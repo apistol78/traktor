@@ -349,6 +349,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		// Create image graph input.
 		Ref< ImgInput > input = new ImgInput();
+		input->setId(Guid::create());
 		m_imageGraph->addNode(input);
 
 		// Create node in graph control.
@@ -358,6 +359,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		// Create image graph output.
 		Ref< ImgOutput > output = new ImgOutput();
+		output->setId(Guid::create());
 		m_imageGraph->addNode(output);
 
 		// Create node in graph control.
@@ -367,6 +369,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		// Create image graph pass.
 		Ref< ImgPass > pass = new ImgPass();
+		pass->setId(Guid::create());
 		m_imageGraph->addNode(pass);
 
 		// Create node in graph control.
@@ -376,6 +379,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		// Create image graph target set.
 		Ref< ImgTargetSet > targetSet = new ImgTargetSet();
+		targetSet->setId(Guid::create());
 		m_imageGraph->addNode(targetSet);
 
 		// Create node in graph control.
@@ -385,6 +389,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		// Create image graph texture reference.
 		Ref< ImgTexture > texture = new ImgTexture();
+		texture->setId(Guid::create());
 		m_imageGraph->addNode(texture);
 
 		// Create node in graph control.

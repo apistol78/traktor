@@ -374,6 +374,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 	if (is_type_of< TextureAsset >(*primaryType))
 	{
 		Ref< Texture > shaderNode = new Texture(instance->getGuid());
+		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
@@ -398,6 +399,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 			instance->getGuid(),
 			fragmentGraph
 		);
+		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
@@ -957,6 +959,7 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 		return;
 
 	// Add to shader graph.
+	shaderNode->setId(Guid::create());
 	shaderNode->setPosition(std::pair< int, int >(
 		ui::invdpi96(at.x),
 		ui::invdpi96(at.y)

@@ -1,4 +1,5 @@
 #include "Core/Serialization/DeepClone.h"
+#include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
@@ -13,9 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", 0
 
 const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ShaderGraph >();
-	return typeSet;
+	return makeTypeInfoSet< ShaderGraph >();
 }
 
 bool ShaderGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -49,7 +48,14 @@ void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComm
 
 Ref< ISerializable > ShaderGraphEditorPageFactory::cloneAsset(const ISerializable* asset) const
 {
-	return DeepClone(asset).create();
+	Ref< ShaderGraph > shaderGraph = DeepClone(asset).create< ShaderGraph >();
+	if (!shaderGraph)
+		return nullptr;
+
+	for (auto node : shaderGraph->getNodes())
+		node->setId(Guid::create());
+
+	return shaderGraph;
 }
 
 	}

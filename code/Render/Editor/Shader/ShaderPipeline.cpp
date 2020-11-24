@@ -553,7 +553,7 @@ bool ShaderPipeline::buildOutput(
 
 		// Optimize and compile all combination programs.
 #if defined(T_USE_BUILD_COMBINATION_JOBS)
-		log::info << L"Spawning " << combinationCount << L" tasks..." << Endl;
+		log::info << L"Building " << combinationCount << L" permutations..." << Endl;
 		JobManager& jobManager = JobManager::getInstance();
 #endif
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
@@ -586,10 +586,6 @@ bool ShaderPipeline::buildOutput(
 
 		log::info << DecreaseIndent;
 	}
-
-#if defined(T_USE_BUILD_COMBINATION_JOBS)
-	log::info << L"Collecting task(s)..." << Endl;
-#endif
 
 	render::IProgramCompiler::Stats stats;
 	uint32_t failed = 0;
@@ -634,7 +630,7 @@ bool ShaderPipeline::buildOutput(
 	shaderResourceTechniques.resize(0);
 	shaderGraphCombinations.resize(0);
 
-	log::info << L"All task(s) collected" << Endl;
+	log::info << L"All permutation(s) built." << Endl;
 
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
