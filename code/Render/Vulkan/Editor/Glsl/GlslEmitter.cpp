@@ -1170,14 +1170,14 @@ bool emitMatrixIn(GlslContext& cx, MatrixIn* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4x4);
 
 	comment(f, node);
-	f << L"mat4 " << out->getName() << L" = transpose(mat4(" << Endl;
+	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
 	f << (yaxis     ? yaxis->cast(GtFloat4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
 	f << (zaxis     ? zaxis->cast(GtFloat4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
 	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
-	f << L"));" << Endl;
+	f << L");" << Endl;
 
 	return true;
 }
@@ -1194,51 +1194,19 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 
 	Ref< GlslVariable > xaxis = cx.emitOutput(node, L"XAxis", GtFloat4);
 	if (xaxis)
-	{
-		assign(f, xaxis) <<
-			L"vec4(" <<
-				in->getName() << L"[0][0], " <<
-				in->getName() << L"[0][1], " <<
-				in->getName() << L"[0][2], " <<
-				in->getName() << L"[0][3]" <<
-			L");" << Endl;
-	}
+		assign(f, xaxis) << in->getName() << L"[0]" << Endl;
 
 	Ref< GlslVariable > yaxis = cx.emitOutput(node, L"YAxis", GtFloat4);
 	if (yaxis)
-	{
-		assign(f, yaxis) <<
-			L"vec4(" <<
-				in->getName() << L"[1][0], " <<
-				in->getName() << L"[1][1], " <<
-				in->getName() << L"[1][2], " <<
-				in->getName() << L"[1][3]" <<
-			L");" << Endl;
-	}
+		assign(f, yaxis) << in->getName() << L"[1]" << Endl;
 
 	Ref< GlslVariable > zaxis = cx.emitOutput(node, L"ZAxis", GtFloat4);
 	if (zaxis)
-	{
-		assign(f, zaxis) <<
-			L"vec4(" <<
-				in->getName() << L"[2][0], " <<
-				in->getName() << L"[2][1], " <<
-				in->getName() << L"[2][2], " <<
-				in->getName() << L"[2][3]" <<
-			L");" << Endl;
-	}
+		assign(f, zaxis) << in->getName() << L"[2]" << Endl;
 
 	Ref< GlslVariable > translate = cx.emitOutput(node, L"Translate", GtFloat4);
 	if (translate)
-	{
-		assign(f, translate) <<
-			L"vec4(" <<
-				in->getName() << L"[3][0], " <<
-				in->getName() << L"[3][1], " <<
-				in->getName() << L"[3][2], " <<
-				in->getName() << L"[3][3]" <<
-			L");" << Endl;
-	}
+		assign(f, translate) << in->getName() << L"[3]" << Endl;
 
 	return true;
 }

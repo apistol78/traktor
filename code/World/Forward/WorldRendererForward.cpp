@@ -1035,13 +1035,11 @@ void WorldRendererForward::setupLightPass(
 						wc.flush(shadowRenderView, shadowPass);
 						renderContext->merge(render::RpAll);
 
-						// Write transposed matrix to shaders as shaders have row-major order.
 						Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-						Matrix44 vls = viewToLightSpace.transpose();
-						vls.axisX().storeUnaligned(lsd->viewToLight0);
-						vls.axisY().storeUnaligned(lsd->viewToLight1);
-						vls.axisZ().storeUnaligned(lsd->viewToLight2);
-						vls.translation().storeUnaligned(lsd->viewToLight3);
+						viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
+						viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
+						viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
+						viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
 
 						// Write slice coordinates to shaders.
 						Vector4(
@@ -1149,13 +1147,11 @@ void WorldRendererForward::setupLightPass(
 					wc.flush(shadowRenderView, shadowPass);
 					renderContext->merge(render::RpAll);
 
-					// Write transposed matrix to shaders as shaders have row-major order.
 					Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-					Matrix44 vls = viewToLightSpace.transpose();
-					vls.axisX().storeUnaligned(lsd->viewToLight0);
-					vls.axisY().storeUnaligned(lsd->viewToLight1);
-					vls.axisZ().storeUnaligned(lsd->viewToLight2);
-					vls.translation().storeUnaligned(lsd->viewToLight3);
+					viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
+					viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
+					viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
+					viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
 
 					// Write atlas coordinates to shaders.
 					Vector4(
