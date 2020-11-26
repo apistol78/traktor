@@ -27,7 +27,7 @@ private:
 	VmaAllocator m_allocator = 0;
 	VmaAllocation m_allocation = 0;
 	VkBuffer m_buffer = 0;
-    bool m_locked = false;
+    void* m_locked = nullptr;
 };
         
     }

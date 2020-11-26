@@ -32,6 +32,7 @@ extern PFN_vkWaitForFences vkWaitForFences;
 extern PFN_vkResetFences vkResetFences;
 extern PFN_vkResetCommandBuffer vkResetCommandBuffer;
 extern PFN_vkCreateImageView vkCreateImageView;
+extern PFN_vkDestroyImageView vkDestroyImageView;
 extern PFN_vkCreateBuffer vkCreateBuffer;
 extern PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements;
 extern PFN_vkAllocateMemory vkAllocateMemory;
