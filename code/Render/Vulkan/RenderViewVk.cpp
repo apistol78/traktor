@@ -1167,8 +1167,17 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
 
+	// Clamp surface size to physical device limits.
+	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
+
+	width = std::max(surfaceCapabilities.minImageExtent.width, width);
+	width = std::min(surfaceCapabilities.maxImageExtent.width, width);
+	height = std::max(surfaceCapabilities.minImageExtent.height, height);
+	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
+
 	// Do not fail if requested size, assume it will get reset later.
-	if (width == 0 && height == 0)
+	if (width == 0 || height == 0)
 		return true;
 
 	// Find present queue.
@@ -1220,9 +1229,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	VkColorSpaceKHR colorSpace = surfaceFormats[0].colorSpace;
 
 	// Determine number of images in swapchain.
-	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
-
 	uint32_t desiredImageCount = 2;
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
 		desiredImageCount = surfaceCapabilities.minImageCount;

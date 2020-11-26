@@ -35,6 +35,7 @@ bool Buffer::create(VmaAllocator allocator, uint32_t bufferSize, uint32_t usageB
 
 void Buffer::destroy()
 {
+	T_FATAL_ASSERT(m_locked == nullptr);
 	if (m_allocator != 0)
 	{
 		vmaDestroyBuffer(m_allocator, m_buffer, m_allocation);
@@ -46,14 +47,13 @@ void Buffer::destroy()
 
 void* Buffer::lock()
 {
-	void* ptr = nullptr;
-	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
-	{
-		m_locked = true;
-		return ptr;
-	}
-	else
-		return nullptr;    
+	if (m_locked)
+		return m_locked;
+
+	if (vmaMapMemory(m_allocator, m_allocation, &m_locked) != VK_SUCCESS)
+		m_locked = nullptr;
+
+	return m_locked;
 }
 
 void Buffer::unlock()
@@ -61,7 +61,7 @@ void Buffer::unlock()
 	if (m_locked)
 	{
 		vmaUnmapMemory(m_allocator, m_allocation);
-		m_locked = false;
+		m_locked = nullptr;
 	}
 }
 
