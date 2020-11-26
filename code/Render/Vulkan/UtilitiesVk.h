@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Config.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiHeader.h"
@@ -27,7 +28,7 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 
 bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryFlags, VkBuffer& outBuffer, VkDeviceMemory& outBufferMemory);
 
-const wchar_t* getHumanResult(VkResult result);
+std::wstring getHumanResult(VkResult result);
 
 void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);
 

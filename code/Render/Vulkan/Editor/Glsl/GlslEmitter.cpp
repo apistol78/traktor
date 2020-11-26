@@ -312,10 +312,14 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	comment(f, node);
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
-	if (node->getBranch() == Conditional::BrStatic)
-		f << L"[[flatten]]" << Endl;
-	else if (node->getBranch() == Conditional::BrDynamic)
-		f << L"[[branch]]" << Endl;
+	const bool supportControlFlowAttributes = (cx.getSettings() != nullptr ? cx.getSettings()->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
+	if (supportControlFlowAttributes)
+	{
+		if (node->getBranch() == Conditional::BrStatic)
+			f << L"[[flatten]]" << Endl;
+		else if (node->getBranch() == Conditional::BrDynamic)
+			f << L"[[branch]]" << Endl;
+	}
 
 	switch (node->getOperator())
 	{
@@ -690,7 +694,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 		if (!in)
 		{
-			log::error << L"Unable to emit interpolator input (1)" << Endl;
+			log::error << L"Unable to emit interpolator input (1)." << Endl;
 			return false;
 		}
 
@@ -709,7 +713,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 	{
-		log::error << L"Unable to emit interpolator input (2)" << Endl;
+		log::error << L"Unable to emit interpolator input (2)." << Endl;
 		return false;
 	}
 
@@ -718,7 +722,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
 	{
-		log::error << L"Unable to determine width of type " << int32_t(in->getType()) << Endl;
+		log::error << L"Unable to determine width of type " << int32_t(in->getType()) << L"." << Endl;
 		return false;
 	}
 
@@ -745,8 +749,8 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		auto& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
 		auto& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
 
-		fvo << L"layout (location = " << interpolatorId << L") out vec4 " << interpolatorName << L";" << Endl;
-		fpi << L"layout (location = " << interpolatorId << L") in vec4 " << interpolatorName << L";" << Endl;
+		fvo << L"layout (location = " << interpolatorId << L") out highp vec4 " << interpolatorName << L";" << Endl;
+		fpi << L"layout (location = " << interpolatorId << L") in highp vec4 " << interpolatorName << L";" << Endl;
 	}
 
 	return true;
@@ -2403,10 +2407,14 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 	comment(f, node);
 
-	if (node->getBranch() == Switch::BrStatic)
-		f << L"[[flatten]]" << Endl;
-	else if (node->getBranch() == Switch::BrDynamic)
-		f << L"[[branch]]" << Endl;
+	const bool supportControlFlowAttributes = (cx.getSettings() != nullptr ? cx.getSettings()->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
+	if (supportControlFlowAttributes)
+	{
+		if (node->getBranch() == Switch::BrStatic)
+			f << L"[[flatten]]" << Endl;
+		else if (node->getBranch() == Switch::BrDynamic)
+			f << L"[[branch]]" << Endl;
+	}
 
 	for (int32_t i = 0; i < (int32_t)cases.size(); ++i)
 	{

@@ -175,6 +175,7 @@ int main(int argc, const char** argv)
 			target,
 			targetConfiguration,
 			outputPath,
+			nullptr,
 			cmdLine.hasOption(L"standalone")
 		).execute(0);
 	}
@@ -193,7 +194,7 @@ int main(int argc, const char** argv)
 			targetManagerPort,
 			targetManagerId,
 			outputPath,
-			0
+			nullptr
 		).execute(0);
 	}
 	else if (command == L"launch")

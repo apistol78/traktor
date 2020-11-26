@@ -70,6 +70,7 @@ BuildTargetAction::BuildTargetAction(
 	const Target* target,
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& outputPath,
+	const PropertyGroup* tweakSettings,
 	bool standAlone
 )
 :	m_database(database)
@@ -78,6 +79,7 @@ BuildTargetAction::BuildTargetAction(
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_outputPath(outputPath)
+,	m_tweakSettings(tweakSettings)
 ,	m_standAlone(standAlone)
 {
 }
@@ -221,6 +223,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	const IPropertyValue* materialTemplates = m_globalSettings->getProperty(L"MeshPipeline.MaterialTemplates");
 	if (materialTemplates)
 		pipelineConfiguration->setProperty(L"MeshPipeline.MaterialTemplates", materialTemplates->clone());
+
+	// Append tweaks.
+	if (m_tweakSettings)
+		pipelineConfiguration = pipelineConfiguration->merge(m_tweakSettings, PropertyGroup::MmJoin);
 
 	// Ensure output directory exists.
 	if (!FileSystem::getInstance().makeAllDirectories(m_outputPath))

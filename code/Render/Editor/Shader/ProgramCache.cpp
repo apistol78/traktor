@@ -19,28 +19,25 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCache", ProgramCache, Object)
 
 ProgramCache::ProgramCache(
 	const Path& cachePath,
-	const IProgramCompiler* compiler
+	const IProgramCompiler* compiler,
+	const PropertyGroup* settings
 )
 :	m_cachePath(cachePath)
 ,	m_compiler(compiler)
+,	m_settings(settings)
 {
+	m_settingsHash = DeepHash(settings).get();
 }
 
-Ref< ProgramResource > ProgramCache::get(
-	const ShaderGraph* shaderGraph,
-	const PropertyGroup* settings
-)
+Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph)
 {
 	Ref< IStream > f;
 
 	// Calculate hash of shader graph.
 	uint32_t shaderGraphHash = ShaderGraphHash::calculate(shaderGraph);
 
-	// Calculate hash of settings.
-	uint32_t settingsHash = DeepHash(settings).get();
-
 	// Generate file name of cached program.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(settingsHash) + L".bin";
+	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(m_settingsHash) + L".bin";
 
 	// Try to read pre-compiled resource from cache.
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmRead)) != nullptr)
@@ -53,7 +50,7 @@ Ref< ProgramResource > ProgramCache::get(
 	}
 
 	// No cached pre-compiled resource found; need to compile resource.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, L"", true, false, nullptr);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, m_settings, L"", nullptr);
 	if (!resource)
 		return nullptr;
 

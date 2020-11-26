@@ -24,13 +24,11 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
 	// Compile program using wrapped compiler.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, optimize, validate, outStats);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, outStats);
 	if (!resource)
 		return nullptr;
 
@@ -47,7 +45,6 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 		shaderGraph,
 		settings,
 		name,
-		optimize,
 		resourceVrfy->m_vertexShader,
 		resourceVrfy->m_pixelShader,
 		resourceVrfy->m_computeShader
@@ -60,14 +57,13 @@ bool ProgramCompilerVrfy::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader
 ) const
 {
 	// Just let the wrapped compiler generate source.
-	return m_compiler->generate(shaderGraph, settings, name, optimize, outVertexShader, outPixelShader, outComputeShader);
+	return m_compiler->generate(shaderGraph, settings, name, outVertexShader, outPixelShader, outComputeShader);
 }
 
 	}

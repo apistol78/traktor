@@ -4,6 +4,8 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/ComRef.h"
 #include "Core/Misc/TString.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/Editor/ProgramCompilerDx11.h"
@@ -97,8 +99,6 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
@@ -112,7 +112,8 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	if (!Hlsl().generate(shaderGraph, hlslProgram))
 		return nullptr;
 
-	optimize = clamp< int32_t >(optimize, 0, sizeof_array(c_optimizationFlags));
+	const int32_t maxOptimize = sizeof_array(c_optimizationFlags) - 1;
+	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Hlsl.Optimize", maxOptimize) : maxOptimize);
 
 	ComRef< ID3DBlob > d3dVertexShader;
 	ComRef< ID3DBlob > d3dPixelShader;
@@ -610,7 +611,6 @@ bool ProgramCompilerDx11::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader

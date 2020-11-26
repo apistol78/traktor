@@ -164,7 +164,10 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-	ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
+
+	const bool supportControlFlowAttributes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
+	if (supportControlFlowAttributes)
+		ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
 
 	const bool supportBallot = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
 	if (supportBallot)
@@ -233,6 +236,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				ss << IncreaseIndent;
 				for (auto uniform : uniformBuffer->get())
 				{
+					// Force high precision on uniform blocks since they share signature.
+					if (uniform.type >= GtFloat && uniform.type <= GtFloat4x4)
+						ss << L"highp ";
 					if (uniform.length <= 1)
 						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
 					else
@@ -283,7 +289,12 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			ss << L"{" << Endl;
 			ss << IncreaseIndent;
 			for (auto element : storageBuffer->get())
+			{
+				// Force high precision on SSBO since they share signature.
+				if (element.type >= DtFloat1 && element.type <= DtFloat4)
+					ss << L"highp ";
 				ss << glslStorageType(element.type) << L" " << element.name << L";" << Endl;
+			}
 			ss << DecreaseIndent;
 			ss << L"};" << Endl;
 			ss << Endl;

@@ -49,7 +49,6 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
-
  	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
@@ -142,6 +141,12 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 
 void RenderTargetDepthVk::destroy()
 {
+	if (m_imageView != 0)
+	{
+		vkDestroyImageView(m_logicalDevice, m_imageView, nullptr);
+		m_imageView = 0;
+	}
+
 	// Do not destroy image unless we have allocated memory for it;
 	// otherwise it's primary targets thus owned by swapchain.
 	if (m_allocation == 0)

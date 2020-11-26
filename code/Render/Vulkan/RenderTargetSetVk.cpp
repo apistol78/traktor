@@ -100,6 +100,10 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRender
 
 void RenderTargetSetVk::destroy()
 {
+	// Wait until GPU is idle to ensure targets are not used, or pending, in some queue
+	// before destroying them.
+	vkDeviceWaitIdle(m_logicalDevice);
+
 	// Destroy color target textures.
 	for (auto colorTarget : m_colorTargets)
 	{

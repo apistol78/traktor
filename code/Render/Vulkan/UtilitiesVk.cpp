@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -359,7 +360,7 @@ bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize
 	return true;
 }
 
-const wchar_t* getHumanResult(VkResult result)
+std::wstring getHumanResult(VkResult result)
 {
 	switch (result)
 	{
@@ -414,7 +415,7 @@ const wchar_t* getHumanResult(VkResult result)
 	case VK_ERROR_INVALID_SHADER_NV:
 		return L"VK_ERROR_INVALID_SHADER_NV";
 	default:
-		return L"** Unknown **";
+		return str(L"Unknown Vulkan result %08x", (uint32_t)result);
 	}
 }
 

@@ -139,6 +139,8 @@ private:
 
 	void updateTargetManagers();
 
+	Ref< PropertyGroup > getTweakSettings() const;
+
 	void launch(TargetInstance* targetInstance);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);

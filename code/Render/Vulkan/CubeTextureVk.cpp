@@ -89,7 +89,6 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	ivci.subresourceRange.levelCount = m_desc.mipCount;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 6;
-
 	if (vkCreateImageView(m_logicalDevice, &ivci, NULL, &m_textureView) != VK_SUCCESS)
 		return false;
 
@@ -144,6 +143,12 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 
 void CubeTextureVk::destroy()
 {
+	if (m_textureView != 0)
+	{
+		vkDestroyImageView(m_logicalDevice, m_textureView, nullptr);
+		m_textureView = 0;
+	}
+
 	if (m_textureImageAllocation != 0)
 	{
 		vmaFreeMemory(m_allocator, m_textureImageAllocation);

@@ -1600,9 +1600,10 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.basePipelineHandle = 0;
 		gpci.basePipelineIndex = 0;
 
-		if (vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &gpci, nullptr, &pipeline) != VK_SUCCESS)
+		VkResult result = vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &gpci, nullptr, &pipeline);
+		if (result != VK_SUCCESS)
 		{
-			log::error << L"Unable to create Vulkan graphics pipeline." << Endl;
+			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L")." << Endl;
 			return false;
 		}
 
