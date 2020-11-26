@@ -34,15 +34,7 @@ public:
 #if defined(_DEBUG)
 	std::wstring name;
 #endif
-	float distance;
-	Ref< IProgram > program;
-	ProgramParameters* programParams;
-
-	RenderBlock()
-	:	distance(0.0f)
-	,	programParams(nullptr)
-	{
-	}
+	float distance = 0.0f;
 
 	virtual ~RenderBlock() {}
 
@@ -58,15 +50,9 @@ public:
 class T_DLLCLASS DrawableRenderBlock : public RenderBlock
 {
 public:
-	float distance;
+	float distance = 0.0f;
 	Ref< IProgram > program;
-	ProgramParameters* programParams;
-
-	DrawableRenderBlock()
-	:	distance(0.0f)
-	,	programParams(nullptr)
-	{
-	}
+	ProgramParameters* programParams = nullptr;
 };
 
 /*! Null render block.
@@ -103,12 +89,7 @@ public:
 	Ref< IndexBuffer > indexBuffer;
 	Ref< VertexBuffer > vertexBuffer;
 	Primitives primitives;
-	uint32_t count;
-
-	InstancingRenderBlock()
-	:	count(0)
-	{
-	}
+	uint32_t count = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -121,22 +102,12 @@ class T_DLLCLASS IndexedInstancingRenderBlock : public DrawableRenderBlock
 public:
 	Ref< IndexBuffer > indexBuffer;
 	Ref< VertexBuffer > vertexBuffer;
-	PrimitiveType primitive;
-	uint32_t offset;
-	uint32_t count;
-	uint32_t minIndex;
-	uint32_t maxIndex;
-	uint32_t instanceCount;
-
-	IndexedInstancingRenderBlock()
-	:	primitive(PtPoints)
-	,	offset(0)
-	,	count(0)
-	,	minIndex(0)
-	,	maxIndex(0)
-	,	instanceCount(0)
-	{
-	}
+	PrimitiveType primitive = PtPoints;
+	uint32_t offset = 0;
+	uint32_t count = 0;
+	uint32_t minIndex = 0;
+	uint32_t maxIndex = 0;
+	uint32_t instanceCount = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -148,16 +119,9 @@ class T_DLLCLASS NonIndexedRenderBlock : public DrawableRenderBlock
 {
 public:
 	Ref< VertexBuffer > vertexBuffer;
-	PrimitiveType primitive;
-	uint32_t offset;
-	uint32_t count;
-
-	NonIndexedRenderBlock()
-	:	primitive(PtPoints)
-	,	offset(0)
-	,	count(0)
-	{
-	}
+	PrimitiveType primitive = PtPoints;
+	uint32_t offset = 0;
+	uint32_t count = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -170,20 +134,11 @@ class T_DLLCLASS IndexedRenderBlock : public DrawableRenderBlock
 public:
 	Ref< IndexBuffer > indexBuffer;
 	Ref< VertexBuffer > vertexBuffer;
-	PrimitiveType primitive;
-	uint32_t offset;
-	uint32_t count;
-	uint32_t minIndex;
-	uint32_t maxIndex;
-
-	IndexedRenderBlock()
-	:	primitive(PtPoints)
-	,	offset(0)
-	,	count(0)
-	,	minIndex(0)
-	,	maxIndex(0)
-	{
-	}
+	PrimitiveType primitive = PtPoints;
+	uint32_t offset = 0;
+	uint32_t count = 0;
+	uint32_t minIndex = 0;
+	uint32_t maxIndex = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };
@@ -195,19 +150,10 @@ class T_DLLCLASS BeginPassRenderBlock : public RenderBlock
 {
 public:
 	Ref< IRenderTargetSet > renderTargetSet;
-	int32_t renderTargetIndex;
+	int32_t renderTargetIndex = -1;
 	Clear clear;
-	uint32_t load;
-	uint32_t store;
-
-	BeginPassRenderBlock()
-	:	RenderBlock()
-	,	renderTargetIndex(-1)
-	,	load(0)
-	,	store(0)
-	{
-		clear.mask = 0;
-	}
+	uint32_t load = 0;
+	uint32_t store = 0;
 
 	virtual void render(IRenderView* renderView) const override final;
 };

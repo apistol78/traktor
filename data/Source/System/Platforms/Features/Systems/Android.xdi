@@ -112,6 +112,18 @@
 				<second type="traktor.PropertyGroup">
 					<value>
 						<item>
+							<first>Glsl.Vulkan.Optimize</first>
+							<second type="traktor.PropertyInteger">
+								<value>0</value>
+							</second>
+						</item>
+						<item>
+							<first>Glsl.Vulkan.ControlFlowAttributes</first>
+							<second type="traktor.PropertyBoolean">
+								<value>false</value>
+							</second>
+						</item>
+						<item>
 							<first>Glsl.Vulkan.Ballot</first>
 							<second type="traktor.PropertyBoolean">
 								<value>false</value>

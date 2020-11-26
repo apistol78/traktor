@@ -53,6 +53,7 @@ T_DEFINE_VK(vkWaitForFences);
 T_DEFINE_VK(vkResetFences);
 T_DEFINE_VK(vkResetCommandBuffer);
 T_DEFINE_VK(vkCreateImageView);
+T_DEFINE_VK(vkDestroyImageView);
 T_DEFINE_VK(vkCreateBuffer);
 T_DEFINE_VK(vkGetBufferMemoryRequirements);
 T_DEFINE_VK(vkAllocateMemory);
@@ -168,6 +169,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkResetFences);
 	T_RESOLVE_VK(vkResetCommandBuffer);
 	T_RESOLVE_VK(vkCreateImageView);
+	T_RESOLVE_VK(vkDestroyImageView);
 	T_RESOLVE_VK(vkCreateBuffer);
 	T_RESOLVE_VK(vkGetBufferMemoryRequirements);
 	T_RESOLVE_VK(vkAllocateMemory);

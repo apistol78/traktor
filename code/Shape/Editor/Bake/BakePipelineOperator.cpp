@@ -479,6 +479,10 @@ BakePipelineOperator::BakePipelineOperator()
 
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
+	// Check if baking is enabled, if not then we leave tracer type as null.
+	if (!settings->getProperty< bool >(L"BakePipelineOperator.Enable", true))
+		return true;
+
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
 
@@ -536,6 +540,10 @@ bool BakePipelineOperator::build(
 ) const
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
+
+	// Skip baking all to gether if no tracer type specified.
+	if (!m_tracerType)
+		return true;
 
 	// In case no tracer processor is registered we create one for this build only,
 	// by doing so we can ensure trace is finished before returning.

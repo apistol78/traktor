@@ -168,6 +168,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Disable baked lighting", false));
 	m_toolBar->addItem(m_toolTweaks);
 
 	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), ui::dpi96(85), i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -264,14 +265,15 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 				Action action;
 
-				// Expose _DEBUG script definition.
+				// Create pipeline settings.
 				Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
 				std::set< std::wstring > scriptPrepDefinitions;
 				scriptPrepDefinitions.insert(L"_DEBUG");
 				pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
-
-				// Also add property for pipelines to indicate we're launching through editor.
 				pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
+				// Create "tweak" settings.
+				Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 				// Add build output data action.
 				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
@@ -282,6 +284,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 					targetInstance->getTarget(),
 					targetInstance->getTargetConfiguration(),
 					outputPath,
+					tweakSettings,
 					false
 				);
 				chain.actions.push_back(action);
@@ -490,6 +493,48 @@ void EditorPlugin::updateTargetManagers()
 	}
 }
 
+Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
+{
+	Ref< PropertyGroup > tweakSettings = new PropertyGroup();
+	if (m_toolTweaks->get(0)->isChecked())
+		tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
+	if (m_toolTweaks->get(1)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+	if (m_toolTweaks->get(2)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Runtime.RenderThread", false);
+	if (m_toolTweaks->get(3)->isChecked())
+		tweakSettings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", 0);
+	if (m_toolTweaks->get(4)->isChecked())
+		tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
+	if (m_toolTweaks->get(5)->isChecked())
+		tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
+	if (m_toolTweaks->get(6)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
+	if (m_toolTweaks->get(7)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
+	if (m_toolTweaks->get(8)->isChecked())
+	{
+		std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
+		modules.insert(L"Traktor.Render.Capture");
+		tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
+		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
+	}
+	if (m_toolTweaks->get(9)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
+	if (m_toolTweaks->get(10)->isChecked())
+		tweakSettings->setProperty< PropertyInteger >(L"Runtime.MaxSimulationUpdates", 1);
+	if (m_toolTweaks->get(11)->isChecked())
+		tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
+	if (m_toolTweaks->get(12)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", false);
+
+	int32_t language = m_toolLanguage->getSelected();
+	if (language > 0)
+		tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
+
+	return tweakSettings;
+}
+
 void EditorPlugin::launch(TargetInstance* targetInstance)
 {
 	// Get selected target host.
@@ -499,16 +544,13 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 
 	std::wstring host = m_hostEnumerator->getHost(id);
 
-	// Get our network host; in case target is local machine we always use loopback for efficiency.
-	std::wstring editorHost = L"127.0.0.1";
-	if (!m_hostEnumerator->isLocal(id))
-	{
-		net::SocketAddressIPv4::Interface itf;
-		if (net::SocketAddressIPv4::getBestInterface(itf))
-			editorHost = itf.addr->getHostName();
-		else
-			log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
-	}
+	// Get our network host.
+	std::wstring editorHost = L"localhost";
+	net::SocketAddressIPv4::Interface itf;
+	if (net::SocketAddressIPv4::getBestInterface(itf))
+		editorHost = itf.addr->getHostName();
+	else
+		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
@@ -525,15 +567,15 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 
 		Action action;
 
+		// Create pipeline settings.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
-
-		// Expose _DEBUG script definition when launching through editor, ie not migrating.
 		std::set< std::wstring > scriptPrepDefinitions;
 		scriptPrepDefinitions.insert(L"_DEBUG");
 		pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
-
-		// Also add property for pipelines to indicate we're launching through editor.
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
+		// Create "tweak" settings.
+		Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
@@ -544,45 +586,10 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			outputPath,
+			tweakSettings,
 			false
 		);
 		chain.actions.push_back(action);
-
-		Ref< PropertyGroup > tweakSettings = new PropertyGroup();
-
-		if (m_toolTweaks->get(0)->isChecked())
-			tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
-		if (m_toolTweaks->get(1)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
-		if (m_toolTweaks->get(2)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Runtime.RenderThread", false);
-		if (m_toolTweaks->get(3)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Render.WaitVBlanks", 0);
-		if (m_toolTweaks->get(4)->isChecked())
-			tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
-		if (m_toolTweaks->get(5)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
-		if (m_toolTweaks->get(6)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
-		if (m_toolTweaks->get(7)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
-		if (m_toolTweaks->get(8)->isChecked())
-		{
-			std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
-			modules.insert(L"Traktor.Render.Capture");
-			tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
-			tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
-		}
-		if (m_toolTweaks->get(9)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
-		if (m_toolTweaks->get(10)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Runtime.MaxSimulationUpdates", 1);
-		if (m_toolTweaks->get(11)->isChecked())
-			tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
-
-		int32_t language = m_toolLanguage->getSelected();
-		if (language > 0)
-			tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
 
 		// Add deploy and launch actions.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
@@ -642,7 +649,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 
 		Action action;
 
-		// Expose _DEBUG script definition when launching through editor, ie not migrating.
+		// Create pipeline settings.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
 		if ((event->getKeyState() & ui::KsControl) == 0)
 		{
@@ -650,9 +657,10 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 			scriptPrepDefinitions.insert(L"_DEBUG");
 			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 		}
-
-		// Also add property for pipelines to indicate we're launching through editor.
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
+
+		// Create "tweak" settings.
+		Ref< PropertyGroup > tweakSettings = getTweakSettings();
 
 		// Add build output data action.
 		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
@@ -663,6 +671,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			outputPath,
+			tweakSettings,
 			false
 		);
 		chain.actions.push_back(action);
@@ -746,6 +755,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
 			outputPath,
+			nullptr,
 			false
 		);
 		chain.actions.push_back(action);

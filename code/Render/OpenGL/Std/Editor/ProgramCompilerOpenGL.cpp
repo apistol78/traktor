@@ -166,8 +166,6 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
@@ -408,7 +406,6 @@ bool ProgramCompilerOpenGL::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader

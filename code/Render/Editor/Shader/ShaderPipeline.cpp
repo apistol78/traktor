@@ -107,7 +107,6 @@ struct BuildCombinationTask : public Object
 	ShaderResource::Technique* shaderResourceTechnique;
 	ShaderResource::Combination* shaderResourceCombination;
 	ProgramCache* programCache;
-	const PropertyGroup* compilerSettings;
 	render::IProgramCompiler::Stats stats;
 	bool frequentUniformsAsLinear;
 	int optimize;
@@ -267,14 +266,7 @@ struct BuildCombinationTask : public Object
 		}
 
 		// Compile shader program.
-		Ref< ProgramResource > programResource = programCache->get(
-			programGraph,
-			compilerSettings
-			// path,
-			// optimize,
-			// validate,
-			// &stats
-		);
+		Ref< ProgramResource > programResource = programCache->get(programGraph);
 		if (!programResource)
 		{
 			log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"" << Endl;
@@ -569,7 +561,6 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceCombination->mask = 0;
 			task->shaderResourceCombination->value = 0;
 			task->programCache = programCache;
-			task->compilerSettings = m_compilerSettings;
 			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
 			task->optimize = m_optimize;
 			task->validate = m_validate;
@@ -758,7 +749,8 @@ ProgramCache* ShaderPipeline::getProgramCache() const
 
 	m_programCache = new ProgramCache(
 		m_programCachePath,
-		programCompiler
+		programCompiler,
+		m_compilerSettings
 	);
 
 	return m_programCache;

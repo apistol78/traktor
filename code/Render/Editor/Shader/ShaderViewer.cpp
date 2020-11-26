@@ -379,7 +379,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	// Create a copy of current settings and add our language of choice.
 	Ref< PropertyGroup > settings = PropertyGroup::get(m_editor->getSettings());
 	settings->setProperty< PropertyString >(L"Glsl.Vulkan.CrossDialect", m_dropLanguages->getSelectedItem());
-	settings->setProperty< PropertyBoolean >(L"Glsl.Vulkan.ConvertRelaxedToHalf", true);
+	settings->setProperty< PropertyBoolean >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false);
 
 	// Extract renderer permutation.
 	const wchar_t* rendererSignature = compiler->getRendererSignature();
@@ -488,13 +488,12 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				// Replace texture nodes with uniforms.
 				RefArray< Texture > textureNodes;
 				programGraph->findNodesOf< Texture >(textureNodes);
-
-				for (RefArray< Texture >::iterator j = textureNodes.begin(); j != textureNodes.end(); ++j)
+				for (auto textureNode : textureNodes)
 				{
-					const Guid& textureGuid = (*j)->getExternal();
+					const Guid& textureGuid = textureNode->getExternal();
 					int32_t textureIndex;
 
-					std::vector< Guid >::iterator it = std::find(textureIds.begin(), textureIds.end(), textureGuid);
+					auto it = std::find(textureIds.begin(), textureIds.end(), textureGuid);
 					if (it != textureIds.end())
 						textureIndex = (int32_t)std::distance(textureIds.begin(), it);
 					else
@@ -505,14 +504,14 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 					Ref< Uniform > textureUniform = new Uniform(
 						getParameterNameFromTextureReferenceIndex(textureIndex),
-						(*j)->getParameterType(),
+						textureNode->getParameterType(),
 						UfOnce
 					);
 
 					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
 					T_ASSERT(textureUniformOutput);
 
-					const OutputPin* textureNodeOutput = (*j)->getOutputPin(0);
+					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 					T_ASSERT(textureNodeOutput);
 
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
@@ -521,7 +520,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 				// Finally ready to compile program graph.
 				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, settings, L"", 0, vertexShader, pixelShader, computeShader))
+				if (compiler->generate(programGraph, settings, L"", vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;

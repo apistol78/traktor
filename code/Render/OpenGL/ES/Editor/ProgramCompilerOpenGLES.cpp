@@ -21,8 +21,6 @@ Ref< ProgramResource > ProgramCompilerOpenGLES::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
@@ -49,7 +47,6 @@ bool ProgramCompilerOpenGLES::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader

@@ -45,6 +45,7 @@ public:
 		const Target* target,
 		const TargetConfiguration* targetConfiguration,
 		const std::wstring& outputPath,
+		const PropertyGroup* tweakSettings,
 		bool standAlone
 	);
 
@@ -57,6 +58,7 @@ private:
 	Ref< const Target > m_target;
 	Ref< const TargetConfiguration > m_targetConfiguration;
 	std::wstring m_outputPath;
+	Ref< const PropertyGroup > m_tweakSettings;
 	bool m_standAlone;
 };
 

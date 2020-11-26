@@ -3,6 +3,8 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
@@ -290,8 +292,6 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
@@ -301,6 +301,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	CgProgram cgProgram;
 	if (!Cg().generate(shaderGraph, cgProgram))
 		return false;
+
+	const int32_t maxOptimize = 4;
+	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Cg.Optimize", maxOptimize) : maxOptimize);
 
 	// Compile shaders.
 	Ref< ProgramResourcePs3 > resource = new ProgramResourcePs3();
@@ -387,7 +390,6 @@ bool ProgramCompilerPs3::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader

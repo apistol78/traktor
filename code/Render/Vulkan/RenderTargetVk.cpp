@@ -51,7 +51,6 @@ bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat forma
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
-
  	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
@@ -89,8 +88,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
- 
-	VmaAllocationCreateInfo aci = {};
+ 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	if (vmaCreateImage(m_allocator, &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
@@ -124,6 +122,12 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 
 void RenderTargetVk::destroy()
 {
+	if (m_imageView != 0)
+	{
+		vkDestroyImageView(m_logicalDevice, m_imageView, nullptr);
+		m_imageView = 0;
+	}
+
 	// Do not destroy image unless we have allocated memory for it;
 	// otherwise it's primary targets thus owned by swapchain.
 	if (m_allocation == 0)

@@ -22,6 +22,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
@@ -238,8 +239,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
-	bool validate,
 	Stats* outStats
 ) const
 {
@@ -269,55 +268,48 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements)).c_str());
-		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements)).c_str());
+		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements));
+		const std::string fragmentShaderText = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements));
 
 		// Vertex shader.
+		const char* vst = vertexShaderText.c_str();
 		vertexShader = new glslang::TShader(EShLangVertex);
-		vertexShader->setStrings(&vertexShaderText, 1);
+		vertexShader->setStrings(&vst, 1);
 		vertexShader->setEntryPoint("main");
-
-		bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
+		bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (vertexShader->getInfoLog())
 		{
 			std::wstring info = trim(mbstows(vertexShader->getInfoLog()));
 			if (!info.empty())
 				log::info << info << Endl;
 		}
-
 #if defined(_DEBUG)
 		if (vertexShader->getInfoDebugLog())
 			log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
 #endif
-
 		if (!vertexResult)
 			return nullptr;
 
-		program->addShader(vertexShader);
-
 		// Fragment shader.
+		const char* fst = fragmentShaderText.c_str();
 		fragmentShader = new glslang::TShader(EShLangFragment);
-		fragmentShader->setStrings(&fragmentShaderText, 1);
+		fragmentShader->setStrings(&fst, 1);
 		fragmentShader->setEntryPoint("main");
-
-		bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
+		bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (fragmentShader->getInfoLog())
 		{
 			std::wstring info = trim(mbstows(fragmentShader->getInfoLog()));
 			if (!info.empty())
 				log::info << info << Endl;
 		}
-
 #if defined(_DEBUG)
 		if (fragmentShader->getInfoDebugLog())
 			log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
 #endif
-
 		if (!fragmentResult)
 			return nullptr;
 
+		program->addShader(vertexShader);
 		program->addShader(fragmentShader);
 	}
 	else if (computeOutputs.size() == 1)
@@ -335,21 +327,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		computeShader = new glslang::TShader(EShLangCompute);
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
-
-		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
+		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (computeShader->getInfoLog())
 		{
 			std::wstring info = trim(mbstows(computeShader->getInfoLog()));
 			if (!info.empty())
 				log::info << info << Endl;
 		}
-
 #if defined(_DEBUG)
 		if (computeShader->getInfoDebugLog())
 			log::info << mbstows(computeShader->getInfoDebugLog()) << Endl;
 #endif
-
 		if (!computeResult)
 			return nullptr;
 
@@ -365,10 +353,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 
-	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf") : false);
-	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
+	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
+	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false) : false);
 
-	// Output render state.
+	// Create output resource.
+	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 	programResource->m_renderState = cx.getRenderState();
 
 	// Generate SPIR-V from program AST.
@@ -378,7 +367,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > vs;
 		glslang::GlslangToSpv(*vsi, vs);
 		programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
-		performOptimization(convertRelaxedToHalf, programResource->m_vertexShader);
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_vertexShader);
 	}
 
 	auto fsi = program->getIntermediate(EShLangFragment);
@@ -387,7 +377,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > fs;
 		glslang::GlslangToSpv(*fsi, fs);
 		programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
-		performOptimization(convertRelaxedToHalf, programResource->m_fragmentShader);
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_fragmentShader);
 	}
 
 	auto csi = program->getIntermediate(EShLangCompute);
@@ -396,7 +387,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		std::vector< uint32_t > cs;
 		glslang::GlslangToSpv(*csi, cs);
 		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
-		performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
+		if (optimize > 0)
+			performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
 	}
 
 	// Map parameters to uniforms.
@@ -592,7 +584,6 @@ bool ProgramCompilerVk::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
-	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader
@@ -712,8 +703,6 @@ bool ProgramCompilerVk::generate(
 			shaderGraph,
 			settings,
 			name,
-			optimize,
-			true,
 			nullptr
 		));
 		if (!programResource)

@@ -130,7 +130,6 @@ bool SimpleTextureVk::create(
 	ivci.subresourceRange.levelCount = desc.mipCount;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
-
 	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create VK simple texture; unable to create image view (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
@@ -248,6 +247,12 @@ bool SimpleTextureVk::create(
 
 void SimpleTextureVk::destroy()
 {
+	if (m_textureView != 0)
+	{
+		vkDestroyImageView(m_logicalDevice, m_textureView, nullptr);
+		m_textureView = 0;
+	}
+
 	if (m_stagingBufferAllocation != 0)
 	{
 		vmaFreeMemory(m_allocator, m_stagingBufferAllocation);

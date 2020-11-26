@@ -16,7 +16,7 @@ namespace traktor
 
 const float c_distanceQuantizeRangeInv = 1.0f / 10.0f;
 
-T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
+T_FORCE_INLINE bool SortOpaquePredicate(const DrawableRenderBlock* renderBlock1, const DrawableRenderBlock* renderBlock2)
 {
 // Don't sort front-to-back on iOS as it's a TDBR architecture thus
 // we focus on minimizing state changes on the CPU instead.
@@ -33,7 +33,7 @@ T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const R
 	return renderBlock1->program < renderBlock2->program;
 }
 
-T_FORCE_INLINE bool SortAlphaBlendPredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
+T_FORCE_INLINE bool SortAlphaBlendPredicate(const DrawableRenderBlock* renderBlock1, const DrawableRenderBlock* renderBlock2)
 {
 	return renderBlock1->distance > renderBlock2->distance;
 }

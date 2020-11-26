@@ -123,7 +123,6 @@ bool VolumeTextureVk::create(
 		ivci.subresourceRange.levelCount = desc.mipCount;
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
-
 		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
 			return false;
 
