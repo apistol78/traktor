@@ -472,7 +472,6 @@ void WorldRendererForward::setupTileDataPass(
 )
 {
 	// Enqueue light clustering as a job, is synchronized in before rendering.
-	T_FATAL_ASSERT(m_frames[frame].tileJob == nullptr);
 	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
 		const auto& lights = m_frames[frame].lights;
