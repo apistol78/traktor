@@ -1,7 +1,5 @@
 #include <cmath>
 #include "Core/Math/Aabb2.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/NormalizeTexCoords.h"
 
@@ -61,15 +59,6 @@ bool NormalizeTexCoords::apply(Model& model) const
     }
 
 	return true;
-}
-
-void NormalizeTexCoords::serialize(ISerializer& s)
-{
-    s >> Member< uint32_t >(L"channel", m_channel);
-    s >> Member< float >(L"marginU", m_marginU);
-    s >> Member< float >(L"marginV", m_marginV);
-    s >> Member< float >(L"stepU", m_stepU);
-    s >> Member< float >(L"stepV", m_stepV);
 }
 
 	}

@@ -62,9 +62,5 @@ bool Triangulate::apply(Model& model) const
 	return true;
 }
 
-void Triangulate::serialize(ISerializer& s)
-{
-}
-
 	}
 }

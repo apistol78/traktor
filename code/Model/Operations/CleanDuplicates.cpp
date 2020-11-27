@@ -1,6 +1,4 @@
 #include "Core/Math/Const.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/CleanDuplicates.h"
 
@@ -89,11 +87,6 @@ bool CleanDuplicates::apply(Model& model) const
 
 	model = cleaned;
 	return true;
-}
-
-void CleanDuplicates::serialize(ISerializer& s)
-{
-	s >> Member< float >(L"positionDistance", m_positionDistance);
 }
 
 	}
