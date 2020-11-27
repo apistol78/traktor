@@ -69,6 +69,9 @@ namespace traktor
 		namespace
 		{
 
+const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
+const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
+
 /*! Resolve external entities, ie flatten scene without external references. */
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -245,6 +248,86 @@ void addSky(
 }
 
 /*! */
+int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
+{
+	float totalWorldArea = 0.0f;
+	for (const auto& polygon : model->getPolygons())
+	{
+		Winding3 polygonWinding;
+		for (const auto index : polygon.getVertices())
+			polygonWinding.push(model->getVertexPosition(index));
+		totalWorldArea += abs(polygonWinding.area());
+	}
+
+	const float totalLightMapArea = lumelDensity * lumelDensity * totalWorldArea;
+	int32_t size = (int32_t)(std::sqrt(totalLightMapArea) + 0.5f);
+        
+	size = std::max< int32_t >(minimumSize, size);
+	size = std::min< int32_t >(maximumSize, size);
+
+	return alignUp(size, 16);
+}
+
+/*! */
+bool prepareModel(
+	editor::IPipelineBuilder* pipelineBuilder,
+	model::Model* model,
+	const std::wstring& assetPath,
+	const Guid& lightmapId,
+	int32_t lightmapSize
+)
+{
+	// Ensure model is fit for tracing.
+	model->clear(model::Model::CfColors | model::Model::CfJoints);
+	model::Triangulate().apply(*model);
+	model::CleanDuplicates(0.0f).apply(*model);
+	model::CleanDegenerate().apply(*model);
+	model::CalculateTangents(false).apply(*model);
+
+	// Check if model already contain lightmap UV or if we need to unwrap.
+	uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+	if (channel == model::c_InvalidIndex)
+	{
+		// No lightmap UV channel, need to add and unwrap automatically.
+		channel = model->addUniqueTexCoordChannel(L"Lightmap");
+		model::UnwrapUV(channel, lightmapSize).apply(*model);
+	}
+
+	// Modify all materials to contain reference to lightmap channel.
+	for (auto& material : model->getMaterials())
+	{
+		material.setBlendOperator(model::Material::BoDecal);
+		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+	}
+
+	// Load texture images and attach to materials.
+	for (auto& material : model->getMaterials())
+	{
+		auto diffuseMap = material.getDiffuseMap();
+		if (diffuseMap.texture.isNotNull())
+		{
+			Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+			if (!textureAsset)
+				continue;
+
+			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
+			Ref< IStream > file = pipelineBuilder->openFile(filePath);
+			if (!file)
+				continue;
+
+			Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+			if (!image)
+				continue;
+
+			diffuseMap.image = image;			
+			material.setDiffuseMap(diffuseMap);
+		}
+	}
+
+	return true;
+}
+
+/*! */
 bool addModel(
 	editor::IPipelineBuilder* pipelineBuilder,
 	model::Model* model,
@@ -332,137 +415,6 @@ bool addModel(
 	));
 
 	return true;
-}
-
-/*! */
-int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
-{
-	float totalWorldArea = 0.0f;
-	for (const auto& polygon : model->getPolygons())
-	{
-		Winding3 polygonWinding;
-		for (const auto index : polygon.getVertices())
-			polygonWinding.push(model->getVertexPosition(index));
-		totalWorldArea += abs(polygonWinding.area());
-	}
-
-	const float totalLightMapArea = lumelDensity * lumelDensity * totalWorldArea;
-	int32_t size = (int32_t)(std::sqrt(totalLightMapArea) + 0.5f);
-        
-	size = std::max< int32_t >(minimumSize, size);
-	size = std::min< int32_t >(maximumSize, size);
-
-	return alignUp(size, 16);
-}
-
-/*! */
-bool prepareModel(
-	const BakeConfiguration* configuration,
-	editor::IPipelineBuilder* pipelineBuilder,
-	const world::EntityData* entity,
-	model::Model* model,
-	const std::wstring& assetPath,
-	const std::wstring& modelCachePath,
-	const Guid& lightmapId,
-	BakeReceipt* receipt,
-	TracerTask* tracerTask
-)
-{
-	const Guid entityId = entity->getId();
-
-	// Calculate size of lightmap from geometry.
-	int32_t lightmapSize = calculateLightmapSize(
-		model,
-		configuration->getLumelDensity(),
-		configuration->getMinimumLightMapSize(),
-		configuration->getMaximumLightMapSize()
-	);
-
-	// Rudimentary caching; assuming calculating hash of model is quicker than UV mapping etc.
-	//uint32_t modelHash = DeepHash(model).get();
-	//Path cachedModelFileName = modelCachePath + L"/Bake_" + toString(modelHash) + L".tmd";
-	//Ref< model::Model > cachedModel = model::ModelFormat::readAny(cachedModelFileName);
-	//if (!cachedModel)
-	{
-		// Ensure model is fit for tracing.
-		model->clear(model::Model::CfColors | model::Model::CfJoints);
-		model::Triangulate().apply(*model);
-		model::CleanDuplicates(0.0f).apply(*model);
-		model::CleanDegenerate().apply(*model);
-		model::CalculateTangents(false).apply(*model);
-
-		// Check if model already contain lightmap UV or if we need to unwrap.
-		uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-		if (channel == model::c_InvalidIndex)
-		{
-			// No lightmap UV channel, need to add and unwrap automatically.
-			channel = model->addUniqueTexCoordChannel(L"Lightmap");
-			model::UnwrapUV(channel, lightmapSize).apply(*model);
-		}
-
-		//FileSystem::getInstance().makeAllDirectories(cachedModelFileName.getPathOnly());
-		//model::ModelFormat::writeAny(cachedModelFileName, model);
-	}
-	//else
-	//	model = cachedModel;
-
-	// Modify all materials to contain reference to lightmap channel.
-	for (auto& material : model->getMaterials())
-	{
-		material.setBlendOperator(model::Material::BoDecal);
-		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
-	}
-
-	// Load texture images and attach to materials.
-	for (auto& material : model->getMaterials())
-	{
-		auto diffuseMap = material.getDiffuseMap();
-		if (diffuseMap.texture.isNotNull())
-		{
-			Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-			if (!textureAsset)
-				continue;
-
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-			Ref< IStream > file = pipelineBuilder->openFile(filePath);
-			if (!file)
-				continue;
-
-			Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-			if (!image)
-				continue;
-
-			diffuseMap.image = image;			
-			material.setDiffuseMap(diffuseMap);
-		}
-	}
-
-	// Calculate priority, if entity has moved since last bake then it's prioritized.
-	int32_t priority = 0;
-	if (receipt)
-	{
-		Transform lastTransform;
-		if (receipt->getLastKnownTransform(entityId, lastTransform))
-		{
-			if (lastTransform != entity->getTransform())
-				priority = 1;
-		}
-		else
-			priority = 1;
-
-		receipt->setTransform(entityId, entity->getTransform());
-	}
-
-	return addModel(
-		pipelineBuilder,
-		model,
-		entity->getTransform(),
-		entity->getName(),
-		priority,
-		lightmapId,
-		lightmapSize,
-		tracerTask
-	);
 }
 
 		}
@@ -595,26 +547,27 @@ bool BakePipelineOperator::build(
 			if (entityId.isNull())
 				return scene::Traverser::VrSkip;
 
-			const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
-			const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
-
-			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
-			Guid outputId = entityId.permutation(c_outputIdSeed);
-
+			// Check editor attributes component if we should include entity.
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
 				if (!editorAttributes->include || editorAttributes->dynamic)
 					return scene::Traverser::VrSkip;
 			}
 
+			// Add light source.
 			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
 			{
 				if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
 					inoutEntityData->removeComponent(lightComponentData);
 			}
 
+			// Add sky source.
 			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
 				addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
+
+			// Calculate synthesized ids.
+			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
+			Guid outputId = entityId.permutation(c_outputIdSeed);
 
 			// Find model synthesizer which can generate from current entity.
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(inoutEntityData)];
@@ -624,15 +577,48 @@ bool BakePipelineOperator::build(
 				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 				if (model)
 				{
+					// Calculate size of lightmap from geometry.
+					int32_t lightmapSize = calculateLightmapSize(
+						model,
+						configuration->getLumelDensity(),
+						configuration->getMinimumLightMapSize(),
+						configuration->getMaximumLightMapSize()
+					);
+
+					// Prepare model for baking.
 					if (!prepareModel(
-						configuration,
 						pipelineBuilder,
-						inoutEntityData,
 						model,
 						m_assetPath,
-						m_modelCachePath,
 						lightmapId,
-						receipt,
+						lightmapSize
+					))
+						return scene::Traverser::VrFailed;
+
+					// Calculate priority, if entity has moved since last bake then it's prioritized.
+					int32_t priority = 0;
+					if (receipt)
+					{
+						Transform lastTransform;
+						if (receipt->getLastKnownTransform(entityId, lastTransform))
+						{
+							if (lastTransform != inoutEntityData->getTransform())
+								priority = 1;
+						}
+						else
+							priority = 1;
+
+						receipt->setTransform(entityId, inoutEntityData->getTransform());
+					}
+
+					if (!addModel(
+						pipelineBuilder,
+						model,
+						inoutEntityData->getTransform(),
+						inoutEntityData->getName(),
+						priority,
+						lightmapId,
+						lightmapSize,
 						tracerTask
 					))
 						return scene::Traverser::VrFailed;
@@ -665,15 +651,48 @@ bool BakePipelineOperator::build(
 				if (!model)
 					continue;
 
+				// Calculate size of lightmap from geometry.
+				int32_t lightmapSize = calculateLightmapSize(
+					model,
+					configuration->getLumelDensity(),
+					configuration->getMinimumLightMapSize(),
+					configuration->getMaximumLightMapSize()
+				);
+
+				// Prepare model for baking.
 				if (!prepareModel(
-					configuration,
 					pipelineBuilder,
-					inoutEntityData,
 					model,
 					m_assetPath,
-					m_modelCachePath,
 					lightmapId,
-					receipt,
+					lightmapSize
+				))
+					return scene::Traverser::VrFailed;
+
+				// Calculate priority, if entity has moved since last bake then it's prioritized.
+				int32_t priority = 0;
+				if (receipt)
+				{
+					Transform lastTransform;
+					if (receipt->getLastKnownTransform(entityId, lastTransform))
+					{
+						if (lastTransform != inoutEntityData->getTransform())
+							priority = 1;
+					}
+					else
+						priority = 1;
+
+					receipt->setTransform(entityId, inoutEntityData->getTransform());
+				}
+
+				if (!addModel(
+					pipelineBuilder,
+					model,
+					inoutEntityData->getTransform(),
+					inoutEntityData->getName(),
+					priority,
+					lightmapId,
+					lightmapSize,
 					tracerTask
 				))
 					return scene::Traverser::VrFailed;
