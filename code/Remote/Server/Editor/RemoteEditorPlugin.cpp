@@ -29,6 +29,7 @@ bool RemoteEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	if (!m_server->create(
 		writableFolder,
 		L"",
+		-1,
 		false
 	))
 	{

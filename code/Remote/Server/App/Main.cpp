@@ -85,6 +85,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!server->create(
 		cmdLine.getString(0),
 		cmdLine.hasOption('k', L"keyword") ? cmdLine.getOption('k', L"keyword").getString() : L"",
+		cmdLine.hasOption('p', L"port") ? cmdLine.getOption('p', L"port").getInteger() : 0,
 		cmdLine.hasOption(L'v', L"verbose")
 	))
 	{
