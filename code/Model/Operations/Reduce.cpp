@@ -1,8 +1,6 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/Operations/Reduce.h"
@@ -362,11 +360,6 @@ bool Reduce::apply(Model& model) const
 	}
 
 	return true;
-}
-
-void Reduce::serialize(ISerializer& s)
-{
-	s >> Member< float >(L"target", m_target);
 }
 
 	}

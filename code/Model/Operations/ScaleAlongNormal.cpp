@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/ScaleAlongNormal.h"
 
@@ -31,11 +29,6 @@ bool ScaleAlongNormal::apply(Model& model) const
 
 	model.setPositions(positions);
 	return true;
-}
-
-void ScaleAlongNormal::serialize(ISerializer& s)
-{
-	s >> Member< float >(L"distance", m_distance);
 }
 
 	}

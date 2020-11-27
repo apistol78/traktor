@@ -73,9 +73,5 @@ bool MergeTVertices::apply(Model& model) const
 	return true;
 }
 
-void MergeTVertices::serialize(ISerializer& s)
-{
-}
-
 	}
 }

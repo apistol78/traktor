@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/Clear.h"
 
@@ -19,11 +17,6 @@ bool Clear::apply(Model& model) const
 {
 	model.clear(m_clearFlags);
 	return true;
-}
-
-void Clear::serialize(ISerializer& s)
-{
-	s >> Member< uint32_t >(L"clearFlags", m_clearFlags);
 }
 
 	}

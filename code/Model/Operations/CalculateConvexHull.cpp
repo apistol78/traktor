@@ -240,9 +240,5 @@ bool CalculateConvexHull::apply(Model& model) const
 	return true;
 }
 
-void CalculateConvexHull::serialize(ISerializer& s)
-{
-}
-
 	}
 }

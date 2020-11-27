@@ -39,8 +39,6 @@ public:
 
 	virtual bool apply(Model& model) const override final;
 
-	virtual void serialize(ISerializer& s) override final;
-
 private:
 	const Model& m_modelA;
 	const Model& m_modelB;

@@ -24,9 +24,5 @@ bool Unweld::apply(Model& model) const
 	return true;
 }
 
-void Unweld::serialize(ISerializer& s)
-{
-}
-
 	}
 }

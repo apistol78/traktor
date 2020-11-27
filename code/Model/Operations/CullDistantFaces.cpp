@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAabb.h"
 #include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Model/Operations/CullDistantFaces.h"
@@ -69,11 +67,6 @@ bool CullDistantFaces::apply(Model& model) const
 	}
 	model.setPolygons(polygons);
 	return true;
-}
-
-void CullDistantFaces::serialize(ISerializer& s)
-{
-	s >> MemberAabb3(L"viewerRegion", m_viewerRegion);
 }
 
 	}

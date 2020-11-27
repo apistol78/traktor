@@ -1,7 +1,5 @@
 #include <cstring>
 #include "Core/Math/Triangle.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/SortProjectedArea.h"
 
@@ -163,11 +161,6 @@ bool SortProjectedArea::apply(Model& model) const
 	model.setPolygons(polygons);
 
 	return true;
-}
-
-void SortProjectedArea::serialize(ISerializer& s)
-{
-	s >> Member< bool >(L"insideOut", m_insideOut);
 }
 
 	}

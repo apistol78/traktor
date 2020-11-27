@@ -1,8 +1,6 @@
 #include <mikktspace.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Model/Model.h"
 #include "Model/Operations/CalculateTangents.h"
 
@@ -93,11 +91,6 @@ bool CalculateTangents::apply(Model& model) const
 
 	genTangSpaceDefault(&cx);
 	return true;
-}
-
-void CalculateTangents::serialize(ISerializer& s)
-{
-	s >> Member< bool >(L"replace", m_replace);
 }
 
 	}
