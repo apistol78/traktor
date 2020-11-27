@@ -44,7 +44,7 @@ Server::Server()
 {
 }
 
-bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword, bool verbose)
+bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword, int32_t listenPort, bool verbose)
 {
 	m_scratchPath = scratchPath;
     m_keyword = keyword;
@@ -70,7 +70,8 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 		return false;
 	}
 
-	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_serverSocket->getLocalAddress())->getPort();
+	if ((m_listenPort = listenPort) <= 0)
+		m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_serverSocket->getLocalAddress())->getPort();
 
 	// Create discovery manager.
 	int32_t mode = net::MdPublishServices;

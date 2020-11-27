@@ -25,7 +25,7 @@ class Server : public Object
 public:
 	Server();
 
-    bool create(const std::wstring& scratchPath, const std::wstring& keyword, bool verbose);
+    bool create(const std::wstring& scratchPath, const std::wstring& keyword, int32_t listenPort, bool verbose);
 
     void destroy();
 
