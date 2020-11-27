@@ -766,10 +766,6 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>BsSndRpt64.exe</item>
-								<item>BugSplat64.dll</item>
-								<item>BugSplat64.lib</item>
-								<item>BugSplatRc64.dll</item>
 								<item>Extern.OpenEXR.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
