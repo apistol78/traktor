@@ -110,6 +110,8 @@ public:
 
 	T_MATH_INLINE void storeUnaligned(float* out) const;
 
+	T_MATH_INLINE void storeIntegersAligned(int32_t* out) const;
+
 	T_MATH_INLINE Scalar get(int index) const;
 
 	T_MATH_INLINE void set(int index, const Scalar& value);
@@ -117,6 +119,8 @@ public:
 	T_MATH_INLINE Scalar min() const;
 
 	T_MATH_INLINE Scalar max() const;
+
+	T_MATH_INLINE Vector4 floor() const;
 
 	T_MATH_INLINE Vector4& operator = (const Vector4& v);
 

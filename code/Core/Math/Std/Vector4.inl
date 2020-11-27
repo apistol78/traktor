@@ -112,6 +112,16 @@ T_MATH_INLINE Scalar Vector4::max() const
 	return Scalar(traktor::max(traktor::max(_x, _y), traktor::max(_z, _w)));
 }
 
+T_MATH_INLINE Vector4 Vector4::floor() const
+{
+	return Vector4(
+		std::floor(_x),
+		std::floor(_y),
+		std::floor(_z),
+		std::floor(_w)
+	);
+}
+
 T_MATH_INLINE Scalar Vector4::x() const
 {
 	return Scalar(_x);
@@ -208,6 +218,15 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 	out[1] = _y;
 	out[2] = _z;
 	out[3] = _w;
+}
+
+T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
+{
+	T_ASSERT(out);
+	out[0] = (int32_t)_x;
+	out[1] = (int32_t)_y;
+	out[2] = (int32_t)_z;
+	out[3] = (int32_t)_w;
 }
 
 T_MATH_INLINE Scalar Vector4::get(int index) const

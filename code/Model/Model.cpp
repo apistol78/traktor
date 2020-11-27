@@ -76,7 +76,7 @@ bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 0, Model, ISerializable)
 
 Model::Model()
-:	m_positions(2.0f)
+:	m_positions(0.5f)
 ,	m_colors(0.1f)
 ,	m_normals(0.1f)
 ,	m_texCoords(0.1f)

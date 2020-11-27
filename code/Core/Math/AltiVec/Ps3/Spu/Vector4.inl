@@ -154,6 +154,19 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 	out[3] = spu_extract(m_data, 3);
 }
 
+T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
+{
+	T_ASSERT(out);
+
+	T_MATH_ALIGN16 float e[4];
+	storeAligned(e);
+
+	out[0] = (int32_t)e[0];
+	out[1] = (int32_t)e[1];
+	out[2] = (int32_t)e[2];
+	out[3] = (int32_t)e[3];
+}
+
 T_MATH_INLINE Scalar Vector4::get(int index) const
 {
 	return Scalar(spu_extract(m_data, index));
