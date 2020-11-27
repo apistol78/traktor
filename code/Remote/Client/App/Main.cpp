@@ -1,4 +1,5 @@
 #include "Compress/Lzo/DeflateStreamLzo.h"
+#include "Compress/Lzo/InflateStreamLzo.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
@@ -20,6 +21,7 @@ namespace
 
 const uint8_t c_msgDeploy = 1;
 const uint8_t c_msgLaunchProcess = 2;
+const uint8_t c_msgFetch = 3;
 const uint8_t c_errNone = 0;
 const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
@@ -290,6 +292,99 @@ int deploy(const CommandLine& cmdLine)
 	return ret;
 }
 
+bool fetchFile(const net::SocketAddressIPv4& addr, const std::wstring& fileName, bool verbose)
+{
+	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
+	if (!clientSocket->connect(addr))
+	{
+		log::info << L"Unable to connect to \"" << addr.getHostName() << L":" << addr.getPort() << L"\"." << Endl;
+		return false;
+	}
+
+	clientSocket->setNoDelay(true);
+
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
+
+	Writer writer(&clientStream);
+	Reader reader(&clientStream);
+	int64_t ret;
+
+	writer << c_msgFetch;
+	writer << OS::getInstance().getCurrentUser();
+	writer << fileName;
+
+	reader >> ret;
+
+	if (ret >= 0)
+	{
+		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(fileName, File::FmWrite);
+		if (!fileStream)
+		{
+			log::error << L"Unable to create file \"" << fileName << L"\"." << Endl;
+			return false;
+		}
+
+		compress::InflateStreamLzo inflateStream(&clientStream);
+		if (!StreamCopy(fileStream, &inflateStream).execute(ret))
+		{
+			log::error << L"Unable to receive file \"" << fileName << L"\"." << Endl;
+			return false;
+		}
+
+		if (verbose)
+			log::info << L"File \"" << fileName << L"\" fetched successfully." << Endl;
+
+		fileStream->close();
+		fileStream = nullptr;
+	}
+	else
+	{
+		log::error << L"Unable to fetch \"" << fileName << L"\"." << Endl;
+		return false;
+	}
+
+	return true;
+}
+
+int fetch(const CommandLine& cmdLine)
+{
+	std::wstring host = cmdLine.getString(1);
+	bool base = cmdLine.hasOption('t', L"target-base");
+	bool verbose = cmdLine.hasOption('v', L"verbose");
+	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+
+	if (!targetBase.isRelative())
+	{
+		log::error << L"Target base must be a relative path." << Endl;
+		return 1;
+	}
+
+	if (cmdLine.getCount() <= 2)
+	{
+		log::error << L"No files to fetch." << Endl;
+		return 2;
+	}
+
+	if (verbose && base)
+		log::info << L"Using target base \"" << targetBase.getPathName() << L"\"" << Endl;
+
+	int32_t port = parseHost(host);
+	net::SocketAddressIPv4 addr(host, port);
+
+	int32_t ret = 0;
+	for (int i = 2; i < cmdLine.getCount(); ++i)
+	{
+		std::wstring fileName = cmdLine.getString(i);
+		if (!fetchFile(addr, fileName, verbose))
+		{
+			ret = 3;
+			break;
+		}
+	}
+
+	return ret;
+}
+
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
@@ -309,6 +404,10 @@ int main(int argc, const char** argv)
 		log::info << L"    -r, -recursive                  Recursive deploy files in directories." << Endl;
 		log::info << L"    -t=<base>, -target-base=<base>  Target base path." << Endl;
 		log::info << L"    -v, -verbose                    Verbose logging." << Endl; 
+		log::info << Endl;
+		log::info << L"  Traktor.Remote.Client.App fetch <host> (options) <files>" << Endl;
+		log::info << L"    -t=<base>, -target-base=<base>  Target base path." << Endl;
+		log::info << L"    -v, -verbose                    Verbose logging." << Endl; 
 		return 0;
 	}
 
@@ -323,6 +422,8 @@ int main(int argc, const char** argv)
 		ret = deploy(cmdLine);
 	else if (compareIgnoreCase(cmdLine.getString(0), L"launch") == 0)
 		ret = launch(cmdLine);
+	else if (compareIgnoreCase(cmdLine.getString(0), L"fetch") == 0)
+		ret = fetch(cmdLine);
 	else
 		log::error << L"Unknown operation \"" << cmdLine.getString(0) << L"\"." << Endl;
 

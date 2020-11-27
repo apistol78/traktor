@@ -1,3 +1,4 @@
+#include "Compress/Lzo/DeflateStreamLzo.h"
 #include "Compress/Lzo/InflateStreamLzo.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
@@ -29,6 +30,7 @@ namespace traktor
 
 const uint8_t c_msgDeploy = 1;
 const uint8_t c_msgLaunchProcess = 2;
+const uint8_t c_msgFetch = 3;
 const uint8_t c_errNone = 0;
 const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
@@ -169,7 +171,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 	reader >> size;
 	reader >> hash;
 
-	log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)" << Endl;
+	log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)." << Endl;
 
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
 	bool outOfSync = true;
@@ -184,7 +186,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			if (FileSystem::getInstance().exist(path))
 			{
 				if (m_verbose)
-					log::info << L"File up-to-date; skipping (1)" << Endl;
+					log::info << L"File up-to-date; skipping (1)." << Endl;
 				outOfSync = false;
 			}
 		}
@@ -199,7 +201,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			adler.begin();
 
 			uint8_t buffer[4096];
-			int32_t nread;
+			int64_t nread;
 			while ((nread = fileStream->read(buffer, sizeof(buffer))) > 0)
 				adler.feed(buffer, nread);
 
@@ -211,7 +213,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			if (adler.get() == hash)
 			{
 				if (m_verbose)
-					log::info << L"File up-to-date; skipping (2)" << Endl;
+					log::info << L"File up-to-date; skipping (2)." << Endl;
 				outOfSync = false;
 			}
 		}
@@ -226,14 +228,14 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmWrite);
 		if (!fileStream)
 		{
-			log::error << L"Unable to create file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to create file \"" << pathName << L"\"." << Endl;
 			return c_errIoFailed;
 		}
 
 		compress::InflateStreamLzo inflateStream(&clientStream);
 		if (!StreamCopy(fileStream, &inflateStream).execute(size))
 		{
-			log::error << L"Unable to receive file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to receive file \"" << pathName << L"\"." << Endl;
 			return c_errIoFailed;
 		}
 
@@ -267,10 +269,10 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 	reader >> arguments;
 	reader >> wait;
 
-	log::info << L"Launching \"" << pathName << L"\"" << Endl;
+	log::info << L"Launch \"" << pathName << L"\"." << Endl;
 
 	if (m_verbose)
-		log::info << L"\targuments \"" << arguments << L"\"" << Endl;
+		log::info << L"\targuments \"" << arguments << L"\"." << Endl;
 
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
 	Ref< IProcess > process = OS::getInstance().execute(
@@ -293,6 +295,48 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 	}
 
 	writer << uint8_t(c_errNone);
+	return c_errNone;
+}
+
+uint8_t Server::handleFetch(net::TcpSocket* clientSocket)
+{
+	net::SocketStream clientStream(clientSocket, true, true, 5000);
+	Reader reader(&clientStream);
+	Writer writer(&clientStream);
+	std::wstring user;
+	std::wstring pathName;
+
+	reader >> user;
+	reader >> pathName;
+
+	log::info << L"Fetch file \"" << pathName << L"\"." << Endl;
+
+	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
+
+	Ref< File > file = FileSystem::getInstance().get(path);
+	if (file)
+	{
+		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmRead);
+		if (fileStream)
+		{
+			writer << (int64_t)file->getSize();
+
+			compress::DeflateStreamLzo deflateStream(&clientStream);
+			if (!StreamCopy(&deflateStream, fileStream).execute(file->getSize()))
+			{
+				log::error << L"Unable to serve file \"" << pathName << L"\"; unable to transmit." << Endl;
+				return c_errIoFailed;
+			}
+
+			fileStream->close();
+			fileStream = nullptr;
+		}
+		else
+			writer << (int64_t)-2;
+	}
+	else
+		writer << (int64_t)-1;
+
 	return c_errNone;
 }
 
@@ -323,6 +367,10 @@ void Server::processClient(net::TcpSocket* clientSocket)
 
 	case c_msgLaunchProcess:
 		ret = handleLaunchProcess(clientSocket);
+		break;
+
+	case c_msgFetch:
+		ret = handleFetch(clientSocket);
 		break;
 
 	default:
