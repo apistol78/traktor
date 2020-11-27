@@ -47,6 +47,8 @@ private:
 
     uint8_t handleLaunchProcess(net::TcpSocket* clientSocket);
 
+    uint8_t handleFetch(net::TcpSocket* clientSocket);
+
     void processClient(net::TcpSocket* clientSocket);
 };
 

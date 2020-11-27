@@ -57,7 +57,7 @@ int main(int argc, const char** argv)
 	{
 		log::info << L"Traktor.Runtime.Deploy.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 		log::info << Endl;
-		log::info << L"Usage: Traktor.Runtime.Deploy.App (option(s)) [workspace] [command] [target] [configuration]" << Endl;
+		log::info << L"Usage: Traktor.Runtime.Deploy.App (option(s)) [workspace] [command] [target] [configuration] (deploy target ip/hostname)" << Endl;
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings              Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
@@ -82,14 +82,14 @@ int main(int argc, const char** argv)
 	Ref< PropertyGroup > settings;
 	if ((settings = loadSettings(settingsFile)) == 0)
 	{
-		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"" << Endl;
+		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"." << Endl;
 		return 1;
 	}
 
 	Ref< PropertyGroup > workspace;
 	if ((workspace = loadSettings(workspaceFile)) == 0)
 	{
-		traktor::log::error << L"Unable to load workspace \"" << workspaceFile << L"\"" << Endl;
+		traktor::log::error << L"Unable to load workspace \"" << workspaceFile << L"\"." << Endl;
 		return 1;
 	}
 
@@ -123,37 +123,38 @@ int main(int argc, const char** argv)
 	Ref< db::Database > sourceDatabase = new db::Database();
 	if (!sourceDatabase->open(sourceDatabaseCS))
 	{
-		traktor::log::error << L"Unable to open database \"" << sourceDatabaseCS.format() << L"\"" << Endl;
+		traktor::log::error << L"Unable to open database \"" << sourceDatabaseCS.format() << L"\"." << Endl;
 		return 1;
 	}
 
 	Ref< db::Instance > targetInstance = sourceDatabase->getInstance(targetPath);
 	if (!targetInstance)
 	{
-		traktor::log::error << L"No such target \"" << targetPath << L"\"" << Endl;
+		traktor::log::error << L"No such target \"" << targetPath << L"\"." << Endl;
 		return 1;
 	}
 
 	Ref< const runtime::Target > target = targetInstance->getObject< runtime::Target >();
 	if (!target)
 	{
-		traktor::log::error << L"No such target \"" << targetPath << L"\"" << Endl;
+		traktor::log::error << L"Unable to read target \"" << targetPath << L"\"." << Endl;
 		return 1;
 	}
 
 	Ref< runtime::TargetConfiguration > targetConfiguration;
-	const RefArray< runtime::TargetConfiguration >& targetConfigurations = target->getConfigurations();
-	for (RefArray< runtime::TargetConfiguration >::const_iterator i = targetConfigurations.begin(); i != targetConfigurations.end(); ++i)
+	for (auto tc : target->getConfigurations())
 	{
-		if ((*i)->getName() == configuration)
+		if (tc->getName() == configuration)
 		{
-			targetConfiguration = *i;
+			targetConfiguration = tc;
 			break;
 		}
 	}
 	if (!targetConfiguration)
 	{
-		traktor::log::error << L"No such target configuration \"" << configuration << L"\"" << Endl;
+		traktor::log::error << L"No such target configuration \"" << configuration << L"\", available configurations are:" << Endl;
+		for (auto tc : target->getConfigurations())
+			traktor::log::error << L"\t\"" << tc->getName() << L"\"" << Endl;
 		return 1;
 	}
 
@@ -165,13 +166,16 @@ int main(int argc, const char** argv)
 	uint16_t targetManagerPort = 0;
 	Guid targetManagerId;
 
+	if (cmdLine.getCount() >= 5)
+		deployHost = cmdLine.getString(4);
+
 	bool result = false;
 	if (command == L"build")
 	{
 		result = runtime::BuildTargetAction(
 			sourceDatabase,
 			settings,
-			0,
+			nullptr,
 			target,
 			targetConfiguration,
 			outputPath,
@@ -223,7 +227,7 @@ int main(int argc, const char** argv)
 	}
 	else
 	{
-		traktor::log::error << L"Unknown command \"" << cmdLine.getString(0) << L"\"" << Endl;
+		traktor::log::error << L"Unknown command \"" << cmdLine.getString(0) << L"\"." << Endl;
 		return 1;
 	}
 
