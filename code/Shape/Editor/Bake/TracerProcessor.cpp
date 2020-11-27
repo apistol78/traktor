@@ -257,10 +257,9 @@ bool writeTexture(
 	{
 		encodeRGBM(lightmapFormat);
 		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
-		//textureFormat = render::TfDXT5;
-		//compressor = new render::DxtnCompressor();
-		textureFormat = render::TfR8G8B8A8;
-		compressor = new render::UnCompressor();
+		prepareForBlockCompression(lightmapFormat, 4, 4, 0.8f);
+		textureFormat = render::TfDXT5;
+		compressor = new render::DxtnCompressor();
 		needAlpha = true;
 	}
 	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)

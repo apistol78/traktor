@@ -12,8 +12,6 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 
@@ -24,7 +22,7 @@ namespace traktor
 		namespace
 		{
 
-struct CompressTextureTask : public Object
+struct CompressTextureTask
 {
 	const drawing::Image* image;
 	int32_t top;
@@ -32,7 +30,7 @@ struct CompressTextureTask : public Object
 	TextureFormat textureFormat;
 	bool needAlpha;
 	int32_t compressionQuality;
-	std::vector< uint8_t > output;
+	AlignedVector< uint8_t > output;
 
 	void execute()
 	{
@@ -45,7 +43,6 @@ struct CompressTextureTask : public Object
 			bottom - top
 		);
 
-		output.clear();
 		output.resize(outputSize, 0);
 
 		const uint8_t* data = static_cast< const uint8_t* >(image->getData());
@@ -140,44 +137,20 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DxtnCompressor", DxtnCompressor, ICompre
 
 bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	// Create multiple jobs for compressing mips; split big mips into several jobs.
-	RefArray< CompressTextureTask > tasks;
-	RefArray< Job > jobs;
-
 	int32_t mipCount = int32_t(mipImages.size());
+
+	CompressTextureTask task;
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
-		int32_t height = mipImages[i]->getHeight();
-		int32_t split = height / 32;
-		if (split < 1)
-			split = 1;
-
-		for (int32_t j = 0; j < split; ++j)
-		{
-			Ref< CompressTextureTask > task = new CompressTextureTask();
-			task->image = mipImages[i];
-			task->top = (height * j) / split;
-			task->bottom = (height * (j + 1)) / split;
-			task->textureFormat = textureFormat;
-			task->needAlpha = needAlpha;
-			task->compressionQuality = compressionQuality;
-
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &CompressTextureTask::execute));
-
-			tasks.push_back(task);
-			jobs.push_back(job);
-		}
-	}
-
-	for (size_t i = 0; i < jobs.size(); ++i)
-	{
-		jobs[i]->wait();
-		jobs[i] = nullptr;
-
-		if (writer.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1) != tasks[i]->output.size())
+		task.image = mipImages[i];
+		task.top = 0;
+		task.bottom = mipImages[i]->getHeight();
+		task.textureFormat = textureFormat;
+		task.needAlpha = needAlpha;
+		task.compressionQuality = compressionQuality;
+		task.execute();
+		if (writer.write(task.output.c_ptr(), (int64_t)task.output.size(), 1) != task.output.size())
 			return false;
-
-		tasks[i] = nullptr;
 	}
 
 	return true;
