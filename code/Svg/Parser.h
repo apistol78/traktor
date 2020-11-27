@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"

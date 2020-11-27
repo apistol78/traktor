@@ -2,6 +2,7 @@
 
 #include <list>
 #include <map>
+#include <string>
 #include "Online/IGameConfiguration.h"
 
 namespace traktor
