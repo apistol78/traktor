@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/RefArray.h"
+#include "Render/Types.h"
 #include "Render/Image2/IImageStepData.h"
 
 // import/export mechanism.
