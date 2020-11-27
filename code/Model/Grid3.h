@@ -15,7 +15,7 @@ namespace traktor
 template < typename ValueType >
 struct DefaultPositionAccessor3
 {
-	static Vector4 get(const ValueType& v) { return v; }
+	static const Vector4& get(const ValueType& v) { return v; }
 };
 
 /*! Default hash function.
@@ -66,23 +66,21 @@ public:
 		{
 			Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
 
-			int32_t x = int32_t(std::floor(p.x()));
-			int32_t y = int32_t(std::floor(p.y()));
-			int32_t z = int32_t(std::floor(p.z()));
+			T_MATH_ALIGN16 int32_t pe[4];
+			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(x, y, z);
+			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].erase(index);
 		}
 
 		// Add index to new cell.
 		{
-			Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
+			Vector4 p = PositionAccessor::get(v) / m_cellSize;
 
-			int32_t x = int32_t(std::floor(p.x()));
-			int32_t y = int32_t(std::floor(p.y()));
-			int32_t z = int32_t(std::floor(p.z()));
+			T_MATH_ALIGN16 int32_t pe[4];
+			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(x, y, z);
+			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].insert(index);
 		}
 
@@ -97,13 +95,22 @@ public:
 		Vector4 p = PositionAccessor::get(v);
 		Vector4 pq = p / m_cellSize;
 
-		int32_t mnx = int32_t(std::floor(pq.x() - distance - 0.5f));
-		int32_t mny = int32_t(std::floor(pq.y() - distance - 0.5f));
-		int32_t mnz = int32_t(std::floor(pq.z() - distance - 0.5f));
+		const Scalar sd(distance);
+		Vector4 mnpq = pq - sd - 0.5_simd;
+		Vector4 mxpq = pq + sd + 0.5_simd;
 
-		int32_t mxx = int32_t(std::floor(pq.x() + distance + 0.5f));
-		int32_t mxy = int32_t(std::floor(pq.y() + distance + 0.5f));
-		int32_t mxz = int32_t(std::floor(pq.z() + distance + 0.5f));
+		T_MATH_ALIGN16 int32_t mne[4];
+		mnpq.storeIntegersAligned(mne);
+
+		T_MATH_ALIGN16 int32_t mxe[4];
+		mxpq.storeIntegersAligned(mxe);
+
+		const int32_t mnx = mne[0];
+		const int32_t mny = mne[1];
+		const int32_t mnz = mne[2];
+		const int32_t mxx = mxe[0];
+		const int32_t mxy = mxe[1];
+		const int32_t mxz = mxe[2];
 
 		for (int32_t iz = mnz; iz <= mxz; ++iz)
 		{
@@ -135,11 +142,10 @@ public:
 	{
 		Vector4 p = PositionAccessor::get(v) / m_cellSize;
 
-		int32_t x = int32_t(std::floor(p.x()));
-		int32_t y = int32_t(std::floor(p.y()));
-		int32_t z = int32_t(std::floor(p.z()));
+		T_MATH_ALIGN16 int32_t pe[4];
+		p.storeIntegersAligned(pe);
 
-		uint32_t hash = HashFunction::get(x, y, z);
+		uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 		uint32_t id = uint32_t(m_values.size());
 
 		m_values.push_back(v);
@@ -156,11 +162,10 @@ public:
 		{
 			Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
-			int32_t x = int32_t(std::floor(p.x()));
-			int32_t y = int32_t(std::floor(p.y()));
-			int32_t z = int32_t(std::floor(p.z()));
+			T_MATH_ALIGN16 int32_t pe[4];
+			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(x, y, z);
+			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].insert(i);
 		}
 	}

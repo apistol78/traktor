@@ -5,7 +5,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.IModelOperation", IModelOperation, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.model.IModelOperation", IModelOperation, Object)
 
 	}
 }

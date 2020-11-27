@@ -80,6 +80,11 @@ T_MATH_INLINE Scalar Vector4::max() const
 	return traktor::max(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
 }
 
+T_MATH_INLINE Vector4 Vector4::floor() const
+{
+	return Vector4(_mm_floor_ps(m_data));
+}
+
 T_MATH_INLINE Scalar Vector4::x() const
 {
 	Vector4 tmp = shuffle< 0, 0, 0, 0 >();
@@ -168,6 +173,13 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
 	T_ASSERT(out);
 	_mm_storeu_ps(out, m_data);
+}
+
+T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
+{
+	T_ASSERT(out);
+	__m128i tmp = _mm_cvtps_epi32(m_data);
+	_mm_store_si128((__m128i*)out, tmp);
 }
 
 T_MATH_INLINE Scalar Vector4::get(int index) const

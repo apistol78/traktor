@@ -177,6 +177,19 @@ T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 	out[3] = vec_extract(m_data, 3);
 }
 
+T_MATH_INLINE void Vector4::storeIntegersAligned(int32_t* out) const
+{
+	T_ASSERT(out);
+
+	T_MATH_ALIGN16 float e[4];
+	storeAligned(e);
+
+	out[0] = (int32_t)e[0];
+	out[1] = (int32_t)e[1];
+	out[2] = (int32_t)e[2];
+	out[3] = (int32_t)e[3];
+}
+
 T_MATH_INLINE Scalar Vector4::get(int index) const
 {
 	return Scalar(vec_extract(m_data, index));
@@ -195,6 +208,18 @@ T_MATH_INLINE Scalar Vector4::min() const
 T_MATH_INLINE Scalar Vector4::max() const
 {
 	return Scalar(vec_max(m_data, m_data));
+}
+
+T_MATH_INLINE Vector4 Vector4::floor() const
+{
+	T_MATH_ALIGN16 float e[4];
+	storeAligned(e);
+	return Vector4(
+		std::floor(e[0]),
+		std::floor(e[1]),
+		std::floor(e[2]),
+		std::floor(e[3])
+	);
 }
 
 T_MATH_INLINE Vector4& Vector4::operator = (const Vector4& v)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ class Model;
 /*!
  * \ingroup Model
  */
-class T_DLLCLASS IModelOperation : public ISerializable
+class T_DLLCLASS IModelOperation : public Object
 {
 	T_RTTI_CLASS;
 

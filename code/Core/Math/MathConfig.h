@@ -85,6 +85,8 @@
 #if defined(T_MATH_USE_SSE2)
 #	if defined(_MSC_VER) || defined(__APPLE__) || defined(__LINUX__)
 #		include <xmmintrin.h>
+#		include <smmintrin.h>
+#		include <immintrin.h>
 #	endif
 #endif
 
