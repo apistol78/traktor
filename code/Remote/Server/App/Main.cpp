@@ -136,7 +136,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	});
 #endif
 
-	log::info << L"Waiting for client(s)..." << Endl;
+	log::info << L"Waiting for client(s) @ " << server->getListenPort() << L"..." << Endl;
 
 #if defined(_WIN32)
 	while (ui::Application::getInstance()->process())

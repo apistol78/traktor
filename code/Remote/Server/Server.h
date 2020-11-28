@@ -31,6 +31,8 @@ public:
 
     bool update();
 
+    int32_t getListenPort() const { return m_listenPort; }
+
     const std::wstring& getScratchPath() const { return m_scratchPath; }
 
 private:
