@@ -54,7 +54,7 @@ public:
 	{
 		DWORD npending = 0;
 		if (!PeekNamedPipe(m_hPipe, nullptr, 0, nullptr, &npending, nullptr))
-			return -1;
+			npending = 0;
 
 		if (npending == 0)
 		{

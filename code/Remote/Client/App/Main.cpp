@@ -89,7 +89,7 @@ int launch(const CommandLine& cmdLine)
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 	Writer writer(&clientStream);
 	Reader reader(&clientStream);
-	uint8_t ret;
+	uint8_t ret = 0xff;
 
 	writer << c_msgLaunchProcess;
 
@@ -101,6 +101,9 @@ int launch(const CommandLine& cmdLine)
 	writer << application;
 	writer << arguments;
 	writer << wait;
+
+	if (wait)
+		clientStream.setTimeout(-1);
 
 	reader >> ret;
 	if (ret != c_errNone)
@@ -292,7 +295,7 @@ int deploy(const CommandLine& cmdLine)
 	return ret;
 }
 
-bool fetchFile(const net::SocketAddressIPv4& addr, const std::wstring& fileName, bool verbose)
+bool fetchFile(const net::SocketAddressIPv4& addr, const Path& fileName, const Path& targetBase, bool verbose)
 {
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
 	if (!clientSocket->connect(addr))
@@ -303,6 +306,10 @@ bool fetchFile(const net::SocketAddressIPv4& addr, const std::wstring& fileName,
 
 	clientSocket->setNoDelay(true);
 
+	Path targetFile = fileName;
+	if (!targetBase.getPathName().empty())
+		targetFile = targetBase + targetFile;
+
 	net::SocketStream clientStream(clientSocket, true, true, 5000);
 
 	Writer writer(&clientStream);
@@ -311,7 +318,7 @@ bool fetchFile(const net::SocketAddressIPv4& addr, const std::wstring& fileName,
 
 	writer << c_msgFetch;
 	writer << OS::getInstance().getCurrentUser();
-	writer << fileName;
+	writer << targetFile.getPathName();
 
 	reader >> ret;
 
@@ -320,26 +327,26 @@ bool fetchFile(const net::SocketAddressIPv4& addr, const std::wstring& fileName,
 		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(fileName, File::FmWrite);
 		if (!fileStream)
 		{
-			log::error << L"Unable to create file \"" << fileName << L"\"." << Endl;
+			log::error << L"Unable to create file \"" << fileName.getPathName() << L"\"." << Endl;
 			return false;
 		}
 
 		compress::InflateStreamLzo inflateStream(&clientStream);
 		if (!StreamCopy(fileStream, &inflateStream).execute(ret))
 		{
-			log::error << L"Unable to receive file \"" << fileName << L"\"." << Endl;
+			log::error << L"Unable to receive file \"" << fileName.getPathName() << L"\"." << Endl;
 			return false;
 		}
 
 		if (verbose)
-			log::info << L"File \"" << fileName << L"\" fetched successfully." << Endl;
+			log::info << L"File \"" << fileName.getPathName() << L"\" fetched successfully." << Endl;
 
 		fileStream->close();
 		fileStream = nullptr;
 	}
 	else
 	{
-		log::error << L"Unable to fetch \"" << fileName << L"\"." << Endl;
+		log::error << L"Unable to fetch \"" << fileName.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
@@ -374,8 +381,8 @@ int fetch(const CommandLine& cmdLine)
 	int32_t ret = 0;
 	for (int i = 2; i < cmdLine.getCount(); ++i)
 	{
-		std::wstring fileName = cmdLine.getString(i);
-		if (!fetchFile(addr, fileName, verbose))
+		Path fileName = cmdLine.getString(i);
+		if (!fetchFile(addr, fileName, targetBase, verbose))
 		{
 			ret = 3;
 			break;

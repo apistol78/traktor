@@ -204,7 +204,7 @@ function deploy(args)
 
 	stdout:printLn("Generating Xcode scheme...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes")
-	if run:run("\"S$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/scheme.xcscheme.template\"", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/scheme.xcscheme.template\"", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
 		stderr:printLn("Failed to generate Xcode scheme")
 		return 1
 	end
@@ -274,15 +274,26 @@ end
 function migrate(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
+	-- Migrate content into a compact database.
 	stdout:printLn("Migrating iOS...")
 	if run:execute(tools.migrate .. " -p -s=Migrate") ~= 0 then
 		stderr:printLn("Failed to migrate iOS database")
 		return 1
 	end
 
+	-- \todo Set "team ID" in project file for signing... need to be configurable from editor.
+	-- also need to set "teamID" in Export.plist
+
+	-- Generate project files.
 	stdout:printLn("Generating Info.plist...")
 	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Info.plist.template\"", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
+		return 1
+	end
+
+	stdout:printLn("Generating Export.plist...")
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Export.plist.template\"", "Export.plist") ~= 0 then
+		stderr:printLn("Failed to generate Export.plist")
 		return 1
 	end
 
@@ -312,14 +323,18 @@ function migrate(args)
 		return 1
 	end
 
-	stdout:printLn("Generating Xcode launcher script...")
+	stdout:printLn("Generating Xcode script...")
 	local f = fileSystem:open(Path("launch.sh"), 2)
 	local s = StreamOutput(f, Utf8Encoding(), "unix")
-	s:printLn("open \"${*:1}\".xcodeproj")
-	f:close()	
+	-- s:printLn("open \"${*:1}\".xcodeproj")
+	s:printLn("xcodebuild -scheme ${*:1} archive -archivePath ./${*:1}.xcarchive -project ${*:1}.xcodeproj -configuration Release -allowProvisioningUpdates")
+	s:printLn("xcodebuild -exportArchive -archivePath ./${*:1}.xcarchive -exportPath . -exportOptionsPlist Export.plist")
+	f:close()
 
-	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
-		stdout:printLn("Deploying resources to target host...")
+	-- Copy project to target which will build final product.
+	local deployTarget = environment:get("DEPLOY_TARGET_HOST")
+	if deployTarget ~= "" then
+		stdout:printLn("Transfer resources to \"" .. deployTarget .. "\"...")
 
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Content.compact Application.config", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
@@ -355,14 +370,20 @@ function migrate(args)
 			run:popd()
 		end
 
-		stdout:printLn("Launching Xcode on target host...")
-		if run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)") ~= 0 then
+		stdout:printLn("Packaging product on \"" .. deployTarget .. "\"...")
+		if run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -w -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"") ~= 0 then
 			stderr:printLn("Failed to launch Xcode")
+			return 1
+		end
+
+		stdout:printLn("Fetching product from \"" .. deployTarget .."\"...")
+		if run:execute(tools.remote .. " fetch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).ipa\"") ~= 0 then
+			stderr:printLn("Failed to fetch product")
 			return 1
 		end
 	end
 
-	stdout:printLn("Migrate finished")
+	stdout:printLn("Migrate finished.")
 	return 0	
 end
 
