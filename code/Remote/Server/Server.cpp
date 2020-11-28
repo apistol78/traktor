@@ -60,7 +60,7 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 
 	// Create server socket.
 	m_serverSocket = new net::TcpSocket();
-	if (!m_serverSocket->bind(net::SocketAddressIPv4(0)))
+	if (!m_serverSocket->bind(net::SocketAddressIPv4(listenPort)))
 	{
 		log::error << L"Unable to bind server socket." << Endl;
 		return false;
@@ -309,13 +309,13 @@ uint8_t Server::handleFetch(net::TcpSocket* clientSocket)
 	reader >> user;
 	reader >> pathName;
 
-	log::info << L"Fetch file \"" << pathName << L"\"." << Endl;
-
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
 
 	Ref< File > file = FileSystem::getInstance().get(path);
 	if (file)
 	{
+		log::info << L"Fetch file \"" << pathName << L"\", " << file->getSize() << L"byte(s) ." << Endl;
+
 		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmRead);
 		if (fileStream)
 		{
@@ -335,7 +335,10 @@ uint8_t Server::handleFetch(net::TcpSocket* clientSocket)
 			writer << (int64_t)-2;
 	}
 	else
+	{
+		log::info << L"Fetch file \"" << path.getPathName() << L"\", no such file." << Endl;
 		writer << (int64_t)-1;
+	}
 
 	return c_errNone;
 }
