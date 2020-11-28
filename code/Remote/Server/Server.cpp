@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/Timer/Timer.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
@@ -50,6 +51,7 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 {
 	m_scratchPath = scratchPath;
     m_keyword = keyword;
+	m_verbose = verbose;
 
     // Ensure our scratch path folder exist.
 	if (!FileSystem::getInstance().makeAllDirectories(m_scratchPath))
@@ -76,12 +78,8 @@ bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword
 		m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_serverSocket->getLocalAddress())->getPort();
 
 	// Create discovery manager.
-	int32_t mode = net::MdPublishServices;
-	if (verbose)
-		mode |= net::MdVerbose;
-
 	m_discoveryManager = new net::DiscoveryManager();
-	if (!m_discoveryManager->create(mode))
+	if (!m_discoveryManager->create(net::MdPublishServices))
 	{
 		log::error << L"Unable to create discovery manager." << Endl;
 		return false;
@@ -272,7 +270,10 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 	log::info << L"Launch \"" << pathName << L"\"." << Endl;
 
 	if (m_verbose)
+	{
 		log::info << L"\targuments \"" << arguments << L"\"." << Endl;
+		log::info << L"\twait \"" << (wait ? L"yes" : L"no") << L"\"." << Endl;
+	}
 
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
 	Ref< IProcess > process = OS::getInstance().execute(
@@ -290,8 +291,17 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 
 	if (wait)
 	{
+		Timer timer;
+		timer.start();
+
+		if (m_verbose)
+			log::info << L"Waiting for process to terminate..." << Endl;
+
 		process->wait();
 		exitCode = process->exitCode();
+
+		if (m_verbose)
+			log::info << L"Process terminated after " << (int32_t)timer.getElapsedTime() << L" seconds, exit code = " << exitCode << Endl;
 	}
 
 	writer << uint8_t(c_errNone);
