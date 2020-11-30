@@ -39,24 +39,14 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 {
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
 
-	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(
-		meshComponentData->getMesh()
-	);
+	// Get referenced mesh asset.
+	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
 	if (!meshAsset)
 		return nullptr;
 
+	// Read source model.
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
-	model::ModelCache modelCache(
-		m_modelCachePath,
-		[&](const Path& p) {
-			return pipelineBuilder->getFile(p);
-		},
-		[&](const Path& p) {
-			return pipelineBuilder->openFile(p);
-		}
-	);
-
-	Ref< model::Model > model = modelCache.get(filePath, meshAsset->getImportFilter());
+	Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 	if (!model)
 		return nullptr;
 
@@ -106,15 +96,15 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
 
 	// Read original mesh asset from source.
-	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(
-		meshComponentData->getMesh()
-	);
+	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
 	if (!meshAsset)
 		return nullptr;
 
 	// Create a new mesh asset referencing the modified model.
     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
     outputMeshAsset->setMeshType(MeshAsset::MtStatic);
+	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
 

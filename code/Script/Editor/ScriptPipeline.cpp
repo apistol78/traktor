@@ -57,7 +57,7 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 	{
 		// Read script from asset as-is as we need to traverse dependencies.
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + scriptAsset->getFileName());
-		Ref< IStream > file = pipelineCommon->openFile(filePath);
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (!file)
 		{
 			log::error << L"Script pipeline failed; unable to open script \"" << filePath.getPathName() << L"\"." << Endl;

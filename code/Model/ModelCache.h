@@ -1,10 +1,8 @@
 #pragma once
 
-#include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
-#include "Core/Thread/Mutex.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,20 +30,17 @@ class T_DLLCLASS ModelCache : public Object
     T_RTTI_CLASS;
 
 public:
-    ModelCache(
-		const Path& cachePath,
-		const std::function< Ref< File >(const Path&) >& getFile,
-		const std::function< Ref< IStream >(const Path&) >& openStream
-	);
+    explicit ModelCache(const Path& cachePath);
+
+    Ref< Model > get(uint32_t key) const;
+
+    bool put(uint32_t key, const Model* model);
 
     /*! Get model. */
     Ref< Model > get(const Path& fileName, const std::wstring& filter);
 
 private:
     Path m_cachePath;
-	std::function< Ref< File >(const Path&) > m_getFile;
-    std::function< Ref< IStream >(const Path&) > m_openStream;
-    Mutex m_lock;
 };
 
     }

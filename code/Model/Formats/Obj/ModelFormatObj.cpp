@@ -1,5 +1,6 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Misc/String.h"
@@ -25,9 +26,9 @@ bool ModelFormatObj::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"obj") == 0;
 }
 
-Ref< Model > ModelFormatObj::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatObj::read(const Path& filePath, const std::wstring& filter) const
 {
-	Ref< IStream > stream = openStream(filePath);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)
 		return nullptr;
 
@@ -136,8 +137,12 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::wstring& filt
 	return md;
 }
 
-bool ModelFormatObj::write(IStream* stream, const Model* model) const
+bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 {
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmWrite);
+	if (!stream)
+		return false;
+
 	BufferedStream bs(stream, 512 * 1024);
 	FileOutputStream s(&bs, new AnsiEncoding());
 

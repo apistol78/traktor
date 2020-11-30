@@ -66,7 +66,7 @@ public:
 
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
 
-	virtual Guid synthesizeOutputGuid(uint32_t iterations) override final;
+	virtual uint32_t calculateInclusiveHash(const ISerializable* sourceAsset) const override final;
 
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) override final;
 
@@ -77,10 +77,6 @@ public:
 	virtual Ref< db::Database > getSourceDatabase() const override final;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
-
-	virtual Ref< File > getFile(const Path& filePath) override final;
-
-	virtual Ref< IStream > openFile(const Path& filePath) override final;
 
 private:
 	struct WorkEntry
@@ -121,7 +117,6 @@ private:
 	std::map< const TypeInfo*, double > m_buildDurations;
 
 	ThreadLocal m_buildInstances;
-	ThreadLocal m_synthesisGuid;
 	ThreadLocal m_parentHash;
 
 	int32_t m_progress;

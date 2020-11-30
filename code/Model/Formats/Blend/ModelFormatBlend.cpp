@@ -39,7 +39,7 @@ bool ModelFormatBlend::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"blend") == 0;
 }
 
-Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& filter) const
 {
 	T_ANONYMOUS_VAR(Acquire< Mutex >)(s_globalLock);
 
@@ -102,7 +102,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	return ModelFormat::readAny(scratchPath + L"/__intermediate__.fbx", filter);
 }
 
-bool ModelFormatBlend::write(IStream* stream, const Model* model) const
+bool ModelFormatBlend::write(const Path& filePath, const Model* model) const
 {
 	return false;
 }

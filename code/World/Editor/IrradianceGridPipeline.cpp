@@ -94,7 +94,7 @@ bool IrradianceGridPipeline::buildOutput(
 	const IrradianceGridAsset* asset = mandatory_non_null_type_cast< const IrradianceGridAsset* >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
-	Ref< IStream > file = pipelineBuilder->openFile(filePath);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Irradiance grid pipeline failed; unable to open source file \"" << filePath.getPathName() << L"\"." << Endl;

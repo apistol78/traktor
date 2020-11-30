@@ -10,7 +10,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 18, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 19, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -67,8 +67,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 		s >> Member< bool >(L"enableAutoTexCoords", enableAutoTexCoords);
 	}
 
-	if (s.getVersion< BakeConfiguration >() >= 1)
-		s >> Member< bool >(L"enableShadowFix", m_enableShadowFix);
+	if (s.getVersion< BakeConfiguration >() >= 1 && s.getVersion< BakeConfiguration >() < 19)
+	{
+		bool enableShadowFix;
+		s >> Member< bool >(L"enableShadowFix", enableShadowFix);
+	}
 
 	if (s.getVersion< BakeConfiguration >() >= 3 && s.getVersion< BakeConfiguration >() < 9)
 	{

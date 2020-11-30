@@ -68,9 +68,7 @@ bool PointSetPipeline::buildOutput(
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + pointSetAsset->getFileName());
-	Ref< model::Model > model = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
-		return pipelineBuilder->openFile(p);
-	});
+	Ref< model::Model > model = model::ModelFormat::readAny(filePath);
 	if (!model)
 	{
 		log::error << L"PointSet pipeline failed; unable to read source model (" << pointSetAsset->getFileName().getOriginal() << L")" << Endl;

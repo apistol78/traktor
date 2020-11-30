@@ -1225,7 +1225,19 @@ bool SceneEditorPage::createExternal()
 	if (!group)
 		return false;
 
-	auto entityData = selectedEntities[0]->getEntityData();
+	Ref< world::EntityData > entityData = selectedEntities[0]->getEntityData();
+
+	// Do not export as LayerEntityData; replace with a plain entity data.
+	if (is_a< world::LayerEntityData >(entityData))
+	{
+		Ref< world::EntityData > plainEntityData = new world::EntityData();
+		plainEntityData->setId(entityData->getId());
+		plainEntityData->setName(entityData->getName());
+		plainEntityData->setTransform(entityData->getTransform());
+		for (auto component : entityData->getComponents())
+			plainEntityData->setComponent(component);
+		entityData = plainEntityData;
+	}
 	
 	std::wstring instanceName = entityData->getName();
 	if (instanceName.empty())

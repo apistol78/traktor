@@ -349,17 +349,7 @@ bool MeshPipeline::buildOutput(
 
 		// Load and prepare models through model cache.
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
-		model::ModelCache modelCache(
-			m_modelCachePath,
-			[&](const Path& p) {
-				return pipelineBuilder->getFile(p);
-			},
-			[&](const Path& p) {
-				return pipelineBuilder->openFile(p);
-			}
-		);
-
-		Ref< model::Model > model = modelCache.get(filePath, asset->getImportFilter());
+		Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, asset->getImportFilter());
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")." << Endl;

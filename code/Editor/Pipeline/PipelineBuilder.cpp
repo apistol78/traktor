@@ -1,8 +1,8 @@
 #if defined(_WIN32)
 #	include <cfloat>
 #endif
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -556,11 +556,39 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	return true;
 }
 
-Guid PipelineBuilder::synthesizeOutputGuid(uint32_t iterations)
+uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsset) const
 {
-	Guid* synthesisGuid = (Guid*)m_synthesisGuid.get();
-	T_FATAL_ASSERT(synthesisGuid != nullptr);
-	return synthesisGuid->permutate(iterations);
+	// Scan dependencies of source asset.
+	PipelineDependencySet dependencySet;
+	if (m_threadedBuildEnable)
+	{
+		PipelineDependsParallel pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+		pipelineDepends.addDependency(sourceAsset);
+		pipelineDepends.waitUntilFinished();
+	}
+	else
+	{
+		PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+		pipelineDepends.addDependency(sourceAsset);
+		pipelineDepends.waitUntilFinished();
+	}
+
+	// Calculate hash of source.
+	uint32_t hash = DeepHash(sourceAsset).get();
+
+	// Append hashes of all dependencies.
+	for (uint32_t i = 0; i < dependencySet.size(); ++i)
+	{
+		const PipelineDependency* dependency = dependencySet.get(i);
+		T_ASSERT(dependency);
+
+		hash += dependency->pipelineHash;
+		hash += dependency->sourceAssetHash;
+		hash += dependency->sourceDataHash;
+		hash += dependency->filesHash;
+	}
+
+	return hash;
 }
 
 Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourceAsset)
@@ -657,17 +685,6 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 		return nullptr;
 }
 
-Ref< File > PipelineBuilder::getFile(const Path& filePath)
-{
-	return FileSystem::getInstance().get(filePath);
-}
-
-Ref< IStream > PipelineBuilder::openFile(const Path& filePath)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
-}
-
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
 	// Ensure FP is in known state.
@@ -752,15 +769,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
-	// Use guid of output as a basis for synthetic ids.
-	Guid* currentSynthesis = (Guid*)m_synthesisGuid.get();
-	Guid* synthesis = nullptr;
-	if ((reason & PbrSynthesized) == 0)
-	{
-		synthesis = new Guid(dependency->outputGuid.permutation(c_synthesisSeedGuid));
-		m_synthesisGuid.set(synthesis);
-	}
-
 	bool result = pipeline->buildOutput(
 		this,
 		dependencySet,
@@ -772,12 +780,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 		buildParams,
 		reason
 	);
-
-	if (synthesis)
-	{
-		m_synthesisGuid.set(currentSynthesis);
-		delete synthesis;
-	}
 
 	if (result)
 		Atomic::increment(m_succeededBuilt);

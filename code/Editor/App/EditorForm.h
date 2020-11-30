@@ -67,7 +67,6 @@ class IObjectEditorFactory;
 class IPipelineDb;
 class LogView;
 class MRU;
-class PipelineAgentsManager;
 class PropertiesView;
 
 /*! Main editor form.
@@ -179,7 +178,6 @@ private:
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
-	Ref< PipelineAgentsManager > m_agentsManager;
 	Ref< IPipelineDb > m_pipelineDb;
 	std::map< std::wstring, Ref< Object > > m_objectStore;
 	Ref< MRU > m_mru;

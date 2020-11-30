@@ -68,7 +68,7 @@ bool CloudMaskPipeline::buildOutput(
 	const CloudMaskAsset* maskAsset = checked_type_cast< const CloudMaskAsset* >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + maskAsset->getFileName());
-	Ref< IStream > file = pipelineBuilder->openFile(filePath);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Cloud mask pipeline failed; unable to open source image \"" << maskAsset->getFileName().getOriginal() << L"\"." << Endl;

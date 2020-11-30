@@ -59,7 +59,7 @@ bool TextureAssetPipeline::buildOutput(
 	const TextureAsset* asset = checked_type_cast< const TextureAsset* >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
-	Ref< IStream > file = pipelineBuilder->openFile(filePath);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Texture asset pipeline failed; unable to open source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;

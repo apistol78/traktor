@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -51,18 +50,18 @@ public:
 
 	/*! Read model.
 	 *
-	 * \param stream Source stream.
+	 * \param filePath Path to model file.
 	 * \return Read model.
 	 */
-	virtual Ref< Model > read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
+	virtual Ref< Model > read(const Path& filePath, const std::wstring& filter) const = 0;
 
 	/*! Write model.
 	 *
-	 * \param stream Output stream.
+	 * \param filePath Path to model file.
 	 * \param model Output model.
 	 * \return True if model written successfully.
 	 */
-	virtual bool write(IStream* stream, const Model* model) const = 0;
+	virtual bool write(const Path& filePath, const Model* model) const = 0;
 
 	/*! Automatically read model using appropriate format.
 	 *
@@ -72,14 +71,6 @@ public:
 	 */
 	static Ref< Model > readAny(const Path& filePath, const std::wstring& filter = L"");
 
-	/*! Automatically read model using appropriate format.
-	 *
-	 * \param filePath Path to model file.
-	 * \param openStreamFn Open stream function.
-	 * \return Read model.
-	 */
-	static Ref< Model > readAny(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream);
-
 	/*! Automatically write model using format based on filename extension.
 	 *
 	 * \param filePath Path to new model file.
@@ -87,14 +78,6 @@ public:
 	 * \return True if model written successfully.
 	 */
 	static bool writeAny(const Path& filePath, const Model* model);
-
-	/*! Automatically write model using format based on filename extension.
-	 *
-	 * \param filePath Path to new model file.
-	 * \param model Output model.
-	 * \return True if model written successfully.
-	 */
-	static bool writeAny(IStream* stream, const std::wstring& extension, const Model* model);
 };
 
 	}

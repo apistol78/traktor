@@ -85,8 +85,8 @@ public:
 	/*! Build ad-hoc output instance from source asset. */
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
 
-	/*! Get guid prepared for synthesized outputs. */
-	virtual Guid synthesizeOutputGuid(uint32_t iterations) = 0;
+	/*! Calculate hash of source asset including it's dependencies. */
+	virtual uint32_t calculateInclusiveHash(const ISerializable* sourceAsset) const = 0;
 
 	/*! Get build product of source asset. */
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) = 0;

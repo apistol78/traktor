@@ -77,16 +77,7 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		if (!m_resourceManager->bind(c_defaultShader, shader))
 			return nullptr;
 
-		Ref< model::ModelCache > modelCache = new model::ModelCache(
-			m_modelCachePath,
-			[&](const Path& p) {
-				return FileSystem::getInstance().get(p);
-			},
-			[&](const Path& p) {
-				return FileSystem::getInstance().open(p, File::FmRead);
-			}
-		);
-
+		Ref< model::ModelCache > modelCache = new model::ModelCache(m_modelCachePath);
 		Ref< SplineEntity > entity = new SplineEntity(
 			splineEntityData,
 			m_database,

@@ -1,8 +1,8 @@
 #if defined(_WIN32)
 #	include <cfloat>
 #endif
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -249,17 +249,6 @@ Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
 		return nullptr;
-}
-
-Ref< File > PipelineDependsParallel::getFile(const Path& filePath)
-{
-	return FileSystem::getInstance().get(filePath);
-}
-
-Ref< IStream > PipelineDependsParallel::openFile(const Path& filePath)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(

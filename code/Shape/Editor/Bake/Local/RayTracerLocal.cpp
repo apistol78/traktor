@@ -106,46 +106,6 @@ void RayTracerLocal::commit()
 	m_sah.build(m_windings);
 }
 
-void RayTracerLocal::preprocess(GBuffer* gbuffer) const
-{
-	// // Adjust gbuffer positions to help fix some shadowing issues.
-	// if (configuration->getEnableShadowFix())
-	// {
-	// 	for (int32_t y = 0; y < outputSize; ++y)
-	// 	{
-	// 		for (int32_t x = 0; x < outputSize; ++x)
-	// 		{
-	// 			auto& elm = gbuffer.get(x, y);
-	// 			if (elm.polygon == model::c_InvalidIndex)
-	// 				continue;
-
-	// 			Vector4 position = elm.position;
-	// 			Vector4 normal = elm.normal;
-
-	// 			Vector4 u, v;
-	// 			orthogonalFrame(normal, u, v);
-
-	// 			const Scalar l = elm.delta.length();
-	// 			const Vector4 d[] = { u, -u, v, -v };
-
-	// 			for (int32_t i = 0; i < 8; ++i)
-	// 			{
-	// 				int32_t ii = i % 4;
-
-	// 				RayTracer::Result result;
-	// 				if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
-	// 					continue;
-
-	// 				if (dot3(result.normal, d[ii]) > 0.0f)
-	// 					continue;
-
-	// 				position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
-	// 			}
-	// 		}
-	// 	}
-	// }
-}
-
 Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) const
 {
 	// // Raytrace IBL probes.

@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -123,11 +124,11 @@ bool ModelFormatGltf::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"gltf") == 0;
 }
 
-Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& filter) const
 {
 	RefArray< IStream > bufferStreams;
 
-	Ref< IStream > stream = openStream(filePath);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)
 		return nullptr;
 
@@ -157,7 +158,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				return nullptr;
 
 			std::wstring uri = buffer->getMemberValue(L"uri").getWideString();
-			if ((bufferStreams[i] = openStream(dirPath + Path(uri))) == nullptr)
+			if ((bufferStreams[i] = FileSystem::getInstance().open(dirPath + Path(uri), File::FmRead)) == nullptr)
 				return nullptr;
 		}
 	}
@@ -346,7 +347,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	return md;
 }
 
-bool ModelFormatGltf::write(IStream* stream, const Model* model) const
+bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 {
 	return false;
 }

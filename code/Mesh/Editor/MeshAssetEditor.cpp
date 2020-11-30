@@ -310,22 +310,7 @@ void MeshAssetEditor::updateModel()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 	std::wstring importFilter = m_asset->getImportFilter();
-
-	model::ModelCache modelCache(
-		m_modelCachePath,
-		[&](const Path& p) {
-			return FileSystem::getInstance().get(p);
-		},
-		[&](const Path& p) -> Ref< IStream > {
-			Ref< IStream > file = FileSystem::getInstance().open(p, File::FmRead);
-			if (file)
-				return new BufferedStream(file);
-			else
-				return nullptr;
-		}
-	);
-
-	m_model = modelCache.get(assetPath, importFilter);
+	m_model = model::ModelCache(m_modelCachePath).get(assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()

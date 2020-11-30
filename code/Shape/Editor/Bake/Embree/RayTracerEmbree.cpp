@@ -188,63 +188,6 @@ void RayTracerEmbree::commit()
 	rtcCommitScene(m_scene);
 }
 
-void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
-{
-	RTCRayHit T_MATH_ALIGN16 rh;
-
-    int32_t width = gbuffer->getWidth();
-    int32_t height = gbuffer->getHeight();
-
-	// Offset gbuffer positions to reduce shadowing issues.
-	if (m_configuration->getEnableShadowFix())
-	{
-		for (int32_t y = 0; y < height; ++y)
-		{
-			for (int32_t x = 0; x < width; ++x)
-			{
-				auto& elm = gbuffer->get(x, y);
-				if (elm.polygon == model::c_InvalidIndex)
-					continue;
-
-				const Scalar l = elm.delta;
-				const Scalar hl = l * Scalar(1.0f);
-
-				Vector4 normal = elm.normal;
-				Vector4 position = elm.position + normal * hl;
-
-				Vector4 u, v;
-				orthogonalFrame(normal, u, v);
-
-				for (int32_t i = 0; i < 16; ++i)
-				{
-					float a = TWO_PI * i / 16.0f;
-					float s = sin(a), c = cos(a);
-
-					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-					constructRay(position, traceDirection, hl, rh);
-
-					RTCIntersectContext context;
-					rtcInitIntersectContext(&context);
-					rtcIntersect1(m_scene, &context, &rh);					
-
-					if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-						continue;
-
-					Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
-
-					if (dot3(hitNormal, traceDirection) < 0.0f)
-						continue;
-
-					// Offset position.
-					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.02f);
-				}
-
-				elm.position = position;
-			}
-		}
-	}	
-}
-
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
 {
 	const uint32_t sampleCount = alignUp(m_configuration->getSampleCount(), 16);
@@ -292,6 +235,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 
 void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
 {
+	RTCRayHit T_MATH_ALIGN16 rh;
 	RandomGeometry random;
 
 	const int32_t sampleCount = m_configuration->getSampleCount();
@@ -303,33 +247,74 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	{
 		for (int32_t x = region[0]; x < region[2]; ++x)
 		{
-			const auto& elm = gbuffer->get(x, y);
+			auto elm = gbuffer->get(x, y);
 			if (elm.polygon == model::c_InvalidIndex)
 				continue;
 
-			const auto& originPolygon = polygons[elm.polygon];
-			const auto& originMaterial = materials[originPolygon.getMaterial()];
+			// Adjust gbuffer position to reduce shadowing issues.
+			{
+				const Scalar l = elm.delta;
+				const Scalar hl = l * Scalar(1.0f);
 
-			Color4f emittance = originMaterial.getColor() * Scalar(originMaterial.getEmissive());
-			Scalar metalness = Scalar(originMaterial.getMetalness());
+				Vector4 normal = elm.normal;
+				Vector4 position = elm.position + normal * hl;
 
-			// Trace direct analytical illumination.
-			Color4f direct = sampleAnalyticalLights(
-				random,
-				elm.position,
-				elm.normal,
-				Light::LmDirect,
-				false
-			);
+				Vector4 u, v;
+				orthogonalFrame(normal, u, v);
 
-			// Trace IBL and indirect illumination.
-			Color4f incoming = tracePath0(elm.position, elm.normal, random);
+				for (int32_t i = 0; i < 16; ++i)
+				{
+					float a = TWO_PI * i / 16.0f;
+					float s = sin(a), c = cos(a);
 
-			// Trace ambient occlusion.
-			Scalar occlusion = traceAmbientOcclusion(elm.position, elm.normal, random);
+					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
+					constructRay(position, traceDirection, hl, rh);
 
-			// Combine and write final lumel.
-			lightmap->setPixel(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+					rtcIntersect1(m_scene, &context, &rh);					
+
+					if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+						continue;
+
+					Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
+
+					if (dot3(hitNormal, traceDirection) < 0.0f)
+						continue;
+
+					// Offset position.
+					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.02f);
+				}
+
+				elm.position = position;
+			}
+
+			// Trace lightmap.
+			{
+				const auto& originPolygon = polygons[elm.polygon];
+				const auto& originMaterial = materials[originPolygon.getMaterial()];
+
+				Color4f emittance = originMaterial.getColor() * Scalar(originMaterial.getEmissive());
+				Scalar metalness = Scalar(originMaterial.getMetalness());
+
+				// Trace direct analytical illumination.
+				Color4f direct = sampleAnalyticalLights(
+					random,
+					elm.position,
+					elm.normal,
+					Light::LmDirect,
+					false
+				);
+
+				// Trace IBL and indirect illumination.
+				Color4f incoming = tracePath0(elm.position, elm.normal, random);
+
+				// Trace ambient occlusion.
+				Scalar occlusion = traceAmbientOcclusion(elm.position, elm.normal, random);
+
+				// Combine and write final lumel.
+				lightmap->setPixel(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+			}
 		}
 	}	
 }
