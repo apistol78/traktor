@@ -5,8 +5,8 @@
 			<id>{FB1ED06B-C219-EB4B-B459-8ACFDE44B789}</id>
 			<comment/>
 			<position>
-				<first>942</first>
-				<second>333</second>
+				<first>954</first>
+				<second>385</second>
 			</position>
 			<fragmentGuid>{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}</fragmentGuid>
 			<inputPins/>
@@ -47,6 +47,10 @@
 					<id>{8E47B001-A54D-5E40-8412-D8A34694976F}</id>
 					<name>ViewVelocity</name>
 				</item>
+				<item>
+					<id>{3FC9E6C6-F4A7-324F-BA76-17AF29309F02}</id>
+					<name>WorldPosition</name>
+				</item>
 			</outputPins>
 			<values/>
 		</item>
@@ -55,7 +59,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>457</second>
+				<second>453</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -64,7 +68,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>505</second>
+				<second>500</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -73,7 +77,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>601</second>
+				<second>594</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
@@ -82,7 +86,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>553</second>
+				<second>547</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
@@ -100,7 +104,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>313</second>
+				<second>312</second>
 			</position>
 			<name>T_Position</name>
 		</item>
@@ -109,7 +113,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>409</second>
+				<second>406</second>
 			</position>
 			<name>T_TexCoord1</name>
 		</item>
@@ -118,7 +122,7 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>361</second>
+				<second>359</second>
 			</position>
 			<name>T_TexCoord0</name>
 		</item>
@@ -127,9 +131,18 @@
 			<comment/>
 			<position>
 				<first>1468</first>
-				<second>649</second>
+				<second>641</second>
 			</position>
 			<name>T_ViewVelocity</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{958C9BD3-92D5-F244-9ADC-B6161CD09190}</id>
+			<comment/>
+			<position>
+				<first>1468</first>
+				<second>688</second>
+			</position>
+			<name>T_WorldPosition</name>
 		</item>
 	</nodes>
 	<edges>
@@ -220,6 +233,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>WorldPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
 			</destination>
 		</item>

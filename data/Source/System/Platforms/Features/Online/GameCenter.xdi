@@ -24,17 +24,15 @@
 							<value>
 								<item>AVFoundation.framework</item>
 								<item>AdSupport.framework</item>
-								<item>AssetsLibrary.framework</item>
 								<item>AudioToolbox.framework</item>
 								<item>CoreGraphics.framework</item>
 								<item>CoreImage.framework</item>
 								<item>CoreMedia.framework</item>
+								<item>CoreServices.framework</item>
 								<item>CoreVideo.framework</item>
 								<item>Foundation.framework</item>
 								<item>GameKit.framework</item>
 								<item>MessageUI.framework</item>
-								<item>MobileCoreServices.framework</item>
-								<item>OpenGLES.framework</item>
 								<item>QuartzCore.framework</item>
 								<item>Security.framework</item>
 								<item>Social.framework</item>
@@ -67,17 +65,15 @@
 							<value>
 								<item>AVFoundation.framework</item>
 								<item>AdSupport.framework</item>
-								<item>AssetsLibrary.framework</item>
 								<item>AudioToolbox.framework</item>
 								<item>CoreGraphics.framework</item>
 								<item>CoreImage.framework</item>
 								<item>CoreMedia.framework</item>
+								<item>CoreServices.framework</item>
 								<item>CoreVideo.framework</item>
 								<item>Foundation.framework</item>
 								<item>GameKit.framework</item>
 								<item>MessageUI.framework</item>
-								<item>MobileCoreServices.framework</item>
-								<item>OpenGLES.framework</item>
 								<item>QuartzCore.framework</item>
 								<item>Security.framework</item>
 								<item>Social.framework</item>

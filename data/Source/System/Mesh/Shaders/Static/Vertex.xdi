@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{EDF2669D-EEC3-D143-ACF5-B51B664184C0}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,7 @@
 				<second>796</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7B4FFACE-E593-6D47-A07E-3A82BD12C62F}</id>
@@ -64,6 +65,10 @@
 				<item>
 					<id>{5172DC2C-EB40-174A-97E2-34D0AA84201E}</id>
 					<name>ViewTangent</name>
+				</item>
+				<item>
+					<id>{099C3159-AA8C-954A-B41A-516554123CC2}</id>
+					<name>WorldPosition</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -121,7 +126,7 @@
 			<comment/>
 			<position>
 				<first>284</first>
-				<second>1069</second>
+				<second>1072</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -130,7 +135,7 @@
 			<comment/>
 			<position>
 				<first>284</first>
-				<second>1019</second>
+				<second>1021</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -139,7 +144,7 @@
 			<comment/>
 			<position>
 				<first>284</first>
-				<second>1119</second>
+				<second>1123</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
@@ -148,7 +153,7 @@
 			<comment/>
 			<position>
 				<first>284</first>
-				<second>969</second>
+				<second>970</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -255,6 +260,15 @@
 				<second>919</second>
 			</position>
 			<name>ViewVelocity</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{C8AEC8F3-589D-D84F-9277-0A8218C6CB98}</id>
+			<comment/>
+			<position>
+				<first>284</first>
+				<second>1174</second>
+			</position>
+			<name>WorldPosition</name>
 		</item>
 	</nodes>
 	<edges>
@@ -405,6 +419,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>WorldPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Input</name>
 			</destination>
 		</item>
