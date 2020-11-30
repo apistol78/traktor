@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>457</second>
+				<second>453</second>
 			</position>
 			<name>T_Color</name>
 		</item>
@@ -15,7 +15,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>226</second>
+				<second>222</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
@@ -24,7 +24,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>325</second>
+				<second>321</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
@@ -33,7 +33,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>391</second>
+				<second>387</second>
 			</position>
 			<name>T_TexCoord0</name>
 		</item>
@@ -42,7 +42,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>292</second>
+				<second>288</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -51,7 +51,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>358</second>
+				<second>354</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -59,8 +59,8 @@
 			<id>{40294FDA-C7A5-384C-8D3F-C306CEDCE4CB}</id>
 			<comment/>
 			<position>
-				<first>567</first>
-				<second>325</second>
+				<first>558</first>
+				<second>311</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -69,7 +69,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>193</second>
+				<second>156</second>
 			</position>
 			<name>T_Position</name>
 		</item>
@@ -78,7 +78,7 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>424</second>
+				<second>420</second>
 			</position>
 			<name>T_TexCoord1</name>
 		</item>
@@ -87,9 +87,18 @@
 			<comment/>
 			<position>
 				<first>884</first>
-				<second>259</second>
+				<second>255</second>
 			</position>
 			<name>T_ViewVelocity</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{494B1457-75BA-6F4B-9DFD-67981507128D}</id>
+			<comment/>
+			<position>
+				<first>884</first>
+				<second>189</second>
+			</position>
+			<name>T_WorldPosition</name>
 		</item>
 	</nodes>
 	<edges>
@@ -180,6 +189,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
 			</destination>
 		</item>

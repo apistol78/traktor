@@ -140,6 +140,10 @@
 					<id>{2D07DFB8-DE2C-8145-97EA-12320C2FBDCE}</id>
 					<name>T_ViewVelocity</name>
 				</item>
+				<item>
+					<id>{494B1457-75BA-6F4B-9DFD-67981507128D}</id>
+					<name>T_WorldPosition</name>
+				</item>
 			</outputPins>
 			<values/>
 		</item>

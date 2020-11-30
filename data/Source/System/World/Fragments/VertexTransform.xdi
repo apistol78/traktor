@@ -334,6 +334,34 @@
 				<second>1677</second>
 			</position>
 		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{099C3159-AA8C-954A-B41A-516554123CC2}</id>
+			<comment/>
+			<position>
+				<first>1160</first>
+				<second>392</second>
+			</position>
+			<name>WorldPosition</name>
+		</item>
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{CD468C4B-F895-7647-A634-78B8C119B592}</id>
+			<comment/>
+			<position>
+				<first>599</first>
+				<second>414</second>
+			</position>
+			<parameterName>World_World</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Transform" version="traktor.render.Node:1">
+			<id>{DB9163BE-FAA3-0B41-9B44-83F66654C056}</id>
+			<comment/>
+			<position>
+				<first>839</first>
+				<second>406</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -744,6 +772,36 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
