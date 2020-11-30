@@ -76,10 +76,6 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual Ref< File > getFile(const Path& filePath) override final;
-
-	virtual Ref< IStream > openFile(const Path& filePath) override final;
-
 private:
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;

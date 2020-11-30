@@ -35,7 +35,6 @@ private:
 	Ref< ui::CheckBox > m_checkVerbose;
 	Ref< ui::CheckBox > m_checkDependsThreads;
 	Ref< ui::CheckBox > m_checkBuildThreads;
-	Ref< ui::CheckBox > m_checkBuildDistributed;
 	Ref< ui::CheckBox > m_checkUseMemCached;
 	Ref< ui::Edit > m_editMemCachedHost;
 	Ref< ui::Edit > m_editMemCachedPort;

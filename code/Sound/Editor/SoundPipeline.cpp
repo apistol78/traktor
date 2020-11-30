@@ -140,7 +140,7 @@ bool SoundPipeline::buildOutput(
 	}
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + soundAsset->getFileName());
-	Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
+	Ref< IStream > sourceStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build sound asset, unable to open source \"" << filePath.getPathName() << L"\"." << Endl;

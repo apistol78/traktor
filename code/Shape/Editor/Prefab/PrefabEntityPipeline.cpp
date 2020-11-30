@@ -190,15 +190,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		return nullptr;
 	}
 
-	model::ModelCache modelCache(
-		m_modelCachePath,
-		[&](const Path& p) {
-			return pipelineBuilder->getFile(p);
-		},
-		[&](const Path& p) {
-			return pipelineBuilder->openFile(p);
-		}
-	);
+	model::ModelCache modelCache(m_modelCachePath);
 
 	const Guid c_renderMeshSeed(L"{161565E6-E1C8-41B6-8163-D11D822FB9BF}");
 	const Guid c_collisionShapeSeed(L"{D28ACFB9-D836-4725-AD99-AC9619E2096A}");

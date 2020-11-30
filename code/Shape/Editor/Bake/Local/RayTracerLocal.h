@@ -30,8 +30,6 @@ public:
 
     virtual void commit() override final;
 
-    virtual void preprocess(GBuffer* gbuffer) const override final;
-
     virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const override final;
 
     virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const override final;

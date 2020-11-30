@@ -65,9 +65,7 @@
 #include "Editor/App/WorkspaceDialog.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
-#include "Editor/Pipeline/PipelineAgentsManager.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
-#include "Editor/Pipeline/PipelineBuilderDistributed.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
@@ -1514,14 +1512,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
 	m_dbConnectionManager->create();
 
-	// Create pipeline agent manager.
-	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
-	m_agentsManager->create(
-		m_mergedSettings,
-		m_mergedSettings->getProperty< std::wstring >(L"Editor.SourceDatabase"),
-		m_mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase")
-	);
-
 	// Open pipeline database.
 	m_pipelineDb = new PipelineDbFlat();
 	if (!m_pipelineDb->open(m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db")))
@@ -1534,7 +1524,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Expose servers as stock objects.
 	setStoreObject(L"StreamServer", m_streamServer);
 	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
-	setStoreObject(L"PipelineAgentsManager", m_agentsManager);
 
 	// Notify plugins about opened workspace.
 	for (auto editorPluginSite : m_editorPluginSites)
@@ -1591,10 +1580,8 @@ void EditorForm::closeWorkspace()
 	// Remove store objects.
 	setStoreObject(L"StreamServer", nullptr);
 	setStoreObject(L"DbConnectionManager", nullptr);
-	setStoreObject(L"PipelineAgentsManager", nullptr);
 
 	// Shutdown agents manager.
-	safeDestroy(m_agentsManager);
 	safeDestroy(m_dbConnectionManager);
 	safeDestroy(m_streamServer);
 
@@ -1856,30 +1843,17 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 
 		// Build output.
-		Ref< IPipelineBuilder > pipelineBuilder;
-
-		if (
-			!m_mergedSettings->getProperty< bool >(L"Pipeline.BuildDistributed", false) ||
-			m_agentsManager->getAgentCount() <= 0
-		)
-			pipelineBuilder = new PipelineBuilder(
-				&pipelineFactory,
-				m_sourceDatabase,
-				m_outputDatabase,
-				pipelineCache,
-				m_pipelineDb,
-				&instanceCache,
-				this,
-				m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-				verbose
-			);
-		else
-			pipelineBuilder = new PipelineBuilderDistributed(
-				m_agentsManager,
-				&pipelineFactory,
-				m_pipelineDb,
-				this
-			);
+		Ref< IPipelineBuilder > pipelineBuilder = new PipelineBuilder(
+			&pipelineFactory,
+			m_sourceDatabase,
+			m_outputDatabase,
+			pipelineCache,
+			m_pipelineDb,
+			&instanceCache,
+			this,
+			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
+			verbose
+		);
 
 		if (rebuild)
 			log::info << L"Rebuilding " << dependencySet.size() << L" asset(s)..." << Endl;

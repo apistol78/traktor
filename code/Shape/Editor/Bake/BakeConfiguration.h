@@ -39,8 +39,6 @@ public:
 
 	int32_t getMaximumLightMapSize() const { return m_maximumLightMapSize; }
 
-	bool getEnableShadowFix() const { return m_enableShadowFix; }
-
 	bool getEnableDenoise() const { return m_enableDenoise; }
 
 	bool getEnableSeamFilter() const { return m_enableSeamFilter; }
@@ -57,7 +55,6 @@ private:
 	float m_irradianceGridDensity = 1.0f;
 	int32_t m_minimumLightMapSize = 16;
 	int32_t m_maximumLightMapSize = 1024;
-	bool m_enableShadowFix = true;
 	bool m_enableDenoise = true;
 	bool m_enableSeamFilter = true;
 };

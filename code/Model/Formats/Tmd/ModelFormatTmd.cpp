@@ -1,4 +1,5 @@
 #include "Core/Io/BufferedStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Model/Model.h"
@@ -22,21 +23,26 @@ bool ModelFormatTmd::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"tmd") == 0;
 }
 
-Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filter) const
 {
-	Ref< IStream > stream = openStream(filePath);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (stream)
 		return BinarySerializer(stream).readObject< Model >();
 	else
 		return nullptr;
 }
 
-bool ModelFormatTmd::write(IStream* stream, const Model* model) const
+bool ModelFormatTmd::write(const Path& filePath, const Model* model) const
 {
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmWrite);
+	if (!stream)
+		return false;
+
 	BufferedStream bs(stream);
 	if (!BinarySerializer(&bs).writeObject(model))
 		return false;
 	bs.flush();
+
 	return true;
 }
 

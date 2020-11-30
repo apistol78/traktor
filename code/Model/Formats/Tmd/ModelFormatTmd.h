@@ -27,9 +27,9 @@ public:
 
 	virtual bool supportFormat(const std::wstring& extension) const override final;
 
-	virtual Ref< Model > read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const override final;
+	virtual Ref< Model > read(const Path& filePath, const std::wstring& filter) const override final;
 
-	virtual bool write(IStream* stream, const Model* model) const override final;
+	virtual bool write(const Path& filePath, const Model* model) const override final;
 };
 
 	}

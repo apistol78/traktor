@@ -88,9 +88,7 @@ bool MeshPipeline::buildOutput(
 	else
 	{
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-		model = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
-			return pipelineBuilder->openFile(p);
-		});
+		model = model::ModelFormat::readAny(filePath);
 	}
 
 	if (!model)

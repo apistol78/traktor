@@ -8,12 +8,13 @@
 #elif defined(__LINUX__)
 #	include <uuid/uuid.h>
 #endif
-//#include "Core/Platform.h"
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
+
+const Guid Guid::null({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
 Guid::Guid()
 :	m_valid(false)

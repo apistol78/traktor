@@ -23,6 +23,8 @@ namespace traktor
 class T_DLLCLASS Guid
 {
 public:
+	const static Guid null;
+
 	Guid();
 
 	/*! Initialize guid from string.

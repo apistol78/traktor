@@ -1,5 +1,5 @@
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
@@ -290,17 +290,6 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
 		return nullptr;
-}
-
-Ref< File > PipelineDependsIncremental::getFile(const Path& filePath)
-{
-	return FileSystem::getInstance().get(filePath);
-}
-
-Ref< IStream > PipelineDependsIncremental::openFile(const Path& filePath)
-{
-	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
-	return fileStream ? new BufferedStream(fileStream) : nullptr;
 }
 
 void PipelineDependsIncremental::addUniqueDependency(

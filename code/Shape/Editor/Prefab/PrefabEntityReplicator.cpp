@@ -57,17 +57,8 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
                 return scene::Traverser::VrFailed;
 
 	        Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
-	        model::ModelCache modelCache(
-		        m_modelCachePath,
-		        [&](const Path& p) {
-			        return pipelineBuilder->getFile(p);
-		        },
-		        [&](const Path& p) {
-			        return pipelineBuilder->openFile(p);
-		        }
-	        );
 
-	        Ref< model::Model > model = modelCache.get(filePath, meshAsset->getImportFilter());
+	        Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 	        if (!model)
 		        return scene::Traverser::VrFailed;
 

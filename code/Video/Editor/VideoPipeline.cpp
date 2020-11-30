@@ -67,7 +67,7 @@ bool VideoPipeline::buildOutput(
 	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + videoAsset->getFileName());
-	Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
+	Ref< IStream > sourceStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build video asset, unable to open source" << Endl;

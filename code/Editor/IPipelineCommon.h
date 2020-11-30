@@ -42,10 +42,6 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
-	virtual Ref< File > getFile(const Path& filePath) = 0;
-
-	virtual Ref< IStream > openFile(const Path& filePath) = 0;
-
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid) {
 		return dynamic_type_cast< const T* >(getObjectReadOnly(guid));

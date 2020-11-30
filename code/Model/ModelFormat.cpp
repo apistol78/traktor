@@ -12,17 +12,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
 Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filter)
 {
-	return readAny(filePath, filter, [&](const Path& p) -> Ref< IStream >{
-		Ref< IStream > file = FileSystem::getInstance().open(p, File::FmRead);
-		if (file)
-			return new BufferedStream(file);
-		else
-			return nullptr;
-	});
-}
-
-Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream)
-{
 	Ref< Model > md;
 
 	TypeInfoSet formatTypes;
@@ -34,7 +23,7 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filt
 		if (!modelFormat || !modelFormat->supportFormat(filePath.getExtension()))
 			continue;
 
-		md = modelFormat->read(filePath, filter, openStream);
+		md = modelFormat->read(filePath, filter);
 		if (md)
 			break;
 	}
@@ -44,15 +33,8 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filt
 
 bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 {
-	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmWrite);
-	if (file)
-		return writeAny(file, filePath.getExtension(), model);
-	else
-		return false;
-}
+	std::wstring extension = filePath.getExtension();
 
-bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const Model* model)
-{
 	TypeInfoSet formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
 
@@ -69,7 +51,7 @@ bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const
 		for (const auto& ext : extensions)
 		{
 			if (compareIgnoreCase(extension, ext) == 0)
-				return modelFormat->write(stream, model);
+				return modelFormat->write(filePath, model);
 		}
 	}
 

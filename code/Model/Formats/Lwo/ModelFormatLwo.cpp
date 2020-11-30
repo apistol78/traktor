@@ -8,10 +8,7 @@ extern "C"
 	#include "lwo2.h"
 }
 
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
@@ -452,35 +449,11 @@ bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 		compareIgnoreCase(extension, L"lw") == 0;
 }
 
-Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::wstring& filter) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
-#if defined(_WIN32)
-	char* tmp = _tempnam("c:\\temp", "lwo");
-#else
-	char* tmp = tempnam("/tmp", "lwo");
-#endif
-	if (!tmp)
-		return nullptr;
-
-	Ref< IStream > stream = openStream(filePath);
-	if (!stream)
-		return nullptr;
-
-	Ref< IStream > tmpFile = FileSystem::getInstance().open(mbstows(tmp), File::FmWrite);
-	if (!tmpFile)
-		return nullptr;
-
-	if (!StreamCopy(tmpFile, stream).execute())
-		return nullptr;
-
-	tmpFile->close();
-	tmpFile = nullptr;
-
-	lwObject* lwo = lwGetObject(tmp, 0, 0);
-	FileSystem::getInstance().remove(mbstows(tmp));
-
+	lwObject* lwo = lwGetObject((char*)wstombs(filePath.getPathName()).c_str(), 0, 0);
 	if (!lwo)
 		return nullptr;
 
@@ -503,7 +476,7 @@ Ref< Model > ModelFormatLwo::read(const Path& filePath, const std::wstring& filt
 	return md;
 }
 
-bool ModelFormatLwo::write(IStream* stream, const Model* model) const
+bool ModelFormatLwo::write(const Path& filePath, const Model* model) const
 {
 	return false;
 }

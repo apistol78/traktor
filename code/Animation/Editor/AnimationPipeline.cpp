@@ -86,9 +86,7 @@ bool AnimationPipeline::buildOutput(
 
 	// Read source model.
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + animationAsset->getFileName());
-	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
-		return pipelineBuilder->openFile(p);
-	});
+	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(filePath);
 	if (!modelAnimation)
 	{
 		log::error << L"Unable to build animation; no such file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
@@ -107,9 +105,7 @@ bool AnimationPipeline::buildOutput(
 		}
 
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
-		modelSkeleton = model::ModelFormat::readAny(filePath, L"", [&](const Path& p) {
-			return pipelineBuilder->openFile(p);
-		});
+		modelSkeleton = model::ModelFormat::readAny(filePath);
 		if (!modelSkeleton)
 		{
 			log::error << L"Unable to build animation; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;

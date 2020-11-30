@@ -27,6 +27,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
+#include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
@@ -73,7 +74,7 @@ const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
 
 /*! Resolve external entities, ie flatten scene without external references. */
-Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
+Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
@@ -83,26 +84,37 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	for (auto member : objectMembers)
 	{
 		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
-
 		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
 		{
 			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
 			if (!externalEntityData)
 				return nullptr;
 
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
+			Guid entityDataId = externalEntityDataRef->getId().permutation(seed);
+
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData, entityDataId));
 			if (!resolvedEntityData)
 				return nullptr;
 
-			resolvedEntityData->setId(externalEntityDataRef->getId());
+			resolvedEntityData->setId(entityDataId);
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
+			objectMember->set(resolvedEntityData);
+		}
+		else if (const world::EntityData* entityDataRef = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
+		{
+			Guid entityDataId = entityDataRef->getId().permutation(seed);
 
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, entityDataRef, entityDataId));
+			if (!resolvedEntityData)
+				return nullptr;
+
+			resolvedEntityData->setId(entityDataId);
 			objectMember->set(resolvedEntityData);
 		}
 		else if (objectMember->get())
 		{
-			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
+			objectMember->set(resolveAllExternal(pipeline, objectMember->get(), seed));
 		}
 	}
 
@@ -178,7 +190,7 @@ void addSky(
 		return;
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-	Ref< IStream > file = pipelineBuilder->openFile(filePath);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!file)
 		return;
 
@@ -300,6 +312,12 @@ bool prepareModel(
 		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 	}
 
+	return true;
+}
+
+/*! */
+bool loadMaterialTextures(editor::IPipelineBuilder* pipelineBuilder, model::Model* model, const std::wstring& assetPath)
+{
 	// Load texture images and attach to materials.
 	for (auto& material : model->getMaterials())
 	{
@@ -311,7 +329,7 @@ bool prepareModel(
 				continue;
 
 			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-			Ref< IStream > file = pipelineBuilder->openFile(filePath);
+			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 			if (!file)
 				continue;
 
@@ -323,7 +341,6 @@ bool prepareModel(
 			material.setDiffuseMap(diffuseMap);
 		}
 	}
-
 	return true;
 }
 
@@ -480,6 +497,26 @@ TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const
 {
 	pipelineDepends->addDependency< render::ShaderGraph >();
+
+	// Add "use" dependencies to first level of external entity datas; so we ensure scene pipeline is invoked if external entity is modified.
+	for (const auto layer : sceneAsset->getLayers())
+	{
+		scene::Traverser::visit(layer, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
+		{
+			if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
+			{
+				if (!editorAttributes->include || editorAttributes->dynamic)
+					return scene::Traverser::VrSkip;
+			}
+
+			const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData);
+			if (externalEntityData != nullptr)
+				pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfUse);
+
+			return scene::Traverser::VrContinue;
+		});
+	}
+
 	return true;
 }
 
@@ -515,6 +552,8 @@ bool BakePipelineOperator::build(
 			receipt = new BakeReceipt();
 	}
 
+	log::info << L"Creating lightmap tasks..." << Endl;
+
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
 		configuration
@@ -525,8 +564,9 @@ bool BakePipelineOperator::build(
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
-		// Resolve all external entities.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
+		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
+		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer, Guid::null));
 		if (!flattenedLayer)
 			return false;
 
@@ -573,8 +613,37 @@ bool BakePipelineOperator::build(
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(inoutEntityData)];
 			if (entityReplicator)
 			{
-				// Synthesize a model which we can trace.
-				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+				uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
+				
+				Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(entityHash);
+				if (!model)
+				{
+					log::info << L"Synthesizing model for baking from entity \"" << inoutEntityData->getName() << L"\"..." << Endl;
+					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+					if (model)
+					{
+						// Calculate size of lightmap from geometry.
+						int32_t lightmapSize = calculateLightmapSize(
+							model,
+							configuration->getLumelDensity(),
+							configuration->getMinimumLightMapSize(),
+							configuration->getMaximumLightMapSize()
+						);
+
+						// Prepare model for baking.
+						if (!prepareModel(
+							pipelineBuilder,
+							model,
+							m_assetPath,
+							lightmapId,
+							lightmapSize
+						))
+							return scene::Traverser::VrFailed;
+
+						model::ModelCache(m_modelCachePath).put(entityHash, model);
+					}
+				}
+
 				if (model)
 				{
 					// Calculate size of lightmap from geometry.
@@ -585,14 +654,8 @@ bool BakePipelineOperator::build(
 						configuration->getMaximumLightMapSize()
 					);
 
-					// Prepare model for baking.
-					if (!prepareModel(
-						pipelineBuilder,
-						model,
-						m_assetPath,
-						lightmapId,
-						lightmapSize
-					))
+					// Load model's material textures.
+					if (!loadMaterialTextures(pipelineBuilder, model, m_assetPath))
 						return scene::Traverser::VrFailed;
 
 					// Calculate priority, if entity has moved since last bake then it's prioritized.
@@ -646,10 +709,36 @@ bool BakePipelineOperator::build(
 				if (!entityReplicator)
 					continue;
 
-				// Synthesize a model which we can trace.
-				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
+
+				Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(componentDataHash);
 				if (!model)
-					continue;
+				{
+					log::info << L"Synthesizing model for baking from component \"" << type_name(componentData) << L"\" of entity \"" << inoutEntityData->getName() << L"\"..." << Endl;
+					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+					if (model)
+					{
+						// Calculate size of lightmap from geometry.
+						int32_t lightmapSize = calculateLightmapSize(
+							model,
+							configuration->getLumelDensity(),
+							configuration->getMinimumLightMapSize(),
+							configuration->getMaximumLightMapSize()
+						);
+
+						// Prepare model for baking.
+						if (!prepareModel(
+							pipelineBuilder,
+							model,
+							m_assetPath,
+							lightmapId,
+							lightmapSize
+						))
+							return scene::Traverser::VrFailed;
+
+						model::ModelCache(m_modelCachePath).put(componentDataHash, model);
+					}
+				}
 
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(
@@ -659,14 +748,8 @@ bool BakePipelineOperator::build(
 					configuration->getMaximumLightMapSize()
 				);
 
-				// Prepare model for baking.
-				if (!prepareModel(
-					pipelineBuilder,
-					model,
-					m_assetPath,
-					lightmapId,
-					lightmapSize
-				))
+				// Load model's material textures.
+				if (!loadMaterialTextures(pipelineBuilder, model, m_assetPath))
 					return scene::Traverser::VrFailed;
 
 				// Calculate priority, if entity has moved since last bake then it's prioritized.

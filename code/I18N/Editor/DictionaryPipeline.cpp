@@ -59,7 +59,7 @@ bool DictionaryPipeline::buildOutput(
 	Ref< const DictionaryAsset > dictionaryAsset = checked_type_cast< const DictionaryAsset*, false >(sourceAsset);
 
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + dictionaryAsset->getFileName());
-	Ref< IStream > file = pipelineBuilder->openFile(filePath);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Dictionary pipeline failed; unable to open source \"" << dictionaryAsset->getFileName().getOriginal() << L"\"." << Endl;

@@ -81,10 +81,6 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual Ref< File > getFile(const Path& filePath) override final;
-
-	virtual Ref< IStream > openFile(const Path& filePath) override final;
-
 private:
 	RefArray< Job > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;

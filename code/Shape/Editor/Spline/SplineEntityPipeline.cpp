@@ -28,6 +28,9 @@ namespace traktor
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
+const Guid c_renderMeshIdSeed(L"{E5CE60FA-9C1A-4DB3-9A55-634EB157D1B9}");
+const Guid c_collisionShapeIdSeed(L"{4BF9C3FE-673B-4DA8-8DB0-6B4E0D8CFBA0}");
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 1, SplineEntityPipeline, world::EntityPipeline)
@@ -109,8 +112,12 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 			return nullptr;
 		}
 
-		Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-		Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
+		const Guid& entityId = splineEntityData->getId();
+		if (entityId.isNull())
+			return nullptr;
+
+		Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
+		Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
 
 		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();

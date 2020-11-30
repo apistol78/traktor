@@ -165,7 +165,7 @@ bool Pipeline::buildOutput(
 	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 	{
 		traktor::Path filePath = FileSystem::getInstance().getAbsolutePath(traktor::Path(m_assetPath) + movieAsset->getFileName());
-		Ref< IStream > sourceStream = pipelineBuilder->openFile(filePath);
+		Ref< IStream > sourceStream = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (!sourceStream)
 		{
 			log::error << L"Failed to import Spark movie; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"." << Endl;

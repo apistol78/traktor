@@ -2,6 +2,7 @@
 #include <fbxsdk.h>
 #include "Core/FbxLock.h"
 #include "Core/Io/BufferedStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
@@ -179,7 +180,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"fbx") == 0;
 }
 
-Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
@@ -213,7 +214,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		return nullptr;
 	}
 
-	Ref< IStream > stream = openStream(filePath);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)
 		return nullptr;
 
@@ -355,7 +356,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	return model;
 }
 
-bool ModelFormatFbx::write(IStream* stream, const Model* model) const
+bool ModelFormatFbx::write(const Path& filePath, const Model* model) const
 {
 	return false;
 }

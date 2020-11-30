@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
@@ -131,9 +132,9 @@ bool ModelFormatBvh::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase(extension, L"bvh") == 0;
 }
 
-Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::wstring& filter, const std::function< Ref< IStream >(const Path&) >& openStream) const
+Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::wstring& filter) const
 {
-	Ref< IStream > stream = openStream(filePath);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)
 		return nullptr;
 
@@ -173,7 +174,7 @@ Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::wstring& filt
 	return model;
 }
 
-bool ModelFormatBvh::write(IStream* stream, const Model* model) const
+bool ModelFormatBvh::write(const Path& filePath, const Model* model) const
 {
 	return false;
 }

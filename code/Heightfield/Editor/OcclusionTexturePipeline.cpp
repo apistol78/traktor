@@ -384,9 +384,7 @@ bool OcclusionTexturePipeline::buildOutput(
 				log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
 
 				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-				Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter(), [&](const Path& p) {
-					return pipelineBuilder->openFile(p);
-				});
+				Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter());
 				if (!model)
 				{
 					log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;

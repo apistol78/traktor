@@ -72,7 +72,7 @@ bool SequenceTexturePipeline::buildOutput(
 	for (const auto& p : asset->m_fileNames)
 	{
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + p);
-		Ref< IStream > file = pipelineBuilder->openFile(filePath);
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (!file)
 		{
 			log::error << L"Sequence texture asset pipeline failed; unable to open source image \"" << p.getOriginal() << L"\"." << Endl;

@@ -29,6 +29,9 @@ namespace traktor
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
+const Guid c_renderMeshIdSeed(L"{4082F1E0-F7BD-46DA-96D6-834B8A5E95B1}");
+const Guid c_collisionShapeIdSeed(L"{3E0AF082-5A9D-4C50-86EB-F86EC5D99035}");
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityPipeline", 1, SolidEntityPipeline, world::EntityPipeline)
@@ -98,8 +101,12 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		if (!outputModel)
 			return nullptr;
 
-		Guid outputRenderMeshGuid = pipelineBuilder->synthesizeOutputGuid(1);
-		Guid outputCollisionShapeGuid = pipelineBuilder->synthesizeOutputGuid(1);
+		const Guid& entityId = solidEntityData->getId();
+		if (entityId.isNull())
+			return nullptr;
+
+		Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
+		Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
 
 		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
 		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
