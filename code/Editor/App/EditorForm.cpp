@@ -30,6 +30,7 @@
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPlugin.h"
@@ -3222,7 +3223,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 		return;
 	}
 
-	progress = 600;
+	progress = 500;
 
 	std::wstring outputDatabaseCs = mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase");
 	Ref< db::Database > outputDatabase = openDatabase(outputDatabaseCs, true);
@@ -3231,6 +3232,11 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 		log::error << L"Unable to open output database \"" << outputDatabaseCs << L"\"." << Endl;
 		return;
 	}
+
+	progress = 800;
+
+	// Setup data access cache.
+	DataAccessCache::getInstance().create(mergedSettings);
 
 	// Successfully opened workspace.
 	m_workspaceSettings = workspaceSettings;
