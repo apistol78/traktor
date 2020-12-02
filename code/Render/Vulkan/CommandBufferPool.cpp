@@ -12,32 +12,36 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CommandBufferPool", CommandBufferPool, O
 
 CommandBufferPool::~CommandBufferPool()
 {
-	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+	// \fixme!!
+	// vkDestroyCommandPool(m_device, m_commandPool, nullptr);
 }
 
 Ref< CommandBufferPool > CommandBufferPool::create(VkDevice device, Queue* queue)
 {
-	VkCommandPool commandPool = 0;
-
-	VkCommandPoolCreateInfo cpci = {};
-	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	cpci.queueFamilyIndex = queue->getQueueIndex();
-	if (vkCreateCommandPool(device, &cpci, 0, &commandPool) != VK_SUCCESS)
-		return nullptr;
-	
-	return new CommandBufferPool(device, commandPool);
+	return new CommandBufferPool(device, queue);
 }
 
 VkCommandBuffer CommandBufferPool::acquire()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	// Get command pool for calling thread, lazy create if no pool has been created.
+	VkCommandPool commandPool = (VkCommandPool)m_commandPool.get();
+	if (!commandPool)
+	{
+		VkCommandPoolCreateInfo cpci = {};
+		cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		cpci.queueFamilyIndex = m_queue->getQueueIndex();
+		if (vkCreateCommandPool(m_device, &cpci, 0, &commandPool) != VK_SUCCESS)
+			return 0;
+		m_commandPool.set((void*)commandPool);
+	}
 
+	// Allocate command buffer from pool.
 	VkCommandBuffer commandBuffer = 0;
 
 	VkCommandBufferAllocateInfo cbai = {};
 	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_commandPool;
+	cbai.commandPool = commandPool;
 	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cbai.commandBufferCount = 1;
 	if (vkAllocateCommandBuffers(m_device, &cbai, &commandBuffer) != VK_SUCCESS)
@@ -62,14 +66,16 @@ VkCommandBuffer CommandBufferPool::acquireAndBegin()
 
 void CommandBufferPool::release(VkCommandBuffer& inoutCommandBuffer)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	vkFreeCommandBuffers(m_device, m_commandPool, 1, &inoutCommandBuffer);
+	VkCommandPool commandPool = (VkCommandPool)m_commandPool.get();
+	T_FATAL_ASSERT(commandPool != 0);
+
+	vkFreeCommandBuffers(m_device, commandPool, 1, &inoutCommandBuffer);
 	inoutCommandBuffer = 0;
 }
 
-CommandBufferPool::CommandBufferPool(VkDevice device, VkCommandPool commandPool)
+CommandBufferPool::CommandBufferPool(VkDevice device, Queue* queue)
 :	m_device(device)
-,	m_commandPool(commandPool)
+,	m_queue(queue)
 {
 }
 

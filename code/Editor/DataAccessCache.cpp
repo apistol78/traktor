@@ -65,7 +65,7 @@ Ref< Object > DataAccessCache::readObject(
 
 	ChunkMemoryStream cms(blob, false, true);
 	if (!write(object, &cms))
-		return false;
+		return nullptr;
 
 	m_objectPool.insert(std::make_pair(key, blob));
 
