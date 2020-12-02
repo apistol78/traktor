@@ -23,6 +23,7 @@ class Instance;
 	namespace editor
 	{
 
+class DataAccessCache;
 class PipelineDependencySet;
 class PipelineDependency;
 
@@ -96,6 +97,9 @@ public:
 
 	/*! Get reference to output database. */
 	virtual Ref< db::Database > getOutputDatabase() const = 0;
+
+	/*! Get data access cache. */
+	virtual DataAccessCache* getDataAccessCache() const = 0;
 
 	//@}
 };

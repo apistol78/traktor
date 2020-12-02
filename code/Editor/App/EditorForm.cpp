@@ -1589,6 +1589,9 @@ void EditorForm::closeWorkspace()
 	// Close pipeline database.
 	safeClose(m_pipelineDb);
 
+	// Close data cache.
+	safeDestroy(m_dataAccessCache);
+
 	// Close databases.
 	safeClose(m_outputDatabase);
 	safeClose(m_sourceDatabase);
@@ -1851,6 +1854,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			pipelineCache,
 			m_pipelineDb,
 			&instanceCache,
+			m_dataAccessCache,
 			this,
 			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
 			verbose
@@ -3235,14 +3239,23 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 
 	progress = 800;
 
-	// Setup data access cache.
-	DataAccessCache::getInstance().create(mergedSettings);
+	// Create data access cache.
+	std::wstring cachePath = mergedSettings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+	Ref< DataAccessCache > dataAccessCache = new DataAccessCache();
+	if (!dataAccessCache->create(cachePath))
+	{
+		log::error << L"Unable to create data access cache." << Endl;
+		return;
+	}
+
+	progress = 900;
 
 	// Successfully opened workspace.
 	m_workspaceSettings = workspaceSettings;
 	m_mergedSettings = mergedSettings;
 	m_sourceDatabase = sourceDatabase;
 	m_outputDatabase = outputDatabase;
+	m_dataAccessCache = dataAccessCache;
 
 	progress = 1000;
 }

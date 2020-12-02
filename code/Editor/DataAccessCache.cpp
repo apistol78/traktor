@@ -1,10 +1,10 @@
+#include "Core/Io/ChunkMemory.h"
+#include "Core/Io/ChunkMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/PropertyString.h"
-#include "Core/Singleton/SingletonManager.h"
 #include "Editor/DataAccessCache.h"
 
 namespace traktor
@@ -12,22 +12,10 @@ namespace traktor
 	namespace editor
 	{
 
-DataAccessCache& DataAccessCache::getInstance()
+bool DataAccessCache::create(const Path& cachePath)
 {
-	static DataAccessCache* s_instance = nullptr;
-	if (!s_instance)
-	{
-		s_instance = new DataAccessCache();
-		SingletonManager::getInstance().add(s_instance);
-	}
-	return *s_instance;
-}
-
-bool DataAccessCache::create(const PropertyGroup* settings)
-{
-	m_cachePath = settings->getProperty< std::wstring >(L"Editor.DataAccessCachePath", L"data/Temp/DataCache");
-	FileSystem::getInstance().makeAllDirectories(m_cachePath);
-	return true;
+	m_cachePath = cachePath;
+	return FileSystem::getInstance().makeAllDirectories(m_cachePath);
 }
 
 void DataAccessCache::destroy() 
@@ -43,30 +31,53 @@ Ref< Object > DataAccessCache::readObject(
 )
 {
 	// Get object from object table.
+	auto it = m_objectPool.find(key);
+	if (it != m_objectPool.end())
+	{
+		ChunkMemoryStream cms(it->second, true, false);
+		return read(&cms);
+	}
 
+	// Try load blob from file.
 	Path fileName = m_cachePath.getPathName() + L"/" + str(L"%08x.blob", key);
 
 	Ref< IStream > blobStream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (blobStream)
 	{
-		Ref< Object > object = read(blobStream);
-		// Add to object table.
-		return object;
+		Ref< ChunkMemory > blob = new ChunkMemory();
+
+		ChunkMemoryStream cmsw(blob, false, true);
+		if (!StreamCopy(&cmsw, blobStream).execute())
+			return nullptr;
+
+		m_objectPool.insert(std::make_pair(key, blob));
+
+		ChunkMemoryStream cmsr(blob, true, false);
+		return read(&cmsr);
 	}
 
-	// No cached entry.
+	// No cached entry; need to fabricate object.
 	Ref< Object > object = create();
 	if (!object)
 		return nullptr;
 
-	// Add to object table.
+	Ref< ChunkMemory > blob = new ChunkMemory();
+
+	ChunkMemoryStream cms(blob, false, true);
+	if (!write(object, &cms))
+		return false;
+
+	m_objectPool.insert(std::make_pair(key, blob));
 
 	// Write to physical cache.
-	// \todo Do this on a writer thread.
 	blobStream = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (blobStream)
 	{
-		write(object, blobStream);
+		ChunkMemoryStream cmsr(blob, true, false);
+
+		if (!StreamCopy(blobStream, &cmsr).execute())
+			return nullptr;
+
 		safeClose(blobStream);
 	}
 

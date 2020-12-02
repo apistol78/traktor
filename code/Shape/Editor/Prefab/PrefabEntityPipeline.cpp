@@ -323,7 +323,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		// Try to get merged model from cache; if no exist then we need to merge it here.
 		uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(prefabEntityData);
 
-		Ref< model::Model > mergedModel = editor::DataAccessCache::getInstance().read< model::Model >(
+		Ref< model::Model > mergedModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 			entityHash,
 			[&](IStream* stream) -> Ref< model::Model > {
 				return BinarySerializer(stream).readObject< model::Model >();

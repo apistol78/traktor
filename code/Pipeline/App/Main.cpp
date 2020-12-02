@@ -36,6 +36,7 @@
 #include "Database/Events/EvtInstanceRemoved.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
@@ -394,6 +395,7 @@ bool perform(const PipelineParameters* params)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
+	// Load necessary modules.
 	std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
 	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
 
@@ -417,6 +419,7 @@ bool perform(const PipelineParameters* params)
 		}
 	}
 
+	// Open database connections.
 	std::wstring sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	std::wstring outputDatabaseCS = settings->getProperty< std::wstring >(L"Editor.OutputDatabase");
 
@@ -434,6 +437,17 @@ bool perform(const PipelineParameters* params)
 		return false;
 	}
 
+	// Open data access cache.
+	std::wstring dataAccessCachePath = settings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+
+	Ref< editor::DataAccessCache > dataAccessCache = new editor::DataAccessCache();
+	if (!dataAccessCache->create(dataAccessCachePath))
+	{
+		log::error << L"Unable to create data access cache." << Endl;
+		return false;
+	}
+
+	// Open pipeline dependency database.
 	std::wstring connectionString = settings->getProperty< std::wstring >(L"Pipeline.Db");
 	std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
@@ -525,8 +539,8 @@ bool perform(const PipelineParameters* params)
 
 	// Write dependency set for debugging.
 #if 0
-		Ref< traktor::IStream > f = FileSystem::getInstance().open(L"Dependencies.txt", File::FmWrite);
-		pipelineDependencySet.dump(FileOutputStream(f, new Utf8Encoding()));
+	Ref< traktor::IStream > f = FileSystem::getInstance().open(L"Dependencies.txt", File::FmWrite);
+	pipelineDependencySet.dump(FileOutputStream(f, new Utf8Encoding()));
 #endif
 
 	AutoPtr< StatusListener > statusListener;
@@ -541,6 +555,7 @@ bool perform(const PipelineParameters* params)
 		pipelineCache,
 		pipelineDb,
 		sourceDatabaseAndCache.cache,
+		dataAccessCache,
 		statusListener.ptr(),
 		settings->getProperty< bool >(L"Pipeline.BuildThreads", true),
 		params->getVerbose()

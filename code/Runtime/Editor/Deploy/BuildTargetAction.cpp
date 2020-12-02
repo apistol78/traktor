@@ -204,6 +204,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
 
+	// Set data access cache path.
+	Path dataAccessCachePath = m_globalSettings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+	dataAccessCachePath = FileSystem::getInstance().getAbsolutePath(dataAccessCachePath);
+	pipelineConfiguration->setProperty< PropertyString >(L"Editor.DataAccessCachePath", dataAccessCachePath.getPathName());
+
 	// Set asset path.
 	Path assetPath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AssetPath");
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);

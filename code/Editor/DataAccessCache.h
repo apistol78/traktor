@@ -1,9 +1,10 @@
 #pragma once
 
 #include <functional>
+#include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
-#include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,9 +17,9 @@
 namespace traktor
 {
 
+class ChunkMemory;
 class IStream;
 class Object;
-class PropertyGroup;
 
 	namespace editor
 	{
@@ -28,12 +29,12 @@ class PropertyGroup;
  * This cache is useful for storing expensive operations, aka memoization,
  * from previous runs.
  */
-class T_DLLCLASS DataAccessCache : public ISingleton
+class T_DLLCLASS DataAccessCache : public Object
 {
 public:
-	static DataAccessCache& getInstance();
+	bool create(const Path& cachePath);
 
-	bool create(const PropertyGroup* settings);
+	void destroy();
 
 	template< typename ObjectType >
 	Ref< ObjectType > read(
@@ -51,15 +52,13 @@ public:
 		));
 	}
 
-protected:
-	virtual void destroy() override final;
-
 private:
 	typedef std::function< Ref< Object > (IStream* stream) > fn_readObject_t;
 	typedef std::function< bool (const Object* object, IStream* stream) > fn_writeObject_t;
 	typedef std::function< Ref< Object > () > fn_createObject_t;
 
 	Path m_cachePath;
+	SmallMap< uint32_t, Ref< ChunkMemory > > m_objectPool;
 
 	Ref< Object > readObject(
 		uint32_t key,

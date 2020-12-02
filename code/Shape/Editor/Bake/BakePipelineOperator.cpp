@@ -613,8 +613,7 @@ bool BakePipelineOperator::build(
 			{
 				uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
 
-
-				Ref< model::Model > model = editor::DataAccessCache::getInstance().read< model::Model >(
+				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 					entityHash,
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
@@ -714,7 +713,7 @@ bool BakePipelineOperator::build(
 
 				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
 
-				Ref< model::Model > model = editor::DataAccessCache::getInstance().read< model::Model >(
+				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 					componentDataHash,
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
