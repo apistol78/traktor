@@ -110,6 +110,7 @@ PipelineBuilder::PipelineBuilder(
 	IPipelineCache* cache,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
+	DataAccessCache* dataAccessCache,
 	IListener* listener,
 	bool threadedBuildEnable,
 	bool verbose
@@ -120,6 +121,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_cache(cache)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
+,	m_dataAccessCache(dataAccessCache)
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_verbose(verbose)
@@ -683,6 +685,11 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 		return m_instanceCache->getObjectReadOnly(instanceGuid);
 	else
 		return nullptr;
+}
+
+DataAccessCache* PipelineBuilder::getDataAccessCache() const
+{
+	return m_dataAccessCache;
 }
 
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)

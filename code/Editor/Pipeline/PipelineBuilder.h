@@ -53,6 +53,7 @@ public:
 		IPipelineCache* cache,
 		IPipelineDb* db,
 		IPipelineInstanceCache* instanceCache,
+		DataAccessCache* dataAccessCache,
 		IListener* listener,
 		bool threadedBuildEnable,
 		bool verbose
@@ -78,6 +79,8 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
+	virtual DataAccessCache* getDataAccessCache() const override final;
+
 private:
 	struct WorkEntry
 	{
@@ -100,6 +103,7 @@ private:
 	Ref< IPipelineCache > m_cache;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
+	Ref< DataAccessCache > m_dataAccessCache;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
 	bool m_verbose;
