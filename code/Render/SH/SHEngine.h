@@ -45,10 +45,6 @@ public:
 
 	// SHMatrix generateTransferMatrix(SHFunction* function) const;
 
-	Vector4 evaluate(float phi, float theta, const SHCoeffs& coefficients) const;
-
-	Vector4 evaluate3(float phi, float theta, const SHCoeffs& coefficients) const;
-
 private:
 	uint32_t m_bandCount;
 	uint32_t m_coefficientCount;

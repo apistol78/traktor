@@ -19,9 +19,9 @@ Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples)
 
 Vector2 Quasirandom::hammersley(uint32_t i, uint32_t numSamples, Random& rnd)
 {
-	float rx = (float)(rnd.nextDouble() * 0.1 - 0.05);
-	float ry = (float)(rnd.nextDouble() * 0.1 - 0.05);
-    return hammersley(i, numSamples) + Vector2(rx, ry);
+	float rx = rnd.nextFloat() * 0.1f;
+	float ry = rnd.nextFloat() * 0.1f;
+    return hammersley(i, numSamples) * 0.9f + Vector2(rx, ry);
 }
 
 Vector4 Quasirandom::uniformHemiSphere(const Vector2& uv, const Vector4& direction)

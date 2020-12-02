@@ -1,3 +1,4 @@
+#include "Core/Math/Polar.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Render/SH/SHCoeffs.h"
@@ -7,12 +8,19 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+#include "Render/SH/SH.inl"
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHCoeffs", 0, SHCoeffs, ISerializable)
 
-void SHCoeffs::resize(size_t coefficientCount)
+void SHCoeffs::resize(int32_t bandCount)
 {
-	m_data.resize(coefficientCount, Vector4::zero());
+	m_bandCount = bandCount;
+	m_data.resize(m_bandCount * m_bandCount, Vector4::zero());
 }
 
 bool SHCoeffs::empty() const
@@ -33,6 +41,41 @@ SHCoeffs SHCoeffs::transform(const SHMatrix& matrix) const
 	return out;
 }
 
+Vector4 SHCoeffs::evaluate(float phi, float theta) const
+{
+	Vector4 result = Vector4::zero();
+	for (int32_t l = 0; l < m_bandCount; ++l)
+	{
+		for (int32_t m = -l; m <= l; ++m)
+		{
+			int32_t index = l * (l + 1) + m;
+			result += Scalar(SH(l, m, phi, theta)) * m_data[index];
+		}
+	}
+	return result;
+}
+
+Vector4 SHCoeffs::evaluate3(float phi, float theta) const
+{
+	Vector4 dir = Polar(phi, theta).toUnitCartesian();
+
+	float shd[9];
+	shEvaluate3(dir.x(), dir.y(), dir.z(), shd);
+
+	Vector4 result = Vector4::zero();
+	result += Scalar(shd[0]) * m_data[0];
+	result += Scalar(shd[1]) * m_data[1];
+	result += Scalar(shd[2]) * m_data[2];
+	result += Scalar(shd[3]) * m_data[3];
+	result += Scalar(shd[4]) * m_data[4];
+	result += Scalar(shd[5]) * m_data[5];
+	result += Scalar(shd[6]) * m_data[6];
+	result += Scalar(shd[7]) * m_data[7];
+	result += Scalar(shd[8]) * m_data[8];
+
+	return result;
+}
+
 Vector4 SHCoeffs::operator * (const SHCoeffs& coeffs) const
 {
 	T_ASSERT(m_data.size() == coeffs.m_data.size());
@@ -46,6 +89,7 @@ Vector4 SHCoeffs::operator * (const SHCoeffs& coeffs) const
 
 void SHCoeffs::serialize(ISerializer& s)
 {
+	s >> Member< int32_t >(L"bandCount", m_bandCount);
 	s >> MemberAlignedVector< Vector4 >(L"data", m_data);
 }
 
