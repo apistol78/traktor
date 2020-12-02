@@ -3,6 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ThreadLocal.h"
 #include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
@@ -33,10 +34,12 @@ public:
 
 private:
 	VkDevice m_device;
-	VkCommandPool m_commandPool;
+	Ref< Queue > m_queue;
+	// VkCommandPool m_commandPool;
+	ThreadLocal m_commandPool;
 	Semaphore m_lock;
 
-	CommandBufferPool(VkDevice device, VkCommandPool commandPool);
+	CommandBufferPool(VkDevice device, Queue* queue);
 };
 
 	}
