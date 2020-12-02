@@ -41,10 +41,10 @@ Vector4 Pfs(const SHFunction* function, float phi, float theta)
 }
 
 // Evaluate point using SH.
-Vector4 Psh(SHEngine* engine, const SHCoeffs& coefficients, float phi, float theta)
+Vector4 Psh(const SHCoeffs& coefficients, float phi, float theta)
 {
 	Vector4 p = polarToCartesian(phi, theta);
-	return p * engine->evaluate3(phi, theta, coefficients);
+	return p * coefficients.evaluate3(phi, theta);
 }
 
 SHMatrix concate(const SHMatrix& m1, const SHMatrix& m2)
@@ -275,25 +275,21 @@ void SHEditorPage::eventRender2(RenderControlEvent* event)
 			Vector4 v[] =
 			{
 				Psh(
-					m_engine,
 					m_lightCoefficients,
 					PI * i / float(azimuthSteps),
 					2.0f * PI * j / float(zenithSteps)
 				),
 				Psh(
-					m_engine,
 					m_lightCoefficients,
 					PI * i / float(azimuthSteps),
 					2.0f * PI * (j + 1) / float(zenithSteps)
 				),
 				Psh(
-					m_engine,
 					m_lightCoefficients,
 					PI * (i + 1) / float(azimuthSteps),
 					2.0f * PI * (j + 1) / float(zenithSteps)
 				),
 				Psh(
-					m_engine,
 					m_lightCoefficients,
 					PI * (i + 1) / float(azimuthSteps),
 					2.0f * PI * j / float(zenithSteps)

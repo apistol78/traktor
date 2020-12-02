@@ -27,11 +27,15 @@ class T_DLLCLASS SHCoeffs : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void resize(size_t coefficientCount);
+	void resize(int32_t bandCount);
 
 	bool empty() const;
 
 	SHCoeffs transform(const SHMatrix& matrix) const;
+
+	Vector4 evaluate(float phi, float theta) const;
+
+	Vector4 evaluate3(float phi, float theta) const;
 
 	Vector4 operator * (const SHCoeffs& coeffs) const;
 
@@ -44,6 +48,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	int32_t m_bandCount;
 	AlignedVector< Vector4 > m_data;
 };
 

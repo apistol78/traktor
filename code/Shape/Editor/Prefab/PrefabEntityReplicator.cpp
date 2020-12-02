@@ -44,6 +44,8 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 {
 	const PrefabEntityData* prefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(source);
 
+    Transform parentInv = prefabEntityData->getTransform().inverse();
+
     // Collect all models from prefab entity.
     RefArray< model::Model > models;
     scene::Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
@@ -65,7 +67,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 	        model::Transform(scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())).apply(*model);
 
             // Transform model into world space.
-            model::Transform(inoutEntityData->getTransform().toMatrix44()).apply(*model);
+            model::Transform((parentInv * inoutEntityData->getTransform()).toMatrix44()).apply(*model);
 
             model->clear(model::Model::CfColors | model::Model::CfJoints);
             models.push_back(model);

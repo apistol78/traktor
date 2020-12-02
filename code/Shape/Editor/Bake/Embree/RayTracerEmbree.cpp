@@ -214,12 +214,26 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 			);
 
 			// Incoming indirect light.
-			Color4f incoming = tracePath(
-				position,
-				direction,
-				random,
-				0
-			);
+			RTCRayHit T_MATH_ALIGN16 rh;
+			constructRay(position, direction, m_configuration->getMaxPathDistance(), rh);
+
+			RTCIntersectContext context;
+			rtcInitIntersectContext(&context);
+			rtcIntersect1(m_scene, &context, &rh);
+
+			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
+			if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+			{
+				Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+				Vector4 newOrigin = (position + direction * Scalar(rh.ray.tfar)).xyz1();
+				incoming += traceSinglePath(newOrigin, hitNormal, random, 0);
+			}
+			else
+			{
+				// Nothing hit, sample sky if available else it's all black.
+				if (m_environment)
+					incoming += m_environment->sample(direction);
+			}
 
 			color += incoming + direct;
 		}
@@ -310,7 +324,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				Color4f incoming = tracePath0(elm.position, elm.normal, random);
 
 				// Trace ambient occlusion.
-				Scalar occlusion = traceAmbientOcclusion(elm.position, elm.normal, random);
+				Scalar occlusion = 0.5_simd + 0.5_simd * traceAmbientOcclusion(elm.position, elm.normal, random);
 
 				// Combine and write final lumel.
 				lightmap->setPixel(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
@@ -335,6 +349,7 @@ Color4f RayTracerEmbree::tracePath0(
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+		//Vector4 direction = lambertianDirection(uv, normal);
 		constructRay(origin, direction, m_configuration->getMaxPathDistance(), rhv[i]);
 	}
 
@@ -345,8 +360,9 @@ Color4f RayTracerEmbree::tracePath0(
 
 	// Accumulate incoming light.
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
-	for (const auto& rh : rhv)
+	for (int32_t i = 0; i < sampleCount; ++i)
 	{
+		const auto& rh = rhv[i];
 		const Vector4 direction(
 			rh.ray.dir_x,
 			rh.ray.dir_y,
@@ -389,8 +405,10 @@ Color4f RayTracerEmbree::tracePath0(
 		Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
 		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
-		Vector2 rnd(random.nextFloat(), random.nextFloat());
-		Vector4 newDirection = lambertianDirection(rnd, hitNormal);
+		//Vector2 uv(random.nextFloat(), random.nextFloat());
+		//Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+		//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+		//Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
 		Color4f direct = sampleAnalyticalLights(
 			random,
@@ -399,23 +417,26 @@ Color4f RayTracerEmbree::tracePath0(
 			Light::LmIndirect,
 			true
 		);
-		Color4f incoming = tracePath(newOrigin, newDirection, random, 1);
+		Color4f incoming = traceSinglePath(newOrigin, hitNormal, random, 1);
 		Color4f reflectance = hitMaterialColor;
 
-		color += emittance + (direct + incoming) * reflectance;		
+		color += (emittance + (direct + incoming) * reflectance) * dot3(direction, normal);
 	}
 
 	return color / Scalar(sampleCount);
 }
 
-Color4f RayTracerEmbree::tracePath(
+Color4f RayTracerEmbree::traceSinglePath(
 	const Vector4& origin,
-	const Vector4& direction,
+	const Vector4& normal,
 	RandomGeometry& random,
 	int32_t depth
 ) const
 {
-	if (depth >= 2)
+	Vector2 uv(random.nextFloat(), random.nextFloat());
+	Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+
+	if (depth > 2)
 	{
 		// Nothing hit, sample sky if available else it's all black.
 		if (m_environment)
@@ -468,8 +489,9 @@ Color4f RayTracerEmbree::tracePath(
 	Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
-	Vector2 rnd(random.nextFloat(), random.nextFloat());
-	Vector4 newDirection = lambertianDirection(rnd, hitNormal);
+	//Vector2 uv(random.nextFloat(), random.nextFloat());
+	////Vector4 newDirection = lambertianDirection(uv, hitNormal);
+	//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 
 	Color4f direct = sampleAnalyticalLights(
 		random,
@@ -478,10 +500,10 @@ Color4f RayTracerEmbree::tracePath(
 		Light::LmIndirect,
 		true
 	);
-	Color4f incoming = tracePath(newOrigin, newDirection, random, depth + 1);
+	Color4f incoming = traceSinglePath(newOrigin, hitNormal, random, depth + 1);
 	Color4f reflectance = hitMaterialColor;
 
-	return emittance + (direct + incoming) * reflectance;
+	return (emittance + (direct + incoming) * reflectance) * dot3(direction, normal);
 }
 
 Scalar RayTracerEmbree::traceAmbientOcclusion(

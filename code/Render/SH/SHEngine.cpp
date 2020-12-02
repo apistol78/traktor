@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Math/Polar.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
@@ -17,85 +18,7 @@ namespace traktor
 		namespace
 		{
 
-Vector4 polarToCartesian(double phi, double theta)
-{
-	return Vector4(
-		(float)(std::cos(theta) * std::sin(phi)),
-		(float)(std::cos(phi)),
-		(float)(std::sin(theta) * std::sin(phi))
-	);
-}
-
-double P(int l, int m, double x)
-{
-	double pmm = 1.0;
-	if (m > 0)
-	{
-		double somx2 = sqrtf((1.0 - x) * (1.0 + x));
-		double fact = 1.0;
-		for (int i = 1; i <= m; ++i)
-		{
-			pmm *= -fact * somx2;
-			fact += 2.0;
-		}
-	}
-	if (l == m)
-		return pmm;
-	double pmmp1 = x * (2.0 * m + 1.0) * pmm;
-	if (l == m + 1)
-		return pmmp1;
-	double pll = 0.0;
-	for (int ll = m + 2; ll <= l; ++ll)
-	{
-		pll = ((2.0 * ll - 1.0) * x * pmmp1 - (ll + m - 1.0) * pmm) / (ll - m);
-		pmm = pmmp1;
-		pmmp1 = pll;
-	}
-	return pll;
-}
-
-int factorial(int n)
-{
-	T_ASSERT(n >= 0);
-	int r = 1;
-	for (int i = 1; i <= n; ++i)
-		r *= i;
-	return r;
-}
-
-double K(int l, int m)
-{
-	double temp = ((2.0 * l + 1.0) * factorial(l - m)) / (4.0 * PI * factorial(l + m));
-	return sqrtf(temp);
-}
-
-double SH(int l, int m, double phi, double theta)
-{
-	const double sqrt2 = sqrtf(2.0);
-	if (m == 0)
-		return K(l, 0) * P(l, m, cosf(phi));
-	else if (m > 0)
-		return sqrt2 * K(l, m) * cosf(m * theta) * P(l, m, cosf(phi));
-	else
-		return sqrt2 * K(l, -m) * sinf(-m * theta) * P(l, -m, cosf(phi));
-}
-
-void shEvaluate3(const float fX, const float fY, const float fZ, float* __restrict pSH)
-{
-	float fTmpA = -0.48860251190292f;
-	float fTmpB = -1.092548430592079f * fY;
-	float fTmpC = 0.5462742152960395f;
-
-	pSH[0] = 0.2820947917738781f;
-	pSH[2] = 0.4886025119029199f * fY;
-	pSH[6] = 0.9461746957575601f * fY * fY + -0.3153915652525201f;
-	pSH[3] = fTmpA * fX;
-	pSH[1] = fTmpA * fZ;
-	pSH[7] = fTmpB * fX;
-	pSH[5] = fTmpB * fZ;
-	pSH[8] = fTmpC * (fX * fX - fZ * fZ);
-	pSH[4] = fTmpC * (fX * fZ + fZ * fX);
-}
+#include "Render/SH/SH.inl"
 
 		}
 
@@ -126,12 +49,12 @@ void SHEngine::generateSamplePoints(uint32_t count)
 			float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
 			float theta = 2.0f * PI * uv.y;
 
-			m_samplePoints[o].unit = polarToCartesian(phi, theta);
+			m_samplePoints[o].unit = Polar(phi, theta).toUnitCartesian();
 			m_samplePoints[o].phi = phi;
 			m_samplePoints[o].theta = theta;
 			m_samplePoints[o].coefficients.resize(m_coefficientCount);
 
-			for (int32_t l = 0; l < int32_t(m_bandCount); ++l)
+			for (int32_t l = 0; l < m_bandCount; ++l)
 			{
 				for (int32_t m = -l; m <= l; ++m)
 				{
@@ -151,10 +74,10 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 	uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
 
 	SHCoeffs intermediate[4];
-	intermediate[0].resize(m_coefficientCount);
-	intermediate[1].resize(m_coefficientCount);
-	intermediate[2].resize(m_coefficientCount);
-	intermediate[3].resize(m_coefficientCount);
+	intermediate[0].resize(m_bandCount);
+	intermediate[1].resize(m_bandCount);
+	intermediate[2].resize(m_bandCount);
+	intermediate[3].resize(m_bandCount);
 
 	RefArray< Functor > jobs(4);
 	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &intermediate[0]);
@@ -163,7 +86,7 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
 	JobManager::getInstance().fork(jobs);
 
-	outResult.resize(m_coefficientCount);
+	outResult.resize(m_bandCount);
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)
 		outResult[i] = intermediate[0][i] + intermediate[1][i] + intermediate[2][i] + intermediate[3][i];
 
@@ -192,41 +115,6 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 // 	}
 // 	return out;
 // }
-
-Vector4 SHEngine::evaluate(float phi, float theta, const SHCoeffs& coefficients) const
-{
-	Vector4 result = Vector4::zero();
-	for (int32_t l = 0; l < int32_t(m_bandCount); ++l)
-	{
-		for (int32_t m = -l; m <= l; ++m)
-		{
-			int32_t index = l * (l + 1) + m;
-			result += Scalar(SH(l, m, phi, theta)) * coefficients[index];
-		}
-	}
-	return result;
-}
-
-Vector4 SHEngine::evaluate3(float phi, float theta, const SHCoeffs& coefficients) const
-{
-	Vector4 dir = polarToCartesian(phi, theta);
-
-	float shd[9];
-	shEvaluate3(dir.x(), dir.y(), dir.z(), shd);
-
-	Vector4 result = Vector4::zero();
-	result += Scalar(shd[0]) * coefficients[0];
-	result += Scalar(shd[1]) * coefficients[1];
-	result += Scalar(shd[2]) * coefficients[2];
-	result += Scalar(shd[3]) * coefficients[3];
-	result += Scalar(shd[4]) * coefficients[4];
-	result += Scalar(shd[5]) * coefficients[5];
-	result += Scalar(shd[6]) * coefficients[6];
-	result += Scalar(shd[7]) * coefficients[7];
-	result += Scalar(shd[8]) * coefficients[8];
-
-	return result;
-}
 
 void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult)
 {

@@ -3,6 +3,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -200,21 +201,6 @@ void addSky(
 
 	safeClose(file);
 
-	// Measure max intensity.
-	//Scalar maxIntensity = 0.0_simd;
-	//for (int32_t y = 0; y < skyImage->getHeight(); ++y)
-	//{
-	//	for (int32_t x = 0; x < skyImage->getWidth(); ++x)
-	//	{
-	//		Color4f cl;
-	//		skyImage->getPixelUnsafe(x, y, cl);
-	//		Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-	//		maxIntensity = max(maxIntensity, intensity);
-	//	}
-	//}
-	//if (maxIntensity <= 0.0_simd)
-	//	return;
-
 	// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
 	int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
 	if (dim > 256)
@@ -228,35 +214,46 @@ void addSky(
 		skyImage->apply(&scaleFilter);
 	}
 
+	Ref< const render::CubeMap > cms = render::CubeMap::createFromImage(skyImage);
+	Ref< render::CubeMap > cmd = new render::CubeMap(128, drawing::PixelFormat::getRGBAF32());
+
+	// Convolve cube map.
+	Random random;
+	for (int32_t side = 0; side < 6; ++side)
+	{
+		for (int32_t y = 0; y < 128; ++y)
+		{
+			for (int32_t x = 0; x < 128; ++x)
+			{
+				Vector4 d = cmd->getDirection(side, x, y);
+				Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+				for (int32_t i = 0; i < 250; ++i)
+				{
+					Vector2 uv = Quasirandom::hammersley(i, 250, random);
+					Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
+					cl += cms->get(direction).saturated() * dot3(d, direction);
+				}
+				cl *= Scalar(PI);
+				cl /= 250.0_simd;
+				cmd->set(d, cl);
+			}
+		}
+	}
+
 	// Convert cube map to equirectangular image.
-	Ref< drawing::Image > radiance = render::CubeMap::createFromImage(skyImage)->createEquirectangular();
+	Ref< drawing::Image > radiance = cmd->createEquirectangular();
 	T_FATAL_ASSERT(radiance != nullptr);
 
 	// Discard alpha channels as they are not used.
 	radiance->clearAlpha(1.0);
 
 	// Blur image slightly to reduce sampling speeks, do this in rectangular image to prevent cube leaks.
-	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(4);
+	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(1);
 	radiance->apply(blurFilter);
-
-	// Renormalize intensity of probe to ensure overall energy level is preserved.
-	//Scalar maxIntensity2 = 0.0_simd;
-	//for (int32_t y = 0; y < radiance->getHeight(); ++y)
-	//{
-	//	for (int32_t x = 0; x < radiance->getWidth(); ++x)
-	//	{
-	//		Color4f cl;
-	//		radiance->getPixelUnsafe(x, y, cl);
-	//		Scalar intensity = dot3(cl, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-	//		maxIntensity2 = max(maxIntensity2, intensity);
-	//	}
-	//}
-	//Scalar normIntensity = maxIntensity / maxIntensity2;
-	//drawing::TransformFilter normFilter(Color4f(normIntensity, normIntensity, normIntensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	//radiance->apply(&normFilter);
 
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
+
 }
 
 /*! */
@@ -285,7 +282,6 @@ bool prepareModel(
 	editor::IPipelineBuilder* pipelineBuilder,
 	model::Model* model,
 	const std::wstring& assetPath,
-	const Guid& lightmapId,
 	int32_t lightmapSize
 )
 {
@@ -305,6 +301,12 @@ bool prepareModel(
 		model::UnwrapUV(channel, lightmapSize).apply(*model);
 	}
 
+	return true;
+}
+
+/*! */
+bool loadMaterialTextures(editor::IPipelineBuilder* pipelineBuilder, model::Model* model, const Guid& lightmapId, const std::wstring& assetPath)
+{
 	// Modify all materials to contain reference to lightmap channel.
 	for (auto& material : model->getMaterials())
 	{
@@ -312,12 +314,6 @@ bool prepareModel(
 		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
 	}
 
-	return true;
-}
-
-/*! */
-bool loadMaterialTextures(editor::IPipelineBuilder* pipelineBuilder, model::Model* model, const std::wstring& assetPath)
-{
 	// Load texture images and attach to materials.
 	for (auto& material : model->getMaterials())
 	{
@@ -635,7 +631,6 @@ bool BakePipelineOperator::build(
 							pipelineBuilder,
 							model,
 							m_assetPath,
-							lightmapId,
 							lightmapSize
 						))
 							return scene::Traverser::VrFailed;
@@ -655,7 +650,7 @@ bool BakePipelineOperator::build(
 					);
 
 					// Load model's material textures.
-					if (!loadMaterialTextures(pipelineBuilder, model, m_assetPath))
+					if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
 						return scene::Traverser::VrFailed;
 
 					// Calculate priority, if entity has moved since last bake then it's prioritized.
@@ -731,7 +726,6 @@ bool BakePipelineOperator::build(
 							pipelineBuilder,
 							model,
 							m_assetPath,
-							lightmapId,
 							lightmapSize
 						))
 							return scene::Traverser::VrFailed;
@@ -749,7 +743,7 @@ bool BakePipelineOperator::build(
 				);
 
 				// Load model's material textures.
-				if (!loadMaterialTextures(pipelineBuilder, model, m_assetPath))
+				if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
 					return scene::Traverser::VrFailed;
 
 				// Calculate priority, if entity has moved since last bake then it's prioritized.

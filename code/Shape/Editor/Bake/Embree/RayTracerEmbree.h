@@ -65,9 +65,9 @@ private:
         RandomGeometry& random
     ) const;
 
-	Color4f tracePath(
+	Color4f traceSinglePath(
 		const Vector4& origin,
-		const Vector4& direction,
+        const Vector4& normal,
 		RandomGeometry& random,
 		int32_t depth
 	) const;
