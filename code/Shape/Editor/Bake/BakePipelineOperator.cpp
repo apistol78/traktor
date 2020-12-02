@@ -11,6 +11,7 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -23,6 +24,7 @@
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -610,14 +612,21 @@ bool BakePipelineOperator::build(
 			if (entityReplicator)
 			{
 				uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
-				
-				Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(entityHash);
-				if (!model)
-				{
-					log::info << L"Synthesizing model for baking from entity \"" << inoutEntityData->getName() << L"\"..." << Endl;
-					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
-					if (model)
-					{
+
+
+				Ref< model::Model > model = editor::DataAccessCache::getInstance().read< model::Model >(
+					entityHash,
+					[&](IStream* stream) -> Ref< model::Model > {
+						return BinarySerializer(stream).readObject< model::Model >();
+					},
+					[=](const model::Model* model, IStream* stream) -> bool {
+						return BinarySerializer(stream).writeObject(model);
+					},
+					[&]() -> Ref< model::Model > {
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
+						if (!model)
+							return nullptr;
+
 						// Calculate size of lightmap from geometry.
 						int32_t lightmapSize = calculateLightmapSize(
 							model,
@@ -633,67 +642,66 @@ bool BakePipelineOperator::build(
 							m_assetPath,
 							lightmapSize
 						))
-							return scene::Traverser::VrFailed;
+							return nullptr;
 
-						model::ModelCache(m_modelCachePath).put(entityHash, model);
+						return model;
 					}
-				}
+				);
+				if (!model)
+					return scene::Traverser::VrFailed;
 
-				if (model)
+				// Calculate size of lightmap from geometry.
+				int32_t lightmapSize = calculateLightmapSize(
+					model,
+					configuration->getLumelDensity(),
+					configuration->getMinimumLightMapSize(),
+					configuration->getMaximumLightMapSize()
+				);
+
+				// Load model's material textures.
+				if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
+					return scene::Traverser::VrFailed;
+
+				// Calculate priority, if entity has moved since last bake then it's prioritized.
+				int32_t priority = 0;
+				if (receipt)
 				{
-					// Calculate size of lightmap from geometry.
-					int32_t lightmapSize = calculateLightmapSize(
-						model,
-						configuration->getLumelDensity(),
-						configuration->getMinimumLightMapSize(),
-						configuration->getMaximumLightMapSize()
-					);
-
-					// Load model's material textures.
-					if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
-						return scene::Traverser::VrFailed;
-
-					// Calculate priority, if entity has moved since last bake then it's prioritized.
-					int32_t priority = 0;
-					if (receipt)
+					Transform lastTransform;
+					if (receipt->getLastKnownTransform(entityId, lastTransform))
 					{
-						Transform lastTransform;
-						if (receipt->getLastKnownTransform(entityId, lastTransform))
-						{
-							if (lastTransform != inoutEntityData->getTransform())
-								priority = 1;
-						}
-						else
+						if (lastTransform != inoutEntityData->getTransform())
 							priority = 1;
-
-						receipt->setTransform(entityId, inoutEntityData->getTransform());
 					}
+					else
+						priority = 1;
 
-					if (!addModel(
-						pipelineBuilder,
-						model,
-						inoutEntityData->getTransform(),
-						inoutEntityData->getName(),
-						priority,
-						lightmapId,
-						lightmapSize,
-						tracerTask
-					))
-						return scene::Traverser::VrFailed;
-
-					// Let model generator consume altered model and modify entity in ways
-					// which make sense for entity data.
-					inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
-						pipelineBuilder,
-						m_assetPath,
-						inoutEntityData,
-						model,
-						outputId
-					));
-
-					// Skip further processing of this entity and it's children.
-					return scene::Traverser::VrSkip;
+					receipt->setTransform(entityId, inoutEntityData->getTransform());
 				}
+
+				if (!addModel(
+					pipelineBuilder,
+					model,
+					inoutEntityData->getTransform(),
+					inoutEntityData->getName(),
+					priority,
+					lightmapId,
+					lightmapSize,
+					tracerTask
+				))
+					return scene::Traverser::VrFailed;
+
+				// Let model generator consume altered model and modify entity in ways
+				// which make sense for entity data.
+				inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
+					pipelineBuilder,
+					m_assetPath,
+					inoutEntityData,
+					model,
+					outputId
+				));
+
+				// Skip further processing of this entity and it's children.
+				return scene::Traverser::VrSkip;
 			}
 
 			// Find model synthesizer which can generate from components.
@@ -706,13 +714,19 @@ bool BakePipelineOperator::build(
 
 				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
 
-				Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(componentDataHash);
-				if (!model)
-				{
-					log::info << L"Synthesizing model for baking from component \"" << type_name(componentData) << L"\" of entity \"" << inoutEntityData->getName() << L"\"..." << Endl;
-					model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
-					if (model)
-					{
+				Ref< model::Model > model = editor::DataAccessCache::getInstance().read< model::Model >(
+					componentDataHash,
+					[&](IStream* stream) -> Ref< model::Model > {
+						return BinarySerializer(stream).readObject< model::Model >();
+					},
+					[=](const model::Model* model, IStream* stream) -> bool {
+						return BinarySerializer(stream).writeObject(model);
+					},
+					[&]() -> Ref< model::Model > {
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+						if (!model)
+							return nullptr;
+
 						// Calculate size of lightmap from geometry.
 						int32_t lightmapSize = calculateLightmapSize(
 							model,
@@ -728,11 +742,13 @@ bool BakePipelineOperator::build(
 							m_assetPath,
 							lightmapSize
 						))
-							return scene::Traverser::VrFailed;
+							return nullptr;
 
-						model::ModelCache(m_modelCachePath).put(componentDataHash, model);
+						return model;
 					}
-				}
+				);
+				if (!model)
+					return scene::Traverser::VrFailed;
 
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(

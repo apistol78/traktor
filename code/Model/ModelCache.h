@@ -32,10 +32,6 @@ class T_DLLCLASS ModelCache : public Object
 public:
     explicit ModelCache(const Path& cachePath);
 
-    Ref< Model > get(uint32_t key) const;
-
-    bool put(uint32_t key, const Model* model);
-
     /*! Get model. */
     Ref< Model > get(const Path& fileName, const std::wstring& filter);
 

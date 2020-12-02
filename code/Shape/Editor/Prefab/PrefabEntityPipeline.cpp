@@ -3,9 +3,11 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyString.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -320,57 +322,66 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 
 		// Try to get merged model from cache; if no exist then we need to merge it here.
 		uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(prefabEntityData);
-		Ref< model::Model > mergedModel = model::ModelCache(m_modelCachePath).get(entityHash);
-		if (!mergedModel)
-		{
-			std::map< std::wstring, Ref< const model::Model > > modelMap;
 
-			uint32_t vertexCount = 0;
-			uint32_t polygonCount = 0;
+		Ref< model::Model > mergedModel = editor::DataAccessCache::getInstance().read< model::Model >(
+			entityHash,
+			[&](IStream* stream) -> Ref< model::Model > {
+				return BinarySerializer(stream).readObject< model::Model >();
+			},
+			[=](const model::Model* model, IStream* stream) -> bool {
+				return BinarySerializer(stream).writeObject(model);
+			},
+			[&]() -> Ref< model::Model > {
+				std::map< std::wstring, Ref< const model::Model > > modelMap;
+				uint32_t vertexCount = 0;
+				uint32_t polygonCount = 0;
 
-			mergedModel = new model::Model();
-			for (const auto& visualMesh : merge->getVisualMeshes())
-			{
-				Ref< const mesh::MeshAsset > meshAsset = visualMesh.meshAsset;
-				T_ASSERT(meshAsset);
-
-				uint32_t currentVertexCount = mergedModel->getVertexCount();
-				uint32_t currentPolygonCount = mergedModel->getPolygonCount();
-
-				auto it = modelMap.find(meshAsset->getFileName().getOriginal());
-				if (it != modelMap.end())
+				Ref< model::Model > mergedModel = new model::Model();
+				for (const auto& visualMesh : merge->getVisualMeshes())
 				{
-					model::MergeModel(*(it->second), visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
-					vertexCount += it->second->getVertexCount();
-					polygonCount += it->second->getPolygonCount();
-				}
-				else
-				{
-					Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-					Ref< model::Model > partModel = modelCache.get(filePath, meshAsset->getImportFilter());
-					if (!partModel)
+					Ref< const mesh::MeshAsset > meshAsset = visualMesh.meshAsset;
+					T_ASSERT(meshAsset);
+
+					uint32_t currentVertexCount = mergedModel->getVertexCount();
+					uint32_t currentPolygonCount = mergedModel->getPolygonCount();
+
+					auto it = modelMap.find(meshAsset->getFileName().getOriginal());
+					if (it != modelMap.end())
 					{
-						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-						continue;
+						model::MergeModel(*(it->second), visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
+						vertexCount += it->second->getVertexCount();
+						polygonCount += it->second->getPolygonCount();
 					}
+					else
+					{
+						Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+						Ref< model::Model > partModel = modelCache.get(filePath, meshAsset->getImportFilter());
+						if (!partModel)
+						{
+							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+							continue;
+						}
 
-					partModel->clear( model::Model::CfColors | model::Model::CfJoints );
+						partModel->clear( model::Model::CfColors | model::Model::CfJoints );
 
-					model::CleanDuplicates(0.01f).apply(*partModel);
-					model::MergeModel(*partModel, visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
+						model::CleanDuplicates(0.01f).apply(*partModel);
+						model::MergeModel(*partModel, visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
 
-					vertexCount += partModel->getVertexCount();
-					polygonCount += partModel->getPolygonCount();
-					modelMap[meshAsset->getFileName().getOriginal()] = partModel;
+						vertexCount += partModel->getVertexCount();
+						polygonCount += partModel->getPolygonCount();
+						modelMap[meshAsset->getFileName().getOriginal()] = partModel;
+					}
 				}
+
+				log::info << L"Output visual model ('original' to 'merged'):" << Endl;
+				log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
+				log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
+
+				return mergedModel;
 			}
-
-			log::info << L"Output visual model ('original' to 'merged'):" << Endl;
-			log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
-			log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
-
-			model::ModelCache(m_modelCachePath).put(entityHash, mergedModel);
-		}
+		);
+		if (!mergedModel)
+			return nullptr;
 
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > mergedMeshAsset = new mesh::MeshAsset();

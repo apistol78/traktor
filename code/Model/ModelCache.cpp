@@ -37,21 +37,6 @@ ModelCache::ModelCache(const Path& cachePath)
 {
 }
 
-Ref< Model > ModelCache::get(uint32_t key) const
-{
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(key) + L".tmd";
-	Ref< Model > model = ModelFormat::readAny(cachedFileName, L"");
-	if (model)
-		log::info << L"READ MODEL " << cachedFileName.getPathName() << Endl;
-	return model;
-}
-
-bool ModelCache::put(uint32_t key, const Model* model)
-{
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(key) + L".tmd";
-	return ModelFormat::writeAny(cachedFileName, model);
-}
-
 Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 {
 	// Get information about source file.
