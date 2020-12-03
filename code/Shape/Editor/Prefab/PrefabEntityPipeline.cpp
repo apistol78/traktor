@@ -141,6 +141,17 @@ bool PrefabEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	// Do not build prefab in editor since it's time consuming and not
+	// strictly necessary for editing purposes.
+	if (m_editor)
+		return world::EntityPipeline::buildDependencies(
+			pipelineDepends,
+			sourceInstance,
+			sourceAsset,
+			outputPath,
+			outputGuid
+		);
+
 	Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineDepends, sourceAsset));
 	if (!prefabEntityData)
 	{
@@ -171,11 +182,7 @@ bool PrefabEntityPipeline::buildDependencies(
 		}
 	}
 
-	// If we're running in the editor then we must also build individual entities, not just the assets.
-	if (m_editor)
-		return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
-	else
-		return true;
+	return true;
 }
 
 Ref< ISerializable > PrefabEntityPipeline::buildOutput(
@@ -185,6 +192,16 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
+	// Do not build prefab in editor since it's time consuming and not
+	// strictly necessary for editing purposes.
+	if (m_editor)
+		return world::EntityPipeline::buildOutput(
+			pipelineBuilder,
+			sourceInstance,
+			sourceAsset,
+			buildParams
+		);
+
 	Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineBuilder, sourceAsset));
 	if (!prefabEntityData)
 	{
