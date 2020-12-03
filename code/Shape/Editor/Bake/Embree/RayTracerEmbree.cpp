@@ -126,6 +126,19 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 		1000 // configuration->getIrradianceSampleCount()
 	);
 
+	// Calculate sampling pattern of shadows, using uniform pattern within a disc.
+	uint32_t sampleCount = m_configuration->getShadowSampleCount();
+
+	// Estimate number of sample points since we "cull" points outside of circle.
+	sampleCount = (uint32_t)(sampleCount * (1 + (PI * 0.25)));
+	for (uint32_t i = 0; i < sampleCount; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, sampleCount);
+		uv = uv * 2.0f - 1.0f;
+		if (uv.length() <= 1.0f)
+			m_shadowSampleOfsets.push_back(uv);
+	}
+
     return true;
 }
 
@@ -552,7 +565,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 	bool bounce
  ) const
 {
-	const uint32_t shadowSampleCount = !bounce ? m_configuration->getShadowSampleCount() : (m_configuration->getShadowSampleCount() > 0 ? 1 : 0);
+	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOfsets.size() : (m_shadowSampleOfsets.size() > 0 ? 1 : 0);
     const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	RTCRay T_MATH_ALIGN16 r;
 
@@ -589,14 +602,8 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						if (shadowSampleCount > 1)
 						{
-							float a = 0.0f, b = 0.0f;
-							do
-							{
-								a = random.nextFloat() * 2.0f - 1.0f;
-								b = random.nextFloat() * 2.0f - 1.0f;
-							}
-							while ((a * a) + (b * b) > 1.0f);
-							lumelPosition += u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius);
+							Vector2 uv = m_shadowSampleOfsets[j];
+							lumelPosition += u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius);
 						}
 
 						lumelPosition.storeAligned(&r.org_x); 
@@ -656,14 +663,8 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						if (shadowSampleCount > 1)
 						{
-							float a = 0.0f, b = 0.0f;
-							do
-							{
-								a = random.nextFloat() * 2.0f - 1.0f;
-								b = random.nextFloat() * 2.0f - 1.0f;
-							}
-							while ((a * a) + (b * b) > 1.0f);
-							traceDirection = (light.position + u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius) - origin).xyz0().normalized();
+							Vector2 uv = m_shadowSampleOfsets[j];
+							traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 						}
 
 						lumelPosition.storeAligned(&r.org_x); 
@@ -728,14 +729,8 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						if (shadowSampleCount > 1)
 						{
-							float a = 0.0f, b = 0.0f;
-							do
-							{
-								a = random.nextFloat() * 2.0f - 1.0f;
-								b = random.nextFloat() * 2.0f - 1.0f;
-							}
-							while ((a * a) + (b * b) > 1.0f);
-							traceDirection = (light.position + u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius) - origin).xyz0().normalized();
+							Vector2 uv = m_shadowSampleOfsets[j];
+							traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 						}
 
 						lumelPosition.storeAligned(&r.org_x); 
