@@ -52,6 +52,7 @@ private:
 
 	const BakeConfiguration* m_configuration;
 	Ref< const IblProbe > m_environment;
+    AlignedVector< Vector2 > m_shadowSampleOfsets;
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device;
 	RTCScene m_scene;
