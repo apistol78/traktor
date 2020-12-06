@@ -18,7 +18,7 @@ bool SortCacheCoherency::apply(Model& model) const
 	AlignedVector< Polygon > newPolygons;
 	newPolygons.reserve(polygons.size());
 
-	uint32_t materialCount = model.getMaterials().size();
+	uint32_t materialCount = (uint32_t)model.getMaterials().size();
 	for (uint32_t material = 0; material < materialCount; ++material)
 	{
 		AlignedVector< uint32_t > indices;

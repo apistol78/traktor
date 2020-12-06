@@ -451,7 +451,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		return true;
 
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 
 	std::wstring tracerTypeName = settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	if (tracerTypeName.empty())
@@ -611,7 +611,25 @@ bool BakePipelineOperator::build(
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(inoutEntityData)];
 			if (entityReplicator)
 			{
-				uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
+				// Calculate hash of entity and it's dependencies; need to anonymize entity a bit since
+				// cached product doesn't depend on id, name nor transform.
+				uint32_t entityHash;
+				{
+					auto id = inoutEntityData->getId();
+					inoutEntityData->setId(Guid::null);
+
+					auto name = inoutEntityData->getName();
+					inoutEntityData->setName(L"");
+
+					auto transform = inoutEntityData->getTransform();
+					inoutEntityData->setTransform(Transform::identity());
+
+					entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
+
+					inoutEntityData->setId(id);
+					inoutEntityData->setName(name);
+					inoutEntityData->setTransform(transform);
+				}
 
 				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 					entityHash,
@@ -622,6 +640,8 @@ bool BakePipelineOperator::build(
 						return BinarySerializer(stream).writeObject(model);
 					},
 					[&]() -> Ref< model::Model > {
+						log::info << L"Preparing \"" << inoutEntityData->getName() << L"\" for tracing..." << Endl;
+
 						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
 						if (!model)
 							return nullptr;

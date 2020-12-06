@@ -153,10 +153,27 @@ public:
 		return id;
 	}
 
+	void swap(AlignedVector< ValueType >& values)
+	{
+		m_values.swap(values);
+		m_indices.reset();
+
+		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
+		{
+			Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
+
+			T_MATH_ALIGN16 int32_t pe[4];
+			p.storeIntegersAligned(pe);
+
+			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			m_indices[hash].insert(i);
+		}
+	}
+
 	void replace(const AlignedVector< ValueType >& values)
 	{
 		m_values = values;
-		m_indices.clear();
+		m_indices.reset();
 
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{

@@ -171,75 +171,75 @@ bool MergeModel::apply(Model& model) const
 
 		outputPolygon.setVertices(outputVertices);
 
-		// Check if polygon is duplicated or canceling through opposite winding.
-		bool duplicate = false;
+		//// Check if polygon is duplicated or canceling through opposite winding.
+		//bool duplicate = false;
 
-		for (size_t j = 0; j < mergedPolygons.size(); ++j)
-		{
-			const Polygon& mergedPolygon = mergedPolygons[j];
+		//for (size_t j = 0; j < mergedPolygons.size(); ++j)
+		//{
+		//	const Polygon& mergedPolygon = mergedPolygons[j];
 
-			if (mergedPolygon.getVertexCount() != outputPolygon.getVertexCount())
-				continue;
+		//	if (mergedPolygon.getVertexCount() != outputPolygon.getVertexCount())
+		//		continue;
 
-			uint32_t outputVertex = outputPolygon.getVertex(0);
-			uint32_t mergedVertex = mergedPolygon.getVertex(0);
+		//	uint32_t outputVertex = outputPolygon.getVertex(0);
+		//	uint32_t mergedVertex = mergedPolygon.getVertex(0);
 
-			const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-			const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
+		//	const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+		//	const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-			Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-			if (distance > c_snapDistanceSqr)
-				continue;
+		//	Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+		//	if (distance > c_snapDistanceSqr)
+		//		continue;
 
-			uint32_t vertexCount = outputPolygon.getVertexCount();
+		//	uint32_t vertexCount = outputPolygon.getVertexCount();
 
-			duplicate = true;
+		//	duplicate = true;
 
-			for (uint32_t k = 1; k < vertexCount; ++k)
-			{
-				uint32_t outputVertex = outputPolygon.getVertex(k);
-				uint32_t mergedVertex = mergedPolygon.getVertex(k);
+		//	for (uint32_t k = 1; k < vertexCount; ++k)
+		//	{
+		//		uint32_t outputVertex = outputPolygon.getVertex(k);
+		//		uint32_t mergedVertex = mergedPolygon.getVertex(k);
 
-				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
+		//		const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+		//		const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-				if (distance > c_snapDistanceSqr)
-				{
-					duplicate = false;
-					break;
-				}
-			}
+		//		Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+		//		if (distance > c_snapDistanceSqr)
+		//		{
+		//			duplicate = false;
+		//			break;
+		//		}
+		//	}
 
-			if (duplicate)
-				break;
+		//	if (duplicate)
+		//		break;
 
-			duplicate = true;
+		//	duplicate = true;
 
-			for (uint32_t k = 1; k < vertexCount; ++k)
-			{
-				uint32_t outputVertex = outputPolygon.getVertex(k);
-				uint32_t mergedVertex = mergedPolygon.getVertex(vertexCount - k);
+		//	for (uint32_t k = 1; k < vertexCount; ++k)
+		//	{
+		//		uint32_t outputVertex = outputPolygon.getVertex(k);
+		//		uint32_t mergedVertex = mergedPolygon.getVertex(vertexCount - k);
 
-				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
+		//		const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+		//		const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-				if (distance > c_snapDistanceSqr)
-				{
-					duplicate = false;
-					break;
-				}
-			}
+		//		Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+		//		if (distance > c_snapDistanceSqr)
+		//		{
+		//			duplicate = false;
+		//			break;
+		//		}
+		//	}
 
-			if (duplicate)
-			{
-				mergedPolygons.erase(mergedPolygons.begin() + j);
-				break;
-			}
-		}
+		//	if (duplicate)
+		//	{
+		//		mergedPolygons.erase(mergedPolygons.begin() + j);
+		//		break;
+		//	}
+		//}
 
-		if (!duplicate)
+		//if (!duplicate)
 			outputPolygons.push_back(outputPolygon);
 	}
 

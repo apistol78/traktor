@@ -62,7 +62,7 @@ bool ClearCachesTool::needOutputResources(std::set< Guid >& outDependencies) con
 
 bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
-	std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.CachePath");
+	std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
     log::info << L"Clearing pipeline instance cache \"" << cachePath << L"\"..." << Endl;
     if (!clearDirectory(cachePath))
     {
@@ -82,7 +82,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	}
 
 	{
-        std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath");
+        std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
         log::info << L"Clearing model cache \"" << cachePath << L"\"..." << Endl;
         if (!clearDirectory(cachePath))
         {
@@ -92,7 +92,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	}
 
 	{
-        std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCachePath");
+        std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
         log::info << L"Clearing program cache \"" << cachePath << L"\"..." << Endl;
         if (!clearDirectory(cachePath))
         {

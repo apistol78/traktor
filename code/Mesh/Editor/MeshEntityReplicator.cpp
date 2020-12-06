@@ -22,7 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEnti
 
 bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
 

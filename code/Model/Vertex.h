@@ -89,5 +89,13 @@ private:
 	AlignedVector< float > m_jointInfluences;
 };
 
+struct VertexHashFunction
+{
+	static uint32_t get(const Vertex& v)
+	{
+		return v.getPosition();
+	}
+};
+
 	}
 }

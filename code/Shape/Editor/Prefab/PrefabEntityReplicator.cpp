@@ -27,7 +27,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 0, Prefa
 
 bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
     return true;
 }
 

@@ -120,7 +120,7 @@ PrefabEntityPipeline::PrefabEntityPipeline()
 bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
 	m_collisionMeshSnap = settings->getProperty< float >(L"PrefabPipeline.CollisionMeshSnap", 0.01f);
 	m_mergeCoplanar = settings->getProperty< bool >(L"PrefabPipeline.MergeCoplanar", true);
@@ -337,8 +337,25 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 			}
 		}
 
-		// Try to get merged model from cache; if no exist then we need to merge it here.
-		uint32_t entityHash = pipelineBuilder->calculateInclusiveHash(prefabEntityData);
+		// Calculate hash of entity and it's dependencies; need to anonymize entity a bit since
+		// cached product doesn't depend on id, name nor transform.
+		uint32_t entityHash;
+		{
+			auto id = prefabEntityData->getId();
+			prefabEntityData->setId(Guid::null);
+
+			auto name = prefabEntityData->getName();
+			prefabEntityData->setName(L"");
+
+			auto transform = prefabEntityData->getTransform();
+			prefabEntityData->setTransform(Transform::identity());
+
+			entityHash = pipelineBuilder->calculateInclusiveHash(prefabEntityData);
+
+			prefabEntityData->setId(id);
+			prefabEntityData->setName(name);
+			prefabEntityData->setTransform(transform);
+		}
 
 		Ref< model::Model > mergedModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 			entityHash,

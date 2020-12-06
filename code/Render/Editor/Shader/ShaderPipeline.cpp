@@ -200,6 +200,15 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Remove unused branches.
+		programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
+			return;
+		}
+
 		// Extract uniform initial values and add to initialization block in shader resource.
 		RefArray< Uniform > uniformNodes;
 		programGraph->findNodesOf< Uniform >(uniformNodes);
@@ -300,7 +309,7 @@ ShaderPipeline::ShaderPipeline()
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-	m_programCachePath = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCachePath");
+	m_programCachePath = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
 	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");

@@ -44,6 +44,10 @@ private:
 	Ref< ui::Edit > m_editFileCachePath;
 	Ref< ui::CheckBox > m_checkFileCacheRead;
 	Ref< ui::CheckBox > m_checkFileCacheWrite;
+	Ref< ui::Edit > m_editDataAccessCachePath;
+	Ref< ui::Edit > m_editInstanceCachePath;
+	Ref< ui::Edit > m_editModelCachePath;
+	Ref< ui::Edit > m_editProgramCachePath;
 
 	void eventUseCacheClick(ui::ButtonClickEvent* event);
 };

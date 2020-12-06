@@ -129,7 +129,10 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
 	auto it = m_techniques.find(name);
-	return it != m_techniques.end() ? DeepClone(it->second).create< ShaderGraph >() : nullptr;
+	if (it != m_techniques.end())
+		return it->second;
+	else
+		return nullptr;
 }
 
 	}

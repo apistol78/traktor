@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{BA802A78-F9E0-7843-B731-198BEB633236}
+
+-- Flipboard
+
+Flipboard = class("Flipboard", Container)
+
+function Flipboard:new(parent)
+	local mc = Widget._createEmptyResource(parent)
+	self:_initialize(parent, mc, FloodLayout())
+end
+
+function Flipboard:showPage(id, arg)
+	local r = 0.4
+
+	local children = self:getChildren()
+	for _, child in ipairs(children) do
+
+		-- Check if it's the desired flip child.
+		local f = false
+		if type(id) == "string" then
+			if child.__flipboardId ~= nil then
+				f = (child.__flipboardId == id)
+			else
+				f = (getmetatable(child).__flipboardId == id)
+			end
+		else
+			f = (id == child)
+		end
+
+		if f then
+			if child._mc ~= nil then
+				Tween(0, 1, r, function(value, last)
+					if child._mc ~= nil then
+						child._mc.alpha = value
+					end
+				end)
+			end
+
+			child:setVisible(true)
+
+			if not child.__entered then
+				if child.enter ~= nil then
+					child:enter(arg)
+				end
+				child.__entered = true
+			end
+		else
+			if child.__entered then
+				if child.leave ~= nil then
+					child:leave()
+				end
+				child.__entered = false
+			end
+
+			if child:isVisible(false) then
+				Tween(0, 1, r, function(value, last)
+					if child._mc ~= nil then
+						child._mc.alpha = 1 - value
+					end
+					if last then child:setVisible(false) end
+				end)
+			end
+		end
+	end
+end
+
+-- Private
+
+function Flipboard:_addChild(child)
+	Widget._addChild(self, child)
+	child.__entered = false
+	child:setVisible(false)
+end
+
+	]]>
+	</text>
+</object>

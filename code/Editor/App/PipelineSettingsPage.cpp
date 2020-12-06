@@ -78,7 +78,7 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkUseFileCache->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editFileCachePath = new ui::Edit();
-	m_editFileCachePath->create(container, toString(settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path")), ui::WsNone);
+	m_editFileCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path"), ui::WsNone);
 	m_editFileCachePath->setEnable(fileCacheEnable);
 
 	m_checkFileCacheRead = new ui::CheckBox();
@@ -90,6 +90,18 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkFileCacheWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
 	m_checkFileCacheWrite->setChecked(settings->getProperty< bool >(L"Pipeline.FileCache.Write", true));
 	m_checkFileCacheWrite->setEnable(fileCacheEnable);
+
+	m_editDataAccessCachePath = new ui::Edit();
+	m_editDataAccessCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path"), ui::WsNone);
+
+	m_editInstanceCachePath = new ui::Edit();
+	m_editInstanceCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path"), ui::WsNone);
+
+	m_editModelCachePath = new ui::Edit();
+	m_editModelCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path"), ui::WsNone);
+
+	m_editProgramCachePath = new ui::Edit();
+	m_editProgramCachePath->create(container, settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path"), ui::WsNone);
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_PIPELINE"));
 	return true;
@@ -116,6 +128,11 @@ bool PipelineSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", m_editFileCachePath->getText());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", m_checkFileCacheRead->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", m_checkFileCacheWrite->isChecked());
+
+	settings->setProperty< PropertyString >(L"Pipeline.DataAccessCache.Path", m_editDataAccessCachePath->getText());
+	settings->setProperty< PropertyString >(L"Pipeline.InstanceCache.Path", m_editInstanceCachePath->getText());
+	settings->setProperty< PropertyString >(L"Pipeline.ModelCache.Path", m_editModelCachePath->getText());
+	settings->setProperty< PropertyString >(L"ShaderPipeline.ProgramCache.Path", m_editProgramCachePath->getText());
 
 	return true;
 }

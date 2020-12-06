@@ -8,6 +8,7 @@
 #include "Model/Types.h"
 #include "Model/Grid2.h"
 #include "Model/Grid3.h"
+#include "Model/HashVector.h"
 #include "Model/Joint.h"
 #include "Model/Material.h"
 #include "Model/Polygon.h"
@@ -53,6 +54,9 @@ public:
 
 	Aabb3 getBoundingBox() const;
 
+	/*! \name Materials */
+	//!@{
+
 	uint32_t addMaterial(const Material& material);
 
 	uint32_t addUniqueMaterial(const Material& material);
@@ -67,23 +71,31 @@ public:
 
 	AlignedVector< Material >& getMaterials() { return m_materials; }
 
+	//!@}
+
+	/*! \name Vertices */
+	//!@{
+
 	void reserveVertices(uint32_t vertexCapacity) { m_vertices.reserve(vertexCapacity); }
 
 	uint32_t addVertex(const Vertex& vertex);
 
 	uint32_t addUniqueVertex(const Vertex& vertex);
 
-	void setVertex(uint32_t index, const Vertex& vertex) { m_vertices[index] = vertex; }
+	void setVertex(uint32_t index, const Vertex& vertex) { m_vertices.set(index, vertex); }
 
 	const Vertex& getVertex(uint32_t index) const { return m_vertices[index]; }
 
 	uint32_t getVertexCount() const { return uint32_t(m_vertices.size()); }
 
-	void setVertices(const AlignedVector< Vertex >& vertices) { m_vertices = vertices; }
+	void setVertices(const AlignedVector< Vertex >& vertices) { m_vertices.replace(vertices); }
 
-	const AlignedVector< Vertex >& getVertices() const { return m_vertices; }
+	const AlignedVector< Vertex >& getVertices() const { return m_vertices.values(); }
 
-	AlignedVector< Vertex >& getVertices() { return m_vertices; }
+	//!@}
+
+	/*! \name Polygons */
+	//!@{
 
 	void reservePolygons(uint32_t polygonCapacity) { m_polygons.reserve(polygonCapacity); }
 
@@ -103,6 +115,11 @@ public:
 
 	AlignedVector< Polygon >& getPolygons() { return m_polygons; }
 
+	//!@}
+
+	/*! \name Positions */
+	//!@{
+
 	void reservePositions(uint32_t positionCapacity);
 
 	uint32_t addPosition(const Vector4& position);
@@ -121,6 +138,11 @@ public:
 
 	const AlignedVector< Vector4 >& getPositions() const { return m_positions.values(); }
 
+	//!@}
+
+	/*! \name Colors */
+	//!@{
+
 	uint32_t addColor(const Vector4& color);
 
 	uint32_t addUniqueColor(const Vector4& color);
@@ -135,6 +157,11 @@ public:
 
 	void reserveColors(uint32_t colorCapacity);
 
+	//!@}
+
+	/*! \name Normals */
+	//!@{
+
 	uint32_t addNormal(const Vector4& normal);
 
 	uint32_t addUniqueNormal(const Vector4& normal);
@@ -148,6 +175,11 @@ public:
 	const AlignedVector< Vector4 >& getNormals() const { return m_normals.values(); }
 
 	void reserveNormals(uint32_t normalCapacity);
+
+	//!@}
+
+	/*! \name Texture coordinates. */
+	//!@{
 
 	uint32_t addTexCoord(const Vector2& texCoord);
 
@@ -166,6 +198,8 @@ public:
 	void setTexCoordChannels(const AlignedVector< std::wstring >& texCoordChannels) { m_texCoordChannels = texCoordChannels; }
 
 	const AlignedVector< std::wstring >& getTexCoordChannels() const { return m_texCoordChannels; }
+
+	//!@}
 
 	/*! \name Skeleton joints. */
 	//!@{
@@ -226,7 +260,7 @@ public:
 
 private:
 	AlignedVector< Material > m_materials;
-	AlignedVector< Vertex > m_vertices;
+	HashVector< Vertex, VertexHashFunction > m_vertices;
 	AlignedVector< Polygon > m_polygons;
 	Grid3< Vector4 > m_positions;
 	Grid3< Vector4 > m_colors;

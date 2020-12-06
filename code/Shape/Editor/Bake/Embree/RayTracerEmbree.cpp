@@ -362,7 +362,6 @@ Color4f RayTracerEmbree::tracePath0(
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-		//Vector4 direction = lambertianDirection(uv, normal);
 		constructRay(origin, direction, m_configuration->getMaxPathDistance(), rhv[i]);
 	}
 
@@ -382,7 +381,10 @@ Color4f RayTracerEmbree::tracePath0(
 			rh.ray.dir_z
 		);
 
-		if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+		if (
+			rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
+			rh.hit.geomID >= m_models.size()
+		)
 		{
 			// Nothing hit, sample sky if available else it's all black.
 			if (m_environment)
@@ -465,7 +467,10 @@ Color4f RayTracerEmbree::traceSinglePath(
 	rtcInitIntersectContext(&context);
 	rtcIntersect1(m_scene, &context, &rh);
 
-	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+	if (
+		rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
+		rh.hit.geomID >= m_models.size()
+	)
 	{
 		// Nothing hit, sample sky if available else it's all black.
 		if (m_environment)
@@ -501,10 +506,6 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
-
-	//Vector2 uv(random.nextFloat(), random.nextFloat());
-	////Vector4 newDirection = lambertianDirection(uv, hitNormal);
-	//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 
 	Color4f direct = sampleAnalyticalLights(
 		random,
