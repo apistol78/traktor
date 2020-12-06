@@ -318,7 +318,7 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 
 	if (!create)
 	{
-		std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.CachePath");
+		std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 		g_databaseConnections[connectionString].cache = new editor::PipelineInstanceCache(database, cachePath);
 	}
 
@@ -438,7 +438,7 @@ bool perform(const PipelineParameters* params)
 	}
 
 	// Open data access cache.
-	std::wstring dataAccessCachePath = settings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+	std::wstring dataAccessCachePath = settings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
 
 	Ref< editor::DataAccessCache > dataAccessCache = new editor::DataAccessCache();
 	if (!dataAccessCache->create(dataAccessCachePath))
@@ -449,7 +449,6 @@ bool perform(const PipelineParameters* params)
 
 	// Open pipeline dependency database.
 	std::wstring connectionString = settings->getProperty< std::wstring >(L"Pipeline.Db");
-	std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.CachePath");
 
 	Ref< editor::IPipelineDb > pipelineDb = new editor::PipelineDbFlat();
 	if (!pipelineDb->open(connectionString))
@@ -466,7 +465,7 @@ bool perform(const PipelineParameters* params)
 		if (!pipelineCache->create(settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline cache; cache disabled." << Endl;
-			pipelineCache = 0;
+			pipelineCache = nullptr;
 		}
 	}
 	if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
@@ -475,7 +474,7 @@ bool perform(const PipelineParameters* params)
 		if (!pipelineCache->create(settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
-			pipelineCache = 0;
+			pipelineCache = nullptr;
 		}
 	}
 

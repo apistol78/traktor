@@ -52,8 +52,8 @@ void EditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
+	std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
 	outEntityFactories.push_back(new EntityFactory(
 		context->getSourceDatabase(),

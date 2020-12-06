@@ -40,8 +40,9 @@ bool NormalizeTexCoords::apply(Model& model) const
         return true;
 
     // Reiterate and normalize texcoords in same channel.
-    for (auto& vertex : model.getVertices())
+    for (uint32_t i = 0; i < model.getVertexCount(); ++i)
     {
+        Vertex vertex = model.getVertex(i);
         uint32_t texCoord = vertex.getTexCoord(m_channel);
         if (texCoord == c_InvalidIndex)
             continue;
@@ -56,6 +57,8 @@ bool NormalizeTexCoords::apply(Model& model) const
 
         texCoord = model.addUniqueTexCoord(uv);
         vertex.setTexCoord(m_channel, texCoord);
+
+        model.setVertex(i, vertex);
     }
 
 	return true;

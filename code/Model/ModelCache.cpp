@@ -1,5 +1,4 @@
 #include "Core/Io/FileSystem.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -60,8 +59,6 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	}
 	if (haveCachedFile)
 	{
-		log::info << L"READ MODEL " << cachedFileName.getPathName() << Endl;
-
 		// Valid cache entry found; read from model from cache,
 		// do not use filter as it's written into cache after filter has been applied.
 		return ModelFormat::readAny(cachedFileName, L"");
@@ -71,9 +68,6 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	Ref< Model > model = ModelFormat::readAny(fileName, filter);
 	if (!model)
 		return nullptr;
-
-	if (model)
-		log::info << L"READ MODEL " << fileName.getPathName() << L", CACHE AS " << cachedFileName.getPathName() << Endl;
 
 	// Write cached copy of post-operation model.
 	{

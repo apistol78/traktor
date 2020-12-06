@@ -25,7 +25,7 @@ bool Triangulate::apply(Model& model) const
 			Winding3 polygonWinding;
 
 			for (size_t vertex : vertices)
-				polygonWinding.push(model.getVertexPosition(vertex));
+				polygonWinding.push(model.getVertexPosition((uint32_t)vertex));
 
 			Vector4 polygonNormal;
 			if (polygon.getNormal() != c_InvalidIndex)

@@ -122,7 +122,7 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	}
 
 	if (count > 0)
-		tipPoint = (tipPoint / Scalar(count)).xyz1();
+		tipPoint = (tipPoint / Scalar((float)count)).xyz1();
 	else
 		tipPoint = midPoint;
 

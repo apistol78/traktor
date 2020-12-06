@@ -34,7 +34,7 @@ public:
 	Ref< ShaderGraph > generate(const std::wstring& name) const;
 
 private:
-	std::map< std::wstring, Ref< const ShaderGraph > > m_techniques;
+	std::map< std::wstring, Ref< ShaderGraph > > m_techniques;
 };
 
 	}

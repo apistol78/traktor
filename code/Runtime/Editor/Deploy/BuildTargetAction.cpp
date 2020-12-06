@@ -181,7 +181,9 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Set instance cache path.
-	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.CachePath", FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/temp/Cache").getPathName());
+	std::wstring instanceCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
+	instanceCachePath = FileSystem::getInstance().getAbsolutePath(instanceCachePath).getPathName();
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.InstanceCache.Path", instanceCachePath);
 
 	// Merge threaded build configuration from global configuration.
 	bool dependsThreads = m_globalSettings->getProperty< bool >(L"Pipeline.DependsThreads", true);
@@ -205,9 +207,9 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
 
 	// Set data access cache path.
-	Path dataAccessCachePath = m_globalSettings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+	Path dataAccessCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
 	dataAccessCachePath = FileSystem::getInstance().getAbsolutePath(dataAccessCachePath);
-	pipelineConfiguration->setProperty< PropertyString >(L"Editor.DataAccessCachePath", dataAccessCachePath.getPathName());
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.DataAccessCache.Path", dataAccessCachePath.getPathName());
 
 	// Set asset path.
 	Path assetPath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AssetPath");
@@ -215,14 +217,14 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 
 	// Set model cache path.
-	Path modelCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.ModelCachePath");
+	Path modelCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 	modelCachePath = FileSystem::getInstance().getAbsolutePath(modelCachePath);
-	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.ModelCachePath", modelCachePath.getPathName());
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.ModelCache.Path", modelCachePath.getPathName());
 
 	// Set shader program cache path.
-	Path programCachePath = m_globalSettings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCachePath");
+	Path programCachePath = m_globalSettings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
 	programCachePath = FileSystem::getInstance().getAbsolutePath(programCachePath);
-	pipelineConfiguration->setProperty< PropertyString >(L"ShaderPipeline.ProgramCachePath", programCachePath.getPathName());
+	pipelineConfiguration->setProperty< PropertyString >(L"ShaderPipeline.ProgramCache.Path", programCachePath.getPathName());
 
 	// Insert mesh pipeline's material templates.
 	const IPropertyValue* materialTemplates = m_globalSettings->getProperty(L"MeshPipeline.MaterialTemplates");

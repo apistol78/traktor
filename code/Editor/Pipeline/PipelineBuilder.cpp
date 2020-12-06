@@ -543,7 +543,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			WorkEntry we;
 			we.dependency = dependency;
 			we.buildParams = nullptr;
-			we.reason = reasons[i];
+			we.reason = reasons[i] | PbrSynthesized;
 
 			if (dependency->outputGuid == outputGuid)
 				we.buildParams = buildParams;
@@ -552,8 +552,13 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		}
 	}
 
-	for (const auto& we : workSet)
-		performBuild(&dependencySet, we.dependency, we.buildParams, we.reason | PbrSynthesized);
+	//for (const auto& we : workSet)
+	//	performBuild(&dependencySet, we.dependency, we.buildParams, we.reason);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
+		m_workSet.insert(m_workSet.end(), workSet.begin(), workSet.end());
+	}
 
 	return true;
 }

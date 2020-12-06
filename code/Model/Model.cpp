@@ -88,7 +88,7 @@ void Model::clear(uint32_t clearFlags)
 	if (clearFlags & CfMaterials)
 		m_materials.resize(0);
 	if (clearFlags & CfVertices)
-		m_vertices.resize(0);
+		m_vertices.clear();
 	if (clearFlags & CfPolygons)
 		m_polygons.resize(0);
 	if (clearFlags & CfPositions)
@@ -102,7 +102,8 @@ void Model::clear(uint32_t clearFlags)
 	if (clearFlags & CfJoints)
 		m_joints.resize(0);
 
-	for (auto& vertex : m_vertices)
+	AlignedVector< Vertex > vertices = m_vertices.values();
+	for (auto& vertex : vertices)
 	{
 		if (clearFlags & CfPositions)
 			vertex.setPosition(c_InvalidIndex);
@@ -119,6 +120,7 @@ void Model::clear(uint32_t clearFlags)
 		if (clearFlags & CfJoints)
 			vertex.clearJointInfluences();
 	}
+	m_vertices.replace(vertices);
 
 	for (auto& polygon : m_polygons)
 	{
@@ -151,20 +153,13 @@ uint32_t Model::addUniqueMaterial(const Material& material)
 
 uint32_t Model::addVertex(const Vertex& vertex)
 {
-	return addId(m_vertices, vertex);
+	return m_vertices.add(vertex);
 }
 
 uint32_t Model::addUniqueVertex(const Vertex& vertex)
 {
-	for (uint32_t i = 0; i < m_vertices.size(); ++i)
-	{
-		if (shouldReplace(m_vertices[i], vertex))
-		{
-			m_vertices[i] = vertex;
-			return i;
-		}
-	}
-	return addId(m_vertices, vertex);
+	uint32_t id = m_vertices.find(vertex);
+	return id != m_vertices.InvalidIndex ? id : m_vertices.add(vertex);
 }
 
 uint32_t Model::addPolygon(const Polygon& polygon)
@@ -401,24 +396,50 @@ const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t
 void Model::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< Material, MemberComposite< Material > >(L"materials", m_materials);
-	s >> MemberAlignedVector< Vertex, MemberComposite< Vertex > >(L"vertices", m_vertices);
-	s >> MemberAlignedVector< Polygon, MemberComposite< Polygon > >(L"polygons", m_polygons);
 
-	AlignedVector< Vector4 > positions = m_positions.values();
-	s >> MemberAlignedVector< Vector4 >(L"positions", positions);
-	m_positions.replace(positions);
+	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		AlignedVector< Vertex > vertices;
+		s >> MemberAlignedVector< Vertex, MemberComposite< Vertex > >(L"vertices", vertices);
+		m_vertices.swap(vertices);
 
-	AlignedVector< Vector4 > colors = m_colors.values();
-	s >> MemberAlignedVector< Vector4 >(L"colors", colors);
-	m_colors.replace(colors);
+		s >> MemberAlignedVector< Polygon, MemberComposite< Polygon > >(L"polygons", m_polygons);
 
-	AlignedVector< Vector4 > normals = m_normals.values();
-	s >> MemberAlignedVector< Vector4 >(L"normals", normals);
-	m_normals.replace(normals);
+		AlignedVector< Vector4 > positions;
+		s >> MemberAlignedVector< Vector4 >(L"positions", positions);
+		m_positions.swap(positions);
 
-	AlignedVector< Vector2 > texCoords = m_texCoords.values();
-	s >> MemberAlignedVector< Vector2 >(L"texCoords", texCoords);
-	m_texCoords.replace(texCoords);
+		AlignedVector< Vector4 > colors;
+		s >> MemberAlignedVector< Vector4 >(L"colors", colors);
+		m_colors.swap(colors);
+
+		AlignedVector< Vector4 > normals;
+		s >> MemberAlignedVector< Vector4 >(L"normals", normals);
+		m_normals.swap(normals);
+
+		AlignedVector< Vector2 > texCoords;
+		s >> MemberAlignedVector< Vector2 >(L"texCoords", texCoords);
+		m_texCoords.swap(texCoords);
+	}
+	else // ISerializer::Direction::Write
+	{
+		auto& values = const_cast< AlignedVector< Vertex >& >(m_vertices.values());
+		s >> MemberAlignedVector< Vertex, MemberComposite< Vertex > >(L"vertices", values);
+
+		s >> MemberAlignedVector< Polygon, MemberComposite< Polygon > >(L"polygons", m_polygons);
+
+		auto& positions = const_cast< AlignedVector< Vector4 >& >(m_positions.values());
+		s >> MemberAlignedVector< Vector4 >(L"positions", positions);
+
+		auto& colors = const_cast< AlignedVector< Vector4 >& >(m_colors.values());
+		s >> MemberAlignedVector< Vector4 >(L"colors", colors);
+
+		auto& normals = const_cast< AlignedVector< Vector4 >& >(m_normals.values());
+		s >> MemberAlignedVector< Vector4 >(L"normals", normals);
+
+		auto& texCoords = const_cast< AlignedVector< Vector2 >& >(m_texCoords.values());
+		s >> MemberAlignedVector< Vector2 >(L"texCoords", texCoords);
+	}
 
 	s >> MemberAlignedVector< std::wstring >(L"texCoordChannels", m_texCoordChannels);
 

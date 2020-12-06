@@ -1708,7 +1708,7 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::buildAssetsForOpenedEditors()
 {
-	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 	std::vector< Guid > assetGuids;
 
 	PipelineFactory pipelineFactory(m_mergedSettings);
@@ -1793,7 +1793,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
-	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
 	// Create pipeline factory.
 	PipelineFactory pipelineFactory(m_mergedSettings);
@@ -1997,7 +1997,7 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 {
 	T_ASSERT(m_sourceDatabase);
 
-	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
 	Ref< PipelineFactory > pipelineFactory = new PipelineFactory(m_mergedSettings);
 	Ref< PipelineInstanceCache > instanceCache = new PipelineInstanceCache(m_sourceDatabase, cachePath);
@@ -3240,7 +3240,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	progress = 800;
 
 	// Create data access cache.
-	std::wstring cachePath = mergedSettings->getProperty< std::wstring >(L"Editor.DataAccessCachePath");
+	std::wstring cachePath = mergedSettings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
 	Ref< DataAccessCache > dataAccessCache = new DataAccessCache();
 	if (!dataAccessCache->create(cachePath))
 	{

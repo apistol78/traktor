@@ -140,7 +140,7 @@ MeshPipeline::MeshPipeline()
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCachePath", L"");
+	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 	m_promoteHalf = settings->getProperty< bool >(L"MeshPipeline.PromoteHalf", false);
 	m_enableCustomShaders = settings->getProperty< bool >(L"MeshPipeline.EnableCustomShaders", true);
 	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);

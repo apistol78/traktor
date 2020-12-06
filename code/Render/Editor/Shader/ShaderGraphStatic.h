@@ -66,7 +66,6 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	Ref< const ShaderGraph > m_shaderGraphClean;
 };
 
 	}

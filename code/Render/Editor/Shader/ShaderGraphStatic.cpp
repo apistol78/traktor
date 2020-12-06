@@ -141,7 +141,10 @@ ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< Platform > nodes;
 	shaderGraph->findNodesOf< Platform >(nodes);
@@ -184,7 +187,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 
 Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring& renderer) const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< Renderer > nodes;
 	shaderGraph->findNodesOf< Renderer >(nodes);
@@ -227,7 +233,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 
 Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< Connected > nodes;
 	if (shaderGraph->findNodesOf< Connected >(nodes) <= 0)
@@ -279,7 +288,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< Type > nodes;
 	if (shaderGraph->findNodesOf< Type >(nodes) <= 0)
@@ -347,12 +359,15 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		}
 	}
 
-	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	return shaderGraph;
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
 
 	// Each output are now assigned a required output width.
@@ -360,10 +375,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	const wchar_t* c_swizzles[] = { L"x", L"xy", L"xyz", L"xyzw" };
 
 	RefArray< Edge > edges = shaderGraph->getEdges();
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+	for (auto edge : edges)
 	{
-		const OutputPin* sourcePin = (*i)->getSource();
-		const InputPin* destinationPin = (*i)->getDestination();
+		const OutputPin* sourcePin = edge->getSource();
+		const InputPin* destinationPin = edge->getDestination();
 
 		PinType sourceType = typePropagation.evaluate(sourcePin);
 		PinType destinationType = typePropagation.evaluate(destinationPin);
@@ -372,10 +387,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 			continue;
 
 		// \fixme Bug in shader graph; must remove edge prior to adding new edges.
-		shaderGraph->removeEdge(*i);
+		shaderGraph->removeEdge(edge);
 
-		const std::pair< int, int > p1 = sourcePin->getNode()->getPosition();
-		const std::pair< int, int > p2 = destinationPin->getNode()->getPosition();
+		const auto p1 = sourcePin->getNode()->getPosition();
+		const auto p2 = destinationPin->getNode()->getPosition();
 
 		std::pair< int, int > p(
 			(p1.first + p2.first) / 2,
@@ -400,11 +415,12 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 {
 	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
-	std::vector< const OutputPin* > inputOutputPins;
+	AlignedVector< const OutputPin* > inputOutputPins;
 
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
-	T_ASSERT(shaderGraph);
-	T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
@@ -677,7 +693,7 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 		i = swizzleNodes.begin();
 	}
 
-	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	return shaderGraph;
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
