@@ -3,6 +3,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
@@ -311,10 +312,7 @@ bool loadMaterialTextures(editor::IPipelineBuilder* pipelineBuilder, model::Mode
 {
 	// Modify all materials to contain reference to lightmap channel.
 	for (auto& material : model->getMaterials())
-	{
-		material.setBlendOperator(model::Material::BoDecal);
 		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
-	}
 
 	// Load texture images and attach to materials.
 	for (auto& material : model->getMaterials())

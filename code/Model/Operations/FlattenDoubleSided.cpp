@@ -1,3 +1,4 @@
+#include "Core/Math/Winding3.h"
 #include "Model/Model.h"
 #include "Model/Operations/FlattenDoubleSided.h"
 
@@ -11,20 +12,43 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.FlattenDoubleSided", FlattenDoubleSided, 
 bool FlattenDoubleSided::apply(Model& model) const
 {
 	const AlignedVector< Polygon >& polygons = model.getPolygons();
-	AlignedVector< Polygon > flatten; flatten.reserve(polygons.size());
+	Winding3 w;
+	Plane p;
 
-	for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	AlignedVector< Polygon > flatten;
+	flatten.reserve(polygons.size());
+
+	for (const auto& polygon : polygons)
 	{
-		uint32_t materialId = i->getMaterial();
+		uint32_t materialId = polygon.getMaterial();
 		const Material& material = model.getMaterial(materialId);
 		if (!material.isDoubleSided())
 			continue;
 
-		Polygon flat = *i;
-		for (uint32_t j = 0; j < i->getVertexCount(); ++j)
+		Polygon flat = polygon;
+
+		w.clear();
+		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+			w.push(model.getVertexPosition(polygon.getVertex(j)));
+		if (!w.getPlane(p))
+			continue;
+
+		for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
 		{
-			uint32_t vtx = i->getVertex(j);
-			flat.setVertex(i->getVertexCount() - j - 1, vtx);
+			uint32_t sourceVertexId = polygon.getVertex(i);
+
+			const Vertex& sourceVertex = model.getVertex(sourceVertexId);
+			Vertex flattenVertex = sourceVertex;
+
+			if (sourceVertex.getNormal() != c_InvalidIndex)
+			{
+				Vector4 sourceNormal = model.getNormal(sourceVertex.getNormal());
+				Vector4 flattenNormal = sourceNormal - p.normal() * (2.0_simd * dot3(p.normal(), sourceNormal));
+				flattenVertex.setNormal(model.addUniqueNormal(flattenNormal));
+			}
+
+			uint32_t flattenVertexId = model.addUniqueVertex(flattenVertex);
+			flat.setVertex(polygon.getVertexCount() - i - 1, flattenVertexId);
 		}
 		flatten.push_back(flat);
 	}
@@ -33,9 +57,8 @@ bool FlattenDoubleSided::apply(Model& model) const
 	model.setPolygons(flatten);
 
 	AlignedVector< Material > materials = model.getMaterials();
-	for (AlignedVector< Material >::iterator i = materials.begin(); i != materials.end(); ++i)
-		i->setDoubleSided(false);
-
+	for (auto& material : materials)
+		material.setDoubleSided(false);
 	model.setMaterials(materials);
 	return true;
 }

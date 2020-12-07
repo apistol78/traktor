@@ -99,7 +99,56 @@ float wrap(float n)
 	return n - std::floor(n);
 }
 
-const Vector4 c_luminance(2.126f, 7.152f, 0.722f, 0.0f);
+struct GeomUser
+{
+	const model::Model* model;
+	RTCGeometry geom;
+};
+
+void alphaTestFilter(const RTCFilterFunctionNArguments* args)
+{
+	if (args->context == nullptr)
+		return;
+
+	const GeomUser* userData = (const GeomUser*)args->geometryUserPtr;
+	const model::Model* model = userData->model;
+	const auto& polygons = model->getPolygons();
+	const auto& materials = model->getMaterials();
+
+	RTCHitN* hits = args->hit;
+
+	for (int i = 0; i < args->N; ++i)
+	{
+		if (args->valid[i] != -1)
+			continue;
+
+		uint32_t primID = RTCHitN_primID(hits, args->N, i);
+
+		const auto& hitPolygon = polygons[primID];
+		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+
+		if (hitMaterial.getDiffuseMap().image)
+		{
+			const uint32_t slot = 0;
+			float texCoord[2] = { 0.0f, 0.0f };
+
+			float u = RTCHitN_u(hits, args->N, i);
+			float v = RTCHitN_v(hits, args->N, i);
+			rtcInterpolate0(userData->geom, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+			auto image = hitMaterial.getDiffuseMap().image;
+
+			Color4f color;
+			image->getPixel(
+				(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+				(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+				color
+			);
+			if (color.getAlpha() <= 0.5f)
+				args->valid[i] = 0;
+		}
+	}
+}
 
 		}
 
@@ -188,6 +237,23 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 		*triangles++ = polygon.getVertex(1);
 		*triangles++ = polygon.getVertex(0);
 	}
+
+	// Add filter functions if model contain alpha-test material.
+	for (const auto& material : model->getMaterials())
+	{
+		if (
+			material.getBlendOperator() == model::Material::BoAlphaTest &&
+			material.getDiffuseMap().image != nullptr
+		)
+		{
+			rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+			rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+		}
+	}
+
+	// Attach user data to geometry, \fixme leaking memory...
+	auto userData = new GeomUser { model, mesh };
+	rtcSetGeometryUserData(mesh, userData);
 
 	rtcCommitGeometry(mesh);
 	rtcAttachGeometry(m_scene, mesh);
@@ -419,11 +485,6 @@ Color4f RayTracerEmbree::tracePath0(
 
 		Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
 		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
-
-		//Vector2 uv(random.nextFloat(), random.nextFloat());
-		//Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-		//Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
 		Color4f direct = sampleAnalyticalLights(
 			random,

@@ -328,10 +328,8 @@ bool MeshPipeline::buildOutput(
 	// are procedurally generated.
 	if (buildParams)
 	{
-		Ref< model::Model > model = mandatory_non_null_type_cast< model::Model* >(
-			const_cast< Object* >(buildParams)
-		);
-
+		// Create a mutable copy of model since we modify it.
+		Ref< model::Model > model = DeepClone(checked_type_cast< const ISerializable* >(buildParams)).create< model::Model >();
 		if (model->getPolygonCount() == 0)
 		{
 			log::error << L"Mesh pipeline failed; no polygons in parametric source model." << Endl;

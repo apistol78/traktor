@@ -23,27 +23,15 @@ public:
 
 	Polar() = default;
 
-	T_MATH_INLINE explicit Polar(float phi_, float theta_)
-	:	phi(phi_)
-	,	theta(theta_)
-	{
-	}
+	T_MATH_INLINE explicit Polar(float phi_, float theta_);
 
-	static T_MATH_INLINE Polar fromUnitCartesian(const Vector4& unit)
-	{
-		float phi = acosf(unit.y());
-		float theta = atan2f(unit.z(), unit.x());
-		return Polar(phi, theta >= 0.0f ? theta : theta + TWO_PI);
-	}
+	static T_MATH_INLINE Polar fromUnitCartesian(const Vector4& unit);
 
-	T_MATH_INLINE Vector4 toUnitCartesian() const
-	{
-		return Vector4(
-			sinf(phi) * cosf(theta),
-			cosf(phi),
-			sinf(phi) * sinf(theta)
-		);
-	}
+	T_MATH_INLINE Vector4 toUnitCartesian() const;
 };
 
 }
+
+#if defined(T_MATH_USE_INLINE)
+#	include "Core/Math/Std/Polar.inl"
+#endif
