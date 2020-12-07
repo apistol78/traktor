@@ -271,6 +271,8 @@ private:
 	RefArray< Animation > m_animations;
 	AlignedVector< std::wstring > m_blendTargets;
 	SmallMap< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
+
+	void validate() const;
 };
 
 	}

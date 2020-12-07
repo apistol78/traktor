@@ -91,10 +91,10 @@ public:
 		return InvalidIndex;
 	}
 
-	//AlignedVector< ValueType >& values()
-	//{
-	//	return m_values;
-	//}
+	const SmallMap< uint32_t, SmallSet< uint32_t > >& indices() const
+	{
+		return m_indices;
+	}
 
 	const AlignedVector< ValueType >& values() const
 	{
@@ -105,11 +105,6 @@ public:
 	{
 		return m_values[index];
 	}
-
-	//ValueType& operator [] (uint32_t index)
-	//{
-	//	return m_values[index];
-	//}
 
 private:
 	SmallMap< uint32_t, SmallSet< uint32_t > > m_indices;

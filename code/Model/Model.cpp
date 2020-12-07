@@ -455,6 +455,30 @@ void Model::serialize(ISerializer& s)
 		Member< uint32_t >,
 		MemberAlignedVector< Vector4 >
 	>(L"blendTargetPositions", m_blendTargetPositions);
+
+#if defined(_DEBUG)
+	if (s.getDirection() == ISerializer::Direction::Read)
+		validate();
+#endif
+}
+
+void Model::validate() const
+{
+	for (const auto& indices : m_vertices.indices())
+	{
+		T_FATAL_ASSERT(!indices.second.empty());
+		for (auto vertexId : indices.second)
+			T_FATAL_ASSERT(vertexId < m_vertices.size());
+	}
+
+	for (const auto& polygon : m_polygons)
+	{
+		T_FATAL_ASSERT(polygon.getVertexCount() > 0);
+		T_FATAL_ASSERT(polygon.getMaterial() < m_materials.size());
+
+		for (auto vertexId : polygon.getVertices())
+			T_FATAL_ASSERT(vertexId < m_vertices.size());
+	}
 }
 
 	}

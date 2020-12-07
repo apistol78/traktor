@@ -36,12 +36,7 @@ namespace traktor
 
 const uint32_t c_maxCacheSize = 32;
 const uint32_t c_maxUnusedCount = 10;
-
-#if defined(__IOS__) || defined(__ANDROID__) || defined(__PS3__)
-const uint32_t c_cacheGlyphSize = 64;
-#else
 const uint32_t c_cacheGlyphSize = 128;
-#endif
 const uint32_t c_cacheGlyphMargin = 0;
 const uint32_t c_cacheGlyphCountX = 16;
 const uint32_t c_cacheGlyphCountY = 8;

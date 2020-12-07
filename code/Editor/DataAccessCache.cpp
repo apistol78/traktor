@@ -5,6 +5,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
 #include "Editor/DataAccessCache.h"
 
 namespace traktor
@@ -31,10 +32,16 @@ Ref< Object > DataAccessCache::readObject(
 )
 {
 	// Get object from object table.
-	auto it = m_objectPool.find(key);
-	if (it != m_objectPool.end())
+	Ref< ChunkMemory > chunk;
 	{
-		ChunkMemoryStream cms(it->second, true, false);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		auto it = m_objectPool.find(key);
+		if (it != m_objectPool.end())
+			chunk = it->second;
+	}
+	if (chunk)
+	{
+		ChunkMemoryStream cms(chunk, true, false);
 		return read(&cms);
 	}
 
@@ -50,7 +57,10 @@ Ref< Object > DataAccessCache::readObject(
 		if (!StreamCopy(&cmsw, blobStream).execute())
 			return nullptr;
 
-		m_objectPool.insert(std::make_pair(key, blob));
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_objectPool.insert(std::make_pair(key, blob));
+		}
 
 		ChunkMemoryStream cmsr(blob, true, false);
 		return read(&cmsr);
@@ -67,7 +77,10 @@ Ref< Object > DataAccessCache::readObject(
 	if (!write(object, &cms))
 		return nullptr;
 
-	m_objectPool.insert(std::make_pair(key, blob));
+	{
+		m_objectPool.insert(std::make_pair(key, blob));
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	}
 
 	// Write to physical cache.
 	blobStream = FileSystem::getInstance().open(fileName, File::FmWrite);

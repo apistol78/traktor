@@ -3,6 +3,7 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
 
@@ -59,6 +60,7 @@ private:
 
 	Path m_cachePath;
 	SmallMap< uint32_t, Ref< ChunkMemory > > m_objectPool;
+	Semaphore m_lock;
 
 	Ref< Object > readObject(
 		uint32_t key,

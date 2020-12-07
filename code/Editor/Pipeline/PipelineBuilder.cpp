@@ -36,8 +36,6 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_synthesisSeedGuid(L"{59CFF56A-2A77-4218-AA06-69019B52B9B1}");
-
 class LogTargetFilter : public ILogTarget
 {
 public:
@@ -495,6 +493,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				reasons[i] |= PbrSourceModified;
 				++modifiedCount;
 			}
+
+			// In case we have a non-hashable parameter we need to ensure it's build every time.
+			if (buildParams != nullptr && !is_a< ISerializable >(buildParams) && dependency->outputGuid == outputGuid)
+				reasons[i] |= PbrUncacheable;
 		}
 		else
 			reasons[i] |= PbrForced;
@@ -551,9 +553,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			workSet.push_back(we);
 		}
 	}
-
-	//for (const auto& we : workSet)
-	//	performBuild(&dependencySet, we.dependency, we.buildParams, we.reason);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
@@ -740,7 +739,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 	m_buildInstances.set(&builtInstances);
 
 	// Get output instances from cache.
-	if (m_cache)
+	if (m_cache && (reason & PbrUncacheable) == 0)
 	{
 		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
@@ -761,7 +760,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 		else
 			Atomic::increment(m_cacheMiss);
 	}
-	else if (m_cache)
+	else
 		Atomic::increment(m_cacheVoid);
 
 	// Expose this dependency's hash since synthesized builds need to take it into account for caching.
@@ -804,7 +803,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 
 	if (result)
 	{
-		if (m_cache)
+		if (m_cache && (reason & PbrUncacheable) == 0)
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
@@ -934,11 +933,15 @@ void PipelineBuilder::buildThread(
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
 			if (!m_workSet.empty())
 			{
+				log::debug << (uint32_t)m_workSet.size() << L" work set items." << Endl;
 				we = m_workSet.back();
 				m_workSet.pop_back();
 			}
 			else
+			{
+				log::debug << L"No more work set items; build finished." << Endl;
 				break;
+			}
 		}
 
 		T_ASSERT(we.dependency);
