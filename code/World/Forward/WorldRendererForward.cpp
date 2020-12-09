@@ -149,24 +149,14 @@ struct LightShaderData
 #pragma pack(1)
 struct LightIndexShaderData
 {
-#if !defined(__ANDROID__)
-	uint16_t lightIndex[4];
-	uint16_t pad[4];
-#else
 	float lightIndex[4];
-#endif
 };
 #pragma pack()
 
 #pragma pack(1)
 struct TileShaderData
 {
-#if !defined(__ANDROID__)
-	uint16_t lightOffsetAndCount[4];
-	uint16_t pad[4];
-#else
 	float lightOffsetAndCount[4];
-#endif
 };
 #pragma pack()
 
@@ -284,11 +274,7 @@ bool WorldRendererForward::create(
 
 		// Tile light index array buffer.
 		AlignedVector< render::StructElement > lightIndexShaderDataStruct;
-#if !defined(__ANDROID__)
-		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(LightIndexShaderData, lightIndex)));
-#else
 		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightIndexShaderData, lightIndex)));
-#endif
 		T_FATAL_ASSERT(sizeof(LightIndexShaderData) == render::getStructSize(lightIndexShaderDataStruct));
 
 		frame.lightIndexSBuffer = renderSystem->createStructBuffer(
@@ -300,11 +286,7 @@ bool WorldRendererForward::create(
 
 		// Tile cluster buffer.
 		AlignedVector< render::StructElement > tileShaderDataStruct;
-#if !defined(__ANDROID__)
-		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lightOffsetAndCount)));
-#else
 		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightOffsetAndCount)));
-#endif
 		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
@@ -504,9 +486,11 @@ void WorldRendererForward::setupTileDataPass(
 		const auto& lights = m_frames[frame].lights;
 
 		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
-		//std::memset(tileShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData));
+		std::memset(tileShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData));
 
 		LightIndexShaderData* lightIndexShaderData = (LightIndexShaderData*)m_frames[frame].lightIndexSBuffer->lock();
+		std::memset(lightIndexShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster * sizeof(LightIndexShaderData));
+
 		uint32_t lightOffset = 0;
 
 		StaticVector< Vector4, c_maxLightCount > lightPositions;
@@ -605,8 +589,8 @@ void WorldRendererForward::setupTileDataPass(
 					tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
 
 					const uint32_t tileOffset = (x + y * ClusterDimXY) * ClusterDimZ + z;
-					tileShaderData[tileOffset].lightOffsetAndCount[0] = (uint16_t)lightOffset;
-					tileShaderData[tileOffset].lightOffsetAndCount[1] = 0;
+					tileShaderData[tileOffset].lightOffsetAndCount[0] = (float)lightOffset;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = (float)0;
 
 					int32_t count = 0;
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
@@ -615,14 +599,14 @@ void WorldRendererForward::setupTileDataPass(
 						const Light& light = lights[lightIndex];
 						if (light.type == LtDirectional)
 						{
-							lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+							lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
 							++count;
 						}
 						else if (light.type == LtPoint)
 						{
 							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
 							{
-								lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
 								++count;
 							}
 						}
@@ -631,7 +615,7 @@ void WorldRendererForward::setupTileDataPass(
 							// \fixme Implement frustum to frustum culling.
 							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
 							{
-								lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
 								++count;
 							}
 						}
@@ -639,7 +623,7 @@ void WorldRendererForward::setupTileDataPass(
 							break;
 					}
 
-					tileShaderData[tileOffset].lightOffsetAndCount[1] = (uint16_t)count;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = (float)count;
 					lightOffset += count;
 				}
 			}
