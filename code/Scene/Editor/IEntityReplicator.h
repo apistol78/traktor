@@ -32,6 +32,14 @@ class Model;
 
     }
 
+    namespace world
+    {
+
+class EntityData;
+class IEntityComponentData;
+
+    }
+
     namespace scene
     {
 
@@ -53,13 +61,15 @@ public:
      *
      * \param pipelineBuilder Pipeline builder.
      * \param assetPath Asset path.
-     * \param source Source object, entity or component data.
+     * \param entityData Owner entity data.
+     * \param componentData Component data which we want to represent as a model.
      * \return Model replica of entity or component.
      */
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
-        const Object* source
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData
     ) const = 0;
 
     /*! Modify entity or component to use attributes from model.

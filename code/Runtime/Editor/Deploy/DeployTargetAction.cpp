@@ -171,7 +171,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	applicationConfiguration->setProperty< PropertyBoolean >(L"Render.UseProgramCache", false);
 
 	// Append verbose resource manager.
-	if (m_globalSettings->getProperty< bool >(L"Runtime.VerboseResourceManager", false))
+	if (m_globalSettings->getProperty< bool >(L"Resource.Verbose", false))
 		applicationConfiguration->setProperty< PropertyBoolean >(L"Resource.Verbose", true);
 
 	// Append tweaks.

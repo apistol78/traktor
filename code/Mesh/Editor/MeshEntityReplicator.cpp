@@ -34,10 +34,11 @@ TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
 Ref< model::Model > MeshEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-    const Object* source
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
 ) const
 {
-	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
+	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
 
 	// Get referenced mesh asset.
 	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());

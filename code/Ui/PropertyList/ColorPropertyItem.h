@@ -33,9 +33,13 @@ public:
 	bool getHighDynamicRange() const;
 
 protected:
-	virtual void mouseButtonUp(MouseButtonUpEvent* event) override;
+	virtual void mouseButtonUp(MouseButtonUpEvent* event) override final;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
+	virtual void paintValue(Canvas& canvas, const Rect& rc) override final;
+
+	virtual bool copy() override final;
+
+	virtual bool paste() override final;
 
 private:
 	Color4f m_value;

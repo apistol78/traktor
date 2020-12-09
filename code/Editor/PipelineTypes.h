@@ -27,9 +27,8 @@ enum PipelineBuildReason
 	PbrDependencyModified = 1,	/*!< Dependent resource has been modified. */
 	PbrSourceModified = 2,		/*!< Source has been modified. */
 	PbrAssetModified = 4,		/*!< Asset has been modified; only valid for Asset classes and are always combined with PbrSourceModified. */
-	PbrSynthesized = 8,			/*!< Build synthesized. */
-	PbrForced = 16,				/*!< Forced build issued, must build even if output is up-to-date. */
-	PbrUncacheable = 32			/*!< Build product is uncacheable, happens if ad-hoc build are used with an unserializable build parameter. */
+	PbrAdHoc = 8,				/*!< Ad-hoc build. */
+	PbrForced = 16				/*!< Forced build issued, must build even if output is up-to-date. */
 };
 
 /*! Pipeline dependency hash.

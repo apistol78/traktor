@@ -39,6 +39,7 @@ extern const render::Handle s_handleLastWorld;
 extern const render::Handle s_handleLastWorldView;
 extern const render::Handle s_handleLightCount;
 extern const render::Handle s_handleLightDiffuseMap;
+extern const render::Handle s_handleLightIndexSBuffer;
 extern const render::Handle s_handleLightMap;
 extern const render::Handle s_handleLightSBuffer;
 extern const render::Handle s_handleLightSpecularMap;

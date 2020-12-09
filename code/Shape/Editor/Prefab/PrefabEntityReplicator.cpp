@@ -14,7 +14,7 @@
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "Scene/Editor/Traverser.h"
-#include "Shape/Editor/Prefab/PrefabEntityData.h"
+#include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/EntityData.h"
 
@@ -33,22 +33,22 @@ bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 {
-    return makeTypeInfoSet< PrefabEntityData >();
+    return makeTypeInfoSet< PrefabComponentData >();
 }
 
 Ref< model::Model > PrefabEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
-    const Object* source
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
 ) const
 {
-	const PrefabEntityData* prefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(source);
+	const PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< const PrefabComponentData* >(componentData);
+    Transform worldInv = entityData->getTransform().inverse();
 
-    Transform parentInv = prefabEntityData->getTransform().inverse();
-
-    // Collect all models from prefab entity.
+    // Collect all models from prefab component.
     RefArray< model::Model > models;
-    scene::Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
+    scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
     {
         if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
         {
@@ -65,9 +65,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 		        return scene::Traverser::VrFailed;
 
 	        model::Transform(scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())).apply(*model);
-
-            // Transform model into world space.
-            model::Transform((parentInv * inoutEntityData->getTransform()).toMatrix44()).apply(*model);
+            model::Transform((worldInv * inoutEntityData->getTransform()).toMatrix44()).apply(*model);
 
             model->clear(model::Model::CfColors | model::Model::CfJoints);
             models.push_back(model);
@@ -91,11 +89,11 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
     const Guid& outputGuid
 ) const
 {
-	const PrefabEntityData* prefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(source);
+	const PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< const PrefabComponentData* >(source);
 
     // Collect all material textures.
     std::map< std::wstring, Guid > materialTextures;
-    scene::Traverser::visit(prefabEntityData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
+    scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
     {
         if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
         {
@@ -123,14 +121,6 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
         return scene::Traverser::VrContinue;
     });
 
-    // Create replacement entity.
-    Ref< world::EntityData > entityData = new world::EntityData();
-    entityData->setId(prefabEntityData->getId());
-    entityData->setName(prefabEntityData->getName());
-    entityData->setTransform(prefabEntityData->getTransform());
-
-    entityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid)));
-
 	// Create a new mesh asset referencing the modified model.
     Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
     outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
@@ -143,7 +133,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
         model
     );
 
-    return entityData;
+    return new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid));
 }
 
     }

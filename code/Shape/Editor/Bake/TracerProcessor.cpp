@@ -11,6 +11,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -423,6 +424,9 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 
 void TracerProcessor::processorThread()
 {
+	Timer timer;
+	timer.start();
+
 	while (!m_thread->stopped())
 	{
 		if (!m_event.wait(100))
@@ -441,11 +445,20 @@ void TracerProcessor::processorThread()
 		{
 			m_status.active = true;
 			m_cancelled = false;
+
+			double Tstart = timer.getElapsedTime();
+
 			process(m_activeTask);
+
+			double Tend = timer.getElapsedTime();
+			if (!m_cancelled)
+				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" finished in " << (int32_t)(Tend - Tstart) << L" seconds." << Endl;
+
 			m_status.active = false;
 			m_activeTask = nullptr;
 		}
 	}
+
 	cancelAll();
 }
 

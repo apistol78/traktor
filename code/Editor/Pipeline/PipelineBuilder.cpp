@@ -1,6 +1,3 @@
-#if defined(_WIN32)
-#	include <cfloat>
-#endif
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
@@ -144,14 +141,6 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	Timer timer;
 	timer.start();
 
-	// Ensure FP is in known state.
-#if defined(_WIN32) && !defined(_WIN64)
-	uint32_t dummy;
-	_controlfp_s(&dummy, 0, 0);
-	_controlfp_s(&dummy,_PC_24, _MCW_PC);
-	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
-#endif
-
 	uint32_t dependencyCount = dependencySet->size();
 	uint32_t modifiedCount = 0;
 
@@ -189,9 +178,8 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			PipelineDependencyHash previousDependencyHash;
 			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 			{
-#if defined(_DEBUG)
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
-#endif
+				if (m_verbose)
+					log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
 				reasons[i] |= PbrSourceModified;
 				++modifiedCount;
 			}
@@ -202,8 +190,9 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 				previousDependencyHash.filesHash != filesHash
 			)
 			{
+				if (m_verbose)
+					log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (or new pipeline version)." << Endl;
 #if defined(_DEBUG)
-				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (or new pipeline version)." << Endl;
 				log::info << IncreaseIndent;
 				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.pipelineHash, 8); log::info << L")" << Endl;
 				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceAssetHash, 8); log::info << L")" << Endl;
@@ -220,9 +209,6 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 		else
 			reasons[i] |= PbrForced;
 	}
-
-	if (!rebuild && (modifiedCount > 0 || m_verbose))
-		log::info << modifiedCount << L" modified instance(s)." << Endl;
 
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
@@ -267,6 +253,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			we.dependency = dependency;
 			we.buildParams = nullptr;
 			we.reason = reasons[i];
+			we.adhoc = false;
 			m_workSet.push_back(we);
 		}
 	}
@@ -332,7 +319,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	}
 
 	// Log cache performance.
-	if (m_cache)
+	if (m_cache && m_verbose)
 		log::info << L"Pipeline cache; " << m_cacheHit << L" hit(s), " << m_cacheMiss << L" miss(es), " << m_cacheVoid << L" uncachable(s)." << Endl;
 
 	// Log results.
@@ -409,6 +396,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const G
 
 bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
+	const bool cacheable = (bool)(buildParams == nullptr || is_a< ISerializable >(buildParams));
+
 	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
 	if (m_threadedBuildEnable)
@@ -441,125 +430,144 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	PipelineDependency* dependency = dependencySet.get(index);
 	T_ASSERT(dependency != nullptr);
 
+	if (m_listener)
+		m_listener->beginBuild(
+			m_progress,
+			m_progressEnd,
+			dependency
+		);
+
 	// Append hash of build params.
-	if (auto hashableBuildParams = dynamic_type_cast< const ISerializable* >(buildParams))
-		dependency->sourceDataHash += DeepHash(hashableBuildParams).get();
+	if (cacheable)
+		dependency->sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
 
-	const bool rebuild = false;
+	// Calculate hash entry.
+	PipelineDependencyHash currentDependencyHash;
+	calculateGlobalHash(
+		&dependencySet,
+		dependency,
+		currentDependencyHash.pipelineHash,
+		currentDependencyHash.sourceAssetHash,
+		currentDependencyHash.sourceDataHash,
+		currentDependencyHash.filesHash
+	);
 
-	uint32_t dependencyCount = dependencySet.size();
-	uint32_t modifiedCount = 0;
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-	AlignedVector< uint32_t > reasons(dependencyCount, 0);
-	for (uint32_t i = 0; i < dependencyCount; ++i)
+	if (m_verbose)
+		log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
+	log::info << IncreaseIndent;
+
+	// Build output instances; keep an array of written instances as we
+	// need them to update the cache.
+	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+	RefArray< db::Instance > builtInstances;
+	m_buildInstances.set(&builtInstances);
+
+	// Get output instances from cache.
+	if (m_cache && cacheable)
 	{
-		const PipelineDependency* dependency = dependencySet.get(i);
-		T_ASSERT(dependency);
-
-		if ((dependency->flags & PdfFailed) != 0)
-			continue;
-
-		// Have source asset been modified?
-		if (!rebuild)
+		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
-			uint32_t pipelineHash = 0;
-			uint32_t sourceAssetHash = 0;
-			uint32_t sourceDataHash = 0;
-			uint32_t filesHash = 0;
+			if (m_verbose)
+				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
 
-			calculateGlobalHash(
-				&dependencySet,
-				dependency,
-				pipelineHash,
-				sourceAssetHash,
-				sourceDataHash,
-				filesHash
-			);
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
-			// Get hash entry from database.
-			PipelineDependencyHash previousDependencyHash;
-			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
-			{
-				reasons[i] |= PbrSourceModified;
-				++modifiedCount;
-			}
-			else if (
-				previousDependencyHash.pipelineHash != pipelineHash ||
-				previousDependencyHash.sourceAssetHash != sourceAssetHash ||
-				previousDependencyHash.sourceDataHash != sourceDataHash ||
-				previousDependencyHash.filesHash != filesHash
-			)
-			{
-				reasons[i] |= PbrSourceModified;
-				++modifiedCount;
-			}
+			Atomic::increment(m_cacheHit);
+			Atomic::increment(m_succeededBuilt);
 
-			// In case we have a non-hashable parameter we need to ensure it's build every time.
-			if (buildParams != nullptr && !is_a< ISerializable >(buildParams) && dependency->outputGuid == outputGuid)
-				reasons[i] |= PbrUncacheable;
+			if (m_listener)
+				m_listener->endBuild(
+					m_progress,
+					m_progressEnd,
+					dependency,
+					BrSucceeded
+				);
+
+			// Restore previous set but also insert built instances from synthesized build;
+			// when caching is enabled then synthesized built instances should be included in parent build as well.
+			if (previousBuiltInstances)
+				previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+			m_buildInstances.set(previousBuiltInstances);
+			return true;
 		}
 		else
-			reasons[i] |= PbrForced;
+			Atomic::increment(m_cacheMiss);
 	}
+	else if (m_cache)
+		Atomic::increment(m_cacheVoid);
 
-	std::list< WorkEntry > workSet;
-	for (uint32_t i = 0; i < dependencyCount; ++i)
+	Timer timer;
+	timer.start();
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT(pipeline);
+
+	bool result = pipeline->buildOutput(
+		this,
+		nullptr,
+		nullptr,
+		nullptr,
+		sourceAsset,
+		outputPath,
+		outputGuid,
+		buildParams,
+		PbrSourceModified
+	);
+
+	double buildTime = timer.getElapsedTime();
+
+	if (result)
 	{
-		const PipelineDependency* dependency = dependencySet.get(i);
-		T_ASSERT(dependency);
+		if (m_cache && cacheable)
+			putInstancesInCache(
+				dependency->outputGuid,
+				currentDependencyHash,
+				builtInstances
+			);
 
-		SmallSet< uint32_t > visited;
-		visited.insert(i);
-
-		AlignedVector< uint32_t > children;
-		children.insert(children.end(), dependency->children.begin(), dependency->children.end());
-
-		while (!children.empty())
+		if (m_verbose && !builtInstances.empty())
 		{
-			if (visited.find(children.back()) != visited.end())
-			{
-				children.pop_back();
-				continue;
-			}
+			log::info << L"Instance(s) built:" << Endl;
+			log::info << IncreaseIndent;
 
-			const PipelineDependency* childDependency = dependencySet.get(children.back());
-			T_ASSERT(childDependency);
+			for (auto builtInstance : builtInstances)
+				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
 
-			if ((childDependency->flags & PdfUse) == 0)
-			{
-				children.pop_back();
-				continue;
-			}
-
-			if ((reasons[children.back()] & PbrSourceModified) != 0)
-				reasons[i] |= PbrDependencyModified;
-
-			visited.insert(children.back());
-
-			children.pop_back();
-			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
+			log::info << DecreaseIndent;
 		}
 
-		if (reasons[i] != 0)
 		{
-			WorkEntry we;
-			we.dependency = dependency;
-			we.buildParams = nullptr;
-			we.reason = reasons[i] | PbrSynthesized;
-
-			if (dependency->outputGuid == outputGuid)
-				we.buildParams = buildParams;
-
-			workSet.push_back(we);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildDurationsLock);
+			m_buildDurations[&type_of(pipeline)] += buildTime;
 		}
 	}
 
+	log::info << DecreaseIndent;
+	if (m_verbose)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
-		m_workSet.insert(m_workSet.end(), workSet.begin(), workSet.end());
+		if (result)
+			log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
+		else
+			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
 	}
 
-	return true;
+	if (m_listener)
+		m_listener->endBuild(
+			m_progress,
+			m_progressEnd,
+			dependency,
+			result ? BrSucceeded : BrFailed
+		);
+
+	// Restore previous set but also insert built instances from synthesized build;
+	// when caching is enabled then synthesized built instances should be included in parent build as well.
+	if (previousBuiltInstances)
+		previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+	m_buildInstances.set(previousBuiltInstances);
+
+	return result;
 }
 
 uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsset) const
@@ -696,16 +704,13 @@ DataAccessCache* PipelineBuilder::getDataAccessCache() const
 	return m_dataAccessCache;
 }
 
-IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
+	const PipelineDependencySet* dependencySet,
+	const PipelineDependency* dependency,
+	const Object* buildParams,
+	uint32_t reason
+)
 {
-	// Ensure FP is in known state.
-#if defined(_WIN32) && !defined(_WIN64)
-	uint32_t dummy;
-	_controlfp_s(&dummy, 0, 0);
-	_controlfp_s(&dummy,_PC_24, _MCW_PC);
-	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
-#endif
-
 	if (!dependency->pipelineType)
 		return BrFailed;
 
@@ -739,14 +744,19 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 	m_buildInstances.set(&builtInstances);
 
 	// Get output instances from cache.
-	if (m_cache && (reason & PbrUncacheable) == 0)
+	if (m_cache)
 	{
 		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
 			if (m_verbose)
-				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
+			{
+				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s):" << Endl;
+				for (auto builtInstance : builtInstances)
+					log::info << L"\t\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
+			}
 
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
 
@@ -762,9 +772,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 	}
 	else
 		Atomic::increment(m_cacheVoid);
-
-	// Expose this dependency's hash since synthesized builds need to take it into account for caching.
-	m_parentHash.set(&currentDependencyHash);
 
 	LogTargetFilter infoTarget(log::info.getLocalTarget(), !m_verbose);
 	LogTargetFilter warningTarget(log::warning.getLocalTarget(), false);
@@ -803,7 +810,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 
 	if (result)
 	{
-		if (m_cache && (reason & PbrUncacheable) == 0)
+		if (m_cache)
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
@@ -816,7 +823,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const PipelineDepend
 			log::info << IncreaseIndent;
 
 			for (auto builtInstance : builtInstances)
-				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
+				log::info << L"\t\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
 
 			log::info << DecreaseIndent;
 		}
@@ -927,8 +934,7 @@ void PipelineBuilder::buildThread(
 {
 	while (!controlThread->stopped())
 	{
-		WorkEntry we = { nullptr, nullptr, 0 };
-
+		WorkEntry we;
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
 			if (!m_workSet.empty())
@@ -943,8 +949,6 @@ void PipelineBuilder::buildThread(
 				break;
 			}
 		}
-
-		T_ASSERT(we.dependency);
 
 		if (m_listener)
 			m_listener->beginBuild(
@@ -967,7 +971,7 @@ void PipelineBuilder::buildThread(
 				result
 			);
 
-		if (!we.buildParams)
+		if (!we.adhoc)
 			Atomic::increment(m_progress);
 	}
 }

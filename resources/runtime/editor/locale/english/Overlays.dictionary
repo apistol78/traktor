@@ -49,5 +49,9 @@
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_HISTORYOVERLAY</first>
 			<second>History</second>
 		</item>
+		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_TILESOVERLAY</first>
+			<second>Tiles</second>
+		</item>		
 	</map>
 </object>

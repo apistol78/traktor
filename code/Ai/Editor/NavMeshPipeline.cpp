@@ -223,18 +223,10 @@ bool NavMeshPipeline::buildOutput(
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData)) != nullptr)
+				if ((model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData, componentData)) != nullptr)
 					break;
 			}
 		}
-
-		if (!model)
-		{
-			// Find model synthesizer which can generate from current entity.
-			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(entityData)];
-			if (entityReplicator)
-				model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData);
-		}	
 
 		// Explicitly check for ocean component, need to discard everything below ocean level.
 		if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())

@@ -122,10 +122,12 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
+	auto ownerEntityData = dynamic_type_cast< const EntityData* >(sourceAsset);
+
 	// Check if entity and if entity should be included.
-	if (auto entityData = dynamic_type_cast< const EntityData* >(sourceAsset))
+	if (ownerEntityData)
 	{
-		auto editorAttributes = entityData->getComponent< EditorAttributesComponentData >();
+		auto editorAttributes = ownerEntityData->getComponent< EditorAttributesComponentData >();
 		if (editorAttributes != nullptr)
 		{
 			if (!editorAttributes->include)
@@ -158,12 +160,12 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
 			// Build component trough pipeline; replace component with product.
-			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityComponentData));
+			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityComponentData, ownerEntityData));
 		}
 		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
 			// Build event trough pipeline; replace event with product.
-			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityEventData));
+			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityEventData, ownerEntityData));
 		}
 		else if (objectMember->get())
 		{

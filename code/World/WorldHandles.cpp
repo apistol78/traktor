@@ -37,6 +37,7 @@ const render::Handle s_handleLastWorld(L"World_LastWorld");
 const render::Handle s_handleLastWorldView(L"World_LastWorldView");
 const render::Handle s_handleLightCount(L"World_LightCount");
 const render::Handle s_handleLightDiffuseMap(L"World_LightDiffuseMap");
+const render::Handle s_handleLightIndexSBuffer(L"World_LightIndexSBuffer");
 const render::Handle s_handleLightMap(L"World_LightMap");
 const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
 const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
