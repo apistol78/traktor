@@ -1601,37 +1601,14 @@ Spot
 			<id>{A041B17B-6316-9749-B78D-DE893224DB63}</id>
 			<comment/>
 			<position>
-				<first>-1060</first>
-				<second>-400</second>
+				<first>-458</first>
+				<second>-317</second>
 			</position>
 			<parameterName>World_LightIndexSBuffer</parameterName>
 			<elements>
 				<item>
 					<name>LightIndex</name>
 					<type>DtFloat4</type>
-				</item>
-			</elements>
-		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
-			<id>{0429A4DF-A070-1747-BAB1-DD6F06E303DD}</id>
-			<comment/>
-			<position>
-				<first>-742</first>
-				<second>-406</second>
-			</position>
-		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{06A340AD-4250-4943-A81E-CB2EBF07DF6F}</id>
-			<comment/>
-			<position>
-				<first>-1070</first>
-				<second>-282</second>
-			</position>
-			<parameterName>World_LightIndexSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>LightIndex</name>
-					<type>DtShort4</type>
 				</item>
 			</elements>
 		</item>
@@ -3115,31 +3092,11 @@ Spot
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[140]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[139]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[139]"/>
-				<name>Android</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[131]"/>
 				<name>LightOffset</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -3149,17 +3106,17 @@ Spot
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[141]"/>
+				<node ref="/object/nodes/item[139]"/>
 				<name>Index</name>
 			</destination>
 		</item>
@@ -3170,7 +3127,7 @@ Spot
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[141]"/>
-				<name>Struct</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -3179,18 +3136,18 @@ Spot
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[138]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[126]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[139]"/>
+				<name>Struct</name>
 			</destination>
 		</item>
 	</edges>

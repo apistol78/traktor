@@ -2338,34 +2338,11 @@ Directional
 			<name>LightIndex</name>
 		</item>
 		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{C91BDCB3-9BF2-504E-9703-BBD2B22D5429}</id>
-			<comment/>
-			<position>
-				<first>560</first>
-				<second>1309</second>
-			</position>
-			<parameterName>World_LightIndexSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>LightIndex</name>
-					<type>DtShort4</type>
-				</item>
-			</elements>
-		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
-			<id>{B98058DB-4BB8-5740-B2A4-1D0EF5840784}</id>
-			<comment/>
-			<position>
-				<first>888</first>
-				<second>1185</second>
-			</position>
-		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
 			<id>{D496820C-CA50-9147-8BB5-0031B514E44E}</id>
 			<comment/>
 			<position>
-				<first>570</first>
-				<second>1191</second>
+				<first>1147</first>
+				<second>1271</second>
 			</position>
 			<parameterName>World_LightIndexSBuffer</parameterName>
 			<elements>
@@ -4556,47 +4533,27 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[213]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[212]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[212]"/>
-				<name>LightCount</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[214]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[209]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[210]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[211]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[210]"/>
-				<name>Android</name>
+				<name>ViewPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[210]"/>
+				<name>LightCount</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[212]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[210]"/>
 				<name>LightOffset</name>
 			</source>
 			<destination>
@@ -4606,7 +4563,7 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[215]"/>
+				<node ref="/object/nodes/item[213]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -4626,32 +4583,32 @@ Directional
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[210]"/>
+				<node ref="/object/nodes/item[208]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[206]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[206]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[209]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[208]"/>
 				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[208]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[206]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[206]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[216]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
