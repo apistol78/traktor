@@ -175,7 +175,7 @@
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_VERBOSE</first>
-			<second>Verbose</second>
+			<second>Verbose scanning and building</second>
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>

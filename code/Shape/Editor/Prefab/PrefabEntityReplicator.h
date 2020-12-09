@@ -27,7 +27,8 @@ public:
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
         const std::wstring& assetPath,
-        const Object* source
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData
     ) const override final;
 
     virtual Ref< Object > modifyOutput(

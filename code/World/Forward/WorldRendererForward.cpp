@@ -1,6 +1,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
@@ -146,15 +147,25 @@ struct LightShaderData
 #pragma pack()
 
 #pragma pack(1)
+struct LightIndexShaderData
+{
+#if !defined(__ANDROID__)
+	uint16_t lightIndex[4];
+	uint16_t pad[4];
+#else
+	float lightIndex[4];
+#endif
+};
+#pragma pack()
+
+#pragma pack(1)
 struct TileShaderData
 {
 #if !defined(__ANDROID__)
-	uint16_t lights[4];			// 8 :  0 -  8
-	uint8_t lightCount[4];		// 4 :  8 - 12
-	uint8_t pad[4];				// 4 : 12 - 16
+	uint16_t lightOffsetAndCount[4];
+	uint16_t pad[4];
 #else
-	float lights[4];
-	float lightCount[4];
+	float lightOffsetAndCount[4];
 #endif
 };
 #pragma pack()
@@ -251,6 +262,7 @@ bool WorldRendererForward::create(
 	m_frames.resize(desc.frameCount);
 	for (auto& frame : m_frames)
 	{
+		// Lights struct buffer.
 		AlignedVector< render::StructElement > lightShaderDataStruct;
 		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, typeRangeRadius)));
 		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, position)));
@@ -270,14 +282,28 @@ bool WorldRendererForward::create(
 		if (!frame.lightSBuffer)
 			return false;
 
+		// Tile light index array buffer.
+		AlignedVector< render::StructElement > lightIndexShaderDataStruct;
+#if !defined(__ANDROID__)
+		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(LightIndexShaderData, lightIndex)));
+#else
+		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightIndexShaderData, lightIndex)));
+#endif
+		T_FATAL_ASSERT(sizeof(LightIndexShaderData) == render::getStructSize(lightIndexShaderDataStruct));
+
+		frame.lightIndexSBuffer = renderSystem->createStructBuffer(
+			lightIndexShaderDataStruct,
+			render::getStructSize(lightIndexShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster
+		);
+		if (!frame.lightIndexSBuffer)
+			return false;
+
+		// Tile cluster buffer.
 		AlignedVector< render::StructElement > tileShaderDataStruct;
 #if !defined(__ANDROID__)
-		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lights)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, lightCount)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, pad)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lightOffsetAndCount)));
 #else
-		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lights)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightCount)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightOffsetAndCount)));
 #endif
 		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
 
@@ -331,6 +357,7 @@ void WorldRendererForward::destroy()
 	for (auto& frame : m_frames)
 	{
 		safeDestroy(frame.lightSBuffer);
+		safeDestroy(frame.lightIndexSBuffer);
 		safeDestroy(frame.tileSBuffer);
 	}
 	m_frames.clear();
@@ -476,12 +503,18 @@ void WorldRendererForward::setupTileDataPass(
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
 		const auto& lights = m_frames[frame].lights;
 
-		// Calculate world positions in view space.
+		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
+		//std::memset(tileShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData));
+
+		LightIndexShaderData* lightIndexShaderData = (LightIndexShaderData*)m_frames[frame].lightIndexSBuffer->lock();
+		uint32_t lightOffset = 0;
+
 		StaticVector< Vector4, c_maxLightCount > lightPositions;
+		StaticVector< int32_t, c_maxLightCount > sliceLights;
+
+		// Calculate positions of lights in view space.
 		for (const auto& light : lights)
 			lightPositions.push_back(worldRenderView.getView() * light.position.xyz1());
-
-		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
 
 		// Update tile data.
 		const Scalar dx(1.0f / ClusterDimXY);
@@ -496,75 +529,123 @@ void WorldRendererForward::setupTileDataPass(
 		Vector4 vx = tr - tl;
 		Vector4 vy = bl - tl;
 
-		Frustum tileFrustum;
-		for (int32_t y = 0; y < ClusterDimXY; ++y)
+		Scalar vnz = viewFrustum.getNearZ();
+		Scalar vfz = viewFrustum.getFarZ();
+
+		for (int32_t z = 0; z < ClusterDimZ; ++z)
 		{
-			Scalar fy = Scalar((float)y) * dy;
-			for (int32_t x = 0; x < ClusterDimXY; ++x)
+			Scalar snz = vnz * power(vfz / vnz, Scalar(z) / Scalar(ClusterDimZ));
+			Scalar sfz = vnz * power(vfz / vnz, Scalar(z + 1) / Scalar(ClusterDimZ));
+
+			// Gather all lights intersecting slice.
+			sliceLights.clear();
+			for (uint32_t i = 0; i < lights.size(); ++i)
 			{
-				Scalar fx = Scalar((float)x) * dx;
-				
-				Vector4 a = tl + vx * fx + vy * fy;
-				Vector4 b = tl + vx * (fx + dx) + vy * fy;
-				Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
-				Vector4 d = tl + vx * fx + vy * (fy + dy);
-				
-				tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
-				tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
-				tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
-				tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
-
-				for (int32_t z = 0; z < ClusterDimZ; ++z)
+				const Light& light = lights[i];
+				if (light.type == LtDirectional)
 				{
-					Scalar fnz = Scalar((float)z) * dz;
-					Scalar ffz = Scalar((float)z + 1.0f) * dz;
+					sliceLights.push_back(i);
+				}
+				else if (light.type == LtPoint)
+				{
+					Scalar lz = lightPositions[i].z();
+					if (lz + Scalar(light.range) >= snz && lz - Scalar(light.range) <= sfz)
+						sliceLights.push_back(i);
+				}
+				else if (light.type == LtSpot)
+				{
+					Scalar lz = lightPositions[i].z();
+					if (lz + Scalar(light.range) >= snz && lz - Scalar(light.range) <= sfz)
+					{
+						//Frustum spotFrustum;
+						//spotFrustum.buildPerspective(light.radius, 1.0f, 0.0f, light.range);
 
-					Scalar nz = lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), fnz);
-					Scalar fz = lerp(viewFrustum.getNearZ(), viewFrustum.getFarZ(), ffz);
+						//Vector4 p[4];
+						//p[0] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[4].xyz0();
+						//p[1] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[5].xyz0();
+						//p[2] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[6].xyz0();
+						//p[3] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[7].xyz0();
 
-					tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), nz);
-					tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -fz);
+						//Range< Scalar > bb;
+						//bb.min = lz;
+						//bb.max = lz;
+						//for (int i = 0; i < 4; ++i)
+						//{
+						//	bb.min = min(bb.min, p[i].z());
+						//	bb.max = max(bb.max, p[i].z());
+						//}
+						//if (Range< Scalar >::intersection(bb, Range< Scalar >(snz, sfz)).delta() > 0.0_simd)
+							sliceLights.push_back(i);
+					}
+				}
+			}
 
-					const uint32_t offset = (x + y * ClusterDimXY) * ClusterDimZ + z;
+			if (sliceLights.empty())
+				continue;
 
-					tileShaderData[offset].lights[0] =
-					tileShaderData[offset].lights[1] =
-					tileShaderData[offset].lights[2] =
-					tileShaderData[offset].lights[3] = 0;
+			Frustum tileFrustum;
+			tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
+			tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
+
+			for (int32_t y = 0; y < ClusterDimXY; ++y)
+			{
+				Scalar fy = Scalar((float)y) * dy;
+				for (int32_t x = 0; x < ClusterDimXY; ++x)
+				{
+					Scalar fx = Scalar((float)x) * dx;
+				
+					Vector4 a = tl + vx * fx + vy * fy;
+					Vector4 b = tl + vx * (fx + dx) + vy * fy;
+					Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
+					Vector4 d = tl + vx * fx + vy * (fy + dy);
+				
+					tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
+					tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
+					tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
+					tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
+
+					const uint32_t tileOffset = (x + y * ClusterDimXY) * ClusterDimZ + z;
+					tileShaderData[tileOffset].lightOffsetAndCount[0] = (uint16_t)lightOffset;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = 0;
 
 					int32_t count = 0;
-					for (uint32_t i = 0; i < lights.size(); ++i)
+					for (uint32_t i = 0; i < sliceLights.size(); ++i)
 					{
-						const Light& light = lights[i];
-
+						uint32_t lightIndex = sliceLights[i];
+						const Light& light = lights[lightIndex];
 						if (light.type == LtDirectional)
 						{
-							tileShaderData[offset].lights[count++] = uint16_t(i);
+							lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+							++count;
 						}
 						else if (light.type == LtPoint)
 						{
-							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
-								tileShaderData[offset].lights[count++] = uint16_t(i);
+							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
+							{
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+								++count;
+							}
 						}
 						else if (light.type == LtSpot)
 						{
 							// \fixme Implement frustum to frustum culling.
-							if (tileFrustum.inside(lightPositions[i], Scalar(light.range)) != Frustum::IrOutside)
-								tileShaderData[offset].lights[count++] = uint16_t(i);
+							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
+							{
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = (uint16_t)lightIndex;
+								++count;
+							}
 						}
-
-						if (count >= 4)
+						if (count >= MaxLightsPerCluster)
 							break;
 					}
 
-					tileShaderData[offset].lightCount[0] = uint8_t(count);
-					tileShaderData[offset].lightCount[1] = 
-					tileShaderData[offset].lightCount[2] = 
-					tileShaderData[offset].lightCount[3] = 0;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = (uint16_t)count;
+					lightOffset += count;
 				}
 			}
 		}
 
+		m_frames[frame].lightIndexSBuffer->unlock();
 		m_frames[frame].tileSBuffer->unlock();
 	}));
 }
@@ -1238,11 +1319,13 @@ void WorldRendererForward::setupVisualPass(
 
 			float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
 			float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
+			float viewSliceScale = ClusterDimZ / std::log(viewFarZ / viewNearZ);
+			float viewSliceBias = ClusterDimZ * std::log(viewNearZ) / std::log(viewFarZ / viewNearZ) - 0.001f;
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(wc.getRenderContext());
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
+			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
@@ -1257,6 +1340,7 @@ void WorldRendererForward::setupVisualPass(
 			}
 
 			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
+			sharedParams->setStructBufferParameter(s_handleLightIndexSBuffer, m_frames[frame].lightIndexSBuffer);
 			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
 
 			if (m_settings.fog)

@@ -76,9 +76,12 @@ public:
 	) override final;
 
 private:
+	friend class TilesOverlay;
+
 	struct Frame
 	{
 		Ref< render::StructBuffer > lightSBuffer;
+		Ref< render::StructBuffer > lightIndexSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
 		AlignedVector< Light > lights;
 		Ref< Packer > shadowAtlasPacker;

@@ -66,10 +66,11 @@ TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 Ref< model::Model > SolidEntityReplicator::createModel(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-	const Object* source
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
 ) const
 {
-	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
+	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(entityData);
 	
 	auto group = solidEntityData->getComponent< world::GroupComponentData >();
 	if (!group)

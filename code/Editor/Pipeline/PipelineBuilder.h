@@ -87,6 +87,7 @@ private:
 		Ref< const PipelineDependency > dependency;
 		Ref< const Object > buildParams;
 		uint32_t reason;
+		bool adhoc;
 	};
 
 	struct BuiltCacheEntry
@@ -121,7 +122,6 @@ private:
 	std::map< const TypeInfo*, double > m_buildDurations;
 
 	ThreadLocal m_buildInstances;
-	ThreadLocal m_parentHash;
 
 	int32_t m_progress;
 	int32_t m_progressEnd;

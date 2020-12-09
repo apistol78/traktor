@@ -316,6 +316,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			ss << L" " << dependency.format();
 	}
 
+	if (m_globalSettings->getProperty< bool >(L"Pipeline.Verbose", false))
+		ss << L" -verbose";
 	if (m_standAlone)
 		ss << L" -standalone";
 

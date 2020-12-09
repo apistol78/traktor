@@ -1,5 +1,9 @@
 #include <sstream>
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/PropertyList/ColorPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
@@ -97,6 +101,40 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		canvas.fillRect(m_rcColor);
 		canvas.drawRect(m_rcColor);
 	}
+}
+
+bool ColorPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	StringOutputStream ss;
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		if (i > 0)
+			ss << L",";
+		ss << m_value.get(i);
+	}
+	return clipboard->setText(ss.str());
+}
+
+bool ColorPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	std::vector< float > values;
+	Split< std::wstring, float >::any(clipboard->getText(), L",", values, true);
+	if (values.size() >= 4)
+	{
+		for (int i = 0; i < 4; ++i)
+			m_value.set(i, Scalar(values[i]));
+		return true;
+	}
+	else
+		return false;
 }
 
 	}

@@ -353,65 +353,26 @@ bool addModel(
 )
 {
 	// Create output instance.
-	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 64, 64);
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		Ref< render::TextureResource > outputResource = new render::TextureResource();
-		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-			L"Generated/" + lightmapId.format(),
-			db::CifReplaceExisting,
-			&lightmapId
-		);
-		if (!outputInstance)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
-			return false;
-		}
-
-		outputInstance->setObject(outputResource);
-
-		// Create output data stream.
-		Ref< IStream > stream = outputInstance->writeData(L"Data");
-		if (!stream)
-		{
-			log::error << L"BakePipelineOperator failed; unable to create texture data stream." << Endl;
-			outputInstance->revert();
-			return false;
-		}
-
-		const int32_t c_size = 64;
-		const uint32_t c_white = 0xff333333;
-		const uint32_t c_black = 0xff222222;
-
-		Writer writer(stream);
-		writer << uint32_t(12);
-		writer << c_size;
-		writer << c_size;
-		writer << int32_t(1);
-		writer << int32_t(1);
-		writer << int32_t(render::TfR8G8B8A8);
-		writer << bool(false);
-		writer << uint8_t(render::Tt2D);
-		writer << bool(false);
-		writer << bool(false);
-
-		for (int32_t y = 0; y < c_size; ++y)
-		{
-			for (int32_t x = 0; x < c_size; ++x)
-			{
-				uint32_t color = ((x / 8 + y / 8) & 1) ? c_white : c_black;
-				if (writer.write(&color, 4, 1) != 4)
-					return false;
-			}
-		}
-
-		stream->close();
-
-		if (!outputInstance->commit())
-		{
-			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-			return false;
+			image->setPixelUnsafe(
+				x, y,
+				((x / 8 + y / 8) & 1) ? Color4f(0.5f, 0.5f, 0.5f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f)
+			);
 		}
 	}
+
+	Ref< render::TextureOutput > output = new render::TextureOutput();
+	output->m_enableCompression = false;
+	if (!pipelineBuilder->buildAdHocOutput(
+		output,
+		lightmapId,
+		image
+	))
+		return false;	
 
 	tracerTask->addTracerModel(new TracerModel(
 		model,
@@ -476,8 +437,6 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 			m_entityReplicators[supportedType] = entityReplicator;
 	}	
 
-	// Create output path for debugging data.
-	// FileSystem::getInstance().makeAllDirectories(Path(L"data/Temp/Bake"));
 	return true;
 }
 
@@ -605,122 +564,6 @@ bool BakePipelineOperator::build(
 			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
 			Guid outputId = entityId.permutation(c_outputIdSeed);
 
-			// Find model synthesizer which can generate from current entity.
-			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(inoutEntityData)];
-			if (entityReplicator)
-			{
-				// Calculate hash of entity and it's dependencies; need to anonymize entity a bit since
-				// cached product doesn't depend on id, name nor transform.
-				uint32_t entityHash;
-				{
-					auto id = inoutEntityData->getId();
-					inoutEntityData->setId(Guid::null);
-
-					auto name = inoutEntityData->getName();
-					inoutEntityData->setName(L"");
-
-					auto transform = inoutEntityData->getTransform();
-					inoutEntityData->setTransform(Transform::identity());
-
-					entityHash = pipelineBuilder->calculateInclusiveHash(inoutEntityData);
-
-					inoutEntityData->setId(id);
-					inoutEntityData->setName(name);
-					inoutEntityData->setTransform(transform);
-				}
-
-				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					entityHash,
-					[&](IStream* stream) -> Ref< model::Model > {
-						return BinarySerializer(stream).readObject< model::Model >();
-					},
-					[=](const model::Model* model, IStream* stream) -> bool {
-						return BinarySerializer(stream).writeObject(model);
-					},
-					[&]() -> Ref< model::Model > {
-						log::info << L"Preparing \"" << inoutEntityData->getName() << L"\" for tracing..." << Endl;
-
-						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData);
-						if (!model)
-							return nullptr;
-
-						// Calculate size of lightmap from geometry.
-						int32_t lightmapSize = calculateLightmapSize(
-							model,
-							configuration->getLumelDensity(),
-							configuration->getMinimumLightMapSize(),
-							configuration->getMaximumLightMapSize()
-						);
-
-						// Prepare model for baking.
-						if (!prepareModel(
-							pipelineBuilder,
-							model,
-							m_assetPath,
-							lightmapSize
-						))
-							return nullptr;
-
-						return model;
-					}
-				);
-				if (!model)
-					return scene::Traverser::VrFailed;
-
-				// Calculate size of lightmap from geometry.
-				int32_t lightmapSize = calculateLightmapSize(
-					model,
-					configuration->getLumelDensity(),
-					configuration->getMinimumLightMapSize(),
-					configuration->getMaximumLightMapSize()
-				);
-
-				// Load model's material textures.
-				if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
-					return scene::Traverser::VrFailed;
-
-				// Calculate priority, if entity has moved since last bake then it's prioritized.
-				int32_t priority = 0;
-				if (receipt)
-				{
-					Transform lastTransform;
-					if (receipt->getLastKnownTransform(entityId, lastTransform))
-					{
-						if (lastTransform != inoutEntityData->getTransform())
-							priority = 1;
-					}
-					else
-						priority = 1;
-
-					receipt->setTransform(entityId, inoutEntityData->getTransform());
-				}
-
-				if (!addModel(
-					pipelineBuilder,
-					model,
-					inoutEntityData->getTransform(),
-					inoutEntityData->getName(),
-					priority,
-					lightmapId,
-					lightmapSize,
-					tracerTask
-				))
-					return scene::Traverser::VrFailed;
-
-				// Let model generator consume altered model and modify entity in ways
-				// which make sense for entity data.
-				inoutEntityData = checked_type_cast< world::EntityData* >(entityReplicator->modifyOutput(
-					pipelineBuilder,
-					m_assetPath,
-					inoutEntityData,
-					model,
-					outputId
-				));
-
-				// Skip further processing of this entity and it's children.
-				return scene::Traverser::VrSkip;
-			}
-
 			// Find model synthesizer which can generate from components.
 			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
 			for (auto componentData : componentDatas)
@@ -740,7 +583,7 @@ bool BakePipelineOperator::build(
 						return BinarySerializer(stream).writeObject(model);
 					},
 					[&]() -> Ref< model::Model > {
-						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, componentData);
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData, componentData);
 						if (!model)
 							return nullptr;
 
@@ -823,6 +666,9 @@ bool BakePipelineOperator::build(
 					inoutEntityData->removeComponent(componentData);
 					inoutEntityData->setComponent(replaceComponentData);
 				}
+
+				lightmapId.permutate();
+				outputId.permutate();
 			}
 
 			return scene::Traverser::VrContinue;
@@ -839,57 +685,54 @@ bool BakePipelineOperator::build(
 		Guid irradianceGridId = sourceInstance->getGuid().permutation(c_irradianceGridIdSeed);
 
 		// Create a black irradiance grid first.
-		if (pipelineBuilder->getOutputDatabase()->getInstance(irradianceGridId) == nullptr)
+		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+			L"Generated/" + irradianceGridId.format(),
+			db::CifReplaceExisting,
+			&irradianceGridId
+		);
+		if (!outputInstance)
 		{
-			Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-			Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-				L"Generated/" + irradianceGridId.format(),
-				db::CifReplaceExisting,
-				&irradianceGridId
-			);
-			if (!outputInstance)
-			{
-				log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
-				return false;
-			}
+			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
+			return false;
+		}
 
-			outputInstance->setObject(outputResource);
+		outputInstance->setObject(outputResource);
 
-			// Create output data stream.
-			Ref< IStream > stream = outputInstance->writeData(L"Data");
-			if (!stream)
-			{
-				log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
-				outputInstance->revert();
-				return false;
-			}
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
 
-			Writer writer(stream);
-			writer << uint32_t(2);
-			writer << (uint32_t)1;	// width
-			writer << (uint32_t)1;	// height
-			writer << (uint32_t)1;	// depth
-			writer << -10000.0f;
-			writer << -10000.0f;
-			writer << -10000.0f;
-			writer <<  10000.0f;
-			writer <<  10000.0f;
-			writer <<  10000.0f;
+		Writer writer(stream);
+		writer << uint32_t(2);
+		writer << (uint32_t)1;	// width
+		writer << (uint32_t)1;	// height
+		writer << (uint32_t)1;	// depth
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
 
-			for (int32_t i = 0; i < 9; ++i)
-			{
-				writer << 0.0f;
-				writer << 0.0f;
-				writer << 0.0f;
-			}
+		for (int32_t i = 0; i < 9; ++i)
+		{
+			writer << 0.0f;
+			writer << 0.0f;
+			writer << 0.0f;
+		}
 
-			stream->close();
+		stream->close();
 
-			if (!outputInstance->commit())
-			{
-				log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-				return false;
-			}
+		if (!outputInstance->commit())
+		{
+			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+			return false;
 		}
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(

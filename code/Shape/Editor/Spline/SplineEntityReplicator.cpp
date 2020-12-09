@@ -29,10 +29,11 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
 Ref< model::Model > SplineEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
-    const Object* source
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
 ) const
 {
-	auto splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(source);
+	auto splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(entityData);
 	TransformPath path;
 
 	// Get group component.

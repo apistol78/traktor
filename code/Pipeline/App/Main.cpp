@@ -379,7 +379,8 @@ bool perform(const PipelineParameters* params)
 		return false;
 	}
 
-	if (params->getVerbose())
+	bool verbose = params->getVerbose();
+	if (verbose)
 		traktor::log::info << L"Using settings \"" << params->getSettings() << L"\"." << Endl;
 
 	Ref< PropertyGroup > settings = loadSettings(params->getSettings());

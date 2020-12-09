@@ -15,12 +15,12 @@ namespace traktor
 	namespace shape
 	{
 
-class T_DLLCLASS PrefabEntityPipeline : public world::EntityPipeline
+class T_DLLCLASS PrefabComponentPipeline : public world::EntityPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	PrefabEntityPipeline();
+	PrefabComponentPipeline();
 
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
@@ -42,11 +42,6 @@ public:
 	) const override final;
 
 private:
-	std::wstring m_assetPath;
-	std::wstring m_modelCachePath;
-	float m_visualMeshSnap;
-	float m_collisionMeshSnap;
-	bool m_mergeCoplanar;
 	bool m_editor;
 };
 

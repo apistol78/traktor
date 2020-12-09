@@ -31,10 +31,11 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
 Ref< model::Model > TerrainEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-    const Object* source
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
 ) const
 {
-	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(source);
+	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
     const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
 
     Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
