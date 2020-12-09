@@ -622,9 +622,9 @@ bool ProgramCompilerVk::generate(
 		const auto& layout = cx.getLayout();
 
 		StringOutputStream ss;
+		ss << L"// Layout" << Endl;
 		for (auto resource : layout.get())
 		{
-			ss << L"// Layout" << Endl;
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
 				ss << L"// [" << sampler->getBinding() << L"] = sampler" << Endl;

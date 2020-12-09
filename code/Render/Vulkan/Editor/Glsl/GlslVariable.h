@@ -31,8 +31,6 @@ public:
 
 	std::wstring cast(GlslType to) const;
 
-	std::wstring castToInteger(GlslType to) const;
-
 	GlslVariable& operator = (const GlslVariable& other);
 
 private:

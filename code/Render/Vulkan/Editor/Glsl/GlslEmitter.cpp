@@ -205,7 +205,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-		f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+		f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->cast(GtInteger2) << L", " << in->cast(GtFloat4) << L");" << Endl;
 
 		// Define parameter in context.
 		cx.addParameter(
@@ -479,7 +479,7 @@ bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtInteger3);
 
 	comment(f, node);
 	assign(f, out) << L"gl_GlobalInvocationID.xyz;" << Endl;
@@ -642,10 +642,10 @@ bool emitInstance(GlslContext& cx, Instance* node)
 	{
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtInteger);
 
 		comment(f, node);
-		assign(f, out) << L"float(gl_InstanceIndex);" << Endl;
+		assign(f, out) << L"gl_InstanceIndex;" << Endl;
 		return true;
 	}
 	else if (cx.inFragment())
