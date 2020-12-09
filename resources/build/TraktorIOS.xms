@@ -5776,7 +5776,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(MOLTEN_SDK)/iOS/framework</item>
+						<item>$(MOLTEN_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>QuartzCore.framework</item>
@@ -5795,7 +5795,7 @@
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/iOS/static/libMoltenVK.a</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/MoltenVK.xcframework</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5815,7 +5815,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(MOLTEN_SDK)/iOS/framework</item>
+						<item>$(MOLTEN_SDK)</item>
 					</libraryPaths>
 					<libraries>
 						<item>QuartzCore.framework</item>
@@ -5834,7 +5834,7 @@
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/iOS/static/libMoltenVK.a</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/MoltenVK.xcframework</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
