@@ -16,15 +16,18 @@ enum GlslType
 	GtVoid = 0,
 	GtBoolean = 1,
 	GtInteger = 2,
-	GtFloat = 3,
-	GtFloat2 = 4,
-	GtFloat3 = 5,
-	GtFloat4 = 6,
-	GtFloat4x4 = 7,
-	GtTexture2D = 8,
-	GtTexture3D = 9,
-	GtTextureCube = 10,
-	GtStructBuffer = 11
+	GtInteger2 = 3,
+	GtInteger3 = 4,
+	GtInteger4 = 5,
+	GtFloat = 6,
+	GtFloat2 = 7,
+	GtFloat3 = 8,
+	GtFloat4 = 9,
+	GtFloat4x4 = 10,
+	GtTexture2D = 11,
+	GtTexture3D = 12,
+	GtTextureCube = 13,
+	GtStructBuffer = 14
 };
 
 struct GlslRequirements

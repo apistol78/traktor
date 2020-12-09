@@ -13,6 +13,9 @@ std::wstring glsl_type_name(GlslType type)
 		L"void",
 		L"bool",
 		L"int",
+		L"ivec2",
+		L"ivec3",
+		L"ivec4",
 		L"float",
 		L"vec2",
 		L"vec3",
@@ -30,17 +33,21 @@ int32_t glsl_type_width(GlslType type)
 {
 	const int32_t w[] =
 	{
-		0,
-		0,
-		1,
-		1,
-		2,
-		3,
-		4,
-		16,
-		0,
-		0,
-		0
+		0,	// GtVoid
+		0,	// GtBoolean
+		1,	// GtInteger
+		2,	// GtInteger2
+		3,	// GtInteger3
+		4,	// GtInteger4
+		1,	// GtFloat
+		2,	// GtFloat2
+		3,	// GtFloat3
+		4,	// GtFloat4
+		16,	// GtFloat4x4
+		0,	// GtTexture2D
+		0,	// GtTexture3D
+		0,	// GtTextureCube
+		0	// GtStructBuffer
 	};
 	T_ASSERT(type < sizeof_array(w));
 	return w[type];
@@ -50,18 +57,18 @@ GlslType glsl_from_data_type(DataType type)
 {
 	const GlslType c[] =
 	{
-		GtFloat,
-		GtFloat2,
-		GtFloat3,
-		GtFloat4,
-		GtFloat4,
-		GtFloat4,
-		GtFloat2,
-		GtFloat4,
-		GtFloat2,
-		GtFloat4,
-		GtFloat2,
-		GtFloat4
+		GtFloat,	// DtFloat1
+		GtFloat2,	// DtFloat2
+		GtFloat3,	// DtFloat3
+		GtFloat4,	// DtFloat4
+		GtInteger4,	// DtByte4
+		GtFloat4,	// DtByte4N
+		GtInteger2,	// DtShort2
+		GtInteger4,	// DtShort4
+		GtFloat2,	// DtShort2N
+		GtFloat4,	// DtShort4N
+		GtFloat2,	// DtHalf2
+		GtFloat4	// DtHalf4
 	};
 	T_ASSERT(type < sizeof_array(c));
 	return c[type];

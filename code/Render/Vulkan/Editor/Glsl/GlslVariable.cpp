@@ -15,39 +15,24 @@ GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType 
 
 std::wstring GlslVariable::cast(GlslType to) const
 {
-	const wchar_t* c[9][9] =
+	if (m_type == GtVoid || m_type == GtBoolean || m_type >= GtFloat4x4 || to >= GtFloat4x4)
+		return m_name;
+
+	const wchar_t* c[10][10] =
 	{
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, L"%", 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, L"%", L"%", L"vec2(%, %)", L"vec3(%, %, %)", L"vec4(%, %, %, %)", 0, 0 },
-		{ 0, 0, L"int(%)", L"%", L"vec2(%, %)", L"vec3(%, %, %)", L"vec4(%, %, %, %)", 0, 0 },
-		{ 0, 0, L"int(%.x)", L"%.x", L"%", L"vec3(%.xy, 0.0)", L"vec4(%.xy, 0.0, 0.0)", 0, 0 },
-		{ 0, 0, L"int(%.x)", L"%.x", L"%.xy", L"%", L"vec4(%.xyz, 0.0)", 0, 0 },
-		{ 0, 0, L"int(%.x)", L"%.x", L"%.xy", L"%.xyz", L"%", 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, L"%", 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, L"%" }
+		//       |      I      |         I2        |       I3         |          I4         |    F   |       F1      |         F2         |           F3              |
+		//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		/*  I */ {         L"%",     L"ivec2(%, %)", L"ivec3(%, %, %)", L"ivec4(%, %, %, %)",    L"%",  L"vec2(%, %)",    L"vec3(%, %, %)",      L"vec4(%, %, %, %)" },
+		/* I2 */ {       L"%.x",               L"%", L"ivec3(%.xy, 0)", L"ivec4(%.xy, 0, 0)",  L"%.x",     L"vec2(%)",  L"vec3(%.xy, 0.0)",  L"vec4(%.xy, 0.0, 0.0)" },
+		/* I3 */ {       L"%.x",            L"%.xy",              L"%",   L"ivec4(%.xyz, 0)",  L"%.x",  L"vec2(%.xy)",          L"vec3(%)",      L"vec4(%.xyz, 0.0)" },
+		/* I4 */ {       L"%.x",            L"%.xy",          L"%.xyz",                 L"%",  L"%.x",  L"vec2(%.xy)",      L"vec3(%.xyz)",               L"vec4(%)" },
+		/*  F */ {    L"int(%)",     L"ivec2(%, %)", L"ivec3(%, %, %)", L"ivec4(%, %, %, %)",    L"%",  L"vec2(%, %)",    L"vec3(%, %, %)",      L"vec4(%, %, %, %)" },
+		/* F2 */ {  L"int(%.x)",        L"ivec2(%)", L"ivec3(%.xy, 0)", L"ivec4(%.xy, 0, 0)",  L"%.x",           L"%",  L"vec3(%.xy, 0.0)",  L"vec4(%.xy, 0.0, 0.0)" },
+		/* F3 */ {  L"int(%.x)",     L"ivec2(%.xy)",       L"ivec3(%)",   L"ivec4(%.xyz, 0)",  L"%.x",        L"%.xy",                L"%",      L"vec4(%.xyz, 0.0)" },
+		/* F4 */ {  L"int(%.x)",     L"ivec2(%.xy)",   L"ivec3(%.xyz)",          L"ivec4(%)",  L"%.x",        L"%.xy",            L"%.xyz",                     L"%" },
 	};
 
-	const wchar_t* f = c[m_type][to];
-	return f ? replaceAll(f, L"%", m_name) : m_name;
-}
-
-std::wstring GlslVariable::castToInteger(GlslType to) const
-{
-	const wchar_t* c[9][9] =
-	{
-		{ 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, L"%", L"%", 0, 0, 0, 0 },
-		{ 0, 0, L"int(%)", L"%", L"ivec2(%, %)", L"ivec3(%, %, %)", L"ivec4(%, %, %, %)", 0, 0 },
-		{ 0, 0, 0, L"%.x", L"ivec2(%)", L"ivec3(%.xy, 0)", L"ivec4(%.xy, 0, 0)", 0, 0 },
-		{ 0, 0, 0, L"%.x", L"ivec2(%.xy)", L"ivec3(%)", L"ivec4(%.xyz, 0)", 0, 0 },
-		{ 0, 0, 0, L"%.x", L"ivec2(%.xy)", L"ivec3(%.xyz)", L"ivec4(%)", 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, L"%", 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, L"%" }
-	};
-
-	const wchar_t* f = c[m_type][to];
+	const wchar_t* f = c[m_type - GtInteger][to - GtInteger];
 	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 
