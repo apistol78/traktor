@@ -588,7 +588,7 @@ void WorldRendererForward::setupTileDataPass(
 					tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
 					tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
 
-					const uint32_t tileOffset = (x + y * ClusterDimXY) * ClusterDimZ + z;
+					const uint32_t tileOffset = x + y * ClusterDimXY + z * ClusterDimXY * ClusterDimXY;
 					tileShaderData[tileOffset].lightOffsetAndCount[0] = (float)lightOffset;
 					tileShaderData[tileOffset].lightOffsetAndCount[1] = (float)0;
 
