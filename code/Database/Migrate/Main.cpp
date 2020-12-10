@@ -9,6 +9,7 @@
 #include "Core/Log/LogRedirectTarget.h"
 #include "Core/Log/LogStreamTarget.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"

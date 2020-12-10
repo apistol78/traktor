@@ -1,15 +1,16 @@
 #if defined(_WIN32)
 #	include <windows.h>
 #endif
-#include <Ui/Application.h>
+#include "Ui/Application.h"
 #if defined(_WIN32)
-#	include <Ui/Win32/WidgetFactoryWin32.h>
+#	include "Ui/Win32/WidgetFactoryWin32.h"
 #elif defined(__APPLE__)
-#	include <Ui/Cocoa/WidgetFactoryCocoa.h>
+#	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #elif defined(__LINUX__) || defined(__RPI__)
-#	include <Ui/X11/WidgetFactoryX11.h>
+#	include "Ui/X11/WidgetFactoryX11.h"
 #endif
-#include <Core/Config.h>
+#include "Core/Config.h"
+#include "Core/Misc/TString.h"
 #include "SolutionForm.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ExternalDependency.h"

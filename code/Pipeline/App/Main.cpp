@@ -12,6 +12,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"

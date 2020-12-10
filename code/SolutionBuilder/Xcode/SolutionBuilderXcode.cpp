@@ -9,6 +9,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/AggregationItem.h"

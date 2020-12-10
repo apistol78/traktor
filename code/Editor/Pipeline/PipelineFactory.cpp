@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineSettings.h"
@@ -27,6 +28,10 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 			continue;
 		}
 
+		uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
+
+		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully; " << str(L"0x%08x", pipelineHash) << L"." << Endl;
+
 		for (auto assetType : pipeline->getAssetTypes())
 		{
 			TypeInfoSet buildableTypes;
@@ -40,7 +45,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 					if (currentDistance < it->second.distance)
 					{
 						it->second.pipeline = pipeline;
-						it->second.hash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
+						it->second.hash = pipelineHash;
 						it->second.distance = currentDistance;
 					}
 				}
@@ -48,7 +53,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 				{
 					PipelineMatch& pm = m_pipelineMap[buildableType];
 					pm.pipeline = pipeline;
-					pm.hash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
+					pm.hash = pipelineHash;
 					pm.distance = type_difference(*assetType, *buildableType);
 				}
 			}

@@ -144,6 +144,7 @@ bool Pipeline::buildDependencies(
 	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 		pipelineDepends->addDependency(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
 	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);	// Solid
+	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
 
