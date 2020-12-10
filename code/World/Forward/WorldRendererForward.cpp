@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
