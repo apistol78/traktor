@@ -8,6 +8,7 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"

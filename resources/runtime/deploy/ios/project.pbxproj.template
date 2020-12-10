@@ -40,6 +40,7 @@ local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 
 local modules = {}
 local frameworks = {}
+local xcframeworks = {}
 local bundles = {}
 local additional = {}
 
@@ -52,17 +53,24 @@ for _, f in ipairs(files) do
 		fw.fileRef = combine("A00000000000000000000000", #frameworks)
 		fw.buildRef = combine("A10000000000000000000000", #frameworks)
 		table.insert(frameworks, fw)
+	elseif string.endswith(f, ".xcframework")  then
+		local fw = {}
+		fw.file = f
+		fw.fileRef = combine("B00000000000000000000000", #frameworks)
+		fw.buildRef = combine("B10000000000000000000000", #frameworks)
+		fw.buildRef2 = combine("B20000000000000000000000", #frameworks)
+		table.insert(xcframeworks, fw)
 	elseif string.endswith(f, ".bundle") then
 		local bd = {}
 		bd.file = f
-		bd.fileRef = combine("B00000000000000000000000", #bundles)
-		bd.buildRef = combine("B10000000000000000000000", #bundles)
+		bd.fileRef = combine("C00000000000000000000000", #bundles)
+		bd.buildRef = combine("C10000000000000000000000", #bundles)
 		table.insert(bundles, bd)
 	elseif string.endswith(f, ".plist") then
 		local ad = {}
 		ad.file = f
-		ad.fileRef = combine("C00000000000000000000000", #additional)
-		ad.buildRef = combine("C10000000000000000000000", #additional)
+		ad.fileRef = combine("D00000000000000000000000", #additional)
+		ad.buildRef = combine("D10000000000000000000000", #additional)
 		table.insert(additional, ad)
 	end
 end
@@ -81,7 +89,7 @@ end
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -101,14 +109,31 @@ for _, f in ipairs(frameworks) do
 		output:printLn("\t\t" .. f.buildRef .. " /* " .. f.file .. " in Frameworks */ = {isa = PBXBuildFile; fileRef = " .. f.fileRef .. " /* " .. f.file .. " */; };")
 end
 
+for _, f in ipairs(xcframeworks) do
+		output:printLn("\t\t" .. f.buildRef .. " /* " .. f.file .. " in Frameworks */ = {isa = PBXBuildFile; fileRef = " .. f.fileRef .. " /* " .. f.file .. " */; };")
+		output:printLn("\t\t" .. f.buildRef2 .. " /* " .. f.file .. " in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = " .. f.fileRef .. " /* " .. f.file .. " */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };")
+end
+
 --!>		337379A630150547A5C6CF6F /* Main.mm in Sources */ = { isa = PBXBuildFile; fileRef = 39B478A5B5290D49A78145C4 /* Main.mm */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-/* End PBXBuildRule section */
-
-/* Begin PBXContainerItemProxy section */
-/* End PBXContainerItemProxy section */
+/* Begin PBXCopyFilesBuildPhase section */
+		27F54F732581844F00EF47FB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+<!--
+for _, f in ipairs(xcframeworks) do
+	output:printLn("\t\t\t\t" .. f.buildRef2 .. " /* MoltenVK.xcframework in Embed Frameworks */,")
+end
+--!>
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2711EB9B18DDB14D005F551E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Images.xcassets"; sourceTree = "<group>"; };
@@ -131,6 +156,14 @@ for _, f in ipairs(frameworks) do
 		end
 end
 
+for _, f in ipairs(xcframeworks) do
+		if fileSystem:exist(Path("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic/" .. f.file)) then
+			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = " .. f.file .. "; path = " .. f.file .. "; sourceTree = \"<group>\"; };")
+		else
+			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = " .. f.file .. "; path = System/Library/Frameworks/" .. f.file .. "; sourceTree = SDKROOT; };")
+		end
+end
+
 --!>		39B478A5B5290D49A78145C4 /* Main.mm */ = { isa = PBXFileReference; name = Main.mm; path = Main.mm; sourceTree = "<group>"; };
 		AB2066142D122F498D88B55F /* Info.plist */ = { isa = PBXFileReference; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		62E1560702D8E643A8B347CD /* <!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!> */ = { isa = PBXFileReference; includeInIndex = 0; path = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,6 +177,9 @@ end
 <!--
 
 for _, f in ipairs(frameworks) do
+		output:printLn("\t\t\t\t" .. f.buildRef .. " /* " .. f.file .. " in Frameworks */,")
+end
+for _, f in ipairs(xcframeworks) do
 		output:printLn("\t\t\t\t" .. f.buildRef .. " /* " .. f.file .. " in Frameworks */,")
 end
 
@@ -183,6 +219,9 @@ end
 for _, f in ipairs(frameworks) do
 		output:printLn("\t\t\t\t" .. f.fileRef .. " /* " .. f.file .. " */,")
 end
+for _, f in ipairs(xcframeworks) do
+		output:printLn("\t\t\t\t" .. f.fileRef .. " /* " .. f.file .. " */,")
+end
 
 --!>			);
 			name = "<!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!>";
@@ -197,8 +236,15 @@ end
 		};
 /* End PBXGroup section */
 
-/* Begin PBXAggregateTarget section */
-/* End PBXAggregateTarget section */
+/* Begin PBXHeadersBuildPhase section */
+		140EECA9F3EABD478A7275B4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		B86125BD821FB74E884DA7DA /* <!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!> */ = {
@@ -209,9 +255,9 @@ end
 				DFF82D7D99AB9B458390AE41 /* Sources */,
 				2314F6D88524EA4985D1FC5C /* Resources */,
 				C1599BDF2F06484098DCBA83 /* Frameworks */,
+				27F54F732581844F00EF47FB /* Embed Frameworks */,
 			);
 			buildRules = (
-				93548B3EA1B214428064386E /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -238,35 +284,18 @@ end
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 5A09C4812775D14E872F915C;
 			productRefGroup = 5602A2348556624A98CD672D /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-			);
 			projectRoot = "";
 			targets = (
 				B86125BD821FB74E884DA7DA /* <!-- output:print(environment:get("DEPLOY_PROJECT_NAME")) --!> */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-/* End PBXReferenceProxy section */
-
-/* Begin PBXHeadersBuildPhase section */
-		140EECA9F3EABD478A7275B4 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		2314F6D88524EA4985D1FC5C /* Resources */ = {
@@ -295,14 +324,11 @@ end
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				337379A630150547A5C6CF6F /* Main.mm */,
+				337379A630150547A5C6CF6F /* Main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CF119CED5E78A34C9130CD13 /* Debug */ = {

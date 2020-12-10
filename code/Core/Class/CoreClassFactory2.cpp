@@ -2,8 +2,10 @@
 #include "Core/Class/CoreClassFactory2.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
+#include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Base64.h"
+#include "Core/Misc/CommandLine.h"
 #include "Core/Misc/HashStream.h"
 #include "Core/Misc/MD5.h"
 #include "Core/Misc/SHA1.h"
@@ -68,6 +70,15 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classBase64 = new AutoRuntimeClass< Base64 >();
 	registrar->registerClass(classBase64);
+
+	auto classCommandLine = new AutoRuntimeClass< CommandLine >();
+	classCommandLine->addConstructor< const std::vector< std::wstring >& >();
+	classCommandLine->addConstructor< const std::wstring&, const std::wstring& >();
+	classCommandLine->addProperty("file", &CommandLine::getFile);
+	classCommandLine->addProperty("count", &CommandLine::getCount);
+	classCommandLine->addMethod("getInteger", &CommandLine::getInteger);
+	classCommandLine->addMethod("getString", &CommandLine::getString);
+	registrar->registerClass(classCommandLine);
 
 	auto classMD5 = new AutoRuntimeClass< MD5 >();
 	classMD5->addConstructor();

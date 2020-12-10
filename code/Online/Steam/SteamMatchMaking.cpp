@@ -1,5 +1,7 @@
 #include <algorithm>
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"

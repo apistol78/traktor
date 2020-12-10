@@ -10,6 +10,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 
 using namespace traktor;

@@ -3,6 +3,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Mutex.h"
 #include "Net/Network.h"

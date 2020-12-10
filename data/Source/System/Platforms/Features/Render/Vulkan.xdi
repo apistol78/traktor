@@ -248,6 +248,7 @@
 							<value>
 								<item>CoreGraphics.framework</item>
 								<item>Metal.framework</item>
+								<item>MoltenVK.xcframework</item>
 							</value>
 						</second>
 					</item>
@@ -273,7 +274,7 @@
 							<value>
 								<item>CoreGraphics.framework</item>
 								<item>Metal.framework</item>
-								<item>libMoltenVK.a</item>
+								<item>MoltenVK.xcframework</item>
 								<item>libTraktor.Compress.a</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Render.Vulkan.a</item>
@@ -322,12 +323,12 @@
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>libMoltenVK.dylib</item>
 								<item>libTraktor.Compress.dylib</item>
 								<item>libTraktor.Core.dylib</item>
 								<item>libTraktor.Render.Vulkan.dylib</item>
 								<item>libTraktor.Render.dylib</item>
 								<item>libTraktor.Resource.dylib</item>
-								<item>libMoltenVK.dylib</item>
 							</value>
 						</second>
 					</item>

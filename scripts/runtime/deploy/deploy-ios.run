@@ -166,7 +166,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -v -p -s=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -236,7 +236,7 @@ function deploy(args)
 				if FileSystem.getInstance():exist(qf) then
 					if string.endswith(f, ".a") or string.endswith(f, ".plist") then
 						deployFiles = deployFiles .. " " .. f
-					elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+					elseif string.endswith(f, ".framework") or string.endswith(f, ".xcframework") or string.endswith(f, ".bundle") then
 						table.insert(deployBundles, f)
 					end
 				end
@@ -354,7 +354,7 @@ function migrate(args)
 				if FileSystem.getInstance():exist(qf) then
 					if string.endswith(f, ".a") or string.endswith(f, ".plist") then
 						deployFiles = deployFiles .. " " .. f
-					elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+					elseif string.endswith(f, ".framework") or string.endswith(f, ".xcframework") or string.endswith(f, ".bundle") then
 						table.insert(deployBundles, f)
 					end
 				end
