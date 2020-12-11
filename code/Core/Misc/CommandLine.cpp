@@ -157,17 +157,17 @@ const CommandLine::Option& CommandLine::getOption(wchar_t shortName, const std::
 	return m_invOpt;
 }
 
-size_t CommandLine::getCount() const
+uint32_t CommandLine::getCount() const
 {
-	return m_args.size();
+	return (uint32_t)m_args.size();
 }
 
-int32_t CommandLine::getInteger(size_t index) const
+int32_t CommandLine::getInteger(uint32_t index) const
 {
 	return parseString< int32_t >(m_args[index]);
 }
 
-const std::wstring& CommandLine::getString(size_t index) const
+const std::wstring& CommandLine::getString(uint32_t index) const
 {
 	return m_args[index];
 }
