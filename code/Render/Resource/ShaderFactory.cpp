@@ -67,7 +67,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	if (!shaderResource)
 		return nullptr;
 
-	std::wstring shaderName = instance->getName();
+	std::wstring shaderName = instance->getPath();
 	Ref< Shader > shader = new Shader();
 
 	// Create combination parameter mapping.
@@ -77,7 +77,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	// Create shader techniques.
 	for (auto resourceTechnique : shaderResource->getTechniques())
 	{
-		std::wstring programName = shaderName + L"." + resourceTechnique.name;
+		std::wstring programName = shaderName + L"[" + resourceTechnique.name + L"]";
 
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(resourceTechnique.name)];
 		technique.mask = resourceTechnique.mask;
