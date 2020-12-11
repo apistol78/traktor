@@ -89,6 +89,7 @@ private:
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;

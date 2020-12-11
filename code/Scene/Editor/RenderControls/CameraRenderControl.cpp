@@ -148,7 +148,7 @@ void CameraRenderControl::updateWorldRenderer()
 	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
 			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
@@ -161,13 +161,7 @@ void CameraRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
-	if (!worldRendererType)
-		return;
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -195,6 +189,8 @@ void CameraRenderControl::updateWorldRenderer()
 
 void CameraRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
+	m_worldRendererType = &worldRendererType;
+	updateWorldRenderer();
 }
 
 void CameraRenderControl::setAspect(float aspect)

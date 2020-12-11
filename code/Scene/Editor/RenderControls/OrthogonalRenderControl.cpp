@@ -195,7 +195,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 		{
 			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
