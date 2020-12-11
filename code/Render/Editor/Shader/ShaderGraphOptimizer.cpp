@@ -86,7 +86,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimi
 
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_insertedCount(0)
 ,	m_frequentUniformsAsLinear(false)
 {
 }
@@ -266,19 +265,25 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	);
 
 	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
-	m_insertedCount = 0;
 
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
-	m_visited.clear();
+	Ref< ShaderGraphOrderEvaluator > orderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear);
+	SmallSet< const Node* > visited;
+
 	for (auto pixelOutputNode : pixelOutputNodes)
-		insertInterpolators(shaderGraph, pixelOutputNode);
+		insertInterpolators(visited, shaderGraph, pixelOutputNode, orderEvaluator);
 
 	return shaderGraph;
 }
 
-void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* node) const
+void ShaderGraphOptimizer::insertInterpolators(
+	SmallSet< const Node* >& visited,
+	ShaderGraph* shaderGraph,
+	Node* node,
+	Ref< ShaderGraphOrderEvaluator >& inoutOrderEvaluator
+) const
 {
 	// Should never reach vertex inputs.
 	T_FATAL_ASSERT(!is_a< VertexInput >(node));
@@ -290,10 +295,9 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 	// If we've already visited source node there is no
 	// place to put an interpolator as we're in a loop.
-	if (m_visited.find(node) != m_visited.end())
+	if (visited.find(node) != visited.end())
 		return;
-
-	m_visited.insert(node);
+	visited.insert(node);
 
 	for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 	{
@@ -313,7 +317,7 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 		PinOrderType inputOrder = PotConstant;
 		if (!vertexMandatory)
-			inputOrder = ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
+			inputOrder = inoutOrderEvaluator->evaluate(sourceOutputPin);
 
 		if (vertexMandatory || (!isSwizzle && !inCycle && inputOrder <= PotLinear))
 		{
@@ -356,15 +360,16 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 					edge = new Edge(interpolator->getOutputPin(0), inputPin);
 					shaderGraph->addEdge(edge);
-
-					m_insertedCount++;
 				}
+
+				// Re-create order evaluator since we've modified the shader graph.
+				inoutOrderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear);
 			}
 		}
 		else
 		{
 			// Input still have too high order; need to keep in pixel shader.
-			insertInterpolators(shaderGraph, sourceNode);
+			insertInterpolators(visited, shaderGraph, sourceNode, inoutOrderEvaluator);
 		}
 	}
 }

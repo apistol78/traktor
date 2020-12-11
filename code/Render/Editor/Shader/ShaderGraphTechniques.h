@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "Core/Object.h"
 
 // import/export mechanism.
