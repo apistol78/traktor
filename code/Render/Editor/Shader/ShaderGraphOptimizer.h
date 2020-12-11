@@ -1,8 +1,7 @@
 #pragma once
 
-#include <set>
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallSet.h"
 #include "Render/Editor/Shader/PinType.h"
 
 // import/export mechanism.
@@ -21,6 +20,7 @@ namespace traktor
 class Node;
 class OutputPin;
 class ShaderGraph;
+class ShaderGraphOrderEvaluator;
 
 /*! Shader graph optimizer.
  * \ingroup Render
@@ -33,7 +33,7 @@ class T_DLLCLASS ShaderGraphOptimizer : public Object
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphOptimizer(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphOptimizer(const ShaderGraph* shaderGraph);
 
 	/*! Remove unused branches.
 	 *
@@ -61,11 +61,14 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	mutable std::set< const Node* > m_visited;
-	mutable int32_t m_insertedCount;
 	mutable bool m_frequentUniformsAsLinear;
 
-	void insertInterpolators(ShaderGraph* shaderGraph, Node* node) const;
+	void insertInterpolators(
+		SmallSet< const Node* >& visited,
+		ShaderGraph* shaderGraph,
+		Node* node,
+		Ref< ShaderGraphOrderEvaluator >& inoutOrderEvaluator
+	) const;
 };
 
 	}
