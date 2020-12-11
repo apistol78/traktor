@@ -175,7 +175,7 @@ void FinalRenderControl::updateWorldRenderer()
 	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
+		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}

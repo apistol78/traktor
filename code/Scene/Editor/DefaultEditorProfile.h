@@ -42,6 +42,7 @@ public:
 		SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
+		const TypeInfo& worldRendererType,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const override final;
 

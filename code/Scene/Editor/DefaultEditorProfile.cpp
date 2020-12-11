@@ -100,12 +100,13 @@ void DefaultEditorProfile::createEntityRenderers(
 	SceneEditorContext* context,
 	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
+	const TypeInfo& worldRendererType,
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 	outEntityRenderers.push_back(new world::EntityRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
-	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), type_of< world::WorldRendererDeferred >()));
+	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
 	outEntityRenderers.push_back(new world::LightRenderer());
 	outEntityRenderers.push_back(new world::FacadeRenderer());
 	outEntityRenderers.push_back(new world::GroupRenderer());
