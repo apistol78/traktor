@@ -27,6 +27,7 @@ bool PipelineLayoutCache::get(const VkDescriptorSetLayoutCreateInfo& dlci, VkDes
 	checksum.begin();
 	for (uint32_t i = 0; i < dlci.bindingCount; ++i)
 		checksum.feed(dlci.pBindings[i]);
+	checksum.end();
 
 	auto it = m_pipelineLayouts.find(checksum.get());
 	if (it != m_pipelineLayouts.end())

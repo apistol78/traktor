@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Render/IProgram.h"
 #include "Render/Vulkan/ApiHeader.h"
 
@@ -145,9 +146,9 @@ private:
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
 	AlignedVector< SBuffer > m_sbuffers;
-	AlignedVector< VkDescriptorBufferInfo > m_bufferInfos;
-	AlignedVector< VkDescriptorImageInfo > m_imageInfos;
-	AlignedVector< VkWriteDescriptorSet > m_writes;
+	StaticVector< VkDescriptorBufferInfo, 16 > m_bufferInfos;
+	StaticVector< VkDescriptorImageInfo, 16 > m_imageInfos;
+	StaticVector< VkWriteDescriptorSet, 16 + 16 > m_writes;
 	uint32_t m_stencilReference;
 	uint32_t m_hash;
 };
