@@ -68,11 +68,11 @@ public:
 
 	const Option& getOption(wchar_t shortName, const std::wstring& longName) const;
 
-	size_t getCount() const;
+	uint32_t getCount() const;
 
-	int32_t getInteger(size_t index) const;
+	int32_t getInteger(uint32_t index) const;
 
-	const std::wstring& getString(size_t index) const;
+	const std::wstring& getString(uint32_t index) const;
 
 private:
 	std::wstring m_file;
