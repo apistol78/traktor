@@ -129,8 +129,8 @@ private:
 	uint32_t m_vertexShaderHash = 0;
 	uint32_t m_fragmentShaderHash = 0;
 	uint32_t m_computeShaderHash = 0;
-
-	uint32_t m_hash = 0;
+	uint32_t m_shaderHash = 0;
+	uint32_t m_layoutHash = 0;
 };
 
 	}

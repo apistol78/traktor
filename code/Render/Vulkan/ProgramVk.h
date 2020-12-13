@@ -65,7 +65,7 @@ public:
 
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 
-	uint32_t getHash() const { return m_hash; }
+	uint32_t getShaderHash() const { return m_shaderHash; }
 
 private:
 	struct ParameterMap
@@ -150,7 +150,7 @@ private:
 	StaticVector< VkDescriptorImageInfo, 16 > m_imageInfos;
 	StaticVector< VkWriteDescriptorSet, 16 + 16 > m_writes;
 	uint32_t m_stencilReference;
-	uint32_t m_hash;
+	uint32_t m_shaderHash;
 };
 
 	}

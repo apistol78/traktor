@@ -543,33 +543,48 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
 		checksum.end();
-		programResource->m_hash = checksum.get();
+		programResource->m_shaderHash = checksum.get();
 	}
-	//{
-	//	Adler32 checksum;
-	//	checksum.begin();
+	{
+		Adler32 checksum;
+		checksum.begin();
 
-	//	for (int32_t i = 0; i < 3; ++i)
-	//	{
-	//		if (programResource->m_uniformBufferSizes[i] > 0)
-	//			checksum.feed(i);
-	//	}
+		for (int32_t i = 0; i < 3; ++i)
+		{
+			if (programResource->m_uniformBufferSizes[i] > 0)
+			{
+				checksum.feed(L"UB");
+				checksum.feed(i);
+			}
+		}
 
-	//	checksum.feed(programResource->m_samplers.size());
-	//	for (const auto& sampler : programResource->m_samplers)
-	//		checksum.feed(sampler.binding);
+		checksum.feed(programResource->m_samplers.size());
+		for (uint32_t i = 0; i < programResource->m_samplers.size(); ++i)
+		{
+			checksum.feed(L"S");
+			checksum.feed(i);
+			checksum.feed(programResource->m_samplers[i].binding);
+		}
 
-	//	checksum.feed(programResource->m_textures.size());
-	//	for (const auto& texture : programResource->m_textures)
-	//		checksum.feed(texture.binding);
+		checksum.feed(programResource->m_textures.size());
+		for (uint32_t i = 0; i < programResource->m_textures.size(); ++i)
+		{
+			checksum.feed(L"T");
+			checksum.feed(i);
+			checksum.feed(programResource->m_textures[i].binding);
+		}
 
-	//	checksum.feed(programResource->m_sbuffers.size());
-	//	for (const auto& sbuffer : programResource->m_sbuffers)
-	//		checksum.feed(sbuffer.binding);
+		checksum.feed(programResource->m_sbuffers.size());
+		for (uint32_t i = 0; i < programResource->m_sbuffers.size(); ++i)
+		{
+			checksum.feed(L"SB");
+			checksum.feed(i);
+			checksum.feed(programResource->m_sbuffers[i].binding);
+		}
 
-	//	checksum.end();
-	//	programResource->m_descriptorSetLayoutHash = checksum.get();
-	//}
+		checksum.end();
+		programResource->m_layoutHash = checksum.get();
+	}
 
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
