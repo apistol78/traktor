@@ -1,13 +1,16 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
+#include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEditorProfile.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
+#include "Resource/Id.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -89,20 +92,20 @@ Ref< world::EntityData > MeshEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	//const TypeInfo* primaryType = instance->getPrimaryType();
-	//if (!primaryType)
-	//	return 0;
+	const TypeInfo* primaryType = instance->getPrimaryType();
+	if (!primaryType)
+		return nullptr;
 
-	//if (!is_type_of< MeshAsset >(*primaryType))
-	//	return 0;
+	if (!is_type_of< MeshAsset >(*primaryType))
+		return nullptr;
 
-	//Ref< MeshEntityData > entityData = new MeshEntityData();
-	//entityData->setName(instance->getName());
-	//entityData->setMesh(resource::Id< IMesh >(instance->getGuid()));
-
-	//return entityData;
-
-	return nullptr;
+	Ref< world::EntityData > entityData = new world::EntityData();
+	entityData->setId(Guid::create());
+	entityData->setName(instance->getName());
+	entityData->setComponent(new MeshComponentData(
+		resource::Id< IMesh >(instance->getGuid())
+	));
+	return entityData;
 }
 
 	}

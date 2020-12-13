@@ -2726,34 +2726,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				result = m_propertiesView->handleCommand(command);
 		}
 
-		// Propagate command to active editor; if it contains focus.
-		if (!result)
-		{
-			bool activeEditorFocus = false;
-
-			if (m_activeTabPage != nullptr && m_activeTabPage->containFocus())
-				activeEditorFocus = true;
-
-			if (!activeEditorFocus && m_activeEditorPageSite)
-			{
-				const auto& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
-				for (auto i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
-				{
-					if (i->first && i->first->containFocus())
-					{
-						activeEditorFocus = true;
-						break;
-					}
-				}
-			}
-
-			if (activeEditorFocus)
-			{
-				if (m_activeEditorPage)
-					result = m_activeEditorPage->handleCommand(command);
-			}
-		}
-
+		// Propagate comment to focus dialog.
 		if (!result)
 		{
 			for (ui::Widget* child = getFirstChild(); child; child = child->getNextSibling())
@@ -2765,6 +2738,12 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					break;
 				}
 			}
+		}
+		// Propagate command to active editor.
+		if (!result)
+		{
+			if (m_activeEditorPage)
+				result = m_activeEditorPage->handleCommand(command);
 		}
 	}
 
