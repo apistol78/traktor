@@ -1451,9 +1451,9 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	
 	uint32_t primitiveId = (uint32_t)pt;
 	uint32_t declHash = vb->getHash();
-	uint32_t programHash = p->getHash();
+	uint32_t shaderHash = p->getShaderHash();
 
-	const auto key = std::make_tuple(primitiveId, m_targetId, declHash, programHash);
+	const auto key = std::make_tuple(primitiveId, m_targetId, declHash, shaderHash);
 
 	VkPipeline pipeline = 0;
 

@@ -73,7 +73,7 @@ ProgramVk::ProgramVk(
 ,	m_descriptorSetLayout(0)
 ,	m_pipelineLayout(0)
 ,	m_stencilReference(0)
-,	m_hash(0)
+,	m_shaderHash(0)
 {
 }
 
@@ -91,7 +91,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 #endif
 
 	m_renderState = resource->m_renderState;
-	m_hash = resource->m_hash;
+	m_shaderHash = resource->m_shaderHash;
 
 	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
@@ -117,7 +117,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	// Each program has 3 uniform buffer bindings (Once, Frame and Draw cbuffers).
 	for (int32_t i = 0; i < 3; ++i)
 	{
-		if (resource->m_uniformBufferSizes[i] <= 0)
+		if (resource->m_uniformBufferSizes[i] == 0)
 			continue;
 
 		auto& lb = dslb.push_back();
@@ -167,7 +167,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	dlci.bindingCount = (uint32_t)dslb.size();
 	dlci.pBindings = dslb.c_ptr();
 
-	if (!pipelineLayoutCache->get(dlci, m_descriptorSetLayout, m_pipelineLayout))
+	if (!pipelineLayoutCache->get(resource->m_layoutHash, dlci, m_descriptorSetLayout, m_pipelineLayout))
 		return false;
 
 	// Create uniform shadow buffers.
