@@ -11,8 +11,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslLayout", GlslLayout, Object)
 void GlslLayout::add(GlslResource* resource)
 {
 	T_ASSERT(resource->m_binding == -1);
-	resource->m_binding = (int32_t)m_resources.size();
 	m_resources.push_back(resource);
+
+	m_resources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
+		if (type_name(r0) < type_name(r1))
+			return false;
+		else if (type_name(r0) > type_name(r1))
+			return true;
+		if (r0->getName() >= r1->getName())
+			return false;
+		else
+			return true;
+	});
+
+	for (int32_t i = 0; i < (int32_t)m_resources.size(); ++i)
+		m_resources[i]->m_binding = i;
 }
 
 GlslResource* GlslLayout::get(int32_t binding)
