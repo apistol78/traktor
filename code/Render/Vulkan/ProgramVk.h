@@ -73,35 +73,19 @@ private:
 #if defined(_DEBUG)
 		std::wstring name;
 #endif
-		uint32_t buffer;	//!< Uniform buffer index.
-		uint32_t offset;	//!< Offset into uniform buffer's data.
-		uint32_t size;		//!< Number of floats.
-
-		ParameterMap()
-		:	buffer(0)
-		,	offset(0)
-		,	size(0)
-		{
-		}
+		uint32_t buffer = 0;	//!< Uniform buffer index.
+		uint32_t offset = 0;	//!< Offset into uniform buffer's data.
+		uint32_t size = 0;		//!< Number of floats.
 	};
 
 	struct UniformBuffer
 	{
-		uint32_t size;
+		uint32_t size = 0;
 		AlignedVector< float > data;
-		VkBuffer buffer;
-		VmaAllocation allocation;
-		void* ptr;
-		bool dirty;
-
-		UniformBuffer()
-		:	size(0)
-		,	buffer(0)
-		,	allocation(0)
-		,	ptr(nullptr)
-		,	dirty(true)
-		{
-		}
+		VkBuffer buffer = 0;
+		VmaAllocation allocation = 0;
+		void* ptr = nullptr;
+		bool dirty = true;
 	};
 
 	struct Sampler

@@ -335,6 +335,7 @@ end
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__IOS__,
@@ -346,7 +347,6 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				VALID_ARCHS = "arm64";
 			};
 			name = Debug;
 		};
@@ -354,6 +354,7 @@ end
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__IOS__,
@@ -364,7 +365,6 @@ end
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				VALID_ARCHS = "arm64";
 			};
 			name = Release;
 		};

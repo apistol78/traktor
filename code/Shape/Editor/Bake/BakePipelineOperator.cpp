@@ -307,38 +307,6 @@ bool prepareModel(
 	return true;
 }
 
-/*! */
-bool loadMaterialTextures(editor::IPipelineBuilder* pipelineBuilder, model::Model* model, const Guid& lightmapId, const std::wstring& assetPath)
-{
-	// Modify all materials to contain reference to lightmap channel.
-	for (auto& material : model->getMaterials())
-		material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
-
-	// Load texture images and attach to materials.
-	for (auto& material : model->getMaterials())
-	{
-		auto diffuseMap = material.getDiffuseMap();
-		if (diffuseMap.texture.isNotNull())
-		{
-			Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-			if (!textureAsset)
-				continue;
-
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-			if (!file)
-				continue;
-
-			Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-			if (!image)
-				continue;
-
-			diffuseMap.image = image;			
-			material.setDiffuseMap(diffuseMap);
-		}
-	}
-	return true;
-}
 
 /*! */
 bool addModel(
@@ -515,6 +483,7 @@ bool BakePipelineOperator::build(
 	);
 
 	RefArray< world::LayerEntityData > layers;
+	SmallMap< Path, Ref< drawing::Image > > images;
 
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	for (const auto layer : inoutSceneAsset->getLayers())
@@ -618,9 +587,36 @@ bool BakePipelineOperator::build(
 					configuration->getMaximumLightMapSize()
 				);
 
-				// Load model's material textures.
-				if (!loadMaterialTextures(pipelineBuilder, model, lightmapId, m_assetPath))
-					return scene::Traverser::VrFailed;
+				// Modify all materials to contain reference to lightmap channel.
+				for (auto& material : model->getMaterials())
+					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+
+				// Load texture images and attach to materials.
+				for (auto& material : model->getMaterials())
+				{
+					auto diffuseMap = material.getDiffuseMap();
+					if (diffuseMap.texture.isNotNull())
+					{
+						Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+						if (!textureAsset)
+							continue;
+
+						Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
+						Ref< drawing::Image > image = images[filePath];
+						if (image == nullptr)
+						{
+							Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+							if (file)
+							{
+								image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+								images[filePath] = image;
+							}
+						}
+
+						diffuseMap.image = image;			
+						material.setDiffuseMap(diffuseMap);
+					}
+				}
 
 				// Calculate priority, if entity has moved since last bake then it's prioritized.
 				int32_t priority = 0;
@@ -678,6 +674,7 @@ bool BakePipelineOperator::build(
 		layers.push_back(flattenedLayer);
 	}
 	inoutSceneAsset->setLayers(layers);
+	images.clear();
 
 	// Create irradiance grid task.
 	{

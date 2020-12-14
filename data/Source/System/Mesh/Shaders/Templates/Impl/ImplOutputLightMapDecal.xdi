@@ -94,6 +94,11 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
 					<name>Cast shadow</name>
 					<optional>true</optional>
@@ -128,9 +133,18 @@
 					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
+					<name>Write velocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Alpha</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Cast shadow</first>
 					<second>1</second>
@@ -154,6 +168,10 @@
 				<item>
 					<first>Transparent</first>
 					<second>0</second>
+				</item>
+				<item>
+					<first>Write velocity</first>
+					<second>1</second>
 				</item>
 			</values>
 		</item>

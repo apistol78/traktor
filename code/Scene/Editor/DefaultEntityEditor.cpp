@@ -21,6 +21,21 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+template < typename ComponentDataType >
+ComponentDataType* getComponentOf(const world::EntityData* entityData)
+{
+	for (auto component : entityData->getComponents())
+	{
+		if (auto typedComponent = dynamic_type_cast< ComponentDataType* >(component))
+			return typedComponent;
+	}
+	return nullptr;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
@@ -40,9 +55,9 @@ bool DefaultEntityEditor::isPickable() const
 bool DefaultEntityEditor::isGroup() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
-	if (entityData->getComponent< world::GroupComponentData >() != nullptr)
+	if (getComponentOf< world::GroupComponentData >(entityData) != nullptr)
 		return true;
-	else if (entityData->getComponent< world::FacadeComponentData >() != nullptr)
+	else if (getComponentOf< world::FacadeComponentData >(entityData) != nullptr)
 		return true;
 	else
 		return false;
@@ -58,12 +73,12 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) cons
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
-	if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
+	if (auto groupComponentData = getComponentOf< world::GroupComponentData >(entityData))
 	{
 		groupComponentData->addEntityData(childEntityData);
 		return true;
 	}
-	else if (auto facadeComponentData = entityData->getComponent< world::FacadeComponentData >())
+	else if (auto facadeComponentData = getComponentOf< world::GroupComponentData >(entityData))
 	{
 		facadeComponentData->addEntityData(childEntityData);
 		return true;
@@ -183,118 +198,30 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
 
-	//if (auto lightComponentData = m_entityAdapter->getComponentData< world::LightComponentData >())
-	//{
-	//	if (!m_context->shouldDrawGuide(L"Entity.Light"))
-	//		return;
+	if (!m_entityAdapter->getParent())
+		return;
 
-	//	Vector4 lightPosition = transform.translation();
-	//	Vector4 lightDirection = -transform.axisY();
-	//	Vector4 lightX = transform.axisX();
-	//	Vector4 lightZ = transform.axisZ();
-
-	//	primitiveRenderer->pushDepthState(true, true, false);
-
-	//	if (lightComponentData->getLightType() == world::LtDirectional)
-	//	{
-	//		primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
-	//		primitiveRenderer->drawLine(
-	//			lightPosition,
-	//			lightPosition + lightDirection * Scalar(0.5f),
-	//			5.0f,
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawArrowHead(
-	//			lightPosition + lightDirection * Scalar(0.5f),
-	//			lightPosition + lightDirection * Scalar(0.7f),
-	//			0.5f,
-	//			Color4ub(255, 255, 255)
-	//		);
-	//	}
-	//	else if (lightComponentData->getLightType() == world::LtPoint)
-	//	{
-	//		primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
-	//	}
-	//	else if (lightComponentData->getLightType() == world::LtSpot)
-	//	{
-	//		primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
-
-	//		Frustum spotFrustum;
-	//		spotFrustum.buildPerspective(lightComponentData->getRadius(), 1.0f, 0.1f, lightComponentData->getRange());
-
-	//		primitiveRenderer->pushWorld(transform.toMatrix44() * rotateX(deg2rad(90.0f)));
-	//		primitiveRenderer->drawWireQuad(
-	//			spotFrustum.corners[0],
-	//			spotFrustum.corners[1],
-	//			spotFrustum.corners[2],
-	//			spotFrustum.corners[3],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawWireQuad(
-	//			spotFrustum.corners[4],
-	//			spotFrustum.corners[5],
-	//			spotFrustum.corners[6],
-	//			spotFrustum.corners[7],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawLine(
-	//			spotFrustum.corners[0],
-	//			spotFrustum.corners[4],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawLine(
-	//			spotFrustum.corners[1],
-	//			spotFrustum.corners[5],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawLine(
-	//			spotFrustum.corners[2],
-	//			spotFrustum.corners[6],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->drawLine(
-	//			spotFrustum.corners[3],
-	//			spotFrustum.corners[7],
-	//			Color4ub(255, 255, 255)
-	//		);
-	//		primitiveRenderer->popWorld();
-	//	}
-
-	//	primitiveRenderer->popDepthState();
-
-	//	primitiveRenderer->pushWorld(transform.toMatrix44());
-	//	primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
-	//	primitiveRenderer->popWorld();
-
-	//	return;
-	//}
-
+	if (m_context->shouldDrawGuide(L"Entity.BoundingBox"))
 	{
-		if (!m_entityAdapter->getParent())
-			return;
-
-		if (m_context->shouldDrawGuide(L"Entity.BoundingBox"))
+		primitiveRenderer->pushWorld(transform.toMatrix44());
+		if (m_entityAdapter->isSelected())
 		{
-			primitiveRenderer->pushWorld(transform.toMatrix44());
-			if (m_entityAdapter->isSelected())
-			{
-				primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
-				primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
-			}
-			else
-				primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
-			primitiveRenderer->popWorld();
+			primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
+			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
+		}
+		else
+			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
+		primitiveRenderer->popWorld();
 
-			if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
+		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
+		{
+			for (const auto& snapPoint : m_entityAdapter->getSnapPoints())
 			{
-				for (const auto& snapPoint : m_entityAdapter->getSnapPoints())
-				{
-					primitiveRenderer->drawSolidPoint(
-						snapPoint.position,
-						4.0f,
-						m_colorSnap
-					);
-				}
+				primitiveRenderer->drawSolidPoint(
+					snapPoint.position,
+					4.0f,
+					m_colorSnap
+				);
 			}
 		}
 	}

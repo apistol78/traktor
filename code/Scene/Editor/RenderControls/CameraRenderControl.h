@@ -51,7 +51,7 @@ class CameraRenderControl : public ISceneRenderControl
 public:
 	CameraRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context);
+	bool create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
 
