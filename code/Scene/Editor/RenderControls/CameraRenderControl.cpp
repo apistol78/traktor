@@ -75,10 +75,12 @@ CameraRenderControl::CameraRenderControl()
 {
 }
 
-bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
+bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
+
+	m_worldRendererType = &worldRendererType;
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);

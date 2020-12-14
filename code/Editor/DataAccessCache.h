@@ -3,8 +3,10 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -21,6 +23,7 @@ namespace traktor
 class ChunkMemory;
 class IStream;
 class Object;
+class Thread;
 
 	namespace editor
 	{
@@ -58,8 +61,17 @@ private:
 	typedef std::function< bool (const Object* object, IStream* stream) > fn_writeObject_t;
 	typedef std::function< Ref< Object > () > fn_createObject_t;
 
+	struct WriteEntry
+	{
+		Path fileName;
+		Ref< ChunkMemory > blob;
+	};
+
 	Path m_cachePath;
+	Thread* m_writeThread = nullptr;
+	Event m_eventWrite;
 	SmallMap< uint32_t, Ref< ChunkMemory > > m_objectPool;
+	ThreadsafeFifo< WriteEntry > m_writeQueue;
 	Semaphore m_lock;
 
 	Ref< Object > readObject(
@@ -68,6 +80,8 @@ private:
 		const fn_writeObject_t& write,
 		const fn_createObject_t& create
 	);
+
+	void threadWriter();
 };
 
 	}

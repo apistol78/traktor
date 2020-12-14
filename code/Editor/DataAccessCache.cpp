@@ -3,9 +3,12 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Editor/DataAccessCache.h"
 
 namespace traktor
@@ -16,12 +19,38 @@ namespace traktor
 bool DataAccessCache::create(const Path& cachePath)
 {
 	m_cachePath = cachePath;
-	return FileSystem::getInstance().makeAllDirectories(m_cachePath);
+	if (!FileSystem::getInstance().makeAllDirectories(m_cachePath))
+		return false;
+
+	m_writeThread = ThreadManager::getInstance().create(makeFunctor(this, &DataAccessCache::threadWriter), L"Data access cache");
+	if (!m_writeThread)
+		return false;
+
+	if (!m_writeThread->start())
+	{
+		m_writeThread = nullptr;
+		return false;
+	}
+
+	return true;
 }
 
 void DataAccessCache::destroy() 
 {
-	// Flush pending writes.
+	if (m_writeThread != nullptr)
+	{
+		// Flush pending writes.
+		while (!m_writeQueue.empty())
+		{
+			m_eventWrite.broadcast();
+			ThreadManager::getInstance().getCurrentThread()->yield();
+		}
+
+		// Terminate writer thread.
+		m_writeThread->stop();
+		ThreadManager::getInstance().destroy(m_writeThread);
+		m_writeThread = nullptr;
+	}
 }
 
 Ref< Object > DataAccessCache::readObject(
@@ -82,19 +111,34 @@ Ref< Object > DataAccessCache::readObject(
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	}
 
-	// Write to physical cache.
-	blobStream = FileSystem::getInstance().open(fileName, File::FmWrite);
-	if (blobStream)
-	{
-		ChunkMemoryStream cmsr(blob, true, false);
-
-		if (!StreamCopy(blobStream, &cmsr).execute())
-			return nullptr;
-
-		safeClose(blobStream);
-	}
+	// Enqueue for writing to physical image.
+	m_writeQueue.put({ fileName, blob });
+	m_eventWrite.broadcast();
 
 	return object;
+}
+
+void DataAccessCache::threadWriter()
+{
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
+	while (!thread->stopped())
+	{
+		m_eventWrite.wait(100);
+
+		WriteEntry entry;
+		while (m_writeQueue.get(entry))
+		{
+			Ref< IStream > blobStream = FileSystem::getInstance().open(entry.fileName, File::FmWrite);
+			if (blobStream)
+			{
+				ChunkMemoryStream cmsr(entry.blob, true, false);
+				if (!StreamCopy(blobStream, &cmsr).execute())
+					log::error << L"Unable to write DAC entry \"" << entry.fileName.getPathName() << L"\" to disc." << Endl;
+				safeClose(blobStream);
+			}
+		}
+		entry.blob = nullptr;
+	}
 }
 
 	}

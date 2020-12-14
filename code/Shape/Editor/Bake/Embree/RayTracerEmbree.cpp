@@ -180,12 +180,13 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 
 	// Estimate number of sample points since we "cull" points outside of circle.
 	sampleCount = (uint32_t)(sampleCount * (1 + (PI * 0.25)));
-	for (uint32_t i = 0; i < sampleCount; ++i)
+	m_shadowSampleOffsets.push_back(Vector2(0.0f, 0.0f));
+	for (uint32_t i = 1; i < sampleCount; ++i)
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount);
 		uv = uv * 2.0f - 1.0f;
 		if (uv.length() <= 1.0f)
-			m_shadowSampleOfsets.push_back(uv);
+			m_shadowSampleOffsets.push_back(uv);
 	}
 
     return true;
@@ -303,7 +304,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 			Color4f incoming(0.0f, 0.0f, 0.0f, 0.0f);
 			if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
 			{
-				Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+				Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 				Vector4 newOrigin = (position + direction * Scalar(rh.ray.tfar)).xyz1();
 				incoming += traceSinglePath(newOrigin, hitNormal, random, 0);
 			}
@@ -370,8 +371,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 					if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 						continue;
 
-					Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
-
+					Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 					if (dot3(hitNormal, traceDirection) < 0.0f)
 						continue;
 
@@ -423,7 +423,7 @@ Color4f RayTracerEmbree::tracePath0(
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Construct all rays.
-	AlignedVector< RTCRayHit > rhv(sampleCount);
+	StaticVector< RTCRayHit, 1024 > rhv(sampleCount);
 	for (int32_t i = 0; i < sampleCount; ++i)
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
@@ -434,6 +434,7 @@ Color4f RayTracerEmbree::tracePath0(
 	// Intersect test all rays using ray streams.
 	RTCIntersectContext context;
 	rtcInitIntersectContext(&context);
+	context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
 	rtcIntersect1M(m_scene, &context, rhv.ptr(), sampleCount, sizeof(RTCRayHit));
 
 	// Accumulate incoming light.
@@ -457,6 +458,8 @@ Color4f RayTracerEmbree::tracePath0(
 				color += m_environment->sample(direction);
 			continue;
 		}
+
+		// \todo Collect materials and images before and access linearly...
 
 		const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
 		const auto& materials = m_models[rh.hit.geomID]->getMaterials();
@@ -483,7 +486,7 @@ Color4f RayTracerEmbree::tracePath0(
 
 		Color4f emittance = hitMaterialColor * Scalar(hitMaterial.getEmissive());
 
-		Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+		Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
 		Color4f direct = sampleAnalyticalLights(
@@ -627,7 +630,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 	bool bounce
  ) const
 {
-	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOfsets.size() : (m_shadowSampleOfsets.size() > 0 ? 1 : 0);
+	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
     const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	RTCRay T_MATH_ALIGN16 r;
 
@@ -654,19 +657,15 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 					RTCIntersectContext context;
 					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
 
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
 						Vector4 lumelPosition = origin;
 						Vector4 traceDirection = -light.direction;
-
-						if (shadowSampleCount > 1)
-						{
-							Vector2 uv = m_shadowSampleOfsets[j];
-							lumelPosition += u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius);
-						}
+						Vector2 uv = m_shadowSampleOffsets[j];
+						lumelPosition += u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius);
 
 						lumelPosition.storeAligned(&r.org_x); 
 						traceDirection.storeAligned(&r.dir_x);
@@ -715,19 +714,15 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 					RTCIntersectContext context;
 					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
 
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
 						Vector4 lumelPosition = origin;
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
-
-						if (shadowSampleCount > 1)
-						{
-							Vector2 uv = m_shadowSampleOfsets[j];
-							traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
-						}
+						Vector2 uv = m_shadowSampleOffsets[j];
+						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
 						lumelPosition.storeAligned(&r.org_x); 
 						traceDirection.storeAligned(&r.dir_x);
@@ -781,19 +776,15 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 					RTCIntersectContext context;
 					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
 
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
 						Vector4 lumelPosition = origin;
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
-
-						if (shadowSampleCount > 1)
-						{
-							Vector2 uv = m_shadowSampleOfsets[j];
-							traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
-						}
+						Vector2 uv = m_shadowSampleOffsets[j];
+						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
 						lumelPosition.storeAligned(&r.org_x); 
 						traceDirection.storeAligned(&r.dir_x);

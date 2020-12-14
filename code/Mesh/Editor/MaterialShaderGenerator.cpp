@@ -49,6 +49,7 @@ const Guid c_implOutputAlphaTest(L"{902D6E55-9B18-774A-874B-76F55CAC2E4C}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
 const Guid c_implOutputMultiply(L"{C635E09A-8DFD-BF40-A863-81301D2388AC}");
 const Guid c_implOutputLightMapDecal(L"{4FFCDA64-4B42-DA46-973E-63C740B06A16}");
+const Guid c_implOutputLightMapAlphaTest(L"{97914603-BA44-7942-B049-7AE3C3280421}");
 const Guid c_implTransparencyConst(L"{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}");
 const Guid c_implTransparencyMap0(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implTransparencyMap1(L"{63451E3C-CC4E-A245-B721-8498E0AE5D0D}");
@@ -201,7 +202,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				}
 			}
 			else
-				externalNode->setFragmentGuid(c_implOutputLightMapDecal);
+			{
+				if (material.getBlendOperator() != model::Material::BoAlphaTest)
+					externalNode->setFragmentGuid(c_implOutputLightMapDecal);
+				else
+					externalNode->setFragmentGuid(c_implOutputLightMapAlphaTest);
+			}
 		}
 		else if (fragmentGuid == c_tplTransparencyParams)
 		{
@@ -400,6 +406,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputMultiply, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputLightMapDecal, editor::PdfUse);
+	pipelineDepends->addDependency(c_implOutputLightMapAlphaTest, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap1, editor::PdfUse);
