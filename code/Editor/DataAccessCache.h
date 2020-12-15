@@ -35,7 +35,11 @@ class Thread;
  */
 class T_DLLCLASS DataAccessCache : public Object
 {
+	T_RTTI_CLASS;
+
 public:
+	virtual ~DataAccessCache();
+
 	bool create(const Path& cachePath);
 
 	void destroy();

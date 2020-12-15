@@ -47,7 +47,7 @@ public:
 
 	virtual void flush() override;
 
-private:
+protected:
 	uint8_t* m_buffer;
 	uint8_t* m_bufferPtr;
 	int64_t m_bufferSize;

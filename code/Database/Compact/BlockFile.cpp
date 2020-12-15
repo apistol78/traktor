@@ -186,7 +186,7 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 	if (!readOnly && !FileSystem::getInstance().exist(fileName))
 		return false;
 
-	m_stream = FileSystem::getInstance().open(fileName, readOnly ? File::FmRead : File::FmRead | File::FmWrite);
+	m_stream = FileSystem::getInstance().open(fileName, readOnly ? File::FmRead | File::FmMapped : File::FmRead | File::FmWrite);
 	if (!m_stream)
 		return false;
 

@@ -320,27 +320,28 @@ bool addModel(
 	TracerTask* tracerTask
 )
 {
-	// Create output instance.
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 64, 64);
-	for (int32_t y = 0; y < image->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
-		{
-			image->setPixelUnsafe(
-				x, y,
-				((x / 8 + y / 8) & 1) ? Color4f(0.5f, 0.5f, 0.5f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f)
-			);
-		}
-	}
+	//// Create output instance.
+	//Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
+	//for (int32_t y = 0; y < image->getHeight(); ++y)
+	//{
+	//	for (int32_t x = 0; x < image->getWidth(); ++x)
+	//	{
+	//		image->setPixelUnsafe(
+	//			x, y,
+	//			((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
+	//		);
+	//	}
+	//}
 
-	Ref< render::TextureOutput > output = new render::TextureOutput();
-	output->m_enableCompression = false;
-	if (!pipelineBuilder->buildAdHocOutput(
-		output,
-		lightmapId,
-		image
-	))
-		return false;	
+	//Ref< render::TextureOutput > output = new render::TextureOutput();
+	//output->m_enableCompression = false;
+	//output->m_linearGamma = true;
+	//if (!pipelineBuilder->buildAdHocOutput(
+	//	output,
+	//	lightmapId,
+	//	image
+	//))
+	//	return false;	
 
 	tracerTask->addTracerModel(new TracerModel(
 		model,
@@ -403,13 +404,23 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		auto supportedTypes = entityReplicator->getSupportedTypes();
 		for (auto supportedType : supportedTypes)
 			m_entityReplicators[supportedType] = entityReplicator;
-	}	
+	}
+
+	// In case we're running in standalone pipeline we create our tracer processor ourselves.
+	if (!m_editor)
+		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, true);
 
 	return true;
 }
 
 void BakePipelineOperator::destroy()
 {
+	if (!m_editor && ms_tracerProcessor)
+	{
+		log::info << L"Waiting for lightmap baking to complete..." << Endl;
+		ms_tracerProcessor->waitUntilIdle();
+		ms_tracerProcessor = nullptr;
+	}
 }
 
 TypeInfoSet BakePipelineOperator::getOperatorTypes() const
@@ -454,17 +465,11 @@ bool BakePipelineOperator::build(
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 
 	// Skip baking all to gether if no tracer type specified.
-	if (!m_tracerType)
+	if (!m_tracerType || !ms_tracerProcessor)
 		return true;
 
-	// In case no tracer processor is registered we create one for this build only,
-	// by doing so we can ensure trace is finished before returning.
-	Ref< TracerProcessor > tracerProcessor = ms_tracerProcessor;
-	if (!tracerProcessor)
-		tracerProcessor = new TracerProcessor(m_tracerType, pipelineBuilder->getOutputDatabase(), m_compressionMethod, true);
-
 	// Cancel any bake process currently running for given scene.
-	tracerProcessor->cancel(sourceInstance->getGuid());
+	ms_tracerProcessor->cancel(sourceInstance->getGuid());
 
 	// Load last known receipt, used for prioritizing moved/new entities.
 	Ref< BakeReceipt > receipt;
@@ -479,7 +484,8 @@ bool BakePipelineOperator::build(
 
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
-		configuration
+		configuration,
+		pipelineBuilder->getOutputDatabase()
 	);
 
 	RefArray< world::LayerEntityData > layers;
@@ -745,15 +751,7 @@ bool BakePipelineOperator::build(
 	}
 
 	// Finally enqueue task to tracer processor.
-	tracerProcessor->enqueue(tracerTask);
-
-	// If we're not running with an external processor then we need to wait.
-	if (!ms_tracerProcessor)
-	{
-		log::info << L"Waiting for lightmap baking to complete..." << Endl;
-		tracerProcessor->waitUntilIdle();
-		tracerProcessor = nullptr;
-	}
+	ms_tracerProcessor->enqueue(tracerTask);
 
 	// Write out the receipt.
 	if (receipt)

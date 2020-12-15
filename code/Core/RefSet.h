@@ -48,6 +48,13 @@ public:
 		m_items.clear();
 	}
 
+	void reset()
+	{
+		for (auto item : m_items)
+			T_SAFE_RELEASE(item);
+		m_items.reset();
+	}
+
 	bool empty() const
 	{
 		return m_items.empty();

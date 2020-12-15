@@ -39,7 +39,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechn
 
 ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 {
-	Ref< ShaderGraph > shaderGraphOpt = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	Ref< ShaderGraph > shaderGraphOpt = new ShaderGraph(
+		shaderGraph->getNodes(),
+		shaderGraph->getEdges()
+	);
 
 	// Constant fold entire graph so disabled outputs can be efficiently evaluated.
 	if (shaderGraphOpt)
@@ -126,7 +129,7 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 	return names;
 }
 
-Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
+ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 {
 	auto it = m_techniques.find(name);
 	if (it != m_techniques.end())

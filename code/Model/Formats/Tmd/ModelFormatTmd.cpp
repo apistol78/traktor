@@ -25,7 +25,7 @@ bool ModelFormatTmd::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filter) const
 {
-	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead | File::FmMapped);
 	if (stream)
 		return BinarySerializer(stream).readObject< Model >();
 	else

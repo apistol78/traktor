@@ -10,6 +10,7 @@
 #include "Core/Log/LogRedirectTarget.h"
 #include "Core/Log/LogStreamTarget.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -586,6 +587,8 @@ bool perform(const PipelineParameters* params)
 			bt->wait();
 		}
 	}
+
+	safeDestroy(dataAccessCache);
 
 	ThreadManager::getInstance().destroy(bt);
 

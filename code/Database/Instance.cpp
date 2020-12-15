@@ -43,7 +43,7 @@ Group* Instance::getParent() const
 	return m_parent;
 }
 
-std::wstring Instance::getName() const
+const std::wstring& Instance::getName() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
@@ -271,6 +271,12 @@ bool Instance::setName(const std::wstring& name)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
 
+	if ((m_cachedFlags & IchName) != 0)
+	{
+		if (name == m_name)
+			return true;
+	}
+
 	if (!m_providerInstance->setName(name))
 		return false;
 
@@ -282,6 +288,12 @@ bool Instance::setGuid(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
+
+	if ((m_cachedFlags & IchGuid) != 0)
+	{
+		if (guid == m_guid)
+			return true;
+	}
 
 	if (!m_providerInstance->setGuid(guid))
 		return false;

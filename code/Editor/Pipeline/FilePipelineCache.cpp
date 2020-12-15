@@ -48,11 +48,11 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 	ss << m_path << L"/" << fa << L"/" << fb << L"/" << gs << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 
 	// Open cached file.
-	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
+	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead | File::FmMapped);
 	if (!fileStream)
 		return nullptr;
 
-	return new BufferedStream(fileStream);
+	return fileStream;
 }
 
 Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)

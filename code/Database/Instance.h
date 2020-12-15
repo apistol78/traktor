@@ -25,10 +25,9 @@ class IStream;
 	namespace db
 	{
 
+class Group;
 class IInstanceEventListener;
 class IProviderInstance;
-
-class Group;
 
 /*! Database instance.
  * \ingroup Database
@@ -52,7 +51,7 @@ public:
 
 	virtual Group* getParent() const;
 
-	virtual std::wstring getName() const;
+	virtual const std::wstring& getName() const;
 
 	virtual std::wstring getPath() const;
 

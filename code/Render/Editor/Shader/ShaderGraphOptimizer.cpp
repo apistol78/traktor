@@ -108,6 +108,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 
 Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 {
+	RefSet< Edge > edges;
 	uint32_t mergedNodes = 0;
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
@@ -150,7 +151,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 			}
 
 			// Identical nodes found; rewire edges.
-			RefSet< Edge > edges;
+			edges.reset();
 			if (shaderGraph->findEdges(nodes[j]->getOutputPin(0), edges) > 0)
 			{
 				for (RefSet< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
@@ -220,7 +221,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				// Identically wired nodes found; rewire output edges.
 				for (int32_t k = 0; k < outputPinCount; ++k)
 				{
-					RefSet< Edge > edges;
+					edges.reset();
 					shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
 					for (RefSet< Edge >::const_iterator m = edges.begin(); m != edges.end(); ++m)
 					{
@@ -236,7 +237,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				// Remove input edges.
 				for (int32_t k = 0; k < inputPinCount; ++k)
 				{
-					Ref< Edge > edge = shaderGraph->findEdge(nodes[j]->getInputPin(k));
+					Edge* edge = shaderGraph->findEdge(nodes[j]->getInputPin(k));
 					if (edge)
 						shaderGraph->removeEdge(edge);
 				}

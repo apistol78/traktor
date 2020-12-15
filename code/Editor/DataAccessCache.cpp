@@ -16,6 +16,13 @@ namespace traktor
 	namespace editor
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DataAccessCache", DataAccessCache, Object)
+
+DataAccessCache::~DataAccessCache()
+{
+	T_FATAL_ASSERT_M(m_writeQueue.empty(), L"Write queue not empty, forgot to destroy instance?");
+}
+
 bool DataAccessCache::create(const Path& cachePath)
 {
 	m_cachePath = cachePath;
@@ -77,7 +84,7 @@ Ref< Object > DataAccessCache::readObject(
 	// Try load blob from file.
 	Path fileName = m_cachePath.getPathName() + L"/" + str(L"%08x.blob", key);
 
-	Ref< IStream > blobStream = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > blobStream = FileSystem::getInstance().open(fileName, File::FmRead | File::FmMapped);
 	if (blobStream)
 	{
 		Ref< ChunkMemory > blob = new ChunkMemory();
