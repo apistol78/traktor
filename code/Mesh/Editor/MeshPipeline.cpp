@@ -567,14 +567,6 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Merge identical branches.
-		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).mergeBranches();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << materialPair.first << L"\"." << Endl;
-			return false;
-		}
-
 		// Update bone count from model.
 		for (auto node : materialShaderGraph->getNodes())
 		{
@@ -602,7 +594,8 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract each material technique.
-		std::set< std::wstring > materialTechniqueNames = render::ShaderGraphTechniques(materialShaderGraph).getNames();
+		render::ShaderGraphTechniques techniques(materialShaderGraph);
+		std::set< std::wstring > materialTechniqueNames = techniques.getNames();
 		if (!m_includeOnlyTechniques.empty())
 		{
 			std::set< std::wstring > keepTechniqueNames;
@@ -620,7 +613,7 @@ bool MeshPipeline::buildOutput(
 
 		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
-			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(materialTechniqueName);
+			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
 
 			uint32_t hash = render::ShaderGraphHash::calculate(materialTechniqueShaderGraph);
 			std::wstring shaderTechniqueName = str(L"M/%s/%08x", materialTechniqueName.c_str(), hash);
@@ -689,7 +682,7 @@ bool MeshPipeline::buildOutput(
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
 	for (std::map< uint32_t, Ref< render::ShaderGraph > >::iterator i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
 	{
-		Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(i->second).create< render::ShaderGraph >();
+		Ref< render::ShaderGraph > materialTechniqueShaderGraph = i->second; // DeepClone(i->second).create< render::ShaderGraph >();
 		for (auto node : materialTechniqueShaderGraph->getNodes())
 			materialShaderGraph->addNode(node);
 		for (auto edge : materialTechniqueShaderGraph->getEdges())

@@ -41,7 +41,8 @@ public:
 	{
 		FmRead = 1,
 		FmWrite = 2,
-		FmAppend = 4
+		FmAppend = 4,
+		FmMapped = 8
 	};
 
 	File();

@@ -5,6 +5,7 @@
 #endif
 #include "Core/Io/Win32/NativeVolume.h"
 #include "Core/Io/Win32/NativeStream.h"
+#include "Core/Io/Win32/NativeMappedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -187,7 +188,28 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 		return 0;
 	}
 
-	return (hFile != INVALID_HANDLE_VALUE) ? new NativeStream(hFile, mode) : 0;
+	// Try to map file if open for reading.
+	if ((mode & (File::FmRead | File::FmMapped)) == (File::FmRead | File::FmMapped))
+	{
+		int64_t fileSize = GetFileSize(hFile, NULL);
+		HANDLE hFileMapping = CreateFileMapping(
+			hFile,
+			NULL,
+			PAGE_READONLY,
+			0,
+			0,
+			NULL
+		);
+		if (hFileMapping != INVALID_HANDLE_VALUE)
+		{
+			void* ptr = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+			if (ptr)
+				return new NativeMappedStream(hFile, hFileMapping, ptr, fileSize);
+			CloseHandle(hFileMapping);
+		}
+	}
+
+	return new NativeStream(hFile, mode);
 }
 
 bool NativeVolume::exist(const Path& fileName)

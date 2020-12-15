@@ -63,6 +63,11 @@ public:
 		m_data.clear();
 	}
 
+	void reset()
+	{
+		m_data.resize(0);
+	}
+
 	bool empty() const
 	{
 		return m_data.empty();

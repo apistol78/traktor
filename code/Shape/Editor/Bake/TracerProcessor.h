@@ -20,13 +20,6 @@ class Guid;
 class PropertyGroup;
 class Thread;
 
-    namespace db
-    {
-
-class Database;
-
-    }
-
     namespace shape
     {
 
@@ -52,7 +45,7 @@ public:
         }
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool parallel);
+    TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool parallel);
 
     virtual ~TracerProcessor();
 
@@ -68,7 +61,6 @@ public:
 
 private:
 	const TypeInfo* m_rayTracerType;
-    Ref< db::Database > m_outputDatabase;
     std::wstring m_compressionMethod;
     bool m_parallel;
     Thread* m_thread;

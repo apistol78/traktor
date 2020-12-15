@@ -25,6 +25,7 @@
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 
 namespace traktor
 {
@@ -120,6 +121,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_verbose(verbose)
+,	m_profiler(new PipelineProfiler())
 ,	m_progress(0)
 ,	m_progressEnd(0)
 ,	m_succeeded(0)
@@ -328,7 +330,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 		log::info << L"Build finished in " << (int32_t)(timer.getElapsedTime() * 1000) << L" ms; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 		if (m_verbose)
 		{
-			for (auto duration : m_buildDurations)
+			for (auto duration : m_profiler->getDurations())
 				log::info << (int32_t)(duration.second * 1000) << L" ms in " << duration.first->getName() << Endl;
 		}
 	}
@@ -372,7 +374,9 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInst
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
+	m_profiler->begin(*pipelineType);
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceInstance, sourceAsset, buildParams);
+	m_profiler->end(*pipelineType);
 	if (!product)
 		return nullptr;
 
@@ -498,12 +502,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	else if (m_cache)
 		Atomic::increment(m_cacheVoid);
 
-	Timer timer;
-	timer.start();
-
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
+	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
 		nullptr,
@@ -515,8 +517,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		buildParams,
 		PbrSourceModified
 	);
-
-	double buildTime = timer.getElapsedTime();
+	m_profiler->end(*dependency->pipelineType);
 
 	if (result)
 	{
@@ -536,11 +537,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
 
 			log::info << DecreaseIndent;
-		}
-
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildDurationsLock);
-			m_buildDurations[&type_of(pipeline)] += buildTime;
 		}
 	}
 
@@ -787,6 +783,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
+	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
 		dependencySet,
@@ -798,6 +795,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		buildParams,
 		reason
 	);
+	m_profiler->end(*dependency->pipelineType);
 
 	if (result)
 		Atomic::increment(m_succeededBuilt);
@@ -829,11 +827,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		}
 
 		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
-
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildDurationsLock);
-			m_buildDurations[&type_of(pipeline)] += buildTime;
-		}
 	}
 
 	log::info << DecreaseIndent;

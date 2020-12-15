@@ -215,14 +215,12 @@ void line(const Vector2& from, const Vector2& to, const std::function< void(cons
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, db::Database* outputDatabase, const std::wstring& compressionMethod, bool parallel)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool parallel)
 :   m_rayTracerType(rayTracerType)
-,   m_outputDatabase(outputDatabase)
 ,	m_compressionMethod(compressionMethod)
 ,	m_parallel(parallel)
 ,   m_thread(nullptr)
 {
-	T_FATAL_ASSERT(m_outputDatabase != nullptr);
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
@@ -299,8 +297,7 @@ void TracerProcessor::processorThread()
 
 	while (!m_thread->stopped())
 	{
-		if (!m_event.wait(100))
-			continue;
+		m_event.wait(100);
 
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -316,6 +313,7 @@ void TracerProcessor::processorThread()
 			m_status.active = true;
 			m_cancelled = false;
 
+			log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
 			double Tstart = timer.getElapsedTime();
 
 			process(m_activeTask);
@@ -544,7 +542,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create final output instance.
 		bool result = writeTexture(
-			m_outputDatabase,
+			task->getOutputDatabase(),
 			m_compressionMethod,
 			tracerOutput->getLightmapId(),
 			lightmap
@@ -565,7 +563,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create output instance.
 		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-		Ref< db::Instance > outputInstance = m_outputDatabase->createInstance(
+		Ref< db::Instance > outputInstance = task->getOutputDatabase()->createInstance(
 			L"Generated/" + tracerIrradiance->getIrradianceGridId().format(),
 			db::CifReplaceExisting,
 			&irradianceGridId

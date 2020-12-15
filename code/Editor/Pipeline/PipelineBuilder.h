@@ -37,6 +37,7 @@ class IPipelineCache;
 class IPipelineDb;
 class IPipelineInstanceCache;
 class PipelineFactory;
+class PipelineProfiler;
 
 /*! Pipeline manager.
  * \ingroup Editor
@@ -112,14 +113,13 @@ private:
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
-	Semaphore m_buildDurationsLock;
 	Semaphore m_workSetLock;
 
-	std::list< WorkEntry > m_workSet;
+	Ref< PipelineProfiler > m_profiler;
 
+	std::list< WorkEntry > m_workSet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
-	std::map< const TypeInfo*, double > m_buildDurations;
 
 	ThreadLocal m_buildInstances;
 

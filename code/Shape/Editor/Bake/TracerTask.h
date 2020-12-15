@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+    namespace db
+    {
+
+class Database;
+
+    }
+
     namespace shape
     {
 
@@ -30,11 +37,13 @@ class T_DLLCLASS TracerTask : public Object
     T_RTTI_CLASS;
 
 public:
-    TracerTask(const Guid& sceneId, const BakeConfiguration* configuration);
+    explicit TracerTask(const Guid& sceneId, const BakeConfiguration* configuration, db::Database* outputDatabase);
 
 	const Guid& getSceneId() const { return m_sceneId; }
 
     const BakeConfiguration* getConfiguration() const { return m_configuration; }
+
+    db::Database* getOutputDatabase() const { return m_outputDatabase; }
 
 	void addTracerEnvironment(const TracerEnvironment* tracerEnvironment);
 
@@ -59,6 +68,7 @@ public:
 private:
     Guid m_sceneId;
     Ref< const BakeConfiguration > m_configuration;
+    Ref< db::Database > m_outputDatabase;
 	RefArray< const TracerEnvironment > m_tracerEnvironments;
     RefArray< const TracerLight > m_tracerLights;
     RefArray< const TracerModel > m_tracerModels;

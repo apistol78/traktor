@@ -77,12 +77,13 @@ bool LocalInstance::commitTransaction()
 {
 	if (!m_transaction)
 	{
-		log::error << L"commitTransaction failed; no pending transaction" << Endl;
+		log::error << L"commitTransaction failed; no pending transaction." << Endl;
 		return false;
 	}
+
 	if (!m_transaction->commit(m_context))
 	{
-		log::error << L"commitTransaction failed; commit failed" << Endl;
+		log::error << L"commitTransaction failed; commit failed." << Endl;
 		return false;
 	}
 
@@ -189,7 +190,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 	if (!objectStream)
 	{
 		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-		objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
+		objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead | File::FmMapped);
 	}
 
 	if (!objectStream)
@@ -280,7 +281,7 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 	}
 
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
-	return FileSystem::getInstance().open(instanceDataPath, File::FmRead);
+	return FileSystem::getInstance().open(instanceDataPath, File::FmRead | File::FmMapped);
 }
 
 Ref< IStream > LocalInstance::writeData(const std::wstring& dataName)

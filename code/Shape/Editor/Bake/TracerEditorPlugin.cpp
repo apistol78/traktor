@@ -67,7 +67,6 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
-		m_editor->getOutputDatabase(),
 		compressionMethod,
 		parallelBake
 	));
