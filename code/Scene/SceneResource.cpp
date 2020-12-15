@@ -33,10 +33,10 @@ Ref< Scene > SceneResource::createScene(
 ) const
 {
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > imageProcessParams;
-	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = m_imageProcessParams.begin(); i != m_imageProcessParams.end(); ++i)
+	for (auto it = m_imageProcessParams.begin(); it != m_imageProcessParams.end(); ++it)
 	{
-		if (!resourceManager->bind(i->second, imageProcessParams[render::getParameterHandle(i->first)]))
-			log::error << L"Unable to bind image processing parameter \"" << i->first << L"\"" << Endl;
+		if (!resourceManager->bind(it->second, imageProcessParams[render::getParameterHandle(it->first)]))
+			log::error << L"Unable to bind image processing parameter \"" << it->first << L"\"" << Endl;
 	}
 
 	SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;

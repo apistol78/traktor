@@ -1,7 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Settings/PropertyString.h"
-#include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
@@ -41,7 +40,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
 
 	// Get referenced mesh asset.
-	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
+	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
 	if (!meshAsset)
 		return nullptr;
 
@@ -97,7 +96,7 @@ Ref< Object > MeshEntityReplicator::modifyOutput(
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
 
 	// Read original mesh asset from source.
-	Ref< MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
+	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
 	if (!meshAsset)
 		return nullptr;
 

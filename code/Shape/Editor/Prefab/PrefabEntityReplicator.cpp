@@ -2,7 +2,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
-#include "Database/Database.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
@@ -52,7 +51,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
     {
         if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
         {
-            Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
+            Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(
                 meshComponentData->getMesh()
             );
             if (!meshAsset)
@@ -97,7 +96,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
     {
         if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
         {
-            Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
+            Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(
                 meshComponentData->getMesh()
             );
             if (!meshAsset)
