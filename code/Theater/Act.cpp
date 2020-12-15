@@ -98,6 +98,16 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 
 		transform = entity->getTransform();
 
+		float wobbleMagnitude = m_tracks[i]->getWobbleMagnitude();
+		float wobbleRate = m_tracks[i]->getWobbleRate();
+		if (wobbleMagnitude > FUZZY_EPSILON && wobbleRate > FUZZY_EPSILON)
+		{
+			float dx = convolve(time * wobbleRate, c_wobbleX, sizeof_array(c_wobbleX)) * wobbleMagnitude;
+			float dy = convolve(time * wobbleRate, c_wobbleY, sizeof_array(c_wobbleY)) * wobbleMagnitude;
+			float dz = convolve(time * wobbleRate, c_wobbleZ, sizeof_array(c_wobbleZ)) * wobbleMagnitude;
+			transform = transform * Transform(Vector4(dx, dy, dz));
+		}
+
 		Ref< world::Entity > lookAtEntity = m_tracks[i]->getLookAtEntity();
 		if (lookAtEntity)
 		{
@@ -107,18 +117,9 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 				lookAtTransform.translation().xyz1()
 			);
 			transform = Transform(m.inverse());
-			entity->setTransform(transform);
 		}
 
-		float wobbleMagnitude = m_tracks[i]->getWobbleMagnitude();
-		float wobbleRate = m_tracks[i]->getWobbleRate();
-		if (wobbleMagnitude > FUZZY_EPSILON && wobbleRate > FUZZY_EPSILON)
-		{
-			float dx = convolve(time * wobbleRate, c_wobbleX, sizeof_array(c_wobbleX)) * wobbleMagnitude;
-			float dy = convolve(time * wobbleRate, c_wobbleY, sizeof_array(c_wobbleY)) * wobbleMagnitude;
-			float dz = convolve(time * wobbleRate, c_wobbleZ, sizeof_array(c_wobbleZ)) * wobbleMagnitude;
-			entity->setTransform(transform * Transform(Vector4(dx, dy, dz)));
-		}
+		entity->setTransform(transform);
 	}
 
 	return true;
