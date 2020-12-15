@@ -320,28 +320,29 @@ bool addModel(
 	TracerTask* tracerTask
 )
 {
-	//// Create output instance.
-	//Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
-	//for (int32_t y = 0; y < image->getHeight(); ++y)
-	//{
-	//	for (int32_t x = 0; x < image->getWidth(); ++x)
-	//	{
-	//		image->setPixelUnsafe(
-	//			x, y,
-	//			((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
-	//		);
-	//	}
-	//}
+	// Create output instance.
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			image->setPixelUnsafe(
+				x, y,
+				((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
+			);
+		}
+	}
 
-	//Ref< render::TextureOutput > output = new render::TextureOutput();
-	//output->m_enableCompression = false;
-	//output->m_linearGamma = true;
-	//if (!pipelineBuilder->buildAdHocOutput(
-	//	output,
-	//	lightmapId,
-	//	image
-	//))
-	//	return false;	
+	Ref< render::TextureOutput > output = new render::TextureOutput();
+	output->m_generateMips = false;
+	output->m_enableCompression = false;
+	output->m_linearGamma = true;
+	if (!pipelineBuilder->buildAdHocOutput(
+		output,
+		lightmapId,
+		image
+	))
+		return false;	
 
 	tracerTask->addTracerModel(new TracerModel(
 		model,
