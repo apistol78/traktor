@@ -10,7 +10,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 19, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 20, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -90,6 +90,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 		float clampShadowThreshold;
 		s >> Member< float >(L"clampShadowThreshold", clampShadowThreshold, AttributeRange(0.0f));
 	}
+
+	if (s.getVersion< BakeConfiguration >() >= 20)
+		s >> Member< float >(L"skyAttenuation", m_skyAttenuation, AttributeRange(0.0f) | AttributeUnit(AuPercent));
 }
 
 	}

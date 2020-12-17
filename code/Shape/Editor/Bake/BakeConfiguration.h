@@ -43,6 +43,8 @@ public:
 
 	bool getEnableSeamFilter() const { return m_enableSeamFilter; }
 
+	float getSkyAttenuation() const { return m_skyAttenuation; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -57,6 +59,7 @@ private:
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;
 	bool m_enableSeamFilter = true;
+	float m_skyAttenuation = 1.0f;
 };
 
 	}

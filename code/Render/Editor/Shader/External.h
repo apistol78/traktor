@@ -48,6 +48,8 @@ public:
 
 	float getValue(const std::wstring& name, float defaultValue) const;
 
+	bool haveValue(const std::wstring& name) const;
+
 	void removeValue(const std::wstring& name);
 
 	const InputPin* createInputPin(const Guid& id, const std::wstring& name, bool optional);

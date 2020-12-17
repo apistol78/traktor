@@ -3,6 +3,7 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
@@ -26,6 +27,17 @@ bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
 TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< TerrainComponentData >();
+}
+
+bool TerrainEntityReplicator::addDependencies(
+    editor::IPipelineDepends* pipelineDepends,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
+    pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfUse);
+	return true;
 }
 
 Ref< model::Model > TerrainEntityReplicator::createModel(

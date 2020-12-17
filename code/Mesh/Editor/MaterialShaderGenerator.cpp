@@ -132,6 +132,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	const Guid& lightMapTexture = material.getLightMap().texture;
 
 	RefArray< render::External > externalNodes;
+	RefArray< render::External > resolveNodes;
 	materialShaderGraph->findNodesOf< render::External >(externalNodes);
 	for (auto externalNode : externalNodes)
 	{
@@ -152,6 +153,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getDiffuseMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implDiffuseMap0 : c_implDiffuseMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplEmissiveParams)
 		{
@@ -162,6 +164,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getEmissiveMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implEmissiveMap0 : c_implEmissiveMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplNormalParams)
 		{
@@ -172,6 +175,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getNormalMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implNormalMap0 : c_implNormalMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplOutput)
 		{
@@ -208,6 +212,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				else
 					externalNode->setFragmentGuid(c_implOutputLightMapAlphaTest);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplTransparencyParams)
 		{
@@ -218,6 +223,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implTransparencyMap0 : c_implTransparencyMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplLightMapParams)
 		{
@@ -228,6 +234,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implLightMap0 : c_implLightMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
 		{
@@ -238,6 +245,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getRoughnessMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplSpecularParams)
 		{
@@ -248,6 +256,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getSpecularMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplMetalnessParams)
 		{
@@ -258,14 +267,18 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				uint32_t channel = model.getTexCoordChannel(material.getMetalnessMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implMetalnessMap0 : c_implMetalnessMap1);
 			}
+			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplVertexParams)
+		{
 			externalNode->setFragmentGuid(c_implVertex);
+			resolveNodes.push_back(externalNode);
+		}
 	}
 
 	// Resolve material shader; load all patched fragments and merge into a complete shader.
 	FragmentReaderAdapter fragmentReader(database);
-	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, false);
+	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, resolveNodes, false);
 	if (!materialShaderGraph)
 		return nullptr;
 
@@ -366,9 +379,11 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 	}
 
+#if defined(_DEBUG)
 	// Validate integrity and then return complete mesh material shader.
 	if (!render::ShaderGraphValidator(materialShaderGraph, templateGuid).validateIntegrity())
 		return nullptr;
+#endif
 
 	return materialShaderGraph;
 }

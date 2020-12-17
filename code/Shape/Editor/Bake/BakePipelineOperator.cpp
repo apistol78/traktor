@@ -182,6 +182,7 @@ void addSky(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
 	const weather::SkyComponentData* skyComponentData,
+	float attenuation,
 	TracerTask* tracerTask
 )
 {
@@ -236,7 +237,7 @@ void addSky(
 					Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 					cl += cms->get(direction).saturated() * dot3(d, direction);
 				}
-				cl *= Scalar(PI);
+				cl *= Scalar(PI * attenuation);
 				cl /= 250.0_simd;
 				cmd->set(d, cl);
 			}
@@ -256,7 +257,6 @@ void addSky(
 
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
-
 }
 
 /*! */
@@ -435,7 +435,23 @@ bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 	// Add "use" dependencies to first level of external entity datas; so we ensure scene pipeline is invoked if external entity is modified.
 	for (const auto layer : sceneAsset->getLayers())
 	{
-		scene::Traverser::visit(layer, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
+		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
+		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineDepends, layer, Guid::null));
+		if (!flattenedLayer)
+			return false;
+
+		// Do not add dynamic layers to bake.
+		if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
+		{
+			if (!editorAttributes->include || editorAttributes->dynamic)
+				continue;
+		}
+
+		// \fixme Add dependency to all external entities.
+		//pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfUse);
+
+		scene::Traverser::visit(flattenedLayer, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
 		{
 			if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
 			{
@@ -443,9 +459,13 @@ bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 					return scene::Traverser::VrSkip;
 			}
 
-			const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData);
-			if (externalEntityData != nullptr)
-				pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfUse);
+			// Find model synthesizer which can add dependencies from components.
+			for (auto componentData : entityData->getComponents())
+			{
+				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				if (entityReplicator)
+					entityReplicator->addDependencies(pipelineDepends, entityData, componentData);
+			}
 
 			return scene::Traverser::VrContinue;
 		});
@@ -533,7 +553,7 @@ bool BakePipelineOperator::build(
 
 			// Add sky source.
 			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
-				addSky(pipelineBuilder, m_assetPath, skyComponentData, tracerTask);
+				addSky(pipelineBuilder, m_assetPath, skyComponentData, configuration->getSkyAttenuation(), tracerTask);
 
 			// Calculate synthesized ids.
 			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);

@@ -102,26 +102,6 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		scanCustomProperties(meshNode, mm);
 		scanCustomProperties(material, mm);
 
-		// \note In case weird FBX show up with un-standard texture names.
-#if 0
-		{
-			FbxProperty prop = material->GetFirstProperty();
-			while (prop.IsValid())
-			{
-				int userTag = prop.GetUserTag();
-				std::wstring propName = mbstows(prop.GetNameAsCStr());
-
-				log::info << L"\"" << propName << L"\"" << Endl;
-
-				const FbxTexture* texture = getTexture(material, prop.GetNameAsCStr());
-				if (texture)
-					log::info << L"\t as texture \"" << getTextureName(texture) << L"\"" << Endl;
-
-				prop = material->GetNextProperty(prop);
-			}
-		}
-#endif
-
 		const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
 		if (diffuseTexture)
 		{

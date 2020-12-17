@@ -87,6 +87,9 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 
 	for (auto edge : edges)
 	{
+		if (!edge->getSource() || !edge->getDestination())
+			continue;
+
 		const auto position1 = edge->getSource()->getNode()->getPosition();
 		const auto position2 = edge->getDestination()->getNode()->getPosition();
 

@@ -3,6 +3,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -35,6 +36,22 @@ TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< PrefabComponentData >();
 }
 
+bool PrefabEntityReplicator::addDependencies(
+    editor::IPipelineDepends* pipelineDepends,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+	const PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< const PrefabComponentData* >(componentData);
+    scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
+    {
+        if (auto meshComponentData = entityData->getComponent< mesh::MeshComponentData >())
+            pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
+        return scene::Traverser::VrContinue;
+    });
+	return true;
+}
+
 Ref< model::Model > PrefabEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,
@@ -47,9 +64,9 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 
     // Collect all models from prefab component.
     RefArray< model::Model > models;
-    scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
+    scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
     {
-        if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
+        if (auto meshComponentData = entityData->getComponent< mesh::MeshComponentData >())
         {
             Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(
                 meshComponentData->getMesh()
@@ -68,7 +85,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 		        scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
 	        ).apply(*model);
             model::Transform(
-                (worldInv * inoutEntityData->getTransform()).toMatrix44()
+                (worldInv * entityData->getTransform()).toMatrix44()
             ).apply(*model);
 
             model->clear(model::Model::CfColors | model::Model::CfJoints);
