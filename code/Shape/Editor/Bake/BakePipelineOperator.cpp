@@ -375,23 +375,22 @@ BakePipelineOperator::BakePipelineOperator()
 
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
-	// Check if baking is enabled, if not then we leave tracer type as null.
-	if (!settings->getProperty< bool >(L"BakePipelineOperator.Enable", true))
-		return true;
-
+	// Read all settings first so pipeline hash is consistent.
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path", L"");
+	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
+	bool tracerEnable = settings->getProperty< bool >(L"BakePipelineOperator.Enable", true);
 	std::wstring tracerTypeName = settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
-	if (tracerTypeName.empty())
-		return false;
+
+	// Check if baking is enabled, if not then we leave tracer type as null.
+	if (!tracerEnable)
+		return true;
 
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 		return false;
-
-	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 
 	// Create entity replicators.
 	TypeInfoSet entityReplicatorTypes;
