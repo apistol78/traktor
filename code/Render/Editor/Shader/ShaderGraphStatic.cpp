@@ -5,6 +5,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
@@ -833,6 +834,34 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
+	return shaderGraph;
+}
+
+Ref< ShaderGraph > ShaderGraphStatic::propagateConstantExternalValues() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< External > externalNodes;
+	shaderGraph->findNodesOf< External >(externalNodes);
+	for (auto externalNode : externalNodes)
+	{
+		for (auto inputPin : externalNode->getInputPins())
+		{
+			if (!inputPin->isOptional() || !externalNode->haveValue(inputPin->getName()))
+				continue;
+
+			Edge* edge = shaderGraph->findEdge(inputPin);
+			if (!edge)
+				continue;
+
+			const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(edge->getSource()->getNode());
+			if (!scalarNode)
+				continue;
+
+			externalNode->setValue(inputPin->getName(), scalarNode->get());
+			shaderGraph->removeEdge(edge);
+		}
+	}
 	return shaderGraph;
 }
 

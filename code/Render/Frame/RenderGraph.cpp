@@ -158,6 +158,28 @@ bool RenderGraph::validate()
 
 	// Collect order of passes, depth-first.
 	m_order.resize(0);	
+
+	// External outputs indicate some sort of caching scheme, such
+	// as offscreen caching etc, so we need to ensure they are executed
+	// first, regardless of dependencies.
+	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
+	{
+		if (m_passes[i]->haveOutput())
+		{
+			const auto& output = m_passes[i]->getOutput();
+			if (output.targetSetId != 0)
+			{
+				auto it = m_targets.find(output.targetSetId);
+				if (it->second.external)
+				{
+					traverse(m_passes, i, added, [&](int32_t index) {
+						m_order.push_back(index);
+					});
+				}
+			}
+		}
+	}
+
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
 		if (m_passes[i]->haveOutput())
@@ -169,19 +191,6 @@ bool RenderGraph::validate()
 				traverse(m_passes, i, added, [&](int32_t index) {
 					m_order.push_back(index);
 				});
-			}
-			else
-			{
-				// External outputs indicate some sort of caching scheme, such
-				// as offscreen caching etc, so we need to ensure they are executed
-				// regardless of dependencies.
-				auto it = m_targets.find(output.targetSetId);
-				if (it->second.external)
-				{
-					traverse(m_passes, i, added, [&](int32_t index) {
-						m_order.push_back(index);
-					});
-				}
 			}
 		}
 		else

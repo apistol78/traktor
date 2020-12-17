@@ -72,16 +72,24 @@ FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
+	RefArray< External > externalNodes;
+	shaderGraph->findNodesOf< External >(externalNodes);
+	return resolve(shaderGraph, externalNodes, fullResolve, optionalShaderGraphGuid);
+}
+
+Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const RefArray< External >& externalNodes, bool fullResolve, const Guid* optionalShaderGraphGuid) const
+{
 	std::wstring errorPrefix;
 	if (optionalShaderGraphGuid)
 		errorPrefix = L"Fragment linkage of \"" + optionalShaderGraphGuid->format() + L"\" failed; ";
 	else
 		errorPrefix = L"Fragment linkage failed; ";
 
-	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > mutableShaderGraph = new ShaderGraph(
+		shaderGraph->getNodes(),
+		shaderGraph->getEdges()
+	);
 
-	RefArray< External > externalNodes;
-	mutableShaderGraph->findNodesOf< External >(externalNodes);
 	for (auto externalNode : externalNodes)
 	{
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());

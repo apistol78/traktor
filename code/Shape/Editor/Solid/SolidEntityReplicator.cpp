@@ -63,6 +63,15 @@ TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< SolidEntityData >();
 }
 
+bool SolidEntityReplicator::addDependencies(
+    editor::IPipelineDepends* pipelineDepends,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+	return true;
+}
+
 Ref< model::Model > SolidEntityReplicator::createModel(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,

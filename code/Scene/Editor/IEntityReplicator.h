@@ -21,6 +21,7 @@ class Guid;
     {
 
 class IPipelineBuilder;
+class IPipelineDepends;
 class IPipelineSettings;
 
     }
@@ -56,6 +57,13 @@ public:
 
     /*! */
     virtual TypeInfoSet getSupportedTypes() const = 0;
+
+    /*! Add dependencies used by synthesizing entity. */
+    virtual bool addDependencies(
+        editor::IPipelineDepends* pipelineDepends,
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData
+    ) const = 0;
 
     /*! Create model replica from entity or component data.
      *

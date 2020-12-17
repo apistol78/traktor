@@ -26,6 +26,15 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< SplineEntityData >();
 }
 
+bool SplineEntityReplicator::addDependencies(
+    editor::IPipelineDepends* pipelineDepends,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+	return true;
+}
+
 Ref< model::Model > SplineEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const std::wstring& assetPath,

@@ -3,6 +3,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -28,6 +29,17 @@ bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
 {
     return makeTypeInfoSet< MeshComponentData >();
+}
+
+bool MeshEntityReplicator::addDependencies(
+    editor::IPipelineDepends* pipelineDepends,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
+	pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
+	return true;
 }
 
 Ref< model::Model > MeshEntityReplicator::createModel(

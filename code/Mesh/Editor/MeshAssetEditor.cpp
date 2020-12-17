@@ -19,6 +19,8 @@
 #include "Model/ModelCache.h"
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
@@ -601,6 +603,12 @@ void MeshAssetEditor::createMaterialShader()
 	);
 	if (materialShader)
 	{
+		materialShader = render::ShaderGraphStatic(materialShader).propagateConstantExternalValues();
+		T_ASSERT(materialShader != nullptr);
+
+		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches();
+		T_ASSERT(materialShader != nullptr);
+
 		Ref< db::Instance > materialShaderInstance = m_instance->getParent()->createInstance(outputName);
 		if (materialShaderInstance)
 		{

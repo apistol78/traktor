@@ -64,6 +64,9 @@ public:
 	/*! Remove disabled outputs. */
 	Ref< ShaderGraph > removeDisabledOutputs() const;
 
+	/*! Set values in external nodes from constant inputs. */
+	Ref< ShaderGraph > propagateConstantExternalValues() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

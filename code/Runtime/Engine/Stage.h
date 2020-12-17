@@ -99,6 +99,9 @@ public:
 	 */
 	Any invokeScript(const std::string& fn, uint32_t argc, const Any* argv);
 
+	/*! Check if transition is defined. */
+	bool haveTransition(const std::wstring& name) const;
+
 	/*! Load next stage.
 	 *
 	 * Next stage is determined by this stage's "transitions"; each

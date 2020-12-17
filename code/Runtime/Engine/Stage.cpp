@@ -1,11 +1,3 @@
-#include "Runtime/IEnvironment.h"
-#include "Runtime/IStateManager.h"
-#include "Runtime/UpdateControl.h"
-#include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/Layer.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/StageLoader.h"
-#include "Runtime/Engine/StageState.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Log/Log.h"
@@ -15,12 +7,29 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/IStateManager.h"
+#include "Runtime/UpdateControl.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/Layer.h"
+#include "Runtime/Engine/Stage.h"
+#include "Runtime/Engine/StageLoader.h"
+#include "Runtime/Engine/StageState.h"
 
 namespace traktor
 {
 	namespace runtime
 	{
+		namespace
+		{
+
+const render::Handle c_handleFade(L"Fade");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Stage", Stage, Object)
 
@@ -130,23 +139,28 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 			return method->invoke(m_object, argc, argv);
 	}
 
-	log::error << L"No such script function \"" << mbstows(fn) << L"\"" << Endl;
+	log::error << L"No such script function \"" << mbstows(fn) << L"\"." << Endl;
 	return Any();
+}
+
+bool Stage::haveTransition(const std::wstring& name) const
+{
+	return m_transitions.find(name) != m_transitions.end();
 }
 
 Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
 {
-	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
-	if (i == m_transitions.end())
+	auto it = m_transitions.find(name);
+	if (it == m_transitions.end())
 	{
-		log::error << L"No transition \"" << name << L"\" found" << Endl;
+		log::error << L"No transition \"" << name << L"\" found." << Endl;
 		return nullptr;
 	}
 
-	Ref< StageLoader > stageLoader = StageLoader::create(m_environment, i->second, params);
+	Ref< StageLoader > stageLoader = StageLoader::create(m_environment, it->second, params);
 	if (stageLoader->failed())
 	{
-		log::error << L"Stage loader failed" << Endl;
+		log::error << L"Stage loader failed." << Endl;
 		return nullptr;
 	}
 
@@ -155,14 +169,14 @@ Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
 
 Ref< StageLoader > Stage::loadStageAsync(const std::wstring& name, const Object* params)
 {
-	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
-	if (i == m_transitions.end())
+	auto it = m_transitions.find(name);
+	if (it == m_transitions.end())
 	{
-		log::error << L"No transition \"" << name << L"\" found" << Endl;
+		log::error << L"No transition \"" << name << L"\" found." << Endl;
 		return nullptr;
 	}
 
-	return StageLoader::createAsync(m_environment, i->second, params);
+	return StageLoader::createAsync(m_environment, it->second, params);
 }
 
 bool Stage::gotoStage(Stage* stage)
@@ -241,15 +255,19 @@ bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	for (auto layer : m_layers)
 		layer->setup(info, renderGraph);
 
-	// \fixme
-	// if (m_shaderFade && m_fade > FUZZY_EPSILON)
-	// {
-	// 	m_shaderFade->setFloatParameter(L"Fade", m_fade);
-	// 	m_screenRenderer->draw(
-	// 		m_environment->getRender()->getRenderView(),
-	// 		m_shaderFade
-	// 	);
-	// }
+	 if (m_shaderFade && m_fade > FUZZY_EPSILON)
+	 {
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Fade");
+		rp->setOutput(0, render::TfAll, render::TfAll);
+		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto programParams = renderContext->alloc< render::ProgramParameters >();
+			programParams->beginParameters(renderContext);
+			programParams->setFloatParameter(c_handleFade, m_fade);
+			programParams->endParameters(renderContext);
+			m_screenRenderer->draw(renderContext, m_shaderFade, programParams);
+		});
+		renderGraph.addPass(rp);
+	 }
 
 	return true;
 }

@@ -27,6 +27,12 @@ public:
 
     virtual TypeInfoSet getSupportedTypes() const override final;
 
+    virtual bool addDependencies(
+        editor::IPipelineDepends* pipelineDepends,
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData
+    ) const override final;
+
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,

@@ -295,6 +295,11 @@ float External::getValue(const std::wstring& name, float defaultValue) const
 	return it != m_values.end() ? it->second : defaultValue;
 }
 
+bool External::haveValue(const std::wstring& name) const
+{
+	return m_values.find(name) != m_values.end();
+}
+
 void External::removeValue(const std::wstring& name)
 {
 	auto it = m_values.find(name);

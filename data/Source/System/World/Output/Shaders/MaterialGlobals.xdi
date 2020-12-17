@@ -70,6 +70,19 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{8459840D-6CBD-944D-A54A-92C215F64FBA}</id>
+			<comment>
+			<![CDATA[
+Set global variables which is used by world renderer.
+
+			]]>
+			</comment>
+			<position>
+				<first>728</first>
+				<second>375</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
