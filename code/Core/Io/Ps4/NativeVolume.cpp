@@ -111,8 +111,8 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
 	int fd = sceKernelOpen(
 		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? SCE_KERNEL_O_RDONLY : SCE_KERNEL_O_WRONLY,
-		bool(mode == File::FmRead) ? 0 : (SCE_KERNEL_O_CREAT | SCE_KERNEL_O_TRUNC)
+		((mode & File::FmRead) != 0) ? SCE_KERNEL_O_RDONLY : SCE_KERNEL_O_WRONLY,
+		((mode & File::FmRead) != 0) ? 0 : (SCE_KERNEL_O_CREAT | SCE_KERNEL_O_TRUNC)
 	);
 	return bool(fd != 0) ? new NativeStream(fd, mode) : 0;
 }

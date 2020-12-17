@@ -88,7 +88,7 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 
 	CellFsErrno err = cellFsOpen(
 		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
+		((mode & File::FmRead != 0) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
 		&fd,
 		NULL,
 		0

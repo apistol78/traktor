@@ -133,7 +133,7 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
 	FILE* fp = fopen(
 		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? "rb" : "wb"
+		((mode & File::FmRead) != 0) ? "rb" : "wb"
 	);
 	return bool(fp != 0) ? new NativeStream(fp, mode) : 0;
 }
