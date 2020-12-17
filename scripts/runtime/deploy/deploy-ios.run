@@ -166,7 +166,7 @@ end
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -v -p -s=Pipeline"
+	local cmdline = tools.pipeline .. " -v -l -p -standalone -s=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -259,11 +259,13 @@ end
 
 
 function launch(args)
-	stdout:printLn("Launching Xcode on target host...")
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
+		stdout:printLn("Launching Xcode on target host...")
 		local result = run:execute(tools.remote .. " launch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh \"$(DEPLOY_PROJECT_NAME)\"", "(null)")
-		if result ~= 0 then
-			stderr:printLn("Failed to launch iOS application")
+		if result == 0 then
+			stdout:printLn("Xcode launched successful, Xcode ready to be used.")
+		else
+			stderr:printLn("Failed to launch Xcode on target host.")
 			return 1
 		end
 	end
@@ -326,9 +328,9 @@ function migrate(args)
 	stdout:printLn("Generating Xcode script...")
 	local f = fileSystem:open(Path("launch.sh"), 2)
 	local s = StreamOutput(f, Utf8Encoding(), "unix")
-	-- s:printLn("open \"${*:1}\".xcodeproj")
-	s:printLn("xcodebuild -scheme ${*:1} archive -archivePath ./${*:1}.xcarchive -project ${*:1}.xcodeproj -configuration Release -allowProvisioningUpdates")
-	s:printLn("xcodebuild -exportArchive -archivePath ./${*:1}.xcarchive -exportPath . -exportOptionsPlist Export.plist")
+	s:printLn("open \"${*:1}\".xcodeproj")
+	--s:printLn("xcodebuild -scheme ${*:1} archive -archivePath ./${*:1}.xcarchive -project ${*:1}.xcodeproj -configuration Release -allowProvisioningUpdates")
+	--s:printLn("xcodebuild -exportArchive -archivePath ./${*:1}.xcarchive -exportPath . -exportOptionsPlist Export.plist")
 	f:close()
 
 	-- Copy project to target which will build final product.
@@ -376,11 +378,13 @@ function migrate(args)
 			return 1
 		end
 
+--[[
 		stdout:printLn("Fetching product from \"" .. deployTarget .."\"...")
 		if run:execute(tools.remote .. " fetch $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).ipa\"") ~= 0 then
 			stderr:printLn("Failed to fetch product")
 			return 1
 		end
+]]
 	end
 
 	stdout:printLn("Migrate finished.")

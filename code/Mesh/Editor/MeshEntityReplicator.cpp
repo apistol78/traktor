@@ -50,7 +50,10 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	if (!model)
 		return nullptr;
 
-	model::Transform(scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())).apply(*model);
+	model::Transform(
+		translate(meshAsset->getOffset()) *
+		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+	).apply(*model);
 
 	// Create list of texture references.
 	std::map< std::wstring, Guid > materialTextures;

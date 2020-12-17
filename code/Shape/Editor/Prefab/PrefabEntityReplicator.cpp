@@ -63,8 +63,13 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 	        if (!model)
 		        return scene::Traverser::VrFailed;
 
-	        model::Transform(scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())).apply(*model);
-            model::Transform((worldInv * inoutEntityData->getTransform()).toMatrix44()).apply(*model);
+	        model::Transform(
+		        translate(meshAsset->getOffset()) *
+		        scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+	        ).apply(*model);
+            model::Transform(
+                (worldInv * inoutEntityData->getTransform()).toMatrix44()
+            ).apply(*model);
 
             model->clear(model::Model::CfColors | model::Model::CfJoints);
             models.push_back(model);

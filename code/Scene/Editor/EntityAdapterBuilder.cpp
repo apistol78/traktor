@@ -4,6 +4,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
+#include "Scene/Editor/ExternalEntityBuilder.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
@@ -39,7 +40,7 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 	EntityAdapter* currentEntityAdapter
 )
 :	m_context(context)
-,	m_entityBuilder(entityBuilder)
+,	m_entityBuilder(new ExternalEntityBuilder(entityBuilder))
 ,	m_cacheHit(0)
 ,	m_cacheMiss(0)
 {
@@ -224,7 +225,7 @@ Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntity
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const
 {
-	return m_entityBuilder->getCompositeEntityBuilder();
+	return m_entityBuilder;
 }
 
 	}

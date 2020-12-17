@@ -85,15 +85,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
 
 		if (m_editor)
-		{
-			// Due to scene editor collecting adapters we cannot continue to create
-			// using the aggregated builder thus we have to manually create child entities.
-			const IEntityFactory* factory = builder->getFactory(resolvedEntityData);
-			if (factory)
-				return factory->createEntity(builder->getCompositeEntityBuilder(), *resolvedEntityData.getResource());
-			else
-				return nullptr;
-		}
+			return builder->getCompositeEntityBuilder()->create(resolvedEntityData.getResource());
 		else
 			return builder->create(resolvedEntityData.getResource());
 	}
