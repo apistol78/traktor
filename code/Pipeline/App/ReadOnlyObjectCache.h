@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/ReaderWriterLock.h"
 
 namespace traktor
@@ -24,12 +24,12 @@ class ReadOnlyObjectCache : public Object
 public:
 	ReadOnlyObjectCache(db::Database* database);
 
-	Ref< const ISerializable > get(const Guid& instanceGuid);
+	const ISerializable* get(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_database;
 	ReaderWriterLock m_readCacheLock;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
+	SmallMap< Guid, Ref< ISerializable > > m_readCache;
 };
 
 }

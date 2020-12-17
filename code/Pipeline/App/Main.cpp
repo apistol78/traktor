@@ -717,8 +717,44 @@ int master(const CommandLine& cmdLine)
 
 	if (cmdLine.hasOption('l', L"log"))
 	{
-		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
-		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != nullptr)
+		RefArray< File > logs;
+		FileSystem::getInstance().find(L"Pipeline_*.log", logs);
+
+		// Get "alive" log ids.
+		std::vector< int32_t > logIds;
+		for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+		{
+			std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+			size_t p = logName.find(L'_');
+			if (p != logName.npos)
+			{
+				int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
+				if (id != -1)
+					logIds.push_back(id);
+			}
+		}
+
+		int32_t nextLogId = 0;
+		if (!logIds.empty())
+		{
+			std::sort(logIds.begin(), logIds.end());
+
+			// Don't keep more than 10 log files.
+			while (logIds.size() >= 10)
+			{
+				StringOutputStream ss;
+				ss << L"Pipeline_" << logIds.front() << L".log";
+				FileSystem::getInstance().remove(ss.str());
+				logIds.erase(logIds.begin());
+			}
+
+			nextLogId = logIds.back() + 1;
+		}
+
+		// Create new log file.
+		StringOutputStream ss;
+		ss << L"Pipeline_" << nextLogId << L".log";
+		if ((logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite)) != nullptr)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
@@ -727,7 +763,7 @@ int master(const CommandLine& cmdLine)
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
 			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
-			traktor::log::info << L"Log file \"Application.log\" created." << Endl;
+			traktor::log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
 		}
 		else
 			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;
@@ -854,8 +890,44 @@ int standalone(const CommandLine& cmdLine)
 
 	if (cmdLine.hasOption('l', L"log"))
 	{
-		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
-		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != nullptr)
+		RefArray< File > logs;
+		FileSystem::getInstance().find(L"Pipeline_*.log", logs);
+
+		// Get "alive" log ids.
+		std::vector< int32_t > logIds;
+		for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+		{
+			std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+			size_t p = logName.find(L'_');
+			if (p != logName.npos)
+			{
+				int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
+				if (id != -1)
+					logIds.push_back(id);
+			}
+		}
+
+		int32_t nextLogId = 0;
+		if (!logIds.empty())
+		{
+			std::sort(logIds.begin(), logIds.end());
+
+			// Don't keep more than 10 log files.
+			while (logIds.size() >= 10)
+			{
+				StringOutputStream ss;
+				ss << L"Pipeline_" << logIds.front() << L".log";
+				FileSystem::getInstance().remove(ss.str());
+				logIds.erase(logIds.begin());
+			}
+
+			nextLogId = logIds.back() + 1;
+		}
+
+		// Create new log file.
+		StringOutputStream ss;
+		ss << L"Pipeline_" << nextLogId << L".log";
+		if ((logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite)) != nullptr)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
@@ -864,7 +936,7 @@ int standalone(const CommandLine& cmdLine)
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
 			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
-			traktor::log::info << L"Log file \"Application.log\" created." << Endl;
+			traktor::log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
 		}
 		else
 			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;

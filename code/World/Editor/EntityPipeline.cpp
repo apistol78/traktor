@@ -4,9 +4,11 @@
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
@@ -22,6 +24,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipelin
 
 bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
+	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -124,8 +127,9 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 {
 	auto ownerEntityData = dynamic_type_cast< const EntityData* >(sourceAsset);
 
-	// Check if entity and if entity should be included.
-	if (ownerEntityData)
+	// Check if entity and if entity should be included, also attributes should
+	// be kept when building for editor.
+	if (!m_editor && ownerEntityData)
 	{
 		auto editorAttributes = ownerEntityData->getComponent< EditorAttributesComponentData >();
 		if (editorAttributes != nullptr)

@@ -11,11 +11,12 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 18, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 19, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtStatic)
 ,	m_scaleFactor(1.0f)
+,	m_offset(Vector4::zero())
 ,	m_renormalize(false)
 ,	m_center(false)
 ,	m_lodSteps(8)
@@ -61,6 +62,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 11)
 		s >> Member< float >(L"scaleFactor", m_scaleFactor);
+
+	if (s.getVersion() >= 19)
+		s >> Member< Vector4 >(L"offset", m_offset);
 
 	if (s.getVersion() >= 16)
 		s >> Member< bool >(L"renormalize", m_renormalize);

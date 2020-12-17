@@ -2,6 +2,7 @@
 
 #include <map>
 #include "Core/Guid.h"
+#include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -84,6 +85,12 @@ public:
 	/*! Get scale factor. */
 	float getScaleFactor() const { return m_scaleFactor; }
 
+	/*! Set offset. */
+	void setOffset(const Vector4& offset) { m_offset = offset; }
+
+	/*! Get offset. */
+	const Vector4& getOffset() const { return m_offset; }
+
 	/*! Set if new normals should be calculated. */
 	void setRenormalize(bool renormalize) { m_renormalize = renormalize; }
 
@@ -122,6 +129,7 @@ private:
 	std::map< std::wstring, Guid > m_materialTextures;
 	Guid m_textureSet;
 	float m_scaleFactor;
+	Vector4 m_offset;
 	bool m_renormalize;
 	bool m_center;
 	int32_t m_lodSteps;

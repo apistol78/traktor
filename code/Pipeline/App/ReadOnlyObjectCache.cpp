@@ -11,16 +11,16 @@ ReadOnlyObjectCache::ReadOnlyObjectCache(db::Database* database)
 {
 }
 
-Ref< const ISerializable > ReadOnlyObjectCache::get(const Guid& instanceGuid)
+const ISerializable* ReadOnlyObjectCache::get(const Guid& instanceGuid)
 {
 	Ref< ISerializable > object;
 
 	// Get object from cache if already acquired.
 	{
 		m_readCacheLock.acquireReader();
-		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-		if (i != m_readCache.end())
-			object = i->second;
+		auto it = m_readCache.find(instanceGuid);
+		if (it != m_readCache.end())
+			object = it->second;
 		m_readCacheLock.releaseReader();
 	}
 

@@ -317,6 +317,7 @@ bool MeshPipeline::buildOutput(
 
 	// Scale model according to scale factor in asset.
 	operations.push_back(new model::Transform(
+		translate(asset->getOffset()) *
 		scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())
 	));
 
