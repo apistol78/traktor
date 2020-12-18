@@ -20,14 +20,18 @@ uint32_t StructElement::getSize() const
 		2 * sizeof(float),
 		3 * sizeof(float),
 		4 * sizeof(float),
-		4 * sizeof(char),
-		4 * sizeof(char),
-		2 * sizeof(short),
-		4 * sizeof(short),
-		2 * sizeof(short),
-		4 * sizeof(short),
+		4 * sizeof(int8_t),
+		4 * sizeof(int8_t),
+		2 * sizeof(int16_t),
+		4 * sizeof(int16_t),
+		2 * sizeof(int16_t),
+		4 * sizeof(int16_t),
 		2 * sizeof(float) / 2,
-		4 * sizeof(float) / 2
+		4 * sizeof(float) / 2,
+		1 * sizeof(int32_t),
+		2 * sizeof(int32_t),
+		3 * sizeof(int32_t),
+		4 * sizeof(int32_t)
 	};
 	return c_typeSize[m_type];
 }

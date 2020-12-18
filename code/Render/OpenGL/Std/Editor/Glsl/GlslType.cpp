@@ -59,6 +59,10 @@ GlslType glsl_from_data_type(DataType type)
 		GtFloat2,
 		GtFloat4,
 		GtFloat2,
+		GtFloat4,
+		GtFloat,
+		GtFloat2,
+		GtFloat3,
 		GtFloat4
 	};
 	T_ASSERT(type < sizeof_array(c));

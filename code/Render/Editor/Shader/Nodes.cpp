@@ -1918,6 +1918,10 @@ void Struct::NamedElement::serialize(ISerializer& s)
 		{ L"DtShort4N", DtShort4N },
 		{ L"DtHalf2", DtHalf2 },
 		{ L"DtHalf4", DtHalf4 },
+		{ L"DtInteger1", DtInteger1 },
+		{ L"DtInteger2", DtInteger2 },
+		{ L"DtInteger3", DtInteger3 },
+		{ L"DtInteger4", DtInteger4 },
 		{ 0 }
 	};
 
@@ -2527,6 +2531,10 @@ void VertexInput::serialize(ISerializer& s)
 		{ L"DtShort4N", DtShort4N },
 		{ L"DtHalf2", DtHalf2 },
 		{ L"DtHalf4", DtHalf4 },
+		{ L"DtInteger1", DtInteger1 },
+		{ L"DtInteger2", DtInteger2 },
+		{ L"DtInteger3", DtInteger3 },
+		{ L"DtInteger4", DtInteger4 },
 		{ 0 }
 	};
 

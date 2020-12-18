@@ -204,6 +204,10 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedDataType->addConstant("DtShort4N", Any::fromInt32(DtShort4N));
 	classBoxedDataType->addConstant("DtHalf2", Any::fromInt32(DtHalf2));
 	classBoxedDataType->addConstant("DtHalf4", Any::fromInt32(DtHalf4));
+	classBoxedDataType->addConstant("DtInteger1", Any::fromInt32(DtInteger1));
+	classBoxedDataType->addConstant("DtInteger2", Any::fromInt32(DtInteger2));
+	classBoxedDataType->addConstant("DtInteger3", Any::fromInt32(DtInteger3));
+	classBoxedDataType->addConstant("DtInteger4", Any::fromInt32(DtInteger4));
 	registrar->registerClass(classBoxedDataType);
 
 	auto classBoxedDisplayMode = new AutoRuntimeClass< BoxedDisplayMode >();
