@@ -58,7 +58,7 @@ Tag_Metalness
 			</position>
 			<parameterName>Mesh_Metalness</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 	</nodes>
 	<edges>

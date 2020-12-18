@@ -1,3 +1,4 @@
+#include "Core/Misc/Adler32.h"
 #include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 
 namespace traktor
@@ -16,6 +17,15 @@ bool GlslStorageBuffer::add(const std::wstring& elementName, DataType elementTyp
 {
 	m_elements.push_back({ elementName, elementType });
 	return true;
+}
+
+int32_t GlslStorageBuffer::getOrdinal() const
+{
+	Adler32 cs;
+	cs.begin();
+	cs.feed(getName());
+	cs.end();
+	return (int32_t)cs.get();
 }
 
 	}

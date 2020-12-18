@@ -5,8 +5,8 @@
 			<id>{BDE4D8D4-7A3A-DB49-A406-04AFBA127934}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>226</second>
+				<first>1267</first>
+				<second>267</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
@@ -18,8 +18,8 @@ Tag_DiffuseMap
 			]]>
 			</comment>
 			<position>
-				<first>497</first>
-				<second>114</second>
+				<first>629</first>
+				<second>150</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
@@ -28,8 +28,8 @@ Tag_DiffuseMap
 			<id>{094F4DB0-E74C-CA41-A06C-5CD0C094304C}</id>
 			<comment/>
 			<position>
-				<first>651</first>
-				<second>133</second>
+				<first>783</first>
+				<second>169</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -46,8 +46,8 @@ Tag_DiffuseMap
 			<id>{184D57C1-EA55-A447-8A87-4B5A3BF5263F}</id>
 			<comment/>
 			<position>
-				<first>856</first>
-				<second>193</second>
+				<first>1029</first>
+				<second>231</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -93,12 +93,12 @@ Tag_DiffuseMap
 			<id>{011BBA32-3102-6A4D-9084-79107C12B18F}</id>
 			<comment/>
 			<position>
-				<first>669</first>
-				<second>238</second>
+				<first>794</first>
+				<second>300</second>
 			</position>
 			<parameterName>Mesh_DiffuseColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{F52B2FE5-339F-2444-B18D-F712CC49918B}</id>
@@ -108,8 +108,8 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>506</first>
-				<second>319</second>
+				<first>572</first>
+				<second>330</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>

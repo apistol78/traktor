@@ -58,7 +58,7 @@ Tag_Specular
 			</position>
 			<parameterName>Mesh_Specular</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 	</nodes>
 	<edges>

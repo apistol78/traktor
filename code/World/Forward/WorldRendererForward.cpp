@@ -999,10 +999,11 @@ void WorldRendererForward::setupLightPass(
 	// and update light sbuffer.
 	if (shadowsEnable)
 	{
-		const int32_t shmw = shadowSettings.resolution * (shadowSettings.cascadingSlices + 1);
+		const int32_t cascadingSlices = lightCascadeIndex >= 0 ? shadowSettings.cascadingSlices : 0;
+		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
-		const int32_t atlasOffset = shadowSettings.resolution * shadowSettings.cascadingSlices;
+		const int32_t atlasOffset = shadowSettings.resolution * cascadingSlices;
 
 		// Add shadow map target.
 		render::RenderGraphTargetSetDesc rgtd;

@@ -17,6 +17,8 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
+	virtual int32_t getOrdinal() const = 0;
+
 protected:
 	GlslResource(const std::wstring& name);
 

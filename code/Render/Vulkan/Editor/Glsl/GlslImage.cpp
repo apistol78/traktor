@@ -1,3 +1,4 @@
+#include "Core/Misc/Adler32.h"
 #include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 
 namespace traktor
@@ -10,6 +11,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslImage", GlslImage, GlslResource)
 GlslImage::GlslImage(const std::wstring& name)
 :	GlslResource(name)
 {
+}
+
+int32_t GlslImage::getOrdinal() const
+{
+	Adler32 cs;
+	cs.begin();
+	cs.feed(getName());
+	cs.end();
+	return (int32_t)cs.get();
 }
 
 	}
