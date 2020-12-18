@@ -58,12 +58,12 @@ void NativeStream::close()
 
 bool NativeStream::canRead() const
 {
-	return (m_fd != 0 && m_mode == File::FmRead);
+	return (m_fd != 0 && ((m_mode & File::FmRead) != 0));
 }
 
 bool NativeStream::canWrite() const
 {
-	return (m_fd != 0 && (m_mode == File::FmWrite || m_mode == File::FmAppend));
+	return (m_fd != 0 && ((m_mode & (File::FmWrite | File::FmAppend)) != 0));
 }
 
 bool NativeStream::canSeek() const

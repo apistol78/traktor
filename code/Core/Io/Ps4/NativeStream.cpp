@@ -12,7 +12,7 @@ NativeStream::NativeStream(int fd, uint32_t mode)
 ,	m_mode(mode)
 ,	m_fileSize(0)
 {
-	if (m_mode == File::FmRead)
+	if ((m_mode & File::FmRead) != 0)
 	{
 		SceKernelStat sb = { 0 };
 		sceKernelFstat(m_fd, &sb);
@@ -36,12 +36,12 @@ void NativeStream::close()
 
 bool NativeStream::canRead() const
 {
-	return (m_fd != 0 && m_mode == File::FmRead);
+	return (m_fd != 0 && ((m_mode & File::FmRead) != 0));
 }
 
 bool NativeStream::canWrite() const
 {
-	return (m_fd != 0 && (m_mode == File::FmWrite || m_mode == File::FmAppend));
+	return (m_fd != 0 && ((m_mode & (File::FmWrite | File::FmAppend)) != 0));
 }
 
 bool NativeStream::canSeek() const

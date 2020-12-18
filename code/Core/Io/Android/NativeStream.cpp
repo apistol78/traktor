@@ -12,7 +12,7 @@ NativeStream::NativeStream(std::FILE* fp, uint32_t mode)
 ,	m_mode(mode)
 ,	m_fileSize(0)
 {
-	if (m_mode == File::FmRead)
+	if ((m_mode & File::FmRead) != 0)
 	{
 		fseek(m_fp, 0, SEEK_END);
 		m_fileSize = (int)ftell(m_fp);
@@ -37,12 +37,12 @@ void NativeStream::close()
 
 bool NativeStream::canRead() const
 {
-	return (m_fp != 0 && m_mode == File::FmRead);
+	return (m_fp != 0 && ((m_mode & File::FmRead) != 0));
 }
 
 bool NativeStream::canWrite() const
 {
-	return (m_fp != 0 && (m_mode == File::FmWrite || m_mode == File::FmAppend));
+	return (m_fp != 0 && ((m_mode & (File::FmWrite | File::FmAppend)) != 0));
 }
 
 bool NativeStream::canSeek() const
