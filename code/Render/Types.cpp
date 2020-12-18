@@ -183,7 +183,11 @@ std::wstring getDataTypeName(DataType dataType)
 		L"DtShort2N",
 		L"DtShort4N",
 		L"DtHalf2",
-		L"DtHalf4"
+		L"DtHalf4",
+		L"DtInteger1",
+		L"DtInteger2",
+		L"DtInteger3",
+		L"DtInteger4"
 	};
 	T_ASSERT(int(dataType) < sizeof_array(c_names));
 	return c_names[int(dataType)];
@@ -191,7 +195,7 @@ std::wstring getDataTypeName(DataType dataType)
 
 uint32_t getDataElementCount(DataType dataType)
 {
-	const uint32_t c_elementCounts[] = { 1, 2, 3, 4, 4, 4, 2, 4, 2, 4, 2, 4 };
+	const uint32_t c_elementCounts[] = { 1, 2, 3, 4, 4, 4, 2, 4, 2, 4, 2, 4, 1, 2, 3, 4 };
 	T_ASSERT(int(dataType) < sizeof_array(c_elementCounts));
 	return c_elementCounts[int(dataType)];
 }

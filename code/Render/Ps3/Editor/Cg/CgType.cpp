@@ -83,6 +83,10 @@ CgType cg_from_data_type(DataType type)
 		CtFloat2,
 		CtFloat4,
 		CtFloat2,
+		CtFloat4,
+		CtFloat,
+		CtFloat2,
+		CtFloat3,
 		CtFloat4
 	};
 	T_ASSERT(type < sizeof_array(c));

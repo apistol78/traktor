@@ -88,6 +88,10 @@ HlslType hlsl_from_data_type(DataType type)
 		HtFloat2,
 		HtFloat4,
 		HtFloat2,
+		HtFloat4,
+		HtFloat,
+		HtFloat2,
+		HtFloat3,
 		HtFloat4
 	};
 	T_ASSERT(type < sizeof_array(c));

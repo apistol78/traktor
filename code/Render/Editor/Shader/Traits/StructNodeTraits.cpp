@@ -42,15 +42,18 @@ PinType StructNodeTraits::getOutputPinType(
 	switch (elementType)
 	{
 	case DtFloat1:
+	case DtInteger1:
 		return PntScalar1;
 
 	case DtFloat2:
 	case DtShort2:
 	case DtShort2N:
 	case DtHalf2:
+	case DtInteger2:
 		return PntScalar2;
 
 	case DtFloat3:
+	case DtInteger3:
 		return PntScalar3;
 
 	case DtFloat4:
@@ -59,6 +62,7 @@ PinType StructNodeTraits::getOutputPinType(
 	case DtShort4:
 	case DtShort4N:
 	case DtHalf4:
+	case DtInteger4:
 		return PntScalar4;
 	}
 

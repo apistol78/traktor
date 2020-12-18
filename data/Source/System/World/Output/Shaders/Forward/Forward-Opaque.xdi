@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>4156</first>
-				<second>906</second>
+				<second>894</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>PhLow</precisionHint>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{E6830DD3-383D-6445-9469-65BC4340C607}</id>

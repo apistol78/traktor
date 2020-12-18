@@ -25,7 +25,7 @@ std::wstring glsl_type_name(GlslType type)
 		L"tex",
 		L"tex"
 	};
-	T_ASSERT(type < sizeof_array(c));
+	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -49,7 +49,7 @@ int32_t glsl_type_width(GlslType type)
 		0,	// GtTextureCube
 		0	// GtStructBuffer
 	};
-	T_ASSERT(type < sizeof_array(w));
+	T_FATAL_ASSERT(type < sizeof_array(w));
 	return w[type];
 }
 
@@ -68,9 +68,13 @@ GlslType glsl_from_data_type(DataType type)
 		GtFloat2,	// DtShort2N
 		GtFloat4,	// DtShort4N
 		GtFloat2,	// DtHalf2
-		GtFloat4	// DtHalf4
+		GtFloat4,	// DtHalf4,
+		GtInteger,	// DtInteger1
+		GtInteger2,	// DtInteger2
+		GtInteger3,	// DtInteger3
+		GtInteger4	// DtInteger4
 	};
-	T_ASSERT(type < sizeof_array(c));
+	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -86,7 +90,7 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtTextureCube,
 		GtStructBuffer
 	};
-	T_ASSERT(type < sizeof_array(c));
+	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -105,9 +109,13 @@ std::wstring glslStorageType(DataType type)
 		L"i16vec2",
 		L"i16vec4",
 		L"f16vec2",
-		L"f16vec4"
+		L"f16vec4",
+		L"int",
+		L"ivec2",
+		L"ivec3",
+		L"ivec4"
 	};
-	T_ASSERT(type < sizeof_array(c));
+	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 

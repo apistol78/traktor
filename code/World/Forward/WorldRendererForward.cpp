@@ -150,14 +150,14 @@ struct LightShaderData
 #pragma pack(1)
 struct LightIndexShaderData
 {
-	float lightIndex[4];
+	int32_t lightIndex[4];
 };
 #pragma pack()
 
 #pragma pack(1)
 struct TileShaderData
 {
-	float lightOffsetAndCount[4];
+	int32_t lightOffsetAndCount[4];
 };
 #pragma pack()
 
@@ -275,7 +275,7 @@ bool WorldRendererForward::create(
 
 		// Tile light index array buffer.
 		AlignedVector< render::StructElement > lightIndexShaderDataStruct;
-		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightIndexShaderData, lightIndex)));
+		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtInteger4, offsetof(LightIndexShaderData, lightIndex)));
 		T_FATAL_ASSERT(sizeof(LightIndexShaderData) == render::getStructSize(lightIndexShaderDataStruct));
 
 		frame.lightIndexSBuffer = renderSystem->createStructBuffer(
@@ -287,7 +287,7 @@ bool WorldRendererForward::create(
 
 		// Tile cluster buffer.
 		AlignedVector< render::StructElement > tileShaderDataStruct;
-		tileShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(TileShaderData, lightOffsetAndCount)));
+		tileShaderDataStruct.push_back(render::StructElement(render::DtInteger4, offsetof(TileShaderData, lightOffsetAndCount)));
 		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
@@ -590,24 +590,24 @@ void WorldRendererForward::setupTileDataPass(
 					tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
 
 					const uint32_t tileOffset = x + y * ClusterDimXY + z * ClusterDimXY * ClusterDimXY;
-					tileShaderData[tileOffset].lightOffsetAndCount[0] = (float)lightOffset;
-					tileShaderData[tileOffset].lightOffsetAndCount[1] = (float)0;
+					tileShaderData[tileOffset].lightOffsetAndCount[0] = (int32_t)lightOffset;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = 0;
 
 					int32_t count = 0;
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
 					{
-						uint32_t lightIndex = sliceLights[i];
+						int32_t lightIndex = sliceLights[i];
 						const Light& light = lights[lightIndex];
 						if (light.type == LtDirectional)
 						{
-							lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
+							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
 						}
 						else if (light.type == LtPoint)
 						{
 							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
 							{
-								lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 								++count;
 							}
 						}
@@ -616,7 +616,7 @@ void WorldRendererForward::setupTileDataPass(
 							// \fixme Implement frustum to frustum culling.
 							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
 							{
-								lightIndexShaderData[lightOffset + count].lightIndex[0] = (float)lightIndex;
+								lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 								++count;
 							}
 						}
@@ -624,7 +624,7 @@ void WorldRendererForward::setupTileDataPass(
 							break;
 					}
 
-					tileShaderData[tileOffset].lightOffsetAndCount[1] = (float)count;
+					tileShaderData[tileOffset].lightOffsetAndCount[1] = count;
 					lightOffset += count;
 				}
 			}

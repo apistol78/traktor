@@ -2212,84 +2212,79 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 	if (map.length() == 0)
 		return false;
 
-	const GlslType types[] = { GtFloat, GtFloat2, GtFloat3, GtFloat4 };
-	GlslType type = types[map.length() - 1];
-
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
-	//if (
-	//	(map == L"xyzw" && in->getType() == GtFloat4) ||
-	//	(map == L"xyz" && in->getType() == GtFloat3) ||
-	//	(map == L"xy" && in->getType() == GtFloat2) ||
-	//	(map == L"x" && in->getType() == GtFloat)
-	//)
-	//{
-	//	// No need to swizzle; pass variable further.
-	//	cx.emitOutput(node, L"Output", in);
-	//}
-	//else
+	GlslType type = GtVoid;
+	if (in->getType() >= GtInteger && in->getType() <= GtInteger4)
 	{
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
-
-		bool containConstant = false;
-		for (size_t i = 0; i < map.length() && !containConstant; ++i)
-		{
-			if (map[i] == L'0' || map[i] == L'1')
-				containConstant = true;
-		}
-
-		StringOutputStream ss;
-		if (containConstant || (map.length() > 1 && in->getType() == GtFloat))
-		{
-			ss << glsl_type_name(type) << L"(";
-			for (size_t i = 0; i < map.length(); ++i)
-			{
-				if (i > 0)
-					ss << L", ";
-				switch (map[i])
-				{
-				case 'x':
-					if (in->getType() == GtFloat)
-					{
-						ss << in->getName();
-						break;
-					}
-					// Don't break, multidimensional source.
-				case 'y':
-				case 'z':
-				case 'w':
-					ss << in->getName() << L'.' << map[i];
-					break;
-				case '0':
-					ss << L"0.0";
-					break;
-				case '1':
-					ss << L"1.0";
-					break;
-				}
-			}
-			ss << L")";
-		}
-		else if (map.length() > 1)
-		{
-			ss << in->getName() << L'.';
-			for (size_t i = 0; i < map.length(); ++i)
-				ss << map[i];
-		}
-		else if (map.length() == 1)
-		{
-			if (map[0] == L'x' && in->getType() == GtFloat)
-				ss << in->getName();
-			else
-				ss << in->getName() << L'.' << map[0];
-		}
-
-		comment(f, node);
-		assign(f, out) << ss.str() << L";" << Endl;
+		const GlslType types[] = { GtInteger, GtInteger2, GtInteger3, GtInteger4 };
+		type = types[map.length() - 1];
+	}
+	else
+	{
+		const GlslType types[] = { GtFloat, GtFloat2, GtFloat3, GtFloat4 };
+		type = types[map.length() - 1];
 	}
 
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
+
+	bool containConstant = false;
+	for (size_t i = 0; i < map.length() && !containConstant; ++i)
+	{
+		if (map[i] == L'0' || map[i] == L'1')
+			containConstant = true;
+	}
+
+	StringOutputStream ss;
+	if (containConstant || (map.length() > 1 && in->getType() == GtFloat))
+	{
+		ss << glsl_type_name(type) << L"(";
+		for (size_t i = 0; i < map.length(); ++i)
+		{
+			if (i > 0)
+				ss << L", ";
+			switch (map[i])
+			{
+			case 'x':
+				if (in->getType() == GtFloat)
+				{
+					ss << in->getName();
+					break;
+				}
+				// Don't break, multidimensional source.
+			case 'y':
+			case 'z':
+			case 'w':
+				ss << in->getName() << L'.' << map[i];
+				break;
+			case '0':
+				ss << L"0.0";
+				break;
+			case '1':
+				ss << L"1.0";
+				break;
+			}
+		}
+		ss << L")";
+	}
+	else if (map.length() > 1)
+	{
+		ss << in->getName() << L'.';
+		for (size_t i = 0; i < map.length(); ++i)
+			ss << map[i];
+	}
+	else if (map.length() == 1)
+	{
+		if (map[0] == L'x' && in->getType() == GtFloat)
+			ss << in->getName();
+		else
+			ss << in->getName() << L'.' << map[0];
+	}
+
+	comment(f, node);
+	assign(f, out) << ss.str() << L";" << Endl;
 	return true;
 }
 

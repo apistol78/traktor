@@ -1608,7 +1608,7 @@ Spot
 			<elements>
 				<item>
 					<name>LightIndex</name>
-					<type>DtFloat4</type>
+					<type>DtInteger4</type>
 				</item>
 			</elements>
 		</item>

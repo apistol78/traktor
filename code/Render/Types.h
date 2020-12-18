@@ -208,7 +208,11 @@ enum DataType
 	DtShort2N	= 8,	//!< 2 signed shorts, normalized to -1 - 1.
 	DtShort4N	= 9,	//!< 4 signed shorts, normalized to -1 - 1.
 	DtHalf2		= 10,	//!< 2 half precision floats.
-	DtHalf4		= 11	//!< 4 half precision floats.
+	DtHalf4		= 11,	//!< 4 half precision floats.
+	DtInteger1  = 12,	//!< Single integer.
+	DtInteger2  = 13,	//!< 2 integers.
+	DtInteger3  = 14,	//!< 3 integers.
+	DtInteger4  = 15	//!< 4 integers.
 };
 
 /*! Shader parameter type. */
