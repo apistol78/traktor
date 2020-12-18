@@ -58,7 +58,7 @@ Tag_Roughness
 			</position>
 			<parameterName>Mesh_Roughness</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 	</nodes>
 	<edges>

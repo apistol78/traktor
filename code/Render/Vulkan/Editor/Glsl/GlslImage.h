@@ -13,7 +13,9 @@ class GlslImage : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	GlslImage(const std::wstring& name);
+	explicit GlslImage(const std::wstring& name);
+
+	virtual int32_t getOrdinal() const override final;
 };
 
 	}

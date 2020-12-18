@@ -18,7 +18,7 @@ void GlslLayout::add(GlslResource* resource)
 			return false;
 		else if (type_name(r0) > type_name(r1))
 			return true;
-		if (r0->getName() >= r1->getName())
+		if (r0->getOrdinal() >= r1->getOrdinal())
 			return false;
 		else
 			return true;

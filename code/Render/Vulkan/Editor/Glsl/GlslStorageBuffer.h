@@ -19,11 +19,13 @@ public:
 		DataType type;
 	};
 
-	GlslStorageBuffer(const std::wstring& name);
+	explicit GlslStorageBuffer(const std::wstring& name);
 
 	bool add(const std::wstring& elementName, DataType elementType);
 
 	const AlignedVector< Element >& get() const { return m_elements; }
+
+	virtual int32_t getOrdinal() const override final;
 
 private:
 	AlignedVector< Element > m_elements;

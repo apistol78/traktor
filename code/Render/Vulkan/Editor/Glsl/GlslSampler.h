@@ -13,9 +13,11 @@ class GlslSampler : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	GlslSampler(const std::wstring& name, const SamplerState& state);
+	explicit GlslSampler(const std::wstring& name, const SamplerState& state);
 
 	const SamplerState& getState() const { return m_state; }
+
+	virtual int32_t getOrdinal() const override final;
 
 private:
 	SamplerState m_state;

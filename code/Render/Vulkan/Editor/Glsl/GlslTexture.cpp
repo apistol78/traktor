@@ -1,3 +1,4 @@
+#include "Core/Misc/Adler32.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
 
 namespace traktor
@@ -11,6 +12,15 @@ GlslTexture::GlslTexture(const std::wstring& name, GlslType uniformType)
 :	GlslResource(name)
 ,	m_uniformType(uniformType)
 {
+}
+
+int32_t GlslTexture::getOrdinal() const
+{
+	Adler32 cs;
+	cs.begin();
+	cs.feed(getName());
+	cs.end();
+	return (int32_t)cs.get();
 }
 
 	}
