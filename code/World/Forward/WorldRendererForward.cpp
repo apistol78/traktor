@@ -834,11 +834,19 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	render::RenderGraphTargetSetDesc rgtd = {};
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
+	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
+	if (m_reflectionsQuality >= Quality::High)
+	{
+		rgtd.referenceWidthDenom = 1;
+		rgtd.referenceHeightDenom = 1;
+	}
+	else
+	{
+		rgtd.referenceWidthDenom = 2;
+		rgtd.referenceHeightDenom = 2;
+	}
 	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add reflections render pass.
@@ -846,13 +854,13 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 
 	rp->addInput(gbufferTargetSetId);
 
-	if (m_reflectionsQuality >= Quality::High)
+	if (m_reflectionsQuality >= Quality::Ultra)
 		rp->addInput(visualReadTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(reflectionsTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
+	rp->setOutput(reflectionsTargetSetId, clear, render::TfNone, render::TfColor);
 	
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -890,24 +898,24 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 		}
 	);
 
-	// // Render screenspace reflections.
-	// if (m_reflectionsQuality >= Quality::High)
-	// {
-	// 	render::ImageGraphParams ipd;
-	// 	ipd.viewFrustum = worldRenderView.getViewFrustum();
-	// 	ipd.view = worldRenderView.getView();
-	// 	ipd.projection = worldRenderView.getProjection();
-	// 	ipd.deltaTime = worldRenderView.getDeltaTime();
+	 // Render screenspace reflections.
+	 if (m_reflectionsQuality >= Quality::Ultra)
+	 {
+	 	render::ImageGraphParams ipd;
+	 	ipd.viewFrustum = worldRenderView.getViewFrustum();
+	 	ipd.view = worldRenderView.getView();
+	 	ipd.projection = worldRenderView.getProjection();
+	 	ipd.deltaTime = worldRenderView.getDeltaTime();
 
-	// 	render::ImageGraphContext cx(m_screenRenderer);
-	// 	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	// 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	// 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	// 	cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
-	// 	cx.setParams(ipd);
+	 	render::ImageGraphContext cx(m_screenRenderer);
+	 	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	 	cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
+	 	cx.setParams(ipd);
 
-	// 	m_screenReflections->addPasses(renderGraph, rp, cx);
-	// }
+	 	m_screenReflections->addPasses(renderGraph, rp, cx);
+	 }
 
 	renderGraph.addPass(rp);
 	return reflectionsTargetSetId;
