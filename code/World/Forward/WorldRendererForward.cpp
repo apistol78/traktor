@@ -362,6 +362,14 @@ void WorldRendererForward::setup(
 	int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
+	// Ensure tile job is finished, this should never happen since it will indicate
+	// previous frame hasn't been rendered.
+	if (m_frames[frame].tileJob != nullptr)
+	{
+		m_frames[frame].tileJob->wait();
+		m_frames[frame].tileJob = nullptr;
+	}
+
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (m_antiAliasQuality >= Quality::Ultra)
 	{
