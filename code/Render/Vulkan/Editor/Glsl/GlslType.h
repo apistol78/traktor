@@ -46,6 +46,10 @@ std::wstring glsl_type_name(GlslType type);
 
 int32_t glsl_type_width(GlslType type);
 
+GlslType glsl_promote_to_float(GlslType type);
+
+GlslType glsl_precedence(GlslType typeA, GlslType typeB);
+
 GlslType glsl_from_data_type(DataType type);
 
 GlslType glsl_from_parameter_type(ParameterType type);

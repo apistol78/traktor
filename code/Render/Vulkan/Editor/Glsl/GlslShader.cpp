@@ -225,89 +225,123 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	for (auto resource : layout.get())
+	if (layout.count< GlslUniformBuffer >() > 0)
 	{
-		if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
+		ss << L"// Uniform buffers." << Endl;
+		for (auto resource : layout.get())
 		{
-			if (!uniformBuffer->get().empty())
+			if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 			{
-				ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L") uniform " << uniformBuffer->getName() << Endl;
+				if (!uniformBuffer->get().empty())
+				{
+					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L") uniform " << uniformBuffer->getName() << Endl;
+					ss << L"{" << Endl;
+					ss << IncreaseIndent;
+					for (auto uniform : uniformBuffer->get())
+					{
+						// Force high precision on uniform blocks since they share signature.
+						if (uniform.type >= GtFloat && uniform.type <= GtFloat4x4)
+							ss << L"highp ";
+						if (uniform.length <= 1)
+							ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
+						else
+							ss << glsl_type_name(uniform.type) << L" " << uniform.name << L"[" << uniform.length << L"];" << Endl;
+					}
+					ss << DecreaseIndent;
+					ss << L"};" << Endl;
+					ss << Endl;
+				}
+			}
+		}
+	}
+
+	if (layout.count< GlslTexture >() > 0)
+	{
+		ss << L"// Textures" << Endl;
+		for (auto resource : layout.get())
+		{
+			if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+			{
+				switch (texture->getUniformType())
+				{
+				case GtTexture2D:
+					ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+					break;
+
+				case GtTexture3D:
+					ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
+					break;
+
+				case GtTextureCube:
+					ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+		ss << Endl;
+	}
+
+	if (layout.count< GlslSampler >() > 0)
+	{
+		ss << L"// Samplers" << Endl;
+		for (auto resource : layout.get())
+		{
+			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+			{
+				if (sampler->getState().compare == CfNone)
+					ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+				else
+					ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
+			}
+		}
+		ss << Endl;
+	}
+
+	if (layout.count< GlslImage >() > 0)
+	{
+		ss << L"// Images" << Endl;
+		for (auto resource : layout.get())
+		{
+			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+				ss << L"layout(set = 0, binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+		}
+		ss << Endl;
+	}
+
+	if (layout.count< GlslStorageBuffer >() > 0)
+	{
+		ss << L"// Storage buffers." << Endl;
+		for (auto resource : layout.get())
+		{
+			if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+			{
+				ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
-				for (auto uniform : uniformBuffer->get())
+				for (auto element : storageBuffer->get())
 				{
-					// Force high precision on uniform blocks since they share signature.
-					if (uniform.type >= GtFloat && uniform.type <= GtFloat4x4)
+					// Force high precision on SSBO since they share signature.
+					if (element.type >= DtFloat1 && element.type <= DtFloat4)
 						ss << L"highp ";
-					if (uniform.length <= 1)
-						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
-					else
-						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L"[" << uniform.length << L"];" << Endl;
+					ss << glslStorageType(element.type) << L" " << element.name << L";" << Endl;
 				}
 				ss << DecreaseIndent;
 				ss << L"};" << Endl;
 				ss << Endl;
+				if (m_shaderType != StCompute)
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") readonly buffer " << storageBuffer->getName() << Endl;
+				else
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
+				ss << L"{" << Endl;
+				ss << IncreaseIndent;
+				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
+				ss << DecreaseIndent;
+				ss << L"};" << Endl;
+				ss << Endl;
 			}
-		}
-		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		{
-			switch (texture->getUniformType())
-			{
-			case GtTexture2D:
-				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
-				break;
-
-			case GtTexture3D:
-				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
-				break;
-
-			case GtTextureCube:
-				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
-				break;
-
-			default:
-				break;
-			}
-			ss << Endl;
-		}
-		else if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
-		{
-			if (sampler->getState().compare == CfNone)
-				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
-			else
-				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
-			ss << Endl;
-		}
-		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		{
-			ss << L"layout(set = 0, binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
-			ss << Endl;
-		}
-		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-		{
-			ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
-			ss << L"{" << Endl;
-			ss << IncreaseIndent;
-			for (auto element : storageBuffer->get())
-			{
-				// Force high precision on SSBO since they share signature.
-				if (element.type >= DtFloat1 && element.type <= DtFloat4)
-					ss << L"highp ";
-				ss << glslStorageType(element.type) << L" " << element.name << L";" << Endl;
-			}
-			ss << DecreaseIndent;
-			ss << L"};" << Endl;
-			ss << Endl;
-			if (m_shaderType != StCompute)
-				ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") readonly buffer " << storageBuffer->getName() << Endl;
-			else
-				ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
-			ss << L"{" << Endl;
-			ss << IncreaseIndent;
-			ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
-			ss << DecreaseIndent;
-			ss << L"};" << Endl;
-			ss << Endl;
 		}
 	}
 

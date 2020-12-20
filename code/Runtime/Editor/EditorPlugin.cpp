@@ -168,7 +168,8 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Disable baked lighting", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
 	m_toolBar->addItem(m_toolTweaks);
 
 	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), ui::dpi96(85), i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -527,6 +528,8 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 		tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
 	if (m_toolTweaks->get(12)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", false);
+	if (m_toolTweaks->get(13)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Render.Validation", true);
 
 	int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)

@@ -19,7 +19,7 @@ VertexBufferDynamicVk::VertexBufferDynamicVk(
 {
 }
 
-bool VertexBufferDynamicVk::create(VmaAllocator allocator, int32_t inFlightCount)
+bool VertexBufferDynamicVk::create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount)
 {
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
@@ -28,7 +28,7 @@ bool VertexBufferDynamicVk::create(VmaAllocator allocator, int32_t inFlightCount
 	m_buffers.resize(inFlightCount);
 	for (auto& buffer : m_buffers)
 	{
-		if (!buffer.create(allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, true, true))
+		if (!buffer.create(logicalDevice, allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, true, true))
 			return false;
 	}
 

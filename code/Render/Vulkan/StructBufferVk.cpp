@@ -14,7 +14,7 @@ StructBufferVk::StructBufferVk(uint32_t bufferSize)
 {
 }
 
-bool StructBufferVk::create(VmaAllocator allocator, int32_t inFlightCount)
+bool StructBufferVk::create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount)
 {
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
@@ -23,7 +23,7 @@ bool StructBufferVk::create(VmaAllocator allocator, int32_t inFlightCount)
 	m_buffers.resize(inFlightCount);
 	for (auto& buffer : m_buffers)
 	{
-		if (!buffer.create(allocator, bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
+		if (!buffer.create(logicalDevice, allocator, bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
 			return false;
 	}
 

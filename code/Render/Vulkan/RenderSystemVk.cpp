@@ -500,7 +500,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	if (dynamic)
 	{
 		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(bufferSize, vibd, vads, cs.get());
-		if (vb->create(m_allocator, 4))
+		if (vb->create(m_logicalDevice, m_allocator, 4))
 			return vb;
 	}
 	else
@@ -516,14 +516,14 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	Buffer buffer;
-	buffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
+	buffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
 	return new IndexBufferVk(indexType, bufferSize, std::move(buffer));
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
 	Ref< StructBufferVk > buffer = new StructBufferVk(bufferSize);
-	if (buffer->create(m_allocator, 4))
+	if (buffer->create(m_logicalDevice, m_allocator, 4))
 		return buffer;
 	else
 		return nullptr;
