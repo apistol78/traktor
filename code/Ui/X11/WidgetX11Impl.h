@@ -367,7 +367,6 @@ public:
         	xe.type = Expose;
         	xe.xexpose.window = m_data.window;
         	XSendEvent(m_context->getDisplay(), m_data.window, False, ExposureMask, &xe);
-			XFlush(m_context->getDisplay());
 		}
 		else
 		{
@@ -761,8 +760,6 @@ protected:
 			if (xe.xexpose.count != 0)
 				return;
 			draw(nullptr);
-			if (xe.xexpose.send_event != 0)
-				m_pendingExposure = false;
 		});
 
 		return true;
@@ -771,6 +768,7 @@ protected:
 	void draw(const Rect* rc)
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
+		m_pendingExposure = false;
 
 		XWindowAttributes xa;
 		XGetWindowAttributes(m_context->getDisplay(), m_data.window, &xa);
