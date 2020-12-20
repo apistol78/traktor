@@ -35,22 +35,51 @@ std::wstring formatFloat(float v)
 
 std::wstring expandScalar(float v, GlslType type)
 {
-	std::wstring vs = formatFloat(v);
-	switch (type)
+	if (type >= GtFloat && type <= GtFloat4)
 	{
-	case GtFloat2:
-		return L"vec2(" + vs + L", " + vs + L")";
+		std::wstring vs = formatFloat(v);
+		switch (type)
+		{
+		case GtFloat:
+			return vs;
 
-	case GtFloat3:
-		return L"vec3(" + vs + L", " + vs + L", " + vs + L")";
+		case GtFloat2:
+			return L"vec2(" + vs + L", " + vs + L")";
 
-	case GtFloat4:
-		return L"vec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
+		case GtFloat3:
+			return L"vec3(" + vs + L", " + vs + L", " + vs + L")";
 
-	default:
-		break;
+		case GtFloat4:
+			return L"vec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
+
+		default:
+			break;
+		}
 	}
-	return vs;
+
+	if (type >= GtInteger && type <= GtInteger4)
+	{
+		std::wstring vs = toString((int32_t)v);
+		switch (type)
+		{
+		case GtInteger:
+			return vs;
+
+		case GtInteger2:
+			return L"ivec2(" + vs + L", " + vs + L")";
+
+		case GtInteger3:
+			return L"ivec3(" + vs + L", " + vs + L", " + vs + L")";
+
+		case GtInteger4:
+			return L"ivec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
+
+		default:
+			break;
+		}
+	}
+
+	return L"";
 }
 
 OutputStream& assign(OutputStream& f, const GlslVariable* out)
@@ -94,7 +123,7 @@ bool emitAdd(GlslContext& cx, Add* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -306,7 +335,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	}
 
 	// Create output variable.
-	GlslType outputType = std::max< GlslType >(caseTrue.getType(), caseFalse.getType());
+	GlslType outputType = glsl_precedence(caseTrue.getType(), caseFalse.getType());
 	out->setType(outputType);
 
 	comment(f, node);
@@ -496,7 +525,8 @@ bool emitDiv(GlslContext& cx, Div* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
+	
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -515,7 +545,7 @@ bool emitDot(GlslContext& cx, Dot* node)
 		return false;
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 
 	comment(f, node);
 	assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
@@ -1118,7 +1148,10 @@ bool emitLerp(GlslContext& cx, Lerp* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
+	if (type == GtVoid)
+		return false;
+
 	Ref< GlslVariable > blend = cx.emitInput(node, L"Blend");
 	if (!blend || blend->getType() != GtFloat)
 		return false;
@@ -1224,7 +1257,7 @@ bool emitMax(GlslContext& cx, Max* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1242,7 +1275,7 @@ bool emitMin(GlslContext& cx, Min* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1352,7 +1385,7 @@ bool emitMul(GlslContext& cx, Mul* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1371,7 +1404,7 @@ bool emitMulAdd(GlslContext& cx, MulAdd* node)
 	if (!in1 || !in2 || !in3)
 		return false;
 
-	GlslType type = std::max< GlslType >(std::max< GlslType >(in1->getType(), in2->getType()), in3->getType());
+	GlslType type = glsl_precedence(glsl_precedence(in1->getType(), in2->getType()), in3->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1493,7 +1526,7 @@ bool emitPow(GlslContext& cx, Pow* node)
 	if (!exponent || !in)
 		return false;
 
-	GlslType type = std::max< GlslType >(exponent->getType(), in->getType());
+	GlslType type = glsl_precedence(exponent->getType(), in->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -1812,11 +1845,19 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 bool emitScalar(GlslContext& cx, Scalar* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
-
 	comment(f, node);
-	f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
+
+	float v = std::abs(node->get());
+	if ((v - std::floor(v)) < FUZZY_EPSILON)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtInteger);
+		f << L"const int " << out->getName() << L" = " << (int32_t)node->get() << L";" << Endl;
+	}
+	else
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
+		f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
+	}
 
 	return true;
 }
@@ -2068,7 +2109,7 @@ bool emitStep(GlslContext& cx, Step* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -2128,7 +2169,7 @@ bool emitSub(GlslContext& cx, Sub* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -2301,11 +2342,17 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 	// Find common output pins from both sides of switch;
 	// emit those before condition in order to have them evaluated outside of conditional.
+	//
+	// Do not extract common output pins from default cases since
+	// they are considered "unlikely" and will most probably divert from
+	// regular cases in such way that no common output pins are found.
+
+	for (int32_t channel = 0; channel < width; ++channel)
 	{
 		AlignedVector< const InputPin* > caseInputPins;
-		for (uint32_t i = 0; i < (uint32_t)(width + cases.size() * width); ++i)
+		for (uint32_t i = 0; i < (uint32_t)cases.size(); ++i)
 		{
-			const InputPin* caseInput = node->getInputPin(1 + i);
+			const InputPin* caseInput = node->getInputPin(1 + width + i * width + channel);
 			T_ASSERT(caseInput);
 			caseInputPins.push_back(caseInput);
 		}
@@ -2566,7 +2613,7 @@ bool emitTruncate(GlslContext& cx, Truncate* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
 	comment(f, node);
-	assign(f, out) << in->getName() << L" - fract(" << in->getName() << L");" << Endl;
+	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
 
 	return true;
 }

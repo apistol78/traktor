@@ -23,6 +23,7 @@ function StackLayout:estimate(container)
 	end
 
 	w = w + self._margin * 2 + math.max(#children - 1, 0) * self._pad
+	h = h + self._margin * 2
 
 	w = math.max(w, p.width)
 	h = math.max(h, p.height)
@@ -39,6 +40,7 @@ function StackLayout:update(container, width, height)
 		x = x + ps.width + self._pad
 	end
 end
+
 	]]>
 	</text>
 </object>

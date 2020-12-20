@@ -23,7 +23,7 @@ public:
 		uint32_t hash
 	);
 
-	bool create(VmaAllocator allocator, int32_t inFlightCount);
+	bool create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount);
 
 	virtual void destroy() override final;
 

@@ -1,4 +1,5 @@
 #include "Core/Config.h"
+#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/Buffer.h"
 
 namespace traktor
@@ -6,7 +7,7 @@ namespace traktor
     namespace render
     {
 
-bool Buffer::create(VmaAllocator allocator, uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
+bool Buffer::create(VkDevice logicalDevice, VmaAllocator allocator, uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
 {
 	T_ASSERT(m_allocator == 0);
 
@@ -29,6 +30,7 @@ bool Buffer::create(VmaAllocator allocator, uint32_t bufferSize, uint32_t usageB
 	if (vmaCreateBuffer(allocator, &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;
 
+	m_logicalDevice = logicalDevice;
 	m_allocator = allocator;
     return true;
 }
@@ -38,7 +40,11 @@ void Buffer::destroy()
 	T_FATAL_ASSERT(m_locked == nullptr);
 	if (m_allocator != 0)
 	{
+		// Wait until GPU is idle to ensure targets are not used, or pending, in some queue
+		// before destroying them.
+		vkDeviceWaitIdle(m_logicalDevice);
 		vmaDestroyBuffer(m_allocator, m_buffer, m_allocation);
+		m_logicalDevice = 0;
 		m_allocator = 0;
 		m_allocation = 0;
 		m_buffer = 0;

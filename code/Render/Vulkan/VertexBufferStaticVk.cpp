@@ -35,7 +35,7 @@ bool VertexBufferStaticVk::create()
 	if (!bufferSize)
 		return false;
 
-	if (!m_deviceBuffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
+	if (!m_deviceBuffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
 		return false;
 
 	return true;
@@ -53,7 +53,7 @@ void* VertexBufferStaticVk::lock()
 	if (!bufferSize)
 		return nullptr;
 
-	if (!m_stageBuffer.create(m_allocator, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+	if (!m_stageBuffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
 		return nullptr;
 
 	return m_stageBuffer.lock();

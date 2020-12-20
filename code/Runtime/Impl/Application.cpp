@@ -882,12 +882,12 @@ bool Application::update()
 						if (currentState)
 							currentState->render(m_frameRender, m_updateInfoRender);
 
+						if (submittedQuery)
+							renderView->endTimeQuery(m_renderGpuDurationQuery);
+
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
 						T_PROFILER_END();
-
-						if (submittedQuery)
-							renderView->endTimeQuery(m_renderGpuDurationQuery);
 					}
 					
 					T_PROFILER_BEGIN(L"Application render present");
@@ -1142,12 +1142,12 @@ void Application::threadRender()
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
 
+						if (submittedQuery)
+							renderView->endTimeQuery(m_renderGpuDurationQuery);
+
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
 						T_PROFILER_END();
-
-						if (submittedQuery)
-							renderView->endTimeQuery(m_renderGpuDurationQuery);
 
 						T_PROFILER_BEGIN(L"Application render present");
 						renderView->present();

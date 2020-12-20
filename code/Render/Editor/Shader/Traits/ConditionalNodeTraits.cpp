@@ -269,6 +269,11 @@ bool ConditionalNodeTraits::evaluatePartial(
 
 			return true;
 		}
+		else if (inputOutputPins[2] == inputOutputPins[3])
+		{
+			foldOutputPin = inputOutputPins[2];
+			return true;
+		}
 	}
 	return false;
 }

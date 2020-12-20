@@ -1426,9 +1426,8 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 
 		RefArray< ui::Edge > editorEdges;
 		m_editorGraph->getConnectedEdges(editorDestinationPin, editorEdges);
-		T_ASSERT(editorEdges.size() == 1);
-
-		m_editorGraph->removeEdge(editorEdges.front());
+		if (editorEdges.size() > 0)
+			m_editorGraph->removeEdge(editorEdges.front());
 	}
 
 	m_document->push();

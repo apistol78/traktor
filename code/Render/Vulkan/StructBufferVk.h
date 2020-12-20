@@ -15,7 +15,7 @@ class StructBufferVk : public StructBuffer
 public:
 	StructBufferVk(uint32_t bufferSize);
 
-	bool create(VmaAllocator allocator, int32_t inFlightCount);
+	bool create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount);
 
 	virtual void destroy() override final;
 
