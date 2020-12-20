@@ -131,7 +131,6 @@ SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
-,	m_entityFilterType(nullptr)
 {
 }
 

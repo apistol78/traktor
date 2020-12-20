@@ -84,9 +84,9 @@ public:
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
 private:
-	editor::IEditor* m_editor;
-	editor::IEditorPageSite* m_site;
-	editor::IDocument* m_document;
+	editor::IEditor* m_editor = nullptr;
+	editor::IEditorPageSite* m_site = nullptr;
+	editor::IDocument* m_document = nullptr;
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
@@ -109,8 +109,8 @@ private:
 	Ref< ui::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
-	const TypeInfo* m_entityFilterType;
-	uint32_t m_currentHash;
+	const TypeInfo* m_entityFilterType = nullptr;
+	uint32_t m_currentHash = 0;
 
 	bool createSceneAsset();
 
