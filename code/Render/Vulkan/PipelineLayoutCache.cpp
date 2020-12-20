@@ -3,6 +3,7 @@
 #include "Core/Misc/Adler32.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/PipelineLayoutCache.h"
+#include "Render/Vulkan/UtilitiesVk.h"
 
 namespace traktor
 {
@@ -59,6 +60,9 @@ PipelineLayoutCache::~PipelineLayoutCache()
 		vkDestroyDescriptorSetLayout(m_logicalDevice, it.second.descriptorSetLayout, 0);
 		vkDestroyPipelineLayout(m_logicalDevice, it.second.pipelineLayout, 0);
 	}
+
+	for (auto& it : m_samplers)
+		vkDestroySampler(m_logicalDevice, it.second, 0);
 }
 
 bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout)
@@ -105,6 +109,29 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayout
 #endif
 		return true;
 	}
+}
+
+VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
+{
+	Adler32 cs;
+	cs.begin();
+	cs.feed(&sci, sizeof(sci));
+	cs.end();
+	
+	const uint32_t samplerHash = cs.get();
+
+	auto it = m_samplers.find(samplerHash);
+	if (it != m_samplers.end())
+		return it->second;
+
+	VkSampler sampler = 0;
+	if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
+		return 0;
+
+	setObjectDebugName(m_logicalDevice, L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+
+	m_samplers.insert(samplerHash, sampler);
+	return sampler;
 }
 
 	}

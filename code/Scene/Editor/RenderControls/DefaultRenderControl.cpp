@@ -76,7 +76,12 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
+	// Get initial view type, if it's final then we revert to
+	// perspective since final need to load it's own resources.
 	int32_t viewType = settings->getProperty< int32_t >(L"SceneEditor.View" + toString(m_viewId), 0);
+	if (viewType == 8)
+		viewType = 0;
+
 	bool gridEnable = settings->getProperty< bool >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
 	bool guideEnable = settings->getProperty< bool >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
 

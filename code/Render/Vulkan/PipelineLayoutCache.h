@@ -18,6 +18,8 @@ public:
 
 	bool get(uint32_t pipelineHash, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout);
 
+	VkSampler getSampler(const VkSamplerCreateInfo& sci);
+
 private:
 	struct Entry
 	{
@@ -30,6 +32,7 @@ private:
 
 	VkDevice m_logicalDevice;
 	SmallMap< uint32_t, Entry > m_entries;
+	SmallMap< uint32_t, VkSampler > m_samplers;
 };
 
 	}
