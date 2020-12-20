@@ -180,7 +180,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	// Create samplers.
 	for (const auto& resourceSampler : resource->m_samplers)
 	{
-		VkSampler sampler = 0;
+		// VkSampler sampler = 0;
 
 		VkSamplerCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -205,10 +205,16 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
 		sci.unnormalizedCoordinates = VK_FALSE;
 
+/*
 		if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
 			return false;
 
 		setObjectDebugName(m_logicalDevice, L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+*/
+
+		VkSampler sampler = pipelineLayoutCache->getSampler(sci);
+		if (!sampler)
+			return false;
 
 		m_samplers.push_back({ resourceSampler.binding, sampler });
 	}
@@ -401,6 +407,8 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 			continue;
 
 		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
+		if (!sbvk->isValid())
+			return false;
 
 		auto& bufferInfo = m_bufferInfos.push_back();
 		bufferInfo.buffer = sbvk->getVkBuffer();
@@ -621,8 +629,8 @@ void ProgramVk::destroy()
 	m_descriptorSetLayout = 0;
 	m_pipelineLayout = 0;
 
-	for (auto& sampler : m_samplers)
-		vkDestroySampler(m_logicalDevice, sampler.sampler, 0);
+	// for (auto& sampler : m_samplers)
+	// 	vkDestroySampler(m_logicalDevice, sampler.sampler, 0);
 	m_samplers.clear();
 }
 

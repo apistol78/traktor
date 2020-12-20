@@ -25,6 +25,8 @@ public:
 
 	virtual void unlock() override final;
 
+	bool isValid() const { return !m_buffers.empty(); }
+
 	VkBuffer getVkBuffer() const { return m_buffers[m_index]; }
 
 private:
