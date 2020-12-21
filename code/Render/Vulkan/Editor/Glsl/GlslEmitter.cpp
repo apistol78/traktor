@@ -2610,10 +2610,14 @@ bool emitTruncate(GlslContext& cx, Truncate* node)
 	if (!in)
 		return false;
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
+	GlslType type = glsl_degrade_to_integer(in->getType());
+	if (type == GtVoid)
+		return false;
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
-	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+	assign(f, out) << glsl_type_name(type) << L"(trunc(" << in->getName() << L"));" << Endl;
 
 	return true;
 }

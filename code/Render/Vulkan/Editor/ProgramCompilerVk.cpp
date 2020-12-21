@@ -635,8 +635,9 @@ bool ProgramCompilerVk::generate(
 		}
 
 		const auto& layout = cx.getLayout();
-
 		StringOutputStream ss;
+
+#if 0
 		ss << L"// Layout" << Endl;
 		for (auto resource : layout.get())
 		{
@@ -679,6 +680,7 @@ bool ProgramCompilerVk::generate(
 				ss << L"//   }" << Endl;
 			}
 		}
+#endif
 
 		GlslRequirements requirements = cx.requirements();
 
