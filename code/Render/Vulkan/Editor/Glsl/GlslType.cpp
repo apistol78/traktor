@@ -77,6 +77,30 @@ GlslType glsl_promote_to_float(GlslType type)
 	return w[type];
 }
 
+GlslType glsl_degrade_to_integer(GlslType type)
+{
+	const GlslType w[] =
+	{
+		GtVoid,		// GtVoid
+		GtInteger,	// GtBoolean
+		GtInteger,	// GtInteger
+		GtInteger2,	// GtInteger2
+		GtInteger3,	// GtInteger3
+		GtInteger4,	// GtInteger4
+		GtInteger,	// GtFloat
+		GtInteger2,	// GtFloat2
+		GtInteger3,	// GtFloat3
+		GtInteger4,	// GtFloat4
+		GtVoid,		// GtFloat4x4
+		GtVoid,		// GtTexture2D
+		GtVoid,		// GtTexture3D
+		GtVoid,		// GtTextureCube
+		GtVoid		// GtStructBuffer
+	};
+	T_FATAL_ASSERT(type < sizeof_array(w));
+	return w[type];	
+}
+
 GlslType glsl_precedence(GlslType typeA, GlslType typeB)
 {
 	return std::max< GlslType >(typeA, typeB);

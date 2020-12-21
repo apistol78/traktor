@@ -17,6 +17,7 @@ class IEditor;
 	namespace ui
 	{
 
+class CheckBox;
 class DropDown;
 class SyntaxRichEdit;
 class Tab;
@@ -66,6 +67,7 @@ private:
 	Ref< ui::DropDown > m_dropTechniques;
 	Ref< ui::DropDown > m_dropCombinations;
 	Ref< ui::DropDown > m_dropLanguages;
+	Ref< ui::CheckBox > m_checkRelaxed;
 	Ref< ui::Tab > m_tab;
 	Ref< ui::SyntaxRichEdit > m_shaderEditVertex;
 	Ref< ui::SyntaxRichEdit > m_shaderEditPixel;
@@ -84,14 +86,6 @@ private:
 	void updateCombinations();
 
 	void updateShaders();
-
-	void eventCompilerChange(ui::SelectionChangeEvent* event);
-
-	void eventTechniqueChange(ui::SelectionChangeEvent* event);
-
-	void eventCombinationChange(ui::SelectionChangeEvent* event);
-
-	void eventLanguageChange(ui::SelectionChangeEvent* event);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 

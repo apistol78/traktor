@@ -24,6 +24,7 @@
 #include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
+#include "Ui/CheckBox.h"
 #include "Ui/Clipboard.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -84,7 +85,7 @@ void ShaderViewer::destroy()
 
 bool ShaderViewer::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0, 0)))
 		return false;
 
 	setText(i18n::Text(L"SHADERGRAPH_VIEWER"));
@@ -97,21 +98,29 @@ bool ShaderViewer::create(ui::Widget* parent)
 
 	m_dropCompiler = new ui::DropDown();
 	m_dropCompiler->create(containerDrops);
-	m_dropCompiler->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCompilerChange);
+	m_dropCompiler->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent*) {
+		if (!m_pendingShaderGraph)
+			reflect(m_lastShaderGraph);
+	});
 
 	Ref< ui::Static > staticTechnique = new ui::Static();
 	staticTechnique->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_TECHNIQUE"));
 
 	m_dropTechniques = new ui::DropDown();
 	m_dropTechniques->create(containerDrops);
-	m_dropTechniques->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventTechniqueChange);
+	m_dropTechniques->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent*) {
+		updateCombinations();
+		updateShaders();
+	});
 
 	Ref< ui::Static > staticCombinations = new ui::Static();
 	staticCombinations->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_COMBINATIONS"));
 
 	m_dropCombinations = new ui::DropDown();
 	m_dropCombinations->create(containerDrops, ui::DropDown::WsMultiple);
-	m_dropCombinations->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCombinationChange);
+	m_dropCombinations->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent*) {
+		updateShaders();
+	});
 
 	Ref< ui::Static > staticLanguages = new ui::Static();
 	staticLanguages->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_LANGUAGES"));
@@ -123,7 +132,17 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_dropLanguages->add(L"HLSL");
 	m_dropLanguages->add(L"MSL");
 	m_dropLanguages->add(L"SPIRV");
-	m_dropLanguages->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventLanguageChange);
+	m_dropLanguages->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent*) {
+		if (!m_pendingShaderGraph)
+			reflect(m_lastShaderGraph);
+	});
+
+	m_checkRelaxed = new ui::CheckBox();
+	m_checkRelaxed->create(this, i18n::Text(L"SHADERGRAPH_VIEWER_RELAXED"), false);
+	m_checkRelaxed->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent*) {
+		if (!m_pendingShaderGraph)
+			reflect(m_lastShaderGraph);
+	});
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
@@ -286,29 +305,6 @@ void ShaderViewer::updateShaders()
 	m_shaderEditCompute->update();
 }
 
-void ShaderViewer::eventCompilerChange(ui::SelectionChangeEvent* event)
-{
-	if (!m_pendingShaderGraph)
-		reflect(m_lastShaderGraph);
-}
-
-void ShaderViewer::eventTechniqueChange(ui::SelectionChangeEvent* event)
-{
-	updateCombinations();
-	updateShaders();
-}
-
-void ShaderViewer::eventCombinationChange(ui::SelectionChangeEvent* event)
-{
-	updateShaders();
-}
-
-void ShaderViewer::eventLanguageChange(ui::SelectionChangeEvent* event)
-{
-	if (!m_pendingShaderGraph)
-		reflect(m_lastShaderGraph);
-}
-
 void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	auto activeTabPage = m_tab->getActivePage();
@@ -379,7 +375,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	// Create a copy of current settings and add our language of choice.
 	Ref< PropertyGroup > settings = PropertyGroup::get(m_editor->getSettings());
 	settings->setProperty< PropertyString >(L"Glsl.Vulkan.CrossDialect", m_dropLanguages->getSelectedItem());
-	settings->setProperty< PropertyBoolean >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false);
+	settings->setProperty< PropertyBoolean >(L"Glsl.Vulkan.ConvertRelaxedToHalf", m_checkRelaxed->isChecked());
 
 	// Extract renderer permutation.
 	const wchar_t* rendererSignature = compiler->getRendererSignature();
