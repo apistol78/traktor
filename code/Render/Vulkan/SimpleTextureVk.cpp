@@ -4,6 +4,7 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -16,15 +17,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
 SimpleTextureVk::SimpleTextureVk(
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator,
+	Context* context,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool
 )
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+:	m_context(context)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_stagingBufferAllocation(0)
@@ -64,7 +61,7 @@ bool SimpleTextureVk::create(
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
-	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateBuffer(m_context->getAllocator(), &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create 2D texture; unable to create staging buffer (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;
@@ -72,7 +69,7 @@ bool SimpleTextureVk::create(
 
 	// Copy data into staging buffer.
 	uint8_t* data = nullptr;
-	if (vmaMapMemory(m_allocator, m_stagingBufferAllocation, (void**)&data) != VK_SUCCESS)
+	if (vmaMapMemory(m_context->getAllocator(), m_stagingBufferAllocation, (void**)&data) != VK_SUCCESS)
 		return false;
 	for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 	{
@@ -83,7 +80,7 @@ bool SimpleTextureVk::create(
 			std::memset(data, 0, mipSize);
 		data += mipSize;
 	}
-	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
+	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);
 
 	// Create texture image.
 	VkImageCreateInfo ici = {};
@@ -109,14 +106,14 @@ bool SimpleTextureVk::create(
 	*/
 
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-	if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_textureAllocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_textureImage, &m_textureAllocation, nullptr) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create VK simple texture; unable to allocate image memory (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;			
 	}
 
 	// Set debug name of texture.
-	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};
@@ -130,7 +127,7 @@ bool SimpleTextureVk::create(
 	ivci.subresourceRange.levelCount = desc.mipCount;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
-	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
+	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_textureView) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create VK simple texture; unable to create image view (\"" << getTextureFormatName(desc.format) << L"\" (" << (int)desc.format << L"), " << (desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
 		return false;
@@ -234,10 +231,10 @@ bool SimpleTextureVk::create(
 	// Free staging buffer if immutable.
 	if (desc.immutable)
 	{
-		vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
+		vkDestroyBuffer(m_context->getLogicalDevice(), m_stagingBuffer, 0);
 		m_stagingBuffer = 0;
 
-		vmaFreeMemory(m_allocator, m_stagingBufferAllocation);
+		vmaFreeMemory(m_context->getAllocator(), m_stagingBufferAllocation);
 		m_stagingBufferAllocation = 0;
 	}
 
@@ -247,35 +244,34 @@ bool SimpleTextureVk::create(
 
 void SimpleTextureVk::destroy()
 {
-	if (m_textureView != 0)
+	if (m_context)
 	{
-		vkDestroyImageView(m_logicalDevice, m_textureView, nullptr);
-		m_textureView = 0;
+		m_context->addDeferredCleanup([
+			textureView = m_textureView,
+			stagingBufferAllocation = m_stagingBufferAllocation,
+			stagingBuffer = m_stagingBuffer,
+			textureAllocation = m_textureAllocation,
+			textureImage = m_textureImage
+		](Context* cx) {
+			if (textureView != 0)
+				vkDestroyImageView(cx->getLogicalDevice(), textureView, nullptr);
+			if (stagingBufferAllocation != 0)
+				vmaFreeMemory(cx->getAllocator(), stagingBufferAllocation);
+			if (stagingBuffer != 0)
+				vkDestroyBuffer(cx->getLogicalDevice(), stagingBuffer, 0);
+			if (textureAllocation != 0)
+				vmaFreeMemory(cx->getAllocator(), textureAllocation);
+			if (textureImage != 0)
+				vkDestroyImage(cx->getLogicalDevice(), textureImage, 0);
+		});
 	}
 
-	if (m_stagingBufferAllocation != 0)
-	{
-		vmaFreeMemory(m_allocator, m_stagingBufferAllocation);
-		m_stagingBufferAllocation = 0;
-	}
-
-	if (m_stagingBuffer != 0)
-	{
-		vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
-		m_stagingBuffer = 0;
-	}
-
-	if (m_textureAllocation != 0)
-	{
-		vmaFreeMemory(m_allocator, m_textureAllocation);
-		m_textureAllocation = 0;
-	}
-
-	if (m_textureImage != 0)
-	{
-		vkDestroyImage(m_logicalDevice, m_textureImage, 0);
-		m_textureImage = 0;
-	}
+	m_context = nullptr;
+	m_stagingBufferAllocation = 0;
+	m_stagingBuffer = 0;
+	m_textureAllocation = 0;
+	m_textureImage = 0;
+	m_textureView = 0;
 }
 
 ITexture* SimpleTextureVk::resolve()
@@ -302,7 +298,7 @@ bool SimpleTextureVk::lock(int32_t level, Lock& lock)
 {
 	if (m_stagingBufferAllocation != 0)
 	{
-		if (vmaMapMemory(m_allocator, m_stagingBufferAllocation, (void**)&lock.bits) != VK_SUCCESS)
+		if (vmaMapMemory(m_context->getAllocator(), m_stagingBufferAllocation, (void**)&lock.bits) != VK_SUCCESS)
 			return false;
 
 		lock.pitch = getTextureRowPitch(m_desc.format, m_desc.width, level);
@@ -314,7 +310,7 @@ bool SimpleTextureVk::lock(int32_t level, Lock& lock)
 
 void SimpleTextureVk::unlock(int32_t level)
 {
-	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);	
+	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);	
 
 	// Begin recording command buffer.
 	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();

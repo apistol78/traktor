@@ -97,6 +97,7 @@ private:
 	uint32_t m_computeQueueIndex;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
+	Ref< Context > m_context;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;

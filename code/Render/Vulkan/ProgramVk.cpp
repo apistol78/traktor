@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
@@ -59,14 +60,8 @@ bool storeIfNotEqual(const Vector4* source, int32_t length, float* dest)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
-ProgramVk::ProgramVk(
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator
-)
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+ProgramVk::ProgramVk(Context* context)
+:	m_context(context)
 ,	m_vertexShaderModule(0)
 ,	m_fragmentShaderModule(0)
 ,	m_computeShaderModule(0)
@@ -272,12 +267,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
 
-	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
 #if defined(_DEBUG)
 	// Set debug name of descriptor set.
-	setObjectDebugName(m_logicalDevice, m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
+	setObjectDebugName(m_context->getLogicalDevice(), m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
 #endif
 
 	m_bufferInfos.resize(0);
@@ -428,7 +423,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 	}
 
 	if (!m_writes.empty())
-		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
+		vkUpdateDescriptorSets(m_context->getLogicalDevice(), (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
@@ -462,12 +457,12 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
 
-	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return false;
 
 #if defined(_DEBUG)
 	// Set debug name of descriptor set.
-	setObjectDebugName(m_logicalDevice, m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
+	setObjectDebugName(m_context->getLogicalDevice(), m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
 #endif
 
 	m_bufferInfos.resize(0);
@@ -605,7 +600,7 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 	}
 
 	if (!m_writes.empty())
-		vkUpdateDescriptorSets(m_logicalDevice, (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
+		vkUpdateDescriptorSets(m_context->getLogicalDevice(), (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(
@@ -629,8 +624,6 @@ void ProgramVk::destroy()
 	m_descriptorSetLayout = 0;
 	m_pipelineLayout = 0;
 
-	// for (auto& sampler : m_samplers)
-	// 	vkDestroySampler(m_logicalDevice, sampler.sampler, 0);
 	m_samplers.clear();
 }
 

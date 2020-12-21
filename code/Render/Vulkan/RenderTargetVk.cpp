@@ -2,6 +2,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -12,14 +13,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimpleTexture)
 
-RenderTargetVk::RenderTargetVk(
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator
-)
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+RenderTargetVk::RenderTargetVk(Context* context)
+:	m_context(context)
 ,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(0)
 ,	m_allocation(0)
@@ -51,7 +46,7 @@ bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat forma
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+ 	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
 	m_format = format;
@@ -60,7 +55,7 @@ bool RenderTargetVk::createPrimary(int32_t width, int32_t height, VkFormat forma
 	m_height = height;
 
 	// Set debug name of texture.
-	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 	return true;
 }
 
@@ -68,7 +63,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 {
 	VkResult result;
 
-	VkFormat format = determineSupportedTargetFormat(m_physicalDevice, desc.format);
+	VkFormat format = determineSupportedTargetFormat(m_context->getPhysicalDevice(), desc.format);
 	if (format == VK_FORMAT_UNDEFINED)
 		return false;
 
@@ -91,7 +86,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
  	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	if (vmaCreateImage(m_allocator, &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateImage(m_context->getAllocator(), &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 
 	VkImageViewCreateInfo ivci = {};
@@ -105,7 +100,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if ((result = vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
+ 	if ((result = vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
 	{
 		log::error << L"RenderTargetVk::create failed; vkCreateImageView returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
@@ -116,31 +111,37 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_height = setDesc.height;
 
 	// Set debug name of texture.
-	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 	return true;
 }
 
 void RenderTargetVk::destroy()
 {
-	if (m_imageView != 0)
+	if (m_context)
 	{
-		vkDestroyImageView(m_logicalDevice, m_imageView, nullptr);
-		m_imageView = 0;
+		m_context->addDeferredCleanup([
+			imageView = m_imageView,
+			allocation = m_allocation,
+			image = m_image
+		](Context* cx) {
+			if (imageView != 0)
+				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+
+			// Do not destroy image unless we have allocated memory for it;
+			// otherwise it's primary targets thus owned by swapchain.
+			if (allocation == 0)
+				return;
+
+			vmaFreeMemory(cx->getAllocator(), allocation);
+			if (image != 0)
+				vkDestroyImage(cx->getLogicalDevice(), image, 0);
+		});
 	}
 
-	// Do not destroy image unless we have allocated memory for it;
-	// otherwise it's primary targets thus owned by swapchain.
-	if (m_allocation == 0)
-		return;
-
-	vmaFreeMemory(m_allocator, m_allocation);
+	m_context = nullptr;
+	m_image = 0;
 	m_allocation = 0;
-
-	if (m_image != 0)
-	{
-		vkDestroyImage(m_logicalDevice, m_image, 0);
-		m_image = 0;
-	}
+	m_imageView = 0;
 }
 
 ITexture* RenderTargetVk::resolve()

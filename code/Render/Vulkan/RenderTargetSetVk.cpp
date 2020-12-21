@@ -5,6 +5,7 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
@@ -25,15 +26,11 @@ uint32_t s_nextId = 1;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, IRenderTargetSet)
 
 RenderTargetSetVk::RenderTargetSetVk(
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator,
+	Context* context,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool
 )
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+:	m_context(context)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_depthTargetShared(false)
@@ -48,11 +45,11 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
+	m_colorTargets[0] = new RenderTargetVk(m_context);
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
+	m_depthTarget = new RenderTargetDepthVk(m_context);
 	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
 		return false;
 
@@ -76,14 +73,14 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRender
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice, m_allocator);
+		m_colorTargets[i] = new RenderTargetVk(m_context);
 		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i], tag))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice, m_allocator);
+		m_depthTarget = new RenderTargetDepthVk(m_context);
 		if (!m_depthTarget->create(setDesc, tag))
 			return false;
 		m_depthTargetShared = false;
@@ -100,10 +97,6 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRender
 
 void RenderTargetSetVk::destroy()
 {
-	// Wait until GPU is idle to ensure targets are not used, or pending, in some queue
-	// before destroying them.
-	vkDeviceWaitIdle(m_logicalDevice);
-
 	// Destroy color target textures.
 	for (auto colorTarget : m_colorTargets)
 	{
@@ -166,21 +159,21 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	ici.tiling = VK_IMAGE_TILING_LINEAR;
 	ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
-	if (vkCreateImage(m_logicalDevice, &ici, nullptr, &hostImage) != VK_SUCCESS)
+	if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &hostImage) != VK_SUCCESS)
 		return false;
 
 	VkMemoryRequirements memoryRequirements;
-	vkGetImageMemoryRequirements(m_logicalDevice, hostImage, &memoryRequirements);
+	vkGetImageMemoryRequirements(m_context->getLogicalDevice(), hostImage, &memoryRequirements);
 
 	VkDeviceMemory hostImageMemory = 0;
 
 	VkMemoryAllocateInfo mai = {};
 	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	mai.allocationSize = memoryRequirements.size;
-	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+	mai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
 
-	vkAllocateMemory(m_logicalDevice, &mai, nullptr, &hostImageMemory);
-	vkBindImageMemory(m_logicalDevice, hostImage, hostImageMemory, 0);
+	vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
+	vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
 
 	// Allocate transient command buffer for transfer.
 	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
@@ -272,11 +265,11 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	VkSubresourceLayout srl = {};
-	vkGetImageSubresourceLayout(m_logicalDevice, hostImage, &isr, &srl);
+	vkGetImageSubresourceLayout(m_context->getLogicalDevice(), hostImage, &isr, &srl);
 
 	// Read back data.
 	uint8_t* src = nullptr;
-	vkMapMemory(m_logicalDevice, hostImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&src);
+	vkMapMemory(m_context->getLogicalDevice(), hostImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&src);
 	src += srl.offset;
 
 	uint32_t fragmentSize = 4 * sizeof(float);
@@ -289,21 +282,21 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		src += srl.rowPitch;
 	}
 
-	vkUnmapMemory(m_logicalDevice, hostImageMemory);
+	vkUnmapMemory(m_context->getLogicalDevice(), hostImageMemory);
 	
 	// Cleanup
-	vkFreeMemory(m_logicalDevice, hostImageMemory, 0);
-	vkDestroyImage(m_logicalDevice, hostImage, 0);
+	vkFreeMemory(m_context->getLogicalDevice(), hostImageMemory, 0);
+	vkDestroyImage(m_context->getLogicalDevice(), hostImage, 0);
 	return true;
 }
 
 void RenderTargetSetVk::setDebugName(const wchar_t* name)
 {
 	for (auto colorTarget : m_colorTargets)
-		setObjectDebugName(m_logicalDevice, name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 
 	if (m_depthTarget)
-		setObjectDebugName(m_logicalDevice, name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
@@ -518,7 +511,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 		renderPassCreateInfo.pAttachments = passAttachments.ptr();
 		renderPassCreateInfo.subpassCount = 1;
 		renderPassCreateInfo.pSubpasses = &subpass;
-		if (vkCreateRenderPass(m_logicalDevice, &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(m_context->getLogicalDevice(), &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
 			return false;
 	}
 
@@ -548,7 +541,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 		frameBufferCreateInfo.width = m_setDesc.width;
 		frameBufferCreateInfo.height = m_setDesc.height;
 		frameBufferCreateInfo.layers = 1;
-		if (vkCreateFramebuffer(m_logicalDevice, &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
 			return false;
 	}
 

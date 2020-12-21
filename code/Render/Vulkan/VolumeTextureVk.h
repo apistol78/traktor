@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class CommandBufferPool;
+class Context;
 class Queue;
 struct VolumeTextureCreateDesc;
 
@@ -20,13 +21,11 @@ class VolumeTextureVk : public IVolumeTexture
 	T_RTTI_CLASS;
 
 public:
-	VolumeTextureVk();
+	explicit VolumeTextureVk(Context* context);
 
 	virtual ~VolumeTextureVk();
 
 	bool create(
-		VkPhysicalDevice physicalDevice,
-		VkDevice device,
 		Queue* graphicsQueue,
 		CommandBufferPool* graphicsCommandPool,
 		const VolumeTextureCreateDesc& desc,
@@ -50,6 +49,7 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
+	Ref< Context > m_context;
 	VkImage m_textureImage;
 	VkImageView m_textureView;
 	int32_t m_width;

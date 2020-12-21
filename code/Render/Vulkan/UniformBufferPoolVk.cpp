@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -23,9 +24,8 @@ int32_t freeIndex(uint32_t size)
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPoolVk", UniformBufferPoolVk, Object)
 
-UniformBufferPoolVk::UniformBufferPoolVk(VkDevice logicalDevice, VmaAllocator allocator)
-:	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+UniformBufferPoolVk::UniformBufferPoolVk(Context* context)
+:	m_context(context)
 ,	m_counter(0)
 {
 }
@@ -81,10 +81,10 @@ bool UniformBufferPoolVk::acquire(
 		aci.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
 		VmaAllocationInfo ai = {};
-		if (vmaCreateBuffer(m_allocator, &bci, &aci, &inoutBuffer, &inoutAllocation, &ai) != VK_SUCCESS)
+		if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &inoutBuffer, &inoutAllocation, &ai) != VK_SUCCESS)
 			return false;
 
-		setObjectDebugName(m_logicalDevice, L"Uniform buffer", (uint64_t)inoutBuffer, VK_OBJECT_TYPE_BUFFER);
+		setObjectDebugName(m_context->getLogicalDevice(), L"Uniform buffer", (uint64_t)inoutBuffer, VK_OBJECT_TYPE_BUFFER);
 
 		inoutMappedPtr = ai.pMappedData;
 	}

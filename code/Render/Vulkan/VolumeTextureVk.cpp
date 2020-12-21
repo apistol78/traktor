@@ -3,6 +3,7 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
@@ -14,8 +15,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureVk", VolumeTextureVk, IVolumeTexture)
 
-VolumeTextureVk::VolumeTextureVk()
-:	m_textureImage(0)
+VolumeTextureVk::VolumeTextureVk(Context* context)
+:	m_context(context)
+,	m_textureImage(0)
 ,	m_textureView(0)
 ,	m_width(0)
 ,	m_height(0)
@@ -29,8 +31,6 @@ VolumeTextureVk::~VolumeTextureVk()
 }
 
 bool VolumeTextureVk::create(
-	VkPhysicalDevice physicalDevice,
-	VkDevice device,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool,
 	const VolumeTextureCreateDesc& desc,
@@ -50,8 +50,8 @@ bool VolumeTextureVk::create(
 		VkDeviceMemory stagingBufferMemory = 0;
 
 		if (!createBuffer(
-			physicalDevice,
-			device,
+			m_context->getPhysicalDevice(),
+			m_context->getLogicalDevice(),
 			imageSize,
 			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -62,14 +62,14 @@ bool VolumeTextureVk::create(
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;
-		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, (void**)&data);
+		vkMapMemory(m_context->getLogicalDevice(), stagingBufferMemory, 0, imageSize, 0, (void**)&data);
 		for (int32_t slice = 0; slice < desc.depth; ++slice)
 		{
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
 			std::memcpy(data, (uint8_t*)desc.initialData[0].data + desc.initialData[0].slicePitch * slice, mipSize);
 			data += mipSize;
 		}
-		vkUnmapMemory(device, stagingBufferMemory);
+		vkUnmapMemory(m_context->getLogicalDevice(), stagingBufferMemory);
 
 		// Create texture image.
 		VkImageCreateInfo ici = {};
@@ -88,15 +88,15 @@ bool VolumeTextureVk::create(
 		ici.samples = VK_SAMPLE_COUNT_1_BIT;
 		ici.flags = 0;
 		
-		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
+		if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &m_textureImage) != VK_SUCCESS)
 			return false;
 
 		// Set debug name of texture.
-		setObjectDebugName(device, tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
+		setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
 
 		// Calculate memory requirement of texture image.
 		VkMemoryRequirements memoryRequirements;
-		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
+		vkGetImageMemoryRequirements(m_context->getLogicalDevice(), m_textureImage, &memoryRequirements);
 
 		// Allocate texture memory.
 		VkDeviceMemory textureImageMemory = 0;
@@ -104,12 +104,12 @@ bool VolumeTextureVk::create(
 		VkMemoryAllocateInfo mai = {};
 		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		mai.allocationSize = memoryRequirements.size;
-		mai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
+		mai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
-		if (vkAllocateMemory(device, &mai, nullptr, &textureImageMemory) != VK_SUCCESS)
+		if (vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &textureImageMemory) != VK_SUCCESS)
 			return false;
 
-		vkBindImageMemory(device, m_textureImage, textureImageMemory, 0);
+		vkBindImageMemory(m_context->getLogicalDevice(), m_textureImage, textureImageMemory, 0);
 
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};
@@ -123,7 +123,7 @@ bool VolumeTextureVk::create(
 		ivci.subresourceRange.levelCount = desc.mipCount;
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
-		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
+		if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, NULL, &m_textureView) != VK_SUCCESS)
 			return false;
 
 		VkCommandBuffer commandBuffer = graphicsCommandPool->acquireAndBegin();
@@ -222,8 +222,8 @@ bool VolumeTextureVk::create(
 		graphicsCommandPool->release(commandBuffer);
 
 		// Free staging buffer.
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
+		vkDestroyBuffer(m_context->getLogicalDevice(), stagingBuffer, nullptr);
+		vkFreeMemory(m_context->getLogicalDevice(), stagingBufferMemory, nullptr);
 	}
 
 	m_width = desc.width;
@@ -234,6 +234,14 @@ bool VolumeTextureVk::create(
 
 void VolumeTextureVk::destroy()
 {
+	if (m_context)
+	{
+		m_context->addDeferredCleanup([=](Context* cx) {
+
+			// \fixme
+
+		});
+	}
 }
 
 ITexture* VolumeTextureVk::resolve()

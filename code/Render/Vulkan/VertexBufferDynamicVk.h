@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Render/Vulkan/Buffer.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
@@ -7,6 +8,8 @@ namespace traktor
 {
 	namespace render
 	{
+
+class Context;
 
 /*!
  * \ingroup Vulkan
@@ -17,13 +20,14 @@ class VertexBufferDynamicVk : public VertexBufferVk
 
 public:
 	VertexBufferDynamicVk(
+		Context* context,
 		uint32_t bufferSize,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 		uint32_t hash
 	);
 
-	bool create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount);
+	bool create(int32_t inFlightCount);
 
 	virtual void destroy() override final;
 
@@ -36,7 +40,8 @@ public:
 	virtual VkBuffer getVkBuffer() const override final;
 
 private:
-	AlignedVector< Buffer > m_buffers;
+	Ref< Context > m_context;
+	RefArray< Buffer > m_buffers;
 	int32_t m_index;
 };
 

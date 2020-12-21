@@ -18,9 +18,6 @@ class VertexBufferVk : public VertexBuffer
 public:
 	VertexBufferVk(
 		uint32_t bufferSize,
-		//VmaAllocator allocator,
-		//VmaAllocation allocation,
-		//VkBuffer vertexBuffer,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 		uint32_t hash
@@ -35,15 +32,9 @@ public:
 	uint32_t getHash() const { return m_hash; }
 
 protected:
-	//VmaAllocator m_allocator;
-	//VmaAllocation m_allocation;
-	//VkBuffer m_vertexBuffer;
-
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 	uint32_t m_hash;
-
-	//Buffer m_buffer;
 };
 
 	}

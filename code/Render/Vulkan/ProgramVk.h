@@ -10,6 +10,7 @@ namespace traktor
 	namespace render
 	{
 
+class Context;
 class PipelineLayoutCache;
 class ProgramResourceVk;
 class ShaderModuleCache;
@@ -23,11 +24,7 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator
-	);
+	explicit ProgramVk(Context* context);
 
 	virtual ~ProgramVk();
 
@@ -116,9 +113,7 @@ private:
 	std::wstring m_tag;
 #endif
 
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;

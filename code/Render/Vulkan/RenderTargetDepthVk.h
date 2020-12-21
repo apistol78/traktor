@@ -11,6 +11,7 @@ class Semaphore;
 	namespace render
 	{
 
+class Context;
 struct RenderTargetSetCreateDesc;
 
 /*!
@@ -21,11 +22,7 @@ class RenderTargetDepthVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetDepthVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator
-	);
+	explicit RenderTargetDepthVk(Context* context);
 
 	virtual ~RenderTargetDepthVk();
 
@@ -60,9 +57,7 @@ public:
 private:
 	friend class RenderTargetSetVk;
 	
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	VkFormat m_format;
 	VkImage m_image;
 	VmaAllocation m_allocation;

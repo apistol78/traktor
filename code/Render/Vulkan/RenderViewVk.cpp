@@ -7,6 +7,7 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
@@ -67,17 +68,13 @@ bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR sur
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
 RenderViewVk::RenderViewVk(
+	Context* context,
 	VkInstance instance,
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator,
 	Queue* graphicsQueue,
 	Queue* computeQueue
 )
-:	m_instance(instance)
-,	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+:	m_context(context)
+,	m_instance(instance)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_computeQueue(computeQueue)
 {
@@ -240,9 +237,8 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
-	// Assume device is idle when lost.
-	if (!m_lost)
-		vkDeviceWaitIdle(m_logicalDevice);
+	// Ensure any pending cleanups are performed before closing render view.
+	m_context->performCleanup();
 
 	m_lost = true;
 
@@ -253,9 +249,9 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		frame.primaryTarget->destroy();
-		vkDestroyFence(m_logicalDevice, frame.inFlightFence, nullptr);
-		vkDestroySemaphore(m_logicalDevice, frame.renderFinishedSemaphore, nullptr);
-		vkDestroyDescriptorPool(m_logicalDevice, frame.descriptorPool, nullptr);
+		vkDestroyFence(m_context->getLogicalDevice(), frame.inFlightFence, nullptr);
+		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+		vkDestroyDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, nullptr);
 		m_computeCommandPool->release(frame.computeCommandBuffer);
 		m_graphicsCommandPool->release(frame.graphicsCommandBuffer);
 	}
@@ -263,25 +259,25 @@ void RenderViewVk::close()
 
 	if (m_queryPool != 0)
 	{
-		vkDestroyQueryPool(m_logicalDevice, m_queryPool, nullptr);
+		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
 		m_queryPool = 0;
 	}
 
 	if (m_imageAvailableSemaphore != 0)
 	{
-		vkDestroySemaphore(m_logicalDevice, m_imageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphore, nullptr);
 		m_imageAvailableSemaphore = 0;
 	}
 
 	// Destroy pipelines.
 	for (auto& pipeline : m_pipelines)
-		vkDestroyPipeline(m_logicalDevice, pipeline.second.pipeline, nullptr);
+		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
 	{
-		vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, 0);	
+		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, 0);	
 		m_swapChain = 0;
 	}
 
@@ -441,7 +437,7 @@ bool RenderViewVk::beginFrame()
 
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
-		m_logicalDevice,
+		m_context->getLogicalDevice(),
 		m_swapChain,
 		timeOut,
 		m_imageAvailableSemaphore,
@@ -453,7 +449,7 @@ bool RenderViewVk::beginFrame()
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-    result = vkWaitForFences(m_logicalDevice, 1, &frame.inFlightFence, VK_TRUE, timeOut);
+    result = vkWaitForFences(m_context->getLogicalDevice(), 1, &frame.inFlightFence, VK_TRUE, timeOut);
 	if (result != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
@@ -467,7 +463,7 @@ bool RenderViewVk::beginFrame()
 	}
 
 	// Reset descriptor pool.
-	result = vkResetDescriptorPool(m_logicalDevice, frame.descriptorPool, 0);
+	result = vkResetDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, 0);
 	if (result != VK_SUCCESS)
 		return false;
 
@@ -514,7 +510,7 @@ void RenderViewVk::endFrame()
 		return;
 	}
 
-	vkResetFences(m_logicalDevice, 1, &frame.inFlightFence);
+	vkResetFences(m_context->getLogicalDevice(), 1, &frame.inFlightFence);
 
 	// Submit commands to graphics queue.
 	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -534,7 +530,7 @@ void RenderViewVk::endFrame()
 	{
 		if ((m_counter - it->second.lastAcquired) >= 16)	// Pipelines are kept for X number of frames before getting collected.
 		{
-			vkDestroyPipeline(m_logicalDevice, it->second.pipeline, nullptr);
+			vkDestroyPipeline(m_context->getLogicalDevice(), it->second.pipeline, nullptr);
 			it = m_pipelines.erase(it);
 		}
 		else
@@ -572,6 +568,9 @@ void RenderViewVk::present()
 		m_lost = true;
 		return;
 	}
+
+	// Cleanup destroyed resources.
+	m_context->performCleanup();
 }
 
 bool RenderViewVk::beginPass(const Clear* clear)
@@ -1119,7 +1118,7 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 
 	uint64_t stamps[2] = { 0, 0 };
 
-	VkResult result = vkGetQueryPoolResults(m_logicalDevice, m_queryPool, query, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
+	VkResult result = vkGetQueryPoolResults(m_context->getLogicalDevice(), m_queryPool, query, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
 	if (result != VK_SUCCESS)
 		return false;
 
@@ -1169,7 +1168,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Clamp surface size to physical device limits.
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &surfaceCapabilities);
 
 	width = std::max(surfaceCapabilities.minImageExtent.width, width);
 	width = std::min(surfaceCapabilities.maxImageExtent.width, width);
@@ -1182,16 +1181,16 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Find present queue.
 	uint32_t queueFamilyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
+	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, 0);
 
 	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
-	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilyProperties.ptr());
+	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
 
 	m_presentQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
 		VkBool32 supportsPresent;
-		vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, i, m_surface, &supportsPresent);
+		vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
 		if (supportsPresent)
 		{
 			m_presentQueueIndex = i;
@@ -1205,14 +1204,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	}
 
 	// Get opaque queues.
-	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
+	vkGetDeviceQueue(m_context->getLogicalDevice(), m_presentQueueIndex, 0, &m_presentQueue);
 
-	m_graphicsCommandPool = CommandBufferPool::create(m_logicalDevice, m_graphicsQueue);
-	m_computeCommandPool = CommandBufferPool::create(m_logicalDevice, m_computeQueue);
+	m_graphicsCommandPool = CommandBufferPool::create(m_context->getLogicalDevice(), m_graphicsQueue);
+	m_computeCommandPool = CommandBufferPool::create(m_context->getLogicalDevice(), m_computeQueue);
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, nullptr);
 	if (surfaceFormatCount == 0)
 	{
 		log::error << L"Failed to create Vulkan; no surface formats." << Endl;
@@ -1220,7 +1219,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	}
 
 	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, surfaceFormats.ptr());
+	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
 
 	VkFormat colorFormat = surfaceFormats[0].format;
 	if (colorFormat == VK_FORMAT_UNDEFINED)
@@ -1249,12 +1248,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	// Determine presentation mode.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
 #if defined(__ANDROID__) || defined(__IOS__) || defined(__LINUX__)
-	if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
 		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 #endif
 	if (vblanks <= 0)
 	{
-		if (presentationModeSupported(m_physicalDevice, m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
+		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
 			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 	}
 
@@ -1292,7 +1291,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		scci.pQueueFamilyIndices = queueFamilyIndices;
 	}
 
-	if (vkCreateSwapchainKHR(m_logicalDevice, &scci, 0, &m_swapChain) != VK_SUCCESS)
+	if (vkCreateSwapchainKHR(m_context->getLogicalDevice(), &scci, 0, &m_swapChain) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
 		return false;
@@ -1300,10 +1299,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
-	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, nullptr);
+	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, nullptr);
 
 	AlignedVector< VkImage > presentImages(imageCount);
-	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, presentImages.ptr());
+	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, presentImages.ptr());
 
 	log::debug << L"Using " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
@@ -1330,27 +1329,27 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.flags = 0;
 
- 	if (vkCreateImage(m_logicalDevice, &ici, nullptr, &depthImage) != VK_SUCCESS)
+ 	if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &depthImage) != VK_SUCCESS)
 		return false;
 
 	VkMemoryRequirements memoryRequirements = {};
-	vkGetImageMemoryRequirements(m_logicalDevice, depthImage, &memoryRequirements);
+	vkGetImageMemoryRequirements(m_context->getLogicalDevice(), depthImage, &memoryRequirements);
 
 	VkMemoryAllocateInfo iai = {};
 	iai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	iai.allocationSize = memoryRequirements.size;
-	iai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
+	iai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
 	VkDeviceMemory imageMemory = {};
-	if (vkAllocateMemory(m_logicalDevice, &iai, nullptr, &imageMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(m_context->getLogicalDevice(), &iai, nullptr, &imageMemory) != VK_SUCCESS)
 		return false;
 
-	if (vkBindImageMemory(m_logicalDevice, depthImage, imageMemory, 0) != VK_SUCCESS)
+	if (vkBindImageMemory(m_context->getLogicalDevice(), depthImage, imageMemory, 0) != VK_SUCCESS)
 		return false;
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_imageAvailableSemaphore);
+	vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore);
 
 	// Create time query pool.
 	VkQueryPoolCreateInfo qpci = {};
@@ -1358,7 +1357,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	qpci.pNext = nullptr;
 	qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
 	qpci.queryCount = imageCount * 2 * 1024;
-	if (vkCreateQueryPool(m_logicalDevice, &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
+	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
 
 	// Create frame resources.
@@ -1386,22 +1385,20 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		dpci.maxSets = 4096;
 		dpci.poolSizeCount = sizeof_array(dps);
 		dpci.pPoolSizes = dps;
-		if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &frame.descriptorPool) != VK_SUCCESS)
+		if (vkCreateDescriptorPool(m_context->getLogicalDevice(), &dpci, nullptr, &frame.descriptorPool) != VK_SUCCESS)
 			return false;
 
 		VkSemaphoreCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-		vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &frame.renderFinishedSemaphore);
+		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
 
 		VkFenceCreateInfo fci = {};
 		fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		vkCreateFence(m_logicalDevice, &fci, nullptr, &frame.inFlightFence);	
+		vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &frame.inFlightFence);	
 
 		frame.primaryTarget = new RenderTargetSetVk(
-			m_physicalDevice,
-			m_logicalDevice,
-			0,
+			m_context,
 			m_graphicsQueue,
 			m_graphicsCommandPool
 		);
@@ -1419,10 +1416,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Check if debug marker extension is available.
 	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
+	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
 
 	AlignedVector< VkExtensionProperties > extensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, extensions.ptr());
+	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
 
 	m_haveDebugMarkers = false;
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -1438,7 +1435,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 #endif
 
 	// Create uniform buffer pool.
-	m_uniformBufferPool = new UniformBufferPoolVk(m_logicalDevice, m_allocator);
+	m_uniformBufferPool = new UniformBufferPoolVk(m_context);
 
 	m_nextQueryIndex = 0;
 	m_lost = false;
@@ -1606,7 +1603,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.basePipelineHandle = 0;
 		gpci.basePipelineIndex = 0;
 
-		VkResult result = vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &gpci, nullptr, &pipeline);
+		VkResult result = vkCreateGraphicsPipelines(m_context->getLogicalDevice(), VK_NULL_HANDLE, 1, &gpci, nullptr, &pipeline);
 		if (result != VK_SUCCESS)
 		{
 			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L")." << Endl;

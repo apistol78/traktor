@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class CommandBufferPool;
+class Context;
 class ProgramVk;
 class Queue;
 class RenderTargetSetVk;
@@ -37,10 +38,8 @@ class RenderViewVk
 
 public:
 	RenderViewVk(
+		Context* context,
 		VkInstance instance,
-		VkPhysicalDevice physicalDevice,
-		VkDevice device,
-		VmaAllocator allocator,
 		Queue* graphicsQueue,
 		Queue* computeQueue
 	);
@@ -134,11 +133,8 @@ private:
 		VkPipeline pipeline;
 	};
 
+	Ref< Context > m_context;
 	VkInstance m_instance = 0;
-	VkPhysicalDevice m_physicalDevice = 0;
-	VkDevice m_logicalDevice = 0;
-	VmaAllocator m_allocator = 0;
-
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif

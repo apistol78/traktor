@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class CommandBufferPool;
+class Context;
 class Queue;
 struct SimpleTextureCreateDesc;
 
@@ -20,10 +21,8 @@ class SimpleTextureVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator,
+	explicit SimpleTextureVk(
+		Context* context,
 		Queue* graphicsQueue,
 		CommandBufferPool* graphicsCommandPool
 	);
@@ -56,9 +55,7 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	Ref< Queue > m_graphicsQueue;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VmaAllocation m_stagingBufferAllocation;

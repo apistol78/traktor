@@ -8,6 +8,8 @@ namespace traktor
 {
 	namespace render
 	{
+
+class Context;
 	
 class UniformBufferPoolVk : public Object
 {
@@ -16,7 +18,7 @@ class UniformBufferPoolVk : public Object
 public:
 	enum { MaxPendingFrames = 8 };
 
-	UniformBufferPoolVk(VkDevice logicalDevice, VmaAllocator allocator);
+	explicit UniformBufferPoolVk(Context* context);
 
 	bool acquire(
 		uint32_t size,
@@ -36,8 +38,7 @@ private:
 		void* mappedPtr;
 	};
 
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	AlignedVector< BufferChain > m_free[64];
 	AlignedVector< BufferChain > m_released[MaxPendingFrames];
 	uint32_t m_counter;
