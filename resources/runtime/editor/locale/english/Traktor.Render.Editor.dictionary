@@ -668,7 +668,11 @@
 		<item>
 			<first>SHADERGRAPH_VIEWER_LANGUAGES</first>
 			<second>Languages</second>
-		</item>		
+		</item>
+		<item>
+			<first>SHADERGRAPH_VIEWER_RELAXED</first>
+			<second>Convert relaxed to half</second>
+		</item>
 		<item>
 			<first>SHADERGRAPH_VARIABLES</first>
 			<second>Variables</second>
