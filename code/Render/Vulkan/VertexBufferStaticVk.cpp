@@ -1,4 +1,6 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/Buffer.h"
 #include "Render/Vulkan/CommandBufferPool.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -12,20 +14,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVk", VertexBufferStaticVk, VertexBufferVk)
 
 VertexBufferStaticVk::VertexBufferStaticVk(
-	VkDevice logicalDevice,
+	Context* context,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool,
-	VmaAllocator allocator,
 	uint32_t bufferSize,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 	uint32_t hash
 )
 :	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
-,	m_logicalDevice(logicalDevice)
+,	m_context(context)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_graphicsCommandPool(graphicsCommandPool)
-,	m_allocator(allocator)
 {
 }
 
@@ -35,7 +35,8 @@ bool VertexBufferStaticVk::create()
 	if (!bufferSize)
 		return false;
 
-	if (!m_deviceBuffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
+	m_deviceBuffer = new Buffer(m_context);
+	if (!m_deviceBuffer->create(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
 		return false;
 
 	return true;
@@ -43,20 +44,24 @@ bool VertexBufferStaticVk::create()
 
 void VertexBufferStaticVk::destroy()
 {
-	m_deviceBuffer.destroy();
-	m_stageBuffer.destroy();
+	safeDestroy(m_deviceBuffer);
+	safeDestroy(m_stageBuffer);
+	m_context = nullptr;
 }
 
 void* VertexBufferStaticVk::lock()
 {
+	T_FATAL_ASSERT(m_stageBuffer == nullptr);
+
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
 		return nullptr;
 
-	if (!m_stageBuffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+	m_stageBuffer = new Buffer(m_context);
+	if (!m_stageBuffer->create(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
 		return nullptr;
 
-	return m_stageBuffer.lock();
+	return m_stageBuffer->lock();
 }
 
 void* VertexBufferStaticVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
@@ -67,7 +72,7 @@ void* VertexBufferStaticVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferStaticVk::unlock()
 {
-	m_stageBuffer.unlock();
+	m_stageBuffer->unlock();
 
 	// Copy staging buffer into vertex buffer.
 	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
@@ -76,8 +81,8 @@ void VertexBufferStaticVk::unlock()
 	bc.size = getBufferSize();
 	vkCmdCopyBuffer(
 		commandBuffer,
-		m_stageBuffer,
-		m_deviceBuffer,
+		*m_stageBuffer,
+		*m_deviceBuffer,
 		1,
 		&bc
 	);
@@ -93,12 +98,12 @@ void VertexBufferStaticVk::unlock()
 	m_graphicsCommandPool->release(commandBuffer);
 
 	// Free staging buffer.
-	m_stageBuffer.destroy();
+	safeDestroy(m_stageBuffer);
 }
 
 VkBuffer VertexBufferStaticVk::getVkBuffer() const
 {
-	return m_deviceBuffer;
+	return *m_deviceBuffer;
 }
 
 	}

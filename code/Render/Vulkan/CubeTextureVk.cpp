@@ -4,6 +4,7 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -16,16 +17,12 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeTexture)
 
 CubeTextureVk::CubeTextureVk(
-	VkPhysicalDevice physicalDevice,
-	VkDevice logicalDevice,
-	VmaAllocator allocator,
+	Context* context,
 	Queue* graphicsQueue,
 	CommandBufferPool* graphicsCommandPool,
 	const CubeTextureCreateDesc& desc
 )
-:	m_physicalDevice(physicalDevice)
-,	m_logicalDevice(logicalDevice)
-,	m_allocator(allocator)
+:	m_context(context)
 ,	m_graphicsQueue(graphicsQueue)
 ,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_desc(desc)
@@ -68,14 +65,14 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	if (vmaCreateImage(m_allocator, &ici, &aci, &m_textureImage, &m_textureImageAllocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_textureImage, &m_textureImageAllocation, nullptr) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create VK cube texture; unable to allocate image memory." << Endl;
 		return false;			
 	}
 
 	// Set debug name of texture.
-	setObjectDebugName(m_logicalDevice, tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
 
 	// Create texture view.
 	VkImageViewCreateInfo ivci = {};
@@ -89,7 +86,7 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	ivci.subresourceRange.levelCount = m_desc.mipCount;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 6;
-	if (vkCreateImageView(m_logicalDevice, &ivci, NULL, &m_textureView) != VK_SUCCESS)
+	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, NULL, &m_textureView) != VK_SUCCESS)
 		return false;
 
 	// Upload initial data.
@@ -143,23 +140,31 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 
 void CubeTextureVk::destroy()
 {
-	if (m_textureView != 0)
+	T_FATAL_ASSERT(m_stagingBufferAllocation == 0);
+
+	if (m_context)
 	{
-		vkDestroyImageView(m_logicalDevice, m_textureView, nullptr);
-		m_textureView = 0;
+		m_context->addDeferredCleanup([
+			textureView = m_textureView,
+			textureImageAllocation = m_textureImageAllocation,
+			textureImage = m_textureImage
+		](Context* cx) {
+			if (textureView != 0)
+				vkDestroyImageView(cx->getLogicalDevice(), textureView, nullptr);
+			if (textureImageAllocation != 0)
+				vmaFreeMemory(cx->getAllocator(), textureImageAllocation);
+			if (textureImage != 0)
+				vkDestroyImage(cx->getLogicalDevice(), textureImage, 0);
+		});
 	}
 
-	if (m_textureImageAllocation != 0)
-	{
-		vmaFreeMemory(m_allocator, m_textureImageAllocation);
-		m_textureImageAllocation = 0;
-	}
+	m_context = nullptr;
+	m_graphicsQueue = nullptr;
+	m_graphicsCommandPool = nullptr;
 
-	if (m_textureImage != 0)
-	{
-		vkDestroyImage(m_logicalDevice, m_textureImage, 0);
-		m_textureImage = 0;
-	}
+	m_textureView = 0;
+	m_textureImageAllocation = 0;
+	m_textureImage = 0;
 }
 
 ITexture* CubeTextureVk::resolve()
@@ -179,6 +184,8 @@ int32_t CubeTextureVk::getSide() const
 
 bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
+	T_FATAL_ASSERT(m_stagingBufferAllocation == 0);
+
 	uint32_t lockSize = getTextureSize(
 		m_desc.format,
 		m_desc.side,
@@ -196,12 +203,12 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
-	if (vmaCreateBuffer(m_allocator, &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateBuffer(m_context->getAllocator(), &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
 		return false;	
 
 	// Map staging buffer.
 	uint8_t* data = nullptr;
-	vmaMapMemory(m_allocator, m_stagingBufferAllocation, (void**)&data);
+	vmaMapMemory(m_context->getAllocator(), m_stagingBufferAllocation, (void**)&data);
 
 	lock.pitch = m_desc.side * sizeof(uint32_t);
 	lock.bits = data;
@@ -210,7 +217,7 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 
 void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
-	vmaUnmapMemory(m_allocator, m_stagingBufferAllocation);
+	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);
 
 	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
 
@@ -300,8 +307,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	m_graphicsCommandPool->release(commandBuffer);
 
 	// Free staging buffer.
-	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, 0);
-	vmaFreeMemory(m_allocator, m_stagingBufferAllocation);
+	vkDestroyBuffer(m_context->getLogicalDevice(), m_stagingBuffer, 0);
+	vmaFreeMemory(m_context->getAllocator(), m_stagingBufferAllocation);
 
 	m_stagingBuffer = 0;
 	m_stagingBufferAllocation = 0;

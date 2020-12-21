@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Render/Vulkan/ApiHeader.h"
 
 namespace traktor
@@ -7,13 +9,19 @@ namespace traktor
     namespace render
     {
 
+class Context;
+
 /*!
  * \ingroup Vulkan
  */
-class Buffer
+class Buffer : public Object
 {
+    T_RTTI_CLASS;
+
 public:
-	bool create(VkDevice logicalDevice, VmaAllocator allocator, uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
+    explicit Buffer(Context* context);
+
+	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
 
 	void destroy();
 
@@ -24,8 +32,7 @@ public:
     operator VkBuffer () const { return m_buffer; }
 
 private:
-    VkDevice m_logicalDevice = 0;
-	VmaAllocator m_allocator = 0;
+    Ref< Context > m_context;
 	VmaAllocation m_allocation = 0;
 	VkBuffer m_buffer = 0;
     void* m_locked = nullptr;

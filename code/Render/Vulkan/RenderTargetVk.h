@@ -8,6 +8,7 @@ namespace traktor
 	namespace render
 	{
 
+class Context;
 struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
@@ -19,11 +20,7 @@ class RenderTargetVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator
-	);
+	explicit RenderTargetVk(Context* context);
 
 	virtual ~RenderTargetVk();
 
@@ -60,9 +57,7 @@ public:
 private:
 	friend class RenderTargetSetVk;
 
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	VkFormat m_format;
 	VkImage m_image;
 	VmaAllocation m_allocation;

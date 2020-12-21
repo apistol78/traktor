@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Render/StructBuffer.h"
 #include "Render/Vulkan/Buffer.h"
 
@@ -8,14 +9,16 @@ namespace traktor
 	namespace render
 	{
 
+class Context;
+
 class StructBufferVk : public StructBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	StructBufferVk(uint32_t bufferSize);
+	explicit StructBufferVk(Context* context, uint32_t bufferSize);
 
-	bool create(VkDevice logicalDevice, VmaAllocator allocator, int32_t inFlightCount);
+	bool create(int32_t inFlightCount);
 
 	virtual void destroy() override final;
 
@@ -27,10 +30,11 @@ public:
 
 	bool isValid() const { return !m_buffers.empty(); }
 
-	VkBuffer getVkBuffer() const { return m_buffers[m_index]; }
+	VkBuffer getVkBuffer() const { return *m_buffers[m_index]; }
 
 private:
-	AlignedVector< Buffer > m_buffers;
+	Ref< Context > m_context;
+	RefArray< Buffer > m_buffers;
 	int32_t m_index;
 };
 

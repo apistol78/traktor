@@ -16,6 +16,7 @@ class Semaphore;
 	{
 
 class CommandBufferPool;
+class Context;
 class Queue;
 class RenderTargetDepthVk;
 class RenderTargetVk;
@@ -29,10 +30,8 @@ class RenderTargetSetVk : public IRenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator,
+	explicit RenderTargetSetVk(
+		Context* context,
 		Queue* graphicsQueue,
 		CommandBufferPool* graphicsCommandPool
 	);
@@ -100,9 +99,7 @@ private:
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	Ref< Queue > m_graphicsQueue;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	RenderTargetSetCreateDesc m_setDesc;

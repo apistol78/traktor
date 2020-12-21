@@ -1,15 +1,23 @@
 #include "Core/Config.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/Buffer.h"
+#include "Render/Vulkan/Context.h"
 
 namespace traktor
 {
     namespace render
     {
 
-bool Buffer::create(VkDevice logicalDevice, VmaAllocator allocator, uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Buffer", Buffer, Object)
+
+Buffer::Buffer(Context* context)
+:	m_context(context)
 {
-	T_ASSERT(m_allocator == 0);
+}
+
+bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
+{
+	T_FATAL_ASSERT(m_buffer == 0);
 
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -27,27 +35,27 @@ bool Buffer::create(VkDevice logicalDevice, VmaAllocator allocator, uint32_t buf
     else
         return false;
 
-	if (vmaCreateBuffer(allocator, &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;
 
-	m_logicalDevice = logicalDevice;
-	m_allocator = allocator;
     return true;
 }
 
 void Buffer::destroy()
 {
 	T_FATAL_ASSERT(m_locked == nullptr);
-	if (m_allocator != 0)
+	if (m_buffer != 0)
 	{
-		// Wait until GPU is idle to ensure targets are not used, or pending, in some queue
-		// before destroying them.
-		vkDeviceWaitIdle(m_logicalDevice);
-		vmaDestroyBuffer(m_allocator, m_buffer, m_allocation);
-		m_logicalDevice = 0;
-		m_allocator = 0;
+		m_context->addDeferredCleanup([
+			buffer = m_buffer,
+			allocation = m_allocation
+		](Context* cx) {
+			vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
+		});
+
 		m_allocation = 0;
 		m_buffer = 0;
+		m_context = nullptr;
 	}
 }
 
@@ -56,7 +64,7 @@ void* Buffer::lock()
 	if (m_locked)
 		return m_locked;
 
-	if (vmaMapMemory(m_allocator, m_allocation, &m_locked) != VK_SUCCESS)
+	if (vmaMapMemory(m_context->getAllocator(), m_allocation, &m_locked) != VK_SUCCESS)
 		m_locked = nullptr;
 
 	return m_locked;
@@ -66,7 +74,7 @@ void Buffer::unlock()
 {
 	if (m_locked)
 	{
-		vmaUnmapMemory(m_allocator, m_allocation);
+		vmaUnmapMemory(m_context->getAllocator(), m_allocation);
 		m_locked = nullptr;
 	}
 }

@@ -10,6 +10,7 @@ namespace traktor
 	{
 
 class CommandBufferPool;
+class Context;
 class Queue;
 
 struct CubeTextureCreateDesc;
@@ -23,9 +24,7 @@ class CubeTextureVk : public ICubeTexture
 
 public:
 	CubeTextureVk(
-		VkPhysicalDevice physicalDevice,
-		VkDevice logicalDevice,
-		VmaAllocator allocator,
+		Context* context,
 		Queue* graphicsQueue,
 		CommandBufferPool* graphicsCommandPool,
 		const CubeTextureCreateDesc& desc
@@ -52,9 +51,7 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VmaAllocator m_allocator;
+	Ref< Context > m_context;
 	Ref< Queue > m_graphicsQueue;
 	Ref< CommandBufferPool > m_graphicsCommandPool;
 	CubeTextureCreateDesc m_desc;

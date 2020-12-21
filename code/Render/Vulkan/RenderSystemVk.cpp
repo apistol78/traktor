@@ -11,6 +11,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/PipelineLayoutCache.h"
@@ -329,6 +330,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	m_context = new Context(m_physicalDevice, m_logicalDevice, m_allocator);
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
 	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice);
 	m_maxAnisotropy = desc.maxAnisotropy;
@@ -342,6 +344,7 @@ void RenderSystemVk::destroy()
 {
 	m_shaderModuleCache = nullptr;
 	m_pipelineLayoutCache = nullptr;
+	m_context = nullptr;
 	finalizeVulkanApi();
 }
 
@@ -445,10 +448,8 @@ float RenderSystemVk::getDisplayAspectRatio() const
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
+		m_context,
 		m_instance,
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator,
 		m_graphicsQueue,
 		m_computeQueue
 	);
@@ -461,10 +462,8 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
+		m_context,
 		m_instance,
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator,
 		m_graphicsQueue,
 		m_computeQueue
 	);
@@ -499,13 +498,13 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 	if (dynamic)
 	{
-		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(bufferSize, vibd, vads, cs.get());
-		if (vb->create(m_logicalDevice, m_allocator, 4))
+		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(m_context, bufferSize, vibd, vads, cs.get());
+		if (vb->create(4))
 			return vb;
 	}
 	else
 	{
-		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_logicalDevice, m_graphicsQueue, m_graphicsCommandPool, m_allocator, bufferSize, vibd, vads, cs.get());
+		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, m_graphicsQueue, m_graphicsCommandPool, bufferSize, vibd, vads, cs.get());
 		if (vb->create())
 			return vb;
 	}
@@ -515,15 +514,15 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Buffer buffer;
-	buffer.create(m_logicalDevice, m_allocator, bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
+	Buffer buffer(m_context);
+	buffer.create(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
 	return new IndexBufferVk(indexType, bufferSize, std::move(buffer));
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	Ref< StructBufferVk > buffer = new StructBufferVk(bufferSize);
-	if (buffer->create(m_logicalDevice, m_allocator, 4))
+	Ref< StructBufferVk > buffer = new StructBufferVk(m_context, bufferSize);
+	if (buffer->create(4))
 		return buffer;
 	else
 		return nullptr;
@@ -532,9 +531,7 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator,
+		m_context,
 		m_graphicsQueue,
 		m_graphicsCommandPool
 	);
@@ -550,9 +547,7 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< CubeTextureVk > texture = new CubeTextureVk(
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator,
+		m_context,
 		m_graphicsQueue,
 		m_graphicsCommandPool,
 		desc
@@ -565,10 +560,8 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< VolumeTextureVk > texture = new VolumeTextureVk();
+	Ref< VolumeTextureVk > texture = new VolumeTextureVk(m_context);
 	if (texture->create(
-		m_physicalDevice,
-		m_logicalDevice,
 		m_graphicsQueue,
 		m_graphicsCommandPool,
 		desc,
@@ -582,9 +575,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator,
+		m_context,
 		m_graphicsQueue,
 		m_graphicsCommandPool
 	);
@@ -600,11 +591,7 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return nullptr;
 
-	Ref< ProgramVk > program = new ProgramVk(
-		m_physicalDevice,
-		m_logicalDevice,
-		m_allocator
-	);
+	Ref< ProgramVk > program = new ProgramVk(m_context);
 	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
 		return program;
 	else
