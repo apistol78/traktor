@@ -3,7 +3,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/CubeTextureVk.h"
@@ -16,15 +16,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeTexture)
 
-CubeTextureVk::CubeTextureVk(
-	Context* context,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool,
-	const CubeTextureCreateDesc& desc
-)
+CubeTextureVk::CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc)
 :	m_context(context)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_desc(desc)
 ,	m_textureImageAllocation(0)
 ,	m_textureImage(0)
@@ -159,9 +152,6 @@ void CubeTextureVk::destroy()
 	}
 
 	m_context = nullptr;
-	m_graphicsQueue = nullptr;
-	m_graphicsCommandPool = nullptr;
-
 	m_textureView = 0;
 	m_textureImageAllocation = 0;
 	m_textureImage = 0;
@@ -219,7 +209,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
 	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);
 
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	VkImageMemoryBarrier imb = {};
@@ -237,7 +227,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -261,7 +251,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	region.imageExtent = { mipSide, mipSide, 1 };
 
 	vkCmdCopyBufferToImage(
-		commandBuffer,
+		*commandBuffer,
 		m_stagingBuffer,
 		m_textureImage,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -285,7 +275,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -294,21 +284,16 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 		1, &imb
 	);
 
-	// We're finished recording command buffer.
-	vkEndCommandBuffer(commandBuffer);
-
-	// Submit and wait for commands to execute.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	m_graphicsCommandPool->release(commandBuffer);
+	commandBuffer->submitAndWait();
 
 	// Free staging buffer.
-	vkDestroyBuffer(m_context->getLogicalDevice(), m_stagingBuffer, 0);
-	vmaFreeMemory(m_context->getAllocator(), m_stagingBufferAllocation);
+	m_context->addDeferredCleanup([
+		stagingBuffer = m_stagingBuffer,
+		stagingBufferAllocation = m_stagingBufferAllocation
+	](Context* cx) {
+		vkDestroyBuffer(cx->getLogicalDevice(), stagingBuffer, 0);
+		vmaFreeMemory(cx->getAllocator(), stagingBufferAllocation);
+	});
 
 	m_stagingBuffer = 0;
 	m_stagingBufferAllocation = 0;

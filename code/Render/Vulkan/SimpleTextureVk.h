@@ -8,9 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class CommandBufferPool;
 class Context;
-class Queue;
 struct SimpleTextureCreateDesc;
 
 /*!
@@ -21,11 +19,7 @@ class SimpleTextureVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	explicit SimpleTextureVk(
-		Context* context,
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool
-	);
+	explicit SimpleTextureVk(Context* context);
 
 	virtual ~SimpleTextureVk();
 
@@ -56,8 +50,6 @@ public:
 
 private:
 	Ref< Context > m_context;
-	Ref< Queue > m_graphicsQueue;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	VmaAllocation m_stagingBufferAllocation;
 	VkBuffer m_stagingBuffer;
 	VmaAllocation m_textureAllocation;

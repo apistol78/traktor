@@ -8,9 +8,7 @@ namespace traktor
 	{
 
 class Buffer;
-class CommandBufferPool;
 class Context;
-class Queue;
 
 /*!
  * \ingroup Vulkan
@@ -22,8 +20,6 @@ class VertexBufferStaticVk : public VertexBufferVk
 public:
 	VertexBufferStaticVk(
 		Context* context,
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool,
 		uint32_t bufferSize,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
@@ -44,8 +40,6 @@ public:
 
 private:
 	Ref< Context > m_context;
-	Ref< Queue > m_graphicsQueue;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	Ref< Buffer > m_stageBuffer;
 	Ref< Buffer > m_deviceBuffer;
 };

@@ -17,10 +17,9 @@ namespace traktor
 	namespace render
 	{
 
-class CommandBufferPool;
+class CommandBuffer;
 class Context;
 class ProgramVk;
-class Queue;
 class RenderTargetSetVk;
 class UniformBufferPoolVk;
 class VertexBufferVk;
@@ -39,9 +38,7 @@ class RenderViewVk
 public:
 	RenderViewVk(
 		Context* context,
-		VkInstance instance,
-		Queue* graphicsQueue,
-		Queue* computeQueue
+		VkInstance instance
 	);
 
 	virtual ~RenderViewVk();
@@ -119,11 +116,14 @@ private:
 
 	struct Frame
 	{
-		VkCommandBuffer graphicsCommandBuffer;
-		VkCommandBuffer computeCommandBuffer;
+		//VkCommandBuffer graphicsCommandBuffer;
+		//VkCommandBuffer computeCommandBuffer;
+
+		Ref< CommandBuffer > graphicsCommandBuffer;
+
 		VkDescriptorPool descriptorPool;
 		VkSemaphore renderFinishedSemaphore;
-		VkFence inFlightFence;
+		//VkFence inFlightFence;
 		Ref< RenderTargetSetVk > primaryTarget;
 	};
 
@@ -139,8 +139,6 @@ private:
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface = 0;
-	Ref< Queue > m_graphicsQueue;
-	Ref< Queue > m_computeQueue;
 	uint32_t m_presentQueueIndex = ~0;
 	VkQueue m_presentQueue = 0;
 	VkQueryPool m_queryPool = 0;

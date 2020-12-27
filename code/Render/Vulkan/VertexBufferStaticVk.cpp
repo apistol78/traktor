@@ -1,7 +1,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/Buffer.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
+#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
@@ -15,8 +16,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVk", VertexBufferStati
 
 VertexBufferStaticVk::VertexBufferStaticVk(
 	Context* context,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool,
 	uint32_t bufferSize,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
@@ -24,8 +23,6 @@ VertexBufferStaticVk::VertexBufferStaticVk(
 )
 :	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
 ,	m_context(context)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 {
 }
 
@@ -74,28 +71,19 @@ void VertexBufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();
 
-	// Copy staging buffer into vertex buffer.
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 	VkBufferCopy bc = {};
 	bc.size = getBufferSize();
 	vkCmdCopyBuffer(
-		commandBuffer,
+		*commandBuffer,
 		*m_stageBuffer,
 		*m_deviceBuffer,
 		1,
 		&bc
 	);
 
-	vkEndCommandBuffer(commandBuffer);
-
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	m_graphicsCommandPool->release(commandBuffer);
+	commandBuffer->submitAndWait();
 
 	// Free staging buffer.
 	safeDestroy(m_stageBuffer);

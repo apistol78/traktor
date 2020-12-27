@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class Context;
+class CommandBuffer;
 struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
@@ -44,7 +45,7 @@ public:
 
 	virtual void* getInternalHandle() override final;
 
-	void prepareForPresentation(VkCommandBuffer cmdBuffer);
+	void prepareForPresentation(CommandBuffer* commandBuffer);
 
 	VkFormat getVkFormat() const { return m_format; }
 
@@ -66,11 +67,11 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 
-	void prepareAsTarget(VkCommandBuffer cmdBuffer);
+	void prepareAsTarget(CommandBuffer* commandBuffer);
 
-	void prepareAsTexture(VkCommandBuffer cmdBuffer);
+	void prepareAsTexture(CommandBuffer* commandBuffer);
 
-	void prepareForReadBack(VkCommandBuffer cmdBuffer);
+	void prepareForReadBack(CommandBuffer* commandBuffer);
 };
 
 	}

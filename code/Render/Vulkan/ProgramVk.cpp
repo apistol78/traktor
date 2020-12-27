@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/PipelineLayoutCache.h"
@@ -249,7 +250,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	return true;
 }
 
-bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
+bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
 {
 	// Set implicit parameters.
 	setVectorParameter(
@@ -427,7 +428,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 
 	// Push command.
 	vkCmdBindDescriptorSets(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
@@ -437,7 +438,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 
 	if (m_renderState.stencilEnable)
 		vkCmdSetStencilReference(
-			commandBuffer,
+			*commandBuffer,
 			VK_STENCIL_FRONT_AND_BACK,
 			m_stencilReference
 		);
@@ -445,7 +446,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, VkCommandBuffe
 	return true;
 }
 
-bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool)
+bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool)
 {
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = 0;
@@ -604,7 +605,7 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, VkCommandBuffer
 
 	// Push command.
 	vkCmdBindDescriptorSets(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_COMPUTE,
 		m_pipelineLayout,
 		0,

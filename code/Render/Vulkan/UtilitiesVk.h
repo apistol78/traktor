@@ -26,8 +26,6 @@ extern const VkFormat c_vkVertexElementFormats[];
 
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements);
 
-bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryFlags, VkBuffer& outBuffer, VkDeviceMemory& outBufferMemory);
-
 std::wstring getHumanResult(VkResult result);
 
 void setObjectDebugName(VkDevice device, const wchar_t* const tag, uint64_t object, VkObjectType objectType);

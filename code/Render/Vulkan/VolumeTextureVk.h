@@ -25,12 +25,7 @@ public:
 
 	virtual ~VolumeTextureVk();
 
-	bool create(
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool,
-		const VolumeTextureCreateDesc& desc,
-		const wchar_t* const tag
-	);
+	bool create(const VolumeTextureCreateDesc& desc, const wchar_t* const tag);
 
 	virtual void destroy() override final;
 

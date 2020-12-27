@@ -2,6 +2,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -178,7 +179,7 @@ void* RenderTargetVk::getInternalHandle()
 	return nullptr;
 }
 
-void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
+void RenderTargetVk::prepareForPresentation(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 		return;
@@ -196,7 +197,7 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		getPipelineStageFlags(imb.oldLayout),
 		getPipelineStageFlags(imb.newLayout),
 		0,
@@ -208,7 +209,7 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	m_imageLayout = imb.newLayout;
 }
 
-void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
+void RenderTargetVk::prepareAsTarget(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
 		return;
@@ -226,7 +227,7 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		getPipelineStageFlags(imb.oldLayout),
 		getPipelineStageFlags(imb.newLayout),
 		0,
@@ -238,7 +239,7 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	m_imageLayout = imb.newLayout;
 }
 
-void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
+void RenderTargetVk::prepareAsTexture(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 		return;
@@ -256,7 +257,7 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		getPipelineStageFlags(imb.oldLayout),
 		getPipelineStageFlags(imb.newLayout),
 		0,
@@ -268,7 +269,7 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	m_imageLayout = imb.newLayout;
 }
 
-void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
+void RenderTargetVk::prepareForReadBack(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
 		return;
@@ -286,7 +287,7 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = getAccessMask(imb.newLayout);
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		getPipelineStageFlags(imb.oldLayout),
 		getPipelineStageFlags(imb.newLayout),
 		0,
