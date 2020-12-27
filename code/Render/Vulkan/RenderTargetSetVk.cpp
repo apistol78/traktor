@@ -4,7 +4,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -25,14 +25,8 @@ uint32_t s_nextId = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, IRenderTargetSet)
 
-RenderTargetSetVk::RenderTargetSetVk(
-	Context* context,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool
-)
+RenderTargetSetVk::RenderTargetSetVk(Context* context)
 :	m_context(context)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_depthTargetShared(false)
 {
 }
@@ -175,8 +169,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
 	vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
 
-	// Allocate transient command buffer for transfer.
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 	// Transfer color target into host image.
 	VkImageMemoryBarrier imb = {};
@@ -194,7 +187,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -216,7 +209,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	ic.extent.height = m_setDesc.height;
 	ic.extent.depth = 1;
 	vkCmdCopyImage(
-		commandBuffer,
+		*commandBuffer,
 		m_colorTargets[index]->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		hostImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
@@ -239,7 +232,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -248,17 +241,8 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		1, &imb
 	);
 
-	vkEndCommandBuffer(commandBuffer);
-
 	// Submit commands, and wait until finished.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	// Release command buffer back to pool.
-	m_graphicsCommandPool->release(commandBuffer);
+	commandBuffer->submitAndWait();
 
 	// Get information about image.
 	VkImageSubresource isr = {};
@@ -300,7 +284,7 @@ void RenderTargetSetVk::setDebugName(const wchar_t* name)
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
-	VkCommandBuffer commandBuffer,
+	CommandBuffer* commandBuffer,
 	int32_t colorIndex,
 	const Clear& clear,
 	uint32_t load,
@@ -566,7 +550,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 }
 
 bool RenderTargetSetVk::prepareAsTexture(
-	VkCommandBuffer commandBuffer,
+	CommandBuffer* commandBuffer,
 	int32_t colorIndex
 )
 {

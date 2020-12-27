@@ -17,10 +17,9 @@ namespace traktor
 	namespace render
 	{
 
-class CommandBufferPool;
+class Context;
 class PipelineLayoutCache;
 class ShaderModuleCache;
-class Queue;
 
 #if defined(_WIN32) || defined(__LINUX__)
 class Window;
@@ -93,12 +92,7 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VkDebugUtilsMessengerEXT m_debugMessenger;
-	uint32_t m_graphicsQueueIndex;
-	uint32_t m_computeQueueIndex;
-	Ref< Queue > m_graphicsQueue;
-	Ref< Queue > m_computeQueue;
 	Ref< Context > m_context;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;
 	VmaAllocator m_allocator;

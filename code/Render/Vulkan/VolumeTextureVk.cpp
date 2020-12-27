@@ -2,7 +2,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -30,12 +30,7 @@ VolumeTextureVk::~VolumeTextureVk()
 	destroy();
 }
 
-bool VolumeTextureVk::create(
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool,
-	const VolumeTextureCreateDesc& desc,
-	const wchar_t* const tag
-)
+bool VolumeTextureVk::create(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	if (desc.immutable)
 	{
@@ -46,30 +41,31 @@ bool VolumeTextureVk::create(
 		uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, 1) * desc.depth;
 
 		// Create staging buffer.
-		VkBuffer stagingBuffer = 0;
-		VkDeviceMemory stagingBufferMemory = 0;
+		VkBufferCreateInfo bufferInfo = {};
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size = imageSize;
+		bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-		if (!createBuffer(
-			m_context->getPhysicalDevice(),
-			m_context->getLogicalDevice(),
-			imageSize,
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer,
-			stagingBufferMemory
-		))
+		VmaAllocationCreateInfo aci = {};
+		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+		VmaAllocation stagingBufferAllocation;
+		VkBuffer stagingBuffer;
+
+		if (vmaCreateBuffer(m_context->getAllocator(), &bufferInfo, &aci, &stagingBuffer, &stagingBufferAllocation, nullptr) != VK_SUCCESS)
 			return false;
 
 		// Copy data into staging buffer.
 		uint8_t* data = nullptr;
-		vkMapMemory(m_context->getLogicalDevice(), stagingBufferMemory, 0, imageSize, 0, (void**)&data);
+		vmaMapMemory(m_context->getAllocator(), stagingBufferAllocation, (void**)&data);
 		for (int32_t slice = 0; slice < desc.depth; ++slice)
 		{
 			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
 			std::memcpy(data, (uint8_t*)desc.initialData[0].data + desc.initialData[0].slicePitch * slice, mipSize);
 			data += mipSize;
 		}
-		vkUnmapMemory(m_context->getLogicalDevice(), stagingBufferMemory);
+		vmaUnmapMemory(m_context->getAllocator(), stagingBufferAllocation);
 
 		// Create texture image.
 		VkImageCreateInfo ici = {};
@@ -126,7 +122,7 @@ bool VolumeTextureVk::create(
 		if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, NULL, &m_textureView) != VK_SUCCESS)
 			return false;
 
-		VkCommandBuffer commandBuffer = graphicsCommandPool->acquireAndBegin();
+		auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 		// Change layout of texture to be able to copy staging buffer into texture.
 		VkImageMemoryBarrier imb = {};
@@ -144,7 +140,7 @@ bool VolumeTextureVk::create(
 		imb.srcAccessMask = 0;
 		imb.dstAccessMask = 0;
 		vkCmdPipelineBarrier(
-			commandBuffer,
+			*commandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -173,7 +169,7 @@ bool VolumeTextureVk::create(
 			region.imageExtent = { mipWidth, mipHeight, 1 };
 
 			vkCmdCopyBufferToImage(
-				commandBuffer,
+				*commandBuffer,
 				stagingBuffer,
 				m_textureImage,
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -200,7 +196,7 @@ bool VolumeTextureVk::create(
 		imb.srcAccessMask = 0;
 		imb.dstAccessMask = 0;
 		vkCmdPipelineBarrier(
-			commandBuffer,
+			*commandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -209,21 +205,13 @@ bool VolumeTextureVk::create(
 			1, &imb
 		);
 
-		// End recording command buffer.
-		vkEndCommandBuffer(commandBuffer);
-
-		// Submit and wait for commands to execute.
-		VkSubmitInfo si = {};
-		si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		si.commandBufferCount = 1;
-		si.pCommandBuffers = &commandBuffer;
-		graphicsQueue->submitAndWait(si);
-
-		graphicsCommandPool->release(commandBuffer);
+		commandBuffer->submitAndWait();
 
 		// Free staging buffer.
-		vkDestroyBuffer(m_context->getLogicalDevice(), stagingBuffer, nullptr);
-		vkFreeMemory(m_context->getLogicalDevice(), stagingBufferMemory, nullptr);
+		m_context->addDeferredCleanup([=](Context* cx) {
+			vkDestroyBuffer(cx->getLogicalDevice(), stagingBuffer, 0);
+			vmaFreeMemory(cx->getAllocator(), stagingBufferAllocation);
+		});
 	}
 
 	m_width = desc.width;

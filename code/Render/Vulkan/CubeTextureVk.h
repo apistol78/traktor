@@ -23,12 +23,7 @@ class CubeTextureVk : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureVk(
-		Context* context,
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool,
-		const CubeTextureCreateDesc& desc
-	);
+	explicit CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc);
 
 	virtual ~CubeTextureVk();
 
@@ -52,8 +47,6 @@ public:
 
 private:
 	Ref< Context > m_context;
-	Ref< Queue > m_graphicsQueue;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	CubeTextureCreateDesc m_desc;
 	VmaAllocation m_textureImageAllocation;
 	VkImage m_textureImage;

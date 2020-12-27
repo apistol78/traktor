@@ -3,7 +3,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
@@ -16,14 +16,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
-SimpleTextureVk::SimpleTextureVk(
-	Context* context,
-	Queue* graphicsQueue,
-	CommandBufferPool* graphicsCommandPool
-)
+SimpleTextureVk::SimpleTextureVk(Context* context)
 :	m_context(context)
-,	m_graphicsQueue(graphicsQueue)
-,	m_graphicsCommandPool(graphicsCommandPool)
 ,	m_stagingBufferAllocation(0)
 ,	m_stagingBuffer(0)
 ,	m_textureAllocation(0)
@@ -133,7 +127,7 @@ bool SimpleTextureVk::create(
 		return false;
 	}
 
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	VkImageMemoryBarrier imb = {};
@@ -151,7 +145,7 @@ bool SimpleTextureVk::create(
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -180,7 +174,7 @@ bool SimpleTextureVk::create(
 		region.imageExtent = { mipWidth, mipHeight, 1 };
 
 		vkCmdCopyBufferToImage(
-			commandBuffer,
+			*commandBuffer,
 			m_stagingBuffer,
 			m_textureImage,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -207,7 +201,7 @@ bool SimpleTextureVk::create(
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -216,25 +210,20 @@ bool SimpleTextureVk::create(
 		1, &imb
 	);
 
-	// We're finished recording command buffer.
-	vkEndCommandBuffer(commandBuffer);
-
-	// Submit and wait for commands to execute.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	m_graphicsCommandPool->release(commandBuffer);
+	commandBuffer->submitAndWait();
 
 	// Free staging buffer if immutable.
 	if (desc.immutable)
 	{
-		vkDestroyBuffer(m_context->getLogicalDevice(), m_stagingBuffer, 0);
-		m_stagingBuffer = 0;
+		m_context->addDeferredCleanup([
+			stagingBuffer = m_stagingBuffer,
+			stagingBufferAllocation = m_stagingBufferAllocation
+		](Context* cx) {
+			vkDestroyBuffer(cx->getLogicalDevice(), stagingBuffer, 0);
+			vmaFreeMemory(cx->getAllocator(), stagingBufferAllocation);
+		});
 
-		vmaFreeMemory(m_context->getAllocator(), m_stagingBufferAllocation);
+		m_stagingBuffer = 0;
 		m_stagingBufferAllocation = 0;
 	}
 
@@ -313,7 +302,7 @@ void SimpleTextureVk::unlock(int32_t level)
 	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);	
 
 	// Begin recording command buffer.
-	VkCommandBuffer commandBuffer = m_graphicsCommandPool->acquireAndBegin();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	VkImageMemoryBarrier imb = {};
@@ -331,7 +320,7 @@ void SimpleTextureVk::unlock(int32_t level)
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -356,7 +345,7 @@ void SimpleTextureVk::unlock(int32_t level)
 	region.imageOffset = { 0, 0, 0 };
 	region.imageExtent = { mipWidth, mipHeight, 1 };
 	vkCmdCopyBufferToImage(
-		commandBuffer,
+		*commandBuffer,
 		m_stagingBuffer,
 		m_textureImage,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -379,7 +368,7 @@ void SimpleTextureVk::unlock(int32_t level)
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
 	vkCmdPipelineBarrier(
-		commandBuffer,
+			*commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -388,18 +377,7 @@ void SimpleTextureVk::unlock(int32_t level)
 		1, &imb
 	);
 
-	// End recording command buffer.
-	vkEndCommandBuffer(commandBuffer);
-
-	// Submit and wait for commands to execute.
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &commandBuffer;
-	m_graphicsQueue->submitAndWait(si);
-
-	// Release command buffer.
-	m_graphicsCommandPool->release(commandBuffer);
+	commandBuffer->submitAndWait();
 }
 
 void* SimpleTextureVk::getInternalHandle()

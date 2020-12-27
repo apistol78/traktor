@@ -15,9 +15,8 @@ class Semaphore;
 	namespace render
 	{
 
-class CommandBufferPool;
+class CommandBuffer;
 class Context;
-class Queue;
 class RenderTargetDepthVk;
 class RenderTargetVk;
 struct RenderTargetSetCreateDesc;
@@ -30,11 +29,7 @@ class RenderTargetSetVk : public IRenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	explicit RenderTargetSetVk(
-		Context* context,
-		Queue* graphicsQueue,
-		CommandBufferPool* graphicsCommandPool
-	);
+	explicit RenderTargetSetVk(Context* context);
 
 	virtual ~RenderTargetSetVk();
 
@@ -59,7 +54,7 @@ public:
 	virtual void setDebugName(const wchar_t* name) override final;
 
 	bool prepareAsTarget(
-		VkCommandBuffer commandBuffer,
+		CommandBuffer* commandBuffer,
 		int32_t colorIndex,
 		const Clear& clear,
 		uint32_t load,
@@ -71,7 +66,7 @@ public:
 	);
 
 	bool prepareAsTexture(
-		VkCommandBuffer commandBuffer,
+		CommandBuffer* commandBuffer,
 		int32_t colorIndex
 	);
 
@@ -100,8 +95,6 @@ private:
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
 	Ref< Context > m_context;
-	Ref< Queue > m_graphicsQueue;
-	Ref< CommandBufferPool > m_graphicsCommandPool;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
@@ -111,4 +104,3 @@ private:
 
 	}
 }
-

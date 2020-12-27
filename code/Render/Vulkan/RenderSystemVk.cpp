@@ -10,7 +10,6 @@
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -94,8 +93,6 @@ RenderSystemVk::RenderSystemVk()
 ,	m_physicalDevice(0)
 ,	m_logicalDevice(0)
 ,	m_debugMessenger(0)
-,	m_graphicsQueueIndex(~0)
-,	m_computeQueueIndex(~0)
 ,	m_allocator(0)
 ,	m_maxAnisotropy(0)
 ,	m_mipBias(0.0f)
@@ -214,8 +211,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	m_physicalDevice = physicalDevices[0];
 
 	// Get physical device graphics queue.
-	m_graphicsQueueIndex = ~0;
-	m_computeQueueIndex = ~0;
+	uint32_t graphicsQueueIndex = ~0;
+	uint32_t computeQueueIndex = ~0;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
@@ -225,17 +222,17 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if (m_graphicsQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			m_graphicsQueueIndex = i;
-		if (m_computeQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
-			m_computeQueueIndex = i;
+		if (graphicsQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			graphicsQueueIndex = i;
+		if (computeQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
+			computeQueueIndex = i;
 	}
-	if (m_graphicsQueueIndex == ~0)
+	if (graphicsQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable graphics queue found." << Endl;
 		return false;
 	}
-	if (m_computeQueueIndex == ~0)
+	if (computeQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
 		return false;
@@ -244,7 +241,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	// Create logical device.
     VkDeviceQueueCreateInfo dqci = {};
     dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    dqci.queueFamilyIndex = m_graphicsQueueIndex;
+    dqci.queueFamilyIndex = graphicsQueueIndex;
     dqci.queueCount = 1;
     float queuePriorities[] = { 1.0f };
     dqci.pQueuePriorities = queuePriorities;
@@ -287,17 +284,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_graphicsQueue = Queue::create(m_logicalDevice, m_graphicsQueueIndex);
-	m_computeQueue = Queue::create(m_logicalDevice, m_computeQueueIndex);
-
-	// Create graphics command pool used for resource creation etc.
-	m_graphicsCommandPool = CommandBufferPool::create(m_logicalDevice, m_graphicsQueue);
-	if (!m_graphicsCommandPool)
-	{
-		log::error << L"Failed to create Vulkan; unable to create a graphics command buffer pool (setup)." << Endl;
-		return false;
-	}
-
 	// Create memory allocator.
 	VmaVulkanFunctions vf = {};
 	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
@@ -330,7 +316,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_context = new Context(m_physicalDevice, m_logicalDevice, m_allocator);
+	m_context = new Context(
+		m_physicalDevice,
+		m_logicalDevice,
+		m_allocator,
+		graphicsQueueIndex,
+		computeQueueIndex
+	);
+
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
 	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice);
 	m_maxAnisotropy = desc.maxAnisotropy;
@@ -449,9 +442,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_context,
-		m_instance,
-		m_graphicsQueue,
-		m_computeQueue
+		m_instance
 	);
 	if (renderView->create(desc))
 		return renderView;
@@ -463,9 +454,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 {
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_context,
-		m_instance,
-		m_graphicsQueue,
-		m_computeQueue
+		m_instance
 	);
 	if (renderView->create(desc))
 		return renderView;
@@ -504,7 +493,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	}
 	else
 	{
-		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, m_graphicsQueue, m_graphicsCommandPool, bufferSize, vibd, vads, cs.get());
+		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, bufferSize, vibd, vads, cs.get());
 		if (vb->create())
 			return vb;
 	}
@@ -530,15 +519,8 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< SimpleTextureVk > texture = new SimpleTextureVk(
-		m_context,
-		m_graphicsQueue,
-		m_graphicsCommandPool
-	);
-	if (texture->create(
-		desc,
-		tag
-	))
+	Ref< SimpleTextureVk > texture = new SimpleTextureVk(m_context);
+	if (texture->create(desc, tag))
 		return texture;
 	else
 		return nullptr;
@@ -546,12 +528,7 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< CubeTextureVk > texture = new CubeTextureVk(
-		m_context,
-		m_graphicsQueue,
-		m_graphicsCommandPool,
-		desc
-	);
+	Ref< CubeTextureVk > texture = new CubeTextureVk(m_context, desc);
 	if (texture->create(tag))
 		return texture;
 	else
@@ -561,12 +538,7 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	Ref< VolumeTextureVk > texture = new VolumeTextureVk(m_context);
-	if (texture->create(
-		m_graphicsQueue,
-		m_graphicsCommandPool,
-		desc,
-		tag
-	))
+	if (texture->create(desc, tag))
 		return texture;
 	else
 		return nullptr;
@@ -574,11 +546,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 
 Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
-	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
-		m_context,
-		m_graphicsQueue,
-		m_graphicsCommandPool
-	);
+	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(m_context);
 	if (renderTargetSet->create(desc, sharedDepthStencil, tag))
 		return renderTargetSet;
 	else

@@ -11,6 +11,7 @@ class Semaphore;
 	namespace render
 	{
 
+class CommandBuffer;
 class Context;
 struct RenderTargetSetCreateDesc;
 
@@ -67,9 +68,9 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 
-	void prepareAsTarget(VkCommandBuffer cmdBuffer);
+	void prepareAsTarget(CommandBuffer* commandBuffer);
 
-	void prepareAsTexture(VkCommandBuffer cmdBuffer);
+	void prepareAsTexture(CommandBuffer* commandBuffer);
 };
 
 	}

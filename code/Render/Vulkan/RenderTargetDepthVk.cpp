@@ -2,6 +2,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -197,7 +198,7 @@ void* RenderTargetDepthVk::getInternalHandle()
 	return nullptr;
 }
 
-void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
+void RenderTargetDepthVk::prepareAsTarget(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		return;
@@ -219,7 +220,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
 		0,
@@ -231,7 +232,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	m_imageLayout = imb.newLayout;
 }
 
-void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
+void RenderTargetDepthVk::prepareAsTexture(CommandBuffer* commandBuffer)
 {
 	if (m_imageLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL)
 		return;
@@ -255,7 +256,7 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 	vkCmdPipelineBarrier(
-		cmdBuffer,
+		*commandBuffer,
 		VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
 		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		0,

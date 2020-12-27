@@ -6,7 +6,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBufferPool.h"
+#include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -69,14 +69,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView
 
 RenderViewVk::RenderViewVk(
 	Context* context,
-	VkInstance instance,
-	Queue* graphicsQueue,
-	Queue* computeQueue
+	VkInstance instance
 )
 :	m_context(context)
 ,	m_instance(instance)
-,	m_graphicsQueue(graphicsQueue)
-,	m_computeQueue(computeQueue)
 {
 }
 
@@ -239,7 +235,6 @@ void RenderViewVk::close()
 {
 	// Ensure any pending cleanups are performed before closing render view.
 	m_context->performCleanup();
-
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
@@ -249,11 +244,11 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		frame.primaryTarget->destroy();
-		vkDestroyFence(m_context->getLogicalDevice(), frame.inFlightFence, nullptr);
+		//vkDestroyFence(m_context->getLogicalDevice(), frame.inFlightFence, nullptr);
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
 		vkDestroyDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, nullptr);
-		m_computeCommandPool->release(frame.computeCommandBuffer);
-		m_graphicsCommandPool->release(frame.graphicsCommandBuffer);
+		//m_computeCommandPool->release(frame.computeCommandBuffer);
+		//m_graphicsCommandPool->release(*frame.graphicsCommandBuffer);
 	}
 	m_frames.clear();
 
@@ -408,7 +403,7 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	vp.height = (float)viewport.height;
 	vp.minDepth = viewport.nearZ;
 	vp.maxDepth = viewport.farZ;
-	vkCmdSetViewport(frame.graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 }
 
 SystemWindow RenderViewVk::getSystemWindow()
@@ -449,17 +444,33 @@ bool RenderViewVk::beginFrame()
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-    result = vkWaitForFences(m_context->getLogicalDevice(), 1, &frame.inFlightFence, VK_TRUE, timeOut);
-	if (result != VK_SUCCESS)
+	// Reset command buffer.
+	// \hack Lazy create since we don't know about rendering thread until beginFrame
+	// is called... This assumes no other thread will perform rendering during the
+	// life time of the render view.
+	if (frame.graphicsCommandBuffer)
 	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		m_lost = true;
-		return false;
+		// Ensure command buffer has been consumed by GPU.
+		if (!frame.graphicsCommandBuffer->wait())
+		{
+			log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
+	
+			// Issue an event in order to reset view.
+			RenderEvent evt;
+			evt.type = ReLost;
+			m_eventQueue.push_back(evt);
+			m_lost = true;
+			return false;
+		}
+
+		if (!frame.graphicsCommandBuffer->reset())
+			return false;
+	}
+	else
+	{
+		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+		if (!frame.graphicsCommandBuffer)
+			return false;
 	}
 
 	// Reset descriptor pool.
@@ -467,18 +478,10 @@ bool RenderViewVk::beginFrame()
 	if (result != VK_SUCCESS)
 		return false;
 
-	// Begin recording command buffer.
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	result = vkBeginCommandBuffer(frame.graphicsCommandBuffer, &beginInfo);
-	if (result != VK_SUCCESS)
-		return false;
-	
 	// Reset time queries.
 	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
-	vkCmdResetQueryPool(frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
+	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
 	m_nextQueryIndex = queryFrom;
 
 	// Reset misc counters.
@@ -491,39 +494,15 @@ bool RenderViewVk::beginFrame()
 void RenderViewVk::endFrame()
 {
 	auto& frame = m_frames[m_currentImageIndex];
-	VkResult result;
 
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
 
-	// End recording command buffer.
-	result = vkEndCommandBuffer(frame.graphicsCommandBuffer);
-	if (result != VK_SUCCESS)
-	{
-		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (1)." << Endl;
-		
-		// Issue an event in order to reset view.
-		RenderEvent evt;
-		evt.type = ReLost;
-		m_eventQueue.push_back(evt);
-		m_lost = true;
-		return;
-	}
-
-	vkResetFences(m_context->getLogicalDevice(), 1, &frame.inFlightFence);
-
-	// Submit commands to graphics queue.
-	VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	si.waitSemaphoreCount = 1;
-	si.pWaitSemaphores = &m_imageAvailableSemaphore;
-	si.pWaitDstStageMask = &waitStageMash;
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &frame.graphicsCommandBuffer;
-	si.signalSemaphoreCount = 1;
-	si.pSignalSemaphores = &frame.renderFinishedSemaphore;
-	m_graphicsQueue->submit(si, frame.inFlightFence);
+	frame.graphicsCommandBuffer->submit(
+		m_imageAvailableSemaphore,
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		frame.renderFinishedSemaphore
+	);
 
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
@@ -628,7 +607,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -638,7 +617,7 @@ bool RenderViewVk::beginPass(const Clear* clear)
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(frame.graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -709,7 +688,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -719,7 +698,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(frame.graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -790,7 +769,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	rpbi.renderArea.extent.height = m_targetSet->getHeight();
 	rpbi.clearValueCount = (uint32_t)clearValues.size();
 	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
 	VkViewport vp = {};
@@ -800,7 +779,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	vp.height = (float)m_targetSet->getHeight();
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(frame.graphicsCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	m_passCount++;
 	return true;
@@ -811,7 +790,7 @@ void RenderViewVk::endPass()
 	auto& frame = m_frames[m_currentImageIndex];
 
 	// Close current render pass.
-	vkCmdEndRenderPass(frame.graphicsCommandBuffer);
+	vkCmdEndRenderPass(*frame.graphicsCommandBuffer);
 
 	// Transition target to texture if necessary.
 	if (m_targetSet != frame.primaryTarget)
@@ -854,7 +833,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
-	vkCmdBindVertexBuffers(frame.graphicsCommandBuffer, 0, 1, &vbb, &offsets);
+	vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &vbb, &offsets);
 
 	if (indexBuffer && primitives.indexed)
 	{
@@ -863,14 +842,14 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 		VkDeviceSize offset = {};
 		vkCmdBindIndexBuffer(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			ibb,
 			offset,
 			(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 		);
 
 		vkCmdDrawIndexed(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			vertexCount,	// index count
 			instanceCount,	// instance count
 			primitives.offset,	// first index
@@ -881,7 +860,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	else
 	{
 		vkCmdDraw(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			vertexCount,   // vertex count
 			instanceCount,   // instance count
 			primitives.offset,   // first vertex
@@ -895,11 +874,11 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
-	auto& frame = m_frames[m_currentImageIndex];
+	//auto& frame = m_frames[m_currentImageIndex];
 
-	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	p->validateCompute(frame.descriptorPool, frame.computeCommandBuffer, m_uniformBufferPool);
-	vkCmdDispatch(frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
+	//ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
+	//p->validateCompute(frame.descriptorPool, frame.computeCommandBuffer, m_uniformBufferPool);
+	//vkCmdDispatch(frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -987,7 +966,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1015,7 +994,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1027,7 +1006,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	// Perform texture image copy.
 	vkCmdCopyImage(
-		frame.graphicsCommandBuffer,
+		*frame.graphicsCommandBuffer,
 		sourceImage,
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		destinationImage,
@@ -1054,7 +1033,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1082,7 +1061,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		imb.dstAccessMask = 0;
 
 		vkCmdPipelineBarrier(
-			frame.graphicsCommandBuffer,
+			*frame.graphicsCommandBuffer,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
@@ -1099,7 +1078,7 @@ int32_t RenderViewVk::beginTimeQuery()
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	const int32_t query = m_nextQueryIndex;
-	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
+	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 	return query;
 }
@@ -1107,7 +1086,7 @@ int32_t RenderViewVk::beginTimeQuery()
 void RenderViewVk::endTimeQuery(int32_t query)
 {
 	auto& frame = m_frames[m_currentImageIndex];
-	vkCmdWriteTimestamp(frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
+	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
 }
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
@@ -1138,7 +1117,7 @@ void RenderViewVk::pushMarker(const char* const marker)
 		VkDebugUtilsLabelEXT dul = {};
 		dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
 		dul.pLabelName = marker;
-		vkCmdBeginDebugUtilsLabelEXT(frame.graphicsCommandBuffer, &dul);
+		vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
 	}
 #endif
 }
@@ -1149,7 +1128,7 @@ void RenderViewVk::popMarker()
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
-		vkCmdEndDebugUtilsLabelEXT(frame.graphicsCommandBuffer);
+		vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
 	}
 #endif
 }
@@ -1205,9 +1184,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	// Get opaque queues.
 	vkGetDeviceQueue(m_context->getLogicalDevice(), m_presentQueueIndex, 0, &m_presentQueue);
-
-	m_graphicsCommandPool = CommandBufferPool::create(m_context->getLogicalDevice(), m_graphicsQueue);
-	m_computeCommandPool = CommandBufferPool::create(m_context->getLogicalDevice(), m_computeQueue);
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
@@ -1282,8 +1258,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	scci.presentMode = presentationMode;
 	scci.clipped = VK_TRUE;
 
-	uint32_t queueFamilyIndices[] = { m_graphicsQueue->getQueueIndex(), m_presentQueueIndex };
-	if (m_graphicsQueue->getQueueIndex() != m_presentQueueIndex)
+	uint32_t queueFamilyIndices[] = { m_context->getGraphicsQueue()->getQueueIndex(), m_presentQueueIndex };
+	if (m_context->getGraphicsQueue()->getQueueIndex() != m_presentQueueIndex)
 	{
 		// Need to be sharing between queues in order to be presentable.
 		scci.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -1366,8 +1342,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	{
 		auto& frame = m_frames[i];
 
-		frame.graphicsCommandBuffer = m_graphicsCommandPool->acquire();
-		frame.computeCommandBuffer = m_computeCommandPool->acquire();
+		//frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+		//if (!frame.graphicsCommandBuffer)
+		//	return false;
+
+		//frame.graphicsCommandBuffer = m_graphicsCommandPool->acquire();
+		//frame.computeCommandBuffer = m_computeCommandPool->acquire();
 
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -1392,16 +1372,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
 
-		VkFenceCreateInfo fci = {};
-		fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &frame.inFlightFence);	
+		//VkFenceCreateInfo fci = {};
+		//fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		//fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		//vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &frame.inFlightFence);	
 
-		frame.primaryTarget = new RenderTargetSetVk(
-			m_context,
-			m_graphicsQueue,
-			m_graphicsCommandPool
-		);
+		frame.primaryTarget = new RenderTargetSetVk(m_context);
 		if (!frame.primaryTarget->createPrimary(
 			width,
 			height,
@@ -1616,7 +1592,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 	return true;
 }
 
