@@ -68,7 +68,7 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< scene::Scene > c_previewScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
+const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
 const uint32_t c_initialRandomSeed = 5489UL;
 const int c_updateInterval = 30;
@@ -150,7 +150,6 @@ bool EffectPreviewControl::create(
 	addEventHandler< ui::MouseButtonDownEvent >(this, &EffectPreviewControl::eventButtonDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &EffectPreviewControl::eventButtonUp);
 	addEventHandler< ui::MouseMoveEvent >(this, &EffectPreviewControl::eventMouseMove);
-	addEventHandler< ui::SizeEvent >(this, &EffectPreviewControl::eventSize);
 	addEventHandler< ui::PaintEvent >(this, &EffectPreviewControl::eventPaint);
 
 	updateSettings();
@@ -362,7 +361,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	wcd.entityRenderers = entityRenderers;
 	wcd.quality.motionBlur = world::Quality::Disabled;
-	wcd.quality.shadows = world::Quality::Ultra;
+	wcd.quality.shadows = world::Quality::Disabled;
 	wcd.quality.reflections = world::Quality::Ultra;
 	wcd.quality.ambientOcclusion = world::Quality::Disabled;
 	wcd.quality.antiAlias = world::Quality::Disabled;
@@ -426,15 +425,6 @@ void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	update();
 }
 
-void EffectPreviewControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView)
-		return;
-
-	ui::Size sz = getInnerRect().getSize();
-	m_renderView->reset(sz.cx, sz.cy);
-}
-
 void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 {
 	// Reload scene if changed.
@@ -456,6 +446,12 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	ui::Size sz = getInnerRect().getSize();
+	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
+	}
 
 	float time = (float)m_timer.getElapsedTime();
 	float deltaTime = (float)(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
@@ -557,7 +553,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())
@@ -566,267 +562,6 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->endFrame();
 		m_renderView->present();
 	}
-
-
-	// if (!m_renderView->beginPass(&cl))
-	// 	return;
-
-	// ui::Size sz = getInnerRect().getSize();
-	// float aspect = float(sz.cx) / sz.cy;
-
-	// Matrix44 viewTransform = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
-	// Matrix44 projectionTransform = perspectiveLh(
-	// 	65.0f * PI / 180.0f,
-	// 	aspect,
-	// 	0.01f,
-	// 	1000.0f
-	// );
-
-	// Matrix44 viewInverse = viewTransform.inverse();
-
-	// Vector4 cameraPosition = viewInverse.translation().xyz1();
-	// Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
-
-	// if (!m_primitiveRenderer->begin(0, Matrix44::identity()))
-	// 	return;
-
-	// if (m_background)
-	// {
-	// 	m_primitiveRenderer->pushView(Matrix44::identity());
-	// 	m_primitiveRenderer->pushDepthState(false, false, false);
-
-	// 	m_primitiveRenderer->drawTextureQuad(
-	// 		Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
-	// 		Vector4( 1.0f,  1.0f, 1.0f, 1.0f), Vector2(1.0f, 0.0f),
-	// 		Vector4( 1.0f, -1.0f, 1.0f, 1.0f), Vector2(1.0f, 1.0f),
-	// 		Vector4(-1.0f, -1.0f, 1.0f, 1.0f), Vector2(0.0f, 1.0f),
-	// 		Color4ub(255, 255, 255, 255),
-	// 		m_background
-	// 	);
-
-	// 	m_primitiveRenderer->popDepthState();
-	// 	m_primitiveRenderer->popView();
-	// }
-
-	// // Draw depth-only ground plane; primary depth and slight tint.
-	// if (m_groundClip)
-	// {
-	// 	m_primitiveRenderer->pushDepthState(true, true, false);
-	// 	m_primitiveRenderer->drawSolidQuad(
-	// 		Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
-	// 		Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
-	// 		Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
-	// 		Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
-	// 		Color4ub(0, 0, 0, 10)
-	// 	);
-	// 	m_primitiveRenderer->popDepthState();
-	// }
-
-	// m_primitiveRenderer->end(0);
-	// m_primitiveRenderer->render(m_renderView, 0);
-
-	// // Draw depth-only ground plane.
-	// const float farZ = 10000.0f;
-
-	// cl.mask = render::CfColor;
-	// cl.colors[0] = Color4f(farZ, farZ, farZ, farZ);
-	// cl.depth = 1.0f;
-	// cl.stencil = 0;
-
-	// if (
-	// 	m_depthTexture/* &&
-	// 	m_renderView->beginPass(m_depthTexture, 0, &cl)*/
-	// )
-	// {
-	// 	if (m_groundClip && m_primitiveRenderer->begin(0, projectionTransform))
-	// 	{
-	// 		m_primitiveRenderer->pushView(viewTransform);
-
-	// 		m_primitiveRenderer->pushDepthState(true, true, true);
-	// 		m_primitiveRenderer->drawSolidQuad(
-	// 			Vector4(-1000.0f, 0.0f, -1000.0f, 1.0f),
-	// 			Vector4( 1000.0f, 0.0f, -1000.0f, 1.0f),
-	// 			Vector4( 1000.0f, 0.0f,  1000.0f, 1.0f),
-	// 			Vector4(-1000.0f, 0.0f,  1000.0f, 1.0f),
-	// 			Color4ub(0, 0, 0, 0)
-	// 		);
-	// 		m_primitiveRenderer->popDepthState();
-
-	// 		m_primitiveRenderer->popView();
-	// 		m_primitiveRenderer->end(0);
-	// 		m_primitiveRenderer->render(m_renderView, 0);
-	// 	}
-
-	// 	m_renderView->endPass();
-	// }
-
-	// //if (m_postProcess)
-	// //{
-	// //	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	// //	cl.colors[0] = Color4f(tmp[0], tmp[1], tmp[2], tmp[3]);
-	// //	
-	// //	m_renderView->begin(m_postTargetSet, 0, &cl);
-	// //}
-
-	// if (m_effectInstance)
-	// {
-	// 	m_context.deltaTime = deltaTime * m_timeScale;
-	// 	m_context.soundPlayer = m_soundPlayer;
-
-	// 	Transform effectTransform = Transform::identity();
-	// 	if (m_moveEmitter)
-	// 	{
-	// 		Vector4 effectPosition(
-	// 			std::sin(time) * 8.0f,
-	// 			0.0f,
-	// 			std::cos(time) * 8.0f,
-	// 			1.0f
-	// 		);
-	// 		Vector4 effectDirection(
-	// 			std::cos(time),
-	// 			0.0f,
-	// 			-std::sin(time),
-	// 			0.0f
-	// 		);
-	// 		effectTransform = Transform(
-	// 			effectPosition,
-	// 			Quaternion(
-	// 				Vector4(0.0f, 0.0f, 1.0f),
-	// 				effectDirection
-	// 			)
-	// 		);
-	// 	}
-
-	// 	m_effectInstance->update(m_context, effectTransform, true);
-	// 	m_effectInstance->synchronize();
-	// 	m_effectInstance->render(
-	// 		render::getParameterHandle(L"World_SimpleColor"),
-	// 		m_pointRenderer,
-	// 		m_meshRenderer,
-	// 		m_trailRenderer,
-	// 		Transform::identity(),
-	// 		cameraPosition,
-	// 		cameraPlane
-	// 	);
-
-	// 	Frustum viewFrustum;
-	// 	viewFrustum.buildPerspective(80.0f * PI / 180.0f, aspect, 0.1f, 2000.0f);
-
-	// 	world::WorldRenderView worldRenderView;
-	// 	worldRenderView.setProjection(projectionTransform);
-	// 	worldRenderView.setView(viewTransform, viewTransform);
-	// 	worldRenderView.setViewSize(Vector2(float(sz.cx), float(sz.cy)));
-	// 	worldRenderView.setCullFrustum(viewFrustum);
-	// 	worldRenderView.setViewFrustum(viewFrustum);
-	// 	worldRenderView.setTimes(time, deltaTime, 0.0f);
-
-	// 	// world::Light globalLight;
-	// 	// globalLight.type = world::LtDirectional;
-	// 	// globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-	// 	// globalLight.direction = Vector4(0.0f, 1.0f, -1.0f, 0.0f).normalized();
-	// 	// globalLight.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	// 	// globalLight.range = Scalar(0.0f);
-	// 	// worldRenderView.addLight(globalLight);
-
-	// 	render::ProgramParameters visualProgramParams;
-	// 	visualProgramParams.beginParameters(m_globalContext);
-	// 	visualProgramParams.setFloatParameter(c_handleTime, time);
-	// 	visualProgramParams.setMatrixParameter(c_handleView, viewTransform);
-	// 	visualProgramParams.setMatrixParameter(c_handleProjection, projectionTransform);
-	// 	visualProgramParams.endParameters(m_globalContext);
-
-	// 	world::WorldRenderPassSimple defaultPass(
-	// 		c_handleSimpleColor,
-	// 		&visualProgramParams,
-	// 		viewTransform
-	// 	);
-
-	// 	m_pointRenderer->flush(m_renderContext, defaultPass);
-	// 	m_meshRenderer->flush(m_renderContext, defaultPass);
-	// 	m_trailRenderer->flush(m_renderContext, defaultPass);
-
-	// 	m_renderContext->merge(render::RpAll);
-	// 	m_renderContext->render(m_renderView);
-	// 	m_renderContext->flush();
-
-	// 	m_globalContext->flush();
-
-	// 	m_lastDeltaTime = deltaTime;
-	// }
-
-	// //if (m_postProcess)
-	// //{
-	// //	m_renderView->end();
-
-	// //	render::ImageProcessStep::Instance::RenderParams params;
-	// //	params.view = viewTransform;
-	// //	params.viewToLight = Matrix44::identity();
-	// //	params.projection = projectionTransform;
-	// //	params.godRayDirection = Vector4(0.0f, 0.0f, -1.0f);
-	// //	params.sliceCount = 0;
-	// //	params.sliceIndex = 0;
-	// //	params.sliceNearZ = 0.0f;
-	// //	params.sliceFarZ = 0.0f;
-	// //	params.shadowFarZ = 0.0f;
-	// //	params.shadowMapBias = 0.0f;
-	// //	params.deltaTime = deltaTime;
-	// //	m_postProcess->render(
-	// //		m_renderView,
-	// //		m_postTargetSet->getColorTexture(0),
-	// //		0,
-	// //		0,
-	// //		0,
-	// //		0,
-	// //		params
-	// //	);
-	// //}
-
-	// if (!m_primitiveRenderer->begin(0, projectionTransform))
-	// 	return;
-
-	// m_primitiveRenderer->pushView(viewTransform);
-
-	// for (int x = -10; x <= 10; ++x)
-	// {
-	// 	m_primitiveRenderer->drawLine(
-	// 		Vector4(float(x), 0.0f, -10.0f, 1.0f),
-	// 		Vector4(float(x), 0.0f, 10.0f, 1.0f),
-	// 		(x == 0) ? 2.0f : 0.0f,
-	// 		m_colorGrid
-	// 	);
-	// 	m_primitiveRenderer->drawLine(
-	// 		Vector4(-10.0f, 0.0f, float(x), 1.0f),
-	// 		Vector4(10.0f, 0.0f, float(x), 1.0f),
-	// 		(x == 0) ? 2.0f : 0.0f,
-	// 		m_colorGrid
-	// 	);
-	// }
-
-	// // Draw emitter sources.
-	// if (m_effectData && m_guideVisible)
-	// {
-	// 	const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
-	// 	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	// 	{
-	// 		Ref< const EmitterData > emitterData = (*i)->getEmitter();
-	// 		if (!emitterData)
-	// 			continue;
-
-	// 		Ref< const SourceData > sourceData = emitterData->getSource();
-	// 		if (!sourceData)
-	// 			continue;
-
-	// 		std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(sourceData));
-	// 		if (j != m_sourceRenderers.end())
-	// 			j->second->render(m_primitiveRenderer, sourceData);
-	// 	}
-	// }
-
-	// m_primitiveRenderer->end(0);
-	// m_primitiveRenderer->render(m_renderView, 0);
-
-	// m_renderView->endPass();
-	// m_renderView->present();
 
 	event->consume();
 }

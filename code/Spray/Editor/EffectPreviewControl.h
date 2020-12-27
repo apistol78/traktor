@@ -143,6 +143,7 @@ private:
 	bool m_guideVisible;
 	bool m_velocityVisible;
 	bool m_moveEmitter;
+	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updateWorldRenderer();
 
@@ -151,8 +152,6 @@ private:
 	void eventButtonUp(ui::MouseButtonUpEvent* event);
 
 	void eventMouseMove(ui::MouseMoveEvent* event);
-
-	void eventSize(ui::SizeEvent* event);
 
 	void eventPaint(ui::PaintEvent* event);
 
