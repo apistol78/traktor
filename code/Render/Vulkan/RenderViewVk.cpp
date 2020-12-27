@@ -275,10 +275,6 @@ void RenderViewVk::close()
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, 0);	
 		m_swapChain = 0;
 	}
-
-	// Free command pools.
-	m_computeCommandPool = nullptr;
-	m_graphicsCommandPool = nullptr;
 }
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
