@@ -1,5 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -89,6 +92,10 @@ bool LogView::create(ui::Widget* parent)
 	m_log = new ui::LogList();
 	m_log->create(this, ui::WsNone, this);
 	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
+
+	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	m_log->setFont(ui::Font(font, fontSize));
 
 	m_popup = new ui::Menu();
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Copy"), i18n::Text(L"LOG_COPY")));
