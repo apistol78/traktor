@@ -785,6 +785,7 @@ bool BakePipelineOperator::build(
 		}
 	}
 
+	log::info << L"Lightmap tasks created, enqueued and ready to be processed." << Endl;
 	return true;
 }
 
