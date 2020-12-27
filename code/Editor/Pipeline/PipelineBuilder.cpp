@@ -5,6 +5,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
@@ -881,6 +883,27 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 {
 	bool result = false;
 
+
+	// Check if entry already exist in output database.
+	const Guid receiptSeed(L"{a0e85092-31d0-424a-bbfc-85cec8a1e06d}"); 
+	Guid receiptGuid = dependency->outputGuid.permutation(receiptSeed);
+	Ref< db::Instance > receiptInstance = m_outputDatabase->getInstance(receiptGuid);
+	if (receiptInstance)
+	{
+		auto receipt = receiptInstance->getObject< PropertyGroup >();
+		if (
+			receipt->getProperty< int32_t >(L"pipelineHash") == hash.pipelineHash &&
+			receipt->getProperty< int32_t >(L"sourceAssetHash") == hash.sourceAssetHash &&
+			receipt->getProperty< int32_t >(L"sourceDataHash") == hash.sourceDataHash &&
+			receipt->getProperty< int32_t >(L"filesHash") == hash.filesHash
+		)
+		{
+			log::info << L"Instances already exist in output database." << Endl;
+			return true;
+		}
+	}
+
+
 	Ref< IStream > stream = m_cache->get(dependency->outputGuid, hash);
 	if (stream)
 	{
@@ -914,6 +937,28 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 		}
 
 		stream->close();
+	}
+
+	if (result)
+	{
+		if (!receiptInstance)
+			receiptInstance = m_outputDatabase->createInstance(L"Pipeline/" + receiptGuid.format(), 0, &receiptGuid);
+		else
+		{
+			if (!receiptInstance->checkout())
+				receiptInstance = nullptr;
+		}
+
+		if (receiptInstance)
+		{
+			Ref< PropertyGroup > receipt = new PropertyGroup();
+			receipt->setProperty< PropertyInteger >(L"pipelineHash", hash.pipelineHash);
+			receipt->setProperty< PropertyInteger >(L"sourceAssetHash", hash.sourceAssetHash);
+			receipt->setProperty< PropertyInteger >(L"sourceDataHash", hash.sourceDataHash);
+			receipt->setProperty< PropertyInteger >(L"filesHash", hash.filesHash);
+			receiptInstance->setObject(receipt);
+			receiptInstance->commit();
+		}
 	}
 
 	return result;
