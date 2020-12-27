@@ -522,10 +522,23 @@ bool TextureOutputPipeline::buildOutput(
 	}
 
 	// Inverse normal map Y; assume it's a normal map to begin with.
-	if (textureOutput->m_inverseNormalMapY)
+	if (textureOutput->m_inverseNormalMapX || textureOutput->m_inverseNormalMapY)
 	{
 		log::info << L"Converting normal map..." << Endl;
-		drawing::TransformFilter transformFilter(Color4f(1.0f, -1.0f, 1.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 0.0f));
+		drawing::TransformFilter transformFilter(
+			Color4f(
+				textureOutput->m_inverseNormalMapX ? -1.0f : 1.0f,
+				textureOutput->m_inverseNormalMapY ? -1.0f : 1.0f,
+				1.0f,
+				1.0f
+			),
+			Color4f(
+				textureOutput->m_inverseNormalMapX ? 1.0f : 0.0f,
+				textureOutput->m_inverseNormalMapY ? 1.0f : 0.0f,
+				0.0f,
+				0.0f
+			)
+		);
 		image->apply(&transformFilter);
 		isNormalMap = true;
 	}
