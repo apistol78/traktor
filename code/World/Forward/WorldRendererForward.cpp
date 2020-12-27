@@ -919,7 +919,7 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	 	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 	 	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	 	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	 	cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
+	 	cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
 	 	cx.setParams(ipd);
 
 	 	m_screenReflections->addPasses(renderGraph, rp, cx);
