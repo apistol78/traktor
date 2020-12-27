@@ -9,38 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 14, TextureOutput, ISerializable)
-
-TextureOutput::TextureOutput()
-:	m_textureFormat(TfInvalid)
-,	m_generateNormalMap(false)
-,	m_scaleDepth(0.0f)
-,	m_generateMips(true)
-,	m_keepZeroAlpha(true)
-,	m_textureType(Tt2D)
-,	m_hasAlpha(false)
-,	m_generateAlpha(false)
-,	m_ignoreAlpha(false)
-,	m_invertAlpha(false)
-,	m_premultiplyAlpha(false)
-,	m_scaleImage(false)
-,	m_scaleWidth(0)
-,	m_scaleHeight(0)
-,	m_flipX(false)
-,	m_flipY(false)
-,	m_enableCompression(true)
-,	m_enableNormalMapCompression(false)
-,	m_inverseNormalMapY(false)
-,	m_linearGamma(false)
-,	m_generateSphereMap(false)
-,	m_preserveAlphaCoverage(false)
-,	m_alphaCoverageReference(0.5f)
-,	m_sharpenRadius(0)
-,	m_sharpenStrength(0.0f)
-,	m_noiseStrength(0.0f)
-,	m_systemTexture(false)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 15, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -135,6 +104,8 @@ void TextureOutput::serialize(ISerializer& s)
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"enableNormalMapCompression", m_enableNormalMapCompression);
 
+	if (s.getVersion() >= 15)
+		s >> Member< bool >(L"inverseNormalMapX", m_inverseNormalMapX);
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"inverseNormalMapY", m_inverseNormalMapY);
 
