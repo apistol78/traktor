@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -10,7 +11,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 5, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 6, TrackData, ISerializable)
 
 TrackData::TrackData()
 :	m_loopStart(0.0f)
@@ -21,24 +22,24 @@ TrackData::TrackData()
 {
 }
 
-void TrackData::setEntityData(world::EntityData* entityData)
+void TrackData::setEntityId(const Guid& entityId)
 {
-	m_entityData = entityData;
+	m_entityId = entityId;
 }
 
-world::EntityData* TrackData::getEntityData() const
+const Guid& TrackData::getEntityId() const
 {
-	return m_entityData;
+	return m_entityId;
 }
 
-void TrackData::setLookAtEntityData(world::EntityData* entityData)
+void TrackData::setLookAtEntityId(const Guid& entityId)
 {
-	m_lookAtEntityData = entityData;
+	m_lookAtEntityId = entityId;
 }
 
-world::EntityData* TrackData::getLookAtEntityData() const
+const Guid& TrackData::getLookAtEntityId() const
 {
-	return m_lookAtEntityData;
+	return m_lookAtEntityId;
 }
 
 void TrackData::setPath(const TransformPath& path)
@@ -108,10 +109,10 @@ float TrackData::getWobbleRate() const
 
 void TrackData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion< TrackData >() >= 5);
+	T_FATAL_ASSERT(s.getVersion< TrackData >() >= 6);
 
-	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
-	s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
+	s >> Member< Guid >(L"entityId", m_entityId, AttributePrivate());
+	s >> Member< Guid >(L"lookAtEntityId", m_lookAtEntityId, AttributePrivate());
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> Member< float >(L"loopStart", m_loopStart);
 	s >> Member< float >(L"loopEnd", m_loopEnd);

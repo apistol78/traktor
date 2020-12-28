@@ -53,7 +53,7 @@ class T_DLLCLASS EntityAdapter : public Object
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapter(SceneEditorContext* context);
+	explicit EntityAdapter(SceneEditorContext* context);
 
 	/*! Prepare adapter.
 	 *
@@ -98,6 +98,8 @@ public:
 
 	/*! \name Information accessors. */
 	//@{
+
+	const Guid& getId() const;
 
 	std::wstring getName() const;
 

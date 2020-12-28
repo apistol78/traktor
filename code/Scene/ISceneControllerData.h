@@ -14,11 +14,13 @@
 
 namespace traktor
 {
+
+class Guid;
+
 	namespace world
 	{
 
 class Entity;
-class EntityData;
 
 	}
 
@@ -45,7 +47,7 @@ public:
 	 * \param editor True if scene is created in editor.
 	 * \return Controller instance.
 	 */
-	virtual Ref< ISceneController > createController(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
+	virtual Ref< ISceneController > createController(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
 };
 
 	}

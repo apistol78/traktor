@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Math/TransformPath.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -13,13 +14,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class EntityData;
-
-	}
-
 	namespace theater
 	{
 
@@ -33,13 +27,13 @@ class T_DLLCLASS TrackData : public ISerializable
 public:
 	TrackData();
 
-	void setEntityData(world::EntityData* entityData);
+	void setEntityId(const Guid& entityId);
 
-	world::EntityData* getEntityData() const;
+	const Guid& getEntityId() const;
 
-	void setLookAtEntityData(world::EntityData* entityData);
+	void setLookAtEntityId(const Guid& entityId);
 
-	world::EntityData* getLookAtEntityData() const;
+	const Guid& getLookAtEntityId() const;
 
 	void setPath(const TransformPath& path);
 
@@ -70,8 +64,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Ref< world::EntityData > m_entityData;
-	Ref< world::EntityData > m_lookAtEntityData;
+	Guid m_entityId;
+	Guid m_lookAtEntityId;
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;
