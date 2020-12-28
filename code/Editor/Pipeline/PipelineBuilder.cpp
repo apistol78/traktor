@@ -530,6 +530,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				builtInstances
 			);
 
+#if defined(_DEBUG)
 		if (m_verbose && !builtInstances.empty())
 		{
 			log::info << L"Instance(s) built:" << Endl;
@@ -540,6 +541,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 			log::info << DecreaseIndent;
 		}
+#endif
 	}
 
 	log::info << DecreaseIndent;
@@ -702,6 +704,11 @@ DataAccessCache* PipelineBuilder::getDataAccessCache() const
 	return m_dataAccessCache;
 }
 
+PipelineProfiler* PipelineBuilder::getProfiler() const
+{
+	return m_profiler;
+}
+
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	const PipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
@@ -817,6 +824,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 				builtInstances
 			);
 
+#if defined(_DEBUG)
 		if (m_verbose && !builtInstances.empty())
 		{
 			log::info << L"Instance(s) built:" << Endl;
@@ -827,6 +835,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 			log::info << DecreaseIndent;
 		}
+#endif
 
 		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 	}
@@ -858,68 +867,82 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDepend
 	bool result = false;
 
 	Ref< IStream > stream = m_cache->put(guid, hash);
-	if (stream)
+	if (!stream)
+		return false;
+
+	Writer writer(stream);
+
+	// Write directory.
+	writer << (uint32_t)instances.size();
+	for (uint32_t i = 0; i < (uint32_t)instances.size(); ++i)
 	{
-		Writer writer(stream);
+		const Guid instanceId = instances[i]->getGuid();
+		const std::wstring instancePath = instances[i]->getPath();
 
-		writer << uint32_t(instances.size());
-		for (uint32_t i = 0; i < uint32_t(instances.size()); ++i)
-		{
-			std::wstring groupPath = instances[i]->getParent()->getPath();
-			writer << groupPath;
-
-			result = db::Isolate::createIsolatedInstance(instances[i], stream);
-			if (!result)
-				break;
-		}
-
-		stream->close();
+		writer.write((const uint8_t*)instanceId, 16);
+		writer << instancePath;
 	}
 
+	// Write instances.
+	for (uint32_t i = 0; i < (uint32_t)instances.size(); ++i)
+	{
+		result = db::Isolate::createIsolatedInstance(instances[i], stream);
+		if (!result)
+			break;
+	}
+
+	stream->close();
 	return result;
 }
 
 bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
 {
-	bool result = false;
-
-
-	// Check if entry already exist in output database.
-	const Guid receiptSeed(L"{a0e85092-31d0-424a-bbfc-85cec8a1e06d}"); 
-	Guid receiptGuid = dependency->outputGuid.permutation(receiptSeed);
-	Ref< db::Instance > receiptInstance = m_outputDatabase->getInstance(receiptGuid);
-	if (receiptInstance)
+	struct DirectoryEntry
 	{
-		auto receipt = receiptInstance->getObject< PropertyGroup >();
-		if (
-			receipt->getProperty< int32_t >(L"pipelineHash") == hash.pipelineHash &&
-			receipt->getProperty< int32_t >(L"sourceAssetHash") == hash.sourceAssetHash &&
-			receipt->getProperty< int32_t >(L"sourceDataHash") == hash.sourceDataHash &&
-			receipt->getProperty< int32_t >(L"filesHash") == hash.filesHash
-		)
-		{
-			log::info << L"Instances already exist in output database." << Endl;
-			return true;
-		}
+		Guid instanceId;
+		std::wstring instancePath;
+	};
+
+	bool create = true;
+	bool result = true;
+
+	// Open stream to cached blob.
+	Ref< IStream > stream = m_cache->get(dependency->outputGuid, hash);
+	if (!stream)
+		return false;
+
+	// Compare hash to last output to determine if we need to create output instances or if
+	// they should already exist in output database.
+	PipelineDependencyHash lastOutputHash;
+	if (m_pipelineDb->getDependency(dependency->outputGuid, lastOutputHash))
+	{
+		if (lastOutputHash == hash)
+			create = false;
 	}
 
+	Reader reader(stream);
 
-	Ref< IStream > stream = m_cache->get(dependency->outputGuid, hash);
-	if (stream)
+	// Read directory from stream.
+	uint32_t instanceCount;
+	reader >> instanceCount;
+
+	AlignedVector< DirectoryEntry > directory(instanceCount);
+	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
-		Reader reader(stream);
+		uint8_t instanceId[16];
+		reader.read(instanceId, 16);
+		directory[i].instanceId = Guid(instanceId);
+		reader >> directory[i].instancePath;
+	}
 
-		uint32_t instanceCount;
-		reader >> instanceCount;
-
-		result = true;
-
+	// Fetch or create instances.
+	if (create)
+	{
 		for (uint32_t i = 0; i < instanceCount; ++i)
 		{
-			std::wstring groupPath;
-			reader >> groupPath;
+			Path instancePath(directory[i].instancePath);
 
-			Ref< db::Group > group = m_outputDatabase->createGroup(groupPath);
+			Ref< db::Group > group = m_outputDatabase->createGroup(instancePath.getPathOnlyNoVolume());
 			if (!group)
 			{
 				result = false;
@@ -935,32 +958,23 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 				break;
 			}
 		}
-
-		stream->close();
 	}
-
-	if (result)
+	else
 	{
-		if (!receiptInstance)
-			receiptInstance = m_outputDatabase->createInstance(L"Pipeline/" + receiptGuid.format(), 0, &receiptGuid);
-		else
+		for (uint32_t i = 0; i < instanceCount; ++i)
 		{
-			if (!receiptInstance->checkout())
-				receiptInstance = nullptr;
-		}
-
-		if (receiptInstance)
-		{
-			Ref< PropertyGroup > receipt = new PropertyGroup();
-			receipt->setProperty< PropertyInteger >(L"pipelineHash", hash.pipelineHash);
-			receipt->setProperty< PropertyInteger >(L"sourceAssetHash", hash.sourceAssetHash);
-			receipt->setProperty< PropertyInteger >(L"sourceDataHash", hash.sourceDataHash);
-			receipt->setProperty< PropertyInteger >(L"filesHash", hash.filesHash);
-			receiptInstance->setObject(receipt);
-			receiptInstance->commit();
+			Ref< db::Instance > instance = m_outputDatabase->getInstance(directory[i].instanceId);
+			if (instance)
+				outInstances.push_back(instance);
+			else
+			{
+				result = false;
+				break;
+			}
 		}
 	}
 
+	stream->close();
 	return result;
 }
 

@@ -48,6 +48,15 @@ struct PipelineDependencyHash
 	,	filesHash(0)
 	{
 	}
+
+	bool operator == (const PipelineDependencyHash& rh) const
+	{
+		return
+			pipelineHash == rh.pipelineHash &&
+			sourceAssetHash == rh.sourceAssetHash &&
+			sourceDataHash == rh.sourceDataHash &&
+			filesHash == rh.filesHash;
+	}
 };
 
 /*! Pipeline file hash.

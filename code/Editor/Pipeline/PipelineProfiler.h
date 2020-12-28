@@ -6,12 +6,20 @@
 #include "Core/Thread/ThreadLocal.h"
 #include "Core/Timer/Timer.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace editor
 	{
 
-class PipelineProfiler : public Object
+class T_DLLCLASS PipelineProfiler : public Object
 {
 	T_RTTI_CLASS;
 

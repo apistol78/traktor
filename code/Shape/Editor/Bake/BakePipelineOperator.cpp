@@ -18,6 +18,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -29,6 +30,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 #include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -76,6 +78,8 @@ namespace traktor
 
 const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
+
+Ref< drawing::Image > s_imageWorkInProgress;
 
 /*! Resolve external entities, ie flatten scene without external references. */
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed)
@@ -320,19 +324,6 @@ bool addModel(
 	TracerTask* tracerTask
 )
 {
-	// Create output instance.
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
-	for (int32_t y = 0; y < image->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
-		{
-			image->setPixelUnsafe(
-				x, y,
-				((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
-			);
-		}
-	}
-
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_generateMips = false;
 	output->m_enableCompression = false;
@@ -340,7 +331,7 @@ bool addModel(
 	if (!pipelineBuilder->buildAdHocOutput(
 		output,
 		lightmapId,
-		image
+		s_imageWorkInProgress
 	))
 		return false;	
 
@@ -409,6 +400,22 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	// In case we're running in standalone pipeline we create our tracer processor ourselves.
 	if (!m_editor)
 		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, true);
+
+	// Create WIP image which is used as a placeholder before actual lightmap has been completed.
+	if (!s_imageWorkInProgress)
+	{
+		s_imageWorkInProgress = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
+		for (int32_t y = 0; y < s_imageWorkInProgress->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < s_imageWorkInProgress->getWidth(); ++x)
+			{
+				s_imageWorkInProgress->setPixelUnsafe(
+					x, y,
+					((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
+				);
+			}
+		}
+	}
 
 	return true;
 }
@@ -490,6 +497,9 @@ bool BakePipelineOperator::build(
 
 	// Cancel any bake process currently running for given scene.
 	ms_tracerProcessor->cancel(sourceInstance->getGuid());
+
+	Timer timer;
+	timer.start();
 
 	// Load last known receipt, used for prioritizing moved/new entities.
 	Ref< BakeReceipt > receipt;
@@ -578,7 +588,9 @@ bool BakePipelineOperator::build(
 						return BinarySerializer(stream).writeObject(model);
 					},
 					[&]() -> Ref< model::Model > {
+						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData, componentData);
+						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
 						if (!model)
 							return nullptr;
 
@@ -674,19 +686,23 @@ bool BakePipelineOperator::build(
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
-				Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
-					pipelineBuilder,
-					m_assetPath,
-					componentData,
-					model,
-					outputId
-				));
-				if (replaceComponentData == nullptr)
-					inoutEntityData->removeComponent(componentData);
-				else if (replaceComponentData != componentData)
 				{
-					inoutEntityData->removeComponent(componentData);
-					inoutEntityData->setComponent(replaceComponentData);
+					pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
+					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
+						pipelineBuilder,
+						m_assetPath,
+						componentData,
+						model,
+						outputId
+					));
+					pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
+					if (replaceComponentData == nullptr)
+						inoutEntityData->removeComponent(componentData);
+					else if (replaceComponentData != componentData)
+					{
+						inoutEntityData->removeComponent(componentData);
+						inoutEntityData->setComponent(replaceComponentData);
+					}
 				}
 
 				lightmapId.permutate();
@@ -785,7 +801,7 @@ bool BakePipelineOperator::build(
 		}
 	}
 
-	log::info << L"Lightmap tasks created, enqueued and ready to be processed." << Endl;
+	log::info << L"Lightmap tasks created, enqueued and ready to be processed (" << str(L"%.2f", (float)timer.getElapsedTime()) << L" seconds)." << Endl;
 	return true;
 }
 
