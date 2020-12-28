@@ -13,7 +13,7 @@ class TextureProxy : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	TextureProxy(const resource::Proxy< ITexture >& texture);
+	explicit TextureProxy(const resource::Proxy< ITexture >& texture);
 
 	virtual void destroy() override final;
 

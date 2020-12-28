@@ -15,6 +15,7 @@
 #include "Render/IRenderView.h"
 #include "Render/IVRCompositor.h"
 #include "Render/Image2/ImageGraphFactory.h"
+#include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -329,6 +330,7 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
 
 	resourceManager->addFactory(m_textureFactory);
+	resourceManager->addFactory(new render::AliasTextureFactory());
 	resourceManager->addFactory(new render::SequenceTextureFactory());
 	resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));

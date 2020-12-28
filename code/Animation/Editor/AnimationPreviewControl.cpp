@@ -19,6 +19,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
+#include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -73,6 +74,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
+	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
