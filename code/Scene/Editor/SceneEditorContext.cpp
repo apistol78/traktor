@@ -450,10 +450,10 @@ void SceneEditorContext::buildEntities()
 			RefArray< EntityAdapter > entityAdapters;
 			getEntities(entityAdapters);
 
-			SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
+			SmallMap< Guid, Ref< world::Entity > > entityProducts;
 			for (auto entityAdapter : entityAdapters)
 				entityProducts.insert(std::make_pair(
-					entityAdapter->getEntityData(),
+					entityAdapter->getId(),
 					entityAdapter->getEntity()
 				));
 
@@ -506,10 +506,10 @@ void SceneEditorContext::buildController()
 		RefArray< EntityAdapter > entityAdapters;
 		getEntities(entityAdapters);
 
-		SmallMap< const world::EntityData*, Ref< world::Entity > > entityProducts;
+		SmallMap< Guid, Ref< world::Entity > > entityProducts;
 		for (auto entityAdapter : entityAdapters)
 			entityProducts.insert(std::make_pair(
-				entityAdapter->getEntityData(),
+				entityAdapter->getId(),
 				entityAdapter->getEntity()
 			));
 

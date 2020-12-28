@@ -158,7 +158,7 @@ void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 		RefArray< TrackData >& tracks = act->getTracks();
 		for (auto it = tracks.begin(); it != tracks.end(); )
 		{
-			if ((*it)->getEntityData() == entityAdapter->getEntityData())
+			if ((*it)->getEntityId() == entityAdapter->getId())
 				it = tracks.erase(it);
 			else
 				++it;
@@ -342,7 +342,7 @@ void TheaterControllerEditor::updateView()
 	{
 		for (auto track : acts[selected]->getTracks())
 		{
-			Ref< ui::Sequence > trackSequence = new ui::Sequence(track->getEntityData()->getName());
+			Ref< ui::Sequence > trackSequence = new ui::Sequence(track->getEntityId().format());
 			trackSequence->setData(L"TRACK", track);
 
 			for (auto& key : track->getPath().getKeys())
@@ -389,22 +389,20 @@ void TheaterControllerEditor::captureEntities()
 	RefArray< TrackData >& tracks = act->getTracks();
 	for (auto selectedEntity : selectedEntities)
 	{
+		const Guid& selectedId = selectedEntity->getId();
 		Transform transform = selectedEntity->getTransform();
-
-		Ref< world::EntityData > entityData = selectedEntity->getEntityData();
-		T_ASSERT(entityData);
 
 		Ref< TrackData > instanceTrackData;
 
 		auto it = std::find_if(tracks.begin(), tracks.end(), [&](const TrackData* trackData) {
-			return trackData->getEntityData() == entityData;
+			return trackData->getEntityId() == selectedId;
 		});
 		if (it != tracks.end())
 			instanceTrackData = *it;
 		else
 		{
 			instanceTrackData = new TrackData();
-			instanceTrackData->setEntityData(entityData);
+			instanceTrackData->setEntityId(selectedId);
 			tracks.push_back(instanceTrackData);
 		}
 
@@ -503,9 +501,9 @@ void TheaterControllerEditor::setLookAtEntity()
 		T_ASSERT(trackData);
 
 		if (!selectedEntities.empty())
-			trackData->setLookAtEntityData(selectedEntities[0]->getEntityData());
+			trackData->setLookAtEntityId(selectedEntities[0]->getId());
 		else
-			trackData->setLookAtEntityData(nullptr);
+			trackData->setLookAtEntityId(Guid::null);
 	}
 
 	m_context->buildController();
@@ -671,8 +669,8 @@ void TheaterControllerEditor::splitAct()
 		trackLeft->setLoopEnd(0.0f);
 
 		Ref< TrackData > trackRight = new TrackData();
-		trackRight->setEntityData(trackLeft->getEntityData());
-		trackRight->setLookAtEntityData(trackLeft->getLookAtEntityData());
+		trackRight->setEntityId(trackLeft->getEntityId());
+		trackRight->setLookAtEntityId(trackLeft->getLookAtEntityId());
 		trackRight->setWobbleMagnitude(trackLeft->getWobbleMagnitude());
 		trackRight->setWobbleRate(trackLeft->getWobbleRate());
 

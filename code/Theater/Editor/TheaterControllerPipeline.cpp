@@ -84,27 +84,8 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 
 		RefArray< TrackData >& tracks = acts[i]->getTracks();
 		tracks.resize(sourceTracks.size());
-
 		for (uint32_t j = 0; j < sourceTracks.size(); ++j)
-		{
-			Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->getBuildProduct(sourceTracks[j]->getEntityData()));
-			Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->getBuildProduct(sourceTracks[j]->getLookAtEntityData()));
-
-			if (!entityData && sourceTracks[j]->getEntityData())
-			{
-				log::error << L"Theater pipeline failed; unable to get product of entity data." << Endl;
-				return nullptr;
-			}
-			if (!lookAtEntityData && sourceTracks[j]->getLookAtEntityData())
-			{
-				log::error << L"Theater pipeline failed; unable to get product of entity data." << Endl;
-				return nullptr;
-			}
-
 			tracks[j] = new TrackData(*sourceTracks[j]);
-			tracks[j]->setEntityData(entityData);
-			tracks[j]->setLookAtEntityData(lookAtEntityData);
-		}
 	}
 
 	return controllerData;

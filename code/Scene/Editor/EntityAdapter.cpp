@@ -108,6 +108,11 @@ uint32_t EntityAdapter::getHash() const
 	return m_hash;
 }
 
+const Guid& EntityAdapter::getId() const
+{
+	return m_entityData ? m_entityData->getId() : Guid::null;
+}
+
 std::wstring EntityAdapter::getName() const
 {
 	return m_entityData ? m_entityData->getName() : L"< Null >";

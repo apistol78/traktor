@@ -19,7 +19,7 @@ TheaterControllerData::TheaterControllerData()
 {
 }
 
-Ref< scene::ISceneController > TheaterControllerData::createController(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts, bool editor) const
+Ref< scene::ISceneController > TheaterControllerData::createController(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const
 {
 	RefArray< const Act > acts(m_acts.size());
 	for (size_t i = 0; i < m_acts.size(); ++i)

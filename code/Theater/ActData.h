@@ -36,9 +36,9 @@ class T_DLLCLASS ActData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ActData();
+	ActData() = default;
 
-	Ref< Act > createInstance(const SmallMap< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
+	Ref< Act > createInstance(const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -56,7 +56,7 @@ public:
 
 private:
 	std::wstring m_name;
-	float m_duration;
+	float m_duration = 5.0f;
 	RefArray< TrackData > m_tracks;
 };
 
