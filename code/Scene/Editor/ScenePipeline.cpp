@@ -7,6 +7,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
@@ -153,7 +154,12 @@ bool ScenePipeline::buildOutput(
 		const IScenePipelineOperator* spo = findOperator(type_of(op));
 		if (!spo)
 			return false;
-		if (!spo->build(pipelineBuilder, op, sourceInstance, sceneAsset, rebuild))
+
+		pipelineBuilder->getProfiler()->begin(type_of(spo));
+		bool result = spo->build(pipelineBuilder, op, sourceInstance, sceneAsset, rebuild);
+		pipelineBuilder->getProfiler()->end(type_of(spo));
+
+		if (!result)
 			return false;
 	}
 

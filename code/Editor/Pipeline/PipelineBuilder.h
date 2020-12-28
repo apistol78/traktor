@@ -82,6 +82,8 @@ public:
 
 	virtual DataAccessCache* getDataAccessCache() const override final;
 
+	virtual PipelineProfiler* getProfiler() const override final;
+
 private:
 	struct WorkEntry
 	{

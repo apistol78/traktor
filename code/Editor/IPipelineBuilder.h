@@ -26,6 +26,7 @@ class Instance;
 class DataAccessCache;
 class PipelineDependencySet;
 class PipelineDependency;
+class PipelineProfiler;
 
 /*! Pipeline builder interface.
  * \ingroup Editor
@@ -100,6 +101,9 @@ public:
 
 	/*! Get data access cache. */
 	virtual DataAccessCache* getDataAccessCache() const = 0;
+
+	/*! Get profiler. */
+	virtual PipelineProfiler* getProfiler() const = 0;
 
 	//@}
 };
