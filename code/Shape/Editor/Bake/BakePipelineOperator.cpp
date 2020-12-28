@@ -45,7 +45,7 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/TextureAsset.h"
-#include "Render/Resource/TextureResource.h"
+#include "Render/Resource/AliasTextureResource.h"
 #include "Scene/Editor/IEntityReplicator.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/Traverser.h"
@@ -76,6 +76,7 @@ namespace traktor
 		namespace
 		{
 
+const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
 
@@ -324,16 +325,18 @@ bool addModel(
 	TracerTask* tracerTask
 )
 {
-	Ref< render::TextureOutput > output = new render::TextureOutput();
-	output->m_generateMips = false;
-	output->m_enableCompression = false;
-	output->m_linearGamma = true;
-	if (!pipelineBuilder->buildAdHocOutput(
-		output,
-		lightmapId,
-		s_imageWorkInProgress
-	))
-		return false;	
+	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
+	{
+		std::wstring outputPath = L"Generated/" + lightmapId.format();
+		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapId);
+		if (lightmapProxyInstance)
+		{
+			lightmapProxyInstance->setObject(new render::AliasTextureResource(
+				resource::Id< render::ITexture >(c_lightmapProxyId)
+			));
+			lightmapProxyInstance->commit();
+		}
+	}
 
 	tracerTask->addTracerModel(new TracerModel(
 		model,
@@ -438,6 +441,7 @@ TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const
 {
 	pipelineDepends->addDependency< render::ShaderGraph >();
+	pipelineDepends->addDependency(c_lightmapProxyId, editor::PdfBuild);
 
 	// Add "use" dependencies to first level of external entity datas; so we ensure scene pipeline is invoked if external entity is modified.
 	for (const auto layer : sceneAsset->getLayers())

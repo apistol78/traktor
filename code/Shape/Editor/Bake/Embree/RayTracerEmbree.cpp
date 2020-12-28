@@ -387,7 +387,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				const auto& originPolygon = polygons[elm.polygon];
 				const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-				Color4f emittance = originMaterial.getColor() * Scalar(originMaterial.getEmissive());
+				Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
 				Scalar metalness = Scalar(originMaterial.getMetalness());
 
 				// Trace direct analytical illumination.
@@ -484,7 +484,7 @@ Color4f RayTracerEmbree::tracePath0(
 			);
 		}
 
-		Color4f emittance = hitMaterialColor * Scalar(hitMaterial.getEmissive());
+		Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 
 		Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();

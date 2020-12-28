@@ -212,6 +212,12 @@ bool Instance::commit(uint32_t flags)
 			m_cachedFlags |= IchGuid;
 		}
 
+		if ((m_transactionFlags & TfObjectChanged) != 0)
+		{
+			m_type = m_providerInstance->getPrimaryTypeName();
+			m_cachedFlags |= IchPrimaryType;
+		}
+
 		if ((m_transactionFlags & TfNameChanged) != 0)
 		{
 			m_name = m_providerInstance->getName();

@@ -8,6 +8,7 @@
 
 // Resource factories
 #include "Render/Image2/ImageGraphFactory.h"
+#include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
@@ -75,6 +76,7 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
+	outResourceFactories.push_back(new render::AliasTextureFactory());
 	outResourceFactories.push_back(new render::ImageGraphFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::SequenceTextureFactory());
 	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
