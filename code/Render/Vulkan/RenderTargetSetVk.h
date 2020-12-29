@@ -29,6 +29,8 @@ class RenderTargetSetVk : public IRenderTargetSet
 	T_RTTI_CLASS;
 
 public:
+	RenderTargetSetVk() = delete;
+
 	explicit RenderTargetSetVk(Context* context);
 
 	virtual ~RenderTargetSetVk();
@@ -81,15 +83,9 @@ public:
 private:
 	struct RenderPass
 	{
-		uint32_t id;
-		VkRenderPass renderPass;
-		VkFramebuffer frameBuffer;
-
-		RenderPass()
-		:	renderPass(0)
-		,	frameBuffer(0)
-		{
-		}
+		uint32_t id = 0;
+		VkRenderPass renderPass = 0;
+		VkFramebuffer frameBuffer = 0;
 	};
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
@@ -99,7 +95,7 @@ private:
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
 	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
-	bool m_depthTargetShared;
+	bool m_depthTargetShared = false;
 };
 
 	}

@@ -16,14 +16,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthV
 
 RenderTargetDepthVk::RenderTargetDepthVk(Context* context)
 :	m_context(context)
-,	m_format(VK_FORMAT_UNDEFINED)
-,	m_image(0)
-,	m_allocation(0)
-,	m_imageView(0)
-,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
-,	m_haveStencil(false)
-,	m_width(0)
-,	m_height(0)
 {
 }
 
@@ -66,7 +58,6 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-
 	if (setDesc.ignoreStencil)
 #if defined(__IOS__)
 		ici.format = VK_FORMAT_D16_UNORM;
@@ -79,7 +70,6 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 #else
 		ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
 #endif
-
 	ici.extent.width = setDesc.width;
 	ici.extent.height = setDesc.height;
 	ici.extent.depth = 1;
@@ -87,19 +77,16 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ici.arrayLayers = 1;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-
 	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	if (setDesc.usingDepthStencilAsTexture)
 		ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
-
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.queueFamilyIndexCount = 0;
 	ici.pQueueFamilyIndices = nullptr;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
 	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 
@@ -109,12 +96,10 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
 	ivci.format = ici.format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
-
 	if (setDesc.ignoreStencil)
 		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	else
 		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-
 	ivci.subresourceRange.baseMipLevel = 0;
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;

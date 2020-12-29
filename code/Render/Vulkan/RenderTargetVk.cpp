@@ -16,13 +16,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimple
 
 RenderTargetVk::RenderTargetVk(Context* context)
 :	m_context(context)
-,	m_format(VK_FORMAT_UNDEFINED)
-,	m_image(0)
-,	m_allocation(0)
-,	m_imageView(0)
-,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
-,	m_width(0)
-,	m_height(0)
 {
 }
 
@@ -84,9 +77,9 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
- 	VmaAllocationCreateInfo aci = {};
+ 	
+	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
 	if (vmaCreateImage(m_context->getAllocator(), &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 

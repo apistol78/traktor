@@ -23,6 +23,8 @@ class RenderTargetDepthVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
+	RenderTargetDepthVk() = delete;
+
 	explicit RenderTargetDepthVk(Context* context);
 
 	virtual ~RenderTargetDepthVk();
@@ -59,14 +61,14 @@ private:
 	friend class RenderTargetSetVk;
 	
 	Ref< Context > m_context;
-	VkFormat m_format;
-	VkImage m_image;
-	VmaAllocation m_allocation;
-	VkImageView m_imageView;
-	VkImageLayout m_imageLayout;
-	bool m_haveStencil;
-	int32_t m_width;
-	int32_t m_height;
+	VkFormat m_format = VK_FORMAT_UNDEFINED;
+	VkImage m_image = 0;
+	VmaAllocation m_allocation = 0;
+	VkImageView m_imageView = 0;
+	VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	bool m_haveStencil = false;
+	int32_t m_width = 0;
+	int32_t m_height = 0;
 
 	void prepareAsTarget(CommandBuffer* commandBuffer);
 
