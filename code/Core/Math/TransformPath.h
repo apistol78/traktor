@@ -28,23 +28,13 @@ class T_DLLCLASS TransformPath : public ISerializable
 public:
 	struct T_DLLCLASS Key
 	{
-		float T;
-		Vector4 tcb;
-		Vector4 position;
-		Vector4 orientation;
-		float values[4];
+		float T = 0.0f;
+		Vector4 tcb = Vector4::zero();
+		Vector4 position = Vector4::origo();
+		Vector4 orientation = Vector4::zero();
+		float values[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		Key()
-		:	T(0.0f)
-		,	tcb(0.0f, 0.0f, 0.0f, 0.0f)
-		,	position(Vector4::origo())
-		,	orientation(Vector4::zero())
-		{
-			values[0] =
-			values[1] =
-			values[2] =
-			values[3] = 0.0f;
-		}
+		Key() = default;
 
 		virtual ~Key() {}
 
@@ -53,9 +43,9 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	TransformPath();
+	TransformPath() = default;
 
-	TransformPath(const TransformPath& path);
+	explicit TransformPath(const TransformPath& path);
 
 	/*! Insert key into path.
 	 *

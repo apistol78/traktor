@@ -320,11 +320,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 1, TransformPath, ISerializable)
-
-TransformPath::TransformPath()
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
 
 TransformPath::TransformPath(const TransformPath& path)
 :	m_keys(path.m_keys)
@@ -532,15 +528,9 @@ void TransformPath::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T, AttributeRange(0.0f));
 	s >> Member< Vector4 >(L"tcb", tcb);
-
-	if (s.getVersion< TransformPath >() >= 1)
-	{
-		s >> Member< Vector4 >(L"position", position, AttributePoint());
-		s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(AuRadians));
-		s >> MemberStaticArray< float, 4 >(L"values", values);
-	}
-	else
-		s >> MemberKeyValue(L"value", position, orientation);
+	s >> Member< Vector4 >(L"position", position, AttributePoint());
+	s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(AuRadians));
+	s >> MemberStaticArray< float, 4 >(L"values", values);
 }
 
 TransformPath& TransformPath::operator = (const TransformPath& path)
