@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 1, PartitionMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 2, PartitionMeshResource, MeshResource)
 
 Ref< IMesh > PartitionMeshResource::createMesh(
 	const std::wstring& name,
@@ -34,8 +34,8 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	Ref< render::Mesh > mesh = render::MeshReader(meshFactory).read(dataStream);
 	if (!mesh)
 	{
-		log::error << L"Partition mesh create failed; unable to read mesh" << Endl;
-		return 0;
+		log::error << L"Partition mesh create failed; unable to read mesh." << Endl;
+		return nullptr;
 	}
 
 	Ref< PartitionMesh > partitionMesh = new PartitionMesh();
@@ -52,11 +52,11 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	}
 
 	if (!resourceManager->bind(m_shader, partitionMesh->m_shader))
-		return 0;
+		return nullptr;
 
 	partitionMesh->m_partition = m_partitionData->createPartition();
 	if (!partitionMesh->m_partition)
-		return 0;
+		return nullptr;
 
 #if defined(_DEBUG)
 	partitionMesh->m_name = wstombs(name);
@@ -67,6 +67,10 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 
 void PartitionMeshResource::serialize(ISerializer& s)
 {
+	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);

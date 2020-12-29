@@ -12,7 +12,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.AutoLodMeshResource", 0, AutoLodMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.AutoLodMeshResource", 1, AutoLodMeshResource, MeshResource)
 
 AutoLodMeshResource::AutoLodMeshResource()
 :	m_maxDistance(0.0f)
@@ -51,6 +51,10 @@ Ref< IMesh > AutoLodMeshResource::createMesh(
 
 void AutoLodMeshResource::serialize(ISerializer& s)
 {
+	T_ASSERT_M(s.getVersion() >= 1, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> Member< float >(L"maxDistance", m_maxDistance);
 	s >> Member< float >(L"cullDistance", m_cullDistance);
 	s >> MemberAabb3(L"boundingBox", m_boundingBox);

@@ -3,7 +3,7 @@
 #include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class Shader;
 	namespace mesh
 	{
 
-class T_DLLCLASS IndoorMeshResource : public IMeshResource
+class T_DLLCLASS IndoorMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

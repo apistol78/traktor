@@ -13,7 +13,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 3, StreamMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 4, StreamMeshResource, MeshResource)
 
 Ref< IMesh > StreamMeshResource::createMesh(
 	const std::wstring& name,
@@ -50,7 +50,10 @@ Ref< IMesh > StreamMeshResource::createMesh(
 
 void StreamMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);

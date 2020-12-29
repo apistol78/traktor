@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,7 +15,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS ProcMeshResource : public IMeshResource
+class T_DLLCLASS ProcMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

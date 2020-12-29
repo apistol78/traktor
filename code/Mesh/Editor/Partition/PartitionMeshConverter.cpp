@@ -376,7 +376,7 @@ Ref< OctreeNodeData > createOctreeParts(
 
 		}
 
-Ref< IMeshResource > PartitionMeshConverter::createResource() const
+Ref< MeshResource > PartitionMeshConverter::createResource() const
 {
 	return new PartitionMeshResource();
 }
@@ -398,7 +398,7 @@ bool PartitionMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
-	IMeshResource* meshResource,
+	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {

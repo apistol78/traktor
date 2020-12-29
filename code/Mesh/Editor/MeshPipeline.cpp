@@ -1,4 +1,5 @@
 #include <list>
+#include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -18,7 +19,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
@@ -127,7 +128,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 33, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 34, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -703,7 +704,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Create render mesh.
-	Ref< IMeshResource > resource = converter->createResource();
+	Ref< MeshResource > resource = converter->createResource();
 	if (!resource)
 	{
 		log::error << L"Mesh pipeline failed; unable to create mesh resource." << Endl;
@@ -732,7 +733,11 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	int64_t dataSize = stream->tell();
+	if (/* compressed */true)
+	{
+		stream = new compress::DeflateStreamLzf(stream);
+		resource->setCompressed(true);
+	}
 
 	// Convert mesh asset.
 	if (!converter->convert(
@@ -750,7 +755,6 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	dataSize = stream->tell() - dataSize;
 	stream->close();
 
 	// Commit resource.

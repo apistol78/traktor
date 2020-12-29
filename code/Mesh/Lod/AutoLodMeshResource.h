@@ -2,7 +2,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 
 class StaticMeshResource;
 
-class T_DLLCLASS AutoLodMeshResource : public IMeshResource
+class T_DLLCLASS AutoLodMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

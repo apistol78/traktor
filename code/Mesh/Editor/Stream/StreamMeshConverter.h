@@ -10,7 +10,7 @@ namespace traktor
 class StreamMeshConverter : public IMeshConverter
 {
 public:
-	virtual Ref< IMeshResource > createResource() const override final;
+	virtual Ref< MeshResource > createResource() const override final;
 
 	virtual bool getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const override final;
 
@@ -21,7 +21,7 @@ public:
 		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const AlignedVector< render::VertexElement >& vertexElements,
 		int32_t maxInstanceCount,
-		IMeshResource* meshResource,
+		MeshResource* meshResource,
 		IStream* meshResourceStream
 	) const override final;
 };
