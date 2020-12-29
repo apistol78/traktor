@@ -137,31 +137,27 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 
 void RenderTargetDepthVk::destroy()
 {
-	if (m_context)
+	// Do not destroy image unless we have allocated memory for it;
+	// otherwise it's primary targets thus owned by swapchain.
+	if (m_context && m_allocation != 0)
 	{
 		m_context->addDeferredCleanup([
 			imageView = m_imageView,
-			allocation = m_allocation,
-			image = m_image
+			image = m_image,
+			allocation = m_allocation
 		](Context* cx) {
 			if (imageView != 0)
 				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
-
-			// Do not destroy image unless we have allocated memory for it;
-			// otherwise it's primary targets thus owned by swapchain.
-			if (allocation == 0)
-				return;
-
-			vmaFreeMemory(cx->getAllocator(), allocation);
 			if (image != 0)
 				vkDestroyImage(cx->getLogicalDevice(), image, 0);
+			vmaFreeMemory(cx->getAllocator(), allocation);
 		});
 	}
 
 	m_context = nullptr;
 	m_image = 0;
-	m_allocation = 0;	
 	m_imageView = 0;
+	m_allocation = 0;	
 }
 
 ITexture* RenderTargetDepthVk::resolve()

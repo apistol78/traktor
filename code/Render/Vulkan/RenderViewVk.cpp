@@ -160,6 +160,24 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
+
+	::Window root;
+	int x, y;
+	unsigned int w, h;
+	unsigned int b;
+	unsigned int d;
+	XGetGeometry(
+		(::Display*)desc.syswin.display,
+		desc.syswin.window,
+		&root,
+		&x, &y,
+		&w, &h,
+		&b,
+		&d
+	);
+	width = (int32_t)w;
+	height = (int32_t)h;
+
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
@@ -233,6 +251,8 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
+	vkDeviceWaitIdle(m_context->getLogicalDevice());
+
 	// Ensure any pending cleanups are performed before closing render view.
 	m_context->performCleanup();
 	m_lost = true;
@@ -244,11 +264,8 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		frame.primaryTarget->destroy();
-		//vkDestroyFence(m_context->getLogicalDevice(), frame.inFlightFence, nullptr);
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
 		vkDestroyDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, nullptr);
-		//m_computeCommandPool->release(frame.computeCommandBuffer);
-		//m_graphicsCommandPool->release(*frame.graphicsCommandBuffer);
 	}
 	m_frames.clear();
 
@@ -268,6 +285,9 @@ void RenderViewVk::close()
 	for (auto& pipeline : m_pipelines)
 		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
+
+	// More pending cleanups since frames own render targets.
+	m_context->performCleanup();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
