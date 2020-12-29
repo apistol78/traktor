@@ -469,8 +469,6 @@ bool RenderViewVk::beginFrame()
 		// Ensure command buffer has been consumed by GPU.
 		if (!frame.graphicsCommandBuffer->wait())
 		{
-			log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (2)." << Endl;
-	
 			// Issue an event in order to reset view.
 			RenderEvent evt;
 			evt.type = ReLost;
