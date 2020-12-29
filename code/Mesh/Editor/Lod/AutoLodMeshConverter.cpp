@@ -12,7 +12,7 @@ namespace traktor
 	namespace mesh
 	{
 
-Ref< IMeshResource > AutoLodMeshConverter::createResource() const
+Ref< MeshResource > AutoLodMeshConverter::createResource() const
 {
 	return new AutoLodMeshResource();
 }
@@ -29,7 +29,7 @@ bool AutoLodMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
-	IMeshResource* meshResource,
+	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -53,7 +53,7 @@ bool AutoLodMeshConverter::convert(
 
 		StaticMeshConverter staticMeshConverter;
 
-		Ref< IMeshResource > staticMeshResource = staticMeshConverter.createResource();
+		Ref< MeshResource > staticMeshResource = staticMeshConverter.createResource();
 
 		RefArray< model::Model > lodModels(1);
 		lodModels[0] = &lodModel;

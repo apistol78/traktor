@@ -38,7 +38,7 @@ struct InfluencePredicate
 
 		}
 
-Ref< IMeshResource > SkinnedMeshConverter::createResource() const
+Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
 	return new SkinnedMeshResource();
 }
@@ -60,7 +60,7 @@ bool SkinnedMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
-	IMeshResource* meshResource,
+	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {

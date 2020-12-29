@@ -41,7 +41,7 @@ class IMesh;
  *
  * Base class for all mesh resources.
  */
-class T_DLLCLASS IMeshResource : public ISerializable
+class T_DLLCLASS MeshResource : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -53,6 +53,15 @@ public:
 		render::IRenderSystem* renderSystem,
 		render::MeshFactory* meshFactory
 	) const = 0;
+
+	virtual void serialize(ISerializer& s) override;
+
+	void setCompressed(bool compressed) { m_compressed = compressed; }
+
+	bool isCompressed() const { return m_compressed; }
+
+private:
+	bool m_compressed = false;
 };
 
 	}

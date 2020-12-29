@@ -6,7 +6,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.ProcMeshResource", 0, ProcMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.ProcMeshResource", 0, ProcMeshResource, MeshResource)
 
 Ref< IMesh > ProcMeshResource::createMesh(
 	const std::wstring& name,
@@ -23,6 +23,7 @@ Ref< IMesh > ProcMeshResource::createMesh(
 
 void ProcMeshResource::serialize(ISerializer& s)
 {
+	MeshResource::serialize(s);
 }
 
 	}

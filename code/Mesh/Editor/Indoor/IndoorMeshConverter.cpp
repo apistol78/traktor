@@ -514,7 +514,7 @@ void createSectors(
  * CONVERTER
  */
 
-Ref< IMeshResource > IndoorMeshConverter::createResource() const
+Ref< MeshResource > IndoorMeshConverter::createResource() const
 {
 	return new IndoorMeshResource();
 }
@@ -531,7 +531,7 @@ bool IndoorMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
-	IMeshResource* meshResource,
+	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {

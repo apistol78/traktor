@@ -1,8 +1,9 @@
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Mesh/IMesh.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Mesh/MeshFactory.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
@@ -23,7 +24,7 @@ MeshFactory::MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactor
 
 const TypeInfoSet MeshFactory::getResourceTypes() const
 {
-	return makeTypeInfoSet< IMeshResource >();
+	return makeTypeInfoSet< MeshResource >();
 }
 
 const TypeInfoSet MeshFactory::getProductTypes(const TypeInfo& resourceType) const
@@ -38,7 +39,7 @@ bool MeshFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< IMeshResource > resource = instance->getObject< IMeshResource >();
+	Ref< MeshResource > resource = instance->getObject< MeshResource >();
 	if (!resource)
 	{
 		log::error << L"Mesh factory failed; unable to get mesh resource." << Endl;
@@ -51,6 +52,9 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 		log::error << L"Mesh factory failed; unable to open data stream." << Endl;
 		return nullptr;
 	}
+
+	if (resource->isCompressed())
+		dataStream = new compress::InflateStreamLzf(dataStream);
 
 	Ref< IMesh > mesh = resource->createMesh(instance->getPath(), dataStream, resourceManager, m_renderSystem, m_meshFactory);
 	if (!mesh)

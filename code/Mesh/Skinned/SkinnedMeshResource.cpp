@@ -16,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 4, SkinnedMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 5, SkinnedMeshResource, MeshResource)
 
 Ref< IMesh > SkinnedMeshResource::createMesh(
 	const std::wstring& name,
@@ -68,7 +68,10 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 void SkinnedMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 5, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberSmallMap<
 		std::wstring,

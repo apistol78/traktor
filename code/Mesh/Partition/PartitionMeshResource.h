@@ -2,7 +2,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class Shader;
 
 class IPartitionData;
 
-class T_DLLCLASS PartitionMeshResource : public IMeshResource
+class T_DLLCLASS PartitionMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

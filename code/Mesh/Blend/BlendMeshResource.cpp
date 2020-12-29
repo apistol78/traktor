@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 3, BlendMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 4, BlendMeshResource, MeshResource)
 
 Ref< IMesh > BlendMeshResource::createMesh(
 	const std::wstring& name,
@@ -31,7 +31,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
-		return 0;
+		return nullptr;
 
 	Reader reader(dataStream);
 
@@ -40,8 +40,8 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 	if (!meshCount)
 	{
-		log::error << L"Blend mesh create failed; no meshes" << Endl;
-		return 0;
+		log::error << L"Blend mesh create failed; no meshes." << Endl;
+		return nullptr;
 	}
 
 	render::SystemMeshFactory systemMeshFactory;
@@ -52,14 +52,14 @@ Ref< IMesh > BlendMeshResource::createMesh(
 	{
 		if (!(meshes[i] = render::MeshReader(&systemMeshFactory).read(dataStream)))
 		{
-			log::error << L"Blend mesh create failed; unable to read mesh" << Endl;
-			return 0;
+			log::error << L"Blend mesh create failed; unable to read mesh." << Endl;
+			return nullptr;
 		}
 		meshVertices[i] = static_cast< const uint8_t* >(meshes[i]->getVertexBuffer()->lock());
 		if (!meshVertices[i])
 		{
-			log::error << L"Blend mesh create failed; unable to lock vertices" << Endl;
-			return 0;
+			log::error << L"Blend mesh create failed; unable to lock vertices." << Endl;
+			return nullptr;
 		}
 	}
 
@@ -89,7 +89,10 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 void BlendMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,

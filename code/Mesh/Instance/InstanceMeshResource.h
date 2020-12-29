@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Guid.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -24,7 +24,7 @@ class Shader;
 	namespace mesh
 	{
 
-class T_DLLCLASS InstanceMeshResource : public IMeshResource
+class T_DLLCLASS InstanceMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

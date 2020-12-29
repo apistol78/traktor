@@ -3,7 +3,7 @@
 #include <list>
 #include <map>
 #include "Core/Guid.h"
-#include "Mesh/IMeshResource.h"
+#include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class Shader;
 	namespace mesh
 	{
 
-class T_DLLCLASS BlendMeshResource : public IMeshResource
+class T_DLLCLASS BlendMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;
 

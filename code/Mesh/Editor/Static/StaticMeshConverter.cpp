@@ -24,7 +24,7 @@ namespace traktor
 	namespace mesh
 	{
 
-Ref< IMeshResource > StaticMeshConverter::createResource() const
+Ref< MeshResource > StaticMeshConverter::createResource() const
 {
 	return new StaticMeshResource();
 }
@@ -47,7 +47,7 @@ bool StaticMeshConverter::convert(
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
-	IMeshResource* meshResource,
+	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {

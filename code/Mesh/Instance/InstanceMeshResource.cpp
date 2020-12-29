@@ -18,7 +18,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 6, InstanceMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 7, InstanceMeshResource, MeshResource)
 
 InstanceMeshResource::InstanceMeshResource()
 :	m_haveRenderMesh(false)
@@ -75,7 +75,10 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 6, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 7, L"Incorrect version");
+
+	MeshResource::serialize(s);
+
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
