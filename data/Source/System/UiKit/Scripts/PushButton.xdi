@@ -209,6 +209,7 @@ end
 function PushButton:_onMousePress(event)
 	self._pressed = true
 	self:_updateState()
+	self:setExclusive()
 	return true
 end
 
@@ -223,6 +224,7 @@ function PushButton:_onMouseRelease(event)
 	end
 
 	self:_updateState()
+	self:releaseExclusive()
 
 	if self._inside and self._clickFn ~= nil then
 		self._clickFn(self)

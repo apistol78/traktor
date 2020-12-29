@@ -6,7 +6,7 @@
 
 Scaffolding = Scaffolding or class("Scaffolding")
 
-function Scaffolding:new(database, resourceManager, root)
+function Scaffolding:new(database, resourceManager, root, width, height)
 	self._database = database
 	self._resourceManager = resourceManager
 
@@ -19,7 +19,7 @@ function Scaffolding:new(database, resourceManager, root)
 	-- Create test frame.
 	self._frame = Frame(
 		root,
-		1280, 720,
+		width, height,
 		FloodLayout(0, 0)
 	)
 	self._frame:update()
