@@ -27,7 +27,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, I
 
 RenderTargetSetVk::RenderTargetSetVk(Context* context)
 :	m_context(context)
-,	m_depthTargetShared(false)
 {
 }
 

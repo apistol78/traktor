@@ -1313,7 +1313,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	ici.queueFamilyIndexCount = 0;
@@ -1358,13 +1358,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	{
 		auto& frame = m_frames[i];
 
-		//frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
-		//if (!frame.graphicsCommandBuffer)
-		//	return false;
-
-		//frame.graphicsCommandBuffer = m_graphicsCommandPool->acquire();
-		//frame.computeCommandBuffer = m_computeCommandPool->acquire();
-
 		VkDescriptorPoolSize dps[4];
 		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		dps[0].descriptorCount = 40000;
@@ -1387,11 +1380,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		VkSemaphoreCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
-
-		//VkFenceCreateInfo fci = {};
-		//fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		//fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		//vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &frame.inFlightFence);	
 
 		frame.primaryTarget = new RenderTargetSetVk(m_context);
 		if (!frame.primaryTarget->createPrimary(
