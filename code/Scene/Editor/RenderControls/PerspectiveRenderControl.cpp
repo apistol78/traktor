@@ -159,6 +159,9 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_camera->setEnable(true);
 	m_timer.start();
 
+	m_dirtySize.cx = m_renderView->getWidth();
+	m_dirtySize.cy = m_renderView->getHeight();
+
 	return true;
 }
 

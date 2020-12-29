@@ -34,7 +34,7 @@ Ref< Object > AliasTextureFactory::create(resource::IResourceManager* resourceMa
 
 	resource::Proxy< ITexture > texture;
 	if (!resourceManager->bind(resource->m_texture, texture))
-		return false;
+		return nullptr;
 
 	return new TextureProxy(texture);
 }

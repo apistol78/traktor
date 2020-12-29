@@ -116,14 +116,9 @@ private:
 
 	struct Frame
 	{
-		//VkCommandBuffer graphicsCommandBuffer;
-		//VkCommandBuffer computeCommandBuffer;
-
 		Ref< CommandBuffer > graphicsCommandBuffer;
-
 		VkDescriptorPool descriptorPool;
 		VkSemaphore renderFinishedSemaphore;
-		//VkFence inFlightFence;
 		Ref< RenderTargetSetVk > primaryTarget;
 	};
 
