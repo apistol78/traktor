@@ -231,7 +231,9 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			{
 				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
-				Any::fromObject(m_moviePlayer->getMovieInstance())
+				Any::fromObject(m_moviePlayer->getMovieInstance()),
+				Any::fromInt32(sz.cx),
+				Any::fromInt32(sz.cy)
 			};
 			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
 		}
