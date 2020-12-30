@@ -394,13 +394,13 @@ void WorldRendererForward::setup(
 	}
 
 	// Add visual target sets.
-	render::RenderGraphTargetSetDesc rgtd = {};
+	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
 	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
 
@@ -657,10 +657,10 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	rgtd.count = 2;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;	// Depth (R), Roughness (G)
-	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
+	rgtd.targets[0].colorFormat = render::TfR16G16F;	// Depth (R), Roughness (G)
+	rgtd.targets[1].colorFormat = render::TfR16G16F;	// Normals (RG)
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
@@ -718,13 +718,13 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 ) const
 {
 	// Add Velocity target set.
-	render::RenderGraphTargetSetDesc rgtd = {};
+	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.targets[0].colorFormat = render::TfR32G32F;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
+	rgtd.targets[0].colorFormat = render::TfR32G32F;
 	auto velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add Velocity render pass.
@@ -797,9 +797,9 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
+	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
 	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
@@ -839,22 +839,39 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 		return 0;
 
 	// Add reflections target.
-	render::RenderGraphTargetSetDesc rgtd = {};
+	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	if (m_reflectionsQuality >= Quality::High)
+
+	switch (m_reflectionsQuality)
 	{
-		rgtd.referenceWidthDenom = 1;
-		rgtd.referenceHeightDenom = 1;
-	}
-	else
-	{
+	default:
+	case Quality::Low:
 		rgtd.referenceWidthDenom = 2;
 		rgtd.referenceHeightDenom = 2;
+		break;
+
+	case Quality::Medium:
+		rgtd.referenceWidthMul = 2;
+		rgtd.referenceWidthDenom = 3;
+		rgtd.referenceHeightMul = 2;
+		rgtd.referenceHeightDenom = 3;
+		break;
+
+	case Quality::High:
+		rgtd.referenceWidthDenom = 1;
+		rgtd.referenceHeightDenom = 1;
+		break;
+
+	case Quality::Ultra:
+		rgtd.referenceWidthDenom = 1;
+		rgtd.referenceHeightDenom = 1;
+		break;
 	}
+
 	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add reflections render pass.
@@ -1444,13 +1461,13 @@ void WorldRendererForward::setupProcessPass(
 
 		if (next)
 		{
-			render::RenderGraphTargetSetDesc rgtd = {};
+			render::RenderGraphTargetSetDesc rgtd;
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
 			rgtd.usingPrimaryDepthStencil = false;
-			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
+			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);

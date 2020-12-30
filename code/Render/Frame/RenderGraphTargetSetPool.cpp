@@ -24,7 +24,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 )
 {
 	// Create descriptor for given reference size.
-	RenderTargetSetCreateDesc rtscd = {};
+	RenderTargetSetCreateDesc rtscd;
 	rtscd.count = targetSetDesc.count;
 	rtscd.width = targetSetDesc.width;
 	rtscd.height = targetSetDesc.height;
@@ -39,9 +39,10 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 		rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;
 		
 	if (targetSetDesc.referenceWidthDenom > 0)
-		rtscd.width = (referenceWidth + targetSetDesc.referenceWidthDenom - 1) / targetSetDesc.referenceWidthDenom;
+		rtscd.width = (referenceWidth * targetSetDesc.referenceWidthMul + targetSetDesc.referenceWidthDenom - 1) / targetSetDesc.referenceWidthDenom;
 	if (targetSetDesc.referenceHeightDenom > 0)
-		rtscd.height = (referenceHeight + targetSetDesc.referenceHeightDenom - 1) / targetSetDesc.referenceHeightDenom;
+		rtscd.height = (referenceHeight * targetSetDesc.referenceHeightMul + targetSetDesc.referenceHeightDenom - 1) / targetSetDesc.referenceHeightDenom;
+
 	if (targetSetDesc.maxWidth > 0)
 		rtscd.width = min< int32_t >(rtscd.width, targetSetDesc.maxWidth);
 	if (targetSetDesc.maxHeight > 0)

@@ -40,15 +40,15 @@ public:
 
 	void setMaterial(uint32_t material);
 
-	uint32_t getMaterial() const;
+	uint32_t getMaterial() const { return m_material; }
 
 	void setNormal(uint32_t normal);
 
-	uint32_t getNormal() const;
+	uint32_t getNormal() const { return m_normal; }
 
 	void setSmoothGroup(uint32_t smoothGroup);
 
-	uint32_t getSmoothGroup() const;
+	uint32_t getSmoothGroup() const { return m_smoothGroup; }
 
 	void clearVertices();
 
@@ -61,15 +61,15 @@ public:
 
 	void setVertex(uint32_t index, uint32_t vertex);
 
-	uint32_t getVertex(uint32_t index) const;
+	uint32_t getVertex(uint32_t index) const { return m_vertices[index]; }
 
-	uint32_t getVertexCount() const;
+	uint32_t getVertexCount() const { return (uint32_t)m_vertices.size(); }
 
 	void setVertices(const vertices_t& vertices);
 
-	const vertices_t& getVertices() const;
+	const vertices_t& getVertices() const { return m_vertices; }
 
-	vertices_t& getVertices();
+	vertices_t& getVertices() { return m_vertices; }
 
 	virtual void serialize(ISerializer& s) override final;
 

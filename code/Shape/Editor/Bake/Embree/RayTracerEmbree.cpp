@@ -116,6 +116,7 @@ void alphaTestFilter(const RTCFilterFunctionNArguments* args)
 	const auto& materials = model->getMaterials();
 
 	RTCHitN* hits = args->hit;
+	Color4f color;
 
 	for (int i = 0; i < args->N; ++i)
 	{
@@ -127,7 +128,8 @@ void alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		const auto& hitPolygon = polygons[primID];
 		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
 
-		if (hitMaterial.getDiffuseMap().image)
+		const auto& image = hitMaterial.getDiffuseMap().image;
+		if (image)
 		{
 			const uint32_t slot = 0;
 			float texCoord[2] = { 0.0f, 0.0f };
@@ -136,10 +138,7 @@ void alphaTestFilter(const RTCFilterFunctionNArguments* args)
 			float v = RTCHitN_v(hits, args->N, i);
 			rtcInterpolate0(userData->geom, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-			auto image = hitMaterial.getDiffuseMap().image;
-
-			Color4f color;
-			image->getPixel(
+			image->getPixelUnsafe(
 				(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 				(int32_t)(wrap(texCoord[1]) * image->getHeight()),
 				color
@@ -406,10 +405,10 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				Scalar occlusion = 0.5_simd + 0.5_simd * traceAmbientOcclusion(elm.position, elm.normal, random);
 
 				// Combine and write final lumel.
-				lightmap->setPixel(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+				lightmap->setPixelUnsafe(x, y, ((emittance + direct + incoming * occlusion) * (1.0_simd - metalness)).rgb1());
 			}
 		}
-	}	
+	}
 }
 
 Color4f RayTracerEmbree::tracePath0(
@@ -418,88 +417,88 @@ Color4f RayTracerEmbree::tracePath0(
 	RandomGeometry& random
 ) const
 {
-	const int32_t sampleCount = m_configuration->getSampleCount();
+	int32_t sampleCount = m_configuration->getSampleCount();
 	if (sampleCount <= 0)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	sampleCount = alignUp(sampleCount, 32);
 
-	// Construct all rays.
-	StaticVector< RTCRayHit, 1024 > rhv(sampleCount);
-	for (int32_t i = 0; i < sampleCount; ++i)
-	{
-		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-		constructRay(origin, direction, m_configuration->getMaxPathDistance(), rhv[i]);
-	}
-
-	// Intersect test all rays using ray streams.
-	RTCIntersectContext context;
-	rtcInitIntersectContext(&context);
-	context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
-	rtcIntersect1M(m_scene, &context, rhv.ptr(), sampleCount, sizeof(RTCRayHit));
-
-	// Accumulate incoming light.
+	RTCRayHit T_ALIGN16 rhv[32];
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
-	for (int32_t i = 0; i < sampleCount; ++i)
+
+	for (int32_t i = 0; i < sampleCount; i += 32)
 	{
-		const auto& rh = rhv[i];
-		const Vector4 direction(
-			rh.ray.dir_x,
-			rh.ray.dir_y,
-			rh.ray.dir_z
-		);
-
-		if (
-			rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
-			rh.hit.geomID >= m_models.size()
-		)
+		for (int32_t j = 0; j < 32; ++j)
 		{
-			// Nothing hit, sample sky if available else it's all black.
-			if (m_environment)
-				color += m_environment->sample(direction);
-			continue;
+			Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+			constructRay(origin, direction, m_configuration->getMaxPathDistance(), rhv[j]);
 		}
 
-		// \todo Collect materials and images before and access linearly...
+		// Intersect test all rays using ray streams.
+		RTCIntersectContext context;
+		rtcInitIntersectContext(&context);
+		context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+		rtcIntersect1M(m_scene, &context, rhv, 32, sizeof(RTCRayHit));
 
-		const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
-		const auto& materials = m_models[rh.hit.geomID]->getMaterials();
-
-		const auto& hitPolygon = polygons[rh.hit.primID];
-		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
-
-		Color4f hitMaterialColor = hitMaterial.getColor();
-		if (hitMaterial.getDiffuseMap().image)
+		// Accumulate incoming light.
+		for (int32_t j = 0; j < 32; ++j)
 		{
-			const uint32_t slot = 0;
-			float texCoord[2] = { 0.0f, 0.0f };
+			const auto& rh = rhv[j];
+			const Vector4 direction = Vector4::loadAligned(&rh.ray.dir_x).xyz0();
 
-			RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
-			rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+			if (
+				rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
+				rh.hit.geomID >= m_models.size()
+			)
+			{
+				// Nothing hit, sample sky if available else it's all black.
+				if (m_environment)
+					color += m_environment->sample(direction);
+				continue;
+			}
 
-			auto image = hitMaterial.getDiffuseMap().image;
-			image->getPixel(
-				(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-				(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-				hitMaterialColor
+			// \todo Collect materials and images before and access linearly...
+
+			const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
+			const auto& materials = m_models[rh.hit.geomID]->getMaterials();
+
+			const auto& hitPolygon = polygons[rh.hit.primID];
+			const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+
+			Color4f hitMaterialColor = hitMaterial.getColor();
+			const auto& image = hitMaterial.getDiffuseMap().image;
+			if (image)
+			{
+				const uint32_t slot = 0;
+				float texCoord[2] = { 0.0f, 0.0f };
+
+				RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+				rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+				image->getPixelUnsafe(
+					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+					hitMaterialColor
+				);
+			}
+
+			Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+
+			Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+			Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
+
+			Color4f direct = sampleAnalyticalLights(
+				random,
+				newOrigin,
+				hitNormal,
+				Light::LmIndirect,
+				true
 			);
+			Color4f incoming = traceSinglePath(newOrigin, hitNormal, random, 1);
+			Color4f reflectance = hitMaterialColor;
+
+			color += (emittance + (direct + incoming) * reflectance) * dot3(direction, normal);
 		}
-
-		Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
-
-		Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
-		Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
-
-		Color4f direct = sampleAnalyticalLights(
-			random,
-			newOrigin,
-			hitNormal,
-			Light::LmIndirect,
-			true
-		);
-		Color4f incoming = traceSinglePath(newOrigin, hitNormal, random, 1);
-		Color4f reflectance = hitMaterialColor;
-
-		color += (emittance + (direct + incoming) * reflectance) * dot3(direction, normal);
 	}
 
 	return color / Scalar(sampleCount);
@@ -550,7 +549,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const auto& hitMaterial = materials[hitPolygon.getMaterial()];
 
 	Color4f hitMaterialColor = hitMaterial.getColor();
-	if (hitMaterial.getDiffuseMap().image)
+	const auto& image = hitMaterial.getDiffuseMap().image;
+	if (image)
 	{
 		const uint32_t slot = 0;
 		float texCoord[2] = { 0.0f, 0.0f };
@@ -558,8 +558,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 		RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
 		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-		auto image = hitMaterial.getDiffuseMap().image;
-		image->getPixel(
+		image->getPixelUnsafe(
 			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
 			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
 			hitMaterialColor
@@ -568,7 +567,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	Color4f emittance = hitMaterialColor * Scalar(hitMaterial.getEmissive());
 
-	Vector4 hitNormal = Vector4::loadUnaligned(&rh.hit.Ng_x).xyz0().normalized();
+	Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 newOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
 	Color4f direct = sampleAnalyticalLights(
@@ -590,30 +589,33 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
     RandomGeometry& random
 ) const
 {
-	const int32_t sampleCount = 100;
+	const int32_t sampleCount = alignUp(m_configuration->getShadowSampleCount(), 16);
 	const float maxOcclusionDistance = 1.0f;
-
-	// Construct all rays.
-	StaticVector< RTCRay, 1024 > rv(sampleCount);
-	for (int32_t i = 0; i < sampleCount; ++i)
-	{
-		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-		constructRay(origin, direction, maxOcclusionDistance, rv[i]);
-	}
-
-	// Intersect test all rays using ray streams.
-	RTCIntersectContext context;
-	rtcInitIntersectContext(&context);
-	context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
-	rtcOccluded1M(m_scene, &context, rv.ptr(), sampleCount, sizeof(RTCRay));
-
-	// Accumulate incoming light.
+	RTCRay T_ALIGN16 rv[16];
 	int32_t unoccluded = 0;
-	for (const auto& r : rv)
+
+	for (int32_t i = 0; i < sampleCount; i += 16)
 	{
-		if (r.tfar > r.tnear)
-			unoccluded++;
+		for (int32_t j = 0; j < 16; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+			constructRay(origin, direction, maxOcclusionDistance, rv[j]);
+		}
+
+		// Intersect test all rays using ray streams.
+		RTCIntersectContext context;
+		rtcInitIntersectContext(&context);
+		context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+		rtcOccluded1M(m_scene, &context, rv, 16, sizeof(RTCRay));
+
+		// Accumulate incoming light.
+		for (int32_t j = 0; j < 16; ++j)
+		{
+			const auto& r = rv[j];
+			if (r.tfar > r.tnear)
+				unoccluded++;
+		}
 	}
 
 	float k = float(unoccluded) / sampleCount;

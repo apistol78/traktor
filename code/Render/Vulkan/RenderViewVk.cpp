@@ -1311,7 +1311,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	ici.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	ici.queueFamilyIndexCount = 0;

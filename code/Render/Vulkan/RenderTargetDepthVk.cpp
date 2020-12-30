@@ -83,7 +83,7 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.queueFamilyIndexCount = 0;
 	ici.pQueueFamilyIndices = nullptr;
-	ici.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;

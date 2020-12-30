@@ -162,25 +162,25 @@ public:
 	bool save(IStream* stream, const std::wstring& extension) const;
 
 	/*! Get current image format. */
-	const PixelFormat& getPixelFormat() const;
+	const PixelFormat& getPixelFormat() const { return m_pixelFormat; }
 
 	/*! Get width of image. */
-	int32_t getWidth() const;
+	int32_t getWidth() const { return m_width; }
 
 	/*! Get height of image. */
-	int32_t getHeight() const;
+	int32_t getHeight() const { return m_height; }
 
 	/*! Get image palette. */
-	Ref< Palette > getPalette() const;
+	Ref< Palette > getPalette() const { return m_palette; }
 
 	/*! Get read-only pointer to image data. */
-	const void* getData() const;
+	const void* getData() const { return m_data; }
 
 	/*! Get pointer to image data. */
-	void* getData();
+	void* getData() { return m_data; }
 
 	/*! Get size of data in bytes. */
-	size_t getDataSize() const;
+	size_t getDataSize() const { return m_size; }
 
 	/*! Attach image meta data. */
 	void setImageInfo(ImageInfo* imageInfo);

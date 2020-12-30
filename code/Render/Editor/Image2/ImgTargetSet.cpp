@@ -101,7 +101,7 @@ const std::wstring& ImgTargetSet::getTextureId(int32_t colorIndex) const
 
 RenderGraphTargetSetDesc ImgTargetSet::getRenderGraphTargetSetDesc() const
 {
-	RenderGraphTargetSetDesc desc = {};
+	RenderGraphTargetSetDesc desc;
 
 	desc.count = (int32_t)m_targets.size();
 	desc.width = m_width;
