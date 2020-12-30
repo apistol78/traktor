@@ -56,29 +56,14 @@ void Polygon::setMaterial(uint32_t material)
 	m_material = material;
 }
 
-uint32_t Polygon::getMaterial() const
-{
-	return m_material;
-}
-
 void Polygon::setNormal(uint32_t normal)
 {
 	m_normal = normal;
 }
 
-uint32_t Polygon::getNormal() const
-{
-	return m_normal;
-}
-
 void Polygon::setSmoothGroup(uint32_t smoothGroup)
 {
 	m_smoothGroup = smoothGroup;
-}
-
-uint32_t Polygon::getSmoothGroup() const
-{
-	return m_smoothGroup;
 }
 
 void Polygon::clearVertices()
@@ -108,29 +93,9 @@ void Polygon::setVertex(uint32_t index, uint32_t vertex)
 	m_vertices[index] = vertex;
 }
 
-uint32_t Polygon::getVertex(uint32_t index) const
-{
-	return m_vertices[index];
-}
-
-uint32_t Polygon::getVertexCount() const
-{
-	return uint32_t(m_vertices.size());
-}
-
 void Polygon::setVertices(const vertices_t& vertices)
 {
 	m_vertices = vertices;
-}
-
-const Polygon::vertices_t& Polygon::getVertices() const
-{
-	return m_vertices;
-}
-
-Polygon::vertices_t& Polygon::getVertices()
-{
-	return m_vertices;
 }
 
 void Polygon::serialize(ISerializer& s)

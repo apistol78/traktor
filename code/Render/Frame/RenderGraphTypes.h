@@ -12,12 +12,7 @@ namespace traktor
  */
 struct RenderGraphTargetDesc
 {
-	TextureFormat colorFormat;
-
-	RenderGraphTargetDesc()
-	:	colorFormat(TfInvalid)
-	{
-	}
+	TextureFormat colorFormat = TfInvalid;
 };
 
 /*!
@@ -27,35 +22,21 @@ struct RenderGraphTargetSetDesc
 {
 	enum { MaxColorTargets = RenderTargetSetCreateDesc::MaxTargets };
 
-	int32_t count;
-	int32_t width;
-	int32_t height;
-	int32_t referenceWidthDenom;
-	int32_t referenceHeightDenom;
-	int32_t maxWidth;
-	int32_t maxHeight;
-	bool createDepthStencil;
-	bool usingPrimaryDepthStencil;
-	bool usingDepthStencilAsTexture;
-	bool ignoreStencil;
-	bool generateMips;
+	int32_t count = 0;
+	int32_t width = 0;
+	int32_t height = 0;
+	int32_t referenceWidthMul = 1;
+	int32_t referenceWidthDenom = 0;
+	int32_t referenceHeightMul = 1;
+	int32_t referenceHeightDenom = 0;
+	int32_t maxWidth = 0;
+	int32_t maxHeight = 0;
+	bool createDepthStencil = false;
+	bool usingPrimaryDepthStencil = false;
+	bool usingDepthStencilAsTexture = false;
+	bool ignoreStencil = false;
+	bool generateMips = false;
 	RenderGraphTargetDesc targets[MaxColorTargets];
-
-	RenderGraphTargetSetDesc()
-	:	count(0)
-	,	width(0)
-	,	height(0)
-	,	referenceWidthDenom(0)
-	,	referenceHeightDenom(0)
-	,	maxWidth(0)
-	,	maxHeight(0)
-	,	createDepthStencil(false)
-	,	usingPrimaryDepthStencil(false)
-	,	usingDepthStencilAsTexture(false)
-	,	ignoreStencil(false)
-	,	generateMips(false)
-	{
-	}
 };
 
 	}

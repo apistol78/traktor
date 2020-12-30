@@ -65,7 +65,7 @@ private:
 	VkImage m_image = 0;
 	VmaAllocation m_allocation = 0;
 	VkImageView m_imageView = 0;
-	VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	bool m_haveStencil = false;
 	int32_t m_width = 0;
 	int32_t m_height = 0;

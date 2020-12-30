@@ -577,41 +577,6 @@ bool Image::save(IStream* stream, const std::wstring& extension) const
 	return result;
 }
 
-const PixelFormat& Image::getPixelFormat() const
-{
-	return m_pixelFormat;
-}
-
-int32_t Image::getWidth() const
-{
-	return m_width;
-}
-
-int32_t Image::getHeight() const
-{
-	return m_height;
-}
-
-Ref< Palette > Image::getPalette() const
-{
-	return m_palette;
-}
-
-const void* Image::getData() const
-{
-	return m_data;
-}
-
-void* Image::getData()
-{
-	return m_data;
-}
-
-size_t Image::getDataSize() const
-{
-	return m_size;
-}
-
 void Image::setImageInfo(ImageInfo* imageInfo)
 {
 	m_imageInfo = imageInfo;

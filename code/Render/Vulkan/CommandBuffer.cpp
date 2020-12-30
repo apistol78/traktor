@@ -26,8 +26,7 @@ CommandBuffer::~CommandBuffer()
 
 bool CommandBuffer::reset()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queue->m_lock);
-	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 
 	vkResetCommandBuffer(m_commandBuffer, 0);
 
@@ -42,8 +41,7 @@ bool CommandBuffer::reset()
 
 bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitStageFlags, VkSemaphore signalSemaphore)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queue->m_lock);
-	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 
 	vkEndCommandBuffer(m_commandBuffer);
 
@@ -68,7 +66,12 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 		si.pSignalSemaphores = &signalSemaphore;
 	}
 
-	return (bool)(vkQueueSubmit(*m_queue, 1, &si, m_inFlight) == VK_SUCCESS);
+	bool result;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queue->m_lock);
+		result = (bool)(vkQueueSubmit(*m_queue, 1, &si, m_inFlight) == VK_SUCCESS);
+	}
+	return result;
 }
 
 bool CommandBuffer::wait()
@@ -88,7 +91,7 @@ bool CommandBuffer::submitAndWait()
 
 CommandBuffer::operator VkCommandBuffer ()
 {
-	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 	return m_commandBuffer;
 }
 
