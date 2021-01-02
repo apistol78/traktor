@@ -138,6 +138,65 @@ bool Image::createCube(
     return true;
 }
 
+bool Image::createVolume(
+	uint32_t width,
+	uint32_t height,
+	uint32_t depth,
+	uint32_t mipLevels,
+	VkFormat format,
+	uint32_t usageBits
+)
+{
+	T_FATAL_ASSERT(m_image == 0);
+
+	// Create image.
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_3D;
+	ici.extent.width = width;
+	ici.extent.height = height;
+	ici.extent.depth = depth;
+	ici.mipLevels = mipLevels;
+	ici.arrayLayers = 1;
+	ici.format = format;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.usage = usageBits;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	ici.flags = 0;
+
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
+		return false;
+	}
+
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+
+	// Create image view.
+	VkImageViewCreateInfo ivci = {};
+	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	ivci.image = m_image;
+	ivci.viewType = VK_IMAGE_VIEW_TYPE_3D;
+	ivci.format = format;
+	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	ivci.subresourceRange.baseMipLevel = 0;
+	ivci.subresourceRange.levelCount = mipLevels;
+	ivci.subresourceRange.baseArrayLayer = 0;
+	ivci.subresourceRange.layerCount = 1;
+	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create image view; unable to create image view." << Endl;
+		return false;
+	}
+
+    return true;
+}
+
 void Image::destroy()
 {
 	T_FATAL_ASSERT(m_locked == nullptr);

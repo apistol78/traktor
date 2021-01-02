@@ -45,6 +45,15 @@ public:
         uint32_t usageBits
     );
 
+	bool createVolume(
+        uint32_t width,
+        uint32_t height,
+        uint32_t depth,
+        uint32_t mipLevels,
+        VkFormat format,
+        uint32_t usageBits
+    );
+
 	void destroy();
 
     void* lock();

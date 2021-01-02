@@ -8,9 +8,10 @@ namespace traktor
 	namespace render
 	{
 
-class CommandBufferPool;
+class Buffer;
 class Context;
-class Queue;
+class Image;
+
 struct VolumeTextureCreateDesc;
 
 /*!
@@ -39,17 +40,13 @@ public:
 
 	virtual int32_t getDepth() const override final;
 
-	VkImage getVkImage() const { return m_textureImage; }
-
-	VkImageView getVkImageView() const { return m_textureView; }
+	Image& getImage() const { return *m_textureImage; }
 
 private:
 	Context* m_context = nullptr;
-	VkImage m_textureImage;
-	VkImageView m_textureView;
-	int32_t m_width;
-	int32_t m_height;
-	int32_t m_depth;
+	Ref< Buffer > m_stagingBuffer;
+	Ref< Image > m_textureImage;
+	VolumeTextureCreateDesc m_desc;
 };
 
 	}
