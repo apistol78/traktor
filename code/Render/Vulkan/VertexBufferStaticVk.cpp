@@ -26,6 +26,11 @@ VertexBufferStaticVk::VertexBufferStaticVk(
 {
 }
 
+VertexBufferStaticVk::~VertexBufferStaticVk()
+{
+	destroy();
+}
+
 bool VertexBufferStaticVk::create()
 {
 	const uint32_t bufferSize = getBufferSize();

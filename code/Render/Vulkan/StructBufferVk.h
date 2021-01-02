@@ -19,6 +19,8 @@ class StructBufferVk : public StructBuffer
 public:
 	explicit StructBufferVk(Context* context, uint32_t bufferSize);
 
+	virtual ~StructBufferVk();
+
 	bool create(int32_t inFlightCount);
 
 	virtual void destroy() override final;
