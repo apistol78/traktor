@@ -9,7 +9,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
-#include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
 #include "Render/Vulkan/Editor/Glsl/GlslEmitter.h"
 #include "Render/Vulkan/Editor/Glsl/GlslImage.h"
@@ -17,6 +16,7 @@
 #include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
 #include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
+#include "Render/Vulkan/Private/VertexAttributes.h"
 
 namespace traktor
 {
@@ -2702,10 +2702,10 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 	if (!out)
 	{
 		GlslType type = glsl_from_data_type(node->getDataType());
-		std::wstring attributeName = VertexAttributesVk::getName(node->getDataUsage(), node->getIndex());
+		std::wstring attributeName = VertexAttributes::getName(node->getDataUsage(), node->getIndex());
 
 		auto& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
-		fi << L"layout (location = " << VertexAttributesVk::getLocation(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+		fi << L"layout (location = " << VertexAttributes::getLocation(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{

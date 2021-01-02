@@ -1,3 +1,5 @@
+#define NOMINMAX
+#include <algorithm>
 #include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
@@ -5,22 +7,22 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBuffer.h"
-#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
-#include "Render/Vulkan/Image.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/UniformBufferPoolVk.h"
-#include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Image.h"
+#include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/UniformBufferPool.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 #if defined(__MAC__)
 #	include "Render/Vulkan/macOS/Metal.h"
@@ -1414,7 +1416,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 #endif
 
 	// Create uniform buffer pool.
-	m_uniformBufferPool = new UniformBufferPoolVk(m_context);
+	m_uniformBufferPool = new UniformBufferPool(m_context);
 
 	m_nextQueryIndex = 0;
 	m_lost = false;

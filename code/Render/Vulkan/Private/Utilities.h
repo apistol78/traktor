@@ -3,7 +3,7 @@
 #include <string>
 #include "Core/Config.h"
 #include "Render/Types.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {

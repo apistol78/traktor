@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Render/IndexBuffer.h"
-#include "Render/Vulkan/Buffer.h"
+#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {

@@ -5,7 +5,7 @@
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Semaphore.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {

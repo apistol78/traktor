@@ -1,12 +1,12 @@
 #include <cstring>
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBuffer.h"
-#include "Render/Vulkan/Context.h"
-#include "Render/Vulkan/Queue.h"
-#include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {

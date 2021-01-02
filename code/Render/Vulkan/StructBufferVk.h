@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Render/StructBuffer.h"
-#include "Render/Vulkan/Buffer.h"
+#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {

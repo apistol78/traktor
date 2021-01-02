@@ -9,28 +9,28 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
-#include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
-#include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/RenderSystemVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
-#include "Render/Vulkan/ShaderModuleCache.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
-#include "Render/Vulkan/UtilitiesVk.h"
-#include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/PipelineLayoutCache.h"
+#include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/ShaderModuleCache.h"
+#include "Render/Vulkan/Private/Utilities.h"
+#include "Render/Vulkan/Private/VertexAttributes.h"
 
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
@@ -473,7 +473,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	for (auto ve : vertexElements)
 	{
 		auto& vad = vads.push_back();
-		vad.location = VertexAttributesVk::getLocation(ve.getDataUsage(), ve.getIndex());
+		vad.location = VertexAttributes::getLocation(ve.getDataUsage(), ve.getIndex());
 		vad.binding = 0;
 		vad.format = c_vkVertexElementFormats[ve.getDataType()];
 		vad.offset = ve.getOffset();

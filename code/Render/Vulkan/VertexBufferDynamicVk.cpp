@@ -1,5 +1,6 @@
-#include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {

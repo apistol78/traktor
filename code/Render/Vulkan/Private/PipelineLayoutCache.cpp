@@ -1,9 +1,9 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/PipelineLayoutCache.h"
-#include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/PipelineLayoutCache.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {

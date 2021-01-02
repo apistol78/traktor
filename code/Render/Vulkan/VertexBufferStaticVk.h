@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
 namespace traktor

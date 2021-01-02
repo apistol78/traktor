@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
-#include "Render/Vulkan/Buffer.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
 namespace traktor
@@ -9,6 +9,7 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class Context;
 
 /*!

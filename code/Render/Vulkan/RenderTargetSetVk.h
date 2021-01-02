@@ -5,7 +5,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Color4f.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {

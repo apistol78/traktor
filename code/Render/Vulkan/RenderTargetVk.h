@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Render/ISimpleTexture.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {

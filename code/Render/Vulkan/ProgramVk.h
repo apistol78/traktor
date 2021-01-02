@@ -3,7 +3,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticVector.h"
 #include "Render/IProgram.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ class Context;
 class PipelineLayoutCache;
 class ProgramResourceVk;
 class ShaderModuleCache;
-class UniformBufferPoolVk;
+class UniformBufferPool;
 
 /*!
  * \ingroup Vulkan
@@ -31,9 +31,9 @@ public:
 
 	bool create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
 
-	bool validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
+	bool validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool, float targetSize[2]);
 
-	bool validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool);
+	bool validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool);
 
 	virtual void destroy() override final;
 

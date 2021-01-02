@@ -1,12 +1,12 @@
 #include "Core/Io/StringOutputStream.h"
-#include "Render/Vulkan/VertexAttributesVk.h"
+#include "Render/Vulkan/Private/VertexAttributes.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-std::wstring VertexAttributesVk::getName(DataUsage usage, int32_t index)
+std::wstring VertexAttributes::getName(DataUsage usage, int32_t index)
 {
 	const wchar_t* s[] =
 	{
@@ -23,7 +23,7 @@ std::wstring VertexAttributesVk::getName(DataUsage usage, int32_t index)
 	return ss.str();
 }
 
-int32_t VertexAttributesVk::getLocation(DataUsage usage, int32_t index)
+int32_t VertexAttributes::getLocation(DataUsage usage, int32_t index)
 {
 	int32_t base[] =
 	{

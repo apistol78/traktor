@@ -2,6 +2,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {
