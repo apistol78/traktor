@@ -2,22 +2,22 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBuffer.h"
-#include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
-#include "Render/Vulkan/Image.h"
-#include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
-#include "Render/Vulkan/ShaderModuleCache.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
-#include "Render/Vulkan/UniformBufferPoolVk.h"
-#include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Image.h"
+#include "Render/Vulkan/Private/PipelineLayoutCache.h"
+#include "Render/Vulkan/Private/ShaderModuleCache.h"
+#include "Render/Vulkan/Private/UniformBufferPool.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 #undef max
 
@@ -194,7 +194,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		else
 			sci.anisotropyEnable = VK_FALSE;
 
-		sci.maxAnisotropy = maxAnistropy;
+		sci.maxAnisotropy = (float)maxAnistropy;
 		sci.compareEnable = (resourceSampler.state.compare != CfNone) ? VK_TRUE : VK_FALSE;
 		sci.compareOp = c_compareOperations[resourceSampler.state.compare];
 		sci.minLod = 0.0f;
@@ -251,7 +251,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	return true;
 }
 
-bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
+bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool, float targetSize[2])
 {
 	// Set implicit parameters.
 	setVectorParameter(
@@ -447,7 +447,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 	return true;
 }
 
-bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPoolVk* uniformBufferPool)
+bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool)
 {
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = 0;
@@ -661,7 +661,7 @@ void ProgramVk::setVectorArrayParameter(handle_t handle, const Vector4* param, i
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (length * 4 <= i->second.size);
+		T_FATAL_ASSERT (length * 4 <= (int)i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		if (storeIfNotEqual(param, length, &ub.data[i->second.offset]))
 			ub.dirty = true;
@@ -684,7 +684,7 @@ void ProgramVk::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (length * 16 <= i->second.size);
+		T_FATAL_ASSERT (length * 16 <= (int)i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		for (int j = 0; j < length; ++j)
 			param[j].storeAligned(&ub.data[i->second.offset + j * 16]);

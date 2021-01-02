@@ -1,8 +1,8 @@
 #include <cstring>
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {

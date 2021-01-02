@@ -5,7 +5,7 @@
 #include "Core/System.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
 #elif defined(__LINUX__)
@@ -21,7 +21,7 @@ class CommandBuffer;
 class Context;
 class ProgramVk;
 class RenderTargetSetVk;
-class UniformBufferPoolVk;
+class UniformBufferPool;
 class VertexBufferVk;
 
 /*!
@@ -160,7 +160,7 @@ private:
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
 
 	// Uniform buffer pool.
-	Ref< UniformBufferPoolVk > m_uniformBufferPool;
+	Ref< UniformBufferPool > m_uniformBufferPool;
 
 	// Stats.
 	bool m_haveDebugMarkers = false;

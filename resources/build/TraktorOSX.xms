@@ -17620,6 +17620,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Private</name>
+					<items>
+						<item type="File">
+							<fileName>Private/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">

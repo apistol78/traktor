@@ -1,9 +1,9 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/Context.h"
-#include "Render/Vulkan/UniformBufferPoolVk.h"
-#include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/UniformBufferPool.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {
@@ -22,15 +22,15 @@ int32_t freeIndex(uint32_t size)
 
 		}
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPoolVk", UniformBufferPoolVk, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPool", UniformBufferPool, Object)
 
-UniformBufferPoolVk::UniformBufferPoolVk(Context* context)
+UniformBufferPool::UniformBufferPool(Context* context)
 :	m_context(context)
 ,	m_counter(0)
 {
 }
 
-bool UniformBufferPoolVk::acquire(
+bool UniformBufferPool::acquire(
 	uint32_t size,
 	VkBuffer& inoutBuffer,
 	VmaAllocation& inoutAllocation,
@@ -92,7 +92,7 @@ bool UniformBufferPoolVk::acquire(
 	return true;
 }
 
-void UniformBufferPoolVk::collect()
+void UniformBufferPool::collect()
 {
 	uint32_t c = (m_counter + 1) % MaxPendingFrames;
 	if (!m_released[c].empty())

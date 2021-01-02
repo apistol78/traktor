@@ -2,7 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Render/IRenderSystem.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

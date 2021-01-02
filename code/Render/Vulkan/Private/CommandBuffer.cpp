@@ -1,10 +1,10 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/CommandBuffer.h"
-#include "Render/Vulkan/Context.h"
-#include "Render/Vulkan/Queue.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Queue.h"
 
 namespace traktor
 {

@@ -1,5 +1,5 @@
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/ShaderModuleCache.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/ShaderModuleCache.h"
 
 namespace traktor
 {

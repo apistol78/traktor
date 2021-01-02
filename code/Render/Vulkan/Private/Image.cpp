@@ -1,9 +1,9 @@
 #include "Core/Config.h"
 #include "Core/Log/Log.h"
-#include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/Image.h"
-#include "Render/Vulkan/Context.h"
-#include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Image.h"
+#include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {

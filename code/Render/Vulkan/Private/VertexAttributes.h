@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS VertexAttributesVk
+class T_DLLCLASS VertexAttributes
 {;
 public:
 	static std::wstring getName(DataUsage usage, int32_t index);

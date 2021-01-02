@@ -2,7 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Vulkan/ApiHeader.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {
@@ -11,14 +11,14 @@ namespace traktor
 
 class Context;
 	
-class UniformBufferPoolVk : public Object
+class UniformBufferPool : public Object
 {
 	T_RTTI_CLASS;
 
 public:
 	enum { MaxPendingFrames = 8 };
 
-	explicit UniformBufferPoolVk(Context* context);
+	explicit UniformBufferPool(Context* context);
 
 	bool acquire(
 		uint32_t size,
