@@ -61,33 +61,33 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	if (format == VK_FORMAT_UNDEFINED)
 		return false;
 
-	VkImageCreateInfo imageCreateInfo = {};
-	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = format;
-	imageCreateInfo.extent.width = setDesc.width;
-	imageCreateInfo.extent.height = setDesc.height;
-	imageCreateInfo.extent.depth = 1;
-	imageCreateInfo.mipLevels = 1;
-	imageCreateInfo.arrayLayers = 1;
-	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	imageCreateInfo.queueFamilyIndexCount = 0;
-	imageCreateInfo.pQueueFamilyIndices = nullptr;
-	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_2D;
+	ici.format = format;
+	ici.extent.width = setDesc.width;
+	ici.extent.height = setDesc.height;
+	ici.extent.depth = 1;
+	ici.mipLevels = 1;
+	ici.arrayLayers = 1;
+	ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.queueFamilyIndexCount = 0;
+	ici.pQueueFamilyIndices = nullptr;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
  	
 	VmaAllocationCreateInfo aci = {};
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-	if (vmaCreateImage(m_context->getAllocator(), &imageCreateInfo, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 		return false;	
 
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	ivci.image = m_image;
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	ivci.format = imageCreateInfo.format;
+	ivci.format = ici.format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
 	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	ivci.subresourceRange.baseMipLevel = 0;
@@ -100,7 +100,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 		return false;
 	}
 
-	m_format = imageCreateInfo.format;
+	m_format = ici.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 

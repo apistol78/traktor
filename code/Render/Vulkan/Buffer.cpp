@@ -15,6 +15,11 @@ Buffer::Buffer(Context* context)
 {
 }
 
+Buffer::~Buffer()
+{
+	T_FATAL_ASSERT_M(m_context == nullptr, L"Not properly destroyed.");
+}
+
 bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
 {
 	T_FATAL_ASSERT(m_buffer == 0);

@@ -14,7 +14,7 @@ IndexBufferVk::IndexBufferVk(
 	Buffer&& buffer
 )
 :	IndexBuffer(indexType, bufferSize)
-,	m_buffer(buffer)
+,	m_buffer(std::move(buffer))
 {
 }
 

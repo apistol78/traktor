@@ -35,7 +35,15 @@ RenderTargetSetVk::~RenderTargetSetVk()
 	destroy();
 }
 
-bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag)
+bool RenderTargetSetVk::createPrimary(
+	int32_t width,
+	int32_t height,
+	VkFormat colorFormat,
+	VkImage colorImage,
+	VkFormat depthFormat,
+	VkImage depthImage,
+	const wchar_t* const tag
+)
 {
 	m_colorTargets.resize(1);
 	m_colorTargets[0] = new RenderTargetVk(m_context);
@@ -61,7 +69,11 @@ bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat co
 	return true;
 }
 
-bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
+bool RenderTargetSetVk::create(
+	const RenderTargetSetCreateDesc& setDesc,
+	IRenderTargetSet* sharedDepthStencil,
+	const wchar_t* const tag
+)
 {
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
