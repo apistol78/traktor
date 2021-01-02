@@ -15,6 +15,11 @@ StructBufferVk::StructBufferVk(Context* context, uint32_t bufferSize)
 {
 }
 
+StructBufferVk::~StructBufferVk()
+{
+	destroy();
+}
+
 bool StructBufferVk::create(int32_t inFlightCount)
 {
 	const uint32_t bufferSize = getBufferSize();

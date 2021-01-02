@@ -19,6 +19,11 @@ IndexBufferVk::IndexBufferVk(
 {
 }
 
+IndexBufferVk::~IndexBufferVk()
+{
+	destroy();
+}
+
 bool IndexBufferVk::create()
 {
 	const uint32_t bufferSize = getBufferSize();

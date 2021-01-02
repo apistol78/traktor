@@ -25,6 +25,8 @@ public:
 		uint32_t bufferSize
 	);
 
+	virtual ~IndexBufferVk();
+
 	bool create();
 
 	virtual void destroy() override final;

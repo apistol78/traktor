@@ -27,6 +27,8 @@ public:
 		uint32_t hash
 	);
 
+	virtual ~VertexBufferStaticVk();
+
 	bool create();
 
 	virtual void destroy() override final;

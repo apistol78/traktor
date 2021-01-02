@@ -22,6 +22,11 @@ VertexBufferDynamicVk::VertexBufferDynamicVk(
 {
 }
 
+VertexBufferDynamicVk::~VertexBufferDynamicVk()
+{
+	destroy();
+}
+
 bool VertexBufferDynamicVk::create(int32_t inFlightCount)
 {
 	const uint32_t bufferSize = getBufferSize();

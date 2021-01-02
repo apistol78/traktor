@@ -28,6 +28,8 @@ public:
 		uint32_t hash
 	);
 
+	virtual ~VertexBufferDynamicVk();
+
 	bool create(int32_t inFlightCount);
 
 	virtual void destroy() override final;
