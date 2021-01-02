@@ -379,7 +379,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 		}
 		else if (is_a< VolumeTextureVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 
@@ -554,7 +554,7 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* 
 		else if (is_a< RenderTargetDepthVk >(resolved))
 			imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
 		else if (is_a< VolumeTextureVk >(resolved))
-			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 
 		if (!imageView)
 			continue;
