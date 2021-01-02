@@ -8,7 +8,10 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class Context;
+class Image;
+
 struct SimpleTextureCreateDesc;
 
 /*!
@@ -44,17 +47,12 @@ public:
 
 	virtual void* getInternalHandle() override final;
 
-	VkImage getVkImage() const { return m_textureImage; }
-
-	VkImageView getVkImageView() const { return m_textureView; }
+	Image& getImage() const { return *m_textureImage; }
 
 private:
 	Ref< Context > m_context;
-	VmaAllocation m_stagingBufferAllocation;
-	VkBuffer m_stagingBuffer;
-	VmaAllocation m_textureAllocation;
-	VkImage m_textureImage;
-	VkImageView m_textureView;
+	Ref< Buffer > m_stagingBuffer;
+	Ref< Image > m_textureImage;
 	SimpleTextureCreateDesc m_desc;
 };
 

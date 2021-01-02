@@ -6,6 +6,7 @@
 #include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
+#include "Render/Vulkan/Image.h"
 #include "Render/Vulkan/PipelineLayoutCache.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
@@ -358,12 +359,12 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 
 		if (is_a< SimpleTextureVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 		else if (is_a< CubeTextureVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 		else if (is_a< RenderTargetVk >(resolved))
@@ -545,9 +546,9 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* 
 
 		VkImageView imageView = 0;
 		if (is_a< SimpleTextureVk >(resolved))
-			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
+			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 		else if (is_a< CubeTextureVk >(resolved))
-			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
+			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
 		else if (is_a< RenderTargetVk >(resolved))
 			imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
 		else if (is_a< RenderTargetDepthVk >(resolved))

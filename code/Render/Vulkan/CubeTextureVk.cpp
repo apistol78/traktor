@@ -1,10 +1,13 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/Buffer.h"
 #include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
+#include "Render/Vulkan/Image.h"
 #include "Render/Vulkan/Queue.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -19,11 +22,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeText
 CubeTextureVk::CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc)
 :	m_context(context)
 ,	m_desc(desc)
-,	m_textureImageAllocation(0)
-,	m_textureImage(0)
-,	m_textureView(0)
-,	m_stagingBufferAllocation(0)
-,	m_stagingBuffer(0)
 {
 }
 
@@ -36,96 +34,51 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 {
 	const VkFormat* vkTextureFormats = m_desc.sRGB ? c_vkTextureFormats_sRGB : c_vkTextureFormats;
 	if (vkTextureFormats[m_desc.format] == VK_FORMAT_UNDEFINED)
-		return false;
-
-	// Create texture image.
-	VkImageCreateInfo ici = {};
-	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.extent.width = m_desc.side;
-	ici.extent.height = m_desc.side;
-	ici.extent.depth = 1;
-	ici.mipLevels = m_desc.mipCount;
-	ici.arrayLayers = 6;
-	ici.format = vkTextureFormats[m_desc.format];
-	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	ici.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
-	
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
-	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_textureImage, &m_textureImageAllocation, nullptr) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create VK cube texture; unable to allocate image memory." << Endl;
-		return false;			
+		log::error << L"Failed to create cube texture; unsupported format (\"" << getTextureFormatName(m_desc.format) << L"\" (" << (int)m_desc.format << L"), " << (m_desc.sRGB ? L"sRGB" : L"linear") << L")." << Endl;
+		return false;
 	}
 
-	// Set debug name of texture.
-	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_textureImage, VK_OBJECT_TYPE_IMAGE);
-
-	// Create texture view.
-	VkImageViewCreateInfo ivci = {};
-	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	ivci.image = m_textureImage;
-	ivci.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
-	ivci.format = vkTextureFormats[m_desc.format];
-	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	ivci.subresourceRange.baseMipLevel = 0;
-	ivci.subresourceRange.levelCount = m_desc.mipCount;
-	ivci.subresourceRange.baseArrayLayer = 0;
-	ivci.subresourceRange.layerCount = 6;
-	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, NULL, &m_textureView) != VK_SUCCESS)
+	// Create image.
+	m_textureImage = new Image(m_context);
+	if (!m_textureImage->createCube(
+		m_desc.side,
+		m_desc.side,
+		m_desc.mipCount,
+		vkTextureFormats[m_desc.format],
+		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+	))
+	{
+		m_textureImage = nullptr;
 		return false;
+	}
 
 	// Upload initial data.
-	if (m_desc.immutable)
+	ITexture::Lock lock;
+	for (int32_t side = 0; side < 6; ++side)
 	{
-		ITexture::Lock lock;
-		for (int32_t side = 0; side < 6; ++side)
+		for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
 		{
-			for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
-			{
-				uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
+			uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
 				
-				if (!this->lock(side, mip, lock))
-					return false;
+			if (!this->lock(side, mip, lock))
+				return false;
 
+			if (m_desc.immutable)
 				std::memcpy(
 					lock.bits,
 					m_desc.initialData[side * m_desc.mipCount + mip].data,
 					mipSize
 				);
-
-				unlock(side, mip);
-			}
-		}
-	}
-	else
-	{
-		ITexture::Lock lock;
-		for (int32_t side = 0; side < 6; ++side)
-		{
-			for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
-			{
-				uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
-
-				if (!this->lock(side, mip, lock))
-					return false;
-
+			else
 				std::memset(
 					lock.bits,
 					0,
 					mipSize
 				);
 
-				unlock(side, mip);
-			}
-		}	
+			unlock(side, mip);
+		}
 	}
 
 	return true;
@@ -133,28 +86,9 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 
 void CubeTextureVk::destroy()
 {
-	T_FATAL_ASSERT(m_stagingBufferAllocation == 0);
-
-	if (m_context)
-	{
-		m_context->addDeferredCleanup([
-			textureView = m_textureView,
-			textureImageAllocation = m_textureImageAllocation,
-			textureImage = m_textureImage
-		](Context* cx) {
-			if (textureView != 0)
-				vkDestroyImageView(cx->getLogicalDevice(), textureView, nullptr);
-			if (textureImageAllocation != 0)
-				vmaFreeMemory(cx->getAllocator(), textureImageAllocation);
-			if (textureImage != 0)
-				vkDestroyImage(cx->getLogicalDevice(), textureImage, 0);
-		});
-	}
-
 	m_context = nullptr;
-	m_textureView = 0;
-	m_textureImageAllocation = 0;
-	m_textureImage = 0;
+	safeDestroy(m_stagingBuffer);
+	safeDestroy(m_textureImage);
 }
 
 ITexture* CubeTextureVk::resolve()
@@ -174,9 +108,7 @@ int32_t CubeTextureVk::getSide() const
 
 bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
-	T_FATAL_ASSERT(m_stagingBufferAllocation == 0);
-
-	uint32_t lockSize = getTextureSize(
+	uint32_t imageSize = getTextureSize(
 		m_desc.format,
 		m_desc.side,
 		m_desc.side,
@@ -184,30 +116,18 @@ bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 	);
 
 	// Create staging buffer.
-	VkBufferCreateInfo bufferInfo = {};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = lockSize;
-	bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	VmaAllocationCreateInfo aci = {};
-	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-
-	if (vmaCreateBuffer(m_context->getAllocator(), &bufferInfo, &aci, &m_stagingBuffer, &m_stagingBufferAllocation, nullptr) != VK_SUCCESS)
-		return false;	
+	m_stagingBuffer = new Buffer(m_context);
+	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Map staging buffer.
-	uint8_t* data = nullptr;
-	vmaMapMemory(m_context->getAllocator(), m_stagingBufferAllocation, (void**)&data);
-
 	lock.pitch = m_desc.side * sizeof(uint32_t);
-	lock.bits = data;
+	lock.bits = m_stagingBuffer->lock();
 	return true;
 }
 
 void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
-	vmaUnmapMemory(m_context->getAllocator(), m_stagingBufferAllocation);
+	m_stagingBuffer->unlock();
 
 	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
 
@@ -218,7 +138,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage;
+	imb.image = m_textureImage->getVkImage();
 	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	imb.subresourceRange.baseMipLevel = level;
 	imb.subresourceRange.levelCount = 1;
@@ -252,8 +172,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 
 	vkCmdCopyBufferToImage(
 		*commandBuffer,
-		m_stagingBuffer,
-		m_textureImage,
+		*m_stagingBuffer,
+		m_textureImage->getVkImage(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
 		&region
@@ -266,7 +186,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage;
+	imb.image = m_textureImage->getVkImage();
 	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	imb.subresourceRange.baseMipLevel = level;
 	imb.subresourceRange.levelCount = 1;
@@ -287,16 +207,7 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	commandBuffer->submitAndWait();
 
 	// Free staging buffer.
-	m_context->addDeferredCleanup([
-		stagingBuffer = m_stagingBuffer,
-		stagingBufferAllocation = m_stagingBufferAllocation
-	](Context* cx) {
-		vkDestroyBuffer(cx->getLogicalDevice(), stagingBuffer, 0);
-		vmaFreeMemory(cx->getAllocator(), stagingBufferAllocation);
-	});
-
-	m_stagingBuffer = 0;
-	m_stagingBufferAllocation = 0;
+	safeDestroy(m_stagingBuffer);
 }
 
 	}

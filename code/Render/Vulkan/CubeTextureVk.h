@@ -9,9 +9,9 @@ namespace traktor
 	namespace render
 	{
 
-class CommandBufferPool;
+class Buffer;
 class Context;
-class Queue;
+class Image;
 
 struct CubeTextureCreateDesc;
 
@@ -41,18 +41,13 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
-	VkImage getVkImage() const { return m_textureImage; }
-
-	VkImageView getVkImageView() const { return m_textureView; }
+	Image& getImage() const { return *m_textureImage; }
 
 private:
 	Ref< Context > m_context;
+	Ref< Buffer > m_stagingBuffer;
+	Ref< Image > m_textureImage;
 	CubeTextureCreateDesc m_desc;
-	VmaAllocation m_textureImageAllocation;
-	VkImage m_textureImage;
-	VkImageView m_textureView;
-	VmaAllocation m_stagingBufferAllocation;
-	VkBuffer m_stagingBuffer;
 };
 
 	}

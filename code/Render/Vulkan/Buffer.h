@@ -19,7 +19,15 @@ class Buffer : public Object
     T_RTTI_CLASS;
 
 public:
+    Buffer() = delete;
+
+    Buffer(const Buffer&) = delete;
+
+    Buffer(Buffer&&) = default;
+
     explicit Buffer(Context* context);
+
+    virtual ~Buffer();
 
 	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
 

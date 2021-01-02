@@ -9,6 +9,7 @@
 #include "Render/Vulkan/CommandBuffer.h"
 #include "Render/Vulkan/Context.h"
 #include "Render/Vulkan/CubeTextureVk.h"
+#include "Render/Vulkan/Image.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/Queue.h"
@@ -931,12 +932,12 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
 	{
-		sourceImage = sourceSimpleTexture->getVkImage();
+		sourceImage = sourceSimpleTexture->getImage().getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
 	{
-		sourceImage = sourceCubeTexture->getVkImage();
+		sourceImage = sourceCubeTexture->getImage().getVkImage();
 		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
 	}
@@ -950,12 +951,12 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
 	{
-		destinationImage = destinationSimpleTexture->getVkImage();
+		destinationImage = destinationSimpleTexture->getImage().getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	}
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
 	{
-		destinationImage = destinationCubeTexture->getVkImage();
+		destinationImage = destinationCubeTexture->getImage().getVkImage();
 		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
 	}
