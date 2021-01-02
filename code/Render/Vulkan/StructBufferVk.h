@@ -34,7 +34,7 @@ public:
 	VkBuffer getVkBuffer() const { return *m_buffers[m_index]; }
 
 private:
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	RefArray< Buffer > m_buffers;
 	int32_t m_index;
 };

@@ -23,7 +23,7 @@ public:
 
     Buffer(const Buffer&) = delete;
 
-    Buffer(Buffer&&) = default;
+    Buffer(Buffer&&) = delete;
 
     explicit Buffer(Context* context);
 
@@ -40,7 +40,7 @@ public:
     operator VkBuffer () const { return m_buffer; }
 
 private:
-    Ref< Context > m_context;
+    Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkBuffer m_buffer = 0;
     void* m_locked = nullptr;

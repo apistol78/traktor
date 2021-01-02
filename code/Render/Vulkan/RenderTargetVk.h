@@ -60,7 +60,7 @@ public:
 private:
 	friend class RenderTargetSetVk;
 
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
 	VkImage m_image = 0;
 	VmaAllocation m_allocation = 0;

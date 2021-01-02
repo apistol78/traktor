@@ -29,6 +29,8 @@ public:
 		uint32_t computeQueueIndex
 	);
 
+	virtual ~Context();
+
 	void addDeferredCleanup(const cleanup_fn_t& fn);
 
 	void performCleanup();
@@ -39,6 +41,8 @@ public:
 
 	VmaAllocator getAllocator() const { return m_allocator; }
 
+	VkPipelineCache getPipelineCache() const { return m_pipelineCache; }
+
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
 	Queue* getComputeQueue() const { return m_computeQueue; }
@@ -47,10 +51,9 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
-
+	VkPipelineCache m_pipelineCache;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
-
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 };

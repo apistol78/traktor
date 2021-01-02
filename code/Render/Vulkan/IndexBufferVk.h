@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Vulkan/Private/Buffer.h"
 
@@ -7,6 +8,8 @@ namespace traktor
 {
 	namespace render
 	{
+
+class Context;
 
 /*!
  * \ingroup Vulkan
@@ -17,10 +20,12 @@ class IndexBufferVk : public IndexBuffer
 
 public:
 	IndexBufferVk(
+		Context* context,
 		IndexType indexType,
-		uint32_t bufferSize,
-		Buffer&& buffer
+		uint32_t bufferSize
 	);
+
+	bool create();
 
 	virtual void destroy() override final;
 
@@ -28,10 +33,11 @@ public:
 
 	virtual void unlock() override final;
 
-	VkBuffer getVkBuffer() const { return m_buffer; }
+	VkBuffer getVkBuffer() const { return *m_buffer; }
 
 private:
-	Buffer m_buffer;
+	Context* m_context;
+	Ref< Buffer > m_buffer;
 };
 
 	}

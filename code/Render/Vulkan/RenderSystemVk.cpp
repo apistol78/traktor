@@ -503,9 +503,11 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Buffer buffer(m_context);
-	buffer.create(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, true, true);
-	return new IndexBufferVk(indexType, bufferSize, std::move(buffer));
+	Ref< IndexBufferVk > buffer = new IndexBufferVk(m_context, indexType, bufferSize);
+	if (buffer->create())
+		return buffer;
+	else
+		return nullptr;
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)

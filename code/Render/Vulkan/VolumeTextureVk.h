@@ -44,7 +44,7 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	VkImage m_textureImage;
 	VkImageView m_textureView;
 	int32_t m_width;

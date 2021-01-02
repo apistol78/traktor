@@ -17,7 +17,7 @@ Buffer::Buffer(Context* context)
 
 Buffer::~Buffer()
 {
-	T_FATAL_ASSERT_M(m_context == nullptr, L"Not properly destroyed.");
+	T_FATAL_ASSERT_M(m_context == nullptr, L"Buffer not properly destroyed.");
 }
 
 bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
@@ -57,11 +57,10 @@ void Buffer::destroy()
 		](Context* cx) {
 			vmaDestroyBuffer(cx->getAllocator(), buffer, allocation);
 		});
-
-		m_allocation = 0;
-		m_buffer = 0;
-		m_context = nullptr;
 	}
+	m_allocation = 0;
+	m_buffer = 0;
+	m_context = nullptr;
 }
 
 void* Buffer::lock()
