@@ -44,7 +44,7 @@ public:
 	Image& getImage() const { return *m_textureImage; }
 
 private:
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	Ref< Buffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	CubeTextureCreateDesc m_desc;

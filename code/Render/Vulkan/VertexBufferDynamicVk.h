@@ -41,7 +41,7 @@ public:
 	virtual VkBuffer getVkBuffer() const override final;
 
 private:
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	RefArray< Buffer > m_buffers;
 	int32_t m_index;
 };

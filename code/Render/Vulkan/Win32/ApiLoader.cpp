@@ -119,6 +119,8 @@ T_DEFINE_VK(vkDestroyQueryPool);
 T_DEFINE_VK(vkCmdResetQueryPool);
 T_DEFINE_VK(vkCmdWriteTimestamp);
 T_DEFINE_VK(vkGetQueryPoolResults);
+T_DEFINE_VK(vkCreatePipelineCache);
+T_DEFINE_VK(vkGetPipelineCacheData);
 
 T_DEFINE_VK(vkCreateWin32SurfaceKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceSupportKHR);
@@ -235,6 +237,8 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkCmdResetQueryPool);
 	T_RESOLVE_VK(vkCmdWriteTimestamp);
 	T_RESOLVE_VK(vkGetQueryPoolResults);
+	T_RESOLVE_VK(vkCreatePipelineCache);
+	T_RESOLVE_VK(vkGetPipelineCacheData);
 	return true;
 }
 

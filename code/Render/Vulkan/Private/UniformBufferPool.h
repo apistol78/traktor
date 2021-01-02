@@ -38,7 +38,7 @@ private:
 		void* mappedPtr;
 	};
 
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	AlignedVector< BufferChain > m_free[64];
 	AlignedVector< BufferChain > m_released[MaxPendingFrames];
 	uint32_t m_counter;

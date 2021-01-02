@@ -40,7 +40,7 @@ public:
 	virtual VkBuffer getVkBuffer() const override final;
 
 private:
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	Ref< Buffer > m_stageBuffer;
 	Ref< Buffer > m_deviceBuffer;
 };

@@ -56,7 +56,7 @@ public:
     VkImageView getVkImageView() const { return m_imageView; }
 
 private:
-    Ref< Context > m_context;
+    Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkImage m_image = 0;
     VkImageView m_imageView = 0;

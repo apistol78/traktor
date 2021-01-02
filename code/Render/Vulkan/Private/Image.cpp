@@ -19,7 +19,7 @@ Image::Image(Context* context)
 
 Image::~Image()
 {
-	T_FATAL_ASSERT_M(m_context == nullptr, L"Not properly destroyed.");
+	T_FATAL_ASSERT_M(m_context == nullptr, L"Image not properly destroyed.");
 }
 
 bool Image::createSimple(

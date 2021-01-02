@@ -30,7 +30,7 @@ private:
 #endif
 	};
 
-	VkDevice m_logicalDevice;
+	VkDevice m_logicalDevice = 0;;
 	SmallMap< uint32_t, Entry > m_entries;
 	SmallMap< uint32_t, VkSampler > m_samplers;
 };

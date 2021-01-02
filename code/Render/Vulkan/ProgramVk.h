@@ -114,7 +114,7 @@ private:
 	std::wstring m_tag;
 #endif
 
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;

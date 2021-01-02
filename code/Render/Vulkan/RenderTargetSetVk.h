@@ -90,7 +90,7 @@ private:
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;

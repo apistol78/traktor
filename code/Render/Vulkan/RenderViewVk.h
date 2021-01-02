@@ -128,7 +128,7 @@ private:
 		VkPipeline pipeline;
 	};
 
-	Ref< Context > m_context;
+	Context* m_context = nullptr;
 	VkInstance m_instance = 0;
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
