@@ -48,7 +48,7 @@ bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, boo
 
 void Buffer::destroy()
 {
-	T_FATAL_ASSERT(m_locked == nullptr);
+	unlock();
 	if (m_buffer != 0)
 	{
 		m_context->addDeferredCleanup([

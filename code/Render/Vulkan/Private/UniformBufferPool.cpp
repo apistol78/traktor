@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
@@ -30,25 +31,40 @@ UniformBufferPool::UniformBufferPool(Context* context)
 {
 }
 
+UniformBufferPool::~UniformBufferPool()
+{
+	for (auto& chain : m_free)
+	{
+		for (auto& c : chain)
+		{
+			c.buffer->unlock();
+			c.buffer->destroy();
+		}
+	}
+	for (auto& chain : m_released)
+	{
+		for (auto& c : chain)
+		{
+			c.buffer->unlock();
+			c.buffer->destroy();
+		}
+	}
+}
+
 bool UniformBufferPool::acquire(
 	uint32_t size,
-	VkBuffer& inoutBuffer,
-	VmaAllocation& inoutAllocation,
+	Ref< Buffer >& inoutBuffer,
 	void*& inoutMappedPtr
 )
 {
 	if (inoutBuffer != 0)
 	{
-		T_FATAL_ASSERT(inoutAllocation != 0);
-
 		BufferChain& bc = m_released[m_counter].push_back();
 		bc.size = size;
 		bc.buffer = inoutBuffer;
-		bc.allocation = inoutAllocation;
 		bc.mappedPtr = inoutMappedPtr;
 
-		inoutBuffer = 0;
-		inoutAllocation = 0;
+		inoutBuffer = nullptr;
 		inoutMappedPtr = nullptr;
 	}
 
@@ -60,7 +76,6 @@ bool UniformBufferPool::acquire(
 	if (it != free.end())
 	{
 		inoutBuffer = it->buffer;
-		inoutAllocation = it->allocation;
 		inoutMappedPtr = it->mappedPtr;
 		
 		if (it != free.end() - 1)
@@ -70,23 +85,9 @@ bool UniformBufferPool::acquire(
 	}
 	else
 	{
-		VkBufferCreateInfo bci = {};
-		bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bci.size = size;
-		bci.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-		bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-		VmaAllocationCreateInfo aci = {};
-		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-		aci.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
-
-		VmaAllocationInfo ai = {};
-		if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &inoutBuffer, &inoutAllocation, &ai) != VK_SUCCESS)
-			return false;
-
-		setObjectDebugName(m_context->getLogicalDevice(), L"Uniform buffer", (uint64_t)inoutBuffer, VK_OBJECT_TYPE_BUFFER);
-
-		inoutMappedPtr = ai.pMappedData;
+		inoutBuffer = new Buffer(m_context);
+		inoutBuffer->create(size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, true, true);
+		inoutMappedPtr = inoutBuffer->lock();
 	}
 
 	return true;

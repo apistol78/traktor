@@ -202,13 +202,6 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
 		sci.unnormalizedCoordinates = VK_FALSE;
 
-/*
-		if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
-			return false;
-
-		setObjectDebugName(m_logicalDevice, L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
-*/
-
 		VkSampler sampler = pipelineLayoutCache->getSampler(sci);
 		if (!sampler)
 			return false;
@@ -293,7 +286,6 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].allocation,
 				m_uniformBuffers[i].ptr
 			))
 				return false;
@@ -308,7 +300,7 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 		}
 
 		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = m_uniformBuffers[i].buffer;
+		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
@@ -483,7 +475,6 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* 
 			if (!uniformBufferPool->acquire(
 				m_uniformBuffers[i].size,
 				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].allocation,
 				m_uniformBuffers[i].ptr
 			))
 				return false;
@@ -498,7 +489,7 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* 
 		}
 
 		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = m_uniformBuffers[i].buffer;
+		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
@@ -619,6 +610,16 @@ bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* 
 
 void ProgramVk::destroy()
 {
+	for (auto& ub : m_uniformBuffers)
+	{
+		if (ub.buffer)
+		{
+			ub.buffer->unlock();
+			ub.buffer->destroy();
+			ub.buffer = nullptr;
+		}
+	}
+
 	m_vertexShaderModule = 0;
 	m_fragmentShaderModule = 0;
 	m_computeShaderModule = 0;
@@ -627,6 +628,8 @@ void ProgramVk::destroy()
 	m_pipelineLayout = 0;
 
 	m_samplers.clear();
+	m_textures.clear();
+	m_sbuffers.clear();
 }
 
 void ProgramVk::setFloatParameter(handle_t handle, float param)

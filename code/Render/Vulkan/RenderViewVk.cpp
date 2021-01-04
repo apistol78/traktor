@@ -289,6 +289,9 @@ void RenderViewVk::close()
 		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
 
+	// Destroy uniform buffer pool.
+	m_uniformBufferPool = nullptr;
+
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
 
