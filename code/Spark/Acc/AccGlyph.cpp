@@ -58,8 +58,8 @@ const render::Handle s_handleFilterColor(L"Spark_FilterColor");
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccGlyph", AccGlyph, Object)
 
 AccGlyph::AccGlyph()
-:	m_currentVertexBuffer(0)
-,	m_vertex(0)
+:	m_vertex(nullptr)
+,	m_offset(0)
 ,	m_count(0)
 {
 }
@@ -78,16 +78,13 @@ bool AccGlyph::create(
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 
-	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
-	{
-		m_vertexBuffers[i] = renderSystem->createVertexBuffer(
-			vertexElements,
-			c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
-			true
-		);
-		if (!m_vertexBuffers[i])
-			return false;
-	}
+	m_vertexBuffer = renderSystem->createVertexBuffer(
+		vertexElements,
+		c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
+		true
+	);
+	if (!m_vertexBuffer)
+		return false;
 
 	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_glyphCount * 6 * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
@@ -109,21 +106,18 @@ bool AccGlyph::create(
 	}
 
 	m_indexBuffer->unlock();
-
 	return true;
 }
 
 void AccGlyph::destroy()
 {
 	safeDestroy(m_indexBuffer);
-
-	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
-		safeDestroy(m_vertexBuffers[i]);
+	safeDestroy(m_vertexBuffer);
 }
 
 void AccGlyph::beginFrame()
 {
-	m_vertex = (uint8_t*)m_vertexBuffers[m_currentVertexBuffer]->lock();
+	m_vertex = (uint8_t*)m_vertexBuffer->lock();
 	m_offset = 0;
 	m_count = 0;
 }
@@ -131,8 +125,7 @@ void AccGlyph::beginFrame()
 void AccGlyph::endFrame()
 {
 	T_FATAL_ASSERT (m_count == 0);
-	m_vertexBuffers[m_currentVertexBuffer]->unlock();
-	m_currentVertexBuffer = (m_currentVertexBuffer + 1) % sizeof_array(m_vertexBuffers);
+	m_vertexBuffer->unlock();
 }
 
 void AccGlyph::add(
@@ -214,7 +207,6 @@ void AccGlyph::render(
 	if (!sp)
 		return;
 
-	uint32_t currentVertexBuffer = m_currentVertexBuffer;
 	uint32_t offset = m_offset;
 	uint32_t count = m_count;
 
@@ -223,7 +215,7 @@ void AccGlyph::render(
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
 		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffers[currentVertexBuffer];
+		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitive = render::PtTriangles;
 		renderBlock->offset = offset * 6;
 		renderBlock->count = count * 2;
