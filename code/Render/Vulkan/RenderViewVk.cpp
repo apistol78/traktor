@@ -515,6 +515,10 @@ void RenderViewVk::endFrame()
 {
 	auto& frame = m_frames[m_currentImageIndex];
 
+	frame.boundPipeline = 0;
+	frame.boundIndexBuffer = nullptr;
+	frame.boundVertexBuffer = nullptr;
+
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
 
@@ -851,22 +855,30 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
 
-	VkBuffer vbb = vb->getVkBuffer();
-	VkDeviceSize offsets = {};
-	vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &vbb, &offsets);
+	if (frame.boundVertexBuffer != vb)
+	{
+		VkBuffer vbb = vb->getVkBuffer();
+		VkDeviceSize offsets = {};
+		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &vbb, &offsets);
+		frame.boundVertexBuffer = vb;
+	}
 
 	if (indexBuffer && primitives.indexed)
 	{
 		IndexBufferVk* ib = mandatory_non_null_type_cast< IndexBufferVk* >(indexBuffer);
-		VkBuffer ibb = ib->getVkBuffer();
 
-		VkDeviceSize offset = {};
-		vkCmdBindIndexBuffer(
-			*frame.graphicsCommandBuffer,
-			ibb,
-			offset,
-			(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
-		);
+		if (frame.boundIndexBuffer != ib)
+		{
+			VkBuffer ibb = ib->getVkBuffer();
+			VkDeviceSize offset = {};
+			vkCmdBindIndexBuffer(
+				*frame.graphicsCommandBuffer,
+				ibb,
+				offset,
+				(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
+			);
+			frame.boundIndexBuffer = ib;
+		}
 
 		vkCmdDrawIndexed(
 			*frame.graphicsCommandBuffer,
@@ -1607,7 +1619,11 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	if (pipeline != frame.boundPipeline)
+	{
+		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		frame.boundPipeline = pipeline;
+	}
 	return true;
 }
 

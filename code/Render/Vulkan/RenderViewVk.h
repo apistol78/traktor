@@ -120,6 +120,10 @@ private:
 		VkDescriptorPool descriptorPool;
 		VkSemaphore renderFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
+
+		VkPipeline boundPipeline = 0;
+		IndexBufferVk* boundIndexBuffer = nullptr;
+		VertexBufferVk* boundVertexBuffer = nullptr;
 	};
 
 	struct PipelineEntry
