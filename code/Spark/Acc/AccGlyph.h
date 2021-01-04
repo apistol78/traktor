@@ -65,9 +65,8 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_shaderGlyph;
-	Ref< render::VertexBuffer > m_vertexBuffers[4];
+	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	uint32_t m_currentVertexBuffer;
 	uint8_t* m_vertex;
 	uint32_t m_offset;
 	uint32_t m_count;
