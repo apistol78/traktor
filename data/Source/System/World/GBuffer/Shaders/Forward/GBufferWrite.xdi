@@ -122,7 +122,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>PhMedium</precisionHint>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
