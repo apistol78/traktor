@@ -10,6 +10,7 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class CommandBuffer;
 class Context;
 class PipelineLayoutCache;
@@ -80,8 +81,7 @@ private:
 	{
 		uint32_t size = 0;
 		AlignedVector< float > data;
-		VkBuffer buffer = 0;
-		VmaAllocation allocation = 0;
+		Ref< Buffer > buffer;
 		void* ptr = nullptr;
 		bool dirty = true;
 	};

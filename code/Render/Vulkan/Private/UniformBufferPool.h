@@ -9,6 +9,7 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class Context;
 	
 class UniformBufferPool : public Object
@@ -20,10 +21,11 @@ public:
 
 	explicit UniformBufferPool(Context* context);
 
+	virtual ~UniformBufferPool();
+
 	bool acquire(
 		uint32_t size,
-		VkBuffer& inoutBuffer,
-		VmaAllocation& inoutAllocation,
+		Ref< Buffer >& inoutBuffer,
 		void*& inoutMappedPtr
 	);
 
@@ -33,8 +35,7 @@ private:
 	struct BufferChain
 	{
 		uint32_t size;
-		VkBuffer buffer;
-		VmaAllocation allocation;
+		Ref< Buffer > buffer;
 		void* mappedPtr;
 	};
 
