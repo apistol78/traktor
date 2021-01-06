@@ -100,6 +100,7 @@ extern PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
 extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
 extern PFN_vkCreatePipelineCache vkCreatePipelineCache;
 extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
+extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

@@ -1,5 +1,7 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Context.h"
 
 namespace traktor
 {
@@ -11,7 +13,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferVk", StructBufferVk, StructB
 StructBufferVk::StructBufferVk(Context* context, uint32_t bufferSize)
 :	StructBuffer(bufferSize)
 ,	m_context(context)
-,	m_index(0)
 {
 }
 
@@ -26,28 +27,32 @@ bool StructBufferVk::create(int32_t inFlightCount)
 	if (!bufferSize)
 		return false;
 
-	m_buffers.resize(inFlightCount);
-	for (int32_t i = 0; i < inFlightCount; ++i)
-	{
-		m_buffers[i] = new Buffer(m_context);
-		m_buffers[i]->create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true);
-	}
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
+	uint32_t storageBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minStorageBufferOffsetAlignment;
+
+	m_alignedBufferSize = alignUp(bufferSize, storageBufferOffsetAlignment);
+	m_inFlightCount = inFlightCount;
+
+	m_buffer = new Buffer(m_context);
+	m_buffer->create(m_alignedBufferSize * inFlightCount, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true);
 
 	return true;
 }
 
 void StructBufferVk::destroy()
 {
-	for (auto buffer : m_buffers)
-		buffer->destroy();
-	m_buffers.clear();
+	safeDestroy(m_buffer);
 	m_context = nullptr;
 }
 
 void* StructBufferVk::lock()
 {
-	int32_t next = (m_index + 1) % (int32_t)m_buffers.size();
-	return m_buffers[next]->lock();
+	uint8_t* ptr = (uint8_t*)m_buffer->lock();
+	if (!ptr)
+		return nullptr;
+
+	return ptr + m_index * m_alignedBufferSize;
 }
 
 void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
@@ -58,9 +63,9 @@ void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
 
 void StructBufferVk::unlock()
 {
-	int32_t next = (m_index + 1) % (int32_t)m_buffers.size();
-	m_buffers[next]->unlock();
-	m_index = next;
+	m_buffer->unlock();
+	m_offset = m_index * m_alignedBufferSize;
+	m_index = (m_index + 1) % m_inFlightCount;
 }
 
 	}

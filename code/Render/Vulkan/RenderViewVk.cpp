@@ -21,7 +21,6 @@
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/Queue.h"
-#include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 #if defined(__MAC__)
@@ -268,7 +267,6 @@ void RenderViewVk::close()
 	{
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
-		vkDestroyDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, nullptr);
 	}
 	m_frames.clear();
 
@@ -288,9 +286,6 @@ void RenderViewVk::close()
 	for (auto& pipeline : m_pipelines)
 		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
-
-	// Destroy uniform buffer pool.
-	m_uniformBufferPool = nullptr;
 
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
@@ -442,7 +437,6 @@ SystemWindow RenderViewVk::getSystemWindow()
 bool RenderViewVk::beginFrame()
 {
 	const uint64_t timeOut = 5 * 60 * 1000ull * 1000ull * 1000ull;
-	VkResult result;
 
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
@@ -493,11 +487,6 @@ bool RenderViewVk::beginFrame()
 			return false;
 	}
 
-	// Reset descriptor pool.
-	result = vkResetDescriptorPool(m_context->getLogicalDevice(), frame.descriptorPool, 0);
-	if (result != VK_SUCCESS)
-		return false;
-
 	// Reset time queries.
 	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
@@ -539,9 +528,6 @@ void RenderViewVk::endFrame()
 		else
 			it++;
 	}
-
-	// Collect, or cycle, released buffers.
-	m_uniformBufferPool->collect();
 }
 
 void RenderViewVk::present()
@@ -850,7 +836,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		(float)m_targetSet->getWidth(),
 		(float)m_targetSet->getHeight()
 	};
-	p->validateGraphics(frame.descriptorPool, frame.graphicsCommandBuffer, m_uniformBufferPool, targetSize);
+	p->validateGraphics(frame.graphicsCommandBuffer, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
@@ -909,7 +895,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	//auto& frame = m_frames[m_currentImageIndex];
 
 	//ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	//p->validateCompute(frame.descriptorPool, frame.computeCommandBuffer, m_uniformBufferPool);
+	//p->validateCompute(frame.descriptorPool, frame.computeCommandBuffer);
 	//vkCmdDispatch(frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
@@ -1374,25 +1360,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	{
 		auto& frame = m_frames[i];
 
-		VkDescriptorPoolSize dps[4];
-		dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		dps[0].descriptorCount = 40000;
-		dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-		dps[1].descriptorCount = 40000;
-		dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		dps[2].descriptorCount = 40000;
-		dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		dps[3].descriptorCount = 4000;
-
-		VkDescriptorPoolCreateInfo dpci = {};
-		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		dpci.pNext = nullptr;
-		dpci.maxSets = 4096;
-		dpci.poolSizeCount = sizeof_array(dps);
-		dpci.pPoolSizes = dps;
-		if (vkCreateDescriptorPool(m_context->getLogicalDevice(), &dpci, nullptr, &frame.descriptorPool) != VK_SUCCESS)
-			return false;
-
 		VkSemaphoreCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
@@ -1429,9 +1396,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		}
 	}
 #endif
-
-	// Create uniform buffer pool.
-	m_uniformBufferPool = new UniformBufferPool(m_context);
 
 	m_nextQueryIndex = 0;
 	m_lost = false;

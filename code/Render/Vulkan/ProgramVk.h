@@ -16,7 +16,6 @@ class Context;
 class PipelineLayoutCache;
 class ProgramResourceVk;
 class ShaderModuleCache;
-class UniformBufferPool;
 
 /*!
  * \ingroup Vulkan
@@ -26,15 +25,23 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
+	class DescriptorSetKey : public StaticVector< intptr_t, 16 >
+	{
+	public:
+		bool operator < (const DescriptorSetKey& rh) const;
+
+		bool operator > (const DescriptorSetKey& rh) const;
+	};
+
 	explicit ProgramVk(Context* context);
 
 	virtual ~ProgramVk();
 
 	bool create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
 
-	bool validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool, float targetSize[2]);
+	bool validateGraphics(CommandBuffer* commandBuffer, float targetSize[2]);
 
-	bool validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool);
+	bool validateCompute(CommandBuffer* commandBuffer);
 
 	virtual void destroy() override final;
 
@@ -80,9 +87,12 @@ private:
 	struct UniformBuffer
 	{
 		uint32_t size = 0;
+		uint32_t alignedSize = 0;
 		AlignedVector< float > data;
 		Ref< Buffer > buffer;
 		void* ptr = nullptr;
+		uint32_t offset = 0;
+		uint32_t count = 0;
 		bool dirty = true;
 	};
 
@@ -116,21 +126,24 @@ private:
 
 	Context* m_context = nullptr;
 	RenderState m_renderState;
-	VkShaderModule m_vertexShaderModule;
-	VkShaderModule m_fragmentShaderModule;
-	VkShaderModule m_computeShaderModule;
-	VkDescriptorSetLayout m_descriptorSetLayout;
-	VkPipelineLayout m_pipelineLayout;
+	VkShaderModule m_vertexShaderModule = 0;
+	VkShaderModule m_fragmentShaderModule = 0;
+	VkShaderModule m_computeShaderModule = 0;
+	VkDescriptorSetLayout m_descriptorSetLayout = 0;
+	VkPipelineLayout m_pipelineLayout = 0;
+	SmallMap< DescriptorSetKey, VkDescriptorSet > m_descriptorSets;
+	VkDescriptorSet m_descriptorSet = 0;
 	UniformBuffer m_uniformBuffers[3];
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
 	AlignedVector< SBuffer > m_sbuffers;
-	StaticVector< VkDescriptorBufferInfo, 16 > m_bufferInfos;
-	StaticVector< VkDescriptorImageInfo, 16 > m_imageInfos;
-	StaticVector< VkWriteDescriptorSet, 16 + 16 > m_writes;
-	uint32_t m_stencilReference;
-	uint32_t m_shaderHash;
+	uint32_t m_stencilReference = 0;
+	uint32_t m_shaderHash = 0;
+	StaticVector< ITexture*, 16 > m_lastTextures;
+	StaticVector< StructBuffer*, 16 > m_lastSBuffers;
+
+	bool validateDescriptorSet();
 };
 
 	}

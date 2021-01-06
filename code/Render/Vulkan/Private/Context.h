@@ -43,6 +43,8 @@ public:
 
 	VkPipelineCache getPipelineCache() const { return m_pipelineCache; }
 
+	VkDescriptorPool getDescriptorPool() const { return m_descriptorPool; }
+
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
 	Queue* getComputeQueue() const { return m_computeQueue; }
@@ -52,6 +54,7 @@ private:
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
 	VkPipelineCache m_pipelineCache;
+	VkDescriptorPool m_descriptorPool;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
 	Semaphore m_cleanupLock;

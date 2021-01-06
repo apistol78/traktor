@@ -21,7 +21,6 @@ class CommandBuffer;
 class Context;
 class ProgramVk;
 class RenderTargetSetVk;
-class UniformBufferPool;
 class VertexBufferVk;
 
 /*!
@@ -117,7 +116,6 @@ private:
 	struct Frame
 	{
 		Ref< CommandBuffer > graphicsCommandBuffer;
-		VkDescriptorPool descriptorPool;
 		VkSemaphore renderFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
 
@@ -162,9 +160,6 @@ private:
 
 	// Pipelines.
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
-
-	// Uniform buffer pool.
-	Ref< UniformBufferPool > m_uniformBufferPool;
 
 	// Stats.
 	bool m_haveDebugMarkers = false;
