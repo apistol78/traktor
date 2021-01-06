@@ -16,7 +16,6 @@
 #include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/ShaderModuleCache.h"
-#include "Render/Vulkan/Private/UniformBufferPool.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 #undef max
@@ -27,6 +26,9 @@ namespace traktor
 	{
 		namespace
 		{
+
+const uint32_t c_uniformBufferInFlight = 4;
+const uint32_t c_uniformBufferDrawPerFrame = 100;
 
 render::Handle s_handleTargetSize(L"_vk_targetSize");
 
@@ -64,13 +66,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
 ProgramVk::ProgramVk(Context* context)
 :	m_context(context)
-,	m_vertexShaderModule(0)
-,	m_fragmentShaderModule(0)
-,	m_computeShaderModule(0)
-,	m_descriptorSetLayout(0)
-,	m_pipelineLayout(0)
-,	m_stencilReference(0)
-,	m_shaderHash(0)
 {
 }
 
@@ -79,14 +74,20 @@ ProgramVk::~ProgramVk()
 	destroy();
 }
 
-bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag)
+bool ProgramVk::create(
+	ShaderModuleCache* shaderModuleCache,
+	PipelineLayoutCache* pipelineLayoutCache,
+	const ProgramResourceVk* resource,
+	int32_t maxAnistropy,
+	float mipBias,
+	const wchar_t* const tag
+)
 {
 	VkShaderStageFlags stageFlags;
 
 #if defined(_DEBUG)
 	m_tag = tag;
 #endif
-
 	m_renderState = resource->m_renderState;
 	m_shaderHash = resource->m_shaderHash;
 
@@ -108,6 +109,10 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 	}
 
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
+	uint32_t uniformBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minUniformBufferOffsetAlignment;
+
 	// Create descriptor set layouts for shader uniforms.
 	AlignedVector< VkDescriptorSetLayoutBinding  > dslb;
 
@@ -120,7 +125,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		auto& lb = dslb.push_back();
 		lb = {};
 		lb.binding = i;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 		lb.descriptorCount = 1;
 		lb.stageFlags = stageFlags;
 	}
@@ -153,7 +158,7 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 		auto& lb = dslb.push_back();
 		lb = {};
 		lb.binding = sbuffer.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		lb.descriptorCount = 1;
 		lb.stageFlags = stageFlags;
 	}
@@ -167,18 +172,28 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	if (!pipelineLayoutCache->get(resource->m_layoutHash, dlci, m_descriptorSetLayout, m_pipelineLayout))
 		return false;
 
-	// Create uniform shadow buffers.
+	// Create uniform buffers, with CPU side shadow data.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		m_uniformBuffers[i].size = resource->m_uniformBufferSizes[i] * 4;
-		m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
+		m_uniformBuffers[i].size = resource->m_uniformBufferSizes[i] * sizeof(float);
+		if (m_uniformBuffers[i].size > 0)
+		{
+			m_uniformBuffers[i].alignedSize = alignUp(m_uniformBuffers[i].size, uniformBufferOffsetAlignment);
+			m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
+			m_uniformBuffers[i].buffer = new Buffer(m_context);
+			m_uniformBuffers[i].buffer->create(
+				m_uniformBuffers[i].alignedSize * c_uniformBufferInFlight * c_uniformBufferDrawPerFrame,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				true,
+				true
+			);
+			m_uniformBuffers[i].ptr = m_uniformBuffers[i].buffer->lock();
+		}
 	}
 
 	// Create samplers.
 	for (const auto& resourceSampler : resource->m_samplers)
 	{
-		// VkSampler sampler = 0;
-
 		VkSamplerCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 		sci.magFilter = c_filters[resourceSampler.state.magFilter];
@@ -244,189 +259,61 @@ bool ProgramVk::create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache
 	return true;
 }
 
-bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool, float targetSize[2])
+bool ProgramVk::validateGraphics(
+	CommandBuffer* commandBuffer,
+	float targetSize[2]
+)
 {
+	if (!validateDescriptorSet())
+		return false;
+
 	// Set implicit parameters.
 	setVectorParameter(
 		s_handleTargetSize,
 		Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
 	);
 
-	// Allocate a descriptor set for parameters.
-	VkDescriptorSet descriptorSet = 0;
+	// Update content of uniform buffers.
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (!m_uniformBuffers[i].size || !m_uniformBuffers[i].dirty)
+			continue;
 
-	VkDescriptorSetAllocateInfo allocateInfo;
-	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocateInfo.pNext = nullptr;
-	allocateInfo.descriptorPool = descriptorPool;
-	allocateInfo.descriptorSetCount = 1;
-	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
+		uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
+		uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+		std::memcpy(
+			ptr,
+			m_uniformBuffers[i].data.c_ptr(),
+			m_uniformBuffers[i].size
+		);
+		m_uniformBuffers[i].offset = offset;
+		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % (c_uniformBufferInFlight * c_uniformBufferDrawPerFrame);
+		m_uniformBuffers[i].dirty = false;
+	}
 
-	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &allocateInfo, &descriptorSet) != VK_SUCCESS)
-		return false;
-
-#if defined(_DEBUG)
-	// Set debug name of descriptor set.
-	setObjectDebugName(m_context->getLogicalDevice(), m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
-#endif
-
-	m_bufferInfos.resize(0);
-	m_imageInfos.resize(0);
-	m_writes.resize(0);
-
-	// Update scalar uniform buffers.
+	// Get offsets into buffers.
+	StaticVector< uint32_t, 3+8 > bufferOffsets;
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
-
-		// Grab a device buffer; cycle buffers for each update call.
-		if (m_uniformBuffers[i].dirty)
-		{
-			if (!uniformBufferPool->acquire(
-				m_uniformBuffers[i].size,
-				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].ptr
-			))
-				return false;
-
-			std::memcpy(
-				m_uniformBuffers[i].ptr,
-				m_uniformBuffers[i].data.c_ptr(),
-				m_uniformBuffers[i].size
-			);
-
-			m_uniformBuffers[i].dirty = false;
-		}
-
-		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
-		bufferInfo.offset = 0;
-		bufferInfo.range = m_uniformBuffers[i].size;
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = i;
+		bufferOffsets.push_back(m_uniformBuffers[i].offset);
 	}
-
-	// Update sampler bindings.
-	for (const auto& sampler : m_samplers)
-	{
-		auto& imageInfo = m_imageInfos.push_back();
-		imageInfo.sampler = sampler.sampler;
-		imageInfo.imageView = 0;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sampler.binding;
-	}
-
-	// Update texture bindings.
-	for (const auto& texture : m_textures)
-	{
-		if (!texture.texture)
-			continue;
-		
-		Ref< ITexture > resolved = texture.texture->resolve();
-		if (!resolved)
-			continue;
-
-		auto& imageInfo = m_imageInfos.push_back();
-		imageInfo.sampler = 0;
-
-		if (is_a< SimpleTextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< CubeTextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< RenderTargetVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< RenderTargetDepthVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< VolumeTextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-
-		T_ASSERT (imageInfo.imageView != 0);
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = texture.binding;
-	}
-
-	// Update sbuffer bindings.
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.sbuffer)
 			continue;
-
 		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
-		if (!sbvk->isValid())
-			return false;
-
-		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = sbvk->getVkBuffer();
-		bufferInfo.offset = 0;
-		bufferInfo.range = sbvk->getBufferSize();
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sbuffer.binding;
+		bufferOffsets.push_back(sbvk->getVkBufferOffset());
 	}
 
-	if (!m_writes.empty())
-		vkUpdateDescriptorSets(m_context->getLogicalDevice(), (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
-
-	// Push command.
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
-		1, &descriptorSet,
-		0, nullptr
+		1, &m_descriptorSet,
+		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
 
 	if (m_renderState.stencilEnable)
@@ -439,172 +326,53 @@ bool ProgramVk::validateGraphics(VkDescriptorPool descriptorPool, CommandBuffer*
 	return true;
 }
 
-bool ProgramVk::validateCompute(VkDescriptorPool descriptorPool, CommandBuffer* commandBuffer, UniformBufferPool* uniformBufferPool)
+bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 {
-	// Allocate a descriptor set for parameters.
-	VkDescriptorSet descriptorSet = 0;
-
-	VkDescriptorSetAllocateInfo allocateInfo;
-	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocateInfo.pNext = nullptr;
-	allocateInfo.descriptorPool = descriptorPool;
-	allocateInfo.descriptorSetCount = 1;
-	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
-
-	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (!validateDescriptorSet())
 		return false;
 
-#if defined(_DEBUG)
-	// Set debug name of descriptor set.
-	setObjectDebugName(m_context->getLogicalDevice(), m_tag.c_str(), (uint64_t)descriptorSet, VK_OBJECT_TYPE_DESCRIPTOR_SET);
-#endif
+	// Update content of uniform buffers.
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (!m_uniformBuffers[i].size || !m_uniformBuffers[i].dirty)
+			continue;
 
-	m_bufferInfos.resize(0);
-	m_imageInfos.resize(0);
-	m_writes.resize(0);
-	
-	// Update scalar uniform buffers.
+		uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
+		uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+		std::memcpy(
+			ptr,
+			m_uniformBuffers[i].data.c_ptr(),
+			m_uniformBuffers[i].size
+		);
+		m_uniformBuffers[i].offset = offset;
+		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % (4 * 1000);
+		m_uniformBuffers[i].dirty = false;
+	}
+
+	// Get offsets into buffers.
+	StaticVector< uint32_t, 3+8 > bufferOffsets;
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
-
-		// Grab a device buffer; cycle buffers for each update call.
-		if (m_uniformBuffers[i].dirty)
-		{
-			if (!uniformBufferPool->acquire(
-				m_uniformBuffers[i].size,
-				m_uniformBuffers[i].buffer,
-				m_uniformBuffers[i].ptr
-			))
-				return false;
-
-			std::memcpy(
-				m_uniformBuffers[i].ptr,
-				m_uniformBuffers[i].data.c_ptr(),
-				m_uniformBuffers[i].size
-			);
-
-			m_uniformBuffers[i].dirty = false;
-		}
-
-		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
-		bufferInfo.offset = 0;
-		bufferInfo.range = m_uniformBuffers[i].size;
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = i;
+		bufferOffsets.push_back(m_uniformBuffers[i].offset);
 	}
-
-	// Update sampler bindings.
-	for (const auto& sampler : m_samplers)
-	{
-		auto& imageInfo = m_imageInfos.push_back();
-		imageInfo.sampler = sampler.sampler;
-		imageInfo.imageView = 0;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sampler.binding;
-	}
-
-	// Update texture bindings.
-	for (const auto& texture : m_textures)
-	{
-		if (!texture.texture)
-			continue;
-		
-		Ref< ITexture > resolved = texture.texture->resolve();
-		if (!resolved)
-			continue;
-
-		VkImageView imageView = 0;
-		if (is_a< SimpleTextureVk >(resolved))
-			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-		else if (is_a< CubeTextureVk >(resolved))
-			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-		else if (is_a< RenderTargetVk >(resolved))
-			imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< RenderTargetDepthVk >(resolved))
-			imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
-		else if (is_a< VolumeTextureVk >(resolved))
-			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getImage().getVkImageView();
-
-		if (!imageView)
-			continue;
-
-		auto& imageInfo = m_imageInfos.push_back();
-		imageInfo.sampler = 0;
-		imageInfo.imageView = imageView;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = texture.binding;
-	}
-
-	// Update sbuffer bindings.
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.sbuffer)
 			continue;
-
 		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
-
-		auto& bufferInfo = m_bufferInfos.push_back();
-		bufferInfo.buffer = sbvk->getVkBuffer();
-		bufferInfo.offset = 0;
-		bufferInfo.range = sbvk->getBufferSize();
-
-		auto& write = m_writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sbuffer.binding;
+		bufferOffsets.push_back(sbvk->getVkBufferOffset());
 	}
 
-	if (!m_writes.empty())
-		vkUpdateDescriptorSets(m_context->getLogicalDevice(), (uint32_t)m_writes.size(), m_writes.c_ptr(), 0, nullptr);
-
-	// Push command.
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_COMPUTE,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
-		1, &descriptorSet,
-		0, nullptr
+		1, &m_descriptorSet,
+		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
-
 	return true;
 }
 
@@ -619,6 +387,16 @@ void ProgramVk::destroy()
 			ub.buffer = nullptr;
 		}
 	}
+
+	for (auto it : m_descriptorSets)
+	{
+		m_context->addDeferredCleanup([
+			descriptorSet = it.second
+		](Context* cx) {
+			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
+		});
+	}
+	m_descriptorSets.clear();
 
 	m_vertexShaderModule = 0;
 	m_fragmentShaderModule = 0;
@@ -712,6 +490,212 @@ void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBu
 void ProgramVk::setStencilReference(uint32_t stencilReference)
 {
 	m_stencilReference = stencilReference;
+}
+
+bool ProgramVk::validateDescriptorSet()
+{
+	// Create key from current bound resources.
+	DescriptorSetKey key;
+	for (const auto& texture : m_textures)
+	{
+		if (!texture.texture)
+			continue;
+		auto resolved = texture.texture->resolve();
+		if (!resolved)
+			continue;
+		key.push_back((intptr_t)resolved);
+	}
+	for (const auto& sbuffer : m_sbuffers)
+	{
+		if (!sbuffer.sbuffer)
+			continue;
+		key.push_back((intptr_t)sbuffer.sbuffer.c_ptr());
+	}
+
+	// Get already created descriptor set for bound resources.
+	auto it = m_descriptorSets.find(key);
+	if (it != m_descriptorSets.end())
+	{
+		m_descriptorSet = it->second;
+		return true;
+	}
+
+	// No such descriptor set found, need to create another set.
+	VkDescriptorSetAllocateInfo dsai;
+	dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	dsai.pNext = nullptr;
+	dsai.descriptorPool = m_context->getDescriptorPool();
+	dsai.descriptorSetCount = 1;
+	dsai.pSetLayouts = &m_descriptorSetLayout;
+	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &dsai, &m_descriptorSet) != VK_SUCCESS)
+		return false;
+
+	StaticVector< VkDescriptorBufferInfo, 16 > bufferInfos;
+	StaticVector< VkDescriptorImageInfo, 16 > imageInfos;
+	StaticVector< VkWriteDescriptorSet, 16 + 16 > writes;
+
+	// Add uniform buffer bindings.
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (!m_uniformBuffers[i].size)
+			continue;
+
+		auto& bufferInfo = bufferInfos.push_back();
+		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = m_uniformBuffers[i].size;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		write.pBufferInfo = &bufferInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = i;
+	}
+
+	// Add sampler bindings.
+	for (const auto& sampler : m_samplers)
+	{
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = sampler.sampler;
+		imageInfo.imageView = 0;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = sampler.binding;
+	}
+
+	// Add texture bindings.
+	for (const auto& texture : m_textures)
+	{
+		if (!texture.texture)
+			continue;
+		auto resolved = texture.texture->resolve();
+		if (!resolved)
+			continue;
+
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = 0;
+
+		if (is_a< SimpleTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< CubeTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< RenderTargetVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< RenderTargetDepthVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+		}
+		else if (is_a< VolumeTextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		}
+
+		T_ASSERT (imageInfo.imageView != 0);
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = texture.binding;
+	}
+
+	// Add sbuffer bindings.
+	for (const auto& sbuffer : m_sbuffers)
+	{
+		if (!sbuffer.sbuffer)
+			continue;
+
+		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
+
+		auto& bufferInfo = bufferInfos.push_back();
+		bufferInfo.buffer = sbvk->getVkBuffer();
+		bufferInfo.offset = 0;
+		bufferInfo.range = sbvk->getBufferSize();
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+		write.pBufferInfo = &bufferInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = sbuffer.binding;
+	}
+
+	vkUpdateDescriptorSets(
+		m_context->getLogicalDevice(),
+		(uint32_t)writes.size(),
+		writes.c_ptr(),
+		0,
+		nullptr
+	);
+
+	m_descriptorSets.insert(key, m_descriptorSet);
+	return true;
+}
+
+bool ProgramVk::DescriptorSetKey::operator < (const DescriptorSetKey& rh) const
+{
+	if (size() < rh.size())
+		return true;
+	if (size() > rh.size())
+		return false;
+
+	for (uint32_t i = 0; i < size(); ++i)
+	{
+		if ((*this)[i] < rh[i])
+			return true;
+	}
+
+	return false;
+}
+
+bool ProgramVk::DescriptorSetKey::operator > (const DescriptorSetKey& rh) const
+{
+	if (size() < rh.size())
+		return false;
+	if (size() > rh.size())
+		return true;
+
+	for (uint32_t i = 0; i < size(); ++i)
+	{
+		if ((*this)[i] > rh[i])
+			return true;
+	}
+
+	return false;
 }
 
 	}

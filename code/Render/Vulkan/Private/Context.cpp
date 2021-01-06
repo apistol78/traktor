@@ -28,12 +28,15 @@ Context::Context(
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
 ,	m_pipelineCache(0)
+,	m_descriptorPool(0)
 {
 	AlignedVector< uint8_t > buffer;
 
+	// Create queues.
 	m_graphicsQueue = Queue::create(this, graphicsQueueIndex);
 	m_computeQueue = Queue::create(this, computeQueueIndex);
 
+	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
 	pcci.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 	pcci.flags = 0;
@@ -61,10 +64,31 @@ Context::Context(
 		nullptr,
 		&m_pipelineCache
 	);
+
+	// Create descriptor set pool.
+	VkDescriptorPoolSize dps[4];
+	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	dps[0].descriptorCount = 40000;
+	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	dps[1].descriptorCount = 40000;
+	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	dps[2].descriptorCount = 40000;
+	dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	dps[3].descriptorCount = 4000;
+
+	VkDescriptorPoolCreateInfo dpci = {};
+	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	dpci.pNext = nullptr;
+	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	dpci.maxSets = 4096;
+	dpci.poolSizeCount = sizeof_array(dps);
+	dpci.pPoolSizes = dps;
+	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 }
 
 Context::~Context()
 {
+	// Save pipeline cache.
 	size_t size = 0;
 	vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, nullptr);
 	if (size > 0)
@@ -83,6 +107,13 @@ Context::~Context()
 	 		file->write(buffer.c_ptr(), size);
 	 		file->close();
 		}
+	}
+
+	// Destroy descriptor pool.
+	if (m_descriptorPool != 0)
+	{
+		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
+		m_descriptorPool = 0;
 	}
 }
 

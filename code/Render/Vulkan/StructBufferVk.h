@@ -31,14 +31,17 @@ public:
 
 	virtual void unlock() override final;
 
-	bool isValid() const { return !m_buffers.empty(); }
+	VkBuffer getVkBuffer() const { return *m_buffer; }
 
-	VkBuffer getVkBuffer() const { return *m_buffers[m_index]; }
+	uint32_t getVkBufferOffset() const { return m_offset; }
 
 private:
 	Context* m_context = nullptr;
-	RefArray< Buffer > m_buffers;
-	int32_t m_index;
+	Ref< Buffer > m_buffer;
+	uint32_t m_alignedBufferSize = 0;
+	int32_t m_inFlightCount = 0;
+	int32_t m_index = 0;
+	uint32_t m_offset = 0;
 };
 
 	}
