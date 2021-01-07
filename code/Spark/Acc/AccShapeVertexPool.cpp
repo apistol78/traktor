@@ -58,7 +58,7 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
 		m_vertexElements,
 		vertexCount * render::getVertexSize(m_vertexElements),
-		false
+		true
 	);
 	if (!vertexBuffer)
 		return false;
