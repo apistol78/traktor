@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Serialization/ISerializable.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -12,58 +13,122 @@
 
 namespace traktor
 {
+	namespace net
+	{
+
+class BidirectionalObjectTransport;
+
+	}
+
 	namespace runtime
 	{
 
-/*! Target performance event from running target.
- * \ingroup Runtime
- */
-class T_DLLCLASS TargetPerformance : public ISerializable
+class T_DLLCLASS TargetPerfSet : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	float time;
-	float fps;
-	float update;
-	float build;
-	float render;
-	float physics;
-	float input;
-	float garbageCollect;
-	float steps;
-	float interval;
-	uint32_t collisions;	// Render collisions, when update and render threads collide.
+	virtual bool check(const TargetPerfSet& old) const = 0;
+};
 
-	// CPU memory usage.
-	uint32_t memInUse;
-	uint32_t memInUseScript;
-	int32_t memCount;
-	int32_t memDeltaCount;
-	uint32_t heapObjects;
+class T_DLLCLASS TpsRuntime : public TargetPerfSet
+{
+	T_RTTI_CLASS;
 
-	// Render usage.
-	uint32_t gpuMemInUse;
-	uint32_t passCount;
-	uint32_t drawCalls;
-	uint32_t primitiveCount;
+public:
+	float fps = 0.0f;
+	float update = 0.0f;
+	float build = 0.0f;
+	float render = 0.0f;
+	float physics = 0.0f;
+	float input = 0.0f;
+	float garbageCollect = 0.0f;
+	float steps = 0.0f;
+	float interval = 0.0f;
+	uint32_t collisions = 0;	//!< Render collisions, when update and render threads collide.
 
-	// Resource usage.
-	uint32_t residentResourcesCount;
-	uint32_t exclusiveResourcesCount;
-
-	// Physics usage.
-	uint32_t bodyCount;
-	uint32_t activeBodyCount;
-	uint32_t manifoldCount;
-	uint32_t queryCount;
-
-	// Audio usage.
-	uint32_t activeSoundChannels;
-
-	TargetPerformance();
+	virtual bool check(const TargetPerfSet& old) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TpsMemory : public TargetPerfSet
+{
+	T_RTTI_CLASS;
+
+public:
+	uint32_t memInUse = 0;
+	uint32_t memInUseScript = 0;
+	int32_t memCount = 0;
+	uint32_t heapObjects = 0;
+
+	virtual bool check(const TargetPerfSet& old) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TpsRender : public TargetPerfSet
+{
+	T_RTTI_CLASS;
+
+public:
+	render::RenderSystemStatistics renderSystemStats;
+	render::RenderViewStatistics renderViewStats;
+
+	virtual bool check(const TargetPerfSet& old) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TpsResource : public TargetPerfSet
+{
+	T_RTTI_CLASS;
+
+public:
+	uint32_t residentResourcesCount = 0;
+	uint32_t exclusiveResourcesCount = 0;
+
+	virtual bool check(const TargetPerfSet& old) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TpsPhysics : public TargetPerfSet
+{
+	T_RTTI_CLASS;
+
+public:
+	uint32_t bodyCount = 0;
+	uint32_t activeBodyCount = 0;
+	uint32_t manifoldCount = 0;
+	uint32_t queryCount = 0;
+
+	virtual bool check(const TargetPerfSet& old) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TpsAudio : public TargetPerfSet
+{
+	T_RTTI_CLASS;
+
+public:
+	uint32_t activeSoundChannels = 0;
+
+	virtual bool check(const TargetPerfSet& old) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+};
+
+class T_DLLCLASS TargetPerformance : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	void publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance);
+
+private:
+	SmallMap< const TypeInfo*, Ref< TargetPerfSet > > m_last;
 };
 
 	}

@@ -1364,7 +1364,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
 
-		frame.primaryTarget = new RenderTargetSetVk(m_context);
+		static uint32_t primaryInstances = 0;
+		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
 		if (!frame.primaryTarget->createPrimary(
 			width,
 			height,

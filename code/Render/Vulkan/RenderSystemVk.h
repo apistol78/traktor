@@ -92,6 +92,7 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VkDebugUtilsMessengerEXT m_debugMessenger;
+	RenderSystemStatistics m_statistics;
 	Ref< Context > m_context;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;

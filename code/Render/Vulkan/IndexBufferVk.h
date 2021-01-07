@@ -22,7 +22,8 @@ public:
 	IndexBufferVk(
 		Context* context,
 		IndexType indexType,
-		uint32_t bufferSize
+		uint32_t bufferSize,
+		uint32_t& instances
 	);
 
 	virtual ~IndexBufferVk();
@@ -40,6 +41,7 @@ public:
 private:
 	Context* m_context;
 	Ref< Buffer > m_buffer;
+	uint32_t& m_instances;
 };
 
 	}

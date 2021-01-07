@@ -33,7 +33,7 @@ public:
 		bool operator > (const DescriptorSetKey& rh) const;
 	};
 
-	explicit ProgramVk(Context* context);
+	explicit ProgramVk(Context* context, uint32_t& instances);
 
 	virtual ~ProgramVk();
 
@@ -125,6 +125,7 @@ private:
 #endif
 
 	Context* m_context = nullptr;
+	uint32_t& m_instances;
 	RenderState m_renderState;
 	VkShaderModule m_vertexShaderModule = 0;
 	VkShaderModule m_fragmentShaderModule = 0;

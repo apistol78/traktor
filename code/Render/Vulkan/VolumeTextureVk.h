@@ -22,7 +22,7 @@ class VolumeTextureVk : public IVolumeTexture
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumeTextureVk(Context* context);
+	explicit VolumeTextureVk(Context* context, uint32_t& instances);
 
 	virtual ~VolumeTextureVk();
 
@@ -44,6 +44,7 @@ public:
 
 private:
 	Context* m_context = nullptr;
+	uint32_t& m_instances;
 	Ref< Buffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	VolumeTextureCreateDesc m_desc;

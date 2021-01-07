@@ -76,7 +76,12 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 )
 {
 	if (pCallbackData && pCallbackData->pMessage)
-		log::info << mbstows(pCallbackData->pMessage) << Endl;
+	{
+		if (
+			std::strcmp(pCallbackData->pMessage, "fragment shader writes to output location 0 with no matching attachment") != 0
+		)
+			log::info << mbstows(pCallbackData->pMessage) << Endl;
+	}
 	return VK_FALSE;
 }
 		}
@@ -487,13 +492,13 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 	if (dynamic)
 	{
-		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(m_context, bufferSize, vibd, vads, cs.get());
+		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(m_context, bufferSize, vibd, vads, cs.get(), m_statistics.vertexBuffers);
 		if (vb->create(4))
 			return vb;
 	}
 	else
 	{
-		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, bufferSize, vibd, vads, cs.get());
+		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, bufferSize, vibd, vads, cs.get(), m_statistics.vertexBuffers);
 		if (vb->create())
 			return vb;
 	}
@@ -503,7 +508,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Ref< IndexBufferVk > buffer = new IndexBufferVk(m_context, indexType, bufferSize);
+	Ref< IndexBufferVk > buffer = new IndexBufferVk(m_context, indexType, bufferSize, m_statistics.indexBuffers);
 	if (buffer->create())
 		return buffer;
 	else
@@ -512,7 +517,7 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	Ref< StructBufferVk > buffer = new StructBufferVk(m_context, bufferSize);
+	Ref< StructBufferVk > buffer = new StructBufferVk(m_context, bufferSize, m_statistics.structBuffers);
 	if (buffer->create(4))
 		return buffer;
 	else
@@ -521,7 +526,7 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< SimpleTextureVk > texture = new SimpleTextureVk(m_context);
+	Ref< SimpleTextureVk > texture = new SimpleTextureVk(m_context, m_statistics.simpleTextures);
 	if (texture->create(desc, tag))
 		return texture;
 	else
@@ -530,7 +535,7 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< CubeTextureVk > texture = new CubeTextureVk(m_context, desc);
+	Ref< CubeTextureVk > texture = new CubeTextureVk(m_context, desc, m_statistics.cubeTextures);
 	if (texture->create(tag))
 		return texture;
 	else
@@ -539,7 +544,7 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< VolumeTextureVk > texture = new VolumeTextureVk(m_context);
+	Ref< VolumeTextureVk > texture = new VolumeTextureVk(m_context, m_statistics.volumeTextures);
 	if (texture->create(desc, tag))
 		return texture;
 	else
@@ -548,7 +553,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 
 Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
-	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(m_context);
+	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(m_context, m_statistics.renderTargetSets);
 	if (renderTargetSet->create(desc, sharedDepthStencil, tag))
 		return renderTargetSet;
 	else
@@ -561,7 +566,7 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return nullptr;
 
-	Ref< ProgramVk > program = new ProgramVk(m_context);
+	Ref< ProgramVk > program = new ProgramVk(m_context, m_statistics.programs);
 	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
 		return program;
 	else
@@ -576,6 +581,8 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	VmaStats stats = {};
 	vmaCalculateStats(m_allocator, &stats);
+
+	outStatistics = m_statistics;
 	outStatistics.memoryUsage = stats.total.usedBytes;
 }
 

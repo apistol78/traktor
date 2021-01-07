@@ -343,6 +343,8 @@ struct RenderSystemStatistics
 
 	// Number of alive resources.
 	uint32_t vertexBuffers = 0;
+	uint32_t indexBuffers = 0;
+	uint32_t structBuffers = 0;
 	uint32_t simpleTextures = 0;
 	uint32_t cubeTextures = 0;
 	uint32_t volumeTextures = 0;

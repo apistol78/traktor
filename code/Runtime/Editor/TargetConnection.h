@@ -64,7 +64,12 @@ public:
 
 	net::BidirectionalObjectTransport* getTransport() const { return m_transport; }
 
-	const TargetPerformance& getPerformance() const { return m_performance; }
+	const TargetPerfSet* getPerformance(const TypeInfo& perfSetType);
+
+	template < typename PerfType >
+	const PerfType& getPerformance() {
+		return *(const PerfType*)getPerformance(type_of< PerfType >());
+	}
 
 	void setProfilerEventsCallback(IProfilerEventsCallback* profilerEventsCallback);
 
@@ -75,7 +80,7 @@ private:
 	Ref<script::IScriptDebuggerSessions> m_targetDebuggerSessions;
 	Ref< TargetScriptDebugger > m_targetDebugger;
 	Ref< TargetScriptProfiler > m_targetProfiler;
-	TargetPerformance m_performance;
+	SmallMap< const TypeInfo*, Ref< TargetPerfSet > > m_performance;
 	SmallMap< uint16_t, std::wstring > m_dictionary;
 	IProfilerEventsCallback* m_profilerEventsCallback;
 	Semaphore m_lock;

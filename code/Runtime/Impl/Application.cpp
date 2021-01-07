@@ -951,73 +951,80 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
-			int32_t lastAllocCount = m_targetPerformance.memCount;
-			int32_t allocCount = (int32_t)Alloc::count();
-
-			render::RenderSystemStatistics rss;
-			m_renderServer->getRenderSystem()->getStatistics(rss);
-
-			resource::ResourceManagerStatistics rms;
-			m_resourceServer->getResourceManager()->getStatistics(rms);
-
-			m_targetPerformance.time = m_updateInfo.m_totalTime;
-			m_targetPerformance.fps = 1.0f / m_updateInfo.m_frameDeltaTime;
-
-			if (updateCount > 0)
+			// Runtime
 			{
-				m_targetPerformance.update = (float)(updateDuration / updateCount);
-				m_targetPerformance.physics = (float)(physicsDuration / updateCount);
-				m_targetPerformance.input = (float)(inputDuration / updateCount);
-			}
-			else
-			{
-				m_targetPerformance.update = 0.0f;
-				m_targetPerformance.physics = 0.0f;
-				m_targetPerformance.input = 0.0f;
+				TpsRuntime tp;
+				tp.fps = 1.0f / m_updateInfo.m_frameDeltaTime;
+				if (updateCount > 0)
+				{
+					tp.update = (float)(updateDuration / updateCount);
+					tp.physics = (float)(physicsDuration / updateCount);
+					tp.input = (float)(inputDuration / updateCount);
+				}		
+				tp.build = (float)(buildTimeEnd - buildTimeStart);
+				tp.render = m_renderGpuDuration;
+				tp.garbageCollect = (float)gcDuration;
+				tp.steps = (float)updateCount;
+				tp.interval = updateInterval;
+				tp.collisions = m_renderCollisions;
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
 			}
 
-			m_targetPerformance.build = (float)(buildTimeEnd - buildTimeStart);
-			m_targetPerformance.render = m_renderGpuDuration;
-
-			m_targetPerformance.garbageCollect = (float)gcDuration;
-			m_targetPerformance.steps = (float)updateCount;
-			m_targetPerformance.interval = updateInterval;
-			m_targetPerformance.collisions = m_renderCollisions;
-			
-			m_targetPerformance.memInUse = (uint32_t)Alloc::allocated();
-			m_targetPerformance.memCount = allocCount;
-			m_targetPerformance.memDeltaCount = allocCount - lastAllocCount;
-			m_targetPerformance.heapObjects = Object::getHeapObjectCount();
-
-			m_targetPerformance.gpuMemInUse = (uint32_t)rss.memoryUsage;
-			m_targetPerformance.passCount = m_renderViewStats.passCount;
-			m_targetPerformance.drawCalls = m_renderViewStats.drawCalls;
-			m_targetPerformance.primitiveCount = m_renderViewStats.primitiveCount;
-
-			m_targetPerformance.residentResourcesCount = rms.residentCount;
-			m_targetPerformance.exclusiveResourcesCount = rms.exclusiveCount;
-
-			if (m_scriptServer)
+			// Memory
 			{
-				script::ScriptStatistics ss;
-				m_scriptServer->getScriptManager()->getStatistics(ss);
-				m_targetPerformance.memInUseScript = ss.memoryUsage;
+				TpsMemory tp;
+				tp.memInUse = (uint32_t)Alloc::allocated();
+				tp.memCount = (int32_t)Alloc::count();
+				tp.heapObjects = Object::getHeapObjectCount();
+				if (m_scriptServer)
+				{
+					script::ScriptStatistics ss;
+					m_scriptServer->getScriptManager()->getStatistics(ss);
+					tp.memInUseScript = ss.memoryUsage;
+				}
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
 			}
 
-			if (m_physicsServer)
+			// Render
 			{
-				physics::PhysicsStatistics ps;
-				m_physicsServer->getPhysicsManager()->getStatistics(ps);
-				m_targetPerformance.bodyCount = ps.bodyCount;
-				m_targetPerformance.activeBodyCount = ps.activeCount;
-				m_targetPerformance.manifoldCount = ps.manifoldCount;
-				m_targetPerformance.queryCount = ps.queryCount;
+				TpsRender tp;
+				m_renderServer->getRenderSystem()->getStatistics(tp.renderSystemStats);
+				tp.renderViewStats = m_renderViewStats;
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
 			}
 
-			if (m_audioServer)
-				m_targetPerformance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+			// Resource
+			{
+				TpsResource tp;
+				resource::ResourceManagerStatistics rms;
+				m_resourceServer->getResourceManager()->getStatistics(rms);
+				tp.residentResourcesCount = rms.residentCount;
+				tp.exclusiveResourcesCount = rms.exclusiveCount;
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
+			}
 
-			m_targetManagerConnection->getTransport()->send(&m_targetPerformance);
+			// Physics
+			{
+				TpsPhysics tp;
+				if (m_physicsServer)
+				{
+					physics::PhysicsStatistics ps;
+					m_physicsServer->getPhysicsManager()->getStatistics(ps);
+					tp.bodyCount = ps.bodyCount;
+					tp.activeBodyCount = ps.activeCount;
+					tp.manifoldCount = ps.manifoldCount;
+					tp.queryCount = ps.queryCount;
+				}
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
+			}
+
+			// Audio
+			{
+				TpsAudio tp;
+				if (m_audioServer)
+					tp.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
+			}
 		}
 #endif
 	}

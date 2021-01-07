@@ -76,10 +76,10 @@ bool TargetConnection::update()
 	}
 
 	{
-		Ref< TargetPerformance > performance;
-		while (m_transport->recv< TargetPerformance >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
+		Ref< TargetPerfSet > performance;
+		while (m_transport->recv< TargetPerfSet >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
 		{
-			m_performance = *performance;
+			m_performance[&type_of(performance)] = performance;
 			m_transport->flush< TargetPerformance >();
 		}
 	}
@@ -127,6 +127,19 @@ bool TargetConnection::update()
 		m_targetDebugger->update();
 
 	return true;
+}
+
+const TargetPerfSet* TargetConnection::getPerformance(const TypeInfo& perfSetType)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	auto it = m_performance.find(&perfSetType);
+	if (it != m_performance.end())
+		return it->second;
+
+	Ref< TargetPerfSet > perfSet = (TargetPerfSet*)perfSetType.createInstance();
+	m_performance.insert(&perfSetType, perfSet);
+	return perfSet;
 }
 
 void TargetConnection::setProfilerEventsCallback(IProfilerEventsCallback* profilerEventsCallback)

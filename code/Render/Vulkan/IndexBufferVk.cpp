@@ -12,16 +12,20 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferVk", IndexBufferVk, IndexBuff
 IndexBufferVk::IndexBufferVk(
 	Context* context,
 	IndexType indexType,
-	uint32_t bufferSize
+	uint32_t bufferSize,
+	uint32_t& instances
 )
 :	IndexBuffer(indexType, bufferSize)
 ,	m_context(context)
+,	m_instances(instances)
 {
+	Atomic::increment((int32_t&)m_instances);
 }
 
 IndexBufferVk::~IndexBufferVk()
 {
 	destroy();
+	Atomic::decrement((int32_t&)m_instances);
 }
 
 bool IndexBufferVk::create()
