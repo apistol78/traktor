@@ -33,7 +33,6 @@ void ScriptComponent::setOwner(Entity* owner)
 	m_object = nullptr;
 	m_methodSetTransform = nullptr;
 	m_methodUpdate = nullptr;
-	validate();
 }
 
 void ScriptComponent::setTransform(const Transform& transform)
