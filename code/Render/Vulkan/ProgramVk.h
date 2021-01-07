@@ -131,6 +131,7 @@ private:
 	VkShaderModule m_computeShaderModule = 0;
 	VkDescriptorSetLayout m_descriptorSetLayout = 0;
 	VkPipelineLayout m_pipelineLayout = 0;
+	uint32_t m_descriptorPoolRevision = ~0U;
 	SmallMap< DescriptorSetKey, VkDescriptorSet > m_descriptorSets;
 	VkDescriptorSet m_descriptorSet = 0;
 	UniformBuffer m_uniformBuffers[3];
@@ -140,8 +141,6 @@ private:
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
-	StaticVector< ITexture*, 16 > m_lastTextures;
-	StaticVector< StructBuffer*, 16 > m_lastSBuffers;
 
 	bool validateDescriptorSet();
 };

@@ -29,6 +29,7 @@ Context::Context(
 ,	m_allocator(allocator)
 ,	m_pipelineCache(0)
 ,	m_descriptorPool(0)
+,	m_descriptorPoolRevision(0)
 {
 	AlignedVector< uint8_t > buffer;
 
@@ -140,6 +141,10 @@ void Context::performCleanup()
 	// Invoke cleanups.
 	for (const auto& cleanupFn : cleanupFns)
 		cleanupFn(this);
+
+	// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
+	vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
+	m_descriptorPoolRevision++;
 }
 
 	}
