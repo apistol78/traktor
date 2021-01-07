@@ -49,6 +49,7 @@ void Graph::addEdge(Edge* edge)
 
 void Graph::removeEdge(Edge* edge)
 {
+	T_ANONYMOUS_VAR(Ref< Edge >)(edge);
 	if (m_edges.remove(edge))
 	{
 		T_ASSERT(m_inputPinToEdge.find(edge->getDestination()) != m_inputPinToEdge.end());

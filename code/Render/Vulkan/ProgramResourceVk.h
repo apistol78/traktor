@@ -25,19 +25,21 @@ class T_DLLCLASS ProgramResourceVk : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
+	enum BindStages
+	{
+		BsVertex = 1,
+		BsFragment = 2,
+		BsCompute = 4
+	};
+
 	struct ParameterDesc
 	{
 		std::wstring name;
-		uint32_t buffer;	//!< Index into which uniform buffer (0-2).
-		uint32_t offset;	//!< Offset in 4-byte floats.
-		uint32_t size;		//!< Size in 4-byte floats.
+		uint32_t buffer = 0;	//!< Index into which uniform buffer (0-2).
+		uint32_t offset = 0;	//!< Offset in 4-byte floats.
+		uint32_t size = 0;		//!< Size in 4-byte floats.
 
-		ParameterDesc()
-		:	buffer(0)
-		,	offset(0)
-		,	size(0)
-		{
-		}
+		ParameterDesc() = default;
 
 		ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
 		:	name(name_)
@@ -52,16 +54,15 @@ public:
 
 	struct SamplerDesc
 	{
-		uint32_t binding;
+		uint32_t binding = 0;
+		uint8_t stages = 0;
 		SamplerState state;
 
-		SamplerDesc()
-		:	binding(0)
-		{
-		}
+		SamplerDesc() = default;
 
-		SamplerDesc(uint32_t binding_, const SamplerState& state_)
+		SamplerDesc(uint32_t binding_, uint8_t stages_, const SamplerState& state_)
 		:	binding(binding_)
+		,	stages(stages_)
 		,	state(state_)
 		{
 		}
@@ -72,16 +73,15 @@ public:
 	struct TextureDesc
 	{
 		std::wstring name;
-		uint32_t binding;
+		uint32_t binding = 0;
+		uint8_t stages = 0;
 
-		TextureDesc()
-		:	binding(0)
-		{
-		}
+		TextureDesc() = default;
 
-		explicit TextureDesc(const std::wstring& name_, uint32_t binding_)
+		TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
 		:	name(name_)
 		,	binding(binding_)
+		,	stages(stages_)
 		{
 		}
 
@@ -91,16 +91,15 @@ public:
 	struct SBufferDesc
 	{
 		std::wstring name;
-		uint32_t binding;
+		uint32_t binding = 0;
+		uint8_t stages = 0;
 
-		SBufferDesc()
-		:	binding(0)
-		{
-		}
+		SBufferDesc() = default;
 
-		explicit SBufferDesc(const std::wstring& name_, uint32_t binding_)
+		SBufferDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
 		:	name(name_)
 		,	binding(binding_)
+		,	stages(stages_)
 		{
 		}
 

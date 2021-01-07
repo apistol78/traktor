@@ -13,7 +13,7 @@ class GlslSampler : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslSampler(const std::wstring& name, const SamplerState& state);
+	explicit GlslSampler(const std::wstring& name, uint8_t stages, const SamplerState& state);
 
 	const SamplerState& getState() const { return m_state; }
 

@@ -27,10 +27,12 @@ public:
 
 	const RefArray< GlslResource >& get() const { return m_resources; }
 
-	uint32_t count(const TypeInfo& resourceType) const;
+	RefArray< GlslResource > get(uint8_t stageMask) const;
+
+	uint32_t count(const TypeInfo& resourceType, uint8_t stageMask = ~0) const;
 
 	template < typename T >
-	uint32_t count() const { return count(type_of< T >()); }
+	uint32_t count(uint8_t stageMask = ~0) const { return count(type_of< T >(), stageMask); }
 
 private:
 	RefArray< GlslResource > m_resources;

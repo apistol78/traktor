@@ -34,9 +34,9 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_computeShader(GlslShader::StCompute)
 ,	m_currentShader(nullptr)
 {
-	m_layout.add(new GlslUniformBuffer(L"UbOnce", 0));
-	m_layout.add(new GlslUniformBuffer(L"UbFrame", 1));
-	m_layout.add(new GlslUniformBuffer(L"UbDraw", 2));
+	m_layout.add(new GlslUniformBuffer(L"UbOnce", 0, 0));
+	m_layout.add(new GlslUniformBuffer(L"UbFrame", 0, 1));
+	m_layout.add(new GlslUniformBuffer(L"UbDraw", 0, 2));
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)

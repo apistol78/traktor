@@ -225,10 +225,18 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	if (layout.count< GlslUniformBuffer >() > 0)
+	uint8_t stageMask = 0;
+	if (m_shaderType == StVertex)
+		stageMask = GlslResource::BsVertex;
+	else if (m_shaderType == StFragment)
+		stageMask = GlslResource::BsFragment;
+	else if (m_shaderType == StCompute)
+		stageMask = GlslResource::BsCompute;
+
+	if (layout.count< GlslUniformBuffer >(stageMask) > 0)
 	{
 		ss << L"// Uniform buffers." << Endl;
-		for (auto resource : layout.get())
+		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 			{
@@ -255,10 +263,10 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		}
 	}
 
-	if (layout.count< GlslTexture >() > 0)
+	if (layout.count< GlslTexture >(stageMask) > 0)
 	{
 		ss << L"// Textures" << Endl;
-		for (auto resource : layout.get())
+		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 			{
@@ -284,10 +292,10 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	if (layout.count< GlslSampler >() > 0)
+	if (layout.count< GlslSampler >(stageMask) > 0)
 	{
 		ss << L"// Samplers" << Endl;
-		for (auto resource : layout.get())
+		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
@@ -300,10 +308,10 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	if (layout.count< GlslImage >() > 0)
+	if (layout.count< GlslImage >(stageMask) > 0)
 	{
 		ss << L"// Images" << Endl;
-		for (auto resource : layout.get())
+		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 				ss << L"layout(set = 0, binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
@@ -311,10 +319,10 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	if (layout.count< GlslStorageBuffer >() > 0)
+	if (layout.count< GlslStorageBuffer >(stageMask) > 0)
 	{
 		ss << L"// Storage buffers." << Endl;
-		for (auto resource : layout.get())
+		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 			{
