@@ -403,9 +403,11 @@ void ProgramVk::destroy()
 	for (auto it : m_descriptorSets)
 	{
 		m_context->addDeferredCleanup([
+			descriptorPoolRevision = m_descriptorPoolRevision,
 			descriptorSet = it.second
 		](Context* cx) {
-			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
+			if (cx->getDescriptorPoolRevision() == descriptorPoolRevision)
+				vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
 		});
 	}
 	m_descriptorSets.clear();
@@ -506,6 +508,13 @@ void ProgramVk::setStencilReference(uint32_t stencilReference)
 
 bool ProgramVk::validateDescriptorSet()
 {
+	// Ensure we're still using same descriptor pool revision; if not then we need to flush our cached descriptor sets.
+	if (m_context->getDescriptorPoolRevision() != m_descriptorPoolRevision)
+	{
+		m_descriptorSets.reset();
+		m_descriptorPoolRevision = m_context->getDescriptorPoolRevision();
+	}
+
 	// Create key from current bound resources.
 	DescriptorSetKey key;
 	for (const auto& texture : m_textures)
