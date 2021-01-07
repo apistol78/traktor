@@ -25,6 +25,18 @@ namespace traktor
 		namespace
 		{
 
+uint8_t getBindStage(const GlslContext& cx)
+{
+	if (cx.inVertex())
+		return GlslResource::BsVertex;
+	else if (cx.inFragment())
+		return GlslResource::BsFragment;
+	else if (cx.inCompute())
+		return GlslResource::BsCompute;
+	else
+		return GlslResource::BsVertex | GlslResource::BsFragment | GlslResource::BsCompute;
+}
+
 std::wstring formatFloat(float v)
 {
 	std::wstring s = toString(v);
@@ -221,16 +233,15 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		auto existing = cx.getLayout().get(storageUniformNode->getParameterName());
 		if (existing != nullptr)
 		{
-			auto existingImage = dynamic_type_cast< const GlslImage* >(existing);
+			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
 			if (!existingImage)
 				return false;
+			existingImage->addStage(GlslResource::BsCompute);
 		}
 		else
 		{
 			// Image do not exist; add new image resource.
-			cx.getLayout().add(new GlslImage(
-				storageUniformNode->getParameterName()
-			));
+			cx.getLayout().add(new GlslImage(storageUniformNode->getParameterName(), GlslResource::BsCompute));
 		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -250,14 +261,15 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		auto existing = cx.getLayout().get(storageStructNode->getParameterName());
 		if (existing != nullptr)
 		{
-			auto existingBuffer = dynamic_type_cast< const GlslStorageBuffer* >(existing);
+			auto existingBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing);
 			if (!existingBuffer)
 				return false;
+			existingBuffer->addStage(getBindStage(cx));
 		}
 		else
 		{
 			// Storage buffer do not exist; add new storage buffer resource.
-			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(storageStructNode->getParameterName());
+			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(storageStructNode->getParameterName(), getBindStage(cx));
 			for (const auto& element : storageStructNode->getElements())
 				storageBuffer->add(element.name, element.type);
 			cx.getLayout().add(storageBuffer);
@@ -647,11 +659,8 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	if (out->getType() < GtTexture2D)
 	{
 		auto ub = cx.getLayout().get< GlslUniformBuffer >(node->getFrequency());
-		ub->add(
-			node->getParameterName(),
-			out->getType(),
-			node->getLength()
-		);
+		ub->addStage(getBindStage(cx));
+		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
 	else
 		return false;
@@ -1709,11 +1718,12 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	// Check if we already have a suitable sampler in the layout.
 	for (auto resource : cx.getLayout().get())
 	{
-		if (const auto sampler = dynamic_type_cast< GlslSampler* >(resource))
+		if (auto sampler = dynamic_type_cast< GlslSampler* >(resource))
 		{
 			if (std::memcmp(&sampler->getState(), &samplerState, sizeof(SamplerState)) == 0)
 			{
 				samplerName = sampler->getName();
+				sampler->addStage(getBindStage(cx));
 				break;
 			}
 		}
@@ -1723,10 +1733,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	if (samplerName.empty())
 	{
 		samplerName = L"_vk_sampler_" + toString(cx.getLayout().count< GlslSampler >());
-		cx.getLayout().add(new GlslSampler(
-			samplerName,
-			samplerState
-		));
+		cx.getLayout().add(new GlslSampler(samplerName, getBindStage(cx), samplerState));
 	}
 
 	comment(f, node);
@@ -2129,9 +2136,10 @@ bool emitStruct(GlslContext& cx, Struct* node)
 	auto existing = cx.getLayout().get(node->getParameterName());
 	if (existing != nullptr)
 	{
-		if (auto existingStorageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(existing))
+		if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
 		{
 			// Storage buffer already exist; \tbd ensure elements match.
+			existingStorageBuffer->addStage(getBindStage(cx));
 			return false;
 		}
 		else
@@ -2143,7 +2151,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 	else
 	{
 		// Storage buffer do not exist; add new storage buffer resource.
-		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName());
+		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName(), getBindStage(cx));
 		for (const auto& element : node->getElements())
 			storageBuffer->add(element.name, element.type);
 		cx.getLayout().add(storageBuffer);
@@ -2518,6 +2526,7 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
 
 	auto ub = cx.getLayout().get< GlslUniformBuffer >(UfOnce);
+	ub->addStage(getBindStage(cx));
 	if (!ub->add(
 		L"_vk_targetSize",
 		GtFloat4,
@@ -2636,11 +2645,8 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	if (out->getType() < GtTexture2D)
 	{
 		auto ub = cx.getLayout().get< GlslUniformBuffer >(node->getFrequency());
-		if (!ub->add(
-			node->getParameterName(),
-			out->getType(),
-			1
-		))
+		ub->addStage(getBindStage(cx));
+		if (!ub->add(node->getParameterName(), out->getType(), 1))
 			return false;
 	}
 	else
@@ -2648,11 +2654,12 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		auto existing = cx.getLayout().get(node->getParameterName());
 		if (existing != nullptr)
 		{
-			if (auto existingTexture = dynamic_type_cast< const GlslTexture* >(existing))
+			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
 			{
 				// Texture already exist; ensure type match.
 				if (existingTexture->getUniformType() != out->getType())
 					return false;
+				existingTexture->addStage(getBindStage(cx));
 			}
 			else
 			{
@@ -2663,10 +2670,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		else
 		{
 			// Texture do not exist; add new texture resource.
-			cx.getLayout().add(new GlslTexture(
-				node->getParameterName(),
-				out->getType()
-			));
+			cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
 		}
 	}
 

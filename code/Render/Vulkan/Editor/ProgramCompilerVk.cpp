@@ -406,6 +406,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
 				sampler->getBinding(),
+				sampler->getStages(),
 				sampler->getState()
 			));
 		}
@@ -418,7 +419,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				texture->getName(),
-				texture->getBinding()
+				texture->getBinding(),
+				texture->getStages()
 			));
 		}
 		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
@@ -430,7 +432,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				image->getName(),
-				image->getBinding()
+				image->getBinding(),
+				image->getStages()
 			));
 		}
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
@@ -459,7 +462,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
 				storageBuffer->getName(),
-				storageBuffer->getBinding()
+				storageBuffer->getBinding(),
+				storageBuffer->getStages()
 			));
 		}
 	}
@@ -564,6 +568,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(L"S");
 			checksum.feed(i);
 			checksum.feed(programResource->m_samplers[i].binding);
+			checksum.feed(programResource->m_samplers[i].stages);
 		}
 
 		checksum.feed(programResource->m_textures.size());
@@ -572,6 +577,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(L"T");
 			checksum.feed(i);
 			checksum.feed(programResource->m_textures[i].binding);
+			checksum.feed(programResource->m_textures[i].stages);
 		}
 
 		checksum.feed(programResource->m_sbuffers.size());
@@ -580,6 +586,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(L"SB");
 			checksum.feed(i);
 			checksum.feed(programResource->m_sbuffers[i].binding);
+			checksum.feed(programResource->m_sbuffers[i].stages);
 		}
 
 		checksum.end();

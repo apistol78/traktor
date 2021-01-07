@@ -32,6 +32,18 @@ const uint32_t c_uniformBufferDrawPerFrame = 100;
 
 render::Handle s_handleTargetSize(L"_vk_targetSize");
 
+VkShaderStageFlags getShaderStageFlags(uint8_t resourceStages)
+{
+	VkShaderStageFlags flags = 0;
+	if (resourceStages & ProgramResourceVk::BsVertex)
+		flags |= VK_SHADER_STAGE_VERTEX_BIT;
+	if (resourceStages & ProgramResourceVk::BsFragment)
+		flags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+	if (resourceStages & ProgramResourceVk::BsCompute)
+		flags |= VK_SHADER_STAGE_COMPUTE_BIT;
+	return flags;
+}
+
 bool storeIfNotEqual(const float* source, int32_t length, float* dest)
 {
 	for (int32_t i = 0; i < length; ++i)
@@ -138,7 +150,7 @@ bool ProgramVk::create(
 		lb.binding = sampler.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 		lb.descriptorCount = 1;
-		lb.stageFlags = stageFlags;
+		lb.stageFlags = getShaderStageFlags(sampler.stages);
 	}
 
 	// Append texture bindings.
@@ -149,7 +161,7 @@ bool ProgramVk::create(
 		lb.binding = texture.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		lb.descriptorCount = 1;
-		lb.stageFlags = stageFlags;
+		lb.stageFlags = getShaderStageFlags(texture.stages);
 	}
 
 	// Append sbuffer bindings.
@@ -160,7 +172,7 @@ bool ProgramVk::create(
 		lb.binding = sbuffer.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		lb.descriptorCount = 1;
-		lb.stageFlags = stageFlags;
+		lb.stageFlags = getShaderStageFlags(sbuffer.stages);
 	}
 
 	VkDescriptorSetLayoutCreateInfo dlci = {};

@@ -19,7 +19,7 @@ public:
 		DataType type;
 	};
 
-	explicit GlslStorageBuffer(const std::wstring& name);
+	explicit GlslStorageBuffer(const std::wstring& name, uint8_t stages);
 
 	bool add(const std::wstring& elementName, DataType elementType);
 

@@ -82,11 +82,11 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 2, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 3, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 2);
+	T_FATAL_ASSERT(s.getVersion() >= 3);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
@@ -114,6 +114,7 @@ void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
 void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
 	s >> MemberSamplerState(L"state", state);
 }
 
@@ -121,12 +122,14 @@ void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
 }
 
 void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
 }
 
 	}

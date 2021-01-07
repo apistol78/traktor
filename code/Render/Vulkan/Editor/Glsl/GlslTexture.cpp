@@ -8,8 +8,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslTexture", GlslTexture, GlslResource)
 
-GlslTexture::GlslTexture(const std::wstring& name, GlslType uniformType)
-:	GlslResource(name)
+GlslTexture::GlslTexture(const std::wstring& name, uint8_t stages, GlslType uniformType)
+:	GlslResource(name, stages)
 ,	m_uniformType(uniformType)
 {
 }

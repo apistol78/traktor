@@ -41,12 +41,23 @@ GlslResource* GlslLayout::get(const std::wstring& name)
 	return it != m_resources.end() ? (*it).ptr() : nullptr;
 }
 
-uint32_t GlslLayout::count(const TypeInfo& resourceType) const
+RefArray< GlslResource > GlslLayout::get(uint8_t stageMask) const
+{
+	RefArray< GlslResource > stageResources;
+	for (auto resource : m_resources)
+	{
+		if ((resource->getStages() & stageMask) != 0)
+			stageResources.push_back(resource);
+	}
+	return stageResources;
+}
+
+uint32_t GlslLayout::count(const TypeInfo& resourceType, uint8_t stageMask) const
 {
 	uint32_t c = 0;
 	for (auto resource : m_resources)
 	{
-		if (is_type_a(resourceType, type_of(resource)))
+		if ((resource->getStages() & stageMask) != 0 && is_type_a(resourceType, type_of(resource)))
 			++c;
 	}
 	return c;

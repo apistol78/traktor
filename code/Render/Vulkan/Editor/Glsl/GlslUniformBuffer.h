@@ -21,7 +21,7 @@ public:
 		int32_t length;
 	};
 
-	explicit GlslUniformBuffer(const std::wstring& name, int32_t ordinal);
+	explicit GlslUniformBuffer(const std::wstring& name, uint8_t stages, int32_t ordinal);
 
 	bool add(const std::wstring& uniformName, GlslType uniformType, int32_t length);
 

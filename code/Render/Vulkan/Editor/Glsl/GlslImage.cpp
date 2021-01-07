@@ -8,8 +8,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslImage", GlslImage, GlslResource)
 
-GlslImage::GlslImage(const std::wstring& name)
-:	GlslResource(name)
+GlslImage::GlslImage(const std::wstring& name, uint8_t stages)
+:	GlslResource(name, stages)
 {
 }
 

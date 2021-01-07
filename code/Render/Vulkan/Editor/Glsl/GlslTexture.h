@@ -13,7 +13,7 @@ class GlslTexture : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslTexture(const std::wstring& name, GlslType uniformType);
+	explicit GlslTexture(const std::wstring& name, uint8_t stages, GlslType uniformType);
 
 	GlslType getUniformType() const { return m_uniformType; }
 

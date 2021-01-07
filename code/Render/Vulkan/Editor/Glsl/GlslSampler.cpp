@@ -8,8 +8,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslSampler", GlslSampler, GlslResource)
 
-GlslSampler::GlslSampler(const std::wstring& name, const SamplerState& state)
-:	GlslResource(name)
+GlslSampler::GlslSampler(const std::wstring& name, uint8_t stages, const SamplerState& state)
+:	GlslResource(name, stages)
 ,	m_state(state)
 {
 }
