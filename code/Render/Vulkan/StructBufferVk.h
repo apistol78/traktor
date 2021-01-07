@@ -17,7 +17,7 @@ class StructBufferVk : public StructBuffer
 	T_RTTI_CLASS;
 
 public:
-	explicit StructBufferVk(Context* context, uint32_t bufferSize);
+	explicit StructBufferVk(Context* context, uint32_t bufferSize, uint32_t& instances);
 
 	virtual ~StructBufferVk();
 
@@ -38,6 +38,7 @@ public:
 private:
 	Context* m_context = nullptr;
 	Ref< Buffer > m_buffer;
+	uint32_t& m_instances;
 	uint32_t m_alignedBufferSize = 0;
 	int32_t m_inFlightCount = 0;
 	int32_t m_index = 0;

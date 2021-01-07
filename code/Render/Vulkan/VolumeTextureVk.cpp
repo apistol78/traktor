@@ -19,14 +19,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureVk", VolumeTextureVk, IVolumeTexture)
 
-VolumeTextureVk::VolumeTextureVk(Context* context)
+VolumeTextureVk::VolumeTextureVk(Context* context, uint32_t& instances)
 :	m_context(context)
+,	m_instances(instances)
 {
+	Atomic::increment((int32_t&)m_instances);
 }
 
 VolumeTextureVk::~VolumeTextureVk()
 {
 	destroy();
+	Atomic::decrement((int32_t&)m_instances);
 }
 
 bool VolumeTextureVk::create(

@@ -22,7 +22,7 @@ class SimpleTextureVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	explicit SimpleTextureVk(Context* context);
+	explicit SimpleTextureVk(Context* context, uint32_t& instances);
 
 	virtual ~SimpleTextureVk();
 
@@ -51,6 +51,7 @@ public:
 
 private:
 	Context* m_context = nullptr;
+	uint32_t& m_instances;
 	Ref< Buffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	SimpleTextureCreateDesc m_desc;

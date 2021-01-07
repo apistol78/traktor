@@ -19,9 +19,10 @@ VertexBufferStaticVk::VertexBufferStaticVk(
 	uint32_t bufferSize,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
 	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
-	uint32_t hash
+	uint32_t hash,
+	uint32_t& instances
 )
-:	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash)
+:	VertexBufferVk(bufferSize, vertexBindingDescription, vertexAttributeDescriptions, hash, instances)
 ,	m_context(context)
 {
 }

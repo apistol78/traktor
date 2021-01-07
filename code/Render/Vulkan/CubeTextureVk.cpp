@@ -19,15 +19,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeTexture)
 
-CubeTextureVk::CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc)
+CubeTextureVk::CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc, uint32_t& instances)
 :	m_context(context)
+,	m_instances(instances)
 ,	m_desc(desc)
 {
+	Atomic::increment((int32_t&)m_instances);
 }
 
 CubeTextureVk::~CubeTextureVk()
 {
 	destroy();
+	Atomic::decrement((int32_t&)m_instances);
 }
 
 bool CubeTextureVk::create(const wchar_t* const tag)

@@ -25,14 +25,17 @@ uint32_t s_nextId = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, IRenderTargetSet)
 
-RenderTargetSetVk::RenderTargetSetVk(Context* context)
+RenderTargetSetVk::RenderTargetSetVk(Context* context, uint32_t& instances)
 :	m_context(context)
+,	m_instances(instances)
 {
+	Atomic::increment((int32_t&)m_instances);
 }
 
 RenderTargetSetVk::~RenderTargetSetVk()
 {
 	destroy();
+	Atomic::decrement((int32_t&)m_instances);
 }
 
 bool RenderTargetSetVk::createPrimary(

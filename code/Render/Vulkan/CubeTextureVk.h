@@ -23,7 +23,7 @@ class CubeTextureVk : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	explicit CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc);
+	explicit CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc, uint32_t& instances);
 
 	virtual ~CubeTextureVk();
 
@@ -45,6 +45,7 @@ public:
 
 private:
 	Context* m_context = nullptr;
+	uint32_t& m_instances;
 	Ref< Buffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	CubeTextureCreateDesc m_desc;

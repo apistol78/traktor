@@ -21,8 +21,11 @@ public:
 		uint32_t bufferSize,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
-		uint32_t hash
+		uint32_t hash,
+		uint32_t& instances
 	);
+
+	virtual ~VertexBufferVk();
 
 	virtual VkBuffer getVkBuffer() const = 0;
 
@@ -36,6 +39,7 @@ protected:
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 	uint32_t m_hash;
+	uint32_t& m_instances;
 };
 
 	}

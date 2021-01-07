@@ -76,14 +76,17 @@ bool storeIfNotEqual(const Vector4* source, int32_t length, float* dest)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
-ProgramVk::ProgramVk(Context* context)
+ProgramVk::ProgramVk(Context* context, uint32_t& instances)
 :	m_context(context)
+,	m_instances(instances)
 {
+	Atomic::increment((int32_t&)m_instances);
 }
 
 ProgramVk::~ProgramVk()
 {
 	destroy();
+	Atomic::decrement((int32_t&)m_instances);
 }
 
 bool ProgramVk::create(

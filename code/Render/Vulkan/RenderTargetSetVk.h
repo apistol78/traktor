@@ -31,7 +31,7 @@ class RenderTargetSetVk : public IRenderTargetSet
 public:
 	RenderTargetSetVk() = delete;
 
-	explicit RenderTargetSetVk(Context* context);
+	explicit RenderTargetSetVk(Context* context, uint32_t& instances);
 
 	virtual ~RenderTargetSetVk();
 
@@ -91,6 +91,7 @@ private:
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
 	Context* m_context = nullptr;
+	uint32_t& m_instances;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
