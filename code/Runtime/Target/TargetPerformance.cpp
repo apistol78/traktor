@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"

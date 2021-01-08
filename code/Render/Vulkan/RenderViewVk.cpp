@@ -1202,7 +1202,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		return false;
 	}
 
-	m_presentQueue = (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex) ? Queue::create(m_context, presentQueueIndex) : m_context->getGraphicsQueue();
+	if (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex)
+		m_presentQueue = Queue::create(m_context, presentQueueIndex);
+	else
+		m_presentQueue = m_context->getGraphicsQueue();
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
