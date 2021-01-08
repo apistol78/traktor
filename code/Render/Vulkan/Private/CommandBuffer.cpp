@@ -1,5 +1,3 @@
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -17,7 +15,7 @@ CommandBuffer::~CommandBuffer()
 {
 	vkFreeCommandBuffers(
 		m_context->getLogicalDevice(),
-		m_queue->ms_commandPool,
+		m_queue->getCommandPool(),
 		1,
 		&m_commandBuffer
 	);
@@ -36,16 +34,16 @@ bool CommandBuffer::reset()
 	if (vkBeginCommandBuffer(m_commandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 
+	m_submitted = false;
 	return true;
 }
 
 bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitStageFlags, VkSemaphore signalSemaphore)
 {
 	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_ASSERT(!m_submitted);
 
 	vkEndCommandBuffer(m_commandBuffer);
-
-	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
 	VkSubmitInfo si = {};
 	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -66,18 +64,27 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 		si.pSignalSemaphores = &signalSemaphore;
 	}
 
-	bool result;
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queue->m_lock);
-		result = (bool)(vkQueueSubmit(*m_queue, 1, &si, m_inFlight) == VK_SUCCESS);
-	}
-	return result;
+	if (m_queue->submit(si, m_inFlight) != VK_SUCCESS)
+		return false;
+
+	m_submitted = true;
+	return true;
 }
 
 bool CommandBuffer::wait()
 {
 	const uint64_t timeOut = 5 * 60 * 1000ull * 1000ull * 1000ull;
-    return (bool)(vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, timeOut) == VK_SUCCESS);
+
+	if (!m_submitted)
+		return true;
+
+    if (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, timeOut) != VK_SUCCESS)
+		return false;
+
+	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
+
+	m_submitted = false;
+	return true;
 }
 
 bool CommandBuffer::submitAndWait()
@@ -102,7 +109,7 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandBuffer com
 {
 	VkFenceCreateInfo fci = {};
 	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fci.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+	fci.flags = 0;
 	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);	
 
 	m_thread = ThreadManager::getInstance().getCurrentThread();

@@ -60,7 +60,7 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const float c_maxDeltaTime = 1.0f / 5.0f;
 const int32_t c_maxDeltaTimeErrors = 300;
-const float c_deltaTimeFilterCoeff = 0.95f;
+const float c_deltaTimeFilterCoeff = 0.99f;
 
 class TargetPerformanceListener : public RefCountImpl< Profiler::IReportListener >
 {
@@ -974,7 +974,6 @@ bool Application::update()
 			{
 				TpsMemory tp;
 				tp.memInUse = (uint32_t)Alloc::allocated();
-				tp.memCount = (int32_t)Alloc::count();
 				tp.heapObjects = Object::getHeapObjectCount();
 				if (m_scriptServer)
 				{

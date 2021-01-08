@@ -77,7 +77,7 @@ void VertexBufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
 	VkBufferCopy bc = {};
 	bc.size = getBufferSize();

@@ -482,7 +482,7 @@ bool RenderViewVk::beginFrame()
 	}
 	else
 	{
-		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 		if (!frame.graphicsCommandBuffer)
 			return false;
 	}
@@ -544,9 +544,7 @@ void RenderViewVk::present()
     pi.waitSemaphoreCount = 1;
     pi.pWaitSemaphores = &frame.renderFinishedSemaphore;
     pi.pResults = nullptr;
-
-    result = vkQueuePresentKHR(m_presentQueue, &pi);
-	if (result != VK_SUCCESS)
+	if ((result = m_presentQueue->present(pi)) != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
 
@@ -559,7 +557,11 @@ void RenderViewVk::present()
 	}
 
 	// Cleanup destroyed resources.
-	m_context->performCleanup();
+	if (m_context->needCleanup())
+	{
+		if (frame.graphicsCommandBuffer->wait())
+			m_context->performCleanup();
+	}
 }
 
 bool RenderViewVk::beginPass(const Clear* clear)
@@ -1183,25 +1185,24 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
 	vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
 
-	m_presentQueueIndex = ~0;
+	uint32_t presentQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
 		VkBool32 supportsPresent;
 		vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
 		if (supportsPresent)
 		{
-			m_presentQueueIndex = i;
+			presentQueueIndex = i;
 			break;
 		}
 	}
-	if (m_presentQueueIndex == ~0)
+	if (presentQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
 		return false;
 	}
 
-	// Get opaque queues.
-	vkGetDeviceQueue(m_context->getLogicalDevice(), m_presentQueueIndex, 0, &m_presentQueue);
+	m_presentQueue = (m_context->getGraphicsQueue()->getQueueIndex() != presentQueueIndex) ? Queue::create(m_context, presentQueueIndex) : m_context->getGraphicsQueue();
 
 	// Determine primary target color format/space.
 	uint32_t surfaceFormatCount = 0;
@@ -1276,8 +1277,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	scci.presentMode = presentationMode;
 	scci.clipped = VK_TRUE;
 
-	uint32_t queueFamilyIndices[] = { m_context->getGraphicsQueue()->getQueueIndex(), m_presentQueueIndex };
-	if (m_context->getGraphicsQueue()->getQueueIndex() != m_presentQueueIndex)
+	uint32_t queueFamilyIndices[] = { m_context->getGraphicsQueue()->getQueueIndex(), m_presentQueue->getQueueIndex() };
+	if (queueFamilyIndices[0] != queueFamilyIndices[1])
 	{
 		// Need to be sharing between queues in order to be presentable.
 		scci.imageSharingMode = VK_SHARING_MODE_CONCURRENT;

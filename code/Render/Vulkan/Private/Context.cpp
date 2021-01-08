@@ -35,7 +35,7 @@ Context::Context(
 
 	// Create queues.
 	m_graphicsQueue = Queue::create(this, graphicsQueueIndex);
-	m_computeQueue = Queue::create(this, computeQueueIndex);
+	m_computeQueue = (computeQueueIndex != graphicsQueueIndex) ? Queue::create(this, computeQueueIndex) : m_graphicsQueue;
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -81,7 +81,7 @@ Context::Context(
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	dpci.pNext = nullptr;
 	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-	dpci.maxSets = 4096;
+	dpci.maxSets = 16000;
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
@@ -122,6 +122,11 @@ void Context::addDeferredCleanup(const cleanup_fn_t& fn)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 	m_cleanupFns.push_back(fn);
+}
+
+bool Context::needCleanup() const
+{
+	return !m_cleanupFns.empty();
 }
 
 void Context::performCleanup()

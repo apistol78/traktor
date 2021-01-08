@@ -33,6 +33,8 @@ public:
 
 	void addDeferredCleanup(const cleanup_fn_t& fn);
 
+	bool needCleanup() const;
+
 	void performCleanup();
 
 	VkPhysicalDevice getPhysicalDevice() const { return m_physicalDevice; }

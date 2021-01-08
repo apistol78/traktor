@@ -105,7 +105,6 @@ bool TpsMemory::check(const TargetPerfSet& old) const
 	return
 		memInUse != o.memInUse ||
 		memInUseScript != o.memInUseScript ||
-		memCount != o.memCount ||
 		heapObjects != o.heapObjects;
 }
 
@@ -113,7 +112,6 @@ void TpsMemory::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"memInUse", memInUse);
 	s >> Member< uint32_t >(L"memInUseScript", memInUseScript);
-	s >> Member< int32_t >(L"memCount", memCount);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 }
 
@@ -185,18 +183,29 @@ void TpsAudio::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPerformance", TargetPerformance, Object)
 
+TargetPerformance::TargetPerformance()
+{
+	m_timer.start();
+}
+
 void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance)
 {
 	const TypeInfo& performanceType = type_of(&performance);
 
 	auto it = m_last.find(&performanceType);
-	if (it != m_last.end() && performance.check(*it->second) == false)
+	if (
+		it != m_last.end() &&
+		(m_timer.getElapsedTime() - it->second.sent) < 1.0 &&
+		performance.check(*it->second.perfSet) == false
+	)
 		return;
 
 	if (!transport->send(&performance))
 		return;
 
-	m_last[&performanceType] = DeepClone(&performance).create< TargetPerfSet >();
+	auto& snapshot = m_last[&performanceType];
+	snapshot.sent = m_timer.getElapsedTime();
+	snapshot.perfSet = DeepClone(&performance).create< TargetPerfSet >();
 }
 
 	}
