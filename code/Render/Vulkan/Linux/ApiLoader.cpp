@@ -122,6 +122,7 @@ T_DEFINE_VK(vkCmdWriteTimestamp);
 T_DEFINE_VK(vkGetQueryPoolResults);
 T_DEFINE_VK(vkCreatePipelineCache);
 T_DEFINE_VK(vkGetPipelineCacheData);
+T_DEFINE_VK(vkFreeDescriptorSets);
 
 T_DEFINE_VK(vkCreateXlibSurfaceKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceSupportKHR);
@@ -240,6 +241,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkGetQueryPoolResults);
 	T_RESOLVE_VK(vkCreatePipelineCache);
 	T_RESOLVE_VK(vkGetPipelineCacheData);
+	T_RESOLVE_VK(vkFreeDescriptorSets);
 	return true;
 }
 

@@ -100,6 +100,7 @@ extern PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
 extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
 extern PFN_vkCreatePipelineCache vkCreatePipelineCache;
 extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
+extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
