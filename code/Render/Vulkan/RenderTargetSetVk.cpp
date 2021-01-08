@@ -183,7 +183,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
 	vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
 	// Transfer color target into host image.
 	VkImageMemoryBarrier imb = {};

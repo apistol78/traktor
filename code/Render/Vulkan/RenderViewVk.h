@@ -20,6 +20,7 @@ namespace traktor
 class CommandBuffer;
 class Context;
 class ProgramVk;
+class Queue;
 class RenderTargetSetVk;
 class VertexBufferVk;
 
@@ -136,8 +137,7 @@ private:
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface = 0;
-	uint32_t m_presentQueueIndex = ~0;
-	VkQueue m_presentQueue = 0;
+	Ref< Queue > m_presentQueue;
 	VkQueryPool m_queryPool = 0;
 	bool m_lost = true;
 

@@ -35,12 +35,12 @@ public:
 private:
 	friend class Queue;
 
-	Context* m_context;
-	Queue* m_queue;
-	VkCommandBuffer m_commandBuffer;
-	VkFence m_inFlight;
-
-	Thread* m_thread;
+	Context* m_context = nullptr;
+	Queue* m_queue = nullptr;
+	VkCommandBuffer m_commandBuffer = 0;
+	VkFence m_inFlight = 0;
+	Thread* m_thread = nullptr;
+	bool m_submitted = false;
 
 	explicit CommandBuffer(Context* context, Queue* queue, VkCommandBuffer commandBuffer);
 };

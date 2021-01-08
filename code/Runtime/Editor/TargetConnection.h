@@ -43,6 +43,8 @@ public:
 		virtual void receivedProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) = 0;
 
 		virtual void receivedProfilerEvents(double, const AlignedVector< Profiler::Event >& events) = 0;
+
+		virtual void receivedPerfSets() = 0;
 	};
 
 	TargetConnection(

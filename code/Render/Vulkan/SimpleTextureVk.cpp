@@ -79,95 +79,7 @@ bool SimpleTextureVk::create(
 	}
 	m_stagingBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
-
-	// Change layout of texture to be able to copy staging buffer into texture.
-	VkImageMemoryBarrier imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage->getVkImage();
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = 0;
-	imb.subresourceRange.levelCount = desc.mipCount;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	// Copy staging buffer into texture.
-	uint32_t offset = 0;
-	for (int32_t mip = 0; mip < desc.mipCount; ++mip)
-	{
-		uint32_t mipWidth = getTextureMipSize(desc.width, mip);
-		uint32_t mipHeight = getTextureMipSize(desc.height, mip);
-		uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
-
-		VkBufferImageCopy region = {};
-		region.bufferOffset = offset;
-		region.bufferRowLength = 0;
-		region.bufferImageHeight = 0;
-		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		region.imageSubresource.mipLevel = mip;
-		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = 1;
-		region.imageOffset = { 0, 0, 0 };
-		region.imageExtent = { mipWidth, mipHeight, 1 };
-
-		vkCmdCopyBufferToImage(
-			*commandBuffer,
-			*m_stagingBuffer,
-			m_textureImage->getVkImage(),
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			1,
-			&region
-		);
-
-		offset += mipSize;
-	}
-
-	// Change layout of texture to optimal sampling.
-	imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage->getVkImage();
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = 0;
-	imb.subresourceRange.levelCount = desc.mipCount;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	commandBuffer->submitAndWait();
-
-	// Free staging buffer if immutable.
-	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
-
+	m_dirty = true;
 	m_desc = desc;
 	return true;
 }
@@ -181,6 +93,101 @@ void SimpleTextureVk::destroy()
 
 ITexture* SimpleTextureVk::resolve()
 {
+	// Update texture if staging buffer contain new data.
+	if (m_dirty)
+	{
+		auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+
+		// Change layout of texture to be able to copy staging buffer into texture.
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = m_textureImage->getVkImage();
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = 0;
+		imb.subresourceRange.levelCount = m_desc.mipCount;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+		vkCmdPipelineBarrier(
+			*commandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+
+		// Copy staging buffer into texture.
+		uint32_t offset = 0;
+		for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
+		{
+			uint32_t mipWidth = getTextureMipSize(m_desc.width, mip);
+			uint32_t mipHeight = getTextureMipSize(m_desc.height, mip);
+			uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.width, m_desc.height, mip);
+
+			VkBufferImageCopy region = {};
+			region.bufferOffset = offset;
+			region.bufferRowLength = 0;
+			region.bufferImageHeight = 0;
+			region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			region.imageSubresource.mipLevel = mip;
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount = 1;
+			region.imageOffset = { 0, 0, 0 };
+			region.imageExtent = { mipWidth, mipHeight, 1 };
+
+			vkCmdCopyBufferToImage(
+				*commandBuffer,
+				*m_stagingBuffer,
+				m_textureImage->getVkImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&region
+			);
+
+			offset += mipSize;
+		}
+
+		// Change layout of texture to optimal sampling.
+		imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = m_textureImage->getVkImage();
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = 0;
+		imb.subresourceRange.levelCount = m_desc.mipCount;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
+		imb.srcAccessMask = 0;
+		imb.dstAccessMask = 0;
+		vkCmdPipelineBarrier(
+			*commandBuffer,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+
+		commandBuffer->submitAndWait();
+
+		// Free staging buffer if immutable, no longer
+		// allowed to update texture.
+		if (m_desc.immutable)
+			safeDestroy(m_stagingBuffer);
+
+		m_dirty = false;
+	}
 	return this;
 }
 
@@ -214,84 +221,7 @@ bool SimpleTextureVk::lock(int32_t level, Lock& lock)
 void SimpleTextureVk::unlock(int32_t level)
 {
 	m_stagingBuffer->unlock();
-
-	// Begin recording command buffer.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
-
-	// Change layout of texture to be able to copy staging buffer into texture.
-	VkImageMemoryBarrier imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage->getVkImage();
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = level;
-	imb.subresourceRange.levelCount = 1;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	// Copy staging buffer into texture.
-	uint32_t mipWidth = getTextureMipSize(m_desc.width, level);
-	uint32_t mipHeight = getTextureMipSize(m_desc.height, level);
-	uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.width, m_desc.height, level);
-
-	VkBufferImageCopy region = {};
-	region.bufferOffset = 0;
-	region.bufferRowLength = 0;
-	region.bufferImageHeight = 0;
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.imageSubresource.mipLevel = level;
-	region.imageSubresource.baseArrayLayer = 0;
-	region.imageSubresource.layerCount = 1;
-	region.imageOffset = { 0, 0, 0 };
-	region.imageExtent = { mipWidth, mipHeight, 1 };
-	vkCmdCopyBufferToImage(
-		*commandBuffer,
-		*m_stagingBuffer,
-		m_textureImage->getVkImage(),
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		1,
-		&region
-	);
-
-	imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = m_textureImage->getVkImage();
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = level;
-	imb.subresourceRange.levelCount = 1;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
-
-	commandBuffer->submitAndWait();
+	m_dirty = true;
 }
 
 void* SimpleTextureVk::getInternalHandle()

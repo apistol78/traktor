@@ -25,15 +25,17 @@ public:
 
 	static Ref< Queue > create(Context* context, uint32_t queueIndex);
 
-	Ref< CommandBuffer > acquireCommandBuffer();
+	Ref< CommandBuffer > acquireCommandBuffer(const wchar_t* const tag);
+
+	VkResult submit(const VkSubmitInfo& si, VkFence fence);
+
+	VkResult present(const VkPresentInfoKHR& pi);
 
 	uint32_t getQueueIndex() const { return m_queueIndex; }
 
-	operator VkQueue () { return m_queue; }
+	VkCommandPool getCommandPool() const { return ms_commandPool; }
 
 private:
-	friend class CommandBuffer;
-
 	Context* m_context;
 	VkQueue m_queue;
 	uint32_t m_queueIndex;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Timer/Timer.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -59,7 +60,6 @@ class T_DLLCLASS TpsMemory : public TargetPerfSet
 public:
 	uint32_t memInUse = 0;
 	uint32_t memInUseScript = 0;
-	int32_t memCount = 0;
 	uint32_t heapObjects = 0;
 
 	virtual bool check(const TargetPerfSet& old) const override final;
@@ -125,10 +125,19 @@ class T_DLLCLASS TargetPerformance : public Object
 	T_RTTI_CLASS;
 
 public:
+	TargetPerformance();
+
 	void publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance);
 
 private:
-	SmallMap< const TypeInfo*, Ref< TargetPerfSet > > m_last;
+	struct Snapshot
+	{
+		double sent;
+		Ref< TargetPerfSet > perfSet;
+	};
+
+	Timer m_timer;
+	SmallMap< const TypeInfo*, Snapshot > m_last;
 };
 
 	}

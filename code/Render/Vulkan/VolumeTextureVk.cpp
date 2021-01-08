@@ -80,7 +80,7 @@ bool VolumeTextureVk::create(
 	}
 	m_stagingBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer();
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
 	// Change layout of texture to be able to copy staging buffer into texture.
 	VkImageMemoryBarrier imb = {};

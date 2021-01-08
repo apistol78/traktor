@@ -3,8 +3,13 @@
 #include "Runtime/Editor/TargetConnection.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
+#include "Ui/Splitter.h"
 #include "Ui/TableLayout.h"
 #include "Ui/BuildChart/BuildChartControl.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -26,6 +31,14 @@ const Color4ub c_threadColors[] =
 	Color4ub(0, 0, 255, 255)
 };
 
+Ref< ui::GridRow > createPerformanceRow(const std::wstring& name, const std::wstring& value)
+{
+	Ref< ui::GridRow > row = new ui::GridRow();
+	row->add(new ui::GridItem(name));
+	row->add(new ui::GridItem(value));
+	return row;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ProfilerDialog", ProfilerDialog, ui::Dialog)
@@ -39,7 +52,7 @@ ProfilerDialog::ProfilerDialog(TargetConnection* connection)
 
 bool ProfilerDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Profiler", ui::dpi96(800), ui::dpi96(350), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Profiler", ui::dpi96(900), ui::dpi96(700), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_toolBar = new ui::ToolBar();
@@ -48,8 +61,16 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(L"Reset", ui::Command(L"Runtime.Profiler.Reset")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
+	Ref< ui::Splitter > splitter = new ui::Splitter();
+	splitter->create(this, true, 30, true);
+
+	m_performanceGrid = new ui::GridView();
+	m_performanceGrid->create(splitter, ui::GridView::WsColumnHeader | ui::WsAccelerated);
+	m_performanceGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(150)));
+	m_performanceGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(150)));
+
 	m_chart = new ui::BuildChartControl();
-	m_chart->create(this, 4 * 8, ui::WsAccelerated);
+	m_chart->create(splitter, 4 * 8, ui::WsAccelerated);
 	m_chart->showRange(0.0, 1.0 / 60.0);
 
 	addEventHandler< ui::CloseEvent >(this, &ProfilerDialog::eventClose);
@@ -118,6 +139,55 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 			);
 		}
 	}
+}
+
+void ProfilerDialog::receivedPerfSets()
+{
+	m_performanceGrid->removeAllRows();
+
+	const TpsRuntime& runtime = m_connection->getPerformance< TpsRuntime >();
+	m_performanceGrid->addRow(createPerformanceRow(L"FPS", str(L"%.2f", runtime.fps)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Update", str(L"%.2f ms", runtime.update * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms", runtime.build * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render", str(L"%.2f ms", runtime.render * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Physics", str(L"%.2f ms", runtime.physics * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Input", str(L"%.2f ms", runtime.input * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Garbage Collect", str(L"%.2f ms", runtime.garbageCollect * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Simulation Steps", str(L"%d", runtime.steps)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Simulation Interval", str(L"%.1f", runtime.interval)));
+
+	const TpsMemory& memory = m_connection->getPerformance< TpsMemory >();
+	m_performanceGrid->addRow(createPerformanceRow(L"Memory (Native)", str(L"%d KiB", memory.memInUse / 1024)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Memory (Script)", str(L"%d KiB", memory.memInUseScript / 1024)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Heap Objects", str(L"%d", memory.heapObjects)));
+
+	const TpsRender& render = m_connection->getPerformance< TpsRender >();
+	m_performanceGrid->addRow(createPerformanceRow(L"Memory (GPU) Available", str(L"%d KiB", render.renderSystemStats.memoryAvailable / 1024)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Memory (GPU) Usage", str(L"%d KiB", render.renderSystemStats.memoryUsage / 1024)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Vertex Buffers", str(L"%d", render.renderSystemStats.vertexBuffers)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Index Buffers", str(L"%d", render.renderSystemStats.indexBuffers)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Struct Buffers", str(L"%d", render.renderSystemStats.structBuffers)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Simple Textures", str(L"%d", render.renderSystemStats.simpleTextures)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Cube Textures", str(L"%d", render.renderSystemStats.cubeTextures)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Volume Textures", str(L"%d", render.renderSystemStats.volumeTextures)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render Target Sets", str(L"%d", render.renderSystemStats.renderTargetSets)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Programs", str(L"%d", render.renderSystemStats.programs)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render Passes", str(L"%d", render.renderViewStats.passCount)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Draw Calls", str(L"%d", render.renderViewStats.drawCalls)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Primitives", str(L"%d", render.renderViewStats.primitiveCount)));
+
+	const TpsResource& resource = m_connection->getPerformance< TpsResource >();
+	m_performanceGrid->addRow(createPerformanceRow(L"Resident Resources", str(L"%d", resource.residentResourcesCount)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Exclusive Resources", str(L"%d", resource.exclusiveResourcesCount)));
+
+	const TpsPhysics& physics = m_connection->getPerformance< TpsPhysics >();
+	m_performanceGrid->addRow(createPerformanceRow(L"Bodies", str(L"%d", physics.bodyCount)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Active Bodies", str(L"%d", physics.activeBodyCount)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Collision Manifolds", str(L"%d", physics.manifoldCount)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Queries", str(L"%d", physics.queryCount)));
+
+	const TpsAudio& audio = m_connection->getPerformance< TpsAudio >();
+	m_performanceGrid->addRow(createPerformanceRow(L"Active Sound Channels", str(L"%d", audio.activeSoundChannels)));
 }
 
 void ProfilerDialog::eventToolClick(ui::ToolBarButtonClickEvent* event)

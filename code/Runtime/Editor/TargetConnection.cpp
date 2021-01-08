@@ -76,11 +76,17 @@ bool TargetConnection::update()
 	}
 
 	{
-		Ref< TargetPerfSet > performance;
-		while (m_transport->recv< TargetPerfSet >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
+		bool receivedPerfSet = false;
+		Ref< TargetPerfSet > perfSet;
+		while (m_transport->recv< TargetPerfSet >(0, perfSet) == net::BidirectionalObjectTransport::RtSuccess)
 		{
-			m_performance[&type_of(performance)] = performance;
-			m_transport->flush< TargetPerformance >();
+			m_performance[&type_of(perfSet)] = perfSet;
+			receivedPerfSet = true;
+		}
+		if (receivedPerfSet)
+		{
+			if (m_profilerEventsCallback)
+				m_profilerEventsCallback->receivedPerfSets();
 		}
 	}
 
