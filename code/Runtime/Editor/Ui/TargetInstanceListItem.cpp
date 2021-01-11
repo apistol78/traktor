@@ -28,8 +28,8 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_performanceLineHeight = 14;
-const int32_t c_performanceHeight = 6 * c_performanceLineHeight;
+const int32_t c_performanceLineHeight = 18;
+const int32_t c_performanceHeight = 3 * c_performanceLineHeight;
 const int32_t c_commandHeight = 22;
 
 const struct
@@ -57,20 +57,6 @@ c_markers[] =
 	{ L"World build", Color4ub(200, 200, 80) },
 	{ L"Script", Color4ub(255, 80, 128) }
 };
-
-std::wstring formatPerformanceTime(float time)
-{
-	std::wstringstream ss;
-	ss << std::setprecision(1) << std::fixed << (time * 1000.0f);
-	return ss.str();
-}
-
-std::wstring formatPerformanceValue(float value)
-{
-	std::wstringstream ss;
-	ss << std::setprecision(1) << std::fixed << value;
-	return ss.str();
-}
 
 		}
 
@@ -310,11 +296,6 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TpsRuntime& runtime = connections[i]->getPerformance< TpsRuntime >();
-		const TpsMemory& memory = connections[i]->getPerformance< TpsMemory >();
-		const TpsRender& render = connections[i]->getPerformance< TpsRender >();
-		const TpsResource& resource = connections[i]->getPerformance< TpsResource >();
-		const TpsPhysics& physics = connections[i]->getPerformance< TpsPhysics >();
-		const TpsAudio& audio = connections[i]->getPerformance< TpsAudio >();
 
 		canvas.setClipRect(performanceRect);
 
@@ -331,88 +312,32 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		topRect.bottom = topRect.top + ui::dpi96(c_performanceLineHeight);
 
 		topRect.left += ui::dpi96(6);
-		canvas.drawText(topRect, toString(int32_t(runtime.fps)), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, str(L"%.1f", runtime.fps), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(20);
-		canvas.drawText(topRect, L"U: " + formatPerformanceTime(runtime.update), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(40);
+		canvas.drawText(topRect, str(L"Update: %.1f ms", runtime.update * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(80);
-		canvas.drawText(topRect, L"B: " + formatPerformanceTime(runtime.build), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(120);
+		canvas.drawText(topRect, str(L"Build: %.1f ms", runtime.build * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(80);
-		canvas.drawText(topRect, L"R: " + formatPerformanceTime(runtime.render), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(120);
+		canvas.drawText(topRect, str(L"Render: %.1f ms", runtime.render * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(80);
-		canvas.drawText(topRect, L"GC: " + formatPerformanceTime(runtime.garbageCollect), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(120);
+		canvas.drawText(topRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
 		middleRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 2;
 		middleRect.bottom = middleRect.top + ui::dpi96(c_performanceLineHeight);
 
-		middleRect.left += ui::dpi96(26);
-		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(runtime.physics), ui::AnLeft, ui::AnCenter);
+		middleRect.left += ui::dpi96(46);
+		canvas.drawText(middleRect, str(L"Physics: %.1f ms", runtime.physics * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::dpi96(80);
-		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(runtime.input), ui::AnLeft, ui::AnCenter);
+		middleRect.left += ui::dpi96(120);
+		canvas.drawText(middleRect, str(L"Input: %.1f ms", runtime.input * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::dpi96(80);
-		canvas.drawText(middleRect, L"Sim: " + toString(int32_t(runtime.steps)) + L", " + formatPerformanceTime(runtime.interval) + L", " + toString(runtime.collisions), ui::AnLeft, ui::AnCenter);
-
-		ui::Rect middleRect2 = performanceRect;
-		middleRect2.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 3;
-		middleRect2.bottom = middleRect2.top + ui::dpi96(c_performanceLineHeight);
-
-		middleRect2.left += ui::dpi96(26);
-		canvas.drawText(middleRect2, L"Pass: " + toString(render.renderViewStats.passCount), ui::AnLeft, ui::AnCenter);
-
-		middleRect2.left += ui::dpi96(100);
-		canvas.drawText(middleRect2, L"Draw: " + toString(render.renderViewStats.drawCalls), ui::AnLeft, ui::AnCenter);
-
-		middleRect2.left += ui::dpi96(100);
-		canvas.drawText(middleRect2, L"Prim: " + toString(render.renderViewStats.primitiveCount), ui::AnLeft, ui::AnCenter);
-
-		middleRect2.left += ui::dpi96(100);
-		canvas.drawText(
-			middleRect2,
-			str(
-				L"Rndr: %d/%d/%d/%d/%d/%d/%d/%d",
-				render.renderSystemStats.vertexBuffers,
-				render.renderSystemStats.indexBuffers,
-				render.renderSystemStats.structBuffers,
-				render.renderSystemStats.simpleTextures,
-				render.renderSystemStats.cubeTextures,
-				render.renderSystemStats.volumeTextures,
-				render.renderSystemStats.renderTargetSets,
-				render.renderSystemStats.programs
-			),
-			ui::AnLeft,
-			ui::AnCenter
-		);
-
-		middleRect2.left += ui::dpi96(200);
-		canvas.drawText(middleRect2, L"Phys: " + toString(physics.activeBodyCount) + L"/" + toString(physics.bodyCount) + L", M: " + toString(physics.manifoldCount) + L", Q: " + toString(physics.queryCount), ui::AnLeft, ui::AnCenter);
-
-		middleRect2.left += ui::dpi96(150);
-		canvas.drawText(middleRect2, L"Snd: " + toString(audio.activeSoundChannels), ui::AnLeft, ui::AnCenter);
-
-		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 4;
-		bottomRect.bottom = bottomRect.top + ui::dpi96(c_performanceLineHeight);
-
-		bottomRect.left += ui::dpi96(26);
-		canvas.drawText(bottomRect, L"Mem: " + toString(memory.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
-
-		bottomRect.left += ui::dpi96(150);
-		canvas.drawText(bottomRect, L"Obj: " + toString(memory.heapObjects), ui::AnLeft, ui::AnCenter);
-
-		bottomRect.left += ui::dpi96(100);
-		canvas.drawText(bottomRect, L"Smem: " + toString(memory.memInUseScript / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
-
-		bottomRect.left += ui::dpi96(100);
-		canvas.drawText(bottomRect, L"Gmem: " + toString(render.renderSystemStats.memoryUsage / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
-
-		bottomRect.left += ui::dpi96(100);
-		canvas.drawText(bottomRect, L"Res: " + toString(resource.residentResourcesCount) + L", " + toString(resource.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
+		middleRect.left += ui::dpi96(120);
+		canvas.drawText(middleRect, str(L"Simulate: %d, %.1f%%, %d", (int32_t)runtime.steps, runtime.interval * 100.0f, runtime.collisions), ui::AnLeft, ui::AnCenter);
 
 		performanceRect = performanceRect.offset(0, ui::dpi96(c_performanceHeight + c_commandHeight));
 	}
