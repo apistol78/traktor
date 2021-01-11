@@ -265,6 +265,9 @@ void RenderViewVk::close()
 	// Destroy frame resources.
 	for (auto& frame : m_frames)
 	{
+		if (frame.graphicsCommandBuffer)
+			frame.graphicsCommandBuffer->wait();
+
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
 	}

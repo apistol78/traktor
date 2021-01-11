@@ -77,10 +77,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 {
 	if (pCallbackData && pCallbackData->pMessage)
 	{
-		if (
-			std::strcmp(pCallbackData->pMessage, "fragment shader writes to output location 0 with no matching attachment") != 0
-		)
-			log::info << mbstows(pCallbackData->pMessage) << Endl;
+		log::info << mbstows(pCallbackData->pMessage) << Endl;
 	}
 	return VK_FALSE;
 }

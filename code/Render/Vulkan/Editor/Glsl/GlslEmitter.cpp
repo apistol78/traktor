@@ -1469,17 +1469,20 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	if (!in[0])
 		return false;
 
-	auto& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
-	auto& fpo = cx.getFragmentShader().getOutputStream(GlslShader::BtOutput);
-
-	comment(fpb, node);
-	for (int32_t i = 0; i < sizeof_array(in); ++i)
+	if (node->getRenderState().colorWriteMask != 0)
 	{
-		if (!in[i])
-			continue;
+		auto& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
+		auto& fpo = cx.getFragmentShader().getOutputStream(GlslShader::BtOutput);
 
-		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
-		fpo << L"layout (location = " << i << L") out vec4 _gl_FragData_" << i << L";" << Endl;
+		comment(fpb, node);
+		for (int32_t i = 0; i < sizeof_array(in); ++i)
+		{
+			if (!in[i])
+				continue;
+
+			fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
+			fpo << L"layout (location = " << i << L") out vec4 _gl_FragData_" << i << L";" << Endl;
+		}
 	}
 
 	cx.setRenderState(rs);
