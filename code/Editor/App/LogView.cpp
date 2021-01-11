@@ -94,7 +94,7 @@ bool LogView::create(ui::Widget* parent)
 	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	int32_t fontSize = m_log->getFont().getSize();
 	m_log->setFont(ui::Font(font, fontSize));
 
 	m_popup = new ui::Menu();
