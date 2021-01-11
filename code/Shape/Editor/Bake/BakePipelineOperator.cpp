@@ -108,6 +108,10 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 			resolvedEntityData->setId(entityDataId);
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
+
+			for (auto componentData : externalEntityDataRef->getComponents())
+				resolvedEntityData->setComponent(componentData);			
+
 			objectMember->set(resolvedEntityData);
 		}
 		else if (const world::EntityData* entityDataRef = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
