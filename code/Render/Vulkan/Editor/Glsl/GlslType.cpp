@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <sstream>
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
 

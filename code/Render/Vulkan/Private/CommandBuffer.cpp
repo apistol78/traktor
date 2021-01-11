@@ -3,6 +3,7 @@
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
 {
@@ -110,7 +111,9 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandBuffer com
 	VkFenceCreateInfo fci = {};
 	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fci.flags = 0;
-	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);	
+	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);
+
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);
 
 	m_thread = ThreadManager::getInstance().getCurrentThread();
 }
