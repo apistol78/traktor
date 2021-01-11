@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -80,14 +81,22 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
 			return nullptr;
 
-		resolvedEntityData->setId(externalEntityData->getId());
-		resolvedEntityData->setName(externalEntityData->getName());
-		resolvedEntityData->setTransform(externalEntityData->getTransform());
+		Ref< EntityData > mutableEntityData = DeepClone(resolvedEntityData).create< EntityData >();
+		if (!mutableEntityData)
+			return nullptr;
+
+		mutableEntityData->setId(externalEntityData->getId());
+		mutableEntityData->setName(externalEntityData->getName());
+		mutableEntityData->setTransform(externalEntityData->getTransform());
+
+		// Override component data.
+		for (auto componentData : entityData.getComponents())
+			mutableEntityData->setComponent(componentData);
 
 		if (m_editor)
-			return builder->getCompositeEntityBuilder()->create(resolvedEntityData.getResource());
+			return builder->getCompositeEntityBuilder()->create(mutableEntityData);
 		else
-			return builder->create(resolvedEntityData.getResource());
+			return builder->create(mutableEntityData);
 	}
 	else
 	{
@@ -105,9 +114,9 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			}
 			components.push_back(component);
 		}
+
 		// Create entity and attach all components to it.
-		Ref< Entity > entity = new Entity(entityData.getName(), entityData.getTransform(), components);
-		return entity;
+		return new Entity(entityData.getName(), entityData.getTransform(), components);
 	}
 	return nullptr;
 }
