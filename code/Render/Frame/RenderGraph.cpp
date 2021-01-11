@@ -1,5 +1,6 @@
 #include "Core/Containers/StaticSet.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderSystem.h"
@@ -58,12 +59,7 @@ void RenderGraph::destroy()
 	m_targets.clear();
 	m_passes.clear();
 	m_order.clear();
-
-	if (m_pool != nullptr)
-	{
-		delete m_pool;
-		m_pool = nullptr;
-	}
+	safeDestroy(m_pool);
 }
 
 handle_t RenderGraph::addTransientTargetSet(

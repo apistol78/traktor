@@ -159,7 +159,7 @@ public:
 	const StaticVector< uint32_t, 512 >& getOrder() const { return m_order; }
 
 private:
-	RenderGraphTargetSetPool* m_pool;
+	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 512 > m_order;

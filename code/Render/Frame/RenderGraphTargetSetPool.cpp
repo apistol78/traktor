@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
@@ -8,10 +9,30 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const int32_t c_maxUnusuedFrames = 8;
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
 
 RenderGraphTargetSetPool::RenderGraphTargetSetPool(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
+}
+
+void RenderGraphTargetSetPool::destroy()
+{
+	m_renderSystem = nullptr;
+	for (auto& pool : m_pool)
+	{
+		T_FATAL_ASSERT(pool.acquired.empty());
+		for (auto& target : pool.free)
+			safeDestroy(target.rts);
+	}
+	m_pool.clear();
 }
 
 IRenderTargetSet* RenderGraphTargetSetPool::acquire(
@@ -102,13 +123,13 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	// Acquire free target, if no one left we need to create a new target.
 	if (!pool->free.empty())
 	{
-		Ref< IRenderTargetSet > targetSet = pool->free.back();
+		Target target = pool->free.back();
 
 		pool->free.pop_back();
-		pool->acquired.push_back(targetSet);
+		pool->acquired.push_back(target.rts);
 
-		targetSet->setDebugName(name);
-		return targetSet;
+		target.rts->setDebugName(name);
+		return target.rts;
 	}
 	else
 	{
@@ -120,24 +141,28 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 			T_FATAL_ASSERT(sharedHeight == rtscd.height);
 		}
 
-		Ref< IRenderTargetSet > targetSet = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, T_FILE_LINE_W);
-		if (targetSet)
+		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, T_FILE_LINE_W);
+		if (rts)
 		{
-			targetSet->setDebugName(name);
-			pool->acquired.push_back(targetSet);
+			rts->setDebugName(name);
+			pool->acquired.push_back(rts);
 		}
-		return targetSet;
+		return rts;
 	}
 }
 
 void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
 {
 	T_ANONYMOUS_VAR(Ref< IRenderTargetSet >)(targetSet);
-	for (auto it = m_pool.begin(); it != m_pool.end(); ++it)
+	for (auto& pool : m_pool)
 	{
-		if (it->acquired.remove(targetSet))
+		auto it = std::remove_if(pool.acquired.begin(), pool.acquired.end(), [&](const IRenderTargetSet* rts) {
+			return rts == targetSet;
+		});
+		if (it != pool.acquired.end())
 		{
-			it->free.push_back(targetSet);
+			pool.acquired.erase(it, pool.acquired.end());
+			pool.free.push_back({ targetSet, 0 });
 			break;
 		}
 	}
@@ -145,10 +170,32 @@ void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
 
 void RenderGraphTargetSetPool::cleanup()
 {
-	//auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
-	//	return pool.acquired.empty();
-	//});
-	//m_pool.erase(it, m_pool.end());
+	int32_t freed = 0;
+	for (auto& pool : m_pool)
+	{
+		T_FATAL_ASSERT(pool.acquired.empty());
+		auto it = std::remove_if(pool.free.begin(), pool.free.end(), [](const Target& target) {
+			return target.unused > c_maxUnusuedFrames;
+		});
+		if (it != pool.free.end())
+		{
+			for (auto it2 = it; it2 != pool.free.end(); ++it2)
+			{
+				it2->rts->destroy();
+				++freed;
+			}
+			pool.free.erase(it, pool.free.end());
+		}
+		for (auto& target : pool.free)
+			target.unused++;
+	}
+	if (freed > 0)
+	{
+		auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
+			return pool.free.empty() && pool.acquired.empty();
+		});
+		m_pool.erase(it, m_pool.end());
+	}
 }
 
 	}
