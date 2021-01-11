@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
@@ -15,10 +16,14 @@ class IRenderTargetSet;
 /*!
  * \ingroup Render
  */
-class RenderGraphTargetSetPool
+class RenderGraphTargetSetPool : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	explicit RenderGraphTargetSetPool(IRenderSystem* renderSystem);
+
+	void destroy();
 
 	/*! Acquire target from pool.
 	 *
@@ -45,6 +50,12 @@ public:
 	void cleanup();
 
 private:
+	struct Target
+	{
+		Ref< IRenderTargetSet > rts;
+		int32_t unused;
+	};
+
 	struct Pool
 	{
 		// Pool identification.
@@ -53,7 +64,7 @@ private:
 		handle_t persistentHandle;
 
 		// Pool targets.
-		RefArray< IRenderTargetSet > free;
+		AlignedVector< Target > free;
 		RefArray< IRenderTargetSet > acquired;
 	};
 
