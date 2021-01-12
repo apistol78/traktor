@@ -72,15 +72,15 @@ bool TpsRuntime::check(const TargetPerfSet& old) const
 {
 	const TpsRuntime& o = (const TpsRuntime&)old;
 	return	
-		std::abs(fps - o.fps) >= 0.0001f ||
+		std::abs(fps - o.fps) >= 0.2f ||
 		std::abs(update - o.update) >= 0.0001f ||
 		std::abs(build - o.build) >= 0.0001f ||
 		std::abs(render - o.render) >= 0.0001f ||
 		std::abs(physics - o.physics) >= 0.0001f ||
 		std::abs(input - o.input) >= 0.0001f ||
-		std::abs(garbageCollect - o.garbageCollect) >= 0.0001f ||
-		std::abs(steps - o.steps) >= 0.0001f ||
-		std::abs(interval - o.interval) >= 0.0001f ||
+		std::abs(garbageCollect - o.garbageCollect) >= 0.001f ||
+		std::abs(steps - o.steps) >= 0.001f ||
+		std::abs(interval - o.interval) >= 0.1f ||
 		collisions != o.collisions;
 }
 
@@ -102,11 +102,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TpsMemory", 0, TpsMemory, Targe
 
 bool TpsMemory::check(const TargetPerfSet& old) const
 {
-	const TpsMemory& o = (const TpsMemory&)old;
-	return
-		memInUse != o.memInUse ||
-		memInUseScript != o.memInUseScript ||
-		heapObjects != o.heapObjects;
+	return false;
 }
 
 void TpsMemory::serialize(ISerializer& s)
@@ -120,10 +116,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TpsRender", 0, TpsRender, Targe
 
 bool TpsRender::check(const TargetPerfSet& old) const
 {
-	const TpsRender& o = (const TpsRender&)old;
-	return
-		std::memcmp(&renderSystemStats, &o.renderSystemStats, sizeof(renderSystemStats)) != 0 ||
-		std::memcmp(&renderViewStats, &o.renderViewStats, sizeof(renderViewStats)) != 0;
+	return false;
 }
 
 void TpsRender::serialize(ISerializer& s)
