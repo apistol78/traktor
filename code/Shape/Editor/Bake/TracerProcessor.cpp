@@ -292,6 +292,8 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 
 void TracerProcessor::processorThread()
 {
+	int32_t pending;
+
 	Timer timer;
 	timer.start();
 
@@ -305,6 +307,7 @@ void TracerProcessor::processorThread()
 			{
 				m_activeTask = m_tasks.front();
 				m_tasks.pop_front();
+				pending = (int32_t)m_tasks.size();
 			}
 		}
 
@@ -313,7 +316,7 @@ void TracerProcessor::processorThread()
 			m_status.active = true;
 			m_cancelled = false;
 
-			log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
+			log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started (" << pending << L" pending)." << Endl;
 			double Tstart = timer.getElapsedTime();
 
 			process(m_activeTask);
