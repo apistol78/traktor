@@ -32,9 +32,10 @@ public:
 
 private:
 	RefArray< const Act > m_acts;
-	bool m_repeatActs;
-	float m_totalDuration;
-	float m_lastTime;
+	bool m_repeatActs = false;
+	bool m_hasInfinite = false;
+	float m_totalDuration = 0.0f;
+	float m_lastTime = -1.0f;
 };
 
 	}

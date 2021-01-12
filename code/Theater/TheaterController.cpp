@@ -15,12 +15,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, 
 TheaterController::TheaterController(const RefArray< const Act >& acts, bool repeatActs)
 :	m_acts(acts)
 ,	m_repeatActs(repeatActs)
-,	m_totalDuration(0.0f)
-,	m_lastTime(-1.0f)
 {
-	// Measure total duration of all acts.
 	for (int32_t i = 0; i < (int32_t)m_acts.size(); ++i)
+	{
 		m_totalDuration += m_acts[i]->getDuration();
+		m_hasInfinite |= m_acts[i]->isInfinite();
+	}
 }
 
 void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
@@ -28,14 +28,13 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	if (m_acts.empty() || traktor::abs(time - m_lastTime) <= FUZZY_EPSILON)
 		return;
 
-	// Wrap time if we're repeating acts indefinitely.
-	if (time > m_totalDuration)
-	{
-		if (m_repeatActs)
-			time = std::fmod(time, m_totalDuration);
-		else
-			return;
-	}
+	// Do nothing if we're finished.
+	if (!m_repeatActs && !m_hasInfinite && time > m_totalDuration)
+		return;
+
+	// Repeat all acts if no infinite act exist.
+	if (m_repeatActs && !m_hasInfinite)
+		time = std::fmod(time, m_totalDuration);
 
 	// Figure out which act we're in; as time might not be continous we need to find this each update.
 	const Act* act = nullptr;
