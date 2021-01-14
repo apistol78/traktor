@@ -40,7 +40,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT(renderSystem);
 
-	Ref< IRenderSystem > renderSystemVrfy = renderSystem; // new RenderSystemVrfy();
+	Ref< IRenderSystem > renderSystemVrfy = new RenderSystemVrfy();
 
 	RenderSystemDesc desc;
 	desc.capture = renderSystem;

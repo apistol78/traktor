@@ -1,3 +1,5 @@
+#include <renderdoc_app.h>
+#include "Core/Library/Library.h"
 #include "Render/StructElement.h"
 #include "Render/VertexElement.h"
 #include "Render/Vrfy/CubeTextureVrfy.h"
@@ -9,6 +11,7 @@
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
+#include "Render/Vrfy/StructBufferVrfy.h"
 #include "Render/Vrfy/VertexBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
@@ -23,6 +26,20 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 {
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
+
+#if defined(_WIN32)
+	// Try to load RenderDoc capture.
+	m_libRenderDoc = new Library();
+	if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
+	{
+		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
+		int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
+		if (ret != 1)
+			m_apiRenderDoc = nullptr;
+	}
+	else
+		m_libRenderDoc = nullptr;
+#endif
 
 	return m_renderSystem->create(desc);
 }
@@ -116,7 +133,7 @@ Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< St
 	if (!structBuffer)
 		return nullptr;
 
-	return nullptr; // new StructBufferVrfy(structBuffer, bufferSize, structSize);	
+	return new StructBufferVrfy(structBuffer, bufferSize, structSize);	
 }
 
 Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
@@ -212,7 +229,21 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 		T_CAPTURE_ASSERT(sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 
-	Ref< IRenderTargetSet > renderTargetSet = m_renderSystem->createRenderTargetSet(desc, sharedDepthStencil, tag);
+	Ref< IRenderTargetSet > renderTargetSet;
+	if (sharedDepthStencil)
+	{
+		Ref< RenderTargetSetVrfy > sharedDepthStencilVrfy = dynamic_type_cast< RenderTargetSetVrfy* >(sharedDepthStencil);
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy, L"Not correct type of render target set.");
+
+		if (!sharedDepthStencilVrfy)
+			return nullptr;
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->getRenderTargetSet(), L"Using destroyed render target set.");
+
+		renderTargetSet = m_renderSystem->createRenderTargetSet(desc, sharedDepthStencilVrfy->getRenderTargetSet(), tag);
+	}
+	else
+		renderTargetSet = m_renderSystem->createRenderTargetSet(desc, nullptr, tag);
+	
 	if (!renderTargetSet)
 		return nullptr;
 
@@ -226,15 +257,17 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	if (!programResource)
 		return nullptr;
 
+	Ref< IProgram > program;
+
 	const ProgramResourceVrfy* resource = dynamic_type_cast< const ProgramResourceVrfy* >(programResource);
-	T_CAPTURE_ASSERT(resource, L"Incorrect program resource type.");
+	if (resource != nullptr)
+	{
+		T_CAPTURE_ASSERT(resource->m_embedded, L"Invalid wrapped resource.");
+		program = m_renderSystem->createProgram(resource->m_embedded, tag);
+	}
+	else
+		program = m_renderSystem->createProgram(programResource, tag);
 
-	if (!resource)
-		return nullptr;
-
-	T_CAPTURE_ASSERT(resource->m_embedded, L"Invalid wrapped resource.");
-
-	Ref< IProgram > program = m_renderSystem->createProgram(resource->m_embedded, tag);
 	if (!program)
 		return nullptr;
 

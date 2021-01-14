@@ -251,7 +251,7 @@ void RenderViewOpenGLES::present()
 	m_context->deleteResources();
 }
 
-bool RenderViewOpenGLES::beginPass(const Clear* clear)
+bool RenderViewOpenGLES::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
 	m_context->bindPrimary();
 

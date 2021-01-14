@@ -3,6 +3,7 @@
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
+#include "Render/Vrfy/StructBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
@@ -209,8 +210,17 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 void ProgramVrfy::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
-	if (m_program)
-		m_program->setStructBufferParameter(handle, structBuffer);
+	
+	if (!m_program)
+		return;
+
+	if (StructBufferVrfy* sbufferVrfy = dynamic_type_cast< StructBufferVrfy* >(structBuffer))
+	{
+		T_CAPTURE_ASSERT(sbufferVrfy->getStructBuffer(), L"Trying to set destroyed sbuffer as shader parameter.");
+		m_program->setStructBufferParameter(handle, sbufferVrfy->getStructBuffer());
+	}
+	else
+		T_FATAL_ERROR;
 }
 
 void ProgramVrfy::setStencilReference(uint32_t stencilReference)

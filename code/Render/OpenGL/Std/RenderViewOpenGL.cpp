@@ -424,9 +424,9 @@ void RenderViewOpenGL::present()
 	}
 }
 
-bool RenderViewOpenGL::beginPass(const Clear* clear)
+bool RenderViewOpenGL::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
-	return beginPass(m_primaryTarget, 0, clear, TfColor | TfDepth, TfColor | TfDepth);
+	return beginPass(m_primaryTarget, 0, clear, load, store);
 }
 
 bool RenderViewOpenGL::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)

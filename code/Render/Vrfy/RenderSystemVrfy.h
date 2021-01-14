@@ -10,8 +10,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+struct RENDERDOC_API_1_4_1;
+
 namespace traktor
 {
+
+class Library;
+
 	namespace render
 	{
 
@@ -72,6 +77,8 @@ public:
 
 private:
 	Ref< IRenderSystem > m_renderSystem;
+	Ref< Library > m_libRenderDoc;
+	RENDERDOC_API_1_4_1* m_apiRenderDoc = nullptr;
 };
 
 	}

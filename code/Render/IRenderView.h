@@ -108,9 +108,11 @@ public:
 	/*! Begin rendering to back buffer.
 	 *
 	 * \param clear Optional clear parameters.
+	 * \param load Load flags.
+	 * \param store Store flags.
 	 * \return True if successful.
 	 */
-	virtual bool beginPass(const Clear* clear) = 0;
+	virtual bool beginPass(const Clear* clear, uint32_t load, uint32_t store) = 0;
 
 	/*! Begin rendering to all render targets in set.
 	 *

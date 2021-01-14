@@ -372,7 +372,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	cl.mask = render::CfColor | render::CfDepth;
 	cl.colors[0] = clearColor;
 	cl.depth = 1.0f;
-	if (m_renderView->beginPass(&cl))
+	if (m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
 	{
 		// Render context.
 		m_renderContext->render(m_renderView);
