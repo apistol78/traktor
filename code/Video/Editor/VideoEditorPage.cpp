@@ -145,7 +145,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	cl.mask = render::CfColor;
 	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
 
-	if (m_renderView->beginPass(&cl))
+	if (m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
 	{
 		if (m_video)
 		{

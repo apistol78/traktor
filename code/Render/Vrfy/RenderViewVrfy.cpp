@@ -7,11 +7,14 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/IndexBufferVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
+#include "Render/Vrfy/SimpleTextureVrfy.h"
 #include "Render/Vrfy/VertexBufferVrfy.h"
+#include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
 {
@@ -122,14 +125,14 @@ void RenderViewVrfy::endFrame()
 
 void RenderViewVrfy::present()
 {
-	T_CAPTURE_ASSERT (!m_insideFrame, L"Cannot present inside beginFrame/endFrame.");
+	T_CAPTURE_ASSERT(!m_insideFrame, L"Cannot present inside beginFrame/endFrame.");
 	m_renderView->present();
 }
 
-bool RenderViewVrfy::beginPass(const Clear* clear)
+bool RenderViewVrfy::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
-	if (!m_renderView->beginPass(clear))
+	if (!m_renderView->beginPass(clear, load, store))
 		return false;
 
 	m_insidePass = true;
@@ -158,7 +161,7 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, int32_t render
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
 
 	RenderTargetSetVrfy* rtsc = mandatory_non_null_type_cast< RenderTargetSetVrfy* >(renderTargetSet);
-	T_CAPTURE_ASSERT (rtsc->haveColorTexture(renderTarget), L"No such render target.");
+	T_CAPTURE_ASSERT(rtsc->haveColorTexture(renderTarget), L"No such render target.");
 
 	if (!m_renderView->beginPass(
 		rtsc->getRenderTargetSet(),
@@ -182,16 +185,16 @@ void RenderViewVrfy::endPass()
 
 void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	T_CAPTURE_ASSERT (m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
-	T_CAPTURE_ASSERT (programVrfy, L"Incorrect program type.");
+	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
 	if (!programVrfy)
 		return;
 
-	T_CAPTURE_ASSERT (programVrfy->m_program, L"Trying to draw with destroyed program.");
-	T_CAPTURE_ASSERT (vertexBuffer, L"No vertex buffer.");
+	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
+	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
 
 	if (!vertexBuffer)
 		return;
@@ -226,7 +229,7 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 	if (primitives.indexed)
 	{
-		T_CAPTURE_ASSERT (ib, L"Drawing indexed primitives but no index buffer.");
+		T_CAPTURE_ASSERT(ib, L"Drawing indexed primitives but no index buffer.");
 		if (!ib)
 			return;
 
@@ -236,14 +239,14 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		else
 			maxVertexCount /= 4;
 
-		T_CAPTURE_ASSERT (primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
+		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
 	}
 	else
 	{
-		T_CAPTURE_ASSERT (!ib, L"Drawing non-indexed primitives but index buffer provided.");
+		T_CAPTURE_ASSERT(!ib, L"Drawing non-indexed primitives but index buffer provided.");
 
 		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
-		T_CAPTURE_ASSERT (primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
+		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
 	}
 
 	programVrfy->verify();
@@ -253,16 +256,16 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	T_CAPTURE_ASSERT (m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
-	T_CAPTURE_ASSERT (programVrfy, L"Incorrect program type.");
+	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
 	if (!programVrfy)
 		return;
 
-	T_CAPTURE_ASSERT (programVrfy->m_program, L"Trying to draw with destroyed program.");
-	T_CAPTURE_ASSERT (vertexBuffer, L"No vertex buffer.");
+	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
+	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
 
 	if (!vertexBuffer)
 		return;
@@ -297,7 +300,7 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 	if (primitives.indexed)
 	{
-		T_CAPTURE_ASSERT (ib, L"Drawing indexed primitives but no index buffer.");
+		T_CAPTURE_ASSERT(ib, L"Drawing indexed primitives but no index buffer.");
 		if (!ib)
 			return;
 
@@ -307,14 +310,14 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		else
 			maxVertexCount /= 4;
 
-		T_CAPTURE_ASSERT (primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
+		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
 	}
 	else
 	{
-		T_CAPTURE_ASSERT (!ib, L"Drawing non-indexed primitives but index buffer provided.");
+		T_CAPTURE_ASSERT(!ib, L"Drawing non-indexed primitives but index buffer provided.");
 
 		uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
-		T_CAPTURE_ASSERT (primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
+		T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
 	}
 
 	programVrfy->verify();
@@ -324,11 +327,11 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 {
-	T_CAPTURE_ASSERT (m_insidePass, L"Cannot compute outside of beginPass/endPass.");
-	T_CAPTURE_ASSERT (workSize != nullptr, L"Incorrect argument; workSize null.");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot compute outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(workSize != nullptr, L"Incorrect argument; workSize null.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
-	T_CAPTURE_ASSERT (programVrfy, L"Incorrect program type.");
+	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
 	if (!programVrfy)
 		return;
@@ -340,11 +343,36 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
-	T_CAPTURE_ASSERT (m_insidePass, L"Cannot copy outside of beginPass/endPass.");
-	T_CAPTURE_ASSERT (destinationTexture, L"Invalid destination texture.");
-	T_CAPTURE_ASSERT (sourceTexture, L"Invalid destination texture.");
+	T_CAPTURE_ASSERT(destinationTexture, L"Invalid destination texture.");
+	T_CAPTURE_ASSERT(sourceTexture, L"Invalid destination texture.");
 
-	return m_renderView->copy(destinationTexture, destinationRegion, sourceTexture, sourceRegion);
+	ITexture* destinationTextureUnwrapped = nullptr;
+	ITexture* sourceTextureUnwrapped = nullptr;
+
+	if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(destinationTexture))
+		destinationTextureUnwrapped = cubeTexture->getTexture();
+	else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(destinationTexture))
+		destinationTextureUnwrapped = simpleTexture->getTexture();
+	else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(destinationTexture))
+		destinationTextureUnwrapped = volumeTexture->getTexture();
+	else
+		T_FATAL_ERROR;
+
+	if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(sourceTexture))
+		sourceTextureUnwrapped = cubeTexture->getTexture();
+	else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(sourceTexture))
+		sourceTextureUnwrapped = simpleTexture->getTexture();
+	else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(sourceTexture))
+		sourceTextureUnwrapped = volumeTexture->getTexture();
+	else
+		T_FATAL_ERROR;
+
+	T_CAPTURE_ASSERT(destinationTextureUnwrapped, L"Using destroyed texture as destination.");
+	T_CAPTURE_ASSERT(sourceTextureUnwrapped, L"Using destroyed texture as source.");
+	if (destinationTextureUnwrapped == nullptr || sourceTextureUnwrapped == nullptr)
+		return false;
+
+	return m_renderView->copy(destinationTextureUnwrapped, destinationRegion, sourceTextureUnwrapped, sourceRegion);
 }
 
 int32_t RenderViewVrfy::beginTimeQuery()

@@ -567,7 +567,7 @@ void RenderViewVk::present()
 	}
 }
 
-bool RenderViewVk::beginPass(const Clear* clear)
+bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
 	T_FATAL_ASSERT(m_targetRenderPass == 0);
 
@@ -588,8 +588,8 @@ bool RenderViewVk::beginPass(const Clear* clear)
 		frame.graphicsCommandBuffer,
 		m_targetColorIndex,
 		cl,
-		TfColor | TfDepth,
-		TfColor,
+		load,
+		store,
 		frame.primaryTarget->getDepthTargetVk(),
 		
 		// Out

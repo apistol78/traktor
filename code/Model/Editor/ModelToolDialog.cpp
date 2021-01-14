@@ -882,7 +882,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	cl.depth = 1.0f;
 	cl.stencil = 0;
 
-	if (!m_renderView->beginPass(&cl))
+	if (!m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
 		return;
 
 	float aspect = float(rc.getWidth()) / rc.getHeight();

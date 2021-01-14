@@ -427,6 +427,7 @@ local outputs =
 			{ name = "TargetStop", column = 4, row = 1, width = 1, height = 1, base = 24 },
 			{ name = "TargetProfile", column = 5, row = 1, width = 1, height = 1, base = 24 },
 			{ name = "Blender", column = 0, row = -2, width = 1, height = 1 },
+			{ name = "RenderDoc", column = 1, row = -2, width = 1, height = 1 },
 		}
 	},
 	{

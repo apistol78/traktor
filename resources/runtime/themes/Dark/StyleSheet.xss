@@ -1179,6 +1179,10 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Runtime/Blender.image</value>
 		</item>
 		<item>
+			<name>Runtime.RenderDoc</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Runtime/RenderDoc.image</value>
+		</item>
+		<item>
 			<name>Input.Alignment</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Dark/Images/Input/Alignment.image</value>
 		</item>

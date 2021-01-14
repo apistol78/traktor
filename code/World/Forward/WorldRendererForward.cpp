@@ -1477,7 +1477,7 @@ void WorldRendererForward::setupProcessPass(
 			render::Clear cl;
 			cl.mask = render::CfColor;
 			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor);
+			rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
 		}
 
 		process->addPasses(renderGraph, rp, cx);

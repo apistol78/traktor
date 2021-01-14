@@ -273,7 +273,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	RandomGeometry random;
 
 	// Emperically determined attenuation to better match global lighting.
-	const Scalar c_attenuation = 2.0_simd;
+	const Scalar c_attenuation = 4.0_simd;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f color(0.0f, 0.0f, 0.0f, 0.0f);

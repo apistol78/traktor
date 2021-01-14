@@ -503,7 +503,7 @@ void RenderViewDx11::present()
 	}
 }
 
-bool RenderViewDx11::beginPass(const Clear* clear)
+bool RenderViewDx11::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
 	RenderState& rs = m_renderState;
 

@@ -111,7 +111,7 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	cl.colors[0] = Color4f(0.25f, 0.25f, 0.25f, 1.0f);
 	cl.depth = 1.0f;
 
-	if (!m_renderView->beginPass(&cl))
+	if (!m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
 		return;
 
 	ui::Rect innerRect = getInnerRect();

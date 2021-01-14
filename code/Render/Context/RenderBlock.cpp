@@ -130,7 +130,7 @@ void BeginPassRenderBlock::render(IRenderView* renderView) const
 			renderView->beginPass(renderTargetSet, &clear, load, store);
 	}
 	else
-		renderView->beginPass(&clear);
+		renderView->beginPass(&clear, load, store);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
