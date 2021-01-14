@@ -22,6 +22,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ChainFilter.h"
+#include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NoiseFilter.h"
@@ -365,21 +366,21 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			if (m_compressionMethod == CmDXTn)
 			{
-				if (textureOutput->m_enableNormalMapCompression)
+				if (textureOutput->m_enableNormalMapCompression || textureOutput->m_encodeAsRGBM)
 				{
-					log::info << L"Using DXT5nm compression" << Endl;
+					log::info << L"Using DXT5 compression." << Endl;
 					textureFormat = TfDXT5;
 				}
 				else
 				{
 					if (needAlpha)
 					{
-						log::info << L"Using DXT3 compression" << Endl;
+						log::info << L"Using DXT3 compression." << Endl;
 						textureFormat = TfDXT3;
 					}
 					else
 					{
-						log::info << L"Using DXT1 compression" << Endl;
+						log::info << L"Using DXT1 compression." << Endl;
 						textureFormat = TfDXT1;
 					}
 				}
@@ -393,38 +394,38 @@ bool TextureOutputPipeline::buildOutput(
 				{
 					if (needAlpha)
 					{
-						log::info << L"Using PVRTC3 compression" << Endl;
+						log::info << L"Using PVRTC3 compression." << Endl;
 						textureFormat = TfPVRTC3;
 					}
 					else
 					{
-						log::info << L"Using PVRTC1 compression" << Endl;
+						log::info << L"Using PVRTC1 compression." << Endl;
 						textureFormat = TfPVRTC1;
 					}
 				}
 				else
-					log::info << L"Using no compression" << Endl;
+					log::info << L"Using no compression." << Endl;
 			}
 			else if (m_compressionMethod == CmETC1)
 			{
 				if (!needAlpha)
 				{
-					log::info << L"Using ETC1 compression" << Endl;
+					log::info << L"Using ETC1 compression." << Endl;
 					textureFormat = TfETC1;
 				}
 				else
-					log::info << L"Using no compression" << Endl;
+					log::info << L"Using no compression." << Endl;
 			}
 			else if (m_compressionMethod == CmASTC)
 			{
-				log::info << L"Using ASTC (4*4) compression" << Endl;
+				log::info << L"Using ASTC (4*4) compression." << Endl;
 				textureFormat = TfASTC4x4;
 			}
 			else
-				log::info << L"Using no compression" << Endl;
+				log::info << L"Using no compression." << Endl;
 		}
 		else
-			log::info << L"Using no compression" << Endl;
+			log::info << L"Using no compression." << Endl;
 	}
 
 	// Data is stored in big endian as GPUs are big endian machines.
@@ -507,6 +508,14 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Pre-multiply with alpha..." << Endl;
 		drawing::PremultiplyAlphaFilter preAlphaFilter;
 		image->apply(&preAlphaFilter);
+	}
+
+	// Encode using RGBM scheme, need to do this before converting pixel format since
+	// we need to consider high range images.
+	if (textureOutput->m_encodeAsRGBM)
+	{
+		const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
+		image->apply(&encodeRGBM);
 	}
 
 	// Convert image into proper format.

@@ -39,6 +39,7 @@ public:
 	bool m_flipY = false;
 	bool m_enableCompression = true;
 	bool m_enableNormalMapCompression = false;
+	bool m_encodeAsRGBM = false;
 	bool m_inverseNormalMapX = false;
 	bool m_inverseNormalMapY = false;
 	bool m_linearGamma = false;
