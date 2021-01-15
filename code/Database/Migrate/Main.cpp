@@ -14,9 +14,6 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -49,14 +46,19 @@ int32_t countGroups(db::Group* group)
  * \param sourceInstance Source instance to migrate.
  * \param targetGroup Migrate into target group.
  */
-bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup)
+bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup, const DateTime& modifiedSince)
 {
-	static Semaphore s_lock;
+	// First check if source instance has been modified since last migration, if not
+	// then we can quickly ignore migration of instance.
+	DateTime sourceModifyDate;
+	sourceInstance->getLastModifyDate(sourceModifyDate);
+	if (sourceModifyDate < modifiedSince)
+		return true;
 
 	Ref< ISerializable > sourceObject = sourceInstance->getObject();
 	if (!sourceObject)
 	{
-		traktor::log::error << L"Failed, unable to get source object" << Endl;
+		traktor::log::error << L"Failed, unable to get source object." << Endl;
 		return false;
 	}
 
@@ -65,49 +67,45 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 	std::vector< std::wstring > dataNames;
 	sourceInstance->getDataNames(dataNames);
 
+	Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
+	if (!targetInstance)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+		traktor::log::error << L"Failed, unable to create target instance." << Endl;
+		return false;
+	}
 
-		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
-		if (!targetInstance)
+	targetInstance->setObject(sourceObject);
+
+	for (const auto& dataName : dataNames)
+	{
+		Ref< IStream > sourceStream = sourceInstance->readData(dataName);
+		if (!sourceStream)
 		{
-			traktor::log::error << L"Failed, unable to create target instance." << Endl;
+			traktor::log::error << L"Failed, unable to open source stream \"" << dataName << L"." << Endl;
 			return false;
 		}
 
-		targetInstance->setObject(sourceObject);
-
-		for (const auto& dataName : dataNames)
+		Ref< IStream > targetStream = targetInstance->writeData(dataName);
+		if (!targetStream)
 		{
-			Ref< IStream > sourceStream = sourceInstance->readData(dataName);
-			if (!sourceStream)
-			{
-				traktor::log::error << L"Failed, unable to open source stream \"" << dataName << L"." << Endl;
-				return false;
-			}
-
-			Ref< IStream > targetStream = targetInstance->writeData(dataName);
-			if (!targetStream)
-			{
-				traktor::log::error << L"Failed, unable to open target stream \"" << dataName << L"." << Endl;
-				return false;
-			}
-
-			if (!StreamCopy(targetStream, sourceStream).execute())
-			{
-				traktor::log::error << L"Failed, unable to copy data \"" << dataName << L"." << Endl;
-				return false;
-			}
-
-			targetStream->close();
-			sourceStream->close();
-		}
-
-		if (!targetInstance->commit())
-		{
-			traktor::log::error << L"Failed, unable to commit target instance," << Endl;
+			traktor::log::error << L"Failed, unable to open target stream \"" << dataName << L"." << Endl;
 			return false;
 		}
+
+		if (!StreamCopy(targetStream, sourceStream).execute())
+		{
+			traktor::log::error << L"Failed, unable to copy data \"" << dataName << L"." << Endl;
+			return false;
+		}
+
+		targetStream->close();
+		sourceStream->close();
+	}
+
+	if (!targetInstance->commit())
+	{
+		traktor::log::error << L"Failed, unable to commit target instance," << Endl;
+		return false;
 	}
 
 	return true;
@@ -121,7 +119,7 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
  * \param groupCount Number of groups to migrate.
  * \return True if successful.
  */
-bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& groupIndex, int32_t groupCount)
+bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, const DateTime& modifiedSince, int32_t& groupIndex, int32_t groupCount)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 	traktor::log::info << IncreaseIndent;
@@ -133,7 +131,7 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 
 	for (auto childInstance : childInstances)
 	{
-		if (!migrateInstance(childInstance, targetGroup))
+		if (!migrateInstance(childInstance, targetGroup, modifiedSince))
 			return false;
 	}
 
@@ -152,51 +150,7 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 				return false;
 		}
 
-		if (!migrateGroup(targetChildGroup, childGroup, groupIndex, groupCount))
-			return false;
-	}
-
-	return true;
-}
-
-/*! Create instance migration jobs.
- *
- * \param targetGroup Target group
- * \param sourceGroup Source group
- * \param outJobs Output array of all jobs created.
- * \return True if successful.
- */
-bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArray< Job >& outJobs)
-{
-	RefArray< db::Instance > childInstances;
-	sourceGroup->getChildInstances(childInstances);
-
-	for (auto childInstance : childInstances)
-	{
-		Ref< db::Instance > sourceInstance = childInstance;
-		Ref< Job > job = JobManager::getInstance().add(makeFunctor(
-			[=] () {
-				migrateInstance(sourceInstance, targetGroup);
-			}
-		));
-		if (job)
-			outJobs.push_back(job);
-	}
-
-	RefArray< db::Group > childGroups;
-	sourceGroup->getChildGroups(childGroups);
-
-	for (auto childGroup : childGroups)
-	{
-		Ref< db::Group > targetChildGroup = targetGroup->getGroup(childGroup->getName());
-		if (!targetChildGroup)
-		{
-			targetChildGroup = targetGroup->createGroup(childGroup->getName());
-			if (!targetChildGroup)
-				return false;
-		}
-
-		if (!createMigrationJobs(targetChildGroup, childGroup, outJobs))
+		if (!migrateGroup(targetChildGroup, childGroup, modifiedSince, groupIndex, groupCount))
 			return false;
 	}
 
@@ -248,7 +202,6 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
 		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
-		traktor::log::info << L"       -parallel       Migrate in parallel" << Endl;
 		return 0;
 	}
 
@@ -341,11 +294,24 @@ int main(int argc, const char** argv)
 	if (verbose)
 		traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;
 
-	Ref< db::Database > destinationDb = new db::Database();
-	if (!destinationDb->create(destinationCs))
+	// Get date when output database was last written.
+	DateTime modifiedSince;
+	std::wstring destinationFileName = db::ConnectionString(destinationCs).get(L"fileName");
+	if (!destinationFileName.empty())
 	{
-		traktor::log::error << L"Unable to create destination database \"" << destinationCs << L"\"." << Endl;
-		return 4;
+		Ref< File > destinationFile = FileSystem::getInstance().get(destinationFileName);
+		if (destinationFile)
+			modifiedSince = destinationFile->getLastWriteTime();
+	}
+
+	Ref< db::Database > destinationDb = new db::Database();
+	if (!destinationDb->open(destinationCs))
+	{
+		if (!destinationDb->create(destinationCs))
+		{
+			traktor::log::error << L"Unable to open nor create destination database \"" << destinationCs << L"\"." << Endl;
+			return 4;
+		}
 	}
 
 	// Begin migration of instances.
@@ -353,43 +319,19 @@ int main(int argc, const char** argv)
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
 	{
-		if (cmdLine.hasOption(L"parallel"))
-		{
-			if (verbose)
-				traktor::log::info << L"Migration begin, creating jobs..." << Endl;
+		if (verbose)
+			traktor::log::info << L"Migration begin, counting groups..." << Endl;
 
-			RefArray< Job > jobs;
-			if (!createMigrationJobs(targetGroup, sourceGroup, jobs))
-				return 5;
+		// Count number of groups; quicker than number of instances but
+		// should be sufficient for progress information.
+		int32_t groupIndex = 0;
+		int32_t groupCount = countGroups(sourceGroup);
 
-			int32_t njobs = int32_t(jobs.size());
+		if (verbose)
+			traktor::log::info << L"Migrating " << groupCount << L" group(s)..." << Endl;
 
-			if (verbose)
-				traktor::log::info << L"Waiting for " << njobs << L" job(s) to complete..." << Endl;
-
-			while (!jobs.empty())
-			{
-				log::info << L":" << (njobs - int32_t(jobs.size())) << L":" << njobs << Endl;
-				jobs.back()->wait();
-				jobs.pop_back();
-			}
-		}
-		else
-		{
-			if (verbose)
-				traktor::log::info << L"Migration begin, counting groups..." << Endl;
-
-			// Count number of groups; quicker than number of instances but
-			// should be sufficient for progress information.
-			int32_t groupIndex = 0;
-			int32_t groupCount = countGroups(sourceGroup);
-
-			if (verbose)
-				traktor::log::info << L"Migrating " << groupCount << L" group(s)..." << Endl;
-
-			if (!migrateGroup(targetGroup, sourceGroup, groupIndex, groupCount))
-				return 5;
-		}
+		if (!migrateGroup(targetGroup, sourceGroup, modifiedSince, groupIndex, groupCount))
+			return 5;
 	}
 
 	if (verbose)

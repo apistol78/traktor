@@ -76,10 +76,7 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 
 	Ref< BlockFile > blockFile = new BlockFile();
 	if (!blockFile->open(fileName, readOnly, flushAlways))
-	{
-		log::error << L"Unable to open compact database \"" << fileName.getPathName() << L"\"; missing or corrupt." << Endl;
 		return false;
-	}
 
 	Ref< IStream > registryStream = blockFile->readBlock(1);
 	if (!registryStream)
@@ -130,13 +127,13 @@ void CompactDatabase::close()
 
 		blockFile->close();
 
-		m_context = 0;
+		m_context = nullptr;
 	}
 }
 
 Ref< IProviderBus > CompactDatabase::getBus()
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< IProviderGroup > CompactDatabase::getRootGroup()
