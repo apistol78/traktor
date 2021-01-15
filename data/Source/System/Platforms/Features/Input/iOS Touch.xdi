@@ -21,7 +21,9 @@
 					<item>
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
-							<value/>
+							<value>
+								<item>CoreHaptics.framework</item>
+							</value>
 						</second>
 					</item>
 					<item>
@@ -47,6 +49,7 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Input.a</item>
 								<item>libTraktor.Input.iOS.a</item>
+								<item>CoreHaptics.framework</item>
 							</value>
 						</second>
 					</item>
