@@ -1,4 +1,6 @@
-#include <renderdoc_app.h>
+#if defined(_WIN32)
+#	include <renderdoc_app.h>
+#endif
 #include "Core/Library/Library.h"
 #include "Render/StructElement.h"
 #include "Render/VertexElement.h"
