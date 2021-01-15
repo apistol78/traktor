@@ -80,8 +80,16 @@ function createXCAssets()
 	s:printLn("  \"images\" : [")
 
 	for i, id in ipairs(iconDefinitions) do
-		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/" .. id.image)
+
+		local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+		if #iconFile <= 0 then
+			iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/" .. id.image
+		end
+
+		local iconPath = Path("$(DEPLOY_PROJECT_ROOT)"):concat(Path(iconFile))
+		local image = Image.loadFromFile(iconPath.pathName)
 		if image == nil then
+			stderr:printLn("Unable to load icon image \"" .. iconPath.pathName .. "\".")
 			return false
 		end
 
