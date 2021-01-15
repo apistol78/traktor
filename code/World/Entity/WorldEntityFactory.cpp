@@ -81,7 +81,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
 			return nullptr;
 
-		Ref< EntityData > mutableEntityData = DeepClone(resolvedEntityData).create< EntityData >();
+		Ref< EntityData > mutableEntityData = DeepClone(resolvedEntityData.getResource()).create< EntityData >();
 		if (!mutableEntityData)
 			return nullptr;
 
