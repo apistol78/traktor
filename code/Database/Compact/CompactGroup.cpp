@@ -20,19 +20,19 @@ bool CompactGroup::internalCreate(CompactGroupEntry* groupEntry)
 	m_groupEntry = groupEntry;
 
 	const RefArray< CompactGroupEntry >& childGroupEntries = groupEntry->getChildGroups();
-	for (RefArray< CompactGroupEntry >::const_iterator i = childGroupEntries.begin(); i != childGroupEntries.end(); ++i)
+	for (auto childGroupEntry : childGroupEntries)
 	{
 		Ref< CompactGroup > childGroup = new CompactGroup(m_context);
-		if (!childGroup->internalCreate(*i))
+		if (!childGroup->internalCreate(childGroupEntry))
 			return false;
 		m_childGroups.push_back(childGroup);
 	}
 
 	const RefArray< CompactInstanceEntry >& childInstanceEntries = groupEntry->getChildInstances();
-	for (RefArray< CompactInstanceEntry >::const_iterator i = childInstanceEntries.begin(); i != childInstanceEntries.end(); ++i)
+	for (auto childInstanceEntry : childInstanceEntries)
 	{
 		Ref< CompactInstance > childInstance = new CompactInstance(m_context);
-		if (!childInstance->internalCreate(*i))
+		if (!childInstance->internalCreate(childInstanceEntry))
 			return false;
 		m_childInstances.push_back(childInstance);
 	}
@@ -58,7 +58,7 @@ bool CompactGroup::remove()
 	T_ASSERT(m_groupEntry);
 	if (!m_context->getRegistry()->removeGroup(m_groupEntry))
 		return false;
-	m_groupEntry = 0;
+	m_groupEntry = nullptr;
 	return true;
 }
 
@@ -68,13 +68,13 @@ Ref< IProviderGroup > CompactGroup::createGroup(const std::wstring& groupName)
 
 	Ref< CompactGroupEntry > childGroupEntry = m_context->getRegistry()->createGroupEntry();
 	if (!childGroupEntry)
-		return 0;
+		return nullptr;
 
 	childGroupEntry->setName(groupName);
 
 	Ref< CompactGroup > childGroup = new CompactGroup(m_context);
 	if (!childGroup->internalCreate(childGroupEntry))
-		return 0;
+		return nullptr;
 
 	m_childGroups.push_back(childGroup);
 	m_groupEntry->addChildGroup(childGroupEntry);
@@ -88,14 +88,14 @@ Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instan
 
 	Ref< CompactInstanceEntry > childInstanceEntry = m_context->getRegistry()->createInstanceEntry();
 	if (!childInstanceEntry)
-		return 0;
+		return nullptr;
 
 	childInstanceEntry->setName(instanceName);
 	childInstanceEntry->setGuid(instanceGuid);
 
 	Ref< CompactInstance > childInstance = new CompactInstance(m_context);
 	if (!childInstance->internalCreate(childInstanceEntry))
-		return 0;
+		return nullptr;
 
 	m_childInstances.push_back(childInstance);
 	m_groupEntry->addChildInstance(childInstanceEntry);
@@ -106,12 +106,12 @@ Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instan
 bool CompactGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
 {
 	outChildGroups.reserve(m_childGroups.size());
-	for (RefArray< CompactGroup >::iterator i = m_childGroups.begin(); i != m_childGroups.end(); ++i)
-		outChildGroups.push_back(*i);
+	for (auto childGroup : m_childGroups)
+		outChildGroups.push_back(childGroup);
 
 	outChildInstances.reserve(m_childInstances.size());
-	for (RefArray< CompactInstance >::iterator i = m_childInstances.begin(); i != m_childInstances.end(); ++i)
-		outChildInstances.push_back(*i);
+	for (auto childInstance : m_childInstances)
+		outChildInstances.push_back(childInstance);
 
 	return true;
 }

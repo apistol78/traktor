@@ -17,12 +17,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactDatabase", 0, CompactDatabase, IProviderDatabase)
 
-CompactDatabase::CompactDatabase()
-:	m_readOnly(false)
-,	m_registryHash(0)
-{
-}
-
 bool CompactDatabase::create(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"fileName"))

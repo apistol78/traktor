@@ -7,10 +7,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponent", NavMeshComponent, world::IEntityComponent)
 
-NavMeshComponent::NavMeshComponent()
-{
-}
-
 NavMeshComponent::NavMeshComponent(const resource::Proxy< NavMesh >& navMesh)
 :	m_navMesh(navMesh)
 {

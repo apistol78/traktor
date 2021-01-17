@@ -29,7 +29,7 @@ class T_DLLCLASS CompactDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
-	CompactDatabase();
+	CompactDatabase() = default;
 
 	virtual bool create(const ConnectionString& connectionString) override final;
 
@@ -44,8 +44,8 @@ public:
 private:
 	Ref< CompactContext > m_context;
 	Ref< CompactGroup > m_rootGroup;
-	bool m_readOnly;
-	uint32_t m_registryHash;
+	bool m_readOnly = false;
+	uint32_t m_registryHash = 0;
 };
 
 	}
