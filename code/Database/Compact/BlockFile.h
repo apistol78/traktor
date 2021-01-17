@@ -2,6 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -28,7 +29,7 @@ public:
 		int64_t size;
 	};
 
-	BlockFile();
+	BlockFile() = default;
 
 	virtual ~BlockFile();
 
@@ -57,9 +58,9 @@ private:
 	Semaphore m_lock;
 	Ref< IStream > m_stream;
 	RefArray< IStream > m_unusedReadStreams;
-	std::vector< Block > m_blocks;
-	bool m_flushAlways;
-	bool m_needFlushTOC;
+	AlignedVector< Block > m_blocks;
+	bool m_flushAlways = false;
+	bool m_needFlushTOC = false;
 };
 
 	}

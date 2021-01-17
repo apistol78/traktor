@@ -20,7 +20,7 @@ class CompactGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	CompactGroup(CompactContext* context);
+	explicit CompactGroup(CompactContext* context);
 
 	bool internalCreate(CompactGroupEntry* groupEntry);
 

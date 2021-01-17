@@ -25,13 +25,13 @@ void CaseRef::run()
 		ra.push_back(new A());
 	CASE_ASSERT_EQUAL((int32_t)ra.size(), 10);
 
-#if defined(T_CXX11)
 	int c = 0;
 	for (auto r : ra)
+	{
+		CASE_ASSERT_EQUAL(r->getReferenceCount(), 1);
 		++c;
+	}
 	CASE_ASSERT_EQUAL(c, 10);
-#endif
-
 }
 
 //// OK

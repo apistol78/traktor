@@ -29,7 +29,7 @@ class T_DLLCLASS NavMeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	NavMeshComponent();
+	NavMeshComponent() = default;
 
 	explicit NavMeshComponent(const resource::Proxy< NavMesh >& navMesh);
 

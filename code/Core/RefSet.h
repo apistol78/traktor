@@ -25,15 +25,19 @@ public:
 	typedef SmallSet< Class* > set_t;
 	typedef typename set_t::const_iterator const_iterator;
 
-	RefSet()
-	{
-	}
+	RefSet() = default;
 
 	RefSet(const RefSet< Class >& rs)
 	:	m_items(rs.m_items)
 	{
 		for (auto item : m_items)
 			T_SAFE_ADDREF(item);
+	}
+
+	RefSet(RefSet< Class >&& rs)
+	:	m_items(rs.m_items)
+	{
+		m_items = std::move(rs.m_items);
 	}
 
 	virtual ~RefSet()
@@ -106,10 +110,17 @@ public:
 
 	RefSet< Class >& operator = (const RefSet< Class >& rs)
 	{
-		clear();
+		reset();
 		m_items = rs.m_items;
 		for (auto item : m_items)
 			T_SAFE_ADDREF(item);
+		return *this;
+	}
+
+	RefSet< Class >& operator = (RefSet< Class >&& rs)
+	{
+		reset();
+		m_items = std::move(rs.m_items);
 		return *this;
 	}
 

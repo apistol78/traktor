@@ -36,7 +36,7 @@ public:
 		if (m_stream)
 		{
 			m_blockFile->returnReadStream(m_stream);
-			m_stream = 0;
+			m_stream = nullptr;
 		}
 	}
 
@@ -71,7 +71,7 @@ public:
 		{
 			m_outBlock.size = m_stream->tell() - m_outBlock.offset;
 			m_blockFile->needFlushTOC();
-			m_stream = 0;
+			m_stream = nullptr;
 		}
 	}
 
@@ -135,12 +135,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockWriteStream", BlockWriteStream, IStream
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockFile", BlockFile, Object)
 
-BlockFile::BlockFile()
-:	m_flushAlways(false)
-,	m_needFlushTOC(false)
-{
-}
-
 BlockFile::~BlockFile()
 {
 	T_ASSERT(!m_stream);
@@ -163,7 +157,6 @@ bool BlockFile::create(const Path& fileName, bool flushAlways)
 	m_unusedReadStreams.push_back(m_stream);
 
 	flushTOC();
-
 	return true;
 }
 
@@ -202,7 +195,6 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 	m_fileName = fileName;
 	m_flushAlways = flushAlways;
 	m_unusedReadStreams.push_back(m_stream);
-
 	return true;
 }
 

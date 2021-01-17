@@ -23,12 +23,16 @@ class T_DLLCLASS Object : public ITypedObject
 	T_RTTI_CLASS;
 
 public:
-	Object()
-	{
-	}
+	Object() = default;
 
 	Object(const Object& object)
 	{
+		// Do not copy reference count.
+	}
+
+	Object(Object&& object)
+	{
+		// Do not move reference count.
 	}
 
 	virtual void addRef(void* owner) const override
@@ -67,8 +71,15 @@ public:
 
 	void operator delete (void* ptr, void* memory);
 
-	Object& operator = (const Object& object)
+	Object& operator = (const Object&)
 	{
+		// Do not copy reference count-
+		return *this;
+	}
+
+	Object& operator = (Object&&)
+	{
+		// Do not move reference count-
 		return *this;
 	}
 

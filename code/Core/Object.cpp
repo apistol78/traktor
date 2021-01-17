@@ -35,7 +35,7 @@ inline bool isObjectHeapAllocated(const void* ptr)
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
-IObjectRefDebugger* Object::ms_refDebugger = 0;
+IObjectRefDebugger* Object::ms_refDebugger = nullptr;
 
 #if defined(_DEBUG)
 void Object::addRef(void* owner) const
@@ -78,7 +78,6 @@ void* Object::operator new (size_t size)
 #endif
 
 	Atomic::increment(s_heapObjectCount);
-
 	return object;
 }
 

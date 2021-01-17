@@ -28,7 +28,19 @@ public:
 	typedef ClassType& reference;
 	typedef ClassType*& pointer_reference;
 
-	InplaceRef(pointer_reference ref)
+	InplaceRef() = default;
+
+	InplaceRef(const InplaceRef& ref)
+	:	m_ref(ref.m_ref)
+	{
+	}
+
+	InplaceRef(InplaceRef&& ref)
+	:	m_ref(ref.m_ref)
+	{
+	}
+
+	explicit InplaceRef(pointer_reference ref)
 	:	m_ref(ref)
 	{
 	}
@@ -64,6 +76,14 @@ public:
 	}
 
 	const InplaceRef& operator = (const InplaceRef& ref) const
+	{
+		T_SAFE_ADDREF(ref.m_ref);
+		T_SAFE_RELEASE(m_ref);
+		m_ref = ref.m_ref;
+		return *this;
+	}
+
+	const InplaceRef& operator = (const InplaceRef&& ref) const
 	{
 		T_SAFE_ADDREF(ref.m_ref);
 		T_SAFE_RELEASE(m_ref);
