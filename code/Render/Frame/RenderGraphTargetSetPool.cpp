@@ -181,7 +181,8 @@ void RenderGraphTargetSetPool::cleanup()
 		{
 			for (auto it2 = it; it2 != pool.free.end(); ++it2)
 			{
-				it2->rts->destroy();
+				if (it2->rts)
+					it2->rts->destroy();
 				++freed;
 			}
 			pool.free.erase(it, pool.free.end());
