@@ -41,7 +41,7 @@ class T_DLLCLASS Image : public Object
 	T_RTTI_CLASS;
 
 public:
-	Image();
+	Image() = default;
 
 	explicit Image(const Image& src);
 
@@ -193,13 +193,13 @@ public:
 
 private:
 	PixelFormat m_pixelFormat;
-	int32_t m_width;
-	int32_t m_height;
-	int32_t m_pitch;
+	int32_t m_width = 0;
+	int32_t m_height = 0;
+	int32_t m_pitch = 0;
 	Ref< Palette > m_palette;
-	size_t m_size;
-	uint8_t* m_data;
-	bool m_own;
+	size_t m_size = 0;
+	uint8_t* m_data = nullptr;
+	bool m_own = false;
 	Ref< ImageInfo > m_imageInfo;
 };
 

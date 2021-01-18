@@ -69,22 +69,12 @@ void freeData(uint8_t* ptr, size_t size)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Image", Image, Object)
 
-Image::Image()
-:	m_width(0)
-,	m_height(0)
-,	m_pitch(0)
-,	m_data(nullptr)
-{
-}
-
 Image::Image(const Image& src)
 :	m_pixelFormat(src.m_pixelFormat)
 ,	m_width(src.m_width)
 ,	m_height(src.m_height)
 ,	m_pitch(src.m_pitch)
 ,	m_palette(src.m_palette)
-,	m_size(0)
-,	m_data(nullptr)
 ,	m_own(true)
 ,	m_imageInfo(src.m_imageInfo)
 {
@@ -99,8 +89,6 @@ Image::Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Pa
 ,	m_height(height)
 ,	m_pitch(width * pixelFormat.getByteSize())
 ,	m_palette(palette)
-,	m_size(0)
-,	m_data(nullptr)
 ,	m_own(true)
 {
 	m_size = m_height * m_pitch;
@@ -113,9 +101,7 @@ Image::Image(void* data, const PixelFormat& pixelFormat, uint32_t width, uint32_
 ,	m_height(height)
 ,	m_pitch(width * pixelFormat.getByteSize())
 ,	m_palette(palette)
-,	m_size(0)
 ,	m_data((uint8_t*)data)
-,	m_own(false)
 {
 	m_size = m_height * m_pitch;
 }

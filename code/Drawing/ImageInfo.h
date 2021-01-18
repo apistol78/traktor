@@ -28,8 +28,6 @@ class T_DLLCLASS ImageInfo : public Object
 	T_RTTI_CLASS;
 
 public:
-	ImageInfo();
-
 	void setAuthor(const std::wstring& author);
 
 	const std::wstring& getAuthor() const;
@@ -50,7 +48,7 @@ private:
 	std::wstring m_author;
 	std::wstring m_copyright;
 	std::wstring m_format;
-	float m_gamma;
+	float m_gamma = 0.0f;
 };
 
 	}
