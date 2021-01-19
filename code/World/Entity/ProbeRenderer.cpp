@@ -30,11 +30,11 @@ namespace traktor
 		namespace
 		{
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 const int32_t c_faceSize = 1024;
 const int32_t c_sampleCount = 1000;
 #else
-const int32_t c_faceSize = 128;
+const int32_t c_faceSize = 256;
 const int32_t c_sampleCount = 100;
 #endif
 

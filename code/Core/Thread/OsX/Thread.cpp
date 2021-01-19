@@ -61,11 +61,11 @@ bool Thread::start(Priority priority)
 	switch (priority)
 	{
 	case Lowest:
-		param.sched_priority = 15;
+		param.sched_priority = -15;
 		break;
 
 	case Below:
-		param.sched_priority = 5;
+		param.sched_priority = -5;
 		break;
 
 	case Normal:
@@ -73,11 +73,12 @@ bool Thread::start(Priority priority)
 		break;
 
 	case Above:
-		param.sched_priority = -6;
+		param.sched_priority = 20;
 		break;
 
 	case Highest:
-		param.sched_priority = -16;
+		param.sched_priority = 45;
+		pthread_attr_setschedpolicy(&attr, SCHED_RR);
 		break;
 	}
 	pthread_attr_setschedparam(&attr, &param);

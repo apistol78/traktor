@@ -392,7 +392,13 @@ bool Application::create(
 		m_threadRender = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadRender), L"Render");
 		if (m_threadRender)
 		{
+#if defined(__IOS__)
+			// Create iOS thread at highest priority to indicate for scheduler to preferably
+			// use "performance" cores.
+			m_threadRender->start(Thread::Highest);
+#else
 			m_threadRender->start(Thread::Above);
+#endif
 			if (m_signalRenderFinish.wait(60 * 1000))
 				log::info << L"Render thread started successfully." << Endl;
 			else

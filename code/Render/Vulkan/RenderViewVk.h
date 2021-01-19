@@ -138,7 +138,9 @@ private:
 #endif
 	VkSurfaceKHR m_surface = 0;
 	Ref< Queue > m_presentQueue;
+#if !defined(__IOS__)
 	VkQueryPool m_queryPool = 0;
+#endif
 	bool m_lost = true;
 
 	// Swap chain.

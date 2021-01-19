@@ -61,7 +61,7 @@ public:
 			else
 			{
 				log::error << L"Failed to enumerate achievements;" << Endl;
-				log::error << fromNSString([error localizedDescription]) << Endl;
+				// log::error << fromNSString([error localizedDescription]) << Endl;
 			}
 			bevent->broadcast();
 		}];

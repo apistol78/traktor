@@ -8,7 +8,24 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
 
+bool isLandscape()
+{
+	UIWindow* firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+	if (firstWindow == nil)
+		return false;
+
+	UIWindowScene* windowScene = firstWindow.windowScene;
+	if (windowScene == nil)
+		return false;
+
+	return UIInterfaceOrientationIsLandscape(windowScene.interfaceOrientation);
+}
+
+		}
+	
 class InputDriveriOSImpl
 :	public Object
 ,	public ITouchViewCallback
@@ -89,8 +106,7 @@ IInputDriver::UpdateResult InputDriveriOSImpl::update()
 	if (--m_untilCheckOrientation)
 	{
 		// Check orientation; fairly expensive operation so do not do this too often.
-		UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-		m_landscape = UIInterfaceOrientationIsLandscape(orientation);
+		m_landscape = isLandscape();
 
 		// Propagate to devices.
 		m_deviceTouch->setLandscape(m_landscape);

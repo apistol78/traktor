@@ -217,10 +217,10 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		else
 		{
 			render::CubeTextureCreateDesc ctcd;
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 			ctcd.side = 1024;
 #else
-			ctcd.side = 128;
+			ctcd.side = 256;
 #endif
 			ctcd.mipCount = (int32_t)(log2(ctcd.side ) + 1.0f);
 			ctcd.format = render::TfR11G11B10F;

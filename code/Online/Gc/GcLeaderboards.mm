@@ -69,7 +69,7 @@ bool GcLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLea
 				else
 				{
 					log::error << L"Failed to enumerate leaderboard;" << Endl;
-					log::error << fromNSString([error localizedDescription]) << Endl;
+					// log::error << fromNSString([error localizedDescription]) << Endl;
 					result = false;
 				}
 				bevent->broadcast();
