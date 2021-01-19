@@ -13,7 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #elif defined(__MAC__)
-#	define VK_USE_PLATFORM_MACOS_MVK
+#	define VK_USE_PLATFORM_METAL_EXT
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
 #elif defined(__IOS__)
