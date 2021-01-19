@@ -118,29 +118,25 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	Ref< TcpSocket > socket = ConnectionPool::getInstance().connect(addr);
 	if (!socket)
 	{
-		log::error << L"RemoteStream; unable to connect to stream server" << Endl;
+		log::error << L"RemoteStream; unable to connect to stream server." << Endl;
 		return 0;
 	}
 
-#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__PS3__)
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x01, id);
-#else
-	net::sendBatch< uint8_t, uint32_t >(socket, 0x81, id);
-#endif
 
 	uint8_t status = 0;
 	int64_t avail = 0;
 
 	if (net::recvBatch< uint8_t, int64_t >(socket, status, avail) <= 0)
 	{
-		log::error << L"RemoteStream; no status from server" << Endl;
+		log::error << L"RemoteStream; no status from server." << Endl;
 		ConnectionPool::getInstance().disconnect(socket, true);
 		return 0;
 	}
 
 	if (!status)
 	{
-		log::error << L"RemoteStream; invalid status from server" << Endl;
+		log::error << L"RemoteStream; invalid status from server." << Endl;
 		ConnectionPool::getInstance().disconnect(socket, true);
 		return 0;
 	}
@@ -160,7 +156,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 			int32_t result = socket->recv(ptr, read);
 			if (result <= 0)
 			{
-				log::error << L"RemoteStream; unexpected disconnect from server" << Endl;
+				log::error << L"RemoteStream; unexpected disconnect from server." << Endl;
 				ConnectionPool::getInstance().disconnect(socket, true);
 				return 0;
 			}
@@ -271,7 +267,7 @@ int64_t RemoteStream::read(void* block, int64_t nbytes)
 		}
 		if (nread != navail)
 		{
-			log::warning << L"Remote stream; didn't receive expected number of bytes (expected " << navail << L", got " << nread << L" byte(s)) from stream server" << Endl;
+			log::warning << L"Remote stream; didn't receive expected number of bytes (expected " << navail << L", got " << nread << L" byte(s)) from stream server." << Endl;
 			break;
 		}
 

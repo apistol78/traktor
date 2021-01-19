@@ -4275,6 +4275,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>CoreHaptics.framework</item>
 						<item>UIKit.framework</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -4307,6 +4308,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
+						<item>CoreHaptics.framework</item>
 						<item>UIKit.framework</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>

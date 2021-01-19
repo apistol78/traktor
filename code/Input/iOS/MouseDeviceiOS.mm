@@ -24,6 +24,19 @@ c_mouseControlMap[] =
 	{ L"Mouse Y axis", DtPositionY, true }
 };
 
+bool isLandscape()
+{
+	UIWindow* firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+	if (firstWindow == nil)
+		return false;
+
+	UIWindowScene* windowScene = firstWindow.windowScene;
+	if (windowScene == nil)
+		return false;
+
+	return UIInterfaceOrientationIsLandscape(windowScene.interfaceOrientation);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceiOS", MouseDeviceiOS, IInputDevice)
@@ -45,9 +58,7 @@ bool MouseDeviceiOS::create(void* nativeWindowHandle)
 
 	m_width = frame.size.width;
 	m_height = frame.size.height;
-
-	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
+	m_landscape = isLandscape();
 
 	return true;
 }

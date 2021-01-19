@@ -91,13 +91,13 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 			}
 			else
 			{
-				if ([GKLocalPlayer localPlayer].authenticated && error == nil)
+				if ([GKLocalPlayer localPlayer].authenticated/* && error == nil*/)
 					log::info << L"GameCenter; local player authenticated successfully." << Endl;
 				else
 				{
 					log::error << L"GameCenter; local player not authenticated;" << Endl;
-					if (error != nil)
-						log::error << fromNSString([error localizedDescription]) << Endl;
+					// if (error != nil)
+					// 	log::error << fromNSString([error localizedDescription]) << Endl;
 				}
 			}
 		};

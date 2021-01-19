@@ -30,6 +30,16 @@
 				"cwd": "${workspaceRoot}/..",
 				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
 				"externalConsole": true
+			},
+
+			"osx": {
+				"type": "cppdbg",
+				"program": "${workspaceRoot}/../bin/latest/osx/debugshared/Traktor.Editor.App",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": false,				
 			}
 		},
 
@@ -61,6 +71,16 @@
 				"cwd": "${workspaceRoot}/..",
 				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
 				"externalConsole": true
+			},
+
+			"osx": {
+				"type": "cppdbg",
+				"program": "${workspaceRoot}/../bin/latest/osx/releaseshared/Traktor.Editor.App",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": false,				
 			}
 		},
 

@@ -273,11 +273,13 @@ void RenderViewVk::close()
 	}
 	m_frames.clear();
 
+#if !defined(__IOS__)
 	if (m_queryPool != 0)
 	{
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
 		m_queryPool = 0;
 	}
+#endif
 
 	if (m_imageAvailableSemaphore != 0)
 	{
@@ -490,11 +492,13 @@ bool RenderViewVk::beginFrame()
 			return false;
 	}
 
+#if !defined(__IOS__)
 	// Reset time queries.
 	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
 	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
 	m_nextQueryIndex = queryFrom;
+#endif
 
 	// Reset misc counters.
 	m_passCount = 0;
@@ -1099,21 +1103,28 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 int32_t RenderViewVk::beginTimeQuery()
 {
+#if !defined(__IOS__)
 	auto& frame = m_frames[m_currentImageIndex];
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 	return query;
+#else
+	return 0;
+#endif
 }
 
 void RenderViewVk::endTimeQuery(int32_t query)
 {
+#if !defined(__IOS__)
 	auto& frame = m_frames[m_currentImageIndex];
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
+#endif
 }
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
+#if !defined(__IOS__)
 	uint32_t flags = VK_QUERY_RESULT_64_BIT;
 	if (wait)
 		flags |= VK_QUERY_RESULT_WAIT_BIT;
@@ -1128,6 +1139,9 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 	outStart = (double)stamps[0] / c_divend;
 	outEnd = (double)stamps[1] / c_divend;
 	return true;
+#else
+	return false;
+#endif
 }
 
 void RenderViewVk::pushMarker(const char* const marker)
@@ -1229,7 +1243,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	VkColorSpaceKHR colorSpace = surfaceFormats[0].colorSpace;
 
 	// Determine number of images in swapchain.
+#if defined(__ANDROID__) || defined(__IOS__)
+	uint32_t desiredImageCount = 3;
+#else
 	uint32_t desiredImageCount = 2;
+#endif
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
 		desiredImageCount = surfaceCapabilities.minImageCount;
 	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
@@ -1352,6 +1370,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore);
 
+#if !defined(__IOS__)
 	// Create time query pool.
 	VkQueryPoolCreateInfo qpci = {};
 	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
@@ -1360,6 +1379,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	qpci.queryCount = imageCount * 2 * 1024;
 	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
+#endif
 
 	// Create frame resources.
 	m_frames.resize(imageCount);

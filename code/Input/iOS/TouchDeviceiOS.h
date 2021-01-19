@@ -1,5 +1,6 @@
 #pragma once
 
+#import <CoreHaptics/CoreHaptics.h>
 #import "Input/iOS/UITouchView.h"
 
 #include <map>
@@ -68,12 +69,13 @@ public:
 	void setLandscape(bool landscape) { m_landscape = landscape; }
 
 private:
-	bool m_landscape;
-	float m_width;
-	float m_height;
+	bool m_landscape = false;
+	float m_width = 0.0f;
+	float m_height = 0.0f;
 	float m_positionX[3];
 	float m_positionY[3];
-	int32_t m_fingers;
+	int32_t m_fingers = 0;
+	CHHapticEngine* m_haptic = nil;
 	std::map< const UITouch*, int32_t > m_touch;
 };
 

@@ -30,6 +30,19 @@ c_touchControlMap[] =
 	{ L"Touch Y axis 3", DtPositionY3, true }
 };
 
+bool isLandscape()
+{
+	UIWindow* firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+	if (firstWindow == nil)
+		return false;
+
+	UIWindowScene* windowScene = firstWindow.windowScene;
+	if (windowScene == nil)
+		return false;
+
+	return UIInterfaceOrientationIsLandscape(windowScene.interfaceOrientation);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.TouchDeviceiOS", TouchDeviceiOS, IInputDevice)
@@ -50,8 +63,20 @@ bool TouchDeviceiOS::create(void* nativeWindowHandle)
 	m_width = frame.size.width;
 	m_height = frame.size.height;
 
-	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
+	// Check screen orientation.
+	m_landscape = isLandscape();
+
+	// Initialize haptic engine, if supported by device.
+	if (CHHapticEngine.capabilitiesForHardware.supportsHaptics)
+	{
+		NSError* error = nil;
+		m_haptic = [[CHHapticEngine alloc] initAndReturnError: &error];
+		if (error != nil)
+		{
+			log::warning << L"Haptic supported but failed to initialize; haptic feedback disabled." << Endl;
+			m_haptic = nil;
+		}
+	}
 
 	return true;
 }
@@ -171,11 +196,15 @@ void TouchDeviceiOS::readState()
 
 bool TouchDeviceiOS::supportRumble() const
 {
-	return false;
+	return m_haptic != nil;
 }
 
 void TouchDeviceiOS::setRumble(const InputRumble& rumble)
 {
+	// if (rumble.lowFrequencyRumble <= 0.0f && rumble.highFrequencyRumble <= 0)
+	// {
+	// 	return;
+	// }
 }
 
 void TouchDeviceiOS::setExclusive(bool exclusive)
