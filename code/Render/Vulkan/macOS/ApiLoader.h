@@ -98,6 +98,9 @@ extern PFN_vkDestroyQueryPool vkDestroyQueryPool;
 extern PFN_vkCmdResetQueryPool vkCmdResetQueryPool;
 extern PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
 extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
+extern PFN_vkCreatePipelineCache vkCreatePipelineCache;
+extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
+extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
 
 // macOS Vulkan extensions.
 extern PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT;
