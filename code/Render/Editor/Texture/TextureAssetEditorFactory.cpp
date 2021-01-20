@@ -12,9 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetEditorFactory", 0, T
 
 const TypeInfoSet TextureAssetEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< TextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< TextureAsset >();
 }
 
 bool TextureAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

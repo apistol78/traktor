@@ -10,6 +10,7 @@
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
+#include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -95,10 +96,22 @@ bool ScenePipeline::buildDependencies(
 
 	for (const auto op : sceneAsset->getOperationData())
 	{
-		const IScenePipelineOperator* spo = findOperator(type_of(op));
+		Ref< const ISerializable > operationData = op;
+
+		// Check if external data is references; if so add dependency and resolve external data.
+		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
+		{
+			operationData = pipelineDepends->getObjectReadOnly(externalOperationData->getExternalDataId());
+			if (!operationData)
+				return false;
+
+			pipelineDepends->addDependency(externalOperationData->getExternalDataId(), editor::PdfUse);
+		}
+
+		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
 			return false;
-		if (!spo->addDependencies(pipelineDepends, op, sceneAsset))
+		if (!spo->addDependencies(pipelineDepends, operationData, sceneAsset))
 			return false;
 	}
 
@@ -151,12 +164,22 @@ bool ScenePipeline::buildOutput(
 	bool rebuild = (bool)((reason & editor::PbrForced) != 0);
 	for (const auto op : sceneAsset->getOperationData())
 	{
-		const IScenePipelineOperator* spo = findOperator(type_of(op));
+		Ref< const ISerializable > operationData = op;
+
+		// Check if external data is referenced; if so resolve external data.
+		if (const ExternalOperationData* externalOperationData = dynamic_type_cast< const ExternalOperationData* >(operationData))
+		{
+			operationData = pipelineBuilder->getObjectReadOnly(externalOperationData->getExternalDataId());
+			if (!operationData)
+				return false;
+		}
+
+		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
 			return false;
 
 		pipelineBuilder->getProfiler()->begin(type_of(spo));
-		bool result = spo->build(pipelineBuilder, op, sourceInstance, sceneAsset, rebuild);
+		bool result = spo->build(pipelineBuilder, operationData, sourceInstance, sceneAsset, rebuild);
 		pipelineBuilder->getProfiler()->end(type_of(spo));
 
 		if (!result)
