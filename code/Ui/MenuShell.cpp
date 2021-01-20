@@ -180,6 +180,8 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 
 void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 {
+	m_activeItem = nullptr;
+
 	// If sub menu already created then lets assume it's event handler perform click event.
 	if (m_trackSubMenu)
 		return;
@@ -192,9 +194,15 @@ void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 	)
 		return;
 
+	// Get active item from mouse position.
 	Point clientPosition = screenToClient(event->getPosition());
 	MenuItem* item = getItem(clientPosition);
-	if (item == nullptr)
+	if (item != nullptr)
+	{
+		if (item->isEnable())
+			m_activeItem = item;
+	}
+	else
 	{
 		MenuClickEvent clickEvent(this, nullptr, Command());
 		raiseEvent(&clickEvent);
@@ -204,7 +212,7 @@ void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 {
 	// If sub menu already created then lets assume it's event handler perform click event.
-	if (m_trackSubMenu)
+	if (!m_activeItem || m_trackSubMenu)
 		return;
 
 	// Do not cancel if clicking on scrollbar.
@@ -217,7 +225,7 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 
 	Point clientPosition = screenToClient(event->getPosition());
 	MenuItem* item = getItem(clientPosition);
-	if (item && item->isEnable())
+	if (item == m_activeItem)
 	{
 		// Toggle if checkbox item selected.
 		if (item->getCheckBox())

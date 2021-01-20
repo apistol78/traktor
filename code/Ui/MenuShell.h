@@ -45,6 +45,7 @@ public:
 private:
 	int32_t m_maxItems;
 	RefArray< MenuItem > m_items;
+	Ref< MenuItem > m_activeItem;
 	Ref< ScrollBar > m_scrollBar;
 	Ref< MenuItem > m_trackItem;
 	Ref< Widget > m_trackSubMenu;
