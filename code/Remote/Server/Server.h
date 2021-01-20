@@ -5,6 +5,14 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_REMOTE_SERVER_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
     namespace net
@@ -18,7 +26,7 @@ class TcpSocket;
     namespace remote
     {
 
-class Server : public Object
+class T_DLLCLASS Server : public Object
 {
     T_RTTI_CLASS;
 

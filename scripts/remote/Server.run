@@ -1,0 +1,29 @@
+import(traktor)
+import(traktor.run)
+
+function main(args)
+	if args.size < 1 then
+		stdout:printLn("Server : Usage Server.run <scratch path>")
+		return 1
+	end
+
+	if not run:loadModule("Traktor.Remote.Server") then
+		stderr:printLn("Unable to load \"Traktor.Remote.Server\" module.")
+		return 1
+	end
+
+	local s = traktor.remote.Server()
+	if not s:create(args:get(0), "", 0, true) then
+		stderr:printLn("Unable to create server instance.")
+		return 1
+	end
+
+	stdout:printLn("Remote server started successfully.")
+	stdout:printLn("Accepting clients @ " .. s.listenPort .. "...")
+
+	while s:update() do
+		-- Idle
+	end
+
+	s:destroy()
+end
