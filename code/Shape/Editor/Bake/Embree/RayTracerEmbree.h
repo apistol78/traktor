@@ -68,7 +68,7 @@ private:
 
 	Color4f traceSinglePath(
 		const Vector4& origin,
-        const Vector4& normal,
+        const Vector4& direction,
 		RandomGeometry& random,
 		int32_t depth
 	) const;
@@ -86,6 +86,8 @@ private:
 		uint8_t mask,
 		bool bounce
     ) const;
+
+    static void alphaTestFilter(const RTCFilterFunctionNArguments* args);
 };
 
     }

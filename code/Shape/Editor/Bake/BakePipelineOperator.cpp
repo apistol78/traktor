@@ -1,5 +1,6 @@
 #include <limits>
 #include <functional>
+#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -18,6 +19,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -203,69 +206,112 @@ void addSky(
 	if (!textureAsset)
 		return;
 
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
-	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (!file)
-		return;
+	uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
 
-	Ref< drawing::Image > skyImage = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-	if (!skyImage)
-		return;
+	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
+		textureAssetHash,
+		[&](IStream* stream) -> Ref< IblProbe > {
+			Ref< drawing::Image > radiance = drawing::Image::load(stream, L"tri");
+			if (radiance)
+				return new IblProbe(radiance);
+			else
+				return nullptr;
+		},
+		[=](const IblProbe* probe, IStream* stream) -> bool {
+			if (!probe->getRadianceImage()->save(stream, L"tri"))
+				return false;
+			return true;
+		},
+		[&]() -> Ref< IblProbe > {
+			// Read sky image from texture asset.
+			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
+			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+			if (!file)
+				return nullptr;
 
-	safeClose(file);
+			Ref< drawing::Image > skyImage = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+			if (!skyImage)
+				return nullptr;
 
-	// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
-	int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
-	if (dim > 256)
-	{
-		drawing::ScaleFilter scaleFilter(
-			(skyImage->getWidth() * 256) / dim,
-			(skyImage->getHeight() * 256) / dim,
-			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
-		skyImage->apply(&scaleFilter);
-	}
+			safeClose(file);
 
-	Ref< const render::CubeMap > cms = render::CubeMap::createFromImage(skyImage);
-	Ref< render::CubeMap > cmd = new render::CubeMap(128, drawing::PixelFormat::getRGBAF32());
-
-	// Convolve cube map.
-	Random random;
-	for (int32_t side = 0; side < 6; ++side)
-	{
-		for (int32_t y = 0; y < 128; ++y)
-		{
-			for (int32_t x = 0; x < 128; ++x)
+			// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
+			int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
+			if (dim > 128)
 			{
-				Vector4 d = cmd->getDirection(side, x, y);
-				Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
-				for (int32_t i = 0; i < 250; ++i)
-				{
-					Vector2 uv = Quasirandom::hammersley(i, 250, random);
-					Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
-					cl += cms->get(direction).saturated() * dot3(d, direction);
-				}
-				cl *= Scalar(PI * attenuation);
-				cl /= 250.0_simd;
-				cmd->set(d, cl);
+				drawing::ScaleFilter scaleFilter(
+					(skyImage->getWidth() * 128) / dim,
+					(skyImage->getHeight() * 128) / dim,
+					drawing::ScaleFilter::MnAverage,
+					drawing::ScaleFilter::MgLinear
+				);
+				skyImage->apply(&scaleFilter);
 			}
+
+			Ref< const render::CubeMap > sourceRadianceCube = render::CubeMap::createFromImage(skyImage);
+			T_FATAL_ASSERT(sourceRadianceCube);
+
+			Ref< render::CubeMap > radianceCube = new render::CubeMap(128, drawing::PixelFormat::getRGBAF32());
+
+			Random random;
+			RefArray< Job > jobs;
+
+			for (int32_t side = 0; side < 6; ++side)
+			{
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor([=, &sourceRadianceCube, &radianceCube, &random]() {
+					for (int32_t y = 0; y < 128; ++y)
+					{
+						for (int32_t x = 0; x < 128; ++x)
+						{
+							Vector4 d = radianceCube->getDirection(side, x, y);
+							Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+							Scalar totalWeight = 0.0_simd;
+							for (int32_t i = 0; i < 10000; ++i)
+							{
+								Vector2 uv = Quasirandom::hammersley(i, 10000, random);
+								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
+								direction = lerp(d, direction, 0.125_simd).normalized();
+								Scalar weight = 1.0_simd; // dot3(d, direction);
+								cl += sourceRadianceCube->get(direction) * weight;
+								totalWeight += weight;
+							}
+							cl /= totalWeight;
+							cl = max(cl, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+							radianceCube->set(d, cl);
+						}
+					}
+				}));
+				jobs.push_back(job);
+			}
+
+			while (!jobs.empty())
+			{
+				jobs.back()->wait();
+				jobs.pop_back();
+			}
+
+			// Convert cube map to equirectangular image.
+			Ref< drawing::Image > radiance = radianceCube->createEquirectangular();
+			T_FATAL_ASSERT(radiance != nullptr);
+
+			// Discard alpha channel as they are not used.
+			radiance->clearAlpha(1.0f);
+
+			// Attenuate images; imperically measured using Blender as reference.
+			const float c_refScale = 5.0f / 4.0f;
+			drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			radiance->apply(&tform);
+
+			return new IblProbe(radiance);
 		}
-	}
+	);
 
-	// Convert cube map to equirectangular image.
-	Ref< drawing::Image > radiance = cmd->createEquirectangular();
-	T_FATAL_ASSERT(radiance != nullptr);
-
-	// Discard alpha channels as they are not used.
-	radiance->clearAlpha(1.0);
-
-	// Blur image slightly to reduce sampling speeks, do this in rectangular image to prevent cube leaks.
-	Ref< drawing::ConvolutionFilter > blurFilter = drawing::ConvolutionFilter::createGaussianBlur(1);
-	radiance->apply(blurFilter);
+	// Scale probe by user attenuation factor.
+	drawing::TransformFilter tform(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	probe->apply(&tform);
 
 	// Create tracer environment.
-	tracerTask->addTracerEnvironment(new TracerEnvironment(new IblProbe(radiance)));
+	tracerTask->addTracerEnvironment(new TracerEnvironment(probe));
 }
 
 /*! */
