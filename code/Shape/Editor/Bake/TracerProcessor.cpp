@@ -1,4 +1,5 @@
 #include <numeric>
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -129,6 +130,7 @@ bool writeTexture(
 	{
 		const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
 		lightmapFormat->apply(&encodeRGBM);
+		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 		textureFormat = render::TfDXT5;
 		compressor = new render::DxtnCompressor();
 		needAlpha = true;
@@ -145,11 +147,13 @@ bool writeTexture(
 	{
 		const drawing::EncodeRGBM encodeRGBM(5.0f);
 		lightmapFormat->apply(&encodeRGBM);
-		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 		textureFormat = render::TfR8G8B8A8;
 		compressor = new render::UnCompressor();
 		needAlpha = true;
 	}
+
+	lightmapFormat->save(L"data/Temp/Lightmaps/" + lightmapId.format() + L"_F.png");
 
 	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
 		L"Generated/" + lightmapId.format(),
@@ -197,20 +201,6 @@ bool writeTexture(
 	return true;
 }
 
-void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
-{
-	Vector2 ad = (to - from);
-	ad.x = std::abs(ad.x);
-	ad.y = std::abs(ad.y);
-	int32_t ln = (int32_t)(std::max(ad.x, ad.y) + 0.5f);
-	for (int32_t i = 0; i <= ln; ++i)
-	{
-		float fraction = (float)i / ln;
-		Vector2 position = lerp(from, to, fraction);
-		fn(position, fraction);
-	}
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
@@ -225,6 +215,8 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
 	m_thread->start();
+
+	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Lightmaps");
 }
 
 TracerProcessor::~TracerProcessor()
@@ -435,113 +427,11 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (configuration->getEnableDenoise())
 			lightmap = denoise(gbuffer, lightmap);
 
-		// Filter seams.
-		//if (configuration->getEnableSeamFilter())
-		//{
-		//	model::ModelAdjacency adjacency(renderModel, model::ModelAdjacency::MdByPosition);
-		//	for (uint32_t i = 0; i < adjacency.getEdgeCount(); ++i)
-		//	{
-		//		// Get shared edges of this polygon's edge.
-		//		model::ModelAdjacency::share_vector_t shared;
-		//		adjacency.getSharedEdges(i, shared);
-		//		if (shared.size() != 1)
-		//			continue;
-
-		//		// Get attributes of this edge.
-		//		const model::Polygon& polygonA = renderModel->getPolygon(adjacency.getPolygon(i));
-		//		uint32_t Aivx0 = polygonA.getVertex(adjacency.getPolygonEdge(i));
-		//		uint32_t Aivx1 = polygonA.getVertex((Aivx0 + 1) % polygonA.getVertexCount());
-
-		//		// Get attributes of shared edge.
-		//		const model::Polygon& polygonB = renderModel->getPolygon(adjacency.getPolygon(shared[0]));
-		//		uint32_t Bivx0 = polygonB.getVertex(adjacency.getPolygonEdge(shared[0]));
-		//		uint32_t Bivx1 = polygonB.getVertex((Bivx0 + 1) % polygonB.getVertexCount());
-
-		//		model::Vertex Avx0 = renderModel->getVertex(Aivx0);
-		//		model::Vertex Avx1 = renderModel->getVertex(Aivx1);
-		//		model::Vertex Bvx0 = renderModel->getVertex(Bivx0);
-		//		model::Vertex Bvx1 = renderModel->getVertex(Bivx1);
-
-		//		// Swap indices if order is reversed.
-		//		if (Bvx0.getPosition() == Avx1.getPosition())
-		//		{
-		//			std::swap(Bivx0, Bivx1);
-		//			std::swap(Bvx0, Bvx1);
-		//		}
-
-		//		// Check for lightmap seam.
-		//		if (
-		//			Avx0.getPosition() == Bvx0.getPosition() &&
-		//			Avx1.getPosition() == Bvx1.getPosition() &&
-		//			//Avx0.getNormal() == Bvx0.getNormal() &&
-		//			//Avx1.getNormal() == Bvx1.getNormal() &&
-		//			(
-		//				Avx0.getTexCoord(channel) != Bvx0.getTexCoord(channel) ||
-		//				Avx1.getTexCoord(channel) != Bvx1.getTexCoord(channel)
-		//			)
-		//		)
-		//		{
-		//			Vector2 imageSize(lightmap->getWidth() - 1, lightmap->getHeight() - 1);
-
-		//			Vector4 Ap0 = renderModel->getPosition(Avx0.getPosition());
-		//			Vector4 Ap1 = renderModel->getPosition(Avx1.getPosition());
-		//			Vector4 An0 = renderModel->getNormal(Avx0.getNormal());
-		//			Vector4 An1 = renderModel->getNormal(Avx1.getNormal());
-		//			Vector2 Auv0 = renderModel->getTexCoord(Avx0.getTexCoord(channel)) * imageSize;
-		//			Vector2 Auv1 = renderModel->getTexCoord(Avx1.getTexCoord(channel)) * imageSize;
-
-		//			Vector4 Bp0 = renderModel->getPosition(Bvx0.getPosition());
-		//			Vector4 Bp1 = renderModel->getPosition(Bvx1.getPosition());
-		//			Vector4 Bn0 = renderModel->getNormal(Bvx0.getNormal());
-		//			Vector4 Bn1 = renderModel->getNormal(Bvx1.getNormal());
-		//			Vector2 Buv0 = renderModel->getTexCoord(Bvx0.getTexCoord(channel)) * imageSize;
-		//			Vector2 Buv1 = renderModel->getTexCoord(Bvx1.getTexCoord(channel)) * imageSize;
-
-		//			float Auvln = (Auv1 - Auv0).length();
-		//			float Buvln = (Buv1 - Buv0).length();
-
-		//			if (Auvln >= Buvln)
-		//			{
-		//				line(Auv0, Auv1, [&](const Vector2& Auv, float fraction) {
-		//					Vector2 Buv = lerp(Buv0, Buv1, fraction);
-
-		//					int32_t Ax = (int32_t)(Auv.x);
-		//					int32_t Ay = (int32_t)(Auv.y);
-		//					int32_t Bx = (int32_t)(Buv.x);
-		//					int32_t By = (int32_t)(Buv.y);
-
-		//					Color4f Aclr, Bclr;
-		//					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
-		//					{
-		//						lightmap->setPixel(Ax, Ay, Aclr * Scalar(0.75f) + Bclr * Scalar(0.25f));
-		//						lightmap->setPixel(Bx, By, Aclr * Scalar(0.25f) + Bclr * Scalar(0.75f));
-		//					}
-		//				});
-		//			}
-		//			else
-		//			{
-		//				line(Buv0, Buv1, [&](const Vector2& Buv, float fraction) {
-		//					Vector2 Auv = lerp(Auv0, Auv1, fraction);
-
-		//					int32_t Ax = (int32_t)(Auv.x);
-		//					int32_t Ay = (int32_t)(Auv.y);
-		//					int32_t Bx = (int32_t)(Buv.x);
-		//					int32_t By = (int32_t)(Buv.y);
-
-		//					Color4f Aclr, Bclr;
-		//					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
-		//					{
-		//						lightmap->setPixel(Ax, Ay, Aclr * Scalar(0.75f) + Bclr * Scalar(0.25f));
-		//						lightmap->setPixel(Bx, By, Aclr * Scalar(0.25f) + Bclr * Scalar(0.75f));
-		//					}
-		//				});
-		//			}
-		//		}
-		//	}
-		//}
-
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
+
+		// Save lightmap for debugging.
+		lightmap->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapId().format() + L".png");
 
 		// Create final output instance.
 		bool result = writeTexture(

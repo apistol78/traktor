@@ -21,12 +21,12 @@ Vector2 toEquirectangular(const Vector4& direction)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.IblProbe", IblProbe, Object)
 
-IblProbe::IblProbe(const drawing::Image* radiance)
+IblProbe::IblProbe(drawing::Image* radiance)
 :	m_radiance(radiance)
 {
 }
 
-Color4f IblProbe::sample(const Vector4& direction) const
+Color4f IblProbe::sampleRadiance(const Vector4& direction) const
 {
 	Vector2 e = toEquirectangular(direction);
 
@@ -41,6 +41,11 @@ Color4f IblProbe::sample(const Vector4& direction) const
 	Color4f cl;
 	m_radiance->getPixel(u, v, cl);
 	return cl;
+}
+
+void IblProbe::apply(const drawing::IImageFilter* imageFilter)
+{
+	m_radiance->apply(imageFilter);
 }
 
 	}

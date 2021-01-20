@@ -25,8 +25,6 @@ public:
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
 
-	uint32_t getIrradianceSampleCount() const { return m_irradianceSampleCount; }
-
 	float getMaxPathDistance() const { return m_maxPathDistance; }
 
 	float getPointLightShadowRadius() const { return m_pointLightShadowRadius; }
@@ -41,16 +39,15 @@ public:
 
 	bool getEnableDenoise() const { return m_enableDenoise; }
 
-	bool getEnableSeamFilter() const { return m_enableSeamFilter; }
-
 	float getSkyAttenuation() const { return m_skyAttenuation; }
+
+	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_sampleCount = 100;
 	uint32_t m_shadowSampleCount = 50;
-	uint32_t m_irradianceSampleCount = 50;
 	float m_maxPathDistance = 1.0f;
 	float m_pointLightShadowRadius = 0.1f;
 	float m_lumelDensity = 16.0f;
@@ -58,8 +55,8 @@ private:
 	int32_t m_minimumLightMapSize = 16;
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;
-	bool m_enableSeamFilter = true;
 	float m_skyAttenuation = 1.0f;
+	float m_ambientOcclusionFactor = 0.5f;
 };
 
 	}

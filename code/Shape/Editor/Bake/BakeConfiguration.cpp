@@ -10,7 +10,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 20, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 23, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -44,8 +44,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	s >> Member< uint32_t >(L"shadowSampleCount", m_shadowSampleCount, AttributeRange(0));
 
-	if (s.getVersion< BakeConfiguration >() >= 11)
-		s >> Member< uint32_t >(L"irradianceSampleCount", m_irradianceSampleCount, AttributeRange(0));
+	if (s.getVersion< BakeConfiguration >() >= 11 && s.getVersion< BakeConfiguration >() < 22)
+	{
+		uint32_t irradianceSampleCount;
+		s >> Member< uint32_t >(L"irradianceSampleCount", irradianceSampleCount, AttributeRange(0));
+	}
 
 	if (s.getVersion< BakeConfiguration >() >= 18)
 		s >> Member< float >(L"maxPathDistance", m_maxPathDistance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
@@ -82,8 +85,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion< BakeConfiguration >() >= 4)
 		s >> Member< bool >(L"enableDenoise", m_enableDenoise);
 
-	if (s.getVersion< BakeConfiguration >() >= 12)
-		s >> Member< bool >(L"enableSeamFilter", m_enableSeamFilter);
+	if (s.getVersion< BakeConfiguration >() >= 12 && s.getVersion< BakeConfiguration >() < 21)
+	{
+		bool enableSeamFilter;
+		s >> Member< bool >(L"enableSeamFilter", enableSeamFilter);
+	}
 
 	if (s.getVersion< BakeConfiguration >() >= 6 && s.getVersion< BakeConfiguration >() < 12)
 	{
@@ -93,6 +99,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	if (s.getVersion< BakeConfiguration >() >= 20)
 		s >> Member< float >(L"skyAttenuation", m_skyAttenuation, AttributeRange(0.0f) | AttributeUnit(AuPercent));
+
+	if (s.getVersion< BakeConfiguration >() >= 23)
+		s >> Member< float >(L"ambientOcclusionFactor", m_ambientOcclusionFactor, AttributeRange(0.0f) | AttributeUnit(AuPercent));
 }
 
 	}
