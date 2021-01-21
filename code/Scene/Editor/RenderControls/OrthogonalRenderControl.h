@@ -62,8 +62,6 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void updateWorldRenderer() override final;
-
 	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
 
 	virtual void setAspect(float aspect) override final;
@@ -118,6 +116,8 @@ private:
 	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 	int32_t m_worldIndex;
+
+	void updateWorldRenderer();
 
 	void updateSettings();
 

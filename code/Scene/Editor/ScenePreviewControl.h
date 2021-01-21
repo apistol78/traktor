@@ -44,8 +44,6 @@ public:
 
 	virtual void destroy() override final;
 
-	void updateWorldRenderer();
-
 	bool handleCommand(const ui::Command& command);
 
 	bool getViewIndex(const ui::Point& position, uint32_t& outIndex) const;

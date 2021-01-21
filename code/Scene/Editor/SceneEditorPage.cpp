@@ -1014,7 +1014,7 @@ void SceneEditorPage::updateScene()
 
 		// Inform editor controls to update their world renderer.
 		if (needUpdate)
-			m_editControl->updateWorldRenderer();
+			log::info << L"WORLD RENDER SETTINGS CHANGED, UPDATE WORLD RENDERER" << Endl;
 	}
 }
 

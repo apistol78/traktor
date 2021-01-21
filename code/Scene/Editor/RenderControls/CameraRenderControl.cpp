@@ -119,7 +119,6 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &CameraRenderControl::eventPaint);
 
 	updateSettings();
-	updateWorldRenderer();
 
 	m_timer.start();
 	return true;
@@ -134,65 +133,10 @@ void CameraRenderControl::destroy()
 	safeDestroy(m_containerAspect);
 }
 
-void CameraRenderControl::updateWorldRenderer()
-{
-	safeDestroy(m_worldRenderer);
-
-	Ref< scene::Scene > sceneInstance = m_context->getScene();
-	if (!sceneInstance)
-		return;
-
-	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
-
-	// Create entity renderers.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
-				return adapter->isVisible();
-			});
-			worldEntityRenderers->add(entityRenderer);
-		}
-	}
-
-	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT(settings);
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
-	if (!worldRenderer)
-		return;
-
-	world::WorldCreateDesc wcd;
-	wcd.worldRenderSettings = &m_worldRenderSettings;
-	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
-	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
-
-	if (worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
-	{
-		m_worldRenderer = worldRenderer;
-	}
-}
-
 void CameraRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	m_worldRendererType = &worldRendererType;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void CameraRenderControl::setAspect(float aspect)
@@ -213,7 +157,7 @@ void CameraRenderControl::setQuality(world::Quality imageProcess, world::Quality
 	m_motionBlurQuality = motionBlur;
 	m_ambientOcclusionQuality = ambientOcclusion;
 	m_antiAliasQuality = antiAlias;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void CameraRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
@@ -269,6 +213,61 @@ void CameraRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDe
 void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	m_selectionRectangle = rect;
+}
+
+void CameraRenderControl::updateWorldRenderer()
+{
+	safeDestroy(m_worldRenderer);
+
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance)
+		return;
+
+	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
+
+	// Create entity renderers.
+	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+		{
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+				return adapter->isVisible();
+			});
+			worldEntityRenderers->add(entityRenderer);
+		}
+	}
+
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT(settings);
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
+	if (!worldRenderer)
+		return;
+
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = &m_worldRenderSettings;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
+
+	if (worldRenderer->create(
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		wcd
+	))
+	{
+		m_worldRenderer = worldRenderer;
+	}
 }
 
 void CameraRenderControl::updateSettings()

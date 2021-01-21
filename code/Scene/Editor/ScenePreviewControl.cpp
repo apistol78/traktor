@@ -178,12 +178,6 @@ void ScenePreviewControl::destroy()
 	Widget::destroy();
 }
 
-void ScenePreviewControl::updateWorldRenderer()
-{
-	for (auto renderControl : m_renderControls)
-		renderControl->updateWorldRenderer();
-}
-
 bool ScenePreviewControl::handleCommand(const ui::Command& command)
 {
 	bool result = true;
@@ -411,8 +405,6 @@ bool ScenePreviewControl::updateRenderControls()
 	}
 
 	update();
-	updateWorldRenderer();
-
 	return true;
 }
 
