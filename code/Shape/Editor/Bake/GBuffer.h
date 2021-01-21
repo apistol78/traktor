@@ -21,16 +21,14 @@ class GBuffer : public Object
 public:
 	struct Element
 	{
-		uint32_t polygon;
-		uint32_t material;
 		Vector4 position;
 		Vector4 normal;
 		Vector4 tangent;
-		Scalar delta;
+		uint32_t polygon;
+		uint32_t material;
+		float delta;
 		float distance;
 	};
-
-	GBuffer();
 
 	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel);
 
@@ -49,8 +47,8 @@ public:
 	void saveAsImages(const std::wstring& outputPath) const;
 
 private:
-	int32_t m_width;
-	int32_t m_height;
+	int32_t m_width = 0;
+	int32_t m_height = 0;
 	AlignedVector< Element > m_data;
 	Aabb3 m_boundingBox;
 };

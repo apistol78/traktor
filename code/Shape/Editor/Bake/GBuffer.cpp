@@ -84,12 +84,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.GBuffer", GBuffer, Object)
 
-GBuffer::GBuffer()
-:	m_width(0)
-,	m_height(0)
-{
-}
-
 bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel)
 {
 	m_width = width;
@@ -99,12 +93,13 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 	for (uint32_t i = 0; i < width * height; ++i)
 	{
-		m_data[i].polygon = model::c_InvalidIndex;
-		m_data[i].material = 0;
 		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 		m_data[i].tangent = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-		m_data[i].delta = Scalar(0.0f);
+		m_data[i].polygon = model::c_InvalidIndex;
+		m_data[i].material = 0;
+		m_data[i].delta = 0.0f;
+		m_data[i].distance = 0.0f;
 	}
 
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
@@ -214,11 +209,11 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 							continue;
 					}
 
-					elm.polygon = i;
-					elm.material = polygon.getMaterial();
 					elm.position = ipolPositions.evaluate(bary, pt).xyz1();
 					elm.normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
 					elm.tangent = ipolTangents.evaluate(bary, pt).xyz0().normalized();
+					elm.polygon = i;
+					elm.material = polygon.getMaterial();
 					elm.distance = distance;
 
 					// Evaluate delta magnitude of position in world space per texel offset.
@@ -286,7 +281,7 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 			if (e.polygon == model::c_InvalidIndex)
 				continue;
 
-			Scalar n = e.delta * Scalar(0.1f);
+			float n = e.delta * 0.1f;
 			image->setPixel(x, y, Color4f(n, n, n, 1.0f));
 		}
 	}

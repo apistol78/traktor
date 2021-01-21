@@ -247,7 +247,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 			// Adjust gbuffer position to reduce shadowing issues.
 			{
-				const Scalar l = elm.delta;
+				const Scalar l = Scalar(elm.delta);
 				const Scalar hl = l * Scalar(1.0f);
 
 				Vector4 normal = elm.normal;
