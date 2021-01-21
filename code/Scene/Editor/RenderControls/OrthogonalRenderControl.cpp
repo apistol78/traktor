@@ -137,7 +137,6 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &OrthogonalRenderControl::eventPaint);
 
 	updateSettings();
-	updateWorldRenderer();
 
 	m_worldIndex = cameraId;
 
@@ -179,65 +178,10 @@ void OrthogonalRenderControl::destroy()
 	safeDestroy(m_renderWidget);
 }
 
-void OrthogonalRenderControl::updateWorldRenderer()
-{
-	safeDestroy(m_worldRenderer);
-
-	Ref< scene::Scene > sceneInstance = m_context->getScene();
-	if (!sceneInstance)
-		return;
-
-	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
-
-	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
-		for (auto entityRenderer : entityRenderers)
-		{
-			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
-				return adapter->isVisible();
-			});
-			worldEntityRenderers->add(entityRendererAdapter);
-		}
-	}
-
-	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT(settings);
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(m_worldRendererType->createInstance());
-	if (!worldRenderer)
-		return;
-
-	// Create world renderer.
-	world::WorldCreateDesc wcd;
-	wcd.worldRenderSettings = worldRenderSettings;
-	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
-
-	if (worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
-		m_worldRenderer = worldRenderer;
-
-	m_viewFarZ = worldRenderSettings->viewFarZ;
-}
-
 void OrthogonalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	m_worldRendererType = &worldRendererType;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void OrthogonalRenderControl::setAspect(float aspect)
@@ -251,7 +195,7 @@ void OrthogonalRenderControl::setQuality(world::Quality imageProcess, world::Qua
 	m_motionBlurQuality = motionBlur;
 	m_ambientOcclusionQuality = ambientOcclusion;
 	m_antiAliasQuality = antiAlias;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void OrthogonalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
@@ -362,6 +306,61 @@ void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mou
 void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 	m_selectionRectangle = rect;
+}
+
+void OrthogonalRenderControl::updateWorldRenderer()
+{
+	safeDestroy(m_worldRenderer);
+
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance)
+		return;
+
+	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
+
+	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
+	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	for (auto editorProfile : m_context->getEditorProfiles())
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
+		{
+			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
+				return adapter->isVisible();
+			});
+			worldEntityRenderers->add(entityRendererAdapter);
+		}
+	}
+
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT(settings);
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(m_worldRendererType->createInstance());
+	if (!worldRenderer)
+		return;
+
+	// Create world renderer.
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = worldRenderSettings;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
+
+	if (worldRenderer->create(
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		wcd
+	))
+		m_worldRenderer = worldRenderer;
+
+	m_viewFarZ = worldRenderSettings->viewFarZ;
 }
 
 void OrthogonalRenderControl::updateSettings()

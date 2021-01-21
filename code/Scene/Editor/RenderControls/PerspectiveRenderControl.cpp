@@ -5,6 +5,7 @@
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -151,7 +152,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &PerspectiveRenderControl::eventPaint);
 
 	updateSettings();
-	updateWorldRenderer();
 
 	m_worldRenderView.setIndex(cameraId);
 
@@ -180,62 +180,13 @@ void PerspectiveRenderControl::destroy()
 	safeDestroy(m_containerAspect);
 }
 
-void PerspectiveRenderControl::updateWorldRenderer()
-{
-	safeDestroy(m_worldRenderer);
-
-	Ref< scene::Scene > sceneInstance = m_context->getScene();
-	if (!sceneInstance)
-		return;
-
-	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
-
-	// Create entity renderers.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
-		for (auto entityRenderer : entityRenderers)
-		{
-			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter * adapter) {
-				return adapter->isVisible();
-			});
-			worldEntityRenderers->add(entityRendererAdapter);
-		}
-	}
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
-	if (!worldRenderer)
-		return;
-
-	world::WorldCreateDesc wcd;
-	wcd.worldRenderSettings = &m_worldRenderSettings;
-	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
-	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
-
-	if (worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
-	{
-		m_worldRenderer = worldRenderer;
-	}
-}
-
 void PerspectiveRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
-	m_worldRendererType = &worldRendererType;
-	updateWorldRenderer();
+	if (m_worldRendererType != &worldRendererType)
+	{
+		m_worldRendererType = &worldRendererType;
+		safeDestroy(m_worldRenderer);
+	}
 }
 
 void PerspectiveRenderControl::setAspect(float aspect)
@@ -256,7 +207,7 @@ void PerspectiveRenderControl::setQuality(world::Quality imageProcess, world::Qu
 	m_motionBlurQuality = motionBlur;
 	m_ambientOcclusionQuality = ambientOcclusion;
 	m_antiAliasQuality = antiAlias;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void PerspectiveRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
@@ -391,6 +342,58 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+void PerspectiveRenderControl::updateWorldRenderer()
+{
+	safeDestroy(m_worldRenderer);
+
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance)
+		return;
+
+	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
+
+	// Create entity renderers.
+	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	for (auto editorProfile : m_context->getEditorProfiles())
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
+		{
+			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter * adapter) {
+				return adapter->isVisible();
+			});
+			worldEntityRenderers->add(entityRendererAdapter);
+		}
+	}
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
+	if (!worldRenderer)
+		return;
+
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = &m_worldRenderSettings;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
+
+	if (worldRenderer->create(
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		wcd
+	))
+	{
+		m_worldRenderer = worldRenderer;
+	}
+}
+
 void PerspectiveRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
@@ -402,8 +405,6 @@ void PerspectiveRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
-
-	updateWorldRenderer();
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const

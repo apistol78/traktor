@@ -254,12 +254,6 @@ void DefaultRenderControl::destroy()
 	safeDestroy(m_container);
 }
 
-void DefaultRenderControl::updateWorldRenderer()
-{
-	if (m_renderControl)
-		m_renderControl->updateWorldRenderer();
-}
-
 void DefaultRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	if (m_renderControl)
@@ -451,7 +445,6 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	T_ASSERT(m_renderControl);
 
 	m_container->update();
-	m_renderControl->updateWorldRenderer();
 
 	if (m_toolToggleGrid->isToggled())
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGrid"));

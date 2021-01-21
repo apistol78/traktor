@@ -4,9 +4,7 @@
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
-
 #include "Resource/Proxy.h"
-
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
 #include "Ui/Rect.h"
@@ -57,8 +55,6 @@ public:
 	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
-
-	virtual void updateWorldRenderer() override final;
 
 	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
 
@@ -111,6 +107,8 @@ private:
 	Timer m_timer;
 	Ref< Camera > m_camera;
 	ui::Size m_dirtySize;
+
+	void updateWorldRenderer();
 
 	void updateSettings();
 

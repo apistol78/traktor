@@ -125,7 +125,6 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
 
 	updateSettings();
-	updateWorldRenderer();
 
 	m_worldRenderView.setIndex(cameraId);
 
@@ -153,66 +152,10 @@ void FinalRenderControl::destroy()
 	safeDestroy(m_containerAspect);
 }
 
-void FinalRenderControl::updateWorldRenderer()
-{
-	safeDestroy(m_worldRenderer);
-
-	if (!m_sceneInstance)
-		return;
-
-	m_worldRenderSettings = *(m_sceneInstance->getWorldRenderSettings());
-
-	// Use world render settings from non-baked scene, still need to
-	// keep irradiance grid in order to preview baked irradiance in editor.
-	if (m_context->getScene() != nullptr)
-	{
-		m_worldRenderSettings = *(m_context->getScene()->getWorldRenderSettings());
-		m_worldRenderSettings.irradianceGrid = m_sceneInstance->getWorldRenderSettings()->irradianceGrid;
-	}
-
-	// Create entity renderers.
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (auto editorProfile : m_context->getEditorProfiles())
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
-		for (auto entityRenderer : entityRenderers)
-			worldEntityRenderers->add(entityRenderer);
-	}
-
-	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT(settings);
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
-	if (!worldRenderer)
-		return;
-
-	world::WorldCreateDesc wcd;
-	wcd.worldRenderSettings = &m_worldRenderSettings;
-	wcd.entityRenderers = worldEntityRenderers;
-	wcd.quality.motionBlur = m_motionBlurQuality;
-	wcd.quality.shadows = m_shadowQuality;
-	wcd.quality.reflections = m_reflectionsQuality;
-	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
-	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
-	wcd.multiSample = m_multiSample;
-	wcd.frameCount = 1;
-
-	if (worldRenderer->create(
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		wcd
-	))
-	{
-		m_worldRenderer = worldRenderer;
-	}
-}
-
 void FinalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
 {
 	m_worldRendererType = &worldRendererType;
-	updateWorldRenderer();	
+	safeDestroy(m_worldRenderer);
 }
 
 void FinalRenderControl::setAspect(float aspect)
@@ -233,7 +176,7 @@ void FinalRenderControl::setQuality(world::Quality imageProcess, world::Quality 
 	m_motionBlurQuality = motionBlur;
 	m_ambientOcclusionQuality = ambientOcclusion;
 	m_antiAliasQuality = antiAlias;
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 }
 
 void FinalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
@@ -300,6 +243,62 @@ void FinalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
+void FinalRenderControl::updateWorldRenderer()
+{
+	safeDestroy(m_worldRenderer);
+
+	if (!m_sceneInstance)
+		return;
+
+	m_worldRenderSettings = *(m_sceneInstance->getWorldRenderSettings());
+
+	// Use world render settings from non-baked scene, still need to
+	// keep irradiance grid in order to preview baked irradiance in editor.
+	if (m_context->getScene() != nullptr)
+	{
+		m_worldRenderSettings = *(m_context->getScene()->getWorldRenderSettings());
+		m_worldRenderSettings.irradianceGrid = m_sceneInstance->getWorldRenderSettings()->irradianceGrid;
+	}
+
+	// Create entity renderers.
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	for (auto editorProfile : m_context->getEditorProfiles())
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, *m_worldRendererType, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
+			worldEntityRenderers->add(entityRenderer);
+	}
+
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT(settings);
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
+	if (!worldRenderer)
+		return;
+
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = &m_worldRenderSettings;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.quality.motionBlur = m_motionBlurQuality;
+	wcd.quality.shadows = m_shadowQuality;
+	wcd.quality.reflections = m_reflectionsQuality;
+	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
+	wcd.quality.antiAlias = m_antiAliasQuality;
+	wcd.quality.imageProcess = m_imageProcessQuality;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
+
+	if (worldRenderer->create(
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		wcd
+	))
+	{
+		m_worldRenderer = worldRenderer;
+	}
+}
+
 void FinalRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
@@ -309,8 +308,6 @@ void FinalRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
-
-	updateWorldRenderer();
 }
 
 Matrix44 FinalRenderControl::getProjectionTransform() const
