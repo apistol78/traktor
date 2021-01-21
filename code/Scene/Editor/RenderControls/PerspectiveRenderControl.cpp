@@ -224,7 +224,19 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
 
-	if (command == L"Editor.SettingsChanged")
+	if (command == L"Editor.PropertiesChanged")
+	{
+		Ref< scene::Scene > sceneInstance = m_context->getScene();
+		if (!sceneInstance)
+			return false;
+
+		uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
+		if (m_worldRendererHash == hash)
+			return false;
+
+		safeDestroy(m_worldRenderer);
+	}
+	else if (command == L"Editor.SettingsChanged")
 		updateSettings();
 	else if (command == L"Scene.Editor.EnableGrid")
 		m_gridEnable = true;
@@ -384,14 +396,15 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 
-	if (worldRenderer->create(
+	if (!worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
 		wcd
 	))
-	{
-		m_worldRenderer = worldRenderer;
-	}
+		return;
+
+	m_worldRenderer = worldRenderer;
+	m_worldRendererHash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
 }
 
 void PerspectiveRenderControl::updateSettings()

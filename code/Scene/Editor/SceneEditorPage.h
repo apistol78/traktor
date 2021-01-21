@@ -110,7 +110,6 @@ private:
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
 	const TypeInfo* m_entityFilterType = nullptr;
-	uint32_t m_currentHash = 0;
 
 	bool createSceneAsset();
 

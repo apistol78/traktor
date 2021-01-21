@@ -581,6 +581,9 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			controllerEditor->propertiesChanged();
 
 		m_context->raiseSelect();
+
+		// Propagate to editor controls.
+		m_editControl->handleCommand(command);
 	}
 	else if (command == L"Editor.Undo")
 	{
@@ -998,24 +1001,6 @@ void SceneEditorPage::createControllerEditor()
 void SceneEditorPage::updateScene()
 {
 	m_context->buildEntities();
-
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	if (sceneAsset)
-	{
-		// Check if any scene settings has changed.
-		bool needUpdate = false;
-
-		DeepHash hash(sceneAsset->getWorldRenderSettings());
-		if (hash != m_currentHash)
-		{
-			needUpdate = true;
-			m_currentHash = hash.get();
-		}
-
-		// Inform editor controls to update their world renderer.
-		if (needUpdate)
-			log::info << L"WORLD RENDER SETTINGS CHANGED, UPDATE WORLD RENDERER" << Endl;
-	}
 }
 
 Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
