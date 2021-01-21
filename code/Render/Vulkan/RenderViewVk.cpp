@@ -1325,47 +1325,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 
 	log::debug << L"Using " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	// Create primary depth image.
-	VkImage depthImage = 0;
-
-	VkImageCreateInfo ici = {};
-	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	ici.imageType = VK_IMAGE_TYPE_2D;
-#if defined(__IOS__)
-	ici.format = VK_FORMAT_D16_UNORM_S8_UINT;
-#else
-	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
-#endif
-	ici.extent = { width, height, 1 };
-	ici.mipLevels = 1;
-	ici.arrayLayers = 1;
-	ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	ici.queueFamilyIndexCount = 0;
-	ici.pQueueFamilyIndices = nullptr;
-	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	ici.flags = 0;
-
- 	if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &depthImage) != VK_SUCCESS)
-		return false;
-
-	VkMemoryRequirements memoryRequirements = {};
-	vkGetImageMemoryRequirements(m_context->getLogicalDevice(), depthImage, &memoryRequirements);
-
-	VkMemoryAllocateInfo iai = {};
-	iai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	iai.allocationSize = memoryRequirements.size;
-	iai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
-
-	VkDeviceMemory imageMemory = {};
-	if (vkAllocateMemory(m_context->getLogicalDevice(), &iai, nullptr, &imageMemory) != VK_SUCCESS)
-		return false;
-
-	if (vkBindImageMemory(m_context->getLogicalDevice(), depthImage, imageMemory, 0) != VK_SUCCESS)
-		return false;
-
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore);
@@ -1380,6 +1339,20 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
 #endif
+
+	// Create primary depth target.
+	Ref< RenderTargetDepthVk > primaryDepth = new RenderTargetDepthVk(m_context);
+	if (!primaryDepth->createPrimary(
+		width,
+		height,
+#if defined(__IOS__)
+		VK_FORMAT_D16_UNORM_S8_UINT
+#else
+		VK_FORMAT_D24_UNORM_S8_UINT,
+#endif
+		L"Primary Depth"
+	))
+		return false;
 
 	// Create frame resources.
 	m_frames.resize(imageCount);
@@ -1398,8 +1371,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 			height,
 			colorFormat,
 			presentImages[i],
-			ici.format,
-			depthImage,
+			primaryDepth,
 			str(L"Primary %d", i).c_str()
 		))
 			return false;
