@@ -369,9 +369,9 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 	outStatistics.exclusiveCount = 0;
 	for (auto i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{
-		for (RefArray< ExclusiveResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (auto handle : i->second)
 		{
-			if (*j)
+			if (handle)
 				++outStatistics.exclusiveCount;
 		}
 	}
