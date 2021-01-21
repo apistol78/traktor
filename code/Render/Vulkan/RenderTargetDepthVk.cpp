@@ -24,11 +24,37 @@ RenderTargetDepthVk::~RenderTargetDepthVk()
 	destroy();
 }
 
-bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag)
+bool RenderTargetDepthVk::createPrimary(
+	int32_t width,
+	int32_t height,
+	VkFormat format,
+	const wchar_t* const tag
+)
 {
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_2D;
+	ici.format = format;
+	ici.extent = { (uint32_t)width, (uint32_t)height, 1 };
+	ici.mipLevels = 1;
+	ici.arrayLayers = 1;
+	ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.queueFamilyIndexCount = 0;
+	ici.pQueueFamilyIndices = nullptr;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.flags = 0;
+
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+		return false;
+
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	ivci.image = image;
+	ivci.image = m_image;
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
 	ivci.format = format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
@@ -41,7 +67,6 @@ bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat 
 		return false;
 
 	m_format = format;
-	m_image = image;
 	m_haveStencil = true;
 	m_width = width;
 	m_height = height;
@@ -122,15 +147,13 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 
 void RenderTargetDepthVk::destroy()
 {
-	// Do not destroy image unless we have allocated memory for it;
-	// otherwise it's primary targets thus owned by swapchain.
-	if (m_context && m_allocation != 0)
+	if (m_context)
 	{
-		m_context->addDeferredCleanup([
-			imageView = m_imageView,
-			image = m_image,
-			allocation = m_allocation
-		](Context* cx) {
+		auto allocation = m_allocation;
+		auto imageView = m_imageView;
+		auto image = m_image;
+
+		m_context->addDeferredCleanup([=](Context* cx) {
 			if (imageView != 0)
 				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
 			if (image != 0)

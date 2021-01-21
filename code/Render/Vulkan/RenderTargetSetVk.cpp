@@ -43,8 +43,7 @@ bool RenderTargetSetVk::createPrimary(
 	int32_t height,
 	VkFormat colorFormat,
 	VkImage colorImage,
-	VkFormat depthFormat,
-	VkImage depthImage,
+	RenderTargetDepthVk* depthTarget,
 	const wchar_t* const tag
 )
 {
@@ -53,9 +52,8 @@ bool RenderTargetSetVk::createPrimary(
 	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk(m_context);
-	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage, tag))
-		return false;
+	m_depthTarget = depthTarget;
+	m_depthTargetShared = true;
 
 	m_setDesc.count = 1;
 	m_setDesc.width = width;

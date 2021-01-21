@@ -35,7 +35,14 @@ public:
 
 	virtual ~RenderTargetSetVk();
 
-	bool createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage, const wchar_t* const tag);
+	bool createPrimary(
+		int32_t width,
+		int32_t height,
+		VkFormat colorFormat,
+		VkImage colorImage,
+		RenderTargetDepthVk* depthTarget,
+		const wchar_t* const tag
+	);
 
 	bool create(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag);
 
