@@ -90,6 +90,7 @@ private:
 	resource::Proxy< scene::Scene > m_sceneInstance;
 	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	uint32_t m_worldRendererHash = 0;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
 	world::Quality m_imageProcessQuality;

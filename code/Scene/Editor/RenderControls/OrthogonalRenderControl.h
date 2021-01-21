@@ -95,6 +95,7 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	uint32_t m_worldRendererHash = 0;
 	world::Quality m_shadowQuality;
 	world::Quality m_reflectionsQuality;
 	world::Quality m_motionBlurQuality;
