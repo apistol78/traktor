@@ -339,6 +339,9 @@ Color4f RayTracerEmbree::tracePath0(
 	RTCRayHit T_MATH_ALIGN16 rhv[16];
 	Vector4 directions[16];
 
+	RTCIntersectContext context;
+	rtcInitIntersectContext(&context);
+
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; i += 16)
 	{
@@ -349,8 +352,6 @@ Color4f RayTracerEmbree::tracePath0(
 			constructRay(origin, directions[j], m_configuration->getMaxPathDistance(), rhv[j]);
 		}
 
-		RTCIntersectContext context;
-		rtcInitIntersectContext(&context);
 		rtcIntersect1M(m_scene, &context, rhv, 16, sizeof(RTCRayHit));
 
 		for (int32_t j = 0; j < 16; ++j)

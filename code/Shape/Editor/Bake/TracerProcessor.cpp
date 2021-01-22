@@ -396,40 +396,25 @@ bool TracerProcessor::process(const TracerTask* task)
 		);
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		// Only use jobs when building targets.
-		if (m_editor)
+		RefArray< Job > jobs;
+		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
 		{
-			RefArray< Job > jobs;
-			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
-			{
-				Ref< Job > job = m_queue->add(makeFunctor([&, ty](){
-					for (int32_t tx = 0; tx < width; tx += 16)
-					{
-						int32_t region[] = { tx, ty, tx + 16, ty + 16 };
-						rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
-						++m_status.current;
-					}
-				}));
-				jobs.push_back(job);
-			}
-			while (!jobs.empty())
-			{
-				jobs.back()->wait();
-				jobs.pop_back();
-			}
-		}
-		else
-		{
-			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
-			{
-				for (int32_t tx = 0; !m_cancelled && tx < width; tx += 16)
+			Ref< Job > job = m_queue->add(makeFunctor([&, ty](){
+				for (int32_t tx = 0; tx < width; tx += 16)
 				{
 					int32_t region[] = { tx, ty, tx + 16, ty + 16 };
 					rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
 					++m_status.current;
 				}
-			}
+			}));
+			jobs.push_back(job);
 		}
+		while (!jobs.empty())
+		{
+			jobs.back()->wait();
+			jobs.pop_back();
+		}
+
 		if (m_cancelled)
 			break;
 
