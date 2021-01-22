@@ -321,7 +321,7 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 void ResourceManager::unload(const TypeInfo& productType)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (auto pair : m_exclusiveHandles)
+	for (auto& pair : m_exclusiveHandles)
 	{
 		for (auto handle : pair.second)
 		{
@@ -329,7 +329,7 @@ void ResourceManager::unload(const TypeInfo& productType)
 				handle->flush();
 		}
 	}
-	for (auto pair : m_residentHandles)
+	for (auto& pair : m_residentHandles)
 	{
 		if (is_type_of(productType, pair.second->getProductType()))
 			pair.second->flush();
@@ -339,7 +339,7 @@ void ResourceManager::unload(const TypeInfo& productType)
 void ResourceManager::unloadUnusedResident()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (auto pair : m_residentHandles)
+	for (auto& pair : m_residentHandles)
 	{
 		if (
 			!pair.second->isPersistent() &&

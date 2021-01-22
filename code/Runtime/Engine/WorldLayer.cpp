@@ -83,6 +83,10 @@ void WorldLayer::destroy()
 	}
 
 	m_environment = nullptr;
+	m_rootGroup = nullptr;
+	m_renderGroup = nullptr;
+	m_cameraEntity = nullptr;
+	m_listenerEntity = nullptr;
 
 	if (m_scene)
 	{
