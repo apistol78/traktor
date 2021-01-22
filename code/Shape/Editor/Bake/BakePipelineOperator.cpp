@@ -83,8 +83,6 @@ const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
 
-Ref< drawing::Image > s_imageWorkInProgress;
-
 /*! Resolve external entities, ie flatten scene without external references. */
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed)
 {
@@ -453,22 +451,6 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	// In case we're running in standalone pipeline we create our tracer processor ourselves.
 	if (!m_editor)
 		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, false);
-
-	// Create WIP image which is used as a placeholder before actual lightmap has been completed.
-	if (!s_imageWorkInProgress)
-	{
-		s_imageWorkInProgress = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), 32, 32);
-		for (int32_t y = 0; y < s_imageWorkInProgress->getHeight(); ++y)
-		{
-			for (int32_t x = 0; x < s_imageWorkInProgress->getWidth(); ++x)
-			{
-				s_imageWorkInProgress->setPixelUnsafe(
-					x, y,
-					((x / 4 + y / 4) & 1) ? Color4f(0.3f, 0.3f, 0.3f, 1.0f) : Color4f(0.1f, 0.1f, 0.1f, 1.0f)
-				);
-			}
-		}
-	}
 
 	return true;
 }
