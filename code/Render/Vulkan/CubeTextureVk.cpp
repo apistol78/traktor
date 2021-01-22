@@ -111,11 +111,11 @@ int32_t CubeTextureVk::getSide() const
 
 bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
-	uint32_t imageSize = getTextureSize(
+	uint32_t imageSize = getTextureMipPitch(
 		m_desc.format,
 		m_desc.side,
 		m_desc.side,
-		m_desc.mipCount
+		level
 	);
 
 	// Create staging buffer.
