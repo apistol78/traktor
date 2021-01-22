@@ -159,9 +159,6 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-
-			m_program->setTextureParameter(handle, cubeTexture->getTexture());
-
 			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
 			// if (it != m_shadow.end())
 			// {
@@ -173,9 +170,6 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-
-			m_program->setTextureParameter(handle, simpleTexture->getTexture());
-
 			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
 			// if (it != m_shadow.end())
 			// {
@@ -187,9 +181,6 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(texture->resolve()))
 		{
 			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-
-			m_program->setTextureParameter(handle, volumeTexture->getTexture());
-
 			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
 			// if (it != m_shadow.end())
 			// {
@@ -247,17 +238,18 @@ void ProgramVrfy::verify()
 		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
+			m_program->setTextureParameter(i->first, cubeTexture->getTexture());
 		}
 		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
+			m_program->setTextureParameter(i->first, simpleTexture->getTexture());
 		}
 		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(i->second->resolve()))
 		{
 			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
+			m_program->setTextureParameter(i->first, volumeTexture->getTexture());
 		}
-		else
-			T_FATAL_ERROR;
 	}
 }
 

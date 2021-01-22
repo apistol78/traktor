@@ -315,23 +315,107 @@ Color4f RayTracerEmbree::tracePath0(
 	if (sampleCount <= 0)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
+	sampleCount = alignUp(sampleCount, 16);
+
+	const Color4f BRDF = Color4f(1.0f, 1.0f, 1.0f, 1.0f) / Scalar(PI);
+	const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
+
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 
+#if 0
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; ++i)
 	{
 		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 
-		Color4f BRDF = Color4f(1.0f, 1.0f, 1.0f, 1.0f) / Scalar(PI);
-
-		const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
 		Scalar cosPhi = dot3(direction, normal);
 
 		Color4f incoming = traceSinglePath(origin, direction, random, 1);
 
 		color += incoming * BRDF * cosPhi / probability;
 	}
+#else
+	RTCRayHit T_MATH_ALIGN16 rhv[16];
+	Vector4 directions[16];
+
+	// Sample across hemisphere.
+	for (int32_t i = 0; i < sampleCount; i += 16)
+	{
+		for (int32_t j = 0; j < 16; ++j)
+		{
+			Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			directions[j] = Quasirandom::uniformHemiSphere(uv, normal);
+			constructRay(origin, directions[j], m_configuration->getMaxPathDistance(), rhv[j]);
+		}
+
+		RTCIntersectContext context;
+		rtcInitIntersectContext(&context);
+		rtcIntersect1M(m_scene, &context, rhv, 16, sizeof(RTCRayHit));
+
+		for (int32_t j = 0; j < 16; ++j)
+		{
+			const auto& rh = rhv[j];
+			const auto& direction = directions[j];
+
+			if (
+				rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
+				rh.hit.geomID >= m_models.size()
+			)
+			{
+				// Nothing hit, sample sky if available else it's all black.
+				if (m_environment)
+					color += m_environment->sampleRadiance(direction);
+				continue;
+			}
+
+			Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+			Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
+
+			const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
+			const auto& materials = m_models[rh.hit.geomID]->getMaterials();
+			const auto& hitPolygon = polygons[rh.hit.primID];
+			const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+
+			Color4f hitMaterialColor = hitMaterial.getColor();
+			const auto& image = hitMaterial.getDiffuseMap().image;
+			if (image)
+			{
+				const uint32_t slot = 0;
+				float texCoord[2] = { 0.0f, 0.0f };
+
+				RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+				rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+				image->getPixel(
+					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+					hitMaterialColor
+				);
+			}
+			Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+			Color4f BRDF = hitMaterialColor / Scalar(PI);
+
+			Vector2 uv(random.nextFloat(), random.nextFloat());
+			Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+
+			const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
+			Scalar cosPhi = dot3(newDirection, hitNormal);
+
+			Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
+
+			Color4f direct = sampleAnalyticalLights(
+				random,
+				hitOrigin,
+				hitNormal,
+				Light::LmIndirect,
+				true
+			);
+
+			color += emittance + (incoming * BRDF * cosPhi / probability) + direct;
+		}
+	}
+#endif
 
 	// Sample direct lighting from analytical lights.
 	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect, false);

@@ -9,6 +9,7 @@
 #	include <stb_dxt.h>
 #endif
 
+#include <string>
 #include "Core/Functor/Functor.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -24,12 +25,10 @@ namespace traktor
 
 struct CompressTextureTask
 {
-	const drawing::Image* image;
-	int32_t top;
-	int32_t bottom;
-	TextureFormat textureFormat;
-	bool needAlpha;
-	int32_t compressionQuality;
+	const drawing::Image* image = nullptr;
+	TextureFormat textureFormat = TfInvalid;
+	bool needAlpha = false;
+	int32_t compressionQuality = 0;
 	AlignedVector< uint8_t > output;
 
 	void execute()
@@ -40,7 +39,7 @@ struct CompressTextureTask
 		uint32_t outputSize = getTextureMipPitch(
 			textureFormat,
 			width,
-			bottom - top
+			height
 		);
 
 		output.resize(outputSize, 0);
@@ -48,12 +47,14 @@ struct CompressTextureTask
 		const uint8_t* data = static_cast< const uint8_t* >(image->getData());
 		uint8_t* block = &output[0];
 
-		for (int32_t y = top; y < bottom; y += 4)
+		for (int32_t y = 0; y < height; y += 4)
 		{
 			for (int32_t x = 0; x < width; x += 4)
 			{
 				uint8_t rgba[4][4][4];
 				int32_t mask = 0;
+
+				std::memset(rgba, 0, sizeof(rgba));
 
 				for (int iy = 0; iy < 4; ++iy)
 				{
@@ -137,14 +138,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DxtnCompressor", DxtnCompressor, ICompre
 
 bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	int32_t mipCount = int32_t(mipImages.size());
-
-	CompressTextureTask task;
+	int32_t mipCount = (int32_t)mipImages.size();
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
+		CompressTextureTask task;
 		task.image = mipImages[i];
-		task.top = 0;
-		task.bottom = mipImages[i]->getHeight();
 		task.textureFormat = textureFormat;
 		task.needAlpha = needAlpha;
 		task.compressionQuality = compressionQuality;
@@ -152,7 +150,6 @@ bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		if (writer.write(task.output.c_ptr(), (int64_t)task.output.size(), 1) != task.output.size())
 			return false;
 	}
-
 	return true;
 }
 
