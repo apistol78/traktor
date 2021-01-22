@@ -154,8 +154,6 @@ bool writeTexture(
 		needAlpha = true;
 	}
 
-	lightmapFormat->save(L"data/Temp/Lightmaps/" + lightmapId.format() + L"_F.png");
-
 	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
 		L"Generated/" + lightmapId.format(),
 		db::CifReplaceExisting,
