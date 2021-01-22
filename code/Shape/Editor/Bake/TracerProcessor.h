@@ -17,6 +17,7 @@ namespace traktor
 {
 
 class Guid;
+class JobQueue;
 class PropertyGroup;
 class Thread;
 
@@ -45,7 +46,7 @@ public:
         }
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool parallel);
+    TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool editor);
 
     virtual ~TracerProcessor();
 
@@ -62,8 +63,9 @@ public:
 private:
 	const TypeInfo* m_rayTracerType;
     std::wstring m_compressionMethod;
-    bool m_parallel;
+    bool m_editor;
     Thread* m_thread;
+    Ref< JobQueue > m_queue;
     Semaphore m_lock;
     Event m_event;
     RefArray< const TracerTask > m_tasks;
