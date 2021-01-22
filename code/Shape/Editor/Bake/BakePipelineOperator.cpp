@@ -452,7 +452,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 
 	// In case we're running in standalone pipeline we create our tracer processor ourselves.
 	if (!m_editor)
-		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, true);
+		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, false);
 
 	// Create WIP image which is used as a placeholder before actual lightmap has been completed.
 	if (!s_imageWorkInProgress)

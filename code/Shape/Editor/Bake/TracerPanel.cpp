@@ -27,7 +27,7 @@ TracerPanel::TracerPanel(editor::IEditor* editor)
 
 bool TracerPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*", ui::dpi96(8), ui::dpi96(4))))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*", ui::dpi96(8), ui::dpi96(4))))
 		return false;
 
 	setText(i18n::Text(L"SHAPE_EDITOR_TRACER_PANEL"));
@@ -37,14 +37,6 @@ bool TracerPanel::create(ui::Widget* parent)
 	m_checkEnable->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
 		auto settings = m_editor->checkoutGlobalSettings();
 		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", m_checkEnable->isChecked());
-		m_editor->commitGlobalSettings();
-	});
-
-	m_checkParallel = new ui::CheckBox();
-	m_checkParallel->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_PARALLEL"), m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.ParallelBake", true));
-	m_checkParallel->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
-		auto settings = m_editor->checkoutGlobalSettings();
-		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.ParallelBake", m_checkParallel->isChecked());
 		m_editor->commitGlobalSettings();
 	});
 

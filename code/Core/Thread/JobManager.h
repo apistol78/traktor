@@ -57,6 +57,9 @@ public:
 	/*! Stop all worker threads. */
 	void stop() { m_queue.stop(); }
 
+	/*! Get job queue. */
+	JobQueue& getQueue() { return m_queue; }
+
 protected:
 	virtual void destroy();
 

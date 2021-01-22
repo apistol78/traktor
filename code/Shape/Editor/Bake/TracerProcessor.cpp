@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -205,16 +206,24 @@ bool writeTexture(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
-TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool parallel)
+TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool editor)
 :   m_rayTracerType(rayTracerType)
 ,	m_compressionMethod(compressionMethod)
-,	m_parallel(parallel)
+,	m_editor(editor)
 ,   m_thread(nullptr)
 {
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
 	m_thread->start();
+
+	if (!m_editor)
+		m_queue = &JobManager::getInstance().getQueue();
+	else
+	{
+		m_queue = new JobQueue();
+		m_queue->create(4, Thread::Below);
+	}
 
 	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Lightmaps");
 }
@@ -231,6 +240,9 @@ TracerProcessor::~TracerProcessor()
 		ThreadManager::getInstance().destroy(m_thread);
 		m_thread = nullptr;
 	}
+
+	if (m_editor)
+		safeDestroy(m_queue);
 }
 
 void TracerProcessor::enqueue(const TracerTask* task)
@@ -387,12 +399,12 @@ bool TracerProcessor::process(const TracerTask* task)
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		// Only use jobs when building targets.
-		if (m_parallel)
+		if (m_editor)
 		{
 			RefArray< Job > jobs;
 			for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
 			{
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor([&, ty](){
+				Ref< Job > job = m_queue->add(makeFunctor([&, ty](){
 					for (int32_t tx = 0; tx < width; tx += 16)
 					{
 						int32_t region[] = { tx, ty, tx + 16, ty + 16 };

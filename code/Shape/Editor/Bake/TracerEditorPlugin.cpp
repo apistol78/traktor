@@ -63,12 +63,11 @@ void TracerEditorPlugin::handleWorkspaceOpened()
 		return;
 
 	std::wstring compressionMethod = m_editor->getSettings()->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	bool parallelBake = m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.ParallelBake", true);
 
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
 		compressionMethod,
-		parallelBake
+		true
 	));
 }
 
