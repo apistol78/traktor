@@ -3,7 +3,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/Mutex.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
@@ -16,7 +15,6 @@ namespace traktor
 		{
 
 const Guid c_globalLockId(L"{BF9144AA-FA5C-49D6-8E5B-9593EEE92148}");
-static Mutex s_lock(c_globalLockId);
 
 uint32_t hash(const std::wstring& text)
 {
@@ -32,7 +30,8 @@ uint32_t hash(const std::wstring& text)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelCache", ModelCache, Object)
 
 ModelCache::ModelCache(const Path& cachePath)
-:	m_cachePath(cachePath)
+:	m_lock(c_globalLockId)
+,	m_cachePath(cachePath)
 {
 }
 
@@ -52,7 +51,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
 	{
-		T_ANONYMOUS_VAR(Acquire< Mutex >)(s_lock);
+		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
 		Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
 		if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
 			haveCachedFile = true;
@@ -71,7 +70,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 
 	// Write cached copy of post-operation model.
 	{
-		T_ANONYMOUS_VAR(Acquire< Mutex >)(s_lock);
+		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
 		FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
 		ModelFormat::writeAny(cachedFileName, model);
 	}

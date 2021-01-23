@@ -3,6 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Mutex.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,8 +18,8 @@ namespace traktor
 
 class IStream;
 
-    namespace model
-    {
+	namespace model
+	{
 
 class Model;
 
@@ -27,17 +28,18 @@ class Model;
  */
 class T_DLLCLASS ModelCache : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    explicit ModelCache(const Path& cachePath);
+	explicit ModelCache(const Path& cachePath);
 
-    /*! Get model. */
-    Ref< Model > get(const Path& fileName, const std::wstring& filter);
+	/*! Get model. */
+	Ref< Model > get(const Path& fileName, const std::wstring& filter);
 
 private:
-    Path m_cachePath;
+	Mutex m_lock;
+	Path m_cachePath;
 };
 
-    }
+	}
 }

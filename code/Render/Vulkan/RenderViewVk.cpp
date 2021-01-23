@@ -1346,7 +1346,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		width,
 		height,
 #if defined(__IOS__)
-		VK_FORMAT_D16_UNORM_S8_UINT
+		VK_FORMAT_D16_UNORM_S8_UINT,
 #else
 		VK_FORMAT_D24_UNORM_S8_UINT,
 #endif
