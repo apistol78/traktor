@@ -10,7 +10,7 @@ IPHONE_OS_MIN_VERSION=13.0
 # Build tools.
 
 # C
-C=ccache $(TOOLCHAIN_BIN)/clang
+C=$(TOOLCHAIN_BIN)/clang
 
 C_FLAGS_COMMON=-fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fstrict-aliasing -fvisibility=hidden -fpascal-strings -miphoneos-version-min=$(IPHONE_OS_MIN_VERSION)
 
@@ -59,7 +59,7 @@ C_FLAGS_RELEASE_EXECUTABLE_x86_64=-arch x86_64 -isysroot $(SDK_SYSROOT_EMULATOR)
 C_FLAG_OUTPUT=-o
 
 # C++
-CC=ccache $(TOOLCHAIN_BIN)/clang
+CC=$(TOOLCHAIN_BIN)/clang
 
 CC_FLAGS_COMMON=-std=c++14 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fstrict-aliasing -fvisibility=hidden -fpascal-strings -miphoneos-version-min=$(IPHONE_OS_MIN_VERSION) -Wno-c++11-extensions
 
@@ -108,7 +108,7 @@ CC_FLAGS_RELEASE_EXECUTABLE_x86_64=-arch x86_64 -isysroot $(SDK_SYSROOT_EMULATOR
 CC_FLAG_OUTPUT=-o
 
 # Objective/C
-MM=ccache $(TOOLCHAIN_BIN)/clang -x objective-c++
+MM=$(TOOLCHAIN_BIN)/clang -x objective-c++
 
 MM_FLAGS_COMMON=-std=c++14 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fstrict-aliasing -fvisibility=hidden -fpascal-strings -miphoneos-version-min=$(IPHONE_OS_MIN_VERSION) -Wno-c++11-extensions
 
@@ -167,7 +167,7 @@ AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=-o
 
 # Linker
-LINK=ccache $(TOOLCHAIN_BIN)/clang $(CC_FLAGS_COMMON)
+LINK=$(TOOLCHAIN_BIN)/clang $(CC_FLAGS_COMMON)
 LINK_FLAG_OUTPUT=-o
 LINK_LIBS=
 

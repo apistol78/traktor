@@ -312,6 +312,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
 	aci.pVulkanFunctions = &vf;
+#if defined(__IOS__)
+	aci.preferredLargeHeapBlockSize = 32 * 1024 * 1024;
+#endif
 	if (vmaCreateAllocator(&aci, &m_allocator) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to create allocator." << Endl;

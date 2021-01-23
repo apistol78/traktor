@@ -17542,7 +17542,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Remote.Server.dylib</sourceFile>
+							<sourceFile>libTraktor.Remote.Server.dylib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17571,7 +17571,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Remote.Server.dylib</sourceFile>
+							<sourceFile>libTraktor.Remote.Server.dylib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17600,7 +17600,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Remote.Server.a</sourceFile>
+							<sourceFile>libTraktor.Remote.Server.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -17629,7 +17629,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Remote.Server.a</sourceFile>
+							<sourceFile>libTraktor.Remote.Server.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
