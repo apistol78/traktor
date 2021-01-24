@@ -75,7 +75,6 @@ VkResult Queue::present(const VkPresentInfoKHR& pi)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		result = vkQueuePresentKHR(m_queue, &pi);
-		T_ASSERT(result == VK_SUCCESS);
 	}
 	return result;
 }

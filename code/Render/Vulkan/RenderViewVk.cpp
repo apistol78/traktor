@@ -301,6 +301,8 @@ void RenderViewVk::close()
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, 0);	
 		m_swapChain = 0;
 	}
+
+	m_counter = -1;
 }
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
@@ -337,7 +339,49 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::reset(int32_t width, int32_t height)
 {
-	close();
+	vkDeviceWaitIdle(m_context->getLogicalDevice());
+
+	// Ensure any pending cleanups are performed before closing render view.
+	m_context->performCleanup();
+	m_lost = true;
+
+	// Ensure event queue doesn't contain stale events.
+	m_eventQueue.clear();
+
+	// Destroy frame resources.
+	for (auto& frame : m_frames)
+	{
+		if (frame.graphicsCommandBuffer)
+			frame.graphicsCommandBuffer->wait();
+
+		frame.primaryTarget->destroy();
+		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+	}
+	m_frames.clear();
+
+#if !defined(__IOS__)
+	if (m_queryPool != 0)
+	{
+		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
+		m_queryPool = 0;
+	}
+#endif
+
+	if (m_imageAvailableSemaphore != 0)
+	{
+		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphore, nullptr);
+		m_imageAvailableSemaphore = 0;
+	}
+
+	// Destroy pipelines.
+	for (auto& pipeline : m_pipelines)
+		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
+	m_pipelines.clear();
+
+	// More pending cleanups since frames own render targets.
+	m_context->performCleanup();
+
+	m_counter = -1;
 
 #if defined(_WIN32)
 	if (m_window)
@@ -1275,7 +1319,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
 			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 	}
-
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
 		log::debug << L"Using FIFO presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
@@ -1300,6 +1343,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	scci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	scci.presentMode = presentationMode;
 	scci.clipped = VK_TRUE;
+	scci.oldSwapchain = m_swapChain;
 
 	uint32_t queueFamilyIndices[] = { m_context->getGraphicsQueue()->getQueueIndex(), m_presentQueue->getQueueIndex() };
 	if (queueFamilyIndices[0] != queueFamilyIndices[1])
@@ -1315,6 +1359,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
 		return false;
 	}
+
+	// Destroy previous swap chain.
+	if (scci.oldSwapchain != 0)
+		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);	
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
