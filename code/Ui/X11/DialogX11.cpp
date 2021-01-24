@@ -63,7 +63,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	}
 
 	// Make dialog on top of parent.
-	if (parent != nullptr && (style & WsTop) == WsTop)
+	if (parent != nullptr)
 	{
 		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
 		XSetTransientForHint(m_context->getDisplay(), window, parentData->window);
