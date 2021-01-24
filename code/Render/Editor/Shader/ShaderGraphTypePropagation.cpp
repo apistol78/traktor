@@ -102,7 +102,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 					currentInputPinTypes[i] = m_outputPinTypes[sourceOutputPin];
 				else
 				{
-					T_ASSERT(inputPin->isOptional());
+					if (!inputPin->isOptional())
+						log::debug << L"No type for mandatory input pin \"" << inputPin->getName() << L"\" of node " << type_name(inputPin->getNode()) << L" " << inputPin->getNode()->getId().format() << L"." << Endl;
 					currentInputPinTypes[i] = PntVoid;
 				}
 			}
@@ -111,9 +112,14 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			for (uint32_t i = 0; i < outputPinCount; ++i)
 			{
 				const OutputPin* outputPin = node->getOutputPin(i);
-				T_ASSERT(m_outputPinTypes.find(outputPin) != m_outputPinTypes.end());
-
-				outputPinTypes[i] = m_outputPinTypes[outputPin];
+				auto it = m_outputPinTypes.find(outputPin);
+				if (it != m_outputPinTypes.end())
+					outputPinTypes[i] = it->second;
+				else
+				{
+					log::debug << L"No type found for output pin \"" << outputPin->getName() << L"\" of node " << type_name(outputPin->getNode()) << L" " << outputPin->getNode()->getId().format() << L"." << Endl;
+					outputPinTypes[i] = PntVoid;
+				}
 			}
 
 			// Evaluate possible new input type from type sets.
@@ -154,6 +160,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 				destinationInputPins.resize(0);
 				m_shaderGraph->findDestinationPins(outputPin, destinationInputPins);
+				if (destinationInputPins.empty())
+					continue;
 
 				PinType outputPinType = PntVoid;
 				for (const auto destinationInputPin : destinationInputPins)
@@ -198,15 +206,13 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
 {
-	SmallMap< const InputPin*, PinType >::const_iterator i = m_inputPinTypes.find(inputPin);
-	T_ASSERT(i != m_inputPinTypes.end());
+	auto i = m_inputPinTypes.find(inputPin);
 	return i != m_inputPinTypes.end() ? i->second : PntVoid;
 }
 
 PinType ShaderGraphTypePropagation::evaluate(const OutputPin* outputPin) const
 {
-	SmallMap< const OutputPin*, PinType >::const_iterator i = m_outputPinTypes.find(outputPin);
-	T_ASSERT(i != m_outputPinTypes.end());
+	auto i = m_outputPinTypes.find(outputPin);
 	return i != m_outputPinTypes.end() ? i->second : PntVoid;
 }
 

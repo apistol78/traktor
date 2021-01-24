@@ -181,6 +181,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 				destinationEdge->getDestination()
 			));
 		}
+
+		shaderGraph->detach(node);
+		shaderGraph->removeNode(node);
 	}
 
 	return shaderGraph;
@@ -227,6 +230,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 				destinationEdge->getDestination()
 			));
 		}
+
+		shaderGraph->detach(node);
+		shaderGraph->removeNode(node);
 	}
 
 	return shaderGraph;
@@ -282,6 +288,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 				destinationEdge->getDestination()
 			));
 		}
+
+		shaderGraph->detach(node);
+		shaderGraph->removeNode(node);
 	}
 
 	return shaderGraph;
@@ -498,7 +507,6 @@ restart_iteration:
 					continue;
 
 				PinType outputPinType = typePropagation.evaluate(outputPin);
-				T_ASSERT(outputPinType != PntVoid);
 
 				// First attempt to evaluate re-wiring to circumvent this node entirely.
 				if (inputPinCount > 0)
