@@ -111,21 +111,33 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 
 void RenderTargetVk::destroy()
 {
-	// Do not destroy image unless we have allocated memory for it;
-	// otherwise it's primary targets thus owned by swapchain.
-	if (m_context && m_allocation != 0)
+	if (m_context)
 	{
-		m_context->addDeferredCleanup([
-			imageView = m_imageView,
-			image = m_image,
-			allocation = m_allocation
-		](Context* cx) {
-			if (imageView != 0)
-				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
-			if (image != 0)
-				vkDestroyImage(cx->getLogicalDevice(), image, 0);
-			vmaFreeMemory(cx->getAllocator(), allocation);
-		});
+		// Do not destroy image unless we have allocated memory for it;
+		// otherwise it's primary targets thus owned by swapchain.
+		if (m_allocation != 0)
+		{
+			auto allocation = m_allocation;
+			auto imageView = m_imageView;
+			auto image = m_image;
+
+			m_context->addDeferredCleanup([=](Context* cx) {
+				if (imageView != 0)
+					vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+				if (image != 0)
+					vkDestroyImage(cx->getLogicalDevice(), image, 0);
+				vmaFreeMemory(cx->getAllocator(), allocation);
+			});
+		}
+		else
+		{
+			auto imageView = m_imageView;
+
+			m_context->addDeferredCleanup([=](Context* cx) {
+				if (imageView != 0)
+					vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+			});
+		}
 	}
 
 	m_context = nullptr;
