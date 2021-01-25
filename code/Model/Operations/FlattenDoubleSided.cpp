@@ -27,11 +27,12 @@ bool FlattenDoubleSided::apply(Model& model) const
 
 		Polygon flat = polygon;
 
-		w.clear();
-		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-			w.push(model.getVertexPosition(polygon.getVertex(j)));
-		if (!w.getPlane(p))
-			continue;
+		if (flat.getNormal() != c_InvalidIndex)
+		{
+			Vector4 sourceNormal = model.getNormal(flat.getNormal());
+			Vector4 flattenNormal = -sourceNormal;
+			flat.setNormal(model.addUniqueNormal(flattenNormal));
+		}
 
 		for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
 		{
@@ -43,13 +44,14 @@ bool FlattenDoubleSided::apply(Model& model) const
 			if (sourceVertex.getNormal() != c_InvalidIndex)
 			{
 				Vector4 sourceNormal = model.getNormal(sourceVertex.getNormal());
-				Vector4 flattenNormal = sourceNormal - p.normal() * (2.0_simd * dot3(p.normal(), sourceNormal));
+				Vector4 flattenNormal = -sourceNormal;
 				flattenVertex.setNormal(model.addUniqueNormal(flattenNormal));
 			}
 
 			uint32_t flattenVertexId = model.addUniqueVertex(flattenVertex);
 			flat.setVertex(polygon.getVertexCount() - i - 1, flattenVertexId);
 		}
+
 		flatten.push_back(flat);
 	}
 
