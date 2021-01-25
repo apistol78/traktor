@@ -81,10 +81,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 
 	TypeInfoSet renderSystemTypes;
 	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes, false);
-
-	for (TypeInfoSet::const_iterator i = renderSystemTypes.begin(); i != renderSystemTypes.end(); ++i)
+	for (const auto& type : renderSystemTypes)
 	{
-		std::wstring name = (*i)->getName();
+		std::wstring name = type->getName();
 		int32_t index = m_dropRenderSystem->add(name);
 		if (name == renderSystemType)
 			m_dropRenderSystem->select(index);

@@ -114,6 +114,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 
 	m_device = rtcNewDevice(nullptr);
 	m_scene = rtcNewScene(m_device);
+	rtcSetSceneBuildQuality(m_scene, RTC_BUILD_QUALITY_HIGH);
 
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
