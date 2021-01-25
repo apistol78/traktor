@@ -267,6 +267,8 @@ void RenderViewVk::close()
 	{
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
+		if (frame.computeCommandBuffer)
+			frame.computeCommandBuffer->wait();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
@@ -353,6 +355,8 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	{
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
+		if (frame.computeCommandBuffer)
+			frame.computeCommandBuffer->wait();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
@@ -509,7 +513,7 @@ bool RenderViewVk::beginFrame()
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// Reset command buffer.
+	// Reset command buffers.
 	// \hack Lazy create since we don't know about rendering thread until beginFrame
 	// is called... This assumes no other thread will perform rendering during the
 	// life time of the render view.
@@ -533,6 +537,28 @@ bool RenderViewVk::beginFrame()
 	{
 		frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 		if (!frame.graphicsCommandBuffer)
+			return false;
+	}
+	if (frame.computeCommandBuffer)
+	{
+		// Ensure command buffer has been consumed by GPU.
+		if (!frame.computeCommandBuffer->wait())
+		{
+			// Issue an event in order to reset view.
+			RenderEvent evt;
+			evt.type = ReLost;
+			m_eventQueue.push_back(evt);
+			m_lost = true;
+			return false;
+		}
+
+		if (!frame.computeCommandBuffer->reset())
+			return false;
+	}
+	else
+	{
+		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+		if (!frame.computeCommandBuffer)
 			return false;
 	}
 
@@ -610,7 +636,7 @@ void RenderViewVk::present()
 	// Cleanup destroyed resources.
 	if (m_context->needCleanup())
 	{
-		if (frame.graphicsCommandBuffer->wait())
+		if (frame.graphicsCommandBuffer->wait() && frame.computeCommandBuffer->wait())
 			m_context->performCleanup();
 	}
 }
@@ -945,11 +971,11 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
-	//auto& frame = m_frames[m_currentImageIndex];
+	auto& frame = m_frames[m_currentImageIndex];
 
-	//ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	//p->validateCompute(frame.descriptorPool, frame.computeCommandBuffer);
-	//vkCmdDispatch(frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
+	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
+	p->validateCompute(frame.computeCommandBuffer);
+	vkCmdDispatch(*frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
