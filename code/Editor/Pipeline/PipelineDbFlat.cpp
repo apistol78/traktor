@@ -113,23 +113,15 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 		s >> MemberStlMap<
 			Guid,
 			PipelineDependencyHash,
-			MemberStlPair<
-				Guid,
-				PipelineDependencyHash,
-				Member< Guid >,
-				MemberPipelineDependencyHash
-			>
+			Member< Guid >,
+			MemberPipelineDependencyHash
 		>(L"dependencies", m_dependencies);
 
 		s >> MemberStlMap<
 			std::wstring,
 			PipelineFileHash,
-			MemberStlPair<
-				std::wstring,
-				PipelineFileHash,
-				Member< std::wstring >,
-				MemberPipelineFileHash
-			>
+			Member< std::wstring >,
+			MemberPipelineFileHash
 		>(L"files", m_files);
 	}
 	else
@@ -166,23 +158,15 @@ void PipelineDbFlat::endTransaction()
 			s >> MemberStlMap<
 				Guid,
 				PipelineDependencyHash,
-				MemberStlPair<
-					Guid,
-					PipelineDependencyHash,
-					Member< Guid >,
-					MemberPipelineDependencyHash
-				>
+				Member< Guid >,
+				MemberPipelineDependencyHash
 			>(L"dependencies", m_dependencies);
 
 			s >> MemberStlMap<
 				std::wstring,
 				PipelineFileHash,
-				MemberStlPair<
-					std::wstring,
-					PipelineFileHash,
-					Member< std::wstring >,
-					MemberPipelineFileHash
-				>
+				Member< std::wstring >,
+				MemberPipelineFileHash
 			>(L"files", m_files);
 
 			bs.close();

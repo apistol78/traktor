@@ -66,12 +66,8 @@ void HierarchicalState::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		std::pair< bool, bool >,
-		MemberStlPair<
-			std::wstring,
-			std::pair< bool, bool >,
-			Member< std::wstring >,
-			MemberStlPair< bool, bool >
-		>
+		Member< std::wstring >,
+		MemberStlPair< bool, bool >
 	>(L"states", m_states);
 }
 

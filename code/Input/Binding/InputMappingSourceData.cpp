@@ -35,12 +35,8 @@ void InputMappingSourceData::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		Ref< IInputSourceData >,
-		MemberStlPair<
-			std::wstring,
-			Ref< IInputSourceData >,
-			Member< std::wstring >,
-			MemberRef< IInputSourceData >
-		>
+		Member< std::wstring >,
+		MemberRef< IInputSourceData >
 	>(L"sourceData", m_sourceData);
 }
 

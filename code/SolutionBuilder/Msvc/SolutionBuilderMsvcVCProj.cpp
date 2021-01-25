@@ -166,12 +166,8 @@ void SolutionBuilderMsvcVCProj::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		Ref< SolutionBuilderMsvcTool >,
-		MemberStlPair<
-			std::wstring,
-			Ref< SolutionBuilderMsvcTool >,
-			Member< std::wstring >,
-			MemberRef< SolutionBuilderMsvcTool >
-		>
+		Member< std::wstring >,
+		MemberRef< SolutionBuilderMsvcTool >
 	>(L"customTools", m_customTools);
 }
 

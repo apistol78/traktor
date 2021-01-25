@@ -97,12 +97,8 @@ void BlendMeshResource::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,
-		MemberStlPair<
-			std::wstring,
-			parts_t,
-			Member< std::wstring >,
-			MemberStlList< Part, MemberComposite< Part > >
-		>
+		Member< std::wstring >,
+		MemberStlList< Part, MemberComposite< Part > >
 	>(L"parts", m_parts);
 	s >> MemberStlMap< std::wstring, int >(L"targetMap", m_targetMap);
 }
