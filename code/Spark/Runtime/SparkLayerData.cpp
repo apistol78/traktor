@@ -59,12 +59,8 @@ void SparkLayerData::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		resource::Id< Movie >,
-		MemberStlPair<
-			std::wstring,
-			resource::Id< Movie >,
-			Member< std::wstring >,
-			resource::Member< Movie >
-		>
+		Member< std::wstring >,
+		resource::Member< Movie >
 	>(L"externalMovies", m_externalMovies);
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);

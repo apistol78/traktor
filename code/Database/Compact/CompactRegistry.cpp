@@ -40,13 +40,8 @@ void CompactInstanceEntry::serialize(ISerializer& s)
 		<
 			std::wstring,
 			Ref< CompactBlockEntry >,
-			MemberStlPair
-			<
-				std::wstring,
-				Ref< CompactBlockEntry >,
-				Member< std::wstring >,
-				MemberRef< CompactBlockEntry >
-			>
+			Member< std::wstring >,
+			MemberRef< CompactBlockEntry >
 		>
 		(L"dataBlocks", m_dataBlocks);
 }

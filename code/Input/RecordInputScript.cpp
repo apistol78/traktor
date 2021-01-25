@@ -50,14 +50,10 @@ void RecordInputScript::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		int,
 		std::vector< Input >,
-		MemberStlPair<
-			int,
-			std::vector< Input >,
-			Member< int >,
-			MemberStlVector<
-				Input,
-				MemberComposite< Input >
-			>
+		Member< int >,
+		MemberStlVector<
+			Input,
+			MemberComposite< Input >
 		>
 	>(L"data", m_data);
 }

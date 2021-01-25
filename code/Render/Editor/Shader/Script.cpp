@@ -435,12 +435,8 @@ void Script::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		SamplerState,
-		MemberStlPair<
-			std::wstring,
-			SamplerState,
-			Member< std::wstring >,
-			MemberSamplerState
-		>
+		Member< std::wstring >,
+		MemberSamplerState
 	>(L"samplers", m_samplers);
 	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine() | AttributePrivate());
 }

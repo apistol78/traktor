@@ -100,12 +100,8 @@ void IndoorMeshResource::Sector::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,
-		MemberStlPair<
-			std::wstring,
-			parts_t,
-			Member< std::wstring >,
-			MemberStlList< Part, MemberComposite< Part > >
-		>
+		Member< std::wstring >,
+		MemberStlList< Part, MemberComposite< Part > >
 	>(L"parts", parts);
 }
 

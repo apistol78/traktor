@@ -238,14 +238,20 @@ private:
 };
 
 /*! STL map member. */
-template < typename KeyType, typename ValueType, typename PairMember = MemberStlPair< KeyType, ValueType > >
+template <
+	typename KeyType,
+	typename ValueType,
+	typename KeyMember = Member< KeyType >,
+	typename ValueMember = Member< ValueType >
+>
 class MemberStlMap : public MemberArray
 {
 public:
 	typedef std::map< KeyType, ValueType > value_type;
+	typedef MemberStlPair< KeyType, ValueType, KeyMember, ValueMember > pair_member;
 
 	MemberStlMap(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
@@ -270,15 +276,15 @@ public:
 
 	virtual void read(ISerializer& s) const override final
 	{
-		typename PairMember::value_type item;
-		s >> PairMember(L"item", item);
+		typename pair_member::value_type item;
+		s >> pair_member(L"item", item);
 		m_ref[item.first] = item.second;
 	}
 
 	virtual void write(ISerializer& s) const override final
 	{
-		typename PairMember::value_type item = std::make_pair(m_iter->first, m_iter->second);
-		s >> PairMember(L"item", item);
+		typename pair_member::value_type item = std::make_pair(m_iter->first, m_iter->second);
+		s >> pair_member(L"item", item);
 		++m_iter;
 	}
 

@@ -30,12 +30,8 @@ void InputMappingStateData::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		std::wstring,
 		Ref< InputStateData >,
-		MemberStlPair<
-			std::wstring,
-			Ref< InputStateData >,
-			Member< std::wstring >,
-			MemberRef< InputStateData >
-		>
+		Member< std::wstring >,
+		MemberRef< InputStateData >
 	>(L"stateData", m_stateData);
 }
 
