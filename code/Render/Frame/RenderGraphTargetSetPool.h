@@ -40,6 +40,7 @@ public:
 		IRenderTargetSet* sharedDepthStencilTargetSet,
 		int32_t referenceWidth,
 		int32_t referenceHeight,
+		uint32_t multiSample,
 		handle_t persistentHandle
 	);
 

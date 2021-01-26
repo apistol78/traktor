@@ -10,8 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVrfy", RenderTargetSetVrfy, IRenderTargetSet)
 
-RenderTargetSetVrfy::RenderTargetSetVrfy(IRenderTargetSet* renderTargetSet)
-:	m_renderTargetSet(renderTargetSet)
+RenderTargetSetVrfy::RenderTargetSetVrfy(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet)
+:	m_setDesc(setDesc)
+,	m_renderTargetSet(renderTargetSet)
 {
 }
 
@@ -101,6 +102,16 @@ bool RenderTargetSetVrfy::haveDepthTexture() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getDepthTexture() != nullptr : false;
+}
+
+bool RenderTargetSetVrfy::usingPrimaryDepthStencil() const
+{
+	return m_setDesc.usingPrimaryDepthStencil;
+}
+
+uint32_t RenderTargetSetVrfy::getMultiSample() const
+{
+	return m_setDesc.multiSample;
 }
 
 	}

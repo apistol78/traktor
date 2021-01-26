@@ -38,6 +38,7 @@ public:
 	bool createPrimary(
 		int32_t width,
 		int32_t height,
+		uint32_t multiSample,
 		VkFormat colorFormat,
 		VkImage colorImage,
 		RenderTargetDepthVk* depthTarget,
@@ -86,6 +87,10 @@ public:
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 	
 	bool usingPrimaryDepthStencil() const { return m_setDesc.usingPrimaryDepthStencil; }
+
+	bool needResolve() const { return m_setDesc.multiSample > 1; }
+
+	VkSampleCountFlagBits getVkSampleCount() const { return needResolve() ? (VkSampleCountFlagBits)m_setDesc.multiSample : VK_SAMPLE_COUNT_1_BIT; }
 
 private:
 	struct RenderPass

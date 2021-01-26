@@ -123,7 +123,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #endif
 
-	if (!create(desc.displayMode.width, desc.displayMode.height, desc.waitVBlanks))
+	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.waitVBlanks))
 		return false;
 
 	return true;	
@@ -220,7 +220,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = getViewHeight(desc.syswin.view);
 #endif
 
-	if (!create(width, height, desc.waitVBlanks))
+	if (!create(width, height, desc.multiSample, desc.waitVBlanks))
 		return false;
 
 	return true;
@@ -392,7 +392,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		m_window->setWindowedStyle(width, height);
 #endif
 
-	if (create(width, height, m_vblanks))
+	if (create(width, height, m_multiSample, m_vblanks))
 		return true;
 	else
 		return false;
@@ -674,10 +674,15 @@ bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 		return false;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 1+1 > clearValues;
+	StaticVector< VkClearValue, 2+1 > clearValues;
 	{
 		auto& cv = clearValues.push_back();
 		cl.colors[0].storeUnaligned(cv.color.float32);
+		if (m_targetSet->needResolve())
+		{
+			auto& cv = clearValues.push_back();
+			cl.colors[0].storeUnaligned(cv.color.float32);
+		}
 	}
 	{
 		auto& cv = clearValues.push_back();
@@ -745,11 +750,16 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 		return false;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 8+1 > clearValues;
+	StaticVector< VkClearValue, 16+1 > clearValues;
 	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
 		cl.colors[0].storeUnaligned(cv.color.float32);
+		if (m_targetSet->needResolve())
+		{
+			auto& cv = clearValues.push_back();
+			cl.colors[0].storeUnaligned(cv.color.float32);
+		}
 	}
 	else
 	{
@@ -757,6 +767,11 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 		{
 			auto& cv = clearValues.push_back();
 			cl.colors[i].storeUnaligned(cv.color.float32);
+			if (m_targetSet->needResolve())
+			{
+				auto& cv = clearValues.push_back();
+				cl.colors[i].storeUnaligned(cv.color.float32);
+			}
 		}
 	}
 	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
@@ -826,11 +841,16 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		return false;
 
 	// Transform clear values.
-	StaticVector< VkClearValue, 8+1 > clearValues;
+	StaticVector< VkClearValue, 16+1 > clearValues;
 	if (m_targetColorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
 		cl.colors[0].storeUnaligned(cv.color.float32);
+		if (m_targetSet->needResolve())
+		{
+			auto& cv = clearValues.push_back();
+			cl.colors[0].storeUnaligned(cv.color.float32);
+		}
 	}
 	else
 	{
@@ -838,6 +858,11 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		{
 			auto& cv = clearValues.push_back();
 			cl.colors[i].storeUnaligned(cv.color.float32);
+			if (m_targetSet->needResolve())
+			{
+				auto& cv = clearValues.push_back();
+				cl.colors[i].storeUnaligned(cv.color.float32);
+			}
 		}
 	}
 	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
@@ -1009,8 +1034,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetVk* >(sourceTexture))
 	{
-		sourceImage = sourceRenderTarget->getVkImage();
-		sourceImageLayout = sourceRenderTarget->getVkImageLayout();
+		sourceImage = sourceRenderTarget->getImageResolved()->getVkImage();
+		sourceImageLayout = sourceRenderTarget->getImageResolved()->getVkImageLayout();
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
 	{
@@ -1028,8 +1053,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetVk* >(destinationTexture))
 	{
-		destinationImage = destinationRenderTarget->getVkImage();
-		destinationImageLayout = destinationRenderTarget->getVkImageLayout();
+		destinationImage = destinationRenderTarget->getImageResolved()->getVkImage();
+		destinationImageLayout = destinationRenderTarget->getImageResolved()->getVkImageLayout();
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
 	{
@@ -1247,10 +1272,12 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
+bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, int32_t vblanks)
 {
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
+	m_multiSample = multiSample;
+	m_vblanks = vblanks;
 
 	// Clamp surface size to physical device limits.
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
@@ -1352,8 +1379,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
 		log::debug << L"Using MAILBOX presentation mode." << Endl;
 
-	m_vblanks = vblanks;
-
 	// Create swap chain.
 	VkSwapchainCreateInfoKHR scci = {};
 	scci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -1419,6 +1444,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 	if (!primaryDepth->createPrimary(
 		width,
 		height,
+		multiSample,
 #if defined(__IOS__)
 		VK_FORMAT_D16_UNORM_S8_UINT,
 #else
@@ -1443,6 +1469,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, int32_t vblanks)
 		if (!frame.primaryTarget->createPrimary(
 			width,
 			height,
+			multiSample,
 			colorFormat,
 			presentImages[i],
 			primaryDepth,
@@ -1553,7 +1580,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 		VkPipelineMultisampleStateCreateInfo mssci = {};
 		mssci.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		mssci.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+		mssci.rasterizationSamples = m_targetSet->getVkSampleCount();
 		mssci.sampleShadingEnable = VK_FALSE;
 		mssci.minSampleShading = 0;
 		mssci.pSampleMask = nullptr;

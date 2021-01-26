@@ -149,6 +149,7 @@ private:
 	VkSemaphore m_imageAvailableSemaphore = 0;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex = 0;
+	uint32_t m_multiSample = 0;
 	int32_t m_vblanks = 0;
 
 	// Event queue.
@@ -173,7 +174,7 @@ private:
 	uint32_t m_drawCalls = 0;
 	uint32_t m_primitiveCount = 0;
 
-	bool create(uint32_t width, uint32_t height, int32_t vblanks);
+	bool create(uint32_t width, uint32_t height, uint32_t multiSample, int32_t vblanks);
 
 	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 

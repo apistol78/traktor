@@ -25,7 +25,7 @@ class RenderViewVrfy : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-	RenderViewVrfy(IRenderSystem* renderSystem, IRenderView* renderView);
+	RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView);
 
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
@@ -99,6 +99,7 @@ private:
 		intptr_t end;
 	};
 
+	RenderViewDesc m_desc;
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;
 	bool m_insideFrame;

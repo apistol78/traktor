@@ -13,6 +13,7 @@ class Semaphore;
 
 class CommandBuffer;
 class Context;
+class Image;
 struct RenderTargetSetCreateDesc;
 
 /*!
@@ -32,6 +33,7 @@ public:
 	bool createPrimary(
 		int32_t width,
 		int32_t height,
+		uint32_t multiSample,
 		VkFormat format,
 		const wchar_t* const tag
 	);
@@ -56,21 +58,27 @@ public:
 
 	VkFormat getVkFormat() const { return m_format; }
 
-	VkImage getVkImage() const { return m_image; }
+	Image* getImage() const { return m_image; }
 
-	VkImageView getVkImageView() const { return m_imageView; }
+	//VkImage getVkImage() const { return m_image; }
 
-	VkImageLayout getVkImageLayout() const { return m_imageLayout; }
+	//VkImageView getVkImageView() const { return m_imageView; }
+
+	//VkImageLayout getVkImageLayout() const { return m_imageLayout; }
 
 private:
 	friend class RenderTargetSetVk;
 	
 	Context* m_context = nullptr;
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
-	VkImage m_image = 0;
-	VmaAllocation m_allocation = 0;
-	VkImageView m_imageView = 0;
-	VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+	Ref< Image > m_image;
+
+	//VkImage m_image = 0;
+	//VmaAllocation m_allocation = 0;
+	//VkImageView m_imageView = 0;
+	//VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
 	bool m_haveStencil = false;
 	int32_t m_width = 0;
 	int32_t m_height = 0;

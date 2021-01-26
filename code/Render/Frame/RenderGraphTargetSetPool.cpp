@@ -41,6 +41,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	int32_t referenceWidth,
 	int32_t referenceHeight,
+	uint32_t multiSample,
 	handle_t persistentHandle
 )
 {
@@ -55,6 +56,9 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
 	rtscd.ignoreStencil = targetSetDesc.usingDepthStencilAsTexture;	// Cannot have stencil on read-back depth targets.
 	rtscd.generateMips = targetSetDesc.generateMips;
+
+	if (targetSetDesc.usingPrimaryDepthStencil)
+		rtscd.multiSample = multiSample;
 
 	for (int32_t i = 0; i < targetSetDesc.count; ++i)
 		rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;

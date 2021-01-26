@@ -23,8 +23,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVrfy", RenderViewVrfy, IRenderView)
 
-RenderViewVrfy::RenderViewVrfy(IRenderSystem* renderSystem, IRenderView* renderView)
-:	m_renderSystem(renderSystem)
+RenderViewVrfy::RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView)
+:	m_desc(desc)
+,	m_renderSystem(renderSystem)
 ,	m_renderView(renderView)
 ,	m_insideFrame(false)
 ,	m_insidePass(false)
@@ -144,6 +145,12 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
 
 	RenderTargetSetVrfy* rtsc = mandatory_non_null_type_cast< RenderTargetSetVrfy* >(renderTargetSet);
+
+	if (rtsc->usingPrimaryDepthStencil())
+	{
+		T_CAPTURE_ASSERT(rtsc->getMultiSample() == m_desc.multiSample, L"Trying to render to RenderTargetSet with incompatible multisample configuration.");
+	}
+
 	if (!m_renderView->beginPass(
 		rtsc->getRenderTargetSet(),
 		clear,

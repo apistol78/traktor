@@ -41,6 +41,7 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(
 	int32_t width,
 	int32_t height,
+	uint32_t multiSample,
 	VkFormat colorFormat,
 	VkImage colorImage,
 	RenderTargetDepthVk* depthTarget,
@@ -49,7 +50,7 @@ bool RenderTargetSetVk::createPrimary(
 {
 	m_colorTargets.resize(1);
 	m_colorTargets[0] = new RenderTargetVk(m_context);
-	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage, tag))
+	if (!m_colorTargets[0]->createPrimary(width, height, multiSample, colorFormat, colorImage, tag))
 		return false;
 
 	m_depthTarget = depthTarget;
@@ -58,7 +59,7 @@ bool RenderTargetSetVk::createPrimary(
 	m_setDesc.count = 1;
 	m_setDesc.width = width;
 	m_setDesc.height = height;
-	m_setDesc.multiSample = 0;
+	m_setDesc.multiSample = multiSample;
 	m_setDesc.createDepthStencil = true;
 	m_setDesc.usingDepthStencilAsTexture = false;
 	m_setDesc.usingPrimaryDepthStencil = false;	// We contain primary depth thus do not share.
@@ -145,154 +146,156 @@ bool RenderTargetSetVk::isContentValid() const
 
 bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
-	if (index < 0 || index >= (int32_t)m_colorTargets.size())
-		return false;
+	//if (index < 0 || index >= (int32_t)m_colorTargets.size())
+	//	return false;
 
-	// Create offscreen image copy.
-	VkImage hostImage = 0;
+	//// Create offscreen image copy.
+	//VkImage hostImage = 0;
 
-	VkImageCreateInfo ici = {};
-	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.format = m_colorTargets[index]->getVkFormat();
-	ici.extent.width = m_setDesc.width;
-	ici.extent.height = m_setDesc.height;
-	ici.extent.depth = 1;
-	ici.arrayLayers = 1;
-	ici.mipLevels = 1;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	ici.tiling = VK_IMAGE_TILING_LINEAR;
-	ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	//VkImageCreateInfo ici = {};
+	//ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	//ici.imageType = VK_IMAGE_TYPE_2D;
+	//ici.format = m_colorTargets[index]->getVkFormat();
+	//ici.extent.width = m_setDesc.width;
+	//ici.extent.height = m_setDesc.height;
+	//ici.extent.depth = 1;
+	//ici.arrayLayers = 1;
+	//ici.mipLevels = 1;
+	//ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	//ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	//ici.tiling = VK_IMAGE_TILING_LINEAR;
+	//ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
-	if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &hostImage) != VK_SUCCESS)
-		return false;
+	//if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &hostImage) != VK_SUCCESS)
+	//	return false;
 
-	VkMemoryRequirements memoryRequirements;
-	vkGetImageMemoryRequirements(m_context->getLogicalDevice(), hostImage, &memoryRequirements);
+	//VkMemoryRequirements memoryRequirements;
+	//vkGetImageMemoryRequirements(m_context->getLogicalDevice(), hostImage, &memoryRequirements);
 
-	VkDeviceMemory hostImageMemory = 0;
+	//VkDeviceMemory hostImageMemory = 0;
 
-	VkMemoryAllocateInfo mai = {};
-	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	mai.allocationSize = memoryRequirements.size;
-	mai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+	//VkMemoryAllocateInfo mai = {};
+	//mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	//mai.allocationSize = memoryRequirements.size;
+	//mai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
 
-	vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
-	vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
+	//vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
+	//vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	//auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
-	// Transfer color target into host image.
-	VkImageMemoryBarrier imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = hostImage;
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = 0;
-	imb.subresourceRange.levelCount = 1;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
+	//// Transfer color target into host image.
+	//VkImageMemoryBarrier imb = {};
+	//imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	//imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	//imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	//imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//imb.image = hostImage;
+	//imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	//imb.subresourceRange.baseMipLevel = 0;
+	//imb.subresourceRange.levelCount = 1;
+	//imb.subresourceRange.baseArrayLayer = 0;
+	//imb.subresourceRange.layerCount = 1;
+	//imb.srcAccessMask = 0;
+	//imb.dstAccessMask = 0;
+	//vkCmdPipelineBarrier(
+	//	*commandBuffer,
+	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+	//	0,
+	//	0, nullptr,
+	//	0, nullptr,
+	//	1, &imb
+	//);
 
-	// Convert target for optimal read.
-	m_colorTargets[index]->prepareForReadBack(commandBuffer);
+	//// Convert target for optimal read.
+	//m_colorTargets[index]->prepareForReadBack(commandBuffer);
 
-	// Copy target into host image.
-	VkImageCopy ic = {};
-	ic.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	ic.srcSubresource.layerCount = 1;
-	ic.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	ic.dstSubresource.layerCount = 1;
-	ic.extent.width = m_setDesc.width;
-	ic.extent.height = m_setDesc.height;
-	ic.extent.depth = 1;
-	vkCmdCopyImage(
-		*commandBuffer,
-		m_colorTargets[index]->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		hostImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		1,
-		&ic
-	);
+	//// Copy target into host image.
+	//VkImageCopy ic = {};
+	//ic.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	//ic.srcSubresource.layerCount = 1;
+	//ic.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	//ic.dstSubresource.layerCount = 1;
+	//ic.extent.width = m_setDesc.width;
+	//ic.extent.height = m_setDesc.height;
+	//ic.extent.depth = 1;
+	//vkCmdCopyImage(
+	//	*commandBuffer,
+	//	m_colorTargets[index]->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+	//	hostImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+	//	1,
+	//	&ic
+	//);
 
-	// Convert host image into general layout; must be general to be mappable.
-	imb = {};
-	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
-	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	imb.image = hostImage;
-	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imb.subresourceRange.baseMipLevel = 0;
-	imb.subresourceRange.levelCount = 1;
-	imb.subresourceRange.baseArrayLayer = 0;
-	imb.subresourceRange.layerCount = 1;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = 0;
-	vkCmdPipelineBarrier(
-		*commandBuffer,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		0,
-		0, nullptr,
-		0, nullptr,
-		1, &imb
-	);
+	//// Convert host image into general layout; must be general to be mappable.
+	//imb = {};
+	//imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	//imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	//imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+	//imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//imb.image = hostImage;
+	//imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	//imb.subresourceRange.baseMipLevel = 0;
+	//imb.subresourceRange.levelCount = 1;
+	//imb.subresourceRange.baseArrayLayer = 0;
+	//imb.subresourceRange.layerCount = 1;
+	//imb.srcAccessMask = 0;
+	//imb.dstAccessMask = 0;
+	//vkCmdPipelineBarrier(
+	//	*commandBuffer,
+	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+	//	0,
+	//	0, nullptr,
+	//	0, nullptr,
+	//	1, &imb
+	//);
 
-	// Submit commands, and wait until finished.
-	commandBuffer->submitAndWait();
+	//// Submit commands, and wait until finished.
+	//commandBuffer->submitAndWait();
 
-	// Get information about image.
-	VkImageSubresource isr = {};
-	isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	//// Get information about image.
+	//VkImageSubresource isr = {};
+	//isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-	VkSubresourceLayout srl = {};
-	vkGetImageSubresourceLayout(m_context->getLogicalDevice(), hostImage, &isr, &srl);
+	//VkSubresourceLayout srl = {};
+	//vkGetImageSubresourceLayout(m_context->getLogicalDevice(), hostImage, &isr, &srl);
 
-	// Read back data.
-	uint8_t* src = nullptr;
-	vkMapMemory(m_context->getLogicalDevice(), hostImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&src);
-	src += srl.offset;
+	//// Read back data.
+	//uint8_t* src = nullptr;
+	//vkMapMemory(m_context->getLogicalDevice(), hostImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&src);
+	//src += srl.offset;
 
-	uint32_t fragmentSize = 4 * sizeof(float);
+	//uint32_t fragmentSize = 4 * sizeof(float);
 
-	uint8_t* dst = (uint8_t*)buffer;
-	for (int32_t y = 0; y < m_setDesc.height; ++y)
-	{
-		std::memcpy(dst, src, m_setDesc.width * fragmentSize);
-		dst += m_setDesc.width * fragmentSize;
-		src += srl.rowPitch;
-	}
+	//uint8_t* dst = (uint8_t*)buffer;
+	//for (int32_t y = 0; y < m_setDesc.height; ++y)
+	//{
+	//	std::memcpy(dst, src, m_setDesc.width * fragmentSize);
+	//	dst += m_setDesc.width * fragmentSize;
+	//	src += srl.rowPitch;
+	//}
 
-	vkUnmapMemory(m_context->getLogicalDevice(), hostImageMemory);
-	
-	// Cleanup
-	vkFreeMemory(m_context->getLogicalDevice(), hostImageMemory, 0);
-	vkDestroyImage(m_context->getLogicalDevice(), hostImage, 0);
-	return true;
+	//vkUnmapMemory(m_context->getLogicalDevice(), hostImageMemory);
+	//
+	//// Cleanup
+	//vkFreeMemory(m_context->getLogicalDevice(), hostImageMemory, 0);
+	//vkDestroyImage(m_context->getLogicalDevice(), hostImage, 0);
+	//return true;
+
+	return false;
 }
 
 void RenderTargetSetVk::setDebugName(const wchar_t* name)
 {
-	for (auto colorTarget : m_colorTargets)
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	//for (auto colorTarget : m_colorTargets)
+	//	setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 
-	if (m_depthTarget)
-		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	//if (m_depthTarget)
+	//	setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
@@ -307,6 +310,8 @@ bool RenderTargetSetVk::prepareAsTarget(
 	VkFramebuffer& outFrameBuffer
 )
 {
+	const VkSampleCountFlagBits sampleCount = (m_setDesc.multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)m_setDesc.multiSample;
+
 	auto key = std::make_tuple(
 		colorIndex,
 		clear.mask
@@ -318,226 +323,244 @@ bool RenderTargetSetVk::prepareAsTarget(
 	{
 		rt.id = s_nextId++;
 
-		AlignedVector< VkAttachmentDescription > passAttachments;
+		StaticVector< VkAttachmentDescription, RenderTargetSetCreateDesc::MaxTargets * 2 + 1 > passAttachments;
 
 		if (colorIndex >= 0)
 		{
 			// One color target selected.
-			VkAttachmentDescription passAttachment = {};
-			passAttachment.format = m_colorTargets[colorIndex]->getVkFormat();
-			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			VkAttachmentDescription pa = {};
+			pa.format = m_colorTargets[colorIndex]->getVkFormat();
+			pa.samples = sampleCount;
 
 			if ((clear.mask & CfColor) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			else if ((load & TfColor) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 			else
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
 			if ((store & TfColor) != 0)
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				pa.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			// Not used in color targets.
-			passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			if ((clear.mask & CfColor) != 0)
-			{
-				// If we're clearing let's also assume we don't know about layout.
-				passAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			}
+				pa.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;	// If we're clearing let's also assume we don't know about layout.
 			else
+				pa.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	// Must keep last layout since we're loading existing color.
+
+			pa.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(pa);
+
+			// Add resolve targets.
+			if (needResolve())
 			{
-				// Must keep last layout since we're loading existing color.
-				passAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				VkAttachmentDescription pa = {};
+				pa.format = m_colorTargets[colorIndex]->getVkFormat();
+				pa.samples = VK_SAMPLE_COUNT_1_BIT;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				pa.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				pa.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				passAttachments.push_back(pa);
 			}
-
-			passAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-			passAttachments.push_back(passAttachment);
 		}
 		else
 		{
 			// Attach all color targets for MRT.
 			for (int32_t i = 0; i < m_setDesc.count; ++i)
 			{
-				VkAttachmentDescription passAttachment = {};
-				passAttachment.format = m_colorTargets[i]->getVkFormat();
-				passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+				VkAttachmentDescription pa = {};
+				pa.format = m_colorTargets[i]->getVkFormat();
+				pa.samples = sampleCount;
 
 				if ((clear.mask & CfColor) != 0)
-					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+					pa.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 				else if ((load & TfColor) != 0)
-					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+					pa.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 				else
-					passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
 				if ((store & TfColor) != 0)
-					passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+					pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				else
-					passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+					pa.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 				// Not used in color targets.
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 				
 				if ((clear.mask & CfColor) != 0)
-				{
-					// If we're clearing let's also assume we don't know about layout.
-					passAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				}
+					pa.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;	// If we're clearing let's also assume we don't know about layout.
 				else
-				{
-					// Must keep last layout since we're loading existing color.
-					passAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-				}
+					pa.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	// Must keep last layout since we're loading existing color.
 			
-				passAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				pa.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				passAttachments.push_back(pa);
 
-				passAttachments.push_back(passAttachment);
+				// Add resolve targets.
+				if (needResolve())
+				{
+					VkAttachmentDescription pa = {};
+					pa.format = m_colorTargets[i]->getVkFormat();
+					pa.samples = VK_SAMPLE_COUNT_1_BIT;
+					pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+					pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+					pa.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+					pa.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+					passAttachments.push_back(pa);
+				}
 			}
 		}
 
-		if (m_depthTarget)
+		if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
 		{
-			VkAttachmentDescription passAttachment = {};
-			passAttachment.format = m_depthTarget->getVkFormat();
-			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			VkAttachmentDescription pa = {};
+
+			if (m_depthTarget)
+				pa.format = m_depthTarget->getVkFormat();
+			else
+				pa.format = primaryDepthTarget->getVkFormat();
+
+			pa.samples = sampleCount;
 
 			if ((clear.mask & CfDepth) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			else if ((load & TfDepth) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 			else
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
 			if ((store & TfDepth) != 0)
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				pa.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 			if ((clear.mask & CfStencil) != 0)
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 			else if ((load & TfDepth) != 0)
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+				pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 			else
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				pa.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 
 			if ((store & TfDepth) != 0)
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+				pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				pa.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
-			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachments.push_back(passAttachment);
-		}
-		else if (m_setDesc.usingPrimaryDepthStencil)
-		{
-			VkAttachmentDescription passAttachment = {};
-			passAttachment.format = primaryDepthTarget->getVkFormat();
-			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-
-			if ((clear.mask & CfDepth) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			else if ((load & TfDepth) != 0)
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			else
-				passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			
-			if ((store & TfDepth) != 0)
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-			else
-				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-
-			if ((clear.mask & CfStencil) != 0)
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			else if ((load & TfDepth) != 0)
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-			else
-				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-
-			if ((store & TfDepth) != 0)
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
-			else
-				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-
-			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachments.push_back(passAttachment);
+			pa.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			pa.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(pa);
 		}
 
-		AlignedVector< VkAttachmentReference > colorAttachmentReferences;
-		VkAttachmentReference depthAttachmentReference = {};
-
+		StaticVector< VkAttachmentReference, RenderTargetSetCreateDesc::MaxTargets > colorAttachmentReferences;
+		StaticVector< VkAttachmentReference, RenderTargetSetCreateDesc::MaxTargets > resolveAttachmentReferences;
 		if (colorIndex >= 0)
 		{
-			auto& colorAttachmentReference = colorAttachmentReferences.push_back();
-			colorAttachmentReference.attachment = 0;
-			colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			auto& car = colorAttachmentReferences.push_back();
+			car.attachment = 0;
+			car.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-			depthAttachmentReference.attachment = 1;
-			depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			if (needResolve())
+			{
+				auto& rar = resolveAttachmentReferences.push_back();
+				rar.attachment = 1;
+				rar.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			}
 		}
 		else
 		{
-			for (int i = 0; i < m_setDesc.count; ++i)
+			if (needResolve())
 			{
-				auto& colorAttachmentReference = colorAttachmentReferences.push_back();
-				colorAttachmentReference.attachment = i;
-				colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			}
+				for (int i = 0; i < m_setDesc.count; ++i)
+				{
+					auto& car = colorAttachmentReferences.push_back();
+					car.attachment = i * 2;
+					car.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-			depthAttachmentReference.attachment = m_setDesc.count;
-			depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+					auto& rar = resolveAttachmentReferences.push_back();
+					rar.attachment = i * 2 + 1;
+					rar.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < m_setDesc.count; ++i)
+				{
+					auto& car = colorAttachmentReferences.push_back();
+					car.attachment = i;
+					car.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				}
+			}
 		}
+
+		// Depth attachment is always last.
+		VkAttachmentReference depthAttachmentReference = {};
+		depthAttachmentReference.attachment = passAttachments.size() - 1;
+		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		VkSubpassDescription subpass = {};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpass.colorAttachmentCount = (uint32_t)colorAttachmentReferences.size();
 		subpass.pColorAttachments = colorAttachmentReferences.c_ptr();
+		if (!resolveAttachmentReferences.empty())
+			subpass.pResolveAttachments = resolveAttachmentReferences.c_ptr();
 		if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
 			subpass.pDepthStencilAttachment = &depthAttachmentReference;
 
-		VkRenderPassCreateInfo renderPassCreateInfo = {};
-		renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassCreateInfo.attachmentCount = (uint32_t)passAttachments.size();
-		renderPassCreateInfo.pAttachments = passAttachments.ptr();
-		renderPassCreateInfo.subpassCount = 1;
-		renderPassCreateInfo.pSubpasses = &subpass;
-		if (vkCreateRenderPass(m_context->getLogicalDevice(), &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
+		VkRenderPassCreateInfo rpci = {};
+		rpci.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		rpci.attachmentCount = (uint32_t)passAttachments.size();
+		rpci.pAttachments = passAttachments.ptr();
+		rpci.subpassCount = 1;
+		rpci.pSubpasses = &subpass;
+		if (vkCreateRenderPass(m_context->getLogicalDevice(), &rpci, nullptr, &rt.renderPass) != VK_SUCCESS)
 			return false;
 	}
 
 	// (Re-)create frame buffer.
 	if (rt.frameBuffer == 0)
 	{
- 		AlignedVector< VkImageView > frameBufferAttachments;
+ 		AlignedVector< VkImageView > fba;
 		
 		if (colorIndex >= 0)
-			frameBufferAttachments.push_back(m_colorTargets[colorIndex]->getVkImageView());
+		{
+			fba.push_back(m_colorTargets[colorIndex]->getImageTarget()->getVkImageView());
+			if (needResolve())
+				fba.push_back(m_colorTargets[colorIndex]->getImageResolved()->getVkImageView());
+		}
 		else
 		{
 			for (int32_t i = 0; i < m_setDesc.count; ++i)
-				frameBufferAttachments.push_back(m_colorTargets[i]->getVkImageView());
+			{
+				fba.push_back(m_colorTargets[i]->getImageTarget()->getVkImageView());
+				if (needResolve())
+					fba.push_back(m_colorTargets[i]->getImageResolved()->getVkImageView());
+			}
 		}
 
 		if (m_depthTarget)
-			frameBufferAttachments.push_back(m_depthTarget->getVkImageView());
+			fba.push_back(m_depthTarget->getImage()->getVkImageView());
 		else if (m_setDesc.usingPrimaryDepthStencil)
-			frameBufferAttachments.push_back(primaryDepthTarget->getVkImageView());
+			fba.push_back(primaryDepthTarget->getImage()->getVkImageView());
 
-		VkFramebufferCreateInfo frameBufferCreateInfo = {};
-		frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		frameBufferCreateInfo.renderPass = rt.renderPass;
-		frameBufferCreateInfo.attachmentCount = (uint32_t)frameBufferAttachments.size();
-		frameBufferCreateInfo.pAttachments = frameBufferAttachments.ptr();
-		frameBufferCreateInfo.width = m_setDesc.width;
-		frameBufferCreateInfo.height = m_setDesc.height;
-		frameBufferCreateInfo.layers = 1;
-		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
+		VkFramebufferCreateInfo fbci = {};
+		fbci.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		fbci.renderPass = rt.renderPass;
+		fbci.attachmentCount = (uint32_t)fba.size();
+		fbci.pAttachments = fba.ptr();
+		fbci.width = m_setDesc.width;
+		fbci.height = m_setDesc.height;
+		fbci.layers = 1;
+		if (vkCreateFramebuffer(m_context->getLogicalDevice(), &fbci, nullptr, &rt.frameBuffer) != VK_SUCCESS)
 			return false;
 	}
 

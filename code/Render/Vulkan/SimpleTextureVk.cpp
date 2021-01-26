@@ -99,29 +99,7 @@ ITexture* SimpleTextureVk::resolve()
 		auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
 
 		// Change layout of texture to be able to copy staging buffer into texture.
-		VkImageMemoryBarrier imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = m_textureImage->getVkImage();
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = 0;
-		imb.subresourceRange.levelCount = m_desc.mipCount;
-		imb.subresourceRange.baseArrayLayer = 0;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
-		vkCmdPipelineBarrier(
-			*commandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
+		m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, m_desc.mipCount, 0, 1);
 
 		// Copy staging buffer into texture.
 		uint32_t offset = 0;
@@ -155,29 +133,7 @@ ITexture* SimpleTextureVk::resolve()
 		}
 
 		// Change layout of texture to optimal sampling.
-		imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = m_textureImage->getVkImage();
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = 0;
-		imb.subresourceRange.levelCount = m_desc.mipCount;
-		imb.subresourceRange.baseArrayLayer = 0;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
-		vkCmdPipelineBarrier(
-			*commandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
+		m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, m_desc.mipCount, 0, 1);
 
 		commandBuffer->submitAndWait();
 

@@ -625,12 +625,12 @@ bool ProgramVk::validateDescriptorSet()
 		}
 		else if (is_a< RenderTargetVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getVkImageView();
+			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 		else if (is_a< RenderTargetDepthVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getVkImageView();
+			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		}
 		else if (is_a< VolumeTextureVk >(resolved))
