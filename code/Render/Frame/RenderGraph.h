@@ -147,7 +147,7 @@ public:
 	bool validate();
 
 	/*! */
-	bool build(RenderContext* renderContext, int32_t width, int32_t height);
+	bool build(RenderContext* renderContext, int32_t width, int32_t height, uint32_t multiSample);
 
 	/*! */
 	const SmallMap< handle_t, Target >& getTargets() const { return m_targets; }
@@ -166,7 +166,7 @@ private:
 	handle_t m_nextTargetSetId;
 	fn_profiler_t m_profiler;
 
-	bool acquire(int32_t width, int32_t height, Target& outTarget);
+	bool acquire(int32_t width, int32_t height, uint32_t multiSample, Target& outTarget);
 };
 
 	}

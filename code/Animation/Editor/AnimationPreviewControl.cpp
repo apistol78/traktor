@@ -365,7 +365,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy, 0);
 
 	// Render frame.
 	render::Clear cl = {};

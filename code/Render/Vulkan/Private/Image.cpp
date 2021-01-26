@@ -1,8 +1,9 @@
 #include "Core/Config.h"
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
-#include "Render/Vulkan/Private/Image.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
@@ -197,6 +198,135 @@ bool Image::createVolume(
     return true;
 }
 
+bool Image::createTarget(
+    uint32_t width,
+    uint32_t height,
+    uint32_t multiSample,
+    VkFormat format,
+	VkImage swapChainImage
+)
+{
+	T_FATAL_ASSERT(m_image == 0);
+
+	if (swapChainImage == 0)
+	{
+		// Create image.
+		VkImageCreateInfo ici = {};
+		ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		ici.imageType = VK_IMAGE_TYPE_2D;
+		ici.extent.width = width;
+		ici.extent.height = height;
+		ici.extent.depth = 1;
+		ici.mipLevels = 1;
+		ici.arrayLayers = 1;
+		ici.format = format;
+		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
+		ici.flags = 0;
+ 	
+		VmaAllocationCreateInfo aci = {};
+		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create image; unable to allocate image memory." << Endl;
+			return false;
+		}
+
+		setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+	}
+	else
+	{
+		m_image = swapChainImage;
+	}
+
+	// Create image view.
+	VkImageViewCreateInfo ivci = {};
+	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	ivci.image = m_image;
+	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	ivci.format = format;
+	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	ivci.subresourceRange.baseMipLevel = 0;
+	ivci.subresourceRange.levelCount = 1;
+	ivci.subresourceRange.baseArrayLayer = 0;
+	ivci.subresourceRange.layerCount = 1;
+ 	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create image view; unable to create image view." << Endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool Image::createDepthTarget(
+    uint32_t width,
+    uint32_t height,
+    uint32_t multiSample,
+    VkFormat format,
+	bool usedAsTexture
+)
+{
+	T_FATAL_ASSERT(m_image == 0);
+
+	bool useStencil = false;
+	if (format == VK_FORMAT_D16_UNORM_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT)
+		useStencil = true;
+
+	// Create image.
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_2D;
+	ici.extent.width = width;
+	ici.extent.height = height;
+	ici.extent.depth = 1;
+	ici.mipLevels = 1;
+	ici.arrayLayers = 1;
+	ici.format = format;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	if (usedAsTexture)
+		ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
+	ici.flags = 0;
+
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
+		return false;
+	}
+
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
+
+	// Create image view.
+	VkImageViewCreateInfo ivci = {};
+	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	ivci.image = m_image;
+	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	ivci.format = format;
+	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
+	ivci.subresourceRange.aspectMask = useStencil ? (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT) : VK_IMAGE_ASPECT_DEPTH_BIT;
+	ivci.subresourceRange.baseMipLevel = 0;
+	ivci.subresourceRange.levelCount = 1;
+	ivci.subresourceRange.baseArrayLayer = 0;
+	ivci.subresourceRange.layerCount = 1;
+	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create image view; unable to create image view." << Endl;
+		return false;
+	}
+
+    return true;
+}
+
 void Image::destroy()
 {
 	T_FATAL_ASSERT(m_locked == nullptr);
@@ -241,6 +371,51 @@ void Image::unlock()
 		vmaUnmapMemory(m_context->getAllocator(), m_allocation);
 		m_locked = nullptr;
 	}
+}
+
+bool Image::changeLayout(
+	CommandBuffer* commandBuffer,
+	VkImageLayout newLayout,
+	VkImageAspectFlags aspectMask,
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount
+)
+{
+	if (m_imageLayout == newLayout)
+		return true;
+
+	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+		m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+	VkImageMemoryBarrier imb = {};
+	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	imb.oldLayout = m_imageLayout;
+	imb.newLayout = newLayout;
+	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	imb.subresourceRange.aspectMask = aspectMask;
+	imb.subresourceRange.baseMipLevel = mipLevel;
+	imb.subresourceRange.levelCount = mipCount;
+	imb.subresourceRange.baseArrayLayer = layerLevel;
+	imb.subresourceRange.layerCount = layerCount;
+	imb.image = m_image;
+	imb.srcAccessMask = getAccessMask(imb.oldLayout);
+	imb.dstAccessMask = getAccessMask(imb.newLayout);
+
+	vkCmdPipelineBarrier(
+		*commandBuffer,
+		getPipelineStageFlags(imb.oldLayout),
+		getPipelineStageFlags(imb.newLayout),
+		0,
+		0, nullptr,
+		0, nullptr,
+		1, &imb
+	);
+
+	m_imageLayout = imb.newLayout;
+	return true;
 }
 
     }

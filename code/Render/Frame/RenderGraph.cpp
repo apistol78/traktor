@@ -220,7 +220,7 @@ bool RenderGraph::validate()
 	return true;
 }
 
-bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height)
+bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height, uint32_t multiSample)
 {
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
@@ -231,7 +231,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& target = it.second;
 		if (target.rts == nullptr && target.persistentHandle != 0)
 		{
-			if (!acquire(width, height, target))
+			if (!acquire(width, height, multiSample, target))
 				return false;
 		}
 	}
@@ -276,7 +276,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (target.rts == nullptr)
 				{
 					T_ASSERT(!target.external);
-					if (!acquire(width, height, target))
+					if (!acquire(width, height, multiSample, target))
 						return false;
 				}	
 
@@ -398,7 +398,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
+bool RenderGraph::acquire(int32_t width, int32_t height, uint32_t multiSample, Target& outTarget)
 {
 	// Use size of reference target.
 	if (outTarget.sizeReferenceTargetSetId != 0)
@@ -424,6 +424,7 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 		outTarget.sharedDepthStencilTargetSet,
 		width,
 		height,
+		multiSample,
 		outTarget.persistentHandle
 	);
 	if (!outTarget.rts)

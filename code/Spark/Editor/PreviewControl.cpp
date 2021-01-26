@@ -103,7 +103,7 @@ bool PreviewControl::create(
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
-	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
+	desc.multiSample = 0; // m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
@@ -270,7 +270,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy, 0);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

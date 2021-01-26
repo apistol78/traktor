@@ -2,6 +2,7 @@
 
 #include "Render/ISimpleTexture.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
+#include "Render/Vulkan/Private/Image.h"
 
 namespace traktor
 {
@@ -27,7 +28,24 @@ public:
 
 	virtual ~RenderTargetVk();
 
-	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image, const wchar_t* const tag);
+	/*! Create primary target.
+	 *
+	 * \param width Width of target.
+	 * \param height Height of target.
+	 * \param format Pixel format of target.
+	 * \param multiSample Number of samples.
+	 * \param swapChainImage Swap chain target image.
+	 * \param tag Debug tag.
+	 * \return True if target successfully created.
+	 */
+	bool createPrimary(
+		int32_t width,
+		int32_t height,
+		uint32_t multiSample,
+		VkFormat format,
+		VkImage swapChainImage,
+		const wchar_t* const tag
+	);
 
 	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, const wchar_t* const tag);
 
@@ -51,21 +69,17 @@ public:
 
 	VkFormat getVkFormat() const { return m_format; }
 
-	VkImage getVkImage() const { return m_image; }
+	Image* getImageTarget() const { return m_imageTarget; }
 
-	VkImageView getVkImageView() const { return m_imageView; }
-
-	VkImageLayout getVkImageLayout() const { return m_imageLayout; }
+	Image* getImageResolved() const { return m_imageResolved; }
 
 private:
 	friend class RenderTargetSetVk;
 
 	Context* m_context = nullptr;
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
-	VkImage m_image = 0;
-	VmaAllocation m_allocation = 0;
-	VkImageView m_imageView = 0;
-	VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	Ref< Image > m_imageTarget;
+	Ref< Image > m_imageResolved;	//!< For MSAA targets; target image is resolved to this image after rendering.
 	int32_t m_width = 0;
 	int32_t m_height = 0;
 

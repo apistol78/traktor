@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Render/IRenderTargetSet.h"
+#include "Render/Types.h"
 
 namespace traktor
 {
@@ -17,7 +18,7 @@ class RenderTargetSetVrfy : public IRenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetVrfy(IRenderTargetSet* renderTargetSet);
+	explicit RenderTargetSetVrfy(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet);
 
 	virtual void destroy() override final;
 
@@ -39,7 +40,12 @@ public:
 
 	bool haveDepthTexture() const;
 
+	bool usingPrimaryDepthStencil() const;
+
+	uint32_t getMultiSample() const;
+
 private:
+	RenderTargetSetCreateDesc m_setDesc;
 	Ref< IRenderTargetSet > m_renderTargetSet;
 	mutable Ref< SimpleTextureVrfy > m_colorTextures[4];
 	mutable Ref< SimpleTextureVrfy > m_depthTexture;

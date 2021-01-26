@@ -84,6 +84,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	// Render entire view.
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
+	int32_t multiSample = m_environment->getRender()->getMultiSample();
 
 	// Setup stage passes.
 	{
@@ -103,7 +104,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	{
 		T_PROFILER_SCOPE(L"Stage build");
 		renderContext->flush();
-		m_renderGraph->build(renderContext, width, height);		
+		m_renderGraph->build(renderContext, width, height, multiSample);		
 	}
 	return BrOk;
 }

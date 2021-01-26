@@ -553,7 +553,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy, 0);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

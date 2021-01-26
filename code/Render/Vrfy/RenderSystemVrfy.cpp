@@ -29,19 +29,19 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32)
-	// Try to load RenderDoc capture.
-	m_libRenderDoc = new Library();
-	if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
-	{
-		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-		int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
-		if (ret != 1)
-			m_apiRenderDoc = nullptr;
-	}
-	else
-		m_libRenderDoc = nullptr;
-#endif
+//#if defined(_WIN32)
+//	// Try to load RenderDoc capture.
+//	m_libRenderDoc = new Library();
+//	if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
+//	{
+//		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
+//		int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
+//		if (ret != 1)
+//			m_apiRenderDoc = nullptr;
+//	}
+//	else
+//		m_libRenderDoc = nullptr;
+//#endif
 
 	return m_renderSystem->create(desc);
 }
@@ -87,7 +87,7 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewDefaultDes
 	if (!renderView)
 		return nullptr;
 
-	return new RenderViewVrfy(m_renderSystem, renderView);
+	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
 Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDesc& desc)
@@ -96,7 +96,7 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (!renderView)
 		return nullptr;
 
-	return new RenderViewVrfy(m_renderSystem, renderView);
+	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
 Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -241,6 +241,11 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 			return nullptr;
 		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->getRenderTargetSet(), L"Using destroyed render target set.");
 
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->getWidth() == desc.width, L"Incompatible width.");
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->getHeight() == desc.height, L"Incompatible height.");
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->getMultiSample() == desc.multiSample, L"Incompatible multisample.");
+		T_CAPTURE_ASSERT(sharedDepthStencilVrfy->haveDepthTexture(), L"Not depth/stencil in shared set.");
+
 		renderTargetSet = m_renderSystem->createRenderTargetSet(desc, sharedDepthStencilVrfy->getRenderTargetSet(), tag);
 	}
 	else
@@ -249,7 +254,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	if (!renderTargetSet)
 		return nullptr;
 
-	return new RenderTargetSetVrfy(renderTargetSet);
+	return new RenderTargetSetVrfy(desc, renderTargetSet);
 }
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
