@@ -563,12 +563,12 @@ bool Image::save(IStream* stream, const std::wstring& extension) const
 	return result;
 }
 
-void Image::setImageInfo(ImageInfo* imageInfo)
+void Image::setImageInfo(const ImageInfo* imageInfo)
 {
 	m_imageInfo = imageInfo;
 }
 
-Ref< ImageInfo > Image::getImageInfo() const
+const ImageInfo* Image::getImageInfo() const
 {
 	return m_imageInfo;
 }
