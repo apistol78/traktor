@@ -171,7 +171,7 @@ public:
 	int32_t getHeight() const { return m_height; }
 
 	/*! Get image palette. */
-	Ref< Palette > getPalette() const { return m_palette; }
+	Palette* getPalette() const { return m_palette; }
 
 	/*! Get read-only pointer to image data. */
 	const void* getData() const { return m_data; }
@@ -183,10 +183,10 @@ public:
 	size_t getDataSize() const { return m_size; }
 
 	/*! Attach image meta data. */
-	void setImageInfo(ImageInfo* imageInfo);
+	void setImageInfo(const ImageInfo* imageInfo);
 
 	/*! Get image meta data. */
-	Ref< ImageInfo > getImageInfo() const;
+	const ImageInfo* getImageInfo() const;
 
 	/*! Copy image. */
 	Image& operator = (const Image& src);
@@ -200,7 +200,7 @@ private:
 	size_t m_size = 0;
 	uint8_t* m_data = nullptr;
 	bool m_own = false;
-	Ref< ImageInfo > m_imageInfo;
+	Ref< const ImageInfo > m_imageInfo;
 };
 
 	}
