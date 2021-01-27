@@ -123,7 +123,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #endif
 
-	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.waitVBlanks))
+	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks))
 		return false;
 
 	return true;	
@@ -220,7 +220,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = getViewHeight(desc.syswin.view);
 #endif
 
-	if (!create(width, height, desc.multiSample, desc.waitVBlanks))
+	if (!create(width, height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks))
 		return false;
 
 	return true;
@@ -392,7 +392,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		m_window->setWindowedStyle(width, height);
 #endif
 
-	if (create(width, height, m_multiSample, m_vblanks))
+	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks))
 		return true;
 	else
 		return false;
@@ -1272,11 +1272,12 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.primitiveCount = m_primitiveCount;
 }
 
-bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, int32_t vblanks)
+bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks)
 {
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
 	m_multiSample = multiSample;
+	m_multiSampleShading = multiSampleShading;
 	m_vblanks = vblanks;
 
 	// Clamp surface size to physical device limits.
@@ -1581,8 +1582,13 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		VkPipelineMultisampleStateCreateInfo mssci = {};
 		mssci.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		mssci.rasterizationSamples = m_targetSet->getVkSampleCount();
-		mssci.sampleShadingEnable = VK_FALSE;
-		mssci.minSampleShading = 0;
+		if (m_multiSampleShading > FUZZY_EPSILON)
+		{
+			mssci.sampleShadingEnable = VK_TRUE;
+			mssci.minSampleShading = m_multiSampleShading;
+		}
+		else
+			mssci.sampleShadingEnable = VK_FALSE;
 		mssci.pSampleMask = nullptr;
 		mssci.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
 		mssci.alphaToOneEnable = VK_FALSE;

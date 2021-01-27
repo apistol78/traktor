@@ -441,6 +441,7 @@ struct RenderViewDesc
 	uint16_t depthBits = 0;
 	uint16_t stencilBits = 0;
 	uint32_t multiSample = 0;
+	float multiSampleShading = 0.0f;
 	int32_t waitVBlanks = 0;
 };
 

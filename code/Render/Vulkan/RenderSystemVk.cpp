@@ -259,6 +259,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     dci.ppEnabledExtensionNames = c_deviceExtensions;
 
     VkPhysicalDeviceFeatures features = {};
+	features.sampleRateShading = VK_TRUE;
     features.shaderClipDistance = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;

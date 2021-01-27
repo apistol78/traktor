@@ -3,6 +3,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -112,6 +113,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
+	desc.multiSampleShading = m_context->getEditor()->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
 	desc.waitVBlanks = 0;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
