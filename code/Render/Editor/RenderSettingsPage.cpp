@@ -62,6 +62,12 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMultiSample = new ui::Edit();
 	m_editMultiSample->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
 
+	Ref< ui::Static > staticMultiSampleShading = new ui::Static();
+	staticMultiSampleShading->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE_SHADING"));
+
+	m_editMultiSampleShading = new ui::Edit();
+	m_editMultiSampleShading->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 1.0f, 1));
+
 	Ref< ui::Static > staticSkipMips = new ui::Static();
 	staticSkipMips->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS"));
 
@@ -105,6 +111,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMipBias->setText(toString(settings->getProperty< float >(L"Editor.MipBias")));
 	m_editMaxAnisotropy->setText(toString(settings->getProperty< int32_t >(L"Editor.MaxAnisotropy")));
 	m_editMultiSample->setText(toString(settings->getProperty< int32_t >(L"Editor.MultiSample", 0)));
+	m_editMultiSampleShading->setText(toString(settings->getProperty< float >(L"Editor.MultiSampleShading", 0.0f)));
 	m_editSkipMips->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.SkipMips", 0)));
 	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
 	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
@@ -124,6 +131,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyFloat >(L"Editor.MipBias", parseString< float >(m_editMipBias->getText()));
 	settings->setProperty< PropertyInteger >(L"Editor.MaxAnisotropy", parseString< int32_t >(m_editMaxAnisotropy->getText()));
 	settings->setProperty< PropertyInteger >(L"Editor.MultiSample", parseString< int32_t >(m_editMultiSample->getText()));
+	settings->setProperty< PropertyFloat >(L"Editor.MultiSampleShading", parseString< float >(m_editMultiSampleShading->getText()));
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.SkipMips", parseString< int32_t >(m_editSkipMips->getText()));
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());

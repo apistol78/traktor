@@ -1,6 +1,7 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
@@ -89,7 +90,8 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
-	desc.multiSample = 0; // m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
+	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
+	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
 	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 

@@ -206,6 +206,10 @@
 			<second>Multisample</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_RENDERER_MULTISAMPLE_SHADING</first>
+			<second>Shader samples</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_RENDERER_TYPE</first>
 			<second>Renderer</second>
 		</item>

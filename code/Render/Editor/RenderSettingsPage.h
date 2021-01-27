@@ -44,6 +44,7 @@ private:
 	Ref< ui::Edit > m_editMipBias;
 	Ref< ui::Edit > m_editMaxAnisotropy;
 	Ref< ui::Edit > m_editMultiSample;
+	Ref< ui::Edit > m_editMultiSampleShading;
 	Ref< ui::Edit > m_editSkipMips;
 	Ref< ui::Edit > m_editClampSize;
 	Ref< ui::CheckBox > m_checkBoxValidation;
