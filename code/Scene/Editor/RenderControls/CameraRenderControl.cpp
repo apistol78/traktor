@@ -108,7 +108,7 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 		return false;
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem());
+	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
@@ -372,7 +372,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy, m_multiSample);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

@@ -114,7 +114,7 @@ bool PreviewControl::create(
 		return false;
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(renderSystem);
+	m_renderGraph = new render::RenderGraph(renderSystem, desc.multiSample);
 
 	m_displayRenderer = new AccDisplayRenderer();
 	m_displayRenderer->create(
@@ -272,7 +272,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy, 0);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())
