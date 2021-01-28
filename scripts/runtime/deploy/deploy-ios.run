@@ -13,60 +13,20 @@ end
 -- Application icon definitions.
 local iconDefinitions =
 {
-	{ image = "Icon.png", idiom = "iphone", width = 29, height = 29, scale = 2 },
-	{ image = "Icon.png", idiom = "iphone", width = 29, height = 29, scale = 3 },
-	{ image = "Icon.png", idiom = "iphone", width = 40, height = 40, scale = 2 },
-	{ image = "Icon.png", idiom = "iphone", width = 40, height = 40, scale = 3 },
-	{ image = "Icon.png", idiom = "iphone", width = 60, height = 60, scale = 2 },
-	{ image = "Icon.png", idiom = "iphone", width = 60, height = 60, scale = 3 },
-	{ image = "Icon.png", idiom = "ipad",   width = 29, height = 29, scale = 1 },
-	{ image = "Icon.png", idiom = "ipad",   width = 29, height = 29, scale = 2 },
-	{ image = "Icon.png", idiom = "ipad",   width = 40, height = 40, scale = 1 },
-	{ image = "Icon.png", idiom = "ipad",   width = 40, height = 40, scale = 2 },
-	{ image = "Icon.png", idiom = "ipad",   width = 76, height = 76, scale = 1 },
-	{ image = "Icon.png", idiom = "ipad",   width = 76, height = 76, scale = 2 },
-	{ image = "Icon.png", idiom = "ipad",   width = 83.5, height = 83.5, scale = 2 },
-}
-
-
--- Launch image definitions.
-local imageDefinitions =
-{
-	-- 12.0
-	{ image = "Default-iPhone.png", width = 1242/3, height = 2688/3, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "12.0", subtype = "2688h", scale = 3 },
-	{ image = "Default-iPhone.png", width = 2688/3, height = 1242/3, orientation = "landscape", idiom = "iphone", extent = "full-screen", minversion = "12.0", subtype = "2688h", scale = 3 },
-	{ image = "Default-iPhone.png", width = 828/2, height = 1792/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "12.0", subtype = "1792h", scale = 2 },
-	{ image = "Default-iPhone.png", width = 1792/2, height = 828/2, orientation = "landscape", idiom = "iphone", extent = "full-screen", minversion = "12.0", subtype = "1792h", scale = 2 },
-
-	-- 11.0
-	{ image = "Default-iPhone.png", width = 1125/3, height = 2436/3, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "11.0", subtype = "2436h", scale = 3 },
-	{ image = "Default-iPhone.png", width = 2436/3, height = 1125/3, orientation = "landscape", idiom = "iphone", extent = "full-screen", minversion = "1!.0", subtype = "2436h", scale = 3 },
-
-	-- 8.0
-	{ image = "Default-iPhone.png", width = 1242/3, height = 2208/3, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "8.0", subtype = "736h", scale = 3 },
-	{ image = "Default-iPhone.png", width = 2208/3, height = 1242/3, orientation = "landscape", idiom = "iphone", extent = "full-screen", minversion = "8.0", subtype = "736h", scale = 3 },
-	{ image = "Default-iPhone.png", width = 750/2, height = 1334/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "8.0", subtype = "667h", scale = 2 },
-
-	-- 7.0
-	{ image = "Default-iPhone.png", width = 640/2, height = 960/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "7.0", subtype = nil, scale = 2 },
-	{ image = "Default-iPhone.png", width = 640/2, height = 1136/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = "7.0", subtype = "retina4", scale = 2 },
-	{ image = "Default-iPad-Portrait.png", width = 768, height = 1024, orientation = "portrait", idiom = "ipad", extent = "full-screen", minversion = "7.0", subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Landscape.png", width = 1024, height = 768, orientation = "landscape", idiom = "ipad", extent = "full-screen", minversion = "7.0", subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Portrait.png", width = 1536/2, height = 2048/2, orientation = "portrait", idiom = "ipad", extent = "full-screen", minversion = "7.0", subtype = nil, scale = 2 },
-	{ image = "Default-iPad-Landscape.png", width = 2048/2, height = 1536/2, orientation = "landscape", idiom = "ipad", extent = "full-screen", minversion = "7.0", subtype = nil, scale = 2 },
-
-	-- 5.0, 6.0
-	{ image = "Default-iPhone.png", width = 320, height = 480, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = nil, subtype = nil, scale = 1 },
-	{ image = "Default-iPhone.png", width = 640/2, height = 960/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = nil, subtype = nil, scale = 2 },
-	{ image = "Default-iPhone.png", width = 640/2, height = 1136/2, orientation = "portrait", idiom = "iphone", extent = "full-screen", minversion = nil, subtype = "retina4", scale = 2 },
-	{ image = "Default-iPad-Portrait.png", width = 768, height = 1004, orientation = "portrait", idiom = "ipad", extent = "to-status-bar", minversion = nil, subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Portrait.png", width = 768, height = 1024, orientation = "portrait", idiom = "ipad", extent = "full-screen", minversion = nil, subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Landscape.png", width = 1024, height = 748, orientation = "landscape", idiom = "ipad", extent = "to-status-bar", minversion = nil, subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Landscape.png", width = 1024, height = 768, orientation = "landscape", idiom = "ipad", extent = "full-screen", minversion = nil, subtype = nil, scale = 1 },
-	{ image = "Default-iPad-Portrait.png", width = 1536/2, height = 2008/2, orientation = "portrait", idiom = "ipad", extent = "to-status-bar", minversion = nil, subtype = nil, scale = 2 },
-	{ image = "Default-iPad-Portrait.png", width = 1536/2, height = 2048/2, orientation = "portrait", idiom = "ipad", extent = "full-screen", minversion = nil, subtype = nil, scale = 2 },
-	{ image = "Default-iPad-Landscape.png", width = 2048/2, height = 1496/2, orientation = "landscape", idiom = "ipad", extent = "to-status-bar", minversion = nil, subtype = nil, scale = 2 },
-	{ image = "Default-iPad-Landscape.png", width = 2048/2, height = 1536/2, orientation = "landscape", idiom = "ipad", extent = "full-screen", minversion = nil, subtype = nil, scale = 2 },
+	{ image = "Icon.png", idiom = "iphone",        width = 29, height = 29, scale = 2 },
+	{ image = "Icon.png", idiom = "iphone",        width = 29, height = 29, scale = 3 },
+	{ image = "Icon.png", idiom = "iphone",        width = 40, height = 40, scale = 2 },
+	{ image = "Icon.png", idiom = "iphone",        width = 40, height = 40, scale = 3 },
+	{ image = "Icon.png", idiom = "iphone",        width = 60, height = 60, scale = 2 },
+	{ image = "Icon.png", idiom = "iphone",        width = 60, height = 60, scale = 3 },
+	{ image = "Icon.png", idiom = "ipad",          width = 29, height = 29, scale = 1 },
+	{ image = "Icon.png", idiom = "ipad",          width = 29, height = 29, scale = 2 },
+	{ image = "Icon.png", idiom = "ipad",          width = 40, height = 40, scale = 1 },
+	{ image = "Icon.png", idiom = "ipad",          width = 40, height = 40, scale = 2 },
+	{ image = "Icon.png", idiom = "ipad",          width = 76, height = 76, scale = 1 },
+	{ image = "Icon.png", idiom = "ipad",          width = 76, height = 76, scale = 2 },
+	{ image = "Icon.png", idiom = "ipad",          width = 83.5, height = 83.5, scale = 2 },
+	{ image = "Icon.png", idiom = "ios-marketing", width = 1024, height = 1024, scale = 1 },
 }
 
 
@@ -116,58 +76,6 @@ function createXCAssets()
 	s:printLn("}")
 
 	f:close()
-
-	-- Legacy launch images.
-	run:mkdir("Images.xcassets/LaunchImage.launchimage")
-	local f = fileSystem:open(Path("Images.xcassets/LaunchImage.launchimage/Contents.json"), 2)
-	local s = StreamOutput(f, Utf8Encoding(), "unix")
-	s:printLn("{")
-	s:printLn("  \"images\" : [")
-
-	for i, id in ipairs(imageDefinitions) do
-		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/" .. id.image)
-		if image == nil then
-			return false
-		end
-
-		generateImage(
-			"Images.xcassets/LaunchImage.launchimage/LaunchImage-" .. i .. ".png",
-		 	image,
-		 	id.width * id.scale,
-		 	id.height * id.scale
-		)
-
-		s:printLn("    {")
-		
-		if id.extent ~= nil then
-			s:printLn("      \"extent\" : \"" .. id.extent .. "\",")
-		end
-
-		s:printLn("      \"idiom\" : \"" .. id.idiom .. "\",")
-
-		if id.subtype ~= nil then
-			s:printLn("      \"subtype\" : \"" .. id.subtype .. "\",")
-		end
-
-		s:printLn("      \"filename\" : \"LaunchImage-" .. i .. ".png\",")
-
-		if id.minversion ~= nil then
-			s:printLn("      \"minimum-system-version\" : \"" .. id.minversion .. "\",")
-		end
-
-		s:printLn("      \"orientation\" : \"" .. id.orientation .. "\",")
-		s:printLn("      \"scale\" : \"" .. id.scale .. "x\"")
-		s:printLn("    },")
-	end
-
-	s:printLn("  ],")
-	s:printLn("  \"info\" : {")
-	s:printLn("    \"version\" : 1,")
-	s:printLn("    \"author\" : \"xcode\"")
-	s:printLn("  }")
-	s:printLn("}")
-
-	f:close()
 	return true
 end
 
@@ -188,6 +96,12 @@ function deploy(args)
 	stdout:printLn("Generating Info.plist...")
 	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Info.plist.template\"", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
+		return 1
+	end
+
+	stdout:printLn("Generating LaunchScreen.storyboard...")
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/LaunchScreen.storyboard.template\"", "LaunchScreen.storyboard") ~= 0 then
+		stderr:printLn("Failed to generate LaunchScreen.storyboard")
 		return 1
 	end
 
@@ -226,7 +140,7 @@ function deploy(args)
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
 
-		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Application.config", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.storyboard *.mm *.png Application.config", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
@@ -307,6 +221,12 @@ function migrate(args)
 		return 1
 	end
 
+	stdout:printLn("Generating LaunchScreen.storyboard...")
+	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/LaunchScreen.storyboard.template\"", "LaunchScreen.storyboard") ~= 0 then
+		stderr:printLn("Failed to generate LaunchScreen.storyboard")
+		return 1
+	end
+
 	stdout:printLn("Generating Main.mm...")
 	if run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Main.mm.template\"", "Main.mm") ~= 0 then
 		stderr:printLn("Failed to generate Main.mm")
@@ -346,7 +266,7 @@ function migrate(args)
 	if deployTarget ~= "" then
 		stdout:printLn("Transfer resources to \"" .. deployTarget .. "\"...")
 
-		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Content.compact Application.config", "(null)")
+		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.storyboard *.mm *.png Content.compact Application.config", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
