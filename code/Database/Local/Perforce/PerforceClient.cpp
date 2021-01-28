@@ -28,17 +28,21 @@ public:
 
 	virtual void OutputInfo(char level, const char *data) override
 	{
+#if 0
 		T_DEBUG(L"Perforce info \"" << trim(mbstows(data)) << L"\"");
+#endif
 	}
 
 	virtual void OutputError(const char* errBuf) override
 	{
 		m_failed = true;
 		m_outLastError = trim(mbstows(errBuf));
+#if 0
 		T_DEBUG(L"Perforce operation failed \"" << m_outLastError << L"\"");
+#endif
 	}
 
-#if defined(_DEBUG)
+#if 0
 	virtual void OutputStat(StrDict* varList) override
 	{
 		for (int32_t i = 0; ; ++i)
