@@ -134,22 +134,26 @@ void Context::performCleanup()
 	if (m_cleanupFns.empty())
 		return;
 
-	// Take over vector in case more resources are added for cleanup from callbacks.
-	// Wait until GPU is idle to ensure resources are not used, or pending, in some queue before destroying them.
-	AlignedVector< cleanup_fn_t > cleanupFns;
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+
+		// Wait until GPU is idle to ensure resources are not used, or pending, in some queue before destroying them.
 		vkDeviceWaitIdle(m_logicalDevice);
+
+		// Take over vector in case more resources are added for cleanup from callbacks.
+		AlignedVector< cleanup_fn_t > cleanupFns;
 		cleanupFns.swap(m_cleanupFns);
+
+		// Invoke cleanups.
+		for (const auto& cleanupFn : cleanupFns)
+			cleanupFn(this);
+
+		// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
+		vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
+		m_descriptorPoolRevision++;
 	}
-
-	// Invoke cleanups.
-	for (const auto& cleanupFn : cleanupFns)
-		cleanupFn(this);
-
-	// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
-	vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
-	m_descriptorPoolRevision++;
 }
 
 	}

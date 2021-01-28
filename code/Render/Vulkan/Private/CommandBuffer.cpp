@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -16,7 +17,7 @@ CommandBuffer::~CommandBuffer()
 {
 	vkFreeCommandBuffers(
 		m_context->getLogicalDevice(),
-		m_queue->getCommandPool(),
+		m_commandPool,
 		1,
 		&m_commandBuffer
 	);
@@ -26,6 +27,7 @@ CommandBuffer::~CommandBuffer()
 bool CommandBuffer::reset()
 {
 	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
+	T_ASSERT(!m_submitted);
 
 	vkResetCommandBuffer(m_commandBuffer, 0);
 
@@ -53,9 +55,9 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 	{
 		si.waitSemaphoreCount = 1;
 		si.pWaitSemaphores = &waitSemaphore;
+		si.pWaitDstStageMask = &waitStageFlags;
 	}
 
-	si.pWaitDstStageMask = &waitStageFlags;
 	si.commandBufferCount = 1;
 	si.pCommandBuffers = &m_commandBuffer;
 
@@ -66,7 +68,10 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 	}
 
 	if (m_queue->submit(si, m_inFlight) != VK_SUCCESS)
+	{
+		log::error << L"Unable to submit command buffer." << Endl;
 		return false;
+	}
 
 	m_submitted = true;
 	return true;
@@ -74,12 +79,12 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 
 bool CommandBuffer::wait()
 {
-	const uint64_t timeOut = 5 * 60 * 1000ull * 1000ull * 1000ull;
+	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 
 	if (!m_submitted)
 		return true;
 
-    if (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, timeOut) != VK_SUCCESS)
+    if (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) != VK_SUCCESS)
 		return false;
 
 	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
@@ -103,15 +108,17 @@ CommandBuffer::operator VkCommandBuffer ()
 	return m_commandBuffer;
 }
 
-CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandBuffer commandBuffer)
+CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer)
 :	m_context(context)
 ,	m_queue(queue)
+,	m_commandPool(commandPool)
 ,	m_commandBuffer(commandBuffer)
 {
 	VkFenceCreateInfo fci = {};
 	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fci.flags = 0;
 	vkCreateFence(m_context->getLogicalDevice(), &fci, nullptr, &m_inFlight);
+	vkResetFences(m_context->getLogicalDevice(), 1, &m_inFlight);
 
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);
 

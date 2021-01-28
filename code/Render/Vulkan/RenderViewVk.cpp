@@ -3,6 +3,7 @@
 #include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -489,8 +490,6 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::beginFrame()
 {
-	const uint64_t timeOut = 5 * 60 * 1000ull * 1000ull * 1000ull;
-
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
 	if (m_lost || m_frames.empty())
@@ -503,7 +502,7 @@ bool RenderViewVk::beginFrame()
     vkAcquireNextImageKHR(
 		m_context->getLogicalDevice(),
 		m_swapChain,
-		timeOut,
+		UINT64_MAX,
 		m_imageAvailableSemaphore,
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
@@ -1007,12 +1006,6 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 {
 	auto& frame = m_frames[m_currentImageIndex];
 
-	VkImage sourceImage = 0;
-	VkImageLayout sourceImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-	VkImage destinationImage = 0;
-	VkImageLayout destinationImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
 	VkImageCopy region = {};
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	region.srcSubresource.mipLevel = sourceRegion.mip;
@@ -1032,166 +1025,86 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	region.extent.width = sourceRegion.width;
 	region.extent.height = sourceRegion.height;
 
+	Image* sourceImage = nullptr;
+	Image* destinationImage = nullptr;
+
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetVk* >(sourceTexture))
-	{
-		sourceImage = sourceRenderTarget->getImageResolved()->getVkImage();
-		sourceImageLayout = sourceRenderTarget->getImageResolved()->getVkImageLayout();
-	}
+		sourceImage = sourceRenderTarget->getImageResolved();
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
-	{
-		sourceImage = sourceSimpleTexture->getImage().getVkImage();
-		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	}
+		sourceImage = &sourceSimpleTexture->getImage();
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
 	{
-		sourceImage = sourceCubeTexture->getImage().getVkImage();
-		sourceImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		sourceImage = &sourceCubeTexture->getImage();
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
 	}
 	else
 		return false;
 
 	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetVk* >(destinationTexture))
-	{
-		destinationImage = destinationRenderTarget->getImageResolved()->getVkImage();
-		destinationImageLayout = destinationRenderTarget->getImageResolved()->getVkImageLayout();
-	}
+		destinationImage = destinationRenderTarget->getImageResolved();
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
-	{
-		destinationImage = destinationSimpleTexture->getImage().getVkImage();
-		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	}
+		destinationImage = &destinationSimpleTexture->getImage();
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
 	{
-		destinationImage = destinationCubeTexture->getImage().getVkImage();
-		destinationImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		destinationImage = &destinationCubeTexture->getImage();
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
 	}
 	else
 		return false;
 
-	// Source texture layout.
-	{
-		VkImageMemoryBarrier imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = sourceImageLayout;
-		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = sourceImage;
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = sourceRegion.mip;
-		imb.subresourceRange.levelCount = 1;
-		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
+	VkImageLayout sourceImageLayout = sourceImage->getVkImageLayout(sourceRegion.mip, region.srcSubresource.baseArrayLayer);
+	VkImageLayout destinationImageLayout = destinationImage->getVkImageLayout(destinationRegion.mip, region.dstSubresource.baseArrayLayer);
 
-		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
-	}
-
-	// Destination texture layout.
-	{
-		VkImageMemoryBarrier imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = destinationImageLayout;
-		imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = destinationImage;
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = destinationRegion.mip;
-		imb.subresourceRange.levelCount = 1;
-		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
-
-		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
-	}
+	// Change image layouts for optimal transfer.
+	sourceImage->changeLayout(
+		frame.graphicsCommandBuffer,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		sourceRegion.mip,
+		1,
+		region.srcSubresource.baseArrayLayer,
+		1
+	);
+	destinationImage->changeLayout(
+		frame.graphicsCommandBuffer,
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		destinationRegion.mip,
+		1,
+		region.dstSubresource.baseArrayLayer,
+		1
+	);
 
 	// Perform texture image copy.
 	vkCmdCopyImage(
 		*frame.graphicsCommandBuffer,
-		sourceImage,
+		sourceImage->getVkImage(),
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-		destinationImage,
+		destinationImage->getVkImage(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
 		&region
 	);
 
-	// Source texture layout.
-	{
-		VkImageMemoryBarrier imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		imb.newLayout = sourceImageLayout;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = sourceImage;
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = sourceRegion.mip;
-		imb.subresourceRange.levelCount = 1;
-		imb.subresourceRange.baseArrayLayer = region.srcSubresource.baseArrayLayer;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
-
-		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
-	}
-
-	// Destination texture layout.
-	{
-		VkImageMemoryBarrier imb = {};
-		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		imb.newLayout = destinationImageLayout;
-		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		imb.image = destinationImage;
-		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imb.subresourceRange.baseMipLevel = destinationRegion.mip;
-		imb.subresourceRange.levelCount = 1;
-		imb.subresourceRange.baseArrayLayer = region.dstSubresource.baseArrayLayer;
-		imb.subresourceRange.layerCount = 1;
-		imb.srcAccessMask = 0;
-		imb.dstAccessMask = 0;
-
-		vkCmdPipelineBarrier(
-			*frame.graphicsCommandBuffer,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &imb
-		);
-	}
+	// Restore image layouts.
+	sourceImage->changeLayout(
+		frame.graphicsCommandBuffer,
+		sourceImageLayout,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		sourceRegion.mip,
+		1,
+		region.srcSubresource.baseArrayLayer,
+		1
+	);
+	destinationImage->changeLayout(
+		frame.graphicsCommandBuffer,
+		destinationImageLayout,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		destinationRegion.mip,
+		1,
+		region.dstSubresource.baseArrayLayer,
+		1
+	);
 
 	return true;
 }

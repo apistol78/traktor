@@ -78,6 +78,9 @@ bool Image::createSimple(
 		return false;
 	}
 
+	m_mipCount = mipLevels;
+	m_layerCount = 1;
+	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
     return true;
 }
 
@@ -136,6 +139,9 @@ bool Image::createCube(
 		return false;
 	}
 
+	m_mipCount = mipLevels;
+	m_layerCount = 6;
+	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
     return true;
 }
 
@@ -195,6 +201,9 @@ bool Image::createVolume(
 		return false;
 	}
 
+	m_mipCount = mipLevels;
+	m_layerCount = 1;
+	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
     return true;
 }
 
@@ -260,6 +269,9 @@ bool Image::createTarget(
 		return false;
 	}
 
+	m_mipCount = 1;
+	m_layerCount = 1;
+	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 	return true;
 }
 
@@ -324,6 +336,9 @@ bool Image::createDepthTarget(
 		return false;
 	}
 
+	m_mipCount = 1;
+	m_layerCount = 1;
+	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
     return true;
 }
 
@@ -383,15 +398,19 @@ bool Image::changeLayout(
 	uint32_t layerCount
 )
 {
-	if (m_imageLayout == newLayout)
+	T_ASSERT(mipLevel + mipCount < m_mipCount);
+	T_ASSERT(layerLevel + layerCount < m_layerCount);
+
+	auto& imageLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
+	if (imageLayout == newLayout)
 		return true;
 
-	if (m_imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
-		m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	if (imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
+		imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = m_imageLayout;
+	imb.oldLayout = imageLayout;
 	imb.newLayout = newLayout;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -414,7 +433,7 @@ bool Image::changeLayout(
 		1, &imb
 	);
 
-	m_imageLayout = imb.newLayout;
+	imageLayout = imb.newLayout;
 	return true;
 }
 
