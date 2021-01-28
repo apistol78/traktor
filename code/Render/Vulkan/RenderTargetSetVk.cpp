@@ -146,156 +146,18 @@ bool RenderTargetSetVk::isContentValid() const
 
 bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
-	//if (index < 0 || index >= (int32_t)m_colorTargets.size())
-	//	return false;
-
-	//// Create offscreen image copy.
-	//VkImage hostImage = 0;
-
-	//VkImageCreateInfo ici = {};
-	//ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	//ici.imageType = VK_IMAGE_TYPE_2D;
-	//ici.format = m_colorTargets[index]->getVkFormat();
-	//ici.extent.width = m_setDesc.width;
-	//ici.extent.height = m_setDesc.height;
-	//ici.extent.depth = 1;
-	//ici.arrayLayers = 1;
-	//ici.mipLevels = 1;
-	//ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	//ici.samples = VK_SAMPLE_COUNT_1_BIT;
-	//ici.tiling = VK_IMAGE_TILING_LINEAR;
-	//ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-
-	//if (vkCreateImage(m_context->getLogicalDevice(), &ici, nullptr, &hostImage) != VK_SUCCESS)
-	//	return false;
-
-	//VkMemoryRequirements memoryRequirements;
-	//vkGetImageMemoryRequirements(m_context->getLogicalDevice(), hostImage, &memoryRequirements);
-
-	//VkDeviceMemory hostImageMemory = 0;
-
-	//VkMemoryAllocateInfo mai = {};
-	//mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	//mai.allocationSize = memoryRequirements.size;
-	//mai.memoryTypeIndex = getMemoryTypeIndex(m_context->getPhysicalDevice(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-
-	//vkAllocateMemory(m_context->getLogicalDevice(), &mai, nullptr, &hostImageMemory);
-	//vkBindImageMemory(m_context->getLogicalDevice(), hostImage, hostImageMemory, 0);
-
-	//auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
-
-	//// Transfer color target into host image.
-	//VkImageMemoryBarrier imb = {};
-	//imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	//imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	//imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	//imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//imb.image = hostImage;
-	//imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//imb.subresourceRange.baseMipLevel = 0;
-	//imb.subresourceRange.levelCount = 1;
-	//imb.subresourceRange.baseArrayLayer = 0;
-	//imb.subresourceRange.layerCount = 1;
-	//imb.srcAccessMask = 0;
-	//imb.dstAccessMask = 0;
-	//vkCmdPipelineBarrier(
-	//	*commandBuffer,
-	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-	//	0,
-	//	0, nullptr,
-	//	0, nullptr,
-	//	1, &imb
-	//);
-
-	//// Convert target for optimal read.
-	//m_colorTargets[index]->prepareForReadBack(commandBuffer);
-
-	//// Copy target into host image.
-	//VkImageCopy ic = {};
-	//ic.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//ic.srcSubresource.layerCount = 1;
-	//ic.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//ic.dstSubresource.layerCount = 1;
-	//ic.extent.width = m_setDesc.width;
-	//ic.extent.height = m_setDesc.height;
-	//ic.extent.depth = 1;
-	//vkCmdCopyImage(
-	//	*commandBuffer,
-	//	m_colorTargets[index]->getVkImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-	//	hostImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-	//	1,
-	//	&ic
-	//);
-
-	//// Convert host image into general layout; must be general to be mappable.
-	//imb = {};
-	//imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	//imb.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	//imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
-	//imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//imb.image = hostImage;
-	//imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//imb.subresourceRange.baseMipLevel = 0;
-	//imb.subresourceRange.levelCount = 1;
-	//imb.subresourceRange.baseArrayLayer = 0;
-	//imb.subresourceRange.layerCount = 1;
-	//imb.srcAccessMask = 0;
-	//imb.dstAccessMask = 0;
-	//vkCmdPipelineBarrier(
-	//	*commandBuffer,
-	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-	//	VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-	//	0,
-	//	0, nullptr,
-	//	0, nullptr,
-	//	1, &imb
-	//);
-
-	//// Submit commands, and wait until finished.
-	//commandBuffer->submitAndWait();
-
-	//// Get information about image.
-	//VkImageSubresource isr = {};
-	//isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-
-	//VkSubresourceLayout srl = {};
-	//vkGetImageSubresourceLayout(m_context->getLogicalDevice(), hostImage, &isr, &srl);
-
-	//// Read back data.
-	//uint8_t* src = nullptr;
-	//vkMapMemory(m_context->getLogicalDevice(), hostImageMemory, 0, VK_WHOLE_SIZE, 0, (void**)&src);
-	//src += srl.offset;
-
-	//uint32_t fragmentSize = 4 * sizeof(float);
-
-	//uint8_t* dst = (uint8_t*)buffer;
-	//for (int32_t y = 0; y < m_setDesc.height; ++y)
-	//{
-	//	std::memcpy(dst, src, m_setDesc.width * fragmentSize);
-	//	dst += m_setDesc.width * fragmentSize;
-	//	src += srl.rowPitch;
-	//}
-
-	//vkUnmapMemory(m_context->getLogicalDevice(), hostImageMemory);
-	//
-	//// Cleanup
-	//vkFreeMemory(m_context->getLogicalDevice(), hostImageMemory, 0);
-	//vkDestroyImage(m_context->getLogicalDevice(), hostImage, 0);
-	//return true;
-
 	return false;
 }
 
 void RenderTargetSetVk::setDebugName(const wchar_t* name)
 {
-	//for (auto colorTarget : m_colorTargets)
-	//	setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
-
-	//if (m_depthTarget)
-	//	setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	for (auto colorTarget : m_colorTargets)
+	{
+		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageTarget()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)colorTarget->getImageResolved()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	}
+	if (m_depthTarget)
+		setObjectDebugName(m_context->getLogicalDevice(), name, (uint64_t)m_depthTarget->getImage()->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
@@ -577,6 +439,8 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 	if (m_depthTarget)
 		m_depthTarget->prepareAsTarget(commandBuffer);
+	else if (m_setDesc.usingPrimaryDepthStencil)
+		primaryDepthTarget->prepareAsTarget(commandBuffer);
 
 	outId = rt.id;
 	outRenderPass = rt.renderPass;

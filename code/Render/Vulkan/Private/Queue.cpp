@@ -55,7 +55,7 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 	if (vkBeginCommandBuffer(commandBuffer, &cbbi) != VK_SUCCESS)
 		return nullptr;
 
-	return new CommandBuffer(m_context, this, commandBuffer);
+	return new CommandBuffer(m_context, this, ms_commandPool, commandBuffer);
 }
 
 VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)

@@ -89,7 +89,7 @@ public:
 
     VkImage getVkImage() const { return m_image; }
 
-    VkImageLayout getVkImageLayout() const { return m_imageLayout; }
+    VkImageLayout getVkImageLayout(uint32_t mipLevel, uint32_t layerLevel) const { return m_imageLayouts[layerLevel * m_mipCount + mipLevel]; }
 
     VkImageView getVkImageView() const { return m_imageView; }
 
@@ -97,8 +97,10 @@ private:
     Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkImage m_image = 0;
-    VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     VkImageView m_imageView = 0;
+    AlignedVector< VkImageLayout > m_imageLayouts;
+    uint32_t m_mipCount = 0;
+    uint32_t m_layerCount = 0;
     void* m_locked = nullptr;
 };
         

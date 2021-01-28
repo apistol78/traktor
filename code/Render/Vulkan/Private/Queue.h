@@ -36,6 +36,8 @@ public:
 	VkCommandPool getCommandPool() const { return ms_commandPool; }
 
 private:
+	friend class Context;
+
 	Context* m_context;
 	VkQueue m_queue;
 	uint32_t m_queueIndex;

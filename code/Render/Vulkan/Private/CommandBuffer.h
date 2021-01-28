@@ -37,12 +37,13 @@ private:
 
 	Context* m_context = nullptr;
 	Queue* m_queue = nullptr;
+	VkCommandPool m_commandPool = 0;
 	VkCommandBuffer m_commandBuffer = 0;
 	VkFence m_inFlight = 0;
 	Thread* m_thread = nullptr;
 	bool m_submitted = false;
 
-	explicit CommandBuffer(Context* context, Queue* queue, VkCommandBuffer commandBuffer);
+	explicit CommandBuffer(Context* context, Queue* queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer);
 };
 
 	}

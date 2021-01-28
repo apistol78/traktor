@@ -6,6 +6,7 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor
@@ -53,6 +54,9 @@ bool RenderTargetVk::createPrimary(
 		m_imageResolved = m_imageTarget;
 	}
 
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+
 	m_format = format;
 	m_width = width;
 	m_height = height;
@@ -78,9 +82,19 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	else
 		m_imageResolved = m_imageTarget;
 
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
+
 	m_format = format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+
+	// Set layout to be read by shader initially since we cannot ensure
+	// target is being used as target directly.
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+	commandBuffer->submitAndWait();
+
 	return true;
 }
 
