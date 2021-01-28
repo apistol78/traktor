@@ -40,6 +40,7 @@ StageState::StageState(
 
 	m_renderGraph = new render::RenderGraph(
 		environment->getRender()->getRenderSystem(),
+		environment->getRender()->getMultiSample(),
 		[](int32_t pass, const std::wstring& name, double start, double duration) {
 			Profiler::getInstance().addEvent(name, start, duration);
 		}
@@ -84,7 +85,6 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	// Render entire view.
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
-	int32_t multiSample = m_environment->getRender()->getMultiSample();
 
 	// Setup stage passes.
 	{
@@ -104,7 +104,7 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	{
 		T_PROFILER_SCOPE(L"Stage build");
 		renderContext->flush();
-		m_renderGraph->build(renderContext, width, height, multiSample);		
+		m_renderGraph->build(renderContext, width, height);		
 	}
 	return BrOk;
 }

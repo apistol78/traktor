@@ -9,6 +9,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshFactory.h"
@@ -83,7 +84,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
-	desc.multiSample = 0;
+	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
@@ -92,7 +93,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_renderSystem);
+	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
@@ -365,7 +366,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy, 0);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
 	render::Clear cl = {};

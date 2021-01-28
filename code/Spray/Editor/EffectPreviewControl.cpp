@@ -2,7 +2,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
@@ -123,7 +125,8 @@ bool EffectPreviewControl::create(
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 32;
 	desc.stencilBits = 0;
-	desc.multiSample = 0;
+	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
+	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
 	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
@@ -136,7 +139,7 @@ bool EffectPreviewControl::create(
 		return false;
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(renderSystem);
+	m_renderGraph = new render::RenderGraph(renderSystem, desc.multiSample);
 
 	if ((m_audioSystem = audioSystem) != nullptr)
 	{
@@ -553,7 +556,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy, 0);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

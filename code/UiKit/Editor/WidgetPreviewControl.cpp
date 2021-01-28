@@ -100,7 +100,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_renderSystem);
+	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
 
 	// Create an empty flash movie.
 	Ref< spark::Sprite > movieClip = new spark::Sprite(0, 60);
@@ -263,7 +263,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy, 0);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
 	if (m_renderView->beginFrame())

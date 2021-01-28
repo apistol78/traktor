@@ -156,7 +156,7 @@ bool AccDisplayRenderer::create(
 	rtscd.count = 1;
 	rtscd.width = c_cacheGlyphDimX;
 	rtscd.height = c_cacheGlyphDimY;
-	rtscd.multiSample = 0;
+	rtscd.multiSample = 4;
 	rtscd.createDepthStencil = false;
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
@@ -441,7 +441,7 @@ void AccDisplayRenderer::renderGlyph(
 
 	uint32_t tag = glyph->getCacheTag();
 
-	SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
+	auto it1 = m_glyphCache.find(tag);
 	if (it1 == m_glyphCache.end())
 	{
 		Ref< AccShape > accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
@@ -481,10 +481,10 @@ void AccDisplayRenderer::renderGlyph(
 		if (m_nextIndex >= c_cacheGlyphCount)
 			m_nextIndex = 0;
 
-		for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		for (auto& cache : m_glyphCache)
 		{
-			if (i->second.index == index)
-				i->second.index = -1;
+			if (cache.second.index == index)
+				cache.second.index = -1;
 		}
 
 		int32_t column = index & (c_cacheGlyphCountX - 1);

@@ -42,8 +42,13 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t index, visited
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
-RenderGraph::RenderGraph(IRenderSystem* renderSystem, const fn_profiler_t& profiler)
+RenderGraph::RenderGraph(
+	IRenderSystem* renderSystem,
+	uint32_t multiSample,
+	const fn_profiler_t& profiler
+)
 :	m_pool(new RenderGraphTargetSetPool(renderSystem))
+,	m_multiSample(multiSample)
 ,	m_nextTargetSetId(1)
 ,	m_profiler(profiler)
 {
@@ -220,7 +225,7 @@ bool RenderGraph::validate()
 	return true;
 }
 
-bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height, uint32_t multiSample)
+bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t height)
 {
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
@@ -231,7 +236,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& target = it.second;
 		if (target.rts == nullptr && target.persistentHandle != 0)
 		{
-			if (!acquire(width, height, multiSample, target))
+			if (!acquire(width, height, target))
 				return false;
 		}
 	}
@@ -276,7 +281,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (target.rts == nullptr)
 				{
 					T_ASSERT(!target.external);
-					if (!acquire(width, height, multiSample, target))
+					if (!acquire(width, height, target))
 						return false;
 				}	
 
@@ -398,7 +403,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-bool RenderGraph::acquire(int32_t width, int32_t height, uint32_t multiSample, Target& outTarget)
+bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 {
 	// Use size of reference target.
 	if (outTarget.sizeReferenceTargetSetId != 0)
@@ -424,7 +429,7 @@ bool RenderGraph::acquire(int32_t width, int32_t height, uint32_t multiSample, T
 		outTarget.sharedDepthStencilTargetSet,
 		width,
 		height,
-		multiSample,
+		m_multiSample,
 		outTarget.persistentHandle
 	);
 	if (!outTarget.rts)
