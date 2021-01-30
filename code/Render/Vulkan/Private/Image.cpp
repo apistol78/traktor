@@ -398,8 +398,8 @@ bool Image::changeLayout(
 	uint32_t layerCount
 )
 {
-	T_ASSERT(mipLevel + mipCount < m_mipCount);
-	T_ASSERT(layerLevel + layerCount < m_layerCount);
+	T_ASSERT(mipLevel + mipCount <= m_mipCount);
+	T_ASSERT(layerLevel + layerCount <= m_layerCount);
 
 	auto& imageLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
 	if (imageLayout == newLayout)
