@@ -164,22 +164,15 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	::Window root;
-	int x, y;
-	unsigned int w, h;
-	unsigned int b;
-	unsigned int d;
-	XGetGeometry(
+	XWindowAttributes xwa;
+	XGetWindowAttributes(
 		(::Display*)desc.syswin.display,
 		desc.syswin.window,
-		&root,
-		&x, &y,
-		&w, &h,
-		&b,
-		&d
+		&xwa
 	);
-	width = (int32_t)w;
-	height = (int32_t)h;
+
+	width = (int32_t)xwa.width;
+	height = (int32_t)xwa.height;
 
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};

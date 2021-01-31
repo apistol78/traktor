@@ -162,10 +162,10 @@ void ScenePreviewControl::destroy()
 	m_context->getEditor()->commitGlobalSettings();
 
 	// Destroy render controls.
-	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+	for (auto renderControl : m_renderControls)
 	{
-		if (*i)
-			(*i)->destroy();
+		if (renderControl)
+			renderControl->destroy();
 	}
 	m_renderControls.resize(0);
 

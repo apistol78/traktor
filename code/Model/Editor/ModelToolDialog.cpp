@@ -874,7 +874,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	T_ASSERT(m_primitiveRenderer);
 
 	if (!m_renderView->beginFrame())
+	{
+		m_renderView->reset(rc.getWidth(), rc.getHeight());
 		return;
+	}
 
 	render::Clear cl;
 	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
