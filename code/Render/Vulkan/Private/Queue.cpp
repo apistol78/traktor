@@ -29,7 +29,7 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 
 		VkCommandPoolCreateInfo cpci = {};
 		cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
 		cpci.queueFamilyIndex = m_queueIndex;
 		if (vkCreateCommandPool(m_context->getLogicalDevice(), &cpci, 0, &commandPool) != VK_SUCCESS)
 			return nullptr;
