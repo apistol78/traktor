@@ -342,6 +342,10 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::reset(int32_t width, int32_t height)
 {
+	log::debug << L"Vulkan; Render view reset:" << Endl;
+	log::debug << L"\twidth " << width << Endl;
+	log::debug << L"\theight " << height << Endl;
+
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Ensure any pending cleanups are performed before closing render view.
@@ -1187,6 +1191,13 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks)
 {
+	log::debug << L"Vulkan; Render view create:" << Endl;
+	log::debug << L"\twidth " << width << Endl;
+	log::debug << L"\theight " << height << Endl;
+	log::debug << L"\tmultiSample " << multiSample << Endl;
+	log::debug << L"\tmultiSampleShading " << multiSampleShading << Endl;
+	log::debug << L"\tvblanks " << vblanks << Endl;
+
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
 	m_multiSample = multiSample;
@@ -1204,7 +1215,10 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	// Do not fail if requested size, assume it will get reset later.
 	if (width == 0 || height == 0)
+	{
+		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
 		return true;
+	}
 
 	// Find present queue.
 	uint32_t queueFamilyCount = 0;
