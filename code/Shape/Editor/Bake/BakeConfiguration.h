@@ -21,7 +21,9 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	uint32_t getSampleCount() const { return m_sampleCount; }
+	uint32_t getPrimarySampleCount() const { return m_primarySampleCount; }
+
+	uint32_t getSecondarySampleCount() const { return m_secondarySampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
 
@@ -46,7 +48,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_sampleCount = 100;
+	uint32_t m_primarySampleCount = 100;
+	uint32_t m_secondarySampleCount = 50;
 	uint32_t m_shadowSampleCount = 50;
 	float m_maxPathDistance = 1.0f;
 	float m_pointLightShadowRadius = 0.1f;
