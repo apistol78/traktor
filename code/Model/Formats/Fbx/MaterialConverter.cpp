@@ -95,8 +95,21 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		if (!material)
 			continue;
 
+		std::wstring name = mbstows(material->GetName());
+
+		// Check if material has already been added.
+		const auto& materials = outModel.getMaterials();
+		auto it = std::find_if(materials.begin(), materials.end(), [&](const Material& m) {
+			return m.getName() == name;
+		});
+		if (it != materials.end())
+		{
+			outMaterialMap[i] = std::distance(materials.begin(), it);
+			continue;
+		}
+
 		Material mm;
-		mm.setName(mbstows(material->GetName()));
+		mm.setName(name);
 
 		// Get custom properties on material.
 		scanCustomProperties(meshNode, mm);
