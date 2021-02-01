@@ -775,6 +775,10 @@ protected:
 		if (xa.map_state != IsViewable)
 			return;
 
+		Size sz = m_rect.getSize();
+		if (sz.cx <= 0 || sz.cy <= 0)
+			return;
+
 		cairo_push_group(m_cairo);
 
 		CanvasX11 canvasImpl(m_cairo);
@@ -782,7 +786,7 @@ protected:
 		PaintEvent paintEvent(
 			m_owner,
 			canvas,
-			rc != nullptr ? *rc : Rect(Point(0, 0), m_rect.getSize())
+			rc != nullptr ? *rc : Rect(Point(0, 0), sz)
 		);
 		m_owner->raiseEvent(&paintEvent);
 
@@ -790,12 +794,12 @@ protected:
 		if (m_data.grabbed)
 		{
 			canvas.setBackground(Color4ub(255, 0, 0, 128));
-			canvas.fillRect(Rect(Point(0, 0), m_rect.getSize()));
+			canvas.fillRect(Rect(Point(0, 0), sz));
 		}
 		else if (m_data.focus)
 		{
 			canvas.setBackground(Color4ub(0, 0, 255, 128));
-			canvas.fillRect(Rect(Point(0, 0), m_rect.getSize()));
+			canvas.fillRect(Rect(Point(0, 0), sz));
 		}
 #endif
 
