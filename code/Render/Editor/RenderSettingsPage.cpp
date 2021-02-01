@@ -60,7 +60,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	staticMultiSample->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE"));
 
 	m_editMultiSample = new ui::Edit();
-	m_editMultiSample->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
+	m_editMultiSample->create(containerTop, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 64));
 
 	Ref< ui::Static > staticMultiSampleShading = new ui::Static();
 	staticMultiSampleShading->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE_SHADING"));
