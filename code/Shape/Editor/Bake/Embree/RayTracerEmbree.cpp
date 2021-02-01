@@ -232,7 +232,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	RTCRayHit T_MATH_ALIGN16 rh;
 	RandomGeometry random;
 
-	const int32_t sampleCount = m_configuration->getSampleCount();
+	const int32_t sampleCount = m_configuration->getPrimarySampleCount();
 	const Scalar ambientOcclusion(m_configuration->getAmbientOcclusionFactor());
 
 	const auto& polygons = model->getPolygons();
@@ -312,7 +312,7 @@ Color4f RayTracerEmbree::tracePath0(
 	RandomGeometry& random
 ) const
 {
-	int32_t sampleCount = m_configuration->getSampleCount();
+	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -399,9 +399,10 @@ Color4f RayTracerEmbree::tracePath0(
 			Color4f BRDF = hitMaterialColor / Scalar(PI);
 
 			Vector2 uv(random.nextFloat(), random.nextFloat());
-			Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+			//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+			Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
-			const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
+			const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 			Scalar cosPhi = dot3(newDirection, hitNormal);
 
 			Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
@@ -419,10 +420,12 @@ Color4f RayTracerEmbree::tracePath0(
 	}
 #endif
 
+	color /= Scalar(sampleCount);
+
 	// Sample direct lighting from analytical lights.
 	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect, false);
 
-	return color / Scalar(sampleCount);
+	return color;
 }
 
 Color4f RayTracerEmbree::traceSinglePath(
@@ -488,9 +491,10 @@ Color4f RayTracerEmbree::traceSinglePath(
 	Color4f BRDF = hitMaterialColor / Scalar(PI);
 
 	Vector2 uv(random.nextFloat(), random.nextFloat());
-	Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+	//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+	Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
-	const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
+	const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 	Scalar cosPhi = dot3(newDirection, hitNormal);
 
 	Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
