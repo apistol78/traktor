@@ -10,14 +10,14 @@
 #	include <iphlpapi.h>
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__) && !defined(__IOS__)
+#if defined(__APPLE__) && !defined(__IOS__)
 #   include <sys/ioctl.h>
 #   include <sys/sysctl.h>
 #   include <net/if.h>
 #   include <netinet/if_ether.h>
 #endif
 
-#if defined(__ANDROID__)
+#if defined(__LINUX__) || defined(__ANDROID__)
 #   include <sys/ioctl.h>
 #   include <net/if.h>
 #   include <netinet/if_ether.h>

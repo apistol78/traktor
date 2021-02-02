@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/DebugAllocator.h"
 #include "Core/Memory/FastAllocator.h"
