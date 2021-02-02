@@ -340,14 +340,27 @@ void TheaterControllerEditor::updateView()
 
 	if (selected >= 0)
 	{
+		RefArray< scene::EntityAdapter > entities;
+		m_context->getEntities(entities);
+
 		for (auto track : acts[selected]->getTracks())
 		{
-			Ref< ui::Sequence > trackSequence = new ui::Sequence(track->getEntityId().format());
+			auto it = std::find_if(entities.begin(), entities.end(), [&](scene::EntityAdapter* entity) {
+				return entity->getId() == track->getEntityId();
+			});
+
+			std::wstring name;
+			if (it != entities.end())
+				name = it->getName();
+			else
+				name = L"[N/A]";
+
+			Ref< ui::Sequence > trackSequence = new ui::Sequence(name);
 			trackSequence->setData(L"TRACK", track);
 
 			for (auto& key : track->getPath().getKeys())
 			{
-				int32_t tickTime = int32_t(key.T * 1000.0f);
+				int32_t tickTime = (int32_t)(key.T * 1000.0f);
 				Ref< ui::Tick > tick = new ui::Tick(tickTime, true);
 				tick->setData(L"KEY", new TransformPathKeyWrapper(key));
 				trackSequence->addKey(tick);
@@ -356,8 +369,8 @@ void TheaterControllerEditor::updateView()
 			m_trackSequencer->addSequenceItem(trackSequence);
 		}
 
-		m_trackSequencer->setLength(int32_t(acts[selected]->getDuration() * 1000.0f));
-		m_trackSequencer->setCursor(int32_t((m_context->getTime() - m_timeOffset) * 1000.0f));
+		m_trackSequencer->setLength((int32_t)(acts[selected]->getDuration() * 1000.0f));
+		m_trackSequencer->setCursor((int32_t)((m_context->getTime() - m_timeOffset) * 1000.0f));
 	}
 
 	m_trackSequencer->update();
