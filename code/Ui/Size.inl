@@ -52,5 +52,15 @@ inline Size& Size::operator -= (const Size& r)
 	return *this;
 }
 
+inline bool Size::operator == (const Size& r) const
+{
+	return cx == r.cx && cy == r.cy;
+}
+
+inline bool Size::operator != (const Size& r) const
+{
+	return cx != r.cx || cy != r.cy;
+}
+
 	}
 }

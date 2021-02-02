@@ -215,26 +215,24 @@ public:
 
 	virtual void setRect(const Rect& rect) override
 	{
-		int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
-		int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
-
-		int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
-		int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
-
+		const Size current = m_rect.getSize();
 		m_rect = rect;
 
-		if (m_data.visible)
+		if (m_data.visible && m_rect.area() > 0)
 		{
-			if (newWidth != oldWidth || newHeight != oldHeight)
+			XMapWindow(m_context->getDisplay(), m_data.window);
+			if (m_rect.getSize() != current)
 			{
-				XMoveResizeWindow(m_context->getDisplay(), m_data.window, rect.left, rect.top, newWidth, newHeight);
-			 	cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
+				XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
+			 	cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());
 			}
 			else
-				XMoveWindow(m_context->getDisplay(), m_data.window, rect.left, rect.top);
+				XMoveWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top);
 		}
+		else
+			XUnmapWindow(m_context->getDisplay(), m_data.window);
 
-		if (newWidth != oldWidth || newHeight != oldHeight)
+		if (m_rect.getSize() != current)
 		{
 			SizeEvent sizeEvent(m_owner, m_rect.getSize());
 			m_owner->raiseEvent(&sizeEvent);
@@ -507,7 +505,7 @@ protected:
 			);
 		}
 
-		if (visible)
+		if (visible && m_rect.area() > 0)
 	    	XMapWindow(m_context->getDisplay(), m_data.window);
 
 		XFlush(m_context->getDisplay());
