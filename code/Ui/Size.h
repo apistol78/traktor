@@ -29,6 +29,10 @@ public:
 	inline Size operator - (const Size& r) const;
 
 	inline Size& operator -= (const Size& r);
+
+	inline bool operator == (const Size& r) const;
+
+	inline bool operator != (const Size& r) const;
 };
 
 	}
