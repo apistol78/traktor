@@ -41,16 +41,6 @@ bool isLandscape()
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceiOS", MouseDeviceiOS, IInputDevice)
 
-MouseDeviceiOS::MouseDeviceiOS()
-:	m_landscape(false)
-,	m_width(0.0f)
-,	m_height(0.0f)
-,	m_positionX(0.0f)
-,	m_positionY(0.0f)
-,	m_button(false)
-{
-}
-
 bool MouseDeviceiOS::create(void* nativeWindowHandle)
 {
 	UIView* view = (UIView*)nativeWindowHandle;
@@ -175,28 +165,30 @@ void MouseDeviceiOS::setExclusive(bool exclusive)
 
 void MouseDeviceiOS::touchesBegan(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
+	if (m_touch != nullptr)
+		return;
+
+	m_touch = touches.anyObject;
+	
+	CGPoint location = [m_touch locationInView: nil];
+	if (!m_landscape)
 	{
-		CGPoint location = [touch locationInView: nil];
-		if (!m_landscape)
-		{
-			m_positionX = location.x;
-			m_positionY = location.y;
-		}
-		else
-		{
-			m_positionX = m_height - location.y;
-			m_positionY = location.x;
-		}
-		m_button = true;
+		m_positionX = location.x;
+		m_positionY = location.y;
 	}
+	else
+	{
+		m_positionX = m_height - location.y;
+		m_positionY = location.x;
+	}
+	m_button = true;
 }
 
 void MouseDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
+	if (m_touch != nullptr && [touches containsObject: m_touch] == YES)
 	{
-		CGPoint location = [touch locationInView: nil];
+		CGPoint location = [m_touch locationInView: nil];
 		if (!m_landscape)
 		{
 			m_positionX = location.x;
@@ -212,9 +204,9 @@ void MouseDeviceiOS::touchesMoved(NSSet* touches, UIEvent* event)
 
 void MouseDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 {
-	for (UITouch* touch in touches)
-	{
-		CGPoint location = [touch locationInView: nil];
+	if (m_touch != nullptr && [touches containsObject: m_touch] == YES)
+	{	
+		CGPoint location = [m_touch locationInView: nil];
 		if (!m_landscape)
 		{
 			m_positionX = location.x;
@@ -226,12 +218,14 @@ void MouseDeviceiOS::touchesEnded(NSSet* touches, UIEvent* event)
 			m_positionY = location.x;
 		}
 		m_button = false;
+		m_touch = nullptr;
 	}
 }
 
 void MouseDeviceiOS::touchesCancelled(NSSet* touches, UIEvent* event)
 {
 	m_button = false;
+	m_touch = nullptr;
 }
 
 	}
