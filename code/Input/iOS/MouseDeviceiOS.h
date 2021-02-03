@@ -16,8 +16,6 @@ class MouseDeviceiOS
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceiOS();
-
 	bool create(void* nativeWindowHandle);
 
 	virtual std::wstring getName() const override final;
@@ -67,12 +65,13 @@ public:
 	void setLandscape(bool landscape) { m_landscape = landscape; }
 
 private:
-	bool m_landscape;
-	float m_width;
-	float m_height;
-	float m_positionX;
-	float m_positionY;
-	bool m_button;
+	bool m_landscape = false;
+	float m_width = 0.0f;
+	float m_height = 0.0f;
+	float m_positionX = 0.0f;
+	float m_positionY = 0.0f;
+	bool m_button = false;
+	const UITouch* m_touch = nullptr;
 };
 
 	}
