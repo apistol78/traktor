@@ -203,8 +203,7 @@ bool RenderGraph::validate()
 		}
 	}
 
-	// Calculate target reference counts,
-	// also set storage flags of each pass's output.
+	// Calculate target reference counts.
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
@@ -263,8 +262,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 #endif
 
 	// Render passes in dependency order.
-	for (auto index : m_order)
+	for (size_t i = 0; i < m_order.size(); ++i)
 	{
+		uint32_t index = m_order[i];
 		const auto pass = m_passes[index];
 		const auto& inputs = pass->getInputs();
 		const auto& output = pass->getOutput();
@@ -298,6 +298,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				tb->clear = output.clear;
 				tb->load = output.load;
 				tb->store = output.store;
+
+				// If this is last pass and write to output target then we
+				// ignore storing depth since we know it will not be used.
+				if (i >= m_order.size() - 1)
+					tb->store &= ~TfDepth;
+
 				renderContext->enqueue(tb);			
 			}
 		}
