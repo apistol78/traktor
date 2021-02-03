@@ -187,6 +187,17 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 		StaticVector< VkAttachmentDescription, RenderTargetSetCreateDesc::MaxTargets * 2 + 1 > passAttachments;
 
+		// We do not wish to support loading of MSAA target which implies
+		// we might need to store it also.
+#if defined(_DEBUG)
+		if (needResolve())
+		{
+			bool cl = ((clear.mask & CfColor) != 0);
+			bool ld = ((load & TfColor) != 0);
+			T_FATAL_ASSERT(!(!cl && ld));
+		}
+#endif
+
 		if (colorIndex >= 0)
 		{
 			// One color target selected.
@@ -201,7 +212,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 			else
 				pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
-			if ((store & TfColor) != 0)
+			if (!needResolve() && (store & TfColor) != 0)
 				pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 			else
 				pa.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -249,7 +260,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 				else
 					pa.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			
-				if ((store & TfColor) != 0)
+				if (!needResolve() && (store & TfColor) != 0)
 					pa.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 				else
 					pa.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -384,6 +395,31 @@ bool RenderTargetSetVk::prepareAsTarget(
 		rpci.pAttachments = passAttachments.ptr();
 		rpci.subpassCount = 1;
 		rpci.pSubpasses = &subpass;
+
+		VkSubpassDependency dependencies[] = { {}, {} };
+		//if (device.FamilyQueues().graphics.index == device.FamilyQueues().present.index)
+		if (needResolve())
+		{
+			dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+			dependencies[0].dstSubpass = 0;
+			dependencies[0].srcStageMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+			dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+			dependencies[1].srcSubpass = 0;
+			dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+			dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			dependencies[1].dstStageMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+			dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			dependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+			dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+			rpci.dependencyCount = 2;
+			rpci.pDependencies = dependencies;
+		}
+
 		if (vkCreateRenderPass(m_context->getLogicalDevice(), &rpci, nullptr, &rt.renderPass) != VK_SUCCESS)
 			return false;
 	}

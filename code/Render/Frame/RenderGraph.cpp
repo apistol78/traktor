@@ -181,6 +181,18 @@ bool RenderGraph::validate()
 		}
 	}
 
+	// Passes which doesn't have an output need to be included as roots.
+	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
+	{
+		if (!m_passes[i]->haveOutput())
+		{
+			traverse(m_passes, i, added, [&](int32_t index) {
+				m_order.push_back(index);
+			});
+		}
+	}
+
+	// "Render to primary" passes is included as roots.
 	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
 	{
 		if (m_passes[i]->haveOutput())
@@ -188,18 +200,10 @@ bool RenderGraph::validate()
 			const auto& output = m_passes[i]->getOutput();
 			if (output.targetSetId == 0)
 			{
-				// "Render to primary" passes is included as roots.
 				traverse(m_passes, i, added, [&](int32_t index) {
 					m_order.push_back(index);
 				});
 			}
-		}
-		else
-		{
-			// Passes which doesn't have an output need to be included as roots.
-			traverse(m_passes, i, added, [&](int32_t index) {
-				m_order.push_back(index);
-			});
 		}
 	}
 
@@ -262,6 +266,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 #endif
 
 	// Render passes in dependency order.
+	//
+	// Since we don't want to load/store render passes, esp when using MSAA,
+	// we track current output target and automatically merge render passes.
+	//
+	handle_t currentOutputTargetSetId = ~0U;
 	for (size_t i = 0; i < m_order.size(); ++i)
 	{
 		uint32_t index = m_order[i];
@@ -274,37 +283,54 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		{
 			if (output.targetSetId != 0)
 			{
-				auto it = m_targets.find(output.targetSetId);
-				T_FATAL_ASSERT(it != m_targets.end());
-
-				auto& target = it->second;
-				if (target.rts == nullptr)
+				if (output.targetSetId != currentOutputTargetSetId)
 				{
-					T_ASSERT(!target.external);
-					if (!acquire(width, height, target))
-						return false;
-				}	
+					if (currentOutputTargetSetId != ~0U)
+					{
+						auto te = renderContext->alloc< EndPassRenderBlock >();
+						renderContext->enqueue(te);
+					}
 
-				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-				tb->renderTargetSet = target.rts;
-				tb->clear = output.clear;
-				tb->load = output.load;
-				tb->store = output.store;
-				renderContext->enqueue(tb);
+					auto it = m_targets.find(output.targetSetId);
+					T_FATAL_ASSERT(it != m_targets.end());
+
+					auto& target = it->second;
+					if (target.rts == nullptr)
+					{
+						T_ASSERT(!target.external);
+						if (!acquire(width, height, target))
+							return false;
+					}	
+
+					auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+					tb->renderTargetSet = target.rts;
+					tb->clear = output.clear;
+					tb->load = output.load;
+					tb->store = output.store;
+					renderContext->enqueue(tb);
+
+					currentOutputTargetSetId = output.targetSetId;
+				}
 			}
 			else
 			{
-				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-				tb->clear = output.clear;
-				tb->load = output.load;
-				tb->store = output.store;
+				if (currentOutputTargetSetId != 0)
+				{
+					if (currentOutputTargetSetId != ~0U)
+					{
+						auto te = renderContext->alloc< EndPassRenderBlock >();
+						renderContext->enqueue(te);
+					}
 
-				// If this is last pass and write to output target then we
-				// ignore storing depth since we know it will not be used.
-				if (i >= m_order.size() - 1)
-					tb->store &= ~TfDepth;
+					auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+					tb->clear = output.clear;
+					tb->load = output.load;
+					tb->store = output.store;
 
-				renderContext->enqueue(tb);			
+					renderContext->enqueue(tb);
+
+					currentOutputTargetSetId = 0;
+				}	
 			}
 		}
 
@@ -322,13 +348,6 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		{
 			build(*this, renderContext);
 			T_FATAL_ASSERT(!renderContext->havePendingDraws());
-		}
-
-		// End render pass.
-		if (pass->haveOutput())
-		{
-			auto te = renderContext->alloc< EndPassRenderBlock >();
-			renderContext->enqueue(te);
 		}
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -358,6 +377,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				target.rts = nullptr;
 			}
 		}
+	}
+
+	if (currentOutputTargetSetId != ~0U)
+	{
+		auto te = renderContext->alloc< EndPassRenderBlock >();
+		renderContext->enqueue(te);
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
