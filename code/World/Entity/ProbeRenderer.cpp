@@ -156,9 +156,12 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 void ProbeRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
+	const ProbeComponent* probeComponent = mandatory_non_null_type_cast< const ProbeComponent* >(renderable);
+	outProbes.push_back(probeComponent);
 }
 
 void ProbeRenderer::setup(const WorldSetupContext& context)

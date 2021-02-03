@@ -33,6 +33,7 @@ class StructBuffer;
 	{
 
 class IrradianceGrid;
+class LightComponent;
 class LightRendererDeferred;
 class WorldEntityRenderers;
 
@@ -122,7 +123,7 @@ private:
 	
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	AlignedVector< Frame > m_frames;
-	AlignedVector< Light > m_lights;
+	AlignedVector< const LightComponent* > m_lights;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	Vector4 m_fogDistanceAndDensity;

@@ -152,7 +152,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		return false;
 
 	Light light;
-	if (lightComponentData->getLightType() == world::LtDirectional)
+	if (lightComponentData->getLightType() == world::LightType::LtDirectional)
 	{
 		light.type = Light::LtDirectional;
 		light.position = Vector4::origo();
@@ -162,7 +162,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
-	else if (lightComponentData->getLightType() == world::LtPoint)
+	else if (lightComponentData->getLightType() == world::LightType::LtPoint)
 	{
 		light.type = Light::LtPoint;
 		light.position = transform.translation().xyz1();
@@ -172,7 +172,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
-	else if (lightComponentData->getLightType() == world::LtSpot)
+	else if (lightComponentData->getLightType() == world::LightType::LtSpot)
 	{
 		light.type = Light::LtSpot;
 		light.position = transform.translation().xyz1();
@@ -330,7 +330,7 @@ int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int
 	size = std::max< int32_t >(minimumSize, size);
 	size = std::min< int32_t >(maximumSize, size);
 
-	return alignUp(size, 16);
+	return alignUp(size, 4);
 }
 
 /*! */

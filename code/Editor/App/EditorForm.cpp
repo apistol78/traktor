@@ -1323,6 +1323,8 @@ bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* par
 bool EditorForm::openBrowser(const net::Url& url)
 {
 	ui::Tab* tab = m_tabGroups.front();
+	if (!tab)
+		return false;
 
 	Ref< ui::TabPage > tabPage = new ui::TabPage();
 	tabPage->create(tab, url.getString(), 0, new ui::FloodLayout());
@@ -1331,7 +1333,7 @@ bool EditorForm::openBrowser(const net::Url& url)
 	homePage->create(tabPage, url);
 
 	tab->addPage(tabPage);
-	tab->update(0, true);
+	tab->update(nullptr, true);
 	return true;
 }
 

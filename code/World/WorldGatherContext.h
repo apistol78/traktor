@@ -2,7 +2,6 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +17,8 @@ namespace traktor
 	{
 
 class Entity;
+class LightComponent;
+class ProbeComponent;
 class WorldEntityRenderers;
 
 /*! World gather context.
@@ -28,9 +29,9 @@ class T_DLLCLASS WorldGatherContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	WorldGatherContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity);
+	explicit WorldGatherContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity);
 
-	void gather(const Object* renderable, AlignedVector< Light >& outLights) const;
+	void gather(const Object* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const;
 
 	const Entity* getRootEntity() const { return m_rootEntity; }
 

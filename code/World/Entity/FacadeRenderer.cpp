@@ -26,12 +26,13 @@ const TypeInfoSet FacadeRenderer::getRenderableTypes() const
 void FacadeRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
 	auto facadeComponent = mandatory_non_null_type_cast< const FacadeComponent* >(renderable);
 	for (auto childEntity : facadeComponent->getVisibleEntities())
-		context.gather(childEntity, outLights);
+		context.gather(childEntity, outLights, outProbes);
 }
 
 void FacadeRenderer::setup(

@@ -18,26 +18,13 @@ const TypeInfoSet LightRenderer::getRenderableTypes() const
 void LightRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
 	const LightComponent* lightComponent = mandatory_non_null_type_cast< const LightComponent* >(renderable);
-	Transform transform = lightComponent->getTransform();
-
-	Light& light = outLights.push_back();
-	light.type = lightComponent->getLightType();
-	light.position = transform.translation();
-	light.direction = transform.axisY();
-	light.color = lightComponent->getColor();
-	light.range = lightComponent->getRange();
-	light.radius = lightComponent->getRadius();
-	light.castShadow = lightComponent->getCastShadow();
-
-	if (lightComponent->getFlickerAmount() > FUZZY_EPSILON)
-	{
-		Scalar randomFlicker(lightComponent->getFlickerCoeff());
-		light.color *= randomFlicker;
-	}
+	if (lightComponent->getLightType() != LightType::LtDisabled)
+		outLights.push_back(lightComponent);
 }
 
 void LightRenderer::setup(

@@ -38,23 +38,12 @@ enum class Projection
 	Perspective = 1
 };
 
-enum LightType
+enum class LightType
 {
 	LtDisabled = 0,
 	LtDirectional = 1,
 	LtPoint = 2,
 	LtSpot = 3
-};
-
-struct Light
-{
-	LightType type;
-	Vector4 position;
-	Vector4 direction;
-	Vector4 color;
-	Scalar range;
-	Scalar radius;
-	bool castShadow;
 };
 
 /*! Update parameters. */

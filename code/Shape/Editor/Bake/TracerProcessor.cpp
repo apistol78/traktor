@@ -402,7 +402,7 @@ bool TracerProcessor::process(const TracerTask* task)
 			Ref< Job > job = m_queue->add(makeFunctor([&, ty](){
 				for (int32_t tx = 0; tx < width; tx += 16)
 				{
-					int32_t region[] = { tx, ty, tx + 16, ty + 16 };
+					int32_t region[] = { tx, ty, std::min(tx + 16, width), std::min(ty + 16, height) };
 					rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
 					++m_status.current;
 				}
