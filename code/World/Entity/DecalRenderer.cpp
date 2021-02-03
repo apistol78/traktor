@@ -84,7 +84,8 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 void DecalRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
 }

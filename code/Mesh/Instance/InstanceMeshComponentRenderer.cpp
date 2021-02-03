@@ -27,7 +27,8 @@ const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 void InstanceMeshComponentRenderer::gather(
 	const world::WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< world::Light >& outLights
+	AlignedVector< const world::LightComponent* >& outLights,
+	AlignedVector< const world::ProbeComponent* >& outProbes
 )
 {
 }

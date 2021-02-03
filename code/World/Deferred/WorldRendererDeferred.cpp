@@ -24,6 +24,7 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/LightComponent.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
 #include "World/SMProj/UniformShadowProjection.h"
@@ -455,7 +456,8 @@ void WorldRendererDeferred::setup(
 
 	// Gather active lights.
 	m_lights.resize(0);
-	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights);
+	AlignedVector< const ProbeComponent* > probes;
+	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights, probes);
 	if (m_lights.size() > c_maxLightCount)
 		m_lights.resize(c_maxLightCount);
 
@@ -467,17 +469,18 @@ void WorldRendererDeferred::setup(
 	const Matrix44& view = worldRenderView.getView();
 	for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 	{
-		const auto& light = m_lights[i];
+		const auto light = m_lights[i];
 		auto* lsd = &lightShaderData[i];
 
-		lsd->typeRangeRadius[0] = (float)light.type;
-		lsd->typeRangeRadius[1] = light.range;
-		lsd->typeRangeRadius[2] = light.radius / 2.0f;
-		lsd->typeRangeRadius[3] = 0.0f;
+		lsd->typeRangeRadius[0] = (float)light->getLightType();
+		lsd->typeRangeRadius[1] = light->getRange();
+		lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+		lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-		(view * light.position.xyz1()).storeUnaligned(lsd->position);
-		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
-		light.color.storeUnaligned(lsd->color);
+		Transform lightTransform = Transform(view) * light->getTransform();
+		lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+		lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+		light->getColor().storeUnaligned(lsd->color);
 
 		Vector4::zero().storeUnaligned(lsd->viewToLight0);
 		Vector4::zero().storeUnaligned(lsd->viewToLight1);
@@ -491,8 +494,8 @@ void WorldRendererDeferred::setup(
 	{
 		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
-			if (light.castShadow && light.type == LtDirectional)
+			const auto light = m_lights[i];
+			if (light->getCastShadow() && light->getLightType() == LightType::LtDirectional)
 			{
 				lightCascadeIndex = i;
 				break;
@@ -506,8 +509,8 @@ void WorldRendererDeferred::setup(
 	{
 		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
-			if (light.castShadow && light.type == LtSpot)
+			const auto light = m_lights[i];
+			if (light->getCastShadow() && light->getLightType() == LightType::LtSpot)
 				lightAtlasIndices.push_back(i);
 		}
 	}
@@ -859,6 +862,11 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	clear.depth = 1.0f;
 	rp->setOutput(shadowMapCascadeTargetSetId, clear, render::TfNone, render::TfDepth);
 
+	const auto light = m_lights[lightCascadeIndex];
+	Transform lightTransform = Transform(view) * light->getTransform();
+	Vector4 lightPosition = lightTransform.translation().xyz1();
+	Vector4 lightDirection = lightTransform.axisY().xyz0();
+
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
@@ -868,7 +876,6 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 				renderContext
 			);
 
-			const auto& light = m_lights[lightCascadeIndex];
 			auto* lsd = &lightShaderData[lightCascadeIndex];
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -888,8 +895,8 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 
 				shadowProjection.calculate(
 					viewInverse,
-					light.position,
-					light.direction,
+					lightPosition,
+					lightDirection,
 					sliceViewFrustum,
 					shadowSettings.farZ,
 					shadowSettings.quantizeProjection,
@@ -980,6 +987,11 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	int32_t atlasIndex = 0;
 	for (int32_t lightAtlasIndex : lightAtlasIndices)
 	{
+		const auto light = m_lights[lightAtlasIndex];
+		Transform lightTransform = Transform(view) * light->getTransform();
+		Vector4 lightPosition = lightTransform.translation().xyz1();
+		Vector4 lightDirection = lightTransform.axisY().xyz0();
+
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow atlas");
 
 		render::Clear clear;
@@ -996,7 +1008,6 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 					renderContext
 				);
 
-				const auto& light = m_lights[lightAtlasIndex];
 				auto* lsd = &lightShaderData[lightAtlasIndex];
 
 				// Calculate shadow map projection.
@@ -1004,17 +1015,11 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 				Matrix44 shadowLightProjection;
 				Frustum shadowFrustum;
 
-				shadowFrustum.buildPerspective(
-					light.radius,
-					1.0f,
-					0.1f,
-					light.range
-				);
-
-				shadowLightProjection = perspectiveLh(light.radius, 1.0f, 0.1f, light.range);
+				shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
+				shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
 
 				Vector4 lightAxisX, lightAxisY, lightAxisZ;
-				lightAxisZ = -light.direction.xyz0().normalized();
+				lightAxisZ = -lightDirection;
 				lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
 				lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
@@ -1022,7 +1027,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 					lightAxisX,
 					lightAxisY,
 					lightAxisZ,
-					light.position.xyz1()
+					lightPosition
 				);
 				shadowLightView = shadowLightView.inverse();
 
@@ -1110,6 +1115,15 @@ void WorldRendererDeferred::setupTileDataPass(
 {
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
+	StaticVector< Vector4, c_maxLightCount > lightPositions;
+
+	// Calculate positions of lights in view space.
+	for (const auto& light : m_lights)
+	{
+		Vector4 lightPosition = light->getTransform().translation().xyz1();
+		lightPositions.push_back(worldRenderView.getView() * lightPosition);
+	}
+
 	// Update tile data.
 	const Scalar dx(1.0f / ClusterDimXY);
 	const Scalar dy(1.0f / ClusterDimXY);
@@ -1156,19 +1170,17 @@ void WorldRendererDeferred::setupTileDataPass(
 				int32_t count = 0;
 				for (uint32_t i = 0; i < m_lights.size(); ++i)
 				{
-					const Light& light = m_lights[i];
-
-					if (light.type == LtDirectional)
+					const auto light = m_lights[i];
+					if (light->getLightType() == LightType::LtDirectional)
 					{
 						tileShaderData[offset].lights[count++] = uint16_t(i);
 					}
-					else if (light.type == LtPoint)
+					else if (light->getLightType() == LightType::LtPoint)
 					{
-						Vector4 lvp = worldRenderView.getView() * light.position.xyz1();
-						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
+						if (tileFrustum.inside(lightPositions[i], light->getRange()) != Frustum::IrOutside)
 							tileShaderData[offset].lights[count++] = uint16_t(i);
 					}
-					else if (light.type == LtSpot)
+					else if (light->getLightType() == LightType::LtSpot)
 					{
 						tileShaderData[offset].lights[count++] = uint16_t(i);
 					}
@@ -1199,7 +1211,7 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 
 	const auto shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
-	const auto& light = m_lights[lightCascadeIndex];
+	const auto light = m_lights[lightCascadeIndex];
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = view.inverse();
@@ -1221,6 +1233,10 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 	// Add screen space shadow mask render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow mask");
 
+	Transform lightTransform = Transform(view) * light->getTransform();
+	Vector4 lightPosition = lightTransform.translation().xyz1();
+	Vector4 lightDirection = lightTransform.axisY().xyz0();
+
 	// Add sub-pass for each slice.
 	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
 	{
@@ -1239,8 +1255,8 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 
 		shadowProjection.calculate(
 			viewInverse,
-			light.position,
-			light.direction,
+			lightPosition,
+			lightDirection,
 			sliceViewFrustum,
 			shadowSettings.farZ,
 			shadowSettings.quantizeProjection,

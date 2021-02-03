@@ -20,12 +20,13 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 void EntityRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
 	const Entity* entity = mandatory_non_null_type_cast< const Entity* >(renderable);
 	for (auto component : entity->getComponents())
-		context.gather(component, outLights);
+		context.gather(component, outLights, outProbes);
 }
 
 void EntityRenderer::setup(

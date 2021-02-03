@@ -114,8 +114,8 @@ Ref< Object > DataAccessCache::readObject(
 		return nullptr;
 
 	{
-		m_objectPool.insert(std::make_pair(key, blob));
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_objectPool.insert(std::make_pair(key, blob));
 	}
 
 	// Enqueue for writing to physical image.

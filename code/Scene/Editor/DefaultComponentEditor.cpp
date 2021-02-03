@@ -64,7 +64,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 			Vector4 lightX = transform.axisX();
 			Vector4 lightZ = transform.axisZ();
 
-			if (lightComponent->getLightType() == world::LtDirectional)
+			if (lightComponent->getLightType() == world::LightType::LtDirectional)
 			{
 				primitiveRenderer->pushDepthState(true, true, false);
 
@@ -83,7 +83,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 				primitiveRenderer->popDepthState();
 			}
-			else if (lightComponent->getLightType() == world::LtPoint)
+			else if (lightComponent->getLightType() == world::LightType::LtPoint)
 			{
 				primitiveRenderer->pushDepthState(true, true, false);
 
@@ -92,7 +92,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 				primitiveRenderer->popDepthState();
 			}
-			else if (lightComponent->getLightType() == world::LtSpot)
+			else if (lightComponent->getLightType() == world::LightType::LtSpot)
 			{
 				primitiveRenderer->pushDepthState(true, true, false);
 

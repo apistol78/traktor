@@ -42,7 +42,8 @@ public:
 	virtual void gather(
 		const WorldGatherContext& context,
 		const Object* renderable,
-		AlignedVector< Light >& outLights
+		AlignedVector< const LightComponent* >& outLights,
+		AlignedVector< const ProbeComponent* >& outProbes
 	) override final;
 
 	virtual void setup(

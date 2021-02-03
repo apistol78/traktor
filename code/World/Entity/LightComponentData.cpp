@@ -17,7 +17,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 10, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
-:	m_lightType(LtDisabled)
+:	m_lightType(LightType::LtDisabled)
 ,	m_color(1.0f, 1.0f, 1.0f, 0.0f)
 ,	m_intensity(1000.0f)
 ,	m_castShadow(false)
@@ -37,10 +37,10 @@ void LightComponentData::serialize(ISerializer& s)
 {
 	const MemberEnum< LightType >::Key c_LightType_Keys[] =
 	{
-		{ L"LtDisabled", LtDisabled },
-		{ L"LtDirectional", LtDirectional },
-		{ L"LtPoint", LtPoint },
-		{ L"LtSpot", LtSpot },
+		{ L"LtDisabled", LightType::LtDisabled },
+		{ L"LtDirectional", LightType::LtDirectional },
+		{ L"LtPoint", LightType::LtPoint },
+		{ L"LtSpot", LightType::LtSpot },
 		{ 0 }
 	};
 

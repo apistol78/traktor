@@ -30,7 +30,9 @@ public:
 
 	bool free(void* p);
 
-	bool belong(const void* p) const;
+	bool belong(const void* p) const { 
+		return (p >= m_top && p < m_end);
+	}
 
 private:
 	size_t* m_top;

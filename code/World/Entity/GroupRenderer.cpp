@@ -26,13 +26,14 @@ const TypeInfoSet GroupRenderer::getRenderableTypes() const
 void GroupRenderer::gather(
 	const WorldGatherContext& context,
 	const Object* renderable,
-	AlignedVector< Light >& outLights
+	AlignedVector< const LightComponent* >& outLights,
+	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
 	if (auto groupComponent = dynamic_type_cast< const GroupComponent* >(renderable))
 	{
 		for (auto childEntity : groupComponent->getEntities())
-			context.gather(childEntity, outLights);
+			context.gather(childEntity, outLights, outProbes);
 	}
 }
 

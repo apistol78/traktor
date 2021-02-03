@@ -26,6 +26,7 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/LightComponent.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Forward/WorldRenderPassForward.h"
 #include "World/SMProj/UniformShadowProjection.h"
@@ -381,8 +382,10 @@ void WorldRendererForward::setup(
 
 	// Gather active lights for this frame.
 	auto& lights = m_frames[frame].lights;
+	auto& probes = m_frames[frame].probes;
 	lights.resize(0);
-	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights);
+	probes.resize(0);
+	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights, probes);
 	if (lights.size() > c_maxLightCount)
 		lights.resize(c_maxLightCount);
 
@@ -507,7 +510,10 @@ void WorldRendererForward::setupTileDataPass(
 
 		// Calculate positions of lights in view space.
 		for (const auto& light : lights)
-			lightPositions.push_back(worldRenderView.getView() * light.position.xyz1());
+		{
+			Vector4 lightPosition = light->getTransform().translation().xyz1();
+			lightPositions.push_back(worldRenderView.getView() * lightPosition);
+		}
 
 		// Update tile data.
 		const Scalar dx(1.0f / ClusterDimXY);
@@ -534,21 +540,23 @@ void WorldRendererForward::setupTileDataPass(
 			sliceLights.clear();
 			for (uint32_t i = 0; i < lights.size(); ++i)
 			{
-				const Light& light = lights[i];
-				if (light.type == LtDirectional)
+				const auto light = lights[i];
+				if (light->getLightType() == LightType::LtDirectional)
 				{
 					sliceLights.push_back(i);
 				}
-				else if (light.type == LtPoint)
+				else if (light->getLightType() == LightType::LtPoint)
 				{
+					Scalar lr = light->getRange();				
 					Scalar lz = lightPositions[i].z();
-					if (lz + Scalar(light.range) >= snz && lz - Scalar(light.range) <= sfz)
+					if (lz + lr >= snz && lz - lr <= sfz)
 						sliceLights.push_back(i);
 				}
-				else if (light.type == LtSpot)
+				else if (light->getLightType() == LightType::LtSpot)
 				{
+					Scalar lr = light->getRange();				
 					Scalar lz = lightPositions[i].z();
-					if (lz + Scalar(light.range) >= snz && lz - Scalar(light.range) <= sfz)
+					if (lz + lr >= snz && lz - lr <= sfz)
 					{
 						//Frustum spotFrustum;
 						//spotFrustum.buildPerspective(light.radius, 1.0f, 0.0f, light.range);
@@ -605,24 +613,24 @@ void WorldRendererForward::setupTileDataPass(
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
 					{
 						int32_t lightIndex = sliceLights[i];
-						const Light& light = lights[lightIndex];
-						if (light.type == LtDirectional)
+						const auto light = lights[lightIndex];
+						if (light->getLightType() == LightType::LtDirectional)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
 						}
-						else if (light.type == LtPoint)
+						else if (light->getLightType() == LightType::LtPoint)
 						{
-							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
+							if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
 							{
 								lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 								++count;
 							}
 						}
-						else if (light.type == LtSpot)
+						else if (light->getLightType() == LightType::LtSpot)
 						{
 							// \fixme Implement frustum to frustum culling.
-							if (tileFrustum.inside(lightPositions[lightIndex], Scalar(light.range)) != Frustum::IrOutside)
+							if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
 							{
 								lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 								++count;
@@ -978,8 +986,8 @@ void WorldRendererForward::setupLightPass(
 	{
 		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
-			const auto& light = lights[i];
-			if (light.castShadow && light.type == LtDirectional)
+			const auto light = lights[i];
+			if (light->getCastShadow() && light->getLightType() == LightType::LtDirectional)
 			{
 				lightCascadeIndex = i;
 				break;
@@ -993,8 +1001,8 @@ void WorldRendererForward::setupLightPass(
 	{
 		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
-			const auto& light = lights[i];
-			if (light.castShadow && light.type == LtSpot)
+			const auto light = lights[i];
+			if (light->getCastShadow() && light->getLightType() == LightType::LtSpot)
 				lightAtlasIndices.push_back(i);
 		}
 	}
@@ -1002,17 +1010,18 @@ void WorldRendererForward::setupLightPass(
 	// Write all lights to sbuffer; without shadow map information.
 	for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 	{
-		const auto& light = lights[i];
+		const auto light = lights[i];
 		auto* lsd = &lightShaderData[i];
 
-		lsd->typeRangeRadius[0] = (float)light.type;
-		lsd->typeRangeRadius[1] = light.range;
-		lsd->typeRangeRadius[2] = std::cos((light.radius - deg2rad(8.0f)) / 2.0f);
-		lsd->typeRangeRadius[3] = std::cos(light.radius / 2.0f);
+		lsd->typeRangeRadius[0] = (float)light->getLightType();
+		lsd->typeRangeRadius[1] = light->getRange();
+		lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+		lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-		(view * light.position.xyz1()).storeUnaligned(lsd->position);
-		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
-		light.color.storeUnaligned(lsd->color);
+		Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+		lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+		lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+		light->getColor().storeUnaligned(lsd->color);
 
 		Vector4::zero().storeUnaligned(lsd->viewToLight0);
 		Vector4::zero().storeUnaligned(lsd->viewToLight1);
@@ -1050,6 +1059,12 @@ void WorldRendererForward::setupLightPass(
 		rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfNone, render::TfDepth);
 
 		if (lightCascadeIndex >= 0)
+		{
+			const auto light = lights[lightCascadeIndex];
+			Transform lightTransform = light->getTransform();
+			Vector4 lightPosition = lightTransform.translation().xyz1();
+			Vector4 lightDirection = lightTransform.axisY().xyz0();
+
 			rp->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
@@ -1059,7 +1074,6 @@ void WorldRendererForward::setupLightPass(
 						renderContext
 					);
 
-					const auto& light = lights[lightCascadeIndex];
 					auto* lsd = &lightShaderData[lightCascadeIndex];
 
 					for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -1079,8 +1093,8 @@ void WorldRendererForward::setupLightPass(
 
 						shadowProjection.calculate(
 							viewInverse,
-							light.position,
-							light.direction,
+							lightPosition,
+							lightDirection,
 							sliceViewFrustum,
 							shadowSettings.farZ,
 							shadowSettings.quantizeProjection,
@@ -1150,9 +1164,15 @@ void WorldRendererForward::setupLightPass(
 					}
 				}
 			);
+		}
 
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
 		{
+			const auto light = lights[lightAtlasIndex];
+			Transform lightTransform = light->getTransform();
+			Vector4 lightPosition = lightTransform.translation().xyz1();
+			Vector4 lightDirection = lightTransform.axisY().xyz0();
+
 			rp->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
@@ -1162,11 +1182,10 @@ void WorldRendererForward::setupLightPass(
 						renderContext
 					);
 
-					const auto& light = lights[lightAtlasIndex];
 					auto* lsd = &lightShaderData[lightAtlasIndex];
 
 					// Calculate size of shadow region based on distance from eye.
-					float distance = (worldRenderView.getEyePosition() - light.position).xyz0().length();
+					float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
 					int32_t denom = (int32_t)std::floor(distance / 4.0f);
 					int32_t atlasSize = 128 >> std::min(denom, 4);
 					
@@ -1179,17 +1198,11 @@ void WorldRendererForward::setupLightPass(
 					Matrix44 shadowLightProjection;
 					Frustum shadowFrustum;
 
-					shadowFrustum.buildPerspective(
-						light.radius,
-						1.0f,
-						0.1f,
-						light.range
-					);
-
-					shadowLightProjection = perspectiveLh(light.radius, 1.0f, 0.1f, light.range);
+					shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
+					shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
 
 					Vector4 lightAxisX, lightAxisY, lightAxisZ;
-					lightAxisZ = -light.direction.xyz0().normalized();
+					lightAxisZ = -lightDirection;
 					lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
 					lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
@@ -1197,7 +1210,7 @@ void WorldRendererForward::setupLightPass(
 						lightAxisX,
 						lightAxisY,
 						lightAxisZ,
-						light.position.xyz1()
+						lightPosition
 					);
 					shadowLightView = shadowLightView.inverse();
 

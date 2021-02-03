@@ -2,7 +2,6 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +18,8 @@ namespace traktor
 
 class Entity;
 class IWorldRenderPass;
+class LightComponent;
+class ProbeComponent;
 class WorldBuildContext;
 class WorldGatherContext;
 class WorldRenderView;
@@ -49,11 +50,13 @@ public:
 	 * \param context World context.
 	 * \param renderable Renderable instance.
 	 * \param outLights Gathered lights.
+	 * \param outProbes Gathered probes.
 	 */
 	virtual void gather(
 		const WorldGatherContext& context,
 		const Object* renderable,
-		AlignedVector< Light >& outLights
+		AlignedVector< const LightComponent* >& outLights,
+		AlignedVector< const ProbeComponent* >& outProbes
 	) = 0;
 
 	/*! Setup pass. */

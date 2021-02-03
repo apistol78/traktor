@@ -32,7 +32,9 @@ class StructBuffer;
 	{
 
 class IrradianceGrid;
+class LightComponent;
 class Packer;
+class ProbeComponent;
 class WorldEntityRenderers;
 struct LightShaderData;
 struct TileShaderData;
@@ -83,7 +85,8 @@ private:
 		Ref< render::StructBuffer > lightSBuffer;
 		Ref< render::StructBuffer > lightIndexSBuffer;
 		Ref< render::StructBuffer > tileSBuffer;
-		AlignedVector< Light > lights;
+		AlignedVector< const LightComponent* > lights;
+		AlignedVector< const ProbeComponent* > probes;
 		Ref< Packer > shadowAtlasPacker;
 		Ref< Job > tileJob;
 	};

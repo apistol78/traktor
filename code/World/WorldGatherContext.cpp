@@ -15,13 +15,13 @@ WorldGatherContext::WorldGatherContext(const WorldEntityRenderers* entityRendere
 {
 }
 
-void WorldGatherContext::gather(const Object* renderable, AlignedVector< Light >& outLights) const
+void WorldGatherContext::gather(const Object* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const
 {
 	if (!renderable)
 		return;
 	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
 	if (renderer)
-		renderer->gather(*this, renderable, outLights);
+		renderer->gather(*this, renderable, outLights, outProbes);
 }
 
 	}
