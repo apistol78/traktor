@@ -79,6 +79,7 @@ void Buffer::unlock()
 	if (m_locked)
 	{
 		vmaUnmapMemory(m_context->getAllocator(), m_allocation);
+		vmaFlushAllocation(m_context->getAllocator(), m_allocation, 0, VK_WHOLE_SIZE);
 		m_locked = nullptr;
 	}
 }
