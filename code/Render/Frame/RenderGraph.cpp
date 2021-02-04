@@ -155,26 +155,23 @@ void RenderGraph::addPass(const RenderPass* pass)
 bool RenderGraph::validate()
 {
 	// Find root passes, which are either of:
-	// 1) Writing to primary target.
+	// 1) Have no output target.
 	// 2) Writing to external targets.
-	// 3) Have no output target.
+	// 3) Writing to primary target.
 	StaticVector< uint32_t, 32 > roots;
 	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
 	{
 		const auto pass = m_passes[i];
 		const auto& output = pass->getOutput();
-		if (output.targetSetId != ~0)
+		if (output.targetSetId == ~0)
+			roots.push_back(i);
+		else if (output.targetSetId != ~0 && output.targetSetId != 0)
 		{
-			if (output.targetSetId == 0)
+			auto it = m_targets.find(output.targetSetId);
+			if (it->second.external)
 				roots.push_back(i);
-			else
-			{				
-				auto it = m_targets.find(output.targetSetId);
-				if (it->second.external)
-					roots.push_back(i);
-			}
 		}
-		else
+		else if (output.targetSetId == 0)
 			roots.push_back(i);
 	}
 
@@ -191,13 +188,21 @@ bool RenderGraph::validate()
 
 	// Gather passes in order for each depth.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
-	{
 		m_order[i].resize(0);
-		for (uint32_t j = 0; j < (uint32_t)m_passes.size(); ++j)
-		{
-			if (depths[j] == i)
-				m_order[i].push_back(j);
-		}
+	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
+	{
+		if (depths[i] >= 0)
+			m_order[depths[i]].push_back(i);
+	}
+
+	// Sort each depth based on output target.
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+	{
+		std::stable_sort(m_order[i].begin(), m_order[i].end(), [&](uint32_t lh, uint32_t rh) {
+			const auto lt = m_passes[lh]->getOutput().targetSetId;
+			const auto rt = m_passes[rh]->getOutput().targetSetId;
+			return lt > rt;
+		});
 	}
 
 	// Count input and output reference counts of all targets.
