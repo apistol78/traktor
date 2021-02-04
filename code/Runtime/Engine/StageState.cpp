@@ -41,7 +41,7 @@ StageState::StageState(
 	m_renderGraph = new render::RenderGraph(
 		environment->getRender()->getRenderSystem(),
 		environment->getRender()->getMultiSample(),
-		[](int32_t pass, const std::wstring& name, double start, double duration) {
+		[](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
 			Profiler::getInstance().addEvent(name, start, duration);
 		}
 	);

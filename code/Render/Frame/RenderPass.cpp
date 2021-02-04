@@ -28,6 +28,16 @@ void RenderPass::addInput(handle_t targetSetId)
 	input.targetSetId = targetSetId;
 }
 
+bool RenderPass::requireInput(handle_t targetSetId) const
+{
+	for (const auto& input : m_inputs)
+	{
+		if (input.targetSetId == targetSetId)
+			return true;
+	}
+	return false;
+}
+
 void RenderPass::setOutput(handle_t targetSetId, uint32_t load, uint32_t store)
 {
 	m_output.targetSetId = targetSetId;

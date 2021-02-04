@@ -374,6 +374,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_gridMeasurements = new ui::GridView();
 	m_gridMeasurements->create(tabPageMeasurements, ui::WsDoubleBuffer | ui::WsTabStop);
+	m_gridMeasurements->addColumn(new ui::GridColumn(L"", ui::dpi96(50)));
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_NAME"), ui::dpi96(150)));
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), ui::dpi96(90)));
 
@@ -1523,6 +1524,7 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 		m_gridMeasurements->removeAllRows();
 
 	Ref< ui::GridRow > row = new ui::GridRow();
+	row->add(new ui::GridItem(str(L"%d [%d]", event->getPass(), event->getLevel())));
 	row->add(new ui::GridItem(event->getName()));
 	row->add(new ui::GridItem(str(L"%.2f \xb5s", (float)(event->getDuration() * 1000000.0))));
 	m_gridMeasurements->addRow(row);

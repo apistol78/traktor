@@ -56,6 +56,8 @@ public:
 
 	void addInput(handle_t targetSetId);
 
+	bool requireInput(handle_t targetSetId) const;
+
 	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
 	//! \}
