@@ -156,7 +156,7 @@ bool AccDisplayRenderer::create(
 	rtscd.count = 1;
 	rtscd.width = c_cacheGlyphDimX;
 	rtscd.height = c_cacheGlyphDimY;
-	rtscd.multiSample = 4;
+	rtscd.multiSample = 0;
 	rtscd.createDepthStencil = false;
 	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
@@ -206,7 +206,7 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 	{
 		render::Clear cl;
 		cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-		cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+		cl.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 0.0);
 		cl.depth = 1.0f;
 		cl.stencil = 0;
 		m_renderPassOutput->setOutput(0, cl, render::TfNone, render::TfColor | render::TfDepth);
@@ -218,7 +218,6 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 		cl.stencil = 0;
 		m_renderPassOutput->setOutput(0, cl, render::TfColor | render::TfDepth, render::TfColor | render::TfDepth);
 	}
-	m_renderGraph->addPass(m_renderPassOutput);
 
 	m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
 	m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
@@ -230,6 +229,8 @@ void AccDisplayRenderer::endSetup()
 {
 	if (!m_renderPassGlyph->getBuilds().empty())
 		m_renderGraph->addPass(m_renderPassGlyph);
+	if (!m_renderPassOutput->getBuilds().empty())
+		m_renderGraph->addPass(m_renderPassOutput);
 
 	m_renderGraph = nullptr;
 	m_renderPassOutput = nullptr;
@@ -471,7 +472,7 @@ void AccDisplayRenderer::renderGlyph(
 
 	// Always use maximum glyph bounds.
 	Aabb2 bounds = accShape->getBounds();
-	bounds.mx = bounds.mn + font->getMaxDimension();
+	//bounds.mx = bounds.mn + font->getMaxDimension();
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)

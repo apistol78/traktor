@@ -211,12 +211,14 @@ bool RenderGraph::validate()
 			if (output.targetSetId != ~0)
 			{
 				auto it = m_targets.find(output.targetSetId);
-				it->second.outputRefCount++;
+				if (it != m_targets.end())
+					it->second.outputRefCount++;
 			}
 			for (const auto& input : pass->getInputs())
 			{
 				auto it = m_targets.find(input.targetSetId);
-				it->second.inputRefCount++;
+				if (it != m_targets.end())
+					it->second.inputRefCount++;
 			}	
 		}
 	}

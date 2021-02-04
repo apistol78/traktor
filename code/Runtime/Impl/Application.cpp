@@ -684,7 +684,14 @@ bool Application::update()
 			// keep game in sync with render time.
 			float simulationEndTime = m_updateInfo.m_stateTime;
 			int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
-			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
+			m_updateCounts.push_back(updateCountNoClamp);
+
+			// Use smallest amount of update counts of last N frames.
+			updateCount = std::numeric_limits< int32_t >::max();
+			for (uint32_t i = 0; i < m_updateCounts.size(); ++i)
+				updateCount = std::min(updateCount, m_updateCounts[i]);
+			updateCount = std::max(updateCount, 1);
+			updateCount = std::min(updateCount, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
