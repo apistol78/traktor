@@ -17,25 +17,20 @@ namespace traktor
 		namespace
 		{
 
-typedef StaticSet< uint32_t, 512 > visitedSet_t;
-
-void traverse(const RefArray< const RenderPass >& passes, int32_t index, visitedSet_t& visited, const std::function< void(int32_t) >& fn)
+void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t index, const std::function< void(int32_t, int32_t) >& fn)
 {
-	if (!visited.insert(index))
-		return;
-
 	// Traverse inputs first as we want to traverse passes depth-first.
 	for (const auto& input : passes[index]->getInputs())
 	{
 		for (int32_t i = 0; i < passes.size(); ++i)
 		{
-			if (i != index && passes[i]->getOutput().targetSetId == input.targetSetId)
-				traverse(passes, i, visited, fn);
+			if (passes[i]->getOutput().targetSetId == input.targetSetId)
+				traverse(passes, depth + 1, i, fn);
 		}
 	}
 
 	// Call visitor for this pass.
-	fn(index);
+	fn(depth, index);
 }
 
 		}
@@ -63,7 +58,8 @@ void RenderGraph::destroy()
 {
 	m_targets.clear();
 	m_passes.clear();
-	m_order.clear();
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+		m_order[i].clear();
 	safeDestroy(m_pool);
 }
 
@@ -82,7 +78,8 @@ handle_t RenderGraph::addTransientTargetSet(
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
-	target.referenceCount = 0;
+	target.inputRefCount = 0;
+	target.outputRefCount = 0;
 	target.external = false;
 
 	return targetSetId;
@@ -104,7 +101,8 @@ handle_t RenderGraph::addPersistentTargetSet(
 	target.targetSetDesc = targetSetDesc;
 	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
-	target.referenceCount = 0;
+	target.inputRefCount = 0;
+	target.outputRefCount = 0;
 	target.external = false;
 
 	return targetSetId;
@@ -123,7 +121,8 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 	target.persistentHandle = 0;
 	target.rts = targetSet;
 	target.sizeReferenceTargetSetId = 0;
-	target.referenceCount = 0;
+	target.inputRefCount = 0;
+	target.outputRefCount = 0;
 	target.external = true;
 
 	return targetSetId;
@@ -155,76 +154,72 @@ void RenderGraph::addPass(const RenderPass* pass)
 
 bool RenderGraph::validate()
 {
-	visitedSet_t added;
-
-	// Collect order of passes, depth-first.
-	m_order.resize(0);	
-
-	// External outputs indicate some sort of caching scheme, such
-	// as offscreen caching etc, so we need to ensure they are executed
-	// first, regardless of dependencies.
-	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
+	// Find root passes, which are either of:
+	// 1) Writing to primary target.
+	// 2) Writing to external targets.
+	// 3) Have no output target.
+	StaticVector< uint32_t, 32 > roots;
+	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
 	{
-		if (m_passes[i]->haveOutput())
+		const auto pass = m_passes[i];
+		const auto& output = pass->getOutput();
+		if (output.targetSetId != ~0)
 		{
-			const auto& output = m_passes[i]->getOutput();
-			if (output.targetSetId != 0)
-			{
+			if (output.targetSetId == 0)
+				roots.push_back(i);
+			else
+			{				
 				auto it = m_targets.find(output.targetSetId);
 				if (it->second.external)
-				{
-					traverse(m_passes, i, added, [&](int32_t index) {
-						m_order.push_back(index);
-					});
-				}
+					roots.push_back(i);
 			}
 		}
+		else
+			roots.push_back(i);
 	}
 
-	// Passes which doesn't have an output need to be included as roots.
-	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
+	// Determine maximum depths of each pass.
+	StaticVector< int32_t, 512 > depths;
+	depths.resize(m_passes.size(), -1);
+	for (auto root : roots)
 	{
-		if (!m_passes[i]->haveOutput())
+		traverse(m_passes, 0, root, [&](int32_t depth, int32_t index) {
+			T_ASSERT(depth < sizeof_array(m_order));
+			depths[index] = std::max(depths[index], depth);
+		});
+	}
+
+	// Gather passes in order for each depth.
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+	{
+		m_order[i].resize(0);
+		for (uint32_t j = 0; j < (uint32_t)m_passes.size(); ++j)
 		{
-			traverse(m_passes, i, added, [&](int32_t index) {
-				m_order.push_back(index);
-			});
+			if (depths[j] == i)
+				m_order[i].push_back(j);
 		}
 	}
 
-	// "Render to primary" passes is included as roots.
-	for (int32_t i = 0; i < (int32_t)m_passes.size(); ++i)
+	// Count input and output reference counts of all targets.
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 	{
-		if (m_passes[i]->haveOutput())
+		const auto& order = m_order[i];
+		for (const auto index : order)
 		{
-			const auto& output = m_passes[i]->getOutput();
-			if (output.targetSetId == 0)
+			const auto pass = m_passes[index];
+			const auto& output = pass->getOutput();
+			if (output.targetSetId != ~0)
 			{
-				traverse(m_passes, i, added, [&](int32_t index) {
-					m_order.push_back(index);
-				});
+				auto it = m_targets.find(output.targetSetId);
+				it->second.outputRefCount++;
 			}
+			for (const auto& input : pass->getInputs())
+			{
+				auto it = m_targets.find(input.targetSetId);
+				it->second.inputRefCount++;
+			}	
 		}
 	}
-
-	// Calculate target read/consume reference counts.
-	for (auto index : m_order)
-	{
-		const auto pass = m_passes[index];
-		for (const auto& input : pass->getInputs())
-		{
-			if (input.targetSetId == 0)
-				continue;
-
-			auto it = m_targets.find(input.targetSetId);
-			if (it == m_targets.end())
-				return false;
-
-			auto& target = it->second;
-			target.referenceCount++;
-		}
-	}
-
 	return true;
 }
 
@@ -237,10 +232,17 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	for (auto& it : m_targets)
 	{
 		auto& target = it.second;
-		if (target.rts == nullptr && target.persistentHandle != 0)
+		if (
+			target.rts == nullptr &&
+			target.persistentHandle != 0 &&
+			(target.inputRefCount != 0 || target.outputRefCount != 0)
+		)
 		{
 			if (!acquire(width, height, target))
+			{
+				cleanup();
 				return false;
+			}
 		}
 	}
 
@@ -271,107 +273,125 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	// we track current output target and automatically merge render passes.
 	//
 	handle_t currentOutputTargetSetId = ~0U;
-	for (size_t i = 0; i < m_order.size(); ++i)
+	for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 	{
-		uint32_t index = m_order[i];
-		const auto pass = m_passes[index];
-		const auto& inputs = pass->getInputs();
-		const auto& output = pass->getOutput();
-
-		// Begin render pass.
-		if (pass->haveOutput())
+		const auto& order = m_order[i];
+		for (const auto index : order)
 		{
-			if (output.targetSetId != 0)
+			const auto pass = m_passes[index];
+			const auto& inputs = pass->getInputs();
+			const auto& output = pass->getOutput();
+
+			// Begin render pass.
+			if (pass->haveOutput())
 			{
-				if (currentOutputTargetSetId != ~0U)
+				if (output.targetSetId != 0)
 				{
-					auto te = renderContext->alloc< EndPassRenderBlock >();
-					renderContext->enqueue(te);
+					if (currentOutputTargetSetId != output.targetSetId)
+					{
+						if (currentOutputTargetSetId != ~0U)
+						{
+							auto te = renderContext->alloc< EndPassRenderBlock >();
+							renderContext->enqueue(te);
+						}
+
+						auto it = m_targets.find(output.targetSetId);
+						T_FATAL_ASSERT(it != m_targets.end());
+
+						auto& target = it->second;
+						if (target.rts == nullptr)
+						{
+							T_ASSERT(!target.external);
+							if (!acquire(width, height, target))
+							{
+								cleanup();
+								return false;
+							}
+						}	
+
+						auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+						tb->renderTargetSet = target.rts;
+						tb->clear = output.clear;
+						tb->load = output.load;
+						tb->store = output.store;
+						renderContext->enqueue(tb);
+
+						currentOutputTargetSetId = output.targetSetId;
+					}
+				}
+				else
+				{
+					if (currentOutputTargetSetId != 0)
+					{
+						if (currentOutputTargetSetId != ~0U)
+						{
+							auto te = renderContext->alloc< EndPassRenderBlock >();
+							renderContext->enqueue(te);
+						}
+
+						auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+						tb->clear = output.clear;
+						tb->load = output.load;
+						tb->store = output.store;
+
+						renderContext->enqueue(tb);
+
+						currentOutputTargetSetId = 0;
+					}	
+				}
+			}
+			else if (currentOutputTargetSetId != ~0U)
+			{
+				auto te = renderContext->alloc< EndPassRenderBlock >();
+				renderContext->enqueue(te);
+				currentOutputTargetSetId = ~0U;
+			}
+
+#if !defined(__ANDROID__) && !defined(__IOS__)
+			if (m_profiler)
+			{
+				auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
+				pb->queryHandle = &passQueryHandles[index];
+				renderContext->enqueue(pb);
+			}
+#endif
+
+			// Build this pass.
+			for (const auto& build : pass->getBuilds())
+			{
+				build(*this, renderContext);
+				T_FATAL_ASSERT(!renderContext->havePendingDraws());
+			}
+
+#if !defined(__ANDROID__) && !defined(__IOS__)
+			if (m_profiler)
+			{
+				auto pe = renderContext->alloc< ProfileEndRenderBlock >();
+				pe->queryHandle = &passQueryHandles[index];
+				renderContext->enqueue(pe);
+			}
+#endif
+
+			// Decrement reference counts on input targets; release if last reference.
+			for (const auto& input : inputs)
+			{
+				if (input.targetSetId == 0)
+					continue;
+
+				auto it = m_targets.find(input.targetSetId);
+				if (it == m_targets.end())
+				{
+					cleanup();
+					return false;
 				}
 
-				auto it = m_targets.find(output.targetSetId);
-				T_FATAL_ASSERT(it != m_targets.end());
-
 				auto& target = it->second;
-				if (target.rts == nullptr)
+				if (--target.inputRefCount <= 0)
 				{
-					T_ASSERT(!target.external);
-					if (!acquire(width, height, target))
-						return false;
-				}	
-
-				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-				tb->renderTargetSet = target.rts;
-				tb->clear = output.clear;
-				tb->load = output.load;
-				tb->store = output.store;
-				renderContext->enqueue(tb);
-
-				currentOutputTargetSetId = output.targetSetId;
-			}
-			else
-			{
-				if (currentOutputTargetSetId != 0)
-				{
-					if (currentOutputTargetSetId != ~0U)
-					{
-						auto te = renderContext->alloc< EndPassRenderBlock >();
-						renderContext->enqueue(te);
-					}
-
-					auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-					tb->clear = output.clear;
-					tb->load = output.load;
-					tb->store = output.store;
-
-					renderContext->enqueue(tb);
-
-					currentOutputTargetSetId = 0;
-				}	
-			}
-		}
-
-#if !defined(__ANDROID__) && !defined(__IOS__)
-		if (m_profiler)
-		{
-			auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
-			pb->queryHandle = &passQueryHandles[index];
-			renderContext->enqueue(pb);
-		}
-#endif
-
-		// Build this pass.
-		for (const auto& build : pass->getBuilds())
-		{
-			build(*this, renderContext);
-			T_FATAL_ASSERT(!renderContext->havePendingDraws());
-		}
-
-#if !defined(__ANDROID__) && !defined(__IOS__)
-		if (m_profiler)
-		{
-			auto pe = renderContext->alloc< ProfileEndRenderBlock >();
-			pe->queryHandle = &passQueryHandles[index];
-			renderContext->enqueue(pe);
-		}
-#endif
-
-		// Decrement reference counts on input targets; release if last reference.
-		for (const auto& input : inputs)
-		{
-			if (input.targetSetId == 0)
-				continue;
-
-			auto it = m_targets.find(input.targetSetId);
-			if (it == m_targets.end())
-				return false;
-
-			auto& target = it->second;
-			if (--target.referenceCount <= 0)
-			{
-				if (!target.external)
-					m_pool->release(target.rts);
-				target.rts = nullptr;
+					if (!target.external)
+						m_pool->release(target.rts);
+					target.rts = nullptr;
+				}
 			}
 		}
 	}
@@ -392,17 +412,25 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		renderContext->enqueue(pe);
 
 		// Report all queries last using reference query to calculate offset.
-		for (int32_t i = 0; i < (int32_t)m_order.size(); ++i)
+		int32_t ordinal = 0;
+		for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 		{
-			uint32_t index = m_order[i];
-			const auto pass = m_passes[index];
-			auto pr = renderContext->alloc< ProfileReportRenderBlock >();
-			pr->name = pass->getName();
-			pr->queryHandle = &passQueryHandles[index];
-			pr->referenceQueryHandle = referenceQueryHandle;
-			pr->offset = referenceOffset;
-			pr->sink = [=](const std::wstring& name, double start, double duration) { m_profiler(i, name, start, duration); };
-			renderContext->enqueue(pr);
+			const auto& order = m_order[i];
+			if (order.empty())
+				continue;
+			for (int32_t j = 0; j < (int32_t)order.size(); ++j)
+			{
+				uint32_t index = order[j];
+				const auto pass = m_passes[index];
+				auto pr = renderContext->alloc< ProfileReportRenderBlock >();
+				pr->name = pass->getName();
+				pr->queryHandle = &passQueryHandles[index];
+				pr->referenceQueryHandle = referenceQueryHandle;
+				pr->offset = referenceOffset;
+				pr->sink = [=](const std::wstring& name, double start, double duration) { m_profiler(ordinal, i, name, start, duration); };
+				renderContext->enqueue(pr);
+				++ordinal;
+			}
 		}
 	}
 #endif
@@ -422,12 +450,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	// Cleanup pool data structure.
 	m_pool->cleanup();
 
-	// Remove all data; keep memory allocated for arrays
+	// Remove all data; keeps memory allocated for arrays
 	// since it's very likely this will be identically
 	// re-populated next frame.
-	m_targets.reset();
-	m_passes.resize(0);
-	m_order.resize(0);
+	cleanup();
 	return true;
 }
 
@@ -464,6 +490,14 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 		return false;
 
 	return true;
+}
+
+void RenderGraph::cleanup()
+{
+	m_passes.resize(0);
+	m_targets.reset();
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+		m_order[i].resize(0);
 }
 
 	}

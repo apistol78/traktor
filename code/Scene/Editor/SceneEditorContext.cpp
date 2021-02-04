@@ -829,9 +829,9 @@ void SceneEditorContext::raiseRedraw()
 	raiseEvent(&redrawEvent);
 }
 
-void SceneEditorContext::raiseMeasurement(int32_t pass, const std::wstring& name, double start, double duration)
+void SceneEditorContext::raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration)
 {
-	MeasurementEvent measurementEvent(this, pass, name, start, duration);
+	MeasurementEvent measurementEvent(this, pass, level, name, start, duration);
 	raiseEvent(&measurementEvent);
 }
 

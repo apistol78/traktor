@@ -305,7 +305,7 @@ public:
 
 	void raiseRedraw();
 
-	void raiseMeasurement(int32_t pass, const std::wstring& name, double start, double duration);
+	void raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
 
 	//@}
 

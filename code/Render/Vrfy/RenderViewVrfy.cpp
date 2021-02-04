@@ -352,6 +352,7 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 {
 	T_CAPTURE_ASSERT(destinationTexture, L"Invalid destination texture.");
 	T_CAPTURE_ASSERT(sourceTexture, L"Invalid destination texture.");
+	T_CAPTURE_ASSERT(!m_insidePass, L"Cannot copy while being in an active render pass.");
 
 	ITexture* destinationTextureUnwrapped = nullptr;
 	ITexture* sourceTextureUnwrapped = nullptr;

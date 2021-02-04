@@ -50,7 +50,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
 ScenePreviewControl::ScenePreviewControl()
-:	m_splitCount(StQuadruple)
+:	m_splitCount(StSingle)
 ,	m_lastDeltaTime(0.0f)
 ,	m_lastTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
@@ -135,7 +135,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_modifierScale = new ScaleModifier(m_context);
 	m_context->setModifier(m_modifierTranslate);
 
-	m_splitCount = settings->getProperty< int32_t >(L"SceneEditor.SplitCount", 4);
+	m_splitCount = settings->getProperty< int32_t >(L"SceneEditor.SplitCount", StSingle);
 
 	if (!updateRenderControls())
 		return false;

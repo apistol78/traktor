@@ -189,7 +189,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolWorldRenderer->add(L"Forward");
 	m_toolWorldRenderer->add(L"Deferred");
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererForward");
 	for (int32_t i = 0; i < 3; ++i)
 	{
 		if (worldRendererTypeName == c_worldRendererTypes[i])

@@ -43,7 +43,7 @@ class T_DLLCLASS RenderGraph : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef std::function< void(int32_t, const std::wstring&, double, double) > fn_profiler_t;
+	typedef std::function< void(int32_t, int32_t, const std::wstring&, double, double) > fn_profiler_t;
 
 	struct Target
 	{
@@ -53,7 +53,8 @@ public:
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > rts;
 		handle_t sizeReferenceTargetSetId = 0;
-		int32_t referenceCount = 0;
+		int32_t inputRefCount = 0;
+		int32_t outputRefCount = 0;
 		bool external = false;
 	};
 
@@ -159,19 +160,18 @@ public:
 	/*! */
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
 
-	/*! */
-	const StaticVector< uint32_t, 512 >& getOrder() const { return m_order; }
-
 private:
 	Ref< RenderGraphTargetSetPool > m_pool;
 	SmallMap< handle_t, Target > m_targets;
 	RefArray< const RenderPass > m_passes;
-	StaticVector< uint32_t, 512 > m_order;
+	StaticVector< uint32_t, 32 > m_order[16];
 	uint32_t m_multiSample;
 	handle_t m_nextTargetSetId;
 	fn_profiler_t m_profiler;
 
 	bool acquire(int32_t width, int32_t height, Target& outTarget);
+
+	void cleanup();
 };
 
 	}

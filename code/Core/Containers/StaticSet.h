@@ -112,9 +112,10 @@ public:
 		return true;
 	}
 
-	bool insert(const const_iterator& from, const const_iterator& to)
+	template < typename IteratorType >
+	bool insert(const IteratorType& from, const IteratorType& to)
 	{
-		for (const_iterator i = from; i != to; ++i)
+		for (IteratorType i = from; i != to; ++i)
 		{
 			if (!insert(*i))
 				return false;
