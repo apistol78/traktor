@@ -207,7 +207,7 @@ bool RenderGraph::validate()
 		}
 	}
 
-	// Calculate target reference counts.
+	// Calculate target read/consume reference counts.
 	for (auto index : m_order)
 	{
 		const auto pass = m_passes[index];
@@ -283,34 +283,31 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		{
 			if (output.targetSetId != 0)
 			{
-				if (output.targetSetId != currentOutputTargetSetId)
+				if (currentOutputTargetSetId != ~0U)
 				{
-					if (currentOutputTargetSetId != ~0U)
-					{
-						auto te = renderContext->alloc< EndPassRenderBlock >();
-						renderContext->enqueue(te);
-					}
-
-					auto it = m_targets.find(output.targetSetId);
-					T_FATAL_ASSERT(it != m_targets.end());
-
-					auto& target = it->second;
-					if (target.rts == nullptr)
-					{
-						T_ASSERT(!target.external);
-						if (!acquire(width, height, target))
-							return false;
-					}	
-
-					auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-					tb->renderTargetSet = target.rts;
-					tb->clear = output.clear;
-					tb->load = output.load;
-					tb->store = output.store;
-					renderContext->enqueue(tb);
-
-					currentOutputTargetSetId = output.targetSetId;
+					auto te = renderContext->alloc< EndPassRenderBlock >();
+					renderContext->enqueue(te);
 				}
+
+				auto it = m_targets.find(output.targetSetId);
+				T_FATAL_ASSERT(it != m_targets.end());
+
+				auto& target = it->second;
+				if (target.rts == nullptr)
+				{
+					T_ASSERT(!target.external);
+					if (!acquire(width, height, target))
+						return false;
+				}	
+
+				auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+				tb->renderTargetSet = target.rts;
+				tb->clear = output.clear;
+				tb->load = output.load;
+				tb->store = output.store;
+				renderContext->enqueue(tb);
+
+				currentOutputTargetSetId = output.targetSetId;
 			}
 			else
 			{
