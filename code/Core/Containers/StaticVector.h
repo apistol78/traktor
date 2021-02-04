@@ -32,7 +32,7 @@ public:
 		typedef const value_type& const_reference;
 
 		const_iterator()
-		:	m_ptr(0)
+		:	m_ptr(nullptr)
 		{
 		}
 
@@ -161,6 +161,10 @@ public:
 		typedef int difference_type;
 		typedef value_type* pointer;
 		typedef value_type& reference;
+
+		iterator() : const_iterator()
+		{
+		}
 
 		reference operator * () const
 		{
