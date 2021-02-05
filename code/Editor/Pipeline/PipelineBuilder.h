@@ -111,20 +111,16 @@ private:
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
 	bool m_verbose;
-
+	bool m_rebuild;
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
 	Semaphore m_workSetLock;
-
 	Ref< PipelineProfiler > m_profiler;
-
 	std::list< WorkEntry > m_workSet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
-
 	ThreadLocal m_buildInstances;
-
 	int32_t m_progress;
 	int32_t m_progressEnd;
 	int32_t m_succeeded;
