@@ -77,9 +77,9 @@ void calculateGlobalHash(
 	outSourceDataHash += dependency->sourceDataHash;
 	outFilesHash += dependency->filesHash;
 
-	for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	for (auto child : dependency->children)
 	{
-		const PipelineDependency* childDependency = dependencySet->get(*i);
+		const PipelineDependency* childDependency = dependencySet->get(child);
 		T_ASSERT(childDependency);
 
 		if (childDependency == dependency)
@@ -123,6 +123,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_verbose(verbose)
+,	m_rebuild(false)
 ,	m_profiler(new PipelineProfiler())
 ,	m_progress(0)
 ,	m_progressEnd(0)
@@ -267,6 +268,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	if (m_verbose && !m_workSet.empty())
 		log::info << L"Dispatching " << (int32_t)m_workSet.size() << L" build(s)..." << Endl;
 
+	m_rebuild = rebuild;
 	m_progress = 0;
 	m_progressEnd = (int32_t)m_workSet.size();
 	m_succeeded = dependencyCount - m_progressEnd;
@@ -458,10 +460,22 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		currentDependencyHash.filesHash
 	);
 
+	// Check database if this build already exist in output.
+	if (!m_rebuild)
+	{
+		PipelineDependencyHash previousDependencyHash;
+		if (m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
+		{
+			if (currentDependencyHash == previousDependencyHash)
+				return true;
+		}
+	}
+
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
 	if (m_verbose)
-		log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
+		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(sourceAsset) << L")..." << Endl;
+
 	log::info << IncreaseIndent;
 
 	// Build output instances; keep an array of written instances as we
@@ -542,6 +556,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			log::info << DecreaseIndent;
 		}
 #endif
+
+		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 	}
 
 	log::info << DecreaseIndent;

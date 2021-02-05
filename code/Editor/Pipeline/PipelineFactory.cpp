@@ -30,7 +30,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 		uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 
-		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully; " << str(L"0x%08x", pipelineHash) << L"." << Endl;
+		log::debug << L"Pipeline \"" << type_name(pipeline) << L" created successfully; " << str(L"0x%08x", pipelineHash) << L"." << Endl;
 
 		for (auto assetType : pipeline->getAssetTypes())
 		{
