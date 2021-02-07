@@ -67,6 +67,13 @@ public:
 	 */
 	bool wait(int32_t timeout = -1);
 
+	/*! Wait until current job is finished.
+	 *
+	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
+	 * \return True if jobs have finished, false if timeout.
+	 */
+	bool waitCurrent(int32_t timeout = -1);
+
 	/*! Stop all worker threads. */
 	void stop();
 

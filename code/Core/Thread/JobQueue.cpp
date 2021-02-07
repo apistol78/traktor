@@ -101,6 +101,11 @@ bool JobQueue::wait(int32_t timeout)
 	return true;
 }
 
+bool JobQueue::waitCurrent(int32_t timeout)
+{
+	return m_pending > 0 ? m_jobFinishedEvent.wait(timeout) : true;
+}
+
 void JobQueue::stop()
 {
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)

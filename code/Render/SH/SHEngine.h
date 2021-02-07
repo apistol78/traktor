@@ -37,11 +37,11 @@ public:
 		SHCoeffs coefficients;
 	};
 
-	SHEngine(uint32_t bandCount);
+	explicit SHEngine(uint32_t bandCount);
 
 	void generateSamplePoints(uint32_t count);
 
-	void generateCoefficients(SHFunction* function, SHCoeffs& outResult);
+	void generateCoefficients(SHFunction* function, bool parallell, SHCoeffs& outResult);
 
 	// SHMatrix generateTransferMatrix(SHFunction* function) const;
 

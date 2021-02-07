@@ -135,7 +135,7 @@ bool IrradianceGridPipeline::buildOutput(
 	
 	render::SHEngine shEngine(3);
 	shEngine.generateSamplePoints(10000);
-	shEngine.generateCoefficients(&shFunction, *shCoeffs);
+	shEngine.generateCoefficients(&shFunction, true, *shCoeffs);
 
 	Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(

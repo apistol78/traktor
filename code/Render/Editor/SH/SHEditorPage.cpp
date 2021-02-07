@@ -99,7 +99,7 @@ bool SHEditorPage::create(ui::Container* parent)
 	m_engine->generateSamplePoints(20000);
 
 	m_lightFunction = new DirectionalLight(Vector4(0.0f, 1.0f, 0.0f));
-	m_engine->generateCoefficients(m_lightFunction, m_lightCoefficients);
+	m_engine->generateCoefficients(m_lightFunction, true, m_lightCoefficients);
 
 	//m_phaseFunction = new RayLeighPhaseFunction();
 	//m_engine->generateCoefficients(m_phaseFunction, m_phaseCoefficients);
@@ -131,7 +131,7 @@ bool SHEditorPage::handleCommand(const ui::Command& command)
 	if (command == L"SHEditor.Editor.Randomize")
 	{
 		m_lightFunction = new DirectionalLight(s_random.nextUnit());
-		m_engine->generateCoefficients(m_lightFunction, m_lightCoefficients);
+		m_engine->generateCoefficients(m_lightFunction, true, m_lightCoefficients);
 		m_renderControls[0]->update();
 		m_renderControls[1]->update();
 		return true;
