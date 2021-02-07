@@ -67,7 +67,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 	}
 }
 
-void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
+void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoeffs& outResult)
 {
 	const double weight = 4.0 * PI;
 
@@ -79,12 +79,22 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 	intermediate[2].resize(m_bandCount);
 	intermediate[3].resize(m_bandCount);
 
-	RefArray< Functor > jobs(4);
-	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &intermediate[0]);
-	jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &intermediate[1]);
-	jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &intermediate[2]);
-	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
-	JobManager::getInstance().fork(jobs);
+	if (parallell)
+	{
+		RefArray< Functor > jobs(4);
+		jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &intermediate[0]);
+		jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &intermediate[1]);
+		jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &intermediate[2]);
+		jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
+		JobManager::getInstance().fork(jobs);
+	}
+	else
+	{
+		generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]);
+		generateCoefficientsJob(function, 1 * sc, 2 * sc, &intermediate[1]);
+		generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]);
+		generateCoefficientsJob(function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
+	}
 
 	outResult.resize(m_bandCount);
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)

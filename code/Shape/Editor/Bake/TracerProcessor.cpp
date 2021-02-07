@@ -3,6 +3,7 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Format.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -484,11 +485,17 @@ bool TracerProcessor::process(const TracerTask* task)
 			boundingBox.expand(gridDensity);
 		}
 
+		// Shrink a tiny bit so we can easily align volume to walls etc in editor.
+		boundingBox.expand(0.025_simd);
+
 		Vector4 worldSize = boundingBox.getExtent() * Scalar(2.0f);
 
 		int32_t gridX = std::max((int32_t)(worldSize.x() * gridDensity + 0.5f), 2);
 		int32_t gridY = std::max((int32_t)(worldSize.y() * gridDensity + 0.5f), 2);
 		int32_t gridZ = std::max((int32_t)(worldSize.z() * gridDensity + 0.5f), 2);
+
+		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
+		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;
 
 		Writer writer(stream);
 
@@ -507,38 +514,54 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		m_status.description = str(L"Irradiance grid (%d, %d, %d)", gridX, gridY, gridZ);
 
-		uint32_t progress = 0;
-		for (int32_t x = 0; !m_cancelled && x < gridX; ++x)
+		RefArray< Job > jobs;
+		RefArray< render::SHCoeffs > shs(gridX * gridY * gridZ);
+
+		for (int32_t x = 0; x < gridX; ++x)
 		{
 			float fx = x / (float)(gridX - 1.0f);
-			for (int32_t y = 0; !m_cancelled && y < gridY; ++y)
+			for (int32_t y = 0; y < gridY; ++y)
 			{
 				float fy = y / (float)(gridY - 1.0f);
-				for (int32_t z = 0; !m_cancelled && z < gridZ; ++z)
+				for (int32_t z = 0; z < gridZ; ++z)
 				{
 					float fz = z / (float)(gridZ - 1.0f);
 
-					m_status.current = progress++;
-					m_status.total = gridX * gridY * gridZ;
-
 					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
+					const uint32_t index = x * gridY * gridZ + y * gridZ + z;
 
-					Ref< render::SHCoeffs > sh = rayTracer->traceProbe(position.xyz1());
-					if (!sh)
-					{
-						log::error << L"Trace failed; unable to trace irradiance probe." << Endl;
-						return false;
-					}
-					T_FATAL_ASSERT(sh->get().size() == 9);
-
-					for (int32_t i = 0; i < 9; ++i)
-					{
-						auto c = (*sh)[i];
-						writer << c.x();
-						writer << c.y();
-						writer << c.z();
-					}
+					Ref< Job > job = m_queue->add(makeFunctor([&, position, index]() {
+						shs[index] = rayTracer->traceProbe(position.xyz1());
+					}));
+					jobs.push_back(job);
 				}
+			}
+		}
+
+		m_status.current = 0;
+		m_status.total = gridX * gridY * gridZ;
+
+		while (!jobs.empty())
+		{
+			jobs.back()->wait();
+			jobs.pop_back();
+			m_status.current++;
+		}
+
+		for (auto sh : shs)
+		{
+			if (!sh)
+			{
+				log::error << L"Trace failed; unable to trace irradiance probe." << Endl;
+				return false;
+			}
+			T_FATAL_ASSERT(sh->get().size() == 9);
+			for (int32_t i = 0; i < 9; ++i)
+			{
+				auto c = (*sh)[i];
+				writer << c.x();
+				writer << c.y();
+				writer << c.z();
 			}
 		}
 

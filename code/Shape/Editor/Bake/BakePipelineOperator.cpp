@@ -70,6 +70,7 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
+#include "World/Entity/VolumeComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
 
 namespace traktor
@@ -556,6 +557,7 @@ bool BakePipelineOperator::build(
 
 	RefArray< world::LayerEntityData > layers;
 	SmallMap< Path, Ref< drawing::Image > > images;
+	Aabb3 irradianceBoundingBox;
 
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	for (const auto layer : inoutSceneAsset->getLayers())
@@ -600,6 +602,13 @@ bool BakePipelineOperator::build(
 			// Add sky source.
 			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
 				addSky(pipelineBuilder, m_assetPath, skyComponentData, configuration->getSkyAttenuation(), tracerTask);
+
+			// Get volume for irradiance grid.
+			if (inoutEntityData->getName() == L"Irradiance")
+			{
+				if (auto volumeComponentData = inoutEntityData->getComponent< world::VolumeComponentData >())
+					irradianceBoundingBox = volumeComponentData->getVolumes().front().transform(inoutEntityData->getTransform());
+			}
 
 			// Calculate synthesized ids.
 			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
@@ -813,7 +822,7 @@ bool BakePipelineOperator::build(
 		tracerTask->addTracerIrradiance(new TracerIrradiance(
 			L"Irradiance",
 			irradianceGridId,
-			Aabb3()
+			irradianceBoundingBox
 		));
 
 		// Modify scene with our generated irradiance grid resource.

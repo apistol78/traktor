@@ -216,14 +216,14 @@ void RayTracerEmbree::commit()
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
 {
-	RandomGeometry random;
+	static thread_local RandomGeometry random;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		return tracePath0(position, unit, random);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
-	m_shEngine->generateCoefficients(&shFunction, *shCoeffs);
+	m_shEngine->generateCoefficients(&shFunction, false, *shCoeffs);
 	return shCoeffs;
 }
 
