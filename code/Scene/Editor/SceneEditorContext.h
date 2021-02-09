@@ -81,6 +81,7 @@ class IModifier;
 class ISceneControllerEditor;
 class ISceneEditorPlugin;
 class ISceneEditorProfile;
+class ISceneRenderControl;
 class Scene;
 class SceneAsset;
 
@@ -303,7 +304,7 @@ public:
 
 	void raiseModifierChanged();
 
-	void raiseRedraw();
+	void raiseRedraw(ISceneRenderControl* renderControl);
 
 	void raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
 

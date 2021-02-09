@@ -15,12 +15,19 @@ namespace traktor
 	namespace scene
 	{
 
+class ISceneRenderControl;
+
 class T_DLLCLASS RedrawEvent : public ui::Event
 {
 	T_RTTI_CLASS;
 
 public:
-	RedrawEvent(ui::EventSubject* sender);
+	explicit RedrawEvent(ui::EventSubject* sender, ISceneRenderControl* renderControl);
+
+	ISceneRenderControl* getRenderControl() const { return m_renderControl; }
+
+private:
+	ISceneRenderControl* m_renderControl;
 };
 
 	}

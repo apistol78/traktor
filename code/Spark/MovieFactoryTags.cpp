@@ -779,12 +779,13 @@ bool TagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 				}
 				else
 				{
-					image->setPixelUnsafe(x, y, Color4f(
+					const Color4f clr(
 						src[x * 4 + 1] / 255.0f,
 						src[x * 4 + 2] / 255.0f,
 						src[x * 4 + 3] / 255.0f,
 						(m_bitsType > 1) ? src[x * 4 + 0] / 255.0f : 1.0f
-					));
+					);
+					image->setPixelUnsafe(x, y, clr);
 				}
 			}
 		}

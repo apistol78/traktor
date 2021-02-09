@@ -508,8 +508,13 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		}
 
 		// Issue updates on render controls.
-		for (auto renderControl : m_renderControls)
-			renderControl->update();
+		if (event->getRenderControl() != nullptr)
+			event->getRenderControl()->update();
+		else
+		{
+			for (auto renderControl : m_renderControls)
+				renderControl->update();
+		}
 
 		// Update modifiers as selected entity might have moved.
 		if (m_lastTime != scaledTime)
@@ -531,7 +536,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 {
-	m_context->raiseRedraw();
+	m_context->raiseRedraw(nullptr);
 }
 
 	}

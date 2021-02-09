@@ -7,8 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RedrawEvent", RedrawEvent, ui::Event)
 
-RedrawEvent::RedrawEvent(ui::EventSubject* sender)
+RedrawEvent::RedrawEvent(ui::EventSubject* sender, ISceneRenderControl* renderControl)
 :	ui::Event(sender)
+,	m_renderControl(renderControl)
 {
 }
 
