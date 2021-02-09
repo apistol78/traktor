@@ -49,20 +49,18 @@ public:
 
 	typedef std::list< ExternalFile > external_files_t;
 
-	const TypeInfo* pipelineType;
+	const TypeInfo* pipelineType = nullptr;
 	Guid sourceInstanceGuid;
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
 	external_files_t files;						/*!< External file dependencies. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
-	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
-	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
-	uint32_t sourceDataHash;					/*!< Hash of source instance data. */
-	uint32_t filesHash;							/*!< Hash of external files. */
-	uint32_t flags;								/*!< Dependency flags. \sa PipelineDependencyFlags */
+	uint32_t pipelineHash = 0;					/*!< Hash of pipeline settings. */
+	uint32_t sourceAssetHash = 0;				/*!< Hash of source asset. */
+	uint32_t sourceDataHash = 0;				/*!< Hash of source instance data. */
+	uint32_t filesHash = 0;						/*!< Hash of external files. */
+	uint32_t flags = 0;							/*!< Dependency flags. \sa PipelineDependencyFlags */
 	SmallSet< uint32_t > children;				/*!< Child dependencies. */
-
-	PipelineDependency();
 
 	void dump(OutputStream& os) const;
 

@@ -17,7 +17,6 @@ class IEditor;
 class Button;
 class CheckBox;
 class ProgressBar;
-class Static;
 
 	}
 
@@ -38,7 +37,6 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::CheckBox > m_checkEnable;
-	Ref< ui::Static > m_staticDescription;
 	Ref< ui::ProgressBar > m_progressBar;
 	Ref< ui::Button > m_buttonAbort;
 };

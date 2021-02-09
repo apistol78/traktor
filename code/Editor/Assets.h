@@ -33,9 +33,7 @@ private:
 	struct Dependency
 	{
 		Guid id;
-		bool editorDeployOnly;	//!< Only built when deployed from editor.
-
-		Dependency();
+		bool editorDeployOnly = false;	//!< Only built when deployed from editor.
 
 		void serialize(ISerializer& s);
 	};

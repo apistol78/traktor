@@ -27,9 +27,9 @@ class T_DLLCLASS Asset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Asset();
+	Asset() = default;
 
-	Asset(const Path& fileName);
+	explicit Asset(const Path& fileName);
 
 	void setFileName(const Path& fileName);
 

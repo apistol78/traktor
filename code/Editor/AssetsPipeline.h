@@ -23,8 +23,6 @@ class T_DLLCLASS AssetsPipeline : public IPipeline
 	T_RTTI_CLASS;
 
 public:
-	AssetsPipeline();
-
 	virtual bool create(const IPipelineSettings* settings) override final;
 
 	virtual void destroy() override final;
@@ -61,7 +59,7 @@ public:
 	) const override final;
 
 private:
-	bool m_editorDeploy;
+	bool m_editorDeploy = false;
 };
 
 	}

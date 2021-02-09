@@ -12,25 +12,8 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", 1, Assets, ISerializable)
 
 void Assets::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
-		s >> MemberStlVector< Dependency, MemberComposite< Dependency > >(L"dependencies", m_dependencies);
-	else
-	{
-		std::vector< Guid > dependencies;
-		s >> MemberStlVector< Guid >(L"dependencies", dependencies);
-
-		m_dependencies.resize(dependencies.size());
-		for (size_t i = 0; i < dependencies.size(); ++i)
-		{
-			m_dependencies[i].id = dependencies[i];
-			m_dependencies[i].editorDeployOnly = false;
-		}
-	}
-}
-
-Assets::Dependency::Dependency()
-:	editorDeployOnly(false)
-{
+	T_FATAL_ASSERT(s.getVersion() >= 1);
+	s >> MemberStlVector< Dependency, MemberComposite< Dependency > >(L"dependencies", m_dependencies);
 }
 
 void Assets::Dependency::serialize(ISerializer& s)
