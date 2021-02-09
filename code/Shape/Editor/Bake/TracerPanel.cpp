@@ -45,6 +45,7 @@ bool TracerPanel::create(ui::Widget* parent)
 
 	m_progressBar = new ui::ProgressBar();
 	m_progressBar->create(container, ui::WsDoubleBuffer, 0, 100);
+	m_progressBar->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
 
 	m_buttonAbort = new ui::Button();
 	m_buttonAbort->create(container, i18n::Text(L"SHAPE_EDITOR_TRACER_ABORT"));
@@ -55,9 +56,6 @@ bool TracerPanel::create(ui::Widget* parent)
 	});
 	m_buttonAbort->setEnable(false);
 
-	m_staticDescription = new ui::Static();
-	m_staticDescription->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
-
 	addEventHandler< ui::TimerEvent >([&](ui::TimerEvent* event) {
 		auto processor = BakePipelineOperator::getTracerProcessor();
 		if (processor)
@@ -65,14 +63,14 @@ bool TracerPanel::create(ui::Widget* parent)
 			auto status = processor->getStatus();
 			if (status.active && status.total > 0)
 			{
-				m_staticDescription->setText(status.description);
+				m_progressBar->setText(status.description);
 				m_progressBar->setProgress((status.current * 100) / status.total);
 				m_buttonAbort->setEnable(true);
 				m_buttonAbort->update();
 			}
 			else
 			{
-				m_staticDescription->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
+				m_progressBar->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
 				m_progressBar->setProgress(0);
 				m_buttonAbort->setEnable(false);
 				m_buttonAbort->update();

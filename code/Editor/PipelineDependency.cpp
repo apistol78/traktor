@@ -16,16 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependency", 0, PipelineDependency, ISerializable)
 
-PipelineDependency::PipelineDependency()
-:	pipelineType(0)
-,	pipelineHash(0)
-,	sourceAssetHash(0)
-,	sourceDataHash(0)
-,	filesHash(0)
-,	flags(0)
-{
-}
-
 void PipelineDependency::dump(OutputStream& os) const
 {
 	uint32_t i = 0;

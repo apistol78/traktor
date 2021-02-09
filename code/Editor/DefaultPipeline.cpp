@@ -77,7 +77,7 @@ bool DefaultPipeline::buildOutput(
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
-		log::error << L"Unable to create output instance" << Endl;
+		log::error << L"Unable to create output instance." << Endl;
 		return false;
 	}
 
@@ -85,7 +85,7 @@ bool DefaultPipeline::buildOutput(
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"Unable to commit output instance" << Endl;
+		log::error << L"Unable to commit output instance." << Endl;
 		return false;
 	}
 

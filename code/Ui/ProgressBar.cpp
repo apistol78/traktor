@@ -9,14 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ProgressBar", ProgressBar, Widget)
 
-ProgressBar::ProgressBar()
-:	m_minProgress(0)
-,	m_maxProgress(100)
-,	m_progress(0)
-,	m_loop(0)
-{
-}
-
 bool ProgressBar::create(Widget* parent, int32_t style, int32_t minProgress, int32_t maxProgress)
 {
 	if (!Widget::create(parent, style))
@@ -103,6 +95,14 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		m_loop += std::max< int32_t >(rc.getWidth() / 16, 1);
 		if (m_loop >= (rc.getWidth() * 5) / 4)
 			m_loop = 0;
+	}
+
+	// Draw text centered over progress bar.
+	std::wstring text = getText();
+	if (!text.empty())
+	{
+		canvas.setForeground(ss->getColor(this, L"color"));
+		canvas.drawText(rc, text, AnCenter, AnCenter);
 	}
 
 	event->consume();

@@ -23,8 +23,6 @@ class T_DLLCLASS ProgressBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	ProgressBar();
-
 	bool create(Widget* parent, int32_t style = WsNone, int32_t minProgress = 0, int32_t maxProgress = 100);
 
 	void setRange(int32_t minProgress, int32_t maxProgress);
@@ -40,10 +38,10 @@ public:
 	virtual Size getPreferedSize() const override;
 
 private:
-	int32_t m_minProgress;
-	int32_t m_maxProgress;
-	int32_t m_progress;
-	int32_t m_loop;
+	int32_t m_minProgress = 0;
+	int32_t m_maxProgress = 100;
+	int32_t m_progress = 0;
+	int32_t m_loop = 0;
 
 	void eventPaint(PaintEvent* event);
 };

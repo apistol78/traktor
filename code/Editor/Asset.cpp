@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ISerializable)
 
-Asset::Asset()
-{
-}
-
 Asset::Asset(const Path& fileName)
 :	m_fileName(fileName)
 {

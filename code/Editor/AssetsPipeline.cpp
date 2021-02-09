@@ -16,11 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", 1, AssetsPipeline, IPipeline)
 
-AssetsPipeline::AssetsPipeline()
-:	m_editorDeploy(false)
-{
-}
-
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
 	m_editorDeploy = settings->getProperty< bool >(L"Pipeline.EditorDeploy", false);
