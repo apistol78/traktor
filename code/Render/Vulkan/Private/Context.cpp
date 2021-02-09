@@ -94,7 +94,7 @@ Context::~Context()
 	vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, nullptr);
 	if (size > 0)
 	{
-		AlignedVector< uint8_t > buffer(size);
+		AlignedVector< uint8_t > buffer(size, 0);
 		vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, buffer.ptr());
 
 		StringOutputStream ss;
