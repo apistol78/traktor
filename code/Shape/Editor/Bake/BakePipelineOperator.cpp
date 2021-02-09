@@ -27,6 +27,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/DataAccessCache.h"
@@ -692,6 +693,12 @@ bool BakePipelineOperator::build(
 							if (file)
 							{
 								image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+								if (image && !textureAsset->m_output.m_linearGamma)
+								{
+									// Convert to linear color space.
+									drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+									image->apply(&gammaFilter);							
+								}
 								images[filePath] = image;
 							}
 						}

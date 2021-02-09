@@ -797,7 +797,7 @@ void TheaterControllerEditor::eventSequencerCursorMove(ui::CursorMoveEvent* even
 	m_context->setTime(m_timeOffset + cursorTime);
 	m_context->setPhysicsEnable(false);
 	m_context->setPlaying(false);
-	m_context->raiseRedraw();
+	m_context->raiseRedraw(nullptr);
 }
 
 void TheaterControllerEditor::eventSequencerKeyMove(ui::KeyMoveEvent* event)

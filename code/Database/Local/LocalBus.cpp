@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_maxJournalSize = 8 * 1024 * 1024;
+const uint32_t c_maxJournalSize = 16 * 1024 * 1024;
 
 #pragma pack(1)
 

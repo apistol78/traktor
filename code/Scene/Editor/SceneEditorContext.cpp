@@ -823,9 +823,9 @@ void SceneEditorContext::raiseModifierChanged()
 	raiseEvent(&modifierChangedEvent);
 }
 
-void SceneEditorContext::raiseRedraw()
+void SceneEditorContext::raiseRedraw(ISceneRenderControl* renderControl)
 {
-	RedrawEvent redrawEvent(this);
+	RedrawEvent redrawEvent(this, renderControl);
 	raiseEvent(&redrawEvent);
 }
 

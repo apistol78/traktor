@@ -461,7 +461,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	);
 
 	// Check database if this build already exist in output.
-	if (!m_rebuild)
+	if (!m_rebuild && cacheable)
 	{
 		PipelineDependencyHash previousDependencyHash;
 		if (m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
