@@ -80,7 +80,35 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	return ss;
 }
 
-Color4ub StyleSheet::getColor(const Object* widget, const wchar_t* const element) const
+void StyleSheet::setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color)
+{
+	for (auto& group : m_groups)
+	{
+		if (group.type == typeName && group.element == element)
+		{
+			group.color = color;
+			return;
+		}
+	}
+
+	Group group;
+	group.type = typeName;
+	group.element = element;
+	group.color = color;
+	m_groups.push_back(group);
+}
+
+Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring& element) const
+{
+	for (auto& group : m_groups)
+	{
+		if (group.type == typeName && group.element == element)
+			return group.color;
+	}
+	return Color4ub(255, 255, 255);
+}
+
+Color4ub StyleSheet::getColor(const Object* widget, const std::wstring& element) const
 {
 	for (auto it = m_groups.rbegin(); it != m_groups.rend(); ++it)
 	{
@@ -97,7 +125,7 @@ Color4ub StyleSheet::getColor(const Object* widget, const wchar_t* const element
 	return Color4ub(255, 255, 255);
 }
 
-std::wstring StyleSheet::getValue(const wchar_t* const name) const
+std::wstring StyleSheet::getValue(const std::wstring& name) const
 {
 	for (const auto& value : m_values)
 	{

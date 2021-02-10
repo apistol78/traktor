@@ -23,6 +23,7 @@ namespace traktor
 	{
 
 class IWidget;
+class StyleSheet;
 
 /*! Deferred widget rectangle.
  * \ingroup UI
@@ -143,6 +144,10 @@ public:
 
 	Align getVerticalAlign() const;
 
+	void setStyleSheet(const StyleSheet* styleSheet);
+
+	const StyleSheet* getStyleSheet() const;
+
 	/*! If this widget accepts to be part of layout.
 	 * For instance child dialogs cannot be part of a layout
 	 * as it's not logical, thus should return false.
@@ -181,6 +186,7 @@ protected:
 	Ref< Widget > m_nextSibling;
 	Ref< Widget > m_firstChild;
 	Ref< Widget > m_lastChild;
+	Ref< const StyleSheet > m_styleSheet;
 	Align m_halign;
 	Align m_valign;
 };

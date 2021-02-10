@@ -238,6 +238,12 @@ Size Edit::getPreferedSize() const
 	return Size(dpi96(100), height);
 }
 
+Size Edit::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
 void Edit::eventFocus(FocusEvent* event)
 {
 	m_caretBlink = true;
@@ -506,14 +512,18 @@ void Edit::eventKey(KeyEvent* event)
 
 void Edit::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	FontMetric fm = canvas.getFontMetric();
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
+	const FontMetric fm = canvas.getFontMetric();
 
 	bool hover = isEnable() && m_hover;
 
-	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
+	if (isEnable())
+		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
+	else
+		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
+
 	canvas.fillRect(rcInner);
 
 	if (m_borderColor.a != 0)

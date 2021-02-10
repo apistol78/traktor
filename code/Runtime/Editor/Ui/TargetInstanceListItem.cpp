@@ -216,14 +216,14 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 
 void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	const ui::StyleSheet* ss = getWidget()->getStyleSheet();
 	const Platform* platform = m_instance->getPlatform();
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::dpi96(28);
 
-	canvas.setBackground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-background-color"));
+	canvas.setBackground(ss->getColor(getWidget(), L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
@@ -231,12 +231,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight + c_commandHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setBackground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-connection-background-color"));
+		canvas.setBackground(ss->getColor(getWidget(), L"item-connection-background-color"));
 		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-seperator-color"));
+	canvas.setForeground(ss->getColor(getWidget(), L"item-seperator-color"));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
 	if (m_instance->getState() != m_lastInstanceState)
@@ -278,11 +278,11 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		textRect.left += logoSize + 10;
 		textRect.right -= ui::dpi96(24) * 3 - 8;
 
-		canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"color"));
+		canvas.setForeground(ss->getColor(getWidget(), L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 	}
 
-	ui::Font widgetFont = getWidget< ui::AutoWidget >()->getFont();
+	ui::Font widgetFont = getWidget()->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
@@ -292,7 +292,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.top = rect.top + ui::dpi96(28);
 	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight);
 
-	canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"color"));
+	canvas.setForeground(ss->getColor(getWidget(), L"color"));
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TpsRuntime& runtime = connections[i]->getPerformance< TpsRuntime >();

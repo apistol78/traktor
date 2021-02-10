@@ -115,7 +115,7 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 
 void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getWidget< GridView >()->getStyleSheet();
 
 	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
 

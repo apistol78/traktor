@@ -351,8 +351,7 @@ void QuadSplitter::eventSize(SizeEvent* event)
 void QuadSplitter::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(event->getUpdateRect());

@@ -238,9 +238,9 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 
 void MenuShell::eventPaint(PaintEvent* e)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = e->getCanvas();
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);

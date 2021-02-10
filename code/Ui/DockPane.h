@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class Canvas;
+class Form;
 class IBitmap;
 
 /*! Docking pane.
@@ -35,7 +36,7 @@ public:
 		DrEast
 	};
 
-	DockPane(Widget* owner, DockPane* parent);
+	explicit DockPane(Widget* owner, DockPane* parent);
 
 	void split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
 

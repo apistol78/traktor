@@ -59,7 +59,7 @@ void GridHeader::mouseMove(MouseMoveEvent* event, const Point& position)
 
 void GridHeader::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getWidget< AutoWidget >()->getStyleSheet();
 
 	canvas.setBackground(ss->getColor(getWidget< AutoWidget >(), L"header-background-color"));
 	canvas.fillRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));

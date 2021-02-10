@@ -347,7 +347,7 @@ void DockPane::draw(Canvas& canvas)
 	if (!isVisible())
 		return;
 
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = m_owner->getStyleSheet();
 
 	if (isSplitter() && m_child[0]->isVisible() && m_child[1]->isVisible())
 	{

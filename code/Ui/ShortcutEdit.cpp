@@ -110,10 +110,9 @@ void ShortcutEdit::eventKeyDown(KeyDownEvent* event)
 
 void ShortcutEdit::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	if (!hasFocus())
 		canvas.setBackground(ss->getColor(this, L"background-color"));

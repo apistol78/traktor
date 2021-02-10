@@ -278,7 +278,7 @@ void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 
 void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getWidget< GridView >()->getStyleSheet();
 	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 
 	const RefArray< GridColumn >& columns = getWidget< GridView >()->getColumns();

@@ -899,9 +899,9 @@ void GraphControl::eventMouseWheel(MouseWheelEvent* event)
 
 void GraphControl::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	// Select font from settings.
 	canvas.setFont(m_paintSettings->getFont());

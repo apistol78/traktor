@@ -1,6 +1,7 @@
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"
+#include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/ToolFormWin32.h"
 
 namespace traktor
@@ -57,6 +58,14 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 	return true;
 }
 
+void ToolFormWin32::setIcon(ISystemBitmap* icon)
+{
+	BitmapWin32* bm = static_cast< BitmapWin32* >(icon);
+	HICON hIcon = bm->createIcon();
+	m_hWnd.sendMessage(WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+}
+
 int ToolFormWin32::showModal()
 {
 	// Ensure tool form is visible.
@@ -64,12 +73,6 @@ int ToolFormWin32::showModal()
 
 	// Disable parent window, should be application main window.
 	HWND hParentWnd = GetParent(m_hWnd);
-	//if (hParentWnd)
-	//{
-	//	while (GetParent(hParentWnd))
-	//		hParentWnd = GetParent(hParentWnd);
-	//	EnableWindow(hParentWnd, FALSE);
-	//}
 
 	// Handle events from the dialog.
 	m_result = DrCancel;
@@ -82,11 +85,7 @@ int ToolFormWin32::showModal()
 	}
 
 	if (hParentWnd)
-	{
-		// Enable parent window.
-		//EnableWindow(hParentWnd, TRUE);
 		SetWindowPos(hParentWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-	}
 
 	return m_result;
 }

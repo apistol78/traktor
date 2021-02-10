@@ -57,12 +57,17 @@ Size ProgressBar::getPreferedSize() const
 	return Size(dpi96(256), dpi96(16));
 }
 
+Size ProgressBar::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
 void ProgressBar::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);

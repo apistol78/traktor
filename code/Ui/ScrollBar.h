@@ -47,6 +47,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	virtual Size getMaximumSize() const override;
+
 private:
 	bool m_vertical;
 	int32_t m_range;

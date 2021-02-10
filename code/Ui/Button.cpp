@@ -81,9 +81,9 @@ void Button::eventButtonUp(MouseButtonUpEvent* event)
 
 void Button::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	bool hover = isEnable() && m_hover;
 

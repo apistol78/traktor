@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/Itf/IToolForm.h"
 
@@ -35,6 +36,23 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int h
 	m_widget = toolForm;
 
 	return Container::create(parent, style, refLayout);
+}
+
+void ToolForm::setIcon(IBitmap* icon)
+{
+	T_ASSERT(m_widget);
+
+	if (!icon || !icon->getSystemBitmap())
+		return;
+
+	m_icon = icon;
+
+	static_cast< IToolForm* >(m_widget)->setIcon(icon->getSystemBitmap());
+}
+
+IBitmap* ToolForm::getIcon()
+{
+	return m_icon;
 }
 
 int ToolForm::showModal()

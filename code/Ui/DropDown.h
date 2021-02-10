@@ -82,6 +82,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	virtual Size getMaximumSize() const override;
+
 private:
 	struct Item
 	{

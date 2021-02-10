@@ -724,9 +724,8 @@ void PathControl::setPath(const Path& path)
 void PathControl::eventPaint(ui::PaintEvent* event)
 {
 	ui::Canvas& canvas = event->getCanvas();
-	ui::Rect rc = getInnerRect();
-
-	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	const ui::Rect rc = getInnerRect();
+	const ui::StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);

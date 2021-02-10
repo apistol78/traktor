@@ -77,9 +77,9 @@ void StatusBar::eventSize(SizeEvent* event)
 
 void StatusBar::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, m_alert ? L"background-color-alert" : L"background-color"));
 	canvas.fillRect(rc);

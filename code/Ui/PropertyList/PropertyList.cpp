@@ -624,9 +624,8 @@ void PropertyList::eventSize(SizeEvent* event)
 void PropertyList::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect rcInner = getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;

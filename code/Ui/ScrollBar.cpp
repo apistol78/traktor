@@ -183,9 +183,9 @@ void ScrollBar::eventMouseMove(MouseMoveEvent* event)
 
 void ScrollBar::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
@@ -318,6 +318,15 @@ Size ScrollBar::getPreferedSize() const
 		dpi96(16),
 		dpi96(16)
 	);
+}
+
+Size ScrollBar::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	if (m_vertical)
+		return Size(preferredSize.cx, 65535);
+	else
+		return Size(65535, preferredSize.cy);
 }
 
 	}

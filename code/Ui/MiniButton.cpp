@@ -53,6 +53,11 @@ Size MiniButton::getPreferedSize() const
 		return Size(getFontMetric().getExtent(getText()).cx + ui::dpi96(10), ui::dpi96(16));
 }
 
+Size MiniButton::getMaximumSize() const
+{
+	return getPreferedSize();
+}
+
 void MiniButton::eventButtonDown(MouseButtonDownEvent* event)
 {
 	m_pushed = true;
@@ -80,10 +85,9 @@ void MiniButton::eventButtonUp(MouseButtonUpEvent* event)
 
 void MiniButton::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-
 	Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	if (isEnable())
 	{

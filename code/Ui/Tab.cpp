@@ -377,10 +377,9 @@ void Tab::eventSize(SizeEvent* event)
 void Tab::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect rcPaint = event->getUpdateRect();
-	Rect rcInner = Widget::getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect rcPaint = event->getUpdateRect();
+	const Rect rcInner = Widget::getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	int32_t y0, y1;
 	if (!m_bottom)
@@ -480,12 +479,7 @@ void Tab::eventPaint(PaintEvent* event)
 				}
 				else
 				{
-					canvas.setForeground(Color4ub(250, 250, 250));
-					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
-
-					rcTabText.left -= 1;
-					rcTabText.top -= 1;
-					canvas.setForeground(Color4ub(120, 120, 120));
+					canvas.setForeground(ss->getColor(this, L"tab-color-disabled"));
 					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
 				}
 			}

@@ -201,7 +201,7 @@ Size MenuItem::getSize(const Widget* shell) const
 
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = shell->getStyleSheet();
 
 	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 

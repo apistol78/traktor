@@ -98,9 +98,8 @@ Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHei
 
 void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
-
-	Size size = getSize(toolBar, imageWidth, imageHeight);
+	const StyleSheet* ss = toolBar->getStyleSheet();
+	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
 	if ((m_state & (BstPushed | BstHover)) != 0)
 	{

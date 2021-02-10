@@ -15,6 +15,8 @@ namespace traktor
 	namespace ui
 	{
 
+class IBitmap;
+
 /*! Tool form.
  * \ingroup UI
  */
@@ -32,6 +34,10 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefault, Layout* layout = 0);
 
+	void setIcon(IBitmap* icon);
+
+	IBitmap* getIcon();
+
 	virtual int showModal();
 
 	virtual void endModal(int result);
@@ -41,6 +47,7 @@ public:
 	virtual bool acceptLayout() const override;
 
 private:
+	Ref< IBitmap > m_icon;
 	bool m_modal;
 };
 
