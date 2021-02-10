@@ -56,7 +56,7 @@ bool ListBoxItem::isSelected() const
 
 void ListBoxItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getWidget< ListBox >()->getStyleSheet();
 
 	if (m_selected)
 	{

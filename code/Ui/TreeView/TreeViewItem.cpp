@@ -218,8 +218,8 @@ void TreeViewItem::sort(bool recursive)
 {
 	if (recursive)
 	{
-		for (RefArray< TreeViewItem >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
-			(*i)->sort(true);
+		for (auto child : m_children)
+			child->sort(true);
 	}
 	m_children.sort(ItemSortPredicate());
 }
@@ -233,7 +233,7 @@ TreeViewItem* TreeViewItem::getPreviousSibling(TreeViewItem* child) const
 {
 	T_FATAL_ASSERT (child->m_parent == this);
 
-	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
+	auto i = std::find(m_children.begin(), m_children.end(), child);
 	if (i == m_children.end() || i == m_children.begin())
 		return nullptr;
 
@@ -244,7 +244,7 @@ TreeViewItem* TreeViewItem::getNextSibling(TreeViewItem* child) const
 {
 	T_FATAL_ASSERT (child->m_parent == this);
 
-	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
+	auto i = std::find(m_children.begin(), m_children.end(), child);
 	if (i == m_children.end())
 		return nullptr;
 
@@ -294,11 +294,11 @@ std::wstring TreeViewItem::getPath() const
 	if (m_parent)
 	{
 		int32_t count = 0;
-		for (RefArray< TreeViewItem >::const_iterator i = m_parent->m_children.begin(); i != m_parent->m_children.end(); ++i)
+		for (auto child : m_parent->m_children)
 		{
-			if (*i == this)
+			if (child == this)
 				break;
-			if ((*i)->getText() == m_text)
+			if (child->getText() == m_text)
 				++count;
 		}
 		if (count > 0)
@@ -511,7 +511,7 @@ void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 
 void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = m_view->getStyleSheet();
 
 	if (isSelected())
 	{

@@ -60,10 +60,10 @@ Rect Panel::getInnerRect() const
 
 void Panel::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
+	const Rect rcInner = Widget::getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
-	Rect rcInner = Widget::getInnerRect();
 	canvas.fillRect(rcInner);
 
 	bool focus = containFocus();

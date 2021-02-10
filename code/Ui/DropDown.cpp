@@ -175,6 +175,12 @@ Size DropDown::getPreferedSize() const
 	return Size(w + marginX * 2, h + marginY * 2);
 }
 
+Size DropDown::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
 void DropDown::eventMouseTrack(MouseTrackEvent* event)
 {
 	m_hover = event->entered();
@@ -245,8 +251,8 @@ void DropDown::eventButtonUp(MouseButtonUpEvent* event)
 
 void DropDown::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
+	const StyleSheet* ss = getStyleSheet();
 
 	Rect rcInner = getInnerRect();
 	Point at = rcInner.getTopLeft();

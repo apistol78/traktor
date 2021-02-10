@@ -76,8 +76,8 @@ Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageH
 
 void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
-	Size size = getSize(toolBar, imageWidth, imageHeight);
+	const StyleSheet* ss = toolBar->getStyleSheet();
+	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
 	int32_t sep = dpi96(14);
 

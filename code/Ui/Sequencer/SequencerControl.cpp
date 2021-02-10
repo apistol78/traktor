@@ -494,9 +494,9 @@ void SequencerControl::eventMouseWheel(MouseWheelEvent* event)
 
 void SequencerControl::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	Canvas& canvas = event->getCanvas();
+	const StyleSheet* ss = getStyleSheet();
+	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
 
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems;

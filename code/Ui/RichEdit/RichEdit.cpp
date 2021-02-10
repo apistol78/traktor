@@ -102,7 +102,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 	bgAttrib.backColor = Color4ub(255, 255, 255);
 	m_backgroundAttributes.push_back(bgAttrib);
 
-	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	const ui::StyleSheet* ss = getStyleSheet();
 	m_foundLineAttribute = addBackgroundAttribute(ss->getColor(this, L"background-found-line"));
 
 	setText(text);
@@ -1523,11 +1523,10 @@ void RichEdit::eventMouseWheel(MouseWheelEvent* event)
 
 void RichEdit::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-
 	Rect innerRc = getInnerRect();
 	Rect updateRc = event->getUpdateRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	// Clear entire background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));

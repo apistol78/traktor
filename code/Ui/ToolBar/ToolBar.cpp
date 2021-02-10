@@ -169,6 +169,12 @@ Size ToolBar::getPreferedSize() const
 	return Size(width + dpi96(c_marginWidth * 2), height + dpi96(c_marginHeight * 2 + 1));
 }
 
+Size ToolBar::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
 void ToolBar::clampOffset()
 {
 	if (m_offsetX > 0)
@@ -270,9 +276,8 @@ void ToolBar::eventWheel(MouseWheelEvent* event)
 void ToolBar::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect rc = getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect rc = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));

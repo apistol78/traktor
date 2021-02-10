@@ -412,9 +412,8 @@ void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 void AutoWidget::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect innerRect = getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect innerRect = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.setBackground(ss->getColor(this, L"background-color"));

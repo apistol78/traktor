@@ -31,6 +31,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	virtual Size getMaximumSize() const override;
+
 private:
 	bool m_pushed;
 	Ref< IBitmap > m_image;

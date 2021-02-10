@@ -45,7 +45,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 
 void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
+	const ui::StyleSheet* ss = getWidget()->getStyleSheet();
 	const ui::Rect& rcInner = rect;
 	ui::Point at = rcInner.getTopLeft();
 	ui::Size size = rcInner.getSize();

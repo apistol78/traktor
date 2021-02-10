@@ -73,6 +73,28 @@ int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 	return m_imageCount - imageCount;
 }
 
+bool TreeView::setImage(int32_t imageIndex, IBitmap* image)
+{
+	if (!m_image)
+		return false;
+
+	Size dim = m_image->getSize();
+	int32_t x = imageIndex * dim.cy;
+
+	Ref< ui::Bitmap > newImage = new ui::Bitmap(dim.cx, dim.cy);
+	newImage->copyImage(m_image->getImage());
+	newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(x, 0));
+	m_image = newImage;
+
+	return true;
+}
+
+void TreeView::removeAllImages()
+{
+	m_image = nullptr;
+	m_imageCount = 0;
+}
+
 Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t imageColumns)
 {
 	Ref< TreeViewItem > item = new TreeViewItem(this, parent, text);

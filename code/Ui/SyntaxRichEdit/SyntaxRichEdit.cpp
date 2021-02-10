@@ -32,7 +32,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 	if (!RichEdit::create(parent, text, style))
 		return false;
 
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 
 	m_attributeDefault[0] = addTextAttribute(ss->getColor(this, L"color-default"), false, false, false);
 	m_attributeDefault[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-default"));

@@ -107,7 +107,7 @@ void Image::eventPaint(PaintEvent* event)
 	if (!m_image)
 		return;
 
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	Size imageSize = m_image->getSize();

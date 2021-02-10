@@ -16,8 +16,8 @@ namespace traktor
 	{
 
 class DockPane;
-class ToolForm;
 class Image;
+class ToolForm;
 
 /*! Docking widget.
  * \ingroup UI

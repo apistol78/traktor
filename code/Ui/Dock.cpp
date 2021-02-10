@@ -1,13 +1,14 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/Form.h"
+#include "Ui/Image.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/ToolForm.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Image.h"
 
 // Resources
 #include "Resources/DockBottom.h"
@@ -204,19 +205,26 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 
 		pane->detach();
 
+		// Determine size of form.
+		Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
+		Size preferredSize = widget ? widget->getPreferedSize() : Size(100, 100);
+		Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
+
 		// Create floating form.
-		Size preferedSize = widget ? widget->getPreferedSize() : Size(100, 100);
-
 		Ref< ToolForm > form = new ToolForm();
-
 		form->create(
 			this,
 			widget ? widget->getText() : L"",
-			preferedSize.cx,
-			preferedSize.cy,
+			formSize.cx,
+			formSize.cy,
 			ToolForm::WsDefault,
 			new FloodLayout()
 		);
+
+		// Use same icon as ancestor.
+		Form* ancestor = dynamic_type_cast< Form* >(getAncestor());
+		if (ancestor)
+			form->setIcon(ancestor->getIcon());
 
 		form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
 		form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
@@ -236,9 +244,8 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 void Dock::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect innerRect = getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect innerRect = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRect);
@@ -251,8 +258,7 @@ void Dock::eventPaint(PaintEvent* event)
 void Dock::eventFormMove(MoveEvent* event)
 {
 	Point position = getMousePosition();
-
-	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
+	DockPane* pane = m_pane->getPaneFromPosition(position);
 	if (pane)
 	{
 		// Is hint form already visible for this pane?
@@ -263,17 +269,20 @@ void Dock::eventFormMove(MoveEvent* event)
 
 		Rect rc = pane->getPaneRect();
 
-		m_hint->setRect(Rect(
-			rc.left + (rc.getWidth() - c_hintSize) / 2,
-			rc.top + (rc.getHeight() - c_hintSize) / 2,
-			rc.left + (rc.getWidth() - c_hintSize) / 2 + c_hintSize,
-			rc.top + (rc.getHeight() - c_hintSize) / 2 + c_hintSize
-		));
+		// Convert pane rectangle from client to screen space.
+		Point tl = clientToScreen(rc.getTopLeft());
+		Point br = clientToScreen(rc.getBottomRight());
 
+		// Show hint at center of hovering pane.
+		Point center = tl + Size((br.x - tl.x) / 2, (br.y - tl.y) / 2);
+		m_hint->setRect(Rect(
+			center - Size(c_hintSize / 2, c_hintSize / 2),
+			Size(c_hintSize, c_hintSize)
+		));
 		m_hint->show();
 
 		m_hintDockPane = pane;
-		m_hintDockForm = checked_type_cast< ToolForm* >(event->getSender());
+		m_hintDockForm = mandatory_non_null_type_cast< ToolForm* >(event->getSender());
 	}
 	else
 	{
@@ -298,8 +307,9 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
 	if (pane)
 	{
-		Ref< ToolForm > form = checked_type_cast< ToolForm* >(event->getSender());
+		Ref< ToolForm > form = mandatory_non_null_type_cast< ToolForm* >(event->getSender());
 		Ref< Widget > widget = form->getData< Widget >(L"WIDGET");
+		Size widgetSize = widget->getRect().getSize();
 
 		// Reparent widget back to dock.
 		if (widget)
@@ -313,16 +323,24 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 		int dy = position.y - pane->m_rect.getCenter().y;
 
 		DockPane::Direction direction;
+		int32_t size;
+
 		if (traktor::abs(dx) > traktor::abs(dy))
+		{
 			direction = dx > 0 ? DockPane::DrEast : DockPane::DrWest;
+			size = widgetSize.cx;
+		}
 		else
+		{
 			direction = dy > 0 ? DockPane::DrSouth : DockPane::DrNorth;
+			size = widgetSize.cy;
+		}
 
 		pane->dock(
 			widget,
 			true,
 			direction,
-			100
+			size
 		);
 
 		update();
@@ -341,6 +359,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 	T_ASSERT(m_hintDockPane);
 
 	Ref< Widget > widget = m_hintDockForm->getData< Widget >(L"WIDGET");
+	Size widgetSize = widget->getRect().getSize();
 
 	// Reparent widget back to dock.
 	if (widget)
@@ -351,20 +370,34 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 
 	// Calculate docking direction.
 	DockPane::Direction direction;
+	int32_t size;
+
 	if (hintImage == m_hintLeft)
+	{
 		direction = DockPane::DrWest;
+		size = widgetSize.cx;
+	}
 	else if (hintImage == m_hintRight)
+	{
 		direction = DockPane::DrEast;
+		size = widgetSize.cx;
+	}
 	else if (hintImage == m_hintTop)
+	{
 		direction = DockPane::DrNorth;
+		size = widgetSize.cy;
+	}
 	else/* if (hintImage == m_hintBottom)*/
+	{
 		direction = DockPane::DrSouth;
+		size = widgetSize.cy;
+	}
 
 	m_hintDockPane->dock(
 		widget,
 		true,
 		direction,
-		100
+		size
 	);
 
 	update();

@@ -61,6 +61,11 @@ public:
 	virtual void paint(Canvas& canvas, const Rect& rect);
 
 protected:
+	AutoWidget* getWidget()
+	{
+		return m_widget;
+	}
+
 	template < typename WidgetType >
 	WidgetType* getWidget()
 	{

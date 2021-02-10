@@ -47,7 +47,7 @@ bool Widget::create(Widget* parent, int style)
 
 	link(parent);
 
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 	std::wstring fontName = ss->getValue(L"font-name");
 	if (!fontName.empty())
 	{
@@ -352,6 +352,26 @@ void Widget::setVerticalAlign(Align valign)
 Align Widget::getVerticalAlign() const
 {
 	return m_valign;
+}
+
+void Widget::setStyleSheet(const StyleSheet* styleSheet)
+{
+	m_styleSheet = styleSheet;
+}
+
+const StyleSheet* Widget::getStyleSheet() const
+{
+	if (m_styleSheet)
+		return m_styleSheet;
+
+	if (m_parent)
+	{
+		auto styleSheet = m_parent->getStyleSheet();
+		if (styleSheet)
+			return styleSheet;
+	}
+
+	return Application::getInstance()->getStyleSheet();
 }
 
 bool Widget::acceptLayout() const

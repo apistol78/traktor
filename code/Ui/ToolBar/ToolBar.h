@@ -48,6 +48,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	virtual Size getMaximumSize() const override;
+
 private:
 	Ref< ToolTip > m_toolTip;
 	int32_t m_style;

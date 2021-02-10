@@ -51,6 +51,10 @@ public:
 
 	int32_t addImage(IBitmap* image, int32_t imageCount);
 
+	bool setImage(int32_t imageIndex, IBitmap* image);
+
+	void removeAllImages();
+
 	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int32_t imageColumns);
 
 	void removeItem(TreeViewItem* item);

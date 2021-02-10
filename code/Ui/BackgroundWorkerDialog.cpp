@@ -128,9 +128,8 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 void BackgroundWorkerDialog::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect rcInner = Widget::getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const Rect rcInner = Widget::getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);

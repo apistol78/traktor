@@ -31,11 +31,13 @@ public:
 
 	int32_t getMaxRange() const;
 
-	void setProgress(int progress);
+	void setProgress(int32_t progress);
 
 	int32_t getProgress() const;
 
 	virtual Size getPreferedSize() const override;
+
+	virtual Size getMaximumSize() const override;
 
 private:
 	int32_t m_minProgress = 0;

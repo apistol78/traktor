@@ -114,10 +114,9 @@ void Slider::eventMouseMove(MouseMoveEvent* event)
 
 void Slider::eventPaint(PaintEvent* event)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const StyleSheet* ss = getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);

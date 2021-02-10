@@ -8,7 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class ToolFormWin32 : public WidgetWin32Impl< IToolForm >
@@ -17,6 +17,8 @@ public:
 	ToolFormWin32(EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
+
+	virtual void setIcon(ISystemBitmap* icon) override final;
 
 	virtual int showModal() override final;
 

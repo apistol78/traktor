@@ -64,6 +64,8 @@ public:
 
 	virtual Size getPreferedSize() const override;
 
+	virtual Size getMaximumSize() const override;
+
 private:
 	Ref< const EditValidator > m_validator;
 	Color4ub m_borderColor;

@@ -228,7 +228,7 @@ void PropertyItem::mouseMove(MouseMoveEvent* event)
 
 void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 {
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	const StyleSheet* ss = m_propertyList->getStyleSheet();
 	if (m_selected)
 	{
 		canvas.setBackground(ss->getColor(m_propertyList, L"item-background-color-selected"));
