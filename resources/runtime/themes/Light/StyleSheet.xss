@@ -2,7 +2,7 @@
 <object type="traktor.ui.StyleSheet" version="1">
 	<entities>
 		<item>
-			<typeName>traktor.ui.Widget</typeName>
+			<typeName>traktor.Object</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
@@ -113,14 +113,6 @@
 					<first>background-color</first>
 					<second>255, 255, 255, 255</second>
 				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
 			</colors>
 		</item>
 		<item>
@@ -187,6 +179,10 @@
 				<item>
 					<first>tab-color-active</first>
 					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-disabled</first>
+					<second>91, 91, 91, 255</second>
 				</item>
 				<item>
 					<first>tab-color-inactive</first>
@@ -275,18 +271,6 @@
 				<item>
 					<first>background-color</first>
 					<second>246, 246, 246, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected-disabled</first>
-					<second>180, 180, 180, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -683,7 +667,7 @@
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>137, 198, 255, 255</second>
+					<second>202, 223, 255, 255</second>
 				</item>
 				<item>
 					<first>color</first>
@@ -769,6 +753,36 @@
 				<item>
 					<first>knob-color</first>
 					<second>49, 108, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.TreeViewItem</typeName>
+			<colors>
+				<item>
+					<first>background-color-selected</first>
+					<second>85, 127, 255, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected-disabled</first>
+					<second>142, 140, 140, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ListBoxItem</typeName>
+			<colors>
+				<item>
+					<first>background-color-selected</first>
+					<second>103, 138, 255, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
 		</item>

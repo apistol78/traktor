@@ -515,7 +515,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (isSelected())
 	{
-		canvas.setBackground(ss->getColor(m_view, L"item-background-color-selected"));
+		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rect);
 	}
 
@@ -586,9 +586,9 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		}
 
 		if (m_enabled)
-			canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected" : L"color"));
+			canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected" : L"color"));
 		else
-			canvas.setForeground(ss->getColor(m_view, m_selected ? L"item-color-selected-disabled" : L"color-disabled"));
+			canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected-disabled" : L"color-disabled"));
 
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
 

@@ -218,8 +218,8 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.ToolBar", L"item-color-dropdown-arrow", Color4ub(20, 20, 20));
 
 	ss->setColor(L"traktor.ui.TreeView", L"background-color", Color4ub(246, 246, 246));
-	ss->setColor(L"traktor.ui.TreeView", L"item-color-selected", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.TreeView", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.TreeViewItem", L"color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.TreeViewItem", L"background-color-selected", Color4ub(51, 153, 255));
 
 	ss->setColor(L"traktor.ui.GridView", L"background-color", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.GridView", L"header-background-color", Color4ub(239, 239, 242));

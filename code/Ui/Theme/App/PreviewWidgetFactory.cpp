@@ -123,7 +123,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		return gridView;
 	}
-	else if (typeName == L"traktor.ui.ListBox")
+	else if (typeName == L"traktor.ui.ListBox" || typeName == L"traktor.ui.ListBoxItem")
 	{
 		Ref< ListBox > listBox = new ListBox();
 		listBox->setStyleSheet(styleSheet);
@@ -295,7 +295,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		return toolBar;
 	}
-	else if (typeName == L"traktor.ui.TreeView")
+	else if (typeName == L"traktor.ui.TreeView" || typeName == L"traktor.ui.TreeViewItem")
 	{
 		Ref< TreeView > treeView = new TreeView();
 		treeView->setStyleSheet(styleSheet);

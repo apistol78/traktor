@@ -43,9 +43,10 @@ void Timers::update(double s)
         {
             t.until = t.interval / 1000.0;
             fns.push_back(t.fn);
+            if (fns.full())
+                break;
         }
     }
-
     for (auto fn : fns)
         fn(0);
 }

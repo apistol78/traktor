@@ -85,6 +85,37 @@
 		},
 
 		{
+			"name": "Runtime - ReleaseShared",
+			"request": "launch",
+
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Runtime.App",
+			"args": [ "-s" ],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/personal/apistol/minigolf/output/MiniGolf/Linux",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+
+			"windows": {
+				"type": "cppvsdbg",
+				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.Editor.App.exe",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": true
+			}
+		},
+
+		{
 			"name": "Test - ReleaseShared",
 			"request": "launch",
 
@@ -107,6 +138,37 @@
 			"windows": {
 				"type": "cppvsdbg",
 				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.Run.App.exe",
+				"args": [ "./scripts/unittest/UnitTest.run" ],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": true
+			}
+		},
+
+		{
+			"name": "Theme - ReleaseShared",
+			"request": "launch",
+
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Ui.Theme.App",
+			"args": [ "./scripts/unittest/UnitTest.run" ],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}/..",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+
+			"windows": {
+				"type": "cppvsdbg",
+				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.Ui.Theme.App.exe",
 				"args": [ "./scripts/unittest/UnitTest.run" ],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
