@@ -27,7 +27,7 @@ bool ActionRemove::execute(Context* context)
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
 	{
-		log::error << L"Action remove failed; unable to read meta object" << Endl;
+		log::error << L"Action remove failed; unable to read meta object." << Endl;
 		return false;
 	}
 
@@ -38,7 +38,7 @@ bool ActionRemove::execute(Context* context)
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
 		{
-			log::error << L"Action remove failed; unable to remove \"" << instanceDataPath.getPathName() << L"\"" << Endl;
+			log::error << L"Action remove failed; unable to remove \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 	}
@@ -47,7 +47,7 @@ bool ActionRemove::execute(Context* context)
 		m_renamedFiles.push_back(instanceObjectPath.getPathName());
 	else
 	{
-		log::error << L"Action remove failed; unable to remove \"" << instanceObjectPath.getPathName() << L"~\"" << Endl;
+		log::error << L"Action remove failed; unable to remove \"" << instanceObjectPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
@@ -55,7 +55,7 @@ bool ActionRemove::execute(Context* context)
 		m_renamedFiles.push_back(instanceMetaPath.getPathName());
 	else
 	{
-		log::error << L"Action remove failed; unable to remove \"" << instanceMetaPath.getPathName() << L"~\"" << Endl;
+		log::error << L"Action remove failed; unable to remove \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
