@@ -47,6 +47,8 @@ public:
 
 	void setValue(const std::wstring& name, const std::wstring& value);
 
+	std::wstring getValueRaw(const std::wstring& name) const;
+
 	std::wstring getValue(const std::wstring& name) const;
 
 	/*! Merge this style sheet with another.
