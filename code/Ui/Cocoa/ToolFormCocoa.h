@@ -23,11 +23,13 @@ public:
 
 	// IToolForm implementation
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override;
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
-	virtual int showModal() override;
+	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual void endModal(int result) override;
+	virtual int showModal() override final;
+
+	virtual void endModal(int result) override final;
 
 	// IWidget implementation
 
