@@ -23,25 +23,25 @@ class T_DLLCLASS Range : public Key
 	T_RTTI_CLASS;
 
 public:
-	Range(int start, int end, bool movable);
+	Range(int32_t start, int32_t end, bool movable);
 
-	void setStart(int start);
+	void setStart(int32_t start);
 
-	int getStart() const;
+	int32_t getStart() const;
 
-	void setEnd(int end);
+	void setEnd(int32_t end);
 
-	int getEnd() const;
+	int32_t getEnd() const;
 
 	virtual void move(int offset) override;
 
 	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
+	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 
 private:
-	int m_start;
-	int m_end;
+	int32_t m_start;
+	int32_t m_end;
 	bool m_movable;
 };
 

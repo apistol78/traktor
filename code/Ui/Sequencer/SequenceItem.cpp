@@ -63,7 +63,7 @@ void SequenceItem::addChildItemBefore(SequenceItem* beforeChildItem, SequenceIte
 void SequenceItem::removeChildItem(SequenceItem* childItem)
 {
 	T_ASSERT_M (childItem->m_parent == this, L"Item not a child to this item");
-	childItem->m_parent = 0;
+	childItem->m_parent = nullptr;
 	m_childItems.remove(childItem);
 }
 

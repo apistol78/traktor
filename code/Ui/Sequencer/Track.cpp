@@ -1,5 +1,7 @@
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/SequencerControl.h"
 #include "Ui/Sequencer/Track.h"
 
 namespace traktor
@@ -53,18 +55,19 @@ void Track::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRec
 	outRect.bottom = rcClient.bottom - 1;
 }
 
-void Track::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
+void Track::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int x1 = sequence->clientFromTime(m_start) - scrollOffset;
-	int x2 = sequence->clientFromTime(m_end) - scrollOffset;
+	const StyleSheet* ss = sequencer->getStyleSheet();
 
+	int32_t x1 = sequence->clientFromTime(m_start) - scrollOffset;
+	int32_t x2 = sequence->clientFromTime(m_end) - scrollOffset;
 	Rect rc(rcClient.left + x1, rcClient.top, rcClient.left + x2, rcClient.bottom - 1);
+	bool selected = (sequence->getSelectedKey() == this);
 
-	canvas.setForeground(Color4ub(255, 255, 255, 100));
-	canvas.setBackground(Color4ub(255, 255, 200, 100));
-	canvas.fillGradientRect(rc);
+	canvas.setBackground(ss->getColor(this, selected ? L"background-color-selected" : L"background-color"));
+	canvas.fillRect(rc);
 
-	canvas.setForeground(Color4ub(255, 255, 200, 180));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawRect(rc);
 }
 

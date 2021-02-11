@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
 
@@ -8,8 +9,173 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 0, StyleSheet, ISerializable)
+struct Group
+{
+	std::wstring type;
+	std::wstring element;
+	Color4ub color;
+
+	void serialize(ISerializer& s)
+	{
+		s >> Member< std::wstring >(L"type", type);
+		s >> Member< std::wstring >(L"element", element);
+		s >> Member< Color4ub >(L"color", color);
+	}
+};
+
+struct Value
+{
+	std::wstring name;
+	std::wstring value;
+
+	void serialize(ISerializer& s)
+	{
+		s >> Member< std::wstring >(L"name", name);
+		s >> Member< std::wstring >(L"value", value);
+	}
+};
+
+class MemberEntity : public MemberComplex
+{
+public:
+	MemberEntity(const wchar_t* const name, StyleSheet::Entity& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const override final
+	{
+		s >> Member< std::wstring >(L"typeName", m_ref.typeName);
+		s >> MemberSmallMap< std::wstring, Color4ub >(L"colors", m_ref.colors);
+	}
+
+private:
+	StyleSheet::Entity& m_ref;
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 1, StyleSheet, ISerializable)
+
+StyleSheet::Entity* StyleSheet::findEntity(const std::wstring& typeName)
+{
+	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+		return entity.typeName == typeName;
+	});
+	return it != m_entities.end() ? &(*it) : nullptr;
+}
+
+StyleSheet::Entity* StyleSheet::addEntity(const std::wstring& typeName)
+{
+	auto& entity = m_entities.push_back();
+	entity.typeName = typeName;
+	return &entity;
+}
+
+void StyleSheet::setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color)
+{
+	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+		return entity.typeName == typeName;
+	});
+	if (it != m_entities.end())
+		it->colors[element] = color;
+	else
+	{
+		auto& entity = m_entities.push_back();
+		entity.typeName = typeName;
+		entity.colors[element] = color;
+	}
+}
+
+Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring& element) const
+{
+	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+		return entity.typeName == typeName;
+	});
+	if (it == m_entities.end())
+		return Color4ub(255, 255, 255);
+
+	auto it2 = it->colors.find(element);
+	if (it2 == it->colors.end())
+		return Color4ub(255, 255, 255);
+
+	return it2->second;
+}
+
+Color4ub StyleSheet::getColor(const Object* widget, const std::wstring& element) const
+{
+	const TypeInfo* widgetType = &type_of(widget);
+	while (widgetType != nullptr)
+	{
+		auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+			return entity.typeName == widgetType->getName();
+		});
+		if (it != m_entities.end())
+		{
+			auto it2 = it->colors.find(element);
+			if (it2 != it->colors.end())
+				return it2->second;
+		}
+		widgetType = widgetType->getSuper();
+	}
+	return Color4ub(255, 255, 255);
+}
+
+void StyleSheet::setValue(const std::wstring& name, const std::wstring& value)
+{
+	m_values[name] = value;
+}
+
+std::wstring StyleSheet::getValue(const std::wstring& name) const
+{
+	auto it = m_values.find(name);
+	return it != m_values.end() ? it->second : L"";
+}
+
+Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
+{
+	Ref< StyleSheet > ss = new StyleSheet();
+
+	ss->m_entities = m_entities;
+	for (const auto& entity : right->m_entities)
+	{
+		for (auto it : entity.colors)
+			ss->setColor(entity.typeName, it.first, it.second);
+	}
+
+	ss->m_values = m_values;
+	for (auto it : right->m_values)
+		ss->setValue(it.first, it.second);
+
+	return ss;
+}
+
+void StyleSheet::serialize(ISerializer& s)
+{
+	if (s.getVersion< StyleSheet >() >= 1)
+	{
+		s >> MemberAlignedVector< Entity, MemberEntity >(L"entities", m_entities);
+		s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
+	}
+	else
+	{
+		AlignedVector< Group > groups;
+		AlignedVector< Value > values;
+
+		s >> MemberAlignedVector< Group, MemberComposite< Group > >(L"groups", groups);
+		s >> MemberAlignedVector< Value, MemberComposite< Value > >(L"values", values);
+
+		for (const auto& group : groups)
+			setColor(group.type, group.element, group.color);
+
+		for (const auto& value : values)
+			setValue(value.name, value.value);
+	}
+}
 
 Ref< StyleSheet > StyleSheet::createDefault()
 {
@@ -78,132 +244,6 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.LogList", L"color-error", Color4ub(0, 0, 0));
 
 	return ss;
-}
-
-void StyleSheet::setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color)
-{
-	for (auto& group : m_groups)
-	{
-		if (group.type == typeName && group.element == element)
-		{
-			group.color = color;
-			return;
-		}
-	}
-
-	Group group;
-	group.type = typeName;
-	group.element = element;
-	group.color = color;
-	m_groups.push_back(group);
-}
-
-Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring& element) const
-{
-	for (auto& group : m_groups)
-	{
-		if (group.type == typeName && group.element == element)
-			return group.color;
-	}
-	return Color4ub(255, 255, 255);
-}
-
-Color4ub StyleSheet::getColor(const Object* widget, const std::wstring& element) const
-{
-	for (auto it = m_groups.rbegin(); it != m_groups.rend(); ++it)
-	{
-		if (it->element != element)
-			continue;
-
-		const TypeInfo* type = TypeInfo::find(it->type.c_str());
-		if (!type)
-			continue;
-
-		if (is_type_of(*type, type_of(widget)))
-			return it->color;
-	}
-	return Color4ub(255, 255, 255);
-}
-
-std::wstring StyleSheet::getValue(const std::wstring& name) const
-{
-	for (const auto& value : m_values)
-	{
-		if (value.name == name)
-			return value.value;
-	}
-	return L"";
-}
-
-Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
-{
-	Ref< StyleSheet > ss = new StyleSheet();
-
-	ss->m_groups = m_groups;
-	for (auto group : right->m_groups)
-		ss->setColor(group.type.c_str(), group.element.c_str(), group.color);
-
-	ss->m_values = m_values;
-	for (auto value : right->m_values)
-		ss->setValue(value.name.c_str(), value.value.c_str());
-
-	return ss;
-}
-
-void StyleSheet::serialize(ISerializer& s)
-{
-	s >> MemberStlVector< Group, MemberComposite< Group > >(L"groups", m_groups);
-	s >> MemberStlVector< Value, MemberComposite< Value > >(L"values", m_values);
-}
-
-void StyleSheet::setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color)
-{
-	for (auto& group : m_groups)
-	{
-		if (group.type == type && group.element == element)
-		{
-			group.color = color;
-			return;
-		}
-	}
-
-	// If we reach here then no such group.
-	Group g;
-	g.type = type;
-	g.element = element;
-	g.color = color;
-	m_groups.push_back(g);
-}
-
-void StyleSheet::setValue(const wchar_t* const name, const wchar_t* const value)
-{
-	for (auto& v : m_values)
-	{
-		if (v.name == name)
-		{
-			v.value = value;
-			return;
-		}
-	}
-
-	// If we reach here then no such value.
-	Value v;
-	v.name = name;
-	v.value = value;
-	m_values.push_back(v);
-}
-
-void StyleSheet::Group::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"type", type);
-	s >> Member< std::wstring >(L"element", element);
-	s >> Member< Color4ub >(L"color", color);
-}
-
-void StyleSheet::Value::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< std::wstring >(L"value", value);
 }
 
 	}

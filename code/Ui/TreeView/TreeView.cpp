@@ -268,7 +268,7 @@ void TreeView::eventEditFocus(FocusEvent* event)
 
 		m_editItem->setText(newText);
 
-		TreeViewContentChangeEvent changeEvent(this, m_editItem);
+		TreeViewContentChangeEvent changeEvent(this, m_editItem, originalText);
 		raiseEvent(&changeEvent);
 
 		if (!changeEvent.consumed())
@@ -289,7 +289,7 @@ void TreeView::eventEditKeyDownEvent(KeyDownEvent* event)
 
 		m_editItem->setText(newText);
 
-		TreeViewContentChangeEvent changeEvent(this, m_editItem);
+		TreeViewContentChangeEvent changeEvent(this, m_editItem, originalText);
 		raiseEvent(&changeEvent);
 
 		if (!changeEvent.consumed())
