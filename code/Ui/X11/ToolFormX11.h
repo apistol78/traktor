@@ -1,5 +1,4 @@
-#ifndef traktor_ui_ToolFormX11_H
-#define traktor_ui_ToolFormX11_H
+#pragma once
 
 #include "Ui/X11/WidgetX11Impl.h"
 #include "Ui/Itf/IToolForm.h"
@@ -14,13 +13,15 @@ class ToolFormX11 : public WidgetX11Impl< IToolForm >
 public:
 	ToolFormX11(Context* context, EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual int showModal() T_OVERRIDE T_FINAL;
+	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual void endModal(int result) T_OVERRIDE T_FINAL;
+	virtual int showModal() override final;
+
+	virtual void endModal(int result) override final;
 
 private:
 	int32_t m_result;
@@ -29,6 +30,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_ui_ToolFormX11_H
-
