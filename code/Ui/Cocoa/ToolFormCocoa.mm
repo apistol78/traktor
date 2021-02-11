@@ -60,6 +60,10 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 	return true;
 }
 
+void ToolFormCocoa::setIcon(ISystemBitmap* icon)
+{
+}
+
 int ToolFormCocoa::showModal()
 {
 	m_result = -1;
