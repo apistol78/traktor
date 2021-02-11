@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Ui/Events/ContentChangeEvent.h"
 
 // import/export mechanism.
@@ -17,7 +18,7 @@ namespace traktor
 
 class TreeViewItem;
 
-/*! \brief
+/*!
  * \ingroup UI
  */
 class T_DLLCLASS TreeViewContentChangeEvent : public ContentChangeEvent
@@ -25,12 +26,15 @@ class T_DLLCLASS TreeViewContentChangeEvent : public ContentChangeEvent
 	T_RTTI_CLASS;
 
 public:
-	TreeViewContentChangeEvent(EventSubject* sender, TreeViewItem* item);
+	TreeViewContentChangeEvent(EventSubject* sender, TreeViewItem* item, const std::wstring& originalText);
 
 	TreeViewItem* getItem() const;
 
+	const std::wstring& getOriginalText() const;
+
 private:
 	Ref< TreeViewItem > m_item;
+	std::wstring m_originalText;
 };
 
 	}

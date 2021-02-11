@@ -20,6 +20,7 @@ class Canvas;
 class Point;
 class Rect;
 class Sequence;
+class SequencerControl;
 
 /*! Sequence key.
  * \ingroup UI
@@ -35,7 +36,7 @@ public:
 
 	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const = 0;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) = 0;
+	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) = 0;
 };
 
 	}

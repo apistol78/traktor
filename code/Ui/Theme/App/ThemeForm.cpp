@@ -8,6 +8,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/FileDialog.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Ui/Splitter.h"
@@ -20,6 +21,7 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 #include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 #include "Xml/XmlDeserializer.h"
@@ -32,11 +34,41 @@ namespace traktor
 		namespace
 		{
 
+template < typename ItemType >
+class Wrapper : public Object
+{
+public:
+	explicit Wrapper(ItemType* ptr)
+	:	m_ptr(ptr)
+	{
+	}
+
+	ItemType* unwrap() { return m_ptr; }
+
+private:
+	ItemType* m_ptr;
+};
+
 Ref< StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< StyleSheet >();
+	{
+		Ref< StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< StyleSheet >();
+		if (!styleSheet)
+			return nullptr;
+
+		//// Add all known widget types to style sheet.
+		//TypeInfoSet widgetTypes;
+		//type_of< Widget >().findAllOf(widgetTypes);
+		//for (const auto widgetType : widgetTypes)
+		//{
+		//	if (styleSheet->findEntity(widgetType->getName()) == nullptr)
+		//		styleSheet->addEntity(widgetType->getName());
+		//}
+
+		return styleSheet;
+	}
 	else
 		return nullptr;
 }
@@ -48,6 +80,35 @@ bool saveStyleSheet(const Path& pathName, const StyleSheet* styleSheet)
 		return xml::XmlSerializer(file).writeObject(styleSheet);
 	else
 		return false;
+}
+
+bool isStyleSheet(const TreeViewItem* item)
+{
+	return item->getData(L"STYLESHEET") != nullptr;
+}
+
+bool isEntity(const TreeViewItem* item)
+{
+	return item->getData(L"ENTITY") != nullptr;
+}
+
+bool isElement(const TreeViewItem* item)
+{
+	return !isStyleSheet(item) && !isEntity(item);
+}
+
+TreeViewItem* getEntity(TreeViewItem* item)
+{
+	if (isEntity(item))
+		return item;
+
+	if (isElement(item))
+	{
+		T_ASSERT(isEntity(item->getParent()));
+		return item->getParent();
+	}
+
+	return nullptr;
 }
 
 		}
@@ -107,6 +168,8 @@ bool ThemeForm::create()
 	);
 	m_treeTheme->addEventHandler< SelectionChangeEvent >(this, &ThemeForm::eventTreeSelectionChange);
 	m_treeTheme->addEventHandler< TreeViewItemActivateEvent >(this, &ThemeForm::eventTreeActivateItem);
+	m_treeTheme->addEventHandler< MouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
+	m_treeTheme->addEventHandler< TreeViewContentChangeEvent >(this, &ThemeForm::eventTreeChange);
 
 	m_containerPreview = new Container();
 	m_containerPreview->create(splitter, WsAccelerated, new TableLayout(L"100%", L"100%", 16, 0));
@@ -122,23 +185,26 @@ void ThemeForm::updateTree()
 	auto state = m_treeTheme->captureState();
 
 	m_treeTheme->removeAllItems();
-
-	std::map< std::wstring, std::list< const StyleSheet::Group* > > gm;
-	for (const auto& group : m_styleSheet->getGroups())
-		gm[group.type].push_back(&group);
-
-	for (const auto& it : gm)
+	if (m_styleSheet)
 	{
-		Ref< TreeViewItem > itemWidget = m_treeTheme->createItem(nullptr, it.first, 0);
-		for (const auto& g : it.second)
+		Ref< TreeViewItem > itemStyleSheet = m_treeTheme->createItem(nullptr, m_styleSheetPath.getPathName(), 0);
+		itemStyleSheet->setData(L"STYLESHEET", m_styleSheet);
+
+		for (auto& entity : m_styleSheet->getEntities())
 		{
-			Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
-			imageColor->clear(Color4f::fromColor4ub(g->color).rgb1());
+			Ref< TreeViewItem > itemEntity = m_treeTheme->createItem(itemStyleSheet, entity.typeName, 0);
+			itemEntity->setData(L"ENTITY", new Wrapper< StyleSheet::Entity >(&entity));
 
-			int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor), 1);
+			for (const auto& it : entity.colors)
+			{
+				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
+				imageColor->clear(Color4f::fromColor4ub(it.second).rgb1());
 
-			Ref< TreeViewItem > itemElement = m_treeTheme->createItem(itemWidget, g->element, 1);
-			itemElement->setImage(0, imageIndex);
+				int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor), 1);
+
+				Ref< TreeViewItem > itemElement = m_treeTheme->createItem(itemEntity, it.first, 1);
+				itemElement->setImage(0, imageIndex);
+			}
 		}
 	}
 
@@ -154,24 +220,22 @@ void ThemeForm::updatePreview()
 	if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
 		return;
 
-	Ref< TreeViewItem > selectedItem = selectedItems.front();
-	while (selectedItem->getParent())
-		selectedItem = selectedItem->getParent();
+	TreeViewItem* selectedEntityItem = getEntity(selectedItems.front());
+	if (!selectedEntityItem)
+		return;
 
-	std::wstring widgetTypeName = selectedItem->getText();
-	if (!widgetTypeName.empty())
-	{
-		Ref< Container > container = new Container();
-		container->create(m_containerPreview, 0, new TableLayout(L"100%", L"100%,100%", 0, 4));
+	auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( selectedEntityItem->getData(L"ENTITY") )->unwrap();
 
-		Ref< Widget > widget1 = PreviewWidgetFactory().create(container, m_styleSheet, widgetTypeName);
-		if (widget1)
-			widget1->setEnable(true);
+	Ref< Container > container = new Container();
+	container->create(m_containerPreview, 0, new TableLayout(L"100%", L"100%,100%", 0, 4));
 
-		Ref< Widget > widget2 = PreviewWidgetFactory().create(container, m_styleSheet, widgetTypeName);
-		if (widget2)
-			widget2->setEnable(false);
-	}
+	Ref< Widget > widget1 = PreviewWidgetFactory().create(container, m_styleSheet, entity->typeName);
+	if (widget1)
+		widget1->setEnable(true);
+
+	Ref< Widget > widget2 = PreviewWidgetFactory().create(container, m_styleSheet, entity->typeName);
+	if (widget2)
+		widget2->setEnable(false);
 
 	m_containerPreview->update();
 }
@@ -233,60 +297,60 @@ void ThemeForm::handleCommand(const Command& command)
 		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
 			return;
 
-		Ref< TreeViewItem > selectedItem = selectedItems.front();
-		if (selectedItem->getParent() != nullptr)
-		{
-			// Copy element.
-			Color4ub color = m_styleSheet->getColor(
-				selectedItem->getParent()->getText(),
-				selectedItem->getText()
-			);
+		//Ref< TreeViewItem > selectedItem = selectedItems.front();
+		//if (selectedItem->getParent() != nullptr)
+		//{
+		//	// Copy element.
+		//	Color4ub color = m_styleSheet->getColor(
+		//		selectedItem->getParent()->getText(),
+		//		selectedItem->getText()
+		//	);
 
-			Ref< PropertyGroup > props = new PropertyGroup();
-			props->setProperty< PropertyString >(L"element", selectedItem->getText());
-			props->setProperty< PropertyColor >(L"color", color);
-			Application::getInstance()->getClipboard()->setObject(props);
-		}
-		else
-		{
-			// Copy widget.
-		}
+		//	Ref< PropertyGroup > props = new PropertyGroup();
+		//	props->setProperty< PropertyString >(L"element", selectedItem->getText());
+		//	props->setProperty< PropertyColor >(L"color", color);
+		//	Application::getInstance()->getClipboard()->setObject(props);
+		//}
+		//else
+		//{
+		//	// Copy widget.
+		//}
 	}
 	else if (command == L"Edit.Paste")
 	{
-		RefArray< TreeViewItem > selectedItems;
-		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
-			return;
+		//RefArray< TreeViewItem > selectedItems;
+		//if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+		//	return;
 
-		Ref< PropertyGroup > props = dynamic_type_cast< PropertyGroup* >(Application::getInstance()->getClipboard()->getObject());
-		if (!props)
-			return;
+		//Ref< PropertyGroup > props = dynamic_type_cast< PropertyGroup* >(Application::getInstance()->getClipboard()->getObject());
+		//if (!props)
+		//	return;
 
-		std::wstring element = props->getProperty< std::wstring >(L"element", L"");
-		if (element.empty())
-			return;
+		//std::wstring element = props->getProperty< std::wstring >(L"element", L"");
+		//if (element.empty())
+		//	return;
 
-		Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
+		//Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
 
-		Ref< TreeViewItem > selectedItem = selectedItems.front();
-		if (selectedItem->getParent() == nullptr)
-		{
-			//int32_t imageIndex = selectedItem->getImage(0);
+		//Ref< TreeViewItem > selectedItem = selectedItems.front();
+		//if (selectedItem->getParent() == nullptr)
+		//{
+		//	//int32_t imageIndex = selectedItem->getImage(0);
 
-			//Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
-			//imageColor->clear(Color4f::fromColor4ub(color).rgb1());
+		//	//Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
+		//	//imageColor->clear(Color4f::fromColor4ub(color).rgb1());
 
-			//m_treeTheme->setImage(imageIndex, new Bitmap(imageColor));
-			//m_treeTheme->update();
+		//	//m_treeTheme->setImage(imageIndex, new Bitmap(imageColor));
+		//	//m_treeTheme->update();
 
-			m_styleSheet->setColor(
-				selectedItem->getText(),
-				element,
-				color
-			);
+		//	m_styleSheet->setColor(
+		//		selectedItem->getText(),
+		//		element,
+		//		color
+		//	);
 
-			updatePreview();
-		}
+		//	updatePreview();
+		//}
 	}
 }
 
@@ -302,15 +366,18 @@ void ThemeForm::eventTreeSelectionChange(SelectionChangeEvent* event)
 
 void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 {
-	Ref< TreeViewItem > item = event->getItem();
-	if (item->getParent() == nullptr)
+	TreeViewItem* itemElement = event->getItem();
+	if (!isElement(itemElement))
 		return;
 
+	TreeViewItem* itemEntity = getEntity(itemElement);
+	T_ASSERT(itemEntity != nullptr);
+
 	ColorDialog colorDialog;
-	colorDialog.create(this, L"Set element color");
+	colorDialog.create(this, L"Set Element Color");
 	if (colorDialog.showModal() == DialogResult::DrOk)
 	{
-		int32_t imageIndex = item->getImage(0);
+		int32_t imageIndex = itemElement->getImage(0);
 
 		Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 		imageColor->clear(colorDialog.getColor().rgb1());
@@ -319,14 +386,115 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 		m_treeTheme->update();
 
 		m_styleSheet->setColor(
-			item->getParent()->getText(),
-			item->getText(),
+			itemEntity->getText(),
+			itemElement->getText(),
 			colorDialog.getColor().toColor4ub()
 		);
 
 		updatePreview();
 	}
 	colorDialog.destroy();
+}
+
+void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
+{
+	if (event->getButton() != ui::MbtRight)
+		return;
+
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	if (!selectedItem)
+		return;
+
+	if (isStyleSheet(selectedItem)) // StyleSheet
+	{
+		Ref< Menu > menu = new Menu();
+		menu->add(new MenuItem(Command(L"Theme.NewEntity"), L"Add New Entity"));
+
+		const ui::MenuItem* menuItem = menu->showModal(m_treeTheme, event->getPosition());
+		if (menuItem)
+		{
+			if (menuItem->getCommand() == L"Theme.NewEntity")
+			{
+				auto entity = m_styleSheet->addEntity(L"Unnamed");
+				if (entity)
+				{
+					Ref< TreeViewItem > itemEntity = m_treeTheme->createItem(selectedItem, entity->typeName, 0);
+					itemEntity->setData(L"ENTITY", new Wrapper< StyleSheet::Entity >(entity));
+				}
+			}
+		}
+	}
+	else if (isEntity(selectedItem)) // Entity
+	{
+		Ref< Menu > menu = new Menu();
+		menu->add(new MenuItem(Command(L"Theme.NewElement"), L"Add New Element"));
+
+		const ui::MenuItem* menuItem = menu->showModal(m_treeTheme, event->getPosition());
+		if (menuItem)
+		{
+			if (menuItem->getCommand() == L"Theme.NewElement")
+			{
+				const Color4ub defaultColor(255, 255, 255);
+
+				m_styleSheet->setColor(
+					selectedItem->getText(),
+					L"unnamed",
+					defaultColor
+				);
+
+				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
+				imageColor->clear(Color4f::fromColor4ub(defaultColor).rgb1());
+
+				int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor), 1);
+
+				Ref< TreeViewItem > itemElement = m_treeTheme->createItem(selectedItem, L"unnamed", 1);
+				itemElement->setImage(0, imageIndex);
+
+				m_treeTheme->update();
+			}
+		}
+	}
+	else if (isElement(selectedItem)) // Element
+	{
+	}
+}
+
+void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
+{
+	TreeViewItem* modifiedItem = event->getItem();
+
+	if (isEntity(modifiedItem)) // Entity
+	{
+		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( modifiedItem->getData(L"ENTITY") )->unwrap();
+		entity->typeName = modifiedItem->getText();
+		updatePreview();
+		event->consume();
+	}
+	else if (isElement(modifiedItem)) // Element
+	{
+		auto entityItem = getEntity(modifiedItem);
+		T_ASSERT(entityItem != nulltpr);
+
+		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( entityItem->getData(L"ENTITY") )->unwrap();
+		T_ASSERT(entity != nullptr);
+
+		auto it = entity->colors.find(event->getOriginalText());
+		T_ASSERT(it != entity->colors.end());
+		Color4ub color = it->second;
+		entity->colors.erase(it);
+
+		if (!modifiedItem->getText().empty())
+			entity->colors[modifiedItem->getText()] = color;
+
+		//updateTree();
+		updatePreview();
+		event->consume();
+	}
 }
 
 	}

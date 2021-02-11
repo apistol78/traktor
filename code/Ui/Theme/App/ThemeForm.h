@@ -12,6 +12,7 @@ class StyleSheet;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class TreeView;
+class TreeViewContentChangeEvent;
 class TreeViewItemActivateEvent;
 
 class ThemeForm : public Form
@@ -39,6 +40,10 @@ private:
 	void eventTreeSelectionChange(SelectionChangeEvent* event);
 
 	void eventTreeActivateItem(TreeViewItemActivateEvent* event);
+
+	void eventTreeButtonDown(MouseButtonDownEvent* event);
+
+	void eventTreeChange(TreeViewContentChangeEvent* event);
 };
 
 	}

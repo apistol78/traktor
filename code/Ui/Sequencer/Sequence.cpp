@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/SequenceButtonClickEvent.h"
 #include "Ui/Sequencer/SequencerControl.h"
@@ -178,11 +179,7 @@ void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
 {
-	Rect rcSequence = rc;
-	Rect rcTick = rc;
-
-	rcSequence.bottom = rcSequence.top + dpi96(c_sequenceHeight);
-	rcTick.top = rcTick.top + dpi96(c_sequenceHeight);
+	const StyleSheet* ss = sequencer->getStyleSheet();
 
 	// Save time scale here; it's used in client<->time conversion.
 	m_timeScale = sequencer->getTimeScale();
@@ -190,52 +187,38 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	// Draw sequence background.
 	if (!isSelected())
 	{
-		canvas.setForeground(Color4ub(250, 249, 250));
-		canvas.setBackground(Color4ub(238, 237, 240));
-		canvas.fillGradientRect(Rect(rc.left, rc.top, separator, rc.bottom));
-
-		canvas.setForeground(Color4ub(170, 169, 170));
-		canvas.setBackground(Color4ub(158, 157, 160));
-		canvas.fillGradientRect(Rect(separator, rcSequence.top, rcSequence.right, rcSequence.bottom));
-
-		canvas.setForeground(Color4ub(240, 239, 240));
-		canvas.setBackground(Color4ub(228, 227, 230));
-		canvas.fillGradientRect(Rect(separator, rcTick.top, rcTick.right, rcTick.bottom));
+		canvas.setBackground(ss->getColor(this, L"background-color"));
+		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 	else
 	{
-		canvas.setBackground(Color4ub(226, 229, 238));
-		canvas.fillRect(Rect(rc.left, rc.top, separator, rc.bottom));
-
-		canvas.setBackground(Color4ub(206, 209, 218));
-		canvas.fillRect(Rect(separator, rcSequence.top, rcSequence.right, rcSequence.bottom));
-
-		canvas.setForeground(Color4ub(240, 239, 240));
-		canvas.setBackground(Color4ub(228, 227, 230));
-		canvas.fillGradientRect(Rect(separator, rcTick.top, rcTick.right, rcTick.bottom));
+		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
+		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 
-	canvas.setForeground(Color4ub(128, 128, 128));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	// Draw sequence text.
-	canvas.setForeground(Color4ub(0, 0, 0));
 	Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
 			rc.left + 32 + getDepth() * 16,
-			rc.top + rc.getHeight() / 2 - ext.cy
+			rc.top + (rc.getHeight() - ext.cy) / 2
 		),
 		getName()
 	);
-	canvas.setForeground(Color4ub(0, 100, 0));
-	canvas.drawText(
-		Point(
-			rc.left + 48 + getDepth() * 16,
-			rc.top + rc.getHeight() / 2
-		),
-		m_description
-	);
+
+	if (!m_description.empty())
+	{
+		canvas.drawText(
+			Point(
+				rc.left + 48 + getDepth() * 16,
+				rc.top + rc.getHeight() / 2
+			),
+			m_description
+		);
+	}
 
 	// Draw sequence buttons.
 	int32_t buttonSize = dpi96(c_buttonSize);
@@ -269,18 +252,18 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	));
 
 	// Draw tickers.
-	canvas.setForeground(Color4ub(128, 128, 128));
-	int cy = (rcSequence.top + rcSequence.bottom) / 2;
-	for (int i = 0; i < sequencer->getLength(); i += 100)
+	canvas.setForeground(ss->getColor(this, L"color"));
+	int32_t cy = (rc.top + rc.bottom) / 2;
+	for (int32_t i = 0; i < sequencer->getLength(); i += 100)
 	{
-		int cx = separator + clientFromTime(i) - scrollOffset;
+		int32_t cx = separator + clientFromTime(i) - scrollOffset;
 		if (cx > rc.right)
 			break;
-		int cya = (i % 1000 == 0) ? 4 : 0;
-		canvas.drawLine(cx, cy - dpi96(2 - cya), cx, cy + dpi96(1 + cya));
+		int32_t cya = (i % 1000 == 0) ? 4 : 0;
+		canvas.drawLine(cx, cy - dpi96(2 + cya), cx, cy + dpi96(2 + cya));
 	}
 
-	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
+	for (auto key : m_keys)
 	{
 		Rect rcClient(
 			rc.left + separator,
@@ -288,7 +271,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 			rc.right,
 			rc.bottom
 		);
-		(*j)->paint(canvas, this, rcClient, scrollOffset);
+		key->paint(sequencer, canvas, this, rcClient, scrollOffset);
 	}
 }
 

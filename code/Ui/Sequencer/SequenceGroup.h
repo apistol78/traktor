@@ -25,7 +25,7 @@ class T_DLLCLASS SequenceGroup : public SequenceItem
 	T_RTTI_CLASS;
 
 public:
-	SequenceGroup(const std::wstring& name);
+	explicit SequenceGroup(const std::wstring& name);
 
 	void expand();
 
@@ -39,19 +39,19 @@ public:
 
 	bool isVisible() const;
 
-	void setRange(int start, int end);
+	void setRange(int32_t start, int32_t end);
 
-	int getStart() const;
+	int32_t getStart() const;
 
-	int getEnd() const;
+	int32_t getEnd() const;
 
-	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override;
+	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override final;
 
-	virtual void mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override;
+	virtual void mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override final;
 
-	virtual void mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override;
+	virtual void mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override final;
 
-	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset) override;
+	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset) override final;
 
 private:
 	Ref< IBitmap > m_imageExpand;
@@ -60,8 +60,8 @@ private:
 	Ref< IBitmap > m_imageHidden;
 	bool m_expanded;
 	bool m_visible;
-	int m_start;
-	int m_end;
+	int32_t m_start;
+	int32_t m_end;
 };
 
 	}

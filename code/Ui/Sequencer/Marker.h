@@ -33,7 +33,7 @@ public:
 
 	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
+	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 
 private:
 	int32_t m_time;

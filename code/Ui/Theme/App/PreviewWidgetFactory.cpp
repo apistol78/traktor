@@ -13,6 +13,8 @@
 #include "Ui/ProgressBar.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/ShortcutEdit.h"
+#include "Ui/Slider.h"
+#include "Ui/Static.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/GridView/GridColumn.h"
@@ -36,6 +38,12 @@
 #include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
+#include "Ui/Sequencer/Range.h"
+#include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/SequenceGroup.h"
+#include "Ui/Sequencer/SequencerControl.h"
+#include "Ui/Sequencer/Tick.h"
+#include "Ui/Sequencer/Track.h"
 
 namespace traktor
 {
@@ -214,6 +222,22 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		shortcutEdit->create(parent, 0, VkSpace);
 		return shortcutEdit;
 	}
+	else if (typeName == L"traktor.ui.Slider")
+	{
+		Ref< Slider > slider = new Slider();
+		slider->setStyleSheet(styleSheet);
+		slider->create(parent);
+		slider->setRange(0, 100);
+		slider->setValue(50);
+		return slider;
+	}
+	else if (typeName == L"traktor.ui.Static")
+	{
+		Ref< Static > statik = new Static();
+		statik->setStyleSheet(styleSheet);
+		statik->create(parent, L"Preview");
+		return statik;
+	}
 	else if (typeName == L"traktor.ui.StatusBar")
 	{
 		Ref< Container > container = new Container();
@@ -284,6 +308,34 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		return treeView;
 	}
+	else if (
+		typeName == L"traktor.ui.SequencerControl" ||
+		typeName == L"traktor.ui.Sequence" ||
+		typeName == L"traktor.ui.SequenceGroup" ||
+		typeName == L"traktor.ui.Tick" ||
+		typeName == L"traktor.ui.Range" ||
+		typeName == L"traktor.ui.Track"
+	)
+	{
+		Ref< SequencerControl > sequencerControl = new SequencerControl();
+		sequencerControl->setStyleSheet(styleSheet);
+		sequencerControl->create(parent);
+		sequencerControl->addSequenceItem(new Sequence(L"First"));
+
+		Ref< Sequence > sequence = new Sequence(L"Second");
+		sequence->addKey(new Tick(100, true));
+		sequence->addKey(new Range(200, 500, true));
+		sequence->addKey(new Track(600, 900, true));
+		sequencerControl->addSequenceItem(sequence);
+
+		Ref< SequenceGroup > group = new SequenceGroup(L"Third");
+		group->addChildItem(new Sequence(L"Fourth"));
+		group->addChildItem(new Sequence(L"Fifth"));
+		sequencerControl->addSequenceItem(group);
+
+		return sequencerControl;
+	}
+
 	else
 		return nullptr;
 }

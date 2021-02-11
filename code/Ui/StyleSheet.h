@@ -1,6 +1,8 @@
 #pragma once
 
-#include <vector>
+#include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -27,30 +29,23 @@ class T_DLLCLASS StyleSheet : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Group
+	struct Entity
 	{
-		std::wstring type;
-		std::wstring element;
-		Color4ub color;
-
-		void serialize(ISerializer& s);
+		std::wstring typeName;
+		SmallMap< std::wstring, Color4ub > colors;
 	};
 
-	struct Value
-	{
-		std::wstring name;
-		std::wstring value;
+	Entity* findEntity(const std::wstring& typeName);
 
-		void serialize(ISerializer& s);
-	};
-
-	static Ref< StyleSheet > createDefault();
+	Entity* addEntity(const std::wstring& typeName);
 
 	void setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color);
 
 	Color4ub getColor(const std::wstring& typeName, const std::wstring& element) const;
 
 	Color4ub getColor(const Object* widget, const std::wstring& element) const;
+
+	void setValue(const std::wstring& name, const std::wstring& value);
 
 	std::wstring getValue(const std::wstring& name) const;
 
@@ -62,17 +57,17 @@ public:
 
 	virtual void serialize(ISerializer& s) override;
 
-	const std::vector< Group >& getGroups() const { return m_groups; }
+	AlignedVector< Entity >& getEntities() { return m_entities; }
 
-	const std::vector< Value >& getValues() const { return m_values; }
+	const AlignedVector< Entity >& getEntities() const { return m_entities; }
+
+	const SmallMap< std::wstring, std::wstring >& getValues() const { return m_values; }
+
+	static Ref< StyleSheet > createDefault();
 
 private:
-	std::vector< Group > m_groups;
-	std::vector< Value > m_values;
-
-	void setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color);
-
-	void setValue(const wchar_t* const name, const wchar_t* const value);
+	AlignedVector< Entity > m_entities;
+	SmallMap< std::wstring, std::wstring > m_values;
 };
 
 	}

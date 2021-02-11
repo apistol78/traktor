@@ -1,8 +1,8 @@
 #include <limits>
-#include <sstream>
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/ScrollBar.h"
@@ -278,17 +278,17 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		// If not shift is down we de-select all items.
 		if (!(event->getKeyState() & KsShift))
 		{
-			for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
-				selectionModified |= (*i)->setSelected(false);
+			for (auto sequenceItem : sequenceItems)
+				selectionModified |= sequenceItem->setSelected(false);
 		}
 
 		// Ensure sequence is selected.
-		int sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
-		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
+		int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
+		if (sequenceId >= 0 && sequenceId < (int32_t)sequenceItems.size())
 		{
-			RefArray< SequenceItem >::iterator i = sequenceItems.begin();
-			std::advance(i, sequenceId);
-			selectionModified |= (*i)->setSelected(true);
+			auto it = sequenceItems.begin();
+			std::advance(it, sequenceId);
+			selectionModified |= (*it)->setSelected(true);
 		}
 
 		// Issue selection change event.
@@ -300,14 +300,14 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	// Issue local mouse down event on sequence item.
-	int sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
-	if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
+	int32_t sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
+	if (sequenceId >= 0 && sequenceId < (int32_t)sequenceItems.size())
 	{
-		RefArray< SequenceItem >::iterator i = sequenceItems.begin();
-		std::advance(i, sequenceId);
+		auto it = sequenceItems.begin();
+		std::advance(it, sequenceId);
 
 		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + sequenceHeight * sequenceId);
-		m_mouseTrackItem.item = *i;
+		m_mouseTrackItem.item = *it;
 		m_mouseTrackItem.item->mouseDown(
 			this,
 			Point(
@@ -328,8 +328,8 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		m_moveTrack = 0;
 
 		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * m_timeScale;
-		m_cursor = std::max< int >(m_cursor, 0);
-		m_cursor = std::min< int >(m_cursor, m_length);
+		m_cursor = std::max< int32_t >(m_cursor, 0);
+		m_cursor = std::min< int32_t >(m_cursor, m_length);
 
 		CursorMoveEvent cursorMoveEvent(this, m_cursor);
 		raiseEvent(&cursorMoveEvent);
@@ -504,25 +504,23 @@ void SequencerControl::eventPaint(PaintEvent* event)
 
 	// Get component sizes.
 	Rect rc = getInnerRect();
-	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
-	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+	int32_t scrollWidth = m_scrollBarV->getPreferedSize().cx;
+	int32_t scrollHeight = m_scrollBarH->getPreferedSize().cy;
 
 	// Get scroll offsets.
-	int scrollOffsetX = m_scrollBarH->getPosition();
-	int scrollOffsetY = m_scrollBarV->getPosition();
+	int32_t scrollOffsetX = m_scrollBarH->getPosition();
+	int32_t scrollOffsetY = m_scrollBarV->getPosition();
 
 	// Clear background.
-	canvas.setBackground(ss->getColor(this, L"background-color"));
-	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
-
-	canvas.setBackground(Color4ub(138, 137, 140));
+	canvas.setBackground(ss->getColor(this, L"control-background-color"));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
+	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
 	// Right sequence edge.
-	int end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
+	int32_t end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
 
 	// Draw sequences.
 	Rect rcSequence(
@@ -531,7 +529,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 		rc.right - scrollWidth,
 		rc.top - scrollOffsetY + sequenceHeight
 	);
-	for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	for (auto sequenceItem : sequenceItems)
 	{
 		canvas.setClipRect(Rect(
 			rc.left,
@@ -539,22 +537,11 @@ void SequencerControl::eventPaint(PaintEvent* event)
 			end,
 			rc.bottom - scrollHeight
 		));
-
-		(*i)->paint(this, canvas, rcSequence, m_separator, scrollOffsetX);
-
+		sequenceItem->paint(this, canvas, rcSequence, m_separator, scrollOffsetX);
 		rcSequence = rcSequence.offset(0, sequenceHeight);
 	}
 
 	canvas.resetClipRect();
-
-	canvas.setBackground(Color4ub(0, 0, 0, 0));
-	canvas.setForeground(Color4ub(0, 0, 0, 80));
-	canvas.fillGradientRect(Rect(
-		rc.left + m_separator,
-		rc.top,
-		rc.left + m_separator + 16,
-		rc.bottom
-	), false);
 
 	// Draw cursor.
 	int x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
@@ -585,9 +572,8 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rcTime);
 
-	std::wstringstream wss;
-	wss << m_cursor << L" ms";
-	Size ext = canvas.getFontMetric().getExtent(wss.str());
+	std::wstring ws = str(L"%d ms", m_cursor);
+	Size ext = canvas.getFontMetric().getExtent(ws);
 
 	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(
@@ -595,7 +581,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 			rcTime.left + 4,
 			rcTime.top + (rcTime.getHeight() - ext.cy) / 2
 		),
-		wss.str()
+		ws
 	);
 
 	event->consume();

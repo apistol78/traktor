@@ -48,7 +48,7 @@ void Marker::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRe
 	outRect.bottom = rcClient.bottom - 3;
 }
 
-void Marker::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
+void Marker::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
 	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	int32_t x = sequence->clientFromTime(m_time) - scrollOffset;

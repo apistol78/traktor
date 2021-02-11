@@ -1,1407 +1,1518 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.ui.StyleSheet">
-	<groups>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>color</element>
-			<color>30, 30, 30, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>color-disabled</element>
-			<color>60, 60, 60, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>background-color-hover</element>
-			<color>249, 249, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>background-color-disabled</element>
-			<color>230, 230, 235, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>border-color</element>
-			<color>160, 160, 160, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Widget</type>
-			<element>border-color-disabled</element>
-			<color>200, 200, 220, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.DropDown</type>
-			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.DropDown</type>
-			<element>background-color-hover</element>
-			<color>249, 249, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.DropDown</type>
-			<element>color-hover</element>
-			<color>70, 70, 74, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.DropDown</type>
-			<element>background-color-button</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.DropDown</type>
-			<element>color-arrow</element>
-			<color>153, 153, 153, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MenuShell</type>
-			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MenuShell</type>
-			<element>border-color</element>
-			<color>160, 160, 160, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MenuItem</type>
-			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MenuItem</type>
-			<element>background-color-hover</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MenuItem</type>
-			<element>color</element>
-			<color>30, 30, 30, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Button</type>
-			<element>background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Button</type>
-			<element>background-color-pushed</element>
-			<color>229, 229, 232, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Button</type>
-			<element>color</element>
-			<color>30, 30, 30, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ListBox</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>background-color-hover</element>
-			<color>190, 219, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>background-color-disabled</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>background-color-selection</element>
-			<color>0, 127, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>border-color</element>
-			<color>180, 180, 180, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Edit</type>
-			<element>border-color-disabled</element>
-			<color>180, 180, 180, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Dock</type>
-			<element>caption-background-color</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Dock</type>
-			<element>caption-color-focus</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Dock</type>
-			<element>caption-color-no-focus</element>
-			<color>30, 30, 30, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Dock</type>
-			<element>splitter-color</element>
-			<color>204, 200, 219, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Tab</type>
-			<element>tab-background-color</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Tab</type>
-			<element>tab-background-color-hover</element>
-			<color>28, 151, 234, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Tab</type>
-			<element>tab-line-color</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Tab</type>
-			<element>tab-color-active</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Tab</type>
-			<element>tab-color-inactive</element>
-			<color>30, 30, 30, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Panel</type>
-			<element>caption-background-color-focus</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Panel</type>
-			<element>caption-background-color-no-focus</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Panel</type>
-			<element>caption-color-focus</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.Panel</type>
-			<element>caption-color-no-focus</element>
-			<color>208, 208, 208, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.BackgroundWorkerDialog</type>
-			<element>border-color</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-background-color-pushed</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-background-color-hover</element>
-			<color>254, 254, 254, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-color-toggled</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-color-seperator</element>
-			<color>160, 160, 160, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-background-color-dropdown</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-background-color-dropdown-hover</element>
-			<color>254, 254, 254, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-color-dropdown-hover</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-background-color-dropdown-button</element>
-			<color>243, 243, 246, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ToolBar</type>
-			<element>item-color-dropdown-arrow</element>
-			<color>20, 20, 20, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.TreeView</type>
-			<element>background-color</element>
-			<color>246, 246, 246, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.TreeView</type>
-			<element>item-color-selected</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.TreeView</type>
-			<element>item-color-selected-disabled</element>
-			<color>180, 180, 180, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.TreeView</type>
-			<element>item-background-color-selected</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GridView</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GridView</type>
-			<element>header-background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GridView</type>
-			<element>item-color-selected</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GridView</type>
-			<element>item-background-color-selected</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.GridView</type>
-			<element>line-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>background-color-info</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>background-color-warning</element>
-			<color>255, 210, 87, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>background-color-error</element>
-			<color>255, 45, 45, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>color-info</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>color-warning</element>
-			<color>95, 48, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.LogList</type>
-			<element>color-error</element>
-			<color>100, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ProfileControl</type>
-			<element>background-color</element>
-			<color>120, 120, 120, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ProfileControl</type>
-			<element>grid-color</element>
-			<color>128, 128, 128, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PropertyList</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PropertyList</type>
-			<element>header-background-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PropertyList</type>
-			<element>item-color-selected</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PropertyList</type>
-			<element>item-background-color-selected</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PropertyList</type>
-			<element>line-color</element>
-			<color>239, 239, 242, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.StatusBar</type>
-			<element>color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.StatusBar</type>
-			<element>background-color</element>
-			<color>0, 122, 204, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.StatusBar</type>
-			<element>background-color-alert</element>
-			<color>202, 81, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ListBox</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ListBox</type>
-			<element>item-color-selected</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ListBox</type>
-			<element>item-background-color-selected</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.sound.BankControl</type>
-			<element>background-color</element>
-			<color>80, 80, 80, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ProgressBar</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ProgressBar</type>
-			<element>progress-color</element>
-			<color>0, 153, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PreviewList</type>
-			<element>background-color</element>
-			<color>246, 246, 246, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PreviewList</type>
-			<element>color</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PreviewList</type>
-			<element>item-background-color</element>
-			<color>200, 200, 200, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.PreviewList</type>
-			<element>item-background-color-selected</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.runtime.TargetListControl</type>
-			<element>item-background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.runtime.TargetListControl</type>
-			<element>item-seperator-color</element>
-			<color>200, 200, 200, 255</color>
-		</item>
-		<item>
-			<type>traktor.runtime.TargetListControl</type>
-			<element>item-connection-background-color</element>
-			<color>220, 220, 220, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MiniButton</type>
-			<element>background-color</element>
-			<color>246, 246, 246, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MiniButton</type>
-			<element>bevel-color</element>
-			<color>140, 140, 140, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MiniButton</type>
-			<element>bevel-highlight-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MiniButton</type>
-			<element>bevel-shadow-color</element>
-			<color>64, 64, 64, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.MiniButton</type>
-			<element>bevel-disabled-color</element>
-			<color>140, 140, 140, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ShortcutEdit</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ShortcutEdit</type>
-			<element>background-color-focus</element>
-			<color>230, 230, 230, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ShortcutEdit</type>
-			<element>color</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ShortcutEdit</type>
-			<element>color-focus</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>background-color</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>background-color-margin</element>
-			<color>200, 200, 200, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>color</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>color-margin</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>color-caret</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>color-selection</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>background-color-selection</element>
-			<color>51, 153, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.RichEdit</type>
-			<element>background-found-line</element>
-			<color>230, 255, 220, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-default</element>
-			<color>0, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-default</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-string</element>
-			<color>120, 120, 120, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-string</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-number</element>
-			<color>0, 0, 120, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-number</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-self</element>
-			<color>210, 150, 90, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-self</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-comment</element>
-			<color>40, 120, 40, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-comment</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-function</element>
-			<color>120, 40, 40, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-function</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-type</element>
-			<color>160, 40, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-type</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-keyword</element>
-			<color>0, 0, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-keyword</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-special</element>
-			<color>255, 140, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-special</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-preprocessor</element>
-			<color>0, 140, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-preprocessor</element>
-			<color>255, 255, 255, 0</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>color-error</element>
-			<color>255, 255, 255, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.SyntaxRichEdit</type>
-			<element>background-color-error</element>
-			<color>255, 0, 0, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ScrollBar</type>
-			<element>background-color</element>
-			<color>219, 219, 222, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ScrollBar</type>
-			<element>color-arrow</element>
-			<color>120, 120, 120, 255</color>
-		</item>
-		<item>
-			<type>traktor.ui.ScrollBar</type>
-			<element>color-slider</element>
-			<color>189, 189, 192, 255</color>
-		</item>
-		<item>
-			<type>traktor.script.ScriptEditorPage</type>
-			<element>background-debug-line</element>
-			<color>255, 255, 220, 255</color>
-		</item>
-	</groups>
+<object type="traktor.ui.StyleSheet" version="1">
+	<entities>
+		<item>
+			<typeName>traktor.ui.Widget</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-disabled</first>
+					<second>230, 230, 235, 255</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>249, 249, 255, 255</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>160, 160, 160, 255</second>
+				</item>
+				<item>
+					<first>border-color-disabled</first>
+					<second>200, 200, 220, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>30, 30, 30, 255</second>
+				</item>
+				<item>
+					<first>color-disabled</first>
+					<second>60, 60, 60, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DropDown</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-button</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>249, 249, 255, 255</second>
+				</item>
+				<item>
+					<first>color-arrow</first>
+					<second>153, 153, 153, 255</second>
+				</item>
+				<item>
+					<first>color-hover</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.MenuShell</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>160, 160, 160, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.MenuItem</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>30, 30, 30, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Button</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-pushed</first>
+					<second>229, 229, 232, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>30, 30, 30, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ListBox</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Edit</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-disabled</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>190, 219, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-selection</first>
+					<second>0, 127, 255, 255</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>180, 180, 180, 255</second>
+				</item>
+				<item>
+					<first>border-color-disabled</first>
+					<second>180, 180, 180, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Dock</typeName>
+			<colors>
+				<item>
+					<first>caption-background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-color-focus</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>caption-color-no-focus</first>
+					<second>30, 30, 30, 255</second>
+				</item>
+				<item>
+					<first>splitter-color</first>
+					<second>204, 200, 219, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Tab</typeName>
+			<colors>
+				<item>
+					<first>tab-background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>tab-background-color-hover</first>
+					<second>28, 151, 234, 255</second>
+				</item>
+				<item>
+					<first>tab-color-active</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>30, 30, 30, 255</second>
+				</item>
+				<item>
+					<first>tab-line-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Panel</typeName>
+			<colors>
+				<item>
+					<first>caption-background-color-focus</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-background-color-no-focus</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-color-focus</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>caption-color-no-focus</first>
+					<second>208, 208, 208, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.BackgroundWorkerDialog</typeName>
+			<colors>
+				<item>
+					<first>border-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ToolBar</typeName>
+			<colors>
+				<item>
+					<first>item-background-color-dropdown</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-dropdown-button</first>
+					<second>243, 243, 246, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-dropdown-hover</first>
+					<second>254, 254, 254, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-hover</first>
+					<second>254, 254, 254, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-pushed</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>item-color-dropdown-arrow</first>
+					<second>20, 20, 20, 255</second>
+				</item>
+				<item>
+					<first>item-color-dropdown-hover</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-seperator</first>
+					<second>160, 160, 160, 255</second>
+				</item>
+				<item>
+					<first>item-color-toggled</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.TreeView</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>246, 246, 246, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected-disabled</first>
+					<second>180, 180, 180, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridView</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>header-background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.LogList</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-error</first>
+					<second>255, 45, 45, 255</second>
+				</item>
+				<item>
+					<first>background-color-info</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-warning</first>
+					<second>255, 210, 87, 255</second>
+				</item>
+				<item>
+					<first>color-error</first>
+					<second>100, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-info</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-warning</first>
+					<second>95, 48, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ProfileControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>grid-color</first>
+					<second>128, 128, 128, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.PropertyList</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>header-background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.StatusBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>background-color-alert</first>
+					<second>202, 81, 0, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.sound.BankControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>80, 80, 80, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ProgressBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>progress-color</first>
+					<second>0, 153, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.PreviewList</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>246, 246, 246, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>item-background-color</first>
+					<second>200, 200, 200, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.runtime.TargetListControl</typeName>
+			<colors>
+				<item>
+					<first>item-background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>item-connection-background-color</first>
+					<second>220, 220, 220, 255</second>
+				</item>
+				<item>
+					<first>item-seperator-color</first>
+					<second>200, 200, 200, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.MiniButton</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>246, 246, 246, 255</second>
+				</item>
+				<item>
+					<first>bevel-color</first>
+					<second>140, 140, 140, 255</second>
+				</item>
+				<item>
+					<first>bevel-disabled-color</first>
+					<second>140, 140, 140, 255</second>
+				</item>
+				<item>
+					<first>bevel-highlight-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>bevel-shadow-color</first>
+					<second>64, 64, 64, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ShortcutEdit</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-focus</first>
+					<second>230, 230, 230, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-focus</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.RichEdit</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-margin</first>
+					<second>200, 200, 200, 255</second>
+				</item>
+				<item>
+					<first>background-color-selection</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>background-found-line</first>
+					<second>230, 255, 220, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-caret</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-margin</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-selection</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.SyntaxRichEdit</typeName>
+			<colors>
+				<item>
+					<first>background-color-comment</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-default</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-error</first>
+					<second>255, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>background-color-function</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-keyword</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-number</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-preprocessor</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-self</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-special</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>background-color-string</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-type</first>
+					<second>255, 255, 255, 0</second>
+				</item>
+				<item>
+					<first>color-comment</first>
+					<second>40, 120, 40, 255</second>
+				</item>
+				<item>
+					<first>color-default</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-error</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>color-function</first>
+					<second>120, 40, 40, 255</second>
+				</item>
+				<item>
+					<first>color-keyword</first>
+					<second>0, 0, 255, 255</second>
+				</item>
+				<item>
+					<first>color-number</first>
+					<second>0, 0, 120, 255</second>
+				</item>
+				<item>
+					<first>color-preprocessor</first>
+					<second>0, 140, 255, 255</second>
+				</item>
+				<item>
+					<first>color-self</first>
+					<second>210, 150, 90, 255</second>
+				</item>
+				<item>
+					<first>color-special</first>
+					<second>255, 140, 0, 255</second>
+				</item>
+				<item>
+					<first>color-string</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-type</first>
+					<second>160, 40, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ScrollBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>219, 219, 222, 255</second>
+				</item>
+				<item>
+					<first>color-arrow</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-slider</first>
+					<second>189, 189, 192, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.script.ScriptEditorPage</typeName>
+			<colors>
+				<item>
+					<first>background-debug-line</first>
+					<second>255, 255, 220, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.SequencerControl</typeName>
+			<colors>
+				<item>
+					<first>control-background-color</first>
+					<second>155, 155, 155, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Sequence</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>137, 198, 255, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>51, 51, 51, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Range</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 197, 73, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>255, 242, 107, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>142, 105, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Tick</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>83, 216, 49, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>104, 255, 137, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>1, 102, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Track</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 65, 65, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>255, 151, 151, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>146, 0, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.SequenceGroup</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>191, 191, 191, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>205, 205, 205, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>62, 62, 62, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Slider</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>173, 173, 173, 255</second>
+				</item>
+				<item>
+					<first>knob-color</first>
+					<second>49, 108, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+	</entities>
 	<values>
 		<item>
-			<name>Editor.Icon</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Icon.image</value>
+			<first>Animation.Alignment</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Alignment.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Save</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Save.image</value>
+			<first>Animation.Bones</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Bones.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Cut</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Cut.image</value>
+			<first>Animation.Playback</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Playback.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Copy</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Copy.image</value>
+			<first>Animation.Skeleton</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Skeleton.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Paste</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Paste.image</value>
+			<first>Drone.Icon</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Drone/Icon.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Undo</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Undo.image</value>
+			<first>Editor.Database.Favorites</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Favorites.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Redo</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Redo.image</value>
+			<first>Editor.Database.Folders</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Folders.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.Build</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Build.image</value>
+			<first>Editor.Database.NameFilter</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/NameFilter.image</second>
 		</item>
 		<item>
-			<name>Editor.ToolBar.CancelBuild</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/CancelBuild.image</value>
+			<first>Editor.Database.ShowFiltered</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/ShowFiltered.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.NameFilter</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/NameFilter.image</value>
+			<first>Editor.Database.TreeColors</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TreeColors.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.TypeFilter</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TypeFilter.image</value>
+			<first>Editor.Database.TypeFilter</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TypeFilter.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.ShowFiltered</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/ShowFiltered.image</value>
+			<first>Editor.Database.Types</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Types.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.Favorites</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Favorites.image</value>
+			<first>Editor.Database.TypesHidden</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TypesHidden.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.Folders</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Folders.image</value>
+			<first>Editor.Icon</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Icon.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.Types</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Types.image</value>
+			<first>Editor.Log.Error</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogError.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.TypesHidden</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TypesHidden.image</value>
+			<first>Editor.Log.Info</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogInfo.image</second>
 		</item>
 		<item>
-			<name>Editor.Database.TreeColors</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/TreeColors.image</value>
+			<first>Editor.Log.Warning</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogWarning.image</second>
 		</item>
 		<item>
-			<name>Editor.Log.Info</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogInfo.image</value>
+			<first>Editor.Tool.Search</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/ToolSearch.image</second>
 		</item>
 		<item>
-			<name>Editor.Log.Warning</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogWarning.image</value>
+			<first>Editor.ToolBar.Build</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Build.image</second>
 		</item>
 		<item>
-			<name>Editor.Log.Error</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/LogError.image</value>
+			<first>Editor.ToolBar.CancelBuild</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/CancelBuild.image</second>
 		</item>
 		<item>
-			<name>Editor.Web.Navigate</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Navigate.image</value>
+			<first>Editor.ToolBar.Copy</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Copy.image</second>
 		</item>
 		<item>
-			<name>Editor.Tool.Search</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/ToolSearch.image</value>
+			<first>Editor.ToolBar.Cut</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Cut.image</second>
 		</item>
 		<item>
-			<name>Script.DefineGlobalFunction</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DefineGlobalFunction.image</value>
+			<first>Editor.ToolBar.Paste</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Paste.image</second>
 		</item>
 		<item>
-			<name>Script.DefineLocalFunction</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DefineLocalFunction.image</value>
+			<first>Editor.ToolBar.Redo</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Redo.image</second>
 		</item>
 		<item>
-			<name>Script.ReferenceFunction</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ReferenceFunction.image</value>
+			<first>Editor.ToolBar.Save</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Save.image</second>
 		</item>
 		<item>
-			<name>Script.AddDependency</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/AddDependency.image</value>
+			<first>Editor.ToolBar.Undo</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Undo.image</second>
 		</item>
 		<item>
-			<name>Script.MoveDependencyDown</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/MoveDependencyDown.image</value>
+			<first>Editor.Web.Navigate</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Editor/Navigate.image</second>
 		</item>
 		<item>
-			<name>Script.MoveDependencyUp</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/MoveDependencyUp.image</value>
+			<first>Flash.Button</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Button.image</second>
 		</item>
 		<item>
-			<name>Script.RemoveDependency</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/RemoveDependency.image</value>
+			<first>Flash.Edit</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Edit.image</second>
 		</item>
 		<item>
-			<name>Script.RemoveBreakpoints</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/RemoveBreakpoints.image</value>
+			<first>Flash.Flash</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Flash.image</second>
 		</item>
 		<item>
-			<name>Script.ToggleComments</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToggleComments.image</value>
+			<first>Flash.MorphShape</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/MorphShape.image</second>
 		</item>
 		<item>
-			<name>Script.Breakpoint</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/Breakpoint.image</value>
+			<first>Flash.MovieClip</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/MovieClip.image</second>
 		</item>
 		<item>
-			<name>Script.Current</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/Current.image</value>
+			<first>Flash.NextFrame</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/NextFrame.image</second>
 		</item>
 		<item>
-			<name>Script.DebugContinue</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugContinue.image</value>
+			<first>Flash.Pivot</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Pivot.image</second>
 		</item>
 		<item>
-			<name>Script.DebugStepInto</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStepInto.image</value>
+			<first>Flash.Playback</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Playback.image</second>
 		</item>
 		<item>
-			<name>Script.DebugStepOver</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStepOver.image</value>
+			<first>Flash.PlusMinus</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/PlusMinus.image</second>
 		</item>
 		<item>
-			<name>Script.DebugStop</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStop.image</value>
+			<first>Flash.PreviousFrame</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/PreviousFrame.image</second>
 		</item>
 		<item>
-			<name>Script.ProfilerClear</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ProfilerClear.image</value>
+			<first>Flash.Shape</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Shape.image</second>
 		</item>
 		<item>
-			<name>Script.Icon.Debugger</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconDebugger.image</value>
+			<first>Flash.Text</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Text.image</second>
 		</item>
 		<item>
-			<name>Script.Tool.Debugger</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToolDebugger.image</value>
+			<first>Flash.Tool.Debugger</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/ToolDebugger.image</second>
 		</item>
 		<item>
-			<name>Script.Icon.Profiler</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconProfiler.image</value>
+			<first>Input.Alignment</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Input/Alignment.image</second>
 		</item>
 		<item>
-			<name>Script.Tool.Profiler</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToolProfiler.image</value>
+			<first>Runtime.Blender</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/Blender.image</second>
 		</item>
 		<item>
-			<name>Sound.PlusMinus</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Sound/PlusMinus.image</value>
+			<first>Runtime.Logos</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/Logos.image</second>
 		</item>
 		<item>
-			<name>Flash.Playback</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Playback.image</value>
+			<first>Runtime.RenderDoc</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/RenderDoc.image</second>
 		</item>
 		<item>
-			<name>Flash.Flash</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Flash.image</value>
+			<first>Runtime.TargetBrowse</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBrowse.image</second>
 		</item>
 		<item>
-			<name>Flash.PlusMinus</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/PlusMinus.image</value>
+			<first>Runtime.TargetBuild</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBuild.image</second>
 		</item>
 		<item>
-			<name>Flash.MovieClip</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/MovieClip.image</value>
+			<first>Runtime.TargetMigrate</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetMigrate.image</second>
 		</item>
 		<item>
-			<name>Flash.Shape</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Shape.image</value>
+			<first>Runtime.TargetPlay</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetPlay.image</second>
 		</item>
 		<item>
-			<name>Flash.MorphShape</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/MorphShape.image</value>
+			<first>Runtime.TargetProfile</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetProfile.image</second>
 		</item>
 		<item>
-			<name>Flash.Text</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Text.image</value>
+			<first>Runtime.TargetStop</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetStop.image</second>
 		</item>
 		<item>
-			<name>Flash.Edit</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Edit.image</value>
+			<first>Scene.DualView</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/DualView.image</second>
 		</item>
 		<item>
-			<name>Flash.Button</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Button.image</value>
+			<first>Scene.FilterEntity</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/FilterEntity.image</second>
 		</item>
 		<item>
-			<name>Flash.Pivot</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/Pivot.image</value>
+			<first>Scene.Folders</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Folders.image</second>
 		</item>
 		<item>
-			<name>Flash.PreviousFrame</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/PreviousFrame.image</value>
+			<first>Scene.LayerAdd</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerAdd.image</second>
 		</item>
 		<item>
-			<name>Flash.NextFrame</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/NextFrame.image</value>
+			<first>Scene.LayerHidden</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerHidden.image</second>
 		</item>
 		<item>
-			<name>Flash.Tool.Debugger</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Flash/ToolDebugger.image</value>
+			<first>Scene.LayerLocked</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerLocked.image</second>
 		</item>
 		<item>
-			<name>Shader.Tools</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Shader/Tools.image</value>
+			<first>Scene.LayerUnlocked</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerUnlocked.image</second>
 		</item>
 		<item>
-			<name>Animation.Playback</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Playback.image</value>
+			<first>Scene.LayerVisible</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerVisible.image</second>
 		</item>
 		<item>
-			<name>Animation.Skeleton</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Skeleton.image</value>
+			<first>Scene.MoveDownEntity</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveDown.image</second>
 		</item>
 		<item>
-			<name>Animation.Bones</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Bones.image</value>
+			<first>Scene.MoveToEntity</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveToEntity.image</second>
 		</item>
 		<item>
-			<name>Animation.Alignment</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Animation/Alignment.image</value>
+			<first>Scene.MoveUpEntity</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveUp.image</second>
 		</item>
 		<item>
-			<name>Texture.PlusMinus</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Texture/PlusMinus.image</value>
+			<first>Scene.Play</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Play.image</second>
 		</item>
 		<item>
-			<name>Scene.ToggleGrid</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/ToggleGrid.image</value>
+			<first>Scene.Pointer</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Pointer.image</second>
 		</item>
 		<item>
-			<name>Scene.ToggleGuide</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/ToggleGuide.image</value>
+			<first>Scene.QuadView</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/QuadView.image</second>
 		</item>
 		<item>
-			<name>Scene.Folders</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Folders.image</value>
+			<first>Scene.RemoveEntity</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/RemoveEntity.image</second>
 		</item>
 		<item>
-			<name>Scene.Types</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Types.image</value>
+			<first>Scene.Rewind</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Rewind.image</second>
 		</item>
 		<item>
-			<name>Scene.MoveToEntity</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveToEntity.image</value>
+			<first>Scene.Rotate</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Rotate.image</second>
 		</item>
 		<item>
-			<name>Scene.RemoveEntity</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/RemoveEntity.image</value>
+			<first>Scene.Scale</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Scale.image</second>
 		</item>
 		<item>
-			<name>Scene.FilterEntity</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/FilterEntity.image</value>
+			<first>Scene.SingleView</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/SingleView.image</second>
 		</item>
 		<item>
-			<name>Scene.MoveUpEntity</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveUp.image</value>
+			<first>Scene.Snap</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Snap.image</second>
 		</item>
 		<item>
-			<name>Scene.MoveDownEntity</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/MoveDown.image</value>
+			<first>Scene.Stop</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Stop.image</second>
 		</item>
 		<item>
-			<name>Scene.LayerAdd</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerAdd.image</value>
+			<first>Scene.ToggleGrid</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/ToggleGrid.image</second>
 		</item>
 		<item>
-			<name>Scene.LayerHidden</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerHidden.image</value>
+			<first>Scene.ToggleGuide</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/ToggleGuide.image</second>
 		</item>
 		<item>
-			<name>Scene.LayerVisible</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerVisible.image</value>
+			<first>Scene.Translate</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Translate.image</second>
 		</item>
 		<item>
-			<name>Scene.LayerLocked</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerLocked.image</value>
+			<first>Scene.Types</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Types.image</second>
 		</item>
 		<item>
-			<name>Scene.LayerUnlocked</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/LayerUnlocked.image</value>
+			<first>Script.AddDependency</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/AddDependency.image</second>
 		</item>
 		<item>
-			<name>UI.SmallDots</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallDots.image</value>
+			<first>Script.Breakpoint</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/Breakpoint.image</second>
 		</item>
 		<item>
-			<name>UI.SmallPlus</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallPlus.image</value>
+			<first>Script.Current</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/Current.image</second>
 		</item>
 		<item>
-			<name>UI.SmallPen</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallPen.image</value>
+			<first>Script.DebugContinue</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugContinue.image</second>
 		</item>
 		<item>
-			<name>UI.SmallCross</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallCross.image</value>
+			<first>Script.DebugStepInto</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStepInto.image</second>
 		</item>
 		<item>
-			<name>UI.Tree</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Tree.image</value>
+			<first>Script.DebugStepOver</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStepOver.image</second>
 		</item>
 		<item>
-			<name>UI.GridView</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/GridView.image</value>
+			<first>Script.DebugStop</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DebugStop.image</second>
 		</item>
 		<item>
-			<name>UI.LayerVisible</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/LayerVisible.image</value>
+			<first>Script.DefineGlobalFunction</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DefineGlobalFunction.image</second>
 		</item>
 		<item>
-			<name>UI.LayerHidden</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/LayerHidden.image</value>
+			<first>Script.DefineLocalFunction</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/DefineLocalFunction.image</second>
 		</item>
 		<item>
-			<name>UI.Log</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Log.image</value>
+			<first>Script.Icon.Debugger</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconDebugger.image</second>
 		</item>
 		<item>
-			<name>UI.Unchecked</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Unchecked.image</value>
+			<first>Script.Icon.Profiler</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/IconProfiler.image</second>
 		</item>
 		<item>
-			<name>UI.Checked</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Checked.image</value>
+			<first>Script.MoveDependencyDown</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/MoveDependencyDown.image</second>
 		</item>
 		<item>
-			<name>UI.PropertyList</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/PropertyList.image</value>
+			<first>Script.MoveDependencyUp</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/MoveDependencyUp.image</second>
 		</item>
 		<item>
-			<name>UI.DockClose</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/DockClose.image</value>
+			<first>Script.ProfilerClear</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ProfilerClear.image</second>
 		</item>
 		<item>
-			<name>UI.DockGripper</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/DockGripper.image</value>
+			<first>Script.ReferenceFunction</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ReferenceFunction.image</second>
 		</item>
 		<item>
-			<name>UI.TabClose</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/TabClose.image</value>
+			<first>Script.RemoveBreakpoints</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/RemoveBreakpoints.image</second>
 		</item>
 		<item>
-			<name>UI.SequenceExpand</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceExpand.image</value>
+			<first>Script.RemoveDependency</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/RemoveDependency.image</second>
 		</item>
 		<item>
-			<name>UI.SequenceCollapse</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceCollapse.image</value>
+			<first>Script.ToggleComments</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToggleComments.image</second>
 		</item>
 		<item>
-			<name>UI.SequenceVisible</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceVisible.image</value>
+			<first>Script.Tool.Debugger</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToolDebugger.image</second>
 		</item>
 		<item>
-			<name>UI.SequenceHidden</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceHidden.image</value>
+			<first>Script.Tool.Profiler</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Script/ToolProfiler.image</second>
 		</item>
 		<item>
-			<name>UI.SearchCaseSensitive</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchCaseSensitive.image</value>
+			<first>Shader.Tools</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Shader/Tools.image</second>
 		</item>
 		<item>
-			<name>UI.SearchWholeWord</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWholeWord.image</value>
+			<first>SolutionBuilder.Aggregation</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Aggregation.image</second>
 		</item>
 		<item>
-			<name>UI.SearchWildCard</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWildCard.image</value>
+			<first>SolutionBuilder.AggregationRule</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/AggregationRule.image</second>
 		</item>
 		<item>
-			<name>Runtime.Logos</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/Logos.image</value>
+			<first>SolutionBuilder.Configuration</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Configuration.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetPlay</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetPlay.image</value>
+			<first>SolutionBuilder.File</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/File.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetStop</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetStop.image</value>
+			<first>SolutionBuilder.Folders</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Folders.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetBuild</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBuild.image</value>
+			<first>SolutionBuilder.Icon</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Icon.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetMigrate</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetMigrate.image</value>
+			<first>SolutionBuilder.Project</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Project.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetBrowse</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBrowse.image</value>
+			<first>SolutionBuilder.Solution</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Solution.image</second>
 		</item>
 		<item>
-			<name>Runtime.TargetProfile</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetProfile.image</value>
+			<first>Sound.PlusMinus</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Sound/PlusMinus.image</second>
 		</item>
 		<item>
-			<name>Runtime.Blender</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/Blender.image</value>
+			<first>Spray.BrowseBackground</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/BrowseBackground.image</second>
 		</item>
 		<item>
-			<name>Runtime.RenderDoc</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/RenderDoc.image</value>
+			<first>Spray.BrowseImageProcess</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/BrowseImageProcess.image</second>
 		</item>
 		<item>
-			<name>Input.Alignment</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Input/Alignment.image</value>
+			<first>Spray.LayerAdd</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerAdd.image</second>
 		</item>
 		<item>
-			<name>Terrain.Terrain</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Terrain/Terrain.image</value>
+			<first>Spray.LayerDelete</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerDelete.image</second>
 		</item>
 		<item>
-			<name>Scene.Pointer</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Pointer.image</value>
+			<first>Spray.LayerHidden</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerHidden.image</second>
 		</item>
 		<item>
-			<name>Scene.Translate</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Translate.image</value>
+			<first>Spray.LayerVisible</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerVisible.image</second>
 		</item>
 		<item>
-			<name>Scene.Rotate</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Rotate.image</value>
+			<first>Spray.Playback</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/Playback.image</second>
 		</item>
 		<item>
-			<name>Scene.Scale</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Scale.image</value>
+			<first>Spray.Randomize</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/Randomize.image</second>
 		</item>
 		<item>
-			<name>Scene.Snap</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Snap.image</value>
+			<first>Spray.ToggleGroundClip</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleGroundClip.image</second>
 		</item>
 		<item>
-			<name>Scene.Play</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Play.image</value>
+			<first>Spray.ToggleGuideLines</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleGuideLines.image</second>
 		</item>
 		<item>
-			<name>Scene.Rewind</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Rewind.image</value>
+			<first>Spray.ToggleMoveEmitter</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleMoveEmitter.image</second>
 		</item>
 		<item>
-			<name>Scene.Stop</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/Stop.image</value>
+			<first>Terrain.Terrain</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Terrain/Terrain.image</second>
 		</item>
 		<item>
-			<name>Scene.SingleView</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/SingleView.image</value>
+			<first>Texture.PlusMinus</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Texture/PlusMinus.image</second>
 		</item>
 		<item>
-			<name>Scene.DualView</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/DualView.image</value>
+			<first>Theater.Theater</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Theater/Theater.image</second>
 		</item>
 		<item>
-			<name>Scene.QuadView</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Scene/QuadView.image</value>
+			<first>UI.Checked</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Checked.image</second>
 		</item>
 		<item>
-			<name>Spray.Playback</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/Playback.image</value>
+			<first>UI.DockClose</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/DockClose.image</second>
 		</item>
 		<item>
-			<name>Spray.ToggleGuideLines</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleGuideLines.image</value>
+			<first>UI.DockGripper</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/DockGripper.image</second>
 		</item>
 		<item>
-			<name>Spray.ToggleMoveEmitter</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleMoveEmitter.image</value>
+			<first>UI.FileDialog.Directory</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Directory.image</second>
 		</item>
 		<item>
-			<name>Spray.ToggleGroundClip</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/ToggleGroundClip.image</value>
+			<first>UI.FileDialog.File</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/File.image</second>
 		</item>
 		<item>
-			<name>Spray.BrowseBackground</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/BrowseBackground.image</value>
+			<first>UI.Graph.Background</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Background.image</second>
 		</item>
 		<item>
-			<name>Spray.BrowseImageProcess</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/BrowseImageProcess.image</value>
+			<first>UI.Graph.Comment</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Comment.image</second>
 		</item>
 		<item>
-			<name>Spray.Randomize</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/Randomize.image</value>
+			<first>UI.Graph.External</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/External.image</second>
 		</item>
 		<item>
-			<name>Spray.LayerAdd</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerAdd.image</value>
+			<first>UI.Graph.ExternalError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalError.image</second>
 		</item>
 		<item>
-			<name>Spray.LayerDelete</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerDelete.image</value>
+			<first>UI.Graph.ExternalErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalErrorSelected.image</second>
 		</item>
 		<item>
-			<name>Spray.LayerVisible</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerVisible.image</value>
+			<first>UI.Graph.ExternalSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalSelected.image</second>
 		</item>
 		<item>
-			<name>Spray.LayerHidden</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Spray/LayerHidden.image</value>
+			<first>UI.Graph.InOut</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOut.image</second>
 		</item>
 		<item>
-			<name>Theater.Theater</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Theater/Theater.image</value>
+			<first>UI.Graph.InOutError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutError.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Icon</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Icon.image</value>
+			<first>UI.Graph.InOutErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutErrorSelected.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Solution</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Solution.image</value>
+			<first>UI.Graph.InOutSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutSelected.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Project</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Project.image</value>
+			<first>UI.Graph.Input</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Input.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Folders</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Folders.image</value>
+			<first>UI.Graph.InputError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputError.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.File</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/File.image</value>
+			<first>UI.Graph.InputErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputErrorSelected.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Configuration</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Configuration.image</value>
+			<first>UI.Graph.InputSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputSelected.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.Aggregation</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/Aggregation.image</value>
+			<first>UI.Graph.Ipol</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Ipol.image</second>
 		</item>
 		<item>
-			<name>SolutionBuilder.AggregationRule</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/SolutionBuilder/AggregationRule.image</value>
+			<first>UI.Graph.IpolError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolError.image</second>
 		</item>
 		<item>
-			<name>Drone.Icon</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Drone/Icon.image</value>
+			<first>UI.Graph.IpolErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Pin</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Pin.image</value>
+			<first>UI.Graph.IpolSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.PinHot</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinHot.image</value>
+			<first>UI.Graph.Label</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Label.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.PinError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinError.image</value>
+			<first>UI.Graph.Node</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Node.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Label</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Label.image</value>
+			<first>UI.Graph.NodeError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Node</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Node.image</value>
+			<first>UI.Graph.NodeErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.NodeSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeSelected.image</value>
+			<first>UI.Graph.NodeSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.NodeError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeError.image</value>
+			<first>UI.Graph.Output</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Output.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.NodeErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/NodeErrorSelected.image</value>
+			<first>UI.Graph.OutputError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.External</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/External.image</value>
+			<first>UI.Graph.OutputErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ExternalSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalSelected.image</value>
+			<first>UI.Graph.OutputSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ExternalError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalError.image</value>
+			<first>UI.Graph.Pin</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Pin.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ExternalErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalErrorSelected.image</value>
+			<first>UI.Graph.PinError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Script</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Script.image</value>
+			<first>UI.Graph.PinHot</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinHot.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ScriptSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptSelected.image</value>
+			<first>UI.Graph.Script</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Script.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ScriptError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptError.image</value>
+			<first>UI.Graph.ScriptError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.ScriptErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptErrorSelected.image</value>
+			<first>UI.Graph.ScriptErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Input</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Input.image</value>
+			<first>UI.Graph.ScriptSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InputSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputSelected.image</value>
+			<first>UI.Graph.Uniform</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Uniform.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InputError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputError.image</value>
+			<first>UI.Graph.UniformError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InputErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InputErrorSelected.image</value>
+			<first>UI.Graph.UniformErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InOut</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOut.image</value>
+			<first>UI.Graph.UniformSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InOutSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutSelected.image</value>
+			<first>UI.Graph.Variable</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Variable.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InOutError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutError.image</value>
+			<first>UI.Graph.VariableError</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableError.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.InOutErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutErrorSelected.image</value>
+			<first>UI.Graph.VariableErrorSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableErrorSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Uniform</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Uniform.image</value>
+			<first>UI.Graph.VariableSelected</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableSelected.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.UniformSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformSelected.image</value>
+			<first>UI.GridView</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/GridView.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.UniformError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformError.image</value>
+			<first>UI.LayerHidden</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/LayerHidden.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.UniformErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformErrorSelected.image</value>
+			<first>UI.LayerVisible</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/LayerVisible.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Variable</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Variable.image</value>
+			<first>UI.Log</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Log.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.VariableSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableSelected.image</value>
+			<first>UI.PropertyList</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/PropertyList.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.VariableError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableError.image</value>
+			<first>UI.SearchCaseSensitive</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchCaseSensitive.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.VariableErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/VariableErrorSelected.image</value>
+			<first>UI.SearchWholeWord</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWholeWord.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Output</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Output.image</value>
+			<first>UI.SearchWildCard</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWildCard.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.OutputSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputSelected.image</value>
+			<first>UI.SequenceCollapse</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceCollapse.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.OutputError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputError.image</value>
+			<first>UI.SequenceExpand</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceExpand.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.OutputErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/OutputErrorSelected.image</value>
+			<first>UI.SequenceHidden</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceHidden.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Ipol</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Ipol.image</value>
+			<first>UI.SequenceVisible</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SequenceVisible.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.IpolSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolSelected.image</value>
+			<first>UI.SmallCross</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallCross.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.IpolError</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolError.image</value>
+			<first>UI.SmallDots</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallDots.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.IpolErrorSelected</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/IpolErrorSelected.image</value>
+			<first>UI.SmallPen</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallPen.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Comment</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Comment.image</value>
+			<first>UI.SmallPlus</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SmallPlus.image</second>
 		</item>
 		<item>
-			<name>UI.Graph.Background</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Background.image</value>
+			<first>UI.TabClose</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/TabClose.image</second>
 		</item>
 		<item>
-			<name>UI.FileDialog.Directory</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Directory.image</value>
+			<first>UI.Tree</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Tree.image</second>
 		</item>
 		<item>
-			<name>UI.FileDialog.File</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/File.image</value>
+			<first>UI.Unchecked</first>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Unchecked.image</second>
 		</item>
 	</values>
 </object>

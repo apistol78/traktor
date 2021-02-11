@@ -59,6 +59,12 @@ Size Slider::getPreferedSize() const
 	return Size(dpi96(200), dpi96(20));
 }
 
+Size Slider::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
 void Slider::eventButtonDown(MouseButtonDownEvent* event)
 {
 	if (!isEnable())

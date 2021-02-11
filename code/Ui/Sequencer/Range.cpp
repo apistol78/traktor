@@ -1,7 +1,9 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Sequencer/Range.h"
 #include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/SequencerControl.h"
 
 namespace traktor
 {
@@ -16,29 +18,29 @@ const int c_sequenceHeight = 40;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Range", Range, Key)
 
-Range::Range(int start, int end, bool movable)
+Range::Range(int32_t start, int32_t end, bool movable)
 :	m_start(start)
 ,	m_end(end)
 ,	m_movable(movable)
 {
 }
 
-void Range::setStart(int start)
+void Range::setStart(int32_t start)
 {
 	m_start = start;
 }
 
-int Range::getStart() const
+int32_t Range::getStart() const
 {
 	return m_start;
 }
 
-void Range::setEnd(int end)
+void Range::setEnd(int32_t end)
 {
 	m_end = end;
 }
 
-int Range::getEnd() const
+int32_t Range::getEnd() const
 {
 	return m_end;
 }
@@ -61,20 +63,20 @@ void Range::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRec
 	outRect.bottom = rcClient.top + sequenceHeight - 3;
 }
 
-void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
+void Range::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const StyleSheet* ss = sequencer->getStyleSheet();
 
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	int32_t x1 = sequence->clientFromTime(m_start) - scrollOffset;
 	int32_t x2 = sequence->clientFromTime(m_end) - scrollOffset;
-
 	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.top + sequenceHeight - 3);
+	bool selected = (sequence->getSelectedKey() == this);
 
-	canvas.setForeground(Color4ub(220, 255, 220));
-	canvas.setBackground(Color4ub(180, 230, 180));
-	canvas.fillGradientRect(rc);
+	canvas.setBackground(ss->getColor(this, selected ? L"background-color-selected" : L"background-color"));
+	canvas.fillRect(rc);
 
-	canvas.setForeground(Color4ub(0, 0, 0, 128));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawRect(rc);
 }
 
