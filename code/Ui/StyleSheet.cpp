@@ -130,10 +130,40 @@ void StyleSheet::setValue(const std::wstring& name, const std::wstring& value)
 	m_values[name] = value;
 }
 
-std::wstring StyleSheet::getValue(const std::wstring& name) const
+std::wstring StyleSheet::getValueRaw(const std::wstring& name) const
 {
 	auto it = m_values.find(name);
 	return it != m_values.end() ? it->second : L"";
+}
+
+std::wstring StyleSheet::getValue(const std::wstring& name) const
+{
+	auto it = m_values.find(name);
+	if (it == m_values.end())
+		return L"";
+
+	std::wstring value = it->second;
+	std::wstring tmp;
+
+	size_t s = 0;
+	for (;;)
+	{
+		s = value.find(L"$(", s);
+		if (s == std::string::npos)
+			break;
+
+		size_t e = value.find(L")", s + 2);
+		if (e == std::string::npos)
+			break;
+
+		std::wstring name = value.substr(s + 2, e - s - 2);
+		if (!(tmp = getValueRaw(name)).empty())
+			value = value.substr(0, s) + tmp + value.substr(e + 1);
+
+		++s;
+	}
+
+	return value;
 }
 
 Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
