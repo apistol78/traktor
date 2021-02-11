@@ -1,5 +1,9 @@
 #include <X11/Xatom.h>
 #include "Core/Timer/Timer.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
+#include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/X11/ToolFormX11.h"
 
 namespace traktor
@@ -56,6 +60,53 @@ void ToolFormX11::destroy()
 {
 	T_FATAL_ASSERT (m_modal == false);
 	WidgetX11Impl< IToolForm >::destroy();
+}
+
+void ToolFormX11::setIcon(ISystemBitmap* icon)
+{
+	Ref< drawing::Image > ii = icon->getImage();
+	ii->convert(drawing::PixelFormat::getA8R8G8B8());
+
+	const int32_t szs[] = { 16, 32, 64, 128, 256, 0 };
+	AlignedVector< unsigned long > data;
+
+	for (const int32_t* sz = szs; *sz != 0; ++sz)
+	{
+		int32_t w = *sz;
+		int32_t h = *sz;
+
+		drawing::ScaleFilter sf(
+			w,
+			h,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+
+		Ref< drawing::Image > img = ii->clone();
+		img->apply(&sf);
+
+		data.push_back(w);
+		data.push_back(h);
+
+		uint32_t o = data.size();
+		data.resize(o + w * h);
+
+		const uint32_t* src = static_cast< const uint32_t* >(img->getData());
+		for (uint32_t i = 0; i < w * h; ++i)
+			data[o + i] = (unsigned long)src[i];
+	}
+
+	XChangeProperty(
+		m_context->getDisplay(),
+		m_data.window,
+		XInternAtom(m_context->getDisplay(), "_NET_WM_ICON", False),
+		XA_CARDINAL, 32,
+		PropModeReplace,
+		(unsigned char*)data.ptr(),
+		data.size()
+	);
+
+	XFlush(m_context->getDisplay());
 }
 
 int ToolFormX11::showModal()
