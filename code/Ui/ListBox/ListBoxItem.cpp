@@ -56,11 +56,12 @@ bool ListBoxItem::isSelected() const
 
 void ListBoxItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = getWidget< ListBox >()->getStyleSheet();
+	const StyleSheet* ss = getWidget()->getStyleSheet();
+	bool enabled = getWidget()->isEnable();
 
-	if (m_selected)
+	if (enabled && m_selected)
 	{
-		canvas.setBackground(ss->getColor(getWidget< ListBox >(), L"item-background-color-selected"));
+		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rect);
 	}
 	else if (m_bgcolor.a != 0)
@@ -69,7 +70,10 @@ void ListBoxItem::paint(Canvas& canvas, const Rect& rect)
 		canvas.fillRect(rect);
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< ListBox >(), m_selected ? L"item-color-selected" : L"color"));
+	if (enabled)
+		canvas.setForeground(ss->getColor(this, m_selected ? L"color-selected" : L"color"));
+	else
+		canvas.setForeground(ss->getColor(this, L"color-disabled"));
 	canvas.drawText(rect, m_text, AnLeft, AnCenter);
 }
 

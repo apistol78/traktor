@@ -35,6 +35,8 @@ private:
 
 	void handleCommand(const Command& command);
 
+	void eventClose(CloseEvent*);
+
 	void eventMenuClick(ToolBarButtonClickEvent* event);
 
 	void eventTreeSelectionChange(SelectionChangeEvent* event);

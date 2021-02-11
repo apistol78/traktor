@@ -55,18 +55,6 @@ Ref< StyleSheet > loadStyleSheet(const Path& pathName)
 	if (file)
 	{
 		Ref< StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< StyleSheet >();
-		if (!styleSheet)
-			return nullptr;
-
-		//// Add all known widget types to style sheet.
-		//TypeInfoSet widgetTypes;
-		//type_of< Widget >().findAllOf(widgetTypes);
-		//for (const auto widgetType : widgetTypes)
-		//{
-		//	if (styleSheet->findEntity(widgetType->getName()) == nullptr)
-		//		styleSheet->addEntity(widgetType->getName());
-		//}
-
 		return styleSheet;
 	}
 	else
@@ -118,7 +106,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ThemeForm", ThemeForm, Form)
 bool ThemeForm::create()
 {
 	// Load stylesheet.
-	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss";
+	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss";
 	Ref< StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
@@ -127,8 +115,10 @@ bool ThemeForm::create()
 	}
 	Application::getInstance()->setStyleSheet(styleSheet);
 
-	if (!Form::create(L"Theme Editor", 1000, 800, Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!Form::create(L"Theme Editor", dpi96(1000), dpi96(800), Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
+
+	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
 
 	m_menuBar = new ToolBar();
 	m_menuBar->create(this);
@@ -352,6 +342,11 @@ void ThemeForm::handleCommand(const Command& command)
 		//	updatePreview();
 		//}
 	}
+}
+
+void ThemeForm::eventClose(CloseEvent*)
+{
+	ui::Application::getInstance()->exit(0);
 }
 
 void ThemeForm::eventMenuClick(ToolBarButtonClickEvent* event)
