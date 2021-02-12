@@ -326,7 +326,25 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
+	{
+		Ref< ui::StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
+		if (!styleSheet)
+			return nullptr;
+
+		auto includes = styleSheet->getInclude();
+		for (const auto& include : includes)
+		{
+			Ref< ui::StyleSheet > includeStyleSheet = loadStyleSheet(include);
+			if (!includeStyleSheet)
+				return nullptr;
+
+			styleSheet = includeStyleSheet->merge(styleSheet);
+			if (!styleSheet)
+				return nullptr;
+		}
+
+		return styleSheet;
+	}
 	else
 		return nullptr;
 }
@@ -444,7 +462,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load editor global settings.
 	if (!loadSettings(m_settingsPath, m_originalSettings, &m_globalSettings))
 	{
-		log::error << L"Unable to load global settings" << Endl;
+		log::error << L"Unable to load global settings." << Endl;
 		return false;
 	}
 
@@ -452,24 +470,14 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
-	Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
-	if (!styleSheetShared)
-	{
-		log::error << L"Unable to load shared stylesheet." << Endl;
-		return false;
-	}
-
 	std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
-		log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
+		log::error << L"Unable to load stylesheet \"" << styleSheetName << L"\"." << Endl;
 		return false;
 	}
-
-	ui::Application::getInstance()->setStyleSheet(
-		styleSheetShared->merge(styleSheet)
-	);
+	ui::Application::getInstance()->setStyleSheet(styleSheet);
 
 	// Load dependent modules.
 	loadModules();

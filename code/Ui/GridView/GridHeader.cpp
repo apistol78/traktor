@@ -61,7 +61,7 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getWidget< AutoWidget >()->getStyleSheet();
 
-	canvas.setBackground(ss->getColor(getWidget< AutoWidget >(), L"header-background-color"));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(0, rect.top, rect.getWidth(), rect.bottom));
 
 	int32_t left = rect.left;
@@ -77,18 +77,18 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 
 		canvas.setClipRect(rcText);
 
-		canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), getWidget< AutoWidget >()->isEnable() ? L"color" : L"color-disabled"));
+		canvas.setForeground(ss->getColor(this, getWidget< AutoWidget >()->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(rcText, column->getTitle(), AnLeft, AnCenter);
 
 		canvas.resetClipRect();
 
-		canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), L"line-color"));
+		canvas.setForeground(ss->getColor(this, L"line-color"));
 		canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 
 		left += width;
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), L"line-color"));
+	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 }
 

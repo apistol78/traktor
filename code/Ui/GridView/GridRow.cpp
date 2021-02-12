@@ -294,7 +294,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setBackground(ss->getColor(getWidget< GridView >(), L"item-background-color-selected"));
+		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rowRect);
 	}
 
@@ -311,18 +311,19 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< GridView >(), (m_state & GridRow::RsSelected) ? L"line-color-selected" : L"line-color"));
+	canvas.setForeground(ss->getColor(this, (m_state & GridRow::RsSelected) ? L"line-color-selected" : L"line-color"));
 
 	if (columns.size() >= 2)
 	{
 		int32_t left = rect.left;
-		for (RefArray< GridColumn >::const_iterator i = columns.begin(); i != columns.end(); ++i)
+		for (auto column : columns)
 		{
-			left += (*i)->getWidth();
+			left += column->getWidth();
 			canvas.drawLine(left, rect.top, left, rect.bottom - 1);
 		}
 	}
 
+	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(0, rect.bottom - 1, rect.getWidth(), rect.bottom - 1);
 }
 

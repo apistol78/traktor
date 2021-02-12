@@ -8,6 +8,7 @@ namespace traktor
 	namespace ui
 	{
 
+class GridView;
 class StyleSheet;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -25,15 +26,25 @@ public:
 private:
 	Ref< ToolBar > m_menuBar;
 	Ref< TreeView > m_treeTheme;
+	Ref< GridView > m_gridPalette;
 	Ref< Container > m_containerPreview;
 	Ref< StyleSheet > m_styleSheet;
 	Path m_styleSheetPath;
+	uint32_t m_styleSheetHash = 0;
 
 	void updateTree();
 
+	void updatePalette();
+
 	void updatePreview();
 
+	void updateTitle();
+
+	bool checkModified() const;
+
 	void handleCommand(const Command& command);
+
+	void eventTimer(TimerEvent*);
 
 	void eventClose(CloseEvent*);
 
@@ -46,6 +57,8 @@ private:
 	void eventTreeButtonDown(MouseButtonDownEvent* event);
 
 	void eventTreeChange(TreeViewContentChangeEvent* event);
+
+	void eventPaletteDoubleClick(MouseDoubleClickEvent* event);
 };
 
 	}

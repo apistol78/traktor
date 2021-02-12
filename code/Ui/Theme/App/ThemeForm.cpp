@@ -1,5 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -15,6 +17,11 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ColorPicker/ColorDialog.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridHeader.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 #include "Ui/Theme/App/PreviewWidgetFactory.h"
 #include "Ui/Theme/App/ThemeForm.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -49,12 +56,35 @@ private:
 	ItemType* m_ptr;
 };
 
-Ref< StyleSheet > loadStyleSheet(const Path& pathName)
+Ref< StyleSheet > loadStyleSheet(const Path& pathName, bool resolve)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 	if (file)
 	{
 		Ref< StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< StyleSheet >();
+		if (!styleSheet)
+			return nullptr;
+
+		if (resolve)
+		{
+			auto includes = styleSheet->getInclude();
+			for (const auto& include : includes)
+			{
+				Ref< StyleSheet > includeStyleSheet = loadStyleSheet(include, true);
+				if (!includeStyleSheet)
+					return nullptr;
+
+				styleSheet = includeStyleSheet->merge(styleSheet);
+				if (!styleSheet)
+					return nullptr;
+			}
+		}
+
+		auto& entities = styleSheet->getEntities();
+		std::sort(entities.begin(), entities.end(), [](const StyleSheet::Entity& lh, const StyleSheet::Entity& rh) {
+			return lh.typeName < rh.typeName;
+		});
+
 		return styleSheet;
 	}
 	else
@@ -105,19 +135,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ThemeForm", ThemeForm, Form)
 
 bool ThemeForm::create()
 {
-	// Load stylesheet.
-	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss";
-	Ref< StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+	Ref< StyleSheet > styleSheet = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss", true);
 	if (!styleSheet)
-	{
-		log::error << L"Unable to load stylesheet \"" << styleSheetName << L"\"." << Endl;
 		return false;
-	}
+
 	Application::getInstance()->setStyleSheet(styleSheet);
 
 	if (!Form::create(L"Theme Editor", dpi96(1000), dpi96(800), Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
+	addEventHandler< ui::TimerEvent >(this, &ThemeForm::eventTimer);
 	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
 
 	m_menuBar = new ToolBar();
@@ -148,9 +175,12 @@ bool ThemeForm::create()
 	Ref< Splitter > splitter = new Splitter();
 	splitter->create(this, true, dpi96(300));
 
+	Ref< Splitter > splitter2 = new Splitter();
+	splitter2->create(splitter, false, -dpi96(250));
+
 	m_treeTheme = new TreeView();
 	m_treeTheme->create(
-		splitter,
+		splitter2,
 		WsAccelerated |
 		TreeView::WsAutoEdit |
 		TreeView::WsTreeButtons |
@@ -160,6 +190,12 @@ bool ThemeForm::create()
 	m_treeTheme->addEventHandler< TreeViewItemActivateEvent >(this, &ThemeForm::eventTreeActivateItem);
 	m_treeTheme->addEventHandler< MouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
 	m_treeTheme->addEventHandler< TreeViewContentChangeEvent >(this, &ThemeForm::eventTreeChange);
+
+	m_gridPalette = new GridView();
+	m_gridPalette->create(splitter2, WsDoubleBuffer | GridView::WsColumnHeader);
+	m_gridPalette->addColumn(new GridColumn(L"Color", dpi96(70)));
+	m_gridPalette->addColumn(new GridColumn(L"Hex", dpi96(150)));
+	m_gridPalette->addEventHandler< MouseDoubleClickEvent >(this, &ThemeForm::eventPaletteDoubleClick);
 
 	m_containerPreview = new Container();
 	m_containerPreview->create(splitter, WsAccelerated, new TableLayout(L"100%", L"100%", 16, 0));
@@ -177,7 +213,7 @@ void ThemeForm::updateTree()
 	m_treeTheme->removeAllItems();
 	if (m_styleSheet)
 	{
-		Ref< TreeViewItem > itemStyleSheet = m_treeTheme->createItem(nullptr, m_styleSheetPath.getPathName(), 0);
+		Ref< TreeViewItem > itemStyleSheet = m_treeTheme->createItem(nullptr, L"Entities", 0);
 		itemStyleSheet->setData(L"STYLESHEET", m_styleSheet);
 
 		for (auto& entity : m_styleSheet->getEntities())
@@ -199,6 +235,33 @@ void ThemeForm::updateTree()
 	}
 
 	m_treeTheme->applyState(state);
+}
+
+void ThemeForm::updatePalette()
+{
+	m_gridPalette->removeAllRows();
+
+	if (!m_styleSheet)
+		return;
+
+	SmallSet< Color4ub > palette;
+	for (const auto& entity : m_styleSheet->getEntities())
+	{
+		for (auto it : entity.colors)
+			palette.insert(it.second);
+	}
+
+	for (const auto& color : palette)
+	{
+		Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
+		imageColor->clear(Color4f::fromColor4ub(color).rgb1());
+
+		Ref< GridRow > row = new GridRow();
+		row->setData(L"COLOR", new PropertyColor(color));
+		row->add(new GridItem(new Bitmap(imageColor)));
+		row->add(new GridItem(str(L"#%02x%02x%02x%02x", color.r, color.g, color.b, color.a)));
+		m_gridPalette->addRow(row);
+	}
 }
 
 void ThemeForm::updatePreview()
@@ -230,6 +293,27 @@ void ThemeForm::updatePreview()
 	m_containerPreview->update();
 }
 
+void ThemeForm::updateTitle()
+{
+	if (m_styleSheet)
+	{
+		if (checkModified())
+			setText(L"Theme Editor - " + m_styleSheetPath.getPathName() + L"*");
+		else
+			setText(L"Theme Editor - " + m_styleSheetPath.getPathName());
+	}
+	else
+		setText(L"Theme Editor");
+}
+
+bool ThemeForm::checkModified() const
+{
+	if (m_styleSheet)
+		return (m_styleSheetHash != DeepHash(m_styleSheet).get());
+	else
+		return false;
+}
+
 void ThemeForm::handleCommand(const Command& command)
 {
 	if (command == L"File.Open")
@@ -240,10 +324,13 @@ void ThemeForm::handleCommand(const Command& command)
 		Path filePath;
 		if (fileDialog.showModal(filePath))
 		{
-			if ((m_styleSheet = loadStyleSheet(filePath)) != nullptr)
+			if ((m_styleSheet = loadStyleSheet(filePath, false)) != nullptr)
 			{
 				m_styleSheetPath = filePath;
+				m_styleSheetHash = DeepHash(m_styleSheet).get();
+				updateTitle();
 				updateTree();
+				updatePalette();
 				updatePreview();
 			}
 			else
@@ -256,7 +343,12 @@ void ThemeForm::handleCommand(const Command& command)
 	{
 		if (m_styleSheet != nullptr)
 		{
-			if (!saveStyleSheet(m_styleSheetPath, m_styleSheet))
+			if (saveStyleSheet(m_styleSheetPath, m_styleSheet))
+			{
+				m_styleSheetHash = DeepHash(m_styleSheet).get();
+				updateTitle();
+			}
+			else
 				ui::MessageBox::show(this, L"Unable to save stylesheet.", L"Error", ui::MbIconExclamation | ui::MbOk);
 		}
 	}
@@ -271,7 +363,11 @@ void ThemeForm::handleCommand(const Command& command)
 			if (fileDialog.showModal(filePath))
 			{
 				if (saveStyleSheet(filePath, m_styleSheet))
+				{
 					m_styleSheetPath = filePath;
+					m_styleSheetHash = DeepHash(m_styleSheet).get();
+					updateTitle();
+				}
 				else
 					ui::MessageBox::show(this, L"Unable to save stylesheet.", L"Error", ui::MbIconExclamation | ui::MbOk);
 			}
@@ -287,61 +383,55 @@ void ThemeForm::handleCommand(const Command& command)
 		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
 			return;
 
-		//Ref< TreeViewItem > selectedItem = selectedItems.front();
-		//if (selectedItem->getParent() != nullptr)
-		//{
-		//	// Copy element.
-		//	Color4ub color = m_styleSheet->getColor(
-		//		selectedItem->getParent()->getText(),
-		//		selectedItem->getText()
-		//	);
+		Ref< TreeViewItem > selectedItem = selectedItems.front();
+		if (isElement(selectedItem))
+		{
+			// Copy element.
+			Color4ub color = m_styleSheet->getColor(
+				selectedItem->getParent()->getText(),
+				selectedItem->getText()
+			);
 
-		//	Ref< PropertyGroup > props = new PropertyGroup();
-		//	props->setProperty< PropertyString >(L"element", selectedItem->getText());
-		//	props->setProperty< PropertyColor >(L"color", color);
-		//	Application::getInstance()->getClipboard()->setObject(props);
-		//}
-		//else
-		//{
-		//	// Copy widget.
-		//}
+			Ref< PropertyGroup > props = new PropertyGroup();
+			props->setProperty< PropertyString >(L"element", selectedItem->getText());
+			props->setProperty< PropertyColor >(L"color", color);
+			Application::getInstance()->getClipboard()->setObject(props);
+		}
 	}
 	else if (command == L"Edit.Paste")
 	{
-		//RefArray< TreeViewItem > selectedItems;
-		//if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
-		//	return;
+		RefArray< TreeViewItem > selectedItems;
+		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+			return;
 
-		//Ref< PropertyGroup > props = dynamic_type_cast< PropertyGroup* >(Application::getInstance()->getClipboard()->getObject());
-		//if (!props)
-		//	return;
+		Ref< PropertyGroup > props = dynamic_type_cast< PropertyGroup* >(Application::getInstance()->getClipboard()->getObject());
+		if (!props)
+			return;
 
-		//std::wstring element = props->getProperty< std::wstring >(L"element", L"");
-		//if (element.empty())
-		//	return;
+		Ref< TreeViewItem > selectedItem = selectedItems.front();
+		if (isEntity(selectedItem))
+		{
+			std::wstring element = props->getProperty< std::wstring >(L"element", L"");
+			if (element.empty())
+				return;
 
-		//Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
+			Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
 
-		//Ref< TreeViewItem > selectedItem = selectedItems.front();
-		//if (selectedItem->getParent() == nullptr)
-		//{
-		//	//int32_t imageIndex = selectedItem->getImage(0);
+			m_styleSheet->setColor(
+				selectedItem->getText(),
+				element,
+				color
+			);
 
-		//	//Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
-		//	//imageColor->clear(Color4f::fromColor4ub(color).rgb1());
-
-		//	//m_treeTheme->setImage(imageIndex, new Bitmap(imageColor));
-		//	//m_treeTheme->update();
-
-		//	m_styleSheet->setColor(
-		//		selectedItem->getText(),
-		//		element,
-		//		color
-		//	);
-
-		//	updatePreview();
-		//}
+			updateTree();
+			updatePreview();
+			updateTitle();
+		}	
 	}
+}
+
+void ThemeForm::eventTimer(TimerEvent*)
+{
 }
 
 void ThemeForm::eventClose(CloseEvent*)
@@ -386,7 +476,9 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 			colorDialog.getColor().toColor4ub()
 		);
 
+		updatePalette();
 		updatePreview();
+		updateTitle();
 	}
 	colorDialog.destroy();
 }
@@ -451,12 +543,16 @@ void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
 				itemElement->setImage(0, imageIndex);
 
 				m_treeTheme->update();
+
+				updatePalette();
 			}
 		}
 	}
 	else if (isElement(selectedItem)) // Element
 	{
 	}
+
+	updateTitle();
 }
 
 void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
@@ -486,10 +582,49 @@ void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
 		if (!modifiedItem->getText().empty())
 			entity->colors[modifiedItem->getText()] = color;
 
-		//updateTree();
+		updateTree();
 		updatePreview();
 		event->consume();
 	}
+}
+
+void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
+{
+	auto selectedRow = m_gridPalette->getSelectedRow();
+	if (selectedRow == nullptr)
+		return;
+
+	Color4ub color = PropertyColor::get(selectedRow->getData< PropertyColor >(L"COLOR"));
+
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return;
+
+	auto itemElement = selectedItems.front();
+	if (!isElement(itemElement))
+		return;
+
+	auto itemEntity = getEntity(itemElement);
+	T_ASSERT(itemEntity);
+
+	int32_t imageIndex = itemElement->getImage(0);
+
+	Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
+	imageColor->clear(Color4f::fromColor4ub(color).rgb1());
+
+	m_treeTheme->setImage(imageIndex, new Bitmap(imageColor));
+	m_treeTheme->update();
+
+	m_styleSheet->setColor(
+		itemEntity->getText(),
+		itemElement->getText(),
+		color
+	);
+
+	updatePalette();
+	updatePreview();
+	updateTitle();
 }
 
 	}

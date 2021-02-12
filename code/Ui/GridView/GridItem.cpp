@@ -147,9 +147,9 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 			canvas.setFont(*m_font);
 
 		if (getWidget< GridView >()->isEnable() && getRow())
-			canvas.setForeground(ss->getColor(getWidget< GridView >(), (getRow()->getState() & GridRow::RsSelected) ? L"item-color-selected" : L"color"));
+			canvas.setForeground(ss->getColor(this, (getRow()->getState() & GridRow::RsSelected) ? L"color-selected" : L"color"));
 		else
-			canvas.setForeground(ss->getColor(getWidget< GridView >(), L"color-disabled"));
+			canvas.setForeground(ss->getColor(this, L"color-disabled"));
 
 		canvas.setClipRect(rcText);
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);

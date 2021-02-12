@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 40;
+const int c_sequenceHeight = 25;
 
 		}
 

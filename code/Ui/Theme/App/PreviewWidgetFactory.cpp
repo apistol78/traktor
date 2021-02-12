@@ -100,7 +100,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		edit->create(parent, L"Preview");
 		return edit;
 	}
-	else if (typeName == L"traktor.ui.GridView")
+	else if (typeName == L"traktor.ui.GridView" || typeName == L"traktor.ui.GridHeader" || typeName == L"traktor.ui.GridRow" || typeName == L"traktor.ui.GridItem")
 	{
 		Ref< GridView > gridView = new GridView();
 		gridView->setStyleSheet(styleSheet);
@@ -170,7 +170,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		panel->create(parent, L"Preview", nullptr);
 		return panel;
 	}
-	else if (typeName == L"traktor.ui.PreviewList")
+	else if (typeName == L"traktor.ui.PreviewList" || typeName == L"traktor.ui.PreviewItem")
 	{
 		Ref< PreviewList > previewList = new PreviewList();
 		previewList->setStyleSheet(styleSheet);
