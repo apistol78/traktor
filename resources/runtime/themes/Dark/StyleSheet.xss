@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.ui.StyleSheet" version="1">
+<object type="traktor.ui.StyleSheet" version="2">
+	<include>
+		<item>$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss</item>
+	</include>
 	<entities>
 		<item>
 			<typeName>traktor.Object</typeName>
@@ -35,7 +38,7 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.DropDown</typeName>
+			<typeName>traktor.runtime.DropListCell</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
@@ -60,32 +63,54 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.MenuShell</typeName>
+			<typeName>traktor.runtime.TargetListControl</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
 					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
-					<first>border-color</first>
-					<second>160, 160, 160, 255</second>
+					<first>item-background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+				<item>
+					<first>item-connection-background-color</first>
+					<second>55, 55, 55, 255</second>
+				</item>
+				<item>
+					<first>item-seperator-color</first>
+					<second>50, 50, 50, 255</second>
 				</item>
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.MenuItem</typeName>
+			<typeName>traktor.script.ScriptEditorPage</typeName>
+			<colors>
+				<item>
+					<first>background-debug-breadcrumb-line</first>
+					<second>40, 40, 30, 255</second>
+				</item>
+				<item>
+					<first>background-debug-current-line</first>
+					<second>80, 80, 20, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.sound.BankControl</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
+					<second>80, 80, 80, 255</second>
 				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.BackgroundWorkerDialog</typeName>
+			<colors>
 				<item>
-					<first>background-color-hover</first>
-					<second>62, 62, 64, 255</second>
-				</item>
-				<item>
-					<first>color</first>
-					<second>255, 255, 255, 255</second>
+					<first>border-color</first>
+					<second>0, 122, 204, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -107,19 +132,48 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.ListBox</typeName>
+			<typeName>traktor.ui.Dock</typeName>
+			<colors>
+				<item>
+					<first>caption-background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-color-focus</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>caption-color-no-focus</first>
+					<second>208, 208, 208, 255</second>
+				</item>
+				<item>
+					<first>splitter-color</first>
+					<second>63, 63, 70, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DropDown</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
+					<second>51, 51, 55, 255</second>
 				</item>
 				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
+					<first>background-color-button</first>
+					<second>61, 61, 65, 255</second>
 				</item>
 				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
+					<first>background-color-hover</first>
+					<second>61, 61, 65, 255</second>
+				</item>
+				<item>
+					<first>color-arrow</first>
+					<second>153, 153, 153, 255</second>
+				</item>
+				<item>
+					<first>color-hover</first>
+					<second>70, 70, 74, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -153,144 +207,6 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.Dock</typeName>
-			<colors>
-				<item>
-					<first>caption-background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>caption-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>caption-color-no-focus</first>
-					<second>208, 208, 208, 255</second>
-				</item>
-				<item>
-					<first>splitter-color</first>
-					<second>63, 63, 70, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.Tab</typeName>
-			<colors>
-				<item>
-					<first>tab-background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>tab-background-color-hover</first>
-					<second>28, 151, 234, 255</second>
-				</item>
-				<item>
-					<first>tab-color-active</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>tab-color-inactive</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>tab-line-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.Panel</typeName>
-			<colors>
-				<item>
-					<first>caption-background-color-focus</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>caption-background-color-no-focus</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>caption-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>caption-color-no-focus</first>
-					<second>208, 208, 208, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.BackgroundWorkerDialog</typeName>
-			<colors>
-				<item>
-					<first>border-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.ToolBar</typeName>
-			<colors>
-				<item>
-					<first>item-background-color-dropdown</first>
-					<second>51, 51, 55, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-dropdown-button</first>
-					<second>61, 61, 65, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-dropdown-hover</first>
-					<second>61, 61, 65, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-hover</first>
-					<second>62, 62, 64, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-pushed</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>item-color-dropdown-arrow</first>
-					<second>153, 153, 153, 255</second>
-				</item>
-				<item>
-					<first>item-color-dropdown-hover</first>
-					<second>70, 70, 74, 255</second>
-				</item>
-				<item>
-					<first>item-color-seperator</first>
-					<second>70, 70, 74, 255</second>
-				</item>
-				<item>
-					<first>item-color-toggled</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.TreeView</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected-disabled</first>
-					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
 			<typeName>traktor.ui.GridView</typeName>
 			<colors>
 				<item>
@@ -312,6 +228,28 @@
 				<item>
 					<first>line-color-selected</first>
 					<second>61, 163, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ListBox</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ListBoxItem</typeName>
+			<colors>
+				<item>
+					<first>background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -349,53 +287,15 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.ProfileControl</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>120, 120, 120, 255</second>
-				</item>
-				<item>
-					<first>grid-color</first>
-					<second>128, 128, 128, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.PropertyList</typeName>
+			<typeName>traktor.ui.MenuItem</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
 					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
-					<first>header-background-color</first>
-					<second>40, 40, 40, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>line-color</first>
-					<second>40, 40, 40, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.StatusBar</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>background-color-alert</first>
-					<second>202, 81, 0, 255</second>
+					<first>background-color-hover</first>
+					<second>62, 62, 64, 255</second>
 				</item>
 				<item>
 					<first>color</first>
@@ -404,45 +304,15 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.sound.BankControl</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>80, 80, 80, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.ProgressBar</typeName>
+			<typeName>traktor.ui.MenuShell</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
 					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
-					<first>progress-color</first>
-					<second>0, 153, 0, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.PreviewList</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
-				</item>
-				<item>
-					<first>color</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>item-background-color</first>
-					<second>200, 200, 200, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
+					<first>border-color</first>
+					<second>160, 160, 160, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -472,23 +342,95 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.ShortcutEdit</typeName>
+			<typeName>traktor.ui.Panel</typeName>
 			<colors>
 				<item>
-					<first>background-color</first>
+					<first>caption-background-color-focus</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-background-color-no-focus</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>caption-color-focus</first>
 					<second>255, 255, 255, 255</second>
 				</item>
 				<item>
-					<first>background-color-focus</first>
-					<second>230, 230, 230, 255</second>
+					<first>caption-color-no-focus</first>
+					<second>208, 208, 208, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.PreviewList</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>0, 0, 0, 255</second>
+					<second>255, 255, 255, 255</second>
 				</item>
 				<item>
-					<first>color-focus</first>
-					<second>0, 0, 0, 255</second>
+					<first>item-background-color</first>
+					<second>200, 200, 200, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ProfileControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>grid-color</first>
+					<second>128, 128, 128, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ProgressBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+				<item>
+					<first>progress-color</first>
+					<second>0, 153, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.PropertyList</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+				<item>
+					<first>header-background-color</first>
+					<second>40, 40, 40, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-selected</first>
+					<second>51, 153, 255, 255</second>
+				</item>
+				<item>
+					<first>item-color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>40, 40, 40, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -521,6 +463,61 @@
 				</item>
 				<item>
 					<first>color-selection</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ScrollBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>60, 60, 62, 255</second>
+				</item>
+				<item>
+					<first>color-arrow</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-slider</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.ShortcutEdit</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>background-color-focus</first>
+					<second>230, 230, 230, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+				<item>
+					<first>color-focus</first>
+					<second>0, 0, 0, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.StatusBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>background-color-alert</first>
+					<second>202, 81, 0, 255</second>
+				</item>
+				<item>
+					<first>color</first>
 					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
@@ -619,78 +616,94 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.ScrollBar</typeName>
+			<typeName>traktor.ui.Tab</typeName>
 			<colors>
 				<item>
-					<first>background-color</first>
-					<second>60, 60, 62, 255</second>
+					<first>tab-background-color</first>
+					<second>0, 122, 204, 255</second>
 				</item>
 				<item>
-					<first>color-arrow</first>
-					<second>120, 120, 120, 255</second>
+					<first>tab-background-color-hover</first>
+					<second>28, 151, 234, 255</second>
 				</item>
 				<item>
-					<first>color-slider</first>
-					<second>120, 120, 120, 255</second>
+					<first>tab-color-active</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-line-color</first>
+					<second>0, 122, 204, 255</second>
 				</item>
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.runtime.TargetListControl</typeName>
+			<typeName>traktor.ui.ToolBar</typeName>
 			<colors>
 				<item>
-					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
-				</item>
-				<item>
-					<first>item-background-color</first>
-					<second>37, 37, 38, 255</second>
-				</item>
-				<item>
-					<first>item-connection-background-color</first>
-					<second>55, 55, 55, 255</second>
-				</item>
-				<item>
-					<first>item-seperator-color</first>
-					<second>50, 50, 50, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.runtime.DropListCell</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
+					<first>item-background-color-dropdown</first>
 					<second>51, 51, 55, 255</second>
 				</item>
 				<item>
-					<first>background-color-button</first>
+					<first>item-background-color-dropdown-button</first>
 					<second>61, 61, 65, 255</second>
 				</item>
 				<item>
-					<first>background-color-hover</first>
+					<first>item-background-color-dropdown-hover</first>
 					<second>61, 61, 65, 255</second>
 				</item>
 				<item>
-					<first>color-arrow</first>
+					<first>item-background-color-hover</first>
+					<second>62, 62, 64, 255</second>
+				</item>
+				<item>
+					<first>item-background-color-pushed</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>item-color-dropdown-arrow</first>
 					<second>153, 153, 153, 255</second>
 				</item>
 				<item>
-					<first>color-hover</first>
+					<first>item-color-dropdown-hover</first>
 					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>item-color-seperator</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>item-color-toggled</first>
+					<second>51, 153, 255, 255</second>
 				</item>
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.script.ScriptEditorPage</typeName>
+			<typeName>traktor.ui.TreeView</typeName>
 			<colors>
 				<item>
-					<first>background-debug-breadcrumb-line</first>
-					<second>40, 40, 30, 255</second>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.TreeViewItem</typeName>
+			<colors>
+				<item>
+					<first>background-color-selected</first>
+					<second>51, 153, 255, 255</second>
 				</item>
 				<item>
-					<first>background-debug-current-line</first>
-					<second>80, 80, 20, 255</second>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>color-selected-disabled</first>
+					<second>180, 180, 180, 255</second>
 				</item>
 			</colors>
 		</item>
