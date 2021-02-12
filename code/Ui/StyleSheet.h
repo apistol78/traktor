@@ -59,6 +59,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override;
 
+	const AlignedVector< std::wstring >& getInclude() const { return m_include; }
+
 	AlignedVector< Entity >& getEntities() { return m_entities; }
 
 	const AlignedVector< Entity >& getEntities() const { return m_entities; }
@@ -68,6 +70,7 @@ public:
 	static Ref< StyleSheet > createDefault();
 
 private:
+	AlignedVector< std::wstring > m_include;
 	AlignedVector< Entity > m_entities;
 	SmallMap< std::wstring, std::wstring > m_values;
 };

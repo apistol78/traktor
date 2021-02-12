@@ -59,7 +59,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 1, StyleSheet, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 2, StyleSheet, ISerializable)
 
 StyleSheet::Entity* StyleSheet::findEntity(const std::wstring& typeName)
 {
@@ -188,6 +188,9 @@ void StyleSheet::serialize(ISerializer& s)
 {
 	if (s.getVersion< StyleSheet >() >= 1)
 	{
+		if (s.getVersion< StyleSheet >() >= 2)
+			s >> MemberAlignedVector< std::wstring >(L"include", m_include);
+
 		s >> MemberAlignedVector< Entity, MemberEntity >(L"entities", m_entities);
 		s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
 	}

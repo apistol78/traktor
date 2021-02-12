@@ -32,6 +32,7 @@ c_styleSheets[] =
 {
 	{ L"EDITOR_SETTINGS_STYLESHEET_LIGHT", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss" },
 	{ L"EDITOR_SETTINGS_STYLESHEET_DARK", L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss" },
+	{ L"EDITOR_SETTINGS_STYLESHEET_MONOKAI", L"$(TRAKTOR_HOME)/resources/runtime/themes/Monokai/StyleSheet.xss" },
 	{ 0 }
 };
 

@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 40;
+const int c_sequenceHeight = 25;
 const int c_buttonSize = 18;
 
 		}
@@ -196,11 +196,12 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	// Draw sequence text.
 	Size ext = canvas.getFontMetric().getExtent(getName());
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(
 		Point(
 			rc.left + 32 + getDepth() * 16,
@@ -252,7 +253,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	));
 
 	// Draw tickers.
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, L"tick-color"));
 	int32_t cy = (rc.top + rc.bottom) / 2;
 	for (int32_t i = 0; i < sequencer->getLength(); i += 100)
 	{

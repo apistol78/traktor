@@ -685,18 +685,18 @@ void PropertyList::eventPaint(PaintEvent* event)
 		Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
 
 		// Draw item background.
-		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
+		canvas.setForeground(ss->getColor((*i), (*i)->isSelected() ? L"color-selected" : L"color"));
 		(*i)->paintBackground(canvas, rcItem);
 
 		// Draw item text and possible expand image.
 		canvas.setClipRect(rcText);
-		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
+		canvas.setForeground(ss->getColor((*i), (*i)->isSelected() ? L"color-selected" : L"color"));
 		(*i)->paintText(canvas, rcText);
 		canvas.resetClipRect();
 
 		// Draw item value.
 		canvas.setClipRect(rcValue);
-		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
+		canvas.setForeground(ss->getColor((*i), (*i)->isSelected() ? L"color-selected" : L"color"));
 		(*i)->paintValue(canvas, rcValue);
 		canvas.resetClipRect();
 

@@ -62,7 +62,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);
 
-	canvas.setBackground(ss->getColor(getWidget(), isSelected() ? L"item-background-color-selected" : L"item-background-color"));
+	canvas.setBackground(ss->getColor(this, isSelected() ? L"background-color-selected" : L"background-color"));
 	canvas.fillRect(Rect(framePosition, frameSize));
 
 	if (m_bitmapImage)
@@ -112,7 +112,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 	textRect.bottom = textRect.top + textExtent.cy + 2;
 
-	canvas.setForeground(ss->getColor(getWidget(), L"color"));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(
 		Rect(
 			textRect.left,

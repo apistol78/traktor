@@ -231,12 +231,12 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 	const StyleSheet* ss = m_propertyList->getStyleSheet();
 	if (m_selected)
 	{
-		canvas.setBackground(ss->getColor(m_propertyList, L"item-background-color-selected"));
+		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rc);
 	}
 	else
 	{
-		canvas.setBackground(ss->getColor(m_propertyList, L"background-color"));
+		canvas.setBackground(ss->getColor(this, L"background-color"));
 		canvas.fillRect(rc);
 	}
 }

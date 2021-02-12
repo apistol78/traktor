@@ -144,7 +144,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	canvas.setClipRect(Rect(
