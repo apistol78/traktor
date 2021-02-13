@@ -590,17 +590,20 @@ void RenderViewVk::endFrame()
 		frame.renderFinishedSemaphore
 	);
 
+#if 0
 	// Release unused pipelines.
 	for (auto it = m_pipelines.begin(); it != m_pipelines.end(); )
 	{
 		if ((m_counter - it->second.lastAcquired) >= 16)	// Pipelines are kept for X number of frames before getting collected.
 		{
+			log::debug << L"Destroying unused pipeline." << Endl;
 			vkDestroyPipeline(m_context->getLogicalDevice(), it->second.pipeline, nullptr);
 			it = m_pipelines.erase(it);
 		}
 		else
 			it++;
 	}
+#endif
 }
 
 void RenderViewVk::present()
@@ -1605,6 +1608,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		}
 
 		m_pipelines[key] = { m_counter, pipeline };
+		log::debug << L"Pipeline created (" << m_pipelines.size() << L" pipelines)." << Endl;
 	}
 
 	if (!pipeline)
