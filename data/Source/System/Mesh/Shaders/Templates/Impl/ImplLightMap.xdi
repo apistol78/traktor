@@ -5,8 +5,8 @@
 			<id>{0EC917A5-AD89-A845-9A20-61D3507ED907}</id>
 			<comment/>
 			<position>
-				<first>1049</first>
-				<second>-64</second>
+				<first>1316</first>
+				<second>9</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -258,6 +258,16 @@ Tag_LightMap
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>iOS</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
