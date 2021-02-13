@@ -148,8 +148,8 @@ Tag_LightMap
 			<id>{E1E6F531-64F2-574F-8E00-56D79A92C3CB}</id>
 			<comment/>
 			<position>
-				<first>1246</first>
-				<second>-92</second>
+				<first>1462</first>
+				<second>-33</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -257,7 +257,7 @@ Tag_LightMap
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
