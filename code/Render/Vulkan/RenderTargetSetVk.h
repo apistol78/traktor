@@ -66,12 +66,8 @@ public:
 	bool prepareAsTarget(
 		CommandBuffer* commandBuffer,
 		int32_t colorIndex,
-		const Clear& clear,
-		uint32_t load,
-		uint32_t store,
+		VkRenderPass renderPass,
 		RenderTargetDepthVk* primaryDepthTarget,
-		uint32_t& outId,
-		VkRenderPass& outRenderPass,
 		VkFramebuffer& outFrameBuffer
 	);
 
@@ -93,21 +89,12 @@ public:
 	VkSampleCountFlagBits getVkSampleCount() const { return needResolve() ? (VkSampleCountFlagBits)m_setDesc.multiSample : VK_SAMPLE_COUNT_1_BIT; }
 
 private:
-	struct RenderPass
-	{
-		uint32_t id = 0;
-		VkRenderPass renderPass = 0;
-		VkFramebuffer frameBuffer = 0;
-	};
-
-	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
-
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
-	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
+	SmallMap< VkRenderPass, VkFramebuffer > m_frameBuffers;
 	bool m_depthTargetShared = false;
 };
 

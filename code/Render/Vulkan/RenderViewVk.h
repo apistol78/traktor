@@ -21,6 +21,7 @@ class CommandBuffer;
 class Context;
 class ProgramVk;
 class Queue;
+class RenderPassCache;
 class RenderTargetSetVk;
 class VertexBufferVk;
 
@@ -112,7 +113,7 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
 private:
-	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
+	typedef std::tuple< uint8_t, intptr_t, uint32_t, uint32_t > pipeline_key_t;
 
 	struct Frame
 	{
@@ -155,11 +156,13 @@ private:
 
 	// Event queue.
 	std::list< RenderEvent > m_eventQueue;
+
+	// Render pass cache.
+	Ref< RenderPassCache > m_renderPassCache;
 	
 	// Current pass's target.
 	Ref< RenderTargetSetVk > m_targetSet;
 	int32_t m_targetColorIndex = 0;
-	uint32_t m_targetId = 0;
 	VkRenderPass m_targetRenderPass = 0;
 	VkFramebuffer m_targetFrameBuffer = 0;
 
