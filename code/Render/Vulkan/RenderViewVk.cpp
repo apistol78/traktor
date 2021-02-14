@@ -22,6 +22,7 @@
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/RenderPassCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 #if defined(__MAC__)
@@ -647,7 +648,7 @@ bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 	if (m_lost)
 		return false;
 
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	Clear cl = {};
 	if (clear)
@@ -656,18 +657,25 @@ bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 	m_targetSet = frame.primaryTarget;
 	m_targetColorIndex = 0;
 
+	// Get render pass.
+	RenderPassCache::Specification rp = {};
+	rp.msaaSampleCount = m_targetSet->getVkSampleCount();
+	rp.clear = cl.mask;
+	rp.load = (uint8_t)load;
+	rp.store = (uint8_t)store;
+	rp.colorTargetFormats[0] = m_targetSet->getColorTargetVk(0)->getVkFormat();
+	rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
+	if (!m_renderPassCache->get(rp, m_targetRenderPass))
+		return false;
+
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 		frame.graphicsCommandBuffer,
 		m_targetColorIndex,
-		cl,
-		load,
-		store,
+		m_targetRenderPass,
 		frame.primaryTarget->getDepthTargetVk(),
 		
 		// Out
-		m_targetId,
-		m_targetRenderPass,
 		m_targetFrameBuffer
 	))
 		return false;
@@ -723,7 +731,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	if (m_lost)
 		return false;
 
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	Clear cl = {};
 	if (clear)
@@ -732,45 +740,43 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	m_targetColorIndex = -1;
 
+	// Get render pass.
+	RenderPassCache::Specification rp = {};
+	rp.msaaSampleCount = m_targetSet->getVkSampleCount();
+	rp.clear = cl.mask;
+	rp.load = (uint8_t)load;
+	rp.store = (uint8_t)store;
+	for (uint32_t i = 0; i < m_targetSet->getColorTargetCount(); ++i)
+		rp.colorTargetFormats[i] = m_targetSet->getColorTargetVk(i)->getVkFormat();
+	if (m_targetSet->getDepthTargetVk())
+		rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
+	else if (m_targetSet->usingPrimaryDepthStencil())
+		rp.depthTargetFormat = frame.primaryTarget->getDepthTargetVk()->getVkFormat();
+	if (!m_renderPassCache->get(rp, m_targetRenderPass))
+		return false;
+
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 		frame.graphicsCommandBuffer,
 		m_targetColorIndex,
-		cl,
-		load,
-		store,
+		m_targetRenderPass,
 		frame.primaryTarget->getDepthTargetVk(),
 		
 		// Out
-		m_targetId,
-		m_targetRenderPass,
 		m_targetFrameBuffer
 	))
 		return false;
 
 	// Transform clear values.
 	StaticVector< VkClearValue, 16+1 > clearValues;
-	if (m_targetColorIndex >= 0)
+	for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
 	{
 		auto& cv = clearValues.push_back();
-		cl.colors[0].storeUnaligned(cv.color.float32);
+		cl.colors[i].storeUnaligned(cv.color.float32);
 		if (m_targetSet->needResolve())
 		{
 			auto& cv = clearValues.push_back();
-			cl.colors[0].storeUnaligned(cv.color.float32);
-		}
-	}
-	else
-	{
-		for (int32_t i = 0; i < (int32_t)m_targetSet->getColorTargetCount(); ++i)
-		{
-			auto& cv = clearValues.push_back();
 			cl.colors[i].storeUnaligned(cv.color.float32);
-			if (m_targetSet->needResolve())
-			{
-				auto& cv = clearValues.push_back();
-				cl.colors[i].storeUnaligned(cv.color.float32);
-			}
 		}
 	}
 	if (m_targetSet->getDepthTargetVk() || m_targetSet->usingPrimaryDepthStencil())
@@ -814,7 +820,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	if (m_lost)
 		return false;
 
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	Clear cl = {};
 	if (clear)
@@ -823,18 +829,34 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	m_targetColorIndex = renderTarget;
 
+	// Get render pass.
+	RenderPassCache::Specification rp = {};
+	rp.msaaSampleCount = m_targetSet->getVkSampleCount();
+	rp.clear = cl.mask;
+	rp.load = (uint8_t)load;
+	rp.store = (uint8_t)store;
+	if (m_targetColorIndex >= 0)
+		rp.colorTargetFormats[0] = m_targetSet->getColorTargetVk(m_targetColorIndex)->getVkFormat();
+	else
+	{
+		for (uint32_t i = 0; i < m_targetSet->getColorTargetCount(); ++i)
+			rp.colorTargetFormats[i] = m_targetSet->getColorTargetVk(i)->getVkFormat();
+	}
+	if (m_targetSet->getDepthTargetVk())
+		rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
+	else if (m_targetSet->usingPrimaryDepthStencil())
+		rp.depthTargetFormat = frame.primaryTarget->getDepthTargetVk()->getVkFormat();
+	if (!m_renderPassCache->get(rp, m_targetRenderPass))
+		return false;
+
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 		frame.graphicsCommandBuffer,
 		m_targetColorIndex,
-		cl,
-		load,
-		store,
+		m_targetRenderPass,
 		frame.primaryTarget->getDepthTargetVk(),
 		
 		// Out
-		m_targetId,
-		m_targetRenderPass,
 		m_targetFrameBuffer
 	))
 		return false;
@@ -900,7 +922,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 
 void RenderViewVk::endPass()
 {
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	// Close current render pass.
 	vkCmdEndRenderPass(*frame.graphicsCommandBuffer);
@@ -915,7 +937,6 @@ void RenderViewVk::endPass()
 	}
 
 	m_targetSet = nullptr;
-	m_targetId = 0;
 	m_targetRenderPass = 0;
 	m_targetFrameBuffer = 0;
 }
@@ -995,7 +1016,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 	p->validateCompute(frame.computeCommandBuffer);
@@ -1004,7 +1025,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
-	auto& frame = m_frames[m_currentImageIndex];
+	const auto& frame = m_frames[m_currentImageIndex];
 
 	VkImageCopy region = {};
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -1422,6 +1443,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 #endif
 
+	m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
 	m_nextQueryIndex = 0;
 	m_lost = false;
 	return true;
@@ -1431,11 +1453,11 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
-	uint32_t primitiveId = (uint32_t)pt;
-	uint32_t declHash = vb->getHash();
-	uint32_t shaderHash = p->getShaderHash();
-
-	const auto key = std::make_tuple(primitiveId, m_targetId, declHash, shaderHash);
+	// Calculate pipeline key.
+	const uint8_t primitiveId = (uint32_t)pt;
+	const uint32_t declHash = vb->getHash();
+	const uint32_t shaderHash = p->getShaderHash();
+	const auto key = std::make_tuple(primitiveId, (intptr_t)m_targetRenderPass, declHash, shaderHash);
 
 	VkPipeline pipeline = 0;
 
@@ -1448,10 +1470,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	else
 	{
 		const RenderState& rs = p->getRenderState();
-
-		uint32_t colorAttachmentCount = m_targetSet->getColorTargetCount();
-		if (m_targetColorIndex >= 0)
-			colorAttachmentCount = 1;
+		const uint32_t colorAttachmentCount = m_targetSet->getColorTargetCount();
 
 		VkViewport vp = {};
 		vp.width = 1;
@@ -1537,8 +1556,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		dssci.minDepthBounds = 0;
 		dssci.maxDepthBounds = 0;
 
-		AlignedVector< VkPipelineColorBlendAttachmentState > blendAttachments;
-
+		StaticVector< VkPipelineColorBlendAttachmentState, RenderTargetSetCreateDesc::MaxTargets > blendAttachments;
 		for (uint32_t i = 0; i < colorAttachmentCount; ++i)
 		{
 			auto& cbas = blendAttachments.push_back();
