@@ -569,7 +569,7 @@ void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
 	else if (isElement(modifiedItem)) // Element
 	{
 		auto entityItem = getEntity(modifiedItem);
-		T_ASSERT(entityItem != nulltpr);
+		T_ASSERT(entityItem != nullptr);
 
 		auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( entityItem->getData(L"ENTITY") )->unwrap();
 		T_ASSERT(entity != nullptr);
