@@ -275,10 +275,10 @@ struct BuildCombinationTask : public Object
 		}
 
 		// Compile shader program.
-		Ref< ProgramResource > programResource = programCache->get(programGraph);
+		Ref< ProgramResource > programResource = programCache->get(programGraph, name);
 		if (!programResource)
 		{
-			log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"" << Endl;
+			log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
 			log::error.setLocalTarget(localTarget);
 			return;
 		}
@@ -349,7 +349,7 @@ uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
 	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature)) == nullptr)
 		return 0;
 
-	return ShaderGraphHash::calculate(shaderGraph);
+	return ShaderGraphHash(true).calculate(shaderGraph);
 }
 
 bool ShaderPipeline::buildDependencies(

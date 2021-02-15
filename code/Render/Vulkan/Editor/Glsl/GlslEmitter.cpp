@@ -1458,6 +1458,33 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 {
 	RenderState rs = node->getRenderState();
 
+	const static RenderState defaultState;
+	if (!rs.blendEnable)
+	{
+		rs.blendColorOperation = defaultState.blendColorOperation;
+		rs.blendColorSource = defaultState.blendColorSource;
+		rs.blendColorDestination = defaultState.blendColorDestination;
+		rs.blendAlphaOperation = defaultState.blendAlphaOperation;
+		rs.blendAlphaSource = defaultState.blendAlphaSource;
+		rs.blendAlphaDestination = defaultState.blendAlphaDestination;
+	}
+	if (!rs.depthEnable)
+		rs.depthFunction = defaultState.depthFunction;
+	if (!rs.alphaTestEnable)
+	{
+		rs.alphaTestEnable = defaultState.alphaTestEnable;
+		rs.alphaTestReference = defaultState.alphaTestReference;
+	}
+	if (!rs.stencilEnable)
+	{
+		rs.stencilFail = defaultState.stencilFail;
+		rs.stencilZFail = defaultState.stencilZFail;
+		rs.stencilPass = defaultState.stencilPass;
+		rs.stencilFunction = defaultState.stencilFunction;
+		rs.stencilReference = defaultState.stencilReference;
+		rs.stencilMask = defaultState.stencilMask;
+	}
+
 	cx.enterFragment();
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
@@ -1469,7 +1496,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	if (!in[0])
 		return false;
 
-	if (node->getRenderState().colorWriteMask != 0)
+	if (rs.colorWriteMask != 0)
 	{
 		auto& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
 		auto& fpo = cx.getFragmentShader().getOutputStream(GlslShader::BtOutput);
@@ -1711,7 +1738,11 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
 
-	const auto& samplerState = node->getSamplerState();
+	SamplerState samplerState = node->getSamplerState();
+	if (samplerState.ignoreMips)
+		samplerState.mipFilter = FtLinear;
+	if (texture->getType() == GtTexture2D)
+		samplerState.addressW = AdWrap;
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GtFloat4 : GtFloat);
 

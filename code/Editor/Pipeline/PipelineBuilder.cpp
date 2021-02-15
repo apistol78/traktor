@@ -1007,15 +1007,11 @@ void PipelineBuilder::buildThread(
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
 			if (!m_workSet.empty())
 			{
-				log::debug << (uint32_t)m_workSet.size() << L" work set items." << Endl;
 				we = m_workSet.back();
 				m_workSet.pop_back();
 			}
 			else
-			{
-				log::debug << L"No more work set items; build finished." << Endl;
 				break;
-			}
 		}
 
 		if (m_listener)

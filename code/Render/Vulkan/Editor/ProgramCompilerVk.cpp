@@ -26,6 +26,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphHash.h"
 
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
@@ -593,12 +594,20 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		programResource->m_layoutHash = checksum.get();
 	}
 
+	log::debug << L"Vulkan program \"" << name << L"\" compiled successfully:" << Endl;
+	log::debug << IncreaseIndent;
+	log::debug << L"m_vertexShaderHash = " << str(L"0x%08x", programResource->m_vertexShaderHash) << Endl;
+	log::debug << L"m_fragmentShaderHash = " << str(L"0x%08x", programResource->m_fragmentShaderHash) << Endl;
+	log::debug << L"m_computeShaderHash = " << str(L"0x%08x", programResource->m_computeShaderHash) << Endl;
+	log::debug << L"m_shaderHash = " << str(L"0x%08x", programResource->m_shaderHash) << Endl;
+	log::debug << L"m_layoutHash = " << str(L"0x%08x", programResource->m_layoutHash) << Endl;
+	log::debug << DecreaseIndent;
+
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
 	delete vertexShader;
 	delete computeShader;
-
 	return programResource;
 }
 

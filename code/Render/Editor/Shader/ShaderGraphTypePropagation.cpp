@@ -116,10 +116,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				if (it != m_outputPinTypes.end())
 					outputPinTypes[i] = it->second;
 				else
-				{
-					log::debug << L"No type found for output pin \"" << outputPin->getName() << L"\" of node " << type_name(outputPin->getNode()) << L" " << outputPin->getNode()->getId().format() << L"." << Endl;
 					outputPinTypes[i] = PntVoid;
-				}
 			}
 
 			// Evaluate possible new input type from type sets.

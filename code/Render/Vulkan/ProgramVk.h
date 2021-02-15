@@ -73,6 +73,10 @@ public:
 
 	uint32_t getShaderHash() const { return m_shaderHash; }
 
+#if defined(_DEBUG)
+	const std::wstring& getTag() const { return m_tag; }
+#endif
+
 private:
 	struct ParameterMap
 	{

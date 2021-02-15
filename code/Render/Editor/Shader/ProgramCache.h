@@ -29,7 +29,7 @@ public:
 		const PropertyGroup* settings
 	);
 
-	Ref< ProgramResource > get(const ShaderGraph* shaderGraph);
+	Ref< ProgramResource > get(const ShaderGraph* shaderGraph, const std::wstring& name);
 
 private:
 	Path m_cachePath;
