@@ -143,6 +143,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 #endif
 	env->set(L"DEPLOY_PROJECT_NAME", m_targetName);
 	env->set(L"DEPLOY_PROJECT_IDENTIFIER", m_target->getIdentifier());
+	env->set(L"DEPLOY_PROJECT_VERSION", m_target->getVersion());
 	env->set(L"DEPLOY_PROJECT_ICON", m_targetConfiguration->getIcon());
 	env->set(L"DEPLOY_SYSTEM_ROOT", m_globalSettings->getProperty< std::wstring >(L"Runtime.SystemRoot", L"$(TRAKTOR_HOME)"));
 	env->set(L"DEPLOY_TARGET_HOST", m_deployHost);
