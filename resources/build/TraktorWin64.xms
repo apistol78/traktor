@@ -22112,6 +22112,11 @@
 					<solutionFileName>ExternWin64.xms</solutionFileName>
 					<projectName>Extern.SPIRV-Cross</projectName>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[104]/dependencies/item[2]/project"/>

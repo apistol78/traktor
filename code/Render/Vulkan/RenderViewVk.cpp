@@ -1454,7 +1454,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	auto& frame = m_frames[m_currentImageIndex];
 	
 	// Calculate pipeline key.
-	const uint8_t primitiveId = (uint32_t)pt;
+	const uint8_t primitiveId = (uint8_t)pt;
 	const uint32_t declHash = vb->getHash();
 	const uint32_t shaderHash = p->getShaderHash();
 	const auto key = std::make_tuple(primitiveId, (intptr_t)m_targetRenderPass, declHash, shaderHash);
@@ -1626,7 +1626,9 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		}
 
 		m_pipelines[key] = { m_counter, pipeline };
-		log::debug << L"Pipeline created (" << m_pipelines.size() << L" pipelines)." << Endl;
+#if defined(_DEBUG)
+		log::debug << L"Pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+#endif
 	}
 
 	if (!pipeline)

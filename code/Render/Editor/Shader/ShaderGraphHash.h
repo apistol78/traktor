@@ -26,9 +26,14 @@ class T_DLLCLASS ShaderGraphHash : public Object
 	T_RTTI_CLASS;
 
 public:
-	static uint32_t calculate(const Node* node);
+	explicit ShaderGraphHash(bool includeTextures);
 
-	static uint32_t calculate(const ShaderGraph* shaderGraph);
+	uint32_t calculate(const Node* node) const;
+
+	uint32_t calculate(const ShaderGraph* shaderGraph) const;
+
+private:
+	bool m_includeTextures;	//!< Include texture node id in hash.
 };
 
 	}

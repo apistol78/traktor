@@ -3,8 +3,9 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 
 namespace traktor
@@ -23,16 +24,29 @@ uint32_t rotateLeft(uint32_t value, uint32_t count)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Object)
 
-uint32_t ShaderGraphHash::calculate(const Node* node)
+ShaderGraphHash::ShaderGraphHash(bool includeTextures)
+:	m_includeTextures(includeTextures)
+{
+}
+
+uint32_t ShaderGraphHash::calculate(const Node* node) const
 {
 	Ref< Node > nodeCopy = DeepClone(node).create< Node >();
-	nodeCopy->setId(Guid());
+	
+	nodeCopy->setId(Guid::null);
 	nodeCopy->setPosition(std::make_pair(0, 0));
 	nodeCopy->setComment(L"");
+
+	if (!m_includeTextures)
+	{
+		if (auto textureNode = dynamic_type_cast< Texture* >(nodeCopy))
+			textureNode->setExternal(Guid::null);
+	}
+
 	return DeepHash(nodeCopy).get();
 }
 
-uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
+uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 {
 	AlignedVector< std::pair< Ref< const Node >, int32_t > > nodeStack;
 	SmallSet< std::pair< Ref< const Node >, int32_t > > nodeVisited;

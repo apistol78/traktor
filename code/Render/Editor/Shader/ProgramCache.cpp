@@ -29,12 +29,12 @@ ProgramCache::ProgramCache(
 	m_settingsHash = DeepHash(settings).get();
 }
 
-Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph)
+Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph, const std::wstring& name)
 {
 	Ref< IStream > f;
 
 	// Calculate hash of shader graph.
-	uint32_t shaderGraphHash = ShaderGraphHash::calculate(shaderGraph);
+	uint32_t shaderGraphHash = ShaderGraphHash(false).calculate(shaderGraph);
 
 	// Generate file name of cached program.
 	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(m_settingsHash) + L".bin";
@@ -50,7 +50,7 @@ Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph)
 	}
 
 	// No cached pre-compiled resource found; need to compile resource.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, m_settings, L"", nullptr);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, m_settings, name, nullptr);
 	if (!resource)
 		return nullptr;
 

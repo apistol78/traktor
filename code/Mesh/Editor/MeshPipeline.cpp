@@ -617,7 +617,7 @@ bool MeshPipeline::buildOutput(
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
 
-			uint32_t hash = render::ShaderGraphHash::calculate(materialTechniqueShaderGraph);
+			uint32_t hash = render::ShaderGraphHash(false).calculate(materialTechniqueShaderGraph);
 			std::wstring shaderTechniqueName = str(L"M/%s/%08x", materialTechniqueName.c_str(), hash);
 
 			for (auto node : materialTechniqueShaderGraph->getNodes())
