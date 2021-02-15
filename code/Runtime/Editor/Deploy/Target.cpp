@@ -9,7 +9,7 @@ namespace traktor
 	namespace runtime
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Target", 0, Target, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Target", 1, Target, ISerializable)
 
 void Target::setIdentifier(const std::wstring& identifier)
 {
@@ -19,6 +19,16 @@ void Target::setIdentifier(const std::wstring& identifier)
 const std::wstring& Target::getIdentifier() const
 {
 	return m_identifier;
+}
+
+void Target::setVersion(const std::wstring& version)
+{
+	m_version = version;
+}
+
+const std::wstring& Target::getVersion() const
+{
+	return m_version;
 }
 
 void Target::addConfiguration(TargetConfiguration* configuration)
@@ -44,6 +54,10 @@ const RefArray< TargetConfiguration >& Target::getConfigurations() const
 void Target::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"identifier", m_identifier);
+
+	if (s.getVersion< Target >() >= 1)
+		 s >> Member< std::wstring >(L"version", m_version);
+
 	s >> MemberRefArray< TargetConfiguration>(L"configurations", m_configurations);
 }
 

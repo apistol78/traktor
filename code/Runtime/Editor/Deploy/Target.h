@@ -31,6 +31,10 @@ public:
 
 	const std::wstring& getIdentifier() const;
 
+	void setVersion(const std::wstring& version);
+
+	const std::wstring& getVersion() const;
+
 	void addConfiguration(TargetConfiguration* configuration);
 
 	void removeConfiguration(TargetConfiguration* configuration);
@@ -43,6 +47,7 @@ public:
 
 private:
 	std::wstring m_identifier;
+	std::wstring m_version;
 	RefArray< TargetConfiguration > m_configurations;
 };
 

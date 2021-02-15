@@ -22,11 +22,11 @@ local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string><!-- output:print(environment:get("DEPLOY_PROJECT_VERSION")) --!></string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string><!-- output:print(environment:get("DEPLOY_PROJECT_VERSION")) --!></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIStatusBarHidden</key>

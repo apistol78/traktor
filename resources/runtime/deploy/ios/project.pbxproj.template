@@ -116,24 +116,6 @@ end
 
 --!>/* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		27F54F732581844F00EF47FB /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-<!--
-for _, f in ipairs(xcframeworks) do
-	output:printLn("\t\t\t\t" .. f.buildRef2 .. " /* MoltenVK.xcframework in Embed Frameworks */,")
-end
---!>
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		2711EB9B18DDB14D005F551E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Images.xcassets"; sourceTree = "<group>"; };
 		2711EBB318DDB23C005F551E /* Application.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Application.config"; sourceTree = "<group>"; };
