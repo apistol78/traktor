@@ -576,6 +576,8 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 
 void RenderSystemVk::purge()
 {
+	if (m_context)
+		m_context->savePipelineCache();
 }
 
 void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const

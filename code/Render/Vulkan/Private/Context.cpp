@@ -45,7 +45,11 @@ Context::Context(
 	pcci.pInitialData = nullptr;
 
 	StringOutputStream ss;
+#if defined(__IOS__)
+	ss << OS::getInstance().getUserHomePath() << L"/Library/Caches/Traktor/Vulkan/Pipeline.cache";
+#else
 	ss << OS::getInstance().getWritableFolderPath() << L"/Traktor/Vulkan/Pipeline.cache";
+#endif
 
 	Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (file)
@@ -57,7 +61,12 @@ Context::Context(
 
 		pcci.initialDataSize = size;
 		pcci.pInitialData = buffer.c_ptr();
+
+		log::debug << L"Pipeline cache \"" << ss.str() << L"\" loaded succesfully." << Endl;
 	}
+	else
+		log::debug << L"No pipeline cache found; creating new cache." << Endl;
+
 
 	vkCreatePipelineCache(
 		m_logicalDevice,
@@ -89,27 +98,6 @@ Context::Context(
 
 Context::~Context()
 {
-	// Save pipeline cache.
-	size_t size = 0;
-	vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, nullptr);
-	if (size > 0)
-	{
-		AlignedVector< uint8_t > buffer(size, 0);
-		vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, buffer.ptr());
-
-		StringOutputStream ss;
-		ss << OS::getInstance().getWritableFolderPath() << L"/Traktor/Vulkan/Pipeline.cache";
-
-		FileSystem::getInstance().makeAllDirectories(Path(ss.str()).getPathOnly());
-
-		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmWrite);
-		if (file)
-		{
-	 		file->write(buffer.c_ptr(), size);
-	 		file->close();
-		}
-	}
-
 	// Destroy descriptor pool.
 	if (m_descriptorPool != 0)
 	{
@@ -154,6 +142,39 @@ void Context::performCleanup()
 		vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
 		m_descriptorPoolRevision++;
 	}
+}
+
+bool Context::savePipelineCache()
+{
+	size_t size = 0;
+	vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, nullptr);
+	if (!size)
+		return true;
+
+	AlignedVector< uint8_t > buffer(size, 0);
+	vkGetPipelineCacheData(m_logicalDevice, m_pipelineCache, &size, buffer.ptr());
+
+	StringOutputStream ss;
+#if defined(__IOS__)
+	ss << OS::getInstance().getUserHomePath() << L"/Library/Caches/Traktor/Vulkan/Pipeline.cache";
+#else
+	ss << OS::getInstance().getWritableFolderPath() << L"/Traktor/Vulkan/Pipeline.cache";
+#endif
+
+	FileSystem::getInstance().makeAllDirectories(Path(ss.str()).getPathOnly());
+
+	Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmWrite);
+	if (!file)
+	{
+		log::error << L"Unable to save pipeline cache; failed to create file \"" << ss.str() << L"\"." << Endl;
+		return false;
+	}
+
+	file->write(buffer.c_ptr(), size);
+	file->close();
+	
+	log::debug << L"Pipeline cache \"" << ss.str() << L"\" saved successfully." << Endl;
+	return true;
 }
 
 	}
