@@ -219,15 +219,17 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 
 Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyName)
 {
-	const IPropertyValue* property = self->getProperty(propertyName);
-	if (const PropertyBoolean* propertyBoolean = dynamic_type_cast< const PropertyBoolean* >(property))
+	IPropertyValue* property = self->getProperty(propertyName);
+	if (auto propertyBoolean = dynamic_type_cast< const PropertyBoolean* >(property))
 		return Any::fromBoolean(*propertyBoolean);
-	else if (const PropertyInteger* propertyInteger = dynamic_type_cast< const PropertyInteger* >(property))
+	else if (auto propertyInteger = dynamic_type_cast< const PropertyInteger* >(property))
 		return Any::fromInt32(*propertyInteger);
-	else if (const PropertyFloat* propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
+	else if (auto propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
 		return Any::fromFloat(*propertyFloat);
-	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
+	else if (auto propertyString = dynamic_type_cast< const PropertyString* >(property))
 		return Any::fromString(*propertyString);
+	else if (property)
+		return Any::fromObject(property);
 	else
 		return Any();
 }
