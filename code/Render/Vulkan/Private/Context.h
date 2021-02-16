@@ -37,6 +37,8 @@ public:
 
 	void performCleanup();
 
+	bool savePipelineCache();
+
 	VkPhysicalDevice getPhysicalDevice() const { return m_physicalDevice; }
 
 	VkDevice getLogicalDevice() const { return m_logicalDevice; }

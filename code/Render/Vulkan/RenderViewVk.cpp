@@ -251,6 +251,7 @@ void RenderViewVk::close()
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Ensure any pending cleanups are performed before closing render view.
+	m_context->savePipelineCache();
 	m_context->performCleanup();
 	m_lost = true;
 
