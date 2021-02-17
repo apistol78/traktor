@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
