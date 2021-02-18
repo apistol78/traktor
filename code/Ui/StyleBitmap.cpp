@@ -69,12 +69,12 @@ bool StyleBitmap::resolve() const
 	if (!ss)
 	{
 		m_bitmap = m_defaultBitmap;
-		return bool(m_bitmap != nullptr);
+		return (bool)(m_bitmap != nullptr);
 	}
 
 	std::wstring bmp = ss->getValue(m_name);
 	if (!bmp.empty() && bmp == m_path)
-		return bool(m_bitmap != nullptr);
+		return (bool)(m_bitmap != nullptr);
 
 	safeDestroy(m_bitmap);
 
@@ -82,7 +82,7 @@ bool StyleBitmap::resolve() const
 		m_bitmap = m_defaultBitmap;
 
 	m_path = bmp;
-	return bool(m_bitmap != nullptr);
+	return (bool)(m_bitmap != nullptr);
 }
 
 	}

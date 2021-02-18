@@ -118,6 +118,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 bool writeTexture(
 	db::Database* outputDatabase,
 	const std::wstring& compressionMethod,
+	bool encodeHDR,
 	const Guid& lightmapId,
 	const drawing::Image* lightmap
 )
@@ -130,8 +131,11 @@ bool writeTexture(
 	// Convert image to match texture format.
 	if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
 	{
-		const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
-		lightmapFormat->apply(&encodeRGBM);
+		if (encodeHDR)
+		{
+			const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
+			lightmapFormat->apply(&encodeRGBM);
+		}
 		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 		textureFormat = render::TfDXT5;
 		compressor = new render::DxtnCompressor();
@@ -139,16 +143,22 @@ bool writeTexture(
 	}
 	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
 	{
-		const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
-		lightmapFormat->apply(&encodeRGBM);
+		if (encodeHDR)
+		{
+			const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
+			lightmapFormat->apply(&encodeRGBM);
+		}
 		textureFormat = render::TfASTC4x4;
 		compressor = new render::AstcCompressor();
 		needAlpha = true;
 	}
 	else
 	{
-		const drawing::EncodeRGBM encodeRGBM(5.0f);
-		lightmapFormat->apply(&encodeRGBM);
+		if (encodeHDR)
+		{
+			const drawing::EncodeRGBM encodeRGBM(5.0f);
+			lightmapFormat->apply(&encodeRGBM);
+		}
 		lightmapFormat->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 		textureFormat = render::TfR8G8B8A8;
 		compressor = new render::UnCompressor();
@@ -389,13 +399,24 @@ bool TracerProcessor::process(const TracerTask* task)
 		GBuffer gbuffer;
 		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
 
-		// Trace lightmap.
-		Ref< drawing::Image > lightmap = new drawing::Image(
+		// Trace lightmaps.
+		Ref< drawing::Image > lightmapDiffuse = new drawing::Image(
 			drawing::PixelFormat::getRGBAF32(),
 			width,
 			height
 		);
-		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		lightmapDiffuse->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+		Ref< drawing::Image > lightmapDirectional;
+		if (tracerOutput->getLightmapDirectionalId().isNotNull())
+		{
+			lightmapDirectional = new drawing::Image(
+				drawing::PixelFormat::getRGBAF32(),
+				width,
+				height
+			);
+			lightmapDirectional->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		}
 
 		RefArray< Job > jobs;
 		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
@@ -404,7 +425,7 @@ bool TracerProcessor::process(const TracerTask* task)
 				for (int32_t tx = 0; tx < width; tx += 16)
 				{
 					int32_t region[] = { tx, ty, std::min(tx + 16, width), std::min(ty + 16, height) };
-					rayTracer->traceLightmap(renderModel, &gbuffer, lightmap, region);
+					rayTracer->traceLightmap(renderModel, &gbuffer, lightmapDiffuse, lightmapDirectional, region);
 					++m_status.current;
 				}
 			}));
@@ -419,27 +440,49 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (m_cancelled)
 			break;
 
-		// Blur lightmap to reduce noise from path tracing.
-		if (configuration->getEnableDenoise())
-			lightmap = denoise(gbuffer, lightmap);
-
-		// Discard alpha.
-		lightmap->clearAlpha(1.0f);
-
-		// Save lightmap for debugging.
-		lightmap->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapId().format() + L".png");
-
 		// Create final output instance.
-		bool result = writeTexture(
-			task->getOutputDatabase(),
-			m_compressionMethod,
-			tracerOutput->getLightmapId(),
-			lightmap
-		);
-		if (!result)
+		if (lightmapDiffuse)
 		{
-			log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
-			return false;
+			if (configuration->getEnableDenoise())
+				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse);
+
+			lightmapDiffuse->clearAlpha(1.0f);
+			lightmapDiffuse->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapDiffuseId().format() + L"_Diffuse.png");
+
+			bool result = writeTexture(
+				task->getOutputDatabase(),
+				m_compressionMethod,
+				true,
+				tracerOutput->getLightmapDiffuseId(),
+				lightmapDiffuse
+			);
+			if (!result)
+			{
+				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
+				return false;
+			}
+		}
+
+		if (lightmapDirectional != nullptr)
+		{
+			if (configuration->getEnableDenoise())
+				lightmapDirectional = denoise(gbuffer, lightmapDirectional);
+
+			lightmapDirectional->clearAlpha(1.0f);
+			lightmapDirectional->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapDirectionalId().format() + L"_Directional.png");
+
+			bool result = writeTexture(
+				task->getOutputDatabase(),
+				m_compressionMethod,
+				false,
+				tracerOutput->getLightmapDirectionalId(),
+				lightmapDirectional
+			);
+			if (!result)
+			{
+				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
+				return false;
+			}
 		}
 	}
 

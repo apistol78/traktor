@@ -331,14 +331,14 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 				material.setDiffuseTerm(1.0f);
 				material.setSpecularTerm(1.0f);
 
-				if (true /* has uv */)
-				{
-					material.setNormalMap(Material::Map(L"Normals", L"default", false));
-					material.setDiffuseMap(Material::Map(L"Albedo", L"default", true));
-					material.setMetalnessMap(Material::Map(L"Metalness", L"default", false));
-					material.setRoughnessMap(Material::Map(L"Roughness", L"default", false));
-					material.setSpecularMap(Material::Map(L"Specular", L"default", false));
-				}
+				//if (true /* has uv */)
+				//{
+				//	material.setNormalMap(Material::Map(L"Normals", L"default", false));
+				//	material.setDiffuseMap(Material::Map(L"Albedo", L"default", true));
+				//	material.setMetalnessMap(Material::Map(L"Metalness", L"default", false));
+				//	material.setRoughnessMap(Material::Map(L"Roughness", L"default", false));
+				//	material.setSpecularMap(Material::Map(L"Specular", L"default", false));
+				//}
 
 				defaultMaterialIndex = model->addMaterial(material);
 			}

@@ -18,8 +18,8 @@
 			<id>{3BCA4AE4-E171-164F-8AE5-6787AA581FBE}</id>
 			<comment/>
 			<position>
-				<first>599</first>
-				<second>83</second>
+				<first>598</first>
+				<second>82</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>596</first>
-				<second>122</second>
+				<second>121</second>
 			</position>
 			<name>T_ViewTangent</name>
 			<connectable>true</connectable>
@@ -45,7 +45,7 @@
 			<comment/>
 			<position>
 				<first>592</first>
-				<second>161</second>
+				<second>160</second>
 			</position>
 			<name>T_ViewBinormal</name>
 			<connectable>true</connectable>
@@ -57,7 +57,7 @@
 			<id>{3C55D3FB-CBDD-8645-920E-3F53290FEF62}</id>
 			<comment/>
 			<position>
-				<first>893</first>
+				<first>892</first>
 				<second>48</second>
 			</position>
 			<name>T_ViewPosition</name>
@@ -66,8 +66,8 @@
 			<id>{A50D3A5A-1226-A345-B3D4-BA9F763EADFF}</id>
 			<comment/>
 			<position>
-				<first>893</first>
-				<second>87</second>
+				<first>892</first>
+				<second>86</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -75,8 +75,8 @@
 			<id>{1FA8FBF1-DB31-0D46-BF04-D33F2EC0453D}</id>
 			<comment/>
 			<position>
-				<first>893</first>
-				<second>126</second>
+				<first>892</first>
+				<second>125</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
@@ -84,32 +84,19 @@
 			<id>{22A15FA0-6319-0247-87BB-AE1263F4D758}</id>
 			<comment/>
 			<position>
-				<first>893</first>
-				<second>165</second>
+				<first>892</first>
+				<second>164</second>
 			</position>
 			<name>T_ViewBinormal</name>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{444C631E-32C8-3A4A-AC74-9465E5513106}</id>
-			<comment/>
-			<position>
-				<first>607</first>
-				<second>-34</second>
-			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{46898871-9F7C-D04A-BCA0-78B45F20637F}</id>
 			<comment/>
 			<position>
-				<first>607</first>
-				<second>5</second>
+				<first>606</first>
+				<second>4</second>
 			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

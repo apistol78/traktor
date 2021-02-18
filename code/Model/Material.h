@@ -147,10 +147,6 @@ public:
 
 	float getReflective() const { return m_reflective; }
 
-	void setRimLightIntensity(float rimLightIntensity);
-
-	float getRimLightIntensity() const { return m_rimLightIntensity; }
-
 	void setBlendOperator(BlendOperator blendOperator);
 
 	BlendOperator getBlendOperator() const { return m_blendOperator; }
@@ -180,7 +176,6 @@ private:
 	float m_transparency;
 	float m_emissive;
 	float m_reflective;
-	float m_rimLightIntensity;
 	BlendOperator m_blendOperator;
 	bool m_doubleSided;
 };

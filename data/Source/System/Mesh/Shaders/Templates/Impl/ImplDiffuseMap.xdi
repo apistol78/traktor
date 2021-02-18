@@ -5,8 +5,8 @@
 			<id>{BDE4D8D4-7A3A-DB49-A406-04AFBA127934}</id>
 			<comment/>
 			<position>
-				<first>1267</first>
-				<second>267</second>
+				<first>1266</first>
+				<second>266</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
@@ -18,8 +18,8 @@ Tag_DiffuseMap
 			]]>
 			</comment>
 			<position>
-				<first>629</first>
-				<second>150</second>
+				<first>628</first>
+				<second>149</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
@@ -28,8 +28,8 @@ Tag_DiffuseMap
 			<id>{094F4DB0-E74C-CA41-A06C-5CD0C094304C}</id>
 			<comment/>
 			<position>
-				<first>783</first>
-				<second>169</second>
+				<first>782</first>
+				<second>168</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -46,8 +46,8 @@ Tag_DiffuseMap
 			<id>{184D57C1-EA55-A447-8A87-4B5A3BF5263F}</id>
 			<comment/>
 			<position>
-				<first>1029</first>
-				<second>231</second>
+				<first>1028</first>
+				<second>230</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -55,22 +55,9 @@ Tag_DiffuseMap
 			<comment/>
 			<position>
 				<first>312</first>
-				<second>291</second>
+				<second>290</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{421894B1-595E-C847-9511-DEE41E3C3F69}</id>
-			<comment/>
-			<position>
-				<first>312</first>
-				<second>330</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -158,17 +145,17 @@ Tag_DiffuseColor
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>

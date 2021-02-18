@@ -5,8 +5,8 @@
 			<id>{A8B8CCDD-BD4E-8A45-8355-86F7958F7C48}</id>
 			<comment/>
 			<position>
-				<first>272</first>
-				<second>447</second>
+				<first>276</first>
+				<second>423</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{3A154CB7-54D1-7E48-BF6E-A50A59320649}</id>
 			<comment/>
 			<position>
-				<first>269</first>
-				<second>486</second>
+				<first>273</first>
+				<second>462</second>
 			</position>
 			<name>T_ViewTangent</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{947AA0F9-60F6-E34A-B2AD-6D133425EB9B}</id>
 			<comment/>
 			<position>
-				<first>265</first>
-				<second>525</second>
+				<first>269</first>
+				<second>501</second>
 			</position>
 			<name>T_ViewBinormal</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{6D3E40F6-FC88-EB46-A0F6-AF8807F4BDDA}</id>
 			<comment/>
 			<position>
-				<first>269</first>
-				<second>408</second>
+				<first>273</first>
+				<second>384</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{B8496494-4662-8944-B86F-DE09D25832E1}</id>
 			<comment/>
 			<position>
-				<first>629</first>
-				<second>374</second>
+				<first>628</first>
+				<second>373</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
@@ -66,8 +66,8 @@
 			<id>{0F9656A3-52F8-BA49-922A-083B227CEC89}</id>
 			<comment/>
 			<position>
-				<first>629</first>
-				<second>415</second>
+				<first>628</first>
+				<second>414</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -75,7 +75,7 @@
 			<id>{B4DCFDCF-602A-AA42-A983-2A96C1E5A990}</id>
 			<comment/>
 			<position>
-				<first>629</first>
+				<first>628</first>
 				<second>456</second>
 			</position>
 			<name>T_ViewTangent</name>
@@ -84,8 +84,8 @@
 			<id>{66F62FA9-CA8C-C741-8D8D-D9E2B2409E6A}</id>
 			<comment/>
 			<position>
-				<first>629</first>
-				<second>497</second>
+				<first>628</first>
+				<second>496</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -93,32 +93,19 @@
 			<id>{CADD0680-B31A-D140-A748-545976FB3B71}</id>
 			<comment/>
 			<position>
-				<first>492</first>
-				<second>180</second>
+				<first>404</first>
+				<second>254</second>
 			</position>
 			<value>0</value>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{A1BD7081-7260-FD44-A633-190BACC07A1B}</id>
-			<comment/>
-			<position>
-				<first>280</first>
-				<second>330</second>
-			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{2CF107FE-DF90-2745-B231-32F6A03CA23E}</id>
 			<comment/>
 			<position>
-				<first>280</first>
-				<second>369</second>
+				<first>284</first>
+				<second>345</second>
 			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

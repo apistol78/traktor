@@ -227,7 +227,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	return shCoeffs;
 }
 
-void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmap, const int32_t region[4]) const
+void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, drawing::Image* lightmapDirectional, const int32_t region[4]) const
 {
 	RTCRayHit T_MATH_ALIGN16 rh;
 	RandomGeometry random;
@@ -284,6 +284,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			}
 
 			// Trace lightmap.
+			Color4f incoming;
 			{
 				const auto& originPolygon = polygons[elm.polygon];
 				const auto& originMaterial = materials[originPolygon.getMaterial()];
@@ -292,7 +293,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				Scalar metalness = Scalar(originMaterial.getMetalness());
 
 				// Trace IBL and indirect illumination.
-				Color4f incoming = tracePath0(elm.position, elm.normal, random);
+				incoming = tracePath0(elm.position, elm.normal, random);
 
 				// Trace ambient occlusion.
 				Scalar occlusion = 1.0_simd;
@@ -300,7 +301,41 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 					occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
 
 				// Combine and write final lumel.
-				lightmap->setPixel(x, y, (emittance + (incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+				lightmapDiffuse->setPixel(x, y, (emittance + (incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+			}
+
+			Scalar intensity = horizontalAdd3(incoming) / 3.0_simd;
+
+			// Trace directional map.
+			if (intensity > FUZZY_EPSILON)
+			{
+				const Vector4 basisX(std::sqrt(2.0f / 3.0f), 0.0f, 1.0f / std::sqrt(3.0f));
+				const Vector4 basisY(-1.0f / std::sqrt(6.0f), 1.0f / std::sqrt(2.0f), 1.0f / std::sqrt(3.0f));
+				const Vector4 basisZ(-1.0f / std::sqrt(6.0f), -1.0f / std::sqrt(2.0f), 1.0f / std::sqrt(3.0f));
+
+				Vector4 binormal = -cross(elm.normal, elm.tangent);
+
+				Matrix44 frame(
+					elm.tangent,
+					binormal,
+					elm.normal,
+					Vector4::zero()
+				);
+
+				Color4f incomingX = tracePath0(elm.position, frame * basisX, random);
+				Color4f incomingY = tracePath0(elm.position, frame * basisY, random);
+				Color4f incomingZ = tracePath0(elm.position, frame * basisZ, random);
+
+				Scalar intensityX = horizontalAdd3(incomingX) / 3.0_simd;
+				Scalar intensityY = horizontalAdd3(incomingY) / 3.0_simd;
+				Scalar intensityZ = horizontalAdd3(incomingZ) / 3.0_simd;
+
+				lightmapDirectional->setPixel(x, y, Color4f(
+					0.5_simd * intensityX / intensity,
+					0.5_simd * intensityY / intensity,
+					0.5_simd * intensityZ / intensity,
+					1.0f
+				));
 			}
 		}
 	}

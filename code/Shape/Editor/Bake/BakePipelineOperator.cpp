@@ -82,7 +82,8 @@ namespace traktor
 		{
 
 const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
-const Guid c_lightmapIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
+const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
+const Guid c_lightmapDirectionalIdSeed(L"{BBCB9EFD-F519-49BE-A47A-66B7F1F0F5D1}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
 
 /*! Resolve external entities, ie flatten scene without external references. */
@@ -370,15 +371,29 @@ bool addModel(
 	const Transform& transform,
 	const std::wstring& name,
 	int32_t priority,
-	const Guid& lightmapId,
+	const Guid& lightmapDiffuseId,
+	const Guid& lightmapDirectionalId,
 	int32_t lightmapSize,
 	TracerTask* tracerTask
 )
 {
-	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
+	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapDiffuseId) == nullptr)
 	{
-		std::wstring outputPath = L"Generated/" + lightmapId.format();
-		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapId);
+		std::wstring outputPath = L"Generated/" + lightmapDiffuseId.format();
+		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapDiffuseId);
+		if (lightmapProxyInstance)
+		{
+			lightmapProxyInstance->setObject(new render::AliasTextureResource(
+				resource::Id< render::ITexture >(c_lightmapProxyId)
+			));
+			lightmapProxyInstance->commit();
+		}
+	}
+
+	if (lightmapDirectionalId.isNotNull() && pipelineBuilder->getOutputDatabase()->getInstance(lightmapDirectionalId) == nullptr)
+	{
+		std::wstring outputPath = L"Generated/" + lightmapDirectionalId.format();
+		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapDirectionalId);
 		if (lightmapProxyInstance)
 		{
 			lightmapProxyInstance->setObject(new render::AliasTextureResource(
@@ -398,7 +413,8 @@ bool addModel(
 		priority,
 		model,
 		transform,
-		lightmapId,
+		lightmapDiffuseId,
+		lightmapDirectionalId,
 		lightmapSize
 	));
 
@@ -612,7 +628,8 @@ bool BakePipelineOperator::build(
 			}
 
 			// Calculate synthesized ids.
-			Guid lightmapId = entityId.permutation(c_lightmapIdSeed);
+			Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
+			Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
 			Guid outputId = entityId.permutation(c_outputIdSeed);
 
 			// Find model synthesizer which can generate from components.
@@ -673,7 +690,11 @@ bool BakePipelineOperator::build(
 
 				// Modify all materials to contain reference to lightmap channel.
 				for (auto& material : model->getMaterials())
-					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapId));
+				{
+					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
+					if (!material.getNormalMap().name.empty())
+						material.setProperty< PropertyString >(L"LightMapDirectionalId", lightmapDirectionalId.format());
+				}
 
 				// Load texture images and attach to materials.
 				for (auto& material : model->getMaterials())
@@ -730,7 +751,8 @@ bool BakePipelineOperator::build(
 					inoutEntityData->getTransform(),
 					inoutEntityData->getName(),
 					priority,
-					lightmapId,
+					lightmapDiffuseId,
+					lightmapDirectionalId,
 					lightmapSize,
 					tracerTask
 				))
@@ -757,7 +779,8 @@ bool BakePipelineOperator::build(
 					}
 				}
 
-				lightmapId.permutate();
+				lightmapDiffuseId.permutate();
+				lightmapDirectionalId.permutate();
 				outputId.permutate();
 			}
 

@@ -5,8 +5,8 @@
 			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
-				<first>913</first>
-				<second>295</second>
+				<first>912</first>
+				<second>294</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
@@ -18,8 +18,8 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>446</first>
-				<second>262</second>
+				<first>445</first>
+				<second>261</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>true</linear>
@@ -28,23 +28,10 @@ Tag_DiffuseColor
 			<id>{16815465-4E22-514C-9E23-58398275B1B4}</id>
 			<comment/>
 			<position>
-				<first>466</first>
-				<second>447</second>
+				<first>465</first>
+				<second>446</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{6BDBE582-FD11-5945-AD49-C7ED36E6A9BB}</id>
-			<comment/>
-			<position>
-				<first>466</first>
-				<second>483</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -82,13 +69,13 @@ Tag_DiffuseColor
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
