@@ -309,9 +309,10 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			// Trace directional map.
 			if (intensity > FUZZY_EPSILON)
 			{
-				const Vector4 basisX(std::sqrt(2.0f / 3.0f), 0.0f, 1.0f / std::sqrt(3.0f));
-				const Vector4 basisY(-1.0f / std::sqrt(6.0f), 1.0f / std::sqrt(2.0f), 1.0f / std::sqrt(3.0f));
-				const Vector4 basisZ(-1.0f / std::sqrt(6.0f), -1.0f / std::sqrt(2.0f), 1.0f / std::sqrt(3.0f));
+				const Scalar z(1.0f / std::sqrt(3.0f));
+				const Vector4 basisX(std::sqrt(2.0f / 3.0f), 0.0f, z);
+				const Vector4 basisY(-1.0f / std::sqrt(6.0f), 1.0f / std::sqrt(2.0f), z);
+				const Vector4 basisZ(-1.0f / std::sqrt(6.0f), -1.0f / std::sqrt(2.0f), z);
 
 				Vector4 binormal = -cross(elm.normal, elm.tangent);
 
@@ -331,9 +332,9 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				Scalar intensityZ = horizontalAdd3(incomingZ) / 3.0_simd;
 
 				lightmapDirectional->setPixel(x, y, Color4f(
-					0.5_simd * intensityX / intensity,
-					0.5_simd * intensityY / intensity,
-					0.5_simd * intensityZ / intensity,
+					0.5_simd * (intensityX / intensity) * (1.0_simd / z),
+					0.5_simd * (intensityY / intensity) * (1.0_simd / z),
+					0.5_simd * (intensityZ / intensity) * (1.0_simd / z),
 					1.0f
 				));
 			}
