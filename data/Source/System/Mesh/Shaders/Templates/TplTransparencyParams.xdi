@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>476</first>
-				<second>230</second>
+				<second>229</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
 			<comment/>
 			<position>
-				<first>619</first>
-				<second>230</second>
+				<first>618</first>
+				<second>229</second>
 			</position>
 			<name>T_Transparency</name>
 		</item>
@@ -23,23 +23,10 @@
 			<id>{884E8DF3-305B-A942-9CBA-10C152BA5F50}</id>
 			<comment/>
 			<position>
-				<first>276</first>
-				<second>212</second>
+				<first>262</first>
+				<second>228</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{14DAD9EC-801E-AA4D-9213-15138EBBB0F9}</id>
-			<comment/>
-			<position>
-				<first>276</first>
-				<second>251</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

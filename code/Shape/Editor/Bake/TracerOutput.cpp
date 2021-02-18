@@ -12,14 +12,16 @@ TracerOutput::TracerOutput(
 	int32_t priority,
     const model::Model* model,
 	const Transform& transform,
-    const Guid& lightmapId,
+	const Guid& lightmapDiffuseId,
+	const Guid& lightmapDirectionalId,
 	int32_t lightmapSize
 )
 :	m_name(name)
 ,	m_priority(priority)
 ,   m_model(model)
 ,	m_transform(transform)
-,   m_lightmapId(lightmapId)
+,   m_lightmapDiffuseId(lightmapDiffuseId)
+,   m_lightmapDirectionalId(lightmapDirectionalId)
 ,	m_lightmapSize(lightmapSize)
 {
 }

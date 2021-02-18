@@ -19,8 +19,8 @@ Tag_TransparencyMap
 			<id>{04B5023C-6E60-F947-BC70-36D77C0E5AA8}</id>
 			<comment/>
 			<position>
-				<first>526</first>
-				<second>159</second>
+				<first>525</first>
+				<second>158</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -38,7 +38,7 @@ Tag_TransparencyMap
 			<comment/>
 			<position>
 				<first>768</first>
-				<second>165</second>
+				<second>164</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -47,7 +47,7 @@ Tag_TransparencyMap
 			<comment/>
 			<position>
 				<first>924</first>
-				<second>145</second>
+				<second>144</second>
 			</position>
 			<name>T_Transparency</name>
 		</item>
@@ -55,23 +55,10 @@ Tag_TransparencyMap
 			<id>{EFED6E54-458B-E44C-9DD7-2F7FEE4E5FFE}</id>
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>233</second>
+				<first>258</first>
+				<second>232</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{DB2DC5B8-8FD4-9740-9F2A-134E5E8B1868}</id>
-			<comment/>
-			<position>
-				<first>259</first>
-				<second>272</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

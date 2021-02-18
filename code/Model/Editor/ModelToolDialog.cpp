@@ -212,7 +212,6 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_RIM_LIGHT"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_BLEND_OPERATOR"), ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DOUBLE_SIDED"), ui::dpi96(100)));
 	m_materialGrid->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventMaterialSelect);
@@ -479,7 +478,6 @@ void ModelToolDialog::updateModel()
 			row->add(new ui::GridItem(toString(i->getTransparency())));
 			row->add(new ui::GridItem(toString(i->getEmissive())));
 			row->add(new ui::GridItem(toString(i->getReflective())));
-			row->add(new ui::GridItem(toString(i->getRimLightIntensity())));
 			row->add(new ui::GridItem(c_blendModes[(int32_t)i->getBlendOperator()]));
 			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
 			m_materialGrid->addRow(row);

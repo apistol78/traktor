@@ -10,7 +10,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 1, Material, PropertyGroup)
 
 Material::Material()
 :	m_name(L"Unnamed")
@@ -22,7 +22,6 @@ Material::Material()
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
-,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
 {
@@ -38,7 +37,6 @@ Material::Material(const std::wstring& name)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
-,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
 {
@@ -54,7 +52,6 @@ Material::Material(const std::wstring& name, const Color4f& color)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
-,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
 {
@@ -150,11 +147,6 @@ void Material::setReflective(float reflective)
 	m_reflective = reflective;
 }
 
-void Material::setRimLightIntensity(float rimLightIntensity)
-{
-	m_rimLightIntensity = rimLightIntensity;
-}
-
 void Material::setBlendOperator(BlendOperator blendOperator)
 {
 	m_blendOperator = blendOperator;
@@ -197,7 +189,13 @@ void Material::serialize(ISerializer& s)
 	s >> Member< float >(L"transparency", m_transparency);
 	s >> Member< float >(L"emissive", m_emissive);
 	s >> Member< float >(L"reflective", m_reflective);
-	s >> Member< float >(L"rimLightIntensity", m_rimLightIntensity);
+
+	if (s.getVersion< Material >() < 1)
+	{
+		float rimLightIntensity;
+		s >> Member< float >(L"rimLightIntensity", rimLightIntensity);
+	}
+
 	s >> MemberEnum< BlendOperator >(L"blendOperator", m_blendOperator, c_BlendOperatorKeys);
 	s >> Member< bool >(L"doubleSided", m_doubleSided);
 }

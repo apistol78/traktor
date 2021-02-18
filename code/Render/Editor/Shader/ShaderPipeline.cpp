@@ -235,7 +235,7 @@ struct BuildCombinationTask : public Object
 			}
 			else
 			{
-				log::error << L"ShaderPipeline failed; initial value of uniform must be constant" << Endl;
+				log::error << L"ShaderPipeline failed; initial value of uniform must be constant." << Endl;
 				log::error.setLocalTarget(localTarget);
 				return;
 			}
@@ -248,6 +248,13 @@ struct BuildCombinationTask : public Object
 		{
 			const Guid& textureGuid = textureNode->getExternal();
 			int32_t textureIndex;
+
+			if (!textureGuid.isNotNull())
+			{
+				log::error << L"ShaderPipeline failed; non valid texture reference in node " << textureNode->getId().format() << L"." << Endl;
+				log::error.setLocalTarget(localTarget);
+				return;
+			}
 
 			auto it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
 			if (it != shaderResourceCombination->textures.end())

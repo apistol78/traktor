@@ -1,49 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{C3A8FDAB-AED7-7C46-9EE4-844363339FEC}</id>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{B5744673-F1B5-5447-AF77-14F0DA61B7CB}</id>
 			<comment/>
 			<position>
-				<first>476</first>
-				<second>229</second>
+				<first>349</first>
+				<second>413</second>
 			</position>
-			<value>0</value>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A19A6757-9C25-4B48-AF91-F5F8052C6051}</id>
+			<comment/>
+			<position>
+				<first>349</first>
+				<second>375</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{F4B09EBA-C01C-124B-927E-B4589CDFFFED}</id>
+			<id>{BE762BF8-2AA1-2D40-8143-F95330638E34}</id>
 			<comment/>
 			<position>
-				<first>628</first>
-				<second>209</second>
-			</position>
-			<name>T_DiffuseColor</name>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{265F5202-0985-B941-B026-F421DFDCED3C}</id>
-			<comment/>
-			<position>
-				<first>263</first>
-				<second>207</second>
+				<first>735</first>
+				<second>390</second>
 			</position>
 			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{45EE435A-4AC0-A746-8CA5-89C2DCDCB934}</id>
-			<comment/>
-			<position>
-				<first>265</first>
-				<second>253</second>
-			</position>
-			<name>T_VertexColor</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -53,7 +44,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>

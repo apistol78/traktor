@@ -224,7 +224,6 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		material.setMetalness(surface->color_hilite.val);
 		material.setEmissive(surface->luminosity.val);
 		material.setReflective(surface->reflection.val.val);
-		material.setRimLightIntensity(surface->glow.val);
 
 		if ((surface->sideflags & 3) == 3)
 			material.setDoubleSided(true);

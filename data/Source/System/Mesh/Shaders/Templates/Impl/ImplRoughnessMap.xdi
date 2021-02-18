@@ -5,8 +5,8 @@
 			<id>{FB952B55-63DA-3D4B-A9D7-68AA1AA76B8C}</id>
 			<comment/>
 			<position>
-				<first>755</first>
-				<second>170</second>
+				<first>754</first>
+				<second>169</second>
 			</position>
 			<name>T_Roughness</name>
 		</item>
@@ -18,7 +18,7 @@ Tag_RoughnessMap
 			]]>
 			</comment>
 			<position>
-				<first>146</first>
+				<first>145</first>
 				<second>92</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
@@ -29,7 +29,7 @@ Tag_RoughnessMap
 			<comment/>
 			<position>
 				<first>392</first>
-				<second>121</second>
+				<second>120</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -46,8 +46,8 @@ Tag_RoughnessMap
 			<id>{52BE2A44-2A6D-8E4B-B5EF-500B024B0A78}</id>
 			<comment/>
 			<position>
-				<first>625</first>
-				<second>159</second>
+				<first>624</first>
+				<second>158</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -55,23 +55,10 @@ Tag_RoughnessMap
 			<id>{D83B4A29-82DF-0C4C-B0DA-55BDAC00A853}</id>
 			<comment/>
 			<position>
-				<first>61</first>
+				<first>60</first>
 				<second>192</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{9A98C86A-DA85-E64D-9A52-07E3C06B0003}</id>
-			<comment/>
-			<position>
-				<first>61</first>
-				<second>231</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

@@ -14,7 +14,7 @@
 			<id>{990E03F4-6CD9-4548-B2FD-84D42D5685B0}</id>
 			<comment/>
 			<position>
-				<first>629</first>
+				<first>628</first>
 				<second>332</second>
 			</position>
 			<name>T_Roughness</name>
@@ -23,23 +23,10 @@
 			<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
 			<comment/>
 			<position>
-				<first>192</first>
-				<second>313</second>
+				<first>236</first>
+				<second>330</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
-			<comment/>
-			<position>
-				<first>192</first>
-				<second>352</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>

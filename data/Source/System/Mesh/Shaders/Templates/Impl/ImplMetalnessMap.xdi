@@ -10,7 +10,7 @@ Tag_MetalnessMap
 			</comment>
 			<position>
 				<first>196</first>
-				<second>95</second>
+				<second>94</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
@@ -19,8 +19,8 @@ Tag_MetalnessMap
 			<id>{2095AE10-D608-9548-9860-8D508BCB51D0}</id>
 			<comment/>
 			<position>
-				<first>426</first>
-				<second>121</second>
+				<first>425</first>
+				<second>120</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -37,8 +37,8 @@ Tag_MetalnessMap
 			<id>{52BE2A44-2A6D-8E4B-B5EF-500B024B0A78}</id>
 			<comment/>
 			<position>
-				<first>687</first>
-				<second>169</second>
+				<first>686</first>
+				<second>168</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -46,23 +46,10 @@ Tag_MetalnessMap
 			<id>{D83B4A29-82DF-0C4C-B0DA-55BDAC00A853}</id>
 			<comment/>
 			<position>
-				<first>53</first>
+				<first>52</first>
 				<second>184</second>
 			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{9A98C86A-DA85-E64D-9A52-07E3C06B0003}</id>
-			<comment/>
-			<position>
-				<first>53</first>
-				<second>223</second>
-			</position>
-			<name>T_TexCoord1</name>
+			<name>T_TexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -115,7 +102,7 @@ Tag_MetalnessMap
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{0C3499D6-7A46-CE4D-980A-D39BCE8A9374}</id>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7B9AF5AF-3779-9A4F-A0CC-C3351EE38EE7}</id>
 			<comment/>
 			<position>
-				<first>761</first>
-				<second>288</second>
+				<first>349</first>
+				<second>413</second>
 			</position>
-			<name>T_DiffuseColor</name>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{3C061940-2423-BC4A-98C3-74F828B050D1}</id>
+			<id>{48210643-CE9C-2848-865D-AB08505C8CFC}</id>
 			<comment/>
 			<position>
-				<first>449</first>
-				<second>282</second>
+				<first>349</first>
+				<second>375</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{DCC189A0-5F03-8A4F-9771-BDFF0CBA846D}</id>
+			<comment/>
+			<position>
+				<first>735</first>
+				<second>390</second>
 			</position>
 			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{BFD21E4D-01A9-0B42-9023-5E129A8EAF62}</id>
-			<comment/>
-			<position>
-				<first>445</first>
-				<second>242</second>
-			</position>
-			<name>T_VertexColor</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>

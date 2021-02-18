@@ -81,7 +81,6 @@ struct MaterialPredicate
 			compare(a.getTransparency(), b.getTransparency()) &&
 			compare(a.getEmissive(), b.getEmissive()) &&
 			compare(a.getReflective(), b.getReflective()) &&
-			compare(a.getRimLightIntensity(), b.getRimLightIntensity()) &&
 			a.getBlendOperator() == b.getBlendOperator() &&
 			a.isDoubleSided() == b.isDoubleSided();
 	}

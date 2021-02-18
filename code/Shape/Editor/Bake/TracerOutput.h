@@ -35,7 +35,8 @@ public:
 		int32_t priority,
         const model::Model* model,
 		const Transform& transform,
-        const Guid& lightmapId,
+        const Guid& lightmapDiffuseId,
+		const Guid& lightmapDirectionalId,
 		int32_t lightmapSize
     );
 
@@ -47,7 +48,9 @@ public:
 
 	const Transform& getTransform() const { return m_transform; }
 
-    const Guid& getLightmapId() const { return m_lightmapId; }
+    const Guid& getLightmapDiffuseId() const { return m_lightmapDiffuseId; }
+
+    const Guid& getLightmapDirectionalId() const { return m_lightmapDirectionalId; }
 
 	int32_t getLightmapSize() const { return m_lightmapSize; }
 
@@ -56,7 +59,8 @@ private:
 	int32_t m_priority;
 	Ref< const model::Model > m_model;
 	Transform m_transform;
-	Guid m_lightmapId;
+	Guid m_lightmapDiffuseId;
+	Guid m_lightmapDirectionalId;
 	int32_t m_lightmapSize;
 };
 

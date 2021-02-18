@@ -42,8 +42,8 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	else
 		m_libRenderDoc = nullptr;
 
-	if (m_apiRenderDoc)
-		m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
+	//if (m_apiRenderDoc)
+	//	m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
 #endif
 
 	return m_renderSystem->create(desc);

@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Database/Instance.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
@@ -19,8 +20,9 @@ namespace traktor
 class TextureReaderAdapter : public TextureLinker::TextureReader
 {
 public:
-	TextureReaderAdapter(resource::IResourceManager* resourceManager)
+	TextureReaderAdapter(resource::IResourceManager* resourceManager, const Guid& shaderId)
 	:	m_resourceManager(resourceManager)
+	,	m_shaderId(shaderId)
 	{
 	}
 
@@ -30,11 +32,15 @@ public:
 		if (m_resourceManager->bind(resource::Id< ITexture >(textureGuid), texture))
 			return new TextureProxy(texture);
 		else
+		{
+			log::error << L"Unable to bind texture \"" << textureGuid.format() << L"\" in shader \"" << m_shaderId.format() << L"\"." << Endl;
 			return (ITexture*)nullptr;
+		}
 	}
 
 private:
 	resource::IResourceManager* m_resourceManager;
+	const Guid& m_shaderId;
 };
 
 		}
@@ -67,6 +73,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	if (!shaderResource)
 		return nullptr;
 
+	Guid shaderId = instance->getGuid();
 	std::wstring shaderName = instance->getPath();
 	Ref< Shader > shader = new Shader();
 
@@ -100,7 +107,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				return nullptr;
 
 			// Set implicit texture uniforms.
-			TextureReaderAdapter textureReader(resourceManager);
+			TextureReaderAdapter textureReader(resourceManager, shaderId);
 			if (!TextureLinker(textureReader).link(resourceCombination, combination.program))
 				return nullptr;
 
