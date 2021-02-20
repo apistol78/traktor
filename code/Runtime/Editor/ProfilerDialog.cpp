@@ -107,6 +107,7 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 
 	m_chart->showTime(currentTime);
 
+	double syncTime = -1.0;
 	for (size_t i = 0; i < events.size(); ++i)
 	{
 		const Profiler::Event& e = events[i];
@@ -120,6 +121,10 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 		auto it = m_dictionary.find(e.name);
 		if (it != m_dictionary.end())
 		{
+			// Track time to application update event.
+			if (e.start > syncTime && it->second == L"Application update")
+				syncTime = e.end;
+
 			m_chart->addTask(
 				m_threadIdToLane[e.threadId] * 8 + e.depth,
 				str(L"%ls (%.2f ms)", it->second.c_str(), (e.end - e.start) * 1000.0f),
@@ -139,6 +144,9 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 			);
 		}
 	}
+
+	if (syncTime > 0.0)
+		m_chart->showTime(syncTime);
 }
 
 void ProfilerDialog::receivedPerfSets()
