@@ -347,8 +347,6 @@ bool prepareModel(
 	// Ensure model is fit for tracing.
 	model->clear(model::Model::CfColors | model::Model::CfJoints);
 	model::Triangulate().apply(*model);
-	model::CleanDuplicates(0.0f).apply(*model);
-	model::CleanDegenerate().apply(*model);
 	model::CalculateTangents(false).apply(*model);
 
 	// Check if model already contain lightmap UV or if we need to unwrap.
