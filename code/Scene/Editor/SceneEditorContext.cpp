@@ -252,15 +252,13 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 	if (boundingBox.empty())
 		return;
 
-	Scalar distance = boundingBox.getExtent().get(majorAxis3(boundingBox.getExtent())) * Scalar(3.0f);
-
 	Transform T = entityAdapter->getTransform();
+	Scalar distance = boundingBox.getExtent().get(majorAxis3(boundingBox.getExtent())) * Scalar(3.0f);
+	Vector4 center = T * boundingBox.getCenter().xyz1();
 
 	for (uint32_t i = 0; i < sizeof_array(m_cameras); ++i)
 	{
-		T_ASSERT(m_cameras[i]);
-
-		Vector4 P = T.translation() - m_cameras[i]->getOrientation() * Vector4(0.0f, 0.0f, distance, 0.0f);
+		Vector4 P = center - m_cameras[i]->getOrientation() * Vector4(0.0f, 0.0f, distance, 0.0f);
 		m_cameras[i]->place(P);
 	}
 }
