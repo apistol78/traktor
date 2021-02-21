@@ -241,7 +241,7 @@ void RenderViewPs4::present()
 	m_currentQueue = (m_currentQueue + 1) % FrameQueueCount;
 }
 
-bool RenderViewPs4::beginPass(const Clear* clear)
+bool RenderViewPs4::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
 	RenderQueuePs4* queue = m_queues[m_currentQueue];
 	T_ASSERT (queue);
