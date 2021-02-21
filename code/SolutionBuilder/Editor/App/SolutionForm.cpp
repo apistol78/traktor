@@ -69,7 +69,25 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, traktor::File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
+	{
+		Ref< ui::StyleSheet > styleSheet = xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
+		if (!styleSheet)
+			return nullptr;
+
+		auto includes = styleSheet->getInclude();
+		for (const auto& include : includes)
+		{
+			Ref< ui::StyleSheet > includeStyleSheet = loadStyleSheet(include);
+			if (!includeStyleSheet)
+				return nullptr;
+
+			styleSheet = includeStyleSheet->merge(styleSheet);
+			if (!styleSheet)
+				return nullptr;
+		}
+
+		return styleSheet;
+	}
 	else
 		return nullptr;
 }
@@ -80,8 +98,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionForm", SolutionForm, ui::Form)
 
 bool SolutionForm::create(const CommandLine& cmdLine)
 {
-	// Load stylesheet.
-	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss";
+	// Load default stylesheet.
+	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss";
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
@@ -290,15 +308,13 @@ void SolutionForm::updateSolutionTree()
 
 	RefArray< Project > projects = m_solution->getProjects();
 	projects.sort(ProjectSortPredicate());
-
-	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
-		createTreeProjectItem(treeSolution, *i);
+	for (auto project : projects)
+		createTreeProjectItem(treeSolution, project);
 
 	RefArray< Aggregation > aggregations = m_solution->getAggregations();
 	aggregations.sort(AggregationsSortPredicate());
-
-	for (RefArray< Aggregation >::iterator i = aggregations.begin(); i != aggregations.end(); ++i)
-		createTreeAggregationItem(treeSolution, *i);
+	for (auto aggregation : aggregations)
+		createTreeAggregationItem(treeSolution, aggregation);
 
 	m_treeSolution->applyState(treeState);
 }
@@ -311,10 +327,10 @@ void SolutionForm::updateMRU()
 	if (!m_mru->getUsedFiles(usedFiles))
 		return;
 
-	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
+	for (const auto& usedFile : usedFiles)
 	{
-		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"File.MRU"), i->getPathName());
-		menuItem->setData(L"PATH", new Path(*i));
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"File.MRU"), usedFile.getPathName());
+		menuItem->setData(L"PATH", new Path(usedFile));
 		m_menuItemMRU->add(menuItem);
 	}
 }
@@ -337,20 +353,17 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	Ref< ui::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 1);
 	treeConfigurations->setImage(0, 2, 3);
 
-	const RefArray< Configuration >& configurations = project->getConfigurations();
-	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
-		createTreeConfigurationItem(treeConfigurations, project, *j);
-
-	const RefArray< ProjectItem >& items = project->getItems();
-	for (RefArray< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+	for (auto configuration : project->getConfigurations())
+		createTreeConfigurationItem(treeConfigurations, project, configuration);
+	for (auto item : project->getItems())
 	{
-		if (is_a< Filter >(*j))
-			createTreeFilterItem(treeProject, project, static_cast< Filter* >(*j));
+		if (is_a< Filter >(item))
+			createTreeFilterItem(treeProject, project, static_cast< Filter* >(item));
 	}
-	for (RefArray< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+	for (auto item : project->getItems())
 	{
-		if (is_a< sb::File >(*j))
-			createTreeFileItem(treeProject, project, static_cast< sb::File* >(*j));
+		if (is_a< sb::File >(item))
+			createTreeFileItem(treeProject, project, static_cast< sb::File* >(item));
 	}
 
 	return treeProject;
@@ -366,9 +379,8 @@ ui::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::TreeViewItem* pare
 	if (!aggregation->getEnable())
 		treeAggregation->disable();
 
-	const RefArray< AggregationItem >& items = aggregation->getItems();
-	for (RefArray< AggregationItem >::const_iterator i = items.begin(); i != items.end(); ++i)
-		createTreeAggregationItemItem(treeAggregation, aggregation, *i);
+	for (auto item : aggregation->getItems())
+		createTreeAggregationItemItem(treeAggregation, aggregation, item);
 
 	return treeAggregation;
 }
@@ -381,9 +393,8 @@ ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* pa
 	treeConfiguration->setData(L"PROJECT", project);
 	treeConfiguration->setData(L"CONFIGURATION", configuration);
 
-	const RefArray< AggregationItem >& items = configuration->getAggregationItems();
-	for (RefArray< AggregationItem >::const_iterator i = items.begin(); i != items.end(); ++i)
-		createTreeAggregationItemItem(treeConfiguration, project, configuration, *i);
+	for (auto item : configuration->getAggregationItems())
+		createTreeAggregationItemItem(treeConfiguration, project, configuration, item);
 
 	return treeConfiguration;
 }

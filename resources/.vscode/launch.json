@@ -85,6 +85,37 @@
 		},
 
 		{
+			"name": "SolutionBuilder - ReleaseShared",
+			"request": "launch",
+
+			"type": "cppdbg",
+			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.SolutionBuilder.Editor.App",
+			"args": [ "-s" ],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/personal/apistol/minigolf/output/Volley_Golf/Linux",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+
+			"windows": {
+				"type": "cppvsdbg",
+				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.SolutionBuilder.Editor.App.exe",
+				"args": [],
+				"stopAtEntry": false,
+				"cwd": "${workspaceRoot}/..",
+				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"externalConsole": true
+			}
+		},
+
+		{
 			"name": "Runtime - ReleaseShared",
 			"request": "launch",
 
@@ -92,7 +123,7 @@
 			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Runtime.App",
 			"args": [ "-s" ],
 			"stopAtEntry": false,
-			"cwd": "/home/apistol/private/personal/apistol/minigolf/output/MiniGolf/Linux",
+			"cwd": "/home/apistol/private/personal/apistol/minigolf/output/Volley_Golf/Linux",
 			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
 			"externalConsole": false,
 			"MIMode": "gdb",

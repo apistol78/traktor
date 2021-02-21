@@ -133,6 +133,32 @@
 					"$gcc"
 				]
 			}
+		},
+
+		{
+			"type": "shell",
+			"label": "Raspberry PI - DebugShared",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh RPi DebugShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			}
+		},
+
+		{
+			"type": "shell",
+			"label": "Raspberry PI - ReleaseShared",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh RPi ReleaseShared",
+				"problemMatcher": [
+					"$gcc"
+				]
+			}
 		}
 	]
 }

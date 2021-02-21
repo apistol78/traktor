@@ -36,6 +36,13 @@ elif [[ "$1" == "iOS" ]]; then
 	make -s -j6 -f 'Traktor iOS.mak' $2
 	popd
 
+elif [[ "$1" == "RPi" ]]; then
+
+	pushd $TRAKTOR_HOME/build/rpi
+	make -s -j6 -f 'Extern Raspberry Pi.mak' $2
+	make -s -j6 -f 'Traktor Raspberry Pi.mak' $2
+	popd
+
 else
 
 	echo "Invalid argument $1"
