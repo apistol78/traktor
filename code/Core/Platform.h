@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(__ANDROID__)
+struct ANativeWindow;
+#endif
+
 namespace traktor
 {
 
@@ -78,14 +82,14 @@ namespace traktor
 		}
 
 #elif defined(__ANDROID__)
-		struct ANativeWindow** window;
+		struct ::ANativeWindow** window;
 
 		SystemWindow()
 		:	window(nullptr)
 		{
 		}
 
-		explicit SystemWindow(struct ANativeWindow** window_)
+		explicit SystemWindow(struct ::ANativeWindow** window_)
 		:	window(window_)
 		{
 		}
