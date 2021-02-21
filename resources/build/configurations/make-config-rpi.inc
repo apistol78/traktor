@@ -47,7 +47,7 @@ AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
 LINK=ccache clang++
-LINK_LIBS=-fuse-ld=lld --target=arm-linux-gnueabihf --sysroot=$(SYSROOT) -Wl,-rpath=\$$ORIGIN
+LINK_LIBS=-fuse-ld=lld -lpthread -ldl --target=arm-linux-gnueabihf --sysroot=$(SYSROOT) -Wl,-rpath=\$$ORIGIN
 LINK_FLAGS_DEBUG_SHARED=$(LINK_LIBS) -shared
 LINK_FLAGS_RELEASE_SHARED=$(LINK_LIBS) -shared
 LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_LIBS)
