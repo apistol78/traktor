@@ -48,7 +48,7 @@ public:
 
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	float getAlpha() const { return clamp((m_alpha - m_age) * 2.0f, 0.0f, 1.0f); }
+	float getAlpha() const { return m_alpha; }
 
 	float getCullDistance() const { return m_cullDistance; }
 
