@@ -535,7 +535,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	);
 	m_profiler->end(*dependency->pipelineType);
 
-	if (result)
+	if (
+		!ThreadManager::getInstance().getCurrentThread()->stopped() &&
+		result
+	)
 	{
 		if (m_cache && cacheable)
 			putInstancesInCache(
@@ -831,7 +834,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	log::warning.setLocalTarget(warningTarget.getTarget());
 	log::error.setLocalTarget(errorTarget.getTarget());
 
-	if (result)
+	if (
+		!ThreadManager::getInstance().getCurrentThread()->stopped() &&
+		result
+	)
 	{
 		if (m_cache)
 			putInstancesInCache(

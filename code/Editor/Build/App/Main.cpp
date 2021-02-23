@@ -136,14 +136,16 @@ int main(int argc, const char** argv)
 		log::info << L"Usage: Traktor.Editor.Build.App (option(s)) [workspace]" << Endl;
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
-		log::info << L"    -s,-settings               Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
-		log::info << L"    -v,-verbose                Verbose building." << Endl;
-		log::info << L"    -standalone                Build using a standalone pipeline." << Endl;
-		log::info << L"    -f,-force                  Force build." << Endl;
-		log::info << L"    -file-cache=path           Specify pipeline file cache directory." << Endl;
-		log::info << L"    -memcached-cache=host:port Specify pipeline memcached host." << Endl;
-		log::info << L"    -sequential-depends        Disable multithreaded pipeline dependency scanner." << Endl;
-		log::info << L"    -sequential-build          Disable multithreaded pipeline build." << Endl;
+		log::info << L"    -s,-settings                   Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
+		log::info << L"    -v,-verbose                    Verbose building." << Endl;
+		log::info << L"    -standalone                    Build using a standalone pipeline." << Endl;
+		log::info << L"    -f,-force                      Force build." << Endl;
+		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
+		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
+		log::info << L"    -memcached-cache=host:port     Specify pipeline memcached host." << Endl;
+		log::info << L"    -memcached-cache-access=r|w|rw Memcached cache access." << Endl;
+		log::info << L"    -sequential-depends            Disable multithreaded pipeline dependency scanner." << Endl;
+		log::info << L"    -sequential-build              Disable multithreaded pipeline build." << Endl;
 		return 1;
 	}
 
@@ -183,11 +185,27 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption(L"file-cache"))
 	{
-		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
+		bool read = true;
+		bool write = true;
+		if (cmdLine.hasOption(L"file-cache-access"))
+		{
+			read =
+			write = false;
+
+			std::wstring access = cmdLine.getOption(L"file-cache-access").getString();
+			for (auto ch : access)
+			{
+				if (ch == L'r')
+					read = true;
+				if (ch == L'w')
+					write = true;
+			}
+		}
+
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
 		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", read);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"memcached-cache"))
@@ -202,13 +220,28 @@ int main(int argc, const char** argv)
 			host = host.substr(0, i);
 		}
 
-		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
+		bool read = true;
+		bool write = true;
+		if (cmdLine.hasOption(L"memcached-cache-access"))
+		{
+			read =
+			write = false;
+
+			std::wstring access = cmdLine.getOption(L"memcached-cache-access").getString();
+			for (auto ch : access)
+			{
+				if (ch == L'r')
+					read = true;
+				if (ch == L'w')
+					write = true;
+			}
+		}
 
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
 		settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", host);
 		settings->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", port);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", read);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"sequential-depends"))
