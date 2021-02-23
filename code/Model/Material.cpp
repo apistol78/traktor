@@ -10,7 +10,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 1, Material, PropertyGroup)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 
 Material::Material()
 :	m_name(L"Unnamed")
@@ -189,13 +189,6 @@ void Material::serialize(ISerializer& s)
 	s >> Member< float >(L"transparency", m_transparency);
 	s >> Member< float >(L"emissive", m_emissive);
 	s >> Member< float >(L"reflective", m_reflective);
-
-	if (s.getVersion< Material >() < 1)
-	{
-		float rimLightIntensity;
-		s >> Member< float >(L"rimLightIntensity", rimLightIntensity);
-	}
-
 	s >> MemberEnum< BlendOperator >(L"blendOperator", m_blendOperator, c_BlendOperatorKeys);
 	s >> Member< bool >(L"doubleSided", m_doubleSided);
 }
