@@ -48,7 +48,7 @@ public:
 	template < typename ValueType >
 	typename PropertyTrait< ValueType >::return_type_t getPropertyIncludeHash(const std::wstring& propertyName, typename PropertyTrait< ValueType >::default_value_type_t defaultValue) const
 	{
-		const PropertyTrait< ValueType >::property_type_t hashableDefaultValue(defaultValue);
+		const typename PropertyTrait< ValueType >::property_type_t hashableDefaultValue(defaultValue);
 		Ref< const IPropertyValue > value = getProperty(propertyName, true, &hashableDefaultValue);
 		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
@@ -56,7 +56,7 @@ public:
 	template < typename ValueType >
 	typename PropertyTrait< ValueType >::return_type_t getPropertyIncludeHash(const std::wstring& propertyName) const
 	{
-		const PropertyTrait< ValueType >::property_type_t hashableDefaultValue;
+		const typename PropertyTrait< ValueType >::property_type_t hashableDefaultValue;
 		Ref< const IPropertyValue > value = getProperty(propertyName, true, &hashableDefaultValue);
 		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
