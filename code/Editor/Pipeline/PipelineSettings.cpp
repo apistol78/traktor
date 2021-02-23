@@ -26,7 +26,10 @@ Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& pr
 		else if(defaultValue)
 			m_hash += DeepHash(defaultValue).get();
 	}
-	return prop != nullptr ? prop : defaultValue;
+	if (prop)
+		return prop;
+	else
+		return defaultValue;
 }
 
 uint32_t PipelineSettings::getHash() const
