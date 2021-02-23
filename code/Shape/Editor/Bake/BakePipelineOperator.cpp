@@ -612,6 +612,20 @@ bool BakePipelineOperator::build(
 			if (!entityId.isNull())
 				flattenEntityData.push_back(inoutEntityData);
 
+			// Stop traversing deeper if this entity has an replicator, ie will be baked.
+			bool haveReplicator = false;
+			for (auto componentData : inoutEntityData->getComponents())
+			{
+				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				if (entityReplicator)
+				{
+					haveReplicator = true;
+					break;
+				}
+			}
+			if (haveReplicator)
+				return scene::Traverser::VrSkip;
+
 			return scene::Traverser::VrContinue;
 		});
 
