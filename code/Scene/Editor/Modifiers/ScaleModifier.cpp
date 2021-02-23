@@ -49,9 +49,9 @@ void ScaleModifier::selectionChanged()
 	m_baseScale.clear();
 	m_center = Vector4::zero();
 
-	for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
+	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = (*i)->getTransform();
+		Transform T = entityAdapter->getTransform0();
 		m_baseScale.push_back(Vector4::one()); // T.scale());
 		m_center += T.translation();
 	}
@@ -144,7 +144,7 @@ void ScaleModifier::apply(
 
 	//for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 	//{
-	//	Transform T = m_entityAdapters[i]->getTransform();
+	//	Transform T = m_entityAdapters[i]->getTransform0();
 	//	m_entityAdapters[i]->setTransform(Transform(
 	//		T.translation(),
 	//		T.rotation(),

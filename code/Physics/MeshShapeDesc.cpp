@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshShapeDesc", ShapeDesc::Version, MeshShapeDesc, ShapeDesc)
 
+MeshShapeDesc::MeshShapeDesc(const resource::Id< Mesh >& mesh)
+:	m_mesh(mesh)
+{
+}
+
 void MeshShapeDesc::setMesh(const resource::Id< Mesh >& mesh)
 {
 	m_mesh = mesh;

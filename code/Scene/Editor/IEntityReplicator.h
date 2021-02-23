@@ -84,7 +84,8 @@ public:
      *
      * \param pipelineBuilder Pipeline builder.
      * \param assetPath Asset path.
-     * \param source Source object, entity data.
+     * \param entityData Owner entity data.
+     * \param componentData Component data which we want to represent as a model.
      * \param model Modified model, based of created from createModel method.
      * \param outputGuid Guid to use for synthesized builds required when modifing output.
      * \return Replacement entity/component data if necessary, will be replaced in output scene.
@@ -92,7 +93,8 @@ public:
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
 		const std::wstring& assetPath,
-        const Object* source,
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData,
         const model::Model* model,
         const Guid& outputGuid
     ) const = 0;

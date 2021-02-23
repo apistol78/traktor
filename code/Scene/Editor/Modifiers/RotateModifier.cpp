@@ -54,7 +54,7 @@ void RotateModifier::selectionChanged()
 
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform();
+		Transform T = entityAdapter->getTransform0();
 		m_baseTransforms.push_back(T);
 		m_center += T.translation();
 	}
@@ -194,7 +194,7 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 	{
 		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
-		Transform T = m_entityAdapters.front()->getTransform();
+		Transform T = m_entityAdapters.front()->getTransform0();
 		Transform Tn(T.translation(), Q);
 
 		m_entityAdapters.front()->setTransform(Tn);
@@ -256,7 +256,7 @@ void RotateModifier::apply(
 	{
 		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
-		Transform T = m_entityAdapters.front()->getTransform();
+		Transform T = m_entityAdapters.front()->getTransform0();
 		Transform Tn(T.translation(), Q);
 
 		m_entityAdapters.front()->setTransform(Tn);

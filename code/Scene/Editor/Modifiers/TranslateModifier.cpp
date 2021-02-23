@@ -49,7 +49,7 @@ void TranslateModifier::selectionChanged()
 	m_baseTranslations.clear();
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform();
+		Transform T = entityAdapter->getTransform0();
 		m_baseTranslations.push_back(T.translation());
 	}
 
@@ -175,7 +175,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 	{
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
-			Transform T = m_entityAdapters[i]->getTransform();
+			Transform T = m_entityAdapters[i]->getTransform0();
 			m_entityAdapters[i]->setTransform(Transform(
 				snap(m_baseTranslations[i], 1 | 2 | 4),
 				T.rotation()
@@ -204,7 +204,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
-			Transform T = m_entityAdapters[i]->getTransform();
+			Transform T = m_entityAdapters[i]->getTransform0();
 			m_entityAdapters[i]->setTransform(Transform(
 				snap(m_baseTranslations[i] + delta, m_axisHot),
 				T.rotation()
@@ -259,7 +259,7 @@ void TranslateModifier::apply(
 
 	for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 	{
-		Transform T = m_entityAdapters[i]->getTransform();
+		Transform T = m_entityAdapters[i]->getTransform0();
 		m_entityAdapters[i]->setTransform(Transform(
 			//m_baseTranslations[i] + baseDelta,	<< Snap in object space
 			snap(m_baseTranslations[i] + baseDelta, m_axisEnable),	//< Snap in world space.

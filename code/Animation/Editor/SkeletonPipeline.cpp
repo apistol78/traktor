@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 5, Skeleto
 
 bool SkeletonPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

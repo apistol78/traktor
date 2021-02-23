@@ -38,12 +38,12 @@ ScenePipeline::ScenePipeline()
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
-	m_suppressShadows = settings->getProperty< bool >(L"ScenePipeline.SuppressShadows");
-	m_suppressDepthPass = settings->getProperty< bool >(L"ScenePipeline.SuppressDepthPass");
-	m_suppressImageProcess = settings->getProperty< bool >(L"ScenePipeline.SuppressImageProcess");
-	m_shadowMapSizeDenom = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
-	m_shadowMapMaxSlices = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
+	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
+	m_suppressShadows = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressShadows", false);
+	m_suppressDepthPass = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressDepthPass", false);
+	m_suppressImageProcess = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressImageProcess", false);
+	m_shadowMapSizeDenom = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
+	m_shadowMapMaxSlices = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 
 	// Instantiate scene pipeline operators.
 	TypeInfoSet operatorTypes;

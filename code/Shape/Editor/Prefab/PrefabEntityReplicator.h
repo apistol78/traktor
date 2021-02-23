@@ -40,7 +40,8 @@ public:
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
         const std::wstring& assetPath,
-        const Object* source,
+        const world::EntityData* entityData,
+        const world::IEntityComponentData* componentData,
         const model::Model* model,
         const Guid& outputGuid
     ) const override final;

@@ -16,12 +16,17 @@ PipelineSettings::PipelineSettings(const PropertyGroup* settings)
 {
 }
 
-Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
+Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName, bool includeInHash, const IPropertyValue* defaultValue) const
 {
 	Ref< const IPropertyValue > prop = m_settings->getProperty(propertyName);
-	if (prop)
-		m_hash += DeepHash(prop).get();
-	return prop;
+	if (includeInHash)
+	{
+		if (prop)
+			m_hash += DeepHash(prop).get();
+		else if(defaultValue)
+			m_hash += DeepHash(defaultValue).get();
+	}
+	return prop != nullptr ? prop : defaultValue;
 }
 
 uint32_t PipelineSettings::getHash() const

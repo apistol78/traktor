@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", 1, AssetsPipeli
 
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
-	m_editorDeploy = settings->getProperty< bool >(L"Pipeline.EditorDeploy", false);
+	m_editorDeploy = settings->getPropertyIncludeHash< bool >(L"Pipeline.EditorDeploy");
 	return true;
 }
 

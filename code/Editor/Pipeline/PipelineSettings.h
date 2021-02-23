@@ -23,9 +23,9 @@ class T_DLLCLASS PipelineSettings : public IPipelineSettings
 	T_RTTI_CLASS;
 
 public:
-	PipelineSettings(const PropertyGroup* settings);
+	explicit PipelineSettings(const PropertyGroup* settings);
 
-	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const override final;
+	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName, bool includeInHash, const IPropertyValue* defaultValue) const override final;
 
 	uint32_t getHash() const;
 

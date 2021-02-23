@@ -315,17 +315,17 @@ ShaderPipeline::ShaderPipeline()
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-	m_programCachePath = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
-	m_compilerSettings = settings->getProperty< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
-	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
-	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
-	m_frequentUniformsAsLinear = settings->getProperty< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
-	m_optimize = settings->getProperty< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
-	m_validate = settings->getProperty< bool >(L"ShaderPipeline.Validate", m_validate);
-	m_debugCompleteGraphs = settings->getProperty< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
-	m_debugPath = settings->getProperty< std::wstring >(L"ShaderPipeline.DebugPath", L"");
-	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_programCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	m_programCachePath = settings->getPropertyExcludeHash< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
+	m_compilerSettings = settings->getPropertyIncludeHash< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
+	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform", L"");
+	m_includeOnlyTechniques = settings->getPropertyIncludeHash< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
+	m_frequentUniformsAsLinear = settings->getPropertyIncludeHash< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
+	m_optimize = settings->getPropertyIncludeHash< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
+	m_validate = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.Validate", m_validate);
+	m_debugCompleteGraphs = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
+	m_debugPath = settings->getPropertyExcludeHash< std::wstring >(L"ShaderPipeline.DebugPath", L"");
+	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 

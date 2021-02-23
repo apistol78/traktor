@@ -107,12 +107,12 @@ Pipeline::Pipeline()
 
 bool Pipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_generateMips = settings->getProperty< bool >(L"Pipeline.GenerateMips", false);
-	m_sharpenStrength = settings->getProperty< bool >(L"Pipeline.SharpenStrength", false);
-	m_useTextureCompression = settings->getProperty< bool >(L"Pipeline.UseTextureCompression", true);
-	m_textureSizeDenom = settings->getProperty< int32_t >(L"Pipeline.TextureSizeDenom", 1);
-	m_textureAtlasSize = settings->getProperty< int32_t >(L"Pipeline.TextureAtlasSize", 1024);
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_generateMips = settings->getPropertyIncludeHash< bool >(L"Pipeline.GenerateMips", false);
+	m_sharpenStrength = settings->getPropertyIncludeHash< bool >(L"Pipeline.SharpenStrength", false);
+	m_useTextureCompression = settings->getPropertyIncludeHash< bool >(L"Pipeline.UseTextureCompression", true);
+	m_textureSizeDenom = settings->getPropertyIncludeHash< int32_t >(L"Pipeline.TextureSizeDenom", 1);
+	m_textureAtlasSize = settings->getPropertyIncludeHash< int32_t >(L"Pipeline.TextureAtlasSize", 1024);
 	return true;
 }
 

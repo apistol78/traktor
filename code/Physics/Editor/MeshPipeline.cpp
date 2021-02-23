@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 10, MeshPipeline
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -58,7 +58,8 @@ bool MeshPipeline::buildDependencies(
 ) const
 {
 	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	pipelineDepends->addDependency(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+	if (!meshAsset->getFileName().empty())
+		pipelineDepends->addDependency(Path(m_assetPath), meshAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -93,12 +94,12 @@ bool MeshPipeline::buildOutput(
 
 	if (!model)
 	{
-		log::error << L"Phys mesh pipeline failed; no model" << Endl;
+		log::error << L"Physics mesh pipeline failed; no model" << Endl;
 		return false;
 	}
 	if (model->getPositions().empty() || model->getVertices().empty() || model->getPolygons().empty())
 	{
-		log::error << L"Phys mesh pipeline failed; no geometry" << Endl;
+		log::error << L"Physics mesh pipeline failed; no geometry" << Endl;
 		return false;
 	}
 
@@ -231,7 +232,7 @@ bool MeshPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Phys mesh pipeline failed; unable create output instance" << Endl;
+		log::error << L"Physics mesh pipeline failed; unable create output instance." << Endl;
 		return false;
 	}
 
@@ -240,7 +241,7 @@ bool MeshPipeline::buildOutput(
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Phys mesh pipeline failed; unable to write data" << Endl;
+		log::error << L"Physics mesh pipeline failed; unable to write data." << Endl;
 		instance->revert();
 		return false;
 	}
@@ -255,7 +256,7 @@ bool MeshPipeline::buildOutput(
 	// Commit resource.
 	if (!instance->commit())
 	{
-		log::error << L"Phys mesh pipeline failed; unable to commit output instance" << Endl;
+		log::error << L"Physics mesh pipeline failed; unable to commit output instance." << Endl;
 		return false;
 	}
 

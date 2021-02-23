@@ -26,6 +26,10 @@ class T_DLLCLASS MeshShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
+	MeshShapeDesc() = default;
+
+	explicit MeshShapeDesc(const resource::Id< Mesh >& mesh);
+
 	void setMesh(const resource::Id< Mesh >& mesh);
 
 	const resource::Id< Mesh >& getMesh() const;
