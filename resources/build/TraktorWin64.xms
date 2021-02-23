@@ -16645,6 +16645,14 @@
 							<sourceFile>Traktor.Database.Local.P4.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/libeay32.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/ssleay32.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
@@ -16693,6 +16701,14 @@
 							<sourceFile>Traktor.Database.Local.P4.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/libeay32.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/ssleay32.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
@@ -16737,6 +16753,14 @@
 							<sourceFile>Traktor.Database.Local.P4.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/libeay32.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/ssleay32.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
@@ -16779,6 +16803,14 @@
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.P4.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/libeay32.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OPENSSL_SDK)/ssleay32.dll</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
