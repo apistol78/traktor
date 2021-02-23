@@ -41,9 +41,9 @@ HeightfieldTexturePipeline::HeightfieldTexturePipeline()
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 
-	std::wstring hf = settings->getProperty< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HtFloat16");
+	std::wstring hf = settings->getPropertyIncludeHash< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HtFloat16");
 	if (hf == L"HtFloat16")
 		m_heightFormat = HfFloat16;
 	else if (hf == L"HfFloat32")
@@ -56,7 +56,7 @@ bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* setting
 		return false;
 	}
 
-	m_compressNormals = settings->getProperty< bool >(L"HeightfieldTexturePipeline.CompressNormals", false);
+	m_compressNormals = settings->getPropertyIncludeHash< bool >(L"HeightfieldTexturePipeline.CompressNormals", false);
 	return true;
 }
 

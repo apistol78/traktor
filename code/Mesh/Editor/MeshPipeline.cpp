@@ -140,15 +140,15 @@ MeshPipeline::MeshPipeline()
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
-	m_promoteHalf = settings->getProperty< bool >(L"MeshPipeline.PromoteHalf", false);
-	m_enableCustomShaders = settings->getProperty< bool >(L"MeshPipeline.EnableCustomShaders", true);
-	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
-	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
-	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-	m_platform = settings->getProperty< std::wstring >(L"ShaderPipeline.Platform", L"");
-	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
+	m_promoteHalf = settings->getPropertyIncludeHash< bool >(L"MeshPipeline.PromoteHalf", false);
+	m_enableCustomShaders = settings->getPropertyIncludeHash< bool >(L"MeshPipeline.EnableCustomShaders", true);
+	m_enableCustomTemplates = settings->getPropertyIncludeHash< bool >(L"MeshPipeline.EnableCustomTemplates", true);
+	m_includeOnlyTechniques = settings->getPropertyIncludeHash< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
+	m_programCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform");
+	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 

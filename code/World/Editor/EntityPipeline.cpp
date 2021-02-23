@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipelin
 
 bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 

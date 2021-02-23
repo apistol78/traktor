@@ -11,6 +11,7 @@
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEntityReplicator.h"
+#include "World/IEntityComponentData.h"
 
 namespace traktor
 {
@@ -81,12 +82,13 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 Ref< Object > TerrainEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-    const Object* source,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData,
     const model::Model* model,
     const Guid& outputGuid
 ) const
 {
-    return const_cast< Object* >(source);
+    return const_cast< world::IEntityComponentData* >(componentData);
 }
 
     }

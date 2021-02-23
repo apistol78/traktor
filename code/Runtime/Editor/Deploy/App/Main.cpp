@@ -12,6 +12,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
@@ -61,13 +62,14 @@ int main(int argc, const char** argv)
 		log::info << L"Usage: Traktor.Runtime.Deploy.App (option(s)) [workspace] [command] [target] [configuration] (deploy target ip/hostname)" << Endl;
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
-		log::info << L"    -s,-settings              Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
-		log::info << L"    -standalone               Build using a standalone pipeline." << Endl;
-		log::info << L"    -debug                    Use debug binaries in deploy or migrate actions." << Endl;
-		log::info << L"    -static-link              Statically link product in deploy or migrate actions." << Endl;
-		log::info << L"    -file-cache               Specify pipeline file cache directory, cache disabled if none specified." << Endl;
-		log::info << L"    -sequential-depends       Disable multithreaded pipeline dependency scanner." << Endl;
-		log::info << L"    -sequential-build         Disable multithreaded pipeline build." << Endl;
+		log::info << L"    -s,-settings               Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
+		log::info << L"    -standalone                Build using a standalone pipeline." << Endl;
+		log::info << L"    -debug                     Use debug binaries in deploy or migrate actions." << Endl;
+		log::info << L"    -static-link               Statically link product in deploy or migrate actions." << Endl;
+		log::info << L"    -file-cache                Specify pipeline file cache directory." << Endl;
+		log::info << L"    -memcached-cache=host:port Specify pipeline memcached host." << Endl;
+		log::info << L"    -sequential-depends        Disable multithreaded pipeline dependency scanner." << Endl;
+		log::info << L"    -sequential-build          Disable multithreaded pipeline build." << Endl;
 		return 1;
 	}
 
@@ -109,6 +111,27 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
+	}
+
+	if (cmdLine.hasOption(L"memcached-cache"))
+	{
+		std::wstring host = cmdLine.getOption(L"memcached-cache").getString();
+		int32_t port = 11211;
+
+		size_t i = host.find(L':');
+		if (i != std::wstring::npos)
+		{
+			port = parseString< int32_t >(host.substr(i + 1));
+			host = host.substr(0, i);
+		}
+
+		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
+
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
+		settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", host);
+		settings->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
 	}
 
 	if (cmdLine.hasOption(L"sequential-depends"))

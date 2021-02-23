@@ -434,13 +434,13 @@ BakePipelineOperator::BakePipelineOperator()
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	// Read all settings first so pipeline hash is consistent.
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path", L"");
-	m_compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
+	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
 
-	bool tracerEnable = settings->getProperty< bool >(L"BakePipelineOperator.Enable", true);
-	std::wstring tracerTypeName = settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 
 	// Check if baking is enabled, if not then we leave tracer type as null.
 	if (!tracerEnable)
@@ -448,7 +448,10 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
+	{
+		log::error << L"Unable to find tracer implementation \"" << tracerTypeName << L"\"." << Endl;
 		return false;
+	}
 
 	// Create entity replicators.
 	TypeInfoSet entityReplicatorTypes;
@@ -593,13 +596,10 @@ bool BakePipelineOperator::build(
 			}
 		}
 
-		// Traverse and visit all entities in layer.
+		// Collect all entities from layer.
+		RefArray< world::EntityData > flattenEntityData;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
-			Guid entityId = inoutEntityData->getId();
-			if (entityId.isNull())
-				return scene::Traverser::VrSkip;
-
 			// Check editor attributes component if we should include entity.
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
@@ -607,6 +607,17 @@ bool BakePipelineOperator::build(
 					return scene::Traverser::VrSkip;
 			}
 
+			// Only accept "named" entities.
+			Guid entityId = inoutEntityData->getId();
+			if (!entityId.isNull())
+				flattenEntityData.push_back(inoutEntityData);
+
+			return scene::Traverser::VrContinue;
+		});
+
+		// Traverse and visit all entities in layer.
+		for (auto inoutEntityData : flattenEntityData)
+		{
 			// Add light source.
 			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
 			{
@@ -626,6 +637,7 @@ bool BakePipelineOperator::build(
 			}
 
 			// Calculate synthesized ids.
+			Guid entityId = inoutEntityData->getId();
 			Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
 			Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
 			Guid outputId = entityId.permutation(c_outputIdSeed);
@@ -676,7 +688,7 @@ bool BakePipelineOperator::build(
 					}
 				);
 				if (!model)
-					return scene::Traverser::VrFailed;
+					return false;
 
 				// Calculate size of lightmap from geometry.
 				int32_t lightmapSize = calculateLightmapSize(
@@ -754,7 +766,7 @@ bool BakePipelineOperator::build(
 					lightmapSize,
 					tracerTask
 				))
-					return scene::Traverser::VrFailed;
+					return false;
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
@@ -763,6 +775,7 @@ bool BakePipelineOperator::build(
 					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
 						pipelineBuilder,
 						m_assetPath,
+						inoutEntityData,
 						componentData,
 						model,
 						outputId
@@ -781,9 +794,7 @@ bool BakePipelineOperator::build(
 				lightmapDirectionalId.permutate();
 				outputId.permutate();
 			}
-
-			return scene::Traverser::VrContinue;
-		});
+		}
 
 		// Replace with modified layer in output scene.
 		layers.push_back(flattenedLayer);

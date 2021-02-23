@@ -46,7 +46,7 @@ bool SolidEntityPipeline::create(const editor::IPipelineSettings* settings)
     if (!world::EntityPipeline::create(settings))
         return false;
 
-	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
+	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor");
     return true;
 }
 

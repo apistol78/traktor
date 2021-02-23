@@ -22,7 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEnti
 
 bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
-	m_modelCachePath = settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
 
@@ -103,12 +103,13 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 Ref< Object > MeshEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-    const Object* source,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData,
     const model::Model* model,
 	const Guid& outputGuid
 ) const
 {
-	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(source);
+	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
 
 	// Read original mesh asset from source.
 	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());

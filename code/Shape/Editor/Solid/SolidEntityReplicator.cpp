@@ -182,12 +182,13 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 Ref< Object > SolidEntityReplicator::modifyOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
-	const Object* source,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData,
 	const model::Model* model,
 	const Guid& outputGuid
 ) const
 {
-	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(source);
+	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(entityData);
 
 	Guid outputRenderMeshGuid = outputGuid.permutation(1);
 	Guid outputCollisionShapeGuid = outputGuid.permutation(2);

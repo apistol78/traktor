@@ -45,8 +45,8 @@ bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 	if (!world::EntityPipeline::create(settings))
 		return false;
 
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath");
-	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
+	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor");
 	return true;
 }
 

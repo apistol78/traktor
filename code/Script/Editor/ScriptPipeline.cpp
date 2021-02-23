@@ -133,7 +133,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 21, ScriptPipel
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
 	// Get implementation type name; return true if no type specified to silence error from pipeline if scripting isn't used.
-	std::wstring scriptCompilerTypeName = settings->getProperty< std::wstring >(L"Editor.ScriptCompilerType");
+	std::wstring scriptCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"Editor.ScriptCompilerType");
 	if (scriptCompilerTypeName.empty())
 		return true;
 
@@ -151,14 +151,14 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	// Create preprocessor.
 	m_preprocessor = new Preprocessor();
 
-	if (settings->getProperty< bool >(L"Pipeline.TargetEditor", false))
+	if (settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor"))
 		m_preprocessor->setDefinition(L"_EDITOR");
 
-	std::set< std::wstring > definitions = settings->getProperty< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
+	std::set< std::wstring > definitions = settings->getPropertyIncludeHash< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
 	for (const auto& definition : definitions)
 		m_preprocessor->setDefinition(definition);
 
-	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	return editor::DefaultPipeline::create(settings);
 }
