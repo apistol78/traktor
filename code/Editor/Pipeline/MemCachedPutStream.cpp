@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
+#include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/MemCachedPutStream.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Core/Thread/Acquire.h"
@@ -14,8 +15,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPutStream", MemCachedPutStream, IStream)
 
-MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string& key)
-:	m_proto(proto)
+MemCachedPutStream::MemCachedPutStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key)
+:	m_cache(cache)
+,	m_proto(proto)
 ,	m_key(key)
 ,	m_inblock(0)
 ,	m_index(0)
@@ -24,11 +26,16 @@ MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string&
 
 void MemCachedPutStream::close()
 {
-	if (m_proto)
+	if (!m_proto)
+		return;
+
+	flush();
+	uploadEndBlock();
+
 	{
-		flush();
-		uploadEndBlock();
-		m_proto = 0;
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cache->m_lock);
+		m_cache->m_protos.push_back(m_proto);
+		m_proto = nullptr;
 	}
 }
 
@@ -103,8 +110,6 @@ void MemCachedPutStream::flush()
 
 bool MemCachedPutStream::uploadBlock()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
-
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
@@ -144,8 +149,6 @@ bool MemCachedPutStream::uploadBlock()
 
 void MemCachedPutStream::uploadEndBlock()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
-
 	std::stringstream ss;
 	std::string command;
 	std::string reply;

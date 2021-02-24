@@ -7,6 +7,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
+#include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 
 namespace traktor
@@ -16,8 +17,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedGetStream", MemCachedGetStream, IStream)
 
-MemCachedGetStream::MemCachedGetStream(MemCachedProto* proto, const std::string& key)
-:	m_proto(proto)
+MemCachedGetStream::MemCachedGetStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key)
+:	m_cache(cache)
+,	m_proto(proto)
 ,	m_key(key)
 ,	m_inblock(0)
 ,	m_index(0)
@@ -26,8 +28,6 @@ MemCachedGetStream::MemCachedGetStream(MemCachedProto* proto, const std::string&
 
 bool MemCachedGetStream::requestEndBlock()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
-
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
@@ -104,8 +104,6 @@ bool MemCachedGetStream::requestEndBlock()
 
 bool MemCachedGetStream::requestNextBlock()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
-
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
@@ -183,7 +181,12 @@ bool MemCachedGetStream::requestNextBlock()
 
 void MemCachedGetStream::close()
 {
-	m_proto = 0;
+	if (m_proto)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cache->m_lock);
+		m_cache->m_protos.push_back(m_proto);
+		m_proto = nullptr;
+	}
 }
 
 bool MemCachedGetStream::canRead() const
