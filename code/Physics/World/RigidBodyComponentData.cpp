@@ -17,10 +17,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidBodyComponentData", 0, RigidBodyComponentData, world::IEntityComponentData)
 
-RigidBodyComponentData::RigidBodyComponentData()
-{
-}
-
 RigidBodyComponentData::RigidBodyComponentData(BodyDesc* bodyDesc)
 :	m_bodyDesc(bodyDesc)
 {
