@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Instance;
+
+	}
+
     namespace model
     {
 
@@ -31,36 +38,28 @@ class T_DLLCLASS TracerOutput : public Object
 
 public:
     TracerOutput(
-		const std::wstring& name,
-		int32_t priority,
+		db::Instance* lightmapDiffuseInstance,
+		db::Instance* lightmapDirectionalInstance,
         const model::Model* model,
 		const Transform& transform,
-        const Guid& lightmapDiffuseId,
-		const Guid& lightmapDirectionalId,
 		int32_t lightmapSize
     );
 
-	const std::wstring& getName() const { return m_name; }
+	db::Instance* getLightmapDiffuseInstance() const { return m_lightmapDiffuseInstance; }
 
-	int32_t getPriority() const { return m_priority; }
+	db::Instance* getLightmapDirectionalInstance() const { return m_lightmapDirectionalInstance; }
 
     const model::Model* getModel() const { return m_model; }
 
 	const Transform& getTransform() const { return m_transform; }
 
-    const Guid& getLightmapDiffuseId() const { return m_lightmapDiffuseId; }
-
-    const Guid& getLightmapDirectionalId() const { return m_lightmapDirectionalId; }
-
 	int32_t getLightmapSize() const { return m_lightmapSize; }
 
 private:
-	std::wstring m_name;
-	int32_t m_priority;
+	Ref< db::Instance > m_lightmapDiffuseInstance;
+	Ref< db::Instance > m_lightmapDirectionalInstance;
 	Ref< const model::Model > m_model;
 	Transform m_transform;
-	Guid m_lightmapDiffuseId;
-	Guid m_lightmapDirectionalId;
 	int32_t m_lightmapSize;
 };
 

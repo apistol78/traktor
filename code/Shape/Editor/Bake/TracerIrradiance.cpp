@@ -8,12 +8,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerIrradiance", TracerIrradiance, Object)
 
 TracerIrradiance::TracerIrradiance(
-    const std::wstring& name,
-    const Guid& irradianceGridId,
+    db::Instance* irradianceInstance,
     const Aabb3& boundingBox
 )
-:	m_name(name)
-,   m_irradianceGridId(irradianceGridId)
+:   m_irradianceInstance(irradianceInstance)
 ,	m_boundingBox(boundingBox)
 {
 }

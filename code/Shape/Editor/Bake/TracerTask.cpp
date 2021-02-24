@@ -7,10 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerTask", TracerTask, Object)
 
-TracerTask::TracerTask(const Guid& sceneId, const BakeConfiguration* configuration, db::Database* outputDatabase)
+TracerTask::TracerTask(const Guid& sceneId, const BakeConfiguration* configuration)
 :   m_sceneId(sceneId)
 ,   m_configuration(configuration)
-,   m_outputDatabase(outputDatabase)
 {
 }
 

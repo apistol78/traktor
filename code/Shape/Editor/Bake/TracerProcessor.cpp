@@ -15,7 +15,6 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
@@ -116,10 +115,11 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 }
 
 bool writeTexture(
-	db::Database* outputDatabase,
+	db::Instance* outputInstance,
+	//db::Database* outputDatabase,
 	const std::wstring& compressionMethod,
 	bool encodeHDR,
-	const Guid& lightmapId,
+	//const Guid& lightmapId,
 	const drawing::Image* lightmap
 )
 {
@@ -165,13 +165,13 @@ bool writeTexture(
 		needAlpha = true;
 	}
 
-	Ref< db::Instance > outputInstance = outputDatabase->createInstance(
-		L"Generated/" + lightmapId.format(),
-		db::CifReplaceExisting,
-		&lightmapId
-	);
-	if (!outputInstance)
-		return false;
+	//Ref< db::Instance > outputInstance = outputDatabase->createInstance(
+	//	L"Generated/" + lightmapId.format(),
+	//	db::CifReplaceExisting,
+	//	&lightmapId
+	//);
+	//if (!outputInstance)
+	//	return false;
 
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
 	outputInstance->setObject(outputResource);
@@ -233,8 +233,6 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 		m_queue = new JobQueue();
 		m_queue->create(4, Thread::Below);
 	}
-
-	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Lightmaps");
 }
 
 TracerProcessor::~TracerProcessor()
@@ -371,9 +369,6 @@ bool TracerProcessor::process(const TracerTask* task)
 
 	// Get output tasks and sort them by priority.
 	auto tracerOutputs = task->getTracerOutputs();
-	tracerOutputs.sort([](const TracerOutput* lh, const TracerOutput* rh) {
-		return lh->getPriority() > rh->getPriority();
-	});
 
 	// Calculate total progress.
 	m_status.total = std::accumulate(tracerOutputs.begin(), tracerOutputs.end(), (int32_t)0, [](int32_t acc, const TracerOutput* iter) {
@@ -393,7 +388,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		const uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
 
 		// Update status.
-		m_status.description = str(L"%s (%d)...", tracerOutput->getName().c_str(), width);
+		m_status.description = str(L"%s (%d)...", tracerOutput->getLightmapDiffuseInstance()->getName().c_str(), width);
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
@@ -408,7 +403,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		lightmapDiffuse->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		Ref< drawing::Image > lightmapDirectional;
-		if (tracerOutput->getLightmapDirectionalId().isNotNull())
+		if (tracerOutput->getLightmapDirectionalInstance() != nullptr)
 		{
 			lightmapDirectional = new drawing::Image(
 				drawing::PixelFormat::getRGBAF32(),
@@ -447,18 +442,16 @@ bool TracerProcessor::process(const TracerTask* task)
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse);
 
 			lightmapDiffuse->clearAlpha(1.0f);
-			lightmapDiffuse->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapDiffuseId().format() + L"_Diffuse.png");
 
 			bool result = writeTexture(
-				task->getOutputDatabase(),
+				tracerOutput->getLightmapDiffuseInstance(),
 				m_compressionMethod,
 				true,
-				tracerOutput->getLightmapDiffuseId(),
 				lightmapDiffuse
 			);
 			if (!result)
 			{
-				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
+				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getLightmapDiffuseInstance()->getName() << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -469,18 +462,16 @@ bool TracerProcessor::process(const TracerTask* task)
 				lightmapDirectional = denoise(gbuffer, lightmapDirectional);
 
 			lightmapDirectional->clearAlpha(1.0f);
-			lightmapDirectional->save(L"data/Temp/Lightmaps/" + tracerOutput->getLightmapDirectionalId().format() + L"_Directional.png");
 
 			bool result = writeTexture(
-				task->getOutputDatabase(),
+				tracerOutput->getLightmapDirectionalInstance(),
 				m_compressionMethod,
 				false,
-				tracerOutput->getLightmapDirectionalId(),
 				lightmapDirectional
 			);
 			if (!result)
 			{
-				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getName() << L"\"." << Endl;
+				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getLightmapDirectionalInstance()->getName() << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -491,32 +482,6 @@ bool TracerProcessor::process(const TracerTask* task)
 	for (uint32_t i = 0; !m_cancelled && i < tracerIrradiances.size(); ++i)
 	{
 		auto tracerIrradiance = tracerIrradiances[i];
-		Guid irradianceGridId = tracerIrradiance->getIrradianceGridId();
-
-		// Create output instance.
-		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-		Ref< db::Instance > outputInstance = task->getOutputDatabase()->createInstance(
-			L"Generated/" + tracerIrradiance->getIrradianceGridId().format(),
-			db::CifReplaceExisting,
-			&irradianceGridId
-		);
-		if (!outputInstance)
-		{
-			log::error << L"Trace failed; unable to create output instance." << Endl;
-			return false;
-		}
-
-		outputInstance->setObject(outputResource);
-
-		// Create output data stream.
-		Ref< IStream > stream = outputInstance->writeData(L"Data");
-		if (!stream)
-		{
-			log::error << L"Trace failed; unable to create texture data stream." << Endl;
-			outputInstance->revert();
-			return false;
-		}
-
 		const Scalar gridDensity(configuration->getIrradianceGridDensity());
 
 		// Determine bounding box from all trace models if noone is already provided.
@@ -539,21 +504,6 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
 		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;
-
-		Writer writer(stream);
-
-		writer << uint32_t(2);
-
-		writer << (uint32_t)gridX;	// width
-		writer << (uint32_t)gridY;	// height
-		writer << (uint32_t)gridZ;	// depth
-
-		writer << boundingBox.mn.x();
-		writer << boundingBox.mn.y();
-		writer << boundingBox.mn.z();
-		writer << boundingBox.mx.x();
-		writer << boundingBox.mx.y();
-		writer << boundingBox.mx.z();
 
 		m_status.description = str(L"Irradiance grid (%d, %d, %d)", gridX, gridY, gridZ);
 
@@ -591,6 +541,39 @@ bool TracerProcessor::process(const TracerTask* task)
 			m_status.current++;
 		}
 
+		if (m_cancelled)
+			break;
+
+		// Create output instance.
+		Ref< db::Instance > outputInstance = tracerIrradiance->getIrradianceInstance();
+
+		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+		outputInstance->setObject(outputResource);
+
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"Trace failed; unable to create irradiance instance data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
+
+		Writer writer(stream);
+
+		writer << uint32_t(2);
+
+		writer << (uint32_t)gridX;	// width
+		writer << (uint32_t)gridY;	// height
+		writer << (uint32_t)gridZ;	// depth
+
+		writer << boundingBox.mn.x();
+		writer << boundingBox.mn.y();
+		writer << boundingBox.mn.z();
+		writer << boundingBox.mx.x();
+		writer << boundingBox.mx.y();
+		writer << boundingBox.mx.z();
+
 		for (auto sh : shs)
 		{
 			if (!sh)
@@ -610,16 +593,11 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		stream->close();
 
-		if (!m_cancelled)
+		if (!outputInstance->commit())
 		{
-			if (!outputInstance->commit())
-			{
-				log::error << L"Trace failed; unable to commit output instance." << Endl;
-				return false;
-			}
+			log::error << L"Trace failed; unable to commit output instance." << Endl;
+			return false;
 		}
-		else
-			outputInstance->revert();
 	}
 
 	return true;
