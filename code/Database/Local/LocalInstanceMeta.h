@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Core/Guid.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Serialization/ISerializable.h"
 
 namespace traktor
@@ -18,17 +18,9 @@ class LocalInstanceMeta : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Blob
-	{
-		std::wstring name;
-		std::wstring hash;
+	LocalInstanceMeta() = default;
 
-		void serialize(ISerializer& s);
-	};
-
-	LocalInstanceMeta();
-
-	LocalInstanceMeta(const Guid& guid, const std::wstring& primaryType);
+	explicit LocalInstanceMeta(const Guid& guid, const std::wstring& primaryType);
 
 	void setGuid(const Guid& guid);
 
@@ -38,20 +30,20 @@ public:
 
 	const std::wstring& getPrimaryType() const;
 
-	void setBlob(const std::wstring& name, const std::wstring& hash);
+	void setBlob(const std::wstring& name);
 
 	void removeBlob(const std::wstring& name);
 
 	bool haveBlob(const std::wstring& name) const;
 
-	const AlignedVector< Blob >& getBlobs() const;
+	const SmallSet< std::wstring >& getBlobs() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Guid m_guid;
 	std::wstring m_primaryType;
-	AlignedVector< Blob > m_blobs;
+	SmallSet< std::wstring > m_blobs;
 };
 
 	}

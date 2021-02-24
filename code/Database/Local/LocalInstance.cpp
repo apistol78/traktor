@@ -242,7 +242,7 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 
 	outDataNames.clear();
 	for (const auto& blob : instanceMeta->getBlobs())
-		outDataNames.push_back(blob.name);
+		outDataNames.push_back(blob);
 
 	return uint32_t(outDataNames.size());
 }

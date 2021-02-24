@@ -1,10 +1,10 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Database/Local/ActionRemove.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -33,7 +33,7 @@ bool ActionRemove::execute(Context* context)
 
 	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob.name);
+		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob);
 		if (fileStore->remove(instanceDataPath))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else

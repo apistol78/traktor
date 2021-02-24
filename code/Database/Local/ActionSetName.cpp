@@ -48,8 +48,8 @@ bool ActionSetName::execute(Context* context)
 
 	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, blob.name);
-		Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, blob.name);
+		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, blob);
+		Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, blob);
 
 		if (!FileSystem::getInstance().copy(newInstanceDataPath, oldInstanceDataPath))
 			return false;
@@ -57,7 +57,7 @@ bool ActionSetName::execute(Context* context)
 		if (!fileStore->add(newInstanceDataPath))
 			return false;
 
-		m_removedData[blob.name] = fileStore->remove(oldInstanceDataPath);
+		m_removedData[blob] = fileStore->remove(oldInstanceDataPath);
 	}
 
 	return true;
