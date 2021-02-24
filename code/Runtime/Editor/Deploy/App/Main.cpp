@@ -104,6 +104,13 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption(L"static-link"))
 		settings->setProperty< PropertyBoolean >(L"Runtime.StaticallyLinked", true);
 
+	// If cache has is explicitly set then we first clear property to ensure exclusivly enabled.
+	if (cmdLine.hasOption(L"file-cache") || cmdLine.hasOption(L"memcached-cache"))
+	{
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+	}
+
 	if (cmdLine.hasOption(L"file-cache"))
 	{
 		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
