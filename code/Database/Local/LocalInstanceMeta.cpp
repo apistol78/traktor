@@ -1,20 +1,33 @@
-#include <algorithm>
+// #include <algorithm>
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberSmallSet.h"
 
 namespace traktor
 {
 	namespace db
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", 1, LocalInstanceMeta, ISerializable)
-
-LocalInstanceMeta::LocalInstanceMeta()
+struct Blob
 {
-}
+	std::wstring name;
+	std::wstring hash;
+
+	void serialize(ISerializer& s)
+	{
+		s >> Member< std::wstring >(L"name", name);
+		s >> Member< std::wstring >(L"hash", hash);
+	}
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", 2, LocalInstanceMeta, ISerializable)
 
 LocalInstanceMeta::LocalInstanceMeta(const Guid& guid, const std::wstring& primaryType)
 :	m_guid(guid)
@@ -42,29 +55,22 @@ const std::wstring& LocalInstanceMeta::getPrimaryType() const
 	return m_primaryType;
 }
 
-void LocalInstanceMeta::setBlob(const std::wstring& name, const std::wstring& hash)
+void LocalInstanceMeta::setBlob(const std::wstring& name)
 {
-	auto it = std::find_if(m_blobs.begin(), m_blobs.end(), [&](const Blob& blob) { return blob.name == name; });
-	if (it != m_blobs.end())
-		it->hash = hash;
-	else
-		m_blobs.push_back({ name, hash });
+	m_blobs.insert(name);
 }
 
 void LocalInstanceMeta::removeBlob(const std::wstring& name)
 {
-	auto it = std::find_if(m_blobs.begin(), m_blobs.end(), [&](const Blob& blob) { return blob.name == name; });
-	if (it != m_blobs.end())
-		m_blobs.erase(it);
+	m_blobs.erase(name);
 }
 
 bool LocalInstanceMeta::haveBlob(const std::wstring& name) const
 {
-	auto it = std::find_if(m_blobs.begin(), m_blobs.end(), [&](const Blob& blob) { return blob.name == name; });
-	return it != m_blobs.end();
+	return m_blobs.find(name) != m_blobs.end();
 }
 
-const AlignedVector< LocalInstanceMeta::Blob >& LocalInstanceMeta::getBlobs() const
+const SmallSet< std::wstring >& LocalInstanceMeta::getBlobs() const
 {
 	return m_blobs;
 }
@@ -73,21 +79,25 @@ void LocalInstanceMeta::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"guid", m_guid);
 	s >> Member< std::wstring >(L"primaryType", m_primaryType);
-	if (s.getVersion< LocalInstanceMeta >() >= 1)
-		s >> MemberAlignedVector< Blob, MemberComposite< Blob > >(L"blobs", m_blobs);
+
+	if (s.getVersion< LocalInstanceMeta >() >= 2)
+	{
+		s >> MemberSmallSet< std::wstring >(L"blobs", m_blobs);
+	}
+	else if (s.getVersion< LocalInstanceMeta >() >= 1)
+	{
+		AlignedVector< Blob > blobs;
+		s >> MemberAlignedVector< Blob, MemberComposite< Blob > >(L"blobs", blobs);
+		for (const auto& blob : blobs)
+			m_blobs.insert(blob.name);		
+	}
 	else
 	{
 		AlignedVector< std::wstring > blobs;
 		s >> MemberAlignedVector< std::wstring >(L"blobs", blobs);
 		for (const auto& blob : blobs)
-			m_blobs.push_back({ blob, L"" });
+			m_blobs.insert(blob);
 	}
-}
-
-void LocalInstanceMeta::Blob::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< std::wstring >(L"hash", hash);
 }
 
 	}

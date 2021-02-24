@@ -3,7 +3,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Misc/SHA1.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Local/ActionWriteData.h"
@@ -65,27 +64,30 @@ bool ActionWriteData::execute(Context* context)
 		}
 	}
 
-	// Calculate SHA1 hash of data while writing data.
-	SHA1 sha1;
-	sha1.begin();
 	for (size_t offset = 0; offset < m_dataMemory->size(); )
 	{
 		const auto chunk = m_dataMemory->getChunk(offset);
 		if (!chunk.ptr)
 			break;
 
-		sha1.feed(chunk.ptr, chunk.size);
-		if (writeStream->write(chunk.ptr, chunk.size) != chunk.size)
-		{
-			log::error << L"Unable to write " << (uint32_t)chunk.size << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
-			safeClose(writeStream);
-			FileSystem::getInstance().remove(instanceDataPath);
-			return false;
-		}
+		const uint8_t* ptr = (const uint8_t*)chunk.ptr;
+		size_t write = chunk.size;
 
+		while (write > 0)
+		{
+			int64_t written = writeStream->write(ptr, write);
+			if (written < 0 || written > write)
+			{
+				log::error << L"Unable to write " << (uint32_t)write << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+				safeClose(writeStream);
+				FileSystem::getInstance().remove(instanceDataPath);
+				return false;				
+			}
+			ptr += written;
+			write -= (size_t)written;
+		}
 		offset += chunk.size;
 	}
-	sha1.end();
 
 	safeClose(writeStream);
 
@@ -95,7 +97,7 @@ bool ActionWriteData::execute(Context* context)
 		return false;
 	}
 
-	instanceMeta->setBlob(m_dataName, sha1.format());
+	instanceMeta->setBlob(m_dataName);
 
 	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
 	{

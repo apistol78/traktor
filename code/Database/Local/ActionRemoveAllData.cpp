@@ -33,7 +33,7 @@ bool ActionRemoveAllData::execute(Context* context)
 
 	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob.name);
+		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob);
 		if (fileStore->remove(instanceDataPath))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
