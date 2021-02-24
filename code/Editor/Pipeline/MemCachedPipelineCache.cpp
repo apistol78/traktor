@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
@@ -32,12 +33,6 @@ std::string generateKey(const Guid& guid, const PipelineDependencyHash& hash)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPipelineCache", MemCachedPipelineCache, IPipelineCache)
 
-MemCachedPipelineCache::MemCachedPipelineCache()
-:	m_accessRead(true)
-,	m_accessWrite(true)
-{
-}
-
 MemCachedPipelineCache::~MemCachedPipelineCache()
 {
 	destroy();
@@ -47,29 +42,54 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 {
 	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.MemCached.Host");
 	int32_t port = settings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 11211);
+	m_addr = net::SocketAddressIPv4(host, port);
 
-	m_socket = new net::TcpSocket();
-	if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
-		return false;
+	//m_socket = new net::TcpSocket();
+	//if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
+	//	return false;
 
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemCached.Read", true);
 	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemCached.Write", true);
-	m_proto = new MemCachedProto(m_socket);
+	//m_proto = new MemCachedProto(m_socket);
 
 	return true;
 }
 
 void MemCachedPipelineCache::destroy()
 {
-	safeClose(m_socket);
-	m_proto = nullptr;
+	//safeClose(m_socket);
+	//m_proto = nullptr;
+
+	m_protos.clear();
 }
 
 Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash));
+		Ref< MemCachedProto > proto;
+
+		// Try to get an already established connection.
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			if (!m_protos.empty())
+			{
+				proto = m_protos.back();
+				m_protos.pop_back();
+			}
+		}
+
+		// If no existing connection found then create a new one.
+		if (!proto)
+		{
+			Ref< net::TcpSocket > socket = new net::TcpSocket();
+			if (!socket->connect(m_addr))
+				return nullptr;
+
+			proto = new MemCachedProto(socket);
+		}
+
+		Ref< MemCachedGetStream > stream = new MemCachedGetStream(this, proto, generateKey(guid, hash));
 
 		// Request end block; do not try to open non-finished cache streams.
 		if (!stream->requestEndBlock())
@@ -88,7 +108,31 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessWrite)
-		return new MemCachedPutStream(m_proto, generateKey(guid, hash));
+	{
+		Ref< MemCachedProto > proto;
+
+		// Try to get an already established connection.
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			if (!m_protos.empty())
+			{
+				proto = m_protos.back();
+				m_protos.pop_back();
+			}
+		}
+
+		// If no existing connection found then create a new one.
+		if (!proto)
+		{
+			Ref< net::TcpSocket > socket = new net::TcpSocket();
+			if (!socket->connect(m_addr))
+				return nullptr;
+
+			proto = new MemCachedProto(socket);
+		}
+
+		return new MemCachedPutStream(this, proto, generateKey(guid, hash));
+	}
 	else
 		return nullptr;
 }

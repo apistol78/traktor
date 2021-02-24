@@ -3,7 +3,6 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -24,8 +23,6 @@ class MemCachedProto : public Object
 public:
 	explicit MemCachedProto(net::Socket* socket);
 
-	Semaphore& getLock();
-
 	bool sendCommand(const std::string& command);
 
 	bool readReply(std::string& outReply);
@@ -39,7 +36,6 @@ public:
 	bool writeData(uint8_t* data, uint32_t dataLength);
 
 private:
-	Semaphore m_lock;
 	Ref< net::Socket > m_socket;
 };
 

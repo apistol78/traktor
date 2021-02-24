@@ -8,6 +8,7 @@ namespace traktor
 	namespace editor
 	{
 
+class MemCachedPipelineCache;
 class MemCachedProto;
 
 class MemCachedPutStream : public IStream
@@ -17,7 +18,7 @@ class MemCachedPutStream : public IStream
 public:
 	enum { MaxBlockSize = 65536 };
 
-	MemCachedPutStream(MemCachedProto* proto, const std::string& key);
+	MemCachedPutStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key);
 
 	virtual void close() override final;
 
@@ -40,6 +41,7 @@ public:
 	virtual void flush() override final;
 
 private:
+	Ref< MemCachedPipelineCache > m_cache;
 	Ref< MemCachedProto > m_proto;
 	std::string m_key;
 	uint8_t m_block[MaxBlockSize + 2];

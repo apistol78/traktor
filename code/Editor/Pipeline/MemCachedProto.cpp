@@ -15,11 +15,6 @@ MemCachedProto::MemCachedProto(net::Socket* socket)
 {
 }
 
-Semaphore& MemCachedProto::getLock()
-{
-	return m_lock;
-}
-
 bool MemCachedProto::sendCommand(const std::string& command)
 {
 	uint32_t length = command.length();
