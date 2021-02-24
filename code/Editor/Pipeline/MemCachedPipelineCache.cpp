@@ -43,23 +43,13 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.MemCached.Host");
 	int32_t port = settings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 11211);
 	m_addr = net::SocketAddressIPv4(host, port);
-
-	//m_socket = new net::TcpSocket();
-	//if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
-	//	return false;
-
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemCached.Read", true);
 	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemCached.Write", true);
-	//m_proto = new MemCachedProto(m_socket);
-
 	return true;
 }
 
 void MemCachedPipelineCache::destroy()
 {
-	//safeClose(m_socket);
-	//m_proto = nullptr;
-
 	m_protos.clear();
 }
 
@@ -85,7 +75,6 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 			Ref< net::TcpSocket > socket = new net::TcpSocket();
 			if (!socket->connect(m_addr))
 				return nullptr;
-
 			proto = new MemCachedProto(socket);
 		}
 
@@ -127,7 +116,6 @@ Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDepen
 			Ref< net::TcpSocket > socket = new net::TcpSocket();
 			if (!socket->connect(m_addr))
 				return nullptr;
-
 			proto = new MemCachedProto(socket);
 		}
 

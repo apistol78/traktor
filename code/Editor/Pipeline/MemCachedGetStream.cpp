@@ -76,14 +76,14 @@ bool MemCachedGetStream::requestEndBlock()
 				return false;
 			}
 
-			uint8_t endData = 0;
-			if (!m_proto->readData(&endData, 1))
+			uint8_t endData[] = { 0, 0, 0 };
+			if (!m_proto->readData(endData, 1))
 			{
 				log::error << L"Unable to request cache block; unable to receive data" << Endl;
 				return false;
 			}
 
-			if (endData != 0xfe)
+			if (endData[0] != 0xfe)
 			{
 				log::error << L"Unable to request cache block; invalid end block" << Endl;
 				return false;
