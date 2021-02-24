@@ -1,7 +1,7 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Net/Socket.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ MemCachedProto::MemCachedProto(net::Socket* socket)
 bool MemCachedProto::sendCommand(const std::string& command)
 {
 	uint32_t length = command.length();
-	uint8_t buf[256];
+	uint8_t buf[1024];
 
 	std::memcpy(buf, command.c_str(), length);
 	std::memcpy(&buf[length], "\r\n", 2);
@@ -31,13 +31,13 @@ bool MemCachedProto::sendCommand(const std::string& command)
 
 bool MemCachedProto::readReply(std::string& outReply)
 {
-	std::vector< char > buffer;
+	AlignedVector< char > buffer;
 	for (;;)
 	{
 		char ch;
 		if (m_socket->recv(&ch, sizeof(ch)) != sizeof(ch))
 		{
-			log::error << L"Unable to request cache block; unable to read reply" << Endl;
+			log::error << L"Unable to request cache block; unable to read reply." << Endl;
 			return false;
 		}
 
@@ -50,7 +50,6 @@ bool MemCachedProto::readReply(std::string& outReply)
 			break;
 		}
 	}
-
 	return true;
 }
 
