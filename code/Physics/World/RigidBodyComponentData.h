@@ -43,7 +43,7 @@ class T_DLLCLASS RigidBodyComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	RigidBodyComponentData();
+	RigidBodyComponentData() = default;
 
 	explicit RigidBodyComponentData(BodyDesc* bodyDesc);
 
