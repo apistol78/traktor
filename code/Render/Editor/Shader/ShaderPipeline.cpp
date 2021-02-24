@@ -394,25 +394,20 @@ bool ShaderPipeline::buildDependencies(
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 	T_ASSERT(shaderGraph);
 
-	// Add fragment dependencies.
-	RefArray< External > externalNodes;
-	shaderGraph->findNodesOf< External >(externalNodes);
-
-	for (auto externalNode : externalNodes)
+	// Add fragment and texture dependencies.
+	for (auto node : shaderGraph->getNodes())
 	{
-		const Guid& fragmentGuid = externalNode->getFragmentGuid();
-		pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
-	}
-
-	// Add external texture dependencies.
-	RefArray< Texture > textureNodes;
-	shaderGraph->findNodesOf< Texture >(textureNodes);
-
-	for (auto textureNode : textureNodes)
-	{
-		const Guid& textureGuid = textureNode->getExternal();
-		if (textureGuid.isNotNull())
-			pipelineDepends->addDependency(textureGuid, editor::PdfBuild | editor::PdfResource);
+		if (const auto externalNode = dynamic_type_cast< External* >(node))
+		{
+			const Guid& fragmentGuid = externalNode->getFragmentGuid();
+			pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
+		}
+		else if (const auto textureNode = dynamic_type_cast< Texture* >(node))
+		{
+			const Guid& textureGuid = textureNode->getExternal();
+			if (textureGuid.isNotNull())
+				pipelineDepends->addDependency(textureGuid, editor::PdfBuild | editor::PdfResource);
+		}
 	}
 
 	return true;
