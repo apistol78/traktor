@@ -62,7 +62,7 @@ private:
 	std::wstring m_modelCachePath;
 	const TypeInfo* m_tracerType;
 	std::wstring m_compressionMethod;
-	bool m_editor;
+	bool m_asynchronous;
 	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
 };
 

@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+    namespace db
+    {
+
+class Instance;
+
+    }
+
     namespace shape
     {
 
@@ -24,20 +31,17 @@ class T_DLLCLASS TracerIrradiance : public Object
 
 public:
     TracerIrradiance(
-		const std::wstring& name,
-        const Guid& irradianceGridId,
+        db::Instance* irradianceInstance,
 		const Aabb3& boundingBox
     );
 
-	const std::wstring& getName() const { return m_name; }
 
-    const Guid& getIrradianceGridId() const { return m_irradianceGridId; }
+    db::Instance* getIrradianceInstance() const { return m_irradianceInstance; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
-	std::wstring m_name;
-	Guid m_irradianceGridId;
+    Ref< db::Instance > m_irradianceInstance;
 	Aabb3 m_boundingBox;
 };
 

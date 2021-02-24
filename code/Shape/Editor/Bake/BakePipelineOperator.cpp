@@ -55,7 +55,6 @@
 #include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
-#include "Shape/Editor/Bake/BakeReceipt.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
@@ -361,64 +360,6 @@ bool prepareModel(
 	return true;
 }
 
-
-/*! */
-bool addModel(
-	editor::IPipelineBuilder* pipelineBuilder,
-	model::Model* model,
-	const Transform& transform,
-	const std::wstring& name,
-	int32_t priority,
-	const Guid& lightmapDiffuseId,
-	const Guid& lightmapDirectionalId,
-	int32_t lightmapSize,
-	TracerTask* tracerTask
-)
-{
-	if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapDiffuseId) == nullptr)
-	{
-		std::wstring outputPath = L"Generated/" + lightmapDiffuseId.format();
-		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapDiffuseId);
-		if (lightmapProxyInstance)
-		{
-			lightmapProxyInstance->setObject(new render::AliasTextureResource(
-				resource::Id< render::ITexture >(c_lightmapProxyId)
-			));
-			lightmapProxyInstance->commit();
-		}
-	}
-
-	if (lightmapDirectionalId.isNotNull() && pipelineBuilder->getOutputDatabase()->getInstance(lightmapDirectionalId) == nullptr)
-	{
-		std::wstring outputPath = L"Generated/" + lightmapDirectionalId.format();
-		Ref< db::Instance > lightmapProxyInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifDefault, &lightmapDirectionalId);
-		if (lightmapProxyInstance)
-		{
-			lightmapProxyInstance->setObject(new render::AliasTextureResource(
-				resource::Id< render::ITexture >(c_lightmapProxyId)
-			));
-			lightmapProxyInstance->commit();
-		}
-	}
-
-	tracerTask->addTracerModel(new TracerModel(
-		model,
-		transform
-	));
-
-	tracerTask->addTracerOutput(new TracerOutput(
-		name,
-		priority,
-		model,
-		transform,
-		lightmapDiffuseId,
-		lightmapDirectionalId,
-		lightmapSize
-	));
-
-	return true;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
@@ -427,25 +368,24 @@ Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
 
 BakePipelineOperator::BakePipelineOperator()
 :	m_tracerType(nullptr)
-,	m_editor(false)
+,	m_asynchronous(false)
 {
 }
 
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
+	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	if (!tracerEnable)
+		return true;
+
 	// Read all settings first so pipeline hash is consistent.
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
+	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
 
-	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	// Instantiate raytracer implementation.
 	std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
-
-	// Check if baking is enabled, if not then we leave tracer type as null.
-	if (!tracerEnable)
-		return true;
-
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 	{
@@ -467,8 +407,8 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 			m_entityReplicators[supportedType] = entityReplicator;
 	}
 
-	// In case we're running in standalone pipeline we create our tracer processor ourselves.
-	if (!m_editor)
+	// In case we're running synchronous mode we create our own tracer processor.
+	if (!m_asynchronous)
 		ms_tracerProcessor = new TracerProcessor(m_tracerType, m_compressionMethod, false);
 
 	return true;
@@ -476,9 +416,8 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 
 void BakePipelineOperator::destroy()
 {
-	if (!m_editor && ms_tracerProcessor)
+	if (!m_asynchronous && ms_tracerProcessor)
 	{
-		log::info << L"Waiting for lightmap baking to complete..." << Endl;
 		ms_tracerProcessor->waitUntilIdle();
 		ms_tracerProcessor = nullptr;
 	}
@@ -556,21 +495,11 @@ bool BakePipelineOperator::build(
 	Timer timer;
 	timer.start();
 
-	// Load last known receipt, used for prioritizing moved/new entities.
-	Ref< BakeReceipt > receipt;
-	if (m_editor)
-	{
-		Guid receiptId = sourceInstance->getGuid().permutation(1);
-		if ((receipt = pipelineBuilder->getOutputDatabase()->getObjectReadOnly< BakeReceipt >(receiptId)) == nullptr)
-			receipt = new BakeReceipt();
-	}
-
 	log::info << L"Creating lightmap tasks..." << Endl;
 
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
-		configuration,
-		pipelineBuilder->getOutputDatabase()
+		configuration
 	);
 
 	RefArray< world::LayerEntityData > layers;
@@ -753,34 +682,81 @@ bool BakePipelineOperator::build(
 					}
 				}
 
-				// Calculate priority, if entity has moved since last bake then it's prioritized.
-				int32_t priority = 0;
-				if (receipt)
-				{
-					Transform lastTransform;
-					if (receipt->getLastKnownTransform(entityId, lastTransform))
-					{
-						if (lastTransform != inoutEntityData->getTransform())
-							priority = 1;
-					}
-					else
-						priority = 1;
+				Ref< db::Instance > lightmapDiffuseInstance;
+				Ref< db::Instance > lightmapDirectionalInstance;
 
-					receipt->setTransform(entityId, inoutEntityData->getTransform());
+				if (m_asynchronous)
+				{
+					if (lightmapDiffuseId.isNotNull())
+					{
+						lightmapDiffuseInstance = pipelineBuilder->getOutputDatabase()->getInstance(lightmapDiffuseId);
+						if (lightmapDiffuseInstance != nullptr)
+							lightmapDiffuseInstance->checkout();
+						else
+						{
+							std::wstring outputPath = L"Generated/" + lightmapDiffuseId.format(); 
+							lightmapDiffuseInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifReplaceExisting, &lightmapDiffuseId);
+							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+								resource::Id< render::ITexture >(c_lightmapProxyId)
+							));
+							lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
+						}
+					}
+
+					if (lightmapDirectionalId.isNotNull())
+					{
+						lightmapDirectionalInstance = pipelineBuilder->getOutputDatabase()->getInstance(lightmapDirectionalId);
+						if (lightmapDirectionalInstance != nullptr)
+							lightmapDirectionalInstance->checkout();
+						else
+						{
+							std::wstring outputPath = L"Generated/" + lightmapDirectionalId.format(); 
+							lightmapDirectionalInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifReplaceExisting, &lightmapDirectionalId);
+							lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
+								resource::Id< render::ITexture >(c_lightmapProxyId)
+							));
+							lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
+						}
+					}
+				}
+				else
+				{
+					if (lightmapDiffuseId.isNotNull())
+					{
+						lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+						lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+							resource::Id< render::ITexture >(c_lightmapProxyId)
+						));
+						lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
+					}
+
+					if (lightmapDirectionalId.isNotNull())
+					{
+						lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
+						lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
+							resource::Id< render::ITexture >(c_lightmapProxyId)
+						));
+						lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
+					}
 				}
 
-				if (!addModel(
-					pipelineBuilder,
+				if (lightmapDiffuseId.isNotNull() && lightmapDiffuseInstance == nullptr)
+					return false;
+				if (lightmapDirectionalId.isNotNull() && lightmapDirectionalInstance == nullptr)
+					return false;
+
+				tracerTask->addTracerModel(new TracerModel(
+					model,
+					inoutEntityData->getTransform()
+				));
+
+				tracerTask->addTracerOutput(new TracerOutput(
+					lightmapDiffuseInstance,
+					lightmapDirectionalInstance,
 					model,
 					inoutEntityData->getTransform(),
-					inoutEntityData->getName(),
-					priority,
-					lightmapDiffuseId,
-					lightmapDirectionalId,
-					lightmapSize,
-					tracerTask
-				))
-					return false;
+					lightmapSize
+				));
 
 				// Let model generator consume altered model and modify entity in ways
 				// which make sense for entity data.
@@ -821,60 +797,74 @@ bool BakePipelineOperator::build(
 		const Guid c_irradianceGridIdSeed(L"{714D9AF6-EF62-4E15-B372-7CEBB090417B}");
 		Guid irradianceGridId = sourceInstance->getGuid().permutation(c_irradianceGridIdSeed);
 
-		// Create a black irradiance grid first.
-		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-		Ref< db::Instance > outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-			L"Generated/" + irradianceGridId.format(),
-			db::CifReplaceExisting,
-			&irradianceGridId
-		);
+		// Create irradiance instance.
+		Ref< db::Instance > outputInstance;
+		if (m_asynchronous)
+		{
+			outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
+				L"Generated/" + irradianceGridId.format(),
+				db::CifReplaceExisting,
+				&irradianceGridId
+			);
+		}
+		else
+		{
+			outputInstance  = pipelineBuilder->createOutputInstance(
+				L"Generated/" + irradianceGridId.format(),
+				irradianceGridId
+			);
+		}
 		if (!outputInstance)
 		{
 			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
 			return false;
 		}
 
-		outputInstance->setObject(outputResource);
-
-		// Create output data stream.
-		Ref< IStream > stream = outputInstance->writeData(L"Data");
-		if (!stream)
+		// Commit a black irradiance grid first until async tracer has finished.
+		if (m_asynchronous)
 		{
-			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
-			outputInstance->revert();
-			return false;
-		}
+			Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+			outputInstance->setObject(outputResource);
 
-		Writer writer(stream);
-		writer << uint32_t(2);
-		writer << (uint32_t)1;	// width
-		writer << (uint32_t)1;	// height
-		writer << (uint32_t)1;	// depth
-		writer << -10000.0f;
-		writer << -10000.0f;
-		writer << -10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
+			// Create output data stream.
+			Ref< IStream > stream = outputInstance->writeData(L"Data");
+			if (!stream)
+			{
+				log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+				outputInstance->revert();
+				return false;
+			}
 
-		for (int32_t i = 0; i < 9; ++i)
-		{
-			writer << 0.0f;
-			writer << 0.0f;
-			writer << 0.0f;
-		}
+			Writer writer(stream);
+			writer << uint32_t(2);
+			writer << (uint32_t)1;	// width
+			writer << (uint32_t)1;	// height
+			writer << (uint32_t)1;	// depth
+			writer << -10000.0f;
+			writer << -10000.0f;
+			writer << -10000.0f;
+			writer <<  10000.0f;
+			writer <<  10000.0f;
+			writer <<  10000.0f;
 
-		stream->close();
+			for (int32_t i = 0; i < 9; ++i)
+			{
+				writer << 0.0f;
+				writer << 0.0f;
+				writer << 0.0f;
+			}
 
-		if (!outputInstance->commit())
-		{
-			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-			return false;
+			stream->close();
+
+			if (!outputInstance->commit(db::CfKeepCheckedOut))
+			{
+				log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+				return false;
+			}
 		}
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(
-			L"Irradiance",
-			irradianceGridId,
+			outputInstance,
 			irradianceBoundingBox
 		));
 
@@ -887,19 +877,14 @@ bool BakePipelineOperator::build(
 	// Finally enqueue task to tracer processor.
 	ms_tracerProcessor->enqueue(tracerTask);
 
-	// Write out the receipt.
-	if (receipt)
+	if (m_asynchronous)
+		log::info << L"Lightmap tasks created, enqueued and ready to be processed (" << str(L"%.2f", (float)timer.getElapsedTime()) << L" seconds)." << Endl;
+	else
 	{
-		Guid receiptId = sourceInstance->getGuid().permutation(1);
-		Ref< db::Instance > receiptInstance = pipelineBuilder->getOutputDatabase()->createInstance(L"Generated/" + receiptId.format(), db::CifReplaceExisting, &receiptId);
-		if (receiptInstance)
-		{
-			receiptInstance->setObject(receipt);
-			receiptInstance->commit();
-		}
+		log::info << L"Waiting for lightmap baking to complete..." << Endl;
+		ms_tracerProcessor->waitUntilIdle();
 	}
 
-	log::info << L"Lightmap tasks created, enqueued and ready to be processed (" << str(L"%.2f", (float)timer.getElapsedTime()) << L" seconds)." << Endl;
 	return true;
 }
 
