@@ -377,10 +377,6 @@ BakePipelineOperator::BakePipelineOperator()
 
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
-	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
-	if (!tracerEnable)
-		return true;
-
 	// Read all settings first so pipeline hash is consistent.
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
@@ -395,6 +391,11 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		log::error << L"Unable to find tracer implementation \"" << tracerTypeName << L"\"." << Endl;
 		return false;
 	}
+
+	// Do this last since we want to ensure asynchronous flag is properly set.
+	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	if (!tracerEnable)
+		return true;
 
 	// Create entity replicators.
 	TypeInfoSet entityReplicatorTypes;
@@ -689,61 +690,23 @@ bool BakePipelineOperator::build(
 				}
 
 				Ref< db::Instance > lightmapDiffuseInstance;
-				Ref< db::Instance > lightmapDirectionalInstance;
-
-				if (m_asynchronous)
+				if (lightmapDiffuseId.isNotNull())
 				{
-					if (lightmapDiffuseId.isNotNull())
-					{
-						lightmapDiffuseInstance = pipelineBuilder->getOutputDatabase()->getInstance(lightmapDiffuseId);
-						if (lightmapDiffuseInstance != nullptr)
-							lightmapDiffuseInstance->checkout();
-						else
-						{
-							std::wstring outputPath = L"Generated/" + lightmapDiffuseId.format(); 
-							lightmapDiffuseInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifReplaceExisting, &lightmapDiffuseId);
-							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-								resource::Id< render::ITexture >(c_lightmapProxyId)
-							));
-							lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
-						}
-					}
-
-					if (lightmapDirectionalId.isNotNull())
-					{
-						lightmapDirectionalInstance = pipelineBuilder->getOutputDatabase()->getInstance(lightmapDirectionalId);
-						if (lightmapDirectionalInstance != nullptr)
-							lightmapDirectionalInstance->checkout();
-						else
-						{
-							std::wstring outputPath = L"Generated/" + lightmapDirectionalId.format(); 
-							lightmapDirectionalInstance = pipelineBuilder->getOutputDatabase()->createInstance(outputPath, db::CifReplaceExisting, &lightmapDirectionalId);
-							lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
-								resource::Id< render::ITexture >(c_lightmapProxyId)
-							));
-							lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
-						}
-					}
+					lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+					lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+						resource::Id< render::ITexture >(c_lightmapProxyId)
+					));
+					lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
 				}
-				else
-				{
-					if (lightmapDiffuseId.isNotNull())
-					{
-						lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
-						lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-							resource::Id< render::ITexture >(c_lightmapProxyId)
-						));
-						lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
-					}
 
-					if (lightmapDirectionalId.isNotNull())
-					{
-						lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
-						lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
-							resource::Id< render::ITexture >(c_lightmapProxyId)
-						));
-						lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
-					}
+				Ref< db::Instance > lightmapDirectionalInstance;
+				if (lightmapDirectionalId.isNotNull())
+				{
+					lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
+					lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
+						resource::Id< render::ITexture >(c_lightmapProxyId)
+					));
+					lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
 				}
 
 				if (lightmapDiffuseId.isNotNull() && lightmapDiffuseInstance == nullptr)
@@ -804,22 +767,10 @@ bool BakePipelineOperator::build(
 		Guid irradianceGridId = sourceInstance->getGuid().permutation(c_irradianceGridIdSeed);
 
 		// Create irradiance instance.
-		Ref< db::Instance > outputInstance;
-		if (m_asynchronous)
-		{
-			outputInstance = pipelineBuilder->getOutputDatabase()->createInstance(
-				L"Generated/" + irradianceGridId.format(),
-				db::CifReplaceExisting,
-				&irradianceGridId
-			);
-		}
-		else
-		{
-			outputInstance  = pipelineBuilder->createOutputInstance(
-				L"Generated/" + irradianceGridId.format(),
-				irradianceGridId
-			);
-		}
+		Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
+			L"Generated/" + irradianceGridId.format(),
+			irradianceGridId
+		);
 		if (!outputInstance)
 		{
 			log::error << L"BakePipelineOperator failed; unable to create output instance." << Endl;
