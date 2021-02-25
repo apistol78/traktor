@@ -188,11 +188,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << Endl;
 
 	PrecisionHint precisionHint = PhUndefined;
-	if (m_shaderType == StVertex)
-		precisionHint = requirements.vertexPrecisionHint;
-	else if (m_shaderType == StFragment)
-		precisionHint = requirements.fragmentPrecisionHint;
-
+	const bool ignorePrecisionHint = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.IgnorePrecisionHint", false) : false);
+	if (!ignorePrecisionHint)
+	{
+		if (m_shaderType == StVertex)
+			precisionHint = requirements.vertexPrecisionHint;
+		else if (m_shaderType == StFragment)
+			precisionHint = requirements.fragmentPrecisionHint;
+	}
+	
 	switch (precisionHint)
 	{
 	case PhLow:

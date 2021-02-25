@@ -57,6 +57,7 @@ Vector4 SHCoeffs::evaluate(float phi, float theta) const
 
 Vector4 SHCoeffs::evaluate3(float phi, float theta) const
 {
+#if !defined(__ANDROID__)
 	Vector4 dir = Polar(phi, theta).toUnitCartesian();
 
 	float shd[9];
@@ -74,6 +75,9 @@ Vector4 SHCoeffs::evaluate3(float phi, float theta) const
 	result += Scalar(shd[8]) * m_data[8];
 
 	return result;
+#else
+	return Vector4::zero();
+#endif
 }
 
 Vector4 SHCoeffs::operator * (const SHCoeffs& coeffs) const

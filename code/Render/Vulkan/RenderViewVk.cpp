@@ -1622,7 +1622,11 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		);
 		if (result != VK_SUCCESS)
 		{
+#if defined(_DEBUG)
+			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
+#else
 			log::error << L"Unable to create Vulkan graphics pipeline (" << getHumanResult(result) << L")." << Endl;
+#endif
 			return false;
 		}
 

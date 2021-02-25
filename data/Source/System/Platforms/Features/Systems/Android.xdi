@@ -141,6 +141,12 @@
 								<value>false</value>
 							</second>
 						</item>
+						<item>
+							<first>Glsl.Vulkan.IgnorePrecisionHint</first>
+							<second type="traktor.PropertyBoolean">
+								<value>true</value>
+							</second>
+						</item>
 					</value>
 				</second>
 			</item>
