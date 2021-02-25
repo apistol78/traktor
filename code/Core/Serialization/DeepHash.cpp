@@ -36,7 +36,7 @@ public:
 
 	virtual void operator >> (const Member< bool >& m) override final
 	{
-		m_adler.feed< bool >(m);
+		m_adler.feed< uint8_t >(m ? 0xff : 0x00);
 	}
 
 	virtual void operator >> (const Member< int8_t >& m) override final
