@@ -164,7 +164,7 @@ void MemCachedPutStream::uploadEndBlock()
 		return;
 	}
 
-	uint8_t endData[3] = { 0xfe, 0x00, 0x00 };
+	uint8_t endData[3] = { 0x11, 0x00, 0x00 };
 	if (!m_proto->writeData(endData, 1))
 	{
 		log::error << L"Unable to store cache block; unable to write data." << Endl;

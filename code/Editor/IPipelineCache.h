@@ -34,6 +34,8 @@ public:
 	virtual Ref< IStream > get(const Guid& guid, const PipelineDependencyHash& hash) = 0;
 
 	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) = 0;
+
+	virtual bool commit(const Guid& guid, const PipelineDependencyHash& hash) = 0;
 };
 
 	}
