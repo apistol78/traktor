@@ -116,10 +116,8 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 bool writeTexture(
 	db::Instance* outputInstance,
-	//db::Database* outputDatabase,
 	const std::wstring& compressionMethod,
 	bool encodeHDR,
-	//const Guid& lightmapId,
 	const drawing::Image* lightmap
 )
 {
@@ -164,14 +162,6 @@ bool writeTexture(
 		compressor = new render::UnCompressor();
 		needAlpha = true;
 	}
-
-	//Ref< db::Instance > outputInstance = outputDatabase->createInstance(
-	//	L"Generated/" + lightmapId.format(),
-	//	db::CifReplaceExisting,
-	//	&lightmapId
-	//);
-	//if (!outputInstance)
-	//	return false;
 
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
 	outputInstance->setObject(outputResource);

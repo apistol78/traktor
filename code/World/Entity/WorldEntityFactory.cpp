@@ -223,7 +223,11 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			ctcd.side = 256;
 #endif
 			ctcd.mipCount = (int32_t)(log2(ctcd.side ) + 1.0f);
+#if !defined(__ANDROID__)
 			ctcd.format = render::TfR11G11B10F;
+#else
+			ctcd.format = render::TfR8G8B8A8;
+#endif
 			ctcd.sRGB = false;
 			ctcd.immutable = false;
 

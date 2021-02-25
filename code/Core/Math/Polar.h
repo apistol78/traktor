@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Config.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector4.h"
