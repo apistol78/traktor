@@ -46,7 +46,8 @@ public:
 		const TargetConfiguration* targetConfiguration,
 		const std::wstring& outputPath,
 		const PropertyGroup* tweakSettings,
-		bool standAlone
+		bool standAlone,
+		bool force
 	);
 
 	virtual bool execute(IProgressListener* progressListener) override final;
@@ -60,6 +61,7 @@ private:
 	std::wstring m_outputPath;
 	Ref< const PropertyGroup > m_tweakSettings;
 	bool m_standAlone;
+	bool m_force;
 };
 
 	}
