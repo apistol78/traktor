@@ -91,5 +91,10 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	);
 }
 
+bool FilePipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
+{
+	return true;
+}
+
 	}
 }

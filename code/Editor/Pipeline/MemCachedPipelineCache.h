@@ -34,6 +34,8 @@ public:
 
 	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
+	virtual bool commit(const Guid& guid, const PipelineDependencyHash& hash) override final;
+
 private:
 	friend class MemCachedGetStream;
 	friend class MemCachedPutStream;
@@ -43,6 +45,8 @@ private:
 	bool m_accessWrite = true;
 	Semaphore m_lock;
 	RefArray< MemCachedProto > m_protos;
+
+	Ref< MemCachedProto > acquireProto();
 };
 
 	}

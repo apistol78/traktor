@@ -30,6 +30,8 @@ public:
 
 	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
+	virtual bool commit(const Guid& guid, const PipelineDependencyHash& hash) override final;
+
 private:
 	bool m_accessRead;
 	bool m_accessWrite;

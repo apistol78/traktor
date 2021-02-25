@@ -886,8 +886,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances)
 {
-	bool result = false;
-
 	Ref< IStream > stream = m_cache->put(guid, hash);
 	if (!stream)
 		return false;
@@ -900,21 +898,25 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDepend
 	{
 		const Guid instanceId = instances[i]->getGuid();
 		const std::wstring instancePath = instances[i]->getPath();
-
-		writer.write((const uint8_t*)instanceId, 16);
+		if (writer.write((const uint8_t*)instanceId, 16) != 16)
+			return false;
 		writer << instancePath;
 	}
 
 	// Write instances.
 	for (uint32_t i = 0; i < (uint32_t)instances.size(); ++i)
 	{
-		result = db::Isolate::createIsolatedInstance(instances[i], stream);
-		if (!result)
-			break;
+		if (!db::Isolate::createIsolatedInstance(instances[i], stream))
+			return false;
 	}
 
 	stream->close();
-	return result;
+	
+	// Commit cached item.
+	if (!m_cache->commit(guid, hash))
+		return false;
+
+	return true;
 }
 
 bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
@@ -945,16 +947,22 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 	Reader reader(stream);
 
 	// Read directory from stream.
-	uint32_t instanceCount;
+	uint32_t instanceCount = 0;
 	reader >> instanceCount;
+	if (instanceCount == 0)
+		return false;
 
 	AlignedVector< DirectoryEntry > directory(instanceCount);
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
 		uint8_t instanceId[16];
-		reader.read(instanceId, 16);
-		directory[i].instanceId = Guid(instanceId);
+		if (reader.read(instanceId, 16) != 16)
+			return false;
+		if (!(directory[i].instanceId = Guid(instanceId)).isNotNull())
+			return false;
 		reader >> directory[i].instancePath;
+		if (directory[i].instancePath.empty())
+			return false;
 	}
 
 	// Fetch or create instances.

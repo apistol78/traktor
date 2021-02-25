@@ -57,30 +57,13 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedProto > proto;
-
-		// Try to get an already established connection.
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			if (!m_protos.empty())
-			{
-				proto = m_protos.back();
-				m_protos.pop_back();
-			}
-		}
-
-		// If no existing connection found then create a new one.
+		Ref< MemCachedProto > proto = acquireProto();
 		if (!proto)
-		{
-			Ref< net::TcpSocket > socket = new net::TcpSocket();
-			if (!socket->connect(m_addr))
-				return nullptr;
-			proto = new MemCachedProto(socket);
-		}
+			return nullptr;
 
 		Ref< MemCachedGetStream > stream = new MemCachedGetStream(this, proto, generateKey(guid, hash));
 
-		// Request end block; do not try to open non-finished cache streams.
+		// Request end block; do not try to open non-finished, uncommitted cache streams.
 		if (!stream->requestEndBlock())
 			return nullptr;
 
@@ -98,31 +81,80 @@ Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDepen
 {
 	if (m_accessWrite)
 	{
-		Ref< MemCachedProto > proto;
-
-		// Try to get an already established connection.
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			if (!m_protos.empty())
-			{
-				proto = m_protos.back();
-				m_protos.pop_back();
-			}
-		}
-
-		// If no existing connection found then create a new one.
-		if (!proto)
-		{
-			Ref< net::TcpSocket > socket = new net::TcpSocket();
-			if (!socket->connect(m_addr))
-				return nullptr;
-			proto = new MemCachedProto(socket);
-		}
-
-		return new MemCachedPutStream(this, proto, generateKey(guid, hash));
+		Ref< MemCachedProto > proto = acquireProto();
+		if (proto)
+			return new MemCachedPutStream(this, proto, generateKey(guid, hash));
 	}
-	else
-		return nullptr;
+	return nullptr;
+}
+
+bool MemCachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
+{
+	std::stringstream ss;
+	std::string command;
+	std::string reply;
+
+	Ref< MemCachedProto > proto = acquireProto();
+	if (!proto)
+		return false;
+
+	ss << "set " << generateKey(guid, hash) << ":END 0 0 1";
+
+	command = ss.str();
+	T_DEBUG(mbstows(command));
+
+	if (!proto->sendCommand(command))
+	{
+		log::error << L"Unable to store cache block; unable to send command." << Endl;
+		return false;
+	}
+
+	uint8_t endData[3] = { 0x22, 0x00, 0x00 };
+	if (!proto->writeData(endData, 1))
+	{
+		log::error << L"Unable to store cache block; unable to write data." << Endl;
+		return false;
+	}
+
+	if (!proto->readReply(reply))
+	{
+		log::error << L"Unable to store cache block; unable to read reply." << Endl;
+		return false;
+	}
+
+	if (reply != "STORED")
+	{
+		log::error << L"Unable to store cache block; server unable to store data." << Endl;
+		return false;
+	}
+
+	return true;
+}
+
+Ref< MemCachedProto > MemCachedPipelineCache::acquireProto()
+{
+	Ref< MemCachedProto > proto;
+
+	// Try to get an already established connection.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		if (!m_protos.empty())
+		{
+			proto = m_protos.back();
+			m_protos.pop_back();
+		}
+	}
+
+	// If no existing connection found then create a new one.
+	if (!proto)
+	{
+		Ref< net::TcpSocket > socket = new net::TcpSocket();
+		if (!socket->connect(m_addr))
+			return nullptr;
+		proto = new MemCachedProto(socket);
+	}
+
+	return proto;
 }
 
 	}
