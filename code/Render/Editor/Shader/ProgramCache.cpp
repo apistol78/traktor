@@ -37,7 +37,12 @@ Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph, const s
 	uint32_t shaderGraphHash = ShaderGraphHash(false).calculate(shaderGraph);
 
 	// Generate file name of cached program.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(m_settingsHash) + L".bin";
+	std::wstring cachedFileName = m_cachePath.getPathName() + L"/" + type_name(m_compiler) + L"/" + toString(shaderGraphHash) + L"_" + toString(m_settingsHash) + L".bin";
+
+	// Check in-memory list of cached programs.
+	Ref< ProgramResource >* program = m_programs.find(cachedFileName);
+	if (program)
+		return *program;
 
 	// Try to read pre-compiled resource from cache.
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmRead)) != nullptr)
@@ -46,7 +51,10 @@ Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph, const s
 		Ref< ProgramResource > cachedResource = BinarySerializer(&bufferedStream).readObject< ProgramResource >();
 		bufferedStream.close();
 		if (cachedResource)
+		{
+			m_programs.insert(cachedFileName, cachedResource);
 			return cachedResource;
+		}
 	}
 
 	// No cached pre-compiled resource found; need to compile resource.
@@ -54,8 +62,11 @@ Ref< ProgramResource > ProgramCache::get(const ShaderGraph* shaderGraph, const s
 	if (!resource)
 		return nullptr;
 
+	// Add to in-memory list.
+	m_programs.insert(cachedFileName, resource);
+
 	// Store resource in cache.
-	FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
+	FileSystem::getInstance().makeAllDirectories(Path(cachedFileName).getPathOnly());
 	if ((f = FileSystem::getInstance().open(cachedFileName, File::FmWrite)) != nullptr)
 	{
 		BufferedStream bufferedStream(f);

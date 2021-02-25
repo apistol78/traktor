@@ -2,6 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/StringMap.h"
 #include "Core/Io/Path.h"
 
 namespace traktor
@@ -36,6 +37,7 @@ private:
 	Ref< const IProgramCompiler > m_compiler;
 	Ref< const PropertyGroup > m_settings;
 	uint32_t m_settingsHash;
+	StringMap< Ref< ProgramResource >, std::wstring > m_programs;
 };
 
 	}

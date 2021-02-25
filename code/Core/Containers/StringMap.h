@@ -73,7 +73,7 @@ private:
 	uint32_t shash(const string_t& str) const
 	{
 		uint32_t hash = 0;
-		for (const char* c = str.c_str(); *c; ++c)
+		for (const typename string_t::value_type* c = str.c_str(); *c; ++c)
 			hash = *c + (hash << 6) + (hash << 16) - hash;
 		return hash;
 	}
