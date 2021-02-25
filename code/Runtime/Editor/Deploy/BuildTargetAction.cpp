@@ -71,7 +71,8 @@ BuildTargetAction::BuildTargetAction(
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& outputPath,
 	const PropertyGroup* tweakSettings,
-	bool standAlone
+	bool standAlone,
+	bool force
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
@@ -81,6 +82,7 @@ BuildTargetAction::BuildTargetAction(
 ,	m_outputPath(outputPath)
 ,	m_tweakSettings(tweakSettings)
 ,	m_standAlone(standAlone)
+,	m_force(force)
 {
 }
 
@@ -320,6 +322,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		ss << L" -verbose";
 	if (m_standAlone)
 		ss << L" -standalone";
+	if (m_force)
+		ss << L" -force";
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		ss.str(),

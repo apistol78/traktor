@@ -286,6 +286,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 					targetInstance->getTargetConfiguration(),
 					outputPath,
 					tweakSettings,
+					false,
 					false
 				);
 				chain.actions.push_back(action);
@@ -590,6 +591,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			tweakSettings,
+			false,
 			false
 		);
 		chain.actions.push_back(action);
@@ -675,6 +677,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			tweakSettings,
+			false,
 			false
 		);
 		chain.actions.push_back(action);
@@ -759,6 +762,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 			targetInstance->getTargetConfiguration(),
 			outputPath,
 			nullptr,
+			false,
 			false
 		);
 		chain.actions.push_back(action);
