@@ -137,8 +137,8 @@ local function linkApplication()
 	cmd = cmd .. " -llog"
 	cmd = cmd .. " -landroid"
 	cmd = cmd .. " -lgcc"
-	cmd = cmd .. " -lEGL"
-	cmd = cmd .. " -lGLESv3"
+	-- cmd = cmd .. " -lEGL"
+	-- cmd = cmd .. " -lGLESv3"
 	cmd = cmd .. " -lOpenSLES"
 	cmd = cmd .. " \"$(DEPLOY_OUTPUT_PATH)/Linkage.o\""
 	cmd = cmd .. libraryPaths
@@ -166,7 +166,7 @@ Build assets in target output database.
 ]]
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -p -standalone -s=Pipeline"
+	local cmdline = tools.pipeline .. " -v -l -p -standalone -s=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -184,7 +184,7 @@ function deploy(args)
 		return 1
 	end
 
-	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+	local debug = false -- (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
@@ -236,7 +236,7 @@ function deploy(args)
 		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/ic_launcher.png"
 	end
 
-	local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
+	local iconPath = Path("$(DEPLOY_PROJECT_ROOT)"):concat(Path(iconFile))
 	local iconImage = Image.loadFromFile(iconPath.pathName)
 	if iconImage ~= nil then
 		generateImage("res/drawable/splash_image.png", iconImage, 512, 512)
@@ -252,38 +252,39 @@ function deploy(args)
 	-- Build apk package.
 	stdout:printLn("Building Android APK package...")
 
+	local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
 	local result = false
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
 
 		if debug then
 			for _, validation in ipairs(validations) do
-				result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+				result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
 			end
 		end
 
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
-		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
 
 		if debug then
 			for _, validation in ipairs(validations) do
-				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
+				result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/" .. validation, nil) == 0)
 			end
 		end
 		
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk", nil) == 0)
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
@@ -294,8 +295,8 @@ function deploy(args)
 	end
 
 	-- Cleanup intermediate files.
-	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
-	run:rm("$(DEPLOY_PROJECT_NAME).aligned.apk")
+	run:rm(apk .. ".unsigned.apk")
+	run:rm(apk .. ".aligned.apk")
 	return 0
 end
 
@@ -310,7 +311,8 @@ function launch(args)
 		return 1
 	end
 
-	local launchVS = false
+	local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
+	local launchVS = true
 --[[
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
@@ -321,7 +323,7 @@ function launch(args)
 	if not launchVS then
 		-- Launch application on attached device.
 		stdout:printLn("Installing package...")
-		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install --no-streaming -r \"$(DEPLOY_PROJECT_NAME).apk\"", nil)
+		local result = run:execute("$(DEPLOY_ANDROID_HOME)/platform-tools/adb -d install --no-streaming -r \"" .. apk .. ".apk\"", nil)
 		if result ~= 0 then
 			stderr:printLn("Failed to install package on device; Please ensure device is attached and in developer mode.")
 			return 1
@@ -395,7 +397,6 @@ function migrate(args)
 
 	-- Cleanup intermediate files.
 	run:rm("Application.config")
-	run:rm("Content.compact")
 	run:rm("libApplication.so")
 
 	-- Create icons.
@@ -406,7 +407,7 @@ function migrate(args)
 		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/ic_launcher.png"
 	end
 
-	local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
+	local iconPath = Path("$(DEPLOY_PROJECT_ROOT)"):concat(Path(iconFile))
 	local iconImage = Image.loadFromFile(iconPath.pathName)
 	if iconImage ~= nil then
 		generateImage("res/drawable/splash_image.png", iconImage, 512, 512)
@@ -422,26 +423,27 @@ function migrate(args)
 	-- Build apk package.
 	stdout:printLn("Building Android APK package...")
 
+	local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
 	local result = false
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Content.compact", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Content.compact", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign.exe\" -f -p 4 \"" .. apk .. ".unsigned.apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner.bat\" sign --ks \"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks\" --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"" .. apk .. ".apk\" \"" .. apk .. ".aligned.apk\"", nil) == 0)
 	elseif host == "linux" or host == "osx" then
 		result = true
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Content.compact", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Content.compact", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk", nil) == 0)
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
@@ -452,8 +454,8 @@ function migrate(args)
 	end
 
 	-- Cleanup intermediate files.
-	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
-	run:rm("$(DEPLOY_PROJECT_NAME).aligned.apk")
+	run:rm(apk .. ".unsigned.apk")
+	run:rm(apk .. ".aligned.apk")
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then
