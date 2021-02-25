@@ -25,7 +25,7 @@ namespace traktor
 		{
 
 const Scalar p(1.0f / (2.0f * PI));
-const float c_epsilonOffset = 0.001f;
+const float c_epsilonOffset = 0.0001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 class WrappedSHFunction : public render::SHFunction
@@ -351,15 +351,14 @@ Color4f RayTracerEmbree::tracePath0(
 	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-
 	sampleCount = alignUp(sampleCount, 16);
-
-	const Color4f BRDF = Color4f(1.0f, 1.0f, 1.0f, 1.0f) / Scalar(PI);
-	const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
 
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 
 #if 0
+	const Color4f BRDF = Color4f(1.0f, 1.0f, 1.0f, 1.0f) / Scalar(PI);
+	const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
+
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; ++i)
 	{
