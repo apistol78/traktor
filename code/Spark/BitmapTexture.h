@@ -32,7 +32,7 @@ class T_DLLCLASS BitmapTexture : public Bitmap
 	T_RTTI_CLASS;
 
 public:
-	BitmapTexture();
+	BitmapTexture() = default;
 
 	explicit BitmapTexture(render::ISimpleTexture* texture);
 

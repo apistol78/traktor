@@ -11,8 +11,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Collectable", Collectable, Object)
 int32_t Collectable::ms_instanceCount = 0;
 
 Collectable::Collectable()
-:	m_prev(0)
-,	m_next(0)
+:	m_prev(nullptr)
+,	m_next(nullptr)
 ,	m_weakRefDisposes(0)
 ,	m_traceRefCount(0)
 ,	m_traceColor(TcBlack)
@@ -23,8 +23,8 @@ Collectable::Collectable()
 
 Collectable::~Collectable()
 {
-	T_ASSERT(m_next == 0);
-	T_ASSERT(m_prev == 0);
+	T_ASSERT(m_next == nullptr);
+	T_ASSERT(m_prev == nullptr);
 	Atomic::decrement(ms_instanceCount);
 	delete m_weakRefDisposes;
 }
@@ -121,9 +121,9 @@ void Collectable::traceCollectWhite()
 		T_ASSERT(m_traceRefCount == 0);
 		T_EXCEPTION_GUARD_BEGIN;
 
-		Collectable::addRef(0);
+		Collectable::addRef(nullptr);
 		dereference();
-		Collectable::release(0);
+		Collectable::release(nullptr);
 
 		T_EXCEPTION_GUARD_END;
 	}

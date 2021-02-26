@@ -8,12 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapResource", 0, BitmapResource, Bitmap)
 
-BitmapResource::BitmapResource()
-:	m_atlasWidth(0)
-,	m_atlasHeight(0)
-{
-}
-
 BitmapResource::BitmapResource(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t atlasWidth, uint32_t atlasHeight, const Guid& resourceId)
 :	Bitmap(x, y, width, height)
 ,	m_atlasWidth(atlasWidth)

@@ -32,7 +32,7 @@ class T_DLLCLASS BitmapImage : public Bitmap
 	T_RTTI_CLASS;
 
 public:
-	BitmapImage();
+	BitmapImage() = default;
 
 	explicit BitmapImage(const drawing::Image* image);
 

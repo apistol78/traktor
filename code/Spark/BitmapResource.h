@@ -24,9 +24,9 @@ class T_DLLCLASS BitmapResource : public Bitmap
 	T_RTTI_CLASS;
 
 public:
-	BitmapResource();
+	BitmapResource() = default;
 
-	BitmapResource(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t atlasWidth, uint32_t atlasHeight, const Guid& resourceId);
+	explicit BitmapResource(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t atlasWidth, uint32_t atlasHeight, const Guid& resourceId);
 
 	uint32_t getAtlasWidth() const { return m_atlasWidth; }
 
@@ -37,8 +37,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_atlasWidth;
-	uint32_t m_atlasHeight;
+	uint32_t m_atlasWidth = 0;
+	uint32_t m_atlasHeight = 0;
 	Guid m_resourceId;
 };
 

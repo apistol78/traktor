@@ -86,9 +86,9 @@ public:
 	typedef AlignedVector< ButtonLayer > button_layers_t;
 	typedef AlignedVector< ButtonCondition > button_conditions_t;
 
-	Button();
+	Button() = default;
 
-	Button(uint16_t id);
+	explicit Button(uint16_t id);
 
 	/*! Add button layer.
 	 *
