@@ -82,18 +82,6 @@
 				</second>
 			</item>
 			<item>
-				<first>ScenePipeline.SuppressPostProcess</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressShadows</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
 				<first>ScriptPipeline.PreprocessorDefinitions</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
@@ -111,12 +99,6 @@
 				<first>ShaderPipeline.ProgramCompilerSettings</first>
 				<second type="traktor.PropertyGroup">
 					<value>
-						<item>
-							<first>Glsl.Vulkan.Optimize</first>
-							<second type="traktor.PropertyInteger">
-								<value>0</value>
-							</second>
-						</item>
 						<item>
 							<first>Glsl.Vulkan.ControlFlowAttributes</first>
 							<second type="traktor.PropertyBoolean">
