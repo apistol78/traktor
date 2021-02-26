@@ -166,7 +166,7 @@ Build assets in target output database.
 ]]
 function build(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -v -l -p -standalone -s=Pipeline"
+	local cmdline = tools.pipeline .. " -v -l -p -s=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end
@@ -184,8 +184,7 @@ function deploy(args)
 		return 1
 	end
 
-	local debug = false -- (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
