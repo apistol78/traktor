@@ -311,13 +311,11 @@ function launch(args)
 	end
 
 	local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
-	local launchVS = true
---[[
+	local launchVS = false
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	if host == "win32" or host == "win64" then
 		launchVS = true
 	end	
-]]
 
 	if not launchVS then
 		-- Launch application on attached device.
