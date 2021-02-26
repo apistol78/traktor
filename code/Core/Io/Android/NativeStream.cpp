@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <sys/stat.h>
 #include "Core/Io/File.h"
 #include "Core/Io/Android/NativeStream.h"
 
@@ -14,9 +15,9 @@ NativeStream::NativeStream(std::FILE* fp, uint32_t mode)
 {
 	if ((m_mode & File::FmRead) != 0)
 	{
-		fseek(m_fp, 0, SEEK_END);
-		m_fileSize = (int)ftell(m_fp);
-		fseek(m_fp, 0, SEEK_SET);
+		struct stat st;
+		fstat(fileno(m_fp), &st);
+		m_fileSize = st.st_size;
 	}
 }
 
