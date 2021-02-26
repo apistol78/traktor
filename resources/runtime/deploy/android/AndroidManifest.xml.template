@@ -1,17 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+local version = environment:get("DEPLOY_PROJECT_VERSION")
+if version == "" then version = "0.0.0" end
+
+-- Calculate a version code as a single integer.
+local versionCode = 0
+for s in version:gmatch("[^.]+") do
+    versionCode = versionCode * 100 + tonumber(s)
+end
+
+--!><?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="<!-- output:print(environment:get("DEPLOY_PROJECT_IDENTIFIER")) --!>"
-        android:versionCode="1"
-        android:versionName="1.0">
+        android:versionCode="<!-- output:print(versionCode) --!>"
+        android:versionName="<!-- output:print(version) --!>">
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="15"
+        android:minSdkVersion="26"
+        android:targetSdkVersion="26"
     />
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="@string/app_name"
         android:hasCode="false"
         android:debuggable="true"
+        android:testOnly="false"
+        android:isGame="true"
     >
         <activity
             android:name="android.app.NativeActivity"
