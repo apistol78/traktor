@@ -23,17 +23,16 @@ ButtonInstance::ButtonInstance(ActionContext* context, Dictionary* dictionary, C
 ,	m_pushed(false)
 {
 	// Create character instances of each character in button's layer list.
-	const Button::button_layers_t& layers = m_button->getButtonLayers();
-	for (Button::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& layer : m_button->getButtonLayers())
 	{
-		Ref< const Character > character = dictionary->getCharacter(i->characterId);
+		Ref< const Character > character = dictionary->getCharacter(layer.characterId);
 		if (!character)
 			continue;
 
 		Ref< CharacterInstance > characterInstance = character->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0);
 		T_ASSERT(characterInstance);
 
-		m_characterInstances[i->characterId] = characterInstance;
+		m_characterInstances[layer.characterId] = characterInstance;
 	}
 }
 

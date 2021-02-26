@@ -9,14 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Bitmap", Bitmap, ISerializable)
 
-Bitmap::Bitmap()
-:	m_x(0)
-,	m_y(0)
-,	m_width(0)
-,	m_height(0)
-{
-}
-
 Bitmap::Bitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 :	m_x(x)
 ,	m_y(y)

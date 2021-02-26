@@ -24,9 +24,9 @@ class T_DLLCLASS Bitmap : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Bitmap();
+	Bitmap() = default;
 
-	Bitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+	explicit Bitmap(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
 	/*! Set cache object.
 	*/
@@ -48,10 +48,10 @@ public:
 
 protected:
 	mutable Ref< IRefCount > m_cacheObject;
-	uint32_t m_x;
-	uint32_t m_y;
-	uint32_t m_width;
-	uint32_t m_height;
+	uint32_t m_x = 0;
+	uint32_t m_y = 0;
+	uint32_t m_width = 0;
+	uint32_t m_height = 0;
 };
 
 	}

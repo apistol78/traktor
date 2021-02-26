@@ -11,11 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapImage", 0, BitmapImage, Bitmap)
 
-BitmapImage::BitmapImage()
-:	Bitmap()
-{
-}
-
 BitmapImage::BitmapImage(const drawing::Image* image)
 :	Bitmap()
 {
@@ -51,7 +46,7 @@ void BitmapImage::serialize(ISerializer& s)
 		m_image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), m_width, m_height);
 #endif
 
-	void* bits = 0;
+	void* bits = nullptr;
 	uint32_t size = 0;
 
 	if (m_image)

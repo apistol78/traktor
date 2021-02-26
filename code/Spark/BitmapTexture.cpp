@@ -8,11 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapTexture", 0, BitmapTexture, Bitmap)
 
-BitmapTexture::BitmapTexture()
-:	Bitmap()
-{
-}
-
 BitmapTexture::BitmapTexture(render::ISimpleTexture* texture)
 :	Bitmap()
 ,	m_texture(texture)

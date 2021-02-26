@@ -36,7 +36,7 @@ class T_DLLCLASS Character : public ISerializable
 public:
 	Character();
 
-	Character(uint16_t id);
+	explicit Character(uint16_t id);
 
 	/*! Get character identification.
 	 *
