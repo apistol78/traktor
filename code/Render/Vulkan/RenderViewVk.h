@@ -140,7 +140,7 @@ private:
 #endif
 	VkSurfaceKHR m_surface = 0;
 	Ref< Queue > m_presentQueue;
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	VkQueryPool m_queryPool = 0;
 #endif
 	bool m_lost = true;

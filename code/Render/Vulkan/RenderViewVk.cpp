@@ -133,6 +133,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 {
+	const int32_t resolutionDenom = 1;
 	VkResult result;
 	int32_t width = 64;
 	int32_t height = 64;
@@ -186,8 +187,8 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	width = ANativeWindow_getWidth(sci.window);
-	height = ANativeWindow_getHeight(sci.window);
+	width = ANativeWindow_getWidth(sci.window) / resolutionDenom;
+	height = ANativeWindow_getHeight(sci.window) / resolutionDenom;
 #elif defined(__MAC__)
 
 	// Attach Metal layer to provided view.
@@ -271,7 +272,7 @@ void RenderViewVk::close()
 	}
 	m_frames.clear();
 
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_queryPool != 0)
 	{
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
@@ -363,7 +364,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 	m_frames.clear();
 
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_queryPool != 0)
 	{
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
@@ -560,7 +561,7 @@ bool RenderViewVk::beginFrame()
 			return false;
 	}
 
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	// Reset time queries.
 	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
@@ -1133,7 +1134,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 int32_t RenderViewVk::beginTimeQuery()
 {
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	auto& frame = m_frames[m_currentImageIndex];
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
@@ -1146,7 +1147,7 @@ int32_t RenderViewVk::beginTimeQuery()
 
 void RenderViewVk::endTimeQuery(int32_t query)
 {
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	auto& frame = m_frames[m_currentImageIndex];
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
 #endif
@@ -1154,7 +1155,7 @@ void RenderViewVk::endTimeQuery(int32_t query)
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	uint32_t flags = VK_QUERY_RESULT_64_BIT;
 	if (wait)
 		flags |= VK_QUERY_RESULT_WAIT_BIT;
@@ -1374,7 +1375,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore);
 
-#if !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__)
 	// Create time query pool.
 	VkQueryPoolCreateInfo qpci = {};
 	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
