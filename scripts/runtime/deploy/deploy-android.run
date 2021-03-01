@@ -37,8 +37,8 @@ local function linkApplication()
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
-	local architecture = "aarch64" -- "arch-arm"
-	local abi = "arm64-v8a"	-- armeabi-v7a
+	local architecture = "armv7a" -- "aarch64"
+	local abi = "armeabi-v7a" -- "arm64-v8a"
 
 	-- Determine tool suitable for os.
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
@@ -64,7 +64,8 @@ local function linkApplication()
 
 	-- Generate paths to NDK.
 	local toolpath = ndk .. "/toolchains/llvm/prebuilt/" .. host .."/bin"
-	local cl = toolpath .. "/" .. architecture .. "-linux-android" .. apilevel .. "-clang++"
+--	local cl = toolpath .. "/" .. architecture .. "-linux-android" .. apilevel .. "-clang++"
+	local cl = toolpath .. "/" .. architecture .. "-linux-androideabi" .. apilevel .. "-clang++"
 	if host == "windows-x86_64" then
 		cl = cl .. ".cmd"
 	end
@@ -129,6 +130,7 @@ local function linkApplication()
 		cmd = cmd .. " -g"
 	end
 	cmd = cmd .. " -shared"
+	--cmd = cmd .. " -static-libstdc++"
 	cmd = cmd .. " -Wl,-soname,Application"
 	cmd = cmd .. " -Wl,--no-undefined"
 	cmd = cmd .. " -lc++"
@@ -136,7 +138,7 @@ local function linkApplication()
 	cmd = cmd .. " -lm"
 	cmd = cmd .. " -llog"
 	cmd = cmd .. " -landroid"
-	cmd = cmd .. " -lgcc"
+	--cmd = cmd .. " -lgcc"
 	-- cmd = cmd .. " -lEGL"
 	-- cmd = cmd .. " -lGLESv3"
 	cmd = cmd .. " -lOpenSLES"
@@ -188,8 +190,8 @@ function deploy(args)
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
-	local architecture = "aarch64" -- "arch-arm"
-	local abi = "arm64-v8a"	-- armeabi-v7a
+	local architecture = "armv7a" -- "aarch64"
+	local abi = "armeabi-v7a" -- "arm64-v8a"
 	local validations = {
 		"libVkLayer_core_validation.so",
 		"libVkLayer_khronos_validation.so",
@@ -211,6 +213,7 @@ function deploy(args)
 	run:replace("Application.config", "assets/Application.config")
 	run:replace("libApplication.so", "lib/" .. abi .. "/libApplication.so")
 	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/" .. abi .. "/libc++_shared.so", "lib/" .. abi .. "/libc++_shared.so")
+	run:replace("$(DEPLOY_ANDROID_NDK_ROOT)/platforms/android-" .. apilevel .. "/arch-arm/usr/lib/libOpenSLES.so", "lib/" .. abi .. "/libOpenSLES.so")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/AndroidManifest.xml.template\"", "AndroidManifest.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_drawable.xml.template\"", "res/drawable/splash_drawable.xml")
 	run:run("\"$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/splash_theme.xml.template\"", "res/values/splash_theme.xml")
@@ -259,6 +262,7 @@ function deploy(args)
 		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar\" -F \"" .. apk .. ".unsigned.apk\"") == 0)
 		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" lib/" .. abi .. "/libOpenSLES.so", nil) == 0)
 		result = result and (run:execute("\"$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt.exe\" add \"" .. apk .. ".unsigned.apk\" assets/Application.config", nil) == 0)
 
 		if debug then
@@ -274,6 +278,7 @@ function deploy(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt package -f -M AndroidManifest.xml -S res -I $(DEPLOY_ANDROID_HOME)/platforms/android-" .. apilevel .. "/android.jar -F " .. apk .. ".unsigned.apk") == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libApplication.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libc++_shared.so", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk lib/" .. abi .. "/libOpenSLES.so", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
 
 		if debug then
@@ -371,8 +376,8 @@ function migrate(args)
 	local apilevel = os:getEnvironment("DEPLOY_ANDROID_APILEVEL")
 	if apilevel == nil or apilevel == "" then apilevel = "29" end
 
-	local architecture = "aarch64" -- "arch-arm"
-	local abi = "arm64-v8a"	-- armeabi-v7a
+	local architecture = "armv7a" -- "aarch64"
+	local abi = "armeabi-v7a" -- "arm64-v8a"
 
 	-- Create android project.
 	run:mkdir("assets")
