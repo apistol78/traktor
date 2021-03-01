@@ -21,7 +21,7 @@ MemCachedGetStream::MemCachedGetStream(MemCachedPipelineCache* cache, MemCachedP
 :	m_cache(cache)
 ,	m_proto(proto)
 ,	m_key(key)
-,	m_inblock(0)
+,	m_in(0)
 ,	m_index(0)
 {
 }
@@ -116,7 +116,8 @@ bool MemCachedGetStream::requestNextBlock()
 		return false;
 	}
 
-	m_inblock = 0;
+	m_in = 0;
+	m_out = 0;
 
 	for (;;)
 	{
@@ -146,20 +147,20 @@ bool MemCachedGetStream::requestNextBlock()
 			uint32_t bytes = parseString< uint32_t >(args[3]);
 			T_DEBUG(L"\tbytes = " << bytes);
 
-			uint32_t avail = MaxBlockSize - m_inblock;
+			uint32_t avail = MaxBlockSize - m_in;
 			if (bytes > avail)
 			{
 				log::error << L"Unable to request cache block; data block too big" << Endl;
 				return false;
 			}
 
-			if (!m_proto->readData(&m_block[m_inblock], bytes))
+			if (!m_proto->readData(&m_block[m_in], bytes))
 			{
 				log::error << L"Unable to request cache block; unable to receive data" << Endl;
 				return false;
 			}
 
-			m_inblock += bytes;
+			m_in += bytes;
 		}
 		else
 		{
@@ -169,7 +170,7 @@ bool MemCachedGetStream::requestNextBlock()
 		}
 	}
 
-	if (!m_inblock)
+	if (!m_in)
 		return false;
 
 	m_index++;
@@ -223,14 +224,15 @@ int64_t MemCachedGetStream::read(void* block, int64_t nbytes)
 
 	while (navail > 0)
 	{
-		if (m_inblock)
+		if (m_in)
 		{
-			int32_t nget = std::min< int32_t >(navail, m_inblock);
+			int32_t nget = std::min< int32_t >(navail, m_in);
 
-			std::memcpy(writePtr, m_block, nget);
-			std::memmove(m_block, &m_block[nget], m_inblock - nget);
+			std::memcpy(writePtr, &m_block[m_out], nget);
 
-			m_inblock -= nget;
+			m_in -= nget;
+			m_out += nget;
+
 			navail -= nget;
 			writePtr += nget;
 		}

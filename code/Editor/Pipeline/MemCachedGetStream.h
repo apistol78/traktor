@@ -49,7 +49,9 @@ private:
 	Ref< MemCachedProto > m_proto;
 	std::string m_key;
 	uint32_t m_index;
-	int32_t m_inblock;
+
+	int32_t m_in;
+	int32_t m_out;
 	uint8_t m_block[MaxBlockSize + 2];
 };
 
