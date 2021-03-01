@@ -20,7 +20,7 @@
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
-#if !TARGET_OS_IPHONE && !defined(__EMSCRIPTEN__) && !defined(_PS3)
+#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__EMSCRIPTEN__) && !defined(_PS3)
 #	define T_USE_UPDATE_JOBS
 #endif
 
@@ -32,7 +32,7 @@ namespace traktor
 		{
 
 const float c_warmUpDeltaTime = 1.0f / 5.0f;
-#if TARGET_OS_IPHONE
+#if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
 #elif defined(_PS3)
@@ -369,10 +369,9 @@ void EmitterInstance::updateTask(float deltaTime)
 	Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 	Scalar deltaTimeScalar(deltaTime);
 
-	const RefArray< const Modifier >& modifiers = m_emitter->getModifiers();
-	for (RefArray< const Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+	for (auto modifier : m_emitter->getModifiers())
 	{
-		(*i)->update(
+		modifier->update(
 			deltaTimeScalar,
 			updateTransform,
 			m_points,

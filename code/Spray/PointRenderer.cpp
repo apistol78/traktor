@@ -36,9 +36,7 @@ namespace traktor
 		namespace
 		{
 
-#if TARGET_OS_MAC
-const uint32_t c_pointCount = 3000;
-#elif TARGET_OS_IPHONE
+#if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;

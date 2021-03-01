@@ -58,9 +58,7 @@ class WorldSetupContext;
 
 class TerrainSurfaceCache;
 
-//#if !TARGET_OS_IPHONE
-#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
-//#endif
+#define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 
 /*! Terrain entity.
  * \ingroup Terrain

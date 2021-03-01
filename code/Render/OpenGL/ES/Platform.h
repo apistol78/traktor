@@ -12,7 +12,7 @@
 #endif
 
 #include <string>
-#if TARGET_OS_IPHONE || TARGET_OS_IPAD
+#if defined(__IOS__)
 #	include <OpenGLES/ES3/gl.h>
 #	include <OpenGLES/ES3/glext.h>
 #else

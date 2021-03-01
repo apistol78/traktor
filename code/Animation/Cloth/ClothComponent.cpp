@@ -253,7 +253,7 @@ Aabb3 ClothComponent::getBoundingBox() const
 
 void ClothComponent::update(const world::UpdateParams& update)
 {
-#if !TARGET_OS_IPHONE
+#if !defined(__IOS__)
 	const float c_updateDeltaTime = 1.0f / 30.0f;
 #else
 	const float c_updateDeltaTime = 1.0f / 10.0f;
