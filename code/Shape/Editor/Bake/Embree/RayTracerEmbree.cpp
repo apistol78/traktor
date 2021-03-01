@@ -434,10 +434,13 @@ Color4f RayTracerEmbree::tracePath0(
 			Color4f BRDF = hitMaterialColor / Scalar(PI);
 
 			Vector2 uv(random.nextFloat(), random.nextFloat());
-			//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-			Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
-			const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+			Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+			const Scalar probability = 1.0_simd;
+
+			//Vector4 newDirection = lambertianDirection(uv, hitNormal);
+			//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+
 			Scalar cosPhi = dot3(newDirection, hitNormal);
 
 			Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
@@ -450,7 +453,7 @@ Color4f RayTracerEmbree::tracePath0(
 				true
 			);
 
-			color += emittance + (incoming * BRDF * cosPhi / probability) + direct;
+			color += emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 		}
 	}
 #endif
@@ -526,10 +529,13 @@ Color4f RayTracerEmbree::traceSinglePath(
 	Color4f BRDF = hitMaterialColor / Scalar(PI);
 
 	Vector2 uv(random.nextFloat(), random.nextFloat());
-	//Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
-	Vector4 newDirection = lambertianDirection(uv, hitNormal);
 
-	const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+	Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+	const Scalar probability = 1.0_simd;
+
+	//Vector4 newDirection = lambertianDirection(uv, hitNormal);
+	//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+
 	Scalar cosPhi = dot3(newDirection, hitNormal);
 
 	Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
@@ -542,7 +548,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 		true
 	);
 
-	return emittance + (incoming * BRDF * cosPhi / probability) + direct;
+	return emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 }
 
 Scalar RayTracerEmbree::traceAmbientOcclusion(
