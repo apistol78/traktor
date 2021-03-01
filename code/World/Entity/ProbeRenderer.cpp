@@ -292,7 +292,11 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.height = c_faceSize;
 		rgtsd.createDepthStencil = true;
 		rgtsd.usingPrimaryDepthStencil = false;
+#if !defined(__ANDROID__)
 		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
+#else
+		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
+#endif
 		auto faceTargetSetId = renderGraph.addTransientTargetSet(L"Probe render intermediate", rgtsd);
 
 		// Render world to intermediate target.
