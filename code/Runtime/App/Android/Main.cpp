@@ -28,6 +28,12 @@
 
 using namespace traktor;
 
+// \hack Not implemented in Android NDK 29, get unresolved symbol issue on some devices.
+char *fgets_unlocked(char *s, int n, FILE *stream)
+{
+	return fgets(s, n, stream);
+} 
+
 namespace
 {
 
@@ -309,6 +315,7 @@ extern "C" void traktor_main(struct android_app* state)
 	mkdir(state->activity->externalDataPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	app_dummy();
+
 	FileSystem::getInstance().mount(L"assets", new AssetsVolume(state->activity));
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"assets:");
 

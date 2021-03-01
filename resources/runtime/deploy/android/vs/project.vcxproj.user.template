@@ -6,11 +6,12 @@ local fs = FileSystem.getInstance()
 local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
 local base = Path("vs")
 local packagePath = fs:getAbsolutePath(base, Path("../" .. apk)):normalized().pathName
-local symbolPath = fs:getAbsolutePath(base, Path("../lib/arm64-v8a")):normalized().pathName
+--local symbolPath = fs:getAbsolutePath(base, Path("../lib/arm64-v8a")):normalized().pathName
+local symbolPath = fs:getAbsolutePath(base, Path("../lib/armeabi-v7a")):normalized().pathName
 
 --!><?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <PackagePath><!-- output:print(packagePath) --!>.apk</PackagePath>
     <DebuggerFlavor>AndroidDebugger</DebuggerFlavor>
     <AdditionalSymbolSearchPaths><!-- output:print(symbolPath) --!>;$(AdditionalSymbolSearchPaths)</AdditionalSymbolSearchPaths>

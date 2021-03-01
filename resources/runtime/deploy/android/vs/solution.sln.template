@@ -11,11 +11,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "<!-- output:print(projectNa
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|ARM64 = Debug|ARM64
+		Debug|ARM = Debug|ARM
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.Debug|ARM64.Build.0 = Debug|ARM64
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.Debug|ARM.ActiveCfg = Debug|ARM
+		{99574D42-4CEE-4755-A5BF-DCB461F71BA5}.Debug|ARM.Build.0 = Debug|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

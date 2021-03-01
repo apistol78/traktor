@@ -258,11 +258,13 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
     dci.ppEnabledExtensionNames = c_deviceExtensions;
 
+#if !defined(__ANDROID__)
     VkPhysicalDeviceFeatures features = {};
 	features.sampleRateShading = VK_TRUE;
     features.shaderClipDistance = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;
+#endif
 
 #if !defined(__ANDROID__)
 	VkPhysicalDevice8BitStorageFeaturesKHR f8;
