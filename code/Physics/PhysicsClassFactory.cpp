@@ -13,6 +13,7 @@
 #include "Physics/HingeJoint.h"
 #include "Physics/PhysicsClassFactory.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/World/JointComponent.h"
 #include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
@@ -385,6 +386,9 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterComponent->addMethod("move", &CharacterComponent::move);
 	classCharacterComponent->addMethod("jump", &CharacterComponent::jump);
 	registrar->registerClass(classCharacterComponent);
+
+	auto classJointComponent = new AutoRuntimeClass< JointComponent >();
+	registrar->registerClass(classJointComponent);
 
 	auto classRigidBodyComponent = new AutoRuntimeClass< RigidBodyComponent >();
 	classRigidBodyComponent->addProperty("body", &RigidBodyComponent::getBody);
