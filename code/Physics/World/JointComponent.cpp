@@ -1,0 +1,73 @@
+#include "Core/Containers/StaticVector.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Physics/Joint.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/World/JointComponent.h"
+#include "Physics/World/RigidBodyComponent.h"
+#include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
+
+namespace traktor
+{
+	namespace physics
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.JointComponent", JointComponent, world::IEntityComponent)
+
+JointComponent::JointComponent(PhysicsManager* physicsManager, const JointDesc* jointDesc)
+:	m_physicsManager(physicsManager)
+,	m_jointDesc(jointDesc)
+{
+}
+
+void JointComponent::destroy()
+{
+	safeDestroy(m_joint);
+	m_physicsManager = nullptr;
+}
+
+void JointComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
+}
+
+void JointComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 JointComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void JointComponent::update(const world::UpdateParams& update)
+{
+	// Lazy create joint.
+	if (!m_joint)
+	{
+		auto groupComponent = m_owner->getComponent< world::GroupComponent >();
+		if (!groupComponent)
+			return;
+
+		// Gather rigid bodies.
+		StaticVector< Body*, 2 > bodies;
+		for (auto entity : groupComponent->getEntities())
+		{
+			auto rigidBodyComponent = entity->getComponent< RigidBodyComponent >();
+			if (rigidBodyComponent)
+			{
+				bodies.push_back(rigidBodyComponent->getBody());
+				if (bodies.full())
+					break;
+			}
+		}
+		while (!bodies.full())
+			bodies.push_back(nullptr);
+
+		if (bodies[0])
+			m_joint = m_physicsManager->createJoint(m_jointDesc, m_owner->getTransform(), bodies[0], bodies[1]);
+	}
+}
+
+	}
+}
