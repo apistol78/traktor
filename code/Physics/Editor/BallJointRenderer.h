@@ -16,17 +16,9 @@ public:
 
 	virtual void draw(
 		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
-		const JointDesc* jointDesc
-	) const override final;
-
-	virtual void draw(
-		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
-		const Transform& body2Transform0,
-		const Transform& body2Transform,
+		const Transform jointTransform[2],
+		const Transform body1Transform[2],
+		const Transform body2Transform[2],
 		const JointDesc* jointDesc
 	) const override final;
 };

@@ -68,7 +68,7 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 					if (!limbs[i])
 						continue;
 
-					Transform limbTransform = limbs[i]->getTransform();
+					Transform limbTransform[] { limbs[i]->getTransform(), limbs[i]->getTransform() };
 
 					physics::CapsuleShapeDesc shapeDesc;
 					shapeDesc.setRadius(joint->getRadius());
@@ -77,7 +77,6 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 					m_physicsRenderer.draw(
 						m_context->getResourceManager(),
 						primitiveRenderer,
-						limbTransform,
 						limbTransform,
 						&shapeDesc
 					);

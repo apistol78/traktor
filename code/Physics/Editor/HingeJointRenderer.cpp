@@ -16,39 +16,16 @@ const TypeInfo& HingeJointRenderer::getDescType() const
 
 void HingeJointRenderer::draw(
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform jointTransform[2],
+	const Transform body1Transform[2],
+	const Transform body2Transform[2],
 	const JointDesc* jointDesc
 ) const
 {
-	const HingeJointDesc* hingeJointDesc = checked_type_cast< const HingeJointDesc*, false >(jointDesc);
-
+	const HingeJointDesc* hingeJointDesc = mandatory_non_null_type_cast< const HingeJointDesc* >(jointDesc);
 	const Scalar c_axisLength(5.0f);
 
-	Vector4 jointAnchor = hingeJointDesc->getAnchor().xyz1();
-	Vector4 jointAxis = hingeJointDesc->getAxis().xyz0();
-
-	primitiveRenderer->drawLine(
-		jointAnchor - jointAxis * c_axisLength,
-		jointAnchor + jointAxis * c_axisLength,
-		Color4ub(255, 255, 0)
-	);
-}
-
-void HingeJointRenderer::draw(
-	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
-	const Transform& body2Transform0,
-	const Transform& body2Transform,
-	const JointDesc* jointDesc
-) const
-{
-	const HingeJointDesc* hingeJointDesc = checked_type_cast< const HingeJointDesc*, false >(jointDesc);
-
-	const Scalar c_axisLength(5.0f);
-
-	primitiveRenderer->pushWorld((body1Transform * body1Transform0.inverse()).toMatrix44());
+	primitiveRenderer->pushWorld(jointTransform[1].toMatrix44());
 
 	Vector4 jointAnchor = hingeJointDesc->getAnchor().xyz1();
 	Vector4 jointAxis = hingeJointDesc->getAxis().xyz0();

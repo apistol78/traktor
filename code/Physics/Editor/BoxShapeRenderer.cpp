@@ -17,8 +17,7 @@ const TypeInfo& BoxShapeRenderer::getDescType() const
 void BoxShapeRenderer::draw(
 	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform body1Transform[2],
 	const ShapeDesc* shapeDesc
 ) const
 {
@@ -27,7 +26,7 @@ void BoxShapeRenderer::draw(
 
 	Aabb3 boundingBox(-boxShapeDesc->getExtent() - margin, boxShapeDesc->getExtent() + margin);
 
-	primitiveRenderer->pushWorld((body1Transform * shapeDesc->getLocalTransform()).toMatrix44());
+	primitiveRenderer->pushWorld((body1Transform[1] * shapeDesc->getLocalTransform()).toMatrix44());
 
 	primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 	primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));

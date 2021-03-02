@@ -17,14 +17,13 @@ const TypeInfo& CapsuleShapeRenderer::getDescType() const
 void CapsuleShapeRenderer::draw(
 	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform body1Transform[2],
 	const ShapeDesc* shapeDesc
 ) const
 {
 	const CapsuleShapeDesc* capsuleShapeDesc = checked_type_cast< const CapsuleShapeDesc*, false >(shapeDesc);
 	primitiveRenderer->drawWireCylinder(
-		(body1Transform * shapeDesc->getLocalTransform()).toMatrix44(),
+		(body1Transform[1] * shapeDesc->getLocalTransform()).toMatrix44(),
 		capsuleShapeDesc->getRadius(),
 		capsuleShapeDesc->getLength(),
 		Color4ub(0, 255, 255, 180)
