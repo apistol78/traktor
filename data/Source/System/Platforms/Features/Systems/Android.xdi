@@ -147,7 +147,7 @@
 			<item>
 				<first>TexturePipeline.SkipMips</first>
 				<second type="traktor.PropertyInteger">
-					<value>0</value>
+					<value>1</value>
 				</second>
 			</item>
 		</value>
