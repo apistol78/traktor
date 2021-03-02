@@ -311,7 +311,7 @@ void BodyBullet::integrate(float deltaTime)
 void BodyBullet::addConstraint(btTypedConstraint* constraint)
 {
 	m_constraints.push_back(constraint);
-	if (m_enable)
+	if (m_enable && m_callback)
 		m_callback->insertConstraint(constraint);
 }
 
@@ -320,7 +320,7 @@ void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 	auto it = std::find(m_constraints.begin(), m_constraints.end(), constraint);
 	if (it != m_constraints.end())
 	{
-		if (m_enable)
+		if (m_enable && m_callback)
 			m_callback->removeConstraint(constraint);
 		m_constraints.erase(it);
 	}

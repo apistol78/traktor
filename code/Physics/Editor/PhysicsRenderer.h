@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,31 +48,22 @@ public:
 
 	void draw(
 		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
-		const JointDesc* jointDesc
-	) const;
-
-	void draw(
-		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
-		const Transform& body2Transform0,
-		const Transform& body2Transform,
+		const Transform jointTransform[2],
+		const Transform body1Transform[2],
+		const Transform body2Transform[2],
 		const JointDesc* jointDesc
 	) const;
 
 	void draw(
 		resource::IResourceManager* resourceManager,
 		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
+		const Transform body1Transform[2],
 		const ShapeDesc* shapeDesc
 	) const;
 
 private:
-	std::map< const TypeInfo*, Ref< IPhysicsJointRenderer > > m_jointRenderers;
-	std::map< const TypeInfo*, Ref< IPhysicsShapeRenderer > > m_shapeRenderers;
+	SmallMap< const TypeInfo*, Ref< IPhysicsJointRenderer > > m_jointRenderers;
+	SmallMap< const TypeInfo*, Ref< IPhysicsShapeRenderer > > m_shapeRenderers;
 };
 
 	}

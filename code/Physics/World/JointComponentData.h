@@ -37,6 +37,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const JointDesc* getJointDesc() const { return m_jointDesc; }
+
 private:
 	Ref< JointDesc > m_jointDesc;
 };

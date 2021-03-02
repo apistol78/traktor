@@ -19,8 +19,7 @@ const TypeInfo& MeshShapeRenderer::getDescType() const
 void MeshShapeRenderer::draw(
 	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform body1Transform[2],
 	const ShapeDesc* shapeDesc
 ) const
 {
@@ -29,7 +28,7 @@ void MeshShapeRenderer::draw(
 	resource::Proxy< Mesh > mesh;
 	if (resourceManager->bind(meshShapeDesc->getMesh(), mesh))
 	{
-		Transform T = body1Transform * Transform(mesh->getOffset()) * shapeDesc->getLocalTransform();
+		Transform T = body1Transform[1] * Transform(mesh->getOffset()) * shapeDesc->getLocalTransform();
 
 		Vector4 Vc = primitiveRenderer->getView() * T.translation().xyz1();
 		if (Vc.z() < 0.0f || Vc.z() > 100.0f)

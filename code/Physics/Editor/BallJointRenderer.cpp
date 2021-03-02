@@ -16,28 +16,14 @@ const TypeInfo& BallJointRenderer::getDescType() const
 
 void BallJointRenderer::draw(
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform jointTransform[2],
+	const Transform body1Transform[2],
+	const Transform body2Transform[2],
 	const JointDesc* jointDesc
 ) const
 {
-	const BallJointDesc* ballJointDesc = checked_type_cast< const BallJointDesc*, false >(jointDesc);
-	Vector4 jointAnchorW = ballJointDesc->getAnchor().xyz1();
-	primitiveRenderer->drawSolidPoint(jointAnchorW, 4.0f, Color4ub(255, 255, 255));
-}
-
-void BallJointRenderer::draw(
-	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
-	const Transform& body2Transform0,
-	const Transform& body2Transform,
-	const JointDesc* jointDesc
-) const
-{
-	const BallJointDesc* ballJointDesc = checked_type_cast< const BallJointDesc*, false >(jointDesc);
-	Vector4 jointAnchor = body1Transform0.inverse() * ballJointDesc->getAnchor().xyz1();
-	Vector4 jointAnchorW = body1Transform * jointAnchor;
+	const BallJointDesc* ballJointDesc = mandatory_non_null_type_cast< const BallJointDesc* >(jointDesc);
+	Vector4 jointAnchorW = jointTransform[1] * ballJointDesc->getAnchor().xyz1();
 	primitiveRenderer->drawSolidPoint(jointAnchorW, 4.0f, Color4ub(255, 255, 255));
 }
 

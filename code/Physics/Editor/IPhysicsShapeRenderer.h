@@ -44,8 +44,7 @@ public:
 	virtual void draw(
 		resource::IResourceManager* resourceManager,
 		render::PrimitiveRenderer* primitiveRenderer,
-		const Transform& body1Transform0,
-		const Transform& body1Transform,
+		const Transform body1Transform[2],
 		const ShapeDesc* shapeDesc
 	) const = 0;
 };

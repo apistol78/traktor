@@ -17,14 +17,13 @@ const TypeInfo& CylinderShapeRenderer::getDescType() const
 void CylinderShapeRenderer::draw(
 	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
-	const Transform& body1Transform0,
-	const Transform& body1Transform,
+	const Transform body1Transform[2],
 	const ShapeDesc* shapeDesc
 ) const
 {
 	const CylinderShapeDesc* cylinderShapeDesc = checked_type_cast< const CylinderShapeDesc*, false >(shapeDesc);
 	primitiveRenderer->drawWireCylinder(
-		(body1Transform * shapeDesc->getLocalTransform()).toMatrix44(),
+		(body1Transform[1] * shapeDesc->getLocalTransform()).toMatrix44(),
 		cylinderShapeDesc->getRadius(),
 		cylinderShapeDesc->getLength(),
 		Color4ub(0, 255, 255, 180)
