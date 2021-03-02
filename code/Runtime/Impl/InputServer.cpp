@@ -153,8 +153,8 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 
 void InputServer::destroy()
 {
-	m_rumbleEffectPlayer = 0;
-	m_inputSystem = 0;
+	m_rumbleEffectPlayer = nullptr;
+	m_inputSystem = nullptr;
 }
 
 void InputServer::createResourceFactories(IEnvironment* environment)
@@ -198,7 +198,7 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 			}
 		}
 		else
-			m_inputMapping = 0;
+			m_inputMapping = nullptr;
 
 		m_inputConstantsHash = DeepHash(inputConstants).get();
 
@@ -206,14 +206,14 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 	}
 
 	bool enableRumble = settings->getProperty< bool >(L"Input.Rumble", true);
-	if (enableRumble != bool(m_rumbleEffectPlayer != 0))
+	if (enableRumble != bool(m_rumbleEffectPlayer != nullptr))
 	{
 		if (enableRumble)
 			m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
 		else if (m_rumbleEffectPlayer)
 		{
 			m_rumbleEffectPlayer->stopAll();
-			m_rumbleEffectPlayer = 0;
+			m_rumbleEffectPlayer = nullptr;
 		}
 		result |= CrAccepted;
 	}
@@ -266,11 +266,11 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		// Abort has been triggered; wait until abort key has been released.
 		if (m_inputFabricatorAbortDevice->getControlValue(m_inputFabricatorAbortControl) < 0.5f)
 		{
-			m_inputSourceFabricator = 0;
+			m_inputSourceFabricator = nullptr;
 			if (m_inputFabricatorAbortUnbind)
 			{
 				if (m_inputMappingSourceData)
-					m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, 0);
+					m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, nullptr);
 
 				// Update mapping with new, fabricated, source.
 				if (m_inputMappingSourceData && m_inputMappingStateData)
@@ -295,12 +295,12 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 					}
 				}
 				else
-					m_inputMapping = 0;
+					m_inputMapping = nullptr;
 			}
 			else
 				m_inputFabricatorAborted = true;
 
-			m_inputFabricatorAbortDevice = 0;
+			m_inputFabricatorAbortDevice = nullptr;
 			m_inputFabricatorAbortControl = 0;
 			m_inputFabricatorAbortUnbind = false;
 		}
@@ -310,18 +310,17 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		Ref< input::IInputSourceData > sourceData = m_inputSourceFabricator->update();
 		if (sourceData)
 		{
-			m_inputSourceFabricator = 0;
+			m_inputSourceFabricator = nullptr;
 
 			if (m_inputMappingSourceData)
 			{
 				uint32_t sourceHash = DeepHash(sourceData).get();
 
 				// Discard duplicated input sources.
-				const std::map< std::wstring, Ref< input::IInputSourceData > >& currentSourceData = m_inputMappingSourceData->getSourceData();
-				for (std::map< std::wstring, Ref< input::IInputSourceData > >::const_iterator i = currentSourceData.begin(); i != currentSourceData.end(); ++i)
+				for (auto it : m_inputMappingSourceData->getSourceData())
 				{
-					if (DeepHash(i->second) == sourceHash)
-						m_inputMappingSourceData->setSourceData(i->first, 0);
+					if (DeepHash(it.second) == sourceHash)
+						m_inputMappingSourceData->setSourceData(it.first, nullptr);
 				}
 
 				m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
@@ -350,7 +349,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				}
 			}
 			else
-				m_inputMapping = 0;
+				m_inputMapping = nullptr;
 
 			m_inputFabricatorAborted = false;
 		}
@@ -409,13 +408,13 @@ bool InputServer::createInputMapping(const input::InputMappingStateData* stateDa
 {
 	if (!m_inputMappingSourceData)
 	{
-		log::error << L"Unable to create input mapping; no source data" << Endl;
+		log::error << L"Unable to create input mapping; no source data." << Endl;
 		return false;
 	}
 
 	if ((m_inputMappingStateData = stateData) == 0)
 	{
-		log::error << L"Unable to create input mapping; no state data" << Endl;
+		log::error << L"Unable to create input mapping; no state data." << Endl;
 		return false;
 	}
 
@@ -451,7 +450,7 @@ bool InputServer::fabricateInputSource(const std::wstring& sourceId, input::Inpu
 
 bool InputServer::isFabricating() const
 {
-	return m_inputSourceFabricator != 0;
+	return m_inputSourceFabricator != nullptr;
 }
 
 bool InputServer::abortedFabricating() const
@@ -464,9 +463,9 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 	if (!m_inputMappingDefaultSourceData || !m_inputMappingSourceData)
 		return false;
 
-	const std::map< std::wstring, Ref< input::IInputSourceData > >& defaultSourceData = m_inputMappingDefaultSourceData->getSourceData();
+	const auto& defaultSourceData = m_inputMappingDefaultSourceData->getSourceData();
 
-	std::map< std::wstring, Ref< input::IInputSourceData > >::const_iterator i = defaultSourceData.find(sourceId);
+	auto i = defaultSourceData.find(sourceId);
 	if (i == defaultSourceData.end())
 		return false;
 
@@ -504,10 +503,9 @@ bool InputServer::isIdle() const
 	if (!m_inputMapping)
 		return false;
 
-	const SmallMap< input::handle_t, Ref< input::InputState > >& states = m_inputMapping->getStates();
-	for (SmallMap< input::handle_t, Ref< input::InputState > >::const_iterator i = states.begin(); i != states.end(); ++i)
+	for (auto it : m_inputMapping->getStates())
 	{
-		float dV = i->second->getValue() - i->second->getPreviousValue();
+		float dV = it.second->getValue() - it.second->getPreviousValue();
 		if (std::abs(dV) > FUZZY_EPSILON)
 			return false;
 	}
@@ -538,12 +536,11 @@ void InputServer::revert()
 		Ref< const PropertyGroup > inputConstants = m_settings->getProperty< PropertyGroup >(L"Input.Constants");
 		if (inputConstants)
 		{
-			const auto& values = inputConstants->getValues();
-			for (auto i = values.begin(); i != values.end(); ++i)
+			for (auto it : inputConstants->getValues())
 			{
 				m_inputMapping->setValue(
-					i->first,
-					PropertyFloat::get(i->second)
+					it.first,
+					PropertyFloat::get(it.second)
 				);
 			}
 		}
