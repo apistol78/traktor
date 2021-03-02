@@ -1286,17 +1286,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	VkColorSpaceKHR colorSpace = surfaceFormats[0].colorSpace;
 
-	// Determine number of images in swapchain.
-#if defined(__ANDROID__) || defined(__IOS__)
-	uint32_t desiredImageCount = 3;
-#else
-	uint32_t desiredImageCount = 2;
-#endif
-	if (desiredImageCount < surfaceCapabilities.minImageCount)
-		desiredImageCount = surfaceCapabilities.minImageCount;
-	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
-		desiredImageCount = surfaceCapabilities.maxImageCount;
-
 	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
 	{
@@ -1308,23 +1297,39 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 
-	// Determine presentation mode.
+	// Determine presentation mode and desired number of images.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
+	uint32_t desiredImageCount = 2;
 #if defined(__ANDROID__) || defined(__IOS__) || defined(__LINUX__)
 	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+	{
 		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+		desiredImageCount = 3;
+	}
+#else
+	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
+		presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
 #endif
 	if (vblanks <= 0)
 	{
 		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
 			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 	}
+
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
 		log::debug << L"Using FIFO presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
+		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
 		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
 		log::debug << L"Using MAILBOX presentation mode." << Endl;
+
+	// Check so desired image count is supported.
+	if (desiredImageCount < surfaceCapabilities.minImageCount)
+		desiredImageCount = surfaceCapabilities.minImageCount;
+	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
+		desiredImageCount = surfaceCapabilities.maxImageCount;
 
 	// Create swap chain.
 	VkSwapchainCreateInfoKHR scci = {};
