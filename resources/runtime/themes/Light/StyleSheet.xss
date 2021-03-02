@@ -277,7 +277,7 @@
 				</item>
 				<item>
 					<first>background-color-error</first>
-					<second>255, 45, 45, 255</second>
+					<second>212, 0, 0, 255</second>
 				</item>
 				<item>
 					<first>background-color-info</first>
@@ -285,11 +285,11 @@
 				</item>
 				<item>
 					<first>background-color-warning</first>
-					<second>255, 210, 87, 255</second>
+					<second>255, 187, 75, 255</second>
 				</item>
 				<item>
 					<first>color-error</first>
-					<second>100, 0, 0, 255</second>
+					<second>255, 255, 255, 255</second>
 				</item>
 				<item>
 					<first>color-info</first>

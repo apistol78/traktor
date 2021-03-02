@@ -1,7 +1,7 @@
 #pragma once
 
-#include <list>
 #include <map>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Semaphore.h"
 #include "Ui/Widget.h"
 
@@ -32,7 +32,7 @@ class T_DLLCLASS LogList : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum LogLevel
+	enum LogLevel : uint8_t
 	{
 		LvInfo		= 1 << 0,
 		LvWarning	= 1 << 1,
@@ -45,19 +45,17 @@ public:
 		virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const = 0;
 	};
 
-	LogList();
-
 	bool create(Widget* parent, int style, const ISymbolLookup* lookup);
 
 	void add(uint32_t threadId, LogLevel level, const std::wstring& text);
 
 	void removeAll();
 
-	void setFilter(uint32_t filter);
+	void setFilter(uint8_t filter);
 
-	uint32_t getFilter() const;
+	uint8_t getFilter() const;
 
-	bool copyLog(uint32_t filter = ~0U);
+	bool copyLog(uint8_t filter = ~0);
 
 	virtual Size getPreferedSize() const override;
 
@@ -65,23 +63,24 @@ private:
 	struct Entry
 	{
 		uint32_t threadId;
-		LogLevel logLevel;
-		std::wstring logText;
+		LogLevel level;
+		std::wstring text;
 	};
 
-	typedef std::list< Entry > log_list_t;
+	typedef AlignedVector< Entry > log_list_t;
 
-	const ISymbolLookup* m_lookup;
+	const ISymbolLookup* m_lookup = nullptr;
 	Ref< ScrollBar > m_scrollBar;
 	Ref< IBitmap > m_icons;
 	log_list_t m_pending;
 	Semaphore m_pendingLock;
 	log_list_t m_logFull;
 	log_list_t m_logFiltered;
+	uint32_t m_logCount[3] = { 0, 0, 0 };
 	std::map< uint32_t, uint32_t > m_threadIndices;
-	int32_t m_itemHeight;
-	uint32_t m_filter;
-	uint32_t m_nextThreadIndex;
+	int32_t m_itemHeight = 0;
+	uint8_t m_filter = LvInfo | LvWarning | LvError;
+	uint32_t m_nextThreadIndex = 0;
 
 	void updateScrollBar();
 
@@ -92,8 +91,6 @@ private:
 	void eventMouseWheel(MouseWheelEvent* event);
 
 	void eventScroll(ScrollEvent* event);
-
-	void eventTimer(TimerEvent* event);
 };
 
 	}
