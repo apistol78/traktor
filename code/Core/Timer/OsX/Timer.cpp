@@ -21,10 +21,6 @@ double absoluteToSeconds(uint64_t abs)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
-:	m_frequency(0)
-,	m_first(0)
-,	m_last(0)
-,	m_paused(true)
 {
 }
 

@@ -42,10 +42,15 @@ public:
 	double getDeltaTime();
 
 private:
-	int64_t m_frequency;
-	int64_t m_first;
-	int64_t m_last;
-	bool m_paused;
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__LINUX__)
+	double m_first = 0.0;
+	double m_last = 0.0;
+#else
+	int64_t m_frequency = 0;
+	int64_t m_first = 0;
+	int64_t m_last = 0;
+#endif
+	bool m_paused = true;
 };
 
 }

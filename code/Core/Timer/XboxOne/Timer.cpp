@@ -13,10 +13,6 @@ int64_t s_frequency = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
-:	m_frequency(0)
-,	m_first(0)
-,	m_last(0)
-,	m_paused(true)
 {
 	if (!s_frequency)
 		QueryPerformanceFrequency(reinterpret_cast <LARGE_INTEGER* >(&s_frequency));
