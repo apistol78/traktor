@@ -30,50 +30,56 @@ public:
 		return *ms_instance;
 	}
 
-	Ref< TcpSocket > connect(const SocketAddressIPv4& addr)
+	TcpSocket* connect(const SocketAddressIPv4& addr)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-		for (std::list< SocketEntry >::iterator i = m_entries.begin(); i != m_entries.end(); ++i)
+		// Try to get connection from pool.
 		{
-			if (!i->inuse && i->addr.getAddr() == addr.getAddr() && i->addr.getPort() == addr.getPort())
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			for (auto& entry : m_entries)
 			{
-				i->inuse = true;
-				return i->socket;
+				if (!entry.inuse && entry.addr.getAddr() == addr.getAddr() && entry.addr.getPort() == addr.getPort())
+				{
+					entry.inuse = true;
+					return entry.socket;
+				}
 			}
 		}
 
+		// Create new connection.
 		Ref< TcpSocket > socket = new TcpSocket();
 		if (!socket->connect(addr))
-			return 0;
-
+			return nullptr;
 		socket->setNoDelay(true);
 
 		SocketEntry e;
 		e.addr = addr;
 		e.socket = socket;
 		e.inuse = true;
-		m_entries.push_back(e);
 
+		// Add to pool so we can reuse later.
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_entries.push_back(e);
+		}
 		return socket;
 	}
 
 	void disconnect(TcpSocket* socket, bool failure)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		for (std::list< SocketEntry >::iterator i = m_entries.begin(); i != m_entries.end(); ++i)
+		for (auto it = m_entries.begin(); it != m_entries.end(); ++it)
 		{
-			if (i->socket == socket)
+			if (it->socket == socket)
 			{
-				T_FATAL_ASSERT (i->inuse);
+				T_ASSERT(it->inuse);
 				if (!failure)
 				{
-					i->inuse = false;
+					it->inuse = false;
 				}
 				else
 				{
-					i->socket->close();
-					m_entries.erase(i);
+					it->socket->close();
+					m_entries.erase(it);
 				}
 				return;
 			}
@@ -85,7 +91,7 @@ protected:
 	virtual void destroy()
 	{
 		T_ASSERT(ms_instance == this);
-		delete ms_instance, ms_instance = 0;
+		delete ms_instance, ms_instance = nullptr;
 	}
 
 private:
@@ -107,7 +113,7 @@ private:
 	std::list< SocketEntry > m_entries;
 };
 
-ConnectionPool* ConnectionPool::ms_instance = 0;
+ConnectionPool* ConnectionPool::ms_instance = nullptr;
 
 		}
 
@@ -119,7 +125,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	if (!socket)
 	{
 		log::error << L"RemoteStream; unable to connect to stream server." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x01, id);
@@ -131,14 +137,14 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	{
 		log::error << L"RemoteStream; no status from server." << Endl;
 		ConnectionPool::getInstance().disconnect(socket, true);
-		return 0;
+		return nullptr;
 	}
 
 	if (!status)
 	{
 		log::error << L"RemoteStream; invalid status from server." << Endl;
 		ConnectionPool::getInstance().disconnect(socket, true);
-		return 0;
+		return nullptr;
 	}
 
 	if (avail > 0)
@@ -158,7 +164,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 			{
 				log::error << L"RemoteStream; unexpected disconnect from server." << Endl;
 				ConnectionPool::getInstance().disconnect(socket, true);
-				return 0;
+				return nullptr;
 			}
 			nread += result;
 			ptr += result;
@@ -166,7 +172,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 
 		net::sendBatch< uint8_t >(socket, 0x02);
 		ConnectionPool::getInstance().disconnect(socket, false);
-		socket = 0;
+		socket = nullptr;
 
 		return dm;
 	}
@@ -184,7 +190,7 @@ RemoteStream::~RemoteStream()
 	{
 		net::sendBatch< uint8_t >(m_socket, 0x02);
 		ConnectionPool::getInstance().disconnect(m_socket, false);
-		m_socket = 0;
+		m_socket = nullptr;
 	}
 }
 
@@ -288,7 +294,7 @@ int64_t RemoteStream::write(const void* block, int64_t nbytes)
 
 	while (nwritten < nbytes)
 	{
-		int32_t write = int32_t(std::min< int64_t >(nbytes - nwritten, 65536));
+		int32_t write = (int32_t)std::min< int64_t >(nbytes - nwritten, 65536);
 		int32_t result = m_socket->send(&ptr[nwritten], write);
 		if (result != write)
 			break;
