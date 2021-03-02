@@ -57,6 +57,33 @@
 
 		{
 			"type": "shell",
+			"label": "Platform - ReleaseStatic",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh macOS ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"windows": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows ReleaseStatic",
+				"problemMatcher": [
+					"$msCompile"
+				]			
+			}			
+		},
+
+		{
+			"type": "shell",
 			"label": "Android - DebugStatic",
 			"group": "build",
 
