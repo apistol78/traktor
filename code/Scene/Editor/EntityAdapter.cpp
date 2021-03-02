@@ -424,7 +424,7 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 
 void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	if (!isVisible(true))
+	if (!isVisible() || isLocked())
 		return;
 
 	if (m_entityEditor)
