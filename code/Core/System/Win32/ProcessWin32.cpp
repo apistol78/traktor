@@ -63,7 +63,7 @@ public:
 		}
 
 		DWORD nread = 0;
-		if (!ReadFile(m_hPipe, block, min(npending, nbytes), &nread, NULL))
+		if (!ReadFile(m_hPipe, block, (DWORD)min(npending, nbytes), &nread, NULL))
 			return -1;
 
 		return int64_t(nread);
@@ -142,14 +142,36 @@ bool ProcessWin32::wait(int32_t timeout)
 	return WaitForSingleObject(m_hProcess, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0;
 }
 
-Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
+IStream* ProcessWin32::getPipeStream(StdPipe pipe)
 {
 	if (pipe == SpStdOut)
 		return m_pipeStdOut;
 	else if (pipe == SpStdErr)
 		return m_pipeStdErr;
 	else
-		return 0;
+		return nullptr;
+}
+
+IStream* ProcessWin32::waitPipeStream(int32_t timeout)
+{
+	HANDLE hs[] = { m_hStdOutRead, m_hStdErrRead, m_hProcess };
+
+	DWORD result = WaitForMultipleObjects(3, hs, FALSE, timeout);
+	if (result >= WAIT_OBJECT_0 && result < WAIT_OBJECT_0 + 3)
+	{
+		if (result == WAIT_OBJECT_0)
+			return m_pipeStdOut;
+		else if (result == WAIT_OBJECT_0 + 1)
+			return m_pipeStdErr;
+		else
+		{
+			// Process signal, probably terminated.
+			return nullptr;
+		}
+	}
+
+	// Timeout.
+	return nullptr;
 }
 
 bool ProcessWin32::signal(SignalType signalType)
@@ -160,10 +182,12 @@ bool ProcessWin32::signal(SignalType signalType)
 		if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT, m_dwProcessId))
 			return false;
 		break;
+
 	case StCtrlBreak:
 		if (!GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_dwProcessId))
 			return false;
 		break;
+
 	default:
 		return false;
 	}

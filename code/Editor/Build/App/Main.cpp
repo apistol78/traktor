@@ -302,32 +302,35 @@ int main(int argc, const char** argv)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	for (;;)
+	while (!process->wait(0))
 	{
-		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
-		if (result1 == PipeReader::RtOk)
-			log::info << str << Endl;
-
-		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
-		if (result2 == PipeReader::RtOk)
+		auto pipe = process->waitPipeStream(100);
+		if (pipe == process->getPipeStream(IProcess::SpStdOut))
 		{
-			str = trim(str);
-			if (!str.empty())
+			PipeReader::Result result;
+			while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
+				log::info << str << Endl;
+		}
+		else if (pipe == process->getPipeStream(IProcess::SpStdErr))
+		{
+			PipeReader::Result result;
+			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
 			{
-				log::error << str << Endl;
-				errors.push_back(str);
+				str = trim(str);
+				if (!str.empty())
+				{
+					log::error << str << Endl;
+					errors.push_back(str);
+				}
 			}
 		}
-
-		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
-			break;
 	}
 
 	if (!errors.empty())
 	{
 		log::error << L"Unsuccessful build, error(s):" << Endl;
-		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
-			log::error << L"\t" << *i << Endl;
+		for (const auto& error : errors)
+			log::error << L"\t" << error << Endl;
 	}
 
 	int32_t exitCode = process->exitCode();
