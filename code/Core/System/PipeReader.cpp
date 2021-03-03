@@ -2,9 +2,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/PipeReader.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
 
 namespace traktor
 {
@@ -20,10 +17,9 @@ PipeReader::~PipeReader()
 {
 }
 
-PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
+PipeReader::Result PipeReader::readLine(std::wstring& outLine)
 {
-	char buffer[1024];
-
+	char buffer[64];
 	outLine.clear();
 
 	// Pop line from line queue if any.
@@ -38,59 +34,47 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 	if (!m_stream)
 		return RtEnd;
 
-	Timer tt;
-	tt.start();
-
-	while (m_lines.empty())
+	int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
+	if (nrecv < 0)
 	{
-		int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
-		if (nrecv < 0)
-		{
-			m_stream = 0;
-			break;
-		}
-
-		if (nrecv == 0)
-		{
-			if (int32_t(tt.getElapsedTime() * 1000.0) >= timeout)
-				break;
-
-			ThreadManager::getInstance().getCurrentThread()->sleep(1);
-			continue;
-		}
-
-		// Transform into lines.
-		for (int64_t i = 0; i < nrecv; ++i)
-		{
-			char ch = buffer[i];
-
-#if defined(__APPLE__) || defined(__LINUX__)
-			if (ch == 10)
-			{
-				m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
-				m_acc.resize(0);
-			}
-			else
-				m_acc.push_back(ch);
-#else
-			if (ch == 13)
-			{
-				m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
-				m_acc.resize(0);
-			}
-			else if (ch != 10)
-				m_acc.push_back(ch);
-#endif
-		}
+		m_stream = nullptr;
+		return RtEnd;
 	}
 
-	if (m_lines.empty())
-		return m_stream ? RtTimeout : RtEnd;
+	// Transform into lines.
+	for (int64_t i = 0; i < nrecv; ++i)
+	{
+		char ch = buffer[i];
+
+#if defined(__APPLE__) || defined(__LINUX__)
+		if (ch == 10)
+		{
+			m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
+			m_acc.resize(0);
+		}
+		else
+			m_acc.push_back(ch);
+#else
+		if (ch == 13)
+		{
+			m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
+			m_acc.resize(0);
+		}
+		else if (ch != 10)
+			m_acc.push_back(ch);
+#endif
+	}
 
 	// Pop line from queue.
-	outLine = m_lines.front();
-	m_lines.pop_front();
-	return RtOk;
+	if (!m_lines.empty())
+	{
+		outLine = m_lines.front();
+		m_lines.pop_front();
+		return RtOk;
+	}
+
+	// No lines in queue.
+	return RtEmpty;
 }
 
 }

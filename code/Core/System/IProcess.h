@@ -61,9 +61,15 @@ public:
 
 	/*! Get pipe stream.
 	 *
-	 * \return Exit code.
+	 * \return Pipe stream.
 	 */
-	virtual Ref< IStream > getPipeStream(StdPipe pipe) = 0;
+	virtual IStream* getPipeStream(StdPipe pipe) = 0;
+
+	/*! Wait for a pipe stream which is ready to be read.
+	 *
+	 * \return Pipe stream.
+	 */
+	virtual IStream* waitPipeStream(int32_t timeout) = 0;
 
 	/*! Send signal to process.
 	 *

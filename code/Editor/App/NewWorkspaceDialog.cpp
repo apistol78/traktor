@@ -185,18 +185,21 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				);
 
 				std::wstring str;
-				for (;;)
+				while (!process->wait(0))
 				{
-					PipeReader::Result result1 = stdOutReader.readLine(str, 10);
-					if (result1 == PipeReader::RtOk)
+					auto pipe = process->waitPipeStream(100);
+					if (pipe == process->getPipeStream(IProcess::SpStdOut))
+					{
+						PipeReader::Result result;
+						while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
 						log::info << str << Endl;
-
-					PipeReader::Result result2 = stdErrReader.readLine(str, 10);
-					if (result2 == PipeReader::RtOk)
-						log::error << str << Endl;
-
-					if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
-						break;
+					}
+					else if (pipe == process->getPipeStream(IProcess::SpStdErr))
+					{
+						PipeReader::Result result;
+						while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
+							log::error << str << Endl;
+					}
 				}
 
 				if (process->exitCode() == 0)

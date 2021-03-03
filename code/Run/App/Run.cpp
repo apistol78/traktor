@@ -191,29 +191,31 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	StringOutputStream stdOut;
 	StringOutputStream stdErr;
 	std::wstring str;
-	for (;;)
+	while (!process->wait(0))
 	{
-		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
-		if (result1 == PipeReader::RtOk)
+		auto pipe = process->waitPipeStream(100);
+		if (pipe == process->getPipeStream(IProcess::SpStdOut))
 		{
-			if (fileOutput)
-				(*fileOutput) << str << Endl;
-			else if (!nullOutput)
-				log::info << str << Endl;
-
-			stdOut << str << Endl;
+			PipeReader::Result result;
+			while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
+			{
+				if (fileOutput)
+					(*fileOutput) << str << Endl;
+				else if (!nullOutput)
+					log::info << str << Endl;
+				stdOut << str << Endl;
+			}
 		}
-
-		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
-		if (result2 == PipeReader::RtOk)
+		else if (pipe == process->getPipeStream(IProcess::SpStdErr))
 		{
-			if (!nullOutput)
-				log::error << str << Endl;
-			stdErr << str << Endl;
+			PipeReader::Result result;
+			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
+			{
+				if (!nullOutput)
+					log::info << str << Endl;
+				stdErr << str << Endl;
+			}
 		}
-
-		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
-			break;
 	}
 
 	safeClose(fileOutput);
