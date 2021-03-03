@@ -3,6 +3,7 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,20 +29,19 @@ public:
 	enum Result
 	{
 		RtOk,
-		RtTimeout,
+		RtEmpty,
 		RtEnd
 	};
 
-	PipeReader(IStream* stream);
+	explicit PipeReader(IStream* stream);
 
 	virtual ~PipeReader();
 
-	Result readLine(std::wstring& outLine, int32_t timeout);
+	Result readLine(std::wstring& outLine);
 
 private:
 	Ref< IStream > m_stream;
-	std::vector< char > m_buffer;
-	std::vector< char > m_acc;
+	AlignedVector< char > m_acc;
 	std::list< std::wstring > m_lines;
 };
 

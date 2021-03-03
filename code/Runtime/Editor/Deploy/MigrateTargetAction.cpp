@@ -272,43 +272,46 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	for (;;)
+	while (!process->wait(0))
 	{
-		PipeReader::Result result1 = stdOutReader.readLine(str, 10);
-		if (result1 == PipeReader::RtOk)
+		auto pipe = process->waitPipeStream(100);
+		if (pipe == process->getPipeStream(IProcess::SpStdOut))
 		{
-			std::wstring tmp = trim(str);
-			if (!tmp.empty() && tmp[0] == L':')
+			PipeReader::Result result;
+			while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
 			{
-				std::vector< std::wstring > out;
-				if (Split< std::wstring >::any(tmp, L":", out) == 2)
+				std::wstring tmp = trim(str);
+				if (!tmp.empty() && tmp[0] == L':')
 				{
-					int32_t index = parseString< int32_t >(out[0]);
-					int32_t count = parseString< int32_t >(out[1]);
-					if (count > 0)
+					std::vector< std::wstring > out;
+					if (Split< std::wstring >::any(tmp, L":", out) == 2)
 					{
-						if (progressListener)
-							progressListener->notifyTargetActionProgress(2 + (98 * index) / count, 100);
+						int32_t index = parseString< int32_t >(out[0]);
+						int32_t count = parseString< int32_t >(out[1]);
+						if (count > 0)
+						{
+							if (progressListener)
+								progressListener->notifyTargetActionProgress(2 + (98 * index) / count, 100);
+						}
 					}
 				}
+				else
+					log::info << str << Endl;
 			}
-			else
-				log::info << str << Endl;
 		}
-
-		PipeReader::Result result2 = stdErrReader.readLine(str, 10);
-		if (result2 == PipeReader::RtOk)
+		else if (pipe == process->getPipeStream(IProcess::SpStdErr))
 		{
-			str = trim(str);
-			if (!str.empty())
+			PipeReader::Result result;
+			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
 			{
-				log::error << str << Endl;
-				errors.push_back(str);
+				str = trim(str);
+				if (!str.empty())
+				{
+					log::error << str << Endl;
+					errors.push_back(str);
+				}
 			}
 		}
-
-		if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
-			break;
 	}
 
 	if (!errors.empty())
