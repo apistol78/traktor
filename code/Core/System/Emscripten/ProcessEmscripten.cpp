@@ -12,9 +12,14 @@ bool ProcessEmscripten::setPriority(Priority priority)
 	return false;
 }
 
-Ref< IStream > ProcessEmscripten::getPipeStream(StdPipe pipe)
+IStream* ProcessEmscripten::getPipeStream(StdPipe pipe)
 {
-	return 0;
+	return nullptr;
+}
+
+IStream* ProcessEmscripten::waitPipeStream(int32_t timeout)
+{
+	return nullptr;
 }
 
 bool ProcessEmscripten::signal(SignalType signalType)

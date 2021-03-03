@@ -16,7 +16,9 @@ public:
 
 	virtual bool setPriority(Priority priority) override final;
 
-	virtual Ref< IStream > getPipeStream(StdPipe pipe) override final;
+	virtual IStream* getPipeStream(StdPipe pipe) override final;
+
+	virtual IStream* waitPipeStream(int32_t timeout) override final;
 
 	virtual bool signal(SignalType signalType) override final;
 
@@ -33,6 +35,8 @@ private:
 	posix_spawn_file_actions_t* m_fileActions;
 	int m_childStdOut;
 	int m_childStdErr;
+	Ref< IStream > m_streamStdOut;
+	Ref< IStream > m_streamStdErr;
 	int32_t m_exitCode;
 
 	ProcessOsX(pid_t pid, posix_spawn_file_actions_t* fileActions, int childStdOut, int childStdErr);

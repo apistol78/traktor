@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <signal.h>
 #include <unistd.h>
 #include <sys/fcntl.h>
 #include <sys/ioctl.h>
@@ -58,19 +59,15 @@ public:
 
 	virtual int64_t read(void* block, int64_t nbytes)
 	{
-		int exitCode;
-		int64_t ret;
-
-		ret = ::read(m_pipe, block, nbytes);
+		int64_t ret = ::read(m_pipe, block, nbytes);
 		if (ret < 0)
 		{
-			bool processTerminated = !(waitpid(m_pid, &exitCode, WNOHANG) >= 0);
-			if (!processTerminated && errno == EAGAIN)
+			// No data on pipe, would block if pipe was in block mode.
+			if (errno == EAGAIN)
 				return 0;
 			else
 				return -1;
 		}
-
 		return ret;
 	}
 
@@ -109,24 +106,56 @@ bool ProcessOsX::setPriority(Priority priority)
 	return false;
 }
 
-Ref< IStream > ProcessOsX::getPipeStream(StdPipe pipe)
+IStream* ProcessOsX::getPipeStream(StdPipe pipe)
 {
-	if (m_fileActions)
+	switch (pipe)
 	{
-		switch (pipe)
-		{
-			case SpStdOut:
-			return new PipeStream(m_pid, m_childStdOut);
+	case SpStdOut:
+		return m_streamStdOut;
+	case SpStdErr:
+		return m_streamStdErr;
+	default:
+		return nullptr;
+	}
+}
 
-			case SpStdErr:
-			return new PipeStream(m_pid, m_childStdErr);
+IStream* ProcessOsX::waitPipeStream(int32_t timeout)
+{
+	fd_set readSet = {};
+	int nfd = 0;
 
-			default:
-			return 0;
-		}
+ 	if (m_childStdOut != 0)
+	{
+		FD_SET(m_childStdOut, &readSet);
+		nfd = std::max(nfd, m_childStdOut);
+	}
+	if (m_childStdErr != 0)
+	{
+		FD_SET(m_childStdErr, &readSet);
+		nfd = std::max(nfd, m_childStdErr);
+	}
+
+	sigset_t sigmask;
+	sigemptyset(&sigmask);
+
+	int rc;
+	if (timeout >= 0)
+	{
+		timespec to = { timeout / 1000, (timeout % 1000) * 1000000 };
+		rc = ::pselect(nfd + 1, &readSet, nullptr, nullptr, &to, &sigmask);
 	}
 	else
-		return 0;
+		rc = ::pselect(nfd + 1, &readSet, nullptr, nullptr, nullptr, &sigmask);
+
+	if (rc <= 0)
+		return nullptr;
+
+	if (FD_ISSET(m_childStdOut, &readSet))
+		return m_streamStdOut;
+	if (FD_ISSET(m_childStdErr, &readSet))
+		return m_streamStdErr;
+
+	return nullptr;
 }
 
 bool ProcessOsX::signal(SignalType signalType)
@@ -170,6 +199,10 @@ ProcessOsX::ProcessOsX(pid_t pid, posix_spawn_file_actions_t* fileActions, int c
 ,	m_childStdErr(childStdErr)
 ,	m_exitCode(0)
 {
+	if (m_childStdOut != 0)
+		m_streamStdOut = new PipeStream(m_pid, m_childStdOut);
+	if (m_childStdErr != 0)
+		m_streamStdErr = new PipeStream(m_pid, m_childStdErr);
 }
 
 }
