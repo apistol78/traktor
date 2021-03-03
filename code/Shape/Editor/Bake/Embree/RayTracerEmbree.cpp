@@ -207,6 +207,14 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	rtcReleaseGeometry(mesh);
 
 	m_models.push_back(model);
+
+	// Create a flatten list of materials to reduce number of indirections while tracing.
+	m_materialOffset.push_back((uint32_t)m_materials.size());
+	for (const auto& polygon : model->getPolygons())
+	{
+		const auto& material = model->getMaterial(polygon.getMaterial());
+		m_materials.push_back(&material);
+	}
 }
 
 void RayTracerEmbree::commit()
@@ -409,10 +417,14 @@ Color4f RayTracerEmbree::tracePath0(
 			Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 			Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
+			/*
 			const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
 			const auto& materials = m_models[rh.hit.geomID]->getMaterials();
 			const auto& hitPolygon = polygons[rh.hit.primID];
 			const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+			*/
+			uint32_t offset = m_materialOffset[rh.hit.geomID];
+			const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 			Color4f hitMaterialColor = hitMaterial.getColor();
 			const auto& image = hitMaterial.getDiffuseMap().image;
@@ -504,10 +516,14 @@ Color4f RayTracerEmbree::traceSinglePath(
 	Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
+	/*
 	const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
 	const auto& materials = m_models[rh.hit.geomID]->getMaterials();
 	const auto& hitPolygon = polygons[rh.hit.primID];
 	const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+	*/
+	uint32_t offset = m_materialOffset[rh.hit.geomID];
+	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 	Color4f hitMaterialColor = hitMaterial.getColor();
 	const auto& image = hitMaterial.getDiffuseMap().image;
@@ -801,11 +817,14 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
 		uint32_t primID = RTCHitN_primID(hits, args->N, i);
 
+		/*
 		const auto& polygons = self->m_models[geomID]->getPolygons();
 		const auto& materials = self->m_models[geomID]->getMaterials();
-
 		const auto& hitPolygon = polygons[primID];
 		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
+		*/
+		uint32_t offset = self->m_materialOffset[geomID];
+		const auto& hitMaterial = *self->m_materials[offset + primID];
 
 		if (hitMaterial.getBlendOperator() != model::Material::BoAlphaTest)
 			continue;

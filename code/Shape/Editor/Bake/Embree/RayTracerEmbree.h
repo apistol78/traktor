@@ -57,6 +57,8 @@ private:
 	RTCDevice m_device;
 	RTCScene m_scene;
 	RefArray< const model::Model > m_models;
+    AlignedVector< uint32_t > m_materialOffset;
+    AlignedVector< const model::Material* > m_materials;
     Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 
