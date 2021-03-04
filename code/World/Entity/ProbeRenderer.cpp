@@ -176,6 +176,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		m_capture = m_captureQueue.front();
 		m_captureQueue.pop_front();
 		m_captureState = 0;
+		m_captureMip = 1;
 	}
 	T_ASSERT(m_capture);
 
@@ -344,117 +345,119 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		// Generate mips by roughness filtering.
 		const int32_t mipCount = (int32_t)log2(c_faceSize) + 1;
 		const int32_t side = m_captureState - 6;
+		const int32_t mip = m_captureMip;
 
-		for (int32_t mip = 1; mip < mipCount; ++mip)
+		// Create intermediate target.
+		render::RenderGraphTargetSetDesc rgtsd;
+		rgtsd.count = 1;
+		rgtsd.width = c_faceSize >> mip;
+		rgtsd.height = c_faceSize >> mip;
+		rgtsd.createDepthStencil = false;
+		rgtsd.usingPrimaryDepthStencil = false;
+		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
+		auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
+
+		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
+		filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
+		filterPass->addBuild(
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			{
+				// Each mip represent one step rougher surface.
+				float roughness = (float)mip / mipCount;
+
+				Vector4 corners[4];
+				switch (side)
+				{
+				case 0:
+					corners[0].set( 1.0f,  1.0f,  1.0f, 0.0f);
+					corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
+					corners[2].set( 1.0f, -1.0f,  1.0f, 0.0f);
+					corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
+					break;
+
+				case 1:
+					corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
+					corners[1].set(-1.0f,  1.0f,  1.0f, 0.0f);
+					corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+					corners[3].set(-1.0f, -1.0f,  1.0f, 0.0f);
+					break;
+
+				case 2:
+					corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
+					corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
+					corners[2].set(-1.0f,  1.0f,  1.0f, 0.0f);
+					corners[3].set( 1.0f,  1.0f,  1.0f, 0.0f);
+					break;
+
+				case 3:
+					corners[0].set(-1.0f, -1.0f,  1.0f, 0.0f);
+					corners[1].set( 1.0f, -1.0f,  1.0f, 0.0f);
+					corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+					corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
+					break;
+
+				case 4:
+					corners[0].set(-1.0f,  1.0f,  1.0f, 0.0f);
+					corners[1].set( 1.0f,  1.0f,  1.0f, 0.0f);
+					corners[2].set(-1.0f, -1.0f,  1.0f, 0.0f);
+					corners[3].set( 1.0f, -1.0f,  1.0f, 0.0f);
+					break;
+
+				case 5:
+					corners[0].set( 1.0f,  1.0f, -1.0f, 0.0f);
+					corners[1].set(-1.0f,  1.0f, -1.0f, 0.0f);
+					corners[2].set( 1.0f, -1.0f, -1.0f, 0.0f);
+					corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
+					break;
+				}
+
+				auto pp = renderContext->alloc< render::ProgramParameters >();
+				pp->beginParameters(renderContext);
+				pp->setFloatParameter(c_handleProbeRoughness, roughness);
+				pp->setTextureParameter(c_handleProbeTexture, probeTexture);
+				pp->setVectorArrayParameter(c_handleProbeFilterCorners, corners, sizeof_array(corners));
+				pp->endParameters(renderContext);
+
+				m_screenRenderer->draw(renderContext, m_filterShader, pp);
+			}
+		);
+		renderGraph.addPass(filterPass);
+
+		// Write back filtered targets into cube map mip level.
+		Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
+		copyPass->addInput(filteredTargetSetId);
+		copyPass->addBuild(
+			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			{
+				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
+				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
+				lrb->lambda = [=](render::IRenderView* renderView)
+				{
+					render::Region sr = {};
+					sr.x = 0;
+					sr.y = 0;
+					sr.mip = 0;
+					sr.width = probeTexture->getSide() >> mip;
+					sr.height = probeTexture->getSide() >> mip;
+
+					render::Region dr = {};
+					dr.x = 0;
+					dr.y = 0;
+					dr.z = side;
+					dr.mip = mip;
+
+					renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
+				};
+				renderContext->enqueue(lrb);
+			}
+		);
+		renderGraph.addPass(copyPass);
+
+		if (++m_captureMip >= mipCount)
 		{
-			// Create intermediate target.
-			render::RenderGraphTargetSetDesc rgtsd;
-			rgtsd.count = 1;
-			rgtsd.width = c_faceSize >> mip;
-			rgtsd.height = c_faceSize >> mip;
-			rgtsd.createDepthStencil = false;
-			rgtsd.usingPrimaryDepthStencil = false;
-			rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
-			auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
-
-			Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
-			filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
-			filterPass->addBuild(
-				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-				{
-					// Each mip represent one step rougher surface.
-					float roughness = (float)mip / mipCount;
-
-					Vector4 corners[4];
-					switch (side)
-					{
-					case 0:
-						corners[0].set( 1.0f,  1.0f,  1.0f, 0.0f);
-						corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
-						corners[2].set( 1.0f, -1.0f,  1.0f, 0.0f);
-						corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-						break;
-
-					case 1:
-						corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
-						corners[1].set(-1.0f,  1.0f,  1.0f, 0.0f);
-						corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
-						corners[3].set(-1.0f, -1.0f,  1.0f, 0.0f);
-						break;
-
-					case 2:
-						corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
-						corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
-						corners[2].set(-1.0f,  1.0f,  1.0f, 0.0f);
-						corners[3].set( 1.0f,  1.0f,  1.0f, 0.0f);
-						break;
-
-					case 3:
-						corners[0].set(-1.0f, -1.0f,  1.0f, 0.0f);
-						corners[1].set( 1.0f, -1.0f,  1.0f, 0.0f);
-						corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
-						corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-						break;
-
-					case 4:
-						corners[0].set(-1.0f,  1.0f,  1.0f, 0.0f);
-						corners[1].set( 1.0f,  1.0f,  1.0f, 0.0f);
-						corners[2].set(-1.0f, -1.0f,  1.0f, 0.0f);
-						corners[3].set( 1.0f, -1.0f,  1.0f, 0.0f);
-						break;
-
-					case 5:
-						corners[0].set( 1.0f,  1.0f, -1.0f, 0.0f);
-						corners[1].set(-1.0f,  1.0f, -1.0f, 0.0f);
-						corners[2].set( 1.0f, -1.0f, -1.0f, 0.0f);
-						corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
-						break;
-					}
-
-					auto pp = renderContext->alloc< render::ProgramParameters >();
-					pp->beginParameters(renderContext);
-					pp->setFloatParameter(c_handleProbeRoughness, roughness);
-					pp->setTextureParameter(c_handleProbeTexture, probeTexture);
-					pp->setVectorArrayParameter(c_handleProbeFilterCorners, corners, sizeof_array(corners));
-					pp->endParameters(renderContext);
-
-					m_screenRenderer->draw(renderContext, m_filterShader, pp);
-				}
-			);
-			renderGraph.addPass(filterPass);
-
-			// Write back filtered targets into cube map mip level.
-			Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
-			copyPass->addInput(filteredTargetSetId);
-			copyPass->addBuild(
-				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-				{
-					auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
-					auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
-					lrb->lambda = [=](render::IRenderView* renderView)
-					{
-						render::Region sr = {};
-						sr.x = 0;
-						sr.y = 0;
-						sr.mip = 0;
-						sr.width = probeTexture->getSide() >> mip;
-						sr.height = probeTexture->getSide() >> mip;
-
-						render::Region dr = {};
-						dr.x = 0;
-						dr.y = 0;
-						dr.z = side;
-						dr.mip = mip;
-
-						renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
-					};
-					renderContext->enqueue(lrb);
-				}
-			);
-			renderGraph.addPass(copyPass);
+			m_captureMip = 1;
+			m_captureState++;
 		}
-
-		++m_captureState;
 	}
 	else
 	{
