@@ -1,4 +1,6 @@
 #include <numeric>
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -185,14 +187,18 @@ bool writeTexture(
 	writer << int32_t(textureFormat);
 	writer << bool(false);
 	writer << uint8_t(render::Tt2D);
+	writer << bool(true);
 	writer << bool(false);
-	writer << bool(false);
+
+	Ref< IStream > streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
+	Writer writerData(streamData);
 
 	// Write texture data.
 	RefArray< drawing::Image > mipImages(1);
 	mipImages[0] = lightmapFormat;
-	compressor->compress(writer, mipImages, textureFormat, needAlpha, 3);
+	compressor->compress(writerData, mipImages, textureFormat, needAlpha, 3);
 
+	streamData->close();
 	stream->close();
 
 	if (!outputInstance->commit())

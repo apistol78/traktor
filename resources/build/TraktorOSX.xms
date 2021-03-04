@@ -11372,6 +11372,11 @@
 								<solutionFileName>ExternOSX.xms</solutionFileName>
 								<projectName>Extern.oidn</projectName>
 							</item>
+							<item type="ProjectDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>
