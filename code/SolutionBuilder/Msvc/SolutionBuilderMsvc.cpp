@@ -287,7 +287,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 					Ref< const Project > dependentProject = projectDependency->getProject();
 					if (!dependentProject->getEnable())
 					{
-						log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
+						log::warning << L"Trying to add disabled dependency (\"" << dependentProject->getName() << L"\") to project \"" << project->getName() << L"\"; dependency skipped." << Endl;
 						continue;
 					}
 
@@ -302,7 +302,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 						Ref< const Project > dependentProject = externalDependency->getProject();
 						if (!dependentProject->getEnable())
 						{
-							log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
+							log::warning << L"Trying to add disabled dependency (\"" << dependentProject->getName() << L"\") to project \"" << project->getName() << L"\"; dependency skipped." << Endl;
 							continue;
 						}
 
