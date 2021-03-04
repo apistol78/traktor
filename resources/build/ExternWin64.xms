@@ -6573,11 +6573,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<sourceFile>Extern.xatlas.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
+							<sourceFile>Extern.xatlas.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -6605,11 +6605,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<sourceFile>Extern.xatlas.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
+							<sourceFile>Extern.xatlas.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
