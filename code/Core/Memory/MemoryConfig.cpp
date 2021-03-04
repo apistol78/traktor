@@ -39,7 +39,8 @@ IAllocator* getAllocator()
 #if defined(__ANDROID__) || defined(_PS3) || defined(__EMSCRIPTEN__) || defined(__APPLE__)
 		s_allocator = s_stdAllocator;
 #elif !defined(_DEBUG)
-		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+		//s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+		s_allocator = s_stdAllocator;
 #else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
 		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
