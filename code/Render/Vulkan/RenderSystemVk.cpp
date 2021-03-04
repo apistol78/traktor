@@ -65,7 +65,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
 #if defined(__ANDROID__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 #else
-const char* c_deviceExtensions[] = { "VK_KHR_swapchain", "VK_KHR_8bit_storage", "VK_KHR_shader_float16_int8" };
+const char* c_deviceExtensions[] = { "VK_KHR_swapchain", "VK_KHR_16bit_storage", "VK_KHR_8bit_storage", "VK_KHR_shader_float16_int8" };
 #endif
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -267,20 +267,29 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 #endif
 
 #if !defined(__ANDROID__)
-	VkPhysicalDevice8BitStorageFeaturesKHR f8;
-	f8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
-	f8.pNext = nullptr;
-	f8.storageBuffer8BitAccess = VK_FALSE;
-	f8.uniformAndStorageBuffer8BitAccess = VK_TRUE;
-	f8.storagePushConstant8 = VK_FALSE;
-	dci.pNext = &f8;
+	VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
+	s8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+	s8.pNext = nullptr;
+	s8.storageBuffer8BitAccess = VK_FALSE;
+	s8.uniformAndStorageBuffer8BitAccess = VK_TRUE;
+	s8.storagePushConstant8 = VK_FALSE;
+	dci.pNext = &s8;
 
-	VkPhysicalDeviceFloat16Int8FeaturesKHR f16;
+	VkPhysicalDevice16BitStorageFeatures s16 = {};
+	s16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
+	s16.pNext = nullptr;
+	s16.storageBuffer16BitAccess = VK_FALSE;
+	s16.uniformAndStorageBuffer16BitAccess = VK_TRUE;
+	s16.storagePushConstant16 = VK_FALSE;
+	s16.storageInputOutput16 = VK_FALSE;
+	s8.pNext = &s16;
+
+	VkPhysicalDeviceFloat16Int8FeaturesKHR f16 = {};
 	f16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
 	f16.pNext = nullptr;
 	f16.shaderFloat16 = VK_FALSE;
 	f16.shaderInt8 = VK_TRUE;
-	f8.pNext = &f16;
+	s16.pNext = &f16;
 #endif
 
     if (vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice) != VK_SUCCESS)
