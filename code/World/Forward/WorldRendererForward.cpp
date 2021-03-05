@@ -303,7 +303,7 @@ bool WorldRendererForward::create(
 		frame.shadowAtlasPacker = new Packer(
 			shadowSettings.resolution,
 			shadowSettings.resolution
-		);			
+		);
 	}
 
 	// Create irradiance grid.
@@ -342,6 +342,9 @@ void WorldRendererForward::destroy()
 {
 	for (auto& frame : m_frames)
 	{
+		if (frame.lightSBufferData != nullptr)
+			frame.lightSBuffer->unlock();
+
 		safeDestroy(frame.lightSBuffer);
 		safeDestroy(frame.lightIndexSBuffer);
 		safeDestroy(frame.tileSBuffer);
@@ -963,7 +966,7 @@ void WorldRendererForward::setupLightPass(
 	render::handle_t outputTargetSetId,
 	int32_t frame,
 	render::handle_t& outShadowMapAtlasTargetSetId
-) const
+)
 {
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
@@ -972,7 +975,12 @@ void WorldRendererForward::setupLightPass(
 
 	// Lock light buffer, will get unlocked from render thread since data is written both
 	// here and then before rendering.
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBuffer->lock();
+	if (m_frames[frame].lightSBufferData == nullptr)
+	{
+		if ((m_frames[frame].lightSBufferData = m_frames[frame].lightSBuffer->lock()) == nullptr)
+			return;
+	}
+	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferData;
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_frames[frame].shadowAtlasPacker;
@@ -1283,7 +1291,11 @@ void WorldRendererForward::setupLightPass(
 			{
                 auto rb = renderContext->alloc< render::LambdaRenderBlock >();
                 rb->lambda = [=](render::IRenderView*) {
-                    m_frames[frame].lightSBuffer->unlock();
+					if (m_frames[frame].lightSBufferData != nullptr)
+					{
+						m_frames[frame].lightSBuffer->unlock();
+						m_frames[frame].lightSBufferData = nullptr;
+					}
                 };
                 renderContext->enqueue(rb);
 			}
