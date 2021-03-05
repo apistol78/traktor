@@ -89,6 +89,7 @@ private:
 		AlignedVector< const ProbeComponent* > probes;
 		Ref< Packer > shadowAtlasPacker;
 		Ref< Job > tileJob;
+		void* lightSBufferData = nullptr;
 	};
 
 	WorldRenderSettings m_settings;
@@ -171,7 +172,7 @@ private:
 		render::handle_t outputTargetSetId,
 		int32_t frame,
 		render::handle_t& outShadowMapAtlasTargetSetId
-	) const;
+	);
 
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,

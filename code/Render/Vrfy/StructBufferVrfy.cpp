@@ -27,7 +27,7 @@ void StructBufferVrfy::destroy()
 void* StructBufferVrfy::lock()
 {
 	T_CAPTURE_ASSERT (m_structBuffer, L"Struct buffer destroyed.");
-	//T_CAPTURE_ASSERT (!m_locked, L"Struct buffer already locked.");
+	T_CAPTURE_ASSERT (!m_locked, L"Struct buffer already locked.");
 
 	if (!m_structBuffer)
 		return nullptr;
@@ -42,7 +42,7 @@ void* StructBufferVrfy::lock()
 void* StructBufferVrfy::lock(uint32_t structOffset, uint32_t structCount)
 {
 	T_CAPTURE_ASSERT (m_structBuffer, L"Struct buffer destroyed.");
-	//T_CAPTURE_ASSERT (!m_locked, L"Struct buffer already locked.");
+	T_CAPTURE_ASSERT (!m_locked, L"Struct buffer already locked.");
 	T_CAPTURE_ASSERT (structOffset + structCount <= getBufferSize() / m_structSize, L"Trying to lock struct buffer out of range.");
 
 	if (!m_structBuffer)
@@ -58,7 +58,7 @@ void* StructBufferVrfy::lock(uint32_t structOffset, uint32_t structCount)
 void StructBufferVrfy::unlock()
 {
 	T_CAPTURE_ASSERT (m_structBuffer, L"Struct buffer destroyed.");
-	//T_CAPTURE_ASSERT (m_locked, L"Struct buffer not locked.");
+	T_CAPTURE_ASSERT (m_locked, L"Struct buffer not locked.");
 
 	if (!m_structBuffer)
 		return;
