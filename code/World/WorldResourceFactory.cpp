@@ -131,7 +131,8 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 
 		Ref< render::StructBuffer > buffer = m_renderSystem->createStructBuffer(
 			layout,
-			render::getStructSize(layout) * size[0] * size[1] * size[2]
+			render::getStructSize(layout) * size[0] * size[1] * size[2],
+			false
 		);
 		if (!buffer)
 			return nullptr;

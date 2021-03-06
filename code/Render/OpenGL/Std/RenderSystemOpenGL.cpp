@@ -773,7 +773,7 @@ Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, ui
 	return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 }
 
-Ref< StructBuffer > RenderSystemOpenGL::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemOpenGL::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 #if !defined(__APPLE__)

@@ -506,7 +506,7 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
 }
 
-Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	return StructBufferDx11::create(m_context, structElements, bufferSize);

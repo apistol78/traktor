@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Core/Ref.h"
-#include "Core/RefArray.h"
 #include "Render/StructBuffer.h"
-#include "Render/Vulkan/Private/Buffer.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor
 {
@@ -21,28 +19,13 @@ public:
 
 	virtual ~StructBufferVk();
 
-	bool create(int32_t inFlightCount);
+	virtual VkBuffer getVkBuffer() const = 0;
 
-	virtual void destroy() override final;
+	virtual uint32_t getVkBufferOffset() const = 0;
 
-	virtual void* lock() override final;
-
-	virtual void* lock(uint32_t structOffset, uint32_t structCount) override final;
-
-	virtual void unlock() override final;
-
-	VkBuffer getVkBuffer() const { return *m_buffer; }
-
-	uint32_t getVkBufferOffset() const { return m_offset; }
-
-private:
+protected:
 	Context* m_context = nullptr;
-	Ref< Buffer > m_buffer;
 	uint32_t& m_instances;
-	uint32_t m_alignedBufferSize = 0;
-	int32_t m_inFlightCount = 0;
-	int32_t m_index = 0;
-	uint32_t m_offset = 0;
 };
 
 	}

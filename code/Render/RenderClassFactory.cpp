@@ -169,7 +169,7 @@ Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32
 	return new BoxedDisplayMode(self->getDisplayMode(index));
 }
 
-Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	AlignedVector< StructElement > se;
 
@@ -177,7 +177,7 @@ Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const 
 	for (size_t i = 0; i < structElements.size(); ++i)
 		se[i] = structElements[i]->unbox();
 
-	return self->createStructBuffer(se, bufferSize);
+	return self->createStructBuffer(se, bufferSize, dynamic);
 }
 
 Ref< ISimpleTexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, const BoxedSimpleTextureCreateDesc* stcd)

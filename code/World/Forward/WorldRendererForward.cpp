@@ -271,7 +271,8 @@ bool WorldRendererForward::create(
 
 		frame.lightSBuffer = renderSystem->createStructBuffer(
 			lightShaderDataStruct,
-			render::getStructSize(lightShaderDataStruct) * c_maxLightCount
+			render::getStructSize(lightShaderDataStruct) * c_maxLightCount,
+			true
 		);
 		if (!frame.lightSBuffer)
 			return false;
@@ -283,7 +284,8 @@ bool WorldRendererForward::create(
 
 		frame.lightIndexSBuffer = renderSystem->createStructBuffer(
 			lightIndexShaderDataStruct,
-			render::getStructSize(lightIndexShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster
+			render::getStructSize(lightIndexShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
+			true
 		);
 		if (!frame.lightIndexSBuffer)
 			return false;
@@ -295,7 +297,8 @@ bool WorldRendererForward::create(
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
 			tileShaderDataStruct,
-			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ
+			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+			true
 		);
 		if (!frame.tileSBuffer)
 			return false;

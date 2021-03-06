@@ -19,7 +19,8 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/StructBufferVk.h"
+#include "Render/Vulkan/StructBufferDynamicVk.h"
+#include "Render/Vulkan/StructBufferStaticVk.h"
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
@@ -527,13 +528,21 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 		return nullptr;
 }
 
-Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
-	Ref< StructBufferVk > buffer = new StructBufferVk(m_context, bufferSize, m_statistics.structBuffers);
-	if (buffer->create(4))
-		return buffer;
+	if (dynamic)
+	{
+		Ref< StructBufferDynamicVk > buffer = new StructBufferDynamicVk(m_context, bufferSize, m_statistics.structBuffers);
+		if (buffer->create(4))
+			return buffer;
+	}
 	else
-		return nullptr;
+	{
+		Ref< StructBufferStaticVk > buffer = new StructBufferStaticVk(m_context, bufferSize, m_statistics.structBuffers);
+		if (buffer->create())
+			return buffer;
+	}
+	return nullptr;
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

@@ -125,8 +125,9 @@ public:
 	 *
 	 * \param vertexElements Structure element declaration.
 	 * \param bufferSize Size of vertex buffer in bytes.
+	 * \param dynamic If structure buffer is frequently updated.
 	 */
-	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) = 0;
+	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! Create simple, 2d, texture. */
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) = 0;
