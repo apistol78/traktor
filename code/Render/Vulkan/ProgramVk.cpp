@@ -11,6 +11,7 @@
 #include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"

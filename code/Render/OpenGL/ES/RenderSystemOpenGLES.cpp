@@ -227,7 +227,7 @@ Ref< IndexBuffer > RenderSystemOpenGLES::createIndexBuffer(IndexType indexType, 
 	return new IndexBufferOpenGLES(m_context, indexType, bufferSize, dynamic);
 }
 
-Ref< StructBuffer > RenderSystemOpenGLES::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemOpenGLES::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES::Scope)(m_context);
 	return new StructBufferOpenGLES(m_context, structElements, bufferSize);

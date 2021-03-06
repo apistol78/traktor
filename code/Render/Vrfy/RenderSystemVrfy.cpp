@@ -127,14 +127,14 @@ Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint
 	return new IndexBufferVrfy(indexBuffer, indexType, bufferSize);
 }
 
-Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid structure buffer size.");
 
 	uint32_t structSize = getStructSize(structElements);
 	T_CAPTURE_ASSERT(bufferSize % structSize == 0, L"Invalid struct buffer size, is not aligned with size of struct.");
 
-	Ref< StructBuffer > structBuffer = m_renderSystem->createStructBuffer(structElements, bufferSize);
+	Ref< StructBuffer > structBuffer = m_renderSystem->createStructBuffer(structElements, bufferSize, dynamic);
 	if (!structBuffer)
 		return nullptr;
 

@@ -360,7 +360,8 @@ bool WorldRendererDeferred::create(
 
 		frame.lightSBuffer = renderSystem->createStructBuffer(
 			lightShaderDataStruct,
-			render::getStructSize(lightShaderDataStruct) * c_maxLightCount
+			render::getStructSize(lightShaderDataStruct) * c_maxLightCount,
+			true
 		);
 		if (!frame.lightSBuffer)
 			return false;
@@ -377,7 +378,8 @@ bool WorldRendererDeferred::create(
 
 		frame.tileSBuffer = renderSystem->createStructBuffer(
 			tileShaderDataStruct,
-			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ
+			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+			true
 		);
 		if (!frame.tileSBuffer)
 			return false;

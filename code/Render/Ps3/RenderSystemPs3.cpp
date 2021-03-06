@@ -270,7 +270,7 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 		return nullptr;
 }
 
-Ref< StructBuffer > RenderSystemPs3::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+Ref< StructBuffer > RenderSystemPs3::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
 	return nullptr;
 }
