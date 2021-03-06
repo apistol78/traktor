@@ -1,14 +1,12 @@
 #pragma once
 
 #include <iterator>
+#include <type_traits>
+#include <utility>
 #include "Core/Config.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
-
-#if defined(T_CXX11)
-#	include <utility>
-#endif
 
 namespace traktor
 {
@@ -19,8 +17,13 @@ namespace traktor
  * Default policy when constructing or destroying
  * items in the AlignedVector container.
  */
+template < typename ItemType, bool pod >
+struct AlignedVectorConstructorBase
+{
+};
+
 template < typename ItemType >
-struct AlignedVectorConstructor
+struct AlignedVectorConstructorBase < ItemType, false >
 {
 	static void construct(ItemType& uninitialized)
 	{
@@ -36,6 +39,28 @@ struct AlignedVectorConstructor
 	{
 		item.~ItemType();
 	}
+};
+
+template < typename ItemType >
+struct AlignedVectorConstructorBase < ItemType, true >
+{
+	static void construct(ItemType& uninitialized)
+	{
+	}
+
+	static void construct(ItemType& uninitialized, const ItemType& source)
+	{
+		uninitialized = source;
+	}
+
+	static void destroy(ItemType& item)
+	{
+	}
+};
+
+template < typename ItemType >
+struct AlignedVectorConstructor : public AlignedVectorConstructorBase< ItemType, std::is_pod< ItemType >::value >
+{
 };
 
 /*! Vector container which strict item alignment.
@@ -320,7 +345,7 @@ public:
 		typedef const value_type& const_reference;
 
 		const_reverse_iterator()
-		:	m_ptr(0)
+		:	m_ptr(nullptr)
 		{
 		}
 
@@ -516,14 +541,6 @@ public:
 	{
 	}
 
-	AlignedVector(size_t size, const ItemType& value = ItemType())
-	:	m_data(nullptr)
-	,	m_size(0)
-	,	m_capacity(0)
-	{
-		resize(size, value);
-	}
-
 	AlignedVector(const AlignedVector< ItemType >& src)
 	:	m_data(nullptr)
 	,	m_size(0)
@@ -532,17 +549,6 @@ public:
 		insert(begin(), src.begin(), src.end());
 	}
 
-	template < typename IteratorType >
-	AlignedVector(const IteratorType& from, const IteratorType& to)
-	:	m_data(nullptr)
-	,	m_size(0)
-	,	m_capacity(0)
-	{
-		for (IteratorType i = from; i != to; ++i)
-			push_back(*i);
-	}
-
-#if defined(T_CXX11)
 	AlignedVector(AlignedVector< ItemType >&& src) noexcept
 	:	m_data(src.m_data)
 	,	m_size(src.m_size)
@@ -552,7 +558,25 @@ public:
 		src.m_size = 0;
 		src.m_capacity = 0;
 	}
-#endif
+
+	explicit AlignedVector(size_t size, const ItemType& value = ItemType())
+	:	m_data(nullptr)
+	,	m_size(0)
+	,	m_capacity(0)
+	{
+		resize(size, value);
+	}
+
+	template < typename IteratorType >
+	explicit AlignedVector(const IteratorType& from, const IteratorType& to)
+	:	m_data(nullptr)
+	,	m_size(0)
+	,	m_capacity(0)
+	{
+		reserve((size_t)(to - from));
+		for (IteratorType i = from; i != to; ++i)
+			push_back(*i);
+	}
 
 	virtual ~AlignedVector()
 	{
@@ -1012,7 +1036,6 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11)
 	AlignedVector< ItemType >& operator = (AlignedVector< ItemType >&& src) noexcept
 	{
 		clear();
@@ -1027,7 +1050,6 @@ public:
 
 		return *this;
 	}
-#endif
 
 	bool operator == (const AlignedVector< ItemType >& rh) const
 	{
@@ -1053,7 +1075,7 @@ private:
 	size_t m_size;
 	size_t m_capacity;
 
-#if defined(T_CXX11) && !defined(__PS3__)
+#if !defined(__PS3__)
 	void move(size_t target, size_t source)
 	{
 		m_data[target] = std::move(m_data[source]);
