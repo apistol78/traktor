@@ -212,18 +212,6 @@ void* VertexBufferStaticOpenGLES::lock()
 	return m_buffer.ptr();
 }
 
-void* VertexBufferStaticOpenGLES::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ASSERT (m_buffer.ptr() == 0);
-	T_FATAL_ASSERT (!m_dirty);
-
-	m_lockOffset = vertexOffset * m_vertexStride;
-	m_lockSize = vertexCount * m_vertexStride;
-	m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
-
-	return m_buffer.ptr();
-}
-
 void VertexBufferStaticOpenGLES::unlock()
 {
 	m_dirty = true;

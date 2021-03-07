@@ -165,17 +165,6 @@ void* VertexBufferStaticVBO::lock()
 	return m_lock;
 }
 
-void* VertexBufferStaticVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
-
-	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
-	m_lock = static_cast< uint8_t* >(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-	return m_lock ? (m_lock + vertexOffset * m_vertexStride) : 0;
-}
-
 void VertexBufferStaticVBO::unlock()
 {
 	T_ASSERT_M(m_lock, L"Vertex buffer not locked");

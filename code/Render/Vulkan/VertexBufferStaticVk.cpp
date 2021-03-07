@@ -67,12 +67,6 @@ void* VertexBufferStaticVk::lock()
 	return m_stageBuffer->lock();
 }
 
-void* VertexBufferStaticVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 void VertexBufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();

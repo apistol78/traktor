@@ -235,17 +235,6 @@ void* VertexBufferDynamicVBO::lock()
 	return m_lock;
 }
 
-void* VertexBufferDynamicVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-
-	m_lock = &m_data[0];
-	if (!m_lock)
-		return 0;
-
-	return (uint8_t*)m_lock + vertexOffset * m_vertexStride;
-}
-
 void VertexBufferDynamicVBO::unlock()
 {
 	T_ASSERT_M(m_lock, L"Vertex buffer not locked");

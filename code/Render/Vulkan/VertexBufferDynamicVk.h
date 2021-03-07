@@ -37,8 +37,6 @@ public:
 
 	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
-
 	virtual void unlock() override final;
 
 	virtual VkBuffer getVkBuffer() const override final;

@@ -85,11 +85,6 @@ void* StructBufferOpenGLES::lock()
 	return m_lock;
 }
 
-void* StructBufferOpenGLES::lock(uint32_t structOffset, uint32_t structCount)
-{
-	return nullptr;
-}
-
 void StructBufferOpenGLES::unlock()
 {
 	T_ASSERT_M(m_lock, L"Struct buffer not locked");

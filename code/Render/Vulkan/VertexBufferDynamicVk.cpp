@@ -58,12 +58,6 @@ void* VertexBufferDynamicVk::lock()
 	return m_buffers[next]->lock();
 }
 
-void* VertexBufferDynamicVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 void VertexBufferDynamicVk::unlock()
 {
 	int32_t next = (m_index + 1) % (int32_t)m_buffers.size();

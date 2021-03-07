@@ -184,21 +184,6 @@ void* VertexBufferDynamicOpenGLES::lock()
 
 	return m_buffer.ptr();
 }
-
-void* VertexBufferDynamicOpenGLES::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	m_lockOffset = vertexOffset * m_vertexStride;
-	m_lockSize = vertexCount * m_vertexStride;
-
-	if (!m_buffer.ptr())
-	{
-		m_buffer.reset((uint8_t*)Alloc::acquireAlign(getBufferSize(), 16, "VB"));
-		std::memset(m_buffer.ptr(), 0, getBufferSize());
-	}
-
-	return m_buffer.ptr() + m_lockOffset;
-}
-
 void VertexBufferDynamicOpenGLES::unlock()
 {
 	m_dirty = true;

@@ -1,5 +1,4 @@
-#ifndef traktor_render_StructBufferVrfy_H
-#define traktor_render_StructBufferVrfy_H
+#pragma once
 
 #include "Render/StructBuffer.h"
 
@@ -16,13 +15,13 @@ class StructBufferVrfy : public StructBuffer
 	T_RTTI_CLASS;
 
 public:
-	StructBufferVrfy(StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize);
+	explicit StructBufferVrfy(StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize);
+
+	virtual ~StructBufferVrfy();
 
 	virtual void destroy() override final;
 
 	virtual void* lock() override final;
-
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
 
 	virtual void unlock() override final;
 
@@ -33,10 +32,15 @@ public:
 protected:
 	Ref< StructBuffer > m_structBuffer;
 	uint32_t m_structSize;
-	bool m_locked;
+	bool m_locked = false;
+	uint8_t* m_device = nullptr;
+	uint8_t* m_shadow = nullptr;
+
+	void verifyGuard() const;
+
+	void verifyUntouched() const;
 };
 
 	}
 }
 
-#endif	// traktor_render_StructBufferVrfy_H

@@ -93,12 +93,6 @@ void* VertexBufferStaticDx11::lock()
 	return m_data.ptr();
 }
 
-void* VertexBufferStaticDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
-
 void VertexBufferStaticDx11::unlock()
 {
 }

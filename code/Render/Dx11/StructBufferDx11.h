@@ -28,8 +28,6 @@ public:
 
 	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t structOffset, uint32_t structCount) override final;
-
 	virtual void unlock() override final;
 
 	ID3D11ShaderResourceView* getD3D11ShaderResourceView() { return m_d3dBufferResourceView; }

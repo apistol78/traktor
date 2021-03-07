@@ -26,8 +26,6 @@ public:
 
 	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
-
 	virtual void unlock() override final;
 
 	virtual void activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash) override final;
