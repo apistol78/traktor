@@ -1,5 +1,6 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Quasirandom.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
@@ -144,6 +145,17 @@ ProbeRenderer::ProbeRenderer(
 	rtscd.ignoreStencil = true;
 	rtscd.generateMips = false;
 	m_depthTargetSet = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
+}
+
+ProbeRenderer::~ProbeRenderer()
+{
+	safeDestroy(m_worldRenderer);
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_screenRenderer);
+	safeDestroy(m_depthTargetSet);
+	m_captureQueue.clear();
+	m_capture = nullptr;
 }
 
 const TypeInfoSet ProbeRenderer::getRenderableTypes() const
