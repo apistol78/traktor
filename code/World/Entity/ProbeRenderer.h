@@ -53,6 +53,8 @@ public:
 		const TypeInfo& worldRendererType
 	);
 
+	virtual ~ProbeRenderer();
+
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
