@@ -38,14 +38,6 @@ public:
 	 */
 	virtual void* lock() = 0;
 
-	/*! Lock access to segment of buffer data.
-	 *
-	 * \param structOffset Struct offset.
-	 * \param structCount Number of structs to lock.
-	 * \return Pointer to segment beginning.
-	 */
-	virtual void* lock(uint32_t structOffset, uint32_t structCount) = 0;
-
 	/*! Unlock access. */
 	virtual void unlock() = 0;
 

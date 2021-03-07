@@ -75,11 +75,6 @@ void* StructBufferOpenGL::lock()
 	return m_lock;
 }
 
-void* StructBufferOpenGL::lock(uint32_t structOffset, uint32_t structCount)
-{
-	return nullptr;
-}
-
 void StructBufferOpenGL::unlock()
 {
 	T_ASSERT_M(m_lock, L"Struct buffer not locked");

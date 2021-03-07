@@ -131,12 +131,6 @@ void* VertexBufferDynamicDx11::lock()
 	return m_data.ptr();
 }
 
-void* VertexBufferDynamicDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
-
 void VertexBufferDynamicDx11::unlock()
 {
 	m_dirty = true;

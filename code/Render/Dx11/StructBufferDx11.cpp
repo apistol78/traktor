@@ -106,11 +106,6 @@ void* StructBufferDx11::lock()
 	return dm.pData;
 }
 
-void* StructBufferDx11::lock(uint32_t structOffset, uint32_t structCount)
-{
-	return nullptr;
-}
-
 void StructBufferDx11::unlock()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());

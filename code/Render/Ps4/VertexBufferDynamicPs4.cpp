@@ -32,12 +32,6 @@ void* VertexBufferDynamicPs4::lock()
 	return 0;
 }
 
-void* VertexBufferDynamicPs4::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
-
 void VertexBufferDynamicPs4::unlock()
 {
 }

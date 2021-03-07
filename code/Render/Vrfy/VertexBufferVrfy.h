@@ -1,5 +1,4 @@
-#ifndef traktor_render_VertexBufferVrfy_H
-#define traktor_render_VertexBufferVrfy_H
+#pragma once
 
 #include "Render/VertexBuffer.h"
 
@@ -16,13 +15,13 @@ class VertexBufferVrfy : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
+	explicit VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
+
+	virtual ~VertexBufferVrfy();
 
 	virtual void destroy() override final;
 
 	virtual void* lock() override final;
-
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
 
 	virtual void unlock() override final;
 
@@ -33,11 +32,13 @@ public:
 protected:
 	Ref< VertexBuffer > m_vertexBuffer;
 	uint32_t m_vertexSize;
-	bool m_locked;
+	bool m_locked = false;
+	uint8_t* m_device = nullptr;
+	uint8_t* m_shadow = nullptr;
+
+	void verifyGuard() const;
 };
 
 	}
 }
-
-#endif	// traktor_render_VertexBufferVrfy_H
 

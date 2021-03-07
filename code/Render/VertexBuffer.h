@@ -38,14 +38,6 @@ public:
 	 */
 	virtual void* lock() = 0;
 
-	/*! Lock access to segment of buffer data.
-	 *
-	 * \param vertexOffset Vertex offset.
-	 * \param vertexCount Number of vertices to lock.
-	 * \return Pointer to segment beginning.
-	 */
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) = 0;
-
 	/*! Unlock access. */
 	virtual void unlock() = 0;
 

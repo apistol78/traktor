@@ -153,13 +153,6 @@ void* VertexBufferPs3::lock()
 	return m_vbo->getPointer();
 }
 
-void* VertexBufferPs3::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	uint8_t* ptr = static_cast< uint8_t* >(m_vbo->getPointer());
-	ptr += vertexOffset * m_vertexStride;
-	return ptr;
-}
-
 void VertexBufferPs3::unlock()
 {
 }

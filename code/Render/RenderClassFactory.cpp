@@ -127,24 +127,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureCreateDesc", BoxedSimpleTextureCreateDesc, Object)
 
-Ref< BoxedPointer > StructBuffer_lock_1(StructBuffer* self)
-{
-	void* ptr = self->lock();
-	if (ptr)
-		return new BoxedPointer(ptr);
-	else
-		return nullptr;
-}
-
-Ref< BoxedPointer > StructBuffer_lock_2(StructBuffer* self, uint32_t structOffset, uint32_t structCount)
-{
-	void* ptr = self->lock(structOffset, structCount);
-	if (ptr)
-		return new BoxedPointer(ptr);
-	else
-		return nullptr;
-}
-
 Ref< BoxedPointer > ISimpleTexture_lock(ISimpleTexture* self, int32_t level)
 {
 	ITexture::Lock lock;
@@ -235,8 +217,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classStructBuffer = new AutoRuntimeClass< StructBuffer >();
 	classStructBuffer->addProperty("bufferSize", &StructBuffer::getBufferSize);
-	classStructBuffer->addMethod("lock", &StructBuffer_lock_1);
-	classStructBuffer->addMethod("lock", &StructBuffer_lock_2);
+	classStructBuffer->addMethod("lock", &StructBuffer::lock);
 	classStructBuffer->addMethod("unlock", &StructBuffer::unlock);
 	registrar->registerClass(classStructBuffer);
 

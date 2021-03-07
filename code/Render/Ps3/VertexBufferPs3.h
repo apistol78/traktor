@@ -33,8 +33,6 @@ public:
 
 	virtual void* lock();
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount);
-
 	virtual void unlock();
 
 	void bind(StateCachePs3& stateCache, const AlignedVector< uint8_t >& signature);

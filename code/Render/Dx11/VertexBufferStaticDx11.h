@@ -35,8 +35,6 @@ public:
 
 	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
-
 	virtual void unlock() override final;
 
 	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache) override final;

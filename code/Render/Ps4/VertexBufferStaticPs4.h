@@ -30,8 +30,6 @@ public:
 
 	virtual void* lock() T_OVERRIDE T_FINAL;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) T_OVERRIDE T_FINAL;
-
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
 	virtual void prepare() T_OVERRIDE T_FINAL;

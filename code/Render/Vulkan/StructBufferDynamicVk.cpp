@@ -55,12 +55,6 @@ void* StructBufferDynamicVk::lock()
 	return ptr + m_index * m_alignedBufferSize;
 }
 
-void* StructBufferDynamicVk::lock(uint32_t structOffset, uint32_t structCount)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 void StructBufferDynamicVk::unlock()
 {
 	m_buffer->unlock();

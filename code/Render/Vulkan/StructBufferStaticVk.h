@@ -26,8 +26,6 @@ public:
 
 	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t structOffset, uint32_t structCount) override final;
-
 	virtual void unlock() override final;
 
 	virtual VkBuffer getVkBuffer() const override final { return *m_deviceBuffer; }

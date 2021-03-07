@@ -57,12 +57,6 @@ void* StructBufferStaticVk::lock()
 	return m_stageBuffer->lock();
 }
 
-void* StructBufferStaticVk::lock(uint32_t structOffset, uint32_t structCount)
-{
-	T_FATAL_ERROR;
-	return nullptr;
-}
-
 void StructBufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();

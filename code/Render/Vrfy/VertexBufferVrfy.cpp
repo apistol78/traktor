@@ -1,3 +1,5 @@
+#include <cstring>
+#include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/VertexBufferVrfy.h"
@@ -6,6 +8,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+constexpr int32_t c_guardBytes = 16;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVrfy", VertexBufferVrfy, VertexBuffer)
 
@@ -13,14 +21,22 @@ VertexBufferVrfy::VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSi
 :	VertexBuffer(bufferSize)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_vertexSize(vertexSize)
-,	m_locked(false)
 {
+	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
+	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+}
+
+VertexBufferVrfy::~VertexBufferVrfy()
+{
+	verifyGuard();
+	Alloc::freeAlign(m_shadow);
 }
 
 void VertexBufferVrfy::destroy()
 {
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer already destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked vertex buffer.");
+	verifyGuard();
 	safeDestroy(m_vertexBuffer);
 }
 
@@ -29,30 +45,20 @@ void* VertexBufferVrfy::lock()
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
 
-	if (!m_vertexBuffer)
-		return nullptr;
-
-	void* p = m_vertexBuffer->lock();
-	if (p)
-		m_locked = true;
-
-	return p;
-}
-
-void* VertexBufferVrfy::lock(uint32_t vertexOffset, uint32_t vertexCount)
-{
-	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
-	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
-	T_CAPTURE_ASSERT (vertexOffset + vertexCount <= getBufferSize() / m_vertexSize, L"Trying to lock vertex buffer out of range.");
+	verifyGuard();
 
 	if (!m_vertexBuffer)
 		return nullptr;
 
-	void* p = m_vertexBuffer->lock(vertexOffset, vertexCount);
-	if (p)
+	m_device = (uint8_t*)m_vertexBuffer->lock();
+	if (m_device)
+	{
 		m_locked = true;
-
-	return p;
+		std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+		return m_shadow + c_guardBytes;
+	}
+	else
+		return nullptr;
 }
 
 void VertexBufferVrfy::unlock()
@@ -60,11 +66,25 @@ void VertexBufferVrfy::unlock()
 	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
 	T_CAPTURE_ASSERT (m_locked, L"Vertex buffer not locked.");
 
+	verifyGuard();
+
 	if (!m_vertexBuffer)
 		return;
 
+	std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
+
 	m_vertexBuffer->unlock();
 	m_locked = false;
+}
+
+void VertexBufferVrfy::verifyGuard() const
+{
+	const uint32_t bufferSize = getBufferSize();
+	for (uint32_t i = 0; i < c_guardBytes; ++i)
+	{
+		T_CAPTURE_ASSERT(m_shadow[i] == 0x00, L"Low guard bytes overwritten.");
+		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes + bufferSize] == 0x00, L"High guard bytes overwritten.");
+	}
 }
 
 	}
