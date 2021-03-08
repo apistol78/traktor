@@ -26,9 +26,9 @@ class T_DLLCLASS EditInstanceDebugInfo : public InstanceDebugInfo
 	T_RTTI_CLASS;
 
 public:
-	EditInstanceDebugInfo();
+	EditInstanceDebugInfo() = default;
 
-	EditInstanceDebugInfo(const EditInstance* instance);
+	explicit EditInstanceDebugInfo(const EditInstance* instance);
 
 	const std::wstring& getText() const { return m_text; }
 
@@ -43,7 +43,7 @@ public:
 private:
 	std::wstring m_text;
 	Color4f m_textColor;
-	SwfTextAlignType m_textAlign;
+	SwfTextAlignType m_textAlign = StaLeft;
 	Vector2 m_textSize;
 };
 

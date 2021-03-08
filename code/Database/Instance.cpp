@@ -45,15 +45,13 @@ Group* Instance::getParent() const
 
 const std::wstring& Instance::getName() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
-
 	if (!(m_cachedFlags & IchName))
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_name = m_providerInstance->getName();
 		m_cachedFlags |= IchName;
 	}
-
 	return m_name;
 }
 
@@ -67,14 +65,12 @@ std::wstring Instance::getPath() const
 Guid Instance::getGuid() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT(m_providerInstance);
-
 	if (!(m_cachedFlags & IchGuid))
 	{
+		T_ASSERT(m_providerInstance);
 		m_guid = m_providerInstance->getGuid();
 		m_cachedFlags |= IchGuid;
 	}
-
 	return m_guid;
 }
 
@@ -94,15 +90,13 @@ uint32_t Instance::getFlags() const
 
 std::wstring Instance::getPrimaryTypeName() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
-
 	if (!(m_cachedFlags & IchPrimaryType))
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_type = m_providerInstance->getPrimaryTypeName();
 		m_cachedFlags |= IchPrimaryType;
 	}
-
 	return m_type;
 }
 

@@ -24,9 +24,9 @@ class T_DLLCLASS TargetProfilerEvents : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TargetProfilerEvents();
+	TargetProfilerEvents() = default;
 
-	TargetProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events);
+	explicit TargetProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events);
 
 	double getCurrentTime() const { return m_currentTime; }
 
@@ -35,7 +35,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	double m_currentTime;
+	double m_currentTime = 0.0;
 	AlignedVector< Profiler::Event > m_events;
 };
 

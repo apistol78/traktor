@@ -11,10 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.FrameDebugInfo", 0, FrameDebugInfo, ISerializable)
 
-FrameDebugInfo::FrameDebugInfo()
-{
-}
-
 FrameDebugInfo::FrameDebugInfo(
 	const Aabb2& frameBounds,
 	const Vector4& stageTransform,

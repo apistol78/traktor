@@ -21,7 +21,7 @@ namespace traktor
 
 class SpriteInstance;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS SpriteInstanceDebugInfo : public InstanceDebugInfo
@@ -29,9 +29,9 @@ class T_DLLCLASS SpriteInstanceDebugInfo : public InstanceDebugInfo
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstanceDebugInfo();
+	SpriteInstanceDebugInfo() = default;
 
-	SpriteInstanceDebugInfo(const SpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
+	explicit SpriteInstanceDebugInfo(const SpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo);
 
 	const std::string& getClassName() const { return m_className; }
 
@@ -55,11 +55,11 @@ public:
 
 private:
 	std::string m_className;
-	bool m_mask;
-	bool m_clipped;
-	uint16_t m_frames;
-	uint16_t m_currentFrame;
-	bool m_playing;
+	bool m_mask = false;
+	bool m_clipped = false;
+	uint16_t m_frames = 0;
+	uint16_t m_currentFrame = 0;
+	bool m_playing = false;
 	Aabb2 m_scalingGrid;
 	AlignedVector< std::pair< uint32_t, std::string > > m_labels;
 	RefArray< InstanceDebugInfo > m_childrenDebugInfo;

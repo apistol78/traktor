@@ -17,7 +17,7 @@ namespace traktor
 
 class TextInstance;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS TextInstanceDebugInfo : public InstanceDebugInfo
@@ -25,9 +25,9 @@ class T_DLLCLASS TextInstanceDebugInfo : public InstanceDebugInfo
 	T_RTTI_CLASS;
 
 public:
-	TextInstanceDebugInfo();
+	TextInstanceDebugInfo() = default;
 
-	TextInstanceDebugInfo(const TextInstance* instance);
+	explicit TextInstanceDebugInfo(const TextInstance* instance);
 
 	virtual void serialize(ISerializer& s) override final;
 };

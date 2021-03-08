@@ -27,9 +27,9 @@ bool Reflection::apply(ISerializable* object) const
 	return true;
 }
 
-Ref< ISerializable > Reflection::clone() const
+Ref< ISerializable > Reflection::clone(void* memory) const
 {
-	Ref< ISerializable > object = checked_type_cast< ISerializable* >(m_objectType.createInstance());
+	Ref< ISerializable > object = checked_type_cast< ISerializable* >(m_objectType.createInstance(memory));
 	if (apply(object))
 		return object;
 	else

@@ -214,6 +214,9 @@ void ReflectionApplySerializer::operator >> (const MemberArray& m)
 	for (uint32_t i = 0; i < m_compoundMember->getMemberCount(); ++i)
 		m.read(*this);
 
+	for (uint32_t i = 0; i < arrayMember->getInsertDefaultCount(); ++i)
+		m.insert();
+
 	T_ASSERT(m_memberIndex == m_compoundMember->getMemberCount());
 
 	m_memberIndex = currentMemberIndex;

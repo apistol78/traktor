@@ -12,12 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ShapeInstanceDebugInfo", 0, ShapeInstanceDebugInfo, InstanceDebugInfo)
 
-ShapeInstanceDebugInfo::ShapeInstanceDebugInfo()
-:	m_mask(false)
-,	m_clipped(false)
-{
-}
-
 ShapeInstanceDebugInfo::ShapeInstanceDebugInfo(const ShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();

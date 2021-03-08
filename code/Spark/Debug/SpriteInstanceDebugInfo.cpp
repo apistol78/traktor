@@ -18,15 +18,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SpriteInstanceDebugInfo", 0, SpriteInstanceDebugInfo, InstanceDebugInfo)
 
-SpriteInstanceDebugInfo::SpriteInstanceDebugInfo()
-:	m_mask(false)
-,	m_clipped(false)
-,	m_frames(0)
-,	m_currentFrame(0)
-,	m_playing(false)
-{
-}
-
 SpriteInstanceDebugInfo::SpriteInstanceDebugInfo(const SpriteInstance* instance, const std::string& className, bool mask, bool clipped, const RefArray< InstanceDebugInfo >& childrenDebugInfo)
 {
 	m_name = instance->getName();

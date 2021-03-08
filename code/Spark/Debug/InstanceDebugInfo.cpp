@@ -12,11 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.InstanceDebugInfo", InstanceDebugInfo, ISerializable)
 
-InstanceDebugInfo::InstanceDebugInfo()
-:	m_visible(false)
-{
-}
-
 void InstanceDebugInfo::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"name", m_name);

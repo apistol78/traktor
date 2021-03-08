@@ -19,7 +19,7 @@ namespace traktor
 
 class CharacterInstance;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS InstanceDebugInfo : public ISerializable
@@ -27,7 +27,7 @@ class T_DLLCLASS InstanceDebugInfo : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	InstanceDebugInfo();
+	InstanceDebugInfo() = default;
 
 	const std::string& getName() const { return m_name; }
 
@@ -46,10 +46,10 @@ public:
 protected:
 	std::string m_name;
 	Aabb2 m_bounds;
-	Matrix33 m_localTransform;
-	Matrix33 m_globalTransform;
+	Matrix33 m_localTransform = Matrix33::identity();
+	Matrix33 m_globalTransform = Matrix33::identity();
 	ColorTransform m_cxform;
-	bool m_visible;
+	bool m_visible = false;
 };
 
 	}
