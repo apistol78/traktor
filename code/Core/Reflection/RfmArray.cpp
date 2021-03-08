@@ -10,4 +10,9 @@ RfmArray::RfmArray(const wchar_t* name)
 {
 }
 
+void RfmArray::insertDefault()
+{
+	m_insertDefaultCount++;
+}
+
 }

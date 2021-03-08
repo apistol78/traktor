@@ -18,7 +18,6 @@ public:
 	virtual void serialize(ISerializer& s) override
 	{
 		T_FATAL_ASSERT(s.getVersion< Clone_Base >() == 1);
-		T_FATAL_ASSERT(s.getVersion() == 2);
 	}
 };
 
@@ -31,7 +30,6 @@ public:
 	{
 		Clone_Base::serialize(s);
 		T_FATAL_ASSERT(s.getVersion< Clone_Derived >() == 2);
-		T_FATAL_ASSERT(s.getVersion() == 2);
 	}
 };
 

@@ -10,12 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.MorphShapeInstanceDebugInfo", 0, MorphShapeInstanceDebugInfo, InstanceDebugInfo)
 
-MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo()
-:	m_mask(false)
-,	m_clipped(false)
-{
-}
-
 MorphShapeInstanceDebugInfo::MorphShapeInstanceDebugInfo(const MorphShapeInstance* instance, bool mask, bool clipped)
 {
 	m_name = instance->getName();

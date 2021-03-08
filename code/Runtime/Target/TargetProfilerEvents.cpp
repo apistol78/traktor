@@ -35,10 +35,6 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetProfilerEvents", 0, TargetProfilerEvents, ISerializable)
 
-TargetProfilerEvents::TargetProfilerEvents()
-{
-}
-
 TargetProfilerEvents::TargetProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
 :	m_currentTime(currentTime)
 ,	m_events(events)

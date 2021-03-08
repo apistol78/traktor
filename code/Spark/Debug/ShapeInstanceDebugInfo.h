@@ -18,7 +18,7 @@ namespace traktor
 class Shape;
 class ShapeInstance;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
@@ -26,9 +26,9 @@ class T_DLLCLASS ShapeInstanceDebugInfo : public InstanceDebugInfo
 	T_RTTI_CLASS;
 
 public:
-	ShapeInstanceDebugInfo();
+	ShapeInstanceDebugInfo() = default;
 
-	ShapeInstanceDebugInfo(const ShapeInstance* instance, bool mask, bool clipped);
+	explicit ShapeInstanceDebugInfo(const ShapeInstance* instance, bool mask, bool clipped);
 
 	const Shape* getShape() const { return m_shape; }
 
@@ -40,8 +40,8 @@ public:
 
 private:
 	Ref< const Shape > m_shape;
-	bool m_mask;
-	bool m_clipped;
+	bool m_mask = false;
+	bool m_clipped = false;
 };
 
 	}

@@ -28,9 +28,9 @@ class T_DLLCLASS FrameDebugInfo : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	FrameDebugInfo();
+	FrameDebugInfo() = default;
 
-	FrameDebugInfo(
+	explicit FrameDebugInfo(
 		const Aabb2& frameBounds,
 		const Vector4& stageTransform,
 		int32_t viewWidth,
@@ -53,8 +53,8 @@ public:
 private:
 	Aabb2 m_frameBounds;
 	Vector4 m_stageTransform;
-	int32_t m_viewWidth;
-	int32_t m_viewHeight;
+	int32_t m_viewWidth = 0;
+	int32_t m_viewHeight = 0;
 	RefArray< InstanceDebugInfo > m_instances;
 };
 

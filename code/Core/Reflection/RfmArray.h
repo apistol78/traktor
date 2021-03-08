@@ -22,7 +22,14 @@ class T_DLLCLASS RfmArray : public RfmCompound
 	T_RTTI_CLASS;
 
 public:
-	RfmArray(const wchar_t* name);
+	explicit RfmArray(const wchar_t* name);
+
+	void insertDefault();
+
+	uint32_t getInsertDefaultCount() const { return m_insertDefaultCount; }
+
+private:
+	uint32_t m_insertDefaultCount = 0;
 };
 
 }

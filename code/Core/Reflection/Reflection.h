@@ -49,9 +49,10 @@ public:
 
 	/*! Use model to create a clone of the source object.
 	 *
+	 * \param memory Instantiate into memory.
 	 * \return Clone of source object.
 	 */
-	Ref< ISerializable > clone() const;
+	Ref< ISerializable > clone(void* memory = nullptr) const;
 
 private:
 	const TypeInfo& m_objectType;

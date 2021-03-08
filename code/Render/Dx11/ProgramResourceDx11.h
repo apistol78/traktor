@@ -31,32 +31,21 @@ public:
 	struct ParameterDesc
 	{
 		std::wstring name;
-		uint32_t offset;
-		uint32_t count;
-
-		ParameterDesc()
-		:	offset(0)
-		,	count(0)
-		{
-		}
+		uint32_t offset = 0;
+		uint32_t count = 0;
 
 		void serialize(ISerializer& s);
 	};
 
 	struct ParameterMappingDesc
 	{
-		uint32_t cbufferOffset;
-		uint32_t parameterOffset;
-		uint32_t parameterCount;
+		uint32_t cbufferOffset = 0;
+		uint32_t parameterOffset = 0;
+		uint32_t parameterCount = 0;
 
-		ParameterMappingDesc()
-		:	cbufferOffset(0)
-		,	parameterOffset(0)
-		,	parameterCount(0)
-		{
-		}
+		ParameterMappingDesc() = default;
 
-		ParameterMappingDesc(uint32_t cbufferOffset_, uint32_t parameterOffset_, uint32_t parameterCount_)
+		explicit ParameterMappingDesc(uint32_t cbufferOffset_, uint32_t parameterOffset_, uint32_t parameterCount_)
 		:	cbufferOffset(cbufferOffset_)
 		,	parameterOffset(parameterOffset_)
 		,	parameterCount(parameterCount_)
@@ -68,29 +57,20 @@ public:
 
 	struct CBufferDesc
 	{
-		uint32_t size;
+		uint32_t size = 0;
 		AlignedVector< ParameterMappingDesc > parameters;
-
-		CBufferDesc()
-		:	size(0)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};
 
 	struct ResourceBindingDesc
 	{
-		uint32_t bindPoint;
-		uint32_t parameterOffset;
+		uint32_t bindPoint = 0;
+		uint32_t parameterOffset = 0;
 
-		ResourceBindingDesc()
-		:	bindPoint(0)
-		,	parameterOffset(0)
-		{
-		}
+		ResourceBindingDesc() = default;
 
-		ResourceBindingDesc(uint32_t bindPoint_, uint32_t parameterOffset_)
+		explicit ResourceBindingDesc(uint32_t bindPoint_, uint32_t parameterOffset_)
 		:	bindPoint(bindPoint_)
 		,	parameterOffset(parameterOffset_)
 		{
@@ -99,7 +79,7 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	ProgramResourceDx11();
+	ProgramResourceDx11() = default;
 
 	virtual void serialize(ISerializer& s);
 
@@ -110,8 +90,8 @@ private:
 	Ref< Blob > m_vertexShader;
 	Ref< Blob > m_pixelShader;
 
-	uint32_t m_vertexShaderHash;
-	uint32_t m_pixelShaderHash;
+	uint32_t m_vertexShaderHash = 0;
+	uint32_t m_pixelShaderHash = 0;
 
 	CBufferDesc m_vertexCBuffers[3];
 	CBufferDesc m_pixelCBuffers[3];
@@ -126,14 +106,14 @@ private:
 	AlignedVector< D3D11_SAMPLER_DESC > m_pixelSamplers;
 
 	AlignedVector< ParameterDesc > m_parameters;
-	uint32_t m_parameterScalarSize;
-	uint32_t m_parameterTextureSize;
-	uint32_t m_parameterStructBufferSize;
+	uint32_t m_parameterScalarSize = 0;
+	uint32_t m_parameterTextureSize = 0;
+	uint32_t m_parameterStructBufferSize = 0;
 
-	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
-	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
-	D3D11_BLEND_DESC m_d3dBlendDesc;
-	uint32_t m_stencilReference;
+	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc = {};
+	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc = {};
+	D3D11_BLEND_DESC m_d3dBlendDesc = {};
+	uint32_t m_stencilReference = 0;
 };
 
 	}

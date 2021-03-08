@@ -17,7 +17,7 @@ namespace traktor
 
 class MorphShapeInstance;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS MorphShapeInstanceDebugInfo : public InstanceDebugInfo
@@ -25,9 +25,9 @@ class T_DLLCLASS MorphShapeInstanceDebugInfo : public InstanceDebugInfo
 	T_RTTI_CLASS;
 
 public:
-	MorphShapeInstanceDebugInfo();
+	MorphShapeInstanceDebugInfo() = default;
 
-	MorphShapeInstanceDebugInfo(const MorphShapeInstance* instance, bool mask, bool clipped);
+	explicit MorphShapeInstanceDebugInfo(const MorphShapeInstance* instance, bool mask, bool clipped);
 
 	bool getMask() const { return m_mask; }
 
@@ -36,8 +36,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_mask;
-	bool m_clipped;
+	bool m_mask = false;
+	bool m_clipped = false;
 };
 
 	}

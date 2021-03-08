@@ -137,19 +137,6 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx11", 0, ProgramResourceDx11, ProgramResource)
 
-ProgramResourceDx11::ProgramResourceDx11()
-:	m_vertexShaderHash(0)
-,	m_pixelShaderHash(0)
-,	m_parameterScalarSize(0)
-,	m_parameterTextureSize(0)
-,	m_parameterStructBufferSize(0)
-,	m_stencilReference(0)
-{
-	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
-	std::memset(&m_d3dDepthStencilDesc, 0, sizeof(m_d3dDepthStencilDesc));
-	std::memset(&m_d3dBlendDesc, 0, sizeof(m_d3dBlendDesc));
-}
-
 void ProgramResourceDx11::serialize(ISerializer& s)
 {
 	s >> MemberBlob(L"vertexShader", m_vertexShader);

@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.TextInstanceDebugInfo", 0, TextInstanceDebugInfo, InstanceDebugInfo)
 
-TextInstanceDebugInfo::TextInstanceDebugInfo()
-{
-}
-
 TextInstanceDebugInfo::TextInstanceDebugInfo(const TextInstance* instance)
 {
 	m_name = instance->getName();

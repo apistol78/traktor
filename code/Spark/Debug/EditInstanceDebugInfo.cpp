@@ -12,10 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.EditInstanceDebugInfo", 0, EditInstanceDebugInfo, InstanceDebugInfo)
 
-EditInstanceDebugInfo::EditInstanceDebugInfo()
-{
-}
-
 EditInstanceDebugInfo::EditInstanceDebugInfo(const EditInstance* instance)
 {
 	m_name = instance->getName();
