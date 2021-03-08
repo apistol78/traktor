@@ -1,7 +1,8 @@
 #pragma once
 
-#include <limits>
 #include <algorithm>
+#include <functional>
+#include <limits>
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
 
@@ -123,10 +124,10 @@ public:
 		return out.size();
 	}
 
-	size_t queryWithinDistance(const Vector4& point, float distance, AlignedVector< ItemType >& out) const
+	void queryWithinDistance(const Vector4& point, float distance, const std::function< void(const ItemType&) >& fn) const
 	{
-		queryWithinDistanceTraverse(point, m_root, 0, distance, out);
-		return out.size();
+		if (!m_nodes.empty())
+			queryWithinDistanceTraverse(point, m_root, 0, distance, fn);
 	}
 
 private:
@@ -285,7 +286,7 @@ private:
 		int32_t nodeIndex,
 		int32_t depth,
 		float distance,
-		AlignedVector< ItemType >& out
+		const std::function< void(const ItemType&) >& fn
 	) const
 	{
 		if (nodeIndex == c_terminationIndex)
@@ -296,13 +297,13 @@ private:
 
 		float split2 = dot3(node.partition - point, node.partition - point);
 		if (split2 <= distance * distance)
-			out.push_back(m_items[node.item]);
+			fn(m_items[node.item]);
 
 		if (node.partition[axis] < point[axis] + distance)
-			queryWithinDistanceTraverse(point, node.left, depth + 1, distance, out);
+			queryWithinDistanceTraverse(point, node.left, depth + 1, distance, fn);
 
 		if (node.partition[axis] > point[axis] - distance)
-			queryWithinDistanceTraverse(point, node.right, depth + 1, distance, out);
+			queryWithinDistanceTraverse(point, node.right, depth + 1, distance, fn);
 	}
 };
 

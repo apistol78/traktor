@@ -45,6 +45,8 @@ public:
 
 	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
 
+	bool getIrradianceCache() const { return m_irradianceCache; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -60,6 +62,7 @@ private:
 	bool m_enableDenoise = true;
 	float m_skyAttenuation = 1.0f;
 	float m_ambientOcclusionFactor = 0.5f;
+	bool m_irradianceCache = true;
 };
 
 	}
