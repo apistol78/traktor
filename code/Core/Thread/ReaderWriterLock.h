@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Core/Thread/Semaphore.h"
+#include <shared_mutex>
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -51,8 +52,6 @@ public:
 		}
 	};
 
-	ReaderWriterLock();
-
 	bool acquireReader(int32_t timeout = -1);
 
 	void releaseReader();
@@ -62,9 +61,7 @@ public:
 	void releaseWriter();
 
 private:
-	Semaphore m_lock;
-	int32_t m_reader;
-	int32_t m_writer;
+	std::shared_timed_mutex m_lock;
 };
 
 }
