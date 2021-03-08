@@ -19,8 +19,8 @@
 
 namespace traktor
 {
-    namespace shape
-    {
+	namespace shape
+	{
 		namespace
 		{
 
@@ -100,17 +100,10 @@ float wrap(float n)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
 
-RayTracerEmbree::RayTracerEmbree()
-:	m_device(nullptr)
-,	m_scene(nullptr)
-,	m_maxDistance(0.0f)
-{
-}
-
 bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 {
 	m_configuration = configuration;
-    m_maxDistance = 100.0f;
+	m_maxDistance = 100.0f;
 
 	m_device = rtcNewDevice(nullptr);
 	m_scene = rtcNewScene(m_device);
@@ -136,12 +129,14 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 			m_shadowSampleOffsets.push_back(uv);
 	}
 
-    return true;
+	return true;
 }
 
 void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
+	if (m_irradianceCache)
+		delete m_irradianceCache;
 }
 
 void RayTracerEmbree::addEnvironment(const IblProbe* environment)
@@ -151,7 +146,7 @@ void RayTracerEmbree::addEnvironment(const IblProbe* environment)
 
 void RayTracerEmbree::addLight(const Light& light)
 {
-    m_lights.push_back(light);
+	m_lights.push_back(light);
 }
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
@@ -176,6 +171,8 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 			uv = model->getTexCoord(vertex.getTexCoord(0));
 		*texCoords++ = uv.x;
 		*texCoords++ = uv.y;
+
+		m_boundingBox.contain(p);
 	}
 
 	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
@@ -220,6 +217,9 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 void RayTracerEmbree::commit()
 {
 	rtcCommitScene(m_scene);
+
+	if (m_configuration->getIrradianceCache() && !m_boundingBox.empty())
+		m_irradianceCache = new Grid3< Irradiance >(m_boundingBox, 1.0f);
 }
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
@@ -417,12 +417,32 @@ Color4f RayTracerEmbree::tracePath0(
 			Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 			Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
-			/*
-			const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
-			const auto& materials = m_models[rh.hit.geomID]->getMaterials();
-			const auto& hitPolygon = polygons[rh.hit.primID];
-			const auto& hitMaterial = materials[hitPolygon.getMaterial()];
-			*/
+			if (m_irradianceCache)
+			{
+				Color4f output(0.0f, 0.0f, 0.0f, 0.0f);
+				Scalar weight = 0.0_simd;
+
+				m_irradianceCache->get(hitOrigin, [&](const Irradiance* irrv, int32_t count) {
+					for (int32_t i = 0; i < count; ++i)
+					{
+						const auto& irr = irrv[i];
+						if (dot3(irr.normal, hitNormal) < 0.9_simd)
+							continue;
+						if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
+							continue;
+						Scalar k = max(1.0_simd - (irr.position - hitOrigin).length(), 0.0_simd);
+						output += irr.irradiance * k;
+						weight += k;
+					}
+				});
+
+				if (weight > 0.0_simd)
+				{
+					color += output / weight;
+					continue;
+				}
+			}
+
 			uint32_t offset = m_materialOffset[rh.hit.geomID];
 			const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
@@ -454,9 +474,7 @@ Color4f RayTracerEmbree::tracePath0(
 			//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 
 			Scalar cosPhi = dot3(newDirection, hitNormal);
-
 			Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
-
 			Color4f direct = sampleAnalyticalLights(
 				random,
 				hitOrigin,
@@ -465,7 +483,12 @@ Color4f RayTracerEmbree::tracePath0(
 				true
 			);
 
-			color += emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+			Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+
+			if (m_irradianceCache)
+				m_irradianceCache->insert({ hitOrigin, hitNormal, output });
+
+			color += output;
 		}
 	}
 #endif
@@ -516,12 +539,29 @@ Color4f RayTracerEmbree::traceSinglePath(
 	Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 	Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
-	/*
-	const auto& polygons = m_models[rh.hit.geomID]->getPolygons();
-	const auto& materials = m_models[rh.hit.geomID]->getMaterials();
-	const auto& hitPolygon = polygons[rh.hit.primID];
-	const auto& hitMaterial = materials[hitPolygon.getMaterial()];
-	*/
+	if (m_irradianceCache)
+	{
+		Color4f output(0.0f, 0.0f, 0.0f, 0.0f);
+		Scalar weight = 0.0_simd;
+
+		m_irradianceCache->get(hitOrigin, [&](const Irradiance* irrv, int32_t count) {
+			for (int32_t i = 0; i < count; ++i)
+			{
+				const auto& irr = irrv[i];
+				if (dot3(irr.normal, hitNormal) < 0.9_simd)
+					continue;
+				if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
+					continue;
+				Scalar k = max(1.0_simd - (irr.position - hitOrigin).length(), 0.0_simd);
+				output += irr.irradiance * k;
+				weight += k;
+			}
+		});
+
+		if (weight > 0.0_simd)
+			return output / weight;
+	}
+
 	uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
@@ -553,9 +593,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 
 	Scalar cosPhi = dot3(newDirection, hitNormal);
-
 	Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
-
 	Color4f direct = sampleAnalyticalLights(
 		random,
 		hitOrigin,
@@ -564,13 +602,18 @@ Color4f RayTracerEmbree::traceSinglePath(
 		true
 	);
 
-	return emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+	Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+
+	if (m_irradianceCache)
+		m_irradianceCache->insert({ hitOrigin, hitNormal, output });
+
+	return output;
 }
 
 Scalar RayTracerEmbree::traceAmbientOcclusion(
-    const Vector4& origin,
-    const Vector4& normal,
-    RandomGeometry& random
+	const Vector4& origin,
+	const Vector4& normal,
+	RandomGeometry& random
 ) const
 {
 	const int32_t sampleCount = alignUp(m_configuration->getShadowSampleCount(), 16);
@@ -609,15 +652,15 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 }
 
 Color4f RayTracerEmbree::sampleAnalyticalLights(
-    RandomGeometry& random,
-    const Vector4& origin,
-    const Vector4& normal,
+	RandomGeometry& random,
+	const Vector4& origin,
+	const Vector4& normal,
 	uint8_t mask,
 	bool bounce
  ) const
 {
 	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
-    const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
+	const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	RTCRay T_MATH_ALIGN16 r;
 
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
@@ -817,12 +860,6 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
 		uint32_t primID = RTCHitN_primID(hits, args->N, i);
 
-		/*
-		const auto& polygons = self->m_models[geomID]->getPolygons();
-		const auto& materials = self->m_models[geomID]->getMaterials();
-		const auto& hitPolygon = polygons[primID];
-		const auto& hitMaterial = materials[hitPolygon.getMaterial()];
-		*/
 		uint32_t offset = self->m_materialOffset[geomID];
 		const auto& hitMaterial = *self->m_materials[offset + primID];
 
@@ -854,5 +891,5 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 	}
 }
 
-    }
+	}
 }
