@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedGuid : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedGuid();
+	BoxedGuid() = default;
 
 	explicit BoxedGuid(const Guid& value);
 

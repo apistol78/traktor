@@ -177,6 +177,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classShape = new AutoRuntimeClass< Shape >();
 	classShape->addProperty("style", &Shape::setStyle, &Shape::getStyle);
 	classShape->addProperty("transform", &Shape::setTransform, &Shape::getTransform);
+	classShape->addProperty("globalTransform", &Shape::getGlobalTransform);
 	classShape->addMethod("addChild", &Shape::addChild);
 	classShape->addMethod("visit", &Shape_visit);
 	registrar->registerClass(classShape);

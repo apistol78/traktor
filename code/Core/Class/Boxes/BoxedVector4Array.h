@@ -26,9 +26,7 @@ class T_DLLCLASS BoxedVector4Array : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedVector4Array()
-	{
-	}
+	BoxedVector4Array() = default;
 
 	explicit BoxedVector4Array(uint32_t size)
 	:	m_arr(size)

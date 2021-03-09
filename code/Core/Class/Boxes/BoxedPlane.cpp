@@ -15,10 +15,6 @@ BoxedAllocator< BoxedPlane, 256 > s_allocBoxedPlane;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Plane", BoxedPlane, Boxed)
 
-BoxedPlane::BoxedPlane()
-{
-}
-
 BoxedPlane::BoxedPlane(const Plane& value)
 :	m_value(value)
 {

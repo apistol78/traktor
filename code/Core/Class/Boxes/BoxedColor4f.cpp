@@ -18,11 +18,6 @@ BoxedColor4f::BoxedColor4f(const Color4f& value)
 {
 }
 
-BoxedColor4f::BoxedColor4f()
-:	m_value(1.0f, 1.0f, 1.0f, 1.0f)
-{
-}
-
 BoxedColor4f::BoxedColor4f(float red, float green, float blue)
 :	m_value(red, green, blue, 1.0f)
 {

@@ -25,7 +25,7 @@ class T_DLLCLASS BoxedQuaternion : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedQuaternion();
+	BoxedQuaternion() = default;
 
 	explicit BoxedQuaternion(const Quaternion& value);
 
@@ -84,7 +84,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	Quaternion m_value;
+	Quaternion m_value = Quaternion::identity();
 };
 
 /*!

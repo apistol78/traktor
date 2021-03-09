@@ -13,10 +13,6 @@ BoxedAllocator< BoxedRange, 256 > s_allocBoxedRange;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Range", BoxedRange, Boxed)
 
-BoxedRange::BoxedRange()
-{
-}
-
 std::wstring BoxedRange::toString() const
 {
 	StringOutputStream ss;

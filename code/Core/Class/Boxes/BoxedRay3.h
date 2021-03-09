@@ -24,7 +24,7 @@ class T_DLLCLASS BoxedRay3 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedRay3();
+	BoxedRay3() = default;
 
 	explicit BoxedRay3(const Ray3& value);
 

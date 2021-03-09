@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedColor4f : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedColor4f();
+	BoxedColor4f() = default;
 
 	explicit BoxedColor4f(const Color4f& value);
 
@@ -74,7 +74,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	Color4f m_value;
+	Color4f m_value = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 /*!

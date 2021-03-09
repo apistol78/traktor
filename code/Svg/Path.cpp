@@ -135,5 +135,15 @@ void Path::getAbsolute(float& x, float& y) const
 	y += m_cursor.y;
 }
 
+float Path::getAbsoluteX(float x) const
+{
+	return x + m_cursor.x;
+}
+
+float Path::getAbsoluteY(float y) const
+{
+	return y + m_cursor.y;
+}
+
 	}
 }

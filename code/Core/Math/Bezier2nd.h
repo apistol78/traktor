@@ -25,9 +25,9 @@ public:
 	Vector2 cp1;
 	Vector2 cp2;
 
-	Bezier2nd();
+	Bezier2nd() = default;
 
-	Bezier2nd(const Vector2& cp0, const Vector2& cp1, const Vector2& cp2);
+	explicit Bezier2nd(const Vector2& cp0, const Vector2& cp1, const Vector2& cp2);
 
 	Vector2 evaluate(float t) const;
 

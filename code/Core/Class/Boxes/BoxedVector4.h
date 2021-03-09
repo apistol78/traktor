@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedVector4 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedVector4();
+	BoxedVector4() = default;
 
 	explicit BoxedVector4(const Vector4& value);
 
@@ -100,7 +100,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	Vector4 m_value;
+	Vector4 m_value = Vector4::zero();
 };
 
 /*!

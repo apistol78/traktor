@@ -6,10 +6,6 @@
 namespace traktor
 {
 
-Bezier2nd::Bezier2nd()
-{
-}
-
 Bezier2nd::Bezier2nd(const Vector2& cp0_, const Vector2& cp1_, const Vector2& cp2_)
 :	cp0(cp0_)
 ,	cp1(cp1_)
@@ -61,7 +57,7 @@ void Bezier2nd::intersectX(float y, float& outT0, float& outT1) const
 	else	// Not a 2nd degree polynomial
 	{
 		outT0 =
-		outT1 = (y - cp0.y) / (2.0f * cp1.y - 2.0f *  cp0.y);
+		outT1 = (y - cp0.y) / (2.0f * cp1.y - 2.0f * cp0.y);
 	}
 }
 

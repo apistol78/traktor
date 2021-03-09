@@ -13,10 +13,6 @@ BoxedAllocator< BoxedAlignedVector, 16 > s_allocBoxedAlignedVector;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AlignedVector", BoxedAlignedVector, Boxed)
 
-BoxedAlignedVector::BoxedAlignedVector()
-{
-}
-
 BoxedAlignedVector::BoxedAlignedVector(uint32_t size)
 :	m_arr(size)
 {

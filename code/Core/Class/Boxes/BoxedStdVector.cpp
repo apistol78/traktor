@@ -13,10 +13,6 @@ BoxedAllocator< BoxedStdVector, 16 > s_allocBoxedStdVector;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Boxed)
 
-BoxedStdVector::BoxedStdVector()
-{
-}
-
 BoxedStdVector::BoxedStdVector(uint32_t size)
 :	m_arr(size)
 {

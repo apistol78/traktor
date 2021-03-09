@@ -18,11 +18,6 @@ BoxedColor4ub::BoxedColor4ub(const Color4ub& value)
 {
 }
 
-BoxedColor4ub::BoxedColor4ub()
-:	m_value(255, 255, 255, 255)
-{
-}
-
 BoxedColor4ub::BoxedColor4ub(uint8_t red, uint8_t green, uint8_t blue)
 :	m_value(red, green, blue, 255)
 {

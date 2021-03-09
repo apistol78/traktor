@@ -1,7 +1,11 @@
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/BoxedAllocator.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedMatrix44.h"
 #include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
@@ -11,6 +15,7 @@
 #include "Render/RenderClassFactory.h"
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
+#include "Render/Context/ProgramParameters.h"
 
 namespace traktor
 {
@@ -55,17 +60,15 @@ class BoxedStructElement : public Object
 	T_RTTI_CLASS;
 
 public:
-	BoxedStructElement()
-	{
-	}
-
-	BoxedStructElement(uint32_t dataType, uint32_t offset)
-	:	m_value((DataType)dataType, offset)
-	{
-	}
+	BoxedStructElement() = default;
 
 	BoxedStructElement(const StructElement& structElement)
 	:	m_value(structElement)
+	{
+	}
+
+	explicit BoxedStructElement(uint32_t dataType, uint32_t offset)
+	:	m_value((DataType)dataType, offset)
 	{
 	}
 
@@ -126,6 +129,17 @@ private:
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureCreateDesc", BoxedSimpleTextureCreateDesc, Object)
+
+BoxedAllocator< BoxedProgramParameters, 4096 > s_allocBoxedProgramParameters;
+
+Ref< BoxedPointer > StructBuffer_lock(StructBuffer* self)
+{
+	void* ptr = self->lock();
+	if (ptr)
+		return new BoxedPointer(ptr);
+	else
+		return nullptr;
+}
 
 Ref< BoxedPointer > ISimpleTexture_lock(ISimpleTexture* self, int32_t level)
 {
@@ -215,9 +229,20 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedSimpleTextureCreateDesc->addProperty("immutable", &BoxedSimpleTextureCreateDesc::setImmutable, &BoxedSimpleTextureCreateDesc::getImmutable);
 	registrar->registerClass(classBoxedSimpleTextureCreateDesc);
 
+	auto classBoxedProgramParameters = new AutoRuntimeClass< BoxedProgramParameters >();
+	classBoxedProgramParameters->addMethod("setFloatParameter", &BoxedProgramParameters::setFloatParameter);
+	classBoxedProgramParameters->addMethod("setVectorParameter", &BoxedProgramParameters::setVectorParameter);
+	classBoxedProgramParameters->addMethod("setVectorArrayParameter", &BoxedProgramParameters::setVectorArrayParameter);
+	classBoxedProgramParameters->addMethod("setMatrixParameter", &BoxedProgramParameters::setMatrixParameter);
+	classBoxedProgramParameters->addMethod("setMatrixArrayParameter", &BoxedProgramParameters::setMatrixArrayParameter);
+	classBoxedProgramParameters->addMethod("setTextureParameter", &BoxedProgramParameters::setTextureParameter);
+	classBoxedProgramParameters->addMethod("setStructBufferParameter", &BoxedProgramParameters::setStructBufferParameter);
+	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
+	registrar->registerClass(classBoxedProgramParameters);
+
 	auto classStructBuffer = new AutoRuntimeClass< StructBuffer >();
 	classStructBuffer->addProperty("bufferSize", &StructBuffer::getBufferSize);
-	classStructBuffer->addMethod("lock", &StructBuffer::lock);
+	classStructBuffer->addMethod("lock", &StructBuffer_lock);
 	classStructBuffer->addMethod("unlock", &StructBuffer::unlock);
 	registrar->registerClass(classStructBuffer);
 
@@ -268,6 +293,68 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderView->addMethod("isCursorVisible", &IRenderView::isCursorVisible);
 	classIRenderView->addMethod("setGamma", &IRenderView::setGamma);
 	registrar->registerClass(classIRenderView);
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramParameters", BoxedProgramParameters, Object)
+
+BoxedProgramParameters::BoxedProgramParameters(ProgramParameters* programParameters)
+:	m_programParameters(programParameters)
+{
+}
+
+void BoxedProgramParameters::setProgramParameters(ProgramParameters* programParameters)
+{
+	m_programParameters = programParameters;
+}
+
+void BoxedProgramParameters::setFloatParameter(const render::handle_t handle, float param)
+{
+	m_programParameters->setFloatParameter(handle, param);
+}
+
+void BoxedProgramParameters::setVectorParameter(const render::handle_t handle, const Vector4& param)
+{
+	m_programParameters->setVectorParameter(handle, param);
+}
+
+void BoxedProgramParameters::setVectorArrayParameter(const render::handle_t handle, const AlignedVector< Vector4 >& param)
+{
+	m_programParameters->setVectorArrayParameter(handle, param.c_ptr(), (int)param.size());
+}
+
+void BoxedProgramParameters::setMatrixParameter(handle_t handle, const Matrix44& param)
+{
+	m_programParameters->setMatrixParameter(handle, param);
+}
+
+void BoxedProgramParameters::setMatrixArrayParameter(handle_t handle, const AlignedVector< Matrix44 >& param)
+{
+	m_programParameters->setMatrixArrayParameter(handle, param.c_ptr(), (int)param.size());
+}
+
+void BoxedProgramParameters::setTextureParameter(const render::handle_t handle, render::ITexture* texture)
+{
+	m_programParameters->setTextureParameter(handle, texture);
+}
+
+void BoxedProgramParameters::setStructBufferParameter(const render::handle_t handle, render::StructBuffer* structBuffer)
+{
+	m_programParameters->setStructBufferParameter(handle, structBuffer);
+}
+
+void BoxedProgramParameters::setStencilReference(uint32_t stencilReference)
+{
+	m_programParameters->setStencilReference(stencilReference);
+}
+
+void* BoxedProgramParameters::operator new (size_t size)
+{
+	return s_allocBoxedProgramParameters.alloc();
+}
+
+void BoxedProgramParameters::operator delete (void* ptr)
+{
+	s_allocBoxedProgramParameters.free(ptr);
 }
 
 	}

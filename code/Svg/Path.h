@@ -84,13 +84,17 @@ public:
 
 	const AlignedVector< SubPath >& getSubPaths() const;
 
+	void getAbsolute(float& x, float& y) const;
+
+	float getAbsoluteX(float x) const;
+
+	float getAbsoluteY(float y) const;
+
 private:
 	AlignedVector< SubPath > m_subPaths;
 	Vector2 m_origin;
 	Vector2 m_cursor;
 	SubPath* m_current;
-
-	void getAbsolute(float& x, float& y) const;
 };
 
 	}

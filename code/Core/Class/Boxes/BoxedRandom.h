@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedRandom : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedRandom();
+	BoxedRandom() = default;
 
 	explicit BoxedRandom(const Random& value);
 

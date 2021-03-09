@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedRange : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedRange();
+	BoxedRange() = default;
 
 	template < typename ItemType >
 	BoxedRange(const Range< ItemType >& range)

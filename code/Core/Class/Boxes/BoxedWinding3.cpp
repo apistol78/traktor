@@ -13,10 +13,6 @@ BoxedAllocator< BoxedWinding3, 356 > s_allocBoxedWinding3;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Winding3", BoxedWinding3, Boxed)
 
-BoxedWinding3::BoxedWinding3()
-{
-}
-
 BoxedWinding3::BoxedWinding3(const Winding3& value)
 :	m_value(value)
 {

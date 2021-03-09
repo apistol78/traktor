@@ -13,10 +13,6 @@ BoxedAllocator< BoxedFrustum, 16 > s_allocBoxedFrustum;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Frustum", BoxedFrustum, Boxed)
 
-BoxedFrustum::BoxedFrustum()
-{
-}
-
 BoxedFrustum::BoxedFrustum(const Frustum& value)
 :	m_value(value)
 {

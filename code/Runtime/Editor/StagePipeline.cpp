@@ -1,5 +1,6 @@
 #include "Runtime/Editor/StagePipeline.h"
 #include "Runtime/Engine/AudioLayerData.h"
+#include "Runtime/Engine/ScreenLayerData.h"
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/VideoLayerData.h"
 #include "Runtime/Engine/WorldLayerData.h"
@@ -26,11 +27,11 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 	{
 		Ref< const StageData > downStageData = pipelineBuilder->getObjectReadOnly< StageData >(stageData->getInherit());
 		if (!downStageData)
-			return 0;
+			return nullptr;
 
 		Ref< StageData > downStageDataFlatten = flattenInheritance(pipelineBuilder, downStageData);
 		if (!downStageData)
-			return 0;
+			return nullptr;
 
 		// Append layers.
 		RefArray< LayerData > downStageLayers = downStageDataFlatten->getLayers();
@@ -112,6 +113,8 @@ bool StagePipeline::buildDependencies(
 	{
 		if (const AudioLayerData* audioLayer = dynamic_type_cast< const AudioLayerData* >(layerData))
 			pipelineDepends->addDependency(audioLayer->m_sound, editor::PdfBuild);
+		else if (const ScreenLayerData* screenLayer = dynamic_type_cast< const ScreenLayerData* >(layerData))
+			pipelineDepends->addDependency(screenLayer->m_shader, editor::PdfBuild);
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(layerData))
 		{
 			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);

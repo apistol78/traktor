@@ -25,7 +25,7 @@ class T_DLLCLASS BoxedPlane : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedPlane();
+	BoxedPlane() = default;
 
 	explicit BoxedPlane(const Plane& value);
 

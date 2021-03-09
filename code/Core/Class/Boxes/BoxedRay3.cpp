@@ -13,10 +13,6 @@ BoxedAllocator< BoxedRay3, 8 > s_allocBoxedRay3;
 	}
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Ray3", BoxedRay3, Boxed)
 
-BoxedRay3::BoxedRay3()
-{
-}
-
 BoxedRay3::BoxedRay3(const Ray3& value)
 :	m_value(value)
 {

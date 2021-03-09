@@ -12,10 +12,6 @@ BoxedAllocator< BoxedAabb3, 64 > s_allocBoxedAabb3;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb3", BoxedAabb3, Boxed)
 
-BoxedAabb3::BoxedAabb3()
-{
-}
-
 BoxedAabb3::BoxedAabb3(const Aabb3& value)
 :	m_value(value)
 {

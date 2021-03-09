@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedPointer : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedPointer();
+	BoxedPointer() = default;
 
 	explicit BoxedPointer(void* ptr)
 	:	m_ptr(ptr)
@@ -46,7 +46,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	void* m_ptr;
+	void* m_ptr = nullptr;
 };
 
 /*!

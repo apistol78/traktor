@@ -102,7 +102,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 					currentInputPinTypes[i] = m_outputPinTypes[sourceOutputPin];
 				else
 				{
-					if (!inputPin->isOptional())
+					if (!inputPin->isOptional() && inputPin->getNode() != nullptr)
 						log::debug << L"No type for mandatory input pin \"" << inputPin->getName() << L"\" of node " << type_name(inputPin->getNode()) << L" " << inputPin->getNode()->getId().format() << L"." << Endl;
 					currentInputPinTypes[i] = PntVoid;
 				}

@@ -26,7 +26,7 @@ class T_DLLCLASS BoxedMatrix44 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedMatrix44();
+	BoxedMatrix44() = default;
 
 	explicit BoxedMatrix44(const Matrix44& value);
 

@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedVector2 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedVector2();
+	BoxedVector2() = default;
 
 	explicit BoxedVector2(const Vector2& value);
 
@@ -78,7 +78,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	Vector2 m_value;
+	Vector2 m_value = Vector2(0.0f, 0.0f);
 };
 
 /*!

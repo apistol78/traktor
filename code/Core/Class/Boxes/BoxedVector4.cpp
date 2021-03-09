@@ -14,11 +14,6 @@ BoxedAllocator< BoxedVector4, 32768 > s_allocBoxedVector4;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Boxed)
 
-BoxedVector4::BoxedVector4()
-:	m_value(Vector4::zero())
-{
-}
-
 BoxedVector4::BoxedVector4(const Vector4& value)
 :	m_value(value)
 {

@@ -26,7 +26,7 @@ class T_DLLCLASS BoxedFrustum : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedFrustum();
+	BoxedFrustum() = default;
 
 	explicit BoxedFrustum(const Frustum& value);
 
