@@ -1,6 +1,7 @@
 #include <locale>
 #include <sstream>
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -98,20 +99,20 @@ float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 
 	std::wstring::iterator j = i;
 
-	if (*i == L'-' || *i == L'+')
+	if (i != end && (*i == L'-' || *i == L'+'))
 		++i;
 
 	skipUntilNot(i, end, isDigit);
 
-	if (*i == L'.' && isDigit(*(i+1)))
+	if (i != end && *i == L'.' && isDigit(*(i+1)))
 	{
 		++i;
 		skipUntilNot(i, end, isDigit);
 	}
-	else if (*i == L'e' && ( *(i+1) == L'-' || *(i+1) == L'+' || isDigit(*(i+1)) ))
+	else if (i != end && *i == L'e' && ( *(i+1) == L'-' || *(i+1) == L'+' || isDigit(*(i+1)) ))
 	{
 		++i;
-		if (*i == L'-' || *i == L'+')
+		if (i != end && (*i == L'-' || *i == L'+'))
 			++i;
 		skipUntilNot(i, end, isDigit);
 	}
@@ -370,6 +371,8 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 				cmd = isupper(cmdLead) ? L'C' : L'c';
 			else if (toupper(cmdLead) == L'L')
 				cmd = isupper(cmdLead) ? L'L' : L'l';
+			else if (toupper(cmdLead) == L'Q')
+				cmd = isupper(cmdLead) ? L'Q' : L'q';
 			else
 				return nullptr;
 		}
@@ -379,7 +382,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			++i;
 		}
 
-		bool relative = (cmd != toupper(cmd));
+		bool relative = islower(cmd);
 		switch (toupper(cmd))
 		{
 		case L'M':	// Move to
@@ -400,15 +403,19 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 
 		case L'V':	// Vertical line to
 			{
-				float x = parseDecimalNumber(i, def.end());
-				path.lineTo(x, path.getCursor().y, relative);
+				float y = parseDecimalNumber(i, def.end());
+				if (relative)				
+					y = path.getAbsoluteY(y);
+				path.lineTo(path.getCursor().x, y, false);
 			}
 			break;
 
 		case L'H':	// Horizontal line to
 			{
-				float y = parseDecimalNumber(i, def.end());
-				path.lineTo(path.getCursor().x, y, relative);
+				float x = parseDecimalNumber(i, def.end());
+				if (relative)
+					x = path.getAbsoluteX(x);
+				path.lineTo(x, path.getCursor().y, false);
 			}
 			break;
 
@@ -708,6 +715,14 @@ Matrix33 Parser::parseTransform(xml::Element* elm)
 
 			if (argv.size() >= 2)
 				transform *= translate(argv[0], argv[1]);
+		}
+		else if (fnc == L"rotate")
+		{
+			std::vector< float > argv;
+			Split< std::wstring, float >::any(args, L",", argv);
+
+			if (argv.size() >= 1)
+				transform *= rotate(deg2rad(argv[0]));
 		}
 		else if (fnc == L"scale")
 		{

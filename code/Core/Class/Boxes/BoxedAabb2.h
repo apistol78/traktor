@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedAabb2 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedAabb2();
+	BoxedAabb2() = default;
 
 	explicit BoxedAabb2(const Aabb2& value);
 

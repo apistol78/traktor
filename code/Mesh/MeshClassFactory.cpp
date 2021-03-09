@@ -1,7 +1,5 @@
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/BoxedAllocator.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
-#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Mesh/IMeshParameterCallback.h"
@@ -25,6 +23,7 @@
 #include "Mesh/Stream/StreamMesh.h"
 #include "Mesh/Stream/StreamMeshComponent.h"
 #include "Render/ITexture.h"
+#include "Render/RenderClassFactory.h"
 #include "Render/StructBuffer.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Resource/ResourceCast.h"
@@ -36,79 +35,11 @@ namespace traktor
 		namespace
 		{
 
-class BoxedProgramParameters : public Object
-{
-	T_RTTI_CLASS;
-
-public:
-	BoxedProgramParameters()
-	:	m_programParameters(nullptr)
-	{
-	}
-
-	void setProgramParameters(render::ProgramParameters* programParameters)
-	{
-		m_programParameters = programParameters;
-	}
-
-	void setFloatParameter(const render::handle_t handle, float param)
-	{
-		m_programParameters->setFloatParameter(handle, param);
-	}
-
-	void setVectorParameter(const render::handle_t handle, const Vector4& param)
-	{
-		m_programParameters->setVectorParameter(handle, param);
-	}
-
-	void setVectorArrayParameter(const render::handle_t handle, const AlignedVector< Vector4 >& param)
-	{
-		m_programParameters->setVectorArrayParameter(handle, param.c_ptr(), (int)param.size());
-	}
-
-	void setTextureParameter(const render::handle_t handle, render::ITexture* texture)
-	{
-		m_programParameters->setTextureParameter(handle, texture);
-	}
-
-	void setStructBufferParameter(const render::handle_t handle, render::StructBuffer* structBuffer)
-	{
-		m_programParameters->setStructBufferParameter(handle, structBuffer);
-	}
-
-	void setStencilReference(uint32_t stencilReference)
-	{
-		m_programParameters->setStencilReference(stencilReference);
-	}
-
-	void* operator new (size_t size);
-
-	void operator delete (void* ptr);
-
-private:
-	render::ProgramParameters* m_programParameters;
-};
-
-BoxedAllocator< BoxedProgramParameters, 64 > s_allocBoxedProgramParameters;
-
-void* BoxedProgramParameters::operator new (size_t size)
-{
-	return s_allocBoxedProgramParameters.alloc();
-}
-
-void BoxedProgramParameters::operator delete (void* ptr)
-{
-	s_allocBoxedProgramParameters.free(ptr);
-}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.ProgramParameters", BoxedProgramParameters, Object)
-
 class DelegateMeshParameterCallback : public RefCountImpl< IMeshParameterCallback >
 {
 public:
 	DelegateMeshParameterCallback(IRuntimeDelegate* callback)
 	:	m_callback(callback)
-	,	m_programParameters(new BoxedProgramParameters())
 	{
 	}
 
@@ -118,18 +49,18 @@ public:
 
 	virtual void setParameters(render::ProgramParameters* programParameters) const
 	{
-		m_programParameters->setProgramParameters(programParameters);
+		m_programParameters.setProgramParameters(programParameters);
 		Any argv[] =
 		{
-			CastAny< BoxedProgramParameters* >::set(m_programParameters)
+			CastAny< render::BoxedProgramParameters* >::set(&m_programParameters)
 		};
 		m_callback->call(sizeof_array(argv), argv);
-		m_programParameters->setProgramParameters(nullptr);
+		m_programParameters.setProgramParameters(nullptr);
 	}
 
 private:
 	Ref< IRuntimeDelegate > m_callback;
-	mutable Ref< BoxedProgramParameters > m_programParameters;
+	mutable render::BoxedProgramParameters m_programParameters;
 };
 
 void MeshComponent_setParameterCallback(MeshComponent* self, IRuntimeDelegate* callback)
@@ -146,15 +77,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshClassFactory", 0, MeshClassFac
 
 void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classBoxedProgramParameters = new AutoRuntimeClass< BoxedProgramParameters >();
-	classBoxedProgramParameters->addMethod("setFloatParameter", &BoxedProgramParameters::setFloatParameter);
-	classBoxedProgramParameters->addMethod("setVectorParameter", &BoxedProgramParameters::setVectorParameter);
-	classBoxedProgramParameters->addMethod("setVectorArrayParameter", &BoxedProgramParameters::setVectorArrayParameter);
-	classBoxedProgramParameters->addMethod("setTextureParameter", &BoxedProgramParameters::setTextureParameter);
-	classBoxedProgramParameters->addMethod("setStructBufferParameter", &BoxedProgramParameters::setStructBufferParameter);
-	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
-	registrar->registerClass(classBoxedProgramParameters);
-
 	auto classIMesh = new AutoRuntimeClass< IMesh >();
 	registrar->registerClass(classIMesh);
 

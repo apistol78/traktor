@@ -6,10 +6,6 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Bezier2nd", BoxedBezier2nd, Boxed)
 
-BoxedBezier2nd::BoxedBezier2nd()
-{
-}
-
 BoxedBezier2nd::BoxedBezier2nd(const Bezier2nd& value)
 :	m_value(value)
 {

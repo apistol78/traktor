@@ -25,7 +25,7 @@ class T_DLLCLASS BoxedBezier2nd : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedBezier2nd();
+	BoxedBezier2nd() = default;
 
 	explicit BoxedBezier2nd(const Bezier2nd& value);
 

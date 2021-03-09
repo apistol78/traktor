@@ -12,10 +12,6 @@ BoxedAllocator< BoxedRandomGeometry, 4 > s_allocBoxedRandomGeometry;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RandomGeometry", BoxedRandomGeometry, BoxedRandom)
 
-BoxedRandomGeometry::BoxedRandomGeometry()
-{
-}
-
 BoxedRandomGeometry::BoxedRandomGeometry(const RandomGeometry& value)
 :	m_value(value)
 {

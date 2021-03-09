@@ -16,11 +16,6 @@ BoxedAllocator< BoxedQuaternion, 4096 > s_allocBoxedQuaternion;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Boxed)
 
-BoxedQuaternion::BoxedQuaternion()
-:	m_value(Quaternion::identity())
-{
-}
-
 BoxedQuaternion::BoxedQuaternion(const Quaternion& value)
 :	m_value(value)
 {

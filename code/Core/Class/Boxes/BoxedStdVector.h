@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedStdVector : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedStdVector();
+	BoxedStdVector() = default;
 
 	explicit BoxedStdVector(uint32_t size);
 

@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedRandomGeometry : public BoxedRandom
 	T_RTTI_CLASS;
 
 public:
-	BoxedRandomGeometry();
+	BoxedRandomGeometry() = default;
 
 	explicit BoxedRandomGeometry(const RandomGeometry& value);
 

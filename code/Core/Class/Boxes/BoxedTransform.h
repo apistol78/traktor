@@ -28,7 +28,7 @@ class T_DLLCLASS BoxedTransform : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedTransform();
+	BoxedTransform() = default;
 
 	explicit BoxedTransform(const Transform& value);
 

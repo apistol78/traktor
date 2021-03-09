@@ -14,10 +14,6 @@ BoxedAllocator< BoxedMatrix44, 16 > s_allocBoxedMatrix44;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Matrix44", BoxedMatrix44, Boxed)
 
-BoxedMatrix44::BoxedMatrix44()
-{
-}
-
 BoxedMatrix44::BoxedMatrix44(const Matrix44& value)
 :	m_value(value)
 {

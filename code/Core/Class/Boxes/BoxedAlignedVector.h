@@ -24,7 +24,7 @@ class T_DLLCLASS BoxedAlignedVector : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedAlignedVector();
+	BoxedAlignedVector() = default;
 
 	explicit BoxedAlignedVector(uint32_t size);
 

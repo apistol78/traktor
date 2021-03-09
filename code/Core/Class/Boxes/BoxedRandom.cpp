@@ -12,10 +12,6 @@ BoxedAllocator< BoxedRandom, 4 > s_allocBoxedRandom;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Random", BoxedRandom, Boxed)
 
-BoxedRandom::BoxedRandom()
-{
-}
-
 BoxedRandom::BoxedRandom(const Random& value)
 :	m_value(value)
 {

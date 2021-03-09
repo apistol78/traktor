@@ -13,10 +13,6 @@ BoxedAllocator< BoxedRefArray, 512 > s_allocBoxedRefArray;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RefArray", BoxedRefArray, Boxed)
 
-BoxedRefArray::BoxedRefArray()
-{
-}
-
 void BoxedRefArray::push_back(ITypedObject* object)
 {
 	m_arr.push_back(object);

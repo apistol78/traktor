@@ -1,18 +1,6 @@
-#include "Runtime/GameClassFactory.h"
-#include "Runtime/IAudioServer.h"
-#include "Runtime/IEnvironment.h"
-#include "Runtime/IInputServer.h"
-#include "Runtime/IRenderServer.h"
-#include "Runtime/UpdateControl.h"
-#include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/AudioLayer.h"
-#include "Runtime/Engine/StageData.h"
-#include "Runtime/Engine/Stage.h"
-#include "Runtime/Engine/StageData.h"
-#include "Runtime/Engine/StageLoader.h"
-#include "Runtime/Engine/VideoLayer.h"
-#include "Runtime/Engine/WorldLayer.h"
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAabb2.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
@@ -20,7 +8,6 @@
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/Boxes/BoxedVector2.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
@@ -31,7 +18,22 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/RenderClassFactory.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/GameClassFactory.h"
+#include "Runtime/IAudioServer.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/IInputServer.h"
+#include "Runtime/IRenderServer.h"
+#include "Runtime/UpdateControl.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/AudioLayer.h"
+#include "Runtime/Engine/ScreenLayer.h"
+#include "Runtime/Engine/Stage.h"
+#include "Runtime/Engine/StageData.h"
+#include "Runtime/Engine/StageLoader.h"
+#include "Runtime/Engine/VideoLayer.h"
+#include "Runtime/Engine/WorldLayer.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -82,12 +84,24 @@ bool IInputServer_fabricateInputSource(IInputServer* self, const std::wstring& s
 RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 {
 	RefArray< BoxedTransition > out;
-
-	const std::map< std::wstring, Guid >& transitions = self->getTransitions();
-	for (std::map< std::wstring, Guid >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
-		out.push_back(new BoxedTransition(i->first, i->second));
-
+	for (auto it : self->getTransitions())
+		out.push_back(new BoxedTransition(it.first, it.second));
 	return out;
+}
+
+void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callback)
+{
+	if (callback)
+	{
+		Ref< IRuntimeDelegate > rc = callback;
+		self->setParameterCallback([&, rc](render::ProgramParameters* programParameters) {
+			Ref< render::BoxedProgramParameters > b = new render::BoxedProgramParameters(programParameters);
+			Any argv[] = { CastAny< render::BoxedProgramParameters* >::set(b) };
+			rc->call(sizeof_array(argv), argv);
+		 });
+	}
+	else
+		self->setParameterCallback(nullptr);
 }
 
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
@@ -282,6 +296,10 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioLayer->addMethod("setParameter", &AudioLayer::setParameter);
 	classAudioLayer->addMethod("tweenParameter", &AudioLayer::tweenParameter);
 	registrar->registerClass(classAudioLayer);
+
+	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();
+	classScreenLayer->addMethod("setParameterCallback", &ScreenLayer_setParameterCallback);
+	registrar->registerClass(classScreenLayer);
 
 	auto classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addProperty< bool >("playing", 0, &VideoLayer::isPlaying);

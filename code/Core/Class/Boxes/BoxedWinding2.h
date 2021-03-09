@@ -25,7 +25,7 @@ class T_DLLCLASS BoxedWinding2 : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedWinding2();
+	BoxedWinding2() = default;
 
 	explicit BoxedWinding2(const Winding2& value);
 

@@ -36,7 +36,9 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	MeshComponent(bool screenSpaceCulling);
+	MeshComponent() = delete;
+
+	explicit MeshComponent(bool screenSpaceCulling);
 
 	virtual void destroy() override;
 

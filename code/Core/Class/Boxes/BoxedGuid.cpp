@@ -12,10 +12,6 @@ BoxedAllocator< BoxedGuid, 512 > s_allocBoxedGuid;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Boxed)
 
-BoxedGuid::BoxedGuid()
-{
-}
-
 BoxedGuid::BoxedGuid(const Guid& value)
 :	m_value(value)
 {

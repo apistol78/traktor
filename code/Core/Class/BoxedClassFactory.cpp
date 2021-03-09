@@ -216,6 +216,13 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix44->addMethod("get", &BoxedMatrix44::get);
 	classBoxedMatrix44->addMethod("concat", &BoxedMatrix44::concat);
 	classBoxedMatrix44->addMethod("transform", &BoxedMatrix44::transform);
+	classBoxedMatrix44->addStaticMethod< Matrix44, const Vector4& >("translate", &translate);
+	classBoxedMatrix44->addStaticMethod< Matrix44, float, float, float >("translate", &translate);
+	classBoxedMatrix44->addStaticMethod("rotateX", &rotateX);
+	classBoxedMatrix44->addStaticMethod("rotateY", &rotateY);
+	classBoxedMatrix44->addStaticMethod("rotateZ", &rotateZ);
+	classBoxedMatrix44->addStaticMethod< Matrix44, const Vector4& >("scale", &scale);
+	classBoxedMatrix44->addStaticMethod< Matrix44, float, float, float >("scale", &scale);
 	classBoxedMatrix44->addOperator< Vector4, const BoxedVector4* >('*', &BoxedMatrix44::transform);
 	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >('*', &BoxedMatrix44::concat);
 	registrar->registerClass(classBoxedMatrix44);

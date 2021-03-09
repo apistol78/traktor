@@ -23,7 +23,7 @@ class T_DLLCLASS BoxedRefArray : public Boxed
 	T_RTTI_CLASS;
 
 public:
-	BoxedRefArray();
+	BoxedRefArray() = default;
 
 	template < typename ObjectType >
 	BoxedRefArray(const RefArray< ObjectType >& arr)
