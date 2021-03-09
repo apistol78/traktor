@@ -31,7 +31,12 @@ public:
 	struct Node
 	{
 		ItemType items[MaxItemsPerNode];
-		std::atomic< int32_t > size = 0;
+		std::atomic< int32_t > size;
+
+		Node()
+		:	size(0)
+		{
+		}
 	};
 
 	explicit Grid3(const Aabb3& bounds, float searchRadius)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Class/IRuntimeClassFactory.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
