@@ -16,18 +16,6 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace
-		{
-
-struct ItemSortPredicate
-{
-	bool operator () (const TreeViewItem* item1, const TreeViewItem* item2) const
-	{
-		return compareIgnoreCase(item1->getText(), item2->getText()) < 0;
-	}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewItem", TreeViewItem, AutoWidgetCell)
 
@@ -216,12 +204,19 @@ bool TreeViewItem::edit()
 
 void TreeViewItem::sort(bool recursive)
 {
+	sort(recursive, [](const TreeViewItem* item1, const TreeViewItem* item2) -> bool {
+		return compareIgnoreCase(item1->getText(), item2->getText()) < 0;
+	});
+}
+
+void TreeViewItem::sort(bool recursive, const std::function< bool(const TreeViewItem* item1, const TreeViewItem* item2) >& predicate)
+{
 	if (recursive)
 	{
 		for (auto child : m_children)
-			child->sort(true);
+			child->sort(true, predicate);
 	}
-	m_children.sort(ItemSortPredicate());
+	m_children.sort(predicate);
 }
 
 TreeViewItem* TreeViewItem::getParent() const
