@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -16,6 +17,7 @@ namespace traktor
 	namespace render
 	{
 
+class ITexture;
 class ProgramParameters;
 class StructBuffer;
 
@@ -38,19 +40,19 @@ public:
 
 	void setProgramParameters(ProgramParameters* programParameters);
 
-	void setFloatParameter(const render::handle_t handle, float param);
+	void setFloatParameter(const handle_t handle, float param);
 
-	void setVectorParameter(const render::handle_t handle, const Vector4& param);
+	void setVectorParameter(const handle_t handle, const Vector4& param);
 
-	void setVectorArrayParameter(const render::handle_t handle, const AlignedVector< Vector4 >& param);
+	void setVectorArrayParameter(const handle_t handle, const AlignedVector< Vector4 >& param);
 
 	void setMatrixParameter(handle_t handle, const Matrix44& param);
 
 	void setMatrixArrayParameter(handle_t handle, const AlignedVector< Matrix44 >& param);
 
-	void setTextureParameter(const render::handle_t handle, render::ITexture* texture);
+	void setTextureParameter(const handle_t handle, ITexture* texture);
 
-	void setStructBufferParameter(const render::handle_t handle, render::StructBuffer* structBuffer);
+	void setStructBufferParameter(const handle_t handle, StructBuffer* structBuffer);
 
 	void setStencilReference(uint32_t stencilReference);
 
