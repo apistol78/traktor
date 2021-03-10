@@ -307,17 +307,17 @@ void BoxedProgramParameters::setProgramParameters(ProgramParameters* programPara
 	m_programParameters = programParameters;
 }
 
-void BoxedProgramParameters::setFloatParameter(const render::handle_t handle, float param)
+void BoxedProgramParameters::setFloatParameter(const handle_t handle, float param)
 {
 	m_programParameters->setFloatParameter(handle, param);
 }
 
-void BoxedProgramParameters::setVectorParameter(const render::handle_t handle, const Vector4& param)
+void BoxedProgramParameters::setVectorParameter(const handle_t handle, const Vector4& param)
 {
 	m_programParameters->setVectorParameter(handle, param);
 }
 
-void BoxedProgramParameters::setVectorArrayParameter(const render::handle_t handle, const AlignedVector< Vector4 >& param)
+void BoxedProgramParameters::setVectorArrayParameter(const handle_t handle, const AlignedVector< Vector4 >& param)
 {
 	m_programParameters->setVectorArrayParameter(handle, param.c_ptr(), (int)param.size());
 }
@@ -332,12 +332,12 @@ void BoxedProgramParameters::setMatrixArrayParameter(handle_t handle, const Alig
 	m_programParameters->setMatrixArrayParameter(handle, param.c_ptr(), (int)param.size());
 }
 
-void BoxedProgramParameters::setTextureParameter(const render::handle_t handle, render::ITexture* texture)
+void BoxedProgramParameters::setTextureParameter(const handle_t handle, ITexture* texture)
 {
 	m_programParameters->setTextureParameter(handle, texture);
 }
 
-void BoxedProgramParameters::setStructBufferParameter(const render::handle_t handle, render::StructBuffer* structBuffer)
+void BoxedProgramParameters::setStructBufferParameter(const handle_t handle, StructBuffer* structBuffer)
 {
 	m_programParameters->setStructBufferParameter(handle, structBuffer);
 }
