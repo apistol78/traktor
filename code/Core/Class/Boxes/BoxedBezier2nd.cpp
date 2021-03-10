@@ -41,13 +41,19 @@ float BoxedBezier2nd::getLocalMinMaxX() const
 	return m_value.getLocalMinMaxX();
 }
 
-//void BoxedBezier2nd::intersectX(float y, float& outT0, float& outT1) const;
-//{
-//}
+Range< float > BoxedBezier2nd::intersectX(float y) const
+{
+	float t0, t1;
+	m_value.intersectX(y, t0, t1);
+	return Range< float >(t0, t1);
+}
 
-//void BoxedBezier2nd::intersectY(float x, float& outT0, float& outT1) const;
-//{
-//}
+Range< float > BoxedBezier2nd::intersectY(float x) const
+{
+	float t0, t1;
+	m_value.intersectY(x, t0, t1);
+	return Range< float >(t0, t1);
+}
 
 RefArray< BoxedBezier2nd > BoxedBezier2nd::split(float t) const
 {

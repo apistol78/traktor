@@ -96,6 +96,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedBezier2nd->addMethod("tangent", &BoxedBezier2nd::tangent);
 	classBoxedBezier2nd->addMethod("getLocalMinMaxY", &BoxedBezier2nd::getLocalMinMaxY);
 	classBoxedBezier2nd->addMethod("getLocalMinMaxX", &BoxedBezier2nd::getLocalMinMaxX);
+	classBoxedBezier2nd->addMethod("intersectX", &BoxedBezier2nd::intersectX);
+	classBoxedBezier2nd->addMethod("intersectY", &BoxedBezier2nd::intersectY);
 	classBoxedBezier2nd->addMethod("split", &BoxedBezier2nd::split);
 	classBoxedBezier2nd->addMethod("toBezier3rd", &BoxedBezier2nd::toBezier3rd);
 	registrar->registerClass(classBoxedBezier2nd);
