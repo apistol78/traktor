@@ -3,6 +3,7 @@
 #include "Core/RefArray.h"
 #include "Core/Class/Boxes/BoxedVector2.h"
 #include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Range.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,9 +40,9 @@ public:
 
 	float getLocalMinMaxX() const;
 
-	//void intersectX(float y, float& outT0, float& outT1) const;
+	Range< float > intersectX(float y) const;
 
-	//void intersectY(float x, float& outT0, float& outT1) const;
+	Range< float > intersectY(float x) const;
 
 	RefArray< BoxedBezier2nd > split(float t) const;
 
