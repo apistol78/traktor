@@ -11,6 +11,7 @@
 #include "Script/Editor/ScriptClassesView.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 
 namespace traktor
 {
@@ -178,6 +179,16 @@ bool ScriptClassesView::create(ui::Widget* parent)
 		if (runtimeClassFactory)
 			runtimeClassFactory->createClasses(&registrar);
 	}
+
+	RefArray< ui::TreeViewItem > items;
+	m_treeClasses->getItems(items, ui::TreeView::GfDefault);
+	for (auto item : items)
+		item->sort(
+			true,
+			[](const ui::TreeViewItem* item1, const ui::TreeViewItem* item2) -> bool {
+				return item1->getText() < item2->getText();
+			}
+		);
 
 	return true;
 }

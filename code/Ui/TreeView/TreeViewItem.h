@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4ub.h"
 #include "Ui/Auto/AutoWidgetCell.h"
@@ -82,6 +83,8 @@ public:
 	bool edit();
 
 	void sort(bool recursive);
+
+	void sort(bool recursive, const std::function< bool(const TreeViewItem* item1, const TreeViewItem* item2) >& predicate);
 
 	TreeViewItem* getParent() const;
 
