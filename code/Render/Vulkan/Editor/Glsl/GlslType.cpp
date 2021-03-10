@@ -104,7 +104,15 @@ GlslType glsl_degrade_to_integer(GlslType type)
 
 GlslType glsl_precedence(GlslType typeA, GlslType typeB)
 {
-	return std::max< GlslType >(typeA, typeB);
+	bool intA = (typeA >= GtBoolean && typeA <= GtInteger4);
+	bool intB = (typeB >= GtBoolean && typeB <= GtInteger4);
+
+	if (intA && !intB)
+		typeA = glsl_promote_to_float(typeA);
+	if (!intA && intB)
+		typeB = glsl_promote_to_float(typeB);
+
+	return std::max(typeA, typeB);
 }
 
 GlslType glsl_from_data_type(DataType type)
