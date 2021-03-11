@@ -410,11 +410,13 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			int32_t indent = os.getIndent();
 			os.setIndent(0);
 
-			os << L"@pushd \"" << solutionPath << L"/" << name << L"\"" << Endl;
-			for (RefArray< AggregationItem >::const_iterator j = aggregationItems.begin(); j != aggregationItems.end(); ++j)
+			Path aggregateOutputPath = FileSystem::getInstance().getAbsolutePath(solution->getAggregateOutputPath());
+
+			os << L"@pushd \"$(SolutionDir)" << name << L"\"" << Endl;
+			for (auto aggregationItem : aggregationItems)
 			{
-				Path sourceFile = Path((*j)->getSourceFile());
-				Path targetPath = Path(solution->getAggregateOutputPath()) + Path((*j)->getTargetPath());
+				Path sourceFile = Path(aggregationItem->getSourceFile());
+				Path targetPath = aggregateOutputPath + Path(aggregationItem->getTargetPath());
 				os << L"@xcopy /D /F /R /Y /I \"" << sourceFile.getPathName() << L"\" \"" << targetPath.getPathName() << L"\\\"" << Endl;
 			}
 			os << L"@popd" << Endl;
@@ -497,11 +499,15 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 				return false;
 
 			Path relativePath;
-			FileSystem::getInstance().getRelativePath(
-				dependentProjectFileName,
-				projectPath,
+			if (!FileSystem::getInstance().getRelativePath(
+				FileSystem::getInstance().getAbsolutePath(dependentProjectFileName),
+				FileSystem::getInstance().getAbsolutePath(projectPath),
 				relativePath
-			);
+			))
+			{
+				log::warning << L"Unable to determine relative path to \"" << dependentProjectFileName << L"\" from \"" << projectPath << L"\"." << Endl;
+				continue;
+			}
 
 			os << L"<ProjectReference Include=\"" << systemPath(relativePath.getPathName()) << L"\">" << Endl;
 			os << IncreaseIndent;
