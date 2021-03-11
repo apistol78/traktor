@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<style>
+body {
+	background: #000;
+    background-image: url("background.png");
+	background-position: center;
+	background-repeat: repeat;
+}
+
+.bold {
+    font-size: 22pt;
+    font-weight: bold;
+}
+
+.content {
+    color: white;
+    text-align: center;
+    font-family: "Segoe UI", "Arial";
+    font-size: 10pt;
+
+    border: solid;
+    border-width: 2px;
+    border-radius: 8px;
+    border-color: #444;
+
+    margin: auto;
+    background: #222;
+
+    padding: 16px;
+}
+
+
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<div class="bold"><!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></div><br>
+			Welcome to the <b>Traktor Editor</b> and your new project <b><!-- output:print(os:getEnvironment("WIZARD_NAME")) --!></b>!<br><br>
+			To get you started we've provided a basic skeleton which
+			contains the very basic to get your application up and
+			running as quickly and easily as possible.
+		</div>
+	</body>
+</html>
