@@ -845,8 +845,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (maximized)
 		maximize();
 
+	// Open workspace specified on command line.
+	if (cmdLine.getCount() > 0)
+	{
+		Path workspacePath = cmdLine.getString(0);
+		if (!workspacePath.empty())
+			openWorkspace(workspacePath);
+	}
 	// Open recently used workspace.
-	if (m_mergedSettings->getProperty< bool >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
+	else if (m_mergedSettings->getProperty< bool >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
 	{
 		Path workspacePath = m_mru->getMostRecentlyUseFile();
 		if (!workspacePath.empty())
@@ -2411,14 +2418,14 @@ void EditorForm::activateNextEditor()
 void EditorForm::loadModules()
 {
 #if !defined(T_STATIC)
-	std::set< std::wstring > modulePaths = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
-	std::set< std::wstring > modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+	std::vector< Path > modulePaths;
+	for (const auto& path : m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths"))
+		modulePaths.push_back(FileSystem::getInstance().getAbsolutePath(path));
 
-	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
-	for (const auto& module : modules)
+	for (const auto& module : m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules"))
 	{
 		Ref< Library > library = new Library();
-		if (library->open(module, modulePathsFlatten, true))
+		if (library->open(module, modulePaths, true))
 		{
 			log::info << L"Module \"" << module << L"\" loaded successfully." << Endl;
 			library->detach();
