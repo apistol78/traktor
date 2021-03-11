@@ -222,11 +222,11 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	Ref< traktor::IStream > file;
 
 #if defined(_WIN32)
-    std::wstring system = L"win32";
+	std::wstring system = L"win32";
 #elif defined(__APPLE__)
-    std::wstring system = L"osx";
+	std::wstring system = L"osx";
 #else   // LINUX
-    std::wstring system = L"linux";
+	std::wstring system = L"linux";
 #endif
 
 	std::wstring globalConfig = settingsFile + L".config";
@@ -256,13 +256,13 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 		file->close();
 	}
 
-    // Read system properties.
-    if ((file = FileSystem::getInstance().open(systemConfig, File::FmRead)) != 0)
-    {
-        systemSettings = xml::XmlDeserializer(file, systemConfig).readObject< PropertyGroup >();
+	// Read system properties.
+	if ((file = FileSystem::getInstance().open(systemConfig, File::FmRead)) != 0)
+	{
+		systemSettings = xml::XmlDeserializer(file, systemConfig).readObject< PropertyGroup >();
 		if (!systemSettings)
 			log::warning << systemConfig << L" corrupt!" << Endl;
-        file->close();
+		file->close();
 	}
 
 	// Merge in system configuration.

@@ -67,19 +67,18 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 
 	StringOutputStream newPathStream;
 
-	std::vector< Path >::const_iterator i = searchPaths.begin();
-	if (i != searchPaths.end())
+	auto it = searchPaths.begin();
+	if (it != searchPaths.end())
 	{
-		newPathStream << i->getPathName();
-		for (++i; i != searchPaths.end(); ++i)
-			newPathStream << L";" << i->getPathName();
+		newPathStream << it->getPathName();
+		for (++it; it != searchPaths.end(); ++it)
+			newPathStream << L";" << it->getPathName();
 	}
 
 	if (includeDefaultPaths)
 		newPathStream << L";" << currentPath;
 
 	std::wstring newPath = newPathStream.str();
-
 	if (!SetEnvironmentVariable(_T("PATH"), newPath.c_str()))
 		return false;
 

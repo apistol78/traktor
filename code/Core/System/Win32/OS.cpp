@@ -250,7 +250,7 @@ Ref< IProcess > OS::execute(
 	HANDLE hStdInRead = 0, hStdInWrite = 0;
 	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
 	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
-	AutoArrayPtr< wchar_t > environment;
+	AutoArrayPtr< char > environment;
 	std::wstring executable;
 	std::wstring arguments;
 
@@ -296,14 +296,14 @@ Ref< IProcess > OS::execute(
 			size += i->first.length() + 1 + i->second.length() + 1;
 		size += 1;
 
-		environment.reset(new wchar_t [size]);
+		environment.reset(new char [size]);
 
-		wchar_t* p = environment.ptr(); *p = 0;
+		char* p = environment.ptr(); *p = 0;
 		for (auto i = e.begin(); i != e.end(); ++i)
 		{
-			wcscpy(p, i->first.c_str());
-			wcscat(p, L"=");
-			wcscat(p, i->second.c_str());
+			strcpy(p, wstombs(i->first).c_str());
+			strcat(p, "=");
+			strcat(p, wstombs(i->second).c_str());
 			p += i->first.length() + 1 + i->second.length() + 1;
 		}
 		*p++ = 0;
@@ -382,9 +382,6 @@ Ref< IProcess > OS::execute(
 	}
 	else
 		dwCreationFlags = CREATE_NEW_CONSOLE;
-
-	if (environment.ptr())
-		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 
 	BOOL result = CreateProcess(
 		NULL,
