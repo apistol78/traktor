@@ -196,7 +196,7 @@ bool writeTexture(
 	// Write texture data.
 	RefArray< drawing::Image > mipImages(1);
 	mipImages[0] = lightmapFormat;
-	compressor->compress(writerData, mipImages, textureFormat, needAlpha, 3);
+	compressor->compress(writerData, mipImages, textureFormat, needAlpha, 1);
 
 	streamData->close();
 	stream->close();
