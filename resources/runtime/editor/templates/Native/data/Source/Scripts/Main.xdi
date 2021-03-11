@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+-- Main
+
+Main = Main or class("Main", Stage)
+
+function Main:new(params, environment)
+	Stage.new(self, params, environment)
+
+	-- Initialize UiKit.
+	Widget.initialize(
+		environment.resource.resourceManager,
+		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
+	)
+
+	-- Create UI frame with virtual size of 1280x720.
+	local root = self.ui.root
+	self._frame = Frame(
+		root,
+		1280, 720,
+		TableLayout({ 100 }, { 100 }, 16, 16, 16, 0)
+	)
+
+	-- Create reset button.
+	self._btn = PushButton(self._frame, "Call Native")
+	self._btn:setHorizontalAlign(Widget.ALIGN_CENTER)
+	self._btn:setVerticalAlign(Widget.ALIGN_CENTER)
+	self._btn:setOnClick(function()
+
+		-- Calling native class.
+		shared.Example():sayHelloWorld()
+
+	end)
+
+	-- Ensure layout is updated.
+	self._frame:update()
+end
+
+function Main:finalize()
+	self._frame:remove()
+	self._frame = nil
+end
+
+function Main:update(info)
+end
+
+	]]>
+	</text>
+</object>

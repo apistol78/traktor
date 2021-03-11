@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.runtime.Target" version="1">
+	<identifier>com.yourcompany.ApplicationName</identifier>
+	<version/>
+	<configurations>
+		<item type="traktor.runtime.TargetConfiguration" version="3">
+			<name>Windows</name>
+			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
+			<features>
+				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
+				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>
+				<item>{4058325A-C745-9640-815A-AE552A358A42}</item>
+				<item>{2C138503-5721-E742-9B5F-51F8AC2962B4}</item>
+				<item>{080D94FE-74F2-C540-BF47-E9B844F07BA2}</item>
+				<item>{44DA7651-8D13-E54B-8564-ED92EE552376}</item>
+				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{AE07939E-B6AD-1240-8C49-D5B968120992}</item>
+				<item>{6F6FBB47-6FB3-2843-87CA-99E2149EB601}</item>
+			</features>
+			<root>{00000000-0000-0000-0000-000000000000}</root>
+			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
+			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
+			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
+		</item>
+		<item type="traktor.runtime.TargetConfiguration" version="3">
+			<name>macOS</name>
+			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
+			<features>
+				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
+				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>
+				<item>{4058325A-C745-9640-815A-AE552A358A42}</item>
+				<item>{080D94FE-74F2-C540-BF47-E9B844F07BA2}</item>
+				<item>{39D2D77C-0235-5E4C-A0E1-AFA086059852}</item>
+				<item>{635B11D0-6C69-154D-A9E1-F59EFD59B8F7}</item>
+				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{6F6FBB47-6FB3-2843-87CA-99E2149EB601}</item>
+				<item>{AE07939E-B6AD-1240-8C49-D5B968120992}</item>
+			</features>
+			<root>{00000000-0000-0000-0000-000000000000}</root>
+			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
+			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
+			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
+		</item>
+		<item type="traktor.runtime.TargetConfiguration" version="3">
+			<name>Linux</name>
+			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<icon>$(TRAKTOR_HOME)/resources/runtime/deploy/DefaultIcon.png</icon>
+			<features>
+				<item>{ED7D0946-D723-0A4A-8D9B-058AE2E20724}</item>
+				<item>{EB30F688-CB36-074B-9F05-C12D5E90E231}</item>
+				<item>{4058325A-C745-9640-815A-AE552A358A42}</item>
+				<item>{080D94FE-74F2-C540-BF47-E9B844F07BA2}</item>
+				<item>{0305E0C8-6C99-D84E-9D92-8DE7E3DD06CA}</item>
+				<item>{02901748-F3D8-3F45-AB56-6180514151F7}</item>
+				<item>{805454A8-73DC-BF43-990B-266E51956C47}</item>
+				<item>{AE07939E-B6AD-1240-8C49-D5B968120992}</item>
+				<item>{6F6FBB47-6FB3-2843-87CA-99E2149EB601}</item>
+			</features>
+			<root>{00000000-0000-0000-0000-000000000000}</root>
+			<startup>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</startup>
+			<onlineConfig>{00000000-0000-0000-0000-000000000000}</onlineConfig>
+			<defaultInput>{E7DE1157-DA53-B14F-9A14-70707DACAFB9}</defaultInput>
+		</item>
+	</configurations>
+</object>
