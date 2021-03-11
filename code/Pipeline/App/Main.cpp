@@ -995,7 +995,7 @@ int main(int argc, const char** argv)
 #endif
 
 		CommandLine cmdLine(argc, argv);
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__LINUX__)
 		if (cmdLine.hasOption(L"slave"))
 			result = slave(cmdLine);
 		else if (cmdLine.hasOption(L"standalone"))
