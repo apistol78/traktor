@@ -22,10 +22,9 @@ ScreenLayer::ScreenLayer(
 	const resource::Proxy< render::Shader >& shader
 )
 :	Layer(stage, name, permitTransition)
+,	m_environment(environment)
 ,	m_shader(shader)
 {
-	m_screenRenderer = new render::ScreenRenderer();
-	m_screenRenderer->create(environment->getRender()->getRenderSystem());
 }
 
 void ScreenLayer::destroy()
@@ -36,6 +35,13 @@ void ScreenLayer::destroy()
 
 void ScreenLayer::transition(Layer* fromLayer)
 {
+	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	if (!permit)
+		return;
+
+	ScreenLayer* fromScreenLayer = mandatory_non_null_type_cast< ScreenLayer* >(fromLayer);
+	m_screenRenderer = fromScreenLayer->m_screenRenderer;
+	fromScreenLayer->m_screenRenderer = nullptr;
 }
 
 void ScreenLayer::prepare(const UpdateInfo& info)
@@ -50,6 +56,12 @@ void ScreenLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph
 {
 	if (!m_shader)
 		return;
+
+	if (!m_screenRenderer)
+	{
+		m_screenRenderer = new render::ScreenRenderer();
+		m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
+	}
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Screen");
 	rp->setOutput(0, render::TfAll, render::TfAll);

@@ -26,6 +26,8 @@ class Shader;
 	namespace runtime
 	{
 
+class IEnvironment;
+
 /*!
  * \ingroup Runtime
  */
@@ -65,6 +67,7 @@ public:
 	const std::function< void(render::ProgramParameters*) >& getParameterCallback() const { return m_parameterCallback; }
 
 private:
+	IEnvironment* m_environment;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::function< void(render::ProgramParameters*) > m_parameterCallback;

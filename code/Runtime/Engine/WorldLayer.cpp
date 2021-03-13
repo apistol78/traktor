@@ -106,7 +106,7 @@ void WorldLayer::transition(Layer* fromLayer)
 	if (!permit)
 		return;
 
-	WorldLayer* fromWorldLayer = checked_type_cast< WorldLayer*, false >(fromLayer);
+	WorldLayer* fromWorldLayer = mandatory_non_null_type_cast< WorldLayer* >(fromLayer);
 	if (DeepHash(m_scene->getWorldRenderSettings()) == DeepHash(fromWorldLayer->m_scene->getWorldRenderSettings()))
 	{
 		m_worldRenderer = fromWorldLayer->m_worldRenderer;

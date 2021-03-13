@@ -1,3 +1,4 @@
+#include "Runtime/IEnvironment.h"
 #include "Runtime/Engine/AudioLayer.h"
 #include "Runtime/Engine/AudioLayerData.h"
 #include "Resource/IResourceManager.h"
@@ -24,7 +25,7 @@ Ref< Layer > AudioLayerData::createInstance(Stage* stage, IEnvironment* environm
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_sound, sound))
-		return 0;
+		return nullptr;
 
 	// Create layer instance.
 	return new AudioLayer(
