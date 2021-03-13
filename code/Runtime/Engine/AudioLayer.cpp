@@ -1,3 +1,4 @@
+#include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/AudioLayer.h"
 #include "Core/Math/Float.h"

@@ -18,13 +18,6 @@
 
 namespace traktor
 {
-	namespace runtime
-	{
-
-class IEnvironment;
-
-	}
-
 	namespace render
 	{
 
@@ -50,6 +43,8 @@ class IWorldRenderer;
 
 	namespace runtime
 	{
+
+class IEnvironment;
 
 /*! World stage layer.
  * \ingroup Runtime
@@ -143,7 +138,7 @@ protected:
 	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 
 private:
-	Ref< IEnvironment > m_environment;
+	IEnvironment* m_environment;
 	resource::Proxy< scene::Scene > m_scene;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;

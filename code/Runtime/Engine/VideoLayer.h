@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace runtime
-	{
-
-class IEnvironment;
-
-	}
-
 	namespace render
 	{
 
@@ -39,7 +32,9 @@ class Video;
 	namespace runtime
 	{
 
-/*! \brief
+class IEnvironment;
+
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS VideoLayer : public Layer
@@ -101,7 +96,7 @@ public:
 	virtual void resume() override final;
 
 private:
-	Ref< IEnvironment > m_environment;
+	IEnvironment* m_environment;
 	resource::Proxy< video::Video > m_video;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ScreenRenderer > m_screenRenderer;

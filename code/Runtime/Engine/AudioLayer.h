@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Runtime/IEnvironment.h"
 #include "Runtime/Engine/Layer.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
@@ -26,6 +25,8 @@ class Sound;
 
 	namespace runtime
 	{
+
+class IEnvironment;
 
 /*! Stage audio layer.
  * \ingroup Runtime
@@ -98,7 +99,7 @@ private:
 		float time;
 	};
 
-	Ref< IEnvironment > m_environment;
+	IEnvironment* m_environment;
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
 	bool m_autoPlay;
