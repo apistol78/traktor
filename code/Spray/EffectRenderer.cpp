@@ -62,35 +62,33 @@ void EffectRenderer::build(
 	Object* renderable
 )
 {
-	if (EffectComponent* effectComponent = dynamic_type_cast< EffectComponent* >(renderable))
-	{
-		// Do we need to render anything with this technique?
-		if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))
-			return;
+	auto effectComponent = mandatory_non_null_type_cast< EffectComponent* >(renderable);
 
-		Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
-		if (boundingBox.empty())
-			return;
+	// Do we need to render anything with this technique?
+	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))
+		return;
 
-		// Early out of bounding sphere is outside of frustum.
-		Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-		Scalar radius = boundingBox.getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
-			return;
+	Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+	if (boundingBox.empty())
+		return;
 
-		Matrix44 viewInverse = worldRenderView.getView().inverse();
-		Vector4 cameraPosition = viewInverse.translation().xyz1();
-		Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
+	// Early out of bounding sphere is outside of frustum.
+	Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+	Scalar radius = boundingBox.getExtent().length();
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+		return;
 
-		effectComponent->render(
-			worldRenderPass.getTechnique(),
-			cameraPosition,
-			cameraPlane,
-			m_pointRenderer,
-			m_meshRenderer,
-			m_trailRenderer
-		);
-	}
+	Vector4 cameraPosition = worldRenderView.getEyePosition();
+	Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
+
+	effectComponent->render(
+		worldRenderPass.getTechnique(),
+		cameraPosition,
+		cameraPlane,
+		m_pointRenderer,
+		m_meshRenderer,
+		m_trailRenderer
+	);
 }
 
 void EffectRenderer::build(

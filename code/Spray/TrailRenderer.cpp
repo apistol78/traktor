@@ -76,13 +76,11 @@ void TrailRenderer::render(
 	const Vector4& cameraPosition,
 	const Plane& cameraPlane,
 	float width,
-	float lengthTreshold,
 	float time,
 	float age
 )
 {
-	int32_t pointCount = int32_t(points.size());
-
+	const int32_t pointCount = (int32_t)points.size();
 	if (pointCount < 2)
 		return;
 
@@ -106,7 +104,6 @@ void TrailRenderer::render(
 	const Vector4 www0(width, width, width, 0.0f);
 	float v = 0.0f;
 
-	// Add from head to tail + 1.
 	for (int32_t i = pointCount - 1; i >= 1; --i)
 	{
 		Vector4 vp0 = points[i - 1];
@@ -114,27 +111,27 @@ void TrailRenderer::render(
 
 		Vector4 direction = (vp1 - vp0).xyz0();
 		Scalar ln = direction.length2();
-
 		if (ln <= FUZZY_EPSILON * FUZZY_EPSILON)
 			continue;
 
 		Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
+		float alpha = float(i) / (pointCount - 1);
 
 		vp1.storeAligned(vertex->position);
 		up.storeAligned(vertex->direction);
 		vertex->uv[0] = 0.0f;
 		vertex->uv[1] = v;
-		vertex->uv[2] = 1.0f;
+		vertex->uv[2] = alpha;
 		++vertex;
 
 		vp1.storeAligned(vertex->position);
 		(-up).storeAligned(vertex->direction);
 		vertex->uv[0] = 1.0f;
 		vertex->uv[1] = v;
-		vertex->uv[2] = 1.0f;
+		vertex->uv[2] = alpha;
 		++vertex;
 
-		v += squareRoot(ln) / (lengthTreshold * (c_stripeLength - 3));
+		v += squareRoot(ln);
 
 		m_batches.back().points++;
 	}
@@ -145,17 +142,14 @@ void TrailRenderer::render(
 		Vector4 vp1 = points[1];
 
 		Vector4 direction = (vp1 - vp0).xyz0();
-		Vector4 up = Vector4::zero();
 		Scalar ln = direction.length2();
-
 		if (ln > FUZZY_EPSILON * FUZZY_EPSILON)
 		{
 			direction *= reciprocalSquareRoot(ln);
 
-			Scalar k = clamp(Scalar(1.0f) + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), Scalar(0.0f), Scalar(1.0f));
+			Scalar k = clamp(1.0_simd + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), 0.0_simd, 1.0_simd);
 			Vector4 vp = lerp(vp0, vp1, k);
-
-			up = cross(direction, vp - cameraPosition).normalized() * www0;
+			Vector4 up = cross(direction, vp - cameraPosition).normalized() * www0;
 
 			vp.storeAligned(vertex->position);
 			up.storeAligned(vertex->direction);
@@ -191,12 +185,12 @@ void TrailRenderer::flush(
 
 	uint32_t offset = 0;
 
-	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+	for (const auto& batch : m_batches)
 	{
-		if (!i->shader || !i->points)
+		if (!batch.shader || !batch.points)
 			continue;
 
-		auto sp = worldRenderPass.getProgram(i->shader);
+		auto sp = worldRenderPass.getProgram(batch.shader);
 		if (!sp)
 			continue;
 
@@ -209,13 +203,13 @@ void TrailRenderer::flush(
 		renderBlock->vertexBuffer = m_vertexBuffers[m_count];
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = offset;
-		renderBlock->count = i->points * 2 - 2;
+		renderBlock->count = batch.points * 2 - 2;
 		renderBlock->minIndex = 0;
 		renderBlock->maxIndex = c_trailCount * c_stripeLength * 2;
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
-		renderBlock->programParams->setVectorParameter(s_handleTimeAndAge, i->timeAndAge);
+		renderBlock->programParams->setVectorParameter(s_handleTimeAndAge, batch.timeAndAge);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(sp.priority, renderBlock);

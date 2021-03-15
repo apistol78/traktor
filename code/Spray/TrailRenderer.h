@@ -58,7 +58,6 @@ public:
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane,
 		float width,
-		float lengthTreshold,
 		float time,
 		float age
 	);
@@ -76,7 +75,7 @@ private:
 		Vector4 timeAndAge;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffers[16];
+	Ref< render::VertexBuffer > m_vertexBuffers[4];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_count;
 	TrailVertex* m_vertex;
