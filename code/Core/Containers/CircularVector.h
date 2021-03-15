@@ -8,14 +8,16 @@ namespace traktor
 /*! Circular static container.
  *
  * \note
- * This implementation only permit Capacity-1 elements
- * as one element are unallocated in order to signal full/empty.
+ * This implementation allocate Capacity+1 elements
+ * so we can keep track of empty vs full.
  *
  * \ingroup Core
  */
 template < typename ItemType, uint32_t Capacity >
 class CircularVector
 {
+	static constexpr int N = Capacity + 1;
+
 public:
 	CircularVector()
 	:	m_front(0)
@@ -30,7 +32,7 @@ public:
 
 	bool full() const
 	{
-		return m_front == ((m_back + 1) % Capacity);
+		return m_front == ((m_back + 1) % N);
 	}
 
 	uint32_t capacity() const
@@ -43,7 +45,7 @@ public:
 		if (m_front <= m_back)
 			return m_back - m_front;
 		else
-			return (Capacity - m_front) + m_back;
+			return (N - m_front) + m_back;
 	}
 
 	void clear()
@@ -54,37 +56,42 @@ public:
 
 	ItemType& push_back()
 	{
+		T_ASSERT(!full());
+
 		// Get back element.
 		ItemType& item = m_items[m_back];
-		m_back = (m_back + 1) % Capacity;
+		m_back = (m_back + 1) % N;
 
 		// Discard front element if we've reached front.
 		if (m_back == m_front)
-			m_front = (m_front + 1) % Capacity;
+			m_front = (m_front + 1) % N;
 
 		return item;
 	}
 
 	void push_back(const ItemType& item)
 	{
+		T_ASSERT(!full());
+
 		// Push back element.
 		m_items[m_back] = item;
-		m_back = (m_back + 1) % Capacity;
+		m_back = (m_back + 1) % N;
 
 		// Discard front element if we've reached front.
 		if (m_back == m_front)
-			m_front = (m_front + 1) % Capacity;
+			m_front = (m_front + 1) % N;
 	}
 
 	void pop_front()
 	{
-		T_ASSERT(m_front != m_back);
-		m_front = (m_front + 1) % Capacity;
+		T_ASSERT(!empty());
+		m_front = (m_front + 1) % N;
 	}
 
 	int32_t find(const ItemType& value) const
 	{
-		for (int32_t i = 0; i < int32_t(size()); ++i)
+		const int32_t sz = (int32_t)size();
+		for (int32_t i = 0; i < sz; ++i)
 		{
 			if ((*this)[i] == value)
 				return i;
@@ -94,44 +101,48 @@ public:
 
 	const ItemType& back() const
 	{
-		return m_items[m_back > 0 ? (m_back - 1) : Capacity - 1];
+		T_ASSERT(!empty());
+		return m_items[m_back > 0 ? (m_back - 1) : N - 1];
 	}
 
 	ItemType& back()
 	{
-		return m_items[m_back > 0 ? (m_back - 1) : Capacity - 1];
+		T_ASSERT(!empty());
+		return m_items[m_back > 0 ? (m_back - 1) : N - 1];
 	}
 
 	const ItemType& front() const
 	{
+		T_ASSERT(!empty());
 		return m_items[m_front];
 	}
 
 	ItemType& front()
 	{
+		T_ASSERT(!empty());
 		return m_items[m_front];
 	}
 
 	const ItemType& offset(int32_t index) const
 	{
 		if (index < 0)
-			return m_items[(m_back + index) % Capacity];
+			return m_items[(m_back + index) % N];
 		else
-			return m_items[(m_front + index) % Capacity];
+			return m_items[(m_front + index) % N];
 	}
 
 	const ItemType& operator [] (uint32_t index) const
 	{
-		return m_items[(index + m_front) % Capacity];
+		return m_items[(index + m_front) % N];
 	}
 
 	ItemType& operator [] (uint32_t index)
 	{
-		return m_items[(index + m_front) % Capacity];
+		return m_items[(index + m_front) % N];
 	}
 
 private:
-	ItemType m_items[Capacity];
+	ItemType m_items[N];
 	uint32_t m_front;
 	uint32_t m_back;
 };
