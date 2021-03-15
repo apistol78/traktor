@@ -150,6 +150,8 @@ bool EffectPreviewControl::create(
 	if (!resourceManager->bind(c_previewScene, m_sceneInstance))
 		return false;
 
+	m_sceneInstance.consume();
+
 	addEventHandler< ui::MouseButtonDownEvent >(this, &EffectPreviewControl::eventButtonDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &EffectPreviewControl::eventButtonUp);
 	addEventHandler< ui::MouseMoveEvent >(this, &EffectPreviewControl::eventMouseMove);
@@ -306,6 +308,8 @@ void EffectPreviewControl::syncEffect()
 
 		effectInstance->update(context, effectTransform, true);
 		effectInstance->synchronize();
+
+		m_effectEntity->setTransform(effectTransform);
 	}
 
 	context.eventManager = nullptr;
@@ -478,6 +482,21 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	rootGroup.addEntity(m_sceneInstance->getRootEntity());
 	if (m_effectEntity)
 	{
+		float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
+
+		Transform effectTransform = Transform::identity();
+		if (m_moveEmitter)
+		{
+			Vector4 effectPosition(
+				std::sin(T) * 8.0f,
+				0.0f,
+				std::cos(T) * 8.0f,
+				1.0f
+			);
+			effectTransform = Transform(effectPosition);
+		}
+
+		m_effectEntity->setTransform(effectTransform);
 		m_effectEntity->update(update);
 		rootGroup.addEntity(m_effectEntity);
 	}
@@ -520,6 +539,12 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 				(x == 0) ? 2.0f : 0.0f,
 				m_colorGrid
 			);
+		}
+
+		if (m_effectEntity && m_guideVisible)
+		{
+			Transform transform = m_effectEntity->getTransform();
+			m_primitiveRenderer->drawWireFrame(transform.toMatrix44(), 1.0f);
 		}
 
 		if (m_effectData && m_guideVisible)
