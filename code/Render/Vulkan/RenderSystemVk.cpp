@@ -52,21 +52,28 @@ namespace traktor
 
 const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #elif defined(__LINUX__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
 #elif defined(__MAC__)
-const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_metal_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_metal_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #else
-const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils" };
+const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #endif
 
 #if defined(__ANDROID__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 #else
-const char* c_deviceExtensions[] = { "VK_KHR_swapchain", "VK_KHR_16bit_storage", "VK_KHR_8bit_storage", "VK_KHR_shader_float16_int8" };
+const char* c_deviceExtensions[] =
+{
+	"VK_KHR_swapchain",
+	"VK_KHR_storage_buffer_storage_class",	// Required by VK_KHR_16bit_storage, VK_KHR_8bit_storage and VK_KHR_shader_float16_int8.
+	"VK_KHR_16bit_storage",
+	"VK_KHR_8bit_storage",
+	"VK_KHR_shader_float16_int8"
+};
 #endif
 
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -82,6 +89,21 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	}
 	return VK_FALSE;
 }
+
+bool isDeviceSuitable(VkPhysicalDevice device)
+{
+    VkPhysicalDeviceProperties dp;
+    // VkPhysicalDeviceFeatures df;
+    
+	vkGetPhysicalDeviceProperties(device, &dp);
+    // vkGetPhysicalDeviceFeatures(device, &df);
+
+	if (dp.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+		return false;
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
@@ -187,8 +209,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		// Setup debug port callback.
 		VkDebugUtilsMessengerCreateInfoEXT dumci = {};
 		dumci.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		dumci.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		dumci.messageType = /*VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | */VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT*/;
+		dumci.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |*/ VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		dumci.messageType = /*VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |*/ VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT*/;
 		dumci.pfnUserCallback = debugCallback;
 
 		if ((result = vkCreateDebugUtilsMessengerEXT(m_instance, &dumci, nullptr, &m_debugMessenger)) != VK_SUCCESS)
@@ -207,11 +229,24 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; no physical devices." << Endl;
 		return false;
 	}
+	log::info << physicalDeviceCount << L" physical device(s) found." << Endl;
 
 	// For now select first reported device; \tbd need to revisit this.
 	AutoArrayPtr< VkPhysicalDevice > physicalDevices(new VkPhysicalDevice[physicalDeviceCount]);
 	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.ptr());
-	m_physicalDevice = physicalDevices[0];
+	for (uint32_t i = 0; i < physicalDeviceCount; ++i)
+	{
+		if (isDeviceSuitable(physicalDevices[i]))
+		{
+			m_physicalDevice = physicalDevices[i];
+			break;
+		}
+	}
+	if (!m_physicalDevice)
+	{
+		log::warning << L"Unable to find a suitable device; attempting to use first reported." << Endl;
+		m_physicalDevice = physicalDevices[0];
+	}
 
 	// Get physical device graphics queue.
 	uint32_t graphicsQueueIndex = ~0;

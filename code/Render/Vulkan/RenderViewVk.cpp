@@ -272,6 +272,9 @@ void RenderViewVk::close()
 	}
 	m_frames.clear();
 
+	// More pending cleanups since frames own render targets.
+	m_context->performCleanup();
+
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_queryPool != 0)
 	{
@@ -290,9 +293,6 @@ void RenderViewVk::close()
 	for (auto& pipeline : m_pipelines)
 		vkDestroyPipeline(m_context->getLogicalDevice(), pipeline.second.pipeline, nullptr);
 	m_pipelines.clear();
-
-	// More pending cleanups since frames own render targets.
-	m_context->performCleanup();
 
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)

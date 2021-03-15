@@ -15,6 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CommandBuffer", CommandBuffer, Object)
 
 CommandBuffer::~CommandBuffer()
 {
+	T_FATAL_ASSERT_M(!m_submitted, L"Cannot destroy in-flight command buffer, must wait until finished.");
 	vkFreeCommandBuffers(
 		m_context->getLogicalDevice(),
 		m_commandPool,

@@ -48,7 +48,7 @@ bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, boo
 
 void Buffer::destroy()
 {
-	unlock();
+	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer still locked.");
 	if (m_buffer != 0)
 	{
 		m_context->addDeferredCleanup([
@@ -65,22 +65,17 @@ void Buffer::destroy()
 
 void* Buffer::lock()
 {
-	if (m_locked)
-		return m_locked;
-
+	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer already locked.");
 	if (vmaMapMemory(m_context->getAllocator(), m_allocation, &m_locked) != VK_SUCCESS)
 		m_locked = nullptr;
-
 	return m_locked;
 }
 
 void Buffer::unlock()
 {
-	if (m_locked)
-	{
-		vmaUnmapMemory(m_context->getAllocator(), m_allocation);
-		m_locked = nullptr;
-	}
+	T_FATAL_ASSERT_M(m_locked != nullptr, L"Buffer not locked.");
+	vmaUnmapMemory(m_context->getAllocator(), m_allocation);
+	m_locked = nullptr;
 }
 
     }
