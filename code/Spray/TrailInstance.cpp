@@ -36,11 +36,12 @@ TrailInstance::TrailInstance(
 
 void TrailInstance::update(Context& context, const Transform& transform, bool enable)
 {
-	if (!m_points.empty())
+	while (!m_points.empty())
 	{
 		Scalar w = (m_time - m_points.front()).w();
-		if (w >= m_age)
-			m_points.pop_front();
+		if (w < m_age)
+			break;
+		m_points.pop_front();
 	}
 
 	if (enable)
@@ -83,7 +84,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 				{
 					m_last += step;
 
-					m_points.push_back(m_last.xyz0() + m_time - Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * float(nsteps - i - 1) / nsteps));
+					m_points.push_back(m_last.xyz0() + m_time + Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * (i + 1) / nsteps));
 					m_boundingBox.contain(m_last);
 
 					ln -= Scalar(m_lengthThreshold);
@@ -119,7 +120,6 @@ void TrailInstance::render(render::handle_t technique, TrailRenderer* trailRende
 			cameraPosition,
 			cameraPlane,
 			m_width,
-			m_lengthThreshold,
 			m_time.w(),
 			m_age
 		);

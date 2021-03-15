@@ -964,8 +964,9 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	};
 	p->validateGraphics(frame.graphicsCommandBuffer, targetSize);
 
-	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
-	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
+	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
+	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
+	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type] + c_primitiveAdd[primitives.type];
 
 	if (frame.boundVertexBuffer != vb)
 	{
