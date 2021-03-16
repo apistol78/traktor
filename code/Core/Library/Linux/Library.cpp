@@ -1,4 +1,8 @@
 #include <dlfcn.h>
+#include <limits.h>
+#include <libgen.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -27,17 +31,21 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 	std::wstring resolved = std::wstring(L"lib") + libraryName.getPathName() + L".so";
 	std::wstring errors;
 
-    // Prefer executable path first.
-    {
-        std::wstring library = L"$ORIGIN/" + resolved;
-        m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
-        if (m_handle)
-        {
-            T_DEBUG(L"Library \"" << library << L"\" loaded");
-            return true;
-        }
-        else
-            errors += mbstows(dlerror()) + L"\n";
+	// Prefer executable path first.
+	{
+		char exepath[PATH_MAX];
+		if (readlink("/proc/self/exe", exepath, PATH_MAX) != -1)
+		{
+			std::wstring library = mbstows(dirname(exepath)) + L"/" + resolved;
+			m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+			if (m_handle)
+			{
+				T_DEBUG(L"Library \"" << library << L"\" loaded");
+				return true;
+			}
+			else
+				errors += mbstows(dlerror()) + L"\n";
+		}
  	}
 
 	// Try loading from specified search paths.
@@ -54,17 +62,17 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 			errors += mbstows(dlerror()) + L"\n";
 	}
 
-    // Try default search paths.
-    {
-        std::wstring library = resolved;
-        m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
-        if (m_handle)
-        {
-            T_DEBUG(L"Library \"" << library << L"\" loaded");
-            return true;
-        }
-        else
-             errors += mbstows(dlerror()) + L"\n";
+	// Try default search paths.
+	{
+		std::wstring library = resolved;
+		m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		if (m_handle)
+		{
+			T_DEBUG(L"Library \"" << library << L"\" loaded");
+			return true;
+		}
+		else
+			 errors += mbstows(dlerror()) + L"\n";
    }
 
 	log::error << L"Failed to load library \"" << libraryName.getPathName() << L"\"" << Endl << IncreaseIndent << errors << DecreaseIndent;
@@ -88,7 +96,7 @@ void* Library::find(const std::wstring& symbol)
 
 Path Library::getPath() const
 {
-    return Path();
+	return Path();
 }
 
 }
