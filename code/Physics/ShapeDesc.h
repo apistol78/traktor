@@ -30,8 +30,6 @@ class T_DLLCLASS ShapeDesc : public ISerializable
 public:
 	enum { Version = 6 };
 
-	ShapeDesc();
-
 	void setLocalTransform(const Transform& localTransform);
 
 	const Transform& getLocalTransform() const;
@@ -51,10 +49,10 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	Transform m_localTransform;
+	Transform m_localTransform = Transform::identity();
 	std::set< resource::Id< CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< CollisionSpecification > > m_collisionMask;
-	int32_t m_material;
+	int32_t m_material = 0;
 };
 
 	}

@@ -12,12 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ShapeDesc", ShapeDesc, ISerializable)
 
-ShapeDesc::ShapeDesc()
-:	m_localTransform(Transform::identity())
-,	m_material(0)
-{
-}
-
 void ShapeDesc::setLocalTransform(const Transform& localTransform)
 {
 	m_localTransform = localTransform;
