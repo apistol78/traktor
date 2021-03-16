@@ -1,6 +1,12 @@
 #include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
 
+#if defined(__clang__) || defined (__GNUC__)
+#	define ATTRIBUTE_NO_SANITIZE_ADDRESS __attribute__((no_sanitize_address))
+#else
+#	define ATTRIBUTE_NO_SANITIZE_ADDRESS
+#endif
+
 namespace traktor
 {
 	namespace
@@ -25,6 +31,7 @@ struct ObjectHeader
 
 static int32_t s_heapObjectCount = 0;
 
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 inline bool isObjectHeapAllocated(const void* ptr)
 {
 	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(ptr) - 1;
