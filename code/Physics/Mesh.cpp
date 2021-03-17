@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 6;
+const uint32_t c_version = 7;
 
 		}
 
@@ -71,6 +71,16 @@ const AlignedVector< uint32_t >& Mesh::getHullIndices() const
 	return m_hullIndices;
 }
 
+void Mesh::setMaterials(const AlignedVector< Material >& materials)
+{
+	m_materials = materials;
+}
+
+const AlignedVector< Mesh::Material >& Mesh::getMaterials() const
+{
+	return m_materials;
+}
+
 void Mesh::setOffset(const Vector4& offset)
 {
 	m_offset = offset;
@@ -116,25 +126,32 @@ bool Mesh::read(IStream* stream)
 	uint32_t hullIndexCount;
 	rd >> hullIndexCount;
 
+	uint32_t materialCount;
+	rd >> materialCount;
+
 	m_vertices.resize(vertexCount);
 	if (vertexCount > 0)
-		rd.read(&m_vertices[0], vertexCount * 4, sizeof(float));
+		rd.read(m_vertices.ptr(), vertexCount * 4, sizeof(float));
 
 	m_normals.resize(normalCount);
 	if (normalCount > 0)
-		rd.read(&m_normals[0], normalCount * 4, sizeof(float));
+		rd.read(m_normals.ptr(), normalCount * 4, sizeof(float));
 
 	m_shapeTriangles.resize(shapeTriangleCount);
 	if (shapeTriangleCount > 0)
-		rd.read(&m_shapeTriangles[0], shapeTriangleCount * 3, sizeof(uint32_t));
+		rd.read(m_shapeTriangles.ptr(), shapeTriangleCount * 4, sizeof(uint32_t));
 
 	m_hullTriangles.resize(hullTriangleCount);
 	if (hullTriangleCount > 0)
-		rd.read(&m_hullTriangles[0], hullTriangleCount * 3, sizeof(uint32_t));
+		rd.read(m_hullTriangles.ptr(), hullTriangleCount * 4, sizeof(uint32_t));
 
 	m_hullIndices.resize(hullIndexCount);
 	if (hullIndexCount > 0)
-		rd.read(&m_hullIndices[0], hullIndexCount, sizeof(uint32_t));
+		rd.read(m_hullIndices.ptr(), hullIndexCount, sizeof(uint32_t));
+
+	m_materials.resize(materialCount);
+	if (materialCount > 0)
+		rd.read(m_materials.ptr(), materialCount * 2, sizeof(float));
 
 	float offset[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	rd >> offset[0];
@@ -151,27 +168,31 @@ bool Mesh::write(IStream* stream)
 {
 	Writer wr(stream);
 
-	wr << uint32_t(c_version);
-	wr << uint32_t(m_vertices.size());
-	wr << uint32_t(m_normals.size());
-	wr << uint32_t(m_shapeTriangles.size());
-	wr << uint32_t(m_hullTriangles.size());
-	wr << uint32_t(m_hullIndices.size());
+	wr << (uint32_t)c_version;
+	wr << (uint32_t)m_vertices.size();
+	wr << (uint32_t)m_normals.size();
+	wr << (uint32_t)m_shapeTriangles.size();
+	wr << (uint32_t)m_hullTriangles.size();
+	wr << (uint32_t)m_hullIndices.size();
+	wr << (uint32_t)m_materials.size();
 
 	if (!m_vertices.empty())
-		wr.write(&m_vertices[0], int(m_vertices.size() * 4), sizeof(float));
+		wr.write(&m_vertices[0], (int64_t)(m_vertices.size() * 4), sizeof(float));
 
 	if (!m_normals.empty())
-		wr.write(&m_normals[0], int(m_normals.size() * 4), sizeof(float));
+		wr.write(&m_normals[0], (int64_t)(m_normals.size() * 4), sizeof(float));
 
 	if (!m_shapeTriangles.empty())
-		wr.write(&m_shapeTriangles[0], int(m_shapeTriangles.size() * 3), sizeof(uint32_t));
+		wr.write(&m_shapeTriangles[0], (int64_t)(m_shapeTriangles.size() * 4), sizeof(uint32_t));
 
 	if (!m_hullTriangles.empty())
-		wr.write(&m_hullTriangles[0], int(m_hullTriangles.size() * 3), sizeof(uint32_t));
+		wr.write(&m_hullTriangles[0], (int64_t)(m_hullTriangles.size() * 4), sizeof(uint32_t));
 
 	if (!m_hullIndices.empty())
-		wr.write(&m_hullIndices[0], int(m_hullIndices.size()), sizeof(uint32_t));
+		wr.write(&m_hullIndices[0], (int64_t)m_hullIndices.size(), sizeof(uint32_t));
+
+	if (!m_materials.empty())
+		wr.write(m_materials.c_ptr(), (int64_t)(m_materials.size() * 2), sizeof(float));
 
 	float offset[4];
 	m_offset.storeUnaligned(offset);

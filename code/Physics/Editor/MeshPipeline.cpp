@@ -19,6 +19,7 @@
 #include "Model/Operations/Triangulate.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshResource.h"
+#include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/Editor/MeshPipeline.h"
 
@@ -27,7 +28,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 10, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 11, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -57,9 +58,14 @@ bool MeshPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
+	const MeshAsset* meshAsset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
+
 	if (!meshAsset->getFileName().empty())
 		pipelineDepends->addDependency(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+
+	for (auto it : meshAsset->getMaterials())
+		pipelineDepends->addDependency(it.second, editor::PdfUse);
+
 	return true;
 }
 
@@ -75,14 +81,14 @@ bool MeshPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
+	const MeshAsset* meshAsset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
 	Ref< model::Model > model;
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.
 	if (buildParams)
 	{
-		model = checked_type_cast< model::Model* >(
+		model = mandatory_non_null_type_cast< model::Model* >(
 			const_cast< Object* >(buildParams)
 		);
 	}
@@ -94,17 +100,17 @@ bool MeshPipeline::buildOutput(
 
 	if (!model)
 	{
-		log::error << L"Physics mesh pipeline failed; no model" << Endl;
+		log::error << L"Physics mesh pipeline failed; no model." << Endl;
 		return false;
 	}
 	if (model->getPositions().empty() || model->getVertices().empty() || model->getPolygons().empty())
 	{
-		log::error << L"Physics mesh pipeline failed; no geometry" << Endl;
+		log::error << L"Physics mesh pipeline failed; no geometry." << Endl;
 		return false;
 	}
 
 	// Cleanup model suitable for physics.
-	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
+	model->clear(model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::CleanDuplicates(0.01f).apply(*model);
 
 	// Shrink model by margin; need to calculate normals from positions only
@@ -128,22 +134,56 @@ bool MeshPipeline::buildOutput(
 
 	// Create physics mesh.
 	AlignedVector< Vector4 > positions = model->getPositions();
-	for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
-		*i -= centerOfGravity;
+	for (auto& position : positions)
+		position -= centerOfGravity;
 
 	AlignedVector< Vector4 > normals;
 	AlignedVector< Mesh::Triangle > meshShapeTriangles;
 	AlignedVector< Mesh::Triangle > meshHullTriangles;
 	AlignedVector< uint32_t > meshHullIndices;
+	AlignedVector< Mesh::Material > meshMaterials;
 
-	const AlignedVector< model::Polygon >& shapeTriangles = model->getPolygons();
-	for (AlignedVector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+	// Add default material first.
+	meshMaterials.push_back({ 0.75f, 0.5f });
+
+	// Add materials defined in asset, build map from
+	// model material to resource materials.
+	std::map< uint32_t, uint32_t > materialMap;
+	for (auto it : meshAsset->getMaterials())
 	{
-		T_ASSERT(i->getVertices().size() == 3);
+		const auto& materials = model->getMaterials();
+		auto it2 = std::find_if(materials.begin(), materials.end(), [&](const model::Material& m) -> bool {
+			return it.first == m.getName();
+		});
+		if (it2 == materials.end())
+		{
+			log::warning << L"Material \"" << it.first << L"\" do not exist in source model." << Endl;
+			continue;
+		}
+		uint32_t index = std::distance(materials.begin(), it2);
+
+		auto materialDef = pipelineBuilder->getObjectReadOnly< Material >(it.second);
+		if (!materialDef)
+			return false;
+		
+		materialMap[index] = (uint32_t)meshMaterials.size();
+		meshMaterials.push_back({ materialDef->getFriction(), materialDef->getRestitution() });
+	}
+
+	// Convert source triangles into collision mesh resource.
+	for (const auto& triangle : model->getPolygons())
+	{
+		T_ASSERT(triangle.getVertices().size() == 3);
 
 		Mesh::Triangle shapeTriangle;
 		for (int j = 0; j < 3; ++j)
-			shapeTriangle.indices[j] = model->getVertex(i->getVertex(j)).getPosition();
+			shapeTriangle.indices[j] = model->getVertex(triangle.getVertex(j)).getPosition();
+
+		auto it = materialMap.find(triangle.getMaterial());
+		if (it != materialMap.end())
+			shapeTriangle.material = it->second;
+		else
+			shapeTriangle.material = 0;
 
 		meshShapeTriangles.push_back(shapeTriangle);
 
@@ -161,25 +201,30 @@ bool MeshPipeline::buildOutput(
 		model::CalculateConvexHull().apply(hull);
 
 		// Extract hull triangles.
-		const AlignedVector< model::Polygon >& hullTriangles = hull.getPolygons();
-		for (AlignedVector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		for (const auto& triangle : hull.getPolygons())
 		{
-			T_ASSERT(i->getVertices().size() == 3);
+			T_ASSERT(triangle.getVertices().size() == 3);
 
 			Mesh::Triangle hullTriangle;
 			for (int j = 0; j < 3; ++j)
-				hullTriangle.indices[j] = hull.getVertex(i->getVertex(j)).getPosition();
+				hullTriangle.indices[j] = hull.getVertex(triangle.getVertex(j)).getPosition();
+
+			auto it = materialMap.find(triangle.getMaterial());
+			if (it != materialMap.end())
+				hullTriangle.material = it->second;
+			else
+				hullTriangle.material = 0;
 
 			meshHullTriangles.push_back(hullTriangle);
 		}
 
 		// Extract hull indices.
 		SmallSet< uint32_t > uniqueIndices;
-		for (const auto& hullTriangle : hullTriangles)
+		for (const auto& triangle : hull.getPolygons())
 		{
-			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(0)).getPosition());
-			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(1)).getPosition());
-			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(2)).getPosition());
+			uniqueIndices.insert(hull.getVertex(triangle.getVertex(0)).getPosition());
+			uniqueIndices.insert(hull.getVertex(triangle.getVertex(1)).getPosition());
+			uniqueIndices.insert(hull.getVertex(triangle.getVertex(2)).getPosition());
 		}
 		for (const auto uniqueIndex : uniqueIndices)
 			meshHullIndices.push_back(uniqueIndex);
@@ -200,22 +245,22 @@ bool MeshPipeline::buildOutput(
 			Vtotal += V;
 		}
 
-		for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
-			*i -= Voffset / Scalar(Vtotal);
+		for (auto& position : positions)
+			position -= Voffset / Scalar(Vtotal);
 
 		centerOfGravity += Voffset / Scalar(Vtotal);
-		log::info << L"Hull volume " << Vtotal << L" unit^3" << Endl;
+		log::info << L"Hull volume " << Vtotal << L" unit^3." << Endl;
 	}
 
 	// Log statistics.
-	log::info << int32_t(positions.size()) << L" vertex(es)" << Endl;
-	log::info << int32_t(meshShapeTriangles.size()) << L" shape triangle(s)" << Endl;
+	log::info << int32_t(positions.size()) << L" vertex(es)." << Endl;
+	log::info << int32_t(meshShapeTriangles.size()) << L" shape triangle(s)." << Endl;
 	if (meshAsset->m_calculateConvexHull)
 	{
-		log::info << int32_t(meshHullTriangles.size()) << L" hull triangle(s)" << Endl;
-		log::info << L"Offset " << centerOfGravity << Endl;
+		log::info << int32_t(meshHullTriangles.size()) << L" hull triangle(s)." << Endl;
+		log::info << L"Offset " << centerOfGravity << L"." << Endl;
 	}
-	log::info << meshAsset->m_margin << L" unit(s) margin" << Endl;
+	log::info << meshAsset->m_margin << L" unit(s) margin." << Endl;
 
 	Mesh mesh;
 	mesh.setVertices(positions);
@@ -223,6 +268,7 @@ bool MeshPipeline::buildOutput(
 	mesh.setShapeTriangles(meshShapeTriangles);
 	mesh.setHullTriangles(meshHullTriangles);
 	mesh.setHullIndices(meshHullIndices);
+	mesh.setMaterials(meshMaterials);
 	mesh.setOffset(centerOfGravity);
 	mesh.setMargin(meshAsset->m_margin);
 

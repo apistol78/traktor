@@ -32,6 +32,15 @@ public:
 	struct Triangle
 	{
 		uint32_t indices[3];
+		uint32_t material;
+	};
+#pragma pack()
+
+#pragma pack(1)
+	struct Material
+	{
+		float friction;
+		float restitution;
 	};
 #pragma pack()
 
@@ -57,6 +66,10 @@ public:
 
 	const AlignedVector< uint32_t >& getHullIndices() const;
 
+	void setMaterials(const AlignedVector< Material >& materials);
+
+	const AlignedVector< Material >& getMaterials() const;
+
 	void setOffset(const Vector4& offset);
 
 	const Vector4& getOffset() const;
@@ -75,6 +88,7 @@ private:
 	AlignedVector< Triangle > m_shapeTriangles;
 	AlignedVector< Triangle > m_hullTriangles;
 	AlignedVector< uint32_t > m_hullIndices;
+	AlignedVector< Material > m_materials;
 	Vector4 m_offset;
 	float m_margin;
 };

@@ -1,5 +1,8 @@
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
 
 namespace traktor
@@ -7,13 +10,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 2, MeshAsset, editor::Asset)
-
-MeshAsset::MeshAsset()
-:	m_calculateConvexHull(true)
-,	m_margin(0.04f)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 3, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -24,6 +21,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< float >(L"margin", m_margin);
+
+	if (s.getVersion< MeshAsset >() >= 3)
+		s >> MemberStlMap< std::wstring, Guid >(L"materials", m_materials, AttributeType(type_of< Material >()));
 }
 
 	}

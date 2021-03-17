@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+#include "Core/Guid.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -20,8 +22,6 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	MeshAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	void setCalculateConvexHull(bool calculateConvexHull) { m_calculateConvexHull = calculateConvexHull; }
@@ -32,11 +32,16 @@ public:
 
 	float getMargin() const { return m_margin; }
 
+	void setMaterials(const std::map< std::wstring, Guid >& materials) { m_materials = materials; }
+
+	const std::map< std::wstring, Guid >& getMaterials() const { return m_materials; }
+
 private:
 	friend class MeshPipeline;
 
-	bool m_calculateConvexHull;
-	float m_margin;
+	bool m_calculateConvexHull = true;
+	float m_margin = 0.04f;
+	std::map< std::wstring, Guid > m_materials;	//!< References to Material instances.
 };
 
 	}
