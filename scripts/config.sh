@@ -7,7 +7,7 @@ export TRAKTOR_HOME
 
 # Paths to 3rd party dependencies.
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp/steamworks-sdk-142
-export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3-master-170526
+export BULLET_SDK=$TRAKTOR_HOME/3rdp/bullet3-master-210317
 export FBX_SDK=$TRAKTOR_HOME/3rdp/FbxSdk/2016.1.2
 export GLSL_OPTIMIZER=$TRAKTOR_HOME/3rdp/glsl-optimizer-master-20141020
 export GLSLANG=$TRAKTOR_HOME/3rdp/glslang-master-200605
