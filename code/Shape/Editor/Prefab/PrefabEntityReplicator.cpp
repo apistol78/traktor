@@ -57,6 +57,12 @@ bool PrefabEntityReplicator::addDependencies(
 	{
 		if (auto meshComponentData = entityData->getComponent< mesh::MeshComponentData >())
 			pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
+		if (auto rigidBodyComponentData = entityData->getComponent< physics::RigidBodyComponentData >())
+		{
+			auto meshShape = dynamic_type_cast< const physics::MeshShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
+			if (meshShape)
+				pipelineDepends->addDependency(meshShape->getMesh(), editor::PdfUse);
+		}
 		return scene::Traverser::VrContinue;
 	});
 	return true;
