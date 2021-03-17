@@ -4,6 +4,7 @@
 #include "Core/Misc/InvokeOnce.h"
 #include "Physics/BodyState.h"
 #include "Physics/Joint.h"
+#include "Physics/Mesh.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/Types.h"
@@ -38,7 +39,8 @@ BodyBullet::BodyBullet(
 	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
 	uint32_t collisionMask,
-	int32_t material
+	int32_t material,
+	const resource::Proxy< Mesh >& mesh
 )
 :	Body(tag)
 ,	m_callback(callback)
@@ -50,6 +52,7 @@ BodyBullet::BodyBullet(
 ,	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
 ,	m_material(material)
+,	m_mesh(mesh)
 ,	m_enable(false)
 {
 }
@@ -329,6 +332,24 @@ void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 Transform BodyBullet::getBodyTransform() const
 {
 	return m_body ? fromBtTransform(m_body->getWorldTransform()) : Transform();
+}
+
+void BodyBullet::getFrictionAndRestitution(int32_t index, float& outFriction, float& outRestitution) const
+{
+	outFriction = m_body->getFriction();
+	outRestitution = m_body->getRestitution();
+
+	if (m_mesh)
+	{
+		const auto& triangles = m_mesh->getShapeTriangles();
+		const auto& materials = m_mesh->getMaterials();
+		if (index >= 0 && index < (int32_t)triangles.size())
+		{
+			uint32_t midx = triangles[index].material;
+			outFriction = materials[midx].friction;
+			outRestitution = materials[midx].restitution;
+		}
+	}
 }
 
 	}

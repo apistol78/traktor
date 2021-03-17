@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Physics/Body.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,6 +24,7 @@ namespace traktor
 	{
 
 struct IWorldCallback;
+class Mesh;
 
 /*!
  * \ingroup Bullet
@@ -42,7 +44,8 @@ public:
 		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
 		uint32_t collisionMask,
-		int32_t material
+		int32_t material,
+		const resource::Proxy< Mesh >& mesh
 	);
 
 	virtual void destroy() override final;
@@ -107,6 +110,8 @@ public:
 
 	Transform getBodyTransform() const;
 
+	void getFrictionAndRestitution(int32_t index, float& outFriction, float& outRestitution) const;
+
 	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
 
 	btRigidBody* getBtRigidBody() const { return m_body; }
@@ -119,7 +124,7 @@ public:
 
 	int32_t getMaterial() const { return m_material; }
 
-	const std::vector< btTypedConstraint* >& getJoints() const { return m_constraints; }
+	const AlignedVector< btTypedConstraint* >& getJoints() const { return m_constraints; }
 
 private:
 	IWorldCallback* m_callback;
@@ -131,7 +136,8 @@ private:
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
 	int32_t m_material;
-	std::vector< btTypedConstraint* > m_constraints;
+	resource::Proxy< Mesh > m_mesh;
+	AlignedVector< btTypedConstraint* > m_constraints;
 	bool m_enable;
 };
 

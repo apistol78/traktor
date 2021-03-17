@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <algorithm>
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
@@ -78,6 +80,30 @@ void traktorFree(void* memblock)
 	getAllocator()->free(memblock);
 }
 
+bool traktorContactAdded(
+	btManifoldPoint& cp,
+	const btCollisionObjectWrapper* colObj0Wrap,
+	int partId0,
+	int index0,
+	const btCollisionObjectWrapper* colObj1Wrap,
+	int partId1,
+	int index1
+)
+{
+	float friction[] = { 0.0f, 0.0f };
+	float restitution[] = { 0.0f, 0.0f };
+
+	const BodyBullet* body0 = static_cast< const BodyBullet* >(colObj0Wrap->getCollisionObject()->getUserPointer());
+	body0->getFrictionAndRestitution(index0, friction[0], restitution[0]);
+
+	const BodyBullet* body1 = static_cast< const BodyBullet* >(colObj1Wrap->getCollisionObject()->getUserPointer());
+	body1->getFrictionAndRestitution(index1, friction[1], restitution[1]);
+
+	cp.m_combinedFriction = friction[0] * friction[1];
+	cp.m_combinedRestitution = restitution[0] * restitution[1];
+	return true;
+}
+
 class MeshProxyIndexVertexArray : public btStridingMeshInterface
 {
 public:
@@ -96,11 +122,11 @@ public:
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
 		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
 
-		numverts = int(vertices.size());
+		numverts = (int)vertices.size();
 		(*vertexbase) = (unsigned char *)&vertices[0];
 		type = PHY_FLOAT;
 		stride = sizeof(Vector4);
-		numfaces = int(shapeTriangles.size());
+		numfaces = (int)shapeTriangles.size();
 		(*indexbase) = (unsigned char *)&shapeTriangles[0];
 		indexstride = sizeof(Mesh::Triangle);
 		indicestype = PHY_INTEGER;
@@ -111,11 +137,11 @@ public:
 		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
 		const AlignedVector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
 
-		numverts = int(vertices.size());
+		numverts = (int)vertices.size();
 		(*vertexbase) = (const unsigned char *)&vertices[0];
 		type = PHY_FLOAT;
 		stride = sizeof(Vector4);
-		numfaces = int(shapeTriangles.size());
+		numfaces = (int)shapeTriangles.size();
 		(*indexbase) = (const unsigned char *)&shapeTriangles[0];
 		indexstride = sizeof(Mesh::Triangle);
 		indicestype = PHY_INTEGER;
@@ -622,6 +648,9 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 
 	m_dispatcher->setNearCallback(&PhysicsManagerBullet::nearCallback);
 
+	// Add our customer contact callback so we can have multiple materials per collision object.
+	T_FATAL_ASSERT_M(gContactAddedCallback == nullptr, L"Doesn't support multiple Bullet physics managers.");
+	gContactAddedCallback = traktorContactAdded;
 	return true;
 }
 
@@ -629,6 +658,8 @@ void PhysicsManagerBullet::destroy()
 {
 	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
 	T_ANONYMOUS_VAR(RefArray< BodyBullet >)(m_bodies);
+
+	gContactAddedCallback = nullptr;
 
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
@@ -665,13 +696,14 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	const ShapeDesc* shapeDesc = desc->getShape();
 	if (!shapeDesc)
 	{
-		log::error << L"Unable to create body, no shape defined" << Endl;
+		log::error << L"Unable to create body, no shape defined." << Endl;
 		return nullptr;
 	}
 
 	// Create collision shape.
 	Vector4 centerOfGravity = Vector4::origo();
-	btCollisionShape* shape = 0;
+	btCollisionShape* shape = nullptr;
+	resource::Proxy< Mesh > mesh;
 
 	if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 	{
@@ -693,37 +725,31 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Mesh > mesh;
 		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
-			log::error << L"Unable to load collision mesh resource " << Guid(meshShape->getMesh()).format() << Endl;
+			log::error << L"Unable to load collision mesh resource " << Guid(meshShape->getMesh()).format() << L"." << Endl;
 			return nullptr;
 		}
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
-			const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-			const AlignedVector< uint32_t >& hullIndices = mesh->getHullIndices();
-			if (hullIndices.empty())
+			const auto& vertices = mesh->getVertices();
+			const auto& hullIndices = mesh->getHullIndices();
+			if (vertices.empty() || hullIndices.empty())
 			{
-				log::error << L"Unable to create body, mesh hull empty" << Endl;
+				log::error << L"Unable to create body, mesh hull empty." << Endl;
 				return nullptr;
 			}
 
-			// Build point list, only hull points.
-			AutoArrayPtr< float, AllocFreeAlign > hullPoints((float*)Alloc::acquireAlign(3 * sizeof(float) * hullIndices.size(), 16, T_FILE_LINE));
-			for (uint32_t j = 0; j < hullIndices.size(); ++j)
-			{
-				float* hp = &hullPoints[j * 3];
-				hp[0] = vertices[hullIndices[j]].x();
-				hp[1] = vertices[hullIndices[j]].y();
-				hp[2] = vertices[hullIndices[j]].z();
-			}
+			// Build point list, only hull points. Add space at end for storeUnaligned always writes four floats.
+			AutoArrayPtr< float, AllocFreeAlign > hullPoints((float*)Alloc::acquireAlign(3 * sizeof(float) * (hullIndices.size() + 1), 16, T_FILE_LINE));
+			for (uint32_t i = 0; i < hullIndices.size(); ++i)
+				vertices[hullIndices[i]].storeUnaligned(&hullPoints[i * 3]);
 
 			// Create Bullet shape.
 			shape = new btConvexHullShape(
 				static_cast< const btScalar* >(hullPoints.c_ptr()),
-				int(hullIndices.size()),
+				(int)hullIndices.size(),
 				3 * sizeof(float)
 			);
 		}
@@ -746,7 +772,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		resource::Proxy< hf::Heightfield > heightfield;
 		if (!resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
 		{
-			log::error << L"Unable to load heightfield resource" << Endl;
+			log::error << L"Unable to load heightfield resource." << Endl;
 			return nullptr;
 		}
 
@@ -754,7 +780,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else
 	{
-		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"" << Endl;
+		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"." << Endl;
 		return nullptr;
 	}
 
@@ -789,6 +815,10 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 			rigidBody->setActivationState(DISABLE_DEACTIVATION);
 		}
+
+		// Add custom material callback so we can support material per triangle.
+		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
 		// Resolve collision group and mask value.
 		uint32_t mergedCollisionGroup = 0;
@@ -826,7 +856,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			centerOfGravity,
 			mergedCollisionGroup,
 			mergedCollisionMask,
-			shapeDesc->getMaterial()
+			shapeDesc->getMaterial(),
+			mesh
 		);
 		m_bodies.push_back(staticBody);
 
@@ -900,7 +931,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			centerOfGravity,
 			mergedCollisionGroup,
 			mergedCollisionMask,
-			shapeDesc->getMaterial()
+			shapeDesc->getMaterial(),
+			mesh
 		);
 		m_bodies.push_back(dynamicBody);
 
@@ -929,8 +961,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	BodyBullet* bb1 = checked_type_cast< BodyBullet* >(body1);
 	BodyBullet* bb2 = checked_type_cast< BodyBullet* >(body2);
 
-	btRigidBody* b1 = body1 ? bb1->getBtRigidBody() : 0;
-	btRigidBody* b2 = body2 ? bb2->getBtRigidBody() : 0;
+	btRigidBody* b1 = body1 ? bb1->getBtRigidBody() : nullptr;
+	btRigidBody* b2 = body2 ? bb2->getBtRigidBody() : nullptr;
 
 	Ref< Joint > joint;
 

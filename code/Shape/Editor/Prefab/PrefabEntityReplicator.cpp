@@ -128,6 +128,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 	// geometry if any.
 	std::map< std::wstring, Guid > materialTemplates;
 	std::map< std::wstring, Guid > materialTextures;
+	std::map< std::wstring, Guid > materialPhysics;
 	RefArray< const model::Model > shapeModels;
 	std::set< resource::Id< physics::CollisionSpecification > > collisionGroup;
 	std::set< resource::Id< physics::CollisionSpecification > > collisionMask;
@@ -160,7 +161,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 			}
 
 			// Then let explicit material textures override those from a texture set.
-			for (const auto& mt : meshAsset->getMaterialTextures())
+			for (auto mt : meshAsset->getMaterialTextures())
 				materialTextures[mt.first] = mt.second;
 		}
 
@@ -197,6 +198,9 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 				collisionGroup.insert(meshShape->getCollisionGroup().begin(), meshShape->getCollisionGroup().end());
 				collisionMask.insert(meshShape->getCollisionMask().begin(), meshShape->getCollisionMask().end());
 
+				for (auto it : meshAsset->getMaterials())
+					materialPhysics[it.first] = it.second;
+
 				friction += bodyDesc->getFriction();
 				restitution += bodyDesc->getRestitution();
 			}
@@ -206,7 +210,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 		return scene::Traverser::VrContinue;
 	});
 
-	// Use average material properties for physics.
+	// Use average material properties as default for physics shape.
 	if (!shapeModels.empty())
 	{
 		friction /= (float)shapeModels.size();
@@ -235,6 +239,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 
 		// Build collision shape mesh.
 		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+		outputShapeMeshAsset->setMaterials(materialPhysics);
 		pipelineBuilder->buildAdHocOutput(
 			outputShapeMeshAsset,
 			outputShapeGuid,
