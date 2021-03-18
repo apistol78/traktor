@@ -29,18 +29,13 @@ public:
 	struct ParameterDesc
 	{
 		std::wstring name;
-		uint32_t buffer;	//!< Index of which uniform buffer (0-2), or texture index.
-		uint32_t offset;	//!< Offset in 4-byte floats.
-		uint32_t size;		//!< Size in 4-byte floats.
+		uint32_t buffer = 0;	//!< Index of which uniform buffer (0-2), or texture index.
+		uint32_t offset = 0;	//!< Offset in 4-byte floats.
+		uint32_t size = 0;		//!< Size in 4-byte floats.
 
-		ParameterDesc()
-		:	buffer(0)
-		,	offset(0)
-		,	size(0)
-		{
-		}
+		ParameterDesc() = default;
 
-		ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
+		explicit ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
 		:	name(name_)
 		,	buffer(buffer_)
 		,	offset(offset_)
@@ -53,17 +48,13 @@ public:
 
 	struct SamplerDesc
 	{
-		uint32_t unit;
+		uint32_t unit = 0;
 		SamplerState state;
-		uint32_t textureIndex;	//!< Index into texture parameter list.
+		uint32_t textureIndex = 0;	//!< Index into texture parameter list.
 
-		SamplerDesc()
-		:	unit(0)
-		,	textureIndex(0)
-		{
-		}
+		SamplerDesc() = default;
 
-		SamplerDesc(uint32_t unit_, const SamplerState& state_, uint32_t textureIndex_)
+		explicit SamplerDesc(uint32_t unit_, const SamplerState& state_, uint32_t textureIndex_)
 		:	unit(unit_)
 		,	state(state_)
 		,	textureIndex(textureIndex_)
@@ -72,8 +63,6 @@ public:
 
 		void serialize(ISerializer& s);
 	};
-
-	ProgramResourceOpenGL();
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -88,12 +77,12 @@ private:
 	std::string m_computeShader;
 
 	AlignedVector< ParameterDesc > m_parameters;
-	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
-	uint32_t m_texturesCount;
-	uint32_t m_sbufferCount;
+	uint32_t m_uniformBufferSizes[3] = { 0, 0, 0 };	// Once(0), Frame(1) and Draw(2)
+	uint32_t m_texturesCount = 0;
+	uint32_t m_sbufferCount = 0;
 
 	AlignedVector< SamplerDesc > m_samplers;
-	uint32_t m_hash;
+	uint32_t m_hash = 0;
 };
 
 	}

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include "Render/OpenGL/ES/TypesOpenGLES.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 
 // import/export mechanism.
@@ -19,52 +19,70 @@ namespace traktor
 	{
 
 /*!
- * \ingroup OGL
  */
 class T_DLLCLASS ProgramResourceOpenGLES : public ProgramResource
 {
 	T_RTTI_CLASS;
 
 public:
-	ProgramResourceOpenGLES();
+	struct ParameterDesc
+	{
+		std::wstring name;
+		uint32_t buffer = 0;	//!< Index of which uniform buffer (0-2), or texture index.
+		uint32_t offset = 0;	//!< Offset in 4-byte floats.
+		uint32_t size = 0;		//!< Size in 4-byte floats.
 
-	ProgramResourceOpenGLES(
-		const std::string& vertexShader,
-		const std::string& fragmentShader,
-		const std::vector< std::wstring >& textures,
-		const std::vector< NamedUniformType >& uniforms,
-		const std::vector< SamplerBindingOpenGL >& samplers,
-		const RenderStateOpenGL& renderState
-	);
+		ParameterDesc() = default;
 
-	const std::string& getVertexShader() const { return m_vertexShader; }
+		explicit ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
+		:	name(name_)
+		,	buffer(buffer_)
+		,	offset(offset_)
+		,	size(size_)
+		{
+		}
 
-	const std::string& getFragmentShader() const { return m_fragmentShader; }
+		void serialize(ISerializer& s);
+	};
 
-	const std::vector< std::wstring >& getTextures() const { return m_textures; }
+	struct SamplerDesc
+	{
+		uint32_t unit = 0;
+		SamplerState state;
+		uint32_t textureIndex = 0;	//!< Index into texture parameter list.
 
-	const std::vector< NamedUniformType >& getUniforms() const { return m_uniforms; }
+		SamplerDesc() = default;
 
-	const std::vector< SamplerBindingOpenGL >& getSamplers() const { return m_samplers; }
+		explicit SamplerDesc(uint32_t unit_, const SamplerState& state_, uint32_t textureIndex_)
+		:	unit(unit_)
+		,	state(state_)
+		,	textureIndex(textureIndex_)
+		{
+		}
 
-	const RenderStateOpenGL& getRenderState() const { return m_renderState; }
-
-	void setHash(uint32_t hash) { m_hash = hash; }
-
-	uint32_t getHash() const { return m_hash; }
+		void serialize(ISerializer& s);
+	};
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	friend class ProgramOpenGLES;
+	friend class ProgramCompilerOpenGLES;
+
+	RenderState m_renderState;
+
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
-	std::vector< std::wstring > m_textures;
-	std::vector< NamedUniformType > m_uniforms;
-	std::vector< SamplerBindingOpenGL > m_samplers;
-	RenderStateOpenGL m_renderState;
-	uint32_t m_hash;
+	std::string m_computeShader;
+
+	AlignedVector< ParameterDesc > m_parameters;
+	uint32_t m_uniformBufferSizes[3] = { 0, 0, 0 };	// Once(0), Frame(1) and Draw(2)
+	uint32_t m_texturesCount = 0;
+	uint32_t m_sbufferCount = 0;
+
+	AlignedVector< SamplerDesc > m_samplers;
+	uint32_t m_hash = 0;
 };
 
 	}
 }
-

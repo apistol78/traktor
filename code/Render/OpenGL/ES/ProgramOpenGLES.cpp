@@ -128,8 +128,8 @@ Ref< ProgramOpenGLES > ProgramOpenGLES::create(ContextOpenGLES* resourceContext,
 	GLsizei errorBufLen;
 	GLint status;
 
-	const std::string& vertexShader = resourceOpenGL->getVertexShader();
-	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
+	const std::string& vertexShader = resourceOpenGL->m_vertexShader;
+	const std::string& fragmentShader = resourceOpenGL->m_fragmentShader;
 
 	GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
 	if (!vertexObject)
@@ -404,124 +404,124 @@ ProgramOpenGLES::ProgramOpenGLES(ContextOpenGLES* resourceContext, GLuint progra
 ,	m_locationTargetSize(0)
 ,	m_locationPostTransform(0)
 {
-	const ProgramResourceOpenGLES* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGLES* >(resource);
+	const ProgramResourceOpenGLES* resourceOpenGL = mandatory_non_null_type_cast< const ProgramResourceOpenGLES* >(resource);
 
-	m_targetSize[0] =
-	m_targetSize[1] =
-	m_targetSize[2] =
-	m_targetSize[3] = 0.0f;
+	//m_targetSize[0] =
+	//m_targetSize[1] =
+	//m_targetSize[2] =
+	//m_targetSize[3] = 0.0f;
 
-	// Get target size parameter.
-	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
-	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
+	//// Get target size parameter.
+	//m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
+	//m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
 
-	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
+	//const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
+	//const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
 
-	// Map texture parameters.
-	for (std::vector< SamplerBindingOpenGL >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
-	{
-		const std::wstring& texture = textures[i->texture];
+	//// Map texture parameters.
+	//for (std::vector< SamplerBindingOpenGL >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	//{
+	//	const std::wstring& texture = textures[i->texture];
 
-		handle_t handle = getParameterHandle(texture);
-		if (m_parameterMap.find(handle) == m_parameterMap.end())
-		{
-			m_parameterMap[handle] = m_textures.size();
-			m_textures.push_back(0);
-		}
+	//	handle_t handle = getParameterHandle(texture);
+	//	if (m_parameterMap.find(handle) == m_parameterMap.end())
+	//	{
+	//		m_parameterMap[handle] = m_textures.size();
+	//		m_textures.push_back(0);
+	//	}
 
-		std::wstring samplerName = i->name;
+	//	std::wstring samplerName = i->name;
 
-		Sampler sampler;
-		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
-		sampler.texture = m_parameterMap[handle];
-		sampler.unit = i->unit;
+	//	Sampler sampler;
+	//	sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
+	//	sampler.texture = m_parameterMap[handle];
+	//	sampler.unit = i->unit;
 
-		m_samplers.push_back(sampler);
+	//	m_samplers.push_back(sampler);
 
-		if (sampler.locationTexture < 0)
-			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
-	}
+	//	if (sampler.locationTexture < 0)
+	//		log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
+	//}
 
-	// Map texture size parameters.
-	for (std::vector< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
-	{
-		const std::wstring& texture = *i;
-		std::wstring textureSizeName = L"_gl_textureSize_" + texture;
+	//// Map texture size parameters.
+	//for (std::vector< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	//{
+	//	const std::wstring& texture = *i;
+	//	std::wstring textureSizeName = L"_gl_textureSize_" + texture;
 
-		GLint location = glGetUniformLocation(m_program, wstombs(textureSizeName).c_str());
-		if (location <= 0)
-			continue;
+	//	GLint location = glGetUniformLocation(m_program, wstombs(textureSizeName).c_str());
+	//	if (location <= 0)
+	//		continue;
 
-		handle_t handle = getParameterHandle(texture);
+	//	handle_t handle = getParameterHandle(texture);
 
-		if (m_parameterMap.find(handle) == m_parameterMap.end())
-		{
-			m_parameterMap[handle] = m_textures.size();
-			m_textures.push_back(0);
-		}
+	//	if (m_parameterMap.find(handle) == m_parameterMap.end())
+	//	{
+	//		m_parameterMap[handle] = m_textures.size();
+	//		m_textures.push_back(0);
+	//	}
 
-		TextureSize textureSize;
-		textureSize.location = location;
-		textureSize.texture = m_parameterMap[handle];
+	//	TextureSize textureSize;
+	//	textureSize.location = location;
+	//	textureSize.texture = m_parameterMap[handle];
 
-		m_textureSize.push_back(textureSize);
-	}
+	//	m_textureSize.push_back(textureSize);
+	//}
 
-	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
-	for (uint32_t i = 0; i < uint32_t(uniforms.size()); ++i)
-	{
-		handle_t handle = getParameterHandle(uniforms[i].name);
-		T_FATAL_ASSERT_M (m_parameterMap.find(handle) == m_parameterMap.end(), L"Duplicated uniform in resource");
+	//const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
+	//for (uint32_t i = 0; i < uint32_t(uniforms.size()); ++i)
+	//{
+	//	handle_t handle = getParameterHandle(uniforms[i].name);
+	//	T_FATAL_ASSERT_M (m_parameterMap.find(handle) == m_parameterMap.end(), L"Duplicated uniform in resource");
 
-		std::string uniformName = wstombs(uniforms[i].name);
+	//	std::string uniformName = wstombs(uniforms[i].name);
 
-		GLint location = glGetUniformLocation(m_program, uniformName.c_str());
-		if (location < 0)
-		{
-			// This probably happen when the GLSL optimizer of the driver is more intelligent than
-			// our GLSL shader generator, thus the uniform has been discarded when the program was loaded.
-			T_DEBUG(L"No location of GL uniform \"" << uniforms[i].name << L"\"; shader parameter ignored.");
-			continue;
-		}
+	//	GLint location = glGetUniformLocation(m_program, uniformName.c_str());
+	//	if (location < 0)
+	//	{
+	//		// This probably happen when the GLSL optimizer of the driver is more intelligent than
+	//		// our GLSL shader generator, thus the uniform has been discarded when the program was loaded.
+	//		T_DEBUG(L"No location of GL uniform \"" << uniforms[i].name << L"\"; shader parameter ignored.");
+	//		continue;
+	//	}
 
-		uint32_t offsetUniform = uint32_t(m_uniforms.size());
-		uint32_t offsetData = uint32_t(m_uniformData.size());
-		uint32_t allocSize = 0;
+	//	uint32_t offsetUniform = uint32_t(m_uniforms.size());
+	//	uint32_t offsetData = uint32_t(m_uniformData.size());
+	//	uint32_t allocSize = 0;
 
-		switch (uniforms[i].type)
-		{
-		case GL_FLOAT:
-			allocSize = alignUp(1 * uniforms[i].length, 4);
-			break;
+	//	switch (uniforms[i].type)
+	//	{
+	//	case GL_FLOAT:
+	//		allocSize = alignUp(1 * uniforms[i].length, 4);
+	//		break;
 
-		case GL_FLOAT_VEC4:
-			allocSize = 4 * uniforms[i].length;
-			break;
+	//	case GL_FLOAT_VEC4:
+	//		allocSize = 4 * uniforms[i].length;
+	//		break;
 
-		case GL_FLOAT_MAT4:
-			allocSize = 16 * uniforms[i].length;
-			break;
+	//	case GL_FLOAT_MAT4:
+	//		allocSize = 16 * uniforms[i].length;
+	//		break;
 
-		default:
-			T_FATAL_ERROR;
-			break;
-		}
+	//	default:
+	//		T_FATAL_ERROR;
+	//		break;
+	//	}
 
-		m_parameterMap[handle] = offsetUniform;
+	//	m_parameterMap[handle] = offsetUniform;
 
-		m_uniforms.push_back(Uniform());
-		m_uniforms.back().location = location;
-		m_uniforms.back().type = uniforms[i].type;
-		m_uniforms.back().offset = offsetData;
-		m_uniforms.back().length = uniforms[i].length;
-		m_uniforms.back().dirty = true;
+	//	m_uniforms.push_back(Uniform());
+	//	m_uniforms.back().location = location;
+	//	m_uniforms.back().type = uniforms[i].type;
+	//	m_uniforms.back().offset = offsetData;
+	//	m_uniforms.back().length = uniforms[i].length;
+	//	m_uniforms.back().dirty = true;
 
-		m_uniformData.resize(offsetData + allocSize, 0.0f);
-	}
+	//	m_uniformData.resize(offsetData + allocSize, 0.0f);
+	//}
 
-	// Create a display list from the render states.
-	m_renderState = resourceOpenGL->getRenderState();
+	//// Create a display list from the render states.
+	//m_renderState = resourceOpenGL->m_renderState;
 }
 
 	}

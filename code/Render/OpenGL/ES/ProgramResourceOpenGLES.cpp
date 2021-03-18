@@ -1,7 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Render/OpenGL/ES/ProgramResourceOpenGLES.h"
 
 namespace traktor
@@ -11,10 +12,10 @@ namespace traktor
 		namespace
 		{
 
-class MemberNamedUniformTypeOpenGL : public MemberComplex
+class MemberRenderState : public MemberComplex
 {
 public:
-	MemberNamedUniformTypeOpenGL(const wchar_t* const name, NamedUniformType& ref)
+	MemberRenderState(const wchar_t* const name, RenderState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -22,19 +23,40 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		s >> Member< std::wstring >(L"name", m_ref.name);
-		s >> Member< GLenum >(L"type", m_ref.type);
-		s >> Member< GLuint >(L"length", m_ref.length);
+		s >> MemberEnumByValue< CullMode >(L"cullMode", m_ref.cullMode);
+		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
+		s >> MemberEnumByValue< BlendOperation >(L"blendColorOperation", m_ref.blendColorOperation);
+		s >> MemberEnumByValue< BlendFactor >(L"blendColorSource", m_ref.blendColorSource);
+		s >> MemberEnumByValue< BlendFactor >(L"blendColorDestination", m_ref.blendColorDestination);
+		s >> MemberEnumByValue< BlendOperation >(L"blendAlphaOperation", m_ref.blendAlphaOperation);
+		s >> MemberEnumByValue< BlendFactor >(L"blendAlphaSource", m_ref.blendAlphaSource);
+		s >> MemberEnumByValue< BlendFactor >(L"blendAlphaDestination", m_ref.blendAlphaDestination);
+		s >> Member< uint32_t >(L"colorWriteMask", m_ref.colorWriteMask);
+		s >> Member< bool >(L"depthEnable", m_ref.depthEnable);
+		s >> Member< bool >(L"depthWriteEnable", m_ref.depthWriteEnable);
+		s >> MemberEnumByValue< CompareFunction >(L"depthFunction", m_ref.depthFunction);
+		s >> Member< bool >(L"alphaTestEnable", m_ref.alphaTestEnable);
+		s >> MemberEnumByValue< CompareFunction >(L"alphaTestFunction", m_ref.alphaTestFunction);
+		s >> Member< int32_t >(L"alphaTestReference", m_ref.alphaTestReference);
+		s >> Member< bool >(L"alphaToCoverageEnable", m_ref.alphaToCoverageEnable);
+		s >> Member< bool >(L"wireframe", m_ref.wireframe);
+		s >> Member< bool >(L"stencilEnable", m_ref.stencilEnable);
+		s >> MemberEnumByValue< StencilOperation >(L"stencilFail", m_ref.stencilFail);
+		s >> MemberEnumByValue< StencilOperation >(L"stencilZFail", m_ref.stencilZFail);
+		s >> MemberEnumByValue< StencilOperation >(L"stencilPass", m_ref.stencilPass);
+		s >> MemberEnumByValue< CompareFunction >(L"stencilFunction", m_ref.stencilFunction);
+		s >> Member< uint32_t >(L"stencilReference", m_ref.stencilReference);
+		s >> Member< uint32_t >(L"stencilMask", m_ref.stencilMask);
 	}
 
 private:
-	NamedUniformType& m_ref;
+	RenderState& m_ref;
 };
 
-class MemberSamplerBindingOpenGL : public MemberComplex
+class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerBindingOpenGL(const wchar_t* const name, SamplerBindingOpenGL& ref)
+	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -42,117 +64,55 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		s >> Member< std::wstring >(L"name", m_ref.name);
-		s >> Member< GLuint >(L"unit", m_ref.unit);
-		s >> Member< GLenum >(L"target", m_ref.target);
-		s >> Member< int32_t >(L"texture", m_ref.texture);
+		s >> MemberEnumByValue< Filter >(L"minFilter", m_ref.minFilter);
+		s >> MemberEnumByValue< Filter >(L"mipFilter", m_ref.mipFilter);
+		s >> MemberEnumByValue< Filter >(L"magFilter", m_ref.magFilter);
+		s >> MemberEnumByValue< Address >(L"addressU", m_ref.addressU);
+		s >> MemberEnumByValue< Address >(L"addressV", m_ref.addressV);
+		s >> MemberEnumByValue< Address >(L"addressW", m_ref.addressW);
+		s >> MemberEnumByValue< CompareFunction >(L"compare", m_ref.compare);
+		s >> Member< float >(L"mipBias", m_ref.mipBias);
+		s >> Member< bool >(L"ignoreMips", m_ref.ignoreMips);
+		s >> Member< bool >(L"useAnisotropic", m_ref.useAnisotropic);
 	}
 
 private:
-	SamplerBindingOpenGL& m_ref;
-};
-
-class MemberSamplerStateOpenGL : public MemberComplex
-{
-public:
-	MemberSamplerStateOpenGL(const wchar_t* const name, SamplerStateOpenGL& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
-	{
-	}
-
-	virtual void serialize(ISerializer& s) const
-	{
-		s >> Member< GLenum >(L"minFilter", m_ref.minFilter);
-		s >> Member< GLenum >(L"magFilter", m_ref.magFilter);
-		s >> Member< GLenum >(L"wrapS", m_ref.wrapS);
-		s >> Member< GLenum >(L"wrapT", m_ref.wrapT);
-		s >> Member< GLenum >(L"wrapR", m_ref.wrapR);
-		s >> Member< GLenum >(L"compare", m_ref.compare);
-	}
-
-private:
-	SamplerStateOpenGL& m_ref;
-};
-
-class MemberRenderStateOpenGL : public MemberComplex
-{
-public:
-	MemberRenderStateOpenGL(const wchar_t* const name, RenderStateOpenGL& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
-	{
-	}
-
-	virtual void serialize(ISerializer& s) const
-	{
-		s >> Member< GLboolean >(L"cullFaceEnable", m_ref.cullFaceEnable);
-		s >> Member< GLenum >(L"cullFace", m_ref.cullFace);
-		s >> Member< GLboolean >(L"blendEnable", m_ref.blendEnable);
-		s >> Member< GLenum >(L"blendColorEquation", m_ref.blendColorEquation);
-		s >> Member< GLenum >(L"blendAlphaEquation", m_ref.blendAlphaEquation);
-		s >> Member< GLenum >(L"blendFuncColorSrc", m_ref.blendFuncColorSrc);
-		s >> Member< GLenum >(L"blendFuncColorDest", m_ref.blendFuncColorDest);
-		s >> Member< GLenum >(L"blendFuncAlphaSrc", m_ref.blendFuncAlphaSrc);
-		s >> Member< GLenum >(L"blendFuncAlphaDest", m_ref.blendFuncAlphaDest);
-		s >> Member< GLboolean >(L"depthTestEnable", m_ref.depthTestEnable);
-		s >> Member< uint32_t >(L"colorMask", m_ref.colorMask);
-		s >> Member< GLboolean >(L"depthMask", m_ref.depthMask);
-		s >> Member< GLenum >(L"depthFunc", m_ref.depthFunc);
-		s >> Member< GLboolean >(L"alphaTestEnable", m_ref.alphaTestEnable);
-		s >> Member< GLenum >(L"alphaFunc", m_ref.alphaFunc);
-		s >> Member< GLclampf >(L"alphaRef", m_ref.alphaRef);
-		s >> Member< GLboolean >(L"stencilTestEnable", m_ref.stencilTestEnable);
-		s >> Member< GLenum >(L"stencilFunc", m_ref.stencilFunc);
-		s >> Member< GLint >(L"stencilRef", m_ref.stencilRef);
-		s >> Member< GLenum >(L"stencilOpFail", m_ref.stencilOpFail);
-		s >> Member< GLenum >(L"stencilOpZFail", m_ref.stencilOpZFail);
-		s >> Member< GLenum >(L"stencilOpZPass", m_ref.stencilOpZPass);
-		s >> MemberStaticArray< SamplerStateOpenGL, 16, MemberSamplerStateOpenGL >(L"samplerStates", m_ref.samplerStates);
-	}
-
-private:
-	RenderStateOpenGL& m_ref;
+	SamplerState& m_ref;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGLES", 10, ProgramResourceOpenGLES, ProgramResource)
-
-ProgramResourceOpenGLES::ProgramResourceOpenGLES()
-:	m_hash(0)
-{
-}
-
-ProgramResourceOpenGLES::ProgramResourceOpenGLES(
-	const std::string& vertexShader,
-	const std::string& fragmentShader,
-	const std::vector< std::wstring >& textures,
-	const std::vector< NamedUniformType >& uniforms,
-	const std::vector< SamplerBindingOpenGL >& samplers,
-	const RenderStateOpenGL& renderState
-)
-:	m_vertexShader(vertexShader)
-,	m_fragmentShader(fragmentShader)
-,	m_textures(textures)
-,	m_uniforms(uniforms)
-,	m_samplers(samplers)
-,	m_renderState(renderState)
-,	m_hash(0)
-{
-}
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGLES", 12, ProgramResourceOpenGLES, ProgramResource)
 
 void ProgramResourceOpenGLES::serialize(ISerializer& s)
 {
-	T_ASSERT(s.getVersion() >= 10);
+	T_ASSERT(s.getVersion() >= 12);
 
+	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
-	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
-	s >> MemberStlVector< NamedUniformType, MemberNamedUniformTypeOpenGL >(L"uniforms", m_uniforms);
-	s >> MemberStlVector< SamplerBindingOpenGL, MemberSamplerBindingOpenGL >(L"samplers", m_samplers);
-	s >> MemberRenderStateOpenGL(L"renderState", m_renderState);
+	s >> Member< std::string >(L"computeShader", m_computeShader);
+	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
+	s >> Member< uint32_t >(L"texturesCount", m_texturesCount);
+	s >> Member< uint32_t >(L"sbufferCount", m_sbufferCount);
+	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
+	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
 	s >> Member< uint32_t >(L"hash", m_hash);
+}
+
+void ProgramResourceOpenGLES::ParameterDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"buffer", buffer);
+	s >> Member< uint32_t >(L"offset", offset);
+	s >> Member< uint32_t >(L"size", size);
+}
+
+void ProgramResourceOpenGLES::SamplerDesc::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"unit", unit);
+	s >> MemberSamplerState(L"state", state);
+	s >> Member< uint32_t >(L"textureIndex", textureIndex);
 }
 
 	}
