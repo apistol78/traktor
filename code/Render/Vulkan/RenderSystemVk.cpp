@@ -24,7 +24,6 @@
 #include "Render/Vulkan/VertexBufferDynamicVk.h"
 #include "Render/Vulkan/VertexBufferStaticVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
-#include "Render/Vulkan/Editor/Glsl/GlslType.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
