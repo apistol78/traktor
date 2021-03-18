@@ -99,12 +99,21 @@ void TrailRenderer::render(
 	m_batches.back().points = 0;
 	m_batches.back().timeAndAge = Vector4(time, age, 0.0f, 0.0f);
 
+	// Calculate total length so we can properly distribute alpha.
+	Scalar tln = 0.0_simd;
+	for (int32_t i = pointCount - 1; i >= 1; --i)
+	{
+		Vector4 vp0 = points[i - 1];
+		Vector4 vp1 = points[i];
+		tln += (vp1 - vp0).xyz0().length();
+	}
+
 	TrailVertex* vertex = m_vertex;
 
 	const Vector4 www0(width, width, width, 0.0f);
 	float v = 0.0f;
 
-	for (int32_t i = pointCount - 1; i >= 1; --i)
+	for (int32_t i = pointCount - 1; i > 1; --i)
 	{
 		Vector4 vp0 = points[i - 1];
 		Vector4 vp1 = points[i];
@@ -115,20 +124,19 @@ void TrailRenderer::render(
 			continue;
 
 		Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
-		float alpha = float(i) / (pointCount - 1);
 
 		vp1.storeAligned(vertex->position);
 		up.storeAligned(vertex->direction);
 		vertex->uv[0] = 0.0f;
 		vertex->uv[1] = v;
-		vertex->uv[2] = alpha;
+		vertex->uv[2] = 1.0f - v / tln;
 		++vertex;
 
 		vp1.storeAligned(vertex->position);
 		(-up).storeAligned(vertex->direction);
 		vertex->uv[0] = 1.0f;
 		vertex->uv[1] = v;
-		vertex->uv[2] = alpha;
+		vertex->uv[2] = 1.0f - v / tln;
 		++vertex;
 
 		v += squareRoot(ln);
