@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Debug/CallStack.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
@@ -24,6 +25,7 @@ StructBufferVrfy::StructBufferVrfy(StructBuffer* structBuffer, uint32_t bufferSi
 {
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
 	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+	getCallStack(8, m_callstack, 2);
 }
 
 StructBufferVrfy::~StructBufferVrfy()
