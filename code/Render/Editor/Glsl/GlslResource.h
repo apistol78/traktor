@@ -17,6 +17,8 @@ namespace traktor
 	namespace render
 	{
 
+class GlslLayout;
+
 class T_DLLCLASS GlslResource : public Object
 {
 	T_RTTI_CLASS;
