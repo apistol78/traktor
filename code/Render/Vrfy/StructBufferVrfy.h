@@ -35,6 +35,7 @@ protected:
 	bool m_locked = false;
 	uint8_t* m_device = nullptr;
 	uint8_t* m_shadow = nullptr;
+	void* m_callstack[8] = { 0 };
 
 	void verifyGuard() const;
 
