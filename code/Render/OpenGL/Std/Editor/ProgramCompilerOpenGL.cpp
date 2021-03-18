@@ -1,16 +1,16 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Render/Editor/Glsl/GlslContext.h"
+#include "Render/Editor/Glsl/GlslImage.h"
+#include "Render/Editor/Glsl/GlslSampler.h"
+#include "Render/Editor/Glsl/GlslStorageBuffer.h"
+#include "Render/Editor/Glsl/GlslTexture.h"
+#include "Render/Editor/Glsl/GlslUniformBuffer.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/OpenGL/Std/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Std/Editor/ProgramCompilerOpenGL.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslContext.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslImage.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslSampler.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslStorageBuffer.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslTexture.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslUniformBuffer.h"
 
 #if defined(T_ENABLE_GLSL_VERIFY)
 #	include <glslang/Include/ShHandle.h>
@@ -177,7 +177,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	GlslContext cx(shaderGraph);
+	GlslContext cx(shaderGraph, settings, GlslDialect::OpenGL);
 
 #if defined(T_ENABLE_GLSL_VERIFY)
 	glslang::TProgram* program = new glslang::TProgram();
@@ -193,9 +193,12 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 		cx.getEmitter().emit(cx, pixelOutputs[0]);
 		cx.getEmitter().emit(cx, vertexOutputs[0]);
 
+		GlslRequirements vertexRequirements = cx.requirements();
+		GlslRequirements fragmentRequirements = cx.requirements();
+
 		const auto& layout = cx.getLayout();
-		programResource->m_vertexShader = wstombs(cx.getVertexShader().getGeneratedShader(layout));
-		programResource->m_fragmentShader = wstombs(cx.getFragmentShader().getGeneratedShader(layout));
+		programResource->m_vertexShader = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements));
+		programResource->m_fragmentShader = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements));
 
 #if defined(T_ENABLE_GLSL_VERIFY)
 		const char* vertexShaderText = strdup(programResource->m_vertexShader.c_str());
@@ -245,8 +248,10 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	{
 		cx.getEmitter().emit(cx, computeOutputs[0]);
 
+		GlslRequirements computeRequirements = cx.requirements();
+
 		const auto& layout = cx.getLayout();
-		programResource->m_computeShader = wstombs(cx.getComputeShader().getGeneratedShader(layout));
+		programResource->m_computeShader = wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements));
 
 #if defined(T_ENABLE_GLSL_VERIFY)
 		const char* computeShaderText = strdup(programResource->m_computeShader.c_str());
@@ -290,8 +295,11 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	{
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
-			const auto textures = cx.getLayout().get< GlslTexture >();
+			// Get index of sampler among samplers, used to determine which texture unit.
+			int32_t textureUnit = cx.getLayout().getLocalIndex(sampler);
 
+			// Find texture resource, calculate index into texture parameter array.
+			const auto textures = cx.getLayout().get< GlslTexture >();
 			auto it = std::find_if(textures.begin(), textures.end(), [&](const GlslTexture* texture) {
 				return texture->getName() == sampler->getTextureName();
 			});
@@ -299,7 +307,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 				return nullptr;
 
 			programResource->m_samplers.push_back(ProgramResourceOpenGL::SamplerDesc(
-				sampler->getUnit(),
+				textureUnit,
 				sampler->getState(),
 				(uint32_t)std::distance(textures.begin(), it)
 			));
@@ -307,7 +315,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
 			auto& pm = parameterMapping[texture->getName()];
-			pm.buffer = (int32_t)cx.getLayout().typedIndexOf< GlslTexture >(texture);
+			pm.buffer = cx.getLayout().getLocalIndex(texture);
 			pm.offset = 0;
 			pm.length = 0;
 
@@ -329,18 +337,18 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 					size = alignUp(size, 4);
 
 				auto& pm = parameterMapping[uniform.name];
-				pm.buffer = uniformBuffer->getBinding();
+				pm.buffer = uniformBuffer->getBinding(GlslDialect::OpenGL);
 				pm.offset = size;
 				pm.length = glsl_type_width(uniform.type) * uniform.length;
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
-			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
+			programResource->m_uniformBufferSizes[uniformBuffer->getBinding(GlslDialect::OpenGL)] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
 			auto& pm = parameterMapping[storageBuffer->getName()];
-			pm.buffer = (int32_t)cx.getLayout().typedIndexOf< GlslStorageBuffer >(storageBuffer);
+			pm.buffer = (int32_t)cx.getLayout().getLocalIndex(storageBuffer);
 			pm.offset = 0;
 			pm.length = 0;
 
@@ -419,7 +427,7 @@ bool ProgramCompilerOpenGL::generate(
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	GlslContext cx(shaderGraph);
+	GlslContext cx(shaderGraph, settings, GlslDialect::OpenGL);
 
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
@@ -432,60 +440,19 @@ bool ProgramCompilerOpenGL::generate(
 	}
 	else
 	{
-		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
+		log::error << L"Unable to generate OpenGL GLSL shader; incorrect number of outputs." << Endl;
 		return false;
 	}
 
 	const auto& layout = cx.getLayout();
+	GlslRequirements requirements = cx.requirements();
 
 	StringOutputStream ss;
-	for (auto resource : layout.get())
-	{
-		ss << L"// Layout" << Endl;
-		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
-		{
-			ss << L"// [" << sampler->getUnit() << L"] = sampler" << Endl;
-			ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
-		}
-		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		{
-			ss << L"// [] = texture" << Endl;
-			ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
-			ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
-		}
-		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
-		{
-			ss << L"// [" << uniformBuffer->getBinding() << L"] = uniform buffer" << Endl;
-			ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
-			ss << L"//   .uniforms = {" << Endl;
-			for (auto uniform : uniformBuffer->get())
-			{
-				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
-			}
-			ss << L"//   }" << Endl;
-		}
-		// else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		// {
-		// 	ss << L"// [" << image->getBinding() << L"] = image" << Endl;
-		// 	ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
-		// }
-		// else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-		// {
-		// 	ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
-		// 	ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
-		// 	ss << L"//   .elements = {" << Endl;
-		// 	for (auto element : storageBuffer->get())
-		// 	{
-		// 		ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
-		// 	}
-		// 	ss << L"//   }" << Endl;
-		// }
-	}
 
 	// Vertex
 	{
 		StringOutputStream vss;
-		vss << cx.getVertexShader().getGeneratedShader(layout);
+		vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements);
 		vss << Endl;
 		vss << ss.str();
 		vss << Endl;
@@ -495,7 +462,7 @@ bool ProgramCompilerOpenGL::generate(
 	// Pixel
 	{
 		StringOutputStream fss;
-		fss << cx.getFragmentShader().getGeneratedShader(layout);
+		fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements);
 		fss << Endl;
 		fss << ss.str();
 		fss << Endl;
@@ -505,7 +472,7 @@ bool ProgramCompilerOpenGL::generate(
 	// Compute
 	{
 		StringOutputStream css;
-		css << cx.getComputeShader().getGeneratedShader(layout);
+		css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements);
 		css << Endl;
 		css << ss.str();
 		css << Endl;

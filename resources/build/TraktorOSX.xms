@@ -5400,6 +5400,15 @@
 															</item>
 														</items>
 													</item>
+													<item type="Filter">
+														<name>Glsl</name>
+														<items>
+															<item type="File">
+																<fileName>Glsl/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency" version="3">
@@ -16603,15 +16612,6 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
-				<item type="Filter">
-					<name>Glsl</name>
-					<items>
-						<item type="File">
-							<fileName>Glsl/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -17472,15 +17472,6 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
-				</item>
-				<item type="Filter">
-					<name>Glsl</name>
-					<items>
-						<item type="File">
-							<fileName>Glsl/*.*</fileName>
-							<items/>
-						</item>
-					</items>
 				</item>
 			</items>
 			<dependencies>

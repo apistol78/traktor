@@ -24,18 +24,17 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Render/Editor/Glsl/GlslContext.h"
+#include "Render/Editor/Glsl/GlslImage.h"
+#include "Render/Editor/Glsl/GlslSampler.h"
+#include "Render/Editor/Glsl/GlslStorageBuffer.h"
+#include "Render/Editor/Glsl/GlslTexture.h"
+#include "Render/Editor/Glsl/GlslUniformBuffer.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
-
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
-#include "Render/Vulkan/Editor/Glsl/GlslContext.h"
-#include "Render/Vulkan/Editor/Glsl/GlslImage.h"
-#include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
-#include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
-#include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
-#include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor
 {
@@ -251,7 +250,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	GlslContext cx(shaderGraph, settings);
+	GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
 
 	glslang::TProgram* program = new glslang::TProgram();
 	glslang::TShader* vertexShader = nullptr;
@@ -406,7 +405,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
 			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
-				sampler->getBinding(),
+				sampler->getBinding(GlslDialect::Vulkan),
 				sampler->getStages(),
 				sampler->getState()
 			));
@@ -414,26 +413,26 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
 			auto& pm = parameterMapping[texture->getName()];
-			pm.buffer = texture->getBinding();
+			pm.buffer = texture->getBinding(GlslDialect::Vulkan);
 			pm.offset = (uint32_t)programResource->m_textures.size();
 			pm.length = 0;
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				texture->getName(),
-				texture->getBinding(),
+				texture->getBinding(GlslDialect::Vulkan),
 				texture->getStages()
 			));
 		}
 		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 		{
 			auto& pm = parameterMapping[image->getName()];
-			pm.buffer = image->getBinding();
+			pm.buffer = image->getBinding(GlslDialect::Vulkan);
 			pm.offset = (uint32_t)programResource->m_textures.size();
 			pm.length = 0;
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				image->getName(),
-				image->getBinding(),
+				image->getBinding(GlslDialect::Vulkan),
 				image->getStages()
 			));
 		}
@@ -446,24 +445,24 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 					size = alignUp(size, 4);
 
 				auto& pm = parameterMapping[uniform.name];
-				pm.buffer = uniformBuffer->getBinding();
+				pm.buffer = uniformBuffer->getBinding(GlslDialect::Vulkan);
 				pm.offset = size;
 				pm.length = glsl_type_width(uniform.type) * uniform.length;
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
-			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
+			programResource->m_uniformBufferSizes[uniformBuffer->getBinding(GlslDialect::OpenGL)] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
 			auto& pm = parameterMapping[storageBuffer->getName()];
-			pm.buffer = storageBuffer->getBinding();
+			pm.buffer = storageBuffer->getBinding(GlslDialect::Vulkan);
 			pm.offset = (uint32_t)programResource->m_sbuffers.size();
 			pm.length = 0;
 
 			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
 				storageBuffer->getName(),
-				storageBuffer->getBinding(),
+				storageBuffer->getBinding(GlslDialect::Vulkan),
 				storageBuffer->getStages()
 			));
 		}
@@ -633,7 +632,7 @@ bool ProgramCompilerVk::generate(
 		shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 		shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-		GlslContext cx(shaderGraph, settings);
+		GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
 
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
