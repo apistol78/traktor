@@ -79,6 +79,7 @@ int32_t GlslLayout::getGlobalIndex(const GlslResource* resource) const
 	{
 		if (untypedResource == resource)
 			return index;
+		++index;
 	}
 	return -1;
 }
