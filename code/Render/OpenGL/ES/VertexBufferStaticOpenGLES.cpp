@@ -15,7 +15,6 @@
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/OpenGL/ES/Linux/ContextOpenGLES.h"
 #endif
-#include "Render/OpenGL/ES/Editor/Glsl/GlslType.h"
 
 namespace traktor
 {
