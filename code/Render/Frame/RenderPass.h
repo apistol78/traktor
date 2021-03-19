@@ -26,7 +26,7 @@ class RenderGraph;
 /*! Render pass definition.
  * \ingroup Render
  */
-class T_DLLCLASS RenderPass : public Object
+class T_DLLCLASS RenderPass : public RefCountImpl< ITypedObject >
 {
 	T_RTTI_CLASS;
 
@@ -81,6 +81,10 @@ public:
 	const AlignedVector< fn_build_t >& getBuilds() const { return m_builds; }
 
 	//! \}
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
 
 protected:
 	std::wstring m_name;
