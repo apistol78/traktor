@@ -1,9 +1,16 @@
+#include "Core/Class/BoxedAllocator.h"
 #include "Render/Frame/RenderPass.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+BoxedAllocator< RenderPass, 128 > s_allocRenderPass;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPass", RenderPass, Object)
 
@@ -57,6 +64,16 @@ void RenderPass::setOutput(handle_t targetSetId, const Clear& clear, uint32_t lo
 void RenderPass::addBuild(const fn_build_t& build)
 {
 	m_builds.push_back(build);
+}
+
+void* RenderPass::operator new (size_t size)
+{
+	return s_allocRenderPass.alloc();
+}
+
+void RenderPass::operator delete (void* ptr)
+{
+	s_allocRenderPass.free(ptr);
 }
 
 	}
