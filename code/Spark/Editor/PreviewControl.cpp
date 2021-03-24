@@ -124,7 +124,7 @@ bool PreviewControl::create(
 		true
 	);
 
-	m_movieRenderer = new MovieRenderer(m_displayRenderer, nullptr);
+	m_movieRenderer = new MovieRenderer(m_displayRenderer);
 
 	if (soundPlayer)
 	{

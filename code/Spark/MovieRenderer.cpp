@@ -4,7 +4,6 @@
 #include "Spark/Dictionary.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
-#include "Spark/DirtyRegionTracker.h"
 #include "Spark/EditInstance.h"
 #include "Spark/Font.h"
 #include "Spark/MorphShapeInstance.h"
@@ -33,9 +32,8 @@ Timer s_timer;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieRenderer", MovieRenderer, Object)
 
-MovieRenderer::MovieRenderer(IDisplayRenderer* displayRenderer, DirtyRegionTracker* dirtyRegionTracker)
+MovieRenderer::MovieRenderer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
-,	m_dirtyRegionTracker(dirtyRegionTracker)
 {
 }
 
@@ -48,10 +46,7 @@ void MovieRenderer::render(
 )
 {
 	const Color4f& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
-
-	Aabb2 dirtyRegion = frameBounds;
-	if (m_dirtyRegionTracker)
-		m_dirtyRegionTracker->update(movieInstance, dirtyRegion);
+	const Aabb2 dirtyRegion = frameBounds;
 
 	m_displayRenderer->begin(
 		*movieInstance->getDictionary(),

@@ -20,7 +20,6 @@ namespace traktor
 class ColorTransform;
 class IDisplayRenderer;
 class Dictionary;
-class DirtyRegionTracker;
 class Sprite;
 class SpriteInstance;
 class CharacterInstance;
@@ -33,7 +32,7 @@ class T_DLLCLASS MovieRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	MovieRenderer(IDisplayRenderer* displayRenderer, DirtyRegionTracker* dirtyRegionTracker);
+	explicit MovieRenderer(IDisplayRenderer* displayRenderer);
 
 	void render(
 		SpriteInstance* movieInstance,
@@ -45,7 +44,6 @@ public:
 
 private:
 	Ref< IDisplayRenderer > m_displayRenderer;
-	Ref< DirtyRegionTracker > m_dirtyRegionTracker;
 
 	void renderSprite(
 		SpriteInstance* spriteInstance,
