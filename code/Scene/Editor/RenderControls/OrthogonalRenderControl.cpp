@@ -107,7 +107,10 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent, ui::WsNoCanvas))
+	{
+		destroy();
 		return false;
+	}
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
@@ -119,7 +122,10 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
+	{
+		destroy();
 		return false;
+	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
@@ -130,8 +136,11 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 		m_context->getRenderSystem(),
 		1
 	))
+	{
+		destroy();
 		return false;
-
+	}
+	
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &OrthogonalRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &OrthogonalRenderControl::eventButtonUp);
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &OrthogonalRenderControl::eventDoubleClick);

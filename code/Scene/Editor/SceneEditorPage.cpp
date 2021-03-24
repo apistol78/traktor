@@ -255,6 +255,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	if (!m_editControl->create(m_editPanel, m_context))
 	{
 		log::error << L"Unable to create scene editor; failed to scene preview." << Endl;
+		safeDestroy(physicsManager);
 		return false;
 	}
 

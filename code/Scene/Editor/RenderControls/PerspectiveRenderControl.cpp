@@ -108,8 +108,11 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
 
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(m_containerAspect, ui::WsWantAllInput | ui::WsNoCanvas))
+	if (!m_renderWidget->create(m_containerAspect, ui::WsNoCanvas))
+	{
+		destroy();
 		return false;
+	}
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
@@ -121,7 +124,10 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
+	{
+		destroy();
 		return false;
+	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(
@@ -138,14 +144,20 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 		m_context->getRenderSystem(),
 		1
 	))
+	{
+		destroy();
 		return false;
+	}
 
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(
 		m_context->getRenderSystem()
 	))
+	{
+		destroy();
 		return false;
-
+	}
+	
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &PerspectiveRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &PerspectiveRenderControl::eventButtonUp);
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &PerspectiveRenderControl::eventDoubleClick);
