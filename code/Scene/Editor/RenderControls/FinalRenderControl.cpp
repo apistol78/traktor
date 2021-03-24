@@ -92,7 +92,10 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(m_containerAspect, ui::WsWantAllInput | ui::WsNoCanvas))
+	{
+		destroy();
 		return false;
+	}
 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
@@ -104,7 +107,10 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
+	{
+		destroy();
 		return false;
+	}
 
 	if (m_context->getDocument()->getInstance(0)->getPrimaryType() == &type_of< SceneAsset >())
 	{
@@ -113,7 +119,10 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 			sceneId,
 			m_sceneInstance
 		))
+		{
+			destroy();
 			return false;
+		}
 	}
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
