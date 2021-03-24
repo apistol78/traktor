@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/FillStyle.h"
-#include "Spark/SwfMembers.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

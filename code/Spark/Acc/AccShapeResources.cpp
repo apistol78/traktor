@@ -1,4 +1,3 @@
-#include "Spark/SwfTypes.h"
 #include "Spark/Acc/AccShapeResources.h"
 #include "Resource/IResourceManager.h"
 

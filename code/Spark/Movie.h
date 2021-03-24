@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,9 +34,9 @@ class T_DLLCLASS Movie : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Movie();
+	Movie() = default;
 
-	Movie(const Aabb2& frameBounds, Sprite* movieClip);
+	explicit Movie(const Aabb2& frameBounds, Sprite* movieClip);
 
 	void defineFont(uint16_t fontId, Font* font);
 

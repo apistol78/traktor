@@ -27,15 +27,15 @@
 #include "Spark/Font.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
-#include "Spark/MovieFactory.h"
 #include "Spark/Optimizer.h"
 #include "Spark/Packer.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
-#include "Spark/SwfReader.h"
 #include "Spark/Editor/EmptyMovieAsset.h"
 #include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/Pipeline.h"
+#include "Spark/Swf/SwfMovieFactory.h"
+#include "Spark/Swf/SwfReader.h"
 #include "Svg/Document.h"
 #include "Svg/IShapeVisitor.h"
 #include "Svg/Parser.h"
@@ -177,7 +177,7 @@ bool Pipeline::buildOutput(
 		if (extension == L"swf")
 		{
 			Ref< SwfReader > swf = new SwfReader(sourceStream);
-			movie = MovieFactory(movieAsset->m_includeAS).createMovie(swf);
+			movie = SwfMovieFactory(movieAsset->m_includeAS).createMovie(swf);
 			if (!movie)
 			{
 				log::error << L"Failed to import Spark movie; unable to parse SWF." << Endl;

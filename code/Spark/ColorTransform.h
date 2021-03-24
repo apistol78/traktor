@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace spark
 	{
 
@@ -34,6 +37,8 @@ public:
 	explicit ColorTransform(const Color4f& mul);
 
 	explicit ColorTransform(const Color4f& mul, const Color4f& add);
+
+	void serialize(ISerializer& s);
 
 	ColorTransform operator * (const ColorTransform& rh) const
 	{

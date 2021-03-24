@@ -2,15 +2,15 @@
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"
 #include "Spark/BitmapImage.h"
-#include "Spark/MovieFactory.h"
-#include "Spark/MovieFactoryTags.h"
 #include "Spark/Movie.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/Frame.h"
-#include "Spark/SwfReader.h"
 #include "Spark/Action/Avm1/ActionVM1.h"
 #include "Spark/Action/Avm2/ActionVM2.h"
+#include "Spark/Swf/SwfMovieFactory.h"
+#include "Spark/Swf/SwfMovieFactoryTags.h"
+#include "Spark/Swf/SwfReader.h"
 
 #define T_SHOW_STATISTICS 0
 
@@ -19,9 +19,9 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieFactory", MovieFactory, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SwfMovieFactory", SwfMovieFactory, Object)
 
-MovieFactory::MovieFactory(bool includeAS)
+SwfMovieFactory::SwfMovieFactory(bool includeAS)
 :	m_includeAS(includeAS)
 {
 	m_tagReaders[TiFileAttributes] = new TagFileAttributes();
@@ -90,13 +90,13 @@ MovieFactory::MovieFactory(bool includeAS)
 	m_tagReaders[TiDefineFontName] = new TagUnsupported(TiDefineFontName);
 }
 
-Ref< Movie > MovieFactory::createMovie(SwfReader* swf) const
+Ref< Movie > SwfMovieFactory::createMovie(SwfReader* swf) const
 {
 	SwfHeader* header = swf->readHeader();
 	if (!header)
 	{
-		log::error << L"Unable to read SWF movie; invalid header" << Endl;
-		return 0;
+		log::error << L"Unable to read SWF movie; invalid header." << Endl;
+		return nullptr;
 	}
 
 	T_DEBUG(L"SWF movie version " << int32_t(header->version));
@@ -127,9 +127,9 @@ Ref< Movie > MovieFactory::createMovie(SwfReader* swf) const
 			break;
 
 		Ref< Tag > tagReader;
-		std::map< uint16_t, Ref< Tag > >::const_iterator i = m_tagReaders.find(tag->id);
-		if (i != m_tagReaders.end())
-			tagReader = i->second;
+		auto it = m_tagReaders.find(tag->id);
+		if (it != m_tagReaders.end())
+			tagReader = it->second;
 
 		if (tagReader)
 		{
@@ -137,8 +137,8 @@ Ref< Movie > MovieFactory::createMovie(SwfReader* swf) const
 			context.tagEndPosition = swf->getBitReader().getStream()->tell() + tag->length;
 			if (!tagReader->read(swf, context))
 			{
-				log::error << L"Unable to read SWF; error when reading tag " << int32_t(tag->id) << Endl;
-				return 0;
+				log::error << L"Unable to read SWF; error when reading tag " << int32_t(tag->id) << L"." << Endl;
+				return nullptr;
 			}
 			if (uint32_t(swf->getBitReader().getStream()->tell()) < context.tagEndPosition)
 			{
@@ -178,7 +178,7 @@ Ref< Movie > MovieFactory::createMovie(SwfReader* swf) const
 	return movie;
 }
 
-Ref< Movie > MovieFactory::createMovieFromImage(const drawing::Image* image) const
+Ref< Movie > SwfMovieFactory::createMovieFromImage(const drawing::Image* image) const
 {
 	// Create a single frame and place shape.
 	Ref< Frame > frame = new Frame();

@@ -10,7 +10,6 @@
 #include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/SwfMembers.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionGlobal.h"
 
@@ -20,10 +19,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Movie", 0, Movie, ISerializable)
-
-Movie::Movie()
-{
-}
 
 Movie::Movie(const Aabb2& frameBounds, Sprite* movieClip)
 :	m_frameBounds(frameBounds)

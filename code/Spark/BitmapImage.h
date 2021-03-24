@@ -2,7 +2,6 @@
 
 #include "Core/Misc/AutoPtr.h"
 #include "Spark/Bitmap.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Spark/SwfTypes.h"
 #include "Spark/Debug/InstanceDebugInfo.h"
+#include "Spark/Swf/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -2,8 +2,8 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Matrix33.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,6 +22,7 @@ class ISerializer;
 	{
 
 class ColorTransform;
+struct SwfFillStyle;
 
 #if defined (_MSC_VER)
 #	pragma warning( disable:4324 )

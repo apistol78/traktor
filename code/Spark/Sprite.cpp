@@ -17,11 +17,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Sprite", 1, Sprite, Character)
 
-Sprite::Sprite()
-:	m_frameRate(0)
-{
-}
-
 Sprite::Sprite(uint16_t id, uint16_t frameRate)
 :	Character(id)
 ,	m_frameRate(frameRate)
@@ -45,7 +40,7 @@ uint32_t Sprite::getFrameCount() const
 
 Frame* Sprite::getFrame(uint32_t frameId) const
 {
-	return frameId < m_frames.size() ? m_frames[frameId] : 0;
+	return frameId < m_frames.size() ? m_frames[frameId] : nullptr;
 }
 
 int Sprite::findFrame(const std::string& frameLabel) const

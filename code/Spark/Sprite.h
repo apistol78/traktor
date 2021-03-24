@@ -3,7 +3,6 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Spark/Character.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +30,7 @@ class T_DLLCLASS Sprite : public Character
 	T_RTTI_CLASS;
 
 public:
-	Sprite();
+	Sprite() = default;
 
 	Sprite(uint16_t id, uint16_t frameRate);
 
@@ -66,7 +65,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint16_t m_frameRate;
+	uint16_t m_frameRate = 0;
 	RefArray< Frame > m_frames;
 	RefArray< const IActionVMImage > m_initActionScripts;
 	Aabb2 m_scalingGrid;

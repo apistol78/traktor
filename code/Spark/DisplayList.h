@@ -4,7 +4,6 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Spark/CharacterInstance.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

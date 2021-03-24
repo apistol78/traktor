@@ -2,7 +2,6 @@
 
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Matrix33.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,6 +20,7 @@ class ISerializer;
 	{
 
 class ColorTransform;
+struct SwfLineStyle;
 
 /*! Shape line style.
  * \ingroup Spark

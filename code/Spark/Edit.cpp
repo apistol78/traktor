@@ -4,7 +4,6 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
-#include "Spark/SwfMembers.h"
 
 namespace traktor
 {

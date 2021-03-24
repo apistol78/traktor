@@ -1,8 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Spark/CharacterInstance.h"
-#include "Spark/SwfMembers.h"
 #include "Spark/Debug/InstanceDebugInfo.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ void InstanceDebugInfo::serialize(ISerializer& s)
 	s >> MemberAabb2(L"bounds", m_bounds);
 	s >> Member< Matrix33 >(L"localTransform", m_localTransform);
 	s >> Member< Matrix33 >(L"globalTransform", m_globalTransform);
-	s >> MemberColorTransform(L"cxform", m_cxform);
+	s >> MemberComposite< ColorTransform >(L"cxform", m_cxform);
 	s >> Member< bool >(L"visible", m_visible);
 }
 
