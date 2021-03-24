@@ -130,21 +130,21 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 	Ref< ActionObject > clazz = m_global;
 
 	StringSplit< std::string > classNameSplit(className, ".");
-	for (StringSplit< std::string >::const_iterator i = classNameSplit.begin(); clazz != 0 && i != classNameSplit.end(); ++i)
+	for (StringSplit< std::string >::const_iterator i = classNameSplit.begin(); clazz != nullptr && i != classNameSplit.end(); ++i)
 	{
 		ActionValue clazzMember;
 		if (!clazz->getLocalMember(m_strings[*i], clazzMember) || !clazzMember.isObject())
-			return 0;
+			return nullptr;
 
 		clazz = clazzMember.getObject();
 	}
 
 	if (!clazz)
-		return 0;
+		return nullptr;
 
 	ActionValue prototypeMember;
 	if (!clazz->getLocalMember(IdPrototype, prototypeMember) || !prototypeMember.isObject())
-		return 0;
+		return nullptr;
 
 	return prototypeMember.getObject();
 }
@@ -178,11 +178,11 @@ void ActionContext::trace(visitor_t visitor) const
 
 void ActionContext::dereference()
 {
-	m_global = 0;
-	m_movieClip = 0;
-	m_focus = 0;
-	m_pressed = 0;
-	m_rolledOver = 0;
+	m_global = nullptr;
+	m_movieClip = nullptr;
+	m_focus = nullptr;
+	m_pressed = nullptr;
+	m_rolledOver = nullptr;
 	m_frameListeners.clear();
 }
 

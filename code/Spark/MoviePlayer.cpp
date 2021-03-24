@@ -7,7 +7,6 @@
 #include "Core/Timer/Timer.h"
 #include "Spark/Dictionary.h"
 #include "Spark/GC.h"
-//#include "Spark/IDisplayRenderer.h"
 #include "Spark/ISoundRenderer.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"

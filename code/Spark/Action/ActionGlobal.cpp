@@ -1,3 +1,5 @@
+#define T_TINY_SPARK
+
 #define T_USE_NATIVE_TWEEN 1
 #define T_USE_NATIVE_TWEEN_EASE	1
 
@@ -5,71 +7,75 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Spark/Action/ActionFunctionNative.h"
 #include "Spark/Action/ActionGlobal.h"
+
 #include "Spark/Action/Common/Classes/AsObject.h"
-#include "Spark/Action/Common/Classes/AsAccessibility.h"
-#include "Spark/Action/Common/Classes/AsArray.h"
 #include "Spark/Action/Common/Classes/AsAsBroadcaster.h"
-#include "Spark/Action/Common/Classes/AsBoolean.h"
-#include "Spark/Action/Common/Classes/AsButton.h"
-#include "Spark/Action/Common/Classes/AsDate.h"
-#include "Spark/Action/Common/Classes/AsError.h"
-#include "Spark/Action/Common/Classes/AsFunction.h"
 #include "Spark/Action/Common/Classes/AsKey.h"
-#include "Spark/Action/Common/Classes/AsLoadVars.h"
-#include "Spark/Action/Common/Classes/AsLocalConnection.h"
-#include "Spark/Action/Common/Classes/AsMath.h"
-#include "Spark/Action/Common/Classes/AsMovieClip.h"
-#include "Spark/Action/Common/Classes/AsMovieClipLoader.h"
 #include "Spark/Action/Common/Classes/AsMouse.h"
-#include "Spark/Action/Common/Classes/AsNumber.h"
-#include "Spark/Action/Common/Classes/AsSecurity.h"
 #include "Spark/Action/Common/Classes/AsSelection.h"
 #include "Spark/Action/Common/Classes/AsStage.h"
-#include "Spark/Action/Common/Classes/AsString.h"
-#include "Spark/Action/Common/Classes/AsSystem.h"
-#include "Spark/Action/Common/Classes/AsTextField.h"
-#include "Spark/Action/Common/Classes/AsTextFormat.h"
-#include "Spark/Action/Common/Classes/AsXML.h"
-#include "Spark/Action/Common/Classes/AsXMLNode.h"
+
+#if !defined(T_TINY_SPARK)
+#	include "Spark/Action/Common/Classes/AsAccessibility.h"
+#	include "Spark/Action/Common/Classes/AsArray.h"
+#	include "Spark/Action/Common/Classes/AsBoolean.h"
+#	include "Spark/Action/Common/Classes/AsButton.h"
+#	include "Spark/Action/Common/Classes/AsDate.h"
+#	include "Spark/Action/Common/Classes/AsError.h"
+#	include "Spark/Action/Common/Classes/AsFunction.h"
+#	include "Spark/Action/Common/Classes/AsLoadVars.h"
+#	include "Spark/Action/Common/Classes/AsLocalConnection.h"
+#	include "Spark/Action/Common/Classes/AsMath.h"
+#	include "Spark/Action/Common/Classes/AsMovieClip.h"
+#	include "Spark/Action/Common/Classes/AsMovieClipLoader.h"
+#	include "Spark/Action/Common/Classes/AsNumber.h"
+#	include "Spark/Action/Common/Classes/AsSecurity.h"
+#	include "Spark/Action/Common/Classes/AsString.h"
+#	include "Spark/Action/Common/Classes/AsSystem.h"
+#	include "Spark/Action/Common/Classes/AsTextField.h"
+#	include "Spark/Action/Common/Classes/AsTextFormat.h"
+#	include "Spark/Action/Common/Classes/AsXML.h"
+#	include "Spark/Action/Common/Classes/AsXMLNode.h"
 
 // flash.display
-#include "Spark/Action/Common/Classes/As_flash_display_BitmapData.h"
-#include "Spark/Action/Common/Classes/As_flash_display_DisplayObject.h"
-#include "Spark/Action/Common/Classes/As_flash_display_DisplayObjectContainer.h"
-#include "Spark/Action/Common/Classes/As_flash_display_InteractiveObject.h"
-#include "Spark/Action/Common/Classes/As_flash_display_MovieClip.h"
-#include "Spark/Action/Common/Classes/As_flash_display_Sprite.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_BitmapData.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_DisplayObject.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_DisplayObjectContainer.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_InteractiveObject.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_MovieClip.h"
+#	include "Spark/Action/Common/Classes/As_flash_display_Sprite.h"
 
 // flash.events
-#include "Spark/Action/Common/Classes/As_flash_events_EventDispatcher.h"
+#	include "Spark/Action/Common/Classes/As_flash_events_EventDispatcher.h"
 
 // flash.external
-#include "Spark/Action/Common/Classes/As_flash_external_ExternalInterface.h"
+#	include "Spark/Action/Common/Classes/As_flash_external_ExternalInterface.h"
 
 // flash.filters
-#include "Spark/Action/Common/Classes/As_flash_filters_BitmapFilter.h"
-#include "Spark/Action/Common/Classes/As_flash_filters_BlurFilter.h"
+#	include "Spark/Action/Common/Classes/As_flash_filters_BitmapFilter.h"
+#	include "Spark/Action/Common/Classes/As_flash_filters_BlurFilter.h"
 
 // flash.geom
-#include "Spark/Action/Common/Classes/As_flash_geom_ColorTransform.h"
-#include "Spark/Action/Common/Classes/As_flash_geom_Matrix.h"
-#include "Spark/Action/Common/Classes/As_flash_geom_Point.h"
-#include "Spark/Action/Common/Classes/As_flash_geom_Rectangle.h"
-#include "Spark/Action/Common/Classes/As_flash_geom_Transform.h"
+#	include "Spark/Action/Common/Classes/As_flash_geom_ColorTransform.h"
+#	include "Spark/Action/Common/Classes/As_flash_geom_Matrix.h"
+#	include "Spark/Action/Common/Classes/As_flash_geom_Point.h"
+#	include "Spark/Action/Common/Classes/As_flash_geom_Rectangle.h"
+#	include "Spark/Action/Common/Classes/As_flash_geom_Transform.h"
 
-#if T_USE_NATIVE_TWEEN
+#	if T_USE_NATIVE_TWEEN
 // mx.transitions
-#	include "Spark/Action/Common/Classes/As_mx_transitions_Tween.h"
-#endif
+#		include "Spark/Action/Common/Classes/As_mx_transitions_Tween.h"
+#	endif
 
-#if T_USE_NATIVE_TWEEN_EASE
+#	if T_USE_NATIVE_TWEEN_EASE
 // mx.transitions.easing
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_Back.h"
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_Bounce.h"
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_Elastic.h"
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_None.h"
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_Regular.h"
-#	include "Spark/Action/Common/Classes/As_mx_transitions_easing_Strong.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_Back.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_Bounce.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_Regular.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_Elastic.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_None.h"
+#		include "Spark/Action/Common/Classes/As_mx_transitions_easing_Strong.h"
+#	endif
 #endif
 
 namespace traktor
@@ -89,6 +95,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 
 	// Create prototypes.
 	setMember("Object", ActionValue(new AsObject(context)));
+#if !defined(T_TINY_SPARK)
 	setMember("Accessibility", ActionValue(new AsAccessibility(context)));
 	setMember("Array", ActionValue(new AsArray(context)));
 	setMember("Boolean", ActionValue(new AsBoolean(context)));
@@ -160,7 +167,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	}
 	setMember("flash", ActionValue(flash));
 
-#if T_USE_NATIVE_TWEEN || T_USE_NATIVE_TWEEN_EASE
+#	if T_USE_NATIVE_TWEEN || T_USE_NATIVE_TWEEN_EASE
 	// mx.
 	Ref< ActionObject > mx = new ActionObject(context);
 	{
@@ -168,11 +175,11 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 		Ref< ActionObject > transitions = new ActionObject(context);
 		if (transitions)
 		{
-#	if T_USE_NATIVE_TWEEN
+#		if T_USE_NATIVE_TWEEN
 			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween(context)));
-#	endif
+#		endif
 
-#	if T_USE_NATIVE_TWEEN_EASE
+#		if T_USE_NATIVE_TWEEN_EASE
 			// mx.transitions.easing
 			Ref< ActionObject > easing = new ActionObject(context);
 			if (easing)
@@ -186,11 +193,12 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 
 				transitions->setMember("easing", ActionValue(easing));
 			}
-#	endif
+#		endif
 		}
 		mx->setMember("transitions", ActionValue(transitions));
 	}
 	setMember("mx", ActionValue(mx));
+#	endif
 #endif
 
 	// Initialize broadcaster and subject instances.
