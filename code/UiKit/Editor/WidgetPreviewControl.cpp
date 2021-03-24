@@ -134,8 +134,8 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	}
 
 	// Create separate movie renderer for each display renderer.
-	m_movieRenderer = new spark::MovieRenderer(m_displayRenderer, nullptr);
-	m_movieRendererWire = new spark::MovieRenderer(m_displayRendererWire, nullptr);
+	m_movieRenderer = new spark::MovieRenderer(m_displayRenderer);
+	m_movieRendererWire = new spark::MovieRenderer(m_displayRendererWire);
 
 	// Create flash movie player.
 	m_moviePlayer = new spark::MoviePlayer(

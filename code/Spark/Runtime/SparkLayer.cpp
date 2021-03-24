@@ -583,7 +583,7 @@ void SparkLayer::createMoviePlayer()
 	if (!m_movieRenderer)
 	{
 		T_ASSERT(m_displayRenderer);
-		m_movieRenderer = new MovieRenderer(m_displayRenderer, nullptr);
+		m_movieRenderer = new MovieRenderer(m_displayRenderer);
 	}
 
 	// Create Spark movie player.
