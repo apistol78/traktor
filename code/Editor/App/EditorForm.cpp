@@ -2332,6 +2332,20 @@ void EditorForm::closeAllEditors()
 	for (auto it = itn; it != m_tabGroups.end(); ++it)
 		(*it)->destroy();
 	m_tabGroups.erase(itn, m_tabGroups.end());
+
+	// Ensure one group exist with no pages.
+	if (m_tabGroups.empty())
+	{
+		Ref< ui::Tab > tab = new ui::Tab();
+		tab->create(m_tabGroupContainer, ui::Tab::WsLine | ui::Tab::WsCloseButton);
+		tab->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
+		tab->addEventHandler< ui::MouseButtonDownEvent >(this, &EditorForm::eventTabButtonDown);
+		tab->addEventHandler< ui::TabSelectionChangeEvent >(this, &EditorForm::eventTabSelChange);
+		tab->addEventHandler< ui::TabCloseEvent >(this, &EditorForm::eventTabClose);
+		tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
+		m_tabGroups.push_back(tab);
+	}
+
 	m_tabGroupContainer->update();
 
 	m_activeEditorPage = nullptr;
