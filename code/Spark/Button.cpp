@@ -4,7 +4,6 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
-#include "Spark/SwfMembers.h"
 #include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
@@ -66,7 +65,7 @@ void Button::ButtonLayer::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"characterId", characterId);
 	s >> Member< uint16_t >(L"placeDepth", placeDepth);
 	s >> Member< Matrix33 >(L"placeMatrix", placeMatrix);
-	s >> MemberColorTransform(L"cxform", cxform);
+	s >> MemberComposite< ColorTransform >(L"cxform", cxform);
 }
 
 void Button::ButtonCondition::serialize(ISerializer& s)

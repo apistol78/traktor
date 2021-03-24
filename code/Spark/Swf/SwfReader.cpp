@@ -5,7 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Memory/PoolAllocator.h"
 #include "Core/Misc/Endian.h"
-#include "Spark/SwfReader.h"
+#include "Spark/Swf/SwfReader.h"
 
 namespace traktor
 {

@@ -2,7 +2,7 @@
 #include "Core/Serialization/Member.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/LineStyle.h"
-#include "Spark/SwfMembers.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

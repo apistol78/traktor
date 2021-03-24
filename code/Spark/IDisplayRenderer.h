@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Math/Aabb2.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Matrix33.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

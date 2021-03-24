@@ -1,10 +1,10 @@
 #include "Spark/CharacterInstance.h"
-#include "Spark/SwfTypes.h"
 #include "Spark/Types.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFrame.h"
 #include "Spark/Action/ActionFunction.h"
 #include "Spark/Action/IActionVMImage.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

@@ -2,9 +2,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
-#include "Spark/SwfReader.h"
 #include "Spark/Action/Avm2/AbcFile.h"
 #include "Spark/Action/Avm2/ActionOpcodes.h"
+#include "Spark/Swf/SwfReader.h"
 
 namespace traktor
 {

@@ -9,6 +9,7 @@
 #include "Spark/Shape.h"
 #include "Spark/ShapeInstance.h"
 #include "Spark/Triangulator.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

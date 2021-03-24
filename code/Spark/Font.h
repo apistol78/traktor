@@ -3,7 +3,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Spark/SwfTypes.h"
+#include "Spark/Swf/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class Shape;
+struct SwfShape;
 
 /*! Font
  * \ingroup Spark

@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Spark/Text.h"
 #include "Spark/TextInstance.h"
-#include "Spark/SwfMembers.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

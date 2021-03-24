@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Spark/SwfTypes.h"
 #include "Spark/Action/ActionObject.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

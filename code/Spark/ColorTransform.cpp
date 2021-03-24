@@ -1,3 +1,5 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Spark/ColorTransform.h"
 
 namespace traktor
@@ -33,6 +35,12 @@ ColorTransform::ColorTransform(const Color4f& mul_, const Color4f& add_)
 ,	mul(mul_)
 ,	add(add_)
 {
+}
+
+void ColorTransform::serialize(ISerializer& s)
+{
+	s >> Member< Color4f >(L"mul", mul);
+	s >> Member< Color4f >(L"add", add);
 }
 
 	}

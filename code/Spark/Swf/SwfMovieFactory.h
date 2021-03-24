@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,12 +30,12 @@ class Tag;
 /*! Flash movie factory.
  * \ingroup Spark
  */
-class T_DLLCLASS MovieFactory : public Object
+class T_DLLCLASS SwfMovieFactory : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	MovieFactory(bool includeAS);
+	explicit SwfMovieFactory(bool includeAS);
 
 	Ref< Movie > createMovie(SwfReader* swf) const;
 
@@ -43,7 +43,7 @@ public:
 
 private:
 	bool m_includeAS;
-	std::map< uint16_t, Ref< Tag > > m_tagReaders;
+	SmallMap< uint16_t, Ref< Tag > > m_tagReaders;
 };
 
 	}

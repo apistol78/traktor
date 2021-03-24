@@ -2,7 +2,6 @@
 
 #include "Spark/Path.h"
 #include "Spark/Polygon.h"
-#include "Spark/SwfTypes.h"
 #include "Spark/Character.h"
 #include "Spark/FillStyle.h"
 #include "Spark/LineStyle.h"
@@ -23,6 +22,9 @@ namespace traktor
 #if defined (_MSC_VER)
 #	pragma warning( disable:4324 )
 #endif
+
+struct SwfShape;
+struct SwfStyles;
 
 /*! Flash shape.
  * \ingroup Spark

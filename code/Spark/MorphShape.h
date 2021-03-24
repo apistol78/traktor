@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Spark/Path.h"
-#include "Spark/SwfTypes.h"
 #include "Spark/Character.h"
 #include "Spark/FillStyle.h"
 #include "Spark/LineStyle.h"
@@ -18,6 +17,9 @@ namespace traktor
 {
 	namespace spark
 	{
+
+struct SwfShape;
+struct SwfStyles;
 
 /*! Flash morph shape.
  * \ingroup Spark

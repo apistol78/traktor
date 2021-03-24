@@ -3,7 +3,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Spark/SwfTypes.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

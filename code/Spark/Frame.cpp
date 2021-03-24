@@ -7,7 +7,6 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Frame.h"
-#include "Spark/SwfMembers.h"
 #include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
@@ -137,7 +136,7 @@ void Frame::PlaceObject::serialize(ISerializer& s)
 		s >> Member< uint16_t >(L"ratio", ratio);
 
 	if (hasFlags & PfHasCxTransform)
-		s >> MemberColorTransform(L"cxTransform", cxTransform);
+		s >> MemberComposite< ColorTransform >(L"cxTransform", cxTransform);
 
 	if (hasFlags & PfHasMatrix)
 		s >> Member< Matrix33 >(L"matrix", matrix);

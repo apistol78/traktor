@@ -21,7 +21,6 @@
 #include "Spark/Font.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
-#include "Spark/MovieFactory.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/Optimizer.h"
@@ -31,11 +30,12 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/TextFormat.h"
-#include "Spark/SwfReader.h"
 #include "Spark/Action/ActionContext.h"
 #include "Spark/Action/ActionFunction.h"
 #include "Spark/Action/ActionValue.h"
 #include "Spark/Action/Common/BitmapData.h"
+#include "Spark/Swf/SwfMovieFactory.h"
+#include "Spark/Swf/SwfReader.h"
 #include "Render/ISimpleTexture.h"
 
 namespace traktor
@@ -471,11 +471,11 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMovieLoader->addMethod("setIncludeAS", &MovieLoader::setIncludeAS);
 	registrar->registerClass(classMovieLoader);
 
-	auto classMovieFactory = new AutoRuntimeClass< MovieFactory >();
-	classMovieFactory->addConstructor< bool >();
-	classMovieFactory->addMethod("createMovie", &MovieFactory::createMovie);
-	classMovieFactory->addMethod("createMovieFromImage", &MovieFactory::createMovieFromImage);
-	registrar->registerClass(classMovieFactory);
+	auto classSwfMovieFactory = new AutoRuntimeClass< SwfMovieFactory >();
+	classSwfMovieFactory->addConstructor< bool >();
+	classSwfMovieFactory->addMethod("createMovie", &SwfMovieFactory::createMovie);
+	classSwfMovieFactory->addMethod("createMovieFromImage", &SwfMovieFactory::createMovieFromImage);
+	registrar->registerClass(classSwfMovieFactory);
 
 	auto classMoviePlayer = new AutoRuntimeClass< MoviePlayer >();
 	classMoviePlayer->addProperty("frameCount", &MoviePlayer::getFrameCount);

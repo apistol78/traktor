@@ -5,6 +5,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Spark/MorphShape.h"
 #include "Spark/MorphShapeInstance.h"
+#include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
 {

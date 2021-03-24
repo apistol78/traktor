@@ -9,7 +9,6 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
-#include "Spark/SwfTypes.h"
 #include "Spark/Acc/AccGlyph.h"
 
 namespace traktor

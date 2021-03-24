@@ -13,11 +13,11 @@
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Spark/Movie.h"
-#include "Spark/MovieFactory.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/Optimizer.h"
 #include "Spark/Sprite.h"
-#include "Spark/SwfReader.h"
+#include "Spark/Swf/SwfMovieFactory.h"
+#include "Spark/Swf/SwfReader.h"
 #include "Net/UrlConnection.h"
 
 namespace traktor
@@ -133,11 +133,11 @@ private:
 		// not supported then this fail quickly.
 		Ref< drawing::Image > image = drawing::Image::load(d, ext);
 		if (image)
-			m_movie = MovieFactory(false).createMovieFromImage(image);
+			m_movie = SwfMovieFactory(false).createMovieFromImage(image);
 		else
 		{
 			SwfReader swfReader(d);
-			m_movie = MovieFactory(m_includeAS).createMovie(&swfReader);
+			m_movie = SwfMovieFactory(m_includeAS).createMovie(&swfReader);
 		}
 
 		d->close();

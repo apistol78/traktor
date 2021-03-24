@@ -5,7 +5,6 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Spark/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

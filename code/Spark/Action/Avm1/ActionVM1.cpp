@@ -1,7 +1,7 @@
-#include "Spark/SwfReader.h"
 #include "Spark/Action/Avm1/ActionOpcodes.h"
 #include "Spark/Action/Avm1/ActionVM1.h"
 #include "Spark/Action/Avm1/ActionVMImage1.h"
+#include "Spark/Swf/SwfReader.h"
 
 namespace traktor
 {
