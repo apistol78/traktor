@@ -14,11 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabComponentPipeline", 1, PrefabComponentPipeline, world::EntityPipeline)
 
-PrefabComponentPipeline::PrefabComponentPipeline()
-:	m_editor(false)
-{
-}
-
 bool PrefabComponentPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
@@ -28,23 +23,6 @@ bool PrefabComponentPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet PrefabComponentPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet< PrefabComponentData >();
-}
-
-bool PrefabComponentPipeline::buildDependencies(
-	editor::IPipelineDepends* pipelineDepends,
-	const db::Instance* sourceInstance,
-	const ISerializable* sourceAsset,
-	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
-{
-	return world::EntityPipeline::buildDependencies(
-		pipelineDepends,
-		sourceInstance,
-		sourceAsset,
-		outputPath,
-		outputGuid
-	);
 }
 
 Ref< ISerializable > PrefabComponentPipeline::buildOutput(
