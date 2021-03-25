@@ -26,23 +26,19 @@ class T_DLLCLASS Edge : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Edge();
+	Edge() = default;
 
 	explicit Edge(const OutputPin* source, const InputPin* destination);
 
-	void setSource(const OutputPin* source);
-
 	const OutputPin* getSource() const { return m_source; }
-
-	void setDestination(const InputPin* destination);
 
 	const InputPin* getDestination() const { return m_destination; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	const OutputPin* m_source;
-	const InputPin* m_destination;
+	const OutputPin* m_source = nullptr;
+	const InputPin* m_destination = nullptr;
 };
 
 	}
