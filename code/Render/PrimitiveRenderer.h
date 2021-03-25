@@ -57,8 +57,6 @@ class T_DLLCLASS PrimitiveRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	PrimitiveRenderer();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		IRenderSystem* renderSystem,
@@ -313,16 +311,11 @@ public:
 private:
 	struct DepthState
 	{
-		bool depthTest;
-		bool depthWrite;
-		bool depthOutput;
+		bool depthTest = false;
+		bool depthWrite = false;
+		bool depthOutput = false;
 
-		DepthState()
-		:	depthTest(false)
-		,	depthWrite(false)
-		,	depthOutput(false)
-		{
-		}
+		DepthState() = default;
 
 		DepthState(bool _depthTest, bool _depthWrite, bool _depthOutput)
 		:	depthTest(_depthTest)
@@ -367,16 +360,16 @@ private:
 
 	// Frame
 	AlignedVector< Frame > m_frames;
-	Frame* m_currentFrame;
+	Frame* m_currentFrame = nullptr;
 
 	// Assembly state.
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
 	AlignedVector< DepthState > m_depthState;
 	Matrix44 m_worldView;
-	float m_viewNearZ;
-	Vertex* m_vertexHead;
-	Vertex* m_vertexTail;
+	float m_viewNearZ = 1.0f;
+	Vertex* m_vertexHead = nullptr;
+	Vertex* m_vertexTail = nullptr;
 
 	void updateTransforms();
 

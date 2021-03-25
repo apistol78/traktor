@@ -61,14 +61,6 @@ struct Vertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PrimitiveRenderer", PrimitiveRenderer, Object)
 
-PrimitiveRenderer::PrimitiveRenderer()
-:	m_currentFrame(0)
-,	m_viewNearZ(1.0f)
-,	m_vertexHead(nullptr)
-,	m_vertexTail(nullptr)
-{
-}
-
 bool PrimitiveRenderer::create(
 	resource::IResourceManager* resourceManager,
 	IRenderSystem* renderSystem,
