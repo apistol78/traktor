@@ -1,4 +1,5 @@
 #include <stack>
+#include "Core/Misc/ImmutableCheck.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
@@ -39,6 +40,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechn
 
 ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 {
+	T_IMMUTABLE_CHECK(shaderGraph);
+
 	Ref< ShaderGraph > shaderGraphOpt = new ShaderGraph(
 		shaderGraph->getNodes(),
 		shaderGraph->getEdges()

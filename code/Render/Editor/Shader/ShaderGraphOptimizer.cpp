@@ -1,6 +1,7 @@
 #include <deque>
 #include <set>
 #include "Core/Log/Log.h"
+#include "Core/Misc/ImmutableCheck.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -92,6 +93,8 @@ ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 
 Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	RefArray< Node > roots;
 	for (auto node : m_shaderGraph->getNodes())
 	{
@@ -108,6 +111,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 
 Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	RefSet< Edge > edges;
 	uint32_t mergedNodes = 0;
 
@@ -260,6 +265,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 
 Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUniformsAsLinear) const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -286,6 +293,8 @@ void ShaderGraphOptimizer::insertInterpolators(
 	Ref< ShaderGraphOrderEvaluator >& inoutOrderEvaluator
 ) const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	// Should never reach vertex inputs.
 	T_FATAL_ASSERT(!is_a< VertexInput >(node));
 

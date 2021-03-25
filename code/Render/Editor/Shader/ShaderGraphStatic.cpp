@@ -2,6 +2,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/ImmutableCheck.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
@@ -107,29 +108,6 @@ struct ConstantFoldingVisitor
 	}
 };
 
-struct ReadVariablePred
-{
-	const ShaderGraph* m_shaderGraph;
-	std::wstring m_name;
-
-	ReadVariablePred(const ShaderGraph* shaderGraph, const std::wstring& name)
-	:	m_shaderGraph(shaderGraph)
-	,	m_name(name)
-	{
-	}
-
-	bool operator () (const Variable* node) const
-	{
-		if (node->getName() == m_name)
-		{
-			// Matching names, is this variable written to?
-			if (m_shaderGraph->findSourcePin(node->getInputPin(0)))
-				return true;
-		}
-		return false;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, Object)
@@ -142,6 +120,8 @@ ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -191,6 +171,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 
 Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring& renderer) const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -240,6 +222,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 
 Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -254,7 +238,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 		const InputPin* inputPin = node->findInputPin(L"Input");
 		T_ASSERT(inputPin);
 
-		bool inputConnected = bool(shaderGraph->findEdge(inputPin) != nullptr);
+		bool inputConnected = (bool)(shaderGraph->findEdge(inputPin) != nullptr);
 
 		inputPin = node->findInputPin(inputConnected ? L"True" : L"False");
 		T_ASSERT(inputPin);
@@ -298,6 +282,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -374,6 +360,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
@@ -423,6 +411,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
 	AlignedVector< const OutputPin* > inputOutputPins;
@@ -571,13 +561,10 @@ restart_iteration:
 
 						RefSet< Edge > edges;
 						shaderGraph->findEdges(outputPin, edges);
-
-						for (RefSet< Edge >::const_iterator it = edges.begin(); it != edges.end(); ++it)
+						for (auto edge : edges)
 						{
-							shaderGraph->removeEdge(*it);
-
-							Ref< Edge > foldEdge = new Edge(foldOutputPin, (*it)->getDestination());
-							shaderGraph->addEdge(foldEdge);
+							shaderGraph->removeEdge(edge);
+							shaderGraph->addEdge(new Edge(foldOutputPin, edge->getDestination()));
 						}
 
 						// We need to restart iteration if nodes has been added to iteration set.
@@ -631,12 +618,13 @@ restart_iteration:
 
 Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	RefArray< Swizzle > swizzleNodes;
 	shaderGraph->findNodesOf< Swizzle >(swizzleNodes);
-
-	for (RefArray< Swizzle >::iterator i = swizzleNodes.begin(); i != swizzleNodes.end(); )
+	for (auto i = swizzleNodes.begin(); i != swizzleNodes.end(); )
 	{
 		Swizzle* swizzleRightNode = *i;
 		T_ASSERT(swizzleRightNode);
@@ -707,6 +695,8 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	RefArray< PixelOutput > pixelOutputNodes;
@@ -737,6 +727,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType resolve) const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	// Get all variable nodes from shader graph.
@@ -745,7 +737,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 
 	// Ignore variables of other scopes.
 	auto it = std::remove_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* variableNode) {
-		return bool((resolve == VrtLocal && variableNode->isGlobal()) || (resolve == VrtGlobal && !variableNode->isGlobal()));
+		return (resolve == VrtLocal && variableNode->isGlobal()) || (resolve == VrtGlobal && !variableNode->isGlobal());
 	});
 	variableNodes.erase(it, variableNodes.end());
 
@@ -757,7 +749,12 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 
 		if (shaderGraph->getDestinationCount(variableOutput) > 0)
 		{
-			auto it = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, variableNode->getName()));
+			auto it = std::find_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* node) {
+				if (node->getName() != variableNode->getName())
+					return false;
+				// Matching names, is this variable written to?
+				return shaderGraph->findSourcePin(node->getInputPin(0)) != nullptr;
+			});
 			if (it != variableNodes.end())
 			{
 				const InputPin* variableInput = (*it)->getInputPin(0);
@@ -788,7 +785,12 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 
 Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
@@ -847,6 +849,8 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 
 Ref< ShaderGraph > ShaderGraphStatic::propagateConstantExternalValues() const
 {
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	RefArray< External > externalNodes;

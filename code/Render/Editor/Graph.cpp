@@ -118,6 +118,8 @@ uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 
 void Graph::detach(const Node* node)
 {
+	RefSet< Edge > edges;
+
 	int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
@@ -125,10 +127,11 @@ void Graph::detach(const Node* node)
 		if (edge)
 			removeEdge(edge);
 	}
+
 	int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
-		RefSet< Edge > edges;
+		edges.reset();
 		findEdges(node->getOutputPin(i), edges);
 		for (auto edge : edges)
 			removeEdge(edge);
@@ -137,23 +140,25 @@ void Graph::detach(const Node* node)
 
 void Graph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
 {
+	// Find all edges connected to output pin.
 	RefSet< Edge > outputEdges;
 	findEdges(outputPin, outputEdges);
+
+	// Remove all those edges first.
+	for (auto edge : outputEdges)
+		removeEdge(edge);
+
+	// Create new edges.
 	if (newOutputPin)
 	{
 		for (auto edge : outputEdges)
-			edge->setSource(newOutputPin);
-	}
-	else
-	{
-		for (auto edge : outputEdges)
-			removeEdge(edge);
+			addEdge(new Edge(newOutputPin, edge->getDestination()));
 	}
 }
 
 void Graph::replace(Node* oldNode, Node* newNode)
 {
-	// Ensure node isn't deleted until very end of this method.
+	// Ensure node isn't deleted until possibly the very end of this method.
 	T_ANONYMOUS_VAR(Ref< Node >)(oldNode);
 
 	// Replace node.
@@ -162,27 +167,33 @@ void Graph::replace(Node* oldNode, Node* newNode)
 
 	// Rewire edges.
 	RefArray< Edge > deleteEdges;
+	RefArray< Edge > newEdges;
 	for (auto edge : m_edges)
 	{
+		const OutputPin* newSource = nullptr;
+		const InputPin* newDestination = nullptr;
 		if (edge->getSource()->getNode() == oldNode)
 		{
-			const OutputPin* newSource = newNode->findOutputPin(edge->getSource()->getName());
-			if (newSource)
-				edge->setSource(newSource);
-			else
-				deleteEdges.push_back(edge);
+			newSource = newNode->findOutputPin(edge->getSource()->getName());
+			deleteEdges.push_back(edge);
 		}
 		if (edge->getDestination()->getNode() == oldNode)
 		{
-			const InputPin* newDestination = newNode->findInputPin(edge->getDestination()->getName());
-			if (newDestination)
-				edge->setDestination(newDestination);
-			else
-				deleteEdges.push_back(edge);
+			newDestination = newNode->findInputPin(edge->getDestination()->getName());
+			deleteEdges.push_back(edge);
+		}
+		if (newSource || newDestination)
+		{
+			newEdges.push_back(new Edge(
+				newSource != nullptr ? newSource : edge->getSource(),
+				newDestination != nullptr ? newDestination : edge->getDestination()
+			));
 		}
 	}
 	for (auto edge : deleteEdges)
 		m_edges.remove(edge);
+	for (auto edge : newEdges)
+		m_edges.push_back(edge);
 
 	// Update mappings.
 	updateInputPinToEdge();

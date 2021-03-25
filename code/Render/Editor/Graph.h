@@ -33,7 +33,7 @@ class T_DLLCLASS Graph : public ISerializable
 public:
 	Graph() = default;
 
-	Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+	explicit Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 
 	virtual ~Graph();
 
