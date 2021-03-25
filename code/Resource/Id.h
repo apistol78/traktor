@@ -17,9 +17,7 @@ template < typename ResourceType >
 class Id
 {
 public:
-	Id()
-	{
-	}
+	Id() = default;
 
 	Id(const Id& rh)
 	:	m_id(rh.m_id)
