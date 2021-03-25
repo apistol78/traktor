@@ -12,10 +12,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Shader", Shader, Object)
 
 const Handle Shader::ms_default(L"Default");
 
-Shader::Shader()
-{
-}
-
 Shader::~Shader()
 {
 	destroy();

@@ -19,10 +19,9 @@ public:
 	{
 	}
 
-	virtual void destroy() { }
-	virtual void* lock() { return &m_data[0]; }
-	virtual void* lock(uint32_t, uint32_t) { return 0; }
-	virtual void unlock() { }
+	virtual void destroy() override final {}
+	virtual void* lock() override final { return &m_data[0]; }
+	virtual void unlock() override final {}
 
 private:
 	AlignedVector< uint8_t > m_data;
@@ -37,9 +36,9 @@ public:
 	{
 	}
 
-	virtual void destroy() { }
-	virtual void* lock() { return &m_data[0]; }
-	virtual void unlock() { }
+	virtual void destroy() override final {}
+	virtual void* lock() override final { return &m_data[0]; }
+	virtual void unlock() override final {}
 
 private:
 	AlignedVector< uint8_t > m_data;
@@ -54,7 +53,7 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	uint32_t vertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize
-)
+) const
 {
 	Ref< VertexBuffer > vertexBuffer;
 	Ref< IndexBuffer > indexBuffer;
@@ -66,11 +65,9 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 		indexBuffer = new InternalIndexBuffer(indexType, indexBufferSize);
 
 	Ref< Mesh > mesh = new Mesh();
-
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexBuffer(indexBuffer);
-
 	return mesh;
 }
 

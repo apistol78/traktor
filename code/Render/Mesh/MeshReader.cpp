@@ -2,11 +2,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/Endian.h"
-#include "Render/Mesh/MeshReader.h"
-#include "Render/Mesh/MeshFactory.h"
-#include "Render/Mesh/Mesh.h"
-#include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
+#include "Render/VertexBuffer.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Mesh/MeshFactory.h"
+#include "Render/Mesh/MeshReader.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.MeshReader", MeshReader, Object)
 
-MeshReader::MeshReader(MeshFactory* meshFactory)
+MeshReader::MeshReader(const MeshFactory* meshFactory)
 :	m_meshFactory(meshFactory)
 {
 }
@@ -27,7 +27,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	uint32_t version;
 	reader >> version;
 	if (version != 3)
-		return 0;
+		return nullptr;
 
 	uint32_t vertexElementCount;
 	reader >> vertexElementCount;
@@ -68,13 +68,13 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	Ref< Mesh > mesh = m_meshFactory->createMesh(vertexElements, vertexBufferSize, IndexType(indexType), indexBufferSize);
 	if (!mesh)
-		return 0;
+		return nullptr;
 
 	if (vertexBufferSize > 0)
 	{
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 		if (!vertex)
-			return 0;
+			return nullptr;
 
 		reader.read(vertex, vertexBufferSize);
 
@@ -146,7 +146,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	{
 		uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
 		if (!index)
-			return 0;
+			return nullptr;
 
 		reader.read(index, indexBufferSize);
 

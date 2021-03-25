@@ -76,8 +76,6 @@ public:
 		}
 	};
 
-	Shader();
-
 	virtual ~Shader();
 
 	void destroy();

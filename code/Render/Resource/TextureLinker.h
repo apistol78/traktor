@@ -29,15 +29,15 @@ public:
 	{
 		virtual ~TextureReader() {}
 
-		virtual Ref< ITexture > read(const Guid& textureGuid) = 0;
+		virtual Ref< ITexture > read(const Guid& textureGuid) const = 0;
 	};
 
-	TextureLinker(TextureReader& textureReader);
+	TextureLinker(const TextureReader& textureReader);
 
-	bool link(const ShaderResource::Combination& shaderCombination, IProgram* program);
+	bool link(const ShaderResource::Combination& shaderCombination, IProgram* program) const;
 
 private:
-	TextureReader& m_textureReader;
+	const TextureReader& m_textureReader;
 };
 
 	}

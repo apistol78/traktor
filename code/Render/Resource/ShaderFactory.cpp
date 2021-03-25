@@ -26,7 +26,7 @@ public:
 	{
 	}
 
-	virtual Ref< ITexture > read(const Guid& textureGuid)
+	virtual Ref< ITexture > read(const Guid& textureGuid) const override final
 	{
 		resource::Proxy< ITexture > texture;
 		if (m_resourceManager->bind(resource::Id< ITexture >(textureGuid), texture))

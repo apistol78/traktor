@@ -26,10 +26,6 @@ struct ScreenVertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScreenRenderer", ScreenRenderer, Object)
 
-ScreenRenderer::ScreenRenderer()
-{
-}
-
 bool ScreenRenderer::create(IRenderSystem* renderSystem)
 {
 	AlignedVector< VertexElement > vertexElements;
