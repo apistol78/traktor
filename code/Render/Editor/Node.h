@@ -28,8 +28,6 @@ class T_DLLCLASS Node : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Node();
-
 	/*! Set node instance id.
 	 *
 	 * \return Instance id.
@@ -139,7 +137,7 @@ public:
 private:
 	Guid m_id;
 	std::wstring m_comment;
-	std::pair< int, int > m_position;
+	std::pair< int, int > m_position = { 0, 0 };
 };
 
 	}

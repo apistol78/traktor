@@ -32,7 +32,7 @@ public:
 		uint32_t vertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize
-	) = 0;
+	) const = 0;
 };
 
 	}

@@ -30,8 +30,6 @@ class StructBuffer;
 class T_DLLCLASS ProgramParameters
 {
 public:
-	ProgramParameters();
-
 	/*! \name Record parameters.
 	 *
 	 * Must set all parameters between begin- and endParameters.
@@ -67,8 +65,8 @@ public:
 	//@}
 
 private:
-	uint8_t* m_parameterFirst;
-	uint8_t* m_parameterLast;
+	uint8_t* m_parameterFirst = nullptr;
+	uint8_t* m_parameterLast = nullptr;
 };
 
 	}

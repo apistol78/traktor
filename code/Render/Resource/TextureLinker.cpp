@@ -8,12 +8,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureLinker", TextureLinker, Object)
 
-TextureLinker::TextureLinker(TextureReader& textureReader)
+TextureLinker::TextureLinker(const TextureReader& textureReader)
 :	m_textureReader(textureReader)
 {
 }
 
-bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, IProgram* program)
+bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, IProgram* program) const
 {
 	const auto& textures = shaderCombination.textures;
 	for (uint32_t i = 0; i < textures.size(); ++i)

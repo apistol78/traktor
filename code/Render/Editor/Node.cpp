@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.render.Node", 1, Node, ISerializable)
 
-Node::Node()
-:	m_position(0, 0)
-{
-}
-
 void Node::setId(const Guid& instanceId)
 {
 	m_id = instanceId;

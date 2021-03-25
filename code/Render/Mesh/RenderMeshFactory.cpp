@@ -19,7 +19,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	uint32_t vertexBufferSize,
 	IndexType indexType,
 	uint32_t indexBufferSize
-)
+) const
 {
 	Ref< VertexBuffer > vertexBuffer;
 	Ref< IndexBuffer > indexBuffer;
@@ -28,22 +28,20 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	{
 		vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, vertexBufferSize, false);
 		if (!vertexBuffer)
-			return 0;
+			return nullptr;
 	}
 
 	if (indexBufferSize > 0)
 	{
 		indexBuffer = m_renderSystem->createIndexBuffer(indexType, indexBufferSize, false);
 		if (!indexBuffer)
-			return 0;
+			return nullptr;
 	}
 
 	Ref< Mesh > mesh = new Mesh();
-
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
 	mesh->setIndexBuffer(indexBuffer);
-
 	return mesh;
 }
 

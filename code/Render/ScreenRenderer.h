@@ -35,8 +35,6 @@ class T_DLLCLASS ScreenRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	ScreenRenderer();
-
 	bool create(IRenderSystem* renderSystem);
 
 	void destroy();

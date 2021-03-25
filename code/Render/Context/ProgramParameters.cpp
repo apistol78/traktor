@@ -100,12 +100,6 @@ enum ParameterTypes
 
 		}
 
-ProgramParameters::ProgramParameters()
-:	m_parameterFirst(nullptr)
-,	m_parameterLast(nullptr)
-{
-}
-
 void ProgramParameters::beginParameters(RenderContext* context)
 {
 	m_parameterFirst =

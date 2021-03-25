@@ -117,8 +117,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 		pool = &(*it);
 	else
 	{
-		m_pool.resize(m_pool.size() + 1);
-		pool = &m_pool.back();
+		pool = &m_pool.push_back();
 		pool->rtscd = rtscd;
         pool->sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 		pool->persistentHandle = persistentHandle;

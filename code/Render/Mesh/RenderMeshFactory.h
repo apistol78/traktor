@@ -32,7 +32,7 @@ public:
 		uint32_t vertexBufferSize,
 		IndexType indexType,
 		uint32_t indexBufferSize
-	) override final;
+	) const override final;
 
 private:
 	Ref< IRenderSystem > m_renderSystem;
