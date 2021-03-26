@@ -7,6 +7,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*!
  * \ingroup Vrfy
  */
@@ -15,7 +17,9 @@ class SimpleTextureVrfy : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureVrfy(ISimpleTexture* texture);
+	SimpleTextureVrfy(ResourceTracker* resourceTracker, ISimpleTexture* texture);
+
+	virtual ~SimpleTextureVrfy();
 
 	virtual void destroy() override final;
 
@@ -36,6 +40,7 @@ public:
 	ISimpleTexture* getTexture() const { return m_texture; }
 
 private:
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< ISimpleTexture > m_texture;
 	int32_t m_locked;
 };

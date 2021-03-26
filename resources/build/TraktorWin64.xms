@@ -235,6 +235,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Winmm.lib</item>
+									<item>Dbghelp.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -274,6 +275,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Winmm.lib</item>
+									<item>Dbghelp.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -313,6 +315,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Winmm.lib</item>
+									<item>Dbghelp.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -348,6 +351,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>Winmm.lib</item>
+									<item>Dbghelp.lib</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>

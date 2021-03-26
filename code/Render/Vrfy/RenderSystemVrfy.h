@@ -20,6 +20,8 @@ class Library;
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*! Verification render system.
  * \ingroup Render
  *
@@ -79,6 +81,7 @@ private:
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< Library > m_libRenderDoc;
 	RENDERDOC_API_1_4_1* m_apiRenderDoc = nullptr;
+	Ref< ResourceTracker > m_resourceTracker;
 };
 
 	}

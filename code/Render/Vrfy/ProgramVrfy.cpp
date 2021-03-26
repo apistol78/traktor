@@ -2,6 +2,7 @@
 #include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
 #include "Render/Vrfy/StructBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
@@ -13,10 +14,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVrfy", ProgramVrfy, IProgram)
 
-ProgramVrfy::ProgramVrfy(IProgram* program, const wchar_t* const tag)
-:	m_program(program)
+ProgramVrfy::ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag)
+:	m_resourceTracker(resourceTracker)
+,	m_program(program)
 ,	m_tag(tag)
 {
+	m_resourceTracker->add(this);
+}
+
+ProgramVrfy::~ProgramVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void ProgramVrfy::destroy()

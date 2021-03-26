@@ -43,8 +43,8 @@ T_FORCE_INLINE bool SortAlphaBlendPredicate(const DrawableRenderBlock* renderBlo
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
 RenderContext::RenderContext(uint32_t heapSize)
-:	m_heapEnd(0)
-,	m_heapPtr(0)
+:	m_heapEnd(nullptr)
+,	m_heapPtr(nullptr)
 {
 	m_heap.reset(static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE)));
 	T_FATAL_ASSERT_M(m_heap.ptr(), L"Out of memory (Render context)");
@@ -54,6 +54,7 @@ RenderContext::RenderContext(uint32_t heapSize)
 
 RenderContext::~RenderContext()
 {
+	flush();
 	m_heap.release();
 }
 

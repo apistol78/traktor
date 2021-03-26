@@ -1,6 +1,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 
 namespace traktor
 {
@@ -9,11 +10,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVrfy", CubeTextureVrfy, ICubeTexture)
 
-CubeTextureVrfy::CubeTextureVrfy(ICubeTexture* texture)
-:	m_texture(texture)
+CubeTextureVrfy::CubeTextureVrfy(ResourceTracker* resourceTracker, ICubeTexture* texture)
+:	m_resourceTracker(resourceTracker)
+,	m_texture(texture)
 {
 	m_locked[0] =
 	m_locked[1] = -1;
+	m_resourceTracker->add(this);
+}
+
+CubeTextureVrfy::~CubeTextureVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void CubeTextureVrfy::destroy()

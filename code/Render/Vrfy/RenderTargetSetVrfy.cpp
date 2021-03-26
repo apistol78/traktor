@@ -1,6 +1,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
 
 namespace traktor
@@ -10,10 +11,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVrfy", RenderTargetSetVrfy, IRenderTargetSet)
 
-RenderTargetSetVrfy::RenderTargetSetVrfy(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet)
-:	m_setDesc(setDesc)
+RenderTargetSetVrfy::RenderTargetSetVrfy(ResourceTracker* resourceTracker, const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet)
+:	m_resourceTracker(resourceTracker)
+,	m_setDesc(setDesc)
 ,	m_renderTargetSet(renderTargetSet)
 {
+	m_resourceTracker->add(this);
+}
+
+RenderTargetSetVrfy::~RenderTargetSetVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void RenderTargetSetVrfy::destroy()
@@ -54,7 +62,7 @@ ISimpleTexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 		if (!colorTexture)
 			return nullptr;
 
-		m_colorTextures[index] = new SimpleTextureVrfy(colorTexture);
+		m_colorTextures[index] = new SimpleTextureVrfy(m_resourceTracker, colorTexture);
 	}
 
 	return m_colorTextures[index];
@@ -73,7 +81,7 @@ ISimpleTexture* RenderTargetSetVrfy::getDepthTexture() const
 		if (!depthTexture)
 			return nullptr;
 
-		m_depthTexture = new SimpleTextureVrfy(depthTexture);
+		m_depthTexture = new SimpleTextureVrfy(m_resourceTracker, depthTexture);
 	}
 
 	return m_depthTexture;

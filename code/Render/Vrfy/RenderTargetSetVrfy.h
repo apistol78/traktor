@@ -8,6 +8,7 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
 class SimpleTextureVrfy;
 
 /*!
@@ -18,7 +19,9 @@ class RenderTargetSetVrfy : public IRenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	explicit RenderTargetSetVrfy(const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet);
+	explicit RenderTargetSetVrfy(ResourceTracker* resourceTracker, const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet);
+
+	virtual ~RenderTargetSetVrfy();
 
 	virtual void destroy() override final;
 
@@ -45,6 +48,7 @@ public:
 	uint32_t getMultiSample() const;
 
 private:
+	Ref< ResourceTracker > m_resourceTracker;
 	RenderTargetSetCreateDesc m_setDesc;
 	Ref< IRenderTargetSet > m_renderTargetSet;
 	mutable Ref< SimpleTextureVrfy > m_colorTextures[4];

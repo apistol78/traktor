@@ -1,6 +1,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/IndexBufferVrfy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 
 namespace traktor
 {
@@ -9,11 +10,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferVrfy", IndexBufferVrfy, IndexBuffer)
 
-IndexBufferVrfy::IndexBufferVrfy(IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize)
+IndexBufferVrfy::IndexBufferVrfy(ResourceTracker* resourceTracker, IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize)
 :	IndexBuffer(indexType, bufferSize)
+,	m_resourceTracker(resourceTracker)
 ,	m_indexBuffer(indexBuffer)
 ,	m_locked(false)
 {
+	m_resourceTracker->add(this);
+}
+
+IndexBufferVrfy::~IndexBufferVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void IndexBufferVrfy::destroy()

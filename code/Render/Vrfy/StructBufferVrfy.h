@@ -7,6 +7,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*!
  * \ingroup Vrfy
  */
@@ -15,7 +17,7 @@ class StructBufferVrfy : public StructBuffer
 	T_RTTI_CLASS;
 
 public:
-	explicit StructBufferVrfy(StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize);
+	explicit StructBufferVrfy(ResourceTracker* resourceTracker, StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize);
 
 	virtual ~StructBufferVrfy();
 
@@ -30,6 +32,7 @@ public:
 	uint32_t getStructSize() const { return m_structSize; }
 
 protected:
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< StructBuffer > m_structBuffer;
 	uint32_t m_structSize;
 	bool m_locked = false;

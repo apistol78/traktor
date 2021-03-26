@@ -8,12 +8,16 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 class ProgramVrfy : public IProgram
 {
 	T_RTTI_CLASS;
 
 public:
-	ProgramVrfy(IProgram* program, const wchar_t* const tag);
+	ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag);
+
+	virtual ~ProgramVrfy();
 
 	virtual void destroy() override final;
 
@@ -50,6 +54,7 @@ private:
 		// std::wstring getName() const;
 	};
 
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< IProgram > m_program;
 	std::wstring m_tag;
 	std::map< handle_t, Parameter > m_shadow;

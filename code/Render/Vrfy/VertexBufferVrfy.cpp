@@ -2,6 +2,7 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/VertexBufferVrfy.h"
 
 namespace traktor
@@ -17,11 +18,13 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVrfy", VertexBufferVrfy, VertexBuffer)
 
-VertexBufferVrfy::VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize)
+VertexBufferVrfy::VertexBufferVrfy(ResourceTracker* resourceTracker, VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize)
 :	VertexBuffer(bufferSize)
+,	m_resourceTracker(resourceTracker)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_vertexSize(vertexSize)
 {
+	m_resourceTracker->add(this);
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
 	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
 }
@@ -30,6 +33,7 @@ VertexBufferVrfy::~VertexBufferVrfy()
 {
 	verifyGuard();
 	Alloc::freeAlign(m_shadow);
+	m_resourceTracker->remove(this);
 }
 
 void VertexBufferVrfy::destroy()

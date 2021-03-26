@@ -7,6 +7,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*!
  * \ingroup Vrfy
  */
@@ -15,7 +17,9 @@ class IndexBufferVrfy : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferVrfy(IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize);
+	IndexBufferVrfy(ResourceTracker* resourceTracker, IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize);
+
+	virtual ~IndexBufferVrfy();
 
 	virtual void destroy() override final;
 
@@ -26,6 +30,7 @@ public:
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
 
 private:
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< IndexBuffer > m_indexBuffer;
 	bool m_locked;
 };

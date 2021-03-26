@@ -187,6 +187,8 @@ void PerspectiveRenderControl::destroy()
 		m_camera = nullptr;
 	}
 
+	m_renderContext = nullptr;
+
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_primitiveRenderer);

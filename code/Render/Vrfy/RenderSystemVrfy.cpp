@@ -12,6 +12,7 @@
 #include "Render/Vrfy/RenderSystemVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
 #include "Render/Vrfy/StructBufferVrfy.h"
 #include "Render/Vrfy/VertexBufferVrfy.h"
@@ -29,7 +30,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32) && !defined(_DEBUG)
+#if defined(_WIN32) && !defined(_DEBUG) && 0
 	// Try to load RenderDoc capture.
 	m_libRenderDoc = new Library();
 	if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
@@ -46,11 +47,16 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	//	m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
 #endif
 
-	return m_renderSystem->create(desc);
+	if (!m_renderSystem->create(desc))
+		return false;
+
+	m_resourceTracker = new ResourceTracker();
+	return true;
 }
 
 void RenderSystemVrfy::destroy()
 {
+	m_resourceTracker->alive();
 	m_renderSystem->destroy();
 }
 
@@ -113,7 +119,7 @@ Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< Ve
 	if (!vertexBuffer)
 		return nullptr;
 
-	return new VertexBufferVrfy(vertexBuffer, bufferSize, vertexSize);
+	return new VertexBufferVrfy(m_resourceTracker, vertexBuffer, bufferSize, vertexSize);
 }
 
 Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
@@ -124,7 +130,7 @@ Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint
 	if (!indexBuffer)
 		return nullptr;
 
-	return new IndexBufferVrfy(indexBuffer, indexType, bufferSize);
+	return new IndexBufferVrfy(m_resourceTracker, indexBuffer, indexType, bufferSize);
 }
 
 Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
@@ -138,7 +144,7 @@ Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< St
 	if (!structBuffer)
 		return nullptr;
 
-	return new StructBufferVrfy(structBuffer, bufferSize, structSize);	
+	return new StructBufferVrfy(m_resourceTracker, structBuffer, bufferSize, structSize);	
 }
 
 Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
@@ -160,7 +166,7 @@ Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureC
 	if (!texture)
 		return nullptr;
 
-	return new SimpleTextureVrfy(texture);
+	return new SimpleTextureVrfy(m_resourceTracker, texture);
 }
 
 Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
@@ -181,7 +187,7 @@ Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateD
 	if (!texture)
 		return nullptr;
 
-	return new CubeTextureVrfy(texture);
+	return new CubeTextureVrfy(m_resourceTracker, texture);
 }
 
 Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
@@ -204,7 +210,7 @@ Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureC
 	if (!texture)
 		return nullptr;
 
-	return new VolumeTextureVrfy(texture);
+	return new VolumeTextureVrfy(m_resourceTracker, texture);
 }
 
 Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
@@ -257,7 +263,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	if (!renderTargetSet)
 		return nullptr;
 
-	return new RenderTargetSetVrfy(desc, renderTargetSet);
+	return new RenderTargetSetVrfy(m_resourceTracker, desc, renderTargetSet);
 }
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
@@ -281,7 +287,7 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 	if (!program)
 		return nullptr;
 
-	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(program, tag);
+	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(m_resourceTracker, program, tag);
 
 	// for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
 	// {

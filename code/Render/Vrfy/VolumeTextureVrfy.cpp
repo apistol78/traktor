@@ -1,5 +1,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
@@ -9,9 +10,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureVrfy", VolumeTextureVrfy, IVolumeTexture)
 
-VolumeTextureVrfy::VolumeTextureVrfy(IVolumeTexture* texture)
-:	m_texture(texture)
+VolumeTextureVrfy::VolumeTextureVrfy(ResourceTracker* resourceTracker, IVolumeTexture* texture)
+:	m_resourceTracker(resourceTracker)
+,	m_texture(texture)
 {
+	m_resourceTracker->add(this);
+}
+
+VolumeTextureVrfy::~VolumeTextureVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void VolumeTextureVrfy::destroy()
