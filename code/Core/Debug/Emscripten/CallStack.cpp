@@ -19,4 +19,14 @@ uint32_t getCallStack(uint32_t ncs, void** outCs, uint32_t skip)
 #endif
 }
 
+bool getSymbolFromAddress(const void* address, std::wstring& outSymbol)
+{
+	return false;
+}
+
+bool getSourceFromAddress(const void* address, std::wstring& outSource, int32_t& outLine)
+{
+	return false;
+}
+
 }

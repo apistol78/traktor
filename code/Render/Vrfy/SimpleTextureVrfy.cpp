@@ -1,5 +1,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
 
 namespace traktor
@@ -9,10 +10,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVrfy", SimpleTextureVrfy, ISimpleTexture)
 
-SimpleTextureVrfy::SimpleTextureVrfy(ISimpleTexture* texture)
-:	m_texture(texture)
+SimpleTextureVrfy::SimpleTextureVrfy(ResourceTracker* resourceTracker, ISimpleTexture* texture)
+:	m_resourceTracker(resourceTracker)
+,	m_texture(texture)
 ,	m_locked(-1)
 {
+	m_resourceTracker->add(this);
+}
+
+SimpleTextureVrfy::~SimpleTextureVrfy()
+{
+	m_resourceTracker->remove(this);
 }
 
 void SimpleTextureVrfy::destroy()

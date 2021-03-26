@@ -8,6 +8,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*!
  * \ingroup Vrfy
  */
@@ -16,7 +18,9 @@ class CubeTextureVrfy : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureVrfy(ICubeTexture* texture);
+	CubeTextureVrfy(ResourceTracker* resourceTracker, ICubeTexture* texture);
+
+	virtual ~CubeTextureVrfy();
 
 	virtual void destroy() override final;
 
@@ -33,6 +37,7 @@ public:
 	ICubeTexture* getTexture() const { return m_texture; }
 
 private:
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< ICubeTexture > m_texture;
 	int32_t m_locked[2];
 };

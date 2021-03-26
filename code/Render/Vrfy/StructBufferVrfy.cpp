@@ -3,6 +3,7 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/StructBufferVrfy.h"
 
 namespace traktor
@@ -18,11 +19,13 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferVrfy", StructBufferVrfy, StructBuffer)
 
-StructBufferVrfy::StructBufferVrfy(StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize)
+StructBufferVrfy::StructBufferVrfy(ResourceTracker* resourceTracker, StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize)
 :	StructBuffer(bufferSize)
+,	m_resourceTracker(resourceTracker)
 ,	m_structBuffer(structBuffer)
 ,	m_structSize(structSize)
 {
+	m_resourceTracker->add(this);
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
 	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
 	getCallStack(8, m_callstack, 2);
@@ -33,6 +36,7 @@ StructBufferVrfy::~StructBufferVrfy()
 	verifyGuard();
 	verifyUntouched();
 	Alloc::freeAlign(m_shadow);
+	m_resourceTracker->remove(this);
 }
 
 void StructBufferVrfy::destroy()

@@ -995,6 +995,8 @@ public:
 
 	Switch();
 
+	virtual ~Switch();
+
 	void setBranch(Branch branch);
 
 	Branch getBranch() const;

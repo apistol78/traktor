@@ -7,6 +7,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceTracker;
+
 /*!
  * \ingroup Vrfy
  */
@@ -15,7 +17,7 @@ class VertexBufferVrfy : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	explicit VertexBufferVrfy(VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
+	explicit VertexBufferVrfy(ResourceTracker* resourceTracker, VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
 
 	virtual ~VertexBufferVrfy();
 
@@ -29,7 +31,8 @@ public:
 
 	uint32_t getVertexSize() const { return m_vertexSize; }
 
-protected:
+private:
+	Ref< ResourceTracker > m_resourceTracker;
 	Ref< VertexBuffer > m_vertexBuffer;
 	uint32_t m_vertexSize;
 	bool m_locked = false;

@@ -2001,6 +2001,14 @@ Switch::Switch()
 	updatePins();
 }
 
+Switch::~Switch()
+{
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
+}
+
 void Switch::setBranch(Branch branch)
 {
 	m_branch = branch;
