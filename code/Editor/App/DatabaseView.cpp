@@ -1,3 +1,4 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
@@ -13,6 +14,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/JobManager.h"
+#include "Core/Thread/Job.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -546,6 +549,8 @@ bool DatabaseView::create(ui::Widget* parent)
 
 void DatabaseView::destroy()
 {
+	if (m_jobTreeColors)
+		m_jobTreeColors->wait();
 	ui::Container::destroy();
 }
 
@@ -1266,29 +1271,34 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 
 void DatabaseView::updateTreeColors()
 {
-	RefArray< ui::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
-	for (auto item : items)
-	{
-		db::Instance* instance = item->getData< db::Instance >(L"INSTANCE");
-		if (instance)
+	if (m_jobTreeColors && !m_jobTreeColors->wait(0))
+		return;
+
+	m_jobTreeColors = JobManager::getInstance().add(makeFunctor([&]() {
+		RefArray< ui::TreeViewItem > items;
+		m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
+		for (auto item : items)
 		{
-			int32_t image = 0;
-
-			if ((instance->getFlags() & db::IfReadOnly) != 0)
-				image |= 1;
-			if ((instance->getFlags() & db::IfModified) != 0)
-				image |= 2;
-
-			image += 2 + 23 + 23;	// Offset to correct image sequence.
-
-			if (image != item->getImage(1))
+			Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
+			if (instance)
 			{
-				item->setImage(1, image);
-				m_treeDatabase->requestUpdate();
+				int32_t image = 0;
+
+				if ((instance->getFlags() & db::IfReadOnly) != 0)
+					image |= 1;
+				if ((instance->getFlags() & db::IfModified) != 0)
+					image |= 2;
+
+				image += 2 + 23 + 23;	// Offset to correct image sequence.
+
+				if (image != item->getImage(1))
+				{
+					item->setImage(1, image);
+					m_treeDatabase->requestUpdate();
+				}
 			}
 		}
-	}
+	}));
 }
 
 void DatabaseView::updateGridInstances()
