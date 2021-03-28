@@ -6,6 +6,7 @@
 namespace traktor
 {
 
+class Job;
 class PropertyGroup;
 
 	namespace ui
@@ -101,6 +102,7 @@ private:
 	std::wstring m_filterText;
 	int32_t m_filterCountDown;
 	int32_t m_colorCountDown;
+	Ref< Job > m_jobTreeColors;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
