@@ -458,6 +458,7 @@ bool MathNodeTraits::evaluatePartial(
 	const OutputPin*& foldOutputPin
 ) const
 {
+	// Discard node if inputs are constant.
 	if (is_a< Div >(node))
 	{
 		if (inputConstants[1].isAllOne())
@@ -495,6 +496,49 @@ bool MathNodeTraits::evaluatePartial(
 			return true;
 		}
 	}
+
+	// Discard redundant nodes.
+	if (is_a< Abs >(node))
+	{
+		if (inputOutputPins[0] != nullptr && is_a< Abs >(inputOutputPins[0]->getNode()))
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Fraction >(node))
+	{
+		if (inputOutputPins[0] != nullptr && is_a< Fraction >(inputOutputPins[0]->getNode()))
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Interpolator >(node))
+	{
+		if (inputOutputPins[0] != nullptr && is_a< Interpolator >(inputOutputPins[0]->getNode()))
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Normalize >(node))
+	{
+		if (inputOutputPins[0] != nullptr && is_a< Normalize >(inputOutputPins[0]->getNode()))
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Truncate >(node))
+	{
+		if (inputOutputPins[0] != nullptr && is_a< Normalize >(inputOutputPins[0]->getNode()))
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+
 	return false;
 }
 
