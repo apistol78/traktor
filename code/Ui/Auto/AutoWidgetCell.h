@@ -34,10 +34,6 @@ class T_DLLCLASS AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	AutoWidgetCell();
-
-	virtual ~AutoWidgetCell();
-
 	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
 	virtual AutoWidgetCell* hitTest(const Point& position);
@@ -47,6 +43,10 @@ public:
 	virtual void endCapture();
 
 	virtual void interval();
+
+	virtual void mouseEnter();
+
+	virtual void mouseLeave();
 
 	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position);
 
@@ -77,7 +77,7 @@ protected:
 	void raiseWidgetEvent(Event* event);
 
 private:
-	AutoWidget* m_widget;
+	AutoWidget* m_widget = nullptr;
 };
 
 	}
