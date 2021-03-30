@@ -79,20 +79,22 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 			int32_t nsteps = int32_t(ln / m_lengthThreshold);
 			if (nsteps > 0)
 			{
-				Vector4 step = direction * Scalar(m_lengthThreshold) / ln;
+				m_points.pop_back();
+
+				const Scalar lnt(m_lengthThreshold);
+				const Vector4 step = direction * lnt / ln;
 				for (int32_t i = 0; i < nsteps; ++i)
 				{
-					m_last += step;
-
-					m_points.push_back(m_last.xyz0() + m_time + Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * (i + 1) / nsteps));
+					m_points.push_back(m_last.xyz0() + m_time + Vector4(0.0f, 0.0f, 0.0f, (context.deltaTime * i) / nsteps));
 					m_boundingBox.contain(m_last);
-
-					ln -= Scalar(m_lengthThreshold);
+					m_last += step;
+					ln -= lnt;
 				}
+
+				m_last -= step;
 			}
 
-			if (ln > FUZZY_EPSILON)
-				m_points.back() = position.xyz0() + m_time;
+			m_points.back() = position.xyz0() + m_time;
 		}
 		else // Always add points.
 		{
