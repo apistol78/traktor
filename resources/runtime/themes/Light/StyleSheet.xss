@@ -224,12 +224,16 @@
 			<typeName>traktor.ui.GridRow</typeName>
 			<colors>
 				<item>
+					<first>background-color-hover</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
 					<first>background-color-selected</first>
 					<second>0, 122, 204, 255</second>
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>243, 243, 246, 255</second>
+					<second>230, 230, 235, 255</second>
 				</item>
 				<item>
 					<first>line-color-selected</first>
@@ -242,7 +246,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>246, 246, 246, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -841,6 +845,10 @@
 		<item>
 			<typeName>traktor.ui.TreeViewItem</typeName>
 			<colors>
+				<item>
+					<first>background-color-hover</first>
+					<second>255, 255, 255, 255</second>
+				</item>
 				<item>
 					<first>background-color-selected</first>
 					<second>0, 122, 204, 255</second>

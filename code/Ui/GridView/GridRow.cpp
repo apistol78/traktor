@@ -278,10 +278,11 @@ void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 
 void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = getWidget< GridView >()->getStyleSheet();
-	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
+	GridView* view = getWidget< GridView >();
+	const StyleSheet* ss = view->getStyleSheet();
+	auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 
-	const RefArray< GridColumn >& columns = getWidget< GridView >()->getColumns();
+	const RefArray< GridColumn >& columns = view->getColumns();
 	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
 
 	// Paint custom background.
@@ -296,6 +297,11 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	{
 		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rowRect);
+	}
+	else if (view->getHoverCell() == this)
+	{
+		canvas.setBackground(ss->getColor(this, L"background-color-hover"));
+		canvas.fillRect(rect);
 	}
 
 	if (!m_children.empty())

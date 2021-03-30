@@ -8,16 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidgetCell", AutoWidgetCell, ui::EventSubject)
 
-AutoWidgetCell::AutoWidgetCell()
-:	m_widget(0)
-{
-}
-
-AutoWidgetCell::~AutoWidgetCell()
-{
-	m_widget = 0;
-}
-
 void AutoWidgetCell::placeCells(AutoWidget* widget, const Rect& rect)
 {
 	m_widget = widget;
@@ -38,6 +28,14 @@ void AutoWidgetCell::endCapture()
 }
 
 void AutoWidgetCell::interval()
+{
+}
+
+void AutoWidgetCell::mouseEnter()
+{
+}
+
+void AutoWidgetCell::mouseLeave()
 {
 }
 

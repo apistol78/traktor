@@ -513,6 +513,11 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rect);
 	}
+	else if (m_view->getHoverCell() == this)
+	{
+		canvas.setBackground(ss->getColor(this, L"background-color-hover"));
+		canvas.fillRect(rect);
+	}
 
 	if (m_view->m_imageState && hasChildren())
 	{

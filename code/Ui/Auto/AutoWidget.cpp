@@ -12,12 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidget", AutoWidget, Widget)
 
-AutoWidget::AutoWidget()
-:	m_scrollOffset(0, 0)
-,	m_deferredUpdate(false)
-{
-}
-
 bool AutoWidget::create(ui::Widget* parent, int32_t style)
 {
 	if (!ui::Widget::create(parent, style))
@@ -28,6 +22,7 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	addEventHandler< MouseDoubleClickEvent >(this, &AutoWidget::eventDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &AutoWidget::eventMouseMove);
 	addEventHandler< MouseWheelEvent >(this, &AutoWidget::eventMouseWheel);
+	addEventHandler< MouseTrackEvent >(this, &AutoWidget::eventMouseTrack);
 	addEventHandler< PaintEvent >(this, &AutoWidget::eventPaint);
 	addEventHandler< SizeEvent >(this, &AutoWidget::eventSize);
 	addEventHandler< TimerEvent >(this, &AutoWidget::eventTimer);
@@ -74,7 +69,7 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 	}
 
 	Point clientPosition = position - m_scrollOffset;
-	for (std::vector< CellInstance >::reverse_iterator i = m_cells.rbegin(); i != m_cells.rend(); ++i)
+	for (auto i = m_cells.rbegin(); i != m_cells.rend(); ++i)
 	{
 		if (!i->rc.inside(clientPosition))
 			continue;
@@ -84,6 +79,11 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 	}
 
 	return hit;
+}
+
+AutoWidgetCell* AutoWidget::getHoverCell() const
+{
+	return m_hoverCell;
 }
 
 void AutoWidget::requestUpdate()
@@ -297,6 +297,16 @@ void AutoWidget::updateLayout()
 		m_scrollOffset.cx = 0;
 	if (!m_scrollBarV->isVisible(false))
 		m_scrollOffset.cy = 0;
+
+	// Update hover tracking.
+	Ref< AutoWidgetCell > hitItem = hitTest(getMousePosition());
+	if (m_hoverCell != hitItem)
+	{
+		if (m_hoverCell != nullptr)
+			m_hoverCell->mouseLeave();
+		if ((m_hoverCell = hitItem) != nullptr)
+			m_hoverCell->mouseEnter();
+	}
 }
 
 void AutoWidget::placeScrollBars()
@@ -377,16 +387,28 @@ void AutoWidget::eventDoubleClick(MouseDoubleClickEvent* event)
 
 void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 {
+	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
+	if (m_hoverCell != hitItem)
+	{
+		if (m_hoverCell != nullptr)
+			m_hoverCell->mouseLeave();
+		if ((m_hoverCell = hitItem) != nullptr)
+			m_hoverCell->mouseEnter();
+		update();
+	}
+
 	if (m_captureCell)
 	{
 		Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_captureCell->mouseMove(event, clientPosition);
 	}
+
 	if (m_focusCell)
 	{
 		Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_focusCell->mouseMoveFocus(event, clientPosition);
 	}
+
 	if (m_captureCell || m_focusCell)
 		update();
 }
@@ -407,6 +429,16 @@ void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 
 	// Redraw widget.
 	update();
+}
+
+void AutoWidget::eventMouseTrack(MouseTrackEvent* event)
+{
+	if (!event->entered() && m_hoverCell != nullptr)
+	{
+		m_hoverCell->mouseLeave();
+		m_hoverCell = nullptr;
+		update();
+	}
 }
 
 void AutoWidget::eventPaint(PaintEvent* event)
@@ -450,7 +482,7 @@ void AutoWidget::eventSize(SizeEvent* event)
 
 void AutoWidget::eventTimer(TimerEvent* event)
 {
-	for (std::list< CellInterval >::iterator i = m_intervals.begin(); i != m_intervals.end(); )
+	for (auto i = m_intervals.begin(); i != m_intervals.end(); )
 	{
 		if ((i->duration -= 100) <= 0)
 		{

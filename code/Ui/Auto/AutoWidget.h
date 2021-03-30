@@ -32,8 +32,6 @@ class T_DLLCLASS AutoWidget : public Widget
 	T_RTTI_CLASS;
 
 public:
-	AutoWidget();
-
 	bool create(ui::Widget* parent, int32_t style);
 
 	void setFocusCell(AutoWidgetCell* focusCell);
@@ -41,6 +39,8 @@ public:
 	AutoWidgetCell* getFocusCell() const;
 
 	AutoWidgetCell* hitTest(const Point& position);
+
+	AutoWidgetCell* getHoverCell() const;
 
 	void requestUpdate();
 
@@ -85,11 +85,12 @@ private:
 	std::list< CellInterval > m_intervals;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
+	Ref< AutoWidgetCell > m_hoverCell;
 	Ref< ScrollBar > m_scrollBarH;
 	Ref< ScrollBar > m_scrollBarV;
-	Size m_scrollOffset;
+	Size m_scrollOffset = { 0, 0 };
 	Rect m_bounds;
-	bool m_deferredUpdate;
+	bool m_deferredUpdate = false;
 
 	void updateLayout();
 
@@ -104,6 +105,8 @@ private:
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventMouseWheel(MouseWheelEvent* event);
+
+	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventPaint(PaintEvent* event);
 
