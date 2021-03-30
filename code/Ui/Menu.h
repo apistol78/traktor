@@ -30,6 +30,10 @@ class T_DLLCLASS Menu : public Object
 public:
 	void add(MenuItem* item);
 
+	void remove(MenuItem* item);
+
+	void removeAll();
+
 	const RefArray< MenuItem >& getItems() const;
 
 	Ref< Widget > show(Widget* parent, const Point& at) const;
