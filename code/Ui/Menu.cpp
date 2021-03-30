@@ -20,6 +20,16 @@ void Menu::add(MenuItem* item)
 	m_items.push_back(item);
 }
 
+void Menu::remove(MenuItem* item)
+{
+	m_items.remove(item);
+}
+
+void Menu::removeAll()
+{
+	m_items.clear();
+}
+
 const RefArray< MenuItem >& Menu::getItems() const
 {
 	return m_items;
