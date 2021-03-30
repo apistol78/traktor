@@ -82,6 +82,12 @@ public:
 			m_front = (m_front + 1) % N;
 	}
 
+	void pop_back()
+	{
+		T_ASSERT(!full());
+		m_back = (m_back > 0) ? m_back - 1 : N - 1;
+	}
+
 	void pop_front()
 	{
 		T_ASSERT(!empty());
