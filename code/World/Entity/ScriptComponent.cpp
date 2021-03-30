@@ -69,6 +69,7 @@ void ScriptComponent::update(const UpdateParams& update)
 	{
 		Any argv[] =
 		{
+			Any::fromObject(update.contextObject),
 			Any::fromFloat(update.totalTime),
 			Any::fromFloat(update.deltaTime)
 		};

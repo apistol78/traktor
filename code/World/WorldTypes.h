@@ -49,9 +49,10 @@ enum class LightType
 /*! Update parameters. */
 struct UpdateParams
 {
-	float totalTime;		/*!< Total time since first update. */
-	float deltaTime;		/*!< Delta time since last update. */
-	float alternateTime;	/*!< Alternative absolute time. */
+	Object* contextObject = nullptr;	/*!< Update context object; is Stage instance during runtime. */
+	float totalTime = 0.0f;				/*!< Total time since first update. */
+	float deltaTime = 0.0f;				/*!< Delta time since last update. */
+	float alternateTime = 0.0f;			/*!< Alternative absolute time. */
 };
 
 	}

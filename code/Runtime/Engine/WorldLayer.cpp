@@ -1,7 +1,3 @@
-#include "Runtime/IAudioServer.h"
-#include "Runtime/IEnvironment.h"
-#include "Runtime/UpdateInfo.h"
-#include "Runtime/Engine/WorldLayer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -13,6 +9,11 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
+#include "Runtime/IAudioServer.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/Stage.h"
+#include "Runtime/Engine/WorldLayer.h"
 #include "Scene/Scene.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Spray/Feedback/FeedbackManager.h"
@@ -223,6 +224,7 @@ void WorldLayer::update(const UpdateInfo& info)
 			m_controllerTime = info.getSimulationTime();
 
 		world::UpdateParams up;
+		up.contextObject = getStage();
 		up.totalTime = info.getSimulationTime() - m_controllerTime;
 		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;
@@ -232,6 +234,7 @@ void WorldLayer::update(const UpdateInfo& info)
 
 	{
 		world::UpdateParams up;
+		up.contextObject = getStage();
 		up.totalTime = info.getSimulationTime();
 		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;

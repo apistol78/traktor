@@ -29,7 +29,7 @@ Layer::~Layer()
 
 void Layer::destroy()
 {
-	m_stage = 0;
+	m_stage = nullptr;
 }
 
 	}
