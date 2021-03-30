@@ -438,7 +438,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
 	{
-		m_worldRenderer = nullptr;
+		safeDestroy(m_worldRenderer);
 		m_sceneInstance.consume();
 	}
 
