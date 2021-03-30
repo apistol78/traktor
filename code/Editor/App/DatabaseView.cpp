@@ -496,45 +496,12 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
-	TypeInfoSet wizardToolTypes;
-	type_of< IWizardTool >().findAllOf(wizardToolTypes);
-
-	if (!wizardToolTypes.empty())
-	{
-		Ref< ui::MenuItem > menuGroupWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
-		Ref< ui::MenuItem > menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
-
-		// Create instances of all found wizards.
-		for (const auto& wizardToolType : wizardToolTypes)
-		{
-			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >(wizardToolType->createInstance());
-			if (wizard)
-				m_wizardTools.push_back(wizard);
-		}
-
-		// Sort wizard based on their description.
-		m_wizardTools.sort(WizardToolPred());
-
-		// Populate menus.
-		int32_t nextWizardId = 0;
-		for (auto wizardTool : m_wizardTools)
-		{
-			std::wstring wizardDescription = wizardTool->getDescription();
-			T_ASSERT(!wizardDescription.empty());
-
-			int32_t wizardId = nextWizardId++;
-
-			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
-				menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
-				menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-		}
-
-		m_menuGroup[0]->add(menuGroupWizards);
-		m_menuGroup[1]->add(menuGroupWizards);
-		m_menuInstance->add(menuInstanceWizards);
-		m_menuInstanceAsset->add(menuInstanceWizards);
-	}
+	m_menuGroupWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
+	m_menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
+	m_menuGroup[0]->add(m_menuGroupWizards);
+	m_menuGroup[1]->add(m_menuGroupWizards);
+	m_menuInstance->add(m_menuInstanceWizards);
+	m_menuInstanceAsset->add(m_menuInstanceWizards);
 
 	m_iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
 	if (!m_iconsGroup)
@@ -557,6 +524,42 @@ void DatabaseView::destroy()
 void DatabaseView::setDatabase(db::Database* db)
 {
 	m_db = db;
+
+	// Update wizards as this method is called after a workspace has been loaded.
+	m_menuGroupWizards->removeAll();
+	m_menuInstanceWizards->removeAll();
+	m_wizardTools.clear();
+
+	TypeInfoSet wizardToolTypes;
+	type_of< IWizardTool >().findAllOf(wizardToolTypes);
+	if (!wizardToolTypes.empty())
+	{
+		// Create instances of all found wizards.
+		for (const auto& wizardToolType : wizardToolTypes)
+		{
+			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >(wizardToolType->createInstance());
+			if (wizard)
+				m_wizardTools.push_back(wizard);
+		}
+
+		// Sort wizard based on their description.
+		m_wizardTools.sort(WizardToolPred());
+
+		// Populate menus.
+		int32_t nextWizardId = 0;
+		for (auto wizardTool : m_wizardTools)
+		{
+			std::wstring wizardDescription = wizardTool->getDescription();
+			T_ASSERT(!wizardDescription.empty());
+
+			int32_t wizardId = nextWizardId++;
+
+			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
+				m_menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
+			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
+				m_menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
+		}
+	}
 
 	// Ensure database views is cleaned.
 	m_treeDatabase->removeAllItems();

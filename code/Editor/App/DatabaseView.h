@@ -93,6 +93,8 @@ private:
 	Ref< ui::Menu > m_menuGroup[2];
 	Ref< ui::Menu > m_menuInstance;
 	Ref< ui::Menu > m_menuInstanceAsset;
+	Ref< ui::MenuItem > m_menuGroupWizards;
+	Ref< ui::MenuItem > m_menuInstanceWizards;
 	Ref< PropertyGroup > m_iconsGroup;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
