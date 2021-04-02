@@ -480,7 +480,6 @@ bool TextureOutputPipeline::buildOutput(
 	// format as it's possible source image has float format thus
 	// resulting in greater accuracy.
 	if (
-		!textureOutput->m_enableNormalMapCompression &&
 		!textureOutput->m_linearGamma &&
 		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
 	)
