@@ -67,6 +67,7 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classAudioChannel = new AutoRuntimeClass< AudioChannel >();
 	classAudioChannel->addProperty("volume", &AudioChannel::setVolume, &AudioChannel::getVolume);
+	classAudioChannel->addProperty("pitch", &AudioChannel::setPitch, &AudioChannel::getPitch);
 	classAudioChannel->addProperty("playing", &AudioChannel::isPlaying);
 	classAudioChannel->addMethod("setFilter", &AudioChannel::setFilter);
 	classAudioChannel->addMethod("stop", &AudioChannel::stop);

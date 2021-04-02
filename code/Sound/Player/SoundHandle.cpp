@@ -38,8 +38,8 @@ void SoundHandle::setVolume(float volume)
 
 void SoundHandle::setPitch(float pitch)
 {
-	//if (m_channel)
-	//	m_channel->setPitch(pitch);
+	if (m_channel)
+		m_channel->setPitch(pitch);
 }
 
 void SoundHandle::setPosition(const Vector4& position)
@@ -63,7 +63,7 @@ SoundHandle::SoundHandle(AudioChannel* channel, Vector4& position, float& fadeOf
 
 void SoundHandle::detach()
 {
-	m_channel = 0;
+	m_channel = nullptr;
 	m_position = 0;
 	m_fadeOff = 0;
 }
