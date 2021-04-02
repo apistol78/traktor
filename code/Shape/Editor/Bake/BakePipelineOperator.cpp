@@ -648,12 +648,17 @@ bool BakePipelineOperator::build(
 					configuration->getMaximumLightMapSize()
 				);
 
+				bool needDirectionalMap = false;
+
 				// Modify all materials to contain reference to lightmap channel.
 				for (auto& material : model->getMaterials())
 				{
 					material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
-					if (!material.getNormalMap().name.empty())
+					if (configuration->getEnableDirectionalMaps() && !material.getNormalMap().name.empty())
+					{
 						material.setProperty< PropertyString >(L"LightMapDirectionalId", lightmapDirectionalId.format());
+						needDirectionalMap = true;
+					}
 				}
 
 				// Load texture images and attach to materials.
@@ -700,7 +705,7 @@ bool BakePipelineOperator::build(
 				}
 
 				Ref< db::Instance > lightmapDirectionalInstance;
-				if (lightmapDirectionalId.isNotNull())
+				if (needDirectionalMap && lightmapDirectionalId.isNotNull())
 				{
 					lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
 					lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
@@ -708,11 +713,6 @@ bool BakePipelineOperator::build(
 					));
 					lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
 				}
-
-				if (lightmapDiffuseId.isNotNull() && lightmapDiffuseInstance == nullptr)
-					return false;
-				if (lightmapDirectionalId.isNotNull() && lightmapDirectionalInstance == nullptr)
-					return false;
 
 				tracerTask->addTracerModel(new TracerModel(
 					model,

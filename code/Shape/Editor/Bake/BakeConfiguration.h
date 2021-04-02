@@ -47,6 +47,8 @@ public:
 
 	bool getIrradianceCache() const { return m_irradianceCache; }
 
+	bool getEnableDirectionalMaps() const { return m_enableDirectionalMaps; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -63,6 +65,7 @@ private:
 	float m_skyAttenuation = 1.0f;
 	float m_ambientOcclusionFactor = 0.5f;
 	bool m_irradianceCache = true;
+	bool m_enableDirectionalMaps = true;
 };
 
 	}

@@ -10,7 +10,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 25, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 26, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -66,6 +66,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	if (s.getVersion< BakeConfiguration >() >= 25)
 		s >> Member< bool >(L"irradianceCache", m_irradianceCache);
+
+	if (s.getVersion< BakeConfiguration >() >= 26)
+		s >> Member< bool >(L"enableDirectionalMaps", m_enableDirectionalMaps);
 }
 
 	}
