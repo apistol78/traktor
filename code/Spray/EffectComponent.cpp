@@ -1,4 +1,3 @@
-#include "Core/Timer/Timer.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Shader.h"
 #include "Spray/Effect.h"
@@ -18,7 +17,7 @@ namespace traktor
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
 const uint32_t c_updateDenom = 1;
-Timer g_randomTimer;
+Random g_randomSeed;
 
 		}
 
@@ -31,7 +30,7 @@ EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world:
 ,	m_enable(true)
 {
 	m_context.deltaTime = 0.0f;
-	m_context.random = RandomGeometry(uint32_t(g_randomTimer.getElapsedTime() * 10000.0f));
+	m_context.random = RandomGeometry(g_randomSeed.next());
 	m_context.eventManager = eventManager;
 	m_context.soundPlayer = soundPlayer;
 }
