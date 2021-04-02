@@ -315,7 +315,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			Scalar intensity = horizontalAdd3(incoming) / 3.0_simd;
 
 			// Trace directional map.
-			if (intensity > FUZZY_EPSILON)
+			if (lightmapDirectional != nullptr && intensity > FUZZY_EPSILON)
 			{
 				const Scalar z(1.0f / std::sqrt(3.0f));
 				const Vector4 basisX(std::sqrt(2.0f / 3.0f), 0.0f, z);
