@@ -4,6 +4,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
 #include "Database/Local/Perforce/PerforceClient.h"
 #include "Database/Local/Perforce/PerforceChangeList.h"
 #include "Database/Local/Perforce/PerforceChangeListFile.h"
@@ -309,6 +310,7 @@ PerforceClient::PerforceClient(const PerforceClientDesc& clientDesc)
 
 PerforceClient::~PerforceClient()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_p4client.ptr())
 	{
 		Error e;
@@ -319,6 +321,8 @@ PerforceClient::~PerforceClient()
 
 bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLists)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -350,6 +354,8 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 
 Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& description)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return nullptr;
 
@@ -375,6 +381,8 @@ Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& d
 
 bool PerforceClient::revertChangeList(PerforceChangeList* changeList)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -397,6 +405,8 @@ bool PerforceClient::revertChangeList(PerforceChangeList* changeList)
 
 bool PerforceClient::whereIsLocalFile(const std::wstring& depotFile, std::wstring& outLocalPath)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -419,6 +429,8 @@ bool PerforceClient::whereIsLocalFile(const std::wstring& depotFile, std::wstrin
 
 bool PerforceClient::isOpened(const std::wstring& localFile, PerforceAction& outAction)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -441,6 +453,8 @@ bool PerforceClient::isOpened(const std::wstring& localFile, PerforceAction& out
 
 bool PerforceClient::addFile(PerforceChangeList* changeList, const std::wstring& localFile)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -466,6 +480,8 @@ bool PerforceClient::addFile(PerforceChangeList* changeList, const std::wstring&
 
 bool PerforceClient::openForEdit(PerforceChangeList* changeList, const std::wstring& localFile)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -491,6 +507,8 @@ bool PerforceClient::openForEdit(PerforceChangeList* changeList, const std::wstr
 
 bool PerforceClient::openForDelete(PerforceChangeList* changeList, const std::wstring& localFile)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -516,6 +534,8 @@ bool PerforceClient::openForDelete(PerforceChangeList* changeList, const std::ws
 
 bool PerforceClient::revertFile(PerforceChangeList* changeList, const std::wstring& localFile)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -541,6 +561,8 @@ bool PerforceClient::revertFile(PerforceChangeList* changeList, const std::wstri
 
 bool PerforceClient::revertUnmodifiedFiles(PerforceChangeList* changeList)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
@@ -563,6 +585,8 @@ bool PerforceClient::revertUnmodifiedFiles(PerforceChangeList* changeList)
 
 bool PerforceClient::synchronize()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!establishConnection())
 		return false;
 
