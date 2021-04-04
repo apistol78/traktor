@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <algorithm>
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
@@ -588,6 +586,7 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 	btAlignedAllocSetCustomAligned(&traktorAllocAlign, &traktorFree);
 
 	m_timeScale = desc.timeScale;
+	m_simulationFrequency = desc.simulationFrequency;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 
 #if !defined(T_BULLET_USE_SPURS)
@@ -1216,7 +1215,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	if (!joint)
 	{
 		log::error << L"Unable to create joint, unknown joint type \"" << type_name(desc) << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	m_joints.push_back(joint);
@@ -1231,7 +1230,8 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
-	m_dynamicsWorld->stepSimulation(simulationDeltaTime * m_timeScale, 4, 1.0f / 120.0f);
+	const float dT = simulationDeltaTime * m_timeScale;
+	m_dynamicsWorld->stepSimulation(dT, 10, 1.0f / m_simulationFrequency);
 
 	// Issue collision events.
 	if (issueCollisionEvents)
@@ -1255,8 +1255,8 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
 			const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
 
-			BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
-			BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
+			BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : nullptr;
+			BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : nullptr;
 
 			info.body1 = wrapperBody0;
 			info.body2 = wrapperBody1;
@@ -1325,12 +1325,12 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 	constraintSolver->solveGroup(
 		btBodies,
 		bodies.size(),
-		0,
+		nullptr,
 		0,
 		btConstraints,
 		(int)joints.size(),
 		m_dynamicsWorld->getSolverInfo(),
-		0,
+		nullptr,
 		m_dynamicsWorld->getDispatcher()
 	);
 }
@@ -1367,8 +1367,8 @@ uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& o
 		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
 		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
 
-		Body* wrapperBody0 = body0 ? static_cast< Body* >(body0->getUserPointer()) : 0;
-		Body* wrapperBody1 = body1 ? static_cast< Body* >(body1->getUserPointer()) : 0;
+		Body* wrapperBody0 = body0 ? static_cast< Body* >(body0->getUserPointer()) : nullptr;
+		Body* wrapperBody1 = body1 ? static_cast< Body* >(body1->getUserPointer()) : nullptr;
 
 		CollisionPair pair = { wrapperBody0, wrapperBody1 };
 		outCollidingPairs.push_back(pair);
@@ -1502,21 +1502,20 @@ uint32_t PhysicsManagerBullet::querySphere(
 
 	QuerySphereCallback callback;
 	m_broadphase->aabbTest(aabbMin, aabbMax, callback);
-
-	for (RefArray< BodyBullet >::const_iterator i = callback.bodies.begin(); i != callback.bodies.end(); ++i)
+	for (auto body : callback.bodies)
 	{
-		uint32_t group = (*i)->getCollisionGroup();
+		uint32_t group = body->getCollisionGroup();
 
 		if ((group & queryFilter.includeGroup) == 0 || (group & queryFilter.ignoreGroup) != 0)
 			continue;
 
-		bool st = (*i)->isStatic();
+		bool st = body->isStatic();
 		if ((queryTypes & QtStatic) == 0 && st)
 			continue;
 		if ((queryTypes & QtDynamic) == 0 && !st)
 			continue;
 
-		btRigidBody* rigidBody = (*i)->getBtRigidBody();
+		btRigidBody* rigidBody = body->getBtRigidBody();
 		T_ASSERT(rigidBody);
 
 		btVector3 aabbMin, aabbMax;
@@ -1526,7 +1525,7 @@ uint32_t PhysicsManagerBullet::querySphere(
 		Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
 
 		if ((bodyCenter - at).length() - radius - bodyRadius <= 0.0f)
-			outBodies.push_back(*i);
+			outBodies.push_back(body);
 	}
 
 	return uint32_t(outBodies.size());
@@ -1783,9 +1782,9 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
-	RefArray< BodyBullet >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
-	T_ASSERT(i != m_bodies.end());
-	m_bodies.erase(i);
+	auto it = std::find(m_bodies.begin(), m_bodies.end(), body);
+	T_ASSERT(it != m_bodies.end());
+	m_bodies.erase(it);
 
 	delete rigidBody->getMotionState();
 	delete rigidBody;
@@ -1798,9 +1797,9 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 
 	m_dynamicsWorld->removeConstraint(constraint);
 
-	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
-	T_ASSERT(i != m_joints.end());
-	m_joints.erase(i);
+	auto it = std::find(m_joints.begin(), m_joints.end(), joint);
+	T_ASSERT(it != m_joints.end());
+	m_joints.erase(it);
 
 	delete constraint;
 }
@@ -1812,8 +1811,8 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	btCollisionObject* colObj0 = static_cast< btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
 	btCollisionObject* colObj1 = static_cast< btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);
 
-	BodyBullet* body1 = colObj0 ? static_cast< BodyBullet* >(colObj0->getUserPointer()) : 0;
-	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : 0;
+	BodyBullet* body1 = colObj0 ? static_cast< BodyBullet* >(colObj0->getUserPointer()) : nullptr;
+	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : nullptr;
 	if (body1 && body2)
 	{
 		// Filter on cluster id.
