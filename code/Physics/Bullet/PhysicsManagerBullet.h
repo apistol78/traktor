@@ -136,7 +136,8 @@ public:
 	virtual void getStatistics(PhysicsStatistics& outStatistics) const override final;
 
 private:
-	float m_timeScale;
+	float m_timeScale = 1.0f;
+	float m_simulationFrequency = 120.0f;
 	Semaphore m_lock;
 	btCollisionConfiguration* m_configuration;
 	btCollisionDispatcher* m_dispatcher;

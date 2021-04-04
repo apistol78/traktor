@@ -80,14 +80,9 @@ struct CollisionPair
  */
 struct PhysicsCreateDesc
 {
-	float timeScale;
-	int32_t solverIterations;
-
-	PhysicsCreateDesc()
-	:	timeScale(1.0f)
-	,	solverIterations(10)
-	{
-	}
+	float timeScale = 1.0;
+	float simulationFrequency = 120.0f;	//!< Simulation frequency, default 120 Hz which is twice per default game update.
+	int32_t solverIterations = 8;		//!< Collision solver iterations.
 };
 
 /*! Runtime statistics.

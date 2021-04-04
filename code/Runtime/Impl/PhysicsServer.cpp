@@ -36,11 +36,11 @@ bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyG
 
 	physics::PhysicsCreateDesc pcd;
 	pcd.timeScale = defaultSettings->getProperty< float >(L"Physics.TimeScale", 1.0f) * c_timeScale;
+	pcd.simulationFrequency = defaultSettings->getProperty< float >(L"Physics.SimulationFrequency", 120.0f);
 	pcd.solverIterations = defaultSettings->getProperty< int32_t >(L"Physics.SolverIterations", 10);
-
 	if (!physicsManager->create(pcd))
 	{
-		log::error << L"Physics server failed; unable to create physics manager" << Endl;
+		log::error << L"Physics server failed; unable to create physics manager." << Endl;
 		return false;
 	}
 
