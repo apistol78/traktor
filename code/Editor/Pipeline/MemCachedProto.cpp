@@ -34,6 +34,12 @@ bool MemCachedProto::readReply(std::string& outReply)
 	AlignedVector< char > buffer;
 	for (;;)
 	{
+		if (m_socket->select(true, false, false, 1000) <= 0)
+		{
+			log::error << L"Unable to request cache block; timeout while waiting on reply." << Endl;
+			return false;
+		}
+
 		char ch;
 		if (m_socket->recv(&ch, sizeof(ch)) != sizeof(ch))
 		{
@@ -58,10 +64,14 @@ bool MemCachedProto::readData(uint8_t* data, uint32_t dataLength)
 	int32_t dataReceived = 0;
 	while (dataReceived < dataLength + 2)
 	{
+		if (m_socket->select(true, false, false, 1000) <= 0)
+			return false;
+
 		int32_t nbytes = dataLength + 2 - dataReceived;
 		int32_t result = m_socket->recv(&data[dataReceived], nbytes);
 		if (result < 0)
 			return false;
+
 		dataReceived += result;
 	}
 
