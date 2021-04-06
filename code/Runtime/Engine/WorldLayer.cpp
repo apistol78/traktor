@@ -331,24 +331,47 @@ world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
 {
-	auto entity = m_scene->getRootEntity();
-
-	auto group = entity->getComponent< world::GroupComponent >();
-	if (!group)
-		return nullptr;
-
-	return group->getEntity(name, index);
+	{
+		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			auto entity = group->getEntity(name, index);
+			if (entity)
+				return entity;
+		}
+	}
+	{
+		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			auto entity = group->getEntity(name, index);
+			if (entity)
+				return entity;
+		}
+	}
+	return nullptr;
 }
 
 RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
 {
-	auto entity = m_scene->getRootEntity();
-
-	auto group = entity->getComponent< world::GroupComponent >();
-	if (!group)
-		return RefArray< world::Entity >();
-
-	return group->getEntities(name);
+	RefArray< world::Entity > entities;
+	{
+		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			auto e = group->getEntities(name);
+			entities.insert(entities.end(), e.begin(), e.end());
+		}
+	}
+	{
+		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			auto e = group->getEntities(name);
+			entities.insert(entities.end(), e.begin(), e.end());
+		}
+	}
+	return entities;
 }
 
 void WorldLayer::addEntity(world::Entity* entity)
