@@ -53,7 +53,7 @@ namespace traktor
 		namespace
 		{
 
-Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
+Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, bool directional)
 {
 #if !defined(__RPI__)
 	int32_t width = lightmap->getWidth();
@@ -92,12 +92,13 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
 	oidnCommitDevice(device);
 
-	OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filter
+	OIDNFilter filter = oidnNewFilter(device, "RTLightmap"); // generic ray tracing filter
 	oidnSetSharedFilterImage(filter, "color",  lightmap->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
 	oidnSetSharedFilterImage(filter, "albedo", albedo.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
 	oidnSetSharedFilterImage(filter, "normal", normals.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
 	oidnSetSharedFilterImage(filter, "output", output->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
 	oidnSetFilter1b(filter, "hdr", true); // image is HDR
+	oidnSetFilter1b(filter, "directional", directional);
 	oidnCommitFilter(filter);
 
 	oidnExecuteFilter(filter);	
@@ -435,7 +436,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (lightmapDiffuse)
 		{
 			if (configuration->getEnableDenoise())
-				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse);
+				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 
 			lightmapDiffuse->clearAlpha(1.0f);
 
@@ -455,7 +456,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (lightmapDirectional != nullptr)
 		{
 			if (configuration->getEnableDenoise())
-				lightmapDirectional = denoise(gbuffer, lightmapDirectional);
+				lightmapDirectional = denoise(gbuffer, lightmapDirectional, true);
 
 			lightmapDirectional->clearAlpha(1.0f);
 
