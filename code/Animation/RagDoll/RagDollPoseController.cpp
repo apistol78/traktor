@@ -9,8 +9,8 @@
 #include "Physics/Body.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
+#include "Physics/DofJointDesc.h"
 #include "Physics/DynamicBodyDesc.h"
-#include "Physics/FixedJointDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Joint.h"
 #include "Physics/PhysicsManager.h"
@@ -176,7 +176,7 @@ bool RagDollPoseController::create(
 			Ref< physics::Joint > limbJoint;
 			if (data->m_constraintAxises == 0)
 			{
-				Ref< physics::FixedJointDesc > jointDesc = new physics::FixedJointDesc();
+				Ref< physics::DofJointDesc > jointDesc = new physics::DofJointDesc();
 				limbJoint = physicsManager->createJoint(
 					jointDesc,
 					worldTransform,

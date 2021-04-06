@@ -15,10 +15,10 @@ namespace traktor
 	namespace physics
 	{
 
-/*! Fixed joint.
+/*! Dof joint.
  * \ingroup Physics
  */
-class T_DLLCLASS FixedJoint : public Joint
+class T_DLLCLASS DofJoint : public Joint
 {
 	T_RTTI_CLASS;
 };

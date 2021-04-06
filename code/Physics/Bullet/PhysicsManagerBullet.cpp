@@ -16,8 +16,8 @@
 #include "Physics/CompoundShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/CylinderShapeDesc.h"
+#include "Physics/DofJointDesc.h"
 #include "Physics/DynamicBodyDesc.h"
-#include "Physics/FixedJointDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
@@ -30,7 +30,7 @@
 #include "Physics/Bullet/BallJointBullet.h"
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/ConeTwistJointBullet.h"
-#include "Physics/Bullet/FixedJointBullet.h"
+#include "Physics/Bullet/DofJointBullet.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
 #include "Physics/Bullet/HingeJointBullet.h"
 #include "Physics/Bullet/Hinge2JointBullet.h"
@@ -965,7 +965,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 	Ref< Joint > joint;
 
-	if (const AxisJointDesc* axisDesc = dynamic_type_cast< const AxisJointDesc* >(desc))
+	if (auto axisDesc = dynamic_type_cast< const AxisJointDesc* >(desc))
 	{
 		btHingeConstraint* hingeConstraint = nullptr;
 
@@ -1007,7 +1007,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		joint = new AxisJointBullet(this, hingeConstraint, bb1, bb2);
 	}
-	else if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
+	else if (auto ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
 	{
 		btPoint2PointConstraint* pointConstraint = nullptr;
 
@@ -1037,7 +1037,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		joint = new BallJointBullet(this, pointConstraint, bb1, bb2);
 	}
-	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
+	else if (auto coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
 		JointConstraint* jointConstraint;
 
@@ -1073,16 +1073,16 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			joint = coneTwistJoint;
 		}
 	}
-	else if (const FixedJointDesc* fixedDesc = dynamic_type_cast< const FixedJointDesc* >(desc))
+	else if (auto dofDesc = dynamic_type_cast< const DofJointDesc* >(desc))
 	{
-		btGeneric6DofConstraint* fixedConstraint = nullptr;
+		btGeneric6DofConstraint* dofConstraint = nullptr;
 
 		if (b1 && b2)
 		{
 			Transform Tbody1Inv = body1->getCenterTransform().inverse();
 			Transform Tbody2Inv = body2->getCenterTransform().inverse();
 
-			fixedConstraint = new btGeneric6DofConstraint(
+			dofConstraint = new btGeneric6DofConstraint(
 				*b1,
 				*b2,
 				toBtTransform(transform * Tbody1Inv),
@@ -1094,24 +1094,24 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		{
 			Transform Tbody1Inv = body1->getCenterTransform().inverse();
 
-			fixedConstraint = new btGeneric6DofConstraint(
+			dofConstraint = new btGeneric6DofConstraint(
 				*b1,
 				toBtTransform(transform * Tbody1Inv),
-				true
+				false
 			);
 		}
 
-		fixedConstraint->setLimit(0, 0.0f, 0.0f);
-		fixedConstraint->setLimit(1, 0.0f, 0.0f);
-		fixedConstraint->setLimit(2, 0.0f, 0.0f);
+		dofConstraint->setLimit(0, 0.0f, dofDesc->getTranslate().x ? -1.0f : 0.0f);
+		dofConstraint->setLimit(1, 0.0f, dofDesc->getTranslate().y ? -1.0f : 0.0f);
+		dofConstraint->setLimit(2, 0.0f, dofDesc->getTranslate().z ? -1.0f : 0.0f);
 
-		fixedConstraint->setLimit(3, 0.0f, 0.0f);
-		fixedConstraint->setLimit(4, 0.0f, 0.0f);
-		fixedConstraint->setLimit(5, 0.0f, 0.0f);
+		dofConstraint->setLimit(3, 0.0f, dofDesc->getRotate().x ? -1.0f : 0.0f);
+		dofConstraint->setLimit(4, 0.0f, dofDesc->getRotate().y ? -1.0f : 0.0f);
+		dofConstraint->setLimit(5, 0.0f, dofDesc->getRotate().z ? -1.0f : 0.0f);
 
-		joint = new FixedJointBullet(this, fixedConstraint, bb1, bb2);
+		joint = new DofJointBullet(this, dofConstraint, bb1, bb2);
 	}
-	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
+	else if (auto hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
 		btHingeConstraint* hingeConstraint = nullptr;
 
@@ -1164,7 +1164,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		joint = new HingeJointBullet(this, hingeConstraint, bb1, bb2);
 	}
-	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
+	else if (auto hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
 	{
 		btHinge2Constraint* hinge2Constraint = nullptr;
 
@@ -1214,7 +1214,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 	if (!joint)
 	{
-		log::error << L"Unable to create joint, unknown joint type \"" << type_name(desc) << L"\"" << Endl;
+		log::error << L"Unable to create joint; unknown joint type \"" << type_name(desc) << L"\"." << Endl;
 		return nullptr;
 	}
 
