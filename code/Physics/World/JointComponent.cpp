@@ -45,22 +45,31 @@ void JointComponent::update(const world::UpdateParams& update)
 	// Lazy create joint.
 	if (!m_joint)
 	{
-		auto groupComponent = m_owner->getComponent< world::GroupComponent >();
-		if (!groupComponent)
-			return;
-
-		// Gather rigid bodies.
 		StaticVector< Body*, 2 > bodies;
-		for (auto entity : groupComponent->getEntities())
+
+		auto groupComponent = m_owner->getComponent< world::GroupComponent >();
+		if (groupComponent)
 		{
-			auto rigidBodyComponent = entity->getComponent< RigidBodyComponent >();
-			if (rigidBodyComponent)
+			// Gather rigid bodies.
+			for (auto entity : groupComponent->getEntities())
 			{
-				bodies.push_back(rigidBodyComponent->getBody());
-				if (bodies.full())
-					break;
+				auto rigidBodyComponent = entity->getComponent< RigidBodyComponent >();
+				if (rigidBodyComponent)
+				{
+					bodies.push_back(rigidBodyComponent->getBody());
+					if (bodies.full())
+						break;
+				}
 			}
 		}
+		else
+		{
+			// No group component, use body with world.
+			auto rigidBodyComponent = m_owner->getComponent< RigidBodyComponent >();
+			if (rigidBodyComponent)
+				bodies.push_back(rigidBodyComponent->getBody());
+		}
+
 		while (!bodies.full())
 			bodies.push_back(nullptr);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Physics/FixedJoint.h"
+#include "Physics/DofJoint.h"
 #include "Physics/Bullet/JointBullet.h"
 
 // import/export mechanism.
@@ -19,12 +19,12 @@ namespace traktor
 /*!
  * \ingroup Bullet
  */
-class T_DLLCLASS FixedJointBullet : public JointBullet< FixedJoint, btGeneric6DofConstraint >
+class T_DLLCLASS DofJointBullet : public JointBullet< DofJoint, btGeneric6DofConstraint >
 {
 	T_RTTI_CLASS;
 
 public:
-	FixedJointBullet(IWorldCallback* callback, btGeneric6DofConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
+	DofJointBullet(IWorldCallback* callback, btGeneric6DofConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 };
 
 	}
