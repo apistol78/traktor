@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cctype>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
@@ -416,6 +418,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
 	AlignedVector< const OutputPin* > inputOutputPins;
+	RefSet< Edge > edges;
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
@@ -516,50 +519,51 @@ restart_iteration:
 						PinType outputPinType = typePropagation.evaluate(outputPin);
 						PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
 
-						if (isPinTypeScalar(outputPinType) && isPinTypeScalar(foldOutputPinType))
+						if (isPinTypeScalar(outputPinType) && isPinTypeScalar(foldOutputPinType) && outputPinType != foldOutputPinType)
 						{
-							if (outputPinType != foldOutputPinType)
+							// It is possible "folded output pin"'s type is wider than "output pin" type due to
+							// hard constraints on type propagation (ex. VertexInput cannot change type).
+
+							if (foldOutputPinType == PntScalar1)
 							{
-								// Need to add a swizzle node in order to expand into expected type.
-								if (foldOutputPinType >= outputPinType)
-									log::warning << L"Incorrect pin type of folding pin (foldOutputPinType < outputPinType); foldOutputPinType = " << int32_t(foldOutputPinType) << L", outputPinType = " << int32_t(outputPinType) << Endl;
+								const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
+								swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
+							}
+							else if (foldOutputPinType == PntScalar2)
+							{
+								const wchar_t* c_tupleSwizzles[] = { L"x", L"", L"xy0", L"xy00" };
+								swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+							}
+							else if (foldOutputPinType == PntScalar3)
+							{
+								const wchar_t* c_tripleSwizzles[] = { L"x", L"xy", L"", L"xyz0" };
+								swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+							}
+							else if (foldOutputPinType == PntScalar4)
+							{
+								const wchar_t* c_tripleSwizzles[] = { L"x", L"xy", L"xyz", L"" };
+								swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
+							}
 
-								if (foldOutputPinType == PntScalar1)
-								{
-									const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
-									swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
-								}
-								else if (foldOutputPinType == PntScalar2)
-								{
-									const wchar_t* c_tupleSwizzles[] = { L"", L"", L"xy0", L"xy00" };
-									swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-								}
-								else if (foldOutputPinType == PntScalar3)
-								{
-									const wchar_t* c_tripleSwizzles[] = { L"", L"", L"", L"xyz0" };
-									swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
-								}
+							if (swizzleNode)
+							{
+								Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
 
-								if (swizzleNode)
-								{
-									Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
+								shaderGraph->addEdge(edgeIn);
+								shaderGraph->addNode(swizzleNode);
 
-									shaderGraph->addEdge(edgeIn);
-									shaderGraph->addNode(swizzleNode);
+								foldOutputPin = swizzleNode->getOutputPin(0);
 
-									foldOutputPin = swizzleNode->getOutputPin(0);
+								// Update types in type evaluator.
+								typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
+								typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
 
-									// Update types in type evaluator.
-									typePropagation.set(swizzleNode->getInputPin(0), outputPinType);
-									typePropagation.set(swizzleNode->getOutputPin(0), outputPinType);
-
-									// Add output pin of new swizzle node to known set.
-									outputConstants[foldOutputPin] = outputConstants[outputPin];
-								}
+								// Add output pin of new swizzle node to known set.
+								outputConstants[foldOutputPin] = outputConstants[outputPin];
 							}
 						}
 
-						RefSet< Edge > edges;
+						edges.reset();
 						shaderGraph->findEdges(outputPin, edges);
 						for (auto edge : edges)
 						{
