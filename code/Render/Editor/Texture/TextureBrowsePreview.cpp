@@ -25,24 +25,26 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 {
 	Ref< const TextureAsset > textureAsset = instance->getObject< TextureAsset >();
 	if (!textureAsset)
-		return 0;
+		return nullptr;
 
 	Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
 	if (!thumbnailGenerator)
-		return 0;
+		return nullptr;
 
 	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
-	bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
+	const bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
+	const bool linearGamma = textureAsset->m_output.m_linearGamma;
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
 		ui::dpi96(64),
 		ui::dpi96(64),
-		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
+		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha,
+		linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
 	);
 
-	return textureThumb ? new ui::Bitmap(textureThumb) : 0;
+	return textureThumb ? new ui::Bitmap(textureThumb) : nullptr;
 }
 
 	}

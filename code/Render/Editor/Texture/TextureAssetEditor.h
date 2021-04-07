@@ -24,6 +24,7 @@ class IEditor;
 
 class Image;
 class PropertyCommandEvent;
+class PropertyContentChangeEvent;
 class Static;
 
 	}
@@ -40,7 +41,7 @@ class TextureAssetEditor
 	T_RTTI_CLASS;
 
 public:
-	TextureAssetEditor(editor::IEditor* editor);
+	explicit TextureAssetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -67,6 +68,8 @@ private:
 	void updatePreview();
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
+
+	void eventPropertyContentChangeEvent(ui::PropertyContentChangeEvent* event);
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 };
