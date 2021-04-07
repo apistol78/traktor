@@ -36,7 +36,14 @@ public:
 		AmAlphaOnly = 2
 	};
 
-	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode) = 0;
+	enum GammaMode
+	{
+		GmAuto = 0,
+		GmLinear = 1,
+		GmSRGB = 2
+	};
+
+	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode, GammaMode gammaMode) = 0;
 };
 
 	}

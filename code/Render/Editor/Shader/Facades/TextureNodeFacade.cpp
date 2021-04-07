@@ -126,12 +126,14 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
 			if (thumbnailGenerator)
 			{
-				bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
+				const bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
+				const bool linearGamma = textureAsset->m_output.m_linearGamma;
 				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(
 					fileName,
 					ui::dpi96(64),
 					ui::dpi96(64),
-					visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
+					visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha,
+					linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
 				);
 				if (thumbnail)
 				{

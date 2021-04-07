@@ -2,6 +2,7 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Editor/App/ThumbnailGenerator.h"
@@ -18,9 +19,11 @@ ThumbnailGenerator::ThumbnailGenerator(const Path& thumbsPath)
 {
 }
 
-Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode)
+Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode, GammaMode gammaMode)
 {
 	const wchar_t* alphaPrefix[] = { L"o", L"a", L"ao" };
+	const wchar_t* gammaPrefix[] = { L"a", L"l", L"r" };
+
 	std::wstring pathName = fileName.getPathName();
 
 	// Stat source file.
@@ -39,7 +42,8 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 		fileName.getFileNameNoExtension() + L"_" +
 		toString(adler.get()) + L"_" +
 		toString(width) + L"x" + toString(height) + L"_" +
-		alphaPrefix[int32_t(alphaMode)] +
+		alphaPrefix[(int32_t)alphaMode] +
+		gammaPrefix[(int32_t)gammaMode] +
 		toString(file->getLastWriteTime().getSecondsSinceEpoch()) +
 		L".png";
 
@@ -91,6 +95,19 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	{
 		image->convert(drawing::PixelFormat::getR8G8B8A8());
 		image->clearAlpha(1.0f);
+	}
+
+	// Convert to sRGB if image is expected to be linear.
+	if (gammaMode == GmAuto)
+	{
+		const auto imageInfo = image->getImageInfo();
+		if (imageInfo != nullptr && abs(imageInfo->getGamma() - 1.0f) < 0.01f)
+			gammaMode = GmLinear;
+	}
+	if (gammaMode == GmLinear)
+	{
+		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+		image->apply(&gammaFilter);
 	}
 
 	// Ensure thumb path exist; then save thumb image.

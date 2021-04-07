@@ -25,6 +25,7 @@
 #include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyCommandEvent.h"
+#include "Ui/PropertyList/PropertyContentChangeEvent.h"
 
 namespace traktor
 {
@@ -64,6 +65,7 @@ bool TextureAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &TextureAssetEditor::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &TextureAssetEditor::eventPropertyContentChangeEvent);
 	m_propertyList->setSeparator(ui::dpi96(200));
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -120,6 +122,16 @@ void TextureAssetEditor::updatePreview()
 		ss << L"Height " << image->getHeight() << Endl;
 		ss << L"Color bits " << image->getPixelFormat().getColorBits() << Endl;
 		ss << L"Alpha bits " << image->getPixelFormat().getAlphaBits() << Endl;
+
+		const auto imageInfo = image->getImageInfo();
+		if (imageInfo)
+		{
+			ss << L"Author " << imageInfo->getAuthor() << Endl;
+			ss << L"Copyright " << imageInfo->getCopyright() << Endl;
+			ss << L"Format " << imageInfo->getFormat() << Endl;
+			ss << L"Gamma " << imageInfo->getGamma() << Endl;
+		}
+
 		m_imageInfo->setText(ss.str());
 	}
 	else
@@ -130,12 +142,15 @@ void TextureAssetEditor::updatePreview()
 		return;
 
 
-	bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
+	const bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
+	const bool linearGamma = m_asset->m_output.m_linearGamma;
+
 	textureThumb = thumbnailGenerator->get(
 		fileName,
 		size,
 		size,
-		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
+		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha,
+		linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
 	);
 	if (textureThumb)
 	{
@@ -149,7 +164,8 @@ void TextureAssetEditor::updatePreview()
 		fileName,
 		size,
 		size,
-		editor::IThumbnailGenerator::AmNoAlpha
+		editor::IThumbnailGenerator::AmNoAlpha,
+		linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
 	);
 	if (textureThumb)
 	{
@@ -163,7 +179,8 @@ void TextureAssetEditor::updatePreview()
 		fileName,
 		size,
 		size,
-		editor::IThumbnailGenerator::AmAlphaOnly
+		editor::IThumbnailGenerator::AmAlphaOnly,
+		linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
 	);
 	if (textureThumb)
 	{
@@ -340,6 +357,12 @@ void TextureAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 */
 	}
 	m_propertyList->update();
+	updatePreview();
+}
+
+void TextureAssetEditor::eventPropertyContentChangeEvent(ui::PropertyContentChangeEvent* event)
+{
+	m_propertyList->apply();
 	updatePreview();
 }
 
