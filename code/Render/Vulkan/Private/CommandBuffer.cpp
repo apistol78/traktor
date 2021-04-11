@@ -46,6 +46,7 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 {
 	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 	T_ASSERT(!m_submitted);
+	VkResult result;
 
 	vkEndCommandBuffer(m_commandBuffer);
 
@@ -68,9 +69,9 @@ bool CommandBuffer::submit(VkSemaphore waitSemaphore, VkPipelineStageFlags waitS
 		si.pSignalSemaphores = &signalSemaphore;
 	}
 
-	if (m_queue->submit(si, m_inFlight) != VK_SUCCESS)
+	if ((result = m_queue->submit(si, m_inFlight)) != VK_SUCCESS)
 	{
-		log::error << L"Unable to submit command buffer." << Endl;
+		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
 		return false;
 	}
 
