@@ -38,21 +38,6 @@ namespace traktor
 		namespace
 		{
 
-struct RenderEventTypePred
-{
-	RenderEventType m_type;
-
-	RenderEventTypePred(RenderEventType type)
-	:	m_type(type)
-	{
-	}
-
-	bool operator () (const RenderEvent& evt) const
-	{
-		return evt.type == m_type;
-	}
-};
-
 bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
 {
 	uint32_t presentModeCount = 0;
@@ -1672,7 +1657,9 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	else if (message == WM_SIZE)
 	{
 		// Remove all pending resize events.
-		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+		m_eventQueue.remove_if([](const RenderEvent& evt) {
+			return evt.type == ReResize;
+		});
 
 		// Push new resize event if not matching current size.
 		int32_t width = LOWORD(lParam);
