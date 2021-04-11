@@ -1224,6 +1224,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_multiSampleShading = multiSampleShading;
 	m_vblanks = vblanks;
 
+	// Do not fail if requested size, assume it will get reset later.
+	if (width == 0 || height == 0)
+	{
+		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
+		return true;
+	}
+
 	// Clamp surface size to physical device limits.
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &surfaceCapabilities);
@@ -1232,13 +1239,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	width = std::min(surfaceCapabilities.maxImageExtent.width, width);
 	height = std::max(surfaceCapabilities.minImageExtent.height, height);
 	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
-
-	// Do not fail if requested size, assume it will get reset later.
-	if (width == 0 || height == 0)
-	{
-		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
-		return true;
-	}
 
 	// Find present queue.
 	uint32_t queueFamilyCount = 0;
