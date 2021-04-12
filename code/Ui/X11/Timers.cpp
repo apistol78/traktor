@@ -35,16 +35,17 @@ void Timers::unbind(int32_t id)
 
 void Timers::update(double s)
 {
-    StaticVector< std::function< void(int32_t) >, 32 > fns;
+    StaticVector< std::function< void(int32_t) >, 4 > fns;
     for (auto& it : m_timers)
     {
         Timer& t = it.second;
         if ((t.until -= s) <= 0.0)
         {
-            t.until = t.interval / 1000.0;
-            fns.push_back(t.fn);
-            if (fns.full())
-                break;
+            if (!fns.full())
+            {
+                t.until = t.interval / 1000.0;
+                fns.push_back(t.fn);
+            }
         }
     }
     for (auto fn : fns)

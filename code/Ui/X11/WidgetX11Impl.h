@@ -129,6 +129,7 @@ public:
 		if (visible != m_data.visible)
 		{
 			m_data.visible = visible;
+
 			if (visible)
 			{
 				int32_t width = std::max< int32_t >(m_rect.getWidth(), 1);
@@ -216,6 +217,7 @@ public:
 	virtual void setRect(const Rect& rect) override
 	{
 		const Size current = m_rect.getSize();
+
 		m_rect = rect;
 
 		if (m_data.visible && m_rect.area() > 0)
@@ -232,7 +234,7 @@ public:
 		else
 			XUnmapWindow(m_context->getDisplay(), m_data.window);
 
-		if (m_rect.getSize() != current)
+		if (m_data.visible && m_rect.getSize() != current)
 		{
 			SizeEvent sizeEvent(m_owner, m_rect.getSize());
 			m_owner->raiseEvent(&sizeEvent);
@@ -757,6 +759,7 @@ protected:
 		m_context->bind(&m_data, Expose, [&](XEvent& xe){
 			if (xe.xexpose.count != 0)
 				return;
+
 			draw(nullptr);
 		});
 
@@ -787,19 +790,6 @@ protected:
 			rc != nullptr ? *rc : Rect(Point(0, 0), sz)
 		);
 		m_owner->raiseEvent(&paintEvent);
-
-#if 0
-		if (m_data.grabbed)
-		{
-			canvas.setBackground(Color4ub(255, 0, 0, 128));
-			canvas.fillRect(Rect(Point(0, 0), sz));
-		}
-		else if (m_data.focus)
-		{
-			canvas.setBackground(Color4ub(0, 0, 255, 128));
-			canvas.fillRect(Rect(Point(0, 0), sz));
-		}
-#endif
 
 		cairo_pop_group_to_source(m_cairo);
 		cairo_paint(m_cairo);

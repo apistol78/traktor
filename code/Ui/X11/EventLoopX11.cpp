@@ -57,7 +57,6 @@ bool EventLoopX11::process(EventSubject* owner)
 	XEvent e;
 
 	int fd = ConnectionNumber(m_context->getDisplay());
-	bool idle = true;
 
 	Timer timer;
 	timer.start();
@@ -85,11 +84,8 @@ bool EventLoopX11::process(EventSubject* owner)
 			while (XPending(m_context->getDisplay()))
 			{
 				XNextEvent(m_context->getDisplay(), &e);
-
 				if (!preTranslateEvent(owner, e))
 					m_context->dispatch(e);
-
-				idle = true;
 			}
 		}
 		else
@@ -122,7 +118,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 			FD_SET(fd, &fds);
 
 			struct timeval tv;
-			tv.tv_usec = idle ? 10 : 1 * 1000;
+			tv.tv_usec = idle ? 1000 : 100 * 1000;
 			tv.tv_sec = 0;
 
 			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
@@ -135,10 +131,8 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 			while (XPending(m_context->getDisplay()))
 			{
 				XNextEvent(m_context->getDisplay(), &e);
-
 				if (!preTranslateEvent(owner, e))
 					m_context->dispatch(e);
-
 				idle = true;
 			}
 		}
