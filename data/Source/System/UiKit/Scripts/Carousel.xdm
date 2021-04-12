@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{AFFC79EF-B871-6044-B8A4-EFF82563E225}</guid>
+	<primaryType>traktor.script.Script</primaryType>
+	<blobs/>
+</object>
