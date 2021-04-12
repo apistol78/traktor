@@ -32,7 +32,14 @@ bool ContainerX11::create(IWidget* parent, int style)
 		nullptr
 	);
 
-	return WidgetX11Impl< IContainer >::create(parent, style, window, Rect(0, 0, c_defaultWidth, c_defaultHeight), true, false);
+	return WidgetX11Impl< IContainer >::create(
+		parent,
+		style,
+		window,
+		Rect(0, 0, 0, 0),
+		true,
+		false
+	);
 }
 
 	}

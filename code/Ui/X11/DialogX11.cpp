@@ -131,7 +131,7 @@ int DialogX11::showModal()
 			FD_SET(fd, &fds);
 
 			struct timeval tv;
-			tv.tv_usec = 1 * 1000;
+			tv.tv_usec = 100 * 1000;
 			tv.tv_sec = 0;
 
 			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
