@@ -35,8 +35,10 @@ function PushButton:place(x, y, width, height)
 	self._background_mc.height = p.height
 
 	local sz = self._caption_tb.textSize
-	local m = p.width - sz.x
-	self._caption_tb.X = m / 2
+	local mx = p.width - sz.x
+	local my = p.height - sz.y
+	self._caption_tb.X = mx / 2
+	self._caption_tb.Y = my / 2
 end
 
 function PushButton:setColor(color)
