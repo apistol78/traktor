@@ -14,8 +14,9 @@ function Tween:new(startValue, endValue, duration, fn)
 	self._duration = duration
 	self._time = 0
 	self._fn = fn
+	self._finished = false
 	table.insert(Tween._instances, self)
-	self._fn(startValue, false)
+	self._fn(self._startValue, false)
 end
 
 function Tween:continueTo(endValue, duration)
@@ -24,6 +25,12 @@ function Tween:continueTo(endValue, duration)
 	self._endValue = endValue
 	self._duration = duration
 	self._time = 0
+
+	if self._finished then
+		self._finished = false
+		table.insert(Tween._instances, self)
+		self._fn(self._startValue, false)
+	end
 end
 
 function Tween:stop()
@@ -52,12 +59,14 @@ function Tween.update(dT)
 			if t._fn ~= nil then
 				t._fn(t._endValue, true)
 			end
+			t._finished = true
 			Tween._instances[i] = Tween._instances[n]
 			Tween._instances[n] = nil
 			n = n - 1
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

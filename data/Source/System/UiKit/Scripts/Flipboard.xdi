@@ -33,6 +33,7 @@ function Flipboard:showPage(id, arg)
 		end
 
 		if f then
+			-- Fade in new child.
 			if child._mc ~= nil then
 				Tween(0, 1, r, function(value, last)
 					if child._mc ~= nil then
@@ -57,6 +58,7 @@ function Flipboard:showPage(id, arg)
 				child.__entered = false
 			end
 
+			-- Fade out old child.
 			if child:isVisible(false) then
 				Tween(0, 1, r, function(value, last)
 					if child._mc ~= nil then

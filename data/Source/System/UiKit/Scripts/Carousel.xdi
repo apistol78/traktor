@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{BA802A78-F9E0-7843-B731-198BEB633236}
+
+-- Carousel
+
+Carousel = class("Carousel", Widget)
+
+function Carousel:new(parent, pad)
+	local mc = Widget._createResource(parent, "MC_Carousel")
+	self:_initialize(parent, mc, pad)
+end
+
+function Carousel:getPreferredSize()
+	local w, h = 0, 0
+	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	for _, child in ipairs(children) do
+		local ps = child:getPreferredSize()
+		w = math.max(w, ps.width)
+		h = math.max(h, ps.height)
+	end
+	return { width = w, height = h }
+end
+
+function Carousel:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	self:_layout()
+
+	local p = self:getPlacement()
+	self._mask_mc.width = p.width
+	self._mask_mc.height = p.height
+end
+
+function Carousel:showPrevious()
+	if self._current > 0 then
+		self._current = self._current - 1
+		self:_layout()
+	end
+end
+
+function Carousel:showNext()
+	local count = #self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	if self._current < count - 1 then
+		self._current = self._current + 1
+		self:_layout()
+	end
+end
+
+-- Private
+
+function Carousel:_initialize(parent, mc, pad)
+	Widget._initialize(self, parent, mc)
+
+	self._inner_mc = mc:getMember("innerContainer_mc")
+	self._mask_mc = mc:getMember("mask_mc")
+
+	self._current = 0
+	self._pad = pad or 0
+
+	-- Override inner clip access to ensure following child widgets
+	-- are created into innerContainer_mc
+	self._getInnerClip = function() return self._inner_mc end
+end
+
+function Carousel:_layout()
+	local p = self:getPlacement()
+	local x = -self._current * (p.width + self._pad)
+	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	for _, child in ipairs(children) do
+		child:place(x, 0, p.width, p.height)
+		x = x + p.width + self._pad
+	end
+end
+
+	]]>
+	</text>
+</object>
