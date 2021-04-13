@@ -419,6 +419,7 @@ Color4f RayTracerEmbree::tracePath0(
 
 			if (m_irradianceCache)
 			{
+				const Scalar maxDistance = Scalar(m_configuration->getIrradianceCacheMaxDistance());
 				Color4f output(0.0f, 0.0f, 0.0f, 0.0f);
 				Scalar weight = 0.0_simd;
 
@@ -430,7 +431,7 @@ Color4f RayTracerEmbree::tracePath0(
 							continue;
 						if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
 							continue;
-						Scalar k = max(1.0_simd - (irr.position - hitOrigin).length(), 0.0_simd);
+						Scalar k = max(1.0_simd - ((irr.position - hitOrigin).length() / maxDistance), 0.0_simd);
 						output += irr.irradiance * k;
 						weight += k;
 					}
