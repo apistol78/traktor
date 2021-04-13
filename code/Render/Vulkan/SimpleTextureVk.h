@@ -55,7 +55,6 @@ private:
 	Ref< Buffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	SimpleTextureCreateDesc m_desc;
-	bool m_dirty = false;
 };
 
 	}
