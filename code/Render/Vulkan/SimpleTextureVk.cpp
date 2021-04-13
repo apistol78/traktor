@@ -61,12 +61,12 @@ bool SimpleTextureVk::create(
 	m_desc = desc;
 
 	// Create staging buffer.
-	const uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
+	const uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, 1);
 
 	m_stagingBuffer = new Buffer(m_context);
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
-	// Copy data into staging buffer.
+	// Upload initial data.
 	for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 	{
 		Lock lck = { 0 };
@@ -139,13 +139,12 @@ void SimpleTextureVk::unlock(int32_t level)
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
 
 	// Copy staging buffer into texture.
-	uint32_t offset = 0;
 	uint32_t mipWidth = getTextureMipSize(m_desc.width, level);
 	uint32_t mipHeight = getTextureMipSize(m_desc.height, level);
 	uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.width, m_desc.height, level);
 
 	VkBufferImageCopy region = {};
-	region.bufferOffset = offset;
+	region.bufferOffset = 0;
 	region.bufferRowLength = 0;
 	region.bufferImageHeight = 0;
 	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -163,8 +162,6 @@ void SimpleTextureVk::unlock(int32_t level)
 		1,
 		&region
 	);
-
-	offset += mipSize;
 
 	// Change layout of texture to optimal sampling.
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
