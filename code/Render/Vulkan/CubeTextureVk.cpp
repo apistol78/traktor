@@ -56,33 +56,35 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 		return false;
 	}
 
+	// Create staging buffer.
+	const uint32_t imageSize = getTextureSize(m_desc.format, m_desc.side, m_desc.side, 1);
+
+	m_stagingBuffer = new Buffer(m_context);
+	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
+
 	// Upload initial data.
-	ITexture::Lock lock;
 	for (int32_t side = 0; side < 6; ++side)
 	{
 		for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
 		{
-			uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
-				
-			if (!this->lock(side, mip, lock))
+			Lock lck = { 0 };
+			if (!lock(side, mip, lck))
 				return false;
 
+			uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
 			if (m_desc.immutable)
-				std::memcpy(
-					lock.bits,
-					m_desc.initialData[side * m_desc.mipCount + mip].data,
-					mipSize
-				);
+				std::memcpy(lck.bits, m_desc.initialData[side * m_desc.mipCount + mip].data, mipSize);
 			else
-				std::memset(
-					lock.bits,
-					0,
-					mipSize
-				);
-
+				std::memset(lck.bits, 0, mipSize);
+		
 			unlock(side, mip);
 		}
 	}
+
+	// Free staging buffer if immutable, no longer
+	// allowed to update texture.
+	if (m_desc.immutable)
+		safeDestroy(m_stagingBuffer);
 
 	return true;
 }
@@ -111,21 +113,14 @@ int32_t CubeTextureVk::getSide() const
 
 bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
-	uint32_t imageSize = getTextureMipPitch(
-		m_desc.format,
-		m_desc.side,
-		m_desc.side,
-		level
-	);
-
-	// Create staging buffer.
-	m_stagingBuffer = new Buffer(m_context);
-	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
-
-	// Map staging buffer.
-	lock.pitch = m_desc.side * sizeof(uint32_t);
-	lock.bits = m_stagingBuffer->lock();
-	return true;
+	if (m_stagingBuffer != nullptr)
+	{
+		lock.bits = m_stagingBuffer->lock();
+		lock.pitch = getTextureRowPitch(m_desc.format, m_desc.side, level);
+		return true;
+	}
+	else
+		return false;
 }
 
 void CubeTextureVk::unlock(int32_t side, int32_t level)
@@ -164,9 +159,6 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, side, 1);
 
 	commandBuffer->submitAndWait();
-
-	// Free staging buffer.
-	safeDestroy(m_stagingBuffer);
 }
 
 	}
