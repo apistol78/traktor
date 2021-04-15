@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Enums.h"
 #include "Ui/Font.h"
 
@@ -35,7 +35,7 @@ public:
 
 	void drawLine(const Point& start, const Point& end);
 
-	void drawLines(const std::vector< Point >& pnts, int32_t thickness);
+	void drawLines(const AlignedVector< Point >& pnts, int32_t thickness);
 
 	void drawRect(const Rect& rc);
 

@@ -111,11 +111,11 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		std::map< const std::wstring, Ref< const IInputNode > > childNodes;
 		t->getInputNodes(node, childNodes);
 
-		Ref< ui::Node > graphNode = new ui::Node(
+		Ref< ui::Node > graphNode = graph->createNode(
 			t->getHeader(node),
 			t->getDescription(node),
 			ui::Point(p.x, p.y),
-			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape(graph) : (ui::INodeShape*)new ui::DefaultNodeShape(graph, ui::DefaultNodeShape::StDefault)
+			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape() : (ui::INodeShape*)new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
 		valuePin = graphNode->createOutputPin(L"Value");
 		graphNode->setData(L"DATA", const_cast< IInputNode* >(node));
@@ -125,8 +125,6 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 			Ref< ui::Pin > pin = graphNode->createInputPin(i->first, false);
 			createInputNodes(mappingAsset, graph, traits, i->second, pin);
 		}
-
-		graph->addNode(graphNode);
 	}
 
 	// Add edge to parent's input pin.
@@ -355,16 +353,15 @@ void InputMappingEditor::updateGraphView()
 	{
 		InputMappingAsset::Position p = m_mappingAsset->getPosition(i->second);
 
-		Ref< ui::Node > node = new ui::Node(
+		Ref< ui::Node > node = m_graph->createNode(
 			L"State",
 			i->first,
 			ui::Point(p.x, p.y),
-			new ui::OutputNodeShape(m_graph)
+			new ui::OutputNodeShape()
 		);
 		node->setData(L"NAME", new PropertyString(i->first));
 		node->setData(L"DATA", i->second);
 		Ref< ui::Pin > inputPin = node->createInputPin(L"Input", false);
-		m_graph->addNode(node);
 
 		// Create edge to input node.
 		if (i->second->getSource() != 0)

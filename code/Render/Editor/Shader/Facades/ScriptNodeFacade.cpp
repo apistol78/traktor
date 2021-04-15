@@ -90,10 +90,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeInstanceData", ScriptNodeInsta
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeFacade", ScriptNodeFacade, INodeFacade)
 
-ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page, ui::GraphControl* graphControl)
+ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page)
 :	m_page(page)
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StScript);
+	m_nodeShape = new ui::DefaultNodeShape(ui::DefaultNodeShape::StScript);
 }
 
 Ref< Node > ScriptNodeFacade::createShaderNode(
@@ -123,7 +123,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		scriptNode->getName(),
 		L"",
 		ui::Point(

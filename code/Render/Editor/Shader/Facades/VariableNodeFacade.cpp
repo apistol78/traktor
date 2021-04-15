@@ -3,6 +3,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/InOutNodeShape.h"
 
@@ -13,9 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VariableNodeFacade", VariableNodeFacade, INodeFacade)
 
-VariableNodeFacade::VariableNodeFacade(ui::GraphControl* graphControl)
+VariableNodeFacade::VariableNodeFacade()
 {
-	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StVariable);
+	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StVariable);
 }
 
 Ref< Node > VariableNodeFacade::createShaderNode(
@@ -33,7 +34,7 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(

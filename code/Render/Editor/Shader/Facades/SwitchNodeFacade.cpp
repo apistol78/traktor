@@ -14,9 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, INodeFacade)
 
-SwitchNodeFacade::SwitchNodeFacade(ui::GraphControl* graphControl)
+SwitchNodeFacade::SwitchNodeFacade()
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
+	m_nodeShape = new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault);
 }
 
 Ref< Node > SwitchNodeFacade::createShaderNode(
@@ -34,7 +34,7 @@ Ref< ui::Node > SwitchNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		i18n::Text(L"SHADERGRAPH_NODE_SWITCH"),
 		shaderNode->getInformation(),
 		ui::Point(

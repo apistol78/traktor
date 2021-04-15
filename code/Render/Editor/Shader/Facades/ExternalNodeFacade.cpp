@@ -22,9 +22,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade, INodeFacade)
 
-ExternalNodeFacade::ExternalNodeFacade(ui::GraphControl* graphControl)
+ExternalNodeFacade::ExternalNodeFacade()
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StExternal);
+	m_nodeShape = new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal);
 }
 
 Ref< Node > ExternalNodeFacade::createShaderNode(
@@ -35,11 +35,11 @@ Ref< Node > ExternalNodeFacade::createShaderNode(
 	editor::TypeBrowseFilter filter(type_of< ShaderGraph >());
 	Ref< db::Instance > fragmentInstance = editor->browseInstance(&filter);
 	if (!fragmentInstance)
-		return 0;
+		return nullptr;
 
 	Ref< ShaderGraph > fragmentGraph = fragmentInstance->getObject< ShaderGraph >();
 	if (!fragmentGraph)
-		return 0;
+		return nullptr;
 
 	return new External(
 		fragmentInstance->getGuid(),
@@ -72,7 +72,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	else
 		title = fragmentGuid.format();
 
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		title,
 		L"",
 		ui::Point(

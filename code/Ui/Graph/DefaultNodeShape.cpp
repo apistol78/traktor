@@ -2,6 +2,7 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/GraphControl.h"
@@ -34,8 +35,7 @@ int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DefaultNodeShape", DefaultNodeShape, INodeShape)
 
-DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl, Style style)
-:	m_graphControl(graphControl)
+DefaultNodeShape::DefaultNodeShape(Style style)
 {
 	switch (style)
 	{
@@ -66,11 +66,11 @@ DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl, Style style)
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin) const
+Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
+	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t top = ui::dpi96(c_marginHeight + c_topMargin + c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -91,7 +91,7 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	return Point(x, rc.top + top);
 }
 
-Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
+Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))
@@ -99,7 +99,7 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 
 	Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
+	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -126,8 +126,9 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 	return nullptr;
 }
 
-void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
+void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
+	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings* settings = canvas->getPaintSettings();
 
 	Rect rc = node->calculateRect().offset(offset);
@@ -168,7 +169,7 @@ void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 	const std::wstring& title = node->getTitle();
 	if (!title.empty())
 	{
-		canvas->setForeground(settings->getNodeText());
+		canvas->setForeground(ss->getColor(this, L"color"));
 		canvas->setFont(settings->getFontBold());
 		canvas->drawText(Rect(rc.left, top, rc.right, top + textHeight), title, AnCenter, AnCenter);
 		canvas->setFont(settings->getFont());
@@ -178,7 +179,7 @@ void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 	const std::wstring& info = node->getInfo();
 	if (!info.empty())
 	{
-		canvas->setForeground(settings->getNodeTextInfo());
+		canvas->setForeground(ss->getColor(this, L"color-info"));
 		canvas->drawText(Rect(rc.left, top, rc.right, top + textHeight), info, AnCenter, AnCenter);
 		top += textHeight;
 	}
@@ -186,7 +187,7 @@ void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 	const std::wstring& comment = node->getComment();
 	if (!comment.empty())
 	{
-		canvas->setForeground(settings->getNodeShadow());
+		canvas->setForeground(ss->getColor(this, L"color-comment"));
 		canvas->drawText(Rect(rc.left, rc.top - textHeight, rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 
@@ -246,7 +247,7 @@ void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 		);
 	}
 
-	canvas->setForeground(settings->getNodeText());
+	canvas->setForeground(ss->getColor(this, L"color"));
 
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
@@ -298,9 +299,9 @@ void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 	}
 }
 
-Size DefaultNodeShape::calculateSize(const Node* node) const
+Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
+	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t height = ui::dpi96(c_marginHeight * 2 + c_topMargin + c_titlePad);
 
 	if (!node->getTitle().empty())
@@ -320,12 +321,12 @@ Size DefaultNodeShape::calculateSize(const Node* node) const
 	int32_t maxWidthPins[2] = { 0, 0 };
 	for (auto inputPin : node->getInputPins())
 	{
-		int32_t labelExtent = getQuantizedTextWidth(m_graphControl, inputPin->getLabel());
+		int32_t labelExtent = getQuantizedTextWidth(graph, inputPin->getLabel());
 		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 	for (auto outputPin : node->getOutputPins())
 	{
-		int32_t labelExtent = getQuantizedTextWidth(m_graphControl, outputPin->getLabel());
+		int32_t labelExtent = getQuantizedTextWidth(graph, outputPin->getLabel());
 		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 
@@ -333,14 +334,14 @@ Size DefaultNodeShape::calculateSize(const Node* node) const
 
 	if (!node->getTitle().empty())
 	{
-		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFontBold());
-		int32_t titleExtent = getQuantizedTextWidth(m_graphControl, node->getTitle());
+		graph->setFont(graph->getPaintSettings()->getFontBold());
+		int32_t titleExtent = getQuantizedTextWidth(graph, node->getTitle());
 		width = std::max(width, titleExtent);
-		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
+		graph->setFont(graph->getPaintSettings()->getFont());
 	}
 	if (!node->getInfo().empty())
 	{
-		int32_t infoExtent = getQuantizedTextWidth(m_graphControl, node->getInfo());
+		int32_t infoExtent = getQuantizedTextWidth(graph, node->getInfo());
 		width = std::max(width, infoExtent);
 	}
 	if (node->getImage())

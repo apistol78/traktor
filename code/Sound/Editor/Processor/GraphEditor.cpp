@@ -293,29 +293,29 @@ void GraphEditor::updateView()
 		Ref< ui::Node > un;
 		if (Scalar* scalar = dynamic_type_cast< Scalar* >(node))
 		{
-			un = new ui::Node(
+			un = m_graph->createNode(
 				L"Scalar",
 				toString(scalar->getValue()),
 				ui::Point(position.first, position.second),
-				new ui::InputNodeShape(m_graph)
+				new ui::InputNodeShape()
 			);
 		}
 		else if (Output* output = dynamic_type_cast< Output* >(node))
 		{
-			un = new ui::Node(
+			un = m_graph->createNode(
 				L"Output",
 				L"",
 				ui::Point(position.first, position.second),
-				new ui::OutputNodeShape(m_graph)
+				new ui::OutputNodeShape()
 			);
 		}
 		else
 		{
-			un = new ui::Node(
+			un = m_graph->createNode(
 				type_name(node),
 				L"",
 				ui::Point(position.first, position.second),
-				new ui::DefaultNodeShape(m_graph, ui::DefaultNodeShape::StDefault)
+				new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 			);
 		}
 
@@ -344,8 +344,6 @@ void GraphEditor::updateView()
 		}
 
 		un->setData(L"NODE", node);
-
-		m_graph->addNode(un);
 	}
 
 	const auto& edges = m_graphAsset->getGraph()->getEdges();

@@ -301,19 +301,19 @@ void Shape::merge(const Shape& shape, const Matrix33& transform, const ColorTran
 	}
 
 	// Transform paths and modify styles.
-	for (AlignedVector< Path >::const_iterator i = shape.getPaths().begin(); i != shape.getPaths().end(); ++i)
+	for (const auto& path : shape.getPaths())
 	{
-		AlignedVector< SubPath > subPaths = i->getSubPaths();
-		for (AlignedVector< SubPath >::iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		AlignedVector< SubPath > subPaths = path.getSubPaths();
+		for (auto& subPath : subPaths)
 		{
-			if (j->fillStyle0)
-				j->fillStyle0 = fillStyleBase + j->fillStyle0;
-			if (j->fillStyle1)
-				j->fillStyle1 = fillStyleBase + j->fillStyle1;
-			if (j->lineStyle)
-				j->lineStyle = lineStyleBase + j->lineStyle;
+			if (subPath.fillStyle0)
+				subPath.fillStyle0 = fillStyleBase + subPath.fillStyle0;
+			if (subPath.fillStyle1)
+				subPath.fillStyle1 = fillStyleBase + subPath.fillStyle1;
+			if (subPath.lineStyle)
+				subPath.lineStyle = lineStyleBase + subPath.lineStyle;
 		}
-		m_paths.push_back(Path(transform, i->getPoints(), subPaths));
+		m_paths.push_back(Path(transform, path.getPoints(), subPaths));
 	}
 
 	// Expand our bounds with transformed shape's bound.
@@ -334,10 +334,10 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 	outLines.resize(0);
 
 	// Convert paths into lines.
-	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	for (const auto& path : m_paths)
 	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		const AlignedVector< Vector2 >& points = path.getPoints();
+		const AlignedVector< SubPath >& subPaths = path.getSubPaths();
 
 		std::set< uint16_t > lineStyles;
 		for (uint32_t j = 0; j < subPaths.size(); ++j)
@@ -355,15 +355,15 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 				if (sp.lineStyle != *ii)
 					continue;
 
-				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				for (const auto& segment : sp.segments)
 				{
-					switch (k->type)
+					switch (segment.type)
 					{
 					case SpgtLinear:
 					{
 						Line ln;
-						ln.v[0] = i->getTransform() * points[k->pointsOffset];
-						ln.v[1] = i->getTransform() * points[k->pointsOffset + 1];
+						ln.v[0] = path.getTransform() * points[segment.pointsOffset];
+						ln.v[1] = path.getTransform() * points[segment.pointsOffset + 1];
 						ln.lineStyle = sp.lineStyle;
 						outLines.push_back(ln);
 					}
@@ -372,9 +372,9 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 					case SpgtQuadratic:
 					{
 						Bezier2nd b(
-							i->getTransform() * points[k->pointsOffset],
-							i->getTransform() * points[k->pointsOffset + 1],
-							i->getTransform() * points[k->pointsOffset + 2]
+							path.getTransform() * points[segment.pointsOffset],
+							path.getTransform() * points[segment.pointsOffset + 1],
+							path.getTransform() * points[segment.pointsOffset + 2]
 						);
 
 						for (int32_t i = 0; i < 4; ++i)
@@ -397,10 +397,10 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 	}
 
 	// Convert paths into triangles.
-	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	for (const auto& path : m_paths)
 	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		const AlignedVector< Vector2 >& points = path.getPoints();
+		const AlignedVector< SubPath >& subPaths = path.getSubPaths();
 
 		std::set< uint16_t > fillStyles;
 		for (uint32_t j = 0; j < subPaths.size(); ++j)
@@ -420,14 +420,14 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
 					continue;
 
-				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				for (const auto& segment : sp.segments)
 				{
-					switch (k->type)
+					switch (segment.type)
 					{
 					case SpgtLinear:
 						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 1];
+							s.v[0] = points[segment.pointsOffset];
+							s.v[1] = points[segment.pointsOffset + 1];
 							s.curve = false;
 							s.fillStyle0 = sp.fillStyle0;
 							s.fillStyle1 = sp.fillStyle1;
@@ -438,9 +438,9 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 
 					case SpgtQuadratic:
 						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 2];
-							s.c = points[k->pointsOffset + 1];
+							s.v[0] = points[segment.pointsOffset];
+							s.v[1] = points[segment.pointsOffset + 2];
+							s.c = points[segment.pointsOffset + 1];
 							s.curve = true;
 							s.fillStyle0 = sp.fillStyle0;
 							s.fillStyle1 = sp.fillStyle1;
@@ -467,9 +467,9 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)
 				{
-					outTriangles[ti].v[0] = i->getTransform() * outTriangles[ti].v[0];
-					outTriangles[ti].v[1] = i->getTransform() * outTriangles[ti].v[1];
-					outTriangles[ti].v[2] = i->getTransform() * outTriangles[ti].v[2];
+					outTriangles[ti].v[0] = path.getTransform() * outTriangles[ti].v[0];
+					outTriangles[ti].v[1] = path.getTransform() * outTriangles[ti].v[1];
+					outTriangles[ti].v[2] = path.getTransform() * outTriangles[ti].v[2];
 				}
 			}
 		}

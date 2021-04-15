@@ -5,6 +5,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/InputNodeShape.h"
@@ -17,11 +18,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DefaultNodeFacade", DefaultNodeFacade, INodeFacade)
 
-DefaultNodeFacade::DefaultNodeFacade(ui::GraphControl* graphControl)
+DefaultNodeFacade::DefaultNodeFacade()
 {
-	m_nodeShapes[0] = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
-	m_nodeShapes[1] = new ui::InputNodeShape(graphControl);
-	m_nodeShapes[2] = new ui::OutputNodeShape(graphControl);
+	m_nodeShapes[0] = new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault);
+	m_nodeShapes[1] = new ui::InputNodeShape();
+	m_nodeShapes[2] = new ui::OutputNodeShape();
 }
 
 Ref< Node > DefaultNodeFacade::createShaderNode(
@@ -52,7 +53,7 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 	else
 		shape = m_nodeShapes[0];
 
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(

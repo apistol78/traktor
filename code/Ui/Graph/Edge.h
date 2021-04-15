@@ -1,8 +1,7 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
 
@@ -20,8 +19,8 @@ namespace traktor
 	{
 
 class GraphCanvas;
+class GraphControl;
 class IBitmap;
-class PaintSettings;
 class Pin;
 class Size;
 
@@ -35,7 +34,9 @@ class T_DLLCLASS Edge
 	T_RTTI_CLASS;
 
 public:
-	Edge(Pin* source, Pin* destination);
+	Edge() = default;
+
+	explicit Edge(Pin* source, Pin* destination);
 
 	void setSourcePin(Pin* source);
 
@@ -57,18 +58,18 @@ public:
 
 	bool isSelected() const;
 
-	bool hit(const PaintSettings* paintSettings, const Point& p) const;
+	bool hit(const Point& p) const;
 
-	void paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const;
+	void paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const;
 
 private:
 	Ref< Pin > m_source;
 	Ref< Pin > m_destination;
 	std::wstring m_text;
-	int32_t m_thickness;
-	bool m_selected;
-	std::map< std::wstring, Ref< Object > > m_data;
-	mutable std::vector< Point > m_spline;
+	int32_t m_thickness = 2;
+	bool m_selected = false;
+	SmallMap< std::wstring, Ref< Object > > m_data;
+	mutable AlignedVector< Point > m_spline;
 };
 
 	}

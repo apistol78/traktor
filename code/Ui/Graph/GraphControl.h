@@ -20,6 +20,7 @@ namespace traktor
 
 class Edge;
 class IBitmap;
+class INodeShape;
 class Node;
 class PaintSettings;
 class Pin;
@@ -57,7 +58,7 @@ public:
 
 	virtual void destroy() override;
 
-	void addNode(Node* node);
+	Node* createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
 
 	void removeNode(Node* node);
 
@@ -140,7 +141,6 @@ public:
 
 private:
 	Ref< const PaintSettings > m_paintSettings;
-	Ref< IBitmap > m_imageBackground;
 	Ref< IBitmap > m_imageLabel;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;

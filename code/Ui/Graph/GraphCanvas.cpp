@@ -87,13 +87,13 @@ void GraphCanvas::drawLine(const Point& start, const Point& end)
 	);
 }
 
-void GraphCanvas::drawLines(const std::vector< Point >& pnts, int32_t thickness)
+void GraphCanvas::drawLines(const AlignedVector< Point >& pnts, int32_t thickness)
 {
 	std::vector< Point > tpnts;
 	tpnts.reserve(pnts.size());
 
-	for (std::vector< Point >::const_iterator i = pnts.begin(); i != pnts.end(); ++i)
-		tpnts.push_back(*i * m_scale);
+	for (const auto& pnt : pnts)
+		tpnts.push_back(pnt * m_scale);
 
 	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
 	m_canvas->drawLines(tpnts);

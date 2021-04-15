@@ -5,6 +5,7 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Graph/CommentNodeShape.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/GraphControl.h"
@@ -24,24 +25,25 @@ const int32_t c_margin = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CommentNodeShape", CommentNodeShape, INodeShape)
 
-CommentNodeShape::CommentNodeShape(GraphControl* graphControl)
-:	m_graphControl(graphControl)
+CommentNodeShape::CommentNodeShape()
 {
 	m_imageNode = new ui::StyleBitmap(L"UI.Graph.Comment");
 }
 
-Point CommentNodeShape::getPinPosition(const Node* node, const Pin* pin) const
+Point CommentNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	return Point(0, 0);
 }
 
-Pin* CommentNodeShape::getPinAt(const Node* node, const Point& pt) const
+Pin* CommentNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
-	return 0;
+	return nullptr;
 }
 
-void CommentNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
+void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
+	const StyleSheet* ss = graph->getStyleSheet();
+
 	Rect rc = node->calculateRect().offset(offset);
 
 	// Draw node shape.
@@ -82,28 +84,28 @@ void CommentNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 		Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 		Size textSize(0, 0);
-		for (std::vector< std::wstring >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+		for (const auto& line : lines)
 		{
-			Size lineExtent = canvas->getTextExtent(*i);
+			Size lineExtent = canvas->getTextExtent(line);
 			textSize.cx = std::max(textSize.cx, lineExtent.cx);
 			textSize.cy += lineHeight;
 		}
 
-		canvas->setForeground(canvas->getPaintSettings()->getNodeText());
+		canvas->setForeground(ss->getColor(this, L"color"));
 
 		int32_t x = rc.left + (rc.getWidth() - textSize.cx) / 2;
 		int32_t y = rc.top + (rc.getHeight() - textSize.cy) / 2;
-		for (std::vector< std::wstring >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+		for (const auto& line : lines)
 		{
-			if (!i->empty())
+			if (!line.empty())
 			{
-				Size lineExtent = canvas->getTextExtent(*i);
+				Size lineExtent = canvas->getTextExtent(line);
 				canvas->drawText(
 					Rect(
 						x, y,
 						x + textSize.cx, y + lineExtent.cy
 					),
-					*i,
+					line,
 					AnLeft,
 					AnTop
 				);
@@ -113,21 +115,21 @@ void CommentNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* c
 	}
 }
 
-Size CommentNodeShape::calculateSize(const Node* node) const
+Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
 		return Size(dpi96(200), dpi96(200));
 
-	int32_t lineHeight = m_graphControl->getFontMetric().getExtent(L"W").cy;
+	int32_t lineHeight = graph->getFontMetric().getExtent(L"W").cy;
 
 	std::vector< std::wstring > lines;
 	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 	Size textSize(0, 0);
-	for (std::vector< std::wstring >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+	for (const auto& line : lines)
 	{
-		Size lineExtent = m_graphControl->getFontMetric().getExtent(*i);
+		Size lineExtent = graph->getFontMetric().getExtent(line);
 		textSize.cx = std::max(textSize.cx, lineExtent.cx);
 		textSize.cy += lineHeight;
 	}

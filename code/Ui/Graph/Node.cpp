@@ -11,22 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Node", Node, Object)
 
-Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
-:	m_title(title)
-,	m_info(info)
-,	m_state(0)
-,	m_position(position)
-,	m_size(0, 0)
-,	m_selected(false)
-,	m_shape(shape)
-{
-}
-
 void Node::setTitle(const std::wstring& title)
 {
 	T_ASSERT(m_shape);
 	m_title = title;
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 }
 
 const std::wstring& Node::getTitle() const
@@ -38,7 +27,7 @@ void Node::setInfo(const std::wstring& info)
 {
 	T_ASSERT(m_shape);
 	m_info = info;
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 }
 
 const std::wstring& Node::getInfo() const
@@ -50,7 +39,7 @@ void Node::setComment(const std::wstring& comment)
 {
 	T_ASSERT(m_shape);
 	m_comment = comment;
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 }
 
 const std::wstring& Node::getComment() const
@@ -64,7 +53,7 @@ void Node::setImage(IBitmap* image)
 	if (m_image != image)
 	{
 		m_image = image;
-		m_size = m_shape->calculateSize(this);
+		m_size = m_shape->calculateSize(m_owner, this);
 	}
 }
 
@@ -79,7 +68,7 @@ void Node::setState(int32_t state)
 	if (m_state != state)
 	{
 		m_state = state;
-		m_size = m_shape->calculateSize(this);
+		m_size = m_shape->calculateSize(m_owner, this);
 	}
 }
 
@@ -94,7 +83,7 @@ void Node::setPosition(const Point& position)
 	if (m_position != position)
 	{
 		m_position = position;
-		m_size = m_shape->calculateSize(this);
+		m_size = m_shape->calculateSize(m_owner, this);
 	}
 }
 
@@ -109,7 +98,7 @@ void Node::setSelected(bool selected)
 	if (m_selected != selected)
 	{
 		m_selected = selected;
-		m_size = m_shape->calculateSize(this);
+		m_size = m_shape->calculateSize(m_owner, this);
 	}
 }
 
@@ -121,7 +110,7 @@ bool Node::isSelected() const
 void Node::setShape(const INodeShape* shape)
 {
 	m_shape = shape;
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 }
 
 const INodeShape* Node::getShape() const
@@ -141,7 +130,7 @@ Pin* Node::createInputPin(const std::wstring& name, const std::wstring& label, b
 	Ref< Pin > pin = new Pin(this, name, label, Pin::DrInput, mandatory);
 	m_inputPins.push_back(pin);
 
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 
 	return pin;
 }
@@ -178,7 +167,7 @@ Pin* Node::createOutputPin(const std::wstring& name, const std::wstring& label)
 	Ref< Pin > pin = new Pin(this, name, label, Pin::DrOutput, false);
 	m_outputPins.push_back(pin);
 
-	m_size = m_shape->calculateSize(this);
+	m_size = m_shape->calculateSize(m_owner, this);
 
 	return pin;
 }
@@ -211,19 +200,31 @@ bool Node::hit(const Point& p) const
 Point Node::getPinPosition(const Pin* pin) const
 {
 	T_ASSERT(m_shape);
-	return m_shape->getPinPosition(this, pin);
+	return m_shape->getPinPosition(m_owner, this, pin);
 }
 
 Pin* Node::getPinAt(const Point& p) const
 {
 	T_ASSERT(m_shape);
-	return m_shape->getPinAt(this, p);
+	return m_shape->getPinAt(m_owner, this, p);
 }
 
 void Node::paint(GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	T_ASSERT(m_shape);
-	m_shape->paint(this, hotPin, canvas, offset);
+	m_shape->paint(m_owner, this, canvas, hotPin, offset);
+}
+
+Node::Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
+:	m_owner(owner)
+,	m_title(title)
+,	m_info(info)
+,	m_state(0)
+,	m_position(position)
+,	m_size(0, 0)
+,	m_selected(false)
+,	m_shape(shape)
+{
 }
 
 Rect Node::calculateRect() const

@@ -1,6 +1,7 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/CommentNodeShape.h"
 
@@ -11,9 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CommentNodeFacade", CommentNodeFacade, INodeFacade)
 
-CommentNodeFacade::CommentNodeFacade(ui::GraphControl* graphControl)
+CommentNodeFacade::CommentNodeFacade()
 {
-	m_nodeShape = new ui::CommentNodeShape(graphControl);
+	m_nodeShape = new ui::CommentNodeShape();
 }
 
 Ref< Node > CommentNodeFacade::createShaderNode(
@@ -31,7 +32,7 @@ Ref< ui::Node > CommentNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		L"",
 		ui::Point(
