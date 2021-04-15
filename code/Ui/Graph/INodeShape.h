@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class GraphCanvas;
+class GraphControl;
 class Node;
 class Pin;
 
@@ -29,13 +30,13 @@ class T_DLLCLASS INodeShape : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Point getPinPosition(const Node* node, const Pin* pin) const = 0;
+	virtual Point getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const = 0;
 
-	virtual Pin* getPinAt(const Node* node, const Point& pt) const = 0;
+	virtual Pin* getPinAt(GraphControl* graph, const Node* node, const Point& pt) const = 0;
 
-	virtual void paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const = 0;
+	virtual void paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const = 0;
 
-	virtual Size calculateSize(const Node* node) const = 0;
+	virtual Size calculateSize(GraphControl* graph, const Node* node) const = 0;
 };
 
 	}

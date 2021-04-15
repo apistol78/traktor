@@ -170,6 +170,23 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.Edge</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>80, 80, 80, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.Edit</typeName>
 			<colors>
 				<item>
@@ -195,6 +212,31 @@
 				<item>
 					<first>border-color-disabled</first>
 					<second>180, 180, 180, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GraphControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>180, 180, 180, 255</second>
+				</item>
+				<item>
+					<first>color-arrow-hints</first>
+					<second>142, 140, 140, 255</second>
+				</item>
+				<item>
+					<first>color-edge-hint</first>
+					<second>96, 96, 96, 255</second>
+				</item>
+				<item>
+					<first>color-grid</first>
+					<second>173, 173, 173, 255</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>255, 255, 255, 110</second>
 				</item>
 			</colors>
 		</item>
@@ -247,6 +289,19 @@
 				<item>
 					<first>background-color</first>
 					<second>246, 246, 246, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.INodeShape</typeName>
+			<colors>
+				<item>
+					<first>color-comment</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-info</first>
+					<second>66, 112, 161, 255</second>
 				</item>
 			</colors>
 		</item>

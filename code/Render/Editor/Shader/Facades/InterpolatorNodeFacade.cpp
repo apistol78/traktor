@@ -3,6 +3,7 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/IpolNodeShape.h"
 
@@ -33,7 +34,7 @@ Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		L"",
 		ui::Point(

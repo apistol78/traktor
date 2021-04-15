@@ -17,6 +17,10 @@
 #include "Ui/Static.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
+#include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/Edge.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
@@ -99,6 +103,32 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		edit->setStyleSheet(styleSheet);
 		edit->create(parent, L"Preview");
 		return edit;
+	}
+	else if (typeName == L"traktor.ui.GraphControl" || typeName == L"traktor.ui.Edge" || typeName == L"traktor.ui.Node" || typeName == L"traktor.ui.INodeShape")
+	{
+		Ref< GraphControl > graphControl = new GraphControl();
+		graphControl->setStyleSheet(styleSheet);
+		graphControl->create(parent);
+		graphControl->setText(L"GRAPH");
+
+		Ref< Edge > edge = new Edge();
+		edge->setText(L"EDGE");
+
+		{
+			Node* node = graphControl->createNode(L"First", L"Info", Point(0, 0), new DefaultNodeShape(DefaultNodeShape::StDefault));
+			node->createInputPin(L"Input", true);
+			edge->setSourcePin(node->createOutputPin(L"Output"));
+		}
+
+		{
+			Node* node = graphControl->createNode(L"Second", L"Info", Point(100, 0), new DefaultNodeShape(DefaultNodeShape::StExternal));
+			edge->setDestinationPin(node->createInputPin(L"Input", true));
+			node->createOutputPin(L"Output");
+		}
+
+		graphControl->addEdge(edge);
+
+		return graphControl;
 	}
 	else if (typeName == L"traktor.ui.GridView" || typeName == L"traktor.ui.GridHeader" || typeName == L"traktor.ui.GridRow" || typeName == L"traktor.ui.GridItem")
 	{

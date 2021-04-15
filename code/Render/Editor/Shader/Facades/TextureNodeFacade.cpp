@@ -13,6 +13,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 
 namespace traktor
@@ -22,9 +23,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, INodeFacade)
 
-TextureNodeFacade::TextureNodeFacade(ui::GraphControl* graphControl)
+TextureNodeFacade::TextureNodeFacade()
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
+	m_nodeShape = new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault);
 }
 
 Ref< Node > TextureNodeFacade::createShaderNode(
@@ -44,7 +45,7 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 {
 	Texture* texture = checked_type_cast< Texture* >(shaderNode);
 
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		i18n::Text(L"SHADERGRAPH_NODE_TEXTURE"),
 		shaderNode->getInformation(),
 		ui::Point(

@@ -353,7 +353,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_imageGraph->addNode(input);
 
 		// Create node in graph control.
-		m_editorGraph->addNode(createEditorNode(input));
+		createEditorNode(input);
 	}
 	else if (command == L"ImageGraph.Editor.AddOutput")
 	{
@@ -363,7 +363,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_imageGraph->addNode(output);
 
 		// Create node in graph control.
-		m_editorGraph->addNode(createEditorNode(output));
+		createEditorNode(output);
 	}
 	else if (command == L"ImageGraph.Editor.AddPass")
 	{
@@ -373,7 +373,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_imageGraph->addNode(pass);
 
 		// Create node in graph control.
-		m_editorGraph->addNode(createEditorNode(pass));
+		createEditorNode(pass);
 	}
 	else if (command == L"ImageGraph.Editor.AddTargetSet")
 	{
@@ -383,7 +383,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_imageGraph->addNode(targetSet);
 
 		// Create node in graph control.
-		m_editorGraph->addNode(createEditorNode(targetSet));
+		createEditorNode(targetSet);
 	}
 	else if (command == L"ImageGraph.Editor.AddTexture")
 	{
@@ -393,7 +393,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		m_imageGraph->addNode(texture);
 
 		// Create node in graph control.
-		m_editorGraph->addNode(createEditorNode(texture));
+		createEditorNode(texture);
 	}
 	else
 		return false;
@@ -415,48 +415,48 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 
 	if (auto input = dynamic_type_cast< ImgInput* >(node))
 	{
-		editorNode = new ui::Node(
+		editorNode = m_editorGraph->createNode(
 			L"Input",
 			input->getTextureId(),
 			position,
-			new ui::InputNodeShape(m_editorGraph)
+			new ui::InputNodeShape()
 		);
 	}
 	else if (auto output = dynamic_type_cast< ImgOutput* >(node))
 	{
-		editorNode = new ui::Node(
+		editorNode = m_editorGraph->createNode(
 			L"Output",
 			L"",
 			position,
-			new ui::OutputNodeShape(m_editorGraph)
+			new ui::OutputNodeShape()
 		);
 	}
 	else if (auto pass = dynamic_type_cast< ImgPass* >(node))
 	{
-		editorNode = new ui::Node(
+		editorNode = m_editorGraph->createNode(
 			L"Pass",
 			pass->getName(),
 			position,
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StDefault)
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
 	}
 	else if (auto targetSet = dynamic_type_cast< ImgTargetSet* >(node))
 	{
-		editorNode = new ui::Node(
+		editorNode = m_editorGraph->createNode(
 			L"TargetSet",
 			targetSet->getTargetSetId(),
 			position,
-			new ui::DefaultNodeShape(m_editorGraph, ui::DefaultNodeShape::StExternal)
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal)
 		);
 	}
 	else if (auto texture = dynamic_type_cast< ImgTexture* >(node))
 	{
 		Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(texture->getTexture());
-		editorNode = new ui::Node(
+		editorNode = m_editorGraph->createNode(
 			L"Texture",
 			textureInstance ? textureInstance->getName() : Guid(texture->getTexture()).format(),
 			position,
-			new ui::InputNodeShape(m_editorGraph)
+			new ui::InputNodeShape()
 		);
 	}
 	else
@@ -494,7 +494,6 @@ void ImageGraphEditorPage::createEditorGraph()
 	for (auto node : m_imageGraph->getNodes())
 	{
 		Ref< ui::Node > editorNode = createEditorNode(node);
-		m_editorGraph->addNode(editorNode);
 		nodeMap[node] = editorNode;
 	}
 

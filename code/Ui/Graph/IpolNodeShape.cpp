@@ -3,10 +3,10 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/IpolNodeShape.h"
 #include "Ui/Graph/Node.h"
-#include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Pin.h"
 
 namespace traktor
@@ -33,7 +33,7 @@ IpolNodeShape::IpolNodeShape()
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
+Point IpolNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
@@ -44,7 +44,7 @@ Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	return Point(rc.left + x, rc.top + y);
 }
 
-Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt) const
+Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
@@ -60,12 +60,11 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt) const
 			return node->getOutputPins()[0];
 	}
 
-	return 0;
+	return nullptr;
 }
 
-void IpolNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
+void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
-	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
 
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
@@ -102,7 +101,7 @@ void IpolNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canv
 	);
 }
 
-Size IpolNodeShape::calculateSize(const Node* node) const
+Size IpolNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	return m_imageNode[imageIndex]->getSize();

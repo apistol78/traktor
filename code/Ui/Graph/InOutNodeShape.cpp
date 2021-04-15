@@ -3,6 +3,7 @@
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Graph/InOutNodeShape.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/GraphControl.h"
@@ -33,8 +34,7 @@ int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
 
-InOutNodeShape::InOutNodeShape(GraphControl* graphControl, Style style)
-:	m_graphControl(graphControl)
+InOutNodeShape::InOutNodeShape(Style style)
 {
 	if (style == StDefault)
 	{
@@ -62,7 +62,7 @@ InOutNodeShape::InOutNodeShape(GraphControl* graphControl, Style style)
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin) const
+Point InOutNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	Point pt;
@@ -75,7 +75,7 @@ Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	return pt;
 }
 
-Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
+Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
 	Rect rc = node->calculateRect();
 
@@ -92,9 +92,11 @@ Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
 	return nullptr;
 }
 
-void InOutNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
+void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
+	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings* settings = canvas->getPaintSettings();
+
 	Rect rc = node->calculateRect().offset(offset);
 
 	// Draw node shape.
@@ -156,7 +158,7 @@ void InOutNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* can
 	std::wstring info = node->getInfo();
 	if (!info.empty())
 	{
-		canvas->setForeground(settings->getNodeTextInfo());
+		canvas->setForeground(ss->getColor(this, L"color-info")); //settings->getNodeTextInfo());
 		canvas->drawText(
 			rc,
 			info,
@@ -168,14 +170,14 @@ void InOutNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* can
 	const std::wstring& comment = node->getComment();
 	if (!comment.empty())
 	{
-		canvas->setForeground(settings->getNodeShadow());
+		canvas->setForeground(ss->getColor(this, L"color-comment")); //settings->getNodeShadow());
 		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
-Size InOutNodeShape::calculateSize(const Node* node) const
+Size InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	Font currentFont = m_graphControl->getFont();
+	Font currentFont = graph->getFont();
 
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	Size sz = m_imageNode[imageIndex]->getSize();
@@ -184,12 +186,12 @@ Size InOutNodeShape::calculateSize(const Node* node) const
 
 	if (!node->getInfo().empty())
 	{
-		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		int32_t extent = getQuantizedTextWidth(m_graphControl, node->getInfo());
+		graph->setFont(graph->getPaintSettings()->getFont());
+		int32_t extent = getQuantizedTextWidth(graph, node->getInfo());
 		width += std::max(extent, ui::dpi96(c_minExtent));
 	}
 
-	m_graphControl->setFont(currentFont);
+	graph->setFont(currentFont);
 
 	return Size(width, sz.cy);
 }

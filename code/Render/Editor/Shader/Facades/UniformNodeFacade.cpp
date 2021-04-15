@@ -3,6 +3,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/InOutNodeShape.h"
 
@@ -13,9 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformNodeFacade", UniformNodeFacade, INodeFacade)
 
-UniformNodeFacade::UniformNodeFacade(ui::GraphControl* graphControl)
+UniformNodeFacade::UniformNodeFacade()
 {
-	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StUniform);
+	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StUniform);
 }
 
 Ref< Node > UniformNodeFacade::createShaderNode(
@@ -33,7 +34,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(

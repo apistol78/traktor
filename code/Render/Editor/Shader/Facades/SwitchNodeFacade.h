@@ -7,7 +7,6 @@ namespace traktor
 	namespace ui
 	{
 
-class GraphControl;
 class INodeShape;
 
 	}
@@ -20,7 +19,7 @@ class SwitchNodeFacade : public INodeFacade
 	T_RTTI_CLASS;
 
 public:
-	SwitchNodeFacade(ui::GraphControl* graphControl);
+	SwitchNodeFacade();
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,

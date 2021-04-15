@@ -5,8 +5,10 @@
 #include "Ui/Application.h"
 #include "Ui/Event.h"
 #include "Ui/IBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/GraphCanvas.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/PaintSettings.h"
@@ -18,11 +20,11 @@ namespace traktor
 		namespace
 		{
 
-const int c_sourcePinOffset = 10;
-const int c_destPinOffset = 16;
-const int c_sourceLabelOffset = 10;
+const int32_t c_sourcePinOffset = 10;
+const int32_t c_destPinOffset = 16;
+const int32_t c_sourceLabelOffset = 10;
 
-void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
+void calculateLinearSpline(Point s1, Point d1, AlignedVector< Point >& outSpline)
 {
 	Point s = s1, d = d1;
 
@@ -94,8 +96,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edge", Edge, Object)
 Edge::Edge(Pin* source, Pin* destination)
 :	m_source(source)
 ,	m_destination(destination)
-,	m_thickness(2)
-,	m_selected(false)
 {
 }
 
@@ -149,7 +149,7 @@ bool Edge::isSelected() const
 	return m_selected;
 }
 
-bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
+bool Edge::hit(const Point& p) const
 {
 	Vector2 P(float(p.x), float(p.y));
 
@@ -157,7 +157,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 
 	const float c_hitWidth = float(dpi96(4));
 
-	for (int i = 1; i < int(m_spline.size() - 2); ++i)
+	for (int32_t i = 1; i < (int32_t)(m_spline.size() - 2); ++i)
 	{
 		const Point& s = m_spline[i];
 		const Point& d = m_spline[i + 1];
@@ -184,22 +184,17 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 	return false;
 }
 
-void Edge::paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const
+void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const
 {
 	if (!m_source || !m_destination)
 		return;
 
+	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings* settings = canvas->getPaintSettings();
-	if (m_selected)
-	{
-		canvas->setForeground(settings->getEdgeSelected());
-		canvas->setBackground(settings->getEdgeSelected());
-	}
-	else
-	{
-		canvas->setForeground(settings->getEdge());
-		canvas->setBackground(settings->getEdge());
-	}
+
+	auto color = ss->getColor(this, m_selected ? L"color-selected" : L"color");
+	canvas->setForeground(color);
+	canvas->setBackground(color);
 
 	Point s = m_source->getPosition() + offset;
 	Point d = m_destination->getPosition() + offset;
@@ -218,7 +213,7 @@ void Edge::paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) c
 
 	if (imageLabel && !m_text.empty())
 	{
-		canvas->setForeground(settings->getNodeText());
+		canvas->setForeground(ss->getColor(this, L"color-label"));
 		canvas->setFont(settings->getFontLabel());
 
 		const auto sz = imageLabel->getSize();

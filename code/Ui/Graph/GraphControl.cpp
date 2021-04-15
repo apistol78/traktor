@@ -108,7 +108,6 @@ bool GraphControl::create(Widget* parent, int style)
 		return false;
 
 	m_paintSettings = new PaintSettings(getFont());
-	m_imageBackground = new ui::StyleBitmap(L"UI.Graph.Background");
 	m_imageLabel = new ui::StyleBitmap(L"UI.Graph.Label");
 
 	addEventHandler< MouseButtonDownEvent >(this, &GraphControl::eventMouseDown);
@@ -135,23 +134,34 @@ bool GraphControl::create(Widget* parent, int style)
 
 void GraphControl::destroy()
 {
+	for (auto node : m_nodes)
+		node->m_owner = nullptr;
+
 	m_nodes.clear();
 	m_edges.clear();
+
 	Widget::destroy();
 }
 
-void GraphControl::addNode(Node* node)
+Node* GraphControl::createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
 {
+	Ref< Node > node = new Node(this, title, info, position, shape);
 	m_nodes.insert(m_nodes.begin(), node);
+	return node;
 }
 
 void GraphControl::removeNode(Node* node)
 {
+	T_FATAL_ASSERT(node->m_owner == this);
+	node->m_owner = nullptr;
 	m_nodes.remove(node);
 }
 
 void GraphControl::removeAllNodes()
 {
+	for (auto node : m_nodes)
+		node->m_owner = nullptr;
+
 	m_nodes.resize(0);
 	m_edges.resize(0);
 }
@@ -274,7 +284,7 @@ Edge* GraphControl::getEdgeAt(const Point& p) const
 {
 	for (auto edge : m_edges)
 	{
-		if (edge->hit(m_paintSettings, p))
+		if (edge->hit(p))
 			return edge;
 	}
 	return nullptr;
@@ -338,8 +348,8 @@ void GraphControl::center(bool selectedOnly)
 		bounds.bottom = std::max(bounds.bottom, rc.bottom);
 	}
 
-	m_offset.cx = -(bounds.left + bounds.getWidth() / 2 - inner.getWidth() / 2);
-	m_offset.cy = -(bounds.top + bounds.getHeight() / 2 - inner.getHeight() / 2);
+	m_offset.cx = -(int32_t)(bounds.left + bounds.getWidth() / 2 - (inner.getWidth() / m_scale) / 2);
+	m_offset.cy = -(int32_t)(bounds.top + bounds.getHeight() / 2 - (inner.getHeight() / m_scale) / 2);
 }
 
 void GraphControl::alignNodes(Alignment align)
@@ -906,34 +916,21 @@ void GraphControl::eventPaint(PaintEvent* event)
 	// Select font from settings.
 	canvas.setFont(m_paintSettings->getFont());
 
-	// Draw background.
-	if (m_imageBackground)
-	{
-		Size backgroundSize = m_imageBackground->getSize();
+	// Draw grid.
+	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.fillRect(rc);
 
-		int32_t ox = int32_t(m_offset.cx * m_scale) % backgroundSize.cx;
-		int32_t oy = int32_t(m_offset.cy * m_scale) % backgroundSize.cy;
+	int32_t gridSpacing = m_scale * dpi96(32);
 
-		canvas.setBackground(Color4ub(255, 255, 255, 255));
-		for (int32_t y = oy - backgroundSize.cy; y < rc.getHeight(); y += backgroundSize.cy)
-		{
-			for (int32_t x = ox - backgroundSize.cx; x < rc.getWidth(); x += backgroundSize.cx)
-			{
-				canvas.drawBitmap(
-					Point(x, y),
-					Point(0, 0),
-					backgroundSize,
-					m_imageBackground,
-					ui::BmNone
-				);
-			}
-		}
-	}
-	else
-	{
-		canvas.setBackground(ss->getColor(this, L"background-color"));
-		canvas.fillRect(rc);
-	}
+	int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
+	int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
+
+	canvas.setForeground(ss->getColor(this, L"color-grid"));
+	for (int32_t x = ox - gridSpacing; x < rc.getWidth(); x += gridSpacing)
+		canvas.drawLine(x, rc.top, x, rc.bottom);
+
+	for (int32_t y = oy - gridSpacing; y < rc.getHeight(); y += gridSpacing)
+		canvas.drawLine(rc.left, y, rc.right, y);
 
 	// Draw text.
 	std::wstring text = getText();
@@ -942,19 +939,19 @@ void GraphControl::eventPaint(PaintEvent* event)
 		auto fn = m_paintSettings->getFont();
 		fn.setSize(40);
 		canvas.setFont(fn);
-		canvas.setForeground(Color4ub(255, 255, 255, 40));
+		canvas.setForeground(ss->getColor(this, L"color-label"));
 		canvas.drawText(rc.inflate(-dpi96(8), -dpi96(8)), text, ui::AnRight, ui::AnBottom);
 		canvas.setFont(m_paintSettings->getFont());
 	}
 
 	// Draw arrow hints.
-	canvas.setBackground(m_paintSettings->getNodeShadow());
+	canvas.setBackground(ss->getColor(this, L"color-arrow-hints"));
 	Point center = rc.getCenter();
 	uint32_t arrowsDrawn = 0;
 	for (auto node : m_nodes)
 	{
 		Rect rcNode = node->calculateRect().offset(m_offset);
-		if ((arrowsDrawn & 1) == 0 && rcNode.left < rc.left)
+		if ((arrowsDrawn & 1) == 0 && (int32_t)(rcNode.left * m_scale) < rc.left)
 		{
 			Point p(rc.left + 16, center.y);
 			Point pl[] =
@@ -966,7 +963,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 			canvas.fillPolygon(pl, 3);
 			arrowsDrawn |= 1;
 		}
-		if ((arrowsDrawn & 2) == 0 && rcNode.top < rc.top)
+		if ((arrowsDrawn & 2) == 0 && (int32_t)(rcNode.top * m_scale) < rc.top)
 		{
 			Point p(center.x, rc.top + 16);
 			Point pl[] =
@@ -978,7 +975,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 			canvas.fillPolygon(pl, 3);
 			arrowsDrawn |= 2;
 		}
-		if ((arrowsDrawn & 4) == 0 && rcNode.right > rc.right)
+		if ((arrowsDrawn & 4) == 0 && (int32_t)(rcNode.right * m_scale) > rc.right)
 		{
 			Point p(rc.right - 16, center.y);
 			Point pl[] =
@@ -990,7 +987,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 			canvas.fillPolygon(pl, 3);
 			arrowsDrawn |= 4;
 		}
-		if ((arrowsDrawn & 8) == 0 && rcNode.bottom > rc.bottom)
+		if ((arrowsDrawn & 8) == 0 && (int32_t)(rcNode.bottom * m_scale) > rc.bottom)
 		{
 			Point p(center.x, rc.bottom - 16);
 			Point pl[] =
@@ -1016,7 +1013,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	for (auto edge : m_edges)
 	{
 		if (!edge->isSelected())
-			edge->paint(&graphCanvas, m_offset, m_imageLabel);
+			edge->paint(this, &graphCanvas, m_offset, m_imageLabel);
 	}
 
 	// Node shapes.
@@ -1032,14 +1029,13 @@ void GraphControl::eventPaint(PaintEvent* event)
 	for (auto edge : m_edges)
 	{
 		if (edge->isSelected())
-			edge->paint(&graphCanvas, m_offset, m_imageLabel);
+			edge->paint(this, &graphCanvas, m_offset, m_imageLabel);
 	}
 
 	// Edge cursor.
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)
 	{
-		graphCanvas.setBackground(m_paintSettings->getGridBackground());
-		graphCanvas.setForeground(m_paintSettings->getEdgeCursor());
+		graphCanvas.setForeground(ss->getColor(this, L"color-edge-hint"));
 		graphCanvas.drawLine(m_edgeOrigin, m_cursor);
 	}
 

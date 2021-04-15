@@ -15,7 +15,6 @@ namespace traktor
 	namespace ui
 	{
 
-class GraphControl;
 class IBitmap;
 
 /*! Input/output node shape.
@@ -33,18 +32,17 @@ public:
 		StVariable = 2
 	};
 
-	InOutNodeShape(GraphControl* graphControl, Style style);
+	explicit InOutNodeShape(Style style);
 
-	virtual Point getPinPosition(const Node* node, const Pin* pin) const override final;
+	virtual Point getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const override final;
 
-	virtual Pin* getPinAt(const Node* node, const Point& pt) const override final;
+	virtual Pin* getPinAt(GraphControl* graph, const Node* node, const Point& pt) const override final;
 
-	virtual void paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const override final;
+	virtual void paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const override final;
 
-	virtual Size calculateSize(const Node* node) const override final;
+	virtual Size calculateSize(GraphControl* graph, const Node* node) const override final;
 
 private:
-	GraphControl* m_graphControl;
 	Ref< IBitmap > m_imageNode[4];
 	Ref< IBitmap > m_imagePin;
 	Ref< IBitmap > m_imagePinHot;

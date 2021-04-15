@@ -310,18 +310,18 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	type_of< Node >().findAllOf(nodeTypes);
 
 	for (TypeInfoSet::const_iterator i = nodeTypes.begin(); i != nodeTypes.end(); ++i)
-		m_nodeFacades[*i] = new DefaultNodeFacade(m_editorGraph);
+		m_nodeFacades[*i] = new DefaultNodeFacade();
 
-	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade();
+	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade();
+	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade();
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
-	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(this, m_editorGraph);
-	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(this);
+	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade();
+	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade();
+	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade();
+	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade();
+	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade();
 
 	createEditorNodes(
 		m_shaderGraph->getNodes(),
@@ -379,8 +379,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
-		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
-		m_editorGraph->addNode(editorNode);
+		createEditorNode(shaderNode);
 
 		updateGraph();
 	}
@@ -404,8 +403,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
-		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
-		m_editorGraph->addNode(editorNode);
+		createEditorNode(shaderNode);
 
 		updateGraph();
 	}
@@ -874,7 +872,6 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 	for (auto shaderNode : shaderNodes)
 	{
 		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
-		m_editorGraph->addNode(editorNode);
 		nodeMap[shaderNode] = editorNode;
 	}
 
@@ -966,8 +963,7 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
-	Ref< ui::Node > editorNode = createEditorNode(shaderNode);
-	m_editorGraph->addNode(editorNode);
+	createEditorNode(shaderNode);
 	updateGraph();
 }
 

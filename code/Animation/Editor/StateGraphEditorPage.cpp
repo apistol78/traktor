@@ -148,9 +148,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 		m_stateGraph->addState(state);
 
-		Ref< ui::Node > node = createEditorNode(state);
-		m_editorGraph->addNode(node);
-
+		createEditorNode(state);
 		bindStateNodes();
 		updateGraph();
 	}
@@ -393,7 +391,6 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			// Update color to show which node is root.
 			for (auto node : m_editorGraph->getNodes())
 				node->setShape(new ui::DefaultNodeShape(
-					m_editorGraph,
 					node == selectedNodes.front() ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
 				));
 		}
@@ -469,7 +466,6 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 	for (auto state : states)
 	{
 		Ref< ui::Node > node = createEditorNode(state);
-		m_editorGraph->addNode(node);
 		nodeMap[state] = node;
 	}
 
@@ -500,11 +496,10 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
 	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(
-		m_editorGraph,
 		m_stateGraph->getRootState() == state ? ui::DefaultNodeShape::StDefault : ui::DefaultNodeShape::StExternal
 	);
 
-	Ref< ui::Node > node = new ui::Node(
+	Ref< ui::Node > node = m_editorGraph->createNode(
 		state->getName(),
 		L"",
 		ui::Point(
@@ -526,9 +521,7 @@ void StateGraphEditorPage::createState(const ui::Point& at)
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 
-	Ref< ui::Node > node = createEditorNode(state);
-	m_editorGraph->addNode(node);
-
+	createEditorNode(state);
 	bindStateNodes();
 	updateGraph();
 }

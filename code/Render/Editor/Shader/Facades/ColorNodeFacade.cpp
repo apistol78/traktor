@@ -14,9 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, INodeFacade)
 
-ColorNodeFacade::ColorNodeFacade(ui::GraphControl* graphControl)
+ColorNodeFacade::ColorNodeFacade()
 {
-	m_nodeShape = new ui::InputNodeShape(graphControl);
+	m_nodeShape = new ui::InputNodeShape();
 }
 
 Ref< Node > ColorNodeFacade::createShaderNode(
@@ -34,7 +34,7 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::Point(

@@ -459,7 +459,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 	T_ASSERT(itemEntity != nullptr);
 
 	ColorDialog colorDialog;
-	colorDialog.create(this, L"Set Element Color");
+	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha);
 	if (colorDialog.showModal() == DialogResult::DrOk)
 	{
 		int32_t imageIndex = itemElement->getImage(0);

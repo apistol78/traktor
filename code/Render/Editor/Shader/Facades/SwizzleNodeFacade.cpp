@@ -3,6 +3,7 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/InOutNodeShape.h"
 
@@ -13,9 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, INodeFacade)
 
-SwizzleNodeFacade::SwizzleNodeFacade(ui::GraphControl* graphControl)
+SwizzleNodeFacade::SwizzleNodeFacade()
 {
-	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StDefault);
+	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StDefault);
 }
 
 Ref< Node > SwizzleNodeFacade::createShaderNode(
@@ -33,7 +34,7 @@ Ref< ui::Node > SwizzleNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::Node > editorNode = new ui::Node(
+	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(

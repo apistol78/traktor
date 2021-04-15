@@ -23,6 +23,7 @@ namespace traktor
 	{
 
 class GraphCanvas;
+class GraphControl;
 class IBitmap;
 class INodeShape;
 class Pin;
@@ -38,8 +39,6 @@ class T_DLLCLASS Node
 	T_RTTI_CLASS;
 
 public:
-	Node(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
-
 	void setTitle(const std::wstring& title);
 
 	const std::wstring& getTitle() const;
@@ -103,6 +102,9 @@ public:
 	Rect calculateRect() const;
 
 private:
+	friend class GraphControl;
+
+	GraphControl* m_owner;
 	std::wstring m_title;
 	std::wstring m_info;
 	std::wstring m_comment;
@@ -114,6 +116,8 @@ private:
 	RefArray< Pin > m_inputPins;
 	RefArray< Pin > m_outputPins;
 	Ref< const INodeShape > m_shape;
+
+	explicit Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
 
 	void updateSize();
 };
