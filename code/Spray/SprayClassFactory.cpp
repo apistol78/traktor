@@ -16,6 +16,7 @@ void SprayClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEffectComponent->addProperty("loopEnable", &EffectComponent::setLoopEnable, &EffectComponent::getLoopEnable);
 	classEffectComponent->addProperty("finished", &EffectComponent::isFinished);
 	classEffectComponent->addProperty("enable", &EffectComponent::setEnable, &EffectComponent::isEnable);
+	classEffectComponent->addMethod("reset", &EffectComponent::reset);
 	registrar->registerClass(classEffectComponent);
 }
 

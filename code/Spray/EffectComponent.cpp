@@ -136,6 +136,11 @@ Aabb3 EffectComponent::getWorldBoundingBox() const
 	return m_effectInstance ? m_effectInstance->getBoundingBox() : Aabb3();
 }
 
+void EffectComponent::reset()
+{
+	m_effectInstance = m_effect->createInstance();
+}
+
 void EffectComponent::setLoopEnable(bool loopEnable)
 {
 	if (m_effectInstance)

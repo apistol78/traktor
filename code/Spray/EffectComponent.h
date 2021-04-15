@@ -72,6 +72,8 @@ public:
 
 	Aabb3 getWorldBoundingBox() const;
 
+	void reset();
+
 	void setLoopEnable(bool loopEnable);
 
 	bool getLoopEnable() const;
