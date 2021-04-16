@@ -37,16 +37,14 @@ end
 
 function Carousel:showPrevious()
 	if self._current > 0 then
-		self._current = self._current - 1
-		self:_layout()
+		self:_show(self._current - 1)
 	end
 end
 
 function Carousel:showNext()
 	local count = #self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	if self._current < count - 1 then
-		self._current = self._current + 1
-		self:_layout()
+		self:_show(self._current + 1)
 	end
 end
 
@@ -68,13 +66,25 @@ end
 
 function Carousel:_layout()
 	local p = self:getPlacement()
-	local x = -self._current * (p.width + self._pad)
+	local x = 0
 	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
 		child:place(x, 0, p.width, p.height)
 		x = x + p.width + self._pad
 	end
 end
+
+function Carousel:_show(index)
+	local p = self:getPlacement()
+	local sx = -self._current * (p.width + self._pad)	
+	local ex = -index * (p.width + self._pad)
+	Tween(sx, ex, 0.25, function(value, last)
+		local x = value
+		self._inner_mc.X = x
+	end)
+	self._current = index
+end
+
 
 	]]>
 	</text>
