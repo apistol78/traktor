@@ -32,7 +32,10 @@ bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, boo
 
 	VmaAllocationCreateInfo aci = {};
     if (cpuAccess && gpuAccess)
+	{
 	    aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+		aci.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
     else if (!cpuAccess && gpuAccess)
         aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
     else if (cpuAccess && !gpuAccess)
