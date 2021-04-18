@@ -1065,7 +1065,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	VkImageLayout destinationImageLayout = destinationImage->getVkImageLayout(destinationRegion.mip, region.dstSubresource.baseArrayLayer);
 
 	// Change image layouts for optimal transfer.
-	sourceImage->changeLayout(
+	if (!sourceImage->changeLayout(
 		frame.graphicsCommandBuffer,
 		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -1073,8 +1073,10 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		1,
 		region.srcSubresource.baseArrayLayer,
 		1
-	);
-	destinationImage->changeLayout(
+	))
+		return false;
+
+	if (!destinationImage->changeLayout(
 		frame.graphicsCommandBuffer,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -1082,7 +1084,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		1,
 		region.dstSubresource.baseArrayLayer,
 		1
-	);
+	))
+		return false;
 
 	// Perform texture image copy.
 	vkCmdCopyImage(
@@ -1096,7 +1099,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 	);
 
 	// Restore image layouts.
-	sourceImage->changeLayout(
+	if (!sourceImage->changeLayout(
 		frame.graphicsCommandBuffer,
 		sourceImageLayout,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -1104,8 +1107,10 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		1,
 		region.srcSubresource.baseArrayLayer,
 		1
-	);
-	destinationImage->changeLayout(
+	))
+		return false;
+
+	if (!destinationImage->changeLayout(
 		frame.graphicsCommandBuffer,
 		destinationImageLayout,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -1113,7 +1118,8 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		1,
 		region.dstSubresource.baseArrayLayer,
 		1
-	);
+	))
+		return false;
 
 	return true;
 }
@@ -1378,7 +1384,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 	qpci.pNext = nullptr;
 	qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
-	qpci.queryCount = imageCount * 2 * 1024;
+	qpci.queryCount = (imageCount + 1) * 2 * 1024;
 	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
 #endif
