@@ -83,11 +83,11 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const Ima
 		{
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			for (auto it : context.getFloatParameters())
+			for (const auto& it : context.getFloatParameters())
 				sharedParams->setFloatParameter(it.first, it.second);
-			for (auto it : context.getVectorParameters())
+			for (const auto& it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
-			for (auto it : context.getTextureParameters())
+			for (const auto& it : context.getTextureParameters())
 				sharedParams->setTextureParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 

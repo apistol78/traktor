@@ -57,6 +57,7 @@ bool SimpleTextureVrfy::lock(int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
+	T_CAPTURE_ASSERT (level < getMips(), L"Invalid mip level.");
 	T_CAPTURE_ASSERT (m_locked < 0, L"Already locked.");
 	return m_texture ? m_texture->lock(level, lock) : false;
 }
@@ -65,6 +66,7 @@ void SimpleTextureVrfy::unlock(int32_t level)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
+	T_CAPTURE_ASSERT (level < getMips(), L"Invalid mip level.");
 	T_CAPTURE_ASSERT (m_locked != level, L"Trying to unlock incorrect mip level.");
 	if (m_texture)
 		m_texture->unlock(level);
