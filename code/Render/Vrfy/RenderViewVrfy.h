@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/SmallSet.h"
 #include "Render/IRenderView.h"
 
 namespace traktor
@@ -104,7 +105,8 @@ private:
 	Ref< IRenderView > m_renderView;
 	bool m_insideFrame;
 	bool m_insidePass;
-	std::vector< ProfileVrfy > m_timeStamps;
+	AlignedVector< ProfileVrfy > m_timeStamps;
+	mutable SmallSet< int32_t > m_queriesPending;
 };
 
 	}

@@ -552,6 +552,7 @@ bool RenderViewVk::beginFrame()
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
 	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
 	m_nextQueryIndex = queryFrom;
+	m_lastQueryIndex = queryFrom + 1024;
 #endif
 
 	// Reset misc counters.
@@ -1127,10 +1128,14 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 int32_t RenderViewVk::beginTimeQuery()
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
+	if (m_nextQueryIndex >= m_lastQueryIndex)
+		return -1;
+
 	auto& frame = m_frames[m_currentImageIndex];
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
+
 	return query;
 #else
 	return 0;
@@ -1450,6 +1455,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
 	m_nextQueryIndex = 0;
+	m_lastQueryIndex = 0;
 	m_lost = false;
 	return true;
 }

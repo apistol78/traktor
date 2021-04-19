@@ -173,6 +173,7 @@ private:
 	bool m_haveDebugMarkers = false;
 	bool m_cursorVisible = true;
 	int32_t m_nextQueryIndex = 0;
+	int32_t m_lastQueryIndex = 0;
 	uint32_t m_counter = -1;
 	uint32_t m_passCount = 0;
 	uint32_t m_drawCalls = 0;
