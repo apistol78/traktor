@@ -95,6 +95,7 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	// Create status bar.
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(m_container, ui::WsDoubleBuffer);
+	m_statusBar->addColumn(-1);
 
 	// Bind widget scaffolding.
 	m_previewControl->setScaffolding(ws);
@@ -140,7 +141,7 @@ void WidgetPreviewEditor::eventPreviewSize(ui::SizeEvent* event)
 
 	StringOutputStream ss;
 	ss << innerSize.cx << L" * " << innerSize.cy;
-	m_statusBar->setText(ss.str());
+	m_statusBar->setText(0, ss.str());
 }
 
 	}

@@ -41,11 +41,21 @@ void StatusBar::setAlert(bool alert)
 	}
 }
 
-void StatusBar::setText(const std::wstring& text)
+void StatusBar::addColumn(int32_t width)
 {
-	if (text != getText())
+	auto& c = m_columns.push_back();
+	c.width = width;
+}
+
+void StatusBar::setText(int32_t column, const std::wstring& text)
+{
+	if (column < 0 || column >= (int32_t)m_columns.size())
+		return;
+
+	auto& c = m_columns[column];
+	if (c.text != text)
 	{
-		Widget::setText(text);
+		c.text = text;
 		update();
 	}
 }
@@ -84,9 +94,28 @@ void StatusBar::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, m_alert ? L"background-color-alert" : L"background-color"));
 	canvas.fillRect(rc);
 
-	std::wstring text = getText();
-	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.drawText(rc.inflate(dpi96(-8), 0), text, AnLeft, AnCenter);
+	if (!m_columns.empty())
+	{
+		canvas.setForeground(ss->getColor(this, L"color"));
+
+		const int32_t nc = (int32_t)m_columns.size();
+		int32_t x = 0;
+		for (int32_t i = 0; i < nc; ++i)
+		{
+			int32_t w = m_columns[i].width;
+			if (w < 0 || i >= nc - 1)
+				w = rc.getWidth() - x;
+			else if (w == 0)
+				w = canvas.getFontMetric().getExtent(m_columns[i].text).cx + ui::dpi96(8);
+
+			Rect rcText = rc;
+			rcText.left = x;
+			rcText.right = x + w;
+			canvas.drawText(rcText.inflate(dpi96(-8), 0), m_columns[i].text, AnLeft, AnCenter);
+
+			x += w;
+		}
+	}
 
 	// Draw scale grip if parent is a form and isn't maximized.
 	Ref< Form > parentForm = dynamic_type_cast< Form* >(getParent());

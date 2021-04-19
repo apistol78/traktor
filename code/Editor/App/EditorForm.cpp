@@ -589,10 +589,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", ui::dpi96(350));
-	int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", ui::dpi96(350));
+	int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", 350);
+	int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
 
-	pane->split(false, ww, m_paneWest, paneCenter);
+	pane->split(false, ui::dpi96(ww), m_paneWest, paneCenter);
 	paneCenter->split(false, ui::dpi96(-250), paneCenter, m_paneEast);
 	paneCenter->split(true, ui::dpi96(-200), paneCenter, paneLog);
 	paneCenter->split(true, ui::dpi96(-200), paneCenter, m_paneSouth);
@@ -612,7 +612,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, we);
+	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(we));
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -667,7 +667,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create status bar.
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(this);
-	m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (int32_t)(Alloc::allocated() + 1023) / 1024));
+	m_statusBar->addColumn(0);
+	m_statusBar->addColumn(0);
+	m_statusBar->addColumn(0);
+	m_statusBar->setText(0, i18n::Text(L"STATUS_IDLE"));
+	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
+	m_statusBar->setText(2, L"");
 
 	m_buildProgress = new ui::ProgressBar();
 	m_buildProgress->create(m_statusBar);
@@ -1935,7 +1940,7 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	if (m_threadBuild)
 	{
 		m_threadBuild->start(Thread::Above);
-		m_statusBar->setText(i18n::Text(L"STATUS_BUILDING"));
+		m_statusBar->setText(0, i18n::Text(L"STATUS_BUILDING"));
 	}
 }
 
@@ -2173,7 +2178,7 @@ void EditorForm::saveCurrentDocument()
 
 		if (result)
 		{
-			m_statusBar->setText(L"Document saved successfully");
+			m_statusBar->setText(0, L"Document saved successfully");
 			log::info << L"Document saved successfully" << Endl;
 		}
 		else
@@ -2219,7 +2224,7 @@ void EditorForm::saveAllDocuments()
 
 	if (allSuccessfull)
 	{
-		m_statusBar->setText(L"Document(s) saved successfully");
+		m_statusBar->setText(0, L"Document(s) saved successfully");
 		log::info << L"Document(s) saved successfully" << Endl;
 	}
 	else
@@ -2983,8 +2988,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	}
 
 	// Save docking pane sizes.
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", m_paneWest->getPaneRect().getWidth() + 3);
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", m_paneEast->getPaneRect().getWidth() + 3);
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", (m_paneWest->getPaneRect().getWidth() + 3) / ui::dpi96(1));
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", (m_paneEast->getPaneRect().getWidth() + 3) / ui::dpi96(1));
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
@@ -3119,10 +3124,14 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	if (!building)
 	{
 		m_buildProgress->setVisible(false);
+
+		m_statusBar->setText(0, i18n::Text(L"STATUS_IDLE"));
+		m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
+
 		if (m_streamServer)
-			m_statusBar->setText(i18n::Format(L"STATUS_IDLE_WITH_STREAMS", (int32_t)(Alloc::allocated() + 1023) / 1024, (int32_t)m_streamServer->getStreamCount()));
+			m_statusBar->setText(2, i18n::Format(L"STATUS_STREAMS", (int32_t)m_streamServer->getStreamCount()));
 		else
-			m_statusBar->setText(i18n::Format(L"STATUS_IDLE", (int32_t)(Alloc::allocated() + 1023) / 1024));
+			m_statusBar->setText(2, L"");
 	}
 	else
 		m_buildProgress->setVisible(true);
