@@ -241,6 +241,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_compileStatus = new ui::StatusBar();
 	if (!m_compileStatus->create(containerEdit))
 		return false;
+	m_compileStatus->addColumn(-1);
 
 	// Create language specific implementations.
 	{
@@ -500,7 +501,7 @@ void ScriptEditorPage::handleDatabaseEvent(db::Database* database, const Guid& e
 
 void ScriptEditorPage::syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
 {
-	m_compileStatus->setText(i18n::Format(L"SCRIPT_EDITOR_STATUS_SYNTAX_ERROR", int32_t(line), message));
+	m_compileStatus->setText(0, i18n::Format(L"SCRIPT_EDITOR_STATUS_SYNTAX_ERROR", int32_t(line), message));
 	m_compileStatus->setAlert(true);
 	if (line > 0)
 		m_edit->setErrorHighlight(line - 1);
@@ -508,7 +509,7 @@ void ScriptEditorPage::syntaxError(const std::wstring& name, uint32_t line, cons
 
 void ScriptEditorPage::otherError(const std::wstring& message)
 {
-	m_compileStatus->setText(i18n::Format(L"SCRIPT_EDITOR_STATUS_OTHER_ERROR", message));
+	m_compileStatus->setText(0, i18n::Format(L"SCRIPT_EDITOR_STATUS_OTHER_ERROR", message));
 	m_compileStatus->setAlert(true);
 }
 
@@ -701,7 +702,7 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	m_script->setTextDirect(text);
 
 	m_compileCountDown = 3;
-	m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
+	m_compileStatus->setText(0, i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 	m_compileStatus->setAlert(false);
 
 	updateBreakpoints();
@@ -778,7 +779,7 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 			if (m_scriptCompiler->compile(L"", script, this))
 			{
 				// Reset error status.
-				m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
+				m_compileStatus->setText(0, i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 				m_compileStatus->setAlert(false);
 				m_edit->setErrorHighlight(-1);
 

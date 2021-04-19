@@ -29,11 +29,20 @@ public:
 
 	void setAlert(bool alert);
 
-	virtual void setText(const std::wstring& text) override;
+	void addColumn(int32_t width);
+
+	void setText(int32_t column, const std::wstring& text);
 
 	virtual Size getPreferedSize() const override;
 
 private:
+	struct Column
+	{
+		int32_t width;
+		std::wstring text;
+	};
+
+	AlignedVector< Column > m_columns;
 	bool m_alert;
 
 	void eventSize(SizeEvent* event);

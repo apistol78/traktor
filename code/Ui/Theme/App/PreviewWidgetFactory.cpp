@@ -276,11 +276,13 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		Ref< StatusBar > statusBar1 = new StatusBar();
 		statusBar1->create(container);
-		statusBar1->setText(L"Preview");
+		statusBar1->addColumn(-1);
+		statusBar1->setText(0, L"Preview");
 
 		Ref< StatusBar > statusBar2 = new StatusBar();
 		statusBar2->create(container);
-		statusBar2->setText(L"Preview");
+		statusBar1->addColumn(-1);
+		statusBar2->setText(0, L"Preview");
 		statusBar2->setAlert(true);
 
 		return container;

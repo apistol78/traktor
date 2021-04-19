@@ -261,6 +261,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(m_editPanel, ui::WsDoubleBuffer);
+	m_statusBar->addColumn(ui::dpi96(100));	// Position
+	m_statusBar->addColumn(ui::dpi96(100));	// Orientation
+	m_statusBar->addColumn(ui::dpi96(100));	// Entity count
+	m_statusBar->addColumn(ui::dpi96(100));	// Time
+	m_statusBar->addColumn(ui::dpi96(100));	// Selected entity
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
@@ -1117,19 +1122,16 @@ void SceneEditorPage::updateStatusBar()
 	Vector4 position = camera->getPosition();
 	Vector4 angles = camera->getOrientation().toEulerAngles();
 
-	StringOutputStream ss;
-	ss.setDecimals(2);
-	ss << position.x() << L", " << position.y() << L", " << position.z() << L"     ";
-	ss << rad2deg(angles.x()) << L", " << rad2deg(angles.y()) << L", " << rad2deg(angles.z()) << L" deg" << L"     ";
-	ss << m_context->getEntityCount() << L" entities" << L"     ";
-	ss.setDecimals(1);
-	ss << m_context->getTime() << L" (" << m_context->getTimeScale() << L")";
+	m_statusBar->setText(0, str(L"%.2f, %.2f, %.2f", (float)position.x(), (float)position.y(), (float)position.z()));
+	m_statusBar->setText(1, str(L"%.1f, %.1f, %.1f", rad2deg(angles.x()), rad2deg(angles.y()), rad2deg(angles.z())));
+	m_statusBar->setText(2, str(L"%d entities", m_context->getEntityCount()));
+	m_statusBar->setText(3, str(L"%.1f (%.1f)", m_context->getTime(), m_context->getTimeScale()));
 
 	RefArray< EntityAdapter > selectedEntities;
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-		ss << L"     " << selectedEntities[0]->getPath() << L" " << selectedEntities[0]->getEntityData()->getId().format();
-
-	m_statusBar->setText(ss.str());
+		m_statusBar->setText(4, selectedEntities[0]->getPath()/* + L" " + selectedEntities[0]->getEntityData()->getId().format()*/);
+	else
+		m_statusBar->setText(4, L"");
 }
 
 bool SceneEditorPage::addEntity(const TypeInfo* entityType)

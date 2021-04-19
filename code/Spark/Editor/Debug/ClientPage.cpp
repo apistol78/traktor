@@ -106,6 +106,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(container, ui::WsDoubleBuffer);
+	m_statusBar->addColumn(-1);
 
 	m_transport = transport;
 	m_selectedFrame = -1;
@@ -486,7 +487,7 @@ void ClientPage::eventDebugViewPaint(ui::PaintEvent* event)
 {
 	StringOutputStream ss;
 	ss << L"Mouse position: " << int32_t(m_debugView->getMousePosition().x / 20.0f) << L", " << int32_t(m_debugView->getMousePosition().y / 20.0f);
-	m_statusBar->setText(ss.str());
+	m_statusBar->setText(0, ss.str());
 }
 
 void ClientPage::eventTimer(ui::TimerEvent* event)

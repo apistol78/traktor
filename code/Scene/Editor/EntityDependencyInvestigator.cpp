@@ -108,19 +108,19 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			dependencyItem->setImage(0, 2);
 			dependencyItem->setData(L"DEPENDENCY", dependency);
 
-			for (editor::PipelineDependency::external_files_t::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
-				externalFiles.insert(j->filePath);
+			for (const auto& file : dependency->files)
+				externalFiles.insert(file.filePath);
 		}
 
 		if (!externalFiles.empty())
 		{
 			Ref< ui::TreeViewItem > filesGroup = m_dependencyTree->createItem(0, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 1);
 			filesGroup->setImage(0, 0, 1);
-			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
+			for (const auto& file : externalFiles)
 			{
-				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 1);
+				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, file.getFileName(), 1);
 				fileItem->setImage(0, 2);
-				fileItem->setData(L"FILE", new Path(*i));
+				fileItem->setData(L"FILE", new Path(file));
 			}
 		}
 	}
@@ -152,7 +152,7 @@ void EntityDependencyInvestigator::eventContextSelect(ui::SelectionChangeEvent* 
 	if (m_context->getEntities(selectedEntityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) == 1)
 		setEntityAdapter(selectedEntityAdapters[0]);
 	else
-		setEntityAdapter(0);
+		setEntityAdapter(nullptr);
 }
 
 	}
