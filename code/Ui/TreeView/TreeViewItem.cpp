@@ -175,9 +175,16 @@ bool TreeViewItem::isVisible() const
 
 void TreeViewItem::show()
 {
+	// Expand all parents to ensure this item is visible.
 	for (TreeViewItem* parent = m_parent; parent; parent = parent->m_parent)
 		parent->expand();
-	m_view->requestUpdate();
+
+	// Layout all cells immediately.
+	m_view->updateLayout();
+
+	// Scroll view to this item.
+	Rect rc = m_view->getCellRect(this);
+	m_view->scrollTo({ 0, rc.getCenter().y });
 }
 
 void TreeViewItem::setEditable(bool editable)

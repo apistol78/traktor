@@ -173,14 +173,13 @@ void TreeView::deselectAll()
 {
 	RefArray< TreeViewItem > selectedItems;
 	getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
-	for (RefArray< TreeViewItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
-		(*i)->unselect();
+	for (auto selectedItem : selectedItems)
+		selectedItem->unselect();
 }
 
 Ref< HierarchicalState > TreeView::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
-
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants);
 	for (auto item : items)
@@ -191,7 +190,6 @@ Ref< HierarchicalState > TreeView::captureState() const
 			item->isSelected()
 		);
 	}
-
 	return state;
 }
 
