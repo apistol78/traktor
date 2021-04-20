@@ -209,6 +209,25 @@ void AutoWidget::releaseCapturedCell()
 	m_captureCell = nullptr;
 }
 
+void AutoWidget::scrollTo(const Point& pnt)
+{
+	Rect innerRect = getInnerRect();
+
+	m_scrollOffset = -(pnt - innerRect.getCenter());
+
+	if (m_scrollBarH->isVisible(false))
+		m_scrollBarH->setPosition(-m_scrollOffset.cx / 16);
+	else
+		m_scrollOffset.cx = 0;
+
+	if (m_scrollBarV->isVisible(false))
+		m_scrollBarV->setPosition(-m_scrollOffset.cy / 16);
+	else
+		m_scrollOffset.cy = 0;
+
+	update();
+}
+
 const Size& AutoWidget::getScrollOffset() const
 {
 	return m_scrollOffset;

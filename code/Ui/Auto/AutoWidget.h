@@ -60,11 +60,15 @@ public:
 
 	void releaseCapturedCell();
 
+	void scrollTo(const Point& pnt);
+
 	const Size& getScrollOffset() const;
 
 	Point getClientPosition(const Point& innerPosition) const;
 
 	virtual void layoutCells(const Rect& rc) = 0;
+
+	void updateLayout();
 
 private:
 	struct CellInstance
@@ -91,8 +95,6 @@ private:
 	Size m_scrollOffset = { 0, 0 };
 	Rect m_bounds;
 	bool m_deferredUpdate = false;
-
-	void updateLayout();
 
 	void placeScrollBars();
 
