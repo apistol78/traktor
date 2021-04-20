@@ -1,10 +1,14 @@
 #include "Core/Guid.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/Asset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/PipelineDependency.h"
@@ -14,6 +18,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityDependencyInvestigator.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView/TreeView.h"
@@ -62,7 +68,24 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 	m_dependencyTree->create(this, (ui::TreeView::WsDefault & ~(ui::TreeView::WsAutoEdit | ui::WsClientBorder)) | ui::WsDoubleBuffer);
 	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Folders"), 2);
 	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Types"), 23);
+	m_dependencyTree->addEventHandler< ui::MouseButtonDownEvent >(this, &EntityDependencyInvestigator::eventDependencyButtonDown);
 	m_dependencyTree->addEventHandler< ui::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
+
+	// Instance
+	m_menuInstance = new ui::Menu();
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
+
+	// Asset
+	m_menuAsset = new ui::Menu();
+	m_menuAsset->add(new ui::MenuItem(ui::Command(L"Scene.Editor.Edit"), i18n::Text(L"DATABASE_EDIT")));
+	m_menuAsset->add(new ui::MenuItem(ui::Command(L"Scene.Editor.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
+	m_menuAsset->add(new ui::MenuItem(L"-"));
+	m_menuAsset->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
+
+	// External file
+	m_menuExternalFile = new ui::Menu();
+	m_menuExternalFile->add(new ui::MenuItem(ui::Command(L"Scene.Editor.Edit"), i18n::Text(L"DATABASE_EDIT")));
+	m_menuExternalFile->add(new ui::MenuItem(ui::Command(L"Scene.Editor.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
 
 	m_context->addEventHandler< ui::SelectionChangeEvent >(this, &EntityDependencyInvestigator::eventContextSelect);
 	return true;
@@ -122,6 +145,84 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 				fileItem->setImage(0, 2);
 				fileItem->setData(L"FILE", new Path(file));
 			}
+		}
+	}
+}
+
+void EntityDependencyInvestigator::eventDependencyButtonDown(ui::MouseButtonDownEvent* event)
+{
+	if (event->getButton() != ui::MbtRight)
+		return;
+
+	RefArray< ui::TreeViewItem > items;
+	if (m_dependencyTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+		return;
+
+	ui::TreeViewItem* treeItem = items.front();
+	T_ASSERT(treeItem);
+
+	auto dependency = treeItem->getData< editor::PipelineDependency >(L"DEPENDENCY");
+	if (dependency != nullptr)
+	{
+		auto asset = dynamic_type_cast< const editor::Asset >(dependency->sourceAsset);
+		if (asset != nullptr)
+		{
+			const ui::MenuItem* selectedItem = m_menuAsset->showModal(this, event->getPosition());
+			if (selectedItem == nullptr)
+				return;
+
+			if (selectedItem->getCommand() == L"Scene.Editor.Edit")
+			{
+				std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
+				OS::getInstance().editFile(filePath.getPathName());
+			}
+			else if (selectedItem->getCommand() == L"Scene.Editor.Explore")
+			{
+				std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
+				OS::getInstance().exploreFile(filePath.getPathName());
+			}
+			else if (selectedItem->getCommand() == L"Scene.Editor.FindInDatabase")
+			{
+				Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(dependency->sourceInstanceGuid);
+				if (instance)
+					m_context->getEditor()->highlightInstance(instance);
+			}
+		}
+		else
+		{
+			const ui::MenuItem* selectedItem = m_menuInstance->showModal(this, event->getPosition());
+			if (selectedItem == nullptr)
+				return;
+
+			if (selectedItem->getCommand() == L"Scene.Editor.FindInDatabase")
+			{
+				Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(dependency->sourceInstanceGuid);
+				if (instance)
+					m_context->getEditor()->highlightInstance(instance);
+			}
+		}
+	}
+
+	auto externalFile = treeItem->getData< Path >(L"FILE");
+	if (externalFile != nullptr)
+	{
+		const ui::MenuItem* selectedItem = m_menuExternalFile->showModal(this, event->getPosition());
+		if (selectedItem == nullptr)
+			return;
+
+		if (selectedItem->getCommand() == L"Scene.Editor.Edit")
+		{
+			std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
+			OS::getInstance().editFile(filePath.getPathName());
+		}
+		else if (selectedItem->getCommand() == L"Scene.Editor.Explore")
+		{
+			std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
+			OS::getInstance().exploreFile(filePath.getPathName());
 		}
 	}
 }

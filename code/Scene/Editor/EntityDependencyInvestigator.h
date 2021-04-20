@@ -7,6 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
+class Menu;
 class TreeView;
 class TreeViewItemActivateEvent;
 
@@ -35,7 +36,12 @@ public:
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::TreeView > m_dependencyTree;
+	Ref< ui::Menu > m_menuInstance;
+	Ref< ui::Menu > m_menuAsset;
+	Ref< ui::Menu > m_menuExternalFile;
 	Ref< EntityAdapter > m_currentEntityAdapter;
+
+	void eventDependencyButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventDependencyActivate(ui::TreeViewItemActivateEvent* event);
 
