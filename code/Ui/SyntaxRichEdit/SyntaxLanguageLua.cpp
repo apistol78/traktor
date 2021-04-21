@@ -122,6 +122,7 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	else if (
 		word == L"and" ||
 		word == L"break" ||
+		word == L"const" ||
 		word == L"do" ||
 		word == L"else" ||
 		word == L"elseif" ||

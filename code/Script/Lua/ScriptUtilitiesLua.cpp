@@ -65,7 +65,7 @@ int luaPrint(lua_State* L)
 		lua_call(L, 1, 1);
 		s = lua_tostring(L, -1);
 		if (s == NULL)
-			return luaL_error(L, LUA_QL("tostring") " must return a string to " LUA_QL("print"));
+			return luaL_error(L, "\"tostring\" must return a string to \"print\"");
 		if (i > 1)
 			log::info << L"\t";
 		log::info << mbstows(s);
@@ -78,7 +78,7 @@ int luaPrint(lua_State* L)
 
 int luaSleep(lua_State* L)
 {
-	int32_t ms = lua_tointeger(L, -1);
+	int32_t ms = (int32_t)lua_tointeger(L, -1);
 	if (ms >= 0)
 		ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 	return 0;
