@@ -125,7 +125,7 @@ int32_t FileDialog::showModal(Path& outPath)
 	if (!path.empty())
 		m_currentPath = path;
 	else if (!outPath.empty())
-		m_currentPath = outPath.getPathName();
+		m_currentPath = FileSystem::getInstance().getAbsolutePath(outPath.getPathOnly());
 	else
 		m_currentPath = m_defaultPath;
 
@@ -205,16 +205,29 @@ void FileDialog::updatePath()
 	while (m_containerPath->getFirstChild() != nullptr)
 		m_containerPath->getFirstChild()->destroy();
 
-#if !defined(_WIN32)
-	auto pn = m_currentPath.getPathNameNoVolume();
-#else
-	auto pn = m_currentPath.getPathName();
-#endif
+	// Add volume drop down.
+	if (m_currentPath.hasVolume())
+	{
+		Ref< DropDown > dropVolume = new DropDown();
+		dropVolume->create(m_containerPath);
 
-	std::wstring p;
+		for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
+		{
+			std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
+			int32_t index = dropVolume->add(volumeId + L":");
+			if (compareIgnoreCase(volumeId, m_currentPath.getVolume()) == 0)
+				dropVolume->select(index);
+		}
 
-#if !defined(_WIN32)
-	p = L"/";
+		dropVolume->addEventHandler< SelectionChangeEvent >([=](SelectionChangeEvent* event) {
+			m_currentPath = dropVolume->getSelectedItem();
+			updatePath();
+			updateFiles();
+		});
+	}
+
+	std::wstring pn = m_currentPath.getPathNameNoVolume();
+	std::wstring p = m_currentPath.hasVolume() ? m_currentPath.getVolume() + L":/" : L"/";
 
 	// Add root button first.
 	Ref< Button > buttonPath = new Button();
@@ -224,44 +237,19 @@ void FileDialog::updatePath()
 		updatePath();
 		updateFiles();
 	});
-#endif
 
+	// Add buttons for rest of path.
 	for (auto s : StringSplit< std::wstring >(pn, L"/"))
 	{
-		if (!p.empty())
-			p = p + L"/" + s;
-		else
-			p = s;
+		p = p + s + L"/";
 
-		if (!endsWith(s, L":"))
-		{
-			Ref< Button > buttonPath = new Button();
-			buttonPath->create(m_containerPath, s);
-			buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
-				m_currentPath = p;
-				updatePath();
-				updateFiles();
-			});
-		}
-		else
-		{
-			Ref< DropDown > dropVolume = new DropDown();
-			dropVolume->create(m_containerPath);
-
-			for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
-			{
-				std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
-				int32_t index = dropVolume->add(volumeId + L":");
-				if (compareIgnoreCase(volumeId + L":", s) == 0)
-					dropVolume->select(index);
-			}
-
-			dropVolume->addEventHandler< SelectionChangeEvent >([=](SelectionChangeEvent* event) {
-				m_currentPath = dropVolume->getSelectedItem();
-				updatePath();
-				updateFiles();
-			});
-		}
+		Ref< Button > buttonPath = new Button();
+		buttonPath->create(m_containerPath, s);
+		buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
+			m_currentPath = p;
+			updatePath();
+			updateFiles();
+		});
 	}
 
 	m_containerPath->update();
