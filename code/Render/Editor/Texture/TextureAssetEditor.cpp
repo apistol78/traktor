@@ -268,9 +268,17 @@ void TextureAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			if (!fileDialog.create(m_propertyList, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 
-			Path path = fileItem->getPath();
+			// Convert path to absolute path.
+			Path assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			Path path = FileSystem::getInstance().getAbsolutePath(assetPath, fileItem->getPath());
+
 			if (fileDialog.showModal(path) == ui::DrOk)
 			{
+				// Convert path to be relative to asset path.
+				Path relativePath;
+				if (FileSystem::getInstance().getRelativePath(path, FileSystem::getInstance().getAbsolutePath(assetPath), relativePath))
+					path = relativePath;
+
 				fileItem->setPath(path);
 				m_propertyList->apply();
 			}
