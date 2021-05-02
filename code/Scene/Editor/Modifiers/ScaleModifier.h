@@ -17,7 +17,7 @@ class ScaleModifier : public IModifier
 	T_RTTI_CLASS;
 
 public:
-	ScaleModifier(SceneEditorContext* context);
+	explicit ScaleModifier(SceneEditorContext* context);
 
 	/*! \name Notifications */
 	//\{

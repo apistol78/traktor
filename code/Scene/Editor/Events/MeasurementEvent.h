@@ -21,7 +21,7 @@ class T_DLLCLASS MeasurementEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	MeasurementEvent(ui::EventSubject* sender, int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
+	explicit MeasurementEvent(ui::EventSubject* sender, int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
 
     int32_t getPass() const { return m_pass; }
 

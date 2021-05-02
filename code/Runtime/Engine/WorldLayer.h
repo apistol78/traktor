@@ -82,6 +82,8 @@ public:
 
 	virtual void resume() override final;
 
+	scene::Scene* getScene() const;
+
 	world::Entity* getEntity(const std::wstring& name) const;
 
 	world::Entity* getEntity(const std::wstring& name, int32_t index) const;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/RefArray.h"
 #include "Scene/ISceneController.h"
 
@@ -26,16 +27,20 @@ class T_DLLCLASS TheaterController : public scene::ISceneController
 	T_RTTI_CLASS;
 
 public:
-	TheaterController(const RefArray< const Act >& acts, bool repeatActs);
+	explicit TheaterController(const RefArray< const Act >& acts, float totalDuration);
+
+	bool play(const std::wstring& actName);
 
 	virtual void update(scene::Scene* scene, float time, float deltaTime) override final;
 
 private:
+	friend class TheaterControllerEditor;
+
 	RefArray< const Act > m_acts;
-	bool m_repeatActs = false;
-	bool m_hasInfinite = false;
 	float m_totalDuration = 0.0f;
-	float m_lastTime = -1.0f;
+	const Act* m_act = nullptr;
+	float m_timeStart = -1.0f;
+	float m_timeLast = -1.0f;
 };
 
 	}

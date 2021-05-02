@@ -28,15 +28,13 @@ class SequencerControl;
 	namespace theater
 	{
 
-/*! \brief
+/*! Theater controller editor
  */
 class TheaterControllerEditor : public scene::ISceneControllerEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	TheaterControllerEditor();
-
 	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent) override final;
 
 	virtual void destroy() override final;
@@ -57,7 +55,7 @@ private:
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
-	float m_timeOffset;
+	//float m_timeOffset;
 
 	void updateView();
 

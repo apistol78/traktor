@@ -20,7 +20,6 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/RenderControls/FinalRenderControl.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"

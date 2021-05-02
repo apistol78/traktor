@@ -294,7 +294,7 @@ public:
 
 	void raisePostModify();
 
-	void raisePostFrame(ui::Event* event);
+	void raisePostFrame();
 
 	void raisePostBuild();
 

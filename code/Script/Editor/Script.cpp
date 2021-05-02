@@ -14,10 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", 2, Script, ISerializable)
 
-Script::Script()
-{
-}
-
 Script::Script(const std::wstring& text)
 :	m_text(text)
 {
@@ -65,13 +61,13 @@ std::wstring Script::escape(std::function< std::wstring (const Guid& g) > fn) co
 
 void Script::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 2)
+	if (s.getVersion< Script >() >= 2)
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
 	else
 	{
 		std::vector< Guid > dependencies;
 
-		if (s.getVersion() == 1)
+		if (s.getVersion< Script >() == 1)
 			s >> MemberStlVector< Guid >(L"dependencies", dependencies);
 
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
@@ -80,8 +76,8 @@ void Script::serialize(ISerializer& s)
 		if (!dependencies.empty())
 		{
 			StringOutputStream ss;
-			for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-				ss << L"#using \\" << i->format() << Endl;
+			for (const auto& dependency : dependencies)
+				ss << L"#using \\" << dependency.format() << Endl;
 			ss << Endl;
 
 			m_text = ss.str() + m_text;

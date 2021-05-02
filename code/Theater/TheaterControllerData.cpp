@@ -21,12 +21,21 @@ TheaterControllerData::TheaterControllerData()
 
 Ref< scene::ISceneController > TheaterControllerData::createController(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const
 {
+	float time = 0.0f;
+
+	// Create act instances.
 	RefArray< const Act > acts(m_acts.size());
 	for (size_t i = 0; i < m_acts.size(); ++i)
 	{
-		acts[i] = m_acts[i]->createInstance(entityProducts);
+		float duration = m_acts[i]->getDuration();
+		if (duration < 0.0f)
+			return nullptr;
+
+		acts[i] = m_acts[i]->createInstance(time, time + duration, entityProducts);
 		if (!acts[i])
 			return nullptr;
+
+		time += duration;
 	}
 
 	// Do not randomize acts if in editor.
@@ -45,7 +54,10 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const Sma
 		acts = tmp;
 	}
 
-	return new TheaterController(acts, m_repeatActs);
+	return new TheaterController(
+		acts,
+		time
+	);
 }
 
 float TheaterControllerData::getActStartTime(int32_t act) const

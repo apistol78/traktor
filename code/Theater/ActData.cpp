@@ -25,10 +25,8 @@ world::Entity* findEntityDataProduct(const SmallMap< Guid, Ref< world::Entity > 
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.ActData", 0, ActData, ISerializable)
 
-Ref< Act > ActData::createInstance(const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const
+Ref< Act > ActData::createInstance(float start, float end, const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const
 {
-	bool infinite = false;
-
 	RefArray< const Track > tracks(m_tracks.size());
 	for (size_t i = 0; i < m_tracks.size(); ++i)
 	{
@@ -41,19 +39,10 @@ Ref< Act > ActData::createInstance(const SmallMap< Guid, Ref< world::Entity > >&
 		tracks[i] = new Track(
 			entity,
 			lookAtEntity,
-			m_tracks[i]->getPath(),
-			m_tracks[i]->getLoopStart(),
-			m_tracks[i]->getLoopEnd(),
-			m_tracks[i]->getTimeOffset(),
-			m_tracks[i]->getWobbleMagnitude(),
-			m_tracks[i]->getWobbleRate()
+			m_tracks[i]->getPath()
 		);
-
-		if (m_tracks[i]->getLoopStart() < m_tracks[i]->getLoopEnd() - FUZZY_EPSILON)
-			infinite |= true;
 	}
-
-	return new Act(m_duration, infinite, tracks);
+	return new Act(m_name, start, end, tracks);
 }
 
 void ActData::serialize(ISerializer& s)

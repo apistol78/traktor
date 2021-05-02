@@ -60,7 +60,8 @@ private:
 	std::wstring m_text;
 	std::wstring m_toolTip;
 	RefArray< MenuItem > m_items;
-	bool m_hover;
+	bool m_hover = false;
+	bool m_active = false;
 	Point m_menuPosition;
 };
 

@@ -34,6 +34,7 @@
 #include "Runtime/Engine/StageLoader.h"
 #include "Runtime/Engine/VideoLayer.h"
 #include "Runtime/Engine/WorldLayer.h"
+#include "Scene/Scene.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -315,6 +316,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVideoLayer);
 
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
+	classWorldLayer->addProperty("scene", &WorldLayer::getScene);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< float >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);

@@ -324,6 +324,11 @@ void WorldLayer::resume()
 {
 }
 
+scene::Scene* WorldLayer::getScene() const
+{
+	return m_scene;
+}
+
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 {
 	return getEntity(name, 0);

@@ -20,7 +20,7 @@ class T_DLLCLASS CameraMovedEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	CameraMovedEvent(ui::EventSubject* sender);
+	explicit CameraMovedEvent(ui::EventSubject* sender);
 };
 
 	}

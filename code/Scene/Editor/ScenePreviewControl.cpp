@@ -19,7 +19,6 @@
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
@@ -526,8 +525,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		}
 
 		// Issue frame handlers.
-		FrameEvent eventFrame(this);
-		m_context->raisePostFrame(&eventFrame);
+		m_context->raisePostFrame();
 
 		// Update context time.
 		m_context->setTime(scaledTime + scaledDeltaTime);

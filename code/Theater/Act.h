@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
@@ -25,17 +26,20 @@ class Act : public Object
 	T_RTTI_CLASS;
 
 public:
-	Act(float duration, bool infinite, const RefArray< const Track >& tracks);
+	explicit Act(const std::wstring& name, float start, float end, const RefArray< const Track >& tracks);
 
 	bool update(scene::Scene* scene, float time, float deltaTime) const;
 
-	float getDuration() const { return m_duration; }
+	const std::wstring& getName() const { return m_name; }
 
-	bool isInfinite() const { return m_infinite; }
+	float getStart() const { return m_start; }
+
+	float getEnd() const { return m_end; }
 
 private:
-	float m_duration;
-	bool m_infinite;
+	std::wstring m_name;
+	float m_start;
+	float m_end;
 	RefArray< const Track > m_tracks;
 };
 

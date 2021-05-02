@@ -46,12 +46,12 @@ class LogTailTarget : public ILogTarget
 {
 public:
 	Semaphore m_lock;
-	std::list< std::wstring > m_tail;
+	CircularVector< std::wstring, 100 > m_tail;
 
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		if (m_tail.size() > 100)
+		if (m_tail.full())
 			m_tail.pop_front();
 		m_tail.push_back(str);
 	}
@@ -120,8 +120,8 @@ void showErrorDialog()
 	{
 		if (g_logTail)
 		{
-			for (const auto& s : g_logTail->m_tail)
-				errorDialog.addErrorString(s);
+			for (uint32_t i = 0; i < g_logTail->m_tail.size(); ++i)
+				errorDialog.addErrorString(g_logTail->m_tail[i]);
 		}
 		errorDialog.showModal();
 		errorDialog.destroy();
@@ -218,15 +218,15 @@ void logSystemInfo()
 
 	char CPUBrandString[0x40];
 	std::memset(CPUBrandString, 0, sizeof(CPUBrandString));
-	for (int i=0x80000000; i<=nExIds; ++i)
+	for (int i = 0x80000000; i <= nExIds; ++i)
 	{
 		__cpuid(cpuInfo, i);
 		if  (i == 0x80000002)
-			memcpy(CPUBrandString, cpuInfo, sizeof(cpuInfo));
+			std::memcpy(CPUBrandString, cpuInfo, sizeof(cpuInfo));
 		else if  (i == 0x80000003)
-			memcpy(CPUBrandString + 16, cpuInfo, sizeof(cpuInfo));
+			std::memcpy(CPUBrandString + 16, cpuInfo, sizeof(cpuInfo));
 		else if  (i == 0x80000004)
-			memcpy(CPUBrandString + 32, cpuInfo, sizeof(cpuInfo));
+			std::memcpy(CPUBrandString + 32, cpuInfo, sizeof(cpuInfo));
 	}
 	if  (nExIds >= 0x80000004)
 		log::info << L"\tBrand String \"" << trim(mbstows(CPUBrandString)) << L"\"" << Endl;
@@ -372,9 +372,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;
-		for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+		for (auto log : logs)
 		{
-			std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+			std::wstring logName = log->getPath().getFileNameNoExtension();
 			size_t p = logName.find(L'_');
 			if (p != logName.npos)
 			{

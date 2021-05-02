@@ -26,7 +26,6 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Traverser.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
-#include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
@@ -489,7 +488,7 @@ void SceneEditorContext::buildEntities()
 		m_entityAdapterMap.insert(entityAdapter->getEntity(), entityAdapter);
 	}
 
-	m_entityCount = entityAdapters.size();
+	m_entityCount = (uint32_t)entityAdapters.size();
 	raisePostBuild();
 	++m_buildCount;
 }
@@ -786,7 +785,7 @@ void SceneEditorContext::raisePostModify()
 	raiseEvent(&postModifyEvent);
 }
 
-void SceneEditorContext::raisePostFrame(ui::Event* event)
+void SceneEditorContext::raisePostFrame()
 {
 	PostFrameEvent postFrameEvent(this);
 	raiseEvent(&postFrameEvent);

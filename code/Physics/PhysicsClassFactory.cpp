@@ -330,6 +330,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classBody = new AutoRuntimeClass< Body >();
 	classBody->addProperty("transform", &Body::setTransform, &Body::getTransform);
 	classBody->addProperty("centerTransform", &Body::getCenterTransform);
+	classBody->addProperty("inverseMass", &Body::getInverseMass);
 	classBody->addProperty("static", &Body::isStatic);
 	classBody->addProperty("kinematic", &Body::isKinematic);
 	classBody->addProperty("active", &Body::setActive, &Body::isActive);
@@ -339,7 +340,6 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addProperty("userObject", &Body::setUserObject, &Body::getUserObject);
 	classBody->addMethod("reset", &Body::reset);
 	classBody->addMethod("setMass", &Body::setMass);
-	classBody->addMethod("getInverseMass", &Body::getInverseMass);
 	classBody->addMethod("addForceAt", &Body::addForceAt);
 	classBody->addMethod("addTorque", &Body::addTorque);
 	classBody->addMethod("addLinearImpulse", &Body::addLinearImpulse);

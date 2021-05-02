@@ -38,7 +38,7 @@ class T_DLLCLASS ActData : public ISerializable
 public:
 	ActData() = default;
 
-	Ref< Act > createInstance(const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const;
+	Ref< Act > createInstance(float start, float end, const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

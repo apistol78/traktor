@@ -20,7 +20,7 @@ class T_DLLCLASS PostModifyEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	PostModifyEvent(ui::EventSubject* sender);
+	explicit PostModifyEvent(ui::EventSubject* sender);
 };
 
 	}

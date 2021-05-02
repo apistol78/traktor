@@ -20,7 +20,7 @@ class T_DLLCLASS PostFrameEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	PostFrameEvent(ui::EventSubject* sender);
+	explicit PostFrameEvent(ui::EventSubject* sender);
 };
 
 	}

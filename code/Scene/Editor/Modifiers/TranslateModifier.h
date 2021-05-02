@@ -17,7 +17,7 @@ class TranslateModifier : public IModifier
 	T_RTTI_CLASS;
 
 public:
-	TranslateModifier(SceneEditorContext* context);
+	explicit TranslateModifier(SceneEditorContext* context);
 
 	/*! \name Notifications */
 	//\{

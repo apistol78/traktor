@@ -20,7 +20,7 @@ class T_DLLCLASS PreModifyEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	PreModifyEvent(ui::EventSubject* sender);
+	explicit PreModifyEvent(ui::EventSubject* sender);
 };
 
 	}

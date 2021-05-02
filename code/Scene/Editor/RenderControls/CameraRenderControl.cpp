@@ -31,7 +31,6 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
-#include "Scene/Editor/Events/FrameEvent.h"
 #include "Scene/Editor/RenderControls/CameraRenderControl.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
