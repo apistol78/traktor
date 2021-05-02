@@ -1,5 +1,4 @@
-#include <cstdlib>
-#include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Theater/Act.h"
@@ -12,48 +11,57 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, scene::ISceneController)
 
-TheaterController::TheaterController(const RefArray< const Act >& acts, bool repeatActs)
+TheaterController::TheaterController(const RefArray< const Act >& acts, float totalDuration)
 :	m_acts(acts)
-,	m_repeatActs(repeatActs)
+,	m_totalDuration(totalDuration)
 {
-	for (int32_t i = 0; i < (int32_t)m_acts.size(); ++i)
+}
+
+bool TheaterController::play(const std::wstring& actName)
+{
+	auto it = std::find_if(m_acts.begin(), m_acts.end(), [&](const Act* act) {
+		return actName == act->getName();
+	});
+	if (it == m_acts.end())
 	{
-		m_totalDuration += m_acts[i]->getDuration();
-		m_hasInfinite |= m_acts[i]->isInfinite();
+		log::warning << L"No act \"" << actName << L"\" found." << Endl;
+		return false;
 	}
+
+	if (*it != m_act)
+	{
+		m_act = *it;
+		m_timeLast = -1.0f;
+	}
+
+	m_timeStart = -1.0f;
+	return true;
 }
 
 void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 {
-	if (m_acts.empty() || traktor::abs(time - m_lastTime) <= FUZZY_EPSILON)
-		return;
+	if (m_timeStart < 0.0f)
+		m_timeStart = time;
 
-	// Do nothing if we're finished.
-	if (!m_repeatActs && !m_hasInfinite && time > m_totalDuration)
-		return;
-
-	// Repeat all acts if no infinite act exist.
-	if (m_repeatActs && !m_hasInfinite)
-		time = std::fmod(time, m_totalDuration);
-
-	// Figure out which act we're in; as time might not be continous we need to find this each update.
-	const Act* act = nullptr;
-	float actStartTime = 0.0f;
-	for (int32_t i = 0; i < (int32_t)m_acts.size(); ++i)
+	if (m_act != nullptr)
 	{
-		float actDuration = m_acts[i]->getDuration();
-		if (time >= actStartTime && (m_acts[i]->isInfinite() || time <= actStartTime + actDuration - FUZZY_EPSILON))
-		{
-			act = m_acts[i];
-			break;
-		}
-		actStartTime += actDuration;
+		float timeAct = time - m_timeStart;
+		float duration = m_act->getEnd() - m_act->getStart();
+		if (timeAct < -FUZZY_EPSILON || timeAct > duration + FUZZY_EPSILON)
+			m_act = nullptr;
 	}
 
-	if (act)
-		act->update(scene, time - actStartTime, deltaTime);
+	if (m_act == nullptr)
+		return;
 
-	m_lastTime = time;
+	// Do nothing if no time has passed since last update.
+	if (traktor::abs(time - m_timeLast) <= FUZZY_EPSILON)
+		return;
+
+	// Evaluate current act.
+	m_act->update(scene, time - m_timeStart, deltaTime);
+
+	m_timeLast = time;
 }
 
 	}

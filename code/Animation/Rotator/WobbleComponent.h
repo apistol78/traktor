@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Math/TransformPath.h"
 #include "World/IEntityComponent.h"
 
 #undef T_DLLCLASS
@@ -18,19 +17,12 @@ namespace traktor
 /*!
  * \ingroup Animation
  */
-class T_DLLCLASS RotatorComponent : public world::IEntityComponent
+class T_DLLCLASS WobbleComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	enum class Axis
-	{
-		X,
-		Y,
-		Z
-	};
-
-	RotatorComponent(Axis axis, float rate);
+	explicit WobbleComponent(float magnitude, float rate);
 
 	virtual void destroy() override final;
 
@@ -46,10 +38,9 @@ private:
 	world::Entity* m_owner = nullptr;
 	Transform m_transform = Transform::identity();
 	Transform m_local = Transform::identity();
-	Axis m_axis = Axis::X;
-	float m_rate = 0.0f;
+	float m_magnitude;
+	float m_rate;
 };
 
 	}
 }
-

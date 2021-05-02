@@ -20,7 +20,7 @@ class T_DLLCLASS ModifierChangedEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	ModifierChangedEvent(ui::EventSubject* sender);
+	explicit ModifierChangedEvent(ui::EventSubject* sender);
 };
 
 	}

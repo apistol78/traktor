@@ -17,16 +17,16 @@ void PhysicsManager::addCollisionListener(CollisionListener* collisionListener)
 
 void PhysicsManager::removeCollisionListener(CollisionListener* collisionListener)
 {
-	RefArray< CollisionListener >::iterator i = std::find(m_collisionListeners.begin(), m_collisionListeners.end(), collisionListener);
-	if (i != m_collisionListeners.end())
-		m_collisionListeners.erase(i);
+	auto it = std::find(m_collisionListeners.begin(), m_collisionListeners.end(), collisionListener);
+	if (it != m_collisionListeners.end())
+		m_collisionListeners.erase(it);
 }
 
 void PhysicsManager::notifyCollisionListeners(const CollisionInfo& collisionInfo)
 {
 	// Notify global listeners first.
-	for (RefArray< CollisionListener >::iterator i = m_collisionListeners.begin(); i != m_collisionListeners.end(); ++i)
-		(*i)->notify(collisionInfo);
+	for (auto listener : m_collisionListeners)
+		listener->notify(collisionInfo);
 
 	// Also notify listeners attached to colliding bodies.
 	if (collisionInfo.body1)

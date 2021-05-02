@@ -20,7 +20,7 @@ class T_DLLCLASS PostBuildEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	PostBuildEvent(ui::EventSubject* sender);
+	explicit PostBuildEvent(ui::EventSubject* sender);
 };
 
 	}

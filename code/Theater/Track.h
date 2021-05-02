@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Ref.h"
 #include "Core/Math/TransformPath.h"
 
 // import/export mechanism.
@@ -35,12 +34,7 @@ public:
 	Track(
 		world::Entity* entity,
 		world::Entity* lookAtEntity,
-		const TransformPath& path,
-		float loopStart,
-		float loopEnd,
-		float timeOffset,
-		float wobbleMagnitude,
-		float wobbleRate
+		const TransformPath& path
 	);
 
 	void setEntity(world::Entity* entity);
@@ -49,31 +43,16 @@ public:
 
 	void setLookAtEntity(world::Entity* entity);
 
-	 world::Entity* getLookAtEntity() const;
+	world::Entity* getLookAtEntity() const;
 
 	const TransformPath& getPath() const;
 
 	TransformPath& getPath();
 
-	float getLoopStart() const;
-
-	float getLoopEnd() const;
-
-	float getTimeOffset() const;
-
-	float getWobbleMagnitude() const;
-
-	float getWobbleRate() const;
-
 private:
-	Ref< world::Entity > m_entity;
-	Ref< world::Entity > m_lookAtEntity;
+	world::Entity* m_entity;
+	world::Entity* m_lookAtEntity;
 	TransformPath m_path;
-	float m_loopStart;
-	float m_loopEnd;
-	float m_timeOffset;
-	float m_wobbleMagnitude;
-	float m_wobbleRate;
 };
 
 	}

@@ -18,7 +18,7 @@ class RotateModifier : public IModifier
 	T_RTTI_CLASS;
 
 public:
-	RotateModifier(SceneEditorContext* context);
+	explicit RotateModifier(SceneEditorContext* context);
 
 	/*! \name Notifications */
 	//\{

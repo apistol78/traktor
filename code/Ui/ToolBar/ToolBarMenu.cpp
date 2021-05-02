@@ -18,7 +18,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarMenu", ToolBarMenu, ToolBarItem)
 ToolBarMenu::ToolBarMenu(const std::wstring& text, const std::wstring& toolTip)
 :	m_text(text)
 ,	m_toolTip(toolTip)
-,	m_hover(false)
 {
 }
 
@@ -104,13 +103,18 @@ void ToolBarMenu::mouseLeave(ToolBar* toolBar)
 
 void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 {
+	// Do not create another menu if already is active.
+	if (m_active)
+		return;
+
 	if (m_items.empty())
 		return;
 
 	Ref< Menu > menu = new Menu();
-
 	for (size_t i = 0; i < m_items.size(); ++i)
 		menu->add(m_items[i]);
+
+	m_active = true;
 
 	const MenuItem* item = menu->showModal(toolBar, m_menuPosition);
 	if (item)
@@ -118,6 +122,8 @@ void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 		ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
 		toolBar->raiseEvent(&clickEvent);
 	}
+
+	m_active = false;
 
 	toolBar->update();
 }

@@ -25,9 +25,9 @@ class T_DLLCLASS Script : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Script();
+	Script() = default;
 
-	Script(const std::wstring& text);
+	explicit Script(const std::wstring& text);
 
 	void setTextDirect(const std::wstring& text);
 
