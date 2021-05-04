@@ -164,7 +164,7 @@ bool emitArcusTan(GlslContext& cx, ArcusTan* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > xy = cx.emitInput(node, L"XY");
-	if (!xy || xy->getType() != GtFloat2)
+	if (!xy || glsl_type_width(xy->getType()) < 2)
 		return false;
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
