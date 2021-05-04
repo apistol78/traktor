@@ -6881,7 +6881,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/src</item>
+						<item>$(VMA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6904,7 +6904,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/src</item>
+						<item>$(VMA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6927,7 +6927,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/src</item>
+						<item>$(VMA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6950,7 +6950,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/src</item>
+						<item>$(VMA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>

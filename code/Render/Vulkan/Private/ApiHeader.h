@@ -20,4 +20,6 @@
 #	define VK_USE_PLATFORM_IOS_MVK
 #	include <vulkan/vulkan.h>
 #endif
+
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
 #include <vk_mem_alloc.h>
