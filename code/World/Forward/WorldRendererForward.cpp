@@ -1468,7 +1468,8 @@ void WorldRendererForward::setupProcessPass(
 	ipd.viewToLight = Matrix44::identity();
 	ipd.view = worldRenderView.getView();
 	ipd.projection = worldRenderView.getProjection();
-	ipd.deltaTime = 1.0f / 60.0f;				
+	ipd.deltaTime = worldRenderView.getDeltaTime();
+	ipd.time = worldRenderView.getTime();
 
 	render::ImageGraphContext cx(m_screenRenderer);
 	cx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
