@@ -19,17 +19,6 @@
 		return false; \
 	}
 
-namespace traktor
-{
-	namespace render
-	{
-		namespace
-		{
-
-HMODULE s_hVulkanModule = nullptr;
-
-		}
-
 T_DEFINE_VK(vkCreateInstance);
 T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
@@ -40,6 +29,7 @@ T_DEFINE_VK(vkGetPhysicalDeviceMemoryProperties);
 T_DEFINE_VK(vkGetPhysicalDeviceFormatProperties);
 T_DEFINE_VK(vkCreateDevice);
 T_DEFINE_VK(vkGetDeviceQueue);
+T_DEFINE_VK(vkGetDeviceProcAddr);
 T_DEFINE_VK(vkGetInstanceProcAddr);
 T_DEFINE_VK(vkCreateCommandPool);
 T_DEFINE_VK(vkAllocateCommandBuffers);
@@ -140,6 +130,17 @@ T_DEFINE_VK(vkCmdEndDebugUtilsLabelEXT);
 T_DEFINE_VK(vkGetBufferMemoryRequirements2KHR);
 T_DEFINE_VK(vkGetImageMemoryRequirements2KHR);
 
+namespace traktor
+{
+	namespace render
+	{
+		namespace
+		{
+
+HMODULE s_hVulkanModule = nullptr;
+
+		}
+
 bool initializeVulkanApi()
 {
 	s_hVulkanModule = LoadLibrary(L"vulkan-1.dll");
@@ -159,6 +160,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkGetPhysicalDeviceFormatProperties);
 	T_RESOLVE_VK(vkCreateDevice);
 	T_RESOLVE_VK(vkGetDeviceQueue);
+	T_RESOLVE_VK(vkGetDeviceProcAddr);
 	T_RESOLVE_VK(vkGetInstanceProcAddr);
 	T_RESOLVE_VK(vkCreateCommandPool);
 	T_RESOLVE_VK(vkAllocateCommandBuffers);
