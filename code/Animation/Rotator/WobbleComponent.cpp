@@ -1,4 +1,5 @@
 #include "Animation/Rotator/WobbleComponent.h"
+#include "Core/Math/Const.h"
 #include "World/Entity.h"
 
 namespace traktor

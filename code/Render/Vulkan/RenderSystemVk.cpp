@@ -359,6 +359,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
 	aci.pVulkanFunctions = &vf;
+	aci.instance = m_instance;
 #if defined(__IOS__)
 	aci.preferredLargeHeapBlockSize = 32 * 1024 * 1024;
 #endif
