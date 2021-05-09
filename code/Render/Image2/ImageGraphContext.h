@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,12 +21,11 @@ namespace traktor
 
 class ITexture;
 class RenderGraph;
-class ScreenRenderer;
 
 /*!
  * \ingroup Render
  */
-struct ImageGraphParams
+struct ImageGraphView
 {
     Frustum viewFrustum;
     Matrix44 view;
@@ -48,13 +47,11 @@ struct ImageGraphParams
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImageGraphContext
+class T_DLLCLASS ImageGraphContext : public Object
 {
+    T_RTTI_CLASS;
+
 public:
-    explicit ImageGraphContext(ScreenRenderer* screenRenderer);
-
-    ScreenRenderer* getScreenRenderer() const { return m_screenRenderer; }
-
     void associateTexture(handle_t textureId, ITexture* texture);
 
 	void associateTextureTargetSet(handle_t textureId, handle_t targetSetId, int32_t colorIndex);
@@ -73,14 +70,6 @@ public:
 
     const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
 
-	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value);
-
-    const SmallMap< handle_t, resource::Proxy< ITexture > >& getTextureParameters() const { return m_textureParameters; }
-
-    void setParams(const ImageGraphParams& params) { m_params = params; }
-
-    const ImageGraphParams& getParams() const { return m_params; }
-
 private:
 	struct TextureTargetSet
 	{
@@ -89,12 +78,9 @@ private:
         ITexture* texture;
 	};
 
-    Ref< ScreenRenderer > m_screenRenderer;
 	SmallMap< handle_t, TextureTargetSet > m_textureTargetSet;
 	SmallMap< handle_t, float > m_scalarParameters;
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
-	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureParameters;
-    ImageGraphParams m_params;
 };
 
 	}

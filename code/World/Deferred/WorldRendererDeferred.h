@@ -113,7 +113,7 @@ private:
 	resource::Proxy< render::ImageGraph > m_antiAlias;
 	resource::Proxy< render::ImageGraph > m_visual;
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
-	resource::Proxy< render::ImageGraph > m_motionBlurPrime;
+	resource::Proxy< render::ImageGraph > m_velocityPrime;
 	resource::Proxy< render::ImageGraph > m_motionBlur;
 	resource::Proxy< render::ImageGraph > m_toneMap;
 	resource::Proxy< render::ImageGraph > m_screenReflections;

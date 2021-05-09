@@ -13,7 +13,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, IImageStep)
 
-void ImagePass::addPasses(const ImageGraph* graph, const ImageGraphContext& context, const targetSetVector_t& targetSetIds, RenderGraph& renderGraph) const
+void ImagePass::addPasses(
+	const ImageGraph* graph,
+	const ImageGraphContext& context,
+	const ImageGraphView& view,
+	const targetSetVector_t& targetSetIds,
+	ScreenRenderer* screenRenderer,
+	RenderGraph& renderGraph
+) const
 {
 	Ref< RenderPass > rp = new RenderPass(m_name);
 
@@ -39,12 +46,18 @@ void ImagePass::addPasses(const ImageGraph* graph, const ImageGraphContext& cont
 				sharedParams->setFloatParameter(it.first, it.second);
 			for (auto it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
-			for (auto it : context.getTextureParameters())
-				sharedParams->setTextureParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 				
 			for (auto op : m_ops)
-				op->build(graph, context, renderGraph, sharedParams, renderContext);
+				op->build(
+					graph,
+					context,
+					view,
+					renderGraph,
+					sharedParams,
+					renderContext,
+					screenRenderer
+				);
 		}
 	);
 
