@@ -4,6 +4,7 @@
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Render/Image2/ImageGraphContext.h"
 #include "World/EntityBuilder.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
@@ -296,6 +297,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIWorldRenderer->addConstant("Medium", Any::fromInt32((int32_t)Quality::Medium));
 	classIWorldRenderer->addConstant("High", Any::fromInt32((int32_t)Quality::High));
 	classIWorldRenderer->addConstant("Ultra", Any::fromInt32((int32_t)Quality::Ultra));
+	classIWorldRenderer->addProperty("imageGraphContext", &IWorldRenderer::getImageGraphContext);
 	registrar->registerClass(classIWorldRenderer);
 }
 

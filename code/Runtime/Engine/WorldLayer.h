@@ -84,6 +84,8 @@ public:
 
 	scene::Scene* getScene() const;
 
+	world::IWorldRenderer* getWorldRenderer() const;
+
 	world::Entity* getEntity(const std::wstring& name) const;
 
 	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
@@ -99,8 +101,6 @@ public:
 	void setControllerEnable(bool controllerEnable);
 
 	void resetController();
-
-	render::ImageProcess* getImageProcess() const;
 
 	const Frustum& getViewFrustum() const;
 

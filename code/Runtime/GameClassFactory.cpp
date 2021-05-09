@@ -317,6 +317,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
 	classWorldLayer->addProperty("scene", &WorldLayer::getScene);
+	classWorldLayer->addProperty("worldRenderer", &WorldLayer::getWorldRenderer);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< float >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
