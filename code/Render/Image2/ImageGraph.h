@@ -24,6 +24,9 @@ class ImageTargetSet;
 class ImageTexture;
 class RenderGraph;
 class RenderPass;
+class ScreenRenderer;
+
+struct ImageGraphView;
 
 /*!
  * \ingroup Render
@@ -35,7 +38,13 @@ class T_DLLCLASS ImageGraph : public Object
 public:
     explicit ImageGraph(const std::wstring& name);
 
-    void addPasses(RenderGraph& renderGraph, RenderPass* pass, const ImageGraphContext& cx) const;
+    void addPasses(
+	    ScreenRenderer* screenRenderer,
+	    RenderGraph& renderGraph,
+	    RenderPass* pass,
+	    const ImageGraphContext& cx,
+	    const ImageGraphView& view
+    ) const;
 
 private:
     friend class ImageGraphData;

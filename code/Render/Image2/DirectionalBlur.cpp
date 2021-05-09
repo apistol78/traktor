@@ -36,41 +36,45 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DirectionalBlur", DirectionalBlur, ImagePassOp)
 
-void DirectionalBlur::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
+void DirectionalBlur::setup(
+	const ImageGraph* graph,
+	const ImageGraphContext& context,
+	RenderPass& pass
+) const
 {
 	for (const auto& source : m_sources)
 	{
-		auto targetSetId = cx.findTextureTargetSetId(source.textureId);
+		auto targetSetId = context.findTextureTargetSetId(source.textureId);
 		if (targetSetId != 0)
 			pass.addInput(targetSetId);
 	}
 }
 
 void DirectionalBlur::build(
-	const ImageGraph* imageGraph,
-	const ImageGraphContext& cx,
+	const ImageGraph* graph,
+	const ImageGraphContext& context,
+	const ImageGraphView& view,
 	const RenderGraph& renderGraph,
 	const ProgramParameters* sharedParams,
-	RenderContext* renderContext
+	RenderContext* renderContext,
+	ScreenRenderer* screenRenderer
 ) const
 {
-	const auto& params = cx.getParams();
-
-	Scalar p11 = params.projection.get(0, 0);
-	Scalar p22 = params.projection.get(1, 1);
-	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
-	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
-	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
-	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
+	Scalar p11 = view.projection.get(0, 0);
+	Scalar p22 = view.projection.get(1, 1);
+	Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4];
+	Vector4 viewEdgeTopRight = view.viewFrustum.corners[5];
+	Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7];
+	Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6];
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
 	pp->beginParameters(renderContext);
 	pp->attachParameters(sharedParams);
 
-	pp->setFloatParameter(s_handleTime, params.time);
-	pp->setFloatParameter(s_handleDeltaTime, params.deltaTime);
-	pp->setFloatParameter(s_handleViewFar, params.viewFrustum.getFarZ());
+	pp->setFloatParameter(s_handleTime, view.time);
+	pp->setFloatParameter(s_handleDeltaTime, view.deltaTime);
+	pp->setFloatParameter(s_handleViewFar, view.viewFrustum.getFarZ());
 	pp->setVectorParameter(s_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	pp->setVectorParameter(s_handleViewEdgeTopRight, viewEdgeTopRight);
 	pp->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
@@ -79,20 +83,20 @@ void DirectionalBlur::build(
 	pp->setVectorParameter(s_handleDirection, m_direction * Scalar(0.5f));
 	pp->setVectorParameter(s_handleNoiseOffset, Vector4(s_random.nextFloat(), s_random.nextFloat(), 0.0f, 0.0f));
 	pp->setVectorArrayParameter(s_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], (uint32_t)m_gaussianOffsetWeights.size());
-	pp->setMatrixParameter(s_handleProjection, params.projection);
-	pp->setMatrixParameter(s_handleView, params.view);
-	pp->setMatrixParameter(s_handleViewInverse, params.view.inverse());
+	pp->setMatrixParameter(s_handleProjection, view.projection);
+	pp->setMatrixParameter(s_handleView, view.view);
+	pp->setMatrixParameter(s_handleViewInverse, view.view.inverse());
 
 	for (const auto& source : m_sources)
 	{
-		auto texture = cx.findTexture(renderGraph, source.textureId);
+		auto texture = context.findTexture(renderGraph, source.textureId);
 		pp->setTextureParameter(source.parameter, texture);
 	}
 
 	pp->endParameters(renderContext);
 
 	// Draw fullscreen quad with shader.
-	cx.getScreenRenderer()->draw(renderContext, m_shader, Shader::Permutation(), pp);
+	screenRenderer->draw(renderContext, m_shader, Shader::Permutation(), pp);
 }
 
     }

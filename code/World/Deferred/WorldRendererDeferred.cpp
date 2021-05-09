@@ -275,7 +275,7 @@ bool WorldRendererDeferred::create(
 		m_antiAliasQuality >= Quality::Ultra
 	)
 	{
-		if (!resourceManager->bind(c_motionBlurPrime, m_motionBlurPrime))
+		if (!resourceManager->bind(c_motionBlurPrime, m_velocityPrime))
 		{
 			log::warning << L"Unable to create motion blur prime process; motion blur disabled." << Endl;
 			m_motionBlurQuality = Quality::Disabled;
@@ -731,19 +731,25 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
 	
-	if (m_motionBlurPrime)
+	if (m_velocityPrime)
 	{
-		render::ImageGraphParams ipd;
-		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
-		ipd.projection = worldRenderView.getProjection();
-		ipd.deltaTime = worldRenderView.getDeltaTime();
+		render::ImageGraphContext context;
+		render::ImageGraphView view;
 
-		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-		cx.setParams(ipd);
+		view.viewFrustum = worldRenderView.getViewFrustum();
+		view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
+		view.projection = worldRenderView.getProjection();
+		view.deltaTime = worldRenderView.getDeltaTime();
 
-		m_motionBlurPrime->addPasses(renderGraph, rp, cx);
+		context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+
+		m_velocityPrime->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			context,
+			view
+		);
 	}
 
 	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
@@ -810,17 +816,23 @@ render::handle_t WorldRendererDeferred::setupAmbientOcclusionPass(
 
 	if (m_ambientOcclusion != nullptr)
 	{
-		render::ImageGraphParams ipd;
-		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.view = worldRenderView.getView();
-		ipd.projection = worldRenderView.getProjection();
+		render::ImageGraphContext context;
+		render::ImageGraphView view;
 
-		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-		cx.setParams(ipd);
+		view.viewFrustum = worldRenderView.getViewFrustum();
+		view.view = worldRenderView.getView();
+		view.projection = worldRenderView.getProjection();
 
-		m_ambientOcclusion->addPasses(renderGraph, rp, cx);
+		context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+
+		m_ambientOcclusion->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			context,
+			view
+		);
 	}
 
 	render::Clear clear;
@@ -1267,30 +1279,35 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 			shadowFrustum
 		);
 
-		render::ImageGraphParams ipd;
-		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.viewToLight = shadowLightProjection * shadowLightView * viewInverse;
-		ipd.projection = worldRenderView.getProjection();
-		ipd.sliceCount = m_shadowSettings.cascadingSlices;
-		ipd.sliceIndex = slice;
-		ipd.sliceNearZ = zn;
-		ipd.sliceFarZ = zf;
-		ipd.shadowFarZ = m_shadowSettings.farZ;
-		ipd.shadowMapBias = m_shadowSettings.bias + slice * m_shadowSettings.biasCoeff;
-		ipd.shadowMapUvTransform = Vector4(
+		render::ImageGraphView view;
+		view.viewFrustum = worldRenderView.getViewFrustum();
+		view.viewToLight = shadowLightProjection * shadowLightView * viewInverse;
+		view.projection = worldRenderView.getProjection();
+		view.sliceCount = m_shadowSettings.cascadingSlices;
+		view.sliceIndex = slice;
+		view.sliceNearZ = zn;
+		view.sliceFarZ = zf;
+		view.shadowFarZ = m_shadowSettings.farZ;
+		view.shadowMapBias = m_shadowSettings.bias + slice * m_shadowSettings.biasCoeff;
+		view.shadowMapUvTransform = Vector4(
 			0.0f, (float)slice / m_shadowSettings.cascadingSlices,
 			1.0f, 1.0f / m_shadowSettings.cascadingSlices
 		);
-		ipd.deltaTime = 0.0f;
-		ipd.time = 0.0f;
+		view.deltaTime = 0.0f;
+		view.time = 0.0f;
 
-		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSetDepth(s_handleInputShadowMap, shadowMapCascadeTargetSetId);
-		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-		cx.setParams(ipd);
+		render::ImageGraphContext context;
+		context.associateTextureTargetSetDepth(s_handleInputShadowMap, shadowMapCascadeTargetSetId);
+		context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 
-		m_shadowMaskProject->addPasses(renderGraph, rp, cx);
+		m_shadowMaskProject->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			context,
+			view
+		);
 	}
 
 	render::Clear clear;
@@ -1382,20 +1399,26 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 	// Render screenspace reflections.
 	if (m_reflectionsQuality >= Quality::High)
 	{
-		render::ImageGraphParams ipd;
-		ipd.viewFrustum = worldRenderView.getViewFrustum();
-		ipd.view = worldRenderView.getView();
-		ipd.projection = worldRenderView.getProjection();
-		ipd.deltaTime = worldRenderView.getDeltaTime();
+		render::ImageGraphContext context;
+		render::ImageGraphView view;
 
-		render::ImageGraphContext cx(m_screenRenderer);
-		cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-		cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-		cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-		cx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
-		cx.setParams(ipd);
+		view.viewFrustum = worldRenderView.getViewFrustum();
+		view.view = worldRenderView.getView();
+		view.projection = worldRenderView.getProjection();
+		view.deltaTime = worldRenderView.getDeltaTime();
 
-		m_screenReflections->addPasses(renderGraph, rp, cx);
+		context.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+		context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+		context.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 2);
+
+		m_screenReflections->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			context,
+			view
+		);
 	}
 
 	renderGraph.addPass(rp);
@@ -1547,45 +1570,43 @@ void WorldRendererDeferred::setupProcessPass(
 	render::handle_t visualReadTargetSetId
 ) const
 {
-	T_PROFILER_SCOPE(L"World setup process");
+	render::ImageGraphContext context;
+	render::ImageGraphView view;
 
-	render::ImageGraphParams ipd;
-	ipd.viewFrustum = worldRenderView.getViewFrustum();
-	ipd.viewToLight = Matrix44::identity();
-	ipd.view = worldRenderView.getView();
-	ipd.projection = worldRenderView.getProjection();
-	ipd.deltaTime = 1.0f / 60.0f;				
+	view.viewFrustum = worldRenderView.getViewFrustum();
+	view.viewToLight = Matrix44::identity();
+	view.view = worldRenderView.getView();
+	view.projection = worldRenderView.getProjection();
+	view.deltaTime = worldRenderView.getDeltaTime();
+	view.time = worldRenderView.getTime();
 
-	render::ImageGraphContext cx(m_screenRenderer);
-	cx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
-	cx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	cx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	cx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	cx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	context.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
+	context.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	context.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	// Expose gamma and exposure.
-	cx.setFloatParameter(s_handleGamma, m_gamma);
-	cx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	cx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+	context.setFloatParameter(s_handleGamma, m_gamma);
+	context.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+	context.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 
 	// Expose jitter; in texture space.
 	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
 	Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
-	cx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
-
-	cx.setParams(ipd);
+	context.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
 
 	render::handle_t intermediateTargetSetId = 0;
 	for (size_t i = 0; i < processes.size(); ++i)
@@ -1613,13 +1634,19 @@ void WorldRendererDeferred::setupProcessPass(
 			render::Clear cl;
 			cl.mask = render::CfColor;
 			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfColor);
+			rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
 		}
 
-		process->addPasses(renderGraph, rp, cx);
+		process->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			context,
+			view
+		);
 
 		if (next)
-			cx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
+			context.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}

@@ -45,34 +45,38 @@ const static Handle s_handleShadowMapDiscRotation(L"ShadowMapDiscRotation");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, ImagePassOp)
 
-void ShadowProject::setup(const ImageGraph* /*imageGraph*/, const ImageGraphContext& cx, RenderPass& pass) const
+void ShadowProject::setup(
+	const ImageGraph* graph,
+	const ImageGraphContext& context,
+	RenderPass& pass
+) const
 {
 	for (const auto& source : m_sources)
 	{
-		auto targetSetId = cx.findTextureTargetSetId(source.textureId);
+		auto targetSetId = context.findTextureTargetSetId(source.textureId);
 		if (targetSetId != 0)
 			pass.addInput(targetSetId);
 	}
 }
 
 void ShadowProject::build(
-	const ImageGraph* imageGraph,
-	const ImageGraphContext& cx,
+	const ImageGraph* graph,
+	const ImageGraphContext& context,
+	const ImageGraphView& view,
 	const RenderGraph& renderGraph,
 	const ProgramParameters* sharedParams,
-	RenderContext* renderContext
+	RenderContext* renderContext,
+	ScreenRenderer* screenRenderer
 ) const
 {
-	const auto& params = cx.getParams();
-
 	// \tbd Assuming ISimpleTexture
-	auto shadowMap = (ISimpleTexture*)cx.findTexture(renderGraph, s_handleShadowMap);
+	auto shadowMap = (ISimpleTexture*)context.findTexture(renderGraph, s_handleShadowMap);
 	if (!shadowMap)
 		return;
 
-	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;
-	float shadowFadeZ = params.shadowFarZ * 0.7f;
-	float shadowFadeRate = 1.0f / (params.shadowFarZ - shadowFadeZ);
+	float shadowMapBias = view.shadowMapBias / view.shadowFarZ;
+	float shadowFadeZ = view.shadowFarZ * 0.7f;
+	float shadowFadeRate = 1.0f / (view.shadowFarZ - shadowFadeZ);
 
 	Vector4 shadowMapSizeAndBias(
 		1.0f / (float)shadowMap->getWidth(),
@@ -81,36 +85,36 @@ void ShadowProject::build(
 		shadowFadeRate
 	);
 
-	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.shadowFarZ);
-	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4] / viewEdgeNorm;
-	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5] / viewEdgeNorm;
-	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7] / viewEdgeNorm;
-	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6] / viewEdgeNorm;
+	Scalar viewEdgeNorm = view.viewFrustum.getFarZ() / Scalar(view.shadowFarZ);
+	Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4] / viewEdgeNorm;
+	Vector4 viewEdgeTopRight = view.viewFrustum.corners[5] / viewEdgeNorm;
+	Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7] / viewEdgeNorm;
+	Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6] / viewEdgeNorm;
 
-	Scalar p11 = params.projection.get(0, 0);
-	Scalar p22 = params.projection.get(1, 1);
+	Scalar p11 = view.projection.get(0, 0);
+	Scalar p22 = view.projection.get(1, 1);
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
 	pp->beginParameters(renderContext);
 	pp->attachParameters(sharedParams);	
 
-	pp->setFloatParameter(s_handleTime, params.time);
-	pp->setFloatParameter(s_handleDeltaTime, params.deltaTime);
+	pp->setFloatParameter(s_handleTime, view.time);
+	pp->setFloatParameter(s_handleDeltaTime, view.deltaTime);
 	pp->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
-	pp->setVectorParameter(s_handleShadowMapUvTransform, params.shadowMapUvTransform);
-	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));
+	pp->setVectorParameter(s_handleShadowMapUvTransform, view.shadowMapUvTransform);
+	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, view.sliceNearZ - c_sliceBias, view.sliceFarZ + c_sliceBias));
 	pp->setVectorParameter(s_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	pp->setVectorParameter(s_handleViewEdgeTopRight, viewEdgeTopRight);
 	pp->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
 	pp->setVectorParameter(s_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	pp->setVectorArrayParameter(s_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
-	pp->setMatrixParameter(s_handleViewToLight, params.viewToLight);
-	pp->setTextureParameter(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation[params.frame & 1]);
+	pp->setMatrixParameter(s_handleViewToLight, view.viewToLight);
+	pp->setTextureParameter(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation[view.frame & 1]);
 
 	for (const auto& source : m_sources)
 	{
-		auto texture = cx.findTexture(renderGraph, source.textureId);
+		auto texture = context.findTexture(renderGraph, source.textureId);
 		pp->setTextureParameter(source.parameter, texture);
 	}
 
@@ -118,8 +122,8 @@ void ShadowProject::build(
 
 	// Draw fullscreen quad with shader.
 	Shader::Permutation perm;
-	m_shader->setCombination(s_handleLastSlice, (bool)(params.sliceIndex >= (params.sliceCount - 1)), perm);
-	cx.getScreenRenderer()->draw(renderContext, m_shader, perm, pp);
+	m_shader->setCombination(s_handleLastSlice, (bool)(view.sliceIndex >= (view.sliceCount - 1)), perm);
+	screenRenderer->draw(renderContext, m_shader, perm, pp);
 }
 
     }

@@ -20,6 +20,9 @@ namespace traktor
 class ImageGraph;
 class ImageGraphContext;
 class RenderGraph;
+class ScreenRenderer;
+
+struct ImageGraphView;
 
 /*!
  * \ingroup Render
@@ -31,7 +34,14 @@ class T_DLLCLASS IImageStep : public Object
 public:
 	typedef StaticVector< handle_t, 32 > targetSetVector_t;
 
-	virtual void addPasses(const ImageGraph* graph, const ImageGraphContext& context, const targetSetVector_t& targetSetIds, RenderGraph& renderGraph) const = 0;
+	virtual void addPasses(
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		const ImageGraphView& view,
+		const targetSetVector_t& targetSetIds,
+		ScreenRenderer* screenRenderer,
+		RenderGraph& renderGraph
+	) const = 0;
 };
 
 	}

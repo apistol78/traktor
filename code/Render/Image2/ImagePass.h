@@ -28,7 +28,14 @@ class T_DLLCLASS ImagePass : public IImageStep
 	T_RTTI_CLASS;
 
 public:
-	virtual void addPasses(const ImageGraph* graph, const ImageGraphContext& context, const targetSetVector_t& targetSetIds, RenderGraph& renderGraph) const override final;
+	virtual void addPasses(
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		const ImageGraphView& view,
+		const targetSetVector_t& targetSetIds,
+		ScreenRenderer* screenRenderer,
+		RenderGraph& renderGraph
+	) const override final;
 
 private:
 	friend class ImagePassData;

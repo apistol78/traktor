@@ -22,7 +22,13 @@ ImageGraph::ImageGraph(const std::wstring& name)
 {
 }
 
-void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const ImageGraphContext& cx) const
+void ImageGraph::addPasses(
+	ScreenRenderer* screenRenderer,
+	RenderGraph& renderGraph,
+	RenderPass* pass,
+	const ImageGraphContext& cx,
+	const ImageGraphView& view
+) const
 {
 	IImageStep::targetSetVector_t targetSetIds;
 
@@ -69,7 +75,7 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const Ima
 
 	// Add all steps to render graph.
 	for (auto step : m_steps)
-		step->addPasses(this, context, targetSetIds, renderGraph);
+		step->addPasses(this, context, view, targetSetIds, screenRenderer, renderGraph);
 
 	// Override pass's name with our root node's name.
 	pass->setName(m_name);
@@ -87,12 +93,18 @@ void ImageGraph::addPasses(RenderGraph& renderGraph, RenderPass* pass, const Ima
 				sharedParams->setFloatParameter(it.first, it.second);
 			for (const auto& it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
-			for (const auto& it : context.getTextureParameters())
-				sharedParams->setTextureParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 
 			for (auto op : m_ops)
-				op->build(this, context, renderGraph, sharedParams, renderContext);
+				op->build(
+					this,
+					context,
+					view,
+					renderGraph,
+					sharedParams,
+					renderContext,
+					screenRenderer
+				);
 		}
 	);
 }

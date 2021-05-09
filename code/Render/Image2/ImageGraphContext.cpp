@@ -7,10 +7,7 @@ namespace traktor
 	namespace render
 	{
 
-ImageGraphContext::ImageGraphContext(ScreenRenderer* screenRenderer)
-:	m_screenRenderer(screenRenderer)
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphContext", ImageGraphContext, Object)
 
 void ImageGraphContext::associateTexture(handle_t textureId, ITexture* texture)
 {
@@ -72,11 +69,6 @@ void ImageGraphContext::setFloatParameter(handle_t handle, float value)
 void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value)
 {
 	m_vectorParameters[handle] = value;
-}
-
-void ImageGraphContext::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& value)
-{
-	m_textureParameters[handle] = value;
 }
 
 	}

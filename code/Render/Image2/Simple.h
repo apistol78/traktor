@@ -27,14 +27,20 @@ class T_DLLCLASS Simple : public ImagePassOp
 	T_RTTI_CLASS;
 
 public:
-	virtual void setup(const ImageGraph* imageGraph, const ImageGraphContext& cx, RenderPass& pass) const override final;
+	virtual void setup(
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		RenderPass& pass
+	) const override final;
 
 	virtual void build(
-		const ImageGraph* imageGraph,
-		const ImageGraphContext& cx,
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		const ImageGraphView& view,
 		const RenderGraph& renderGraph,
 		const ProgramParameters* sharedParams,
-		RenderContext* renderContext
+		RenderContext* renderContext,
+		ScreenRenderer* screenRenderer
 	) const override final;
 
 private:

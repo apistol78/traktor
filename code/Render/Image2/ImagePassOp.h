@@ -23,7 +23,10 @@ class ProgramParameters;
 class RenderContext;
 class RenderGraph;
 class RenderPass;
+class ScreenRenderer;
 class Shader;
+
+struct ImageGraphView;
 
 /*! Image pass step.
  * \ingroup Render
@@ -37,15 +40,21 @@ class T_DLLCLASS ImagePassOp : public Object
 
 public:
 	/*! */
-	virtual void setup(const ImageGraph* imageGraph, const ImageGraphContext& cx, RenderPass& pass) const = 0;
+	virtual void setup(
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		RenderPass& pass
+	) const = 0;
 
 	/*! */
 	virtual void build(
-		const ImageGraph* imageGraph,
-		const ImageGraphContext& cx,
+		const ImageGraph* graph,
+		const ImageGraphContext& context,
+		const ImageGraphView& view,
 		const RenderGraph& renderGraph,
 		const ProgramParameters* sharedParams,
-		RenderContext* renderContext
+		RenderContext* renderContext,
+		ScreenRenderer* screenRenderer
 	) const = 0;
 
 protected:
