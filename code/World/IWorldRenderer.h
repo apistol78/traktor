@@ -20,6 +20,7 @@ namespace traktor
 	namespace render
 	{
 
+class ImageGraphContext;
 class IRenderSystem;
 class IRenderTargetSet;
 class RenderGraph;
@@ -133,6 +134,9 @@ public:
 	) = 0;
 
 	//@}
+
+	/*! */
+	virtual render::ImageGraphContext* getImageGraphContext() const = 0;
 };
 
 	}

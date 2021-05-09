@@ -77,6 +77,8 @@ public:
 		render::handle_t outputTargetSetId
 	) override final;
 
+	virtual render::ImageGraphContext* getImageGraphContext() const override final;
+
 private:
 	friend class TilesOverlay;
 
@@ -107,6 +109,8 @@ private:
 	
 	Ref< render::ISimpleTexture > m_blackTexture;
 	Ref< render::ISimpleTexture > m_whiteTexture;
+
+	Ref< render::ImageGraphContext > m_imageGraphContext;
 
 	resource::Proxy< render::ImageGraph > m_velocityPrime;
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;

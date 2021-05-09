@@ -329,6 +329,11 @@ scene::Scene* WorldLayer::getScene() const
 	return m_scene;
 }
 
+world::IWorldRenderer* WorldLayer::getWorldRenderer() const
+{
+	return m_worldRenderer;
+}
+
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 {
 	return getEntity(name, 0);
@@ -405,12 +410,6 @@ bool WorldLayer::isEntityAdded(const world::Entity* entity) const
 void WorldLayer::setControllerEnable(bool controllerEnable)
 {
 	m_controllerEnable = controllerEnable;
-}
-
-render::ImageProcess* WorldLayer::getImageProcess() const
-{
-	// \fixme
-	return nullptr; // m_worldRenderer->getVisualImageProcess();
 }
 
 void WorldLayer::resetController()

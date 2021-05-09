@@ -631,6 +631,11 @@ void WorldRendererDeferred::setup(
 	m_count++;
 }
 
+render::ImageGraphContext* WorldRendererDeferred::getImageGraphContext() const
+{
+	return nullptr;
+}
+
 render::handle_t WorldRendererDeferred::setupGBufferPass(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,

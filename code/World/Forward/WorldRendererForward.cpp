@@ -251,6 +251,8 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	m_imageGraphContext = new render::ImageGraphContext();
+
 	// Allocate light lists.
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	m_frames.resize(desc.frameCount);
@@ -490,6 +492,11 @@ void WorldRendererForward::setup(
 	);
 
 	m_count++;
+}
+
+render::ImageGraphContext* WorldRendererForward::getImageGraphContext() const
+{
+	return m_imageGraphContext;
 }
 
 void WorldRendererForward::setupTileDataPass(
@@ -748,7 +755,6 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 	
 	if (m_velocityPrime)
 	{
-		render::ImageGraphContext context;
 		render::ImageGraphView view;
 
 		view.viewFrustum = worldRenderView.getViewFrustum();
@@ -756,13 +762,13 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 		view.projection = worldRenderView.getProjection();
 		view.deltaTime = worldRenderView.getDeltaTime();
 
-		context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 
 		m_velocityPrime->addPasses(
 			m_screenRenderer,
 			renderGraph,
 			rp,
-			context,
+			*m_imageGraphContext,
 			view
 		);
 	}
@@ -811,7 +817,6 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	render::handle_t gbufferTargetSetId
 ) const
 {
-	render::ImageGraphContext context;
 	render::ImageGraphView view;
 
 	if (m_ambientOcclusion == nullptr)
@@ -832,15 +837,15 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	view.view = worldRenderView.getView();
 	view.projection = worldRenderView.getProjection();
 
-	context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	m_ambientOcclusion->addPasses(
 		m_screenRenderer,
 		renderGraph,
 		rp,
-		context,
+		*m_imageGraphContext,
 		view
 	);
 
@@ -953,7 +958,6 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	 // Render screenspace reflections.
 	 if (m_reflectionsQuality >= Quality::Ultra)
 	 {
-	 	render::ImageGraphContext context;
 	 	render::ImageGraphView view;
 
 	 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -961,16 +965,16 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	 	view.projection = worldRenderView.getProjection();
 	 	view.deltaTime = worldRenderView.getDeltaTime();
 
-	 	context.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	 	context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	 	context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	 	context.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
+	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
 
 	 	m_screenReflections->addPasses(
 			m_screenRenderer,
 			renderGraph,
 			rp,
-			context,
+			*m_imageGraphContext,
 			view
 		);
 	 }
@@ -1480,7 +1484,6 @@ void WorldRendererForward::setupProcessPass(
 	render::handle_t visualReadTargetSetId
 ) const
 {
-	render::ImageGraphContext context;
 	render::ImageGraphView view;
 
 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -1490,21 +1493,21 @@ void WorldRendererForward::setupProcessPass(
 	view.deltaTime = worldRenderView.getDeltaTime();
 	view.time = worldRenderView.getTime();
 
-	context.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
-	context.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	context.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	context.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	context.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 
 	// Expose gamma and exposure.
-	context.setFloatParameter(s_handleGamma, m_gamma);
-	context.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	context.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+	m_imageGraphContext->setFloatParameter(s_handleGamma, m_gamma);
+	m_imageGraphContext->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+	m_imageGraphContext->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 
 	// Expose jitter; in texture space.
 	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
 	Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
-	context.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
+	m_imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 4 > processes;
 	if (m_toneMap)
@@ -1549,12 +1552,12 @@ void WorldRendererForward::setupProcessPass(
 			m_screenRenderer,
 			renderGraph,
 			rp,
-			context,
+			*m_imageGraphContext,
 			view
 		);
 
 		if (next)
-			context.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
+			m_imageGraphContext->associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}

@@ -85,5 +85,10 @@ void WorldRendererSimple::setup(
 	renderGraph.addPass(rp);
 }
 
+render::ImageGraphContext* WorldRendererSimple::getImageGraphContext() const
+{
+	return nullptr;
+}
+
 	}
 }
