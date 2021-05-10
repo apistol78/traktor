@@ -965,33 +965,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Image</name>
-											<items>
-												<item type="Filter">
-													<name>Steps</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Steps/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="Filter">
-													<name>Defines</name>
-													<items>
-														<item type="File">
-															<fileName>Image/Defines/*.*</fileName>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="File">
-													<fileName>Image/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Image2</name>
 											<items>
 												<item type="File">
@@ -5383,10 +5356,10 @@
 														</items>
 													</item>
 													<item type="Filter">
-														<name>Image</name>
+														<name>Image2</name>
 														<items>
 															<item type="File">
-																<fileName>Image/*.*</fileName>
+																<fileName>Image2/*.*</fileName>
 																<items/>
 															</item>
 														</items>
@@ -11146,6 +11119,10 @@
 										<sourceFile>libTraktor.Shape.Editor.dylib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugshared</consumerLibraryPath>
 							</item>
@@ -11173,6 +11150,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Shape.Editor.dylib</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -11204,6 +11185,10 @@
 										<sourceFile>libTraktor.Shape.Editor.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
 								</aggregationItems>
 								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
@@ -11231,6 +11216,10 @@
 								<aggregationItems>
 									<item type="AggregationItem">
 										<sourceFile>libTraktor.Shape.Editor.a</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
+									<item type="AggregationItem">
+										<sourceFile>$(EMBREE_SDK)/lib/*.*</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -17178,11 +17167,7 @@
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/dylib/macOS/*.*</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17219,11 +17204,7 @@
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/dylib/macOS/*.*</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17260,11 +17241,7 @@
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/dylib/macOS/*.*</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -17301,11 +17278,7 @@
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/libMoltenVK.dylib</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>$(MOLTEN_SDK)/macOS/dynamic/MoltenVK_icd.json</sourceFile>
+							<sourceFile>$(MOLTEN_SDK)/dylib/macOS/*.*</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

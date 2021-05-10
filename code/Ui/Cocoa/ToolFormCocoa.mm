@@ -259,12 +259,10 @@ Rect ToolFormCocoa::getNormalRect() const
 
 void ToolFormCocoa::setFont(const Font& font)
 {
-	log::info << mbstows(T_FILE_LINE) << L": setFont NI" << Endl;
 }
 
 Font ToolFormCocoa::getFont() const
 {
-	log::info << mbstows(T_FILE_LINE) << L": getFont NI" << Endl;
 	return Font();
 }
 
