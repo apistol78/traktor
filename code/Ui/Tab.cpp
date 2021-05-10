@@ -122,7 +122,10 @@ TabPage* Tab::getPage(int32_t index) const
 
 TabPage* Tab::getPageAt(const Point& position) const
 {
-	if (position.y >= dpi96(c_tabHeight))
+	const auto rc = getInnerRect();
+	if (!m_bottom && position.y >= rc.top + dpi96(c_tabHeight))
+		return nullptr;
+	else if (m_bottom && position.y <= rc.bottom - dpi96(c_tabHeight))
 		return nullptr;
 
 	for (const auto& ps : m_pages)
