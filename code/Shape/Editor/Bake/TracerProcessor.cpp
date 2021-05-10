@@ -42,7 +42,7 @@
 #include "Shape/Editor/Bake/TracerTask.h"
 #include "World/IrradianceGridResource.h"
 
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__APPLE__)
 #	include <OpenImageDenoise/oidn.h>
 #endif
 
@@ -55,7 +55,7 @@ namespace traktor
 
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, bool directional)
 {
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__APPLE__)
 	int32_t width = lightmap->getWidth();
 	int32_t height = lightmap->getHeight();
 
