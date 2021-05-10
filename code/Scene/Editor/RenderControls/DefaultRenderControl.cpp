@@ -39,6 +39,19 @@ namespace traktor
 
 const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
 
+const float c_aspects[] =
+{
+	0.0f,
+	1.0f,
+	4.0f / 3.0f,
+	6.0f / 4.0f,
+	16.0f / 9.0f,
+	16.0f / 10.0f,
+	3.0f / 4.0f,
+	4.0f / 6.0f,
+	9.0f / 16.0f
+};
+
 ui::MenuItem* getChecked(ui::MenuItem* menu)
 {
 	for (int i = 0; i < menu->count(); ++i)
@@ -444,6 +457,8 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 
 	T_ASSERT(m_renderControl);
 
+	m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
+
 	m_container->update();
 
 	if (m_toolToggleGrid->isToggled())
@@ -503,18 +518,6 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
-		const float c_aspects[] =
-		{
-			0.0f,
-			1.0f,
-			4.0f / 3.0f,
-			6.0f / 4.0f,
-			16.0f / 9.0f,
-			16.0f / 10.0f,
-			3.0f / 4.0f,
-			4.0f / 6.0f,
-			9.0f / 16.0f
-		};
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 	else if (event->getCommand() == L"Scene.Editor.PostProcessQuality")
