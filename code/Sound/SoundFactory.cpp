@@ -31,7 +31,7 @@ Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, 
 	if (resource)
 		return resource->createSound(resourceManager, instance);
 	else
-		return 0;
+		return nullptr;
 }
 
 	}
