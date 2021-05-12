@@ -824,14 +824,19 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
 			return false;
 
-		for (RefArray< ui::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (auto node : nodes)
 		{
-			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
-			if (selectedExternal)
+			if (auto selectedExternal = node->getData< External >(L"SHADERNODE"))
 			{
 				Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
 				if (fragmentInstance)
 					m_editor->highlightInstance(fragmentInstance);
+			}
+			else if (auto selectedTexture = node->getData< Texture >(L"SHADERNODE"))
+			{
+				Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
+				if (textureInstance)
+					m_editor->highlightInstance(textureInstance);
 			}
 		}
 	}
