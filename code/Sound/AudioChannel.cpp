@@ -95,15 +95,15 @@ float AudioChannel::getPitch() const
 void AudioChannel::setFilter(const IFilter* filter)
 {
 	StateFilter& sf = m_stateFilter.beginWrite();
-	if (filter != 0)
+	if (filter != nullptr)
 	{
 		sf.filter = filter;
 		sf.filterInstance = filter->createInstance();
 	}
 	else
 	{
-		sf.filter = 0;
-		sf.filterInstance = 0;
+		sf.filter = nullptr;
+		sf.filterInstance = nullptr;
 	}
 	m_stateFilter.endWrite();
 }
@@ -117,8 +117,8 @@ void AudioChannel::stop()
 {
 	StateSound& ss = m_stateSound.beginWrite();
 
-	ss.buffer = 0;
-	ss.cursor = 0;
+	ss.buffer = nullptr;
+	ss.cursor = nullptr;
 	ss.category = 0;
 	ss.volume = 0.0f;
 	ss.repeat = false;
@@ -232,8 +232,8 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 						skip -= min(skip, skipSoundBlock.samplesCount);
 					else
 					{
-						ss.buffer = 0;
-						ss.cursor = 0;
+						ss.buffer = nullptr;
+						ss.cursor = nullptr;
 						m_playing = false;
 						return false;
 					}
@@ -241,16 +241,16 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 
 				if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 				{
-					ss.buffer = 0;
-					ss.cursor = 0;
+					ss.buffer = nullptr;
+					ss.cursor = nullptr;
 					m_playing = false;
 					return false;
 				}
 			}
 			else
 			{
-				ss.buffer = 0;
-				ss.cursor = 0;
+				ss.buffer = nullptr;
+				ss.cursor = nullptr;
 				m_playing = false;
 				return false;
 			}

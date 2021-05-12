@@ -160,7 +160,7 @@ Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 	if (cursor->create())
 		return cursor;
 	else
-		return 0;
+		return nullptr;
 }
 
 bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const

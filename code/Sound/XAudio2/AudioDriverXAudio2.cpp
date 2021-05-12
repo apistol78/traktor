@@ -307,24 +307,21 @@ bool AudioDriverXAudio2::reset()
 		m_masteringVoice = nullptr;
 	}
 
-	if (m_audio)
+	if (!m_audio)
 	{
-		m_audio->UnregisterForCallbacks(m_engineCallback);
-		m_audio.release();
-	}
+		UINT32 flags = 0;
+	#if defined(_DEBUG)
+		flags |= XAUDIO2_DEBUG_ENGINE;
+	#endif
+		hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
+			return false;
+		}
 
-	UINT32 flags = 0;
-#if defined(_DEBUG)
-	flags |= XAUDIO2_DEBUG_ENGINE;
-#endif
-	hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
-		return false;
+		m_audio->RegisterForCallbacks(m_engineCallback);
 	}
-
-	m_audio->RegisterForCallbacks(m_engineCallback);
 
 	hr = m_audio->CreateMasteringVoice(
 		&m_masteringVoice,
