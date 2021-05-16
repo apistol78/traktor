@@ -92,6 +92,8 @@ float RenderSystemVrfy::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewDefaultDesc& desc)
 {
+	T_CAPTURE_TRACE(L"createRenderView");
+
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return nullptr;
@@ -101,6 +103,8 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewDefaultDes
 
 Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
+	T_CAPTURE_TRACE(L"createRenderView");
+
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return nullptr;
@@ -110,6 +114,7 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 
 Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_CAPTURE_TRACE(L"createVertexBuffer");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid vertex buffer size.");
 
 	uint32_t vertexSize = getVertexSize(vertexElements);
@@ -124,6 +129,7 @@ Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< Ve
 
 Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+	T_CAPTURE_TRACE(L"createIndexBuffer");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid index buffer size.");
 
 	Ref< IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(indexType, bufferSize, dynamic);
@@ -135,6 +141,7 @@ Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint
 
 Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
 {
+	T_CAPTURE_TRACE(L"createStructBuffer");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid structure buffer size.");
 
 	uint32_t structSize = getStructSize(structElements);
@@ -149,6 +156,7 @@ Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< St
 
 Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_CAPTURE_TRACE(L"createSimpleTexture");
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid texture height.");
 	T_CAPTURE_ASSERT(desc.mipCount >= 1, L"Invalid number of mips.");
@@ -171,6 +179,7 @@ Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureC
 
 Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_CAPTURE_TRACE(L"createCubeTexture");
 	T_CAPTURE_ASSERT(desc.side > 0, L"Invalid cube texture size.");
 	T_CAPTURE_ASSERT(desc.mipCount >= 1, L"Invalid number of mips.");
 	T_CAPTURE_ASSERT(desc.mipCount < 16, L"Too many mips.");
@@ -192,6 +201,7 @@ Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateD
 
 Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
+	T_CAPTURE_TRACE(L"createVolumeTexture");
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid volume texture width.");
 	T_CAPTURE_ASSERT(desc.height > 0, L"Invalid volume texture height.");
 	T_CAPTURE_ASSERT(desc.depth > 0, L"Invalid volume texture depth.");
@@ -215,6 +225,7 @@ Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureC
 
 Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
 {
+	T_CAPTURE_TRACE(L"createRenderTargetSet");
 	T_CAPTURE_ASSERT(desc.count >= 0, L"Negative number of targets.");
 	T_CAPTURE_ASSERT(desc.count <= 4, L"Too many targets.");
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid size.");
@@ -268,6 +279,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
+	T_CAPTURE_TRACE(L"createProgram");
 	T_CAPTURE_ASSERT(programResource, L"No program resource.");
 
 	if (!programResource)
