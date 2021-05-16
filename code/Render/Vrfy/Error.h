@@ -1,5 +1,4 @@
-#ifndef traktor_render_Error_H
-#define traktor_render_Error_H
+#pragma once
 
 #include "Core/Debug/Debugger.h"
 #include "Core/Log/Log.h"
@@ -10,5 +9,10 @@
 		Debugger::getInstance().breakDebugger(); \
 	}
 
-#endif	// traktor_render_Error_H
+#if 0
+#	define T_CAPTURE_TRACE(method) \
+		log::debug << method << Endl;
+#else
+#	define T_CAPTURE_TRACE(method)
+#endif
 

@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Thread;
+
 	namespace drawing
 	{
 
@@ -103,8 +106,9 @@ private:
 	RenderViewDesc m_desc;
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;
-	bool m_insideFrame;
-	bool m_insidePass;
+	bool m_insideFrame = false;
+	bool m_insidePass = false;
+	Thread* m_threadFrame = nullptr;
 	AlignedVector< ProfileVrfy > m_timeStamps;
 	mutable SmallSet< int32_t > m_queriesPending;
 };

@@ -1,6 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Render/IndexBuffer.h"
@@ -27,112 +28,142 @@ RenderViewVrfy::RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* render
 :	m_desc(desc)
 ,	m_renderSystem(renderSystem)
 ,	m_renderView(renderView)
-,	m_insideFrame(false)
-,	m_insidePass(false)
 {
 }
 
 bool RenderViewVrfy::nextEvent(RenderEvent& outEvent)
 {
+	T_CAPTURE_TRACE(L"nextEvent");
 	return m_renderView->nextEvent(outEvent);
 }
 
 void RenderViewVrfy::close()
 {
+	T_CAPTURE_TRACE(L"close");
 	m_renderView->close();
 }
 
 bool RenderViewVrfy::reset(const RenderViewDefaultDesc& desc)
 {
+	T_CAPTURE_TRACE(L"reset");
+	T_CAPTURE_ASSERT(!m_insideFrame, L"Cannot reset while rendering frame.");
 	return m_renderView->reset(desc);
 }
 
 bool RenderViewVrfy::reset(int32_t width, int32_t height)
 {
+	T_CAPTURE_TRACE(L"reset");
+	T_CAPTURE_ASSERT(!m_insideFrame, L"Cannot reset while rendering frame.");
 	return m_renderView->reset(width, height);
 }
 
 int RenderViewVrfy::getWidth() const
 {
+	T_CAPTURE_TRACE(L"getWidth");
 	return m_renderView->getWidth();
 }
 
 int RenderViewVrfy::getHeight() const
 {
+	T_CAPTURE_TRACE(L"getHeight");
 	return m_renderView->getHeight();
 }
 
 bool RenderViewVrfy::isActive() const
 {
+	T_CAPTURE_TRACE(L"isActive");
 	return m_renderView->isActive();
 }
 
 bool RenderViewVrfy::isMinimized() const
 {
+	T_CAPTURE_TRACE(L"isMinimized");
 	return m_renderView->isMinimized();
 }
 
 bool RenderViewVrfy::isFullScreen() const
 {
+	T_CAPTURE_TRACE(L"isFullScreen");
 	return m_renderView->isFullScreen();
 }
 
 void RenderViewVrfy::showCursor()
 {
+	T_CAPTURE_TRACE(L"showCursor");
 	m_renderView->showCursor();
 }
 
 void RenderViewVrfy::hideCursor()
 {
+	T_CAPTURE_TRACE(L"hideCursor");
 	m_renderView->hideCursor();
 }
 
 bool RenderViewVrfy::isCursorVisible() const
 {
+	T_CAPTURE_TRACE(L"isCursorVisible");
 	return m_renderView->isCursorVisible();
 }
 
 bool RenderViewVrfy::setGamma(float gamma)
 {
+	T_CAPTURE_TRACE(L"setGamma");
 	return m_renderView->setGamma(gamma);
 }
 
 void RenderViewVrfy::setViewport(const Viewport& viewport)
 {
+	T_CAPTURE_TRACE(L"setViewport");
+	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot set viewport outside of frame.");
 	m_renderView->setViewport(viewport);
 }
 
 SystemWindow RenderViewVrfy::getSystemWindow()
 {
+	T_CAPTURE_TRACE(L"getSystemWindow");
 	return m_renderView->getSystemWindow();
 }
 
 bool RenderViewVrfy::beginFrame()
 {
+	T_CAPTURE_TRACE(L"beginFrame");
 	T_CAPTURE_ASSERT(!m_insideFrame, L"Frame already begun.");
+
 	if (!m_renderView->beginFrame())
 		return false;
 
+	m_threadFrame = ThreadManager::getInstance().getCurrentThread();
 	m_insideFrame = true;
 	return true;
 }
 
 void RenderViewVrfy::endFrame()
 {
+	T_CAPTURE_TRACE(L"endFrame");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Frame not begun.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
 	m_renderView->endFrame();
 	m_insideFrame = false;
 }
 
 void RenderViewVrfy::present()
 {
+	T_CAPTURE_TRACE(L"present");
 	T_CAPTURE_ASSERT(!m_insideFrame, L"Cannot present inside beginFrame/endFrame.");
+	T_CAPTURE_ASSERT(m_threadFrame, L"Cannot present multiple times without rendering.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
 	m_renderView->present();
+	m_threadFrame = nullptr;
 }
 
 bool RenderViewVrfy::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
+	T_CAPTURE_TRACE(L"beginPass");
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
 	if (!m_renderView->beginPass(clear, load, store))
 		return false;
 
@@ -142,7 +173,9 @@ bool RenderViewVrfy::beginPass(const Clear* clear, uint32_t load, uint32_t store
 
 bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
 {
+	T_CAPTURE_TRACE(L"beginPass");
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	RenderTargetSetVrfy* rtsc = mandatory_non_null_type_cast< RenderTargetSetVrfy* >(renderTargetSet);
 
@@ -165,7 +198,9 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 
 bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear, uint32_t load, uint32_t store)
 {
+	T_CAPTURE_TRACE(L"beginPass");
 	T_CAPTURE_ASSERT(!m_insidePass, L"Already inside pass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	RenderTargetSetVrfy* rtsc = mandatory_non_null_type_cast< RenderTargetSetVrfy* >(renderTargetSet);
 	T_CAPTURE_ASSERT(rtsc->haveColorTexture(renderTarget), L"No such render target.");
@@ -185,14 +220,19 @@ bool RenderViewVrfy::beginPass(IRenderTargetSet* renderTargetSet, int32_t render
 
 void RenderViewVrfy::endPass()
 {
+	T_CAPTURE_TRACE(L"endPass");
 	T_CAPTURE_ASSERT(m_insidePass, L"Not inside pass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
 	m_renderView->endPass();
 	m_insidePass = false;
 }
 
 void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
+	T_CAPTURE_TRACE(L"draw");
 	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
 	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
@@ -263,7 +303,9 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	T_CAPTURE_TRACE(L"draw");
 	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
 	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
@@ -334,8 +376,10 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 {
+	T_CAPTURE_TRACE(L"compute");
 	T_CAPTURE_ASSERT(m_insidePass, L"Cannot compute outside of beginPass/endPass.");
 	T_CAPTURE_ASSERT(workSize != nullptr, L"Incorrect argument; workSize null.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
 	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
@@ -350,9 +394,11 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
+	T_CAPTURE_TRACE(L"copy");
 	T_CAPTURE_ASSERT(destinationTexture, L"Invalid destination texture.");
 	T_CAPTURE_ASSERT(sourceTexture, L"Invalid destination texture.");
 	T_CAPTURE_ASSERT(!m_insidePass, L"Cannot copy while being in an active render pass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
 	ITexture* destinationTextureUnwrapped = nullptr;
 	ITexture* sourceTextureUnwrapped = nullptr;
@@ -441,35 +487,46 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 
 int32_t RenderViewVrfy::beginTimeQuery()
 {
-	int32_t query = m_renderView->beginTimeQuery();
-	if (query < 0)
-		return query;
+	return -1;
 
-	T_CAPTURE_ASSERT(m_queriesPending.find(query) == m_queriesPending.end(), L"Invalid query index returned from renderer.");
-	m_queriesPending.insert(query);
-	return query;
+	//T_CAPTURE_TRACE(L"beginTimeQuery");
+
+	//int32_t query = m_renderView->beginTimeQuery();
+	//if (query < 0)
+	//	return query;
+
+	//T_CAPTURE_ASSERT(m_queriesPending.find(query) == m_queriesPending.end(), L"Invalid query index returned from renderer.");
+	//m_queriesPending.insert(query);
+	//return query;
 }
 
 void RenderViewVrfy::endTimeQuery(int32_t query)
 {
-	T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
-	m_renderView->endTimeQuery(query);
-	m_queriesPending.erase(query);
+	//T_CAPTURE_TRACE(L"endTimeQuery");
+	//T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
+
+	//m_renderView->endTimeQuery(query);
+	//m_queriesPending.erase(query);
 }
 
 bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-	return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
+	//T_CAPTURE_TRACE(L"getTimeQuery");
+	//return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
+	return false;
 }
 
 void RenderViewVrfy::pushMarker(const char* const marker)
 {
+	T_CAPTURE_TRACE(L"pushMarker");
 	T_CAPTURE_ASSERT(marker != nullptr, L"Invalid marker.");
+
 	m_renderView->pushMarker(marker);
 }
 
 void RenderViewVrfy::popMarker()
 {
+	T_CAPTURE_TRACE(L"popMarker");
 	m_renderView->popMarker();
 }
 
