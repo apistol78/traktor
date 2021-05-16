@@ -523,66 +523,66 @@ void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 
 void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
 {
-	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
-	if (bm)
-	{
-		Gdiplus::ImageAttributes attr;
-		if ((blendMode & BmModulate) != 0)
-		{
-			Gdiplus::ColorMatrix cm =
-			{
-				m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 0.0f, 1.0f
-			};
-			attr.SetColorMatrix(&cm);
-		}
+	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
+	if (!bm)
+		return;
 
-		m_graphics->DrawImage(
-			bm,
-			Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)size.cx, (Gdiplus::REAL)size.cy),
-			(Gdiplus::REAL)srcAt.x,
-			(Gdiplus::REAL)srcAt.y,
-			(Gdiplus::REAL)size.cx,
-			(Gdiplus::REAL)size.cy,
-			UnitPixel,
-			&attr
-		);
+	Gdiplus::ImageAttributes attr;
+	if ((blendMode & BmModulate) != 0)
+	{
+		Gdiplus::ColorMatrix cm =
+		{
+			m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+		};
+		attr.SetColorMatrix(&cm);
 	}
+
+	m_graphics->DrawImage(
+		bm,
+		Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)size.cx, (Gdiplus::REAL)size.cy),
+		(Gdiplus::REAL)srcAt.x,
+		(Gdiplus::REAL)srcAt.y,
+		(Gdiplus::REAL)size.cx,
+		(Gdiplus::REAL)size.cy,
+		UnitPixel,
+		&attr
+	);
 }
 
 void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
 {
-	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
-	if (bm)
-	{
-		Gdiplus::ImageAttributes attr;
-		if ((blendMode & BmModulate) != 0)
-		{
-			Gdiplus::ColorMatrix cm =
-			{
-				m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 0.0f, 1.0f
-			};
-			attr.SetColorMatrix(&cm);
-		}
+	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
+	if (!bm)
+		return;
 
-		m_graphics->DrawImage(
-			bm,
-			Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)dstSize.cx, (Gdiplus::REAL)dstSize.cy),
-			(Gdiplus::REAL)srcAt.x,
-			(Gdiplus::REAL)srcAt.y,
-			(Gdiplus::REAL)srcSize.cx,
-			(Gdiplus::REAL)srcSize.cy,
-			UnitPixel,
-			&attr
-		);
+	Gdiplus::ImageAttributes attr;
+	if ((blendMode & BmModulate) != 0)
+	{
+		Gdiplus::ColorMatrix cm =
+		{
+			m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+		};
+		attr.SetColorMatrix(&cm);
 	}
+
+	m_graphics->DrawImage(
+		bm,
+		Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)dstSize.cx, (Gdiplus::REAL)dstSize.cy),
+		(Gdiplus::REAL)srcAt.x,
+		(Gdiplus::REAL)srcAt.y,
+		(Gdiplus::REAL)srcSize.cx,
+		(Gdiplus::REAL)srcSize.cy,
+		UnitPixel,
+		&attr
+	);
 }
 
 void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
@@ -634,9 +634,9 @@ Gdiplus::Bitmap* CanvasGdiPlusWin32::getCachedBitmap(const ISystemBitmap* bm)
 	const uint32_t* srcColor = (const uint32_t*)bmw32->getBits();
 	const uint32_t* srcAlpha = (const uint32_t*)bmw32->getBitsPreMulAlpha();
 
-	const uint32_t alpha = (bmw32->getMask() & 0x000000ff);
+	const uint32_t alpha = 0; // (bmw32->getMask() & 0x000000ff);
 
-	AutoArrayPtr< uint32_t > bits(new uint32_t [width * height]);
+	uint32_t* bits = new uint32_t [width * height];
 	for (int32_t y = 0; y < height; ++y)
 	{
 		int32_t srcOffset = (height - y - 1) * width;
@@ -651,8 +651,8 @@ Gdiplus::Bitmap* CanvasGdiPlusWin32::getCachedBitmap(const ISystemBitmap* bm)
 		height,
 		width * 4,
 		PixelFormat32bppARGB,
-		(LPBYTE)bits.ptr()
-	));
+		(LPBYTE)bits //.ptr()
+	);
 
 	m_cachedBitmaps[bmw32->getTag()] = gdipbm;
 	return gdipbm;

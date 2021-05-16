@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Misc/ComRef.h"
 #include "Ui/Itf/IForm.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
 
