@@ -492,7 +492,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		c_title,
 		ui::dpi96(1280),
 		ui::dpi96(900),
-		ui::Form::WsDefault,
+		ui::Form::WsDefault | ui::WsNoCanvas,
 		new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)
 	))
 		return false;

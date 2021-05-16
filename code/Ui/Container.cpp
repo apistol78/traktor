@@ -35,7 +35,9 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 	}
 
 	addEventHandler< SizeEvent >(this, &Container::eventSize);
-	addEventHandler< PaintEvent >(this, &Container::eventPaint);
+
+	if ((style & WsNoCanvas) == 0)
+		addEventHandler< PaintEvent >(this, &Container::eventPaint);
 
 	return Widget::create(parent);
 }
