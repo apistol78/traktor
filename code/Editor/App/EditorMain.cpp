@@ -193,16 +193,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		{
 #if !defined(_DEBUG)
 			if (splash)
+			{
 				splash->hide();
+				safeDestroy(splash);
+			}
 #endif
 
 			ui::Application::getInstance()->execute();
-			editorForm->destroy();
+			safeDestroy(editorForm);
 		}
-
-#if !defined(_DEBUG)
-		safeDestroy(splash);
-#endif
 	}
 	catch (...)
 	{
