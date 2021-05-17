@@ -50,8 +50,16 @@ bool include(FbxNode* node, const std::wstring& filter)
 	std::wstring name = mbstows(node->GetName());
 	for (auto s : StringSplit< std::wstring >(filter, L",;"))
 	{
-		if (s == name)
-			return true;
+		if (s.front() != L'!')
+		{
+			if (s == name)
+				return true;
+		}
+		else
+		{
+			if (s.substr(1) != name)
+				return true;
+		}
 	}
 
 	return false;
