@@ -316,6 +316,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRefArray->addMethod("get", &BoxedRefArray::get);
 	classBoxedRefArray->addMethod("push_back", &BoxedRefArray::push_back);
 	classBoxedRefArray->addMethod("pop_back", &BoxedRefArray::pop_back);
+	classBoxedRefArray->addMethod("remove", &BoxedRefArray::remove);
 	registrar->registerClass(classBoxedRefArray);
 
 	auto classBoxedSphere = new AutoRuntimeClass< BoxedSphere >();

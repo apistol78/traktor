@@ -45,6 +45,8 @@ public:
 
 	void pop_back();
 
+	bool remove(ITypedObject* object);
+
 	inline ITypedObject* front() { return m_arr.front(); }
 
 	inline ITypedObject* back() { return m_arr.back(); }

@@ -23,6 +23,11 @@ void BoxedRefArray::pop_back()
 	m_arr.pop_back();
 }
 
+bool BoxedRefArray::remove(ITypedObject* object)
+{
+	return m_arr.remove(object);
+}
+
 std::wstring BoxedRefArray::toString() const
 {
 	StringOutputStream ss;
