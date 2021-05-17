@@ -24,6 +24,10 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 public:
 	virtual void serialize(ISerializer& s) override final;
 
+	void setImportFilter(const std::wstring& importFilter) { m_importFilter = importFilter; }
+
+	const std::wstring& getImportFilter() const { return m_importFilter; }
+
 	void setCalculateConvexHull(bool calculateConvexHull) { m_calculateConvexHull = calculateConvexHull; }
 
 	bool getCalculateConvexHull() const { return m_calculateConvexHull; }
@@ -39,6 +43,7 @@ public:
 private:
 	friend class MeshPipeline;
 
+	std::wstring m_importFilter;
 	bool m_calculateConvexHull = true;
 	float m_margin = 0.04f;
 	std::map< std::wstring, Guid > m_materials;	//!< References to Material instances.
