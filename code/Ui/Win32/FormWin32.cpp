@@ -62,6 +62,7 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 
 void FormWin32::destroy()
 {
+	m_taskBarList.release();
 	WidgetWin32Impl< IForm >::destroy();
 }
 

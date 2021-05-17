@@ -20,7 +20,7 @@ bool Form::create(const std::wstring& text, int width, int height, int style, La
 		return false;
 	}
 
-	if (!form->create(parent ? parent->getIWidget() : 0, text, width, height, style))
+	if (!form->create(parent ? parent->getIWidget() : nullptr, text, width, height, style))
 	{
 		form->destroy();
 		return false;
