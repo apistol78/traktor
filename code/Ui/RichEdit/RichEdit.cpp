@@ -40,19 +40,7 @@ bool isWordSeparator(wchar_t ch)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.RichEdit", RichEdit, Widget)
 
 RichEdit::RichEdit()
-:	m_imageWidth(0)
-,	m_imageHeight(0)
-,	m_imageCount(0)
-,	m_clipboard(true)
-,	m_caret(0)
-,	m_caretBlink(true)
-,	m_selectionStart(-1)
-,	m_selectionStop(-1)
-,	m_lineMargin(c_lineMarginMin)
-,	m_lineOffsetH(0)
-,	m_widestLineWidth(0)
-,	m_nextSpecialCharacter(0xff00)
-,	m_foundLineAttribute(0)
+:	m_lineMargin(c_lineMarginMin)
 {
 }
 
@@ -394,13 +382,16 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 {
 	Rect rc = getEditRect();
 
-	uint32_t lineCount = uint32_t(m_lines.size());
+	uint32_t lineCount = (uint32_t)m_lines.size();
+	if (lineCount == 0)
+		return -1;
+
 	uint32_t lineOffset = m_scrollBarV->getPosition();
 	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
 
 	uint32_t line = lineOffset + position.y / lineHeight;
 	if (line >= lineCount)
-		return -1;
+		return m_lines.back().stop;
 
 	const Line& ln = m_lines[line];
 
@@ -420,10 +411,7 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 		for (int32_t i = int32_t(stops.size()) - 1; i >= 0; --i)
 		{
 			if (linePosition >= stops[i])
-			{
 				return ln.start + i;
-				break;
-			}
 		}
 	}
 
@@ -1406,9 +1394,9 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 				m_selectionStart = -1;
 				m_selectionStop = -1;
 
-				std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
-				if (i != m_specialCharacters.end())
-					i->second->mouseButtonDown(event);
+				auto it = m_specialCharacters.find(m_text[m_caret].ch);
+				if (it != m_specialCharacters.end())
+					it->second->mouseButtonDown(event);
 			}
 
 			CaretEvent caretEvent(this);

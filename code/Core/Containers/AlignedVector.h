@@ -81,6 +81,7 @@ class AlignedVector
 
 public:
 	typedef ItemType value_type;
+	typedef size_t size_type;
 	typedef int difference_type;
 	typedef const value_type* const_pointer;
 	typedef const value_type& const_reference;

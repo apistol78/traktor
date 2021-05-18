@@ -647,8 +647,9 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 
 	m_dispatcher->setNearCallback(&PhysicsManagerBullet::nearCallback);
 
-	// Add our customer contact callback so we can have multiple materials per collision object.
-	T_FATAL_ASSERT_M(gContactAddedCallback == nullptr, L"Doesn't support multiple Bullet physics managers.");
+	// Add our customer contact callback so we can have multiple materials per collision object,
+	// since no manager data is accessed this can be set by multiple managers if necessary.
+	// But we cannot remove it since it's not reference counted.
 	gContactAddedCallback = traktorContactAdded;
 	return true;
 }
@@ -657,8 +658,6 @@ void PhysicsManagerBullet::destroy()
 {
 	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
 	T_ANONYMOUS_VAR(RefArray< BodyBullet >)(m_bodies);
-
-	gContactAddedCallback = nullptr;
 
 	while (!m_joints.empty())
 		m_joints.front()->destroy();

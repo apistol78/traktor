@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
