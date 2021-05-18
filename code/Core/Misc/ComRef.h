@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
@@ -16,36 +16,39 @@ template < typename T >
 struct ComRef
 {
 public:
-	ComRef()
-	:	m_ptr(0)
-	{
-	}
+	ComRef() = default;
 
 	ComRef(T* ptr)
 	:	m_ptr(ptr)
 	{
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 			m_ptr->AddRef();
 	}
 
 	ComRef(const ComRef< T >& src)
 	:	m_ptr(src.m_ptr)
 	{
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 			m_ptr->AddRef();
+	}
+
+	ComRef(ComRef< T >&& src)
+	:	m_ptr(src.m_ptr)
+	{
+		src.m_ptr = nullptr;
 	}
 
 	virtual ~ComRef()
 	{
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 			m_ptr->Release();
 	}
 
 	inline ComRef< T >& operator = (T* ptr)
 	{
-		if (ptr != 0)
+		if (ptr != nullptr)
 			ptr->AddRef();
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 			m_ptr->Release();
 		m_ptr = ptr;
 		return *this;
@@ -53,11 +56,20 @@ public:
 
 	inline ComRef< T >& operator = (const ComRef< T >& src)
 	{
-		if (src.m_ptr != 0)
+		if (src.m_ptr != nullptr)
 			src.m_ptr->AddRef();
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 			m_ptr->Release();
 		m_ptr = src.m_ptr;
+		return *this;
+	}
+
+	inline ComRef< T >& operator = (ComRef< T >&& src)
+	{
+		if (m_ptr != nullptr)
+			m_ptr->Release();
+		m_ptr = src.m_ptr;
+		src.m_ptr = nullptr;
 		return *this;
 	}
 
@@ -74,10 +86,10 @@ public:
 
 	inline void release()
 	{
-		if (m_ptr != 0)
+		if (m_ptr != nullptr)
 		{
 			m_ptr->Release();
-			m_ptr = 0;
+			m_ptr = nullptr;
 		}
 	}
 
@@ -92,7 +104,7 @@ public:
 	}
 
 private:
-	T* m_ptr;
+	T* m_ptr = nullptr;
 };
 
 /*! ActiveX/COM object array reference container.
@@ -106,7 +118,7 @@ template < typename T >
 struct ComRefArray
 {
 public:
-	typedef std::vector< T* > container_type;
+	typedef AlignedVector< T* > container_type;
 	typedef typename container_type::size_type size_type;
 	typedef typename container_type::iterator iterator;
 	typedef typename container_type::const_iterator const_iterator;
@@ -136,14 +148,11 @@ public:
 				m_array[m_index]->Release();
 
 			m_array[m_index] = ptr;
-
 			return *this;
 		}
 	};
 
-	ComRefArray()
-	{
-	}
+	ComRefArray() = default;
 
 	ComRefArray(size_t size)
 	:	m_array(size)
@@ -155,7 +164,7 @@ public:
 	{
 		for (size_type i = 0; i < size; ++i)
 		{
-			if ((m_array[i] = array[i]) != 0)
+			if ((m_array[i] = array[i]) != nullptr)
 				m_array[i]->AddRef();
 		}
 	}
@@ -181,7 +190,7 @@ public:
 
 	T** base()
 	{
-		return m_array.empty() ? 0 : &m_array[0];
+		return m_array.empty() ? nullptr : &m_array[0];
 	}
 
 	iterator begin()

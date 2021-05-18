@@ -195,16 +195,9 @@ private:
 	struct TextAttribute
 	{
 		Color4ub textColor;
-		bool bold;
-		bool italic;
-		bool underline;
-
-		TextAttribute()
-		:	bold(false)
-		,	italic(false)
-		,	underline(false)
-		{
-		}
+		bool bold = false;
+		bool italic = false;
+		bool underline = false;
 	};
 
 	struct BackgroundAttribute
@@ -214,35 +207,21 @@ private:
 
 	struct Line
 	{
-		int32_t start;
-		int32_t stop;
-		int32_t image;
-		uint16_t attrib;
+		int32_t start = 0;
+		int32_t stop = 0;
+		int32_t image = -1;
+		uint16_t attrib = 0xffff;
 		Ref< Object > data;
-
-		Line()
-		:	start(0)
-		,	stop(0)
-		,	image(-1)
-		,	attrib(0xffff)
-		{
-		}
 	};
 
 	struct Character
 	{
-		wchar_t ch;
-		uint16_t tai;
-		uint16_t bgai;
-		uint16_t width;
+		wchar_t ch = 0;
+		uint16_t tai = 0;
+		uint16_t bgai = 0;
+		uint16_t width = 0;
 
-		Character()
-		:	ch(0)
-		,	tai(0)
-		,	bgai(0)
-		,	width(0)
-		{
-		}
+		Character() = default;
 
 		explicit Character(wchar_t _ch)
 		:	ch(_ch)
@@ -265,23 +244,23 @@ private:
 	std::vector< TextAttribute > m_textAttributes;
 	std::vector< BackgroundAttribute > m_backgroundAttributes;
 	Ref< IBitmap > m_image;
-	uint32_t m_imageWidth;
-	uint32_t m_imageHeight;
-	uint32_t m_imageCount;
+	uint32_t m_imageWidth = 0;
+	uint32_t m_imageHeight = 0;
+	uint32_t m_imageCount = 0;
 	std::vector< Line > m_lines;
 	std::vector< Character > m_text;
 	std::map< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
-	bool m_clipboard;
-	int32_t m_caret;
-	bool m_caretBlink;
-	int32_t m_selectionStart;
-	int32_t m_selectionStop;
-	int32_t m_lineMargin;
-	int32_t m_lineOffsetH;
-	int32_t m_widestLineWidth;
-	int32_t m_fromCaret;
-	wchar_t m_nextSpecialCharacter;
-	int32_t m_foundLineAttribute;
+	bool m_clipboard = true;
+	int32_t m_caret = 0;
+	bool m_caretBlink = true;
+	int32_t m_selectionStart = -1;
+	int32_t m_selectionStop = -1;
+	int32_t m_lineMargin = 0;
+	int32_t m_lineOffsetH = 0;
+	int32_t m_widestLineWidth = 0;
+	int32_t m_fromCaret = 0;
+	wchar_t m_nextSpecialCharacter = 0xff00;
+	int32_t m_foundLineAttribute = 0;
 
 	void updateScrollBars();
 
