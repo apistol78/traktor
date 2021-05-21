@@ -21,6 +21,28 @@ void scanCustomProperties(const FbxObject* node, Material& outMaterial)
 		std::wstring propName = mbstows(prop.GetNameAsCStr());
 		if (startsWith(propName, L"Traktor_"))
 		{
+			propName = propName.substr(8);
+			if (propName == L"DoubleSided")
+			{
+				FbxPropertyT< FbxBool > propState = prop;
+				if (propState.IsValid())
+					outMaterial.setDoubleSided(propState.Get());
+			}
+			else if (propName == L"BlendMode")
+			{
+				FbxPropertyT< FbxInt32 > propMode = prop;
+				if (propMode.IsValid())
+					outMaterial.setBlendOperator((Material::BlendOperator)propMode.Get());
+			}
+			else if (propName == L"Emissive")
+				outMaterial.setEmissive(1.0f);
+			else
+			{
+				FbxPropertyT< FbxBool > propState = prop;
+				if (propState.IsValid())
+					outMaterial.setProperty< PropertyBoolean >(propName, propState.Get());
+			}
+
 			propName = replaceAll(propName, L"Traktor_", L"");
 			FbxPropertyT< FbxBool > propState = prop;
 			if (propState.IsValid())
@@ -110,10 +132,6 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 
 		Material mm;
 		mm.setName(name);
-
-		// Get custom properties on material.
-		scanCustomProperties(meshNode, mm);
-		scanCustomProperties(material, mm);
 
 		const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
 		if (diffuseTexture)
@@ -300,9 +318,9 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 			mm.setSpecularTerm(0.0f);
 		}
 
-		// \hack to enable emissive materials from Blender.
-		if (startsWith(mm.getName(), L"EM_"))
-			mm.setEmissive(1.0f);
+		// Get custom properties on material.
+		scanCustomProperties(meshNode, mm);
+		scanCustomProperties(material, mm);
 
 		outMaterialMap[i] = outModel.addUniqueMaterial(mm);
 	}
