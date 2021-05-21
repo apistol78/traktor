@@ -4,6 +4,7 @@
 #include "Core/Misc/StringSplit.h"
 #include "Spark/CharacterInstance.h"
 #include "Spark/Font.h"
+#include "Spark/Shape.h"
 #include "Spark/TextLayout.h"
 
 namespace traktor
@@ -247,7 +248,6 @@ void TextLayout::insertText(const std::wstring& text)
 				continue;
 
 			float wordWidth = 0.0f;
-
 			for (uint32_t j = 0; j < word.length(); ++j)
 			{
 				uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
@@ -273,6 +273,7 @@ void TextLayout::insertText(const std::wstring& text)
 
 			Word w = { m_currentAttrib, 0 };
 
+			float tailAdjust = 0.0f;
 			for (uint32_t j = 0; j < word.length(); ++j)
 			{
 				uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
@@ -290,14 +291,22 @@ void TextLayout::insertText(const std::wstring& text)
 					w.chars.push_back(chr);
 				}
 
+				const Aabb2* glyphBounds = attrib.font->getBounds(glyphIndex);
+				if (glyphBounds)
+					tailAdjust = (glyphAdvance - glyphBounds->getSize().x) * fontScale;
+				else
+					tailAdjust = 0.0f;
+
 				m_cursorX += (glyphAdvance + letterSpacing) * fontScale;
 			}
 
 			if (!w.chars.empty())
 				m_lines.back().words.push_back(w);
 
-			m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
-			m_width = std::max(m_width, m_cursorX);
+			const float lw = std::max(m_lines.back().width, m_cursorX - tailAdjust);
+
+			m_lines.back().width = lw;
+			m_width = std::max(m_width, lw);
 
 			spaceInsert = true;
 		}
@@ -310,6 +319,7 @@ void TextLayout::insertText(const std::wstring& text)
 
 		Word w = { m_currentAttrib, 0 };
 
+		float tail = 0.0f;
 		for (uint32_t j = 0; j < word.length(); ++j)
 		{
 			uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
@@ -317,6 +327,15 @@ void TextLayout::insertText(const std::wstring& text)
 
 			if (j < word.length() - 1)
 				glyphAdvance += attrib.font->lookupKerning(word[j], word[j + 1]);
+
+			const Shape* glyphShape = attrib.font->getShape(glyphIndex);
+			if (glyphShape)
+			{
+				if (j == 0)
+					m_cursorX -= glyphShape->getShapeBounds().mn.x * fontScale;
+
+				tail = m_cursorX + glyphShape->getShapeBounds().mx.x * fontScale;
+			}
 
 			Character chr;
 			chr.x = m_cursorX;
@@ -330,8 +349,9 @@ void TextLayout::insertText(const std::wstring& text)
 		if (!w.chars.empty())
 			m_lines.back().words.push_back(w);
 
-		m_lines.back().width = std::max(m_lines.back().width, m_cursorX);
-		m_width = std::max(m_width, m_cursorX);
+		const float lw = std::max(m_lines.back().width, tail);
+		m_lines.back().width = lw;
+		m_width = std::max(m_width, lw);
 	}
 }
 

@@ -257,6 +257,24 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_moviePlayer->render(m_movieRenderer);
 	m_displayRenderer->endSetup();
 
+	// Render debug wires.
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
+		rp->setOutput(0, render::TfAll, render::TfAll);
+		rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
+			m_displayRendererWire->begin(0);
+			m_moviePlayer->render(m_movieRendererWire);
+			m_displayRendererWire->end(0);
+
+			auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+			rb->lambda = [&](render::IRenderView* renderView) {
+				m_displayRendererWire->render(m_renderView, 0);
+			};
+			renderContext->enqueue(rb);
+		});
+		m_renderGraph->addPass(rp);
+	}
+
 	// Validate render graph.
 	if (!m_renderGraph->validate())
 		return;

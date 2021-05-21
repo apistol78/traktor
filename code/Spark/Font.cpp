@@ -69,17 +69,17 @@ bool Font::create(
 	m_boundsTable = boundsTable;
 	m_coordinateType = coordinateType;
 
-	for (AlignedVector< SwfKerningRecord >::const_iterator i = kerningRecords.begin(); i != kerningRecords.end(); ++i)
+	for (const auto& kerning : kerningRecords)
 	{
-		uint32_t codePair = (uint32_t(i->code1) << 16) | i->code2;
-		m_kerningLookup[codePair] = i->adjustment;
+		uint32_t codePair = (uint32_t(kerning.code1) << 16) | kerning.code2;
+		m_kerningLookup[codePair] = kerning.adjustment;
 	}
 
 	for (uint32_t i = 0; i < codeTable.size(); ++i)
 		m_indexLookup[codeTable[i]] = i;
 
-	for (AlignedVector< Aabb2 >::const_iterator i = boundsTable.begin(); i != boundsTable.end(); ++i)
-		m_maxDimension = max(m_maxDimension, i->mx - i->mn);
+	for (const auto& bounds : boundsTable)
+		m_maxDimension = max(m_maxDimension, bounds.mx - bounds.mn);
 
 	return true;
 }
@@ -131,7 +131,7 @@ int16_t Font::getAdvance(uint16_t index) const
 
 const Aabb2* Font::getBounds(uint16_t index) const
 {
-	return index < m_boundsTable.size() ? &m_boundsTable[index] : 0;
+	return index < m_boundsTable.size() ? &m_boundsTable[index] : nullptr;
 }
 
 const Vector2& Font::getMaxDimension() const
