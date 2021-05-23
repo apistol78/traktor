@@ -258,6 +258,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_displayRenderer->endSetup();
 
 	// Render debug wires.
+	if (m_debugWires)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
 		rp->setOutput(0, render::TfAll, render::TfAll);
