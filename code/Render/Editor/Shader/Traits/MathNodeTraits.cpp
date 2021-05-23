@@ -459,7 +459,20 @@ bool MathNodeTraits::evaluatePartial(
 ) const
 {
 	// Discard node if inputs are constant.
-	if (is_a< Div >(node))
+	if (is_a< Add >(node))
+	{
+		if (inputConstants[0].isAllZero())
+		{
+			foldOutputPin = inputOutputPins[1];
+			return true;
+		}
+		else if (inputConstants[1].isAllZero())
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Div >(node))
 	{
 		if (inputConstants[1].isAllOne())
 		{
@@ -532,7 +545,7 @@ bool MathNodeTraits::evaluatePartial(
 	}
 	else if (is_a< Truncate >(node))
 	{
-		if (inputOutputPins[0] != nullptr && is_a< Normalize >(inputOutputPins[0]->getNode()))
+		if (inputOutputPins[0] != nullptr && is_a< Truncate >(inputOutputPins[0]->getNode()))
 		{
 			foldOutputPin = inputOutputPins[0];
 			return true;
