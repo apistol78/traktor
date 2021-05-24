@@ -509,6 +509,14 @@ bool MathNodeTraits::evaluatePartial(
 			return true;
 		}
 	}
+	else if (is_a< Sub >(node))
+	{
+		if (inputConstants[1].isAllZero())
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
 
 	// Discard redundant nodes.
 	if (is_a< Abs >(node))
