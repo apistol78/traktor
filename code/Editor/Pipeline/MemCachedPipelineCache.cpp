@@ -45,6 +45,15 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 	m_addr = net::SocketAddressIPv4(host, port);
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemCached.Read", true);
 	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemCached.Write", true);
+
+	Ref< MemCachedProto > proto = acquireProto();
+	if (!proto)
+	{
+		log::error << L"Memcached pipeline cache failed; unable to connect to memcached at \"" << host << L"\" @ " << port << L"." << Endl;
+		return false;
+	}
+	m_protos.push_back(proto);
+
 	return true;
 }
 
