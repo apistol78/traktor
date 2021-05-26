@@ -104,23 +104,20 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 
 	for (int32_t distance = LobbyFilter::DtUnspecified; distance <= filter->getDistance(); ++distance)
 	{
-		const std::vector< LobbyFilter::StringComparison >& stringComparisons = filter->getStringComparisons();
-		for (std::vector< LobbyFilter::StringComparison >::const_iterator i = stringComparisons.begin(); i != stringComparisons.end(); ++i)
+		for (const auto& sc : filter->getStringComparisons())
 		{
 			SteamMatchmaking()->AddRequestLobbyListStringFilter(
-				wstombs(i->key).c_str(),
-				wstombs(i->value).c_str(),
-				translateComparison(i->comparison)
+				wstombs(sc.key).c_str(),
+				wstombs(sc.value).c_str(),
+				translateComparison(sc.comparison)
 			);
 		}
-
-		const std::vector< LobbyFilter::NumberComparison >& numberComparisons = filter->getNumberComparisons();
-		for (std::vector< LobbyFilter::NumberComparison >::const_iterator i = numberComparisons.begin(); i != numberComparisons.end(); ++i)
+		for (const auto& nc : filter->getNumberComparisons())
 		{
 			SteamMatchmaking()->AddRequestLobbyListNumericalFilter(
-				wstombs(i->key).c_str(),
-				i->value,
-				translateComparison(i->comparison)
+				wstombs(nc.key).c_str(),
+				nc.value,
+				translateComparison(nc.comparison)
 			);
 		}
 
@@ -157,7 +154,7 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 			return false;
 	}
 
-	m_outLobbies = 0;
+	m_outLobbies = nullptr;
 	return true;
 }
 

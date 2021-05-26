@@ -7,29 +7,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LobbyFilter", LobbyFilter, Object)
 
-LobbyFilter::LobbyFilter()
-:	m_distance(DtInfinity)
-,	m_slots(0)
-,	m_count(-1)
-{
-}
-
 void LobbyFilter::addComparison(const std::wstring& key, const std::wstring& value, ComparisonType comparison)
 {
-	StringComparison scr;
-	scr.key = key;
-	scr.value = value;
-	scr.comparison = comparison;
-	m_stringComparisons.push_back(scr);
+	m_stringComparisons.push_back({ key, value, comparison });
 }
 
 void LobbyFilter::addComparison(const std::wstring& key, int32_t value, ComparisonType comparison)
 {
-	NumberComparison ncr;
-	ncr.key = key;
-	ncr.value = value;
-	ncr.comparison = comparison;
-	m_numberComparisons.push_back(ncr);
+	m_numberComparisons.push_back({ key, value, comparison });
 }
 
 void LobbyFilter::setDistance(DistanceType distance)
