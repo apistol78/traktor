@@ -38,7 +38,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 	{
 		if (!ThreadPool::getInstance().spawn(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), m_thread))
 		{
-			m_thread = 0;
+			m_thread = nullptr;
 			m_asyncTx =
 			m_asyncRx = false;
 		}
@@ -50,8 +50,8 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()
 {
 	// Disable P2P with all connected users.
-	for (AlignedVector< P2PUser >::iterator i = m_users.begin(); i != m_users.end(); ++i)
-		i->user->setP2PEnable(false);
+	for (auto& user : m_users)
+		user.user->setP2PEnable(false);
 
 	// Terminate transmission thread.
 	if (m_thread)

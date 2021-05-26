@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -55,8 +55,6 @@ public:
 		ComparisonType comparison;
 	};
 
-	LobbyFilter();
-
 	void addComparison(const std::wstring& key, const std::wstring& value, ComparisonType comparison);
 
 	void addComparison(const std::wstring& key, int32_t value, ComparisonType comparison);
@@ -67,9 +65,9 @@ public:
 
 	void setCount(int32_t count);
 
-	const std::vector< StringComparison >& getStringComparisons() const { return m_stringComparisons; }
+	const AlignedVector< StringComparison >& getStringComparisons() const { return m_stringComparisons; }
 
-	const std::vector< NumberComparison >& getNumberComparisons() const { return m_numberComparisons; }
+	const AlignedVector< NumberComparison >& getNumberComparisons() const { return m_numberComparisons; }
 
 	DistanceType getDistance() const { return m_distance; }
 
@@ -78,11 +76,11 @@ public:
 	int32_t getCount() const { return m_count; }
 
 private:
-	std::vector< StringComparison > m_stringComparisons;
-	std::vector< NumberComparison > m_numberComparisons;
-	DistanceType m_distance;
-	int32_t m_slots;
-	int32_t m_count;
+	AlignedVector< StringComparison > m_stringComparisons;
+	AlignedVector< NumberComparison > m_numberComparisons;
+	DistanceType m_distance = DtInfinity;
+	int32_t m_slots = 0;
+	int32_t m_count = -1;
 };
 
 	}
