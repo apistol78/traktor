@@ -53,11 +53,13 @@ void JobQueue::destroy()
 
 Ref< Job > JobQueue::add(Functor* functor)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 	Ref< Job > job = new Job(m_jobFinishedEvent, functor);
-	m_jobQueue.push_back(job);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
+		m_jobQueue.push_back(job);
+		Atomic::increment(m_pending);
+	}
 	m_jobQueuedEvent.pulse();
-	Atomic::increment(m_pending);
 	return job;
 }
 
@@ -121,23 +123,26 @@ void JobQueue::threadWorker()
 
 	while (!thread->stopped())
 	{
-		if (!m_jobQueuedEvent.wait(100))
+		if (m_pending == 0 && !m_jobQueuedEvent.wait(100))
 			continue;
 
 		// Pop job from queue.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
-			T_FATAL_ASSERT(!m_jobQueue.empty());
-			job = m_jobQueue.front();
-			m_jobQueue.pop_front();
+			if (!m_jobQueue.empty())
+			{
+				job = m_jobQueue.front();
+				m_jobQueue.pop_front();
+			}
+			else
+				continue;
 		}
 
-		// Unless job has been stopped while in queue, we execute it.
-		if (job->m_finished == 0)
-		{
-			(*job->m_functor)();
-			Atomic::exchange(job->m_finished, 1);
-		}
+		// Execute job.
+		T_FATAL_ASSERT(job->m_finished == 0);
+		(*job->m_functor)();
+		T_FATAL_ASSERT(job->m_finished == 0);
+		Atomic::exchange(job->m_finished, 1);
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
 		Atomic::decrement(m_pending);

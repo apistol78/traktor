@@ -373,6 +373,7 @@ void WorldRendererForward::setup(
 	int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Ensure tile job is finished, this should never happen since it will indicate
 	// previous frame hasn't been rendered.
 	if (m_frames[frame].tileJob != nullptr)
@@ -380,6 +381,7 @@ void WorldRendererForward::setup(
 		m_frames[frame].tileJob->wait();
 		m_frames[frame].tileJob = nullptr;
 	}
+#endif
 
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (m_antiAliasQuality >= Quality::Ultra)
@@ -507,8 +509,10 @@ void WorldRendererForward::setupTileDataPass(
 	int32_t frame
 )
 {
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Enqueue light clustering as a job, is synchronized in before rendering.
 	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
+#endif
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
 		const auto& lights = m_frames[frame].lights;
 
@@ -663,7 +667,9 @@ void WorldRendererForward::setupTileDataPass(
 
 		m_frames[frame].lightIndexSBuffer->unlock();
 		m_frames[frame].tileSBuffer->unlock();
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	}));
+#endif
 }
 
 render::handle_t WorldRendererForward::setupGBufferPass(
@@ -1375,6 +1381,7 @@ void WorldRendererForward::setupVisualPass(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 			// Enure light clustering job has finished.
             Ref< Job > tileJob = m_frames[frame].tileJob;
             if (tileJob)
@@ -1386,6 +1393,7 @@ void WorldRendererForward::setupVisualPass(
                 renderContext->enqueue(rb);
             }
 			m_frames[frame].tileJob = nullptr;
+#endif
 
 			WorldBuildContext wc(
 				m_entityRenderers,

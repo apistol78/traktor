@@ -63,6 +63,7 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	addEventHandler< ui::TimerEvent >(this, &ObjectEditorDialog::eventTimer);
 
 	m_instance = instance;
+	m_instanceGuid = instance->getGuid();
 	m_objectHash = DeepHash(object).get();
 
 	if (!m_objectEditor->create(this, instance, object))
@@ -77,17 +78,17 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 void ObjectEditorDialog::destroy()
 {
 	// Remember instance's editor dimensions in settings.
-	if (m_settings && m_instance)
+	if (m_settings)
 	{
 		ui::Rect rc = getRect();
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instance->getGuid().format() + L"/Width", rc.getWidth());
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instance->getGuid().format() + L"/Height", rc.getHeight());
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", rc.getWidth());
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", rc.getHeight());
 	}
 
 	if (m_objectEditor)
 	{
 		m_objectEditor->destroy();
-		m_objectEditor = 0;
+		m_objectEditor = nullptr;
 	}
 
 	ui::ConfigDialog::destroy();

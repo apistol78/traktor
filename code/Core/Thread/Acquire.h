@@ -20,7 +20,8 @@ public:
 	T_FORCE_INLINE Acquire< T >(T& lock)
 	:	m_lock(lock)
 	{
-		m_lock.wait();
+		bool result = m_lock.wait();
+		T_FATAL_ASSERT(result == true);
 	}
 
 	T_FORCE_INLINE ~Acquire< T >()
@@ -52,7 +53,8 @@ public:
 
 	T_FORCE_INLINE ~Release< T >()
 	{
-		m_lock.wait();
+		bool result = m_lock.wait();
+		T_FATAL_ASSERT(result == true);
 	}
 
 private:
