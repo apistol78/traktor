@@ -14,13 +14,7 @@
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
 
-#if defined(T_MODIFIER_USE_PS3_SPURS)
-#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
-#	include "Spray/Ps3/SprayJobQueue.h"
-#	include "Spray/Ps3/Spu/JobModifierUpdate.h"
-#endif
-
-#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__EMSCRIPTEN__) && !defined(_PS3)
+#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
 #	define T_USE_UPDATE_JOBS
 #endif
 
@@ -35,9 +29,6 @@ const float c_warmUpDeltaTime = 1.0f / 5.0f;
 #if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
-#elif defined(_PS3)
-const uint32_t c_maxEmitPerUpdate = 6;
-const uint32_t c_maxEmitSingleShot = 500;
 #else
 const uint32_t c_maxEmitPerUpdate = 16;
 const uint32_t c_maxEmitSingleShot = 400;
@@ -211,35 +202,9 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 			m_boundingBox = m_boundingBox.transform(transform);
 	}
 
-#if defined(T_MODIFIER_USE_PS3_SPURS)
-	//
-	// Update particles on SPU
-	//
-	if (!m_points.empty())
-	{
-		SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
-		T_ASSERT(jobQueue);
-
-		Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
-
-		const RefArray< const Modifier >& modifiers = m_emitter->getModifiers();
-		for (RefArray< const Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
-		{
-			if (*i)
-				(*i)->update(
-					jobQueue,
-					Scalar(context.deltaTime),
-					updateTransform,
-					m_points
-				);
-		}
-	}
-#else
-	//
 	// Update particles on CPU
-	//
 	size = m_points.size();
-#	if defined(T_USE_UPDATE_JOBS)
+#if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
 	if (size >= 64)
 	{
@@ -252,9 +217,8 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	}
 	else
 		updateTask(context.deltaTime);
-#	else
+#else
 	updateTask(context.deltaTime);
-#	endif
 #endif
 }
 
@@ -343,27 +307,15 @@ void EmitterInstance::render(
 
 void EmitterInstance::synchronize() const
 {
-#if defined(T_MODIFIER_USE_PS3_SPURS)
-
-	SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
-	T_ASSERT(jobQueue);
-
-	jobQueue->wait();
-
-#else
-
-#	if defined(T_USE_UPDATE_JOBS)
+#if defined(T_USE_UPDATE_JOBS)
 	if (m_job)
 	{
 		m_job->wait();
-		m_job = 0;
+		m_job = nullptr;
 	}
-#	endif
-
 #endif
 }
 
-#if !defined(T_MODIFIER_USE_PS3_SPURS)
 void EmitterInstance::updateTask(float deltaTime)
 {
 	Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
@@ -443,7 +395,6 @@ void EmitterInstance::updateTask(float deltaTime)
 
 	m_count++;
 }
-#endif
 
 	}
 }

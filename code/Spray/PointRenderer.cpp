@@ -12,23 +12,6 @@
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
 
-#if defined(_PS3)
-//#define T_POINTRENDERER_USE_PS3_SPURS
-#endif
-
-#if defined(T_POINTRENDERER_USE_PS3_SPURS)
-#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
-#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
-#	include "Spray/Ps3/Spu/JobPointRenderer.h"
-
-extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start[];
-extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size[];
-
-static char* job_start = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start;
-static char* job_size = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size;
-
-#endif
-
 namespace traktor
 {
 	namespace spray
@@ -38,13 +21,10 @@ namespace traktor
 
 #if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_pointCount = 1000;
-#elif defined(_PS3)
-const uint32_t c_pointCount = 3000;
 #else
 const uint32_t c_pointCount = 8000;
 #endif
 
-#if !defined(T_POINTRENDERER_USE_PS3_SPURS)
 const static float c_extents[4][2] =
 {
 	{ -1.0f, -1.0f },
@@ -52,7 +32,6 @@ const static float c_extents[4][2] =
 	{  1.0f,  1.0f },
 	{ -1.0f,  1.0f }
 };
-#endif
 
 		}
 
@@ -93,10 +72,6 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 		*index++ = i + 3;
 	}
 	m_indexBuffer->unlock();
-
-#if defined(T_POINTRENDERER_USE_PS3_SPURS)
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobPointRenderer), 256, SpursManager::Normal);
-#endif
 }
 
 PointRenderer::~PointRenderer()
@@ -106,10 +81,6 @@ PointRenderer::~PointRenderer()
 
 void PointRenderer::destroy()
 {
-#if defined(T_POINTRENDERER_USE_PS3_SPURS)
-	safeDestroy(m_jobQueue);
-#endif
-
 	safeDestroy(m_indexBuffer);
 
 	if (m_vertex)
@@ -132,7 +103,7 @@ void PointRenderer::render(
 	float cameraOffset
 )
 {
-	int32_t size = int32_t(points.size());
+	int32_t size = (int32_t)points.size();
 	T_ASSERT(size > 0);
 
 	int32_t avail = c_pointCount - m_pointOffset;
@@ -150,37 +121,11 @@ void PointRenderer::render(
 			return;
 	}
 
-	m_batches.push_back(Batch());
-
-	Batch& back = m_batches.back();
+	Batch& back = m_batches.push_back();
 	back.shader = shader;
 	back.offset = m_pointOffset * 3 * 2;
 	back.count = 0;
 	back.distance = std::numeric_limits< float >::max();
-
-#if defined(T_POINTRENDERER_USE_PS3_SPURS)
-
-	JobPointRenderer job;
-
-	__builtin_memset(&job, 0, sizeof(JobPointRenderer));
-	job.header.eaBinary = (uintptr_t)job_start;
-	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
-
-	cameraPlane.normal().storeAligned(job.data.cameraPlane);
-	job.data.cameraPlane[3] = -cameraPlane.distance();
-	job.data.cullNearDistance = cullNearDistance;
-	job.data.fadeNearRange = fadeNearRange;
-	job.data.middleAge = middleAge;
-	job.data.pointsEA = (uintptr_t)&points[0];
-	job.data.pointsCount = size;
-	job.data.vertexOutEA = (uintptr_t)(m_vertex);
-	job.data.batchEA = (uintptr_t)&back;
-
-	m_jobQueue->push(&job);
-
-	m_pointOffset += size;
-
-#else
 
 	Vector4 cameraOffsetV = cameraPlane.normal() * Scalar(cameraOffset);
 
@@ -232,8 +177,6 @@ void PointRenderer::render(
 
 		m_pointOffset++;
 	}
-
-#endif
 }
 
 void PointRenderer::flush(
@@ -243,10 +186,6 @@ void PointRenderer::flush(
 {
 	if (m_pointOffset > 0)
 	{
-#if defined(T_POINTRENDERER_USE_PS3_SPURS)
-		m_jobQueue->wait();
-#endif
-
 		T_ASSERT(m_vertex);
 
 		for (const auto& batch : m_batches)

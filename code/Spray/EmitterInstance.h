@@ -89,12 +89,9 @@ private:
 	Aabb3 m_boundingBox;
 	uint32_t m_count;
 	uint32_t m_skip;
-
-#if !defined(T_MODIFIER_USE_PS3_SPURS)
 	mutable Ref< Job > m_job;
 
 	void updateTask(float deltaTime);
-#endif
 };
 
 	}

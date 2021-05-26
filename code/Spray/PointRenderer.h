@@ -18,10 +18,6 @@
 
 namespace traktor
 {
-#if defined(_PS3)
-class SpursJobQueue;
-#endif
-
 	namespace render
 	{
 
@@ -84,23 +80,13 @@ public:
 	float getLod2Distance() const { return m_lod2Distance; }
 
 private:
-#pragma pack(1)
 	struct Batch
 	{
 		uint32_t count;
 		float distance;
-		Ref< render::Shader > shader;
+		render::Shader* shader;
 		uint32_t offset;
-
-		Batch()
-		:	count(0)
-		,	distance(0.0f)
-		,	shader(0)
-		,	offset(0)
-		{
-		}
 	};
-#pragma pack()
 
 	Ref< render::VertexBuffer > m_vertexBuffers[8];
 	Ref< render::IndexBuffer > m_indexBuffer;
@@ -111,10 +97,6 @@ private:
 	EmitterVertex* m_vertex;
 	int32_t m_pointOffset;
 	AlignedVector< Batch > m_batches;
-
-#if defined(_PS3)
-	Ref< SpursJobQueue > m_jobQueue;
-#endif
 };
 
 	}
