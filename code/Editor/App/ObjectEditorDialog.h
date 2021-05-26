@@ -49,6 +49,7 @@ private:
 	Ref< IObjectEditor > m_objectEditor;
 	Ref< ObjectEditor > m_editor;
 	Ref< db::Instance > m_instance;
+	Guid m_instanceGuid;
 	uint32_t m_objectHash;
 	bool m_modified;
 

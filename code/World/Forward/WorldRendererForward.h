@@ -13,6 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+// #define T_WORLD_FORWARD_USE_TILE_JOB
+
 namespace traktor
 {
 
@@ -90,7 +92,9 @@ private:
 		AlignedVector< const LightComponent* > lights;
 		AlignedVector< const ProbeComponent* > probes;
 		Ref< Packer > shadowAtlasPacker;
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 		Ref< Job > tileJob;
+#endif
 		void* lightSBufferData = nullptr;
 	};
 
