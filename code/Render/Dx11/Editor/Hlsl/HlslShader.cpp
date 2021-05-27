@@ -1,4 +1,5 @@
 #include <cassert>
+#include "Core/Misc/String.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Editor/Hlsl/HlslShader.h"
 #include "Render/Editor/OutputPin.h"
@@ -12,21 +13,37 @@ HlslShader::HlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
 ,	m_interpolatorCount(0)
 ,	m_booleanRegisterCount(0)
-,	m_nextTemporaryVariable(0)
 ,	m_needVPos(false)
 ,	m_needVFace(false)
 ,	m_needTargetSize(false)
 ,	m_needInstanceID(false)
 {
-	m_variableScopes.push_back(0);
-	for (int32_t i = 0; i < BtLast; ++i)
-		pushOutputStream((BlockType)i, new StringOutputStream());
+	pushScope();
+	pushOutputStream(BtCBufferOnce, T_FILE_LINE_W);
+	pushOutputStream(BtCBufferFrame, T_FILE_LINE_W);
+	pushOutputStream(BtCBufferDraw, T_FILE_LINE_W);
+	pushOutputStream(BtStructs, T_FILE_LINE_W);
+	pushOutputStream(BtTextures, T_FILE_LINE_W);
+	pushOutputStream(BtSamplers, T_FILE_LINE_W);
+	pushOutputStream(BtInput, T_FILE_LINE_W);
+	pushOutputStream(BtOutput, T_FILE_LINE_W);
+	pushOutputStream(BtScript, T_FILE_LINE_W);
+	pushOutputStream(BtBody, T_FILE_LINE_W);
 }
 
 HlslShader::~HlslShader()
 {
-	for (int32_t i = 0; i < BtLast; ++i)
-		popOutputStream((BlockType)i);
+	popOutputStream(BtBody);
+	popOutputStream(BtScript);
+	popOutputStream(BtOutput);
+	popOutputStream(BtInput);
+	popOutputStream(BtSamplers);
+	popOutputStream(BtTextures);
+	popOutputStream(BtStructs);
+	popOutputStream(BtCBufferDraw);
+	popOutputStream(BtCBufferFrame);
+	popOutputStream(BtCBufferOnce);
+	popScope();
 }
 
 bool HlslShader::haveInput(const std::wstring& inputName) const
@@ -41,22 +58,30 @@ void HlslShader::addInput(const std::wstring& inputName)
 
 HlslVariable* HlslShader::createTemporaryVariable(const OutputPin* outputPin, HlslType type)
 {
-	StringOutputStream ss;
-	ss << L"v" << m_nextTemporaryVariable++;
-	return createVariable(outputPin, ss.str(), type);
+	int32_t index = (int32_t)m_temporaryVariableAlloc.alloc();
+	std::wstring name = str(L"v%d", index);
+
+	auto& v = m_variables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new HlslVariable(outputPin->getNode(), name, type);
+	v.index = index;
+	return v.variable;
 }
 
 HlslVariable* HlslShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type)
 {
+#if defined(_DEBUG)
 	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
 	{
 		const auto& v = m_variables[i];
 		T_FATAL_ASSERT (v.outputPin != outputPin);
 	}
+#endif
 
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new HlslVariable(outputPin->getNode(), variableName, type);
+	v.index = -1;
 	return v.variable;
 }
 
@@ -65,6 +90,7 @@ HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const 
 	auto& v = m_outerVariables.push_back();
 	v.outputPin = outputPin;
 	v.variable = new HlslVariable(outputPin->getNode(), variableName, type);
+	v.index = -1;
 	return v.variable;
 }
 
@@ -85,11 +111,19 @@ HlslVariable* HlslShader::getVariable(const OutputPin* outputPin) const
 
 void HlslShader::pushScope()
 {
-	m_variableScopes.push_back(m_variables.size());
+	m_variableScopes.push_back((uint32_t)m_variables.size());
 }
 
 void HlslShader::popScope()
 {
+	// Free all indices used for temporary variables within scope to be popped.
+	for (size_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
+	{
+		int32_t index = m_variables[i].index;
+		if (index >= 0)
+			m_temporaryVariableAlloc.free(index);
+	}
+
 	m_variables.resize(m_variableScopes.back());
 	m_variableScopes.pop_back();
 }
@@ -154,9 +188,11 @@ const std::set< std::wstring >& HlslShader::getUniforms() const
 	return m_uniforms;
 }
 
-void HlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outputStream)
+StringOutputStream& HlslShader::pushOutputStream(BlockType blockType, const wchar_t* const tag)
 {
-	m_outputStreams[int(blockType)].push_back(outputStream);
+	Ref< StringOutputStream > os = new StringOutputStream();
+	m_outputStreams[int(blockType)].push_back({ os, tag });
+	return *os;
 }
 
 void HlslShader::popOutputStream(BlockType blockType)
@@ -168,7 +204,13 @@ void HlslShader::popOutputStream(BlockType blockType)
 StringOutputStream& HlslShader::getOutputStream(BlockType blockType)
 {
 	T_ASSERT(!m_outputStreams[int(blockType)].empty());
-	return *(m_outputStreams[int(blockType)].back());
+	return *(m_outputStreams[int(blockType)].back().outputStream);
+}
+
+const StringOutputStream& HlslShader::getOutputStream(BlockType blockType) const
+{
+	T_ASSERT(!m_outputStreams[int(blockType)].empty());
+	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
 std::wstring HlslShader::getGeneratedShader()

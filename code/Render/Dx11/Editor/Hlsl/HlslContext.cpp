@@ -30,7 +30,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 ,	m_vertexShader(HlslShader::StVertex)
 ,	m_pixelShader(HlslShader::StPixel)
 ,	m_computeShader(HlslShader::StCompute)
-,	m_currentShader(0)
+,	m_currentShader(nullptr)
 ,	m_stencilReference(0)
 {
 	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
@@ -159,28 +159,22 @@ HlslVariable* HlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT(inputPin);
-
 	return emitInput(inputPin);
+}
+
+HlslVariable* HlslContext::emitOutput(const OutputPin* outputPin, HlslType type)
+{
+	HlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
+	T_ASSERT(out);
+	return out;
 }
 
 HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT(outputPin);
-
-	HlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT(out);
-
-	return out;
+	return emitOutput(outputPin, type);
 }
-
-//void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
-//{
-//	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-//	T_ASSERT(outputPin);
-//
-//	m_currentShader->associateVariable(outputPin, variable);
-//}
 
 void HlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {
@@ -192,6 +186,11 @@ void HlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, c
 	AlignedVector< const InputPin* > inputPins(2);
 	inputPins[0] = node->findInputPin(inputPin1);
 	inputPins[1] = node->findInputPin(inputPin2);
+	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
+}
+
+void HlslContext::findCommonOutputs(const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outOutputPins) const
+{
 	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
 }
 
@@ -236,9 +235,7 @@ bool HlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 		{
 			outId = i;
 			outOffset = occupied;
-
 			occupied += width;
-
 			return false;
 		}
 	}
@@ -247,7 +244,6 @@ bool HlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 	outOffset = 0;
 
 	m_interpolatorMap.push_back(width);
-
 	return true;
 }
 

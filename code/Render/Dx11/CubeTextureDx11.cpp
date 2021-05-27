@@ -159,10 +159,5 @@ void CubeTextureDx11::unlock(int32_t side, int32_t level)
 	);
 }
 
-ID3D11ShaderResourceView* CubeTextureDx11::getD3D11TextureResourceView() const
-{
-	return m_d3dTextureResourceView;
-}
-
 	}
 }

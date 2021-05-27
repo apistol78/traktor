@@ -46,6 +46,10 @@ public:
 
 	bool read(void* buffer) const;
 
+	ID3D11Texture2D* getD3D11Texture2D() const {
+		return m_d3dTexture;
+	}
+
 	ID3D11RenderTargetView* getD3D11RenderTargetView() const {
 		return m_d3dRenderTargetView;
 	}

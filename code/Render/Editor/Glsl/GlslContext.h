@@ -147,14 +147,10 @@ public:
 private:
 	struct Scope
 	{
-		const InputPin* inputPin;
-		const OutputPin* outputPin;
+		const InputPin* inputPin = nullptr;
+		const OutputPin* outputPin = nullptr;
 
-		Scope()
-		:	inputPin(nullptr)
-		,	outputPin(nullptr)
-		{
-		}
+		Scope() = default;
 
 		Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
 		:	inputPin(inputPin_)

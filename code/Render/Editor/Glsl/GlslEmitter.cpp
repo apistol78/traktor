@@ -459,6 +459,9 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 	case Derivative::DaY:
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
+
+	default:
+		return false;
 	}
 
 	return true;
@@ -677,9 +680,12 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 bool emitInstanceOpenGL(GlslContext& cx, Instance* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
+
 	comment(f, node);
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
+
 	return true;
 }
 
@@ -740,10 +746,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		// We're already in vertex state; skip interpolation.
 		Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 		if (!in)
-		{
-			log::error << L"Unable to emit interpolator input (1)." << Endl;
 			return false;
-		}
 
 		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -759,19 +762,13 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
-	{
-		log::error << L"Unable to emit interpolator input (2)." << Endl;
 		return false;
-	}
 
 	cx.enterFragment();
 
 	int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
-	{
-		log::error << L"Unable to determine width of type " << int32_t(in->getType()) << L"." << Endl;
 		return false;
-	}
 
 	int32_t interpolatorId;
 	int32_t interpolatorOffset;
@@ -1191,20 +1188,18 @@ bool emitLog(GlslContext& cx, Log* node)
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 
+	comment(f, node);
 	switch (node->getBase())
 	{
 	case Log::LbTwo:
-		comment(f, node);
 		assign(f, out) << L"log2(" << in->getName() << L");" << Endl;
 		break;
 
 	case Log::LbTen:
-		comment(f, node);
 		T_ASSERT_M (0, L"Log::LbTen not available in GLSL");
 		break;
 
 	case Log::LbNatural:
-		comment(f, node);
 		assign(f, out) << L"log(" << in->getName() << L");" << Endl;
 		break;
 	}
