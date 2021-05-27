@@ -75,7 +75,7 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 
 	hr = context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	Ref< VertexBufferDynamicDx11 > vb = new VertexBufferDynamicDx11(bufferSize);
 

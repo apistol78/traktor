@@ -17,23 +17,23 @@ StateCache::StateCache(ID3D11DeviceContext* d3dDeviceContext)
 ,	m_d3dTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
 ,	m_d3dSignatureHash(0)
 ,	m_stencilReference(0)
-,	m_activeProgram(0)
+,	m_activeProgram(nullptr)
 {
 }
 
 void StateCache::reset()
 {
-	m_d3dRasterizerState = 0;
-	m_d3dDepthStencilState = 0;
-	m_d3dBlendState = 0;
-	m_d3dVertexShader = 0;
-	m_d3dPixelShader = 0;
-	m_d3dVertexBuffer = 0;
-	m_d3dIndexBuffer = 0;
+	m_d3dRasterizerState = nullptr;
+	m_d3dDepthStencilState = nullptr;
+	m_d3dBlendState = nullptr;
+	m_d3dVertexShader = nullptr;
+	m_d3dPixelShader = nullptr;
+	m_d3dVertexBuffer = nullptr;
+	m_d3dIndexBuffer = nullptr;
 	m_d3dTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 	m_d3dSignatureHash = 0;
 	m_stencilReference = 0;
-	m_activeProgram = 0;
+	m_activeProgram = nullptr;
 }
 
 void StateCache::setRasterizerState(ID3D11RasterizerState* d3dRasterizerState)
@@ -68,7 +68,7 @@ void StateCache::setVertexShader(ID3D11VertexShader* d3dVertexShader)
 {
 	if (d3dVertexShader != m_d3dVertexShader)
 	{
-		m_d3dDeviceContext->VSSetShader(d3dVertexShader, 0, 0);
+		m_d3dDeviceContext->VSSetShader(d3dVertexShader, nullptr, 0);
 		m_d3dVertexShader = d3dVertexShader;
 	}
 }
@@ -77,7 +77,7 @@ void StateCache::setPixelShader(ID3D11PixelShader* d3dPixelShader)
 {
 	if (d3dPixelShader != m_d3dPixelShader)
 	{
-		m_d3dDeviceContext->PSSetShader(d3dPixelShader, 0, 0);
+		m_d3dDeviceContext->PSSetShader(d3dPixelShader, nullptr, 0);
 		m_d3dPixelShader = d3dPixelShader;
 	}
 }
@@ -115,7 +115,7 @@ void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVer
 	uint64_t d3dSignatureHash = (uint64_t(d3dVertexShaderHash) << 32) | d3dInputElementsHash;
 	if (m_d3dSignatureHash != d3dSignatureHash)
 	{
-		ID3D11InputLayout* d3dInputLayout = 0;
+		ID3D11InputLayout* d3dInputLayout = nullptr;
 		SmallMap< uint64_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dSignatureHash);
 		if (i != m_d3dInputLayouts.end())
 			d3dInputLayout = i->second;

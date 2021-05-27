@@ -60,9 +60,9 @@ RenderViewDx11::RenderViewDx11(
 ,	m_cursorVisible(true)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
-,	m_currentVertexBuffer(0)
-,	m_currentIndexBuffer(0)
-,	m_currentProgram(0)
+,	m_currentVertexBuffer(nullptr)
+,	m_currentIndexBuffer(nullptr)
+,	m_currentProgram(nullptr)
 {
 	if (m_window)
 		m_window->addListener(this);
@@ -80,9 +80,9 @@ RenderViewDx11::RenderViewDx11(
 ,	m_cursorVisible(true)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
-,	m_currentVertexBuffer(0)
-,	m_currentIndexBuffer(0)
-,	m_currentProgram(0)
+,	m_currentVertexBuffer(nullptr)
+,	m_currentIndexBuffer(nullptr)
+,	m_currentProgram(nullptr)
 {
 }
 
@@ -115,7 +115,7 @@ void RenderViewDx11::close()
 	if (m_window)
 	{
 		m_window->removeListener(this);
-		m_window = 0;
+		m_window = nullptr;
 	}
 
 	m_d3dRenderTargetView.release();
@@ -180,7 +180,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 			dm.refreshRate = 0;
 			if (!findDxgiDisplayMode(m_context->getDXGIOutput(), dm, scd.BufferDesc))
 			{
-				log::error << L"Unable to create render view; display mode not supported" << Endl;
+				log::error << L"Unable to create render view; display mode not supported." << Endl;
 				return false;
 			}
 		}
@@ -205,7 +205,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 
 	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D24_UNORM_S8_UINT, scd.SampleDesc))
 	{
-		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
+		log::error << L"Unable to create render view; unsupported MSAA." << Endl;
 		return false;
 	}
 
@@ -216,7 +216,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateSwapChain failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to create render view; CreateSwapChain failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -228,14 +228,14 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; GetBuffer failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to create render view; GetBuffer failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to create render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -255,7 +255,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to create render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -268,7 +268,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to create render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -307,21 +307,21 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_dxgiSwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; ResizeBuffers failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to reset render view; ResizeBuffers failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
 	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; GetBuffer failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to reset render view; GetBuffer failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to reset render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -343,7 +343,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to reset render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -356,7 +356,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << Endl;
+		log::error << L"Unable to reset render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << L"." << Endl;
 		return false;
 	}
 
@@ -581,7 +581,7 @@ bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 			rts,
 			{ rt0, rt1, rt2, rt3 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), rt3->getD3D11RenderTargetView() },
-			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : nullptr,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -594,7 +594,7 @@ bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 			rts,
 			{ rt0, rt1, rt2, 0 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), rt2->getD3D11RenderTargetView(), 0 },
-			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : nullptr,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -607,7 +607,7 @@ bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 			rts,
 			{ rt0, rt1, 0, 0 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView(), 0, 0 },
-			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : nullptr,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -620,7 +620,7 @@ bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 			rts,
 			{ rt0, 0, 0, 0 },
 			{ rt0->getD3D11RenderTargetView(), 0, 0, 0 },
-			(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+			(rtd != 0) ? rtd->getD3D11DepthTextureView() : nullptr,
 			{ rts->getWidth(), rts->getHeight() }
 		};
 
@@ -648,22 +648,22 @@ bool RenderViewDx11::beginPass(IRenderTargetSet* renderTargetSet, const Clear* c
 		if ((clear->mask & CfColor) == CfColor)
 		{
 			float T_MATH_ALIGN16 tmp[4];
-			if (rs.d3dRenderView[0] != 0)
+			if (rs.d3dRenderView[0] != nullptr)
 			{
 				clear->colors[0].storeAligned(tmp);
 				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
 			}
-			if (rs.d3dRenderView[1] != 0)
+			if (rs.d3dRenderView[1] != nullptr)
 			{
 				clear->colors[1].storeAligned(tmp);
 				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[1], tmp);
 			}
-			if (rs.d3dRenderView[2] != 0)
+			if (rs.d3dRenderView[2] != nullptr)
 			{
 				clear->colors[2].storeAligned(tmp);
 				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[2], tmp);
 			}
-			if (rs.d3dRenderView[3] != 0)
+			if (rs.d3dRenderView[3] != nullptr)
 			{
 				clear->colors[3].storeAligned(tmp);
 				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[3], tmp);
@@ -1054,7 +1054,7 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		if (m_dxgiSwapChain)
 			m_dxgiSwapChain->GetDesc(&dxscd);
 
-		if (m_dxgiSwapChain == 0 || width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
+		if (m_dxgiSwapChain == nullptr || width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
 		{
 			RenderEvent evt;
 			evt.type = ReResize;

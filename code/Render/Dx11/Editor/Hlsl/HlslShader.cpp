@@ -63,7 +63,7 @@ HlslVariable* HlslShader::createTemporaryVariable(const OutputPin* outputPin, Hl
 
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;
-	v.variable = new HlslVariable(outputPin->getNode(), name, type);
+	v.variable = new HlslVariable(outputPin != nullptr ? outputPin->getNode() : nullptr, name, type);
 	v.index = index;
 	return v.variable;
 }

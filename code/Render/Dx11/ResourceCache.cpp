@@ -67,7 +67,7 @@ ID3D11RasterizerState* ResourceCache::getRasterizerState(const D3D11_RASTERIZER_
 		&rs.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dRasterizerStates.insert(std::make_pair(h, rs));
 	return rs;
@@ -88,7 +88,7 @@ ID3D11DepthStencilState* ResourceCache::getDepthStencilState(const D3D11_DEPTH_S
 		&dss.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dDepthStencilStates.insert(std::make_pair(h, dss));
 	return dss;
@@ -109,7 +109,7 @@ ID3D11BlendState* ResourceCache::getBlendState(const D3D11_BLEND_DESC& bd)
 		&bs.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dBlendStates.insert(std::make_pair(h, bs));
 	return bs;
@@ -137,7 +137,7 @@ ID3D11SamplerState* ResourceCache::getSamplerState(const D3D11_SAMPLER_DESC& dsd
 		&ss.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dSamplerStates.insert(std::make_pair(h, ss));
 	return ss;
@@ -159,7 +159,7 @@ ID3D11VertexShader* ResourceCache::getVertexShader(const Blob* vertexShaderBlob,
 		&d3dVertexShader.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dVertexShaders.insert(std::make_pair(vertexShaderHash, d3dVertexShader));
 	return d3dVertexShader;
@@ -181,7 +181,7 @@ ID3D11PixelShader* ResourceCache::getPixelShader(const Blob* pixelShaderBlob, ui
 		&d3dPixelShader.getAssign()
 	);
 	if (FAILED(hr))
-		return 0;
+		return nullptr;
 
 	m_d3dPixelShaders.insert(std::make_pair(pixelShaderHash, d3dPixelShader));
 	return d3dPixelShader;

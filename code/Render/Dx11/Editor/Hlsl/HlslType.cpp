@@ -170,5 +170,30 @@ HlslType hlsl_from_parameter_type(ParameterType type)
 	return c[type];
 }
 
+std::wstring hlsl_storage_type(DataType type)
+{
+	const wchar_t* c[] =
+	{
+		L"float",
+		L"float2",
+		L"float3",
+		L"float4",
+		L"",
+		L"",
+		L"short2",
+		L"short4",
+		L"",
+		L"",
+		L"uint",	// Two packed 16 bit.
+		L"uint2",	// Four packed 16 bit.
+		L"int",
+		L"int2",
+		L"int3",
+		L"int4"
+	};
+	T_FATAL_ASSERT(type < sizeof_array(c));
+	return c[type];
+}
+
 	}
 }

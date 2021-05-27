@@ -24,7 +24,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint8_t blob[131072];
+		uint8_t blob[256 * 1024];
 		uint32_t blobSize;
 
 		if (s.getDirection() == ISerializer::Direction::Read)
