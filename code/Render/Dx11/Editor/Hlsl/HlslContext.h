@@ -32,13 +32,15 @@ public:
 
 	HlslVariable* emitInput(Node* node, const std::wstring& inputPinName);
 
-	HlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, HlslType type);
+	HlslVariable* emitOutput(const OutputPin* outputPin, HlslType type);
 
-	//void emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable);
+	HlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, HlslType type);
 
 	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
 
 	void findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, AlignedVector< const OutputPin* >& outOutputPins) const;
+
+	void findCommonOutputs(const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
 
 	void enterVertex();
 
@@ -79,14 +81,10 @@ public:
 private:
 	struct Scope
 	{
-		const InputPin* inputPin;
-		const OutputPin* outputPin;
+		const InputPin* inputPin = nullptr;
+		const OutputPin* outputPin = nullptr;
 
-		Scope()
-		:	inputPin(0)
-		,	outputPin(0)
-		{
-		}
+		Scope() = default;
 
 		Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
 		:	inputPin(inputPin_)
@@ -101,7 +99,7 @@ private:
 	HlslShader m_computeShader;
 	HlslShader* m_currentShader;
 	HlslEmitter m_emitter;
-	std::vector< uint8_t > m_interpolatorMap;
+	AlignedVector< uint8_t > m_interpolatorMap;
 	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
 	D3D11_BLEND_DESC m_d3dBlendDesc;

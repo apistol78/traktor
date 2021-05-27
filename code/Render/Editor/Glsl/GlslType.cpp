@@ -1,4 +1,3 @@
-// #include <algorithm>
 #include "Core/Misc/String.h"
 #include "Render/Editor/Glsl/GlslType.h"
 

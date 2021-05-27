@@ -13,17 +13,21 @@ namespace traktor
  */
 enum HlslType
 {
-	HtVoid,
-	HtBoolean,
-	HtFloat,
-	HtFloat2,
-	HtFloat3,
-	HtFloat4,
-	HtFloat4x4,
-	HtTexture2D,
-	HtTexture3D,
-	HtTextureCube,
-	HtStructBuffer
+	HtVoid = 0,
+	HtBoolean = 1,
+	HtInteger = 2,
+	HtInteger2 = 3,
+	HtInteger3 = 4,
+	HtInteger4 = 5,
+	HtFloat = 6,
+	HtFloat2 = 7,
+	HtFloat3 = 8,
+	HtFloat4 = 9,
+	HtFloat4x4 = 10,
+	HtTexture2D = 11,
+	HtTexture3D = 12,
+	HtTextureCube = 13,
+	HtStructBuffer = 14
 };
 
 /*!
@@ -34,12 +38,28 @@ std::wstring hlsl_semantic(DataUsage usage, int index);
 /*!
  * \ingroup DX11
  */
-std::wstring hlsl_type_name(HlslType type, bool lowPrecision);
+std::wstring hlsl_type_name(HlslType type);
 
 /*!
  * \ingroup DX11
  */
 int32_t hlsl_type_width(HlslType type);
+
+
+/*!
+ * \ingroup DX11
+ */
+HlslType hlsl_promote_to_float(HlslType type);
+
+/*!
+ * \ingroup DX11
+ */
+HlslType hlsl_degrade_to_integer(HlslType type);
+
+/*!
+ * \ingroup DX11
+ */
+HlslType hlsl_precedence(HlslType typeA, HlslType typeB);
 
 /*!
  * \ingroup DX11

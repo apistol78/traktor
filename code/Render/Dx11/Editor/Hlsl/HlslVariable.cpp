@@ -5,12 +5,24 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
 
-HlslVariable::HlslVariable()
-:	m_node(nullptr)
-,	m_type(HtVoid)
+const wchar_t* c_castFormat[10][10] =
 {
-}
+	//       |      I      |         I2        |       I3         |          I4         |    F         |       F1       |         F2          |           F3              |
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	/*  I */ {         L"%",      L"int2(%, %)",  L"int3(%, %, %)",  L"int4(%, %, %, %)",   L"float(%)", L"float2(%, %)",   L"float3(%, %, %)",      L"float4(%, %, %, %)" },
+	/* I2 */ {       L"%.x",               L"%",  L"int3(%.xy, 0)",  L"int4(%.xy, 0, 0)", L"float(%.x)",    L"float2(%)", L"float3(%.xy, 0.0)",  L"float4(%.xy, 0.0, 0.0)" },
+	/* I3 */ {       L"%.x",            L"%.xy",              L"%",    L"int4(%.xyz, 0)", L"float(%.x)", L"float2(%.xy)",         L"float3(%)",      L"float4(%.xyz, 0.0)" },
+	/* I4 */ {       L"%.x",            L"%.xy",          L"%.xyz",                 L"%", L"float(%.x)", L"float2(%.xy)",     L"float3(%.xyz)",               L"float4(%)" },
+	/*  F */ {    L"int(%)",      L"int2(%, %)",  L"int3(%, %, %)",  L"int4(%, %, %, %)",          L"%", L"float2(%, %)",   L"float3(%, %, %)",      L"float4(%, %, %, %)" },
+	/* F2 */ {  L"int(%.x)",         L"int2(%)",  L"int3(%.xy, 0)",  L"int4(%.xy, 0, 0)",        L"%.x",            L"%", L"float3(%.xy, 0.0)",  L"float4(%.xy, 0.0, 0.0)" },
+	/* F3 */ {  L"int(%.x)",      L"int2(%.xy)",        L"int3(%)",    L"int4(%.xyz, 0)",        L"%.x",         L"%.xy",                 L"%",      L"float4(%.xyz, 0.0)" },
+	/* F4 */ {  L"int(%.x)",      L"int2(%.xy)",    L"int3(%.xyz)",           L"int4(%)",        L"%.x",         L"%.xy",             L"%.xyz",                       L"%" },
+};
+
+		}
 
 HlslVariable::HlslVariable(const Node* node, const std::wstring& name, HlslType type)
 :	m_node(node)
@@ -21,19 +33,10 @@ HlslVariable::HlslVariable(const Node* node, const std::wstring& name, HlslType 
 
 std::wstring HlslVariable::cast(HlslType to) const
 {
-	const wchar_t* c[8][8] =
-	{
-		{ 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, L"%", L"%.xx", L"%.xxx", L"%.xxxx", 0, 0 },
-		{ 0, 0, L"%.x", L"%", L"float3(%.xy, 0)", L"float4(%.xy, 0, 0)", 0, 0 },
-		{ 0, 0, L"%.x", L"%.xy", L"%", L"float4(%.xyz, 0)", 0, 0 },
-		{ 0, 0, L"%.x", L"%.xy", L"%.xyz", L"%", 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, L"%", 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, L"%" },
-	};
+	if (m_type == HtVoid || m_type == HtBoolean || m_type >= HtFloat4x4 || to >= HtFloat4x4)
+		return m_name;
 
-	const wchar_t* f = c[m_type][to];
+	const wchar_t* f = c_castFormat[m_type - HtInteger][to - HtInteger];
 	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 

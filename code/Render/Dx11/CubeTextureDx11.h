@@ -37,7 +37,13 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
-	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
+	ID3D11Texture2D* getD3D11Texture2D() const {
+		return m_d3dTexture;
+	}
+
+	ID3D11ShaderResourceView* getD3D11TextureResourceView() const {
+		return m_d3dTextureResourceView;
+	}
 
 private:
 	Ref< ContextDx11 > m_context;

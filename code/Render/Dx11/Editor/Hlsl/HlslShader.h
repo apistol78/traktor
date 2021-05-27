@@ -5,6 +5,7 @@
 #include <set>
 #include <string>
 #include "Core/RefArray.h"
+#include "Core/Containers/IdAllocator.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Editor/Hlsl/HlslType.h"
@@ -87,11 +88,18 @@ public:
 
 	const std::set< std::wstring >& getUniforms() const;
 
-	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
+	/*! \name Output streams */
+	/*! \{ */
+
+	StringOutputStream& pushOutputStream(BlockType blockType, const wchar_t* const tag);
 
 	void popOutputStream(BlockType blockType);
 
 	StringOutputStream& getOutputStream(BlockType blockType);
+
+	const StringOutputStream& getOutputStream(BlockType blockType) const;
+
+	/*! \} */
 
 	std::wstring getGeneratedShader();
 
@@ -100,6 +108,13 @@ private:
 	{
 		const OutputPin* outputPin;
 		Ref< HlslVariable > variable;
+		int32_t index;
+	};
+
+	struct OutputStreamTuple
+	{
+		Ref< StringOutputStream > outputStream;
+		const wchar_t* tag;
 	};
 
 	ShaderType m_shaderType;
@@ -112,8 +127,8 @@ private:
 	std::set< std::wstring > m_scripts;
 	std::map< std::wstring, D3D11_SAMPLER_DESC > m_samplers;
 	std::set< std::wstring > m_uniforms;
-	int32_t m_nextTemporaryVariable;
-	RefArray< StringOutputStream > m_outputStreams[BtLast];
+	IdAllocator m_temporaryVariableAlloc;
+	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 	bool m_needVPos;
 	bool m_needVFace;
 	bool m_needTargetSize;

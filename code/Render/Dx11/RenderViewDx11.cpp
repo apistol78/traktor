@@ -3,13 +3,15 @@
 #include "Core/Thread/Acquire.h"
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
-#include "Render/Dx11/VertexBufferDx11.h"
+#include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/IndexBufferDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/RenderTargetDepthDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
+#include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/Utilities.h"
+#include "Render/Dx11/VertexBufferDx11.h"
 
 namespace traktor
 {
@@ -927,32 +929,66 @@ void RenderViewDx11::compute(IProgram* program, const int32_t* workSize)
 
 bool RenderViewDx11::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
-	//if (!destinationTexture || sourceTexture)
-	//	return false;
+	if (!destinationTexture || !sourceTexture)
+		return false;
 
-	//ID3D11Texture2D* d3dDestinationTexture = (ID3D11Texture2D*)destinationTexture->getInternalHandle();
-	//ID3D11Texture2D* d3dSourceTexture = (ID3D11Texture2D*)sourceTexture->getInternalHandle();
-	//if (!d3dDestinationTexture || !d3dSourceTexture)
-	//	return false;
+	ID3D11Texture2D* d3dSourceTexture = nullptr;
+	ID3D11Texture2D* d3dDestinationTexture = nullptr;
+	UINT ssr, dsr;
 
-	//D3D11_BOX sr;
-	//sr.left = 0;
-	//sr.right = m_side >> level;
-	//sr.top = 0;
-	//sr.bottom = m_side >> level;
-	//sr.front = 0;
-	//sr.back = 1;
+	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetDx11* >(sourceTexture))
+	{
+		d3dSourceTexture = sourceRenderTarget->getD3D11Texture2D();
+		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceRenderTarget->getMips());
+	}
+	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureDx11* >(sourceTexture))
+	{
+		d3dSourceTexture = sourceSimpleTexture->getD3D11Texture2D();
+		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceSimpleTexture->getMips());
+	}
+	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureDx11* >(sourceTexture))
+	{
+		d3dSourceTexture = sourceCubeTexture->getD3D11Texture2D();
+		ssr = D3D11CalcSubresource(sourceRegion.mip, sourceRegion.z, sourceCubeTexture->getMips());
+	}
 
-	//m_context->getD3DDeviceContext()->CopySubresourceRegion(
-	//	d3dDestinationTexture,
-	//	D3D11CalcSubresource(destinationLevel, destinationSide, m_mipCount),
-	//	0,
-	//	0,
-	//	0,
-	//	d3dSourceTexture,
-	//	level,
-	//	&sr
-	//);
+	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetDx11* >(destinationTexture))
+	{
+		d3dDestinationTexture = destinationRenderTarget->getD3D11Texture2D();
+		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationRenderTarget->getMips());
+	}
+	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureDx11* >(destinationTexture))
+	{
+		d3dDestinationTexture = destinationSimpleTexture->getD3D11Texture2D();
+		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationSimpleTexture->getMips());
+	}
+	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureDx11* >(destinationTexture))
+	{
+		d3dDestinationTexture = destinationCubeTexture->getD3D11Texture2D();
+		dsr = D3D11CalcSubresource(destinationRegion.mip, destinationRegion.z, destinationCubeTexture->getMips());
+	}
+
+	if (!d3dDestinationTexture || !d3dSourceTexture)
+		return false;
+
+	D3D11_BOX sb;
+	sb.left = 0;
+	sb.right = sourceRegion.width;
+	sb.top = 0;
+	sb.bottom = sourceRegion.height;
+	sb.front = 0;
+	sb.back = 1;
+
+	m_context->getD3DDeviceContext()->CopySubresourceRegion(
+		d3dDestinationTexture,
+		dsr,
+		destinationRegion.x,
+		destinationRegion.y,
+		0,
+		d3dSourceTexture,
+		ssr,
+		&sb
+	);
 
 	return true;
 }
