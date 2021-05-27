@@ -71,6 +71,11 @@ HlslType hlsl_from_data_type(DataType type);
  */
 HlslType hlsl_from_parameter_type(ParameterType type);
 
+/*!
+ * \ingroup DX11
+ */
+std::wstring hlsl_storage_type(DataType type);
+
 	}
 }
 

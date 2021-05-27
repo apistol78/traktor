@@ -28,7 +28,7 @@ Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 	T_FATAL_ASSERT (vertexStride > 0);
 
 	if (!bufferHeap->alloc(bufferSize, vertexStride, bufferChunk))
-		return 0;
+		return nullptr;
 
 	T_FATAL_ASSERT (bufferChunk.vertexOffset % vertexStride == 0);
 
@@ -80,7 +80,7 @@ void VertexBufferStaticDx11::destroy()
 		if (m_bufferHeap)
 		{
 			m_bufferHeap->free(m_bufferChunk);
-			m_bufferHeap = 0;
+			m_bufferHeap = nullptr;
 		}
 		m_context->releaseComRef(m_d3dBuffer);
 	}

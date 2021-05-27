@@ -1529,7 +1529,31 @@ bool emitReadStruct(HlslContext& cx, ReadStruct* node)
 	Ref< HlslVariable > out = cx.emitOutput(node, L"Output", hlsl_from_data_type(type));
 
 	comment(f, node);
-	assign(f, out) << strct->getName() << L"[" << index->cast(HtFloat) << L"]." << node->getName() << L";" << Endl;
+
+	if (type == DtHalf2)
+	{
+		Ref< HlslVariable > tmp = cx.getShader().createTemporaryVariable(nullptr, HtVoid);
+		f << L"const uint " << tmp->getName() << L" = " << strct->getName() << L"[" << index->cast(HtInteger) << L"]." << node->getName() << L";" << Endl;
+		assign(f, out) <<
+			L"float2(" <<
+				L"f16tof32(" << tmp->getName() << L" & 0xffff), " <<
+				L"f16tof32(" << tmp->getName() << L" >> 16)" <<
+			L");" << Endl;
+	}
+	else if (type == DtHalf4)
+	{
+		Ref< HlslVariable > tmp = cx.getShader().createTemporaryVariable(nullptr, HtVoid);
+		f << L"const uint2 " << tmp->getName() << L" = " << strct->getName() << L"[" << index->cast(HtInteger) << L"]." << node->getName() << L";" << Endl;
+		assign(f, out) <<
+			L"float4(" <<
+				L"f16tof32(" << tmp->getName() << L".x & 0xffff), " <<
+				L"f16tof32(" << tmp->getName() << L".x >> 16), " <<
+				L"f16tof32(" << tmp->getName() << L".y & 0xffff), " <<
+				L"f16tof32(" << tmp->getName() << L".y >> 16)" <<
+			L");" << Endl;
+	}
+	else
+		assign(f, out) << strct->getName() << L"[" << index->cast(HtInteger) << L"]." << node->getName() << L";" << Endl;
 
 	return true;
 }
@@ -2156,7 +2180,7 @@ bool emitStruct(HlslContext& cx, Struct* node)
 		fs << L"struct S_" << node->getParameterName() << Endl;
 		fs << L"{" << Endl;
 		for (const auto& element : node->getElements())
-			fs << L"\t" << hlsl_type_name(hlsl_from_data_type(element.type)) << L" " << element.name << L";" << Endl;
+			fs << L"\t" << hlsl_storage_type(element.type) << L" " << element.name << L";" << Endl;
 		fs << L"};" << Endl;
 		fs << Endl;
 		fs << L"StructuredBuffer< S_" << node->getParameterName() << L" > " << node->getParameterName() << L";" << Endl;
