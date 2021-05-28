@@ -64,45 +64,6 @@
 			</position>
 			<name>shR0_3</name>
 		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{B29C8222-0050-4A24-9BB3-CB8AA6CE3C04}</id>
-			<comment/>
-			<position>
-				<first>11</first>
-				<second>-164</second>
-			</position>
-			<parameterName>World_IrradianceGridSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>shR0_3</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shR4_7</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shG0_3</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shG4_7</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shB0_3</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shB4_7</name>
-					<type>DtHalf4</type>
-				</item>
-				<item>
-					<name>shRGB_8</name>
-					<type>DtHalf4</type>
-				</item>
-			</elements>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{31074BE1-F585-4FA4-A882-3FED43320E7E}</id>
 			<comment/>
@@ -179,20 +140,12 @@
 			</position>
 			<name>shRGB_8</name>
 		</item>
-		<item type="traktor.render.Platform" version="traktor.render.Node:1">
-			<id>{A81D3202-8834-E049-B89B-460F7817D128}</id>
-			<comment/>
-			<position>
-				<first>477</first>
-				<second>-397</second>
-			</position>
-		</item>
 		<item type="traktor.render.Struct" version="traktor.render.Node:1">
 			<id>{1072694C-AB6C-F344-9451-4029E4D4848C}</id>
 			<comment/>
 			<position>
-				<first>8</first>
-				<second>-413</second>
+				<first>276</first>
+				<second>-38</second>
 			</position>
 			<parameterName>World_IrradianceGridSBuffer</parameterName>
 			<elements>
@@ -230,7 +183,7 @@
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -240,7 +193,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -250,7 +203,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -260,7 +213,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -270,7 +223,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -280,7 +233,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -290,7 +243,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -301,6 +254,16 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -310,7 +273,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -320,7 +283,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -330,7 +293,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -340,7 +303,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -350,7 +313,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -360,27 +323,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -390,7 +333,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -400,7 +343,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -410,7 +353,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -420,7 +363,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -430,7 +373,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -440,22 +383,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Struct</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Android</name>
 			</destination>
 		</item>
 	</edges>
