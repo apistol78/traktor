@@ -2616,21 +2616,24 @@ bool emitTextureSize(HlslContext& cx, TextureSize* node)
 
 	std::wstring textureName = in->getName();
 
-	Ref< HlslVariable > out = cx.emitOutput(node, L"Output", HtFloat3);
+	Ref< HlslVariable > out;
 
-	f << L"float3 " << out->getName() << L" = float3(0.0f, 0.0f, 0.0f);" << Endl;
+	comment(f, node);
 	switch (in->getType())
 	{
 	case HtTexture2D:
-		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		out = cx.emitOutput(node, L"Output", HtFloat2);
+		f << L"float2 " << out->getName() << L"; " << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
 		break;
 
 	case HtTexture3D:
-		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y, " << out->getName() << L".z);" << Endl;
+		out = cx.emitOutput(node, L"Output", HtFloat3);
+		f << L"float3 " << out->getName() << L"; " << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y, " << out->getName() << L".z);" << Endl;
 		break;
 
 	case HtTextureCube:
-		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		out = cx.emitOutput(node, L"Output", HtFloat3);
+		f << L"float3 " << out->getName() << L"; " << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y, " << out->getName() << L".z);" << Endl;
 		break;
 
 	default:
@@ -2649,10 +2652,10 @@ bool emitTransform(HlslContext& cx, Transform* node)
 	if (!in || !transform)
 		return false;
 
-	Ref< HlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< HlslVariable > out = cx.emitOutput(node, L"Output", HtFloat4);
 
 	comment(f, node);
-	assign(f, out) << L"mul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
+	assign(f, out) << L"mul(" << transform->getName() << L", " << in->cast(HtFloat4) << L");" << Endl;
 
 	return true;
 }
