@@ -1971,7 +1971,11 @@ void EditorForm::buildAssets(bool rebuild)
 
 	std::vector< Guid > assetGuids;
 	for (const auto& rootInstance : m_workspaceSettings->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances"))
-		assetGuids.push_back(Guid(rootInstance));
+	{
+		const Guid rootInstanceId(rootInstance);
+		if (m_sourceDatabase->getInstance(rootInstanceId) != nullptr)
+			assetGuids.push_back(rootInstanceId);
+	}
 
 	log::info << DecreaseIndent;
 
