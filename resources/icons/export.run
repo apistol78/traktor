@@ -6,7 +6,7 @@ local outputs =
 	{
 		source = "Label.svg",
 		name = "UI_Graph_Label",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Label", column = 0, row = 0, width = 2, height = 1, base = 12 }, -- , base = 16*96/45 },
@@ -16,7 +16,7 @@ local outputs =
 	{
 		source = "Pin.svg",
 		name = "UI_Graph_Pin",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Pin", column = 0, row = 0, width = 1, height = 1, base = 12 }, -- , base = 16*96/45 },
@@ -25,7 +25,7 @@ local outputs =
 	{
 		source = "Pin.svg",
 		name = "UI_Graph_Pin",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "PinHot", column = 1, row = 0, width = 1, height = 1, base = 12 }, -- , base = 16*96/45 },
@@ -34,7 +34,7 @@ local outputs =
 	{
 		source = "Pin.svg",
 		name = "UI_Graph_Pin",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "PinErrpr", column = 2, row = 0, width = 1, height = 1, base = 12 }, -- , base = 16*96/45 },
@@ -44,7 +44,7 @@ local outputs =
 	{
 		source = "Node.svg",
 		name = "UI_Graph_Node",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Node", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
@@ -57,7 +57,7 @@ local outputs =
 	{
 		source = "External.svg",
 		name = "UI_Graph_External",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "External", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
@@ -70,7 +70,7 @@ local outputs =
 	{
 		source = "Script.svg",
 		name = "UI_Graph_Script",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Script", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
@@ -83,7 +83,7 @@ local outputs =
 	{
 		source = "Input.svg",
 		name = "UI_Graph_Input",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Input", column = 0, row = 0, width = 3, height = 2 },
@@ -96,7 +96,7 @@ local outputs =
 	{
 		source = "InOut.svg",
 		name = "UI_Graph_InOut",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "InOut", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
@@ -109,7 +109,7 @@ local outputs =
 	{
 		source = "Uniform.svg",
 		name = "UI_Graph_Uniform",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Uniform", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
@@ -122,7 +122,7 @@ local outputs =
 	{
 		source = "Variable.svg",
 		name = "UI_Graph_Variable",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Variable", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
@@ -135,7 +135,7 @@ local outputs =
 	{
 		source = "Output.svg",
 		name = "UI_Graph_Output",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Output", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
@@ -148,7 +148,7 @@ local outputs =
 	{
 		source = "Ipol.svg",
 		name = "UI_Graph_Output",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Ipol", column = 0, row = 0, width = 2, height = 2 }, -- , base = 16*96/45 },
@@ -161,7 +161,7 @@ local outputs =
 	{
 		source = "Comment.svg",
 		name = "UI_Graph_Comment",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Comment", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
@@ -171,7 +171,7 @@ local outputs =
 	{
 		source = "Background.svg",
 		name = "UI_Graph_Background",
-		path = "../../runtime/themes/%s/Images/UI/Graph",
+		path = "../runtime/themes/%s/Images/UI/Graph",
 		resources =
 		{
 			{ name = "Background", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
@@ -180,7 +180,7 @@ local outputs =
 
 	{
 		name = "Editor",
-		path = "../../runtime/themes/%s/Images/Editor",
+		path = "../runtime/themes/%s/Images/Editor",
 		resources =
 		{
 			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
@@ -209,7 +209,7 @@ local outputs =
 	},
 	{
 		name = "UI_Dock",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "DockClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
@@ -217,8 +217,9 @@ local outputs =
 		}
 	},
 	{
+		source = "UI.svg",
 		name = "UI_Tab",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "TabClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
@@ -226,7 +227,7 @@ local outputs =
 	},	
 	{
 		name = "UI_TreeView",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Tree", column = 0, row = 5, width = 4, height = 1 },
@@ -234,7 +235,7 @@ local outputs =
 	},
 	{
 		name = "UI_GridView",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "GridView", column = 0, row = 5, width = 4, height = 1 },
@@ -242,7 +243,7 @@ local outputs =
 	},
 	{
 		name = "UI_LogList",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Log", column = 0, row = 24, width = 3, height = 1, base = 12 },
@@ -250,7 +251,7 @@ local outputs =
 	},	
 	{
 		name = "UI_PropertyList",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "PropertyList", column = 0, row = 5, width = 2, height = 1 },
@@ -264,7 +265,7 @@ local outputs =
 	},
 	{
 		name = "UI_Sequencer",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "SequenceExpand", column = 0, row = 5, width = 1, height = 1, base = 9 },
@@ -276,7 +277,7 @@ local outputs =
 	{
 		source = "Layers.svg",
 		name = "UI_Layer",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1 },
@@ -285,7 +286,7 @@ local outputs =
 	},	
 	{
 		name = "UI_RichEdit",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "SearchCaseSensitive", column = 15, row = 6, width = 1, height = 1 },
@@ -295,7 +296,7 @@ local outputs =
 	},
 	{
 		name = "UI_FileDialog",
-		path = "../../runtime/themes/%s/Images/UI",
+		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
 			{ name = "Directory", column = 0, row = 42, width = 1, height = 1 },
@@ -305,7 +306,7 @@ local outputs =
 
 	{
 		name = "Script",
-		path = "../../runtime/themes/%s/Images/Script",
+		path = "../runtime/themes/%s/Images/Script",
 		resources =
 		{
 			{ name = "ToggleComments", column = 0, row = 6, width = 1, height = 1 },
@@ -332,7 +333,7 @@ local outputs =
 	},
 	{
 		name = "Spray",
-		path = "../../runtime/themes/%s/Images/Spray",
+		path = "../runtime/themes/%s/Images/Spray",
 		resources =
 		{
 			{ name = "Randomize", column = 0, row = 7, width = 1, height = 1 },
@@ -348,7 +349,7 @@ local outputs =
 	{
 		source = "Layers.svg",
 		name = "Spray",
-		path = "../../runtime/themes/%s/Images/Spray",
+		path = "../runtime/themes/%s/Images/Spray",
 		resources =
 		{
 			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
@@ -359,7 +360,7 @@ local outputs =
 	{
 		source = "Shader.svg",
 		name = "Shader",
-		path = "../../runtime/themes/%s/Images/Shader",
+		path = "../runtime/themes/%s/Images/Shader",
 		resources =
 		{
 			{ name = "Tools", column = 0, row = 0, width = 18, height = 1 },
@@ -367,7 +368,7 @@ local outputs =
 	},
 	{
 		name = "Texture",
-		path = "../../runtime/themes/%s/Images/Texture",
+		path = "../runtime/themes/%s/Images/Texture",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
@@ -376,7 +377,7 @@ local outputs =
 	{
 		source = "Scene.svg",
 		name = "Scene",
-		path = "../../runtime/themes/%s/Images/Scene",
+		path = "../runtime/themes/%s/Images/Scene",
 		resources =
 		{
 			{ name = "Pointer", column = 0, row = 0, width = 1, height = 1 },
@@ -402,7 +403,7 @@ local outputs =
 	{
 		source = "Layers.svg",
 		name = "Scene",
-		path = "../../runtime/themes/%s/Images/Scene",
+		path = "../runtime/themes/%s/Images/Scene",
 		resources =
 		{
 			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1 },
@@ -416,7 +417,7 @@ local outputs =
 	{
 		source = "Runtime.svg",
 		name = "Runtime",
-		path = "../../runtime/themes/%s/Images/Runtime",
+		path = "../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
 			{ name = "Logos", column = 0, row = 0, width = 13, height = 1, base = 24 },
@@ -432,7 +433,7 @@ local outputs =
 	},
 	{
 		name = "Input",
-		path = "../../runtime/themes/%s/Images/Input",
+		path = "../runtime/themes/%s/Images/Input",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
@@ -440,7 +441,7 @@ local outputs =
 	},
 	{
 		name = "Animation",
-		path = "../../runtime/themes/%s/Images/Animation",
+		path = "../runtime/themes/%s/Images/Animation",
 		resources =
 		{
 			{ name = "Alignment", column = 0, row = 8, width = 6, height = 1 },
@@ -451,7 +452,7 @@ local outputs =
 	},
 	{
 		name = "Flash",
-		path = "../../runtime/themes/%s/Images/Flash",
+		path = "../runtime/themes/%s/Images/Flash",
 		resources =
 		{
 			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
@@ -472,7 +473,7 @@ local outputs =
 	{
 		source = "Terrain.svg",
 		name = "Terrain",
-		path = "../../runtime/themes/%s/Images/Terrain",
+		path = "../runtime/themes/%s/Images/Terrain",
 		resources =
 		{
 			{ name = "Terrain", column = 0, row = 0, width = 17, height = 1 },
@@ -480,7 +481,7 @@ local outputs =
 	},
 	{
 		name = "Theater",
-		path = "../../runtime/themes/%s/Images/Theater",
+		path = "../runtime/themes/%s/Images/Theater",
 		resources =
 		{
 			{ name = "Theater", column = 0, row = 16, width = 8, height = 1 },
@@ -488,7 +489,7 @@ local outputs =
 	},
 	{
 		name = "Sound",
-		path = "../../runtime/themes/%s/Images/Sound",
+		path = "../runtime/themes/%s/Images/Sound",
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
@@ -497,7 +498,7 @@ local outputs =
 	},	
 	{
 		name = "Runtime_Run",
-		path = "../../runtime/themes/%s/Images/Runtime",
+		path = "../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
 			{ name = "Error", column = 0, row = 35, width = 3, height = 10 },
@@ -505,7 +506,7 @@ local outputs =
 	},
 	{
 		name = "SolutionBuilder",
-		path = "../../runtime/themes/%s/Images/SolutionBuilder",
+		path = "../runtime/themes/%s/Images/SolutionBuilder",
 		resources =
 		{
 			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
@@ -520,7 +521,7 @@ local outputs =
 	},
 	{
 		name = "Drone",
-		path = "../../runtime/themes/%s/Images/Drone",
+		path = "../runtime/themes/%s/Images/Drone",
 		resources =
 		{
 			{ name = "Icon", column = 0, row = 40, width = 1, height = 1, base = 64 },
@@ -542,7 +543,7 @@ local dpis =
 local function export(input, x, y, width, height, dpi, output)
 	--local inkscape = "/usr/bin/inkscape"
 	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
-	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. -y .. ":" .. (x + width) .. ":" .. -y + height .. " --export-dpi=" .. string.format("%d", dpi) .. " " .. input
+	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. string.format("%d", dpi) .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)
 	stdout:printLn("  exitcode " .. result)
@@ -561,77 +562,71 @@ function main(argv)
 		local source = g.source
 		if source == nil then source = "Icons.svg" end
 
-		-- if argv:empty() or argv:get(0) == g.name then
-		if true then
-			for _, o in ipairs(g.resources) do
+		for _, o in ipairs(g.resources) do
+			local path = string.format(g.path, argv:get(0))
+			local p = FileSystem.getInstance():getAbsolutePath(Path(path .. "/" .. o.name .. ".image"))
+			local f = FileSystem.getInstance():get(p)
+
+			if f == nil or not f.readOnly then
 				stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
-				local path = string.format(g.path, argv:get(0))
-				local p = FileSystem.getInstance():getAbsolutePath(Path(path .. "/" .. o.name .. ".image"))
-				local f = FileSystem.getInstance():get(p)
+				local sizes = { 0, 0, 0, 0 }
+				local base = 16
+				if o.base ~= nil then base = o.base end
 
-				if f == nil or not f.readOnly then
+				-- Generate PNG at different DPI resolutions.
+				for j, dpi in ipairs(dpis) do
 
-					local sizes = { 0, 0, 0, 0 }
-					local base = 16
-					if o.base ~= nil then base = o.base end
+					stdout:printLn("Exporting @ dpi " .. dpi .. "...")
 
-					-- Generate PNG at different DPI resolutions.
-					for j, dpi in ipairs(dpis) do
+					-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
+					local xdpi = (96 / 2) * (dpi / 96) * (base / 16)
+					export(source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
-						stdout:printLn("Exporting @ dpi " .. dpi .. "...")
-
-						-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
-						local xdpi = (96 / 2) * (dpi / 96) * (base / 16)
-						export(source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
-
-						-- Get file size of output.
-						local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
-						assert (f ~= nil)
-						sizes[j] = f.size
-					end
-
-					stdout:printLn("Merging into \"image\"...")
-
-					FileSystem.getInstance():makeAllDirectories(Path(p.pathOnly))
-
-					-- Merge all files into a simple "image pack" resource.
-					local f = FileSystem.getInstance():open(p, File.FmWrite)
+					-- Get file size of output.
+					local f = FileSystem.getInstance():get(Path(dpi .. ".png"))
 					assert (f ~= nil)
-
-					-- Write directory.
-					local bw = BitWriter(f)
-					bw:writeUInt16(#dpis)
-					local offset = 16 / 8 + #dpis * (16 + 32) / 8
-					for j, dpi in ipairs(dpis) do
-						bw:writeUInt16(dpi)
-						bw:writeUInt32(offset)
-						offset = offset + sizes[j]
-					end
-
-					-- Append each image file.
-					for j, dpi in ipairs(dpis) do
-						local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
-						assert (sf ~= nil)
-						StreamCopy(f, sf):execute()
-						sf:close()
-					end
-
-					f:close()
-
-					stdout:printLn("Cleaning up intermediate")
-
-					-- Remove all intermediate images.
-					for j, dpi in ipairs(dpis) do
-						--run:rm(dpi .. ".png")
-						FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
-					end
-
-					stdout:printLn("Done")
-
-				else
-					stdout:printLn("Skipped as target is read-only; presumably because it's locked in SCM.")
+					sizes[j] = f.size
 				end
+
+				stdout:printLn("Merging into \"image\"...")
+
+				FileSystem.getInstance():makeAllDirectories(Path(p.pathOnly))
+
+				-- Merge all files into a simple "image pack" resource.
+				local f = FileSystem.getInstance():open(p, File.FmWrite)
+				assert (f ~= nil)
+
+				-- Write directory.
+				local bw = BitWriter(f)
+				bw:writeUInt16(#dpis)
+				local offset = 16 / 8 + #dpis * (16 + 32) / 8
+				for j, dpi in ipairs(dpis) do
+					bw:writeUInt16(dpi)
+					bw:writeUInt32(offset)
+					offset = offset + sizes[j]
+				end
+
+				-- Append each image file.
+				for j, dpi in ipairs(dpis) do
+					local sf = FileSystem.getInstance():open(Path(dpi .. ".png"), File.FmRead)
+					assert (sf ~= nil)
+					StreamCopy(f, sf):execute()
+					sf:close()
+				end
+
+				f:close()
+
+				stdout:printLn("Cleaning up intermediate")
+
+				-- Remove all intermediate images.
+				for j, dpi in ipairs(dpis) do
+					--run:rm(dpi .. ".png")
+					FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
+				end
+
+				stdout:printLn("Done")
+
 			end
 		end
 	end
