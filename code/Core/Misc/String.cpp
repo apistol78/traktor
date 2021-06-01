@@ -185,4 +185,22 @@ std::wstring str(const wchar_t* const format, ...)
 	return buf;
 }
 
+std::wstring formatDuration(double duration)
+{
+	int32_t ms = (int32_t)(duration * 1000.0) % 1000;
+
+	int32_t s = ((int32_t)duration) % 60;
+	int32_t m = ((int32_t)duration) / 60;
+	int32_t h = m / 60;
+
+	m = m % 60;
+
+	if (h > 0)	
+		return str(L"%d:%02d:%02d:%04d", h, m, s, ms);
+	else if (m > 0 || s > 0)
+		return str(L"%02d:%02d:%04d", m, s, ms);
+	else
+		return str(L"%d ms", ms);
+}
+
 }

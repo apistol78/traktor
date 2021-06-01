@@ -305,4 +305,9 @@ bool T_DLLCLASS split(const std::wstring& str, wchar_t delim, std::wstring& outL
  */
 std::wstring T_DLLCLASS str(const wchar_t* const format, ...);
 
+/*! Duration formatting helper.
+ * \ingroup Core
+ */
+std::wstring T_DLLCLASS formatDuration(double duration);
+
 }

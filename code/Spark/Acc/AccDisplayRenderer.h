@@ -142,11 +142,9 @@ private:
 
 	resource::IResourceManager* m_resourceManager;
 	render::IRenderSystem* m_renderSystem;
-
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::RenderPass > m_renderPassOutput;
 	Ref< render::RenderPass > m_renderPassGlyph;
-
 	Ref< render::IRenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
@@ -170,6 +168,7 @@ private:
 	uint8_t m_glyphFilter;
 	Color4f m_glyphColor;
 	Color4f m_glyphFilterColor;
+	bool m_firstFrame;
 
 	void renderEnqueuedGlyphs();
 };

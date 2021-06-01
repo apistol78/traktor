@@ -63,7 +63,6 @@ private:
 
 	Ref< db::Database > m_database;
 	Thread* m_scanThread;
-	bool m_scanThreadActive;
 	Semaphore m_lock;
 	std::vector< IListener* > m_listeners;
 	std::set< Dependency > m_dependencies;

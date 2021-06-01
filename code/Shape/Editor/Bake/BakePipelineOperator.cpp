@@ -835,7 +835,7 @@ bool BakePipelineOperator::build(
 	ms_tracerProcessor->enqueue(tracerTask);
 
 	if (m_asynchronous)
-		log::info << L"Lightmap tasks created, enqueued and ready to be processed (" << str(L"%.2f", (float)timer.getElapsedTime()) << L" seconds)." << Endl;
+		log::info << L"Lightmap tasks created, enqueued and ready to be processed (" << formatDuration(timer.getElapsedTime()) << L")." << Endl;
 	else
 	{
 		log::info << L"Waiting for lightmap baking to complete..." << Endl;
