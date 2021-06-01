@@ -172,7 +172,7 @@ void BrowseInstanceDialog::destroy()
 	if (m_threadGeneratePreview)
 	{
 		ThreadPool::getInstance().stop(m_threadGeneratePreview);
-		m_threadGeneratePreview = 0;
+		m_threadGeneratePreview = nullptr;
 	}
 
 	m_previewTasks.clear();

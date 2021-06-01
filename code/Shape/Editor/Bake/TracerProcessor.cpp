@@ -452,14 +452,18 @@ void TracerProcessor::processorThread()
 			m_status.active = true;
 			m_cancelled = false;
 
-			log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started (" << pending << L" pending)." << Endl;
+			if (pending > 0)
+				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started (" << pending << L" pending)." << Endl;
+			else
+				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
+
 			double Tstart = timer.getElapsedTime();
 
 			process(m_activeTask);
 
 			double Tend = timer.getElapsedTime();
 			if (!m_cancelled)
-				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" finished in " << (int32_t)(Tend - Tstart) << L" seconds." << Endl;
+				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" finished in " << formatDuration(Tend - Tstart) << L"." << Endl;
 
 			m_status.active = false;
 			m_activeTask = nullptr;

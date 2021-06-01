@@ -1866,7 +1866,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		if (verbose)
 		{
 			double elapsedDependencies = timerBuild.getElapsedTime();
-			log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << elapsedDependencies << L" second(s)." << Endl;
+			log::info << L"Collected " << dependencySet.size() << L" dependencies from " << assetGuids.size() << L" root(s) in " << formatDuration(elapsedDependencies) << L"." << Endl;
 		}
 
 		// Build output.
@@ -1894,12 +1894,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 		double elapsedTotal = timerBuild.getElapsedTime();
 
-		uint32_t seconds = uint32_t(elapsedTotal + 0.5);
-		uint32_t minutes = seconds / 60; seconds %= 60;
-		uint32_t hours = minutes / 60; minutes %= 60;
-
 		log::info << DecreaseIndent;
-		log::info << L"Finished (" << str(L"%d:%02d:%02d", hours, minutes, seconds) << L")" << Endl;
+		log::info << L"Finished (" << formatDuration(elapsedTotal) << L")" << Endl;
 	}
 	else
 	{

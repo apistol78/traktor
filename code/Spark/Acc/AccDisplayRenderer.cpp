@@ -79,6 +79,7 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_glyphFilter(0)
 ,	m_glyphColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_glyphFilterColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_firstFrame(true)
 {
 }
 
@@ -220,9 +221,18 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 	}
 
 	m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
-	m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
+	if (!m_firstFrame)
+		m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
+	else
+	{
+		render::Clear cl;
+		cl.mask = render::CfColor;
+		cl.colors[0] = Color4f(1.0f, 0.0f, 0.0f, 1.0);
+		m_renderPassGlyph->setOutput(glyphsTargetSetId, cl, render::TfNone, render::TfColor);
+	}
 
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
+	m_firstFrame = false;
 }
 
 void AccDisplayRenderer::endSetup()

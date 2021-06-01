@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Thread.h"
@@ -37,19 +38,12 @@ protected:
 private:
 	struct Worker
 	{
-		Thread* thread;
+		Thread* thread = nullptr;
 		Event eventAttachWork;
 		Event eventFinishedWork;
 		Ref< Functor > functorWork;
-		int32_t alive;
-		int32_t busy;
-
-		Worker()
-		:	thread(nullptr)
-		,	alive(1)
-		,	busy(0)
-		{
-		}
+		std::atomic< int32_t > alive = 1;
+		std::atomic< int32_t > busy = 0;
 	};
 
 	Worker m_workerThreads[32];

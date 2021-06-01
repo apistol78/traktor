@@ -3,6 +3,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -331,11 +332,11 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		log::info << L"Build finished in " << (int32_t)(timer.getElapsedTime() * 1000) << L" ms; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+		log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 		if (m_verbose)
 		{
 			for (auto duration : m_profiler->getDurations())
-				log::info << (int32_t)(duration.second * 1000) << L" ms in " << duration.first->getName() << Endl;
+				log::info << formatDuration(duration.second) << L" in " << duration.first->getName() << Endl;
 		}
 	}
 	else

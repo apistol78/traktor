@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database, bool& scanThreadActive)
+void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database)
 {
 	RefArray< db::Instance > shaderGraphInstances;
 	db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
@@ -31,10 +31,9 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 		for (auto externalNode : externalNodes)
 			tracker->addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
 	}
-	scanThreadActive = false;
 }
 
-void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database, Guid shader, bool& scanThreadActive)
+void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database, Guid shader)
 {
 	Ref< db::Instance > instance = database->getInstance(shader);
 	if (instance)
@@ -50,7 +49,6 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 				tracker->addDependency(shader, externalNode->getFragmentGuid());
 		}
 	}
-	scanThreadActive = false;
 }
 
 		}
@@ -59,7 +57,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyTracker", ShaderDependen
 
 ShaderDependencyTracker::ShaderDependencyTracker()
 :	m_scanThread(nullptr)
-,	m_scanThreadActive(false)
 {
 }
 
@@ -72,35 +69,33 @@ ShaderDependencyTracker::~ShaderDependencyTracker()
 
 void ShaderDependencyTracker::destroy()
 {
-	if (m_scanThreadActive)
+	if (m_scanThread)
 	{
 		ThreadPool::getInstance().join(m_scanThread);
-		T_ASSERT(!m_scanThreadActive);
+		m_scanThread = nullptr;
 	}
 }
 
 void ShaderDependencyTracker::scan(db::Database* database)
 {
-	if (m_scanThreadActive)
+	if (m_scanThread)
 	{
 		ThreadPool::getInstance().join(m_scanThread);
-		T_ASSERT(!m_scanThreadActive);
+		m_scanThread = nullptr;
 	}
 
-	m_scanThreadActive = true;
-	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, bool& >(&scanDependencies, this, database, m_scanThreadActive), m_scanThread);
+	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database* >(&scanDependencies, this, database), m_scanThread);
 }
 
 void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 {
-	if (m_scanThreadActive)
+	if (m_scanThread)
 	{
 		ThreadPool::getInstance().join(m_scanThread);
-		T_ASSERT(!m_scanThreadActive);
+		m_scanThread = nullptr;
 	}
 
-	m_scanThreadActive = true;
-	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, Guid, bool& >(&scanDependencies, this, database, shader, m_scanThreadActive), m_scanThread);
+	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, Guid >(&scanDependencies, this, database, shader), m_scanThread);
 }
 
 void ShaderDependencyTracker::addListener(IListener* listener)

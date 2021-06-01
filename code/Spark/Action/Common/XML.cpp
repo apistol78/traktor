@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.XML", XML, XMLNode)
 XML::XML(ActionContext* context)
 :	XMLNode("XML", XMLNode::NtElement, L"", L"")
 ,	m_context(context)
-,	m_thread(0)
+,	m_thread(nullptr)
 {
 }
 
@@ -37,7 +37,7 @@ XML::~XML()
 		m_context->removeFrameListener(self);
 
 		ThreadPool::getInstance().stop(m_thread);
-		m_thread = 0;
+		m_thread = nullptr;
 	}
 }
 
@@ -66,7 +66,7 @@ void XML::onFrame(CallArgs& ca)
 
 	if (m_thread->wait(0))
 	{
-		m_thread = 0;
+		m_thread = nullptr;
 
 		m_context->removeFrameListener(self);
 

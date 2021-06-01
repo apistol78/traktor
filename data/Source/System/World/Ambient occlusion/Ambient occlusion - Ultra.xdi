@@ -23,8 +23,8 @@
 			<id>{07E0F511-6269-EB4E-856D-7933E9FD66BE}</id>
 			<comment/>
 			<position>
-				<first>1195</first>
-				<second>230</second>
+				<first>1197</first>
+				<second>235</second>
 			</position>
 			<targetSetId>Temporary</targetSetId>
 			<persistent>false</persistent>
@@ -48,34 +48,9 @@
 			<id>{402BEABF-3110-F341-B938-F607AA2BFD06}</id>
 			<comment/>
 			<position>
-				<first>1693</first>
-				<second>218</second>
+				<first>1739</first>
+				<second>247</second>
 			</position>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{3A1ECA6F-641F-2E4C-89C1-F74C3451031C}</id>
-			<comment/>
-			<position>
-				<first>680</first>
-				<second>276</second>
-			</position>
-			<targetSetId>AO</targetSetId>
-			<persistent>false</persistent>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR8</colorFormat>
-				</item>
-			</targets>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{23FA7ED0-9D6F-934E-8339-1E8C74500B18}</id>
@@ -119,7 +94,7 @@
 			<comment/>
 			<position>
 				<first>935</first>
-				<second>208</second>
+				<second>223</second>
 			</position>
 			<name>AO blur X</name>
 			<clear>
@@ -158,8 +133,8 @@
 			<id>{A3B318DF-EB83-EE4F-9CEF-C182B0F99F1F}</id>
 			<comment/>
 			<position>
-				<first>1455</first>
-				<second>144</second>
+				<first>1465</first>
+				<second>146</second>
 			</position>
 			<name>AO blur Y</name>
 			<clear>
@@ -194,6 +169,31 @@
 				</item>
 			</steps>
 		</item>
+		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
+			<id>{3A1ECA6F-641F-2E4C-89C1-F74C3451031C}</id>
+			<comment/>
+			<position>
+				<first>681</first>
+				<second>301</second>
+			</position>
+			<targetSetId>AO</targetSetId>
+			<persistent>false</persistent>
+			<width>0</width>
+			<height>0</height>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
+			<createDepthStencil>false</createDepthStencil>
+			<ignoreStencil>false</ignoreStencil>
+			<generateMips>false</generateMips>
+			<targets>
+				<item>
+					<textureId>Output</textureId>
+					<colorFormat>TfR8</colorFormat>
+				</item>
+			</targets>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -202,7 +202,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Depth</name>
 			</destination>
 		</item>
@@ -212,77 +212,77 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Source</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Depth</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Depth</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Source</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Depth</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Source</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>
