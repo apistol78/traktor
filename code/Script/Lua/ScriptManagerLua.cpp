@@ -98,10 +98,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptMana
 ScriptManagerLua* ScriptManagerLua::ms_instance = nullptr;
 
 ScriptManagerLua::ScriptManagerLua()
-:	m_luaState(0)
-,	m_defaultAllocFn(0)
-,	m_defaultAllocOpaque(0)
-,	m_lockContext(0)
+:	m_luaState(nullptr)
+,	m_defaultAllocFn(nullptr)
+,	m_defaultAllocOpaque(nullptr)
+,	m_lockContext(nullptr)
 ,	m_collectStepFrequency(10.0)
 ,	m_collectSteps(-1)
 ,	m_collectTargetSteps(0.0f)
@@ -1136,7 +1136,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	ITypedObject* object = 0;
+	ITypedObject* object = nullptr;
 	Any arg;
 
 	if (lua_istable(luaState, 1))
@@ -1227,7 +1227,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	ITypedObject* object = 0;
+	ITypedObject* object = nullptr;
 	Any arg;
 
 	if (lua_istable(luaState, 1))
