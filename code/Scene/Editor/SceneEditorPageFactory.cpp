@@ -1,6 +1,11 @@
 #include "Core/Log/Log.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfmPrimitive.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IEditor.h"
+#include "Scene/ISceneControllerData.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -14,6 +19,37 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
+{
+	Ref< Reflection > reflection = Reflection::create(object);
+
+	// Rename all id;s in this object first.
+	RefArray< ReflectionMember > idMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), idMembers);
+	for (auto idMember : idMembers)
+	{
+		auto id = static_cast< RfmPrimitiveGuid* >(idMember.ptr());
+		auto it = renamedMap.find(id->get());
+		if (it != renamedMap.end())
+			id->set(it->second);
+	}
+
+	// Recurse with child objects.
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	for (auto objectMember : objectMembers)
+	{
+		auto object = static_cast< RfmObject* >(objectMember.ptr());
+		renameIds(object->get(), renamedMap);
+	}
+
+	reflection->apply(object);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorPageFactory", 0, SceneEditorPageFactory, editor::IEditorPageFactory)
 
@@ -94,11 +130,24 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 
 Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* asset) const
 {
-	Ref< ISerializable > mutableAsset = DeepClone(asset).create();
+	Ref< SceneAsset > mutableAsset = DeepClone(asset).create< SceneAsset >();
+	SmallMap< Guid, Guid > renamedMap;
+
+	// Rename all entities.
 	Traverser::visit(mutableAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
-		inoutEntityData->setId(Guid::create());
+		Guid newEntityId = Guid::create();
+		if (inoutEntityData->getId().isNotNull())
+			renamedMap.insert(inoutEntityData->getId(), newEntityId);
+		inoutEntityData->setId(newEntityId);
 		return Traverser::VrContinue;
 	});
+
+	// Also ensure attached data contain updated entity identities.
+	if (mutableAsset->getControllerData() != nullptr)
+		renameIds(mutableAsset->getControllerData(), renamedMap);
+	for (auto operationData : mutableAsset->getOperationData())
+		renameIds(operationData, renamedMap);
+
 	return mutableAsset;
 }
 
