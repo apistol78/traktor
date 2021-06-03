@@ -161,6 +161,8 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 
 	// Register our idle event handler.
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &WidgetPreviewControl::eventIdle);
+	
+	m_timer.start();
 	return true;
 }
 
