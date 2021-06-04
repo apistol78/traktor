@@ -175,7 +175,7 @@ ScriptManagerLua::ScriptManagerLua()
 		lua_pop(m_luaState, 1);
 	}
 
-	s_timer.start();
+	s_timer.reset();
 }
 
 ScriptManagerLua::~ScriptManagerLua()

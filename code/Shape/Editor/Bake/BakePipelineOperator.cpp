@@ -500,7 +500,7 @@ bool BakePipelineOperator::build(
 	ms_tracerProcessor->cancel(sourceInstance->getGuid());
 
 	Timer timer;
-	timer.start();
+	timer.reset();
 
 	log::info << L"Creating lightmap tasks..." << Endl;
 

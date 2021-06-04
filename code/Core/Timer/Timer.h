@@ -23,17 +23,8 @@ class T_DLLCLASS Timer : public Object
 public:
 	Timer();
 
-	/*! Start timer. */
-	void start();
-
-	/*! Pause timer. */
-	void pause();
-
-	/*! Stop timer. */
-	void stop();
-
-	/*! Is timer started? */
-	bool started() const { return !m_paused; }
+	/*! Reset timer. */
+	void reset();
 
 	/*! Get number of seconds since timer started. */
 	double getElapsedTime() const;
@@ -50,7 +41,6 @@ private:
 	int64_t m_first = 0;
 	int64_t m_last = 0;
 #endif
-	bool m_paused = true;
 };
 
 }

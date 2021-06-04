@@ -62,7 +62,7 @@ bool VideoTexture::create(render::IRenderSystem* renderSystem, IVideoDecoder* de
 	m_lastUploadedFrame = ~0U;
 	m_current = 0;
 
-	m_timer.start();
+	m_timer.reset();
 
 	if (!ThreadPool::getInstance().spawn(makeFunctor(this, &VideoTexture::decodeThread), m_thread))
 		return false;
@@ -151,7 +151,7 @@ void VideoTexture::decodeThread()
 			if (!playing)
 			{
 				m_decoder->rewind();
-				m_timer.start();
+				m_timer.reset();
 				continue;
 			}
 			m_lastDecodedFrame = frame;

@@ -98,7 +98,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 		return false;
 
 	m_video = video;
-	m_timer.start();
+	m_timer.reset();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &VideoEditorPage::eventIdle);
 

@@ -33,7 +33,6 @@ MuteGrain::MuteGrain(double duration)
 Ref< ISoundBufferCursor > MuteGrain::createCursor() const
 {
 	Ref< MuteGrainCursor > muteCursor = new MuteGrainCursor();
-	muteCursor->m_timer.start();
 	muteCursor->m_end = muteCursor->m_timer.getElapsedTime() + m_duration;
 	return muteCursor;
 }

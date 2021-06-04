@@ -24,8 +24,6 @@ class T_DLLCLASS PipelineProfiler : public Object
 	T_RTTI_CLASS;
 
 public:
-	PipelineProfiler();
-
 	void begin(const TypeInfo& pipelineType);
 
 	void end(const TypeInfo& pipelineType);

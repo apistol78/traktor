@@ -8,11 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineProfiler", PipelineProfiler, Object)
 
-PipelineProfiler::PipelineProfiler()
-{
-	m_timer.start();
-}
-
 void PipelineProfiler::begin(const TypeInfo& pipelineType)
 {
 	Scope* current = new Scope();

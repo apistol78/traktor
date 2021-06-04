@@ -106,16 +106,15 @@ int64_t DebugStream::read(void* block, int64_t nbytes)
 {
 	T_ASSERT(m_stream)
 	m_readCalls++;
-	m_timer.start();
+	m_timer.reset();
 	int64_t nread = m_stream->read(block, nbytes);
-	m_timer.stop();
+	m_readIoTime += m_timer.getElapsedTime();
 	if (nread > 0)
 	{
 		int32_t index = getIndex(nread, sizeof_array(m_readTotals) - 1);
 		m_readTotals[index]++;
 		m_readTotal += nread;
 	}
-	m_readIoTime += m_timer.getElapsedTime();
 	return nread;
 }
 
@@ -123,16 +122,15 @@ int64_t DebugStream::write(const void* block, int64_t nbytes)
 {
 	T_ASSERT(m_stream)
 	m_writeCalls++;
-	m_timer.start();
+	m_timer.reset();
 	int64_t nwritten = m_stream->write(block, nbytes);
-	m_timer.stop();
+	m_writeIoTime += m_timer.getElapsedTime();
 	if (nwritten > 0)
 	{
 		int64_t index = getIndex(nwritten, sizeof_array(m_writeTotals) - 1);
 		m_writeTotals[index]++;
 		m_writeTotal += nwritten;
 	}
-	m_writeIoTime += m_timer.getElapsedTime();
 	return nwritten;
 }
 
@@ -140,9 +138,8 @@ void DebugStream::flush()
 {
 	T_ASSERT(m_stream)
 	m_flushCalls++;
-	m_timer.start();
+	m_timer.reset();
 	m_stream->flush();
-	m_timer.stop();
 	m_flushIoTime += m_timer.getElapsedTime();
 }
 

@@ -94,7 +94,6 @@ Peer2PeerTopology::Peer2PeerTopology(IPeer2PeerProvider* provider)
 ,	m_propagateInterval(1.0)
 ,	m_propagateRandomFlux(0.3)
 {
-	m_timer.start();
 }
 
 void Peer2PeerTopology::setIAmInterval(double interval, double flux)

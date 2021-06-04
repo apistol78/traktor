@@ -136,21 +136,11 @@ bool Replicator::update()
 	net_handle_t from;
 
 	// Need to use real-time delta; cannot use engine filtered and clamped delta.
-	double dT = 0.0;
-	if (m_timer.started())
+	double dT = m_timer.getDeltaTime();
+	if (dT > c_catastrophicDeltaTime)
 	{
-		dT = m_timer.getDeltaTime();
-		if (dT > c_catastrophicDeltaTime)
-		{
-			log::error << getLogPrefix() << L"Catastrophic delta time measured (" << dT << L" second(s)), cannot sustain reliable networking." << Endl;
-			return false;
-		}
-	}
-	else
-	{
-		// Do nothing on first iteration, just start timer so we get a correct reading next time.
-		m_timer.start();
-		return true;
+		log::error << getLogPrefix() << L"Catastrophic delta time measured (" << dT << L" second(s)), cannot sustain reliable networking." << Endl;
+		return false;
 	}
 
 	// Update underlying network topology layer.

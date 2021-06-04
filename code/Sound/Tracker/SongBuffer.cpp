@@ -91,7 +91,6 @@ Ref< ISoundBufferCursor > SongBuffer::createCursor() const
 	soundBufferCursor->m_bpm = m_bpm;
 	soundBufferCursor->m_currentPattern = 0;
 	soundBufferCursor->m_currentRow = -1;
-	soundBufferCursor->m_timer.start();
 
 	return soundBufferCursor;
 }
@@ -190,7 +189,7 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 		{
 			soundBufferCursor->m_currentPattern++;
 			soundBufferCursor->m_currentRow = -1;
-			soundBufferCursor->m_timer.start();
+			soundBufferCursor->m_timer.reset();
 		}
 	}
 	return bool(soundBufferCursor->m_currentPattern < m_patterns.size());

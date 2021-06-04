@@ -44,7 +44,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 		}
 	}
 
-	m_timer.start();
+	m_timer.reset();
 }
 
 OnlinePeer2PeerProvider::~OnlinePeer2PeerProvider()

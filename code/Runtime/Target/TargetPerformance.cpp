@@ -179,7 +179,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPerformance", TargetPerformance, 
 
 TargetPerformance::TargetPerformance()
 {
-	m_timer.start();
 }
 
 void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance)

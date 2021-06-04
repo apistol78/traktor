@@ -285,7 +285,7 @@ void AudioSystem::threadMixer()
 	Timer timerMixer;
 	uint32_t channelsCount;
 
-	timerMixer.start();
+	timerMixer.reset();
 	while (!m_threadMixer->stopped())
 	{
 		double startTime = timerMixer.getElapsedTime();

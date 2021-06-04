@@ -25,7 +25,7 @@ bool GraphEvaluator::create(const Graph* graph)
 
 		m_nodeCursors[node] = nodeCursor;
 	}
-	m_timer.start();
+	m_timer.reset();
 	return true;
 }
 
