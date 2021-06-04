@@ -110,7 +110,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &AnimationPreviewControl::eventIdle);
 
-	m_timer.start();
+	m_timer.reset();
 	return true;
 }
 

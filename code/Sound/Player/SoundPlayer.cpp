@@ -48,7 +48,7 @@ bool SoundPlayer::create(AudioSystem* audioSystem, SurroundEnvironment* surround
 		m_channels.push_back(ch);
 	}
 
-	m_timer.start();
+	m_timer.reset();
 	return true;
 }
 

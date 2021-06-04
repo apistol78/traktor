@@ -429,9 +429,7 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 void TracerProcessor::processorThread()
 {
 	int32_t pending;
-
 	Timer timer;
-	timer.start();
 
 	while (!m_thread->stopped())
 	{

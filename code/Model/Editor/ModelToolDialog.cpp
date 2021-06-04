@@ -313,7 +313,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 			log::error << L"Unable to load \"" << fileName << L"\"." << Endl;
 	}
 
-	m_timer.start();
+	m_timer.reset();
 
 	update();
 	show();

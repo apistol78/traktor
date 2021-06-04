@@ -140,7 +140,6 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 
 	m_camera = m_context->getCamera(cameraId);
 	m_camera->setEnable(true);
-	m_timer.start();
 
 	return true;
 }

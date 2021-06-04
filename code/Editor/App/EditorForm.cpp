@@ -1790,7 +1790,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	bool verbose = m_mergedSettings->getProperty< bool >(L"Pipeline.Verbose", false);
 
 	Timer timerBuild;
-	timerBuild.start();
 
 	m_buildProgress->setProgress(0);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);

@@ -376,7 +376,7 @@ bool Application::create(
 
 	log::info << L"Application started successfully; enter initial state..." << Endl;
 
-	m_timer.start();
+	m_timer.reset();
 	m_stateManager->enter(state);
 
 	log::info << L"Initial state ready; enter main loop..." << Endl;

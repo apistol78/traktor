@@ -53,9 +53,7 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTimer->addConstructor();
 	classTimer->addProperty("elapsedTime", &Timer::getElapsedTime);
 	classTimer->addProperty("deltaTime", &Timer::getDeltaTime);
-	classTimer->addMethod("start", &Timer::start);
-	classTimer->addMethod("pause", &Timer::pause);
-	classTimer->addMethod("stop", &Timer::stop);
+	classTimer->addMethod("reset", &Timer::reset);
 	registrar->registerClass(classTimer);
 
 	auto classIHash = new AutoRuntimeClass< IHash >();

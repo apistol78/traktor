@@ -158,7 +158,7 @@ bool EffectPreviewControl::create(
 	addEventHandler< ui::PaintEvent >(this, &EffectPreviewControl::eventPaint);
 
 	updateSettings();
-	m_timer.start();
+	m_timer.reset();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &EffectPreviewControl::eventIdle);
 	return true;

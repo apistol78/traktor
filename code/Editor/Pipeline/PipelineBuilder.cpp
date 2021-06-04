@@ -145,7 +145,6 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	T_ANONYMOUS_VAR(ScopeIndent)(log::debug);
 
 	Timer timer;
-	timer.start();
 
 	uint32_t dependencyCount = dependencySet->size();
 	uint32_t modifiedCount = 0;
@@ -807,7 +806,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	log::error.setLocalTarget(&errorTarget);
 
 	Timer timer;
-	timer.start();
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);

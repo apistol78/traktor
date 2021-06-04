@@ -158,7 +158,7 @@ double Profiler::getTime() const
 Profiler::Profiler()
 :	m_dictionaryDirty(false)
 {
-	m_timer.start();
+	m_timer.reset();
 }
 
 void Profiler::destroy()

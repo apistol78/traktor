@@ -292,7 +292,6 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 	if (wait)
 	{
 		Timer timer;
-		timer.start();
 
 		if (m_verbose)
 			log::info << L"Waiting for process to terminate..." << Endl;

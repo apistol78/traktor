@@ -175,7 +175,7 @@ void DiscoveryManager::threadMulticastListener()
 	Timer timer;
 	int32_t res;
 
-	timer.start();
+	timer.reset();
 	double beacon = timer.getElapsedTime() + 1.0;
 
 	while (!m_threadMulticastListener->stopped())

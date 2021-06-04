@@ -22,7 +22,6 @@ MeasureP2PProvider::MeasureP2PProvider(IPeer2PeerProvider* provider)
 ,	m_sentBps(0.0)
 ,	m_recvBps(0.0)
 {
-	s_timer.start();
 	m_time = s_timer.getElapsedTime();
 }
 

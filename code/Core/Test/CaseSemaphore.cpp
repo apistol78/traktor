@@ -29,8 +29,6 @@ void threadStress(int32_t index)
 	Atomic::increment(g_count[index]);
 
 	Timer timer;
-	timer.start();
-
 	while (!thread->stopped() && timer.getElapsedTime() < 4000.0)
 	{
 		g_semaphore.wait();

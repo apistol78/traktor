@@ -104,8 +104,6 @@ int main(int argc, const char** argv)
 	}
 
 	Timer timer;
-	timer.start();
-
 	Ref< Solution > solution;
 
 	if (cmdLine.getCount() >= 1)
@@ -179,8 +177,6 @@ int main(int argc, const char** argv)
 			return ERROR_UNABLE_TO_CREATE_SOLUTION;
 		}
 	}
-
-	timer.stop();
 
 	if (cmdLine.hasOption('v', L"verbose"))
 		traktor::log::info << L"Finished successfully in " << timer.getElapsedTime() << L" second(s)." << Endl;

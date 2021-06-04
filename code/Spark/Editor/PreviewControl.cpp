@@ -147,7 +147,7 @@ bool PreviewControl::create(
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &PreviewControl::eventIdle);
 
 	m_database = database;
-	m_timer.start();
+	m_timer.reset();
 	return true;
 }
 

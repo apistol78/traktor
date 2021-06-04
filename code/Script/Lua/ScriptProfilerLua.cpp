@@ -17,7 +17,7 @@ ScriptProfilerLua::ScriptProfilerLua(ScriptManagerLua* scriptManager, lua_State*
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 {
-	m_timer.start();
+	m_timer.reset();
 }
 
 ScriptProfilerLua::~ScriptProfilerLua()

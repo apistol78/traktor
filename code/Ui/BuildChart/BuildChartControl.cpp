@@ -157,7 +157,7 @@ void BuildChartControl::begin()
 	m_running = true;
 	m_time = 0.0;
 
-	m_timer.start();
+	m_timer.reset();
 }
 
 void BuildChartControl::end()

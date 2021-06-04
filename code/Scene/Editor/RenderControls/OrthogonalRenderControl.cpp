@@ -177,7 +177,6 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 		break;
 	}
 
-	m_timer.start();
 	return true;
 }
 

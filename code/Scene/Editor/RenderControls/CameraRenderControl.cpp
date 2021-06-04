@@ -129,8 +129,6 @@ bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &CameraRenderControl::eventPaint);
 
 	updateSettings();
-
-	m_timer.start();
 	return true;
 }
 
