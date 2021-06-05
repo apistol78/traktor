@@ -1,4 +1,4 @@
-#include "Core/Platform.h"
+#include "Core/System.h"
 #include "Core/Timer/Timer.h"
 
 namespace traktor
@@ -18,23 +18,13 @@ Timer::Timer()
 		QueryPerformanceFrequency(reinterpret_cast <LARGE_INTEGER* >(&s_frequency));
 
 	m_frequency = s_frequency;
+	reset();
 }
 
-void Timer::start()
+void Timer::reset()
 {
 	QueryPerformanceCounter(reinterpret_cast< LARGE_INTEGER* >(&m_first));
 	m_last = m_first;
-	m_paused = false;
-}
-
-void Timer::pause()
-{
-	m_paused = true;
-}
-
-void Timer::stop()
-{
-	m_paused = true;
 }
 
 double Timer::getElapsedTime() const
@@ -56,4 +46,3 @@ double Timer::getDeltaTime()
 }
 
 }
-

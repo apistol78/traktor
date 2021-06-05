@@ -18,23 +18,13 @@ Timer::Timer()
 		s_frequency = sceKernelGetProcessTimeCounterFrequency();
 
 	m_frequency = s_frequency;
+	reset();
 }
 
-void Timer::start()
+void Timer::reset()
 {
 	m_first = sceKernelGetProcessTimeCounter();
 	m_last = m_first;
-	m_paused = false;
-}
-
-void Timer::pause()
-{
-	m_paused = true;
-}
-
-void Timer::stop()
-{
-	m_paused = true;
 }
 
 double Timer::getElapsedTime() const

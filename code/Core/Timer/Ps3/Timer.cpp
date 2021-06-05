@@ -10,23 +10,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 Timer::Timer()
 {
 	m_frequency = sys_time_get_timebase_frequency();
+	reset();
 }
 
-void Timer::start()
+void Timer::reset()
 {
 	SYS_TIMEBASE_GET(m_first);
 	m_last = m_first;
-	m_paused = false;
-}
-
-void Timer::pause()
-{
-	m_paused = true;
-}
-
-void Timer::stop()
-{
-	m_paused = true;
 }
 
 double Timer::getElapsedTime() const

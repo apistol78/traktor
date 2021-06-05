@@ -8,24 +8,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
 {
+	reset();
 }
 
-void Timer::start()
+void Timer::reset()
 {
 	m_first = 0.0;
 	m_last = 0.0;
 	m_first = getElapsedTime();
-	m_paused = false;
-}
-
-void Timer::pause()
-{
-	m_paused = true;
-}
-
-void Timer::stop()
-{
-	m_paused = true;
 }
 
 double Timer::getElapsedTime() const
