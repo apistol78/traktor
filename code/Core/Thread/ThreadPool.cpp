@@ -143,4 +143,10 @@ void ThreadPool::destroy()
 	}
 }
 
+ThreadPool::Worker::Worker()
+:	alive(1)
+,	busy(0)
+{
+}
+
 }
