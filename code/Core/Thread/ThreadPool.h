@@ -42,8 +42,10 @@ private:
 		Event eventAttachWork;
 		Event eventFinishedWork;
 		Ref< Functor > functorWork;
-		std::atomic< int32_t > alive = 1;
-		std::atomic< int32_t > busy = 0;
+		std::atomic< int32_t > alive;
+		std::atomic< int32_t > busy;
+
+		Worker();
 	};
 
 	Worker m_workerThreads[32];
