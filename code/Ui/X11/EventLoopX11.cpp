@@ -97,13 +97,11 @@ bool EventLoopX11::process(EventSubject* owner)
 
 int32_t EventLoopX11::execute(EventSubject* owner)
 {
+	Timer timer;
 	XEvent e;
 
 	int fd = ConnectionNumber(m_context->getDisplay());
 	bool idle = true;
-
-	Timer timer;
-	timer.start();
 
 	while (!m_terminated)
 	{
