@@ -128,11 +128,11 @@ int32_t EventLoopWin32::getAsyncKeyState() const
 {
 	int32_t keyState = KsNone;
 
-	if (GetAsyncKeyState(VK_CONTROL))
+	if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
 		keyState |= KsControl | KsCommand;
-	if (GetAsyncKeyState(VK_MENU))
+	if ((GetAsyncKeyState(VK_MENU) & 0x8000) != 0)
 		keyState |= KsMenu;
-	if (GetAsyncKeyState(VK_SHIFT))
+	if ((GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0)
 		keyState |= KsShift;
 
 	return keyState;
@@ -142,7 +142,7 @@ bool EventLoopWin32::isKeyDown(VirtualKey vk) const
 {
 	uint32_t keyCode = translateToKeyCode(vk);
 	if (keyCode)
-		return GetAsyncKeyState(keyCode) != 0;
+		return (GetAsyncKeyState(keyCode) & 0x8000) != 0;
 	else
 		return false;
 }

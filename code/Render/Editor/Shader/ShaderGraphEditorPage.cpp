@@ -1296,26 +1296,46 @@ void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	if (event->getButton() != ui::MbtRight)
-		return;
-
-	const ui::MenuItem* selected = m_menuPopup->showModal(m_editorGraph, event->getPosition());
-	if (!selected)
-		return;
-
-	const ui::Command& command = selected->getCommand();
-
-	if (command == L"ShaderGraph.Editor.Create")	// Create
+	if (event->getButton() == ui::MbtLeft)
 	{
-		m_document->push();
-
-		createNode(
-			&c_nodeCategories[command.getId()].type,
-			m_editorGraph->clientToVirtual(event->getPosition())
-		);
+		// Override default graph behaviour and instead create value nodes.
+		ui::Point position = m_editorGraph->clientToVirtual(event->getPosition());
+		if (ui::Application::getInstance()->getEventLoop()->isKeyDown(ui::VkS))
+		{
+			createNode(&type_of< Scalar >(), position);
+			event->consume();
+		}
+		else if (ui::Application::getInstance()->getEventLoop()->isKeyDown(ui::VkC))
+		{
+			createNode(&type_of< Color >(), position);
+			event->consume();
+		}
+		else if (ui::Application::getInstance()->getEventLoop()->isKeyDown(ui::VkV))
+		{
+			createNode(&type_of< Vector >(), position);
+			event->consume();
+		}
 	}
-	else
-		handleCommand(command);
+	else if (event->getButton() == ui::MbtRight)
+	{
+		const ui::MenuItem* selected = m_menuPopup->showModal(m_editorGraph, event->getPosition());
+		if (!selected)
+			return;
+
+		const ui::Command& command = selected->getCommand();
+
+		if (command == L"ShaderGraph.Editor.Create")	// Create
+		{
+			m_document->push();
+
+			createNode(
+				&c_nodeCategories[command.getId()].type,
+				m_editorGraph->clientToVirtual(event->getPosition())
+			);
+		}
+		else
+			handleCommand(command);
+	}
 }
 
 void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
