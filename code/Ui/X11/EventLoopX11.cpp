@@ -54,13 +54,10 @@ void EventLoopX11::destroy()
 
 bool EventLoopX11::process(EventSubject* owner)
 {
+	Timer timer;
 	XEvent e;
 
 	int fd = ConnectionNumber(m_context->getDisplay());
-
-	Timer timer;
-	timer.start();
-
 	while (!m_terminated)
 	{
         int nr = 0;

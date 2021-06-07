@@ -119,7 +119,6 @@ int DialogX11::showModal()
 	XEvent e;
 
 	Timer timer;
-	timer.start();
 
 	for (m_modal = true; m_modal; )
 	{

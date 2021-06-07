@@ -339,7 +339,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 
 #if defined(_DEBUG)
 		if (m_buildDepTimeStack.empty())
-			m_timer.start();
+			m_timer.restart();
 
 		m_buildDepTimeStack.push_back(m_timer.getElapsedTime());
 #endif
