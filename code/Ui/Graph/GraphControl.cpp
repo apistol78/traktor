@@ -556,7 +556,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	{
 		m_moveAll = true;
 		setCapture();
-		event->consume();
 		return;
 	}
 
@@ -649,7 +648,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 							releaseCapture();
 						}
 
-						event->consume();
 						return;
 					}
 				}
@@ -661,7 +659,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 					m_mode = MdDrawEdge;
 
 					setCapture();
-					event->consume();
 					return;
 				}
 			}
@@ -669,7 +666,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			// No pin selected, move the selected node(s).
 			m_moveSelected = true;
 			setCapture();
-			event->consume();
 		}
 	}
 	else if (!m_selectedNode && m_selectedEdge)
@@ -700,7 +696,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			update();
 
 		m_mode = MdNothing;
-		event->consume();
 	}
 	else
 	{
@@ -723,7 +718,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 		m_mode = MdDrawSelectionRectangle;
 
 		setCapture();
-		event->consume();
 	}
 }
 
