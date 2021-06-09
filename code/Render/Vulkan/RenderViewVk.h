@@ -123,6 +123,7 @@ private:
 		Ref< RenderTargetSetVk > primaryTarget;
 
 		VkPipeline boundPipeline = 0;
+		VkPipeline boundComputePipeline = 0;
 		IndexBufferVk* boundIndexBuffer = nullptr;
 		VertexBufferVk* boundVertexBuffer = nullptr;
 	};
@@ -181,7 +182,9 @@ private:
 
 	bool create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks);
 
-	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
+	bool validateGraphicsPipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
+
+	bool validateComputePipeline(ProgramVk* p);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

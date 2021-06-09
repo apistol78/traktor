@@ -69,6 +69,8 @@ public:
 
 	VkShaderModule getFragmentVkShaderModule() const { return m_fragmentShaderModule; }
 
+	VkShaderModule getComputeVkShaderModule() const { return m_computeShaderModule; }
+
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 
 	uint32_t getShaderHash() const { return m_shaderHash; }
