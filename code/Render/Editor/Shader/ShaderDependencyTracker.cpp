@@ -64,7 +64,7 @@ ShaderDependencyTracker::~ShaderDependencyTracker()
 {
 	// Destructor should never be reached as long as a reference to tracker
 	// belongs to the scan functor.
-	T_ASSERT(!m_scanThreadActive);
+	T_ASSERT(m_scanThread == nullptr);
 }
 
 void ShaderDependencyTracker::destroy()

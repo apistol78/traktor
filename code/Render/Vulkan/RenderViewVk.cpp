@@ -938,10 +938,9 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 {
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-
 	auto& frame = m_frames[m_currentImageIndex];
 
-	validatePipeline(vb, p, primitives.type);
+	validateGraphicsPipeline(vb, p, primitives.type);
 
 	float targetSize[] =
 	{
@@ -1005,9 +1004,11 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
+	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
+	validateComputePipeline(p);
+
 	p->validateCompute(frame.computeCommandBuffer);
 	vkCmdDispatch(*frame.computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
@@ -1460,7 +1461,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	return true;
 }
 
-bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validateGraphicsPipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
@@ -1642,7 +1643,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 		m_pipelines[key] = { m_counter, pipeline };
 #if defined(_DEBUG)
-		log::debug << L"Pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+		log::debug << L"Graphics pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
 #endif
 	}
 
@@ -1653,6 +1654,73 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	{
 		vkCmdBindPipeline(*frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 		frame.boundPipeline = pipeline;
+	}
+	return true;
+}
+
+bool RenderViewVk::validateComputePipeline(ProgramVk* p)
+{
+	auto& frame = m_frames[m_currentImageIndex];
+
+	// Calculate pipeline key.
+	const uint8_t primitiveId = 0;
+	const uint32_t declHash = 0;
+	const uint32_t shaderHash = p->getShaderHash();
+	const auto key = std::make_tuple(primitiveId, 0, declHash, shaderHash);
+
+	VkPipeline pipeline = 0;
+
+	auto it = m_pipelines.find(key);
+	if (it != m_pipelines.end())
+	{
+		it->second.lastAcquired = m_counter;
+		pipeline = it->second.pipeline;
+	}
+	else
+	{
+		VkPipelineShaderStageCreateInfo ssci = {};
+		ssci.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		ssci.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+		ssci.module = p->getComputeVkShaderModule();
+		ssci.pName = "main";
+		ssci.pSpecializationInfo = nullptr;
+
+		VkComputePipelineCreateInfo cpci = {};
+		cpci.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+		cpci.stage = ssci;
+		cpci.layout = p->getPipelineLayout();
+
+		VkResult result = vkCreateComputePipelines(
+			m_context->getLogicalDevice(),
+			m_context->getPipelineCache(),
+			1,
+			&cpci,
+			nullptr,
+			&pipeline
+		);
+		if (result != VK_SUCCESS)
+		{
+#if defined(_DEBUG)
+			log::error << L"Unable to create Vulkan compute pipeline (" << getHumanResult(result) << L"), \"" << p->getTag() << L"\"." << Endl;
+#else
+			log::error << L"Unable to create Vulkan compute pipeline (" << getHumanResult(result) << L")." << Endl;
+#endif
+			return false;
+		}
+
+		m_pipelines[key] = { m_counter, pipeline };
+#if defined(_DEBUG)
+		log::debug << L"Compute pipeline created (" << p->getTag() << L", " << m_pipelines.size() << L" pipelines)." << Endl;
+#endif
+	}
+
+	if (!pipeline)
+		return false;
+
+	if (pipeline != frame.boundComputePipeline)
+	{
+		vkCmdBindPipeline(*frame.computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+		frame.boundComputePipeline = pipeline;
 	}
 	return true;
 }

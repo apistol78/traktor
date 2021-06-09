@@ -147,14 +147,17 @@ bool ProgramVk::create(
 	}
 
 	// Append sampler bindings.
-	for (const auto& sampler : resource->m_samplers)
+	if (stageFlags != VK_SHADER_STAGE_COMPUTE_BIT)
 	{
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = sampler.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(sampler.stages);
+		for (const auto& sampler : resource->m_samplers)
+		{
+			auto& lb = dslb.push_back();
+			lb = {};
+			lb.binding = sampler.binding;
+			lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+			lb.descriptorCount = 1;
+			lb.stageFlags = getShaderStageFlags(sampler.stages);
+		}
 	}
 
 	// Append texture bindings.
@@ -163,7 +166,13 @@ bool ProgramVk::create(
 		auto& lb = dslb.push_back();
 		lb = {};
 		lb.binding = texture.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+
+		// \fixme need to have another array in resource with m_images.
+		if (stageFlags == VK_SHADER_STAGE_COMPUTE_BIT)
+			lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		else
+			lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+
 		lb.descriptorCount = 1;
 		lb.stageFlags = getShaderStageFlags(texture.stages);
 	}
@@ -383,7 +392,7 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		VK_PIPELINE_BIND_POINT_COMPUTE,
 		m_pipelineLayout,
 		0,
 		1, &m_descriptorSet,

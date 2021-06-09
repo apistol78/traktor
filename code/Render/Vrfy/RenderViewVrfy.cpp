@@ -487,33 +487,30 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 
 int32_t RenderViewVrfy::beginTimeQuery()
 {
-	return -1;
+	T_CAPTURE_TRACE(L"beginTimeQuery");
 
-	//T_CAPTURE_TRACE(L"beginTimeQuery");
+	int32_t query = m_renderView->beginTimeQuery();
+	if (query < 0)
+		return query;
 
-	//int32_t query = m_renderView->beginTimeQuery();
-	//if (query < 0)
-	//	return query;
-
-	//T_CAPTURE_ASSERT(m_queriesPending.find(query) == m_queriesPending.end(), L"Invalid query index returned from renderer.");
-	//m_queriesPending.insert(query);
-	//return query;
+	T_CAPTURE_ASSERT(m_queriesPending.find(query) == m_queriesPending.end(), L"Invalid query index returned from renderer.");
+	m_queriesPending.insert(query);
+	return query;
 }
 
 void RenderViewVrfy::endTimeQuery(int32_t query)
 {
-	//T_CAPTURE_TRACE(L"endTimeQuery");
-	//T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
+	T_CAPTURE_TRACE(L"endTimeQuery");
+	T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
 
-	//m_renderView->endTimeQuery(query);
-	//m_queriesPending.erase(query);
+	m_renderView->endTimeQuery(query);
+	m_queriesPending.erase(query);
 }
 
 bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-	//T_CAPTURE_TRACE(L"getTimeQuery");
-	//return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
-	return false;
+	T_CAPTURE_TRACE(L"getTimeQuery");
+	return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
 }
 
 void RenderViewVrfy::pushMarker(const char* const marker)

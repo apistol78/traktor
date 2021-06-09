@@ -525,7 +525,7 @@ bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtInteger3);
 
 	comment(f, node);
-	assign(f, out) << L"gl_GlobalInvocationID.xyz;" << Endl;
+	assign(f, out) << L"ivec3(gl_GlobalInvocationID.xyz);" << Endl;
 
 	return true;
 }
