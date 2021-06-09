@@ -995,7 +995,7 @@ bool RenderViewDx11::copy(ITexture* destinationTexture, const Region& destinatio
 
 int32_t RenderViewDx11::beginTimeQuery()
 {
-	return 0;
+	return -1;
 }
 
 void RenderViewDx11::endTimeQuery(int32_t query)

@@ -501,6 +501,10 @@ int32_t RenderViewVrfy::beginTimeQuery()
 void RenderViewVrfy::endTimeQuery(int32_t query)
 {
 	T_CAPTURE_TRACE(L"endTimeQuery");
+
+	if (query < 0)
+		return;
+
 	T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
 
 	m_renderView->endTimeQuery(query);

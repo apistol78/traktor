@@ -51,7 +51,7 @@ class T_DLLCLASS DrawableRenderBlock : public RenderBlock
 {
 public:
 	float distance = 0.0f;
-	Ref< IProgram > program;
+	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
 };
 
@@ -73,8 +73,8 @@ public:
 class T_DLLCLASS SimpleRenderBlock : public DrawableRenderBlock
 {
 public:
-	Ref< IndexBuffer > indexBuffer;
-	Ref< VertexBuffer > vertexBuffer;
+	IndexBuffer* indexBuffer = nullptr;
+	VertexBuffer* vertexBuffer = nullptr;
 	Primitives primitives;
 
 	virtual void render(IRenderView* renderView) const override final;
@@ -86,8 +86,8 @@ public:
 class T_DLLCLASS InstancingRenderBlock : public DrawableRenderBlock
 {
 public:
-	Ref< IndexBuffer > indexBuffer;
-	Ref< VertexBuffer > vertexBuffer;
+	IndexBuffer* indexBuffer = nullptr;
+	VertexBuffer* vertexBuffer = nullptr;
 	Primitives primitives;
 	uint32_t count = 0;
 
@@ -100,8 +100,8 @@ public:
 class T_DLLCLASS IndexedInstancingRenderBlock : public DrawableRenderBlock
 {
 public:
-	Ref< IndexBuffer > indexBuffer;
-	Ref< VertexBuffer > vertexBuffer;
+	IndexBuffer* indexBuffer = nullptr;
+	VertexBuffer* vertexBuffer = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;
@@ -118,7 +118,7 @@ public:
 class T_DLLCLASS NonIndexedRenderBlock : public DrawableRenderBlock
 {
 public:
-	Ref< VertexBuffer > vertexBuffer;
+	VertexBuffer* vertexBuffer = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;
@@ -132,8 +132,8 @@ public:
 class T_DLLCLASS IndexedRenderBlock : public DrawableRenderBlock
 {
 public:
-	Ref< IndexBuffer > indexBuffer;
-	Ref< VertexBuffer > vertexBuffer;
+	IndexBuffer* indexBuffer = nullptr;
+	VertexBuffer* vertexBuffer = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;
@@ -149,7 +149,7 @@ public:
 class T_DLLCLASS BeginPassRenderBlock : public RenderBlock
 {
 public:
-	Ref< IRenderTargetSet > renderTargetSet;
+	IRenderTargetSet* renderTargetSet = nullptr;
 	int32_t renderTargetIndex = -1;
 	Clear clear;
 	uint32_t load = 0;
