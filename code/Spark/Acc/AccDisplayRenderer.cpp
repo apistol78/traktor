@@ -232,12 +232,11 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 	}
 
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
-	m_firstFrame = false;
 }
 
 void AccDisplayRenderer::endSetup()
 {
-	if (!m_renderPassGlyph->getBuilds().empty())
+	if (!m_renderPassGlyph->getBuilds().empty() || m_firstFrame)
 		m_renderGraph->addPass(m_renderPassGlyph);
 	if (!m_renderPassOutput->getBuilds().empty())
 		m_renderGraph->addPass(m_renderPassOutput);
@@ -245,6 +244,8 @@ void AccDisplayRenderer::endSetup()
 	m_renderGraph = nullptr;
 	m_renderPassOutput = nullptr;
 	m_renderPassGlyph = nullptr;
+
+	m_firstFrame = false;
 }
 
 void AccDisplayRenderer::flushCaches()
