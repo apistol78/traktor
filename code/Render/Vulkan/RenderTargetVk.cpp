@@ -89,10 +89,29 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-	// Set layout to be read by shader initially since we cannot ensure
-	// target is being used as target directly.
+	// Prepare target so it can be read by shader without first being rendered to.
 	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+
+	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+
+	VkClearColorValue color = {};
+	VkImageSubresourceRange range;
+	range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	range.baseMipLevel = 0;
+	range.levelCount = 1;
+	range.baseArrayLayer = 0;
+	range.layerCount = 1;
+	vkCmdClearColorImage(
+		*commandBuffer,
+		m_imageResolved->getVkImage(),
+		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		&color,
+		1,
+		&range
+	);
+
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+
 	commandBuffer->submitAndWait();
 
 	return true;
