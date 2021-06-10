@@ -32,6 +32,8 @@ public:
 	uint32_t getVertexSize() const { return m_vertexSize; }
 
 private:
+	friend class RenderViewVrfy;
+
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< VertexBuffer > m_vertexBuffer;
 	uint32_t m_vertexSize;
