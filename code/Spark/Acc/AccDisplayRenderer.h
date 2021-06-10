@@ -73,6 +73,8 @@ public:
 
 	void flushCaches();
 
+	void setClearBackground(bool clearBackground);
+
 	// \name IDisplayRenderer
 	// \{
 

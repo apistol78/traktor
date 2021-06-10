@@ -174,10 +174,6 @@ void SparkLayer::transition(Layer* fromLayer)
 	SparkLayer* fromSparkLayer = checked_type_cast< SparkLayer*, false >(fromLayer);
 	bool shouldFlush = true;
 
-	// Ensure matching settings.
-	if (m_clearBackground != fromSparkLayer->m_clearBackground)
-		return;
-
 	// Pass movie as well, if it's the same movie and we're allowed.
 	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
 	if (m_movie == fromSparkLayer->m_movie)
@@ -204,6 +200,10 @@ void SparkLayer::transition(Layer* fromLayer)
 	// Ensure display renderer's caches are fresh.
 	if (m_displayRenderer && shouldFlush)
 		m_displayRenderer->flushCaches();
+
+	// Update setting on display renderer.
+	if (m_displayRenderer)
+		m_displayRenderer->setClearBackground(m_clearBackground);
 }
 
 void SparkLayer::prepare(const runtime::UpdateInfo& info)

@@ -265,6 +265,11 @@ void AccDisplayRenderer::flushCaches()
 	m_nextIndex = 0;
 }
 
+void AccDisplayRenderer::setClearBackground(bool clearBackground)
+{
+	m_clearBackground = clearBackground;
+}
+
 // IDisplayRenderer
 
 bool AccDisplayRenderer::wantDirtyRegion() const
