@@ -30,6 +30,8 @@ public:
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
 
 private:
+	friend class RenderViewVrfy;
+
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< IndexBuffer > m_indexBuffer;
 	bool m_locked;

@@ -249,6 +249,8 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	VertexBufferVrfy* vb = checked_type_cast< VertexBufferVrfy* >(vertexBuffer);
 	IndexBufferVrfy* ib = checked_type_cast< IndexBufferVrfy* >(indexBuffer);
 
+	T_CAPTURE_ASSERT(vb->m_vertexBuffer, L"Trying to draw with destroyed vertex buffer.");
+
 	// Validate draw call.
 	uint32_t vertexCount = 0;
 	switch (primitives.type)
@@ -279,6 +281,8 @@ void RenderViewVrfy::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		T_CAPTURE_ASSERT(ib, L"Drawing indexed primitives but no index buffer.");
 		if (!ib)
 			return;
+
+		T_CAPTURE_ASSERT(ib->m_indexBuffer, L"Trying to draw with destroyed index buffer.");
 
 		uint32_t maxVertexCount = ib->getBufferSize();
 		if (ib->getIndexType() == ItUInt16)

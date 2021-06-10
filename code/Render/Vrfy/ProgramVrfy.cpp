@@ -29,6 +29,7 @@ ProgramVrfy::~ProgramVrfy()
 
 void ProgramVrfy::destroy()
 {
+	T_CAPTURE_ASSERT (m_program, L"Program already destroyed.");
 	safeDestroy(m_program);
 }
 
@@ -238,7 +239,7 @@ void ProgramVrfy::verify()
 	// 	T_CAPTURE_ASSERT(!i->second.undefined, L"Parameter \"" << i->second.getName() << L"\" not set, value undefined (" << m_tag << L").");
 	// }
 
-	for (std::map< handle_t, Ref< ITexture > >::const_iterator i = m_boundTextures.begin(); i != m_boundTextures.end(); ++i)
+	for (auto i = m_boundTextures.begin(); i != m_boundTextures.end(); ++i)
 	{
 		if (!i->second)
 			continue;

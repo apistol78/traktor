@@ -161,10 +161,8 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Supersample *4", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
 	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Profile Rendering", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
@@ -509,28 +507,28 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 	if (m_toolTweaks->get(4)->isChecked())
 		tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 0.25f);
 	if (m_toolTweaks->get(5)->isChecked())
-		tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 2);
-	if (m_toolTweaks->get(6)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
-	if (m_toolTweaks->get(7)->isChecked())
+	if (m_toolTweaks->get(6)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachProfiler", true);
-	if (m_toolTweaks->get(8)->isChecked())
-	{
-		std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
-		modules.insert(L"Traktor.Render.Capture");
-		tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
-		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemCapture");
-	}
-	if (m_toolTweaks->get(9)->isChecked())
+	if (m_toolTweaks->get(7)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"Online.DownloadableContent", false);
-	if (m_toolTweaks->get(10)->isChecked())
+	if (m_toolTweaks->get(8)->isChecked())
 		tweakSettings->setProperty< PropertyInteger >(L"Runtime.MaxSimulationUpdates", 1);
-	if (m_toolTweaks->get(11)->isChecked())
+	if (m_toolTweaks->get(9)->isChecked())
 		tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
-	if (m_toolTweaks->get(12)->isChecked())
+	if (m_toolTweaks->get(10)->isChecked())
 		tweakSettings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", false);
-	if (m_toolTweaks->get(13)->isChecked())
+	if (m_toolTweaks->get(11)->isChecked())
+	{
+		// Use low level render API validation.
 		tweakSettings->setProperty< PropertyBoolean >(L"Render.Validation", true);
+
+		// Use our own high level verification layer also.
+		std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
+		modules.insert(L"Traktor.Render.Vrfy");
+		tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
+		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemVrfy");
+	}
 
 	int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)

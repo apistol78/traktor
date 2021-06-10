@@ -1,6 +1,7 @@
 #pragma once
 
-#include <map>
+#include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 
 namespace traktor
@@ -57,8 +58,8 @@ private:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< IProgram > m_program;
 	std::wstring m_tag;
-	std::map< handle_t, Parameter > m_shadow;
-	std::map< handle_t, Ref< ITexture > > m_boundTextures;
+	SmallMap< handle_t, Parameter > m_shadow;
+	SmallMap< handle_t, Ref< ITexture > > m_boundTextures;
 };
 
 	}
