@@ -6,7 +6,6 @@
 #include "Runtime/Target/TargetPerformance.h"
 #include "Core/Platform.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/CircularVector.h"
 #include "Core/Library/Library.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Thread/Semaphore.h"
@@ -108,7 +107,6 @@ private:
 #endif
 	Timer m_timer;
 	int32_t m_maxSimulationUpdates;
-	CircularVector< int32_t, 10 > m_updateCounts;
 	int32_t m_deltaTimeError;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;

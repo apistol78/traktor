@@ -27,8 +27,6 @@ class T_DLLCLASS UpdateInfo : public Object
 	T_RTTI_CLASS;
 
 public:
-	UpdateInfo();
-
 	/*! Get total application time.
 	 *
 	 * \return Time in seconds.
@@ -65,7 +63,7 @@ public:
 	 *
 	 * \return Frequency in hertz.
 	 */
-	int32_t getSimulationFrequency() const { return m_simulationFrequency; }
+	float getSimulationFrequency() const { return m_simulationFrequency; }
 
 	/*! Get frame delta time.
 	 *
@@ -84,11 +82,9 @@ public:
 
 	/*! Get interval fraction.
 	 *
-	 * I = 1 - (Tsim - Tstate) / dTsim
-	 *
 	 * \return Interval fraction.
 	 */
-	float getInterval() const { return clamp((m_stateTime - m_simulationTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
+	float getInterval() const { return (m_stateTime - m_simulationTime) / m_simulationDeltaTime; }
 
 	/*! If system is detected as being too slow.
 	 *
@@ -99,14 +95,14 @@ public:
 private:
 	friend class Application;
 
-	float m_totalTime;
-	float m_stateTime;
-	float m_simulationTime;
-	float m_simulationDeltaTime;
-	int32_t m_simulationFrequency;
-	float m_frameDeltaTime;
-	uint64_t m_frame;
-	bool m_runningSlow;
+	float m_totalTime = 0.0f;
+	float m_stateTime = 0.0f;
+	float m_simulationTime = 0.0f;
+	float m_simulationDeltaTime = 0.0f;
+	float m_simulationFrequency = 0.0f;
+	float m_frameDeltaTime = 0.0f;
+	uint64_t m_frame = 0;
+	bool m_runningSlow = false;
 };
 
 	}
