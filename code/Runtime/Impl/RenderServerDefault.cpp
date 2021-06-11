@@ -199,7 +199,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 
 	if (!renderSystem->create(rsd))
 	{
-		log::error << L"Render server failed; unable to create render system" << Endl;
+		log::error << L"Render server failed; unable to create render system." << Endl;
 		return false;
 	}
 
@@ -212,7 +212,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 			m_screenAspectRatio = float(m_originalDisplayMode.width) / m_originalDisplayMode.height;
 		else
 		{
-			log::warning << L"Unable to get display aspect ratio; assuming square display ratio" << Endl;
+			log::warning << L"Unable to get display aspect ratio; assuming square display ratio." << Endl;
 			m_screenAspectRatio = 1.0f;
 		}
 	}

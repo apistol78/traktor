@@ -1,6 +1,7 @@
 #include <intrin.h>
 #include "Runtime/App/Win32/ErrorDialog.h"
 #include "Runtime/Impl/Application.h"
+#include "Core/Containers/CircularVector.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"

@@ -60,7 +60,6 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const float c_maxDeltaTime = 1.0f / 5.0f;
 const int32_t c_maxDeltaTimeErrors = 300;
-const float c_deltaTimeFilterCoeff = 0.99f;
 
 class TargetPerformanceListener : public RefCountImpl< Profiler::IReportListener >
 {
@@ -329,7 +328,6 @@ bool Application::create(
 		m_onlineServer->setupVoice(m_audioServer);
 
 #if !defined(__EMSCRIPTEN__)
-
 	// Database monitoring thread.
 	if (settings->getProperty< bool >(L"Runtime.DatabaseThread", false))
 	{
@@ -338,7 +336,6 @@ bool Application::create(
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
-
 #endif
 
 	// Initial, startup, state.
@@ -382,7 +379,6 @@ bool Application::create(
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
 #if !defined(__EMSCRIPTEN__)
-
 	// Create render thread if enabled and we're running on a multi core system.
 	if (
 		OS::getInstance().getCPUCoreCount() >= 2 &&
@@ -407,7 +403,6 @@ bool Application::create(
 	}
 	else
 		log::info << L"Using single threaded rendering." << Endl;
-
 #endif
 
 	m_settings = settings;
@@ -654,8 +649,7 @@ bool Application::update()
 			m_updateInfo.m_runningSlow = false;
 		}
 
-		// Filter frame delta time to prevent unnecessary jitter.
-		m_updateInfo.m_frameDeltaTime = deltaTime * c_deltaTimeFilterCoeff + m_updateInfo.m_frameDeltaTime * (1.0f - c_deltaTimeFilterCoeff);
+		m_updateInfo.m_frameDeltaTime = deltaTime;
 
 		// Update audio.
 		if (m_audioServer)
@@ -672,26 +666,20 @@ bool Application::update()
 		}
 
 		// Update active state; fixed time step if physics manager is available.
-		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
+		const physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : nullptr;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
-			float dT = m_updateControl.m_timeScale / m_updateControl.m_simulationFrequency;
+			const float dT = m_updateControl.m_timeScale / m_updateControl.m_simulationFrequency;
+			const float dFT = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 
 			m_updateInfo.m_simulationDeltaTime = dT;
-			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / dT);
+			m_updateInfo.m_simulationFrequency = 1.0f / dT;
 
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
-			float simulationEndTime = m_updateInfo.m_stateTime;
-			int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
-			m_updateCounts.push_back(updateCountNoClamp);
-
-			// Use smallest amount of update counts of last N frames.
-			updateCount = std::numeric_limits< int32_t >::max();
-			for (uint32_t i = 0; i < m_updateCounts.size(); ++i)
-				updateCount = std::min(updateCount, m_updateCounts[i]);
-			updateCount = std::max(updateCount, 1);
-			updateCount = std::min(updateCount, m_maxSimulationUpdates);
+			const float simulationEndTime = (m_updateInfo.m_stateTime + dFT);
+			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
+			const int32_t updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
@@ -747,8 +735,11 @@ bool Application::update()
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
-				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
+				m_updateDuration = (float)(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
 				m_updateInfo.m_simulationTime += dT;
+
+				m_updateInfo.m_totalTime += (dFT / updateCount);
+				m_updateInfo.m_stateTime += (dFT / updateCount);
 
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
@@ -768,10 +759,6 @@ bool Application::update()
 			// Cannot allow time to drift even if number of updates are clamped,
 			// this is quite a bad situation.
 			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
-
-			// Step both total and state time.
-			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
-			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 		}
 		else
 		{
@@ -782,7 +769,7 @@ bool Application::update()
 				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
 			}
 
-			// No physics; update in same rate as rendering.
+			// Update in same rate as rendering.
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 

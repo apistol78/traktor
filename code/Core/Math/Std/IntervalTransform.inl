@@ -35,7 +35,7 @@ Transform IntervalTransform::get(float interval) const
 	return lerp(
 		m_transform[0],
 		m_transform[1],
-		Scalar(clamp(interval, 0.0f, 1.0f))
+		Scalar(interval)
 	);
 }
 
