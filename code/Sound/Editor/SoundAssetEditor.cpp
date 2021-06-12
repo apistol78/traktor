@@ -283,9 +283,9 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 				if (ui::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::ArrayPropertyItem* >(objectItem->getParentItem()))
 					m_propertyList->removePropertyItem(parentArrayItem, objectItem);
 				else
-					objectItem->setObject(0);
+					objectItem->setObject(nullptr);
 
-				m_propertyList->refresh(objectItem, 0);
+				m_propertyList->refresh(objectItem, nullptr);
 				m_propertyList->apply();
 			}
 		}

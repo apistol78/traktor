@@ -17,7 +17,10 @@ public:
 	Ref< GraphEvaluator > m_evaluator;
 	Ref< const InputPin > m_outputPin;
 
-	virtual void setParameter(handle_t id, float parameter) override final {}
+	virtual void setParameter(handle_t id, float parameter) override final
+	{
+		m_evaluator->setParameter(id, parameter);
+	}
 
 	virtual void disableRepeat() override final {}
 
