@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Sound/ISoundBuffer.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Node.h"
@@ -27,6 +28,12 @@ bool GraphEvaluator::create(const Graph* graph)
 	}
 	m_timer.reset();
 	return true;
+}
+
+void GraphEvaluator::setParameter(handle_t id, float parameter)
+{
+	for (auto it : m_nodeCursors)
+		it.second->setParameter(id, parameter);
 }
 
 bool GraphEvaluator::evaluateScalar(const OutputPin* producerPin, float& outScalar) const

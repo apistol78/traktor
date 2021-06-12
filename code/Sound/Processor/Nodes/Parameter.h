@@ -34,6 +34,7 @@ public:
 
 private:
 	std::wstring m_name;
+	float m_defaultValue = 0.0f;
 };
 
 	}

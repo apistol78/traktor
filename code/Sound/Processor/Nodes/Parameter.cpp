@@ -13,7 +13,7 @@ namespace traktor
 const ImmutableNode::OutputPinDesc c_Parameter_o[] =
 {
 	{ L"Output", NptScalar },
-	{ 0 }
+	{ nullptr }
 };
 
 class ParameterCursor : public RefCountImpl< ISoundBufferCursor >
@@ -22,9 +22,9 @@ public:
 	handle_t m_id;
 	float m_value;
 
-	ParameterCursor(handle_t id)
+	ParameterCursor(handle_t id, float defaultValue)
 	:	m_id(id)
-	,	m_value(0.0f)
+	,	m_value(defaultValue)
 	{
 	}
 
@@ -41,7 +41,7 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Parameter", 0, Parameter, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Parameter", 1, Parameter, ImmutableNode)
 
 Parameter::Parameter()
 :	ImmutableNode(nullptr, c_Parameter_o)
@@ -55,7 +55,7 @@ bool Parameter::bind(resource::IResourceManager* resourceManager)
 
 Ref< ISoundBufferCursor > Parameter::createCursor() const
 {
-	return new ParameterCursor(getParameterHandle(m_name));
+	return new ParameterCursor(getParameterHandle(m_name), m_defaultValue);
 }
 
 bool Parameter::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outParameter) const
@@ -75,6 +75,9 @@ void Parameter::serialize(ISerializer& s)
 	ImmutableNode::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
+
+	if (s.getVersion< Parameter >() >= 1)
+		s >> Member< float >(L"defaultValue", m_defaultValue);
 }
 
 	}

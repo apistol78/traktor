@@ -4,6 +4,7 @@
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Timer/Timer.h"
+#include "Sound/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,6 +33,8 @@ class T_DLLCLASS GraphEvaluator : public Object
 
 public:
 	bool create(const Graph* graph);
+
+	void setParameter(handle_t id, float parameter);
 
 	bool evaluateScalar(const OutputPin* producerPin, float& outScalar) const;
 
