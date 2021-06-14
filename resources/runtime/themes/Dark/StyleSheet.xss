@@ -207,6 +207,31 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.GraphControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>42, 42, 42, 255</second>
+				</item>
+				<item>
+					<first>color-arrow-hints</first>
+					<second>128, 128, 128, 255</second>
+				</item>
+				<item>
+					<first>color-edge-hint</first>
+					<second>153, 153, 153, 255</second>
+				</item>
+				<item>
+					<first>color-grid</first>
+					<second>61, 61, 65, 255</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.GridView</typeName>
 			<colors>
 				<item>
@@ -704,6 +729,23 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.INodeShape</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>color-comment</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-info</first>
+					<second>57, 135, 214, 255</second>
 				</item>
 			</colors>
 		</item>
