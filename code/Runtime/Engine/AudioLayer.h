@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Runtime/Engine/Layer.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Resource/Proxy.h"
 #include "Sound/Types.h"
 
@@ -67,6 +67,14 @@ public:
 	/*! Tween effect parameter over a period of time.
 	 *
 	 * \param parameterName Name of effect parameter.
+	 * \param toValue Effect parameter "to" value.
+	 * \param duration Duration in seconds for transition.
+	 */
+	void tweenParameter(const std::wstring& parameterName, float toValue, float duration);
+
+	/*! Tween effect parameter over a period of time.
+	 *
+	 * \param parameterName Name of effect parameter.
 	 * \param fromValue Effect parameter "from" value.
 	 * \param toValue Effect parameter "to" value.
 	 * \param duration Duration in seconds for transition.
@@ -92,9 +100,9 @@ public:
 private:
 	struct Tween
 	{
-		sound::handle_t parameter;
 		float fromValue;
 		float toValue;
+		float lastValue;
 		float duration;
 		float time;
 	};
@@ -104,7 +112,7 @@ private:
 	Ref< sound::ISoundHandle > m_handle;
 	bool m_autoPlay;
 	bool m_repeat;
-	AlignedVector< Tween > m_tweens;
+	SmallMap< sound::handle_t, Tween > m_tweens;
 };
 
 	}

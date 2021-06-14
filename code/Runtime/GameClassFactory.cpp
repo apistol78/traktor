@@ -90,6 +90,16 @@ RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 	return out;
 }
 
+void AudioLayer_tweenParameter_1(AudioLayer* self, const std::wstring& parameterName, float toValue, float duration)
+{
+	self->tweenParameter(parameterName, toValue, duration);
+}
+
+void AudioLayer_tweenParameter_2(AudioLayer* self, const std::wstring& parameterName, float fromValue, float toValue, float duration)
+{
+	self->tweenParameter(parameterName, fromValue, toValue, duration);
+}
+
 void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callback)
 {
 	if (callback)
@@ -295,7 +305,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioLayer->addMethod("stop", &AudioLayer::stop);
 	classAudioLayer->addMethod("fadeOff", &AudioLayer::fadeOff);
 	classAudioLayer->addMethod("setParameter", &AudioLayer::setParameter);
-	classAudioLayer->addMethod("tweenParameter", &AudioLayer::tweenParameter);
+	classAudioLayer->addMethod("tweenParameter", &AudioLayer_tweenParameter_1);
+	classAudioLayer->addMethod("tweenParameter", &AudioLayer_tweenParameter_2);
 	registrar->registerClass(classAudioLayer);
 
 	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();

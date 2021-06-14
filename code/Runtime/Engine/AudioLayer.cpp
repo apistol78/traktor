@@ -29,6 +29,7 @@ AudioLayer::AudioLayer(
 ,	m_autoPlay(autoPlay)
 ,	m_repeat(repeat)
 {
+	m_sound.consume();
 }
 
 void AudioLayer::destroy()
@@ -78,16 +79,32 @@ void AudioLayer::fadeOff()
 
 void AudioLayer::setParameter(const std::wstring& parameterName, float value)
 {
-	if (m_handle)
-		m_handle->setParameter(sound::getParameterHandle(parameterName), value);
+	const sound::handle_t handle = sound::getParameterHandle(parameterName);
+	Tween& tween = m_tweens[handle];
+	tween.fromValue = value;
+	tween.toValue = value;
+	tween.lastValue = value;
+	tween.duration = 0.0f;
+	tween.time = 0.0f;
+}
+
+void AudioLayer::tweenParameter(const std::wstring& parameterName, float toValue, float duration)
+{
+	const sound::handle_t handle = sound::getParameterHandle(parameterName);
+	Tween& tween = m_tweens[handle];
+	tween.fromValue = tween.lastValue;
+	tween.toValue = toValue;
+	tween.duration = duration;
+	tween.time = 0.0f;
 }
 
 void AudioLayer::tweenParameter(const std::wstring& parameterName, float fromValue, float toValue, float duration)
 {
-	Tween& tween = m_tweens.push_back();
-	tween.parameter = sound::getParameterHandle(parameterName);
+	const sound::handle_t handle = sound::getParameterHandle(parameterName);
+	Tween& tween = m_tweens[handle];
 	tween.fromValue = fromValue;
 	tween.toValue = toValue;
+	tween.lastValue = fromValue;
 	tween.duration = duration;
 	tween.time = 0.0f;
 }
@@ -105,6 +122,7 @@ void AudioLayer::transition(Layer* fromLayer)
 		m_tweens = fromAudioLayer->m_tweens;
 		fromAudioLayer->m_handle = nullptr;
 		fromAudioLayer->m_tweens.clear();
+		m_sound.consume();
 	}
 }
 
@@ -115,6 +133,16 @@ void AudioLayer::prepare(const UpdateInfo& info)
 void AudioLayer::update(const UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"AudioLayer update");
+
+	if (m_sound.changed())
+	{
+		if (m_handle != nullptr)
+		{
+			m_handle->stop();
+			m_handle = nullptr;
+		}
+		m_sound.consume();
+	}
 
 	if (
 		m_autoPlay &&
@@ -131,19 +159,22 @@ void AudioLayer::update(const UpdateInfo& info)
 
 	if (m_handle)
 	{
-		for (AlignedVector< Tween >::iterator i = m_tweens.begin(); i != m_tweens.end(); )
+		for (auto& it : m_tweens)
 		{
-			if (i->time <= i->duration)
+			auto& tween = it.second;
+			if (tween.time <= tween.duration)
 			{
-				float k = i->time / i->duration;
-				m_handle->setParameter(i->parameter, lerp(i->fromValue, i->toValue, k));
-				i->time += info.getSimulationDeltaTime();
-				++i;
-			}
-			else
-			{
-				m_handle->setParameter(i->parameter, i->toValue);
-				i = m_tweens.erase(i);
+				if (tween.duration >= FUZZY_EPSILON)
+				{
+					float k = tween.time / tween.duration;
+					tween.lastValue = lerp(tween.fromValue, tween.toValue, k);
+				}
+				else
+					tween.lastValue = tween.toValue;
+
+				m_handle->setParameter(it.first, tween.lastValue);
+
+				tween.time += info.getFrameDeltaTime();
 			}
 		}
 	}
