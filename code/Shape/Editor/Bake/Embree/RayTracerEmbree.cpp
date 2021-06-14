@@ -298,7 +298,6 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				const auto& originMaterial = materials[originPolygon.getMaterial()];
 
 				Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
-				Scalar metalness = Scalar(originMaterial.getMetalness());
 
 				// Trace IBL and indirect illumination.
 				incoming = tracePath0(elm.position, elm.normal, random);
@@ -309,7 +308,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 					occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
 
 				// Combine and write final lumel.
-				lightmapDiffuse->setPixel(x, y, (emittance + (incoming * occlusion) * (1.0_simd - metalness)).rgb1());
+				lightmapDiffuse->setPixel(x, y, (emittance + incoming * occlusion).rgb1());
 			}
 
 			Scalar intensity = horizontalAdd3(incoming) / 3.0_simd;
