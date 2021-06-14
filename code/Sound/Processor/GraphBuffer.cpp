@@ -67,6 +67,9 @@ Ref< ISoundBufferCursor > GraphBuffer::createCursor() const
 bool GraphBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	GraphBufferCursor* graphCursor = static_cast< GraphBufferCursor* >(cursor);
+
+	graphCursor->m_evaluator->flushCachedBlocks();
+
 	return graphCursor->m_evaluator->evaluateBlock(
 		graphCursor->m_outputPin,
 		mixer,
