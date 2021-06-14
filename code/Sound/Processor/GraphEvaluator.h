@@ -3,6 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/Types.h"
 
@@ -46,10 +47,18 @@ public:
 
 	float getTime() const;
 
+	void flushCachedBlocks();
+
 private:
 	Ref< const Graph > m_graph;
 	SmallMap< const Node*, Ref< ISoundBufferCursor > > m_nodeCursors;
 	Timer m_timer;
+
+	mutable StaticVector< SoundBlock, 128 > m_blocks;
+	mutable SmallMap< const OutputPin*, SoundBlock > m_cachedBlocks;
+
+	SoundBlock* copyBlock(const SoundBlock& sourceBlock) const;
+
 };
 
 	}

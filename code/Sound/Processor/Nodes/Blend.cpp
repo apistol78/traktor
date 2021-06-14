@@ -1,3 +1,4 @@
+#include "Core/Math/Float.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
@@ -66,7 +67,7 @@ Ref< ISoundBufferCursor > Blend::createCursor() const
 {
 	Ref< BlendCursor > blendCursor = new BlendCursor();
 
-	const uint32_t outputSamplesCount = 1024/*hwFrameSamples*/;
+	const uint32_t outputSamplesCount = 4096;
 	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
 
 	blendCursor->m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
@@ -81,7 +82,17 @@ Ref< ISoundBufferCursor > Blend::createCursor() const
 
 bool Blend::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
-	return false;
+	float scalar1, scalar2, weight;
+
+	if (!evaluator->evaluateScalar(getInputPin(0), scalar1))
+		return false;
+	if (!evaluator->evaluateScalar(getInputPin(1), scalar2))
+		return false;
+	if (!evaluator->evaluateScalar(getInputPin(2), weight))
+		return false;
+
+	outScalar = lerp(scalar1, scalar2, weight);
+	return true;
 }
 
 bool Blend::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const

@@ -1,4 +1,7 @@
 #include "Core/Log/Log.h"
+
+#include "Core/Memory/Alloc.h"
+
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphEvaluator.h"
@@ -69,8 +72,41 @@ bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const IAudioMix
 	if (!producerCursor)
 		return false;
 
-	if (!producerNode->getBlock(producerCursor, this, mixer, outBlock))
-		return false;
+	const uint32_t consumerCount = m_graph->getDestinationCount(producerPin);
+	if (consumerCount == 1)
+	{
+		if (!producerNode->getBlock(producerCursor, this, mixer, outBlock))
+			return false;
+	}
+	else if (consumerCount >= 2)
+	{
+		// Need to buffer output of node since we have multiple consumers.
+		auto it = m_cachedBlocks.find(producerPin);
+		if (it != m_cachedBlocks.end())
+		{
+			if (consumerCount == 2)
+				outBlock = it->second;
+			else
+			{
+				auto copiedBlock = copyBlock(it->second);
+				if (!copiedBlock)
+					return false;
+
+				outBlock = *copiedBlock;		
+			}
+		}
+		else
+		{
+			if (!producerNode->getBlock(producerCursor, this, mixer, outBlock))
+				return false;
+
+			auto copiedBlock = copyBlock(outBlock);
+			if (!copiedBlock)
+				return false;
+
+			m_cachedBlocks[producerPin] = *copiedBlock;
+		}
+	}
 
 	return true;
 }
@@ -87,6 +123,46 @@ bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixe
 float GraphEvaluator::getTime() const
 {
 	return float(m_timer.getElapsedTime());
+}
+
+void GraphEvaluator::flushCachedBlocks()
+{
+	for (auto& block : m_blocks)
+	{
+		for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+		{
+			if (block.samples[i])
+				Alloc::freeAlign(block.samples[i]);
+		}
+	}
+	m_blocks.clear();
+	m_cachedBlocks.reset();
+}
+
+SoundBlock* GraphEvaluator::copyBlock(const SoundBlock& sourceBlock) const
+{
+	if (m_blocks.full())
+		return nullptr;
+
+	SoundBlock& block = m_blocks.push_back();
+
+	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+	{
+		if (sourceBlock.samples[i])
+		{
+			block.samples[i] = (float*)Alloc::acquireAlign(sourceBlock.samplesCount * sizeof(float), 16, T_FILE_LINE);
+			std::memcpy(block.samples[i], sourceBlock.samples[i], sourceBlock.samplesCount * sizeof(float));
+		}
+		else
+			block.samples[i] = nullptr;
+	}
+
+	block.samplesCount = sourceBlock.samplesCount;
+	block.sampleRate = sourceBlock.sampleRate;
+	block.maxChannel = sourceBlock.maxChannel;
+	block.category = sourceBlock.category;
+
+	return &block;
 }
 
 	}
