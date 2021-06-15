@@ -1,5 +1,7 @@
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Render/IRenderSystem.h"
+#include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -33,8 +35,8 @@ void SkinnedMesh::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
-	const AlignedVector< Vector4 >& lastJointTransforms,
-	const AlignedVector< Vector4 >& jointTransforms,
+	render::StructBuffer* lastJointTransforms,
+	render::StructBuffer* jointTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -69,11 +71,8 @@ void SkinnedMesh::build(
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 
-		if (!lastJointTransforms.empty())
-			renderBlock->programParams->setVectorArrayParameter(s_handleLastJoints, lastJointTransforms.c_ptr(), (int)lastJointTransforms.size());
-
-		if (!jointTransforms.empty())
-			renderBlock->programParams->setVectorArrayParameter(s_handleJoints, jointTransforms.c_ptr(), (int)jointTransforms.size());
+		renderBlock->programParams->setStructBufferParameter(s_handleLastJoints, lastJointTransforms);
+		renderBlock->programParams->setStructBufferParameter(s_handleJoints, jointTransforms);
 
 		renderBlock->programParams->endParameters(renderContext);
 
@@ -92,6 +91,16 @@ int32_t SkinnedMesh::getJointCount() const
 const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 {
 	return m_jointMap;
+}
+
+Ref< render::StructBuffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
+{
+	AlignedVector< render::StructElement > jointDataStruct;
+	jointDataStruct.push_back({ render::DtFloat4, offsetof(JointData, translation) });
+	jointDataStruct.push_back({ render::DtFloat4, offsetof(JointData, rotation) });
+	T_FATAL_ASSERT(sizeof(JointData) == render::getStructSize(jointDataStruct));
+
+	return renderSystem->createStructBuffer(jointDataStruct, jointCount * sizeof(JointData), true);
 }
 
 	}

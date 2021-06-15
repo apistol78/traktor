@@ -9,6 +9,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Render/StructBuffer.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
@@ -39,6 +40,7 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 	IPoseController* poseController,
 	const AlignedVector< int32_t >& jointRemap,
 	const AlignedVector< Binding >& bindings,
+	render::IRenderSystem* renderSystem,
 	bool screenSpaceCulling
 )
 :	mesh::MeshComponent(screenSpaceCulling)
@@ -49,6 +51,11 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 ,	m_bindings(bindings)
 ,	m_index(0)
 {
+	const uint32_t skinJointCount = m_mesh->getJointCount();
+
+	m_jointBuffers[0] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
+	m_jointBuffers[1] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
+
 	if (m_skeleton)
 	{
 		calculateJointTransforms(
@@ -58,11 +65,8 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 
 		m_poseTransforms.reserve(m_jointTransforms.size());
 
-		size_t skinJointCount = m_mesh->getJointCount();
 		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
 		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[3].resize(skinJointCount * 2, Vector4::origo());
 
 		updatePoseController(m_index, 0.0f, 0.0f);
 		m_index = 1 - m_index;
@@ -77,6 +81,8 @@ void AnimatedMeshComponent::destroy()
 {
 	synchronize();
 
+	safeDestroy(m_jointBuffers[1]);
+	safeDestroy(m_jointBuffers[0]);
 	safeDestroy(m_poseController);
 
 	for (auto binding : m_bindings)
@@ -143,8 +149,6 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	size_t skinJointCount = m_mesh->getJointCount();
 	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
 	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-	m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
-	m_skinTransforms[3].resize(skinJointCount * 2, Vector4::origo());
 	m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
@@ -196,24 +200,29 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
 	const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
-	auto& skinTransformsLastBuild = m_skinTransforms[2];
-	auto& skinTransformsCurrentBuild = m_skinTransforms[3];
+
+	auto jointBufferLast = m_jointBuffers[0];
+	auto jointBufferCurrent = m_jointBuffers[1];
 
 	// Interpolate between updates to get current build skin transforms.
-	for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); ++i)
-		skinTransformsCurrentBuild[i] = lerp(
-			skinTransformsLastUpdate[i],
-			skinTransformsCurrentUpdate[i],
-			interval
-		);
+	mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
+	for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
+	{
+		auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
+		auto rotation = lerp(skinTransformsLastUpdate[i], skinTransformsCurrentUpdate[i], interval);
+		translation.storeAligned(jointData->translation);
+		rotation.storeAligned(jointData->rotation);
+		jointData++;
+	}
+	jointBufferCurrent->unlock();
 
 	m_mesh->build(
 		context.getRenderContext(),
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
-		skinTransformsLastBuild,
-		skinTransformsCurrentBuild,
+		jointBufferLast,
+		jointBufferCurrent,
 		distance,
 		getParameterCallback()
 	);
@@ -223,7 +232,10 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	// Save last rendered transform so we can properly write velocities next frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
-		skinTransformsLastBuild = skinTransformsCurrentBuild;
+	{
+		m_jointBuffers[0] = jointBufferCurrent;
+		m_jointBuffers[1] = jointBufferLast;
+	}
 }
 
 bool AnimatedMeshComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const

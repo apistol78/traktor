@@ -58,7 +58,7 @@ Ref< world::IEntityEvent > AnimationEntityFactory::createEntityEvent(const world
 Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (auto animatedMeshComponentData = dynamic_type_cast< const AnimatedMeshComponentData* >(&entityComponentData))
-		return animatedMeshComponentData->createComponent(m_resourceManager, m_physicsManager, builder);
+		return animatedMeshComponentData->createComponent(m_resourceManager, m_renderSystem, m_physicsManager, builder);
 	else if (auto boidsComponentData = dynamic_type_cast< const BoidsComponentData* >(&entityComponentData))
 		return boidsComponentData->createComponent(builder);
 	else if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(&entityComponentData))

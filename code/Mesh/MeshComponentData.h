@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace resource
 	{
 
@@ -42,11 +49,11 @@ class T_DLLCLASS MeshComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	MeshComponentData();
+	MeshComponentData() = default;
 
 	explicit MeshComponentData(const resource::Id< IMesh >& mesh);
 
-	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager) const;
+	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 

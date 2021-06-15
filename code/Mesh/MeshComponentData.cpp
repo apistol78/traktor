@@ -27,16 +27,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshComponentData", 0, MeshComponentData, world::IEntityComponentData)
 
-MeshComponentData::MeshComponentData()
-{
-}
-
 MeshComponentData::MeshComponentData(const resource::Id< IMesh >& mesh)
 :	m_mesh(mesh)
 {
 }
 
-Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManager* resourceManager) const
+Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	resource::Proxy< IMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))
@@ -55,7 +51,7 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 	else if (is_a< PartitionMesh >(mesh.getResource()))
 		component = new PartitionMeshComponent(resource::Proxy< PartitionMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
-		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), renderSystem, m_screenSpaceCulling);
 	else if (is_a< StaticMesh >(mesh.getResource()))
 		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()), m_screenSpaceCulling);
 	else if (is_a< StreamMesh >(mesh.getResource()))

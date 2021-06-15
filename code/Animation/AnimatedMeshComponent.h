@@ -24,6 +24,14 @@ class SkinnedMesh;
 
 	}
 
+	namespace render
+	{
+
+class IRenderSystem;
+class StructBuffer;
+
+	}
+
 	namespace world
 	{
 
@@ -58,6 +66,7 @@ public:
 		IPoseController* poseController,
 		const AlignedVector< int32_t >& jointRemap,
 		const AlignedVector< Binding >& bindings,
+		render::IRenderSystem* renderSystem,
 		bool screenSpaceCulling
 	);
 
@@ -110,7 +119,8 @@ private:
 	AlignedVector< Binding > m_bindings;
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
-	AlignedVector< Vector4 > m_skinTransforms[4];
+	AlignedVector< Vector4 > m_skinTransforms[2];
+	Ref< render::StructBuffer > m_jointBuffers[2];
 	int32_t m_index;
 	mutable Ref< Job > m_updatePoseControllerJob;
 

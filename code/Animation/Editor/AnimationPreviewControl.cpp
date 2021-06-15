@@ -188,6 +188,7 @@ void AnimationPreviewControl::updatePreview()
 		m_poseController,
 		jointRemap,
 		noBindings,
+		m_renderSystem,
 		false
 	);
 
