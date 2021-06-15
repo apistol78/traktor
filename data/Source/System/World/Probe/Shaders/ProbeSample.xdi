@@ -10,7 +10,7 @@
 			</position>
 			<parameterName>World_ProbeIntensity</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{8F853E62-489E-F843-9A00-EB8DABC66082}</id>
@@ -39,7 +39,7 @@
 			</position>
 			<parameterName>World_ProbeTexture</parameterName>
 			<type>PtTextureCube</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{50E06897-C251-0D43-9A87-3EBAF324E59F}</id>
@@ -58,7 +58,7 @@
 			</position>
 			<parameterName>World_ProbeTextureMips</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{56243AF1-337F-E344-A348-E7A3B0667AED}</id>
