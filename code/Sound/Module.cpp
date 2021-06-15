@@ -10,7 +10,11 @@
 #	include "Sound/Decoders/WavStreamDecoder.h"
 
 // Processor
+#	include "Sound/Processor/Edge.h"
+#	include "Sound/Processor/Graph.h"
 #	include "Sound/Processor/GraphResource.h"
+#	include "Sound/Processor/InputPin.h"
+#	include "Sound/Processor/OutputPin.h"
 #	include "Sound/Processor/Nodes/Add.h"
 #	include "Sound/Processor/Nodes/Blend.h"
 #	include "Sound/Processor/Nodes/Divide.h"
@@ -55,7 +59,11 @@ extern "C" void __module__Traktor_Sound()
 	T_FORCE_LINK_REF(WavStreamDecoder);
 
 	// Processor
+	T_FORCE_LINK_REF(Edge);
+	T_FORCE_LINK_REF(Graph);
 	T_FORCE_LINK_REF(GraphResource);
+	T_FORCE_LINK_REF(InputPin);
+	T_FORCE_LINK_REF(OutputPin);
 	T_FORCE_LINK_REF(Add);
 	T_FORCE_LINK_REF(Blend);
 	T_FORCE_LINK_REF(Divide);
