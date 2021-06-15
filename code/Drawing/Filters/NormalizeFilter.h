@@ -22,8 +22,16 @@ class T_DLLCLASS NormalizeFilter : public IImageFilter
 {
 	T_RTTI_CLASS;
 
+public:
+	NormalizeFilter() = default;
+
+	explicit NormalizeFilter(float scale);
+
 protected:
 	virtual void apply(Image* image) const override final;
+
+private:
+	float m_scale = 0.0f;
 };
 
 	}
