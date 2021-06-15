@@ -1,6 +1,8 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
+#include "Render/StructBuffer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
@@ -18,21 +20,21 @@ const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
-SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, bool screenSpaceCulling)
+SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem, bool screenSpaceCulling)
 :	MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_count(0)
 {
 	const auto& jointMap = m_mesh->getJointMap();
-	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
-	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
+	m_jointTransforms[0] = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
+	m_jointTransforms[1] = SkinnedMesh::createJointBuffer(renderSystem, (uint32_t)jointMap.size());
 }
 
 void SkinnedMeshComponent::destroy()
 {
 	m_mesh.clear();
-	m_jointTransforms[0].clear();
-	m_jointTransforms[1].clear();
+	safeDestroy(m_jointTransforms[1]);
+	safeDestroy(m_jointTransforms[0]);
 	MeshComponent::destroy();
 }
 
@@ -81,26 +83,20 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)
 {
-	AlignedVector< Vector4 >& jointTransforms = m_jointTransforms[m_count];
+	render::StructBuffer* jointTransforms = m_jointTransforms[m_count];
+	SkinnedMesh::JointData* jointData = (SkinnedMesh::JointData*)jointTransforms->lock();
 
-	const auto& jointMap = m_mesh->getJointMap();
-	jointTransforms.resize(jointMap.size() * 2, Vector4::origo());
+	//const auto& jointMap = m_mesh->getJointMap();
 
-	uint32_t size = uint32_t(jointTransforms_.size());
-	for (uint32_t i = 0, j = 0; i < size; i += 2, ++j)
+	uint32_t size = (uint32_t)jointTransforms_.size();
+	for (uint32_t i = 0; i < size; ++i)
 	{
-		if (j < jointTransforms_.size())
-		{
-			Transform joint(jointTransforms_[i]);
-			jointTransforms[i + 0] = joint.rotation().e;
-			jointTransforms[i + 1] = joint.translation().xyz1();
-		}
-		else
-		{
-			jointTransforms[i + 0] = Vector4::origo();
-			jointTransforms[i + 1] = Vector4::origo();
-		}
+		Transform joint(jointTransforms_[i]);
+		joint.translation().xyz1().storeAligned(jointData[i].translation);
+		joint.rotation().e.storeAligned(jointData[i].rotation);
 	}
+
+	jointTransforms->unlock();
 
 	Atomic::exchange(m_count, 1 - m_count);
 }

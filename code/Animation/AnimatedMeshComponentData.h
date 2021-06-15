@@ -29,6 +29,13 @@ class PhysicsManager;
 
 	}
 
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace resource
 	{
 
@@ -75,7 +82,7 @@ public:
 		const IPoseControllerData* poseController
 	);
 
-	Ref< AnimatedMeshComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
+	Ref< AnimatedMeshComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 

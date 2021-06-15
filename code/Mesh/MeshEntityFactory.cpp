@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityFactory", MeshEntityFactory, world::IEntityFactory)
 
-MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager)
+MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 {
 }
 
@@ -42,7 +43,7 @@ Ref< world::IEntityEvent > MeshEntityFactory::createEntityEvent(const world::IEn
 Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(&entityComponentData);
-	return meshComponentData->createComponent(m_resourceManager);
+	return meshComponentData->createComponent(m_resourceManager, m_renderSystem);
 }
 
 	}

@@ -88,7 +88,6 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBlendMesh);
 
 	auto classBlendMeshComponent = new AutoRuntimeClass< BlendMeshComponent >();
-	classBlendMeshComponent->addConstructor< const resource::Proxy< BlendMesh >&, bool >();
 	classBlendMeshComponent->addMethod("setBlendWeights", &BlendMeshComponent::setBlendWeights);
 	classBlendMeshComponent->addMethod("getBlendWeights", &BlendMeshComponent::getBlendWeights);
 	registrar->registerClass(classBlendMeshComponent);
@@ -104,49 +103,42 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIndoorMesh);
 
 	auto classIndoorMeshComponent = new AutoRuntimeClass< IndoorMeshComponent >();
-	classIndoorMeshComponent->addConstructor< const resource::Proxy< IndoorMesh >&, bool >();
 	registrar->registerClass(classIndoorMeshComponent);
 
 	auto classInstanceMesh = new AutoRuntimeClass< InstanceMesh >();
 	registrar->registerClass(classInstanceMesh);
 
 	auto classInstanceMeshComponent = new AutoRuntimeClass< InstanceMeshComponent >();
-	classInstanceMeshComponent->addConstructor< const resource::Proxy< InstanceMesh >&, bool >();
 	registrar->registerClass(classInstanceMeshComponent);
 
 	auto classAutoLodMesh = new AutoRuntimeClass< AutoLodMesh >();
 	registrar->registerClass(classAutoLodMesh);
 
 	auto classAutoLodMeshComponent = new AutoRuntimeClass< AutoLodMeshComponent >();
-	classAutoLodMeshComponent->addConstructor< const resource::Proxy< AutoLodMesh >&, bool >();
 	registrar->registerClass(classAutoLodMeshComponent);
 
 	auto classPartitionMesh = new AutoRuntimeClass< PartitionMesh >();
 	registrar->registerClass(classPartitionMesh);
 
 	auto classPartitionMeshComponent = new AutoRuntimeClass< PartitionMeshComponent >();
-	classPartitionMeshComponent->addConstructor< const resource::Proxy< PartitionMesh >&, bool >();
 	registrar->registerClass(classPartitionMeshComponent);
 
 	auto classSkinnedMesh = new AutoRuntimeClass< SkinnedMesh >();
 	registrar->registerClass(classSkinnedMesh);
 
 	auto classSkinnedMeshComponent = new AutoRuntimeClass< SkinnedMeshComponent >();
-	classSkinnedMeshComponent->addConstructor< const resource::Proxy< SkinnedMesh >&, bool >();
 	registrar->registerClass(classSkinnedMeshComponent);
 
 	auto classStaticMesh = new AutoRuntimeClass< StaticMesh >();
 	registrar->registerClass(classStaticMesh);
 
 	auto classStaticMeshComponent = new AutoRuntimeClass< StaticMeshComponent >();
-	classStaticMeshComponent->addConstructor< const resource::Proxy< StaticMesh >&, bool >();
 	registrar->registerClass(classStaticMeshComponent);
 
 	auto classStreamMesh = new AutoRuntimeClass< StreamMesh >();
 	registrar->registerClass(classStreamMesh);
 
 	auto classStreamMeshComponent = new AutoRuntimeClass< StreamMeshComponent >();
-	classStreamMeshComponent->addConstructor< const resource::Proxy< StreamMesh >&, bool >();
 	classStreamMeshComponent->addProperty("frameCount", &StreamMeshComponent::getFrameCount);
 	classStreamMeshComponent->addProperty("frame", &StreamMeshComponent::setFrame, &StreamMeshComponent::getFrame);
 	registrar->registerClass(classStreamMeshComponent);

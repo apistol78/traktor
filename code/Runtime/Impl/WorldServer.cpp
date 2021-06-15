@@ -161,7 +161,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 
 	m_entityBuilder->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
-	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
+	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));

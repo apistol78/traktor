@@ -15,6 +15,14 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+class StructBuffer;
+
+	}
+
 	namespace mesh
 	{
 
@@ -28,7 +36,7 @@ class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, bool screenSpaceCulling);
+	explicit SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -40,7 +48,7 @@ public:
 
 private:
 	resource::Proxy< SkinnedMesh > m_mesh;
-	AlignedVector< Vector4 > m_jointTransforms[2];
+	Ref< render::StructBuffer > m_jointTransforms[2];
 	int32_t m_count;
 };
 

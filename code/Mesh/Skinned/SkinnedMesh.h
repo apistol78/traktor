@@ -19,9 +19,11 @@ namespace traktor
 	namespace render
 	{
 
-class RenderContext;
-class Mesh;
+class IRenderSystem;
 class ITexture;
+class RenderContext;
+class StructBuffer;
+class Mesh;
 
 	}
 
@@ -48,6 +50,14 @@ class T_DLLCLASS SkinnedMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
+#pragma pack(1)
+	struct JointData
+	{
+		float translation[4];
+		float rotation[4];
+	};
+#pragma pack()
+
 	SkinnedMesh() = default;
 
 	const Aabb3& getBoundingBox() const;
@@ -59,8 +69,8 @@ public:
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
-		const AlignedVector< Vector4 >& lastJointTransforms,
-		const AlignedVector< Vector4 >& jointTransforms,
+		render::StructBuffer* lastJointTransforms,
+		render::StructBuffer* jointTransforms,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);
@@ -68,6 +78,8 @@ public:
 	int32_t getJointCount() const;
 
 	const SmallMap< std::wstring, int32_t >& getJointMap() const;
+
+	static Ref< render::StructBuffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
 
 private:
 	friend class SkinnedMeshResource;

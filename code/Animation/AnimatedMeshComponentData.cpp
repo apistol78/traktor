@@ -31,7 +31,7 @@ AnimatedMeshComponentData::AnimatedMeshComponentData(
 {
 }
 
-Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const
+Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const
 {
 	resource::Proxy< mesh::SkinnedMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))
@@ -84,6 +84,7 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 		poseController,
 		jointRemap,
 		bindings,
+		renderSystem,
 		m_screenSpaceCulling
 	);
 }

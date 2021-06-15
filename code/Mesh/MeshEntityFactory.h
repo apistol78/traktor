@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace resource
 	{
 
@@ -27,7 +34,7 @@ class T_DLLCLASS MeshEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	MeshEntityFactory(resource::IResourceManager* resourceManager);
+	explicit MeshEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -43,6 +50,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 	}
