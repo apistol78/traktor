@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 16, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 17, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -111,6 +111,9 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"inverseNormalMapX", m_inverseNormalMapX);
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"inverseNormalMapY", m_inverseNormalMapY);
+
+	if (s.getVersion() >= 17)
+		s >> Member< float >(L"scaleNormalMap", m_scaleNormalMap, AttributeRange(0.0f));
 
 	s >> Member< bool >(L"linearGamma", m_linearGamma);
 

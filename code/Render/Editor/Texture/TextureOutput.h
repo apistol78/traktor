@@ -42,6 +42,7 @@ public:
 	bool m_encodeAsRGBM = false;
 	bool m_inverseNormalMapX = false;
 	bool m_inverseNormalMapY = false;
+	float m_scaleNormalMap = 0.0f;
 	bool m_linearGamma = false;
 	bool m_generateSphereMap = false;
 	bool m_preserveAlphaCoverage = false;

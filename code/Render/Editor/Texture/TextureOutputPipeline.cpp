@@ -840,7 +840,7 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			for (auto mipImage : mipImages)
 			{
-				drawing::NormalizeFilter normalizeFilter;
+				drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 				mipImage->apply(&normalizeFilter);
 
 				if (
