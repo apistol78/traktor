@@ -602,7 +602,7 @@ bool Application::update()
 	float updateInterval = 0.0f;
 	int32_t updateCount = 0;
 
-	if ((currentState = m_stateManager->getCurrent()) != 0)
+	if ((currentState = m_stateManager->getCurrent()) != nullptr)
 	{
 #if !defined(__ANDROID__) && !defined(__IOS__)
 		// Check render active state; notify application when changes.
@@ -754,6 +754,13 @@ bool Application::update()
 				// Abort simulation loop if state has been changed.
 				if (m_stateManager->getNext())
 					break;
+			}
+
+			// Update state times if no updates are performed this tick.
+			if (updateCount <= 0)
+			{
+				m_updateInfo.m_totalTime += dFT;
+				m_updateInfo.m_stateTime += dFT;
 			}
 
 			// Cannot allow time to drift even if number of updates are clamped,
