@@ -413,10 +413,6 @@ bool perform(const PipelineParameters* params)
 				traktor::log::error << L"Unable to load module \"" << module << L"\"." << Endl;
 				return false;
 			}
-
-			if (params->getVerbose())
-				traktor::log::info << L"Library \"" << library.getPath().getPathName() << L"\" loaded." << Endl;
-
 			library.detach();
 			g_loadedModules.insert(module);
 		}
@@ -456,7 +452,7 @@ bool perform(const PipelineParameters* params)
 	Ref< editor::IPipelineDb > pipelineDb = new editor::PipelineDbFlat();
 	if (!pipelineDb->open(connectionString))
 	{
-		traktor::log::error << L"Unable to connect to pipeline database." << Endl;
+		traktor::log::error << L"Unable to connect to pipeline database using connection string \"" << connectionString << L"\"." << Endl;
 		return false;
 	}
 
@@ -467,7 +463,7 @@ bool perform(const PipelineParameters* params)
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(settings))
 		{
-			traktor::log::warning << L"Unable to create pipeline cache; cache disabled." << Endl;
+			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
 			pipelineCache = nullptr;
 		}
 	}
@@ -627,7 +623,6 @@ int slave(const CommandLine& cmdLine)
 	}
 
 #if defined(_WIN32)
-
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	DWORD dwParentPID = 0;
 
@@ -651,7 +646,6 @@ int slave(const CommandLine& cmdLine)
 	CloseHandle(hSnapshot);
 
 	HANDLE hParentProcess = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, FALSE, dwParentPID);
-
 #endif
 
 	while (!g_receivedBreakSignal)
@@ -722,9 +716,9 @@ int master(const CommandLine& cmdLine)
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;
-		for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+		for (auto log : logs)
 		{
-			std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+			std::wstring logName = log->getPath().getFileNameNoExtension();
 			size_t p = logName.find(L'_');
 			if (p != logName.npos)
 			{
@@ -895,9 +889,9 @@ int standalone(const CommandLine& cmdLine)
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;
-		for (RefArray< File >::const_iterator i = logs.begin(); i != logs.end(); ++i)
+		for (auto log : logs)
 		{
-			std::wstring logName = (*i)->getPath().getFileNameNoExtension();
+			std::wstring logName = log->getPath().getFileNameNoExtension();
 			size_t p = logName.find(L'_');
 			if (p != logName.npos)
 			{
