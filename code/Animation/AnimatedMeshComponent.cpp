@@ -231,7 +231,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		context.build(worldRenderView, worldRenderPass, binding.entity);
 
 	// Save last rendered transform so we can properly write velocities next frame.
-	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
 	{
 		m_jointBuffers[0] = jointBufferCurrent;
 		m_jointBuffers[1] = jointBufferLast;
