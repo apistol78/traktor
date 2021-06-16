@@ -1,6 +1,7 @@
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/AudioLayer.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Timer/Profiler.h"
 #include "Sound/Sound.h"
