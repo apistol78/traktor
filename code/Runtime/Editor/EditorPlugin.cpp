@@ -1,30 +1,9 @@
 #include <cstring>
-#include "Runtime/Editor/EditorPlugin.h"
-#include "Runtime/Editor/HostEnumerator.h"
-#include "Runtime/Editor/ProfilerDialog.h"
-#include "Runtime/Editor/TargetConnection.h"
-#include "Runtime/Editor/TargetInstance.h"
-#include "Runtime/Editor/TargetManager.h"
-#include "Runtime/Editor/Deploy/BuildTargetAction.h"
-#include "Runtime/Editor/Deploy/DeployTargetAction.h"
-#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
-#include "Runtime/Editor/Deploy/MigrateTargetAction.h"
-#include "Runtime/Editor/Deploy/Platform.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
-#include "Runtime/Editor/Ui/TargetBuildEvent.h"
-#include "Runtime/Editor/Ui/TargetCaptureEvent.h"
-#include "Runtime/Editor/Ui/TargetCommandEvent.h"
-#include "Runtime/Editor/Ui/TargetInstanceListItem.h"
-#include "Runtime/Editor/Ui/TargetListControl.h"
-#include "Runtime/Editor/Ui/TargetMigrateEvent.h"
-#include "Runtime/Editor/Ui/TargetPlayEvent.h"
-#include "Runtime/Editor/Ui/TargetStopEvent.h"
-#include "Runtime/Target/CommandEvent.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -48,6 +27,28 @@
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Runtime/Editor/EditorPlugin.h"
+#include "Runtime/Editor/HostEnumerator.h"
+#include "Runtime/Editor/ProfilerDialog.h"
+#include "Runtime/Editor/TargetConnection.h"
+#include "Runtime/Editor/TargetInstance.h"
+#include "Runtime/Editor/TargetManager.h"
+#include "Runtime/Editor/Deploy/BuildTargetAction.h"
+#include "Runtime/Editor/Deploy/DeployTargetAction.h"
+#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
+#include "Runtime/Editor/Deploy/MigrateTargetAction.h"
+#include "Runtime/Editor/Deploy/Platform.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
+#include "Runtime/Editor/Ui/TargetBuildEvent.h"
+#include "Runtime/Editor/Ui/TargetCaptureEvent.h"
+#include "Runtime/Editor/Ui/TargetCommandEvent.h"
+#include "Runtime/Editor/Ui/TargetInstanceListItem.h"
+#include "Runtime/Editor/Ui/TargetListControl.h"
+#include "Runtime/Editor/Ui/TargetMigrateEvent.h"
+#include "Runtime/Editor/Ui/TargetPlayEvent.h"
+#include "Runtime/Editor/Ui/TargetStopEvent.h"
+#include "Runtime/Target/CommandEvent.h"
 #include "Script/Editor/ScriptDebuggerSessions.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
@@ -243,6 +244,15 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 {
 	if (command == L"Editor.AutoBuild")
 	{
+		// Check if we should auto-build for running targets.
+		bool autoBuild = m_editor->getSettings()->getProperty< bool >(L"Runtime.AutoBuildRunningTargets", true);
+		if (!autoBuild)
+			return false;
+
+		// Do not use threaded builds when auto-building for targets.
+		Ref< PropertyGroup > globalSettings = DeepClone(m_editor->getSettings()).create< PropertyGroup >();
+		globalSettings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
+
 		for (auto targetInstance : m_targetInstances)
 		{
 			// Only build for those who have any running applications.
@@ -278,7 +288,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 				action.action = new BuildTargetAction(
 					m_editor->getSourceDatabase(),
-					m_editor->getSettings(),
+					globalSettings,
 					pipelineSettings,
 					targetInstance->getTarget(),
 					targetInstance->getTargetConfiguration(),
