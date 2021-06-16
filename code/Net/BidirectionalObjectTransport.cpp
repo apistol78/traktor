@@ -106,7 +106,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				continue;
 
 			// Receive object from socket.
-			net::SocketStream ss(m_socket, true, false, timeout);
+			net::SocketStream ss(m_socket, true, false);
 			Ref< ISerializable > object = BinarySerializer(&ss).readObject();
 			if (!object)
 			{
