@@ -99,8 +99,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Application", Application, IApplication
 
 Application::Application()
 #if !defined(__EMSCRIPTEN__)
-:	m_threadDatabase(0)
-,	m_threadRender(0)
+:	m_threadDatabase(nullptr)
+,	m_threadRender(nullptr)
 ,	m_maxSimulationUpdates(1)
 #else
 :	m_maxSimulationUpdates(1)
@@ -1075,13 +1075,14 @@ void Application::pollDatabase()
 	Ref< const db::IEvent > event;
 	bool remote;
 
-	while (m_database->getEvent(event, remote))
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped() && m_database->getEvent(event, remote))
 	{
 		if (auto committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
 			eventIds.push_back(committed->getInstanceGuid());
 	}
 
-	if (!eventIds.empty())
+	if (!currentThread->stopped() && !eventIds.empty())
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
