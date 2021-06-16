@@ -72,7 +72,6 @@ void TimeStretchFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) c
 			continue;
 
 		float* outputSamples = fi->m_samples[i];
-		T_ASSERT(history);
 
 		for (int32_t j = 0; j < outputSamplesCount; ++j)
 		{
