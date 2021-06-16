@@ -52,6 +52,12 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	bool staticallyLinked = settings->getProperty< bool >(L"Runtime.StaticallyLinked", false);
 	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
+	m_checkAutoBuildRunningTargets = new ui::CheckBox();
+	m_checkAutoBuildRunningTargets->create(container, i18n::Text(L"RUNTIME_SETTINGS_AUTO_BUILD_RUNNING_TARGETS"));
+
+	bool autoBuildRunningTargets = settings->getProperty< bool >(L"Runtime.AutoBuildRunningTargets", true);
+	m_checkAutoBuildRunningTargets->setChecked(autoBuildRunningTargets);
+
 	Ref< ui::Container > containerAndroid = new ui::Container();
 	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
 
@@ -134,6 +140,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	bool staticallyLinked = m_checkStaticallyLinked->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.StaticallyLinked", staticallyLinked);
+
+	bool autoBuildRunningTargets = m_checkAutoBuildRunningTargets->isChecked();
+	settings->setProperty< PropertyBoolean >(L"Runtime.AutoBuildRunningTargets", autoBuildRunningTargets);
 
 	std::wstring androidHome = m_editAndroidHome->getText();
 	settings->setProperty< PropertyString >(L"Runtime.AndroidHome", androidHome);

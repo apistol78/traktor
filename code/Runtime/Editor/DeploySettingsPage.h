@@ -36,6 +36,7 @@ private:
 	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
 	Ref< ui::CheckBox > m_checkStaticallyLinked;
+	Ref< ui::CheckBox > m_checkAutoBuildRunningTargets;
 	Ref< ui::Edit > m_editAndroidHome;
 	Ref< ui::Edit > m_editAndroidNdkRoot;
 	Ref< ui::Edit > m_editAndroidToolchain;
