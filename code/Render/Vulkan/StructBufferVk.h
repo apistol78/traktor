@@ -2,6 +2,7 @@
 
 #include "Render/StructBuffer.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
+#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {
@@ -19,13 +20,15 @@ public:
 
 	virtual ~StructBufferVk();
 
-	virtual VkBuffer getVkBuffer() const = 0;
+	VkBuffer getVkBuffer() const { return *m_buffer; }
 
-	virtual uint32_t getVkBufferOffset() const = 0;
+	uint32_t getVkBufferOffset() const { return m_offset; }
 
 protected:
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
+	Ref< Buffer > m_buffer;
+	uint32_t m_offset = 0;
 };
 
 	}

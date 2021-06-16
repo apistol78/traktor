@@ -28,8 +28,8 @@ bool StructBufferStaticVk::create()
 	if (!bufferSize)
 		return false;
 
-	m_deviceBuffer = new Buffer(m_context);
-	if (!m_deviceBuffer->create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
+	m_buffer = new Buffer(m_context);
+	if (!m_buffer->create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
 		return false;
 
 	return true;
@@ -37,7 +37,7 @@ bool StructBufferStaticVk::create()
 
 void StructBufferStaticVk::destroy()
 {
-	safeDestroy(m_deviceBuffer);
+	safeDestroy(m_buffer);
 	safeDestroy(m_stageBuffer);
 	m_context = nullptr;
 }
@@ -68,7 +68,7 @@ void StructBufferStaticVk::unlock()
 	vkCmdCopyBuffer(
 		*commandBuffer,
 		*m_stageBuffer,
-		*m_deviceBuffer,
+		*m_buffer,
 		1,
 		&bc
 	);

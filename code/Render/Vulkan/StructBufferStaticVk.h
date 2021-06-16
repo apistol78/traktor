@@ -28,13 +28,8 @@ public:
 
 	virtual void unlock() override final;
 
-	virtual VkBuffer getVkBuffer() const override final { return *m_deviceBuffer; }
-
-	virtual uint32_t getVkBufferOffset() const override final { return 0; }
-
 private:
 	Ref< Buffer > m_stageBuffer;
-	Ref< Buffer > m_deviceBuffer;
 };
 
 	}

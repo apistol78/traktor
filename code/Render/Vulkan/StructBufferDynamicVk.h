@@ -2,14 +2,11 @@
 
 #include "Core/Ref.h"
 #include "Render/Vulkan/StructBufferVk.h"
-#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {
 	namespace render
 	{
-
-class Buffer;
 
 class StructBufferDynamicVk : public StructBufferVk
 {
@@ -28,16 +25,10 @@ public:
 
 	virtual void unlock() override final;
 
-	virtual VkBuffer getVkBuffer() const override final { return *m_buffer; }
-
-	virtual uint32_t getVkBufferOffset() const override final { return m_offset; }
-
 private:
-	Ref< Buffer > m_buffer;
 	uint32_t m_alignedBufferSize = 0;
 	int32_t m_inFlightCount = 0;
 	int32_t m_index = 0;
-	uint32_t m_offset = 0;
 };
 
 	}
