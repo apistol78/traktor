@@ -105,18 +105,10 @@ private:
 	{
 		Ref< const ISoundBuffer > buffer;
 		Ref< ISoundBufferCursor > cursor;
-		handle_t category;
-		float volume;
-		bool repeat;
-		uint32_t repeatFrom;
-
-		StateSound()
-		:	category(0)
-		,	volume(1.0f)
-		,	repeat(false)
-		,	repeatFrom(0)
-		{
-		}
+		handle_t category = 0;
+		float volume = 1.0f;
+		bool repeat = false;
+		uint32_t repeatFrom = 0;
 	};
 
 	struct StateParameter
