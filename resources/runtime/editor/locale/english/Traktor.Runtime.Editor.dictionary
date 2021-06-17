@@ -210,6 +210,10 @@
 			<second>Statically link product</second>
 		</item>
 		<item>
+			<first>RUNTIME_SETTINGS_AUTO_BUILD_RUNNING_TARGETS</first>
+			<second>Auto-build running targets</second>
+		</item>
+		<item>
 			<first>RUNTIME_SETTINGS_VERBOSE_RESOURCE_MANAGER</first>
 			<second>Verbose resource manager</second>
 		</item>
