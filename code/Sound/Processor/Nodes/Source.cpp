@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/MemberIdProxy.h"
+#include "Sound/IAudioMixer.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Sound.h"
 #include "Sound/Processor/Nodes/Source.h"
@@ -72,8 +73,6 @@ Ref< ISoundBufferCursor > Source::createCursor() const
 	sourceCursor->m_soundBuffer = soundBuffer;
 	sourceCursor->m_soundCursor = soundCursor;
 
-	// m_sound.consume();
-
 	return sourceCursor;
 }
 
@@ -88,33 +87,28 @@ bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	if (!sourceCursor)
 		return false;
 
-	// if (m_sound.changed())
-	// {
-	// 	if (!m_sound)
-	// 		return false;
-
-	// 	Ref< ISoundBuffer > soundBuffer = m_sound->getBuffer();
-	// 	if (!soundBuffer)
-	// 		return false;
-
-	// 	Ref< ISoundBufferCursor > soundCursor = soundBuffer->createCursor();
-	// 	if (!soundCursor)
-	// 		return false;
-
-	// 	sourceCursor->m_soundBuffer = soundBuffer;
-	// 	sourceCursor->m_soundCursor = soundCursor;
-
-	// 	m_sound.consume();
-	// }
-
 	T_ASSERT(sourceCursor->m_soundBuffer);
 	T_ASSERT(sourceCursor->m_soundCursor);
 
-	return sourceCursor->m_soundBuffer->getBlock(
+	if (!sourceCursor->m_soundBuffer->getBlock(
 		sourceCursor->m_soundCursor,
 		mixer,
 		outBlock
-	);
+	))
+		return false;
+
+
+	if (m_sound->getGain() != 0.0f)
+	{
+		float gain = decibelToLinear(m_sound->getGain());
+		mixer->mulConst(
+			outBlock.samples[0],
+			outBlock.samplesCount,
+			gain
+		);
+	}
+
+	return true;
 }
 
 void Source::serialize(ISerializer& s)

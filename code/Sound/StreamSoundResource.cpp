@@ -17,24 +17,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 8, StreamSoundResource, ISoundResource)
 
-StreamSoundResource::StreamSoundResource()
-:	m_decoderType(0)
-,	m_gain(0.0f)
-,	m_range(0.0f)
-,	m_preload(false)
-{
-}
-
 Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
 {
 	Ref< IStream > stream = resourceInstance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	if (!m_decoderType)
 	{
-		log::error << L"Unable to create sound, no decoder type" << Endl;
-		return 0;
+		log::error << L"Unable to create sound, no decoder type." << Endl;
+		return nullptr;
 	}
 
 	if (m_preload)
@@ -46,7 +38,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		{
 			int64_t res = stream->read(&buffer[i], size - i);
 			if (res <= 0)
-				return 0;
+				return nullptr;
 			i += res;
 		}
 
@@ -56,15 +48,15 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
 	if (!streamDecoder->create(stream))
 	{
-		log::error << L"Unable to create sound, unable to create stream decoder" << Endl;
-		return 0;
+		log::error << L"Unable to create sound, unable to create stream decoder." << Endl;
+		return nullptr;
 	}
 
 	Ref< StreamSoundBuffer > soundBuffer = new StreamSoundBuffer();
 	if (!soundBuffer->create(streamDecoder))
 	{
-		log::error << L"Unable to create sound, unable to create stream sound buffer" << Endl;
-		return 0;
+		log::error << L"Unable to create sound, unable to create stream sound buffer." << Endl;
+		return nullptr;
 	}
 
 	return new Sound(
