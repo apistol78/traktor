@@ -252,6 +252,23 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
+	// Issue script post update.
+	if (validateScriptContext())
+	{
+		T_PROFILER_SCOPE(L"Script setup");
+		if (m_object)
+		{
+			Any argv[] =
+			{
+				Any::fromObject(const_cast< UpdateInfo* >(&info))
+			};
+
+			const IRuntimeDispatch* methodSetup = findRuntimeClassMethod(m_class, "setup");
+			if (methodSetup != nullptr)
+				methodSetup->invoke(m_object, sizeof_array(argv), argv);
+		}
+	}
+
 	for (auto layer : m_layers)
 		layer->setup(info, renderGraph);
 

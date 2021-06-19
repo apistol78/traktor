@@ -12,6 +12,7 @@
 #include "Core/Class/Boxes/BoxedColor4ub.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
+#include "Core/Class/Boxes/BoxedIntervalTransform.h"
 #include "Core/Class/Boxes/BoxedMatrix33.h"
 #include "Core/Class/Boxes/BoxedMatrix44.h"
 #include "Core/Class/Boxes/BoxedPlane.h"
@@ -173,6 +174,11 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedGuid->addMethod("isNull", &BoxedGuid::isNull);
 	classBoxedGuid->addMethod("isNotNull", &BoxedGuid::isNotNull);
 	registrar->registerClass(classBoxedGuid);
+
+	auto classBoxedIntervalTransform = new AutoRuntimeClass< BoxedIntervalTransform >();
+	classBoxedIntervalTransform->addConstructor();
+	classBoxedIntervalTransform->addMethod("get", &BoxedIntervalTransform::get);
+	registrar->registerClass(classBoxedIntervalTransform);
 
 	auto classBoxedMatrix33 = new AutoRuntimeClass< BoxedMatrix33 >();
 	classBoxedMatrix33->addConstructor();
