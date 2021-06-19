@@ -1,5 +1,6 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
+#include "Core/Class/Boxes/BoxedIntervalTransform.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Mesh/IMeshParameterCallback.h"
@@ -71,6 +72,11 @@ void MeshComponent_setParameterCallback(MeshComponent* self, IRuntimeDelegate* c
 		self->setParameterCallback(nullptr);
 }
 
+const IntervalTransform& MeshComponent_getTransform(MeshComponent* self)
+{
+	return self->getTransform();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshClassFactory", 0, MeshClassFactory, IRuntimeClassFactory)
@@ -81,7 +87,8 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIMesh);
 
 	auto classMeshComponent = new AutoRuntimeClass< MeshComponent >();
-	classMeshComponent->addMethod("setParameterCallback", MeshComponent_setParameterCallback);
+	classMeshComponent->addMethod("setParameterCallback", &MeshComponent_setParameterCallback);
+	classMeshComponent->addProperty("transform", &MeshComponent_getTransform);
 	registrar->registerClass(classMeshComponent);
 
 	auto classBlendMesh = new AutoRuntimeClass< BlendMesh >();
