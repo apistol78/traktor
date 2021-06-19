@@ -194,7 +194,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 	{
 		// Prepare all layers.
 		for (auto layer : m_layers)
-			layer->prepare(info);
+			layer->preUpdate(info);
 
 		// Issue script update.
 		if (validateScriptContext())
@@ -252,6 +252,10 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 {
+	// Prepare all layers.
+	for (auto layer : m_layers)
+		layer->preSetup(info);
+
 	// Issue script post update.
 	if (validateScriptContext())
 	{

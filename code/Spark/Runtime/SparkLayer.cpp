@@ -206,9 +206,9 @@ void SparkLayer::transition(Layer* fromLayer)
 		m_displayRenderer->setClearBackground(m_clearBackground);
 }
 
-void SparkLayer::prepare(const runtime::UpdateInfo& info)
+void SparkLayer::preUpdate(const runtime::UpdateInfo& info)
 {
-	T_PROFILER_SCOPE(L"SparkLayer prepare");
+	T_PROFILER_SCOPE(L"SparkLayer pre-update");
 
 	if (m_movie.changed())
 	{
@@ -420,6 +420,10 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 		};
 		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}
+}
+
+void SparkLayer::preSetup(const runtime::UpdateInfo& info)
+{
 }
 
 void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph)

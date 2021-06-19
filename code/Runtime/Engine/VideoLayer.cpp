@@ -107,7 +107,7 @@ void VideoLayer::transition(Layer* fromLayer)
 {
 }
 
-void VideoLayer::prepare(const UpdateInfo& info)
+void VideoLayer::preUpdate(const UpdateInfo& info)
 {
 }
 
@@ -130,6 +130,10 @@ void VideoLayer::update(const UpdateInfo& info)
 			}
 		}
 	}
+}
+
+void VideoLayer::preSetup(const UpdateInfo& info)
+{
 }
 
 void VideoLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)

@@ -58,13 +58,19 @@ public:
 	 *
 	 * \param info Engine update information.
 	 */
-	virtual void prepare(const UpdateInfo& info) = 0;
+	virtual void preUpdate(const UpdateInfo& info) = 0;
 
 	/*! Update layer logic.
 	 *
 	 * info Engine update information.
 	 */
 	virtual void update(const UpdateInfo& info) = 0;
+
+	/*! Prepare layer for setup.
+	 *
+	 * \param info Engine update information.
+	 */
+	virtual void preSetup(const UpdateInfo& info) = 0;
 
 	/*! Setup render graph passes.
 	 *

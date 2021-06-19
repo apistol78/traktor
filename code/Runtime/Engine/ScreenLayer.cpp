@@ -44,11 +44,15 @@ void ScreenLayer::transition(Layer* fromLayer)
 	fromScreenLayer->m_screenRenderer = nullptr;
 }
 
-void ScreenLayer::prepare(const UpdateInfo& info)
+void ScreenLayer::preUpdate(const UpdateInfo& info)
 {
 }
 
 void ScreenLayer::update(const UpdateInfo& info)
+{
+}
+
+void ScreenLayer::preSetup(const UpdateInfo& info)
 {
 }
 

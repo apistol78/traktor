@@ -127,7 +127,7 @@ void AudioLayer::transition(Layer* fromLayer)
 	}
 }
 
-void AudioLayer::prepare(const UpdateInfo& info)
+void AudioLayer::preUpdate(const UpdateInfo& info)
 {
 }
 
@@ -179,6 +179,10 @@ void AudioLayer::update(const UpdateInfo& info)
 			}
 		}
 	}
+}
+
+void AudioLayer::preSetup(const UpdateInfo& info)
+{
 }
 
 void AudioLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
