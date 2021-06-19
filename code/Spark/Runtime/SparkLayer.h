@@ -69,9 +69,11 @@ public:
 
 	virtual void transition(Layer* fromLayer) override final;
 
-	virtual void prepare(const runtime::UpdateInfo& info) override final;
+	virtual void preUpdate(const runtime::UpdateInfo& info) override final;
 
 	virtual void update(const runtime::UpdateInfo& info) override final;
+
+	virtual void preSetup(const runtime::UpdateInfo& info) override final;
 
 	virtual void setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph) override final;
 

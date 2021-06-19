@@ -48,7 +48,7 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 	// to be created before first frame.
 	const UpdateInfo info;
 	for (const auto layer : stage->getLayers())
-		layer->prepare(info);
+		layer->preUpdate(info);
 
 	return new StageState(environment, stage);
 }

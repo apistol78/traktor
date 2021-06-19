@@ -120,9 +120,9 @@ void WorldLayer::transition(Layer* fromLayer)
 	}
 }
 
-void WorldLayer::prepare(const UpdateInfo& info)
+void WorldLayer::preUpdate(const UpdateInfo& info)
 {
-	T_PROFILER_SCOPE(L"WorldLayer prepare");
+	T_PROFILER_SCOPE(L"WorldLayer pre-update");
 	if (m_scene.changed())
 	{
 		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
@@ -253,9 +253,9 @@ void WorldLayer::update(const UpdateInfo& info)
 	m_alternateTime += info.getSimulationDeltaTime();
 }
 
-void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
+void WorldLayer::preSetup(const UpdateInfo& info)
 {
-	T_PROFILER_SCOPE(L"WorldLayer setup");
+	T_PROFILER_SCOPE(L"WorldLayer pre-setup");
 	if (!m_worldRenderer || !m_scene)
 		return;
 
@@ -273,6 +273,13 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		info.getFrameDeltaTime(),
 		info.getInterval()
 	);
+}
+
+void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
+{
+	T_PROFILER_SCOPE(L"WorldLayer setup");
+	if (!m_worldRenderer || !m_scene)
+		return;
 
 	// Build a root entity by gathering entities from containers.
 	auto group = m_rootGroup->getComponent< world::GroupComponent >();
@@ -308,7 +315,7 @@ void WorldLayer::postReconfigured()
 	// Issue prepare here as we want the world renderer
 	// to be created during reconfiguration has the render lock.
 	UpdateInfo info;
-	prepare(info);
+	preUpdate(info);
 }
 
 void WorldLayer::suspend()
