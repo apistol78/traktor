@@ -1319,15 +1319,11 @@ void WorldRendererForward::setupLightPass(
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-                auto rb = renderContext->alloc< render::LambdaRenderBlock >();
-                rb->lambda = [=](render::IRenderView*) {
-					if (m_frames[frame].lightSBufferData != nullptr)
-					{
-						m_frames[frame].lightSBuffer->unlock();
-						m_frames[frame].lightSBufferData = nullptr;
-					}
-                };
-                renderContext->enqueue(rb);
+				if (m_frames[frame].lightSBufferData != nullptr)
+				{
+					m_frames[frame].lightSBuffer->unlock();
+					m_frames[frame].lightSBufferData = nullptr;
+				}
 			}
 		);
 

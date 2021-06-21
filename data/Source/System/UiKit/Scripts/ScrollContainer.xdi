@@ -149,7 +149,6 @@ function ScrollContainer:_initialize(parent, mc, layout, mode)
 	self._scroll = { x = 0, y = 0 }
 	self._motion = { x = 0, y = 0, k = 0.95 }
 	self._timer = Timer()
-	self._timer:start()
 
 	-- Create scrollbars.
 	if (mode & ScrollContainer.SCROLLBARS) ~= 0 then
@@ -342,6 +341,7 @@ function ScrollContainer:_onFrame(event)
 	end
 	return false
 end
+
 	]]>
 	</text>
 </object>

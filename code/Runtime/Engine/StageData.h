@@ -48,8 +48,6 @@ class T_DLLCLASS StageData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	StageData();
-
 	Ref< Stage > createInstance(IEnvironment* environment, const Object* params) const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -69,6 +67,10 @@ public:
 	void setShaderFade(const resource::Id< render::Shader >& shaderFade) { m_shaderFade = shaderFade; }
 
 	const resource::Id< render::Shader >& getShaderFade() const { return m_shaderFade; }
+
+	void setFadeOutUpdate(bool fadeOutUpdate) { m_fadeOutUpdate = fadeOutUpdate; }
+
+	bool getFadeOutUpdate() const { return m_fadeOutUpdate; }
 
 	void setFadeRate(float fadeRate) { m_fadeRate = fadeRate; }
 
@@ -94,7 +96,8 @@ private:
 	RefArray< LayerData > m_layers;
 	resource::Id< IRuntimeClass > m_class;
 	resource::Id< render::Shader > m_shaderFade;
-	float m_fadeRate;
+	bool m_fadeOutUpdate = false;
+	float m_fadeRate = 1.0f;
 	std::map< std::wstring, Guid > m_transitions;
 	Guid m_resourceBundle;
 	Ref< const PropertyGroup > m_properties;

@@ -1,10 +1,13 @@
+#include "Core/Functor/Functor.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
+#include "Core/Timer/Timer.h"
+#include "Database/Database.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/StageLoader.h"
-#include "Core/Functor/Functor.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
-#include "Database/Database.h"
 
 namespace traktor
 {
@@ -19,7 +22,9 @@ void jobLoader(IEnvironment* environment, Guid stageGuid, Ref< const Object > pa
 	if (!stageData)
 		return;
 
+	Timer timer;
 	outStage = stageData->createInstance(environment, params);
+	log::info << L"Stage " << stageGuid.format() << L" loaded in " << formatDuration(timer.getElapsedTime()) << L"." << Endl;
 }
 
 		}
