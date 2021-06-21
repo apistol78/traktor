@@ -94,7 +94,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 0, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 1, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)
@@ -143,7 +143,7 @@ bool Pipeline::buildDependencies(
 {
 	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 		pipelineDepends->addDependency(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
-	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);	// Solid
+	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
@@ -206,9 +206,6 @@ bool Pipeline::buildOutput(
 				log::error << L"Failed to import Spark movie; no document node." << Endl;
 				return false;
 			}
-
-			//float width = document->getSize().x;
-			//float height = document->getSize().y;
 
 			const Vector2& size = document->getSize();
 			const Aabb2& viewBox = document->getViewBox();
@@ -438,10 +435,9 @@ bool Pipeline::buildOutput(
 		}
 
 		bool foundBucket = false;
-
-		for (std::list< AtlasBucket >::iterator j = buckets.begin(); j != buckets.end(); ++j)
+		for (auto& bucket : buckets)
 		{
-			if (j->packer->insert(bitmapData->getWidth() + 2, bitmapData->getHeight() + 2, r))
+			if (bucket.packer->insert(bitmapData->getWidth() + 2, bitmapData->getHeight() + 2, r))
 			{
 				AtlasBitmap ab;
 				ab.id = i->first;
@@ -451,12 +447,11 @@ bool Pipeline::buildOutput(
 				ab.packedRect.y += 1;
 				ab.packedRect.width = bitmapData->getWidth();
 				ab.packedRect.height = bitmapData->getHeight();
-				j->bitmaps.push_back(ab);
+				bucket.bitmaps.push_back(ab);
 				foundBucket = true;
 				break;
 			}
 		}
-
 		if (!foundBucket)
 		{
 			buckets.push_back(AtlasBucket());
@@ -494,11 +489,11 @@ bool Pipeline::buildOutput(
 
 	uint32_t count = 1;
 
-	for (std::list< AtlasBucket >::const_iterator i = buckets.begin(); i != buckets.end(); ++i)
+	for (const auto& bucket : buckets)
 	{
-		log::info << L"Atlas " << count << L", containing " << uint32_t(i->bitmaps.size()) << L" bitmaps." << Endl;
+		log::info << L"Atlas " << count << L", containing " << uint32_t(bucket.bitmaps.size()) << L" bitmaps." << Endl;
 
-		if (i->bitmaps.size() > 1)
+		if (bucket.bitmaps.size() > 1)
 		{
 			Ref< drawing::Image > atlasImage = new drawing::Image(
 				drawing::PixelFormat::getA8B8G8R8(),
@@ -508,41 +503,41 @@ bool Pipeline::buildOutput(
 
 			atlasImage->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-			for (std::list< AtlasBitmap >::const_iterator j = i->bitmaps.begin(); j != i->bitmaps.end(); ++j)
+			for (const auto& ab : bucket.bitmaps)
 			{
 				Ref< drawing::Image > bitmapImage = new drawing::Image(
 					drawing::PixelFormat::getA8B8G8R8(),
-					j->bitmap->getWidth(),
-					j->bitmap->getHeight()
+					ab.bitmap->getWidth(),
+					ab.bitmap->getHeight()
 				);
 
 				std::memcpy(
 					bitmapImage->getData(),
-					j->bitmap->getBits(),
-					j->bitmap->getWidth() * j->bitmap->getHeight() * 4
+					ab.bitmap->getBits(),
+					ab.bitmap->getWidth() * ab.bitmap->getHeight() * 4
 				);
 
-				for (int32_t y = -1; y < j->packedRect.height + 1; ++y)
+				for (int32_t y = -1; y < ab.packedRect.height + 1; ++y)
 				{
-					for (int32_t x = -1; x < j->packedRect.width + 1; ++x)
+					for (int32_t x = -1; x < ab.packedRect.width + 1; ++x)
 					{
 						int32_t sx = x;
 						int32_t sy = y;
 
 						if (sx < 0)
-							sx = j->packedRect.width - 1;
-						else if (sx > j->packedRect.width - 1)
+							sx = ab.packedRect.width - 1;
+						else if (sx > ab.packedRect.width - 1)
 							sx = 0;
 
 						if (sy < 0)
-							sy = j->packedRect.height - 1;
-						else if (sy > j->packedRect.height - 1)
+							sy = ab.packedRect.height - 1;
+						else if (sy > ab.packedRect.height - 1)
 							sy = 0;
 
 						Color4f tmp;
 						bitmapImage->getPixel(sx, sy, tmp);
 
-						atlasImage->setPixel(j->packedRect.x + x, j->packedRect.y + y, tmp);
+						atlasImage->setPixel(ab.packedRect.x + x, ab.packedRect.y + y, tmp);
 					}
 				}
 			}
@@ -592,22 +587,22 @@ bool Pipeline::buildOutput(
 			))
 				return false;
 
-			for (std::list< AtlasBitmap >::const_iterator j = i->bitmaps.begin(); j != i->bitmaps.end(); ++j)
+			for (const auto& ab : bucket.bitmaps)
 			{
-				movie->defineBitmap(j->id, new BitmapResource(
-					j->packedRect.x,
-					j->packedRect.y,
-					j->packedRect.width,
-					j->packedRect.height,
+				movie->defineBitmap(ab.id, new BitmapResource(
+					ab.packedRect.x,
+					ab.packedRect.y,
+					ab.packedRect.width,
+					ab.packedRect.height,
 					m_textureAtlasSize,
 					m_textureAtlasSize,
 					bitmapOutputGuid
 				));
 			}
 		}
-		else if (i->bitmaps.size() == 1)
+		else if (bucket.bitmaps.size() == 1)
 		{
-			AtlasBitmap ab = i->bitmaps.front();
+			AtlasBitmap ab = bucket.bitmaps.front();
 			ab.packedRect.x = 0;
 			ab.packedRect.y = 0;
 			ab.packedRect.width = ab.bitmap->getWidth();

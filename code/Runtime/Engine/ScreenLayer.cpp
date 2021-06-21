@@ -1,16 +1,23 @@
-#include "Runtime/IEnvironment.h"
-#include "Runtime/Engine/ScreenLayer.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderPass.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/ScreenLayer.h"
 
 namespace traktor
 {
 	namespace runtime
 	{
+		namespace
+		{
+
+const render::Handle s_handleTime(L"Time");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ScreenLayer", ScreenLayer, Layer)
 
@@ -72,6 +79,7 @@ void ScreenLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
 		auto programParams = renderContext->alloc< render::ProgramParameters >();
 		programParams->beginParameters(renderContext);
+		programParams->setFloatParameter(s_handleTime, info.getSimulationTime());
 		if (m_parameterCallback)
 			m_parameterCallback(programParams);
 		programParams->endParameters(renderContext);

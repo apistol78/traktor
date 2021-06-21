@@ -25,12 +25,7 @@ namespace traktor
 	namespace runtime
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.StageData", 10, StageData, ISerializable)
-
-StageData::StageData()
-:	m_fadeRate(1.5f)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.StageData", 11, StageData, ISerializable)
 
 Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* params) const
 {
@@ -72,7 +67,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 			}
 		}
 		else
-			log::warning << L"Pre-loading of resources ignored" << Endl;
+			log::warning << L"Pre-loading of resources ignored." << Endl;
 	}
 #endif
 
@@ -83,7 +78,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 		return nullptr;
 
 	// Create layers.
-	Ref< Stage > stage = new Stage(m_name, environment, clazz, shaderFade, m_fadeRate, m_transitions, params);
+	Ref< Stage > stage = new Stage(m_name, environment, clazz, shaderFade, m_fadeOutUpdate, m_fadeRate, m_transitions, params);
 	for (auto layerData : m_layers)
 	{
 		Ref< Layer > layer = layerData->createInstance(stage, environment);
@@ -105,6 +100,10 @@ void StageData::serialize(ISerializer& s)
 	s >> MemberRefArray< LayerData >(L"layers", m_layers);
 	s >> resource::Member< IRuntimeClass >(L"class", m_class);
 	s >> resource::Member< render::Shader >(L"shaderFade", m_shaderFade);
+
+	if (s.getVersion< StageData >() >= 11)
+		s >> Member< bool >(L"fadeOutUpdate", m_fadeOutUpdate);
+
 	s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
 	s >> MemberStlMap< std::wstring, Guid >(L"transitions", m_transitions);
 	s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));

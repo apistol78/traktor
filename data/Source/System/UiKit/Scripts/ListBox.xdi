@@ -43,7 +43,7 @@ function ListBox:add(item)
 
 	s:setOnClick(function()
 		if self._clickFn ~= nil then
-			self._clickFn(index)
+			self._clickFn(index, item)
 		end
 	end)
 
@@ -96,7 +96,7 @@ function ListBox:_initialize(parent, mc, skin)
 
 	self._index = 0
 
-	self._panel = Panel(self, FloodLayout(), skin)
+	self._panel = Panel(self, FloodLayout(16, 16), skin)
 	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(Color4f(0.0, 0.0, 0.0, 0.2))
 
@@ -110,6 +110,7 @@ function ListBox:_loadStyle()
 	self:setTextHoverColor(style.textHover)
 	self:setTextSize(style.textSize)
 end
+
 	]]>
 	</text>
 </object>

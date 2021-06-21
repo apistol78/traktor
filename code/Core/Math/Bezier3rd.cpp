@@ -92,7 +92,7 @@ namespace
 		}
 		else
 		{
-			approximateSubdivide(bl, errorThreshold, maxSubdivisions, outQuadratic);
+			approximateSubdivide(bl, errorThreshold, maxSubdivisions - 1, outQuadratic);
 		}
 
 		if (br.isFlat(errorThreshold))
@@ -102,7 +102,7 @@ namespace
 		}
 		else
 		{
-			approximateSubdivide(br, errorThreshold, maxSubdivisions, outQuadratic);
+			approximateSubdivide(br, errorThreshold, maxSubdivisions - 1, outQuadratic);
 		}
 	}
 

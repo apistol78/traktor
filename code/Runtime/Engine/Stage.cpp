@@ -38,6 +38,7 @@ Stage::Stage(
 	IEnvironment* environment,
 	const resource::Proxy< IRuntimeClass >& clazz,
 	const resource::Proxy< render::Shader >& shaderFade,
+	bool fadeOutUpdate,
 	float fadeRate,
 	const std::map< std::wstring, Guid >& transitions,
 	const Object* params
@@ -46,6 +47,7 @@ Stage::Stage(
 ,	m_environment(environment)
 ,	m_class(clazz)
 ,	m_shaderFade(shaderFade)
+,	m_fadeOutUpdate(fadeOutUpdate)
 ,	m_fadeRate(fadeRate)
 ,	m_transitions(transitions)
 ,	m_params(params)
@@ -190,7 +192,33 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 	if (!m_running)
 		return false;
 
+	bool updateValid = false;
+
 	if (!m_pendingStage)
+	{
+		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
+		updateValid = true;
+	}
+	else
+	{
+		// Next stage ready, fade out.
+		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
+		if (m_fade > 1.0f)
+		{
+			// Fade out finished; enter next stage.
+			stateManager->enter(new StageState(m_environment, m_pendingStage));
+			m_transitionStage = m_pendingStage;
+			m_pendingStage = nullptr;
+			updateValid = false;
+		}
+		else
+		{
+			// Fade out in progress; update valid is configurable.
+			updateValid = m_fadeOutUpdate;
+		}
+	}
+
+	if (updateValid)
 	{
 		// Prepare all layers.
 		for (auto layer : m_layers)
@@ -232,18 +260,6 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 				if (methodPostUpdate != nullptr)
 					methodPostUpdate->invoke(m_object, sizeof_array(argv), argv);
 			}
-		}
-
-		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
-	}
-	else
-	{
-		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
-		if (m_fade > 1.0f)
-		{
-			stateManager->enter(new StageState(m_environment, m_pendingStage));
-			m_transitionStage = m_pendingStage;
-			m_pendingStage = nullptr;
 		}
 	}
 

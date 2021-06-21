@@ -50,6 +50,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		if (stageDataOut->getShaderFade().isNull())
 		{
 			stageDataOut->setShaderFade(downStageDataFlatten->getShaderFade());
+			stageDataOut->setFadeOutUpdate(downStageDataFlatten->getFadeOutUpdate());
 			stageDataOut->setFadeRate(downStageDataFlatten->getFadeRate());
 		}
 

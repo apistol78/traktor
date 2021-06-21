@@ -56,6 +56,7 @@ public:
 		IEnvironment* environment,
 		const resource::Proxy< IRuntimeClass >& clazz,
 		const resource::Proxy< render::Shader >& shaderFade,
+		bool fadeOutUpdate,
 		float fadeRate,
 		const std::map< std::wstring, Guid >& transitions,
 		const Object* params
@@ -168,6 +169,7 @@ private:
 	Ref< ITypedObject > m_object;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
+	bool m_fadeOutUpdate;
 	float m_fadeRate;
 	RefArray< Layer > m_layers;
 	std::map< std::wstring, Guid > m_transitions;
