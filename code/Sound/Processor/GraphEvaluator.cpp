@@ -1,7 +1,6 @@
+#include <string>
 #include "Core/Log/Log.h"
-
 #include "Core/Memory/Alloc.h"
-
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphEvaluator.h"
