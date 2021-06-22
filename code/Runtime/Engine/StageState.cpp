@@ -128,7 +128,14 @@ bool StageState::take(const Object* event)
 	if (auto reconfigureEvent = dynamic_type_cast< const ReconfigureEvent* >(event))
 	{
 		if (!reconfigureEvent->isFinished())
+		{
+			// Ensure no pending render contexts before reconfiguration in case any
+			// render resource is destroyed.
+			for (auto& frame : m_frames)
+				frame.renderContext->flush();
+
 			m_stage->preReconfigured();
+		}
 		else
 			m_stage->postReconfigured();
 	}
