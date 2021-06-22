@@ -1,9 +1,12 @@
+#include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Compact/BlockFile.h"
+#include "Database/Compact/BlockReadStream.h"
+#include "Database/Compact/BlockWriteStream.h"
 
 namespace traktor
 {
@@ -14,122 +17,8 @@ namespace traktor
 
 const uint32_t c_version = 3;
 const uint32_t c_maxBlockCount = 8192;
-
-class BlockReadStream : public StreamStream
-{
-	T_RTTI_CLASS;
-
-public:
-	BlockReadStream(BlockFile* blockFile, IStream* stream, int endOffset)
-	:	StreamStream(stream, endOffset)
-	,	m_blockFile(blockFile)
-	{
-	}
-
-	virtual ~BlockReadStream()
-	{
-		close();
-	}
-
-	virtual void close() override final
-	{
-		if (m_stream)
-		{
-			m_blockFile->returnReadStream(m_stream);
-			m_stream = nullptr;
-		}
-	}
-
-private:
-	Ref< BlockFile > m_blockFile;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockReadStream", BlockReadStream, StreamStream)
-
-class BlockWriteStream : public IStream
-{
-	T_RTTI_CLASS;
-
-public:
-	BlockWriteStream(BlockFile* blockFile, IStream* stream, BlockFile::Block& outBlock)
-	:	m_blockFile(blockFile)
-	,	m_stream(stream)
-	,	m_outBlock(outBlock)
-	{
-		m_outBlock.offset = m_stream->tell();
-		m_outBlock.size = 0;
-	}
-
-	virtual ~BlockWriteStream()
-	{
-		close();
-	}
-
-	virtual void close() override final
-	{
-		if (m_stream)
-		{
-			m_outBlock.size = m_stream->tell() - m_outBlock.offset;
-			m_blockFile->needFlushTOC();
-			m_stream = nullptr;
-		}
-	}
-
-	virtual bool canRead() const override final
-	{
-		return false;
-	}
-
-	virtual bool canWrite() const override final
-	{
-		return true;
-	}
-
-	virtual bool canSeek() const override final
-	{
-		return false;
-	}
-
-	virtual int64_t tell() const override final
-	{
-		T_ASSERT(m_stream);
-		return m_stream->tell() - m_outBlock.offset;
-	}
-
-	virtual int64_t available() const override final
-	{
-		return 0;
-	}
-
-	virtual int64_t seek(SeekOriginType origin, int64_t offset) override final
-	{
-		return 0;
-	}
-
-	virtual int64_t read(void* block, int64_t nbytes) override final
-	{
-		return 0;
-	}
-
-	virtual int64_t write(const void* block, int64_t nbytes) override final
-	{
-		T_ASSERT(m_stream);
-		return m_stream->write(block, nbytes);
-	}
-
-	virtual void flush() override final
-	{
-		T_ASSERT(m_stream);
-		m_stream->flush();
-	}
-
-private:
-	Ref< BlockFile > m_blockFile;
-	Ref< IStream > m_stream;
-	BlockFile::Block& m_outBlock;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockWriteStream", BlockWriteStream, IStream)
+const uint32_t c_headerSize = 3 * sizeof(uint32_t);
+const uint32_t c_dataOffset = c_headerSize + c_maxBlockCount * (sizeof(uint32_t) + sizeof(BlockFile::Block));
 
 		}
 
@@ -188,9 +77,22 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 		reader >> block.id;
 		reader >> block.offset;
 		reader >> block.size;
+		if (block.offset < c_dataOffset)
+			return false;
 	}
 
-	m_stream->seek(IStream::SeekSet, 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)));
+#if defined(_DEBUG)
+	int64_t last = 0;
+	int64_t size = 0;
+	for (const auto& block : m_blocks)
+	{
+		last = std::max(last, block.offset + block.size);
+		size += block.size;
+	}
+	log::info << last << L" allocated, " << size << L" used (" << (100 * (last - size)) / last << L"% waste) in " << m_blocks.size() << L" blocks." << Endl;
+#endif
+
+	m_stream->seek(IStream::SeekSet, c_dataOffset);
 
 	m_fileName = fileName;
 	m_flushAlways = flushAlways;
@@ -237,9 +139,67 @@ void BlockFile::freeBlockId(uint32_t blockId)
 		if (it->id == blockId)
 		{
 			m_blocks.erase(it);
-			break;
+			return;
 		}
 	}
+	log::warning << L"Unable to free block " << blockId << L", no such block allocated." << Endl;
+}
+
+int64_t BlockFile::allocateRegion(int64_t size)
+{
+	// Check for large enough gaps between blocks.
+	if (m_blocks.size() >= 2)
+	{
+		// Need to sort blocks by offset so we can easily search for gaps.
+		AlignedVector< Block > blocks = m_blocks;
+		std::sort(blocks.begin(), blocks.end(), [](const Block& lh, const Block& rh) {
+			return lh.offset < rh.offset;
+		});
+
+		// Linearly search for block which has enough gap but smallest waste.
+		int64_t minWaste = std::numeric_limits< int64_t >::max();
+		const Block* minBlock = nullptr;
+
+		for (int32_t i = 0; i < (int32_t)blocks.size() - 1; ++i)
+		{
+			if (blocks[i].offset < c_dataOffset)
+				continue;
+
+			int64_t ctail = blocks[i].offset + blocks[i].size;
+			int64_t nhead = blocks[i + 1].offset;
+			int64_t gap = nhead - ctail;
+			if (gap >= size)
+			{
+				int64_t waste = gap - size;
+				if (waste < minWaste)
+				{
+					minBlock = &blocks[i];
+					minWaste = waste;
+				}
+			}
+		}
+
+		if (minBlock != nullptr)
+		{
+			int64_t ctail = minBlock->offset + minBlock->size;
+			return ctail;
+		}
+
+		// No gaps large enough found, append after last block.
+		const auto& last = blocks.back();
+		if (last.offset >= c_dataOffset)
+			return last.offset + last.size;
+	}
+	else if (m_blocks.size() == 1)
+	{
+		// No gaps possible, append after last block.
+		const auto& last = m_blocks.back();
+		if (last.offset >= c_dataOffset)
+			return last.offset + last.size;
+	}
+
+	// No blocks, append after last block.
+	return c_dataOffset;
 }
 
 Ref< IStream > BlockFile::readBlock(uint32_t blockId)
@@ -280,9 +240,6 @@ Ref< IStream > BlockFile::writeBlock(uint32_t blockId)
 	if (it == m_blocks.end())
 		return nullptr;
 
-	if (m_stream->seek(IStream::SeekEnd, 0) < 0)
-		return nullptr;
-
 	return new BlockWriteStream(this, m_stream, *it);
 }
 
@@ -313,10 +270,10 @@ void BlockFile::flushTOC()
 		writer << block.size;
 	}
 
-	int64_t padSize = 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)) - m_stream->tell();
+	int64_t padSize = c_dataOffset - m_stream->tell();
 	for (int64_t i = 0; i < padSize; ++i)
 	{
-		uint8_t padDummy = 0x00;
+		const uint8_t padDummy = 0x00;
 		m_stream->write(&padDummy, 1);
 	}
 

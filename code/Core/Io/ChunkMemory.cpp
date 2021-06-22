@@ -13,11 +13,6 @@ const int64_t c_chunkSize = 65536;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ChunkMemory", ChunkMemory, Object)
 
-ChunkMemory::ChunkMemory()
-:   m_size(0)
-{
-}
-
 ChunkMemory::~ChunkMemory()
 {
 	for (auto chunk : m_chunks)

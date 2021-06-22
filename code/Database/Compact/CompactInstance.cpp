@@ -88,18 +88,18 @@ bool CompactInstance::remove()
 {
 	T_ASSERT(m_instanceEntry);
 
-	Ref< BlockFile > blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context->getBlockFile();
 	T_ASSERT(blockFile);
 
-	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
-	for (std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.begin(); i != dataBlocks.end(); ++i)
+	const auto& dataBlocks = m_instanceEntry->getDataBlocks();
+	for (auto it : dataBlocks)
 	{
-		blockFile->freeBlockId(i->second->getBlockId());
-		if (!m_context->getRegistry()->removeBlock(i->second))
+		blockFile->freeBlockId(it.second->getBlockId());
+		if (!m_context->getRegistry()->removeBlock(it.second))
 			return false;
 	}
 
-	Ref< CompactBlockEntry > objectBlock = m_instanceEntry->getObjectBlock();
+	CompactBlockEntry* objectBlock = m_instanceEntry->getObjectBlock();
 	if (objectBlock)
 	{
 		blockFile->freeBlockId(objectBlock->getBlockId());
@@ -110,7 +110,7 @@ bool CompactInstance::remove()
 	if (!m_context->getRegistry()->removeInstance(m_instanceEntry))
 		return false;
 
-	m_instanceEntry = 0;
+	m_instanceEntry = nullptr;
 	return true;
 }
 
@@ -120,14 +120,14 @@ Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType) c
 
 	Ref< CompactBlockEntry > objectBlockEntry = m_instanceEntry->getObjectBlock();
 	if (!objectBlockEntry)
-		return 0;
+		return nullptr;
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
 	T_ASSERT(blockFile);
 
 	Ref< IStream > objectStream = blockFile->readBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
-		return 0;
+		return nullptr;
 
 	outSerializerType = &type_of< BinarySerializer >();
 	return objectStream;
@@ -153,7 +153,7 @@ Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName,
 
 	Ref< IStream > objectStream = blockFile->writeBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
-		return 0;
+		return nullptr;
 
 	m_instanceEntry->setPrimaryTypeName(primaryTypeName);
 
@@ -165,9 +165,9 @@ uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames
 {
 	T_ASSERT(m_instanceEntry);
 
-	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
-	for (std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.begin(); i != dataBlocks.end(); ++i)
-		outDataNames.push_back(i->first);
+	const auto& dataBlocks = m_instanceEntry->getDataBlocks();
+	for (auto it : dataBlocks)
+		outDataNames.push_back(it.first);
 
 	return uint32_t(outDataNames.size());
 }
@@ -179,7 +179,17 @@ bool CompactInstance::getDataLastWriteTime(const std::wstring& dataName, DateTim
 
 bool CompactInstance::removeAllData()
 {
-	std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
+	BlockFile* blockFile = m_context->getBlockFile();
+	T_ASSERT(blockFile);
+
+	auto& dataBlocks = m_instanceEntry->getDataBlocks();
+	for (auto it : dataBlocks)
+	{
+		blockFile->freeBlockId(it.second->getBlockId());
+		if (!m_context->getRegistry()->removeBlock(it.second))
+			return false;
+	}
+
 	dataBlocks.clear();
 	return true;
 }
@@ -188,26 +198,26 @@ Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 {
 	T_ASSERT(m_instanceEntry);
 
-	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
+	const auto& dataBlocks = m_instanceEntry->getDataBlocks();
 
-	std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.find(dataName);
-	if (i == dataBlocks.end())
-		return 0;
+	auto it = dataBlocks.find(dataName);
+	if (it == dataBlocks.end())
+		return nullptr;
 
-	Ref< BlockFile > blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context->getBlockFile();
 	T_ASSERT(blockFile);
 
-	return blockFile->readBlock(i->second->getBlockId());
+	return blockFile->readBlock(it->second->getBlockId());
 }
 
 Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT(m_instanceEntry);
 
-	Ref< BlockFile > blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context->getBlockFile();
 	T_ASSERT(blockFile);
 
-	std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
+	auto& dataBlocks = m_instanceEntry->getDataBlocks();
 	if (!dataBlocks[dataName])
 	{
 		dataBlocks[dataName] = m_context->getRegistry()->createBlockEntry();
@@ -216,7 +226,7 @@ Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 
 	Ref< IStream > dataStream = blockFile->writeBlock(dataBlocks[dataName]->getBlockId());
 	if (!dataStream)
-		return 0;
+		return nullptr;
 
 	return dataStream;
 }

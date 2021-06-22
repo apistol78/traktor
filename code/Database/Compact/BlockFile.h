@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
@@ -42,6 +43,8 @@ public:
 	uint32_t allocBlockId();
 
 	void freeBlockId(uint32_t blockId);
+
+	int64_t allocateRegion(int64_t size);
 
 	Ref< IStream > readBlock(uint32_t blockId);
 
