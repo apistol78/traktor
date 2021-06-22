@@ -201,6 +201,7 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
 		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -f|-full        Perform full migration regardless if target instance is up-to-date." << Endl;
 		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
 		return 0;
 	}
@@ -296,12 +297,15 @@ int main(int argc, const char** argv)
 
 	// Get date when output database was last written.
 	DateTime modifiedSince;
-	std::wstring destinationFileName = db::ConnectionString(destinationCs).get(L"fileName");
-	if (!destinationFileName.empty())
+	if (!cmdLine.hasOption('f', L"full"))
 	{
-		Ref< File > destinationFile = FileSystem::getInstance().get(destinationFileName);
-		if (destinationFile)
-			modifiedSince = destinationFile->getLastWriteTime();
+		std::wstring destinationFileName = db::ConnectionString(destinationCs).get(L"fileName");
+		if (!destinationFileName.empty())
+		{
+			Ref< File > destinationFile = FileSystem::getInstance().get(destinationFileName);
+			if (destinationFile)
+				modifiedSince = destinationFile->getLastWriteTime();
+		}
 	}
 
 	Ref< db::Database > destinationDb = new db::Database();

@@ -29,8 +29,6 @@ public:
 		size_t avail;
 	};
 
-	ChunkMemory();
-
 	virtual ~ChunkMemory();
 
 	/*! Get byte size of chunked memory. */
@@ -44,7 +42,7 @@ public:
 
 private:
 	AlignedVector< uint8_t* > m_chunks;
-	int64_t m_size;
+	int64_t m_size = 0;
 };
 
 }
