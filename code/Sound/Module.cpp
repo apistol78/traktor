@@ -43,6 +43,21 @@
 #	include "Sound/Resound/SimultaneousGrainData.h"
 #	include "Sound/Resound/TriggerGrainData.h"
 
+// Filters
+#	include "Sound/Filters/CombFilter.h"
+#	include "Sound/Filters/DitherFilter.h"
+#	include "Sound/Filters/EchoFilter.h"
+#	include "Sound/Filters/EqualizerFilter.h"
+#	include "Sound/Filters/FFTFilter.h"
+#	include "Sound/Filters/GroupFilter.h"
+#	include "Sound/Filters/LowPassFilter.h"
+#	include "Sound/Filters/NormalizationFilter.h"
+#	include "Sound/Filters/ReverbFilter.h"
+#	include "Sound/Filters/RingModulationFilter.h"
+#	include "Sound/Filters/SurroundEnvironment.h"
+#	include "Sound/Filters/SurroundFilter.h"
+#	include "Sound/Filters/TimeStretchFilter.h"
+
 namespace traktor
 {
 	namespace sound
@@ -91,6 +106,21 @@ extern "C" void __module__Traktor_Sound()
 	T_FORCE_LINK_REF(SequenceGrainData);
 	T_FORCE_LINK_REF(SimultaneousGrainData);
 	T_FORCE_LINK_REF(TriggerGrainData);
+
+	// Filters
+	T_FORCE_LINK_REF(CombFilter);
+	T_FORCE_LINK_REF(DitherFilter);
+	T_FORCE_LINK_REF(EchoFilter);
+	T_FORCE_LINK_REF(EqualizerFilter);
+	T_FORCE_LINK_REF(FFTFilter);
+	T_FORCE_LINK_REF(GroupFilter);
+	T_FORCE_LINK_REF(LowPassFilter);
+	T_FORCE_LINK_REF(NormalizationFilter);
+	T_FORCE_LINK_REF(ReverbFilter);
+	T_FORCE_LINK_REF(RingModulationFilter);
+	T_FORCE_LINK_REF(SurroundEnvironment);
+	T_FORCE_LINK_REF(SurroundFilter);
+	T_FORCE_LINK_REF(TimeStretchFilter);
 }
 
 	}
