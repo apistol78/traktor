@@ -476,20 +476,13 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classReplicatorConfiguration = new AutoRuntimeClass< ReplicatorConfiguration >();
 	classReplicatorConfiguration->addConstructor();
-	classReplicatorConfiguration->addMethod("setTimeVarianceThreshold", &ReplicatorConfiguration::setTimeVarianceThreshold);
-	classReplicatorConfiguration->addMethod("getTimeVarianceThreshold", &ReplicatorConfiguration::getTimeVarianceThreshold);
-	classReplicatorConfiguration->addMethod("setNearDistance", &ReplicatorConfiguration::setNearDistance);
-	classReplicatorConfiguration->addMethod("getNearDistance", &ReplicatorConfiguration::getNearDistance);
-	classReplicatorConfiguration->addMethod("setFarDistance", &ReplicatorConfiguration::setFarDistance);
-	classReplicatorConfiguration->addMethod("getFarDistance", &ReplicatorConfiguration::getFarDistance);
-	classReplicatorConfiguration->addMethod("setFurthestDistance", &ReplicatorConfiguration::setFurthestDistance);
-	classReplicatorConfiguration->addMethod("getFurthestDistance", &ReplicatorConfiguration::getFurthestDistance);
-	classReplicatorConfiguration->addMethod("setTimeUntilTxStateNear", &ReplicatorConfiguration::setTimeUntilTxStateNear);
-	classReplicatorConfiguration->addMethod("getTimeUntilTxStateNear", &ReplicatorConfiguration::getTimeUntilTxStateNear);
-	classReplicatorConfiguration->addMethod("setTimeUntilTxStateFar", &ReplicatorConfiguration::setTimeUntilTxStateFar);
-	classReplicatorConfiguration->addMethod("getTimeUntilTxStateFar", &ReplicatorConfiguration::getTimeUntilTxStateFar);
-	classReplicatorConfiguration->addMethod("setTimeUntilTxPing", &ReplicatorConfiguration::setTimeUntilTxPing);
-	classReplicatorConfiguration->addMethod("getTimeUntilTxPing", &ReplicatorConfiguration::getTimeUntilTxPing);
+	classReplicatorConfiguration->addProperty("timeVarianceThreshold", &ReplicatorConfiguration::setTimeVarianceThreshold, &ReplicatorConfiguration::getTimeVarianceThreshold);
+	classReplicatorConfiguration->addProperty("nearDistance", &ReplicatorConfiguration::setNearDistance, &ReplicatorConfiguration::getNearDistance);
+	classReplicatorConfiguration->addProperty("farDistance", &ReplicatorConfiguration::setFarDistance, &ReplicatorConfiguration::getFarDistance);
+	classReplicatorConfiguration->addProperty("furthestDistance", &ReplicatorConfiguration::setFurthestDistance, &ReplicatorConfiguration::getFurthestDistance);
+	classReplicatorConfiguration->addProperty("timeUntilTxStateNear", &ReplicatorConfiguration::setTimeUntilTxStateNear, &ReplicatorConfiguration::getTimeUntilTxStateNear);
+	classReplicatorConfiguration->addProperty("timeUntilTxStateFar", &ReplicatorConfiguration::setTimeUntilTxStateFar, &ReplicatorConfiguration::getTimeUntilTxStateFar);
+	classReplicatorConfiguration->addProperty("timeUntilTxPing", &ReplicatorConfiguration::setTimeUntilTxPing, &ReplicatorConfiguration::getTimeUntilTxPing);
 	registrar->registerClass(classReplicatorConfiguration);
 
 	auto classReplicatorListener = new AutoRuntimeClass< ReplicatorListener >();
