@@ -135,7 +135,6 @@ GlslType glsl_from_data_type(DataType type)
 		GtInteger3,	// DtInteger3
 		GtInteger4	// DtInteger4
 	};
-	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -176,7 +175,6 @@ std::wstring glsl_storage_type(DataType type)
 		L"ivec3",
 		L"ivec4"
 	};
-	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 

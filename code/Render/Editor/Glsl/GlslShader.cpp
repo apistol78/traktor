@@ -305,6 +305,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 						case GtTextureCube:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCube " << sampler->getName() << L";" << Endl;
 							break;
+
+						default:
+							break;
 						}
 					}
 					else
@@ -321,6 +324,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 
 						case GtTextureCube:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCubeShadow " << sampler->getName() << L";" << Endl;
+							break;
+
+						default:
 							break;
 						}				
 					}

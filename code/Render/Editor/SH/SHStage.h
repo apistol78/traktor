@@ -20,7 +20,7 @@ class T_DLLCLASS SHStage : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 };
 
 	}
