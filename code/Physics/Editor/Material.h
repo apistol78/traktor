@@ -28,7 +28,7 @@ public:
 
 	float getRestitution() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_friction = 0.75f;

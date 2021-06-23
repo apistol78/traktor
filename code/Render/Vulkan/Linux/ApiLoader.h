@@ -4,11 +4,6 @@
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
-namespace traktor
-{
-	namespace render
-	{
-
 extern PFN_vkCreateInstance vkCreateInstance;
 extern PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
 extern PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
@@ -19,6 +14,7 @@ extern PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperti
 extern PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties;
 extern PFN_vkCreateDevice vkCreateDevice;
 extern PFN_vkGetDeviceQueue vkGetDeviceQueue;
+extern PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
 extern PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 extern PFN_vkCreateCommandPool vkCreateCommandPool;
 extern PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
@@ -56,6 +52,7 @@ extern PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
 extern PFN_vkCmdBindPipeline vkCmdBindPipeline;
 extern PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
 extern PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
+extern PFN_vkCreateComputePipelines vkCreateComputePipelines;
 extern PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
 extern PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
 extern PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
@@ -119,6 +116,11 @@ extern PFN_vkCmdBeginDebugUtilsLabelEXT vkCmdBeginDebugUtilsLabelEXT;
 extern PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT;
 extern PFN_vkGetBufferMemoryRequirements2KHR vkGetBufferMemoryRequirements2KHR;
 extern PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
+
+namespace traktor
+{
+	namespace render
+	{
 
 bool initializeVulkanApi();
 

@@ -1,4 +1,4 @@
-#include <string>
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/ISoundBuffer.h"
