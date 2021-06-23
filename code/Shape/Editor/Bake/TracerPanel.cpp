@@ -38,6 +38,8 @@ bool TracerPanel::create(ui::Widget* parent)
 		auto settings = m_editor->checkoutGlobalSettings();
 		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", m_checkEnable->isChecked());
 		m_editor->commitGlobalSettings();
+		m_progressBar->setEnable(m_checkEnable->isChecked());
+		m_progressBar->update();
 	});
 
 	Ref< ui::Container > container = new ui::Container();
@@ -46,6 +48,7 @@ bool TracerPanel::create(ui::Widget* parent)
 	m_progressBar = new ui::ProgressBar();
 	m_progressBar->create(container, ui::WsDoubleBuffer, 0, 100);
 	m_progressBar->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
+	m_progressBar->setEnable(m_checkEnable->isChecked());
 
 	m_buttonAbort = new ui::Button();
 	m_buttonAbort->create(container, i18n::Text(L"SHAPE_EDITOR_TRACER_ABORT"));
@@ -80,12 +83,9 @@ bool TracerPanel::create(ui::Widget* parent)
 	});
 
 	startTimer(200);
-	return true;
-}
+	update();
 
-void TracerPanel::destroy()
-{
-	ui::Container::destroy();
+	return true;
 }
 
 	}
