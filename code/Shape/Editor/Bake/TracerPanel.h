@@ -28,11 +28,9 @@ class TracerPanel : public ui::Container
 	T_RTTI_CLASS;
 
 public:
-	TracerPanel(editor::IEditor* editor);
+	explicit TracerPanel(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
-
-	virtual void destroy() override final;
 
 private:
 	editor::IEditor* m_editor;
