@@ -257,6 +257,23 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.INodeShape</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>color-comment</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+				<item>
+					<first>color-info</first>
+					<second>57, 135, 214, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.ListBox</typeName>
 			<colors>
 				<item>
@@ -429,8 +446,16 @@
 					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
+					<first>background-color-disabled</first>
+					<second>55, 55, 55, 255</second>
+				</item>
+				<item>
 					<first>progress-color</first>
 					<second>0, 153, 0, 255</second>
+				</item>
+				<item>
+					<first>progress-color-disabled</first>
+					<second>40, 80, 30, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -729,23 +754,6 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.INodeShape</typeName>
-			<colors>
-				<item>
-					<first>color</first>
-					<second>70, 70, 74, 255</second>
-				</item>
-				<item>
-					<first>color-comment</first>
-					<second>120, 120, 120, 255</second>
-				</item>
-				<item>
-					<first>color-info</first>
-					<second>57, 135, 214, 255</second>
 				</item>
 			</colors>
 		</item>

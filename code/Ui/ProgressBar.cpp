@@ -69,7 +69,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	const Rect rc = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(rc);
 
 	int32_t range = m_maxProgress - m_minProgress;
@@ -80,7 +80,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		{
 			Rect rc2 = rc; rc2.right = rc2.left + x;
 
-			canvas.setBackground(ss->getColor(this, L"progress-color"));
+			canvas.setBackground(ss->getColor(this, isEnable() ? L"progress-color" : L"progress-color-disabled"));
 			canvas.fillRect(rc2);
 		}
 	}
@@ -94,7 +94,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		rc2.left = x1;
 		rc2.right = x2;
 
-		canvas.setBackground(ss->getColor(this, L"progress-color"));
+		canvas.setBackground(ss->getColor(this, isEnable() ? L"progress-color" : L"progress-color-disabled"));
 		canvas.fillRect(rc2);
 
 		m_loop += std::max< int32_t >(rc.getWidth() / 16, 1);
@@ -106,7 +106,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	std::wstring text = getText();
 	if (!text.empty())
 	{
-		canvas.setForeground(ss->getColor(this, L"color"));
+		canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(rc, text, AnCenter, AnCenter);
 	}
 
