@@ -9,10 +9,14 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Editor/MeshAssetRasterizer.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Model.h"
@@ -22,10 +26,12 @@
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
+#include "Ui/Image.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
@@ -146,7 +152,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticDummy->create(containerFile, L"");
 
 	Ref< ui::Container > containerOptions = new ui::Container();
-	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0, 0));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
@@ -187,6 +193,17 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_editScaleFactor = new ui::Edit();
 	m_editScaleFactor->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+
+	Ref< ui::Static > staticPreviewAngle = new ui::Static();
+	staticPreviewAngle->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_ANGLE"));
+
+	m_sliderPreviewAngle = new ui::Slider();
+	m_sliderPreviewAngle->create(containerRight);
+	m_sliderPreviewAngle->setRange(1, 100);
+	m_sliderPreviewAngle->addEventHandler< ui::ContentChangeEvent >(this, &MeshAssetEditor::eventPreviewAngleChange);
+
+	m_imagePreview = new ui::Image();
+	m_imagePreview->create(containerOptions, nullptr, ui::WsDoubleBuffer);
 
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
@@ -233,6 +250,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
+	updatePreview();
 	updateFile();
 	updateMaterialList();
 
@@ -254,6 +272,7 @@ void MeshAssetEditor::apply()
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
 	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
 	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
+	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
 	std::map< std::wstring, Guid > materialTemplates;
 	std::map< std::wstring, Guid > materialShaders;
@@ -341,6 +360,38 @@ void MeshAssetEditor::updateFile()
 	m_editLodCullDistance->setText(toString(m_asset->getLodCullDistance()));
 
 	m_editScaleFactor->setText(toString(m_asset->getScaleFactor()));
+
+	m_sliderPreviewAngle->setValue((int32_t)(m_asset->getPreviewAngle() * 100.0f / TWO_PI));
+}
+
+void MeshAssetEditor::updatePreview()
+{
+	if (m_model == nullptr)
+	{
+		m_imagePreview->setImage(nullptr);
+		return;
+	}
+
+	Ref< drawing::Image > meshThumb = new drawing::Image(
+		drawing::PixelFormat::getR8G8B8A8(),
+		ui::dpi96(256),
+		ui::dpi96(256)
+	);
+	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));	
+
+	if (MeshAssetRasterizer().generate(m_editor, m_asset, meshThumb))
+	{
+		drawing::ScaleFilter scaleFilter(
+			ui::dpi96(128),
+			ui::dpi96(128),
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		meshThumb->apply(&scaleFilter);
+		m_imagePreview->setImage(new ui::Bitmap(meshThumb));
+	}
+	else
+		m_imagePreview->setImage(nullptr);
 }
 
 void MeshAssetEditor::updateMaterialList()
@@ -691,6 +742,12 @@ void MeshAssetEditor::eventLodStepsChange(ui::ContentChangeEvent* event)
 	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_sliderLodSteps->getValue()));
 }
 
+void MeshAssetEditor::eventPreviewAngleChange(ui::ContentChangeEvent* event)
+{
+	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
+	updatePreview();
+}
+
 void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
@@ -711,6 +768,7 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 		m_asset->setFileName(path);
 
 		updateModel();
+		updatePreview();
 		updateFile();
 		updateMaterialList();
 	}

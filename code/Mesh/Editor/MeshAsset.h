@@ -39,8 +39,6 @@ public:
 		MtStream = 8
 	};
 
-	MeshAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	/*! Set import filter. */
@@ -121,20 +119,27 @@ public:
 	/*! Get distance to when mesh should no longer be rendererd. */
 	float getLodCullDistance() const { return m_lodCullDistance; }
 
+	/*! */
+	void setPreviewAngle(float previewAngle) { m_previewAngle = previewAngle; }
+
+	/*! */
+	float getPreviewAngle() const { return m_previewAngle; }
+
 private:
 	std::wstring m_importFilter;
-	MeshType m_meshType;
+	MeshType m_meshType = MtStatic;
 	std::map< std::wstring, Guid > m_materialTemplates;
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
 	Guid m_textureSet;
-	float m_scaleFactor;
-	Vector4 m_offset;
-	bool m_renormalize;
-	bool m_center;
-	int32_t m_lodSteps;
-	float m_lodMaxDistance;
-	float m_lodCullDistance;
+	float m_scaleFactor = 1.0f;
+	Vector4 m_offset = Vector4::zero();
+	bool m_renormalize = false;
+	bool m_center = false;
+	int32_t m_lodSteps = 8;
+	float m_lodMaxDistance = 100.0f;
+	float m_lodCullDistance = 200.0f;
+	float m_previewAngle = 0.0f;
 };
 
 	}

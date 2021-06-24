@@ -11,19 +11,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 19, MeshAsset, editor::Asset)
-
-MeshAsset::MeshAsset()
-:	m_meshType(MtStatic)
-,	m_scaleFactor(1.0f)
-,	m_offset(Vector4::zero())
-,	m_renormalize(false)
-,	m_center(false)
-,	m_lodSteps(8)
-,	m_lodMaxDistance(100.0f)
-,	m_lodCullDistance(200.0f)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 20, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -108,6 +96,9 @@ void MeshAsset::serialize(ISerializer& s)
 		float autoDetailLevel = 0.0f;
 		s >> Member< float >(L"autoDetailLevel", autoDetailLevel, AttributeRange(0.0f, 1.0f));
 	}
+
+	if (s.getVersion() >= 20)
+		s >> Member< float >(L"previewAngle", m_previewAngle);
 }
 
 	}
