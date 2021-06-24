@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Editor/IEditor.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -17,6 +18,17 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+
+int32_t wrap(int32_t v, int32_t l)
+{
+	int32_t c = v % l;
+	return (c < 0) ? c + l : c;
+}
+
+		}
+
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetRasterizer", MeshAssetRasterizer, Object)
 
@@ -83,12 +95,12 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 				if (file)
 				{
 					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-					//if (image && !textureAsset->m_output.m_linearGamma)
-					//{
-					//	// Convert to linear color space.
-					//	drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-					//	image->apply(&gammaFilter);							
-					//}
+					if (image && textureAsset->m_output.m_linearGamma)
+					{
+						// Convert to gamma color space.
+						drawing::GammaFilter gammaFilter(2.2f);
+						image->apply(&gammaFilter);							
+					}
 					images[filePath] = image;
 				}
 			}
@@ -128,6 +140,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 			continue;
 
 		Vector4 cp[3];
+		Vector4 nm[3];
 		Vector2 sp[3];
 		Vector2 uv[3];
 
@@ -135,10 +148,13 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		{
 			const model::Vertex& vertex = vertices[polygonVertices[i]];
 			const Vector4& position = positions[vertex.getPosition()];
+			const Vector4& normal = normals[vertex.getNormal()];
 
 			Vector4 vp = modelView * position;
 			cp[i] = projection * vp;
 			cp[i] = cp[i] / cp[i].w();
+
+			nm[i] = (modelView * normal).normalized();
 
 			sp[i] = Vector2(
 				cp[i].x() * hw + hw,
@@ -167,12 +183,22 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 				drawing::Image* texture = polygonMaterial.getDiffuseMap().image;
 				if (texture != nullptr)
 				{
+					const int32_t tw = texture->getWidth();
+					const int32_t th = texture->getHeight();
+
 					Vector2 tc = uv[0] * alpha + uv[1] * beta + uv[2] * gamma;
-					tc *= Vector2(texture->getWidth(), texture->getHeight());
-					texture->getPixel((int32_t)tc.x, (int32_t)tc.y, color);
+
+					int32_t tu = wrap((int32_t)(tc.x * tw), tw);
+					int32_t tv = wrap((int32_t)(tc.y * th), th);
+
+					tc *= Vector2(tw, th);
+					texture->getPixel(tu, tv, color);
 				}
 
-				outImage->setPixel(x, y, color.rgb1());
+				Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
+				Scalar d = -n.z();
+
+				outImage->setPixelUnsafe(x, y, (color * d).rgb1());
 				zbuffer[offset] = z;
 			}
 		});
