@@ -237,5 +237,9 @@
 			<first>MESHENTITY_WIZARDTOOL_ERROR_NOT_MESH_ASSET_MESSAGE</first>
 			<second>Select instance must be a mesh asset.</second>
 		</item>
+		<item>
+			<first>MESHASSET_EDITOR_PREVIEW_ANGLE</first>
+			<second>Preview angle</second>
+		</item>
 	</map>
 </object>

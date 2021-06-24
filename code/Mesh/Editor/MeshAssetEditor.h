@@ -27,6 +27,7 @@ class Container;
 class CheckBox;
 class DropDown;
 class Edit;
+class Image;
 class GridView;
 class Slider;
 class Static;
@@ -83,12 +84,16 @@ private:
 	Ref< ui::Edit > m_editLodMaxDistance;
 	Ref< ui::Edit > m_editLodCullDistance;
 	Ref< ui::Edit > m_editScaleFactor;
+	Ref< ui::Slider > m_sliderPreviewAngle;
+	Ref< ui::Image > m_imagePreview;
 	Ref< ui::GridView > m_materialShaderList;
 	Ref< ui::GridView > m_materialTextureList;
 
 	void updateModel();
 
 	void updateFile();
+
+	void updatePreview();
 
 	void updateMaterialList();
 
@@ -111,6 +116,8 @@ private:
 	void eventMeshTypeChange(ui::SelectionChangeEvent* event);
 
 	void eventLodStepsChange(ui::ContentChangeEvent* event);
+
+	void eventPreviewAngleChange(ui::ContentChangeEvent* event);
 
 	void eventBrowseClick(ui::ButtonClickEvent* event);
 
