@@ -10,23 +10,6 @@ namespace traktor
 		namespace
 		{
 
-struct ProjectionRaster
-{
-	uint8_t* face;
-
-	ProjectionRaster(uint8_t* face_)
-	:	face(face_)
-	{
-	}
-
-	void operator () (int x, int y, float alpha, float beta, float gamma)
-	{
-		if (x > 63 || x < 0 || y < 0 || y > 63)
-			return;
-		face[x + y * 64] = 1;
-	}
-};
-
 struct SortCovers
 {
 	bool operator () (const std::pair< uint32_t, uint32_t >& c1, const std::pair< uint32_t, uint32_t >& c2)
@@ -90,9 +73,16 @@ bool SortProjectedArea::apply(Model& model) const
 					64.0f * (Vector2(pv[1].x(), pv[1].y()) + o) / (2.0f * o),
 					64.0f * (Vector2(pv[2].x(), pv[2].y()) + o) / (2.0f * o)
 				};
-				ProjectionRaster raster(face[0]);
-				triangle(v[0], v[1], v[2], raster);
-				triangle(v[2], v[1], v[0], raster);
+				triangle(v[0], v[1], v[2], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[0][x + y * 64] = 1;					
+				});
+				triangle(v[2], v[1], v[0], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[0][x + y * 64] = 1;					
+				});	
 			}
 
 			// x/z plane
@@ -104,9 +94,16 @@ bool SortProjectedArea::apply(Model& model) const
 					64.0f * (Vector2(pv[1].x(), pv[1].z()) + o) / (2.0f * o),
 					64.0f * (Vector2(pv[2].x(), pv[2].z()) + o) / (2.0f * o)
 				};
-				ProjectionRaster raster(face[1]);
-				triangle(v[0], v[1], v[2], raster);
-				triangle(v[2], v[1], v[0], raster);
+				triangle(v[0], v[1], v[2], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[1][x + y * 64] = 1;					
+				});
+				triangle(v[2], v[1], v[0], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[1][x + y * 64] = 1;					
+				});				
 			}
 
 			// y/z plane
@@ -118,9 +115,16 @@ bool SortProjectedArea::apply(Model& model) const
 					64.0f * (Vector2(pv[1].y(), pv[1].z()) + o) / (2.0f * o),
 					64.0f * (Vector2(pv[2].y(), pv[2].z()) + o) / (2.0f * o)
 				};
-				ProjectionRaster raster(face[2]);
-				triangle(v[0], v[1], v[2], raster);
-				triangle(v[2], v[1], v[0], raster);
+				triangle(v[0], v[1], v[2], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[2][x + y * 64] = 1;					
+				});
+				triangle(v[2], v[1], v[0], [&](int32_t x, int32_t y, float, float, float) {
+					if (x > 63 || x < 0 || y < 0 || y > 63)
+						return;
+					face[2][x + y * 64] = 1;					
+				});	
 			}
 		}
 
@@ -144,13 +148,13 @@ bool SortProjectedArea::apply(Model& model) const
 		materials[i] = model.getMaterial(covers[i].first);
 
 	// Update polygons with new material IDs.
-	for (AlignedVector< Polygon >::iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (auto& polygon : polygons)
 	{
 		for (uint32_t j = 0; j < covers.size(); ++j)
 		{
-			if (covers[j].first == i->getMaterial())
+			if (covers[j].first == polygon.getMaterial())
 			{
-				i->setMaterial(j);
+				polygon.setMaterial(j);
 				break;
 			}
 		}

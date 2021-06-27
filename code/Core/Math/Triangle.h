@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Math/Vector2.h"
 
 namespace traktor
@@ -24,12 +25,11 @@ inline int _max(int a, int b, int c)
 
 		}
 
-template < typename Visitor >
-void triangle(
+inline void triangle(
 	const Vector2& v0,
 	const Vector2& v1,
 	const Vector2& v2,
-	Visitor& visitor
+	const std::function< void(int32_t, int32_t, float, float, float) >& visitor
 )
 {
 	// 28.4 fixed-point coordinates
