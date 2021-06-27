@@ -1,3 +1,4 @@
+#include <functional>
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Triangle.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -55,7 +56,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	{
 		Ref< const render::TextureSet > textureSet = editor->getSourceDatabase()->getObjectReadOnly< render::TextureSet >(textureSetId);
 		if (!textureSet)
-			return nullptr;
+			return false;
 
 		materialTextures = textureSet->get();
 	}
@@ -169,7 +170,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 
 		const auto& polygonMaterial = materials[polygon.getMaterial()];
 		
-		triangle(sp[0], sp[1], sp[2], [&](int x, int y, float alpha, float beta, float gamma) {
+		triangle(sp[0], sp[1], sp[2], [&](int32_t x, int32_t y, float alpha, float beta, float gamma) {
 			if (x < 0 || x >= outImage->getWidth() || y < 0 || y >= outImage->getHeight())
 				return;
 
