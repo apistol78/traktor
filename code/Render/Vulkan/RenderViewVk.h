@@ -8,7 +8,7 @@
 #include "Render/Vulkan/Private/ApiHeader.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/Vulkan/Linux/Window.h"
 #endif
 
@@ -136,7 +136,7 @@ private:
 
 	Context* m_context = nullptr;
 	VkInstance m_instance = 0;
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface = 0;

@@ -34,7 +34,7 @@
 
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/Vulkan/Linux/Window.h"
 #elif defined(__ANDROID__)
 #	include "Core/System/Android/DelegateInstance.h"
@@ -52,7 +52,7 @@ namespace traktor
 const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #elif defined(__ANDROID__)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_android_surface" };
@@ -108,7 +108,7 @@ bool isDeviceSuitable(VkPhysicalDevice device)
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
 
 RenderSystemVk::RenderSystemVk()
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 :	m_display(nullptr)
 ,	m_instance(0)
 #else
@@ -131,7 +131,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 {
 	VkResult result;
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 	if ((m_display = XOpenDisplay(0)) == nullptr)
 	{
 		log::error << L"Unable to create Vulkan renderer; Failed to open X display" << Endl;
@@ -459,7 +459,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	int screen = DefaultScreen(m_display);
 	DisplayMode dm;
 	dm.width = DisplayWidth(m_display, screen);

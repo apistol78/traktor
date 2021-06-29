@@ -21,7 +21,7 @@ class Context;
 class PipelineLayoutCache;
 class ShaderModuleCache;
 
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 class Window;
 #endif
 
@@ -78,10 +78,10 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const override final;
 
 private:
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 	Ref< Window > m_window;
 #endif
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 	void* m_display;
 #endif
 #if defined(__ANDROID__)
