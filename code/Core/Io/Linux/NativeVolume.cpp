@@ -33,7 +33,7 @@ Ref< File > NativeVolume::get(const Path& path)
 
 	std::wstring systemPath = getSystemPath(path);
 	if (stat(wstombs(systemPath).c_str(), &st) != 0)
-		return 0;
+		return nullptr;
 
 	DateTime adt(uint64_t(st.st_atime));
 	DateTime mdt(uint64_t(st.st_mtime));
@@ -114,11 +114,24 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 
 Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
+	const uint32_t mrw = (mode & (File::FmRead | File::FmWrite));
+
+	const char* m = nullptr;
+	if (mrw == File::FmRead)
+		m = "rb";
+	else if (mrw == File::FmWrite)
+		m = "wb";
+	else if (mrw == (File::FmRead | File::FmWrite))
+		m = "w+b";
+	
+	if (!m)
+		return nullptr;
+
 	FILE* fp = fopen(
 		wstombs(getSystemPath(filename)).c_str(),
-		((mode & File::FmRead) != 0) ? "rb" : "wb"
+		m
 	);
-	return bool(fp != 0) ? new NativeStream(fp, mode) : 0;
+	return bool(fp != 0) ? new NativeStream(fp, mode) : nullptr;
 }
 
 bool NativeVolume::exist(const Path& filename)
