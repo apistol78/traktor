@@ -494,6 +494,7 @@ local outputs =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
 			{ name = "Grain", column = 0, row = 23, width = 4, height = 6, base = 32 },
+			{ name = "Play", column = 1, row = 14, width = 1, height = 1 },
 		}
 	},	
 	{
@@ -541,8 +542,8 @@ local dpis =
 
 -- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
-	--local inkscape = "/usr/bin/inkscape"
-	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
+	local inkscape = "/snap/bin/inkscape"
+	-- local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
 	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. string.format("%d", dpi) .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)
@@ -557,17 +558,32 @@ function main(argv)
 		return 1
 	end
 
+	local theme = argv:get(0)
+	
+	local filter = nil
+	if argv.size >= 2 then filter = argv:get(1) end
+
 	for _, g in ipairs(outputs) do
 
 		local source = g.source
 		if source == nil then source = "Icons.svg" end
 
 		for _, o in ipairs(g.resources) do
-			local path = string.format(g.path, argv:get(0))
+			local path = string.format(g.path, theme)
 			local p = FileSystem.getInstance():getAbsolutePath(Path(path .. "/" .. o.name .. ".image"))
-			local f = FileSystem.getInstance():get(p)
 
-			if f == nil or not f.readOnly then
+			local include = true
+
+			-- Check if output isn't read-only.
+			local f = FileSystem.getInstance():get(p)
+			if f ~= nil then include = include and not f.readOnly end
+
+			-- Check filter.
+			if filter ~= nil then
+				include = (filter == g.name)
+			end
+
+			if include then
 				stdout:printLn("Converting " .. g.name .. "/" .. o.name .. "...")
 
 				local sizes = { 0, 0, 0, 0 }
@@ -621,12 +637,11 @@ function main(argv)
 
 				-- Remove all intermediate images.
 				for j, dpi in ipairs(dpis) do
-					--run:rm(dpi .. ".png")
+					run:rm(dpi .. ".png")
 					FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 				end
 
 				stdout:printLn("Done")
-
 			end
 		end
 	end
