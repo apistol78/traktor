@@ -1,4 +1,4 @@
-3rdp
-build
-bin/latest
-.vs
+/3rdp
+/build
+/bin/latest
+/.vs
