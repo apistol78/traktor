@@ -419,6 +419,10 @@
 			<second>$(Images.Path)/Images/SolutionBuilder/Solution.image</second>
 		</item>
 		<item>
+			<first>Sound.Play</first>
+			<second>$(Images.Path)/Images/Sound/Play.image</second>
+		</item>
+		<item>
 			<first>Sound.PlusMinus</first>
 			<second>$(Images.Path)/Images/Sound/PlusMinus.image</second>
 		</item>

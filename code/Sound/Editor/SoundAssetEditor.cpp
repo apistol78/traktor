@@ -21,8 +21,9 @@
 #include "Sound/Editor/SoundAssetEditor.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
 #include "Ui/PropertyList/FilePropertyItem.h"
@@ -54,7 +55,8 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addItem(new ui::ToolBarButton(L"Play", ui::Command(L"Sound.Play")));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Sound.Play"), 1);
+	m_toolBar->addItem(new ui::ToolBarButton(L"Play", 0, ui::Command(L"Sound.Play")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SoundAssetEditor::eventToolBarClick);
 
 	m_propertyList = new ui::AutoPropertyList();
