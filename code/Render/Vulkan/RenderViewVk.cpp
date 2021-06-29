@@ -72,7 +72,7 @@ RenderViewVk::~RenderViewVk()
 
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 	// Create render window.
 	m_window = new Window();
 	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
@@ -98,7 +98,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
 		return false;
 	}
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	VkXlibSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = m_window->getDisplay();
@@ -140,7 +140,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	width = (int32_t)(rc.right - rc.left);
 	height = (int32_t)(rc.bottom - rc.top);
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	VkXlibSurfaceCreateInfoKHR sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 	sci.dpy = (::Display*)desc.syswin.display;
@@ -225,7 +225,7 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 	}
 	else
 		return false;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	return m_window ? m_window->update(outEvent) : false;
 #else
 	return false;
@@ -291,7 +291,7 @@ void RenderViewVk::close()
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32) || defined(__LINUX__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
 	// Cannot reset embedded view.
 	if (!m_window)
 		return false;
@@ -466,7 +466,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 {
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
 #else
 	return SystemWindow();

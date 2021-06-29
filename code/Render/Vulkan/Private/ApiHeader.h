@@ -4,7 +4,7 @@
 #	define VK_USE_PLATFORM_WIN32_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	define VK_USE_PLATFORM_XLIB_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan/vulkan.h>

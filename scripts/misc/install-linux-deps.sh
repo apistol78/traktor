@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#    clang
-#    lld
-
 # install packages.
 PACKAGES="
     build-essential
@@ -19,6 +16,8 @@ PACKAGES="
     libglew-dev
     freeglut3-dev
     opencl-dev
+    clang
+    lld
 "
 
 apt-get install $PACKAGES
