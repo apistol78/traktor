@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -131,8 +132,10 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	std::wstring tmp = material.getProperty< std::wstring >(L"LightMapDirectionalId");
 	if (!tmp.empty())
 	{
-		T_FATAL_ASSERT(normalTexture.isNotNull());
-		lightMapDirectionalTexture = Guid(tmp);
+		if (normalTexture.isNotNull())
+			lightMapDirectionalTexture = Guid(tmp);
+		else
+			log::warning << L"Material \"" << material.getName() << L"\" has directional lightmap ID but no normal map associated." << Endl;
 	}
 
 	RefArray< render::External > externalNodes;
