@@ -30,6 +30,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	addEventHandler< PaintEvent >(this, &LogList::eventPaint);
 	addEventHandler< SizeEvent >(this, &LogList::eventSize);
+	addEventHandler< MouseButtonDownEvent >(this, &LogList::eventMouseButtonDown);
 	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
 
 	m_scrollBar = new ScrollBar();
@@ -104,6 +105,7 @@ void LogList::removeAll()
 	m_logCount[0] = m_logCount[1] = m_logCount[2] = 0;
 	m_threadIndices.clear();
 	m_nextThreadIndex = 0;
+	m_selectedEntry = -1;
 
 	updateScrollBar();
 	update();
@@ -113,6 +115,7 @@ void LogList::setFilter(uint8_t filter)
 {
 	m_filter = filter;
 	m_logFiltered.clear();
+	m_selectedEntry = -1;
 
 	for (const auto& log : m_logFull)
 	{
@@ -149,7 +152,7 @@ void LogList::updateScrollBar()
 {
 	Rect inner = getInnerRect();
 
-	int32_t logCount = int(m_logFiltered.size());
+	int32_t logCount = (int32_t)m_logFiltered.size();
 	int32_t pageCount = inner.getHeight() / m_itemHeight;
 
 	m_scrollBar->setRange(logCount);
@@ -185,6 +188,9 @@ void LogList::eventPaint(PaintEvent* event)
 		m_scrollBar->setPosition((int32_t)m_logFiltered.size());
 	}
 
+	const Color4ub selectedColor = ss->getColor(this, L"color-selected");
+	const Color4ub selectedBgColor = ss->getColor(this, L"background-color-selected");
+
 	const Color4ub levelColors[] =
 	{
 		ss->getColor(this, L"color-info"),
@@ -206,61 +212,73 @@ void LogList::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(inner);
 
-	int32_t scrollOffset = m_scrollBar->getPosition();
 	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), m_itemHeight));
 
-	log_list_t::const_iterator i = m_logFiltered.begin();
-
-	// Advance iterator by scroll offset, keep a page worth of lines.
-	int32_t advanceCount = scrollOffset;
+	// Advance by scroll offset, keep a page worth of lines.
+	int32_t advanceCount = m_scrollBar->getPosition();
 	advanceCount = std::max(0, advanceCount);
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
-	std::advance(i, advanceCount);
 
-	for (; i != m_logFiltered.end() && rc.top < inner.bottom; ++i)
+	for (int32_t row = advanceCount; row < (int32_t)m_logFiltered.size() && rc.top < inner.bottom; ++row)
 	{
-		uint32_t threadIndex = m_threadIndices[i->threadId];
+		const auto& entry = m_logFiltered[row];
+		const uint32_t threadIndex = m_threadIndices[entry.threadId];
 
 		Size iconSize(m_icons->getSize().cy, m_icons->getSize().cy);
 		Point iconPos = rc.getTopLeft() + Size(0, (rc.getHeight() - iconSize.cy) / 2);
-		switch (i->level)
+
+		Color4ub fg(0, 0, 0, 0);
+		Color4ub bg(0, 0, 0, 0);
+
+		switch (entry.level)
 		{
+		default:
 		case LvDebug:
 		case LvInfo:
-			if (levelBgColors[0].a != 0)
-			{
-				canvas.setBackground(levelBgColors[0]);
-				canvas.fillRect(rc);
-			}
-			canvas.drawBitmap(iconPos, Point(0, 0), iconSize, m_icons, BmAlpha);
-			canvas.setForeground(levelColors[0]);
+			fg = levelColors[0];
+			bg = levelBgColors[0];
 			break;
 
 		case LvWarning:
-			if (levelBgColors[1].a != 0)
-			{
-				canvas.setBackground(levelBgColors[1]);
-				canvas.fillRect(rc);
-			}
-			canvas.drawBitmap(iconPos, Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
-			canvas.setForeground(levelColors[1]);
+			fg = levelColors[1];
+			bg = levelBgColors[1];
 			break;
 
 		case LvError:
-			if (levelBgColors[2].a != 0)
-			{
-				canvas.setBackground(levelBgColors[2]);
-				canvas.fillRect(rc);
-			}
+			fg = levelColors[2];
+			bg = levelBgColors[2];
+			break;
+		}
+
+		if (m_selectedEntry == row)
+		{
+			fg = selectedColor;
+			bg = selectedBgColor;
+		}
+
+		canvas.setForeground(fg);
+		if (bg.a != 0)
+		{
+			canvas.setBackground(bg);
+			canvas.fillRect(rc);
+		}
+
+		switch (entry.level)
+		{
+		case LvDebug:
+		case LvInfo:
+			canvas.drawBitmap(iconPos, Point(0, 0), iconSize, m_icons, BmAlpha);
+			break;
+
+		case LvWarning:
+			canvas.drawBitmap(iconPos, Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
+			break;
+
+		case LvError:
 			canvas.drawBitmap(iconPos, Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
-			canvas.setForeground(levelColors[2]);
 			break;
 
 		default:
-			if (levelBgColors[0].a != 0)
-				canvas.setBackground(levelBgColors[0]);
-			canvas.fillRect(rc);
-			canvas.setForeground(levelColors[0]);
 			break;
 		}
 
@@ -269,19 +287,19 @@ void LogList::eventPaint(PaintEvent* event)
 		textRect.left += dpi96(20);
 
 		size_t s = 0;
-		while (s < i->text.length())
+		while (s < entry.text.length())
 		{
-			size_t e1 = i->text.find_first_not_of('\t', s);
-			if (e1 == i->text.npos)
+			size_t e1 = entry.text.find_first_not_of('\t', s);
+			if (e1 == entry.text.npos)
 				break;
 
 			textRect.left += int32_t(e1 - s) * dpi96(8 * 4);
 
-			size_t e2 = i->text.find_first_of('\t', e1);
-			if (e2 == i->text.npos)
-				e2 = i->text.length();
+			size_t e2 = entry.text.find_first_of('\t', e1);
+			if (e2 == entry.text.npos)
+				e2 = entry.text.length();
 
-			std::wstring text = i->text.substr(e1, e2 - e1);
+			std::wstring text = entry.text.substr(e1, e2 - e1);
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
 			Size extent = canvas.getFontMetric().getExtent(text);
@@ -293,6 +311,7 @@ void LogList::eventPaint(PaintEvent* event)
 		rc = rc.offset(0, m_itemHeight);
 	}
 
+	// Draw number of warnings or errors.
 	if (m_logCount[1] > 0 || m_logCount[2] > 0)
 	{
 		std::wstring ws = str(L"%d", m_logCount[1]);
@@ -338,6 +357,18 @@ void LogList::eventSize(SizeEvent* event)
 	m_scrollBar->setRect(rc);
 
 	updateScrollBar();
+}
+
+void LogList::eventMouseButtonDown(MouseButtonDownEvent* event)
+{
+	int32_t advanceCount = m_scrollBar->getPosition();
+	advanceCount = std::max(0, advanceCount);
+	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
+
+	int32_t row = advanceCount + event->getPosition().y / m_itemHeight;
+	m_selectedEntry = row;
+
+	update();
 }
 
 void LogList::eventMouseWheel(MouseWheelEvent* event)
