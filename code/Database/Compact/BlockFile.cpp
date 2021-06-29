@@ -134,15 +134,13 @@ uint32_t BlockFile::allocBlockId()
 
 void BlockFile::freeBlockId(uint32_t blockId)
 {
-	for (auto it = m_blocks.begin(); it != m_blocks.end(); ++it)
-	{
-		if (it->id == blockId)
-		{
-			m_blocks.erase(it);
-			return;
-		}
-	}
-	log::warning << L"Unable to free block " << blockId << L", no such block allocated." << Endl;
+	auto it = std::find_if(m_blocks.begin(), m_blocks.end(), [=](const Block& b) {
+		return b.id == blockId;
+	});
+	if (it != m_blocks.end())
+		m_blocks.erase(it);
+	else
+		log::warning << L"Unable to free block " << blockId << L", no such block allocated." << Endl;
 }
 
 int64_t BlockFile::allocateRegion(int64_t size)
