@@ -1304,7 +1304,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	desiredImageCount = 3;
 #endif
 
-#if defined(__ANDROID__) || defined(__IOS__) || defined(__LINUX__)
+#if defined(__ANDROID__) || defined(__IOS__)
 	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
 	{
 		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
