@@ -142,7 +142,7 @@ bool FileSystem::modify(const Path& fileName, uint32_t flags)
 Ref< IStream > FileSystem::open(const Path& fileName, uint32_t mode)
 {
 	Ref< IVolume > volume = getVolume(fileName);
-	return volume ? volume->open(fileName, mode) : 0;
+	return volume ? volume->open(fileName, mode) : nullptr;
 }
 
 bool FileSystem::exist(const Path& fileName)
