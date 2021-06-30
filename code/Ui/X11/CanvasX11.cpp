@@ -252,7 +252,7 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 void* CanvasX11::getSystemHandle()
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 void CanvasX11::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
