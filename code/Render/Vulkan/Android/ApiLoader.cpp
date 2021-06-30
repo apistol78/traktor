@@ -68,6 +68,7 @@ T_DEFINE_VK(vkCmdDrawIndexed);
 T_DEFINE_VK(vkCmdBindPipeline);
 T_DEFINE_VK(vkCreatePipelineLayout);
 T_DEFINE_VK(vkCreateGraphicsPipelines);
+T_DEFINE_VK(vkCreateComputePipelines);
 T_DEFINE_VK(vkCreateDescriptorSetLayout);
 T_DEFINE_VK(vkCreateDescriptorPool);
 T_DEFINE_VK(vkAllocateDescriptorSets);
