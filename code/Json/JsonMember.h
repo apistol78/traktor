@@ -24,7 +24,7 @@ class T_DLLCLASS JsonMember : public JsonNode
 	T_RTTI_CLASS;
 
 public:
-	JsonMember();
+	JsonMember() = default;
 
 	JsonMember(const std::wstring& name, const Any& value);
 

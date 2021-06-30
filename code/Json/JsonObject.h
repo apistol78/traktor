@@ -27,8 +27,6 @@ class T_DLLCLASS JsonObject : public JsonNode
 	T_RTTI_CLASS;
 
 public:
-	JsonObject();
-
 	/*! Push member onto object.
 	 *
 	 * \param member Member to push.

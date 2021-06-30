@@ -19,11 +19,6 @@ const Any& JsonArray_get_1(JsonArray* self, uint32_t index)
 	return self->get(index);
 }
 
-//const AlignedVector< Any >& JsonArray_get_0(JsonArray* self)
-//{
-//	return self->get();
-//}
-
 JsonMember* JsonObject_get_1(JsonObject* self, uint32_t index)
 {
 	return self->get(index);
@@ -48,7 +43,6 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonArray->addMethod("back", &JsonArray::back);
 	classJsonArray->addMethod("size", &JsonArray::size);
 	classJsonArray->addMethod("get", &JsonArray_get_1);
-	//classJsonArray->addMethod("get", &JsonArray_get_0);
 	registrar->registerClass(classJsonArray);
 
 	auto classJsonDocument = new AutoRuntimeClass< JsonDocument >();

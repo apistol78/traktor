@@ -91,7 +91,7 @@ public:
 
 		m_scope.push_back(object);
 
-		m_array = 0;
+		m_array = nullptr;
 		m_object = object;
 
 		return true;
@@ -114,8 +114,8 @@ public:
 		}
 		else
 		{
-			m_object = 0;
-			m_array = 0;
+			m_object = nullptr;
+			m_array = nullptr;
 		}
 
 		return true;
@@ -138,7 +138,7 @@ public:
 		m_scope.push_back(array);
 
 		m_array = array;
-		m_object = 0;
+		m_object = nullptr;
 
 		return true;
 	}
@@ -154,8 +154,8 @@ public:
 		}
 		else
 		{
-			m_object = 0;
-			m_array = 0;
+			m_object = nullptr;
+			m_array = nullptr;
 		}
 
 		return true;
@@ -216,7 +216,7 @@ public:
 
 	Ch* PutBegin()
 	{
-		return 0;
+		return nullptr;
 	}
 
 	void Put(Ch c)
@@ -305,7 +305,7 @@ bool JsonDocument::saveToStream(IStream* stream)
 	Utf8Encoding encoding;
 	FileOutputStream os(stream, &encoding);
 
-	for (AlignedVector< Any >::const_iterator i = get().begin(); i != get().end(); ++i)
+	for (auto i = get().begin(); i != get().end(); ++i)
 	{
 		if (i != get().begin())
 			os << L"," << Endl;
@@ -338,7 +338,7 @@ bool JsonDocument::saveToStream(IStream* stream)
 
 		case Any::Type::Object:
 			{
-				if (const JsonNode* node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
+				if (auto node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
 					node->write(os);
 				else
 					os << L"nil" << Endl;

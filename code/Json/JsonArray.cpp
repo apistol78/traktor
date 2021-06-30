@@ -8,10 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonArray", JsonArray, JsonNode)
 
-JsonArray::JsonArray()
-{
-}
-
 void JsonArray::push(const Any& value)
 {
 	m_array.push_back(value);
@@ -22,7 +18,7 @@ bool JsonArray::write(OutputStream& os) const
 	os << L"[" << Endl;
 	os << IncreaseIndent;
 
-	for (AlignedVector< Any >::const_iterator i = m_array.begin(); i != m_array.end(); ++i)
+	for (auto i = m_array.begin(); i != m_array.end(); ++i)
 	{
 		if (i != m_array.begin())
 			os << L"," << Endl;
@@ -55,7 +51,7 @@ bool JsonArray::write(OutputStream& os) const
 
 		case Any::Type::Object:
 			{
-				if (const JsonNode* node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
+				if (auto node = dynamic_type_cast< const JsonNode* >(i->getObjectUnsafe()))
 					node->write(os);
 				else
 					os << L"nil" << Endl;
