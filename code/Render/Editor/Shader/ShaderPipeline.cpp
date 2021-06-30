@@ -528,15 +528,15 @@ bool ShaderPipeline::buildOutput(
 		if (ThreadManager::getInstance().getCurrentThread()->stopped())
 			break;
 
-		log::info << L"Building shader technique \"" << techniqueName << L"\"..." << Endl;
-		log::info << IncreaseIndent;
-
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(techniqueName);
 		T_ASSERT(shaderGraphTechnique);
 
 		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
 		uint32_t combinationCount = combinations->getCombinationCount();
 		shaderGraphCombinations.push_back(combinations);
+
+		log::info << L"Building shader technique \"" << techniqueName << L"\" (" << combinationCount << L" permutations)..." << Endl;
+		log::info << IncreaseIndent;
 
 		ShaderResource::Technique* shaderResourceTechnique = new ShaderResource::Technique();
 		shaderResourceTechnique->name = techniqueName;
@@ -555,10 +555,6 @@ bool ShaderPipeline::buildOutput(
 		}
 
 		// Optimize and compile all combination programs.
-#if defined(T_USE_BUILD_COMBINATION_JOBS)
-		log::info << L"Building " << combinationCount << L" permutations..." << Endl;
-		JobManager& jobManager = JobManager::getInstance();
-#endif
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
 			Ref< BuildCombinationTask > task = new BuildCombinationTask();
@@ -579,7 +575,7 @@ bool ShaderPipeline::buildOutput(
 			tasks.push_back(task);
 
 #if defined(T_USE_BUILD_COMBINATION_JOBS)
-			Ref< Job > job = jobManager.add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 			jobs.push_back(job);
 #else
 			task->execute();
