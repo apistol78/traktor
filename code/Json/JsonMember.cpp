@@ -8,10 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonMember", JsonMember, JsonNode)
 
-JsonMember::JsonMember()
-{
-}
-
 JsonMember::JsonMember(const std::wstring& name, const Any& value)
 :	m_name(name)
 ,	m_value(value)
@@ -49,7 +45,7 @@ bool JsonMember::write(OutputStream& os) const
 
 	case Any::Type::Object:
 		{
-			if (const JsonNode* node = dynamic_type_cast< const JsonNode* >(m_value.getObjectUnsafe()))
+			if (auto node = dynamic_type_cast< const JsonNode* >(m_value.getObjectUnsafe()))
 				node->write(os);
 			else
 				os << L"nil" << Endl;

@@ -12,10 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonObject", JsonObject, JsonNode)
 
-JsonObject::JsonObject()
-{
-}
-
 void JsonObject::push(JsonMember* member)
 {
 	m_members.push_back(member);
@@ -51,9 +47,9 @@ Any JsonObject::getValue(const std::wstring& path) const
 	Any iter = Any::fromObject(const_cast< JsonObject* >(this));
 
 	StringSplit< std::wstring > s(path, L".");
-	for (StringSplit< std::wstring >::const_iterator i = s.begin(); i != s.end(); ++i)
+	for (auto i = s.begin(); i != s.end(); ++i)
 	{
-		if (JsonObject* nodeObject = dynamic_type_cast< JsonObject* >(iter.getObject()))
+		if (auto nodeObject = dynamic_type_cast< JsonObject* >(iter.getObject()))
 		{
 			JsonMember* member = nodeObject->getMember(*i);
 			if (member)
@@ -61,7 +57,7 @@ Any JsonObject::getValue(const std::wstring& path) const
 			else
 				return Any();
 		}
-		else if (JsonArray* nodeArray = dynamic_type_cast< JsonArray* >(iter.getObject()))
+		else if (auto nodeArray = dynamic_type_cast< JsonArray* >(iter.getObject()))
 		{
 			uint32_t index = parseString< int32_t >(*i, ~0U);
 			if (index < nodeArray->size())

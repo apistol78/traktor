@@ -27,8 +27,6 @@ class T_DLLCLASS JsonArray : public JsonNode
 	T_RTTI_CLASS;
 
 public:
-	JsonArray();
-
 	/*! Push value at the back of the array.
 	 *
 	 * \param value Value to push.
