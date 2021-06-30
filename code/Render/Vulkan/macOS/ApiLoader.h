@@ -52,6 +52,7 @@ extern PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
 extern PFN_vkCmdBindPipeline vkCmdBindPipeline;
 extern PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
 extern PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
+extern PFN_vkCreateComputePipelines vkCreateComputePipelines;
 extern PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
 extern PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
 extern PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
