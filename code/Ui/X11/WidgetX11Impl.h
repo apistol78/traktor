@@ -536,77 +536,77 @@ protected:
 		setFont(Font(L"Ubuntu Regular", 11));
 
 		// Focus in.
-		m_context->bind(&m_data, FocusIn, [&](XEvent& xe) {
+		m_context->bind(&m_data, FocusIn, [this](XEvent& xe) {
 			XSetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, true);
 			m_owner->raiseEvent(&focusEvent);
 		});
 
 		// Focus out.
-		m_context->bind(&m_data, FocusOut, [&](XEvent& xe) {
+		m_context->bind(&m_data, FocusOut, [this](XEvent& xe) {
 			XUnsetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, false);
 			m_owner->raiseEvent(&focusEvent);
 		});
 
 		// Key press.
-		m_context->bind(&m_data, KeyPress, [&](XEvent& xe) {
+		m_context->bind(&m_data, KeyPress, [this](XEvent& xe) {
 			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), xe.xkey.keycode, 1, &nkeysyms);
-			if (ks != nullptr)
+			if (ks == nullptr)
+				return;
+
+			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
+			if (vk != VkNull)
 			{
-				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
-				if (vk != VkNull)
-				{
-					KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
-					m_owner->raiseEvent(&keyDownEvent);
-				}
+				KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
+				m_owner->raiseEvent(&keyDownEvent);
+			}
 
-				// Ensure owner is still valid; widget might have been destroyed in key down event.
-				if (m_owner)
-				{
-					uint8_t str[8] = { 0 };
+			// Ensure owner is still valid; widget might have been destroyed in key down event.
+			if (m_owner)
+			{
+				uint8_t str[8] = { 0 };
 
-					Status status = 0;
-					const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
-					if (n > 0)
+				Status status = 0;
+				const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
+				if (n > 0)
+				{
+					wchar_t wch = 0;
+					if (Utf8Encoding().translate(str, n, wch) > 0)
 					{
-						wchar_t wch = 0;
-						if (Utf8Encoding().translate(str, n, wch) > 0)
-						{
-							KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
-							m_owner->raiseEvent(&keyEvent);
-						}
+						KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
+						m_owner->raiseEvent(&keyEvent);
 					}
 				}
-
-				XFree(ks);
 			}
+
+			XFree(ks);
 		});
 
 		// Key release.
-		m_context->bind(&m_data, KeyRelease, [&](XEvent& xe) {
+		m_context->bind(&m_data, KeyRelease, [this](XEvent& xe) {
 			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), xe.xkey.keycode, 1, &nkeysyms);
-			if (ks != nullptr)
-			{
-				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
-				if (vk != VkNull)
-				{
-					KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
-					m_owner->raiseEvent(&keyUpEvent);
-				}
+			if (ks == nullptr)
+				return;
 
-				XFree(ks);
+			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
+			if (vk != VkNull)
+			{
+				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
+				m_owner->raiseEvent(&keyUpEvent);
 			}
+
+			XFree(ks);
 		});
 
 		// Motion
-		m_context->bind(&m_data, MotionNotify, [&](XEvent& xe){
+		m_context->bind(&m_data, MotionNotify, [this](XEvent& xe){
 			T_FATAL_ASSERT (m_data.enable);
 
 			int32_t button = 0;
@@ -626,19 +626,19 @@ protected:
 		});
 
 		// Enter
-		m_context->bind(&m_data, EnterNotify, [&](XEvent& xe){
+		m_context->bind(&m_data, EnterNotify, [this](XEvent& xe){
 			MouseTrackEvent mouseTrackEvent(m_owner, true);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
 
 		// Leave
-		m_context->bind(&m_data, LeaveNotify, [&](XEvent& xe){
+		m_context->bind(&m_data, LeaveNotify, [this](XEvent& xe){
 			MouseTrackEvent mouseTrackEvent(m_owner, false);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
 
 		// Button press.
-		m_context->bind(&m_data, ButtonPress, [&](XEvent& xe){
+		m_context->bind(&m_data, ButtonPress, [this](XEvent& xe){
 			T_FATAL_ASSERT (m_data.enable);
 
 			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
@@ -697,7 +697,7 @@ protected:
 		});
 
 		// Button release.
-		m_context->bind(&m_data, ButtonRelease, [&](XEvent& xe){
+		m_context->bind(&m_data, ButtonRelease, [this](XEvent& xe){
 			T_FATAL_ASSERT (m_data.enable);
 
 			int32_t button = 0;
@@ -730,7 +730,7 @@ protected:
 		// Configure
 		if (topLevel)
 		{
-			m_context->bind(&m_data, ConfigureNotify, [&](XEvent& xe){
+			m_context->bind(&m_data, ConfigureNotify, [this](XEvent& xe){
 				Rect rect(
 					Point(xe.xconfigure.x, xe.xconfigure.y),
 					Size(xe.xconfigure.width, xe.xconfigure.height)
@@ -756,10 +756,9 @@ protected:
 		}
 
 		// Expose
-		m_context->bind(&m_data, Expose, [&](XEvent& xe){
+		m_context->bind(&m_data, Expose, [this](XEvent& xe){
 			if (xe.xexpose.count != 0)
 				return;
-
 			draw(nullptr);
 		});
 
@@ -770,6 +769,9 @@ protected:
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
 		m_pendingExposure = false;
+
+		if (!m_data.visible)
+			return;
 
 		XWindowAttributes xa;
 		XGetWindowAttributes(m_context->getDisplay(), m_data.window, &xa);
