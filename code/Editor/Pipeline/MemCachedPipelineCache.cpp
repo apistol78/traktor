@@ -3,6 +3,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -141,7 +143,7 @@ bool MemCachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHa
 	return true;
 }
 
-void MemCachedPipelineCache::getInformation(OutputStream& os) const
+void MemCachedPipelineCache::getInformation(OutputStream& os)
 {
 	os << L"Memcached cache (";
 	if (m_accessRead && !m_accessWrite)
@@ -152,6 +154,63 @@ void MemCachedPipelineCache::getInformation(OutputStream& os) const
 		os << L"read+write";
 	else
 		os << L"disabled";
+
+	Ref< MemCachedProto > proto = acquireProto();
+	if (!proto)
+	{
+		os << L")";
+		return;
+	}
+
+	if (!proto->sendCommand("stats"))
+	{
+		os << L")";
+		return;
+	}
+
+	SmallMap< std::string, std::string > stats;
+	for(;;)
+	{
+		std::string reply;
+		if (!proto->readReply(reply))
+			break;
+
+		if (reply == "END")
+			break;
+
+		std::vector< std::string > args;
+		Split< std::string >::any(reply, " ", args);
+		if (args.size() < 3)
+			continue;
+
+		stats[args[1]] = args[2];
+	}
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_protos.push_back(proto);
+	}
+
+	uint64_t currentItems = parseString< uint64_t >(stats["curr_items"], 0);
+	os << L", " << currentItems << L" items";
+
+	uint64_t bytes = parseString< uint64_t >(stats["bytes"], 0);
+	uint64_t maxBytes = parseString< uint64_t >(stats["limit_maxbytes"], 0);
+	if (bytes >= 1024 * 1024)
+		os << L", " << (bytes / (1024 * 1024)) << L" MiB";
+	else if (bytes >= 1024)
+		os << L", " << (bytes / 1024) << L" KiB";
+	else
+		os << L", " << bytes << L" B";
+	if (maxBytes > 0)
+		os << L", " << ((bytes * 100) / maxBytes) << L" %";
+
+#if defined(_DEBUG)
+	uint64_t evictions = parseString< uint64_t >(stats["evictions"], 0);
+	uint64_t reclaimed = parseString< uint64_t >(stats["reclaimed"], 0);
+	os << L", " << evictions << L" evictions, " << reclaimed << L" reclaimed";
+#endif
+
 	os << L")";
 }
 
