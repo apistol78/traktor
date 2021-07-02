@@ -670,9 +670,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_statusBar->addColumn(0);
 	m_statusBar->addColumn(0);
 	m_statusBar->addColumn(0);
+	m_statusBar->addColumn(0);
 	m_statusBar->setText(0, i18n::Text(L"STATUS_IDLE"));
 	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
 	m_statusBar->setText(2, L"");
+	m_statusBar->setText(3, L"");
 
 	m_buildProgress = new ui::ProgressBar();
 	m_buildProgress->create(m_statusBar);
@@ -1545,6 +1547,27 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		return false;
 	}
 
+	// Create pipeline cache.
+	safeDestroy(m_pipelineCache);
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
+	{
+		m_pipelineCache = new editor::MemCachedPipelineCache();
+		if (!m_pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
+			m_pipelineCache = nullptr;
+		}
+	}
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+	{
+		m_pipelineCache = new editor::FilePipelineCache();
+		if (!m_pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
+			m_pipelineCache = nullptr;
+		}
+	}
+
 	// Expose servers as stock objects.
 	setStoreObject(L"StreamServer", m_streamServer);
 	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
@@ -1609,8 +1632,9 @@ void EditorForm::closeWorkspace()
 	safeDestroy(m_dbConnectionManager);
 	safeDestroy(m_streamServer);
 
-	// Close pipeline database.
+	// Close pipeline database and cache.
 	safeClose(m_pipelineDb);
+	safeDestroy(m_pipelineCache);
 
 	// Close data cache.
 	safeDestroy(m_dataAccessCache);
@@ -1794,27 +1818,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setProgress(0);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
-	// Create cache if enabled.
-	Ref< editor::IPipelineCache > pipelineCache;
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
-	{
-		pipelineCache = new editor::MemCachedPipelineCache();
-		if (!pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
-			pipelineCache = nullptr;
-		}
-	}
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
-	{
-		pipelineCache = new editor::FilePipelineCache();
-		if (!pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
-			pipelineCache = nullptr;
-		}
-	}
-
 	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
 	// Create pipeline factory.
@@ -1873,7 +1876,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			&pipelineFactory,
 			m_sourceDatabase,
 			m_outputDatabase,
-			pipelineCache,
+			m_pipelineCache,
 			m_pipelineDb,
 			&instanceCache,
 			m_dataAccessCache,
@@ -1902,9 +1905,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	}
 
 	m_pipelineDb->endTransaction();
-
-	if (pipelineCache)
-		pipelineCache->destroy();
 }
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
@@ -2644,25 +2644,49 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				else
 					m_mergedSettings = m_globalSettings;
 
-				// Load editor stylesheet.
-				Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
-				T_FATAL_ASSERT(styleSheetShared);
-				
-				std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light.xss");
-				Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
-				if (styleSheet)
-					ui::Application::getInstance()->setStyleSheet(
-						styleSheetShared->merge(styleSheet)
-					);
-				else
-					log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
-
 				// Save modified settings; do this here as well as at termination
 				// as we want to make sure changes doesn't get lost in case of a crash.
 				Ref< const PropertyGroup > userSettings = m_originalSettings->difference(m_globalSettings);
 				if (saveUserSettings(m_settingsPath, userSettings))
 				{
+					// Load editor stylesheet.
+					Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
+					T_FATAL_ASSERT(styleSheetShared);
+				
+					std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light.xss");
+					Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+					if (styleSheet)
+						ui::Application::getInstance()->setStyleSheet(
+							styleSheetShared->merge(styleSheet)
+						);
+					else
+						log::error << L"Unable to load stylesheet " << styleSheetName << L"." << Endl;
+
+					// Create pipeline cache.
+					safeDestroy(m_pipelineCache);
+					if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
+					{
+						m_pipelineCache = new editor::MemCachedPipelineCache();
+						if (!m_pipelineCache->create(m_mergedSettings))
+						{
+							traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
+							m_pipelineCache = nullptr;
+						}
+					}
+					if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+					{
+						m_pipelineCache = new editor::FilePipelineCache();
+						if (!m_pipelineCache->create(m_mergedSettings))
+						{
+							traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
+							m_pipelineCache = nullptr;
+						}
+					}
+
+					// Update shortcuts.
 					updateShortcutTable();
+
+					// Notify editors about settings changed.
 					for (auto tab : m_tabGroups)
 					{
 						for (int32_t i = 0; i < tab->getPageCount(); ++i)
@@ -3119,21 +3143,25 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	// Update modified flags.
 	checkModified();
 
-	// Hide build progress if build thread has finished.
-	if (!building)
+	m_statusBar->setText(0, i18n::Text(building ? L"STATUS_BUILDING" : L"STATUS_IDLE"));
+	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
+
+	if (m_streamServer)
+		m_statusBar->setText(2, i18n::Format(L"STATUS_STREAMS", (int32_t)m_streamServer->getStreamCount()));
+	else
+		m_statusBar->setText(2, L"");
+
+	if (m_pipelineCache)
 	{
-		m_buildProgress->setVisible(false);
-
-		m_statusBar->setText(0, i18n::Text(L"STATUS_IDLE"));
-		m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
-
-		if (m_streamServer)
-			m_statusBar->setText(2, i18n::Format(L"STATUS_STREAMS", (int32_t)m_streamServer->getStreamCount()));
-		else
-			m_statusBar->setText(2, L"");
+		StringOutputStream ss;
+		m_pipelineCache->getInformation(ss);
+		m_statusBar->setText(3, ss.str());
 	}
 	else
-		m_buildProgress->setVisible(true);
+		m_statusBar->setText(3, L"");
+
+	// Hide build progress if build thread has finished.
+	m_buildProgress->setVisible(building);
 }
 
 void EditorForm::threadAssetMonitor()

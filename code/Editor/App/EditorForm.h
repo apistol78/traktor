@@ -65,6 +65,7 @@ class IEditorPluginFactory;
 class IEditorTool;
 class IObjectEditor;
 class IObjectEditorFactory;
+class IPipelineCache;
 class IPipelineDb;
 class LogView;
 class MRU;
@@ -180,6 +181,7 @@ private:
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Ref< IPipelineDb > m_pipelineDb;
+	Ref< IPipelineCache > m_pipelineCache;
 	std::map< std::wstring, Ref< Object > > m_objectStore;
 	Ref< MRU > m_mru;
 	std::list< ui::Command > m_shortcutCommands;

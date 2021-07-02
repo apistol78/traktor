@@ -1,5 +1,6 @@
 #include <sstream>
 #include "Core/Io/IStream.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
@@ -138,6 +139,20 @@ bool MemCachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHa
 	}
 
 	return true;
+}
+
+void MemCachedPipelineCache::getInformation(OutputStream& os) const
+{
+	os << L"Memcached cache (";
+	if (m_accessRead && !m_accessWrite)
+		os << L"read";
+	else if (!m_accessRead && m_accessWrite)
+		os << L"write";
+	else if (m_accessRead && m_accessWrite)
+		os << L"read+write";
+	else
+		os << L"disabled";
+	os << L")";
 }
 
 Ref< MemCachedProto > MemCachedPipelineCache::acquireProto()
