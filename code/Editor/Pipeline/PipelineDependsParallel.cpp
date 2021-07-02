@@ -297,6 +297,15 @@ void PipelineDependsParallel::addUniqueDependency(
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
+	// Ensure arguments are valid.
+	if (outputPath.empty())
+	{
+		log::error << L"Unable to add dependency \"" << outputGuid.format() << L"\"; no output path." << Endl;
+		currentDependency->flags |= PdfFailed;
+		m_result = false;
+		return;
+	}
+
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
