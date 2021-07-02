@@ -17,6 +17,7 @@ namespace traktor
 {
 
 class IStream;
+class OutputStream;
 class PropertyGroup;
 
 	namespace editor
@@ -36,6 +37,8 @@ public:
 	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) = 0;
 
 	virtual bool commit(const Guid& guid, const PipelineDependencyHash& hash) = 0;
+
+	virtual void getInformation(OutputStream& os) const = 0;
 };
 
 	}

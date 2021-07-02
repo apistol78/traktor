@@ -1,5 +1,6 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -89,6 +90,20 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 		new BufferedStream(fileStream),
 		ss.str()
 	);
+}
+
+void FilePipelineCache::getInformation(OutputStream& os) const
+{
+	os << L"File cache (";
+	if (m_accessRead && !m_accessWrite)
+		os << L"read";
+	else if (!m_accessRead && m_accessWrite)
+		os << L"write";
+	else if (m_accessRead && m_accessWrite)
+		os << L"read+write";
+	else
+		os << L"disabled";
+	os << L")";
 }
 
 bool FilePipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
