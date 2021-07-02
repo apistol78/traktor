@@ -92,7 +92,7 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	);
 }
 
-void FilePipelineCache::getInformation(OutputStream& os) const
+void FilePipelineCache::getInformation(OutputStream& os)
 {
 	os << L"File cache (";
 	if (m_accessRead && !m_accessWrite)
