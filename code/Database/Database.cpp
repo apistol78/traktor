@@ -315,17 +315,17 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 				else
 				{
 					if (!group->internalAddExtGroup(*i))
-						log::error << L"Unable to add instance; Remotely created group not found" << Endl;
+						log::error << L"Unable to add instance; remotely created group not found." << Endl;
 					group = findChildGroup(group, FindGroupByName(*i));
 					if (!group)
-						log::error << L"Unable to add instance; Group \"" << *i << L"\" not found" << Endl;
+						log::error << L"Unable to add instance; group \"" << *i << L"\" not found." << Endl;
 				}
 			}
 
 			if (group)
 			{
 				if (!group->internalAddExtInstance(created->getInstanceGuid()))
-					log::error << L"Unable to add instance; Remotely created instance not found" << Endl;
+					log::error << L"Unable to add instance; remotely created instance not found." << Endl;
 			}
 
 			m_instanceMap.clear();
