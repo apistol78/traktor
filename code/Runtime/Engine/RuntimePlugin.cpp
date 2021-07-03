@@ -46,7 +46,7 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 
 	// Prepare all initial layers; this will cause pending resources and systems
 	// to be created before first frame.
-	const UpdateInfo info;
+	const UpdateInfo info = {};
 	for (const auto layer : stage->getLayers())
 		layer->preUpdate(info);
 
