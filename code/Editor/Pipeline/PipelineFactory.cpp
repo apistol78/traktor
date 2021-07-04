@@ -24,13 +24,13 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		PipelineSettings pipelineSettings(settings);
 		if (!pipeline->create(&pipelineSettings))
 		{
-			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;			
+			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"." << Endl;			
 			continue;
 		}
 
 		uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 
-		log::debug << L"Pipeline \"" << type_name(pipeline) << L" created successfully; " << str(L"0x%08x", pipelineHash) << L"." << Endl;
+		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully; configuration hash " << str(L"0x%08x", pipelineHash) << L"." << Endl;
 
 		for (auto assetType : pipeline->getAssetTypes())
 		{
