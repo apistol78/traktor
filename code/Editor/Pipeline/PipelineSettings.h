@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Io/StringOutputStream.h"
 #include "Editor/IPipelineSettings.h"
 
 // import/export mechanism.
@@ -29,9 +30,12 @@ public:
 
 	uint32_t getHash() const;
 
+	std::wstring getLog() const;
+
 private:
 	Ref< const PropertyGroup > m_settings;
 	mutable uint32_t m_hash;
+	mutable StringOutputStream m_log;
 };
 
 	}
