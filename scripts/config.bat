@@ -40,3 +40,6 @@ set SHADOWLAUNCH=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.ShadowLaunch.App
 
 :: Export path to Ninja binary.
 set NINJA=%TRAKTOR_HOME%\3rdp\ninja\win\ninja
+
+:: Export path to FBuild executable.
+set FBUILD=%TRAKTOR_HOME%\3rdp\FASTBuild-Windows-x64-v1.05\FBuild.exe
