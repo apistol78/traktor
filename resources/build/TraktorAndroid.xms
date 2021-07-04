@@ -727,15 +727,6 @@
 											</items>
 										</item>
 										<item type="Filter">
-											<name>Shader</name>
-											<items>
-												<item type="File">
-													<fileName>Shader/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Image2</name>
 											<items>
 												<item type="File">
@@ -2677,6 +2668,33 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Processor</name>
+								<items>
+									<item type="File">
+										<fileName>Processor/*.*</fileName>
+										<items/>
+									</item>
+									<item type="Filter">
+										<name>Nodes</name>
+										<items>
+											<item type="File">
+												<fileName>Processor/Nodes/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Tracker</name>
+								<items>
+									<item type="File">
+										<fileName>Tracker/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -3852,24 +3870,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>Layer</name>
-					<items>
-						<item type="File">
-							<fileName>Layer/*.*</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>Resources</name>
-							<items>
-								<item type="File">
-									<fileName>Layer/Resources/*.*</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>PropertyList</name>
 					<items>
 						<item type="File">
@@ -3902,15 +3902,6 @@
 									<items/>
 								</item>
 							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Tab</name>
-					<items>
-						<item type="File">
-							<fileName>Tab/*.*</fileName>
-							<items/>
 						</item>
 					</items>
 				</item>

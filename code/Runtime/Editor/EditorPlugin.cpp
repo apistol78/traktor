@@ -734,7 +734,11 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
 	// Resolve absolute output path.
+#if defined(_WIN32)
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+#else
+	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathNameNoVolume();
+#endif
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
