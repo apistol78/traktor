@@ -427,7 +427,7 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 		end
 --?>{
-	.Compiler = '$RC$'
+	.Compiler = 'ResourceCompiler'
 	.CompilerOptions = '$RC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions) --?> /fo"%2" "%1"'
 	.CompilerInputFiles =
 	{
