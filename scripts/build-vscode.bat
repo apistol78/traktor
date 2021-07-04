@@ -8,7 +8,8 @@ call %~dp0config.bat
 if "%PLATFORM%" == "Windows" (
     call %~dp0config-vs-x64.bat
     pushd "%TRAKTOR_HOME%\build\win64"
-    devenv "Traktor Win64.sln" /Build %CONFIG%
+    %FBUILD% -config "Extern Win64.bff" -noprogress -cache %CONFIG%
+    %FBUILD% -config "Traktor Win64.bff" -noprogress -cache %CONFIG%
     popd
 )
 
