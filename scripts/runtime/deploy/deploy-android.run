@@ -129,6 +129,7 @@ local function linkApplication()
 	if debug then
 		cmd = cmd .. " -g"
 	end
+	cmd = cmd .. " -fuse-ld=lld"
 	cmd = cmd .. " -shared"
 	--cmd = cmd .. " -static-libstdc++"
 	cmd = cmd .. " -Wl,-soname,Application"
@@ -151,6 +152,7 @@ local function linkApplication()
 	local result = run:execute(cmd)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
+		stderr:printLn(cmd)
 		return false
 	end
 
@@ -452,7 +454,7 @@ function migrate(args)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Application.config", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/aapt add " .. apk .. ".unsigned.apk assets/Content.compact", nil) == 0)
 		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/zipalign -f -p 4 " .. apk .. ".unsigned.apk " .. apk .. ".aligned.apk", nil) == 0)
-		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk", nil) == 0)
+		result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/29.0.1/apksigner sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out " .. apk .. ".apk " .. apk .. ".aligned.apk") == 0)
 	else
 		stderr:printLn("Unsupported host OS (" .. host .. ").")
 		return 1
