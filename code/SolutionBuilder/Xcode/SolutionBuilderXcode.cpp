@@ -1,3 +1,4 @@
+#include <map>
 #include "Core/Guid.h"
 #include "Core/RefSet.h"
 #include "Core/Io/FileSystem.h"

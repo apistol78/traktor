@@ -1,3 +1,4 @@
+#include <map>
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
