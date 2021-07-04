@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/File.h"
 #include "Core/Io/IVolume.h"
 #include "Core/Io/Path.h"
@@ -221,7 +221,7 @@ protected:
 	virtual void destroy() override final;
 
 private:
-	std::map< std::wstring, Ref< IVolume > > m_volumes;
+	SmallMap< std::wstring, Ref< IVolume > > m_volumes;
 	Ref< IVolume > m_currentVolume;
 
 	IVolume* getVolume(const Path& path) const;

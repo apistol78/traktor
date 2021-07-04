@@ -1,4 +1,3 @@
-#include <sstream>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -317,13 +316,13 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 			return false;
 	}
 
-	std::vector< std::wstring > absoluteParts, relativeParts;
+	AlignedVector< std::wstring > absoluteParts, relativeParts;
 
 	Split< std::wstring >::any(absolutePath.getPathName(), L"/", absoluteParts);
 	Split< std::wstring >::any(relativeToPath.getPathName(), L"/", relativeParts);
 
-	std::vector< std::wstring >::iterator i1 = absoluteParts.begin();
-	std::vector< std::wstring >::iterator i2 = relativeParts.begin();
+	auto i1 = absoluteParts.begin();
+	auto i2 = relativeParts.begin();
 	while (i1 != absoluteParts.end() && i2 != relativeParts.end() && *i1 == *i2)
 	{
 		i1 = absoluteParts.erase(i1);
@@ -336,8 +335,8 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 	for (; i2 != relativeParts.end(); ++i2)
 		absoluteParts.insert(absoluteParts.begin(), L"..");
 
-	std::vector< std::wstring >::iterator j = absoluteParts.begin();
-	std::wstringstream ss;
+	auto j = absoluteParts.begin();
+	StringOutputStream ss;
 	ss << *j++;
 	for (; j != absoluteParts.end(); ++j)
 		ss << L"/" << *j;
