@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/IPropertyValue.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -21,10 +22,22 @@ Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& pr
 	Ref< const IPropertyValue > prop = m_settings->getProperty(propertyName);
 	if (includeInHash)
 	{
+		m_log << L"\"" << propertyName << L"\"";
 		if (prop)
-			m_hash += DeepHash(prop).get();
+		{
+			uint32_t hash = DeepHash(prop).get();
+			m_log << L" " << str(L"0x%08x", hash);
+			m_hash += hash;
+		}
 		else if(defaultValue)
-			m_hash += DeepHash(defaultValue).get();
+		{
+			uint32_t hash = DeepHash(defaultValue).get();
+			m_log << L" " << str(L"0x%08x", hash) << L" (default)";
+			m_hash += hash;
+		}
+		else
+			m_log << L" 0x00000000 (missing)";
+		m_log << Endl;
 	}
 	if (prop)
 		return prop;
@@ -35,6 +48,11 @@ Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& pr
 uint32_t PipelineSettings::getHash() const
 {
 	return m_hash;
+}
+
+std::wstring PipelineSettings::getLog() const
+{
+	return m_log.str();
 }
 
 	}
