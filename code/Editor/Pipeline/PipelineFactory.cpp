@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Editor/IPipeline.h"
@@ -15,7 +16,16 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
 	TypeInfoSet pipelineTypes;
 	type_of< IPipeline >().findAllOf(pipelineTypes, false);
-	for (auto pipelineType : pipelineTypes)
+
+	AlignedVector< const TypeInfo* > sortedPipelineTypes;
+	sortedPipelineTypes.insert(sortedPipelineTypes.begin(), pipelineTypes.begin(), pipelineTypes.end());
+	std::sort(sortedPipelineTypes.begin(), sortedPipelineTypes.end(), [](const TypeInfo* lh, const TypeInfo* rh) {
+		return lh->getName() < rh->getName();
+	});
+
+	log::info << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
+
+	for (auto pipelineType : sortedPipelineTypes)
 	{
 		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >(pipelineType->createInstance());
 		if (!pipeline)
