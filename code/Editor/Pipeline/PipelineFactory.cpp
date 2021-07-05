@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Editor/IPipeline.h"
@@ -20,11 +21,10 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 	AlignedVector< const TypeInfo* > sortedPipelineTypes;
 	sortedPipelineTypes.insert(sortedPipelineTypes.begin(), pipelineTypes.begin(), pipelineTypes.end());
 	std::sort(sortedPipelineTypes.begin(), sortedPipelineTypes.end(), [](const TypeInfo* lh, const TypeInfo* rh) {
-		return lh->getName() < rh->getName();
+		return std::wcscmp(lh->getName(), rh->getName()) < 0;
 	});
 
 	log::info << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
-
 	for (auto pipelineType : sortedPipelineTypes)
 	{
 		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >(pipelineType->createInstance());
@@ -38,11 +38,10 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 			continue;
 		}
 
-		uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
+		const uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 
-		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully:" << Endl;
+		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
 		log::info << IncreaseIndent;
-		log::info << L"Configuration hash " << str(L"0x%08x", pipelineHash) << L"." << Endl;
 		log::info << pipelineSettings.getLog();
 		log::info << DecreaseIndent;
 

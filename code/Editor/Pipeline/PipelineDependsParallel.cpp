@@ -28,27 +28,6 @@ namespace traktor
 {
 	namespace editor
 	{
-		namespace
-		{
-
-class ExternalFilePred
-{
-public:
-	ExternalFilePred(const Path& path)
-	:	m_path(path)
-	{
-	}
-
-	bool operator () (const PipelineDependency::ExternalFile& file) const
-	{
-		return file.filePath == m_path;
-	}
-
-private:
-	const Path& m_path;
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDependsParallel, IPipelineDepends)
 
@@ -94,7 +73,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 		T_ASSERT(pipeline);
 
-		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
+		pipeline->buildDependencies(this, nullptr, sourceAsset, L"", Guid());
 
 		// Merge hash of dependent pipeline with parent's pipeline hash.
 		if (parentDependency)
@@ -177,8 +156,11 @@ void PipelineDependsParallel::addDependency(
 	{
 		T_FATAL_ASSERT_M(parentDependency->sourceAssetHash == 0, L"Dependency already hashed");
 
-		Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
-		if (std::find_if(parentDependency->files.begin(), parentDependency->files.end(), ExternalFilePred(filePath)) == parentDependency->files.end())
+		const Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
+		auto it = std::find_if(parentDependency->files.begin(), parentDependency->files.end(), [&](const PipelineDependency::ExternalFile& file) {
+			return file.filePath == filePath;
+		});
+		if (it == parentDependency->files.end())
 		{
 			Ref< File > file = FileSystem::getInstance().get(filePath);
 			if (file && !file->isDirectory())
@@ -377,6 +359,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 		sourceInstance->getDataNames(dataNames);
 		for (const auto& dataName : dataNames)
 		{
+			// Reuse hash from database if file hasn't been written to since last build.
 			if (m_pipelineDb)
 			{
 				haveLastWriteTime = sourceInstance->getDataLastWriteTime(dataName, lastWriteTime);
@@ -394,6 +377,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 				}
 			}
 
+			// Calculate hash of instance's data.
 			Ref< IStream > dataStream = sourceInstance->readData(dataName);
 			if (dataStream)
 			{
@@ -428,6 +412,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 	dependency->filesHash = 0;
 	for (const auto& dependencyFile : dependency->files)
 	{
+		// Reuse hash from database if file hasn't been written to since last build.
 		if (m_pipelineDb)
 		{
 			Ref< File > file = FileSystem::getInstance().get(dependencyFile.filePath);
@@ -445,6 +430,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 			}
 		}
 
+		// Calculate hash of external file.
 		Ref< IStream > fileStream = FileSystem::getInstance().open(dependencyFile.filePath, File::FmRead);
 		if (fileStream)
 		{
@@ -493,7 +479,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	addUniqueDependency(
 		parentDependency,
 		currentDependency,
-		0,
+		nullptr,
 		sourceAsset,
 		outputPath,
 		outputGuid
