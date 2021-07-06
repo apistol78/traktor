@@ -36,7 +36,11 @@ fi
 
 # Export name of solution builder binary.
 if [[ `uname -s` == Linux* ]]; then
-	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
+	if [[ `uname -m` == arm* ]]; then
+		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.SolutionBuilder.App"
+	else
+		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
+	fi
 elif [[ `uname -s` == Darwin* ]]; then
 	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.SolutionBuilder.App"
 fi
