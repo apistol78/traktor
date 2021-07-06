@@ -9,7 +9,7 @@ namespace traktor
 BoxedAllocator< BoxedIntervalTransform, 16 > s_allocBoxedIntervalTransform;
 	
 	}
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedIntervalTransform, Boxed)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.IntervalTransform", BoxedIntervalTransform, Boxed)
 
 BoxedIntervalTransform::BoxedIntervalTransform(const IntervalTransform& value)
 :	m_value(value)
