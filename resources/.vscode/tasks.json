@@ -186,6 +186,19 @@
 					"$gcc"
 				]
 			}
+		},
+
+		{
+			"type": "shell",
+			"label": "Raspberry PI - ReleaseStatic",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh RPi ReleaseStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			}
 		}
 	]
 }
