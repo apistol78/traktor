@@ -228,19 +228,29 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; no physical devices." << Endl;
 		return false;
 	}
-	log::info << physicalDeviceCount << L" physical device(s) found." << Endl;
+	log::info << L"Found " << physicalDeviceCount << L" physical device(s)," << Endl;
 
-	// For now select first reported device; \tbd need to revisit this.
 	AutoArrayPtr< VkPhysicalDevice > physicalDevices(new VkPhysicalDevice[physicalDeviceCount]);
 	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.ptr());
 	for (uint32_t i = 0; i < physicalDeviceCount; ++i)
 	{
+		VkPhysicalDeviceProperties pdp = {};
+		vkGetPhysicalDeviceProperties(physicalDevices[i], &pdp);
+
 		if (isDeviceSuitable(physicalDevices[i]))
 		{
-			m_physicalDevice = physicalDevices[i];
-			break;
+			if (!m_physicalDevice)
+				m_physicalDevice = physicalDevices[i];
 		}
+
+		log::info << (i + 1) << L". \"" << mbstows(pdp.deviceName) << L"\"";
+		
+		if (m_physicalDevice == physicalDevices[i])
+			log::info << L" (selected)";
+		
+		log::info << Endl;
 	}
+
 	if (!m_physicalDevice)
 	{
 		log::warning << L"Unable to find a suitable device; attempting to use first reported." << Endl;
@@ -257,12 +267,31 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilyProperties.ptr());
 
+	// Select graphics queue.
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if (graphicsQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
+		{
 			graphicsQueueIndex = i;
-		if (computeQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
+			break;
+		}
+	}
+
+	// Select compute queue.
+	for (uint32_t i = 0; i < queueFamilyCount; ++i)
+	{
+		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
+		{
+			// Ensure family can support two queues.
+			if (i == graphicsQueueIndex)
+			{
+				if (queueFamilyProperties[i].queueCount <= 1)
+					continue;
+			}
+
 			computeQueueIndex = i;
+			break;
+		}
 	}
 	if (graphicsQueueIndex == ~0)
 	{
@@ -276,18 +305,34 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create logical device.
-    VkDeviceQueueCreateInfo dqci = {};
-    dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    dqci.queueFamilyIndex = graphicsQueueIndex;
-    dqci.queueCount = 1;
-    float queuePriorities[] = { 1.0f };
-    dqci.pQueuePriorities = queuePriorities;
+	const float queuePriorities[] = { 1.0f, 1.0f };
+
+    VkDeviceQueueCreateInfo dqci[2] = {};
+	if (graphicsQueueIndex != computeQueueIndex)
+	{
+		dqci[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		dqci[0].queueFamilyIndex = graphicsQueueIndex;
+		dqci[0].queueCount = 1;
+		dqci[0].pQueuePriorities = queuePriorities;
+
+		dqci[1].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		dqci[1].queueFamilyIndex = computeQueueIndex;
+		dqci[1].queueCount = 1;
+		dqci[1].pQueuePriorities = queuePriorities;
+	}
+	else
+	{
+		dqci[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		dqci[0].queueFamilyIndex = graphicsQueueIndex;
+		dqci[0].queueCount = 2;
+		dqci[0].pQueuePriorities = queuePriorities;
+	}
 
     VkDeviceCreateInfo dci = {};
     dci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	dci.pNext = nullptr;
-    dci.queueCreateInfoCount = 1;
-    dci.pQueueCreateInfos = &dqci;
+    dci.queueCreateInfoCount = (graphicsQueueIndex != computeQueueIndex) ? 2 : 1;
+    dci.pQueueCreateInfos = dqci;
 	dci.enabledLayerCount = (uint32_t)validationLayers.size();
 	dci.ppEnabledLayerNames = validationLayers.c_ptr();
     dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
