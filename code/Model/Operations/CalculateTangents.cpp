@@ -79,9 +79,15 @@ bool CalculateTangents::apply(Model& model) const
 	itf.m_setTSpace = [](const SMikkTSpaceContext * pContext, const float fvTangent[], const float fvBiTangent[], const float fMagS, const float fMagT, const tbool bIsOrientationPreserving, const int iFace, const int iVert) -> void {
 		UserData* ud = (UserData*)pContext->m_pUserData;
 		const Polygon& polygon = ud->model->getPolygon(iFace);
+		
 		Vertex vertex = ud->model->getVertex(polygon.getVertex(iVert));
-		vertex.setTangent(ud->model->addUniqueNormal( Vector4::loadUnaligned(fvTangent).xyz0()));
-		vertex.setBinormal(ud->model->addUniqueNormal( Vector4::loadUnaligned(fvBiTangent).xyz0()));
+
+		const float* ft = fvTangent;
+		vertex.setTangent(ud->model->addUniqueNormal(Vector4(ft[0], ft[1], ft[2], 0.0f)));
+
+		const float* fn = fvBiTangent;
+		vertex.setBinormal(ud->model->addUniqueNormal(Vector4(fn[0], fn[1], fn[2], 0.0f)));
+
 		ud->model->setVertex(polygon.getVertex(iVert), vertex);
 	};
 
