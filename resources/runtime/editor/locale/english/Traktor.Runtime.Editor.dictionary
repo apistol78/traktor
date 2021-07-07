@@ -246,6 +246,10 @@
 			<second>Feature</second>
 		</item>
 		<item>
+			<first>RUNTIME_FEATURE_CLONE</first>
+			<second>Clone...</second>
+		</item>
+		<item>
 			<first>RUNTIME_FEATURE_DESCRIPTION</first>
 			<second>Description</second>
 		</item>

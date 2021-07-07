@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
@@ -18,6 +19,7 @@
 #include "Ui/ListBox/ListBox.h"
 #include "Ui/EditList.h"
 #include "Ui/EditListEditEvent.h"
+#include "Ui/FlowLayout.h"
 #include "Ui/Panel.h"
 #include "Ui/Splitter.h"
 
@@ -89,7 +91,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	}
 
 	Ref< ui::Container > containerPlatformsAddRemove = new ui::Container();
-	containerPlatformsAddRemove->create(containerPlatforms, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, f));
+	containerPlatformsAddRemove->create(containerPlatforms, ui::WsNone, new ui::FlowLayout(0, 0, f, f));
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_ADD"));
@@ -103,6 +105,23 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 			m_feature->addPlatform(fp);
 			m_listPlatforms->add(platformInstance->getName(), platformInstance);
 		}
+	});
+
+	Ref< ui::Button > buttonClone = new ui::Button();
+	buttonClone->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_CLONE"));
+	buttonClone->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
+		if (!m_selectedPlatform)
+			return;
+
+		Ref< db::Instance > platformInstance = m_editor->browseInstance(type_of< Platform >());
+		if (!platformInstance)
+			return;
+
+		Feature::Platform fp;
+		fp.platform = platformInstance->getGuid();
+		fp.deploy = DeepClone(m_selectedPlatform->deploy).create< PropertyGroup >();
+		m_feature->addPlatform(fp);
+		m_listPlatforms->add(platformInstance->getName(), platformInstance);
 	});
 
 	Ref< ui::Button > buttonRemove = new ui::Button();
