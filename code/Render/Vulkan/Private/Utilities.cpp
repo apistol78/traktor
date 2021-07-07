@@ -334,32 +334,6 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 	return 0;
 }
 
-//bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryFlags, VkBuffer& outBuffer, VkDeviceMemory& outBufferMemory)
-//{
-//	VkBufferCreateInfo bufferInfo = {};
-//	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-//	bufferInfo.size = size;
-//	bufferInfo.usage = usage;
-//	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-//
-//	if (vkCreateBuffer(device, &bufferInfo, nullptr, &outBuffer) != VK_SUCCESS)
-//		return false;
-//
-//	VkMemoryRequirements memRequirements;
-//	vkGetBufferMemoryRequirements(device, outBuffer, &memRequirements);
-//
-//	VkMemoryAllocateInfo allocInfo = {};
-//	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-//	allocInfo.allocationSize = memRequirements.size;
-//	allocInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, memoryFlags, memRequirements);
-//
-//	if (vkAllocateMemory(device, &allocInfo, nullptr, &outBufferMemory) != VK_SUCCESS)
-//		return false;
-//
-//	vkBindBufferMemory(device, outBuffer, outBufferMemory, 0);
-//	return true;
-//}
-
 std::wstring getHumanResult(VkResult result)
 {
 	switch (result)
