@@ -66,6 +66,13 @@
 				<value/>
 			</deploy>
 		</item>
+		<item>
+			<platform>{9D506CE7-880A-4899-8A83-1FF53E9CD590}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value/>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties/>
 	<migrateProperties/>

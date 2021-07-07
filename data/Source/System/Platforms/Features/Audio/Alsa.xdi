@@ -69,6 +69,72 @@
 				</value>
 			</deploy>
 		</item>
+		<item>
+			<platform>{9D506CE7-880A-4899-8A83-1FF53E9CD590}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Core</item>
+								<item>Traktor.Sound</item>
+								<item>Traktor.Sound.Alsa</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Sound.Alsa.so</item>
+								<item>libTraktor.Sound.so</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
@@ -98,15 +164,6 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Runtime.Modules</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>Traktor.Sound</item>
-						<item>Traktor.Sound.Alsa</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Audio.MasterVolume</first>
 				<second type="traktor.PropertyFloat">
 					<value>1</value>
@@ -135,6 +192,15 @@
 				<first>Audio.Type</first>
 				<second type="traktor.PropertyString">
 					<value>traktor.sound.AudioDriverAlsa</value>
+				</second>
+			</item>
+			<item>
+				<first>Runtime.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound</item>
+						<item>Traktor.Sound.Alsa</item>
+					</value>
 				</second>
 			</item>
 		</value>

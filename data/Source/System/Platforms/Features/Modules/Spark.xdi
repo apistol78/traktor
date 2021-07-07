@@ -16,13 +16,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -62,13 +62,13 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Spark.Runtime.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Sound.a</item>
+								<item>libTraktor.Spark.Runtime.a</item>
+								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Xml.a</item>
 							</value>
 						</second>
@@ -105,13 +105,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -124,13 +124,13 @@
 								<item>libTraktor.Core.so</item>
 								<item>libTraktor.Database.so</item>
 								<item>libTraktor.Drawing.so</item>
-								<item>libTraktor.Spark.Runtime.so</item>
-								<item>libTraktor.Spark.so</item>
 								<item>libTraktor.Html.so</item>
 								<item>libTraktor.Net.so</item>
 								<item>libTraktor.Render.so</item>
 								<item>libTraktor.Resource.so</item>
 								<item>libTraktor.Sound.so</item>
+								<item>libTraktor.Spark.Runtime.so</item>
+								<item>libTraktor.Spark.so</item>
 								<item>libTraktor.Xml.so</item>
 							</value>
 						</second>
@@ -196,13 +196,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -215,13 +215,13 @@
 								<item>libTraktor.Core.dylib</item>
 								<item>libTraktor.Database.dylib</item>
 								<item>libTraktor.Drawing.dylib</item>
-								<item>libTraktor.Spark.Runtime.dylib</item>
-								<item>libTraktor.Spark.dylib</item>
 								<item>libTraktor.Html.dylib</item>
 								<item>libTraktor.Net.dylib</item>
 								<item>libTraktor.Render.dylib</item>
 								<item>libTraktor.Resource.dylib</item>
 								<item>libTraktor.Sound.dylib</item>
+								<item>libTraktor.Spark.Runtime.dylib</item>
+								<item>libTraktor.Spark.dylib</item>
 								<item>libTraktor.Xml.dylib</item>
 							</value>
 						</second>
@@ -280,13 +280,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -328,13 +328,13 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Spark.Runtime.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>Traktor.Spark.Runtime.lib</item>
+								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
@@ -373,13 +373,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -392,13 +392,13 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
-								<item>Traktor.Spark.Runtime.dll</item>
-								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.Sound.dll</item>
+								<item>Traktor.Spark.Runtime.dll</item>
+								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Xml.dll</item>
 							</value>
 						</second>
@@ -432,13 +432,13 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Spark.Runtime.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>Traktor.Spark.Runtime.lib</item>
+								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
@@ -475,13 +475,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -494,13 +494,13 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
-								<item>Traktor.Spark.Runtime.dll</item>
-								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
 								<item>Traktor.Sound.dll</item>
+								<item>Traktor.Spark.Runtime.dll</item>
+								<item>Traktor.Spark.dll</item>
 								<item>Traktor.Xml.dll</item>
 							</value>
 						</second>
@@ -534,13 +534,13 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Spark.Runtime.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>Traktor.Spark.Runtime.lib</item>
+								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
@@ -577,13 +577,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -623,13 +623,13 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Spark.Runtime.lib</item>
-								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
 								<item>Traktor.Resource.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>Traktor.Spark.Runtime.lib</item>
+								<item>Traktor.Spark.lib</item>
 								<item>Traktor.Xml.lib</item>
 							</value>
 						</second>
@@ -666,13 +666,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -712,13 +712,13 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Spark.Runtime.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Sound.a</item>
+								<item>libTraktor.Spark.Runtime.a</item>
+								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Xml.a</item>
 							</value>
 						</second>
@@ -755,13 +755,13 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Spark</item>
-								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
 								<item>Traktor.Resource</item>
 								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
 								<item>Traktor.Xml</item>
 							</value>
 						</second>
@@ -801,13 +801,13 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Spark.Runtime.a</item>
-								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
 								<item>libTraktor.Resource.a</item>
 								<item>libTraktor.Sound.a</item>
+								<item>libTraktor.Spark.Runtime.a</item>
+								<item>libTraktor.Spark.a</item>
 								<item>libTraktor.Xml.a</item>
 							</value>
 						</second>
@@ -843,6 +843,90 @@
 			<executableFile/>
 			<deploy/>
 		</item>
+		<item>
+			<platform>{9D506CE7-880A-4899-8A83-1FF53E9CD590}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Drawing</item>
+								<item>Traktor.Html</item>
+								<item>Traktor.Net</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.Sound</item>
+								<item>Traktor.Spark</item>
+								<item>Traktor.Spark.Runtime</item>
+								<item>Traktor.Xml</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Compress.so</item>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Database.so</item>
+								<item>libTraktor.Drawing.so</item>
+								<item>libTraktor.Html.so</item>
+								<item>libTraktor.Net.so</item>
+								<item>libTraktor.Render.so</item>
+								<item>libTraktor.Resource.so</item>
+								<item>libTraktor.Sound.so</item>
+								<item>libTraktor.Spark.Runtime.so</item>
+								<item>libTraktor.Spark.so</item>
+								<item>libTraktor.Xml.so</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
@@ -856,22 +940,11 @@
 				</second>
 			</item>
 			<item>
-				<first>SparkPipeline.GenerateMips</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>SparkPipeline.SharpenStrength</first>
-				<second type="traktor.PropertyFloat">
-					<value>1</value>
-				</second>
-			</item>
-			<item>
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>DropShadow</item>
+						<item>Glow</item>
 						<item>Spark_Add</item>
 						<item>Spark_Alpha</item>
 						<item>Spark_Darken</item>
@@ -887,8 +960,19 @@
 						<item>Spark_Overlay</item>
 						<item>Spark_Screen</item>
 						<item>Spark_Subtract</item>
-						<item>Glow</item>
 					</value>
+				</second>
+			</item>
+			<item>
+				<first>SparkPipeline.GenerateMips</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>SparkPipeline.SharpenStrength</first>
+				<second type="traktor.PropertyFloat">
+					<value>1</value>
 				</second>
 			</item>
 		</value>

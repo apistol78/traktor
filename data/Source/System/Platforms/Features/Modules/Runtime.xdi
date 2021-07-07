@@ -1223,6 +1223,119 @@
 			<executableFile/>
 			<deploy/>
 		</item>
+		<item>
+			<platform>{9D506CE7-880A-4899-8A83-1FF53E9CD590}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Ai</item>
+								<item>Traktor.Animation</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Database</item>
+								<item>Traktor.Drawing</item>
+								<item>Traktor.Heightfield</item>
+								<item>Traktor.Html</item>
+								<item>Traktor.I18N</item>
+								<item>Traktor.Input</item>
+								<item>Traktor.Mesh</item>
+								<item>Traktor.Net</item>
+								<item>Traktor.Online</item>
+								<item>Traktor.Physics</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Resource</item>
+								<item>Traktor.Runtime</item>
+								<item>Traktor.Scene</item>
+								<item>Traktor.Script</item>
+								<item>Traktor.Sound</item>
+								<item>Traktor.Spray</item>
+								<item>Traktor.Terrain</item>
+								<item>Traktor.Theater</item>
+								<item>Traktor.Video</item>
+								<item>Traktor.Weather</item>
+								<item>Traktor.World</item>
+								<item>Traktor.Xml</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Runtime.App</item>
+								<item>libTraktor.Ai.so</item>
+								<item>libTraktor.Animation.so</item>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Database.so</item>
+								<item>libTraktor.Drawing.so</item>
+								<item>libTraktor.Heightfield.so</item>
+								<item>libTraktor.Html.so</item>
+								<item>libTraktor.I18N.so</item>
+								<item>libTraktor.Input.so</item>
+								<item>libTraktor.Mesh.so</item>
+								<item>libTraktor.Net.so</item>
+								<item>libTraktor.Online.so</item>
+								<item>libTraktor.Physics.so</item>
+								<item>libTraktor.Render.so</item>
+								<item>libTraktor.Resource.so</item>
+								<item>libTraktor.Runtime.so</item>
+								<item>libTraktor.Scene.so</item>
+								<item>libTraktor.Script.so</item>
+								<item>libTraktor.Sound.so</item>
+								<item>libTraktor.Spray.so</item>
+								<item>libTraktor.Terrain.so</item>
+								<item>libTraktor.Theater.so</item>
+								<item>libTraktor.Video.so</item>
+								<item>libTraktor.Weather.so</item>
+								<item>libTraktor.World.so</item>
+								<item>libTraktor.Xml.so</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value/>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/rpi/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
 	</platforms>
 	<pipelineProperties type="traktor.PropertyGroup">
 		<value>
