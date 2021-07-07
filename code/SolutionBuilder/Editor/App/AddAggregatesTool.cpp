@@ -78,7 +78,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 					{
 						{
 							Ref< AggregationItem > a = new AggregationItem();
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 							a->setSourceFile(L"lib" + project->getName() + L".a");
 #else
 							a->setSourceFile(project->getName() + L".lib");
@@ -86,7 +86,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 							a->setTargetPath(toLower(configuration->getName()));
 							configuration->addAggregationItem(a);
 						}
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(__RPI__)
 						{
 							Ref< AggregationItem > a = new AggregationItem();
 							a->setSourceFile(project->getName() + L".pdb");
@@ -102,7 +102,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 				case Configuration::TfSharedLibrary:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-#if defined(__LINUX__)						
+#if defined(__LINUX__) || defined(__RPI__)					
 						a->setSourceFile(L"lib" + project->getName() + L".so");
 #else
 						a->setSourceFile(project->getName() + L".lib");
@@ -110,7 +110,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						a->setTargetPath(toLower(configuration->getName()));
 						configuration->addAggregationItem(a);
 					}
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(__RPI__)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile(project->getName() + L".dll");
@@ -130,7 +130,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 				case Configuration::TfExecutableConsole:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-#if defined(__LINUX__)						
+#if defined(__LINUX__) || defined(__RPI__)					
 						a->setSourceFile(project->getName());
 #else
 						a->setSourceFile(project->getName() + L".exe");
@@ -138,7 +138,7 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						a->setTargetPath(toLower(configuration->getName()));
 						configuration->addAggregationItem(a);
 					}
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(__RPI__)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile(project->getName() + L".pdb");

@@ -1,7 +1,7 @@
 #if !defined(_WIN32)
 #	include <cassert>
 #endif
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 #	include <signal.h>
 #elif defined(__APPLE__)
 #	include <stdbool.h>
@@ -29,7 +29,7 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 
 #if defined(_WIN32)
 	__debugbreak();
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	raise(SIGTRAP);
 #else
 	// Fall back on assert macro

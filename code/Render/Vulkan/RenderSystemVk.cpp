@@ -62,7 +62,7 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_metal_surface", "VK_EXT
 const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_get_physical_device_properties2" };
 #endif
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__RPI__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 #else
 const char* c_deviceExtensions[] =
@@ -282,13 +282,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	{
 		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
 		{
+#if !defined(__RPI__)
 			// Ensure family can support two queues.
 			if (i == graphicsQueueIndex)
 			{
 				if (queueFamilyProperties[i].queueCount <= 1)
 					continue;
 			}
-
+#endif
 			computeQueueIndex = i;
 			break;
 		}
@@ -338,7 +339,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
     dci.ppEnabledExtensionNames = c_deviceExtensions;
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
     VkPhysicalDeviceFeatures features = {};
 	features.sampleRateShading = VK_TRUE;
     features.shaderClipDistance = VK_TRUE;
@@ -346,7 +347,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     dci.pEnabledFeatures = &features;
 #endif
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
 	VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
 	s8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
 	s8.pNext = nullptr;

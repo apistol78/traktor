@@ -82,7 +82,7 @@ void EditList::eventEditFocus(FocusEvent* event)
 {
 	if (m_editItem->isVisible(false) && event->lostFocus())
 	{
-#if !defined(__LINUX__)
+#if !defined(__LINUX__) && !defined(__RPI__)
 		setFocus();
 #endif
 		m_editItem->hide();

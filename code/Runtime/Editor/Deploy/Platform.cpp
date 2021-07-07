@@ -24,7 +24,7 @@ const DeployTool& Platform::getDeployTool() const
 {
 #if TARGET_OS_MAC
 	return m_deployToolOsX;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	return m_deployToolLinux;
 #else
 	return m_deployToolWin64;

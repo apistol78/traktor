@@ -41,7 +41,7 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
 #endif
 
-#if defined(TARGET_OS_MAC) || defined(__LINUX__) || defined(__ANDROID__)
+#if defined(TARGET_OS_MAC) || defined(__LINUX__) || defined(__RPI__) || defined(__ANDROID__)
 	std::wstring dbName = fileName.getPathNameNoVolume();
 #else
 	std::wstring dbName = fileName.getPathName();

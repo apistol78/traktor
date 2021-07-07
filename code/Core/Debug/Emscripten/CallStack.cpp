@@ -1,4 +1,4 @@
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
 #	include <execinfo.h>
 #endif
 #include "Core/Platform.h"
@@ -9,7 +9,7 @@ namespace traktor
 
 uint32_t getCallStack(uint32_t ncs, void** outCs, uint32_t skip)
 {
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
 	return backtrace(
 		outCs,
 		ncs

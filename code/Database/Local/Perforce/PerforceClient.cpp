@@ -622,7 +622,7 @@ bool PerforceClient::establishConnection()
 
 	if (m_clientDesc.m_port.empty() || m_clientDesc.m_user.empty() || m_clientDesc.m_client.empty())
 	{
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 		Path applicationSettingsPath = OS::getInstance().getUserHomePath() + L"/.p4qt/ApplicationSettings.xml";
 #else
 		Path applicationSettingsPath = OS::getInstance().getUserHomePath() + L"/../.p4qt/ApplicationSettings.xml";

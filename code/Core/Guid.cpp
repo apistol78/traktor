@@ -5,7 +5,7 @@
 #elif defined(__APPLE__)
 #	include <mach/mach_time.h>
 #	include "Core/Math/Random.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include <uuid/uuid.h>
 #endif
 #include "Core/Guid.h"
@@ -107,7 +107,7 @@ Guid Guid::create()
 
 	guid.m_valid = true;
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 
 	uuid_t id;
 	uuid_generate(id);

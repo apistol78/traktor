@@ -33,7 +33,7 @@ typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
 typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
 #endif
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 #	include <X11/Xlib.h>
 #endif
 

@@ -46,7 +46,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine)
 	{
 		char ch = buffer[i];
 
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__LINUX__) || defined(__RPI__)
 		if (ch == 10)
 		{
 			m_lines.push_back(mbstows(std::string(m_acc.begin(), m_acc.end())));
