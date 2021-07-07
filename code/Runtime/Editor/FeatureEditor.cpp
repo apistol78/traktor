@@ -120,6 +120,16 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		Feature::Platform fp;
 		fp.platform = platformInstance->getGuid();
 		fp.deploy = DeepClone(m_selectedPlatform->deploy).create< PropertyGroup >();
+
+		if (fp.deploy->getProperty(L"DEPLOY_SHARED_PATH_DEBUG") != nullptr)
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_DEBUG", std::set< std::wstring >({ L"__path_shared_debug" }));
+		if (fp.deploy->getProperty(L"DEPLOY_SHARED_PATH_RELEASE") != nullptr)
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_RELEASE", std::set< std::wstring >({ L"__path_shared_release" }));
+		if (fp.deploy->getProperty(L"DEPLOY_STATIC_PATH_DEBUG") != nullptr)
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_DEBUG", std::set< std::wstring >({ L"__path_static_debug" }));
+		if (fp.deploy->getProperty(L"DEPLOY_STATIC_PATH_RELEASE") != nullptr)
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_RELEASE", std::set< std::wstring >({ L"__path_static_release" }));
+
 		m_feature->addPlatform(fp);
 		m_listPlatforms->add(platformInstance->getName(), platformInstance);
 	});
@@ -267,10 +277,11 @@ ui::Size FeatureEditor::getPreferredSize() const
 
 void FeatureEditor::selectPlatform(Feature::Platform* platform)
 {
+	int32_t selected = -1;
+
 	m_selectedPlatform = platform;
 
 	m_listKeys->removeAll();
-
 	if (m_selectedPlatform != nullptr)
 	{
 		m_editExecutable->setText(m_selectedPlatform->executableFile);
@@ -279,7 +290,12 @@ void FeatureEditor::selectPlatform(Feature::Platform* platform)
 		if (m_selectedPlatform->deploy != nullptr)
 		{
 			for (auto kv : m_selectedPlatform->deploy->getValues())
-				m_listKeys->add(kv.first, kv.second);
+			{
+				int32_t index = m_listKeys->add(kv.first, kv.second);
+				if (kv.first == m_selectedKey)
+					selected = index;
+			}
+			m_listKeys->select(selected);
 		}
 	}
 	else
@@ -288,7 +304,7 @@ void FeatureEditor::selectPlatform(Feature::Platform* platform)
 		m_editExecutable->setEnable(false);
 	}
 
-	selectKey(L"");
+	selectKey(selected >= 0 ? m_selectedKey : L"");
 }
 
 void FeatureEditor::selectKey(const std::wstring& key)
