@@ -226,6 +226,10 @@
 			<second>Miscellaneous</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NO_DEPENDENCY_TRACKER_ERROR</first>
+			<second>No dependency tracker, unable to list referees.</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_ABS</first>
 			<second>Abs</second>
 		</item>
