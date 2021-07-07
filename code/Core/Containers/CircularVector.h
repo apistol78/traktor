@@ -71,8 +71,6 @@ public:
 
 	void push_back(const ItemType& item)
 	{
-		T_ASSERT(!full());
-
 		// Push back element.
 		m_items[m_back] = item;
 		m_back = (m_back + 1) % N;
@@ -84,7 +82,6 @@ public:
 
 	void pop_back()
 	{
-		T_ASSERT(!full());
 		m_back = (m_back > 0) ? m_back - 1 : N - 1;
 	}
 
