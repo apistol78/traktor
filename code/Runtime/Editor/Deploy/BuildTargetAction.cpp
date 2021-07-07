@@ -195,7 +195,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
-	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=" + FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/db").getPathName() + L";binary=true;fileStore=traktor.db.NoFileStore");
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=" + FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/db").getPathName() + L";binary=true;journal=false;fileStore=traktor.db.NoFileStore");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
 	{
@@ -203,6 +203,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		sourceDatabaseCs.set(L"groupPath", groupPath.getPathName());
 	}
 
+	sourceDatabaseCs.set(L"journal", L"false");
 	sourceDatabaseCs.set(L"fileStore", L"");
 
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
