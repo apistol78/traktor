@@ -1,4 +1,4 @@
-#if defined(__LINUX__) || defined(__APPLE__) || defined(__ANDROID__)
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__) || defined(__ANDROID__)
 #	include <sys/ioctl.h>
 #endif
 #include "Net/Platform.h"
@@ -36,7 +36,7 @@ void Socket::close()
 	{
 #if defined(_WIN32)
 		::shutdown(m_socket, SD_BOTH);
-#elif !defined(__LINUX__)
+#elif !defined(__LINUX__) && !defined(__RPI__)
 		::send(m_socket, 0, 0, 0);
 #endif
 		CLOSE_SOCKET(m_socket);
@@ -119,7 +119,7 @@ bool Socket::ioctl(IoctlCommand cmd, unsigned long* argp)
 		return false;
 	}
 	return bool(ioctlsocket(m_socket, ncmd, argp) == 0);
-#elif defined(__LINUX__) || defined(__APPLE__) || defined(__ANDROID__)
+#elif defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__) || defined(__ANDROID__)
 	int ret = 0;
 	switch (cmd)
 	{

@@ -33,7 +33,7 @@ public:
 	double getDeltaTime();
 
 private:
-#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__LINUX__)
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__LINUX__) || defined(__RPI__)
 	double m_first = 0.0;
 	double m_last = 0.0;
 #else

@@ -17,7 +17,7 @@
 #   include <netinet/if_ether.h>
 #endif
 
-#if defined(__LINUX__) || defined(__ANDROID__)
+#if defined(__LINUX__) || defined(__RPI__) || defined(__ANDROID__)
 #   include <sys/ioctl.h>
 #   include <net/if.h>
 #   include <netinet/if_ether.h>
@@ -180,7 +180,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#elif defined(__LINUX__) || defined(__ANDROID__) || defined(__APPLE__) && !defined(__IOS__)
+#elif defined(__LINUX__) || defined(__RPI__) || defined(__ANDROID__) || defined(__APPLE__) && !defined(__IOS__)
 
     uint8_t buf[32767] = { 0 };
     struct ifconf ifc = { 0 };
@@ -209,7 +209,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
     {
         struct ifreq& r = *(struct ifreq*)&ptr[i];
 
-#if defined(__LINUX__) || defined(__ANDROID__)
+#if defined(__LINUX__) || defined(__RPI__) || defined(__ANDROID__)
 		i += sizeof(r);
 #else
 		i += IFNAMSIZ + r.ifr_addr.sa_len;
