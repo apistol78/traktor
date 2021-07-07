@@ -126,7 +126,7 @@ bool Server::update()
         platforms.push_back(L"Emscripten");
         platforms.push_back(L"Linux");
 #elif defined(__RPI__)
-    	platforms.push_back(L"RaspberryPI");
+    	platforms.push_back(L"Raspberry PI");
 #endif
 
         Ref< PropertyGroup > properties = new PropertyGroup();
