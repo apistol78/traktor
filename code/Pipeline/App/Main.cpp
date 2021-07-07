@@ -303,12 +303,14 @@ void threadBuild(editor::PipelineBuilder& pipelineBuilder, const editor::Pipelin
 
 ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstring& connectionString, bool create)
 {
-	std::map< std::wstring, ConnectionAndCache >::iterator i = g_databaseConnections.find(connectionString);
-	if (i != g_databaseConnections.end())
-		return i->second;
+	// Check if database is already opened.
+	auto it = g_databaseConnections.find(connectionString);
+	if (it != g_databaseConnections.end())
+		return it->second;
 
 	log::info << L"Opening database \"" << connectionString << L"\"..." << Endl;
 
+	// Open or create new database.
 	Ref< db::Database > database = new db::Database();
 	if (!database->open(connectionString))
 	{
@@ -318,6 +320,7 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 
 	g_databaseConnections[connectionString].database = database;
 
+	// Also create an instance cache.
 	if (!create)
 	{
 		std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
@@ -332,39 +335,39 @@ void updateDatabases()
 	Ref< const db::IEvent > event;
 	bool remote;
 
-	for (std::map< std::wstring, ConnectionAndCache >::iterator i = g_databaseConnections.begin(); i != g_databaseConnections.end(); ++i)
+	for (auto it : g_databaseConnections)
 	{
-		while (i->second.database->getEvent(event, remote))
+		while (it.second.database->getEvent(event, remote))
 		{
 			if (remote)
 			{
-				if (const db::EvtInstanceCreated* instanceCreated = dynamic_type_cast< const db::EvtInstanceCreated* >(event))
+				if (auto instanceCreated = dynamic_type_cast< const db::EvtInstanceCreated* >(event))
 				{
-					Ref< db::Instance > instance = i->second.database->getInstance(instanceCreated->getInstanceGuid());
+					Ref< db::Instance > instance = it.second.database->getInstance(instanceCreated->getInstanceGuid());
 					if (instance)
 						log::info << L"Database event; instance \"" << instance->getName() << L"\" created" << Endl;
 					else
 						log::info << L"Database event; instance \"" << instanceCreated->getInstanceGuid().format() << L"\" created" << Endl;
 
-					if (i->second.cache)
-						i->second.cache->flush(instanceCreated->getInstanceGuid());
+					if (it.second.cache)
+						it.second.cache->flush(instanceCreated->getInstanceGuid());
 				}
-				else if (const db::EvtInstanceCommitted* instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+				else if (auto instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
 				{
-					Ref< db::Instance > instance = i->second.database->getInstance(instanceCommited->getInstanceGuid());
+					Ref< db::Instance > instance = it.second.database->getInstance(instanceCommited->getInstanceGuid());
 					if (instance)
 						log::info << L"Database event; instance \"" << instance->getName() << L"\" committed" << Endl;
 					else
 						log::info << L"Database event; instance \"" << instanceCommited->getInstanceGuid().format() << L"\" committed" << Endl;
 
-					if (i->second.cache)
-						i->second.cache->flush(instanceCommited->getInstanceGuid());
+					if (it.second.cache)
+						it.second.cache->flush(instanceCommited->getInstanceGuid());
 				}
-				else if (const db::EvtInstanceRemoved* instanceRemoved = dynamic_type_cast< const db::EvtInstanceRemoved* >(event))
+				else if (auto instanceRemoved = dynamic_type_cast< const db::EvtInstanceRemoved* >(event))
 				{
 					log::info << L"Database event; instance \"" << instanceRemoved->getInstanceGuid().format() << L"\" removed" << Endl;
-					if (i->second.cache)
-						i->second.cache->flush(instanceRemoved->getInstanceGuid());
+					if (it.second.cache)
+						it.second.cache->flush(instanceRemoved->getInstanceGuid());
 				}
 				else
 					log::info << L"Database event; " << type_name(event) << Endl;
