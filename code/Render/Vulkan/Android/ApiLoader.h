@@ -101,6 +101,7 @@ extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
 
 // Android Vulkan extensions.
 extern PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
+extern PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;

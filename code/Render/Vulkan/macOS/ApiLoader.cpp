@@ -116,6 +116,7 @@ T_DEFINE_VK(vkGetPipelineCacheData);
 T_DEFINE_VK(vkFreeDescriptorSets);
 
 T_DEFINE_VK(vkCreateMetalSurfaceEXT);
+T_DEFINE_VK(vkDestroySurfaceKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceSupportKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceFormatsKHR);
 T_DEFINE_VK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
@@ -254,6 +255,7 @@ bool initializeVulkanApi()
 bool initializeVulkanExtensions(VkInstance instance)
 {
 	T_RESOLVE_VK_EXT(vkCreateMetalSurfaceEXT);
+	T_RESOLVE_VK_EXT(vkDestroySurfaceKHR);
 	T_RESOLVE_VK_EXT(vkGetPhysicalDeviceSurfaceSupportKHR);
 	T_RESOLVE_VK_EXT(vkGetPhysicalDeviceSurfaceFormatsKHR);
 	T_RESOLVE_VK_EXT(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
