@@ -282,8 +282,15 @@ void RenderViewVk::close()
 	// Destroy previous swap chain.
 	if (m_swapChain != 0)
 	{
-		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, 0);	
+		vkDestroySwapchainKHR(m_context->getLogicalDevice(), m_swapChain, nullptr);	
 		m_swapChain = 0;
+	}
+
+	// Destroy surface.
+	if (m_surface != 0)
+	{
+		vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+		m_surface = 0;
 	}
 
 	m_counter = -1;
