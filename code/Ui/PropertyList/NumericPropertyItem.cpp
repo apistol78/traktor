@@ -7,6 +7,7 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/PropertyList/NumericPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
@@ -93,6 +94,11 @@ void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 	m_editor->setVisible(false);
 	m_editor->addEventHandler< FocusEvent >(this, &NumericPropertyItem::eventEditFocus);
 	m_editor->addEventHandler< KeyDownEvent >(this, &NumericPropertyItem::eventEditKeyDownEvent);
+
+	m_upDown[0] = new StyleBitmap(L"UI.UpDown0");
+	m_upDown[1] = new StyleBitmap(L"UI.UpDown1");
+	m_upDown[2] = new StyleBitmap(L"UI.UpDown2");
+	m_upDown[3] = new StyleBitmap(L"UI.UpDown3");
 }
 
 void NumericPropertyItem::destroyInPlaceControls()
@@ -195,28 +201,24 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 
-	int h = rc.getHeight() / 2;
-	int b = h - 2;
-	int x = rc.right - h;
-	int y = rc.top + h;
+	int32_t index = 0;
+	if (value > m_limitMin)
+		index |= 1;
+	if (value < m_limitMax)
+		index |= 2;
 
-	Point up[] =
-	{
-		Point(x, y - b - 1),
-		Point(x + b, y - 1),
-		Point(x - b, y - 1)
-	};
-	canvas.setBackground(value < m_limitMax ? Color4ub(80, 80, 80) : Color4ub(180, 180, 180));
-	canvas.fillPolygon(up, 3);
+	auto upDown = m_upDown[index];
+	auto upDownSize = upDown->getSize();
 
-	Point dw[] =
-	{
-		Point(x, y + b),
-		Point(x - b + 1, y + 1),
-		Point(x + b - 1, y + 1)
-	};
-	canvas.setBackground(value > m_limitMin ? Color4ub(80, 80, 80) : Color4ub(180, 180, 180));
-	canvas.fillPolygon(dw, 3);
+	const int32_t x = rc.right - upDownSize.cx - dpi96(2);
+	const int32_t y = rc.top + (rc.getHeight() - upDownSize.cy) / 2;
+
+	canvas.drawBitmap(
+		Point(x, y),
+		Point(0, 0),
+		upDown->getSize(),
+		upDown
+	);
 }
 
 bool NumericPropertyItem::copy()

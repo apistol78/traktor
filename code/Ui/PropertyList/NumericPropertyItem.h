@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class Edit;
+class IBitmap;
 
 /*! Numeric property item.
  * \ingroup UI
@@ -77,6 +78,7 @@ protected:
 
 private:
 	Ref< Edit > m_editor;
+	Ref< IBitmap > m_upDown[4];
 	double m_value;
 	double m_limitMin;
 	double m_limitMax;
