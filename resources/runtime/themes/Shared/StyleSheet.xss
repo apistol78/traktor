@@ -735,6 +735,22 @@
 			<second>$(Images.Path)/Images/UI/SmallPlus.image</second>
 		</item>
 		<item>
+			<first>UI.UpDown0</first>
+			<second>$(Images.Path)/Images/UI/UpDown0.image</second>
+		</item>
+		<item>
+			<first>UI.UpDown1</first>
+			<second>$(Images.Path)/Images/UI/UpDown1.image</second>
+		</item>
+		<item>
+			<first>UI.UpDown2</first>
+			<second>$(Images.Path)/Images/UI/UpDown2.image</second>
+		</item>
+		<item>
+			<first>UI.UpDown3</first>
+			<second>$(Images.Path)/Images/UI/UpDown3.image</second>
+		</item>
+		<item>
 			<first>UI.TabClose</first>
 			<second>$(Images.Path)/Images/UI/TabClose.image</second>
 		</item>

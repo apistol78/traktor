@@ -261,6 +261,10 @@ local outputs =
 			{ name = "SmallDots", column = 3, row = 25, width = 1, height = 1, base = 12 },
 			{ name = "SmallPen", column = 4, row = 25, width = 1, height = 1, base = 12 },
 			{ name = "SmallPlus", column = 5, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "UpDown0", column = 6, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "UpDown1", column = 7, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "UpDown2", column = 8, row = 25, width = 1, height = 1, base = 12 },
+			{ name = "UpDown3", column = 9, row = 25, width = 1, height = 1, base = 12 },
 		}
 	},
 	{
@@ -544,7 +548,7 @@ local dpis =
 local function export(input, x, y, width, height, dpi, output)
 	local inkscape = "/snap/bin/inkscape"
 	-- local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
-	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. string.format("%d", dpi) .. " " .. input
+	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)
 	stdout:printLn("  exitcode " .. result)
