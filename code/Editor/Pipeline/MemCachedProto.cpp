@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Net/Socket.h"
@@ -31,7 +32,7 @@ bool MemCachedProto::sendCommand(const std::string& command)
 
 bool MemCachedProto::readReply(std::string& outReply)
 {
-	AlignedVector< char > buffer;
+	StaticVector< char, 1024 > buffer;
 	for (;;)
 	{
 		if (m_socket->select(true, false, false, 1000) <= 0)
