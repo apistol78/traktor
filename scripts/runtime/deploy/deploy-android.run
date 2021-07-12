@@ -169,19 +169,7 @@ end
 Build assets in target output database.
 ]]
 function build(args)
-	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -v -l -p -s=Pipeline"
-
-	-- Do this for now since we cannot use a pipeline master on Linux nor macOS.
-	local host = os:getEnvironment("DEPLOY_HOST_OS")
-	if host == "linux" or host == "osx" then
-		cmdline = cmdline .. " -standalone"
-	end
-
-	for i = 1, args.size - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
-	end
-	return run:execute(cmdline)
+	return commonBuild(args)
 end
 
 --[[
