@@ -107,26 +107,6 @@ bool isDeviceSuitable(VkPhysicalDevice device)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
 
-RenderSystemVk::RenderSystemVk()
-#if defined(__LINUX__) || defined(__RPI__)
-:	m_display(nullptr)
-,	m_instance(0)
-#else
-:	m_instance(0)
-#endif
-,	m_physicalDevice(0)
-,	m_logicalDevice(0)
-,	m_debugMessenger(0)
-,	m_allocator(0)
-,	m_maxAnisotropy(0)
-,	m_mipBias(0.0f)
-{
-#if defined(__ANDROID__)
-	m_screenWidth = 0;
-	m_screenHeight = 0;
-#endif
-}
-
 bool RenderSystemVk::create(const RenderSystemDesc& desc)
 {
 	VkResult result;
