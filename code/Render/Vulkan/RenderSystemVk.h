@@ -35,8 +35,6 @@ class T_DLLCLASS RenderSystemVk : public IRenderSystem
 	T_RTTI_CLASS;
 
 public:
-	RenderSystemVk();
-
 	virtual bool create(const RenderSystemDesc& desc) override final;
 
 	virtual void destroy() override final;
@@ -82,23 +80,23 @@ private:
 	Ref< Window > m_window;
 #endif
 #if defined(__LINUX__) || defined(__RPI__)
-	void* m_display;
+	void* m_display = nullptr;
 #endif
 #if defined(__ANDROID__)
-	int32_t m_screenWidth;
-	int32_t m_screenHeight;
+	int32_t m_screenWidth = 0;
+	int32_t m_screenHeight = 0;
 #endif
-	VkInstance m_instance;
-	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_logicalDevice;
-	VkDebugUtilsMessengerEXT m_debugMessenger;
+	VkInstance m_instance = 0;
+	VkPhysicalDevice m_physicalDevice = 0;
+	VkDevice m_logicalDevice = 0;
+	VkDebugUtilsMessengerEXT m_debugMessenger = 0;
 	RenderSystemStatistics m_statistics;
 	Ref< Context > m_context;
 	Ref< ShaderModuleCache > m_shaderModuleCache;
 	Ref< PipelineLayoutCache > m_pipelineLayoutCache;
-	VmaAllocator m_allocator;
-	int32_t m_maxAnisotropy;
-	float m_mipBias;
+	VmaAllocator m_allocator = 0;
+	int32_t m_maxAnisotropy = 0;
+	float m_mipBias = 0.0f;
 };
 
 	}
