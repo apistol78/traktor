@@ -135,6 +135,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
+	// Get size of surfce.
 	RECT rc;
 	GetClientRect((HWND)desc.syswin.hWnd, &rc);
 	width = (int32_t)(rc.right - rc.left);
@@ -151,15 +152,11 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	XWindowAttributes xwa;
-	XGetWindowAttributes(
-		(::Display*)desc.syswin.display,
-		desc.syswin.window,
-		&xwa
-	);
-
-	width = (int32_t)xwa.width;
-	height = (int32_t)xwa.height;
+	// Get size of surfce.
+	VkSurfaceCapabilitiesKHR sc;
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+	width = sc.currentExtent.width;
+	height = sc.currentExtent.height;
 
 #elif defined(__ANDROID__)
 	VkAndroidSurfaceCreateInfoKHR sci = {};
@@ -172,6 +169,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
+	// Get size of surfce.
 	width = ANativeWindow_getWidth(sci.window) / resolutionDenom;
 	height = ANativeWindow_getHeight(sci.window) / resolutionDenom;
 #elif defined(__MAC__)
@@ -197,6 +195,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
+	// Get size of surfce.
 	width = getViewWidth(desc.syswin.view);
 	height = getViewHeight(desc.syswin.view);
 #endif
