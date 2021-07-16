@@ -1,6 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Core/System/Environment.h"
 #include "Pipeline/App/PipelineParameters.h"
 
 namespace traktor
@@ -8,15 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PipelineParameters", 0, PipelineParameters, ISerializable)
 
-PipelineParameters::PipelineParameters()
-:	m_verbose(false)
-,	m_progress(false)
-,	m_rebuild(false)
-,	m_noCache(false)
-{
-}
-
 PipelineParameters::PipelineParameters(
+	const Environment* environment,
 	const std::wstring& workingDirectory,
 	const std::wstring& settings,
 	bool verbose,
@@ -25,7 +20,8 @@ PipelineParameters::PipelineParameters(
 	bool noCache,
 	const std::vector< Guid >& roots
 )
-:	m_workingDirectory(workingDirectory)
+:	m_environment(environment)
+,	m_workingDirectory(workingDirectory)
 ,	m_settings(settings)
 ,	m_verbose(verbose)
 ,	m_progress(progress)
@@ -37,6 +33,7 @@ PipelineParameters::PipelineParameters(
 
 void PipelineParameters::serialize(ISerializer& s)
 {
+	s >> MemberRef< const Environment >(L"environment", m_environment);
 	s >> Member< std::wstring >(L"workingDirectory", m_workingDirectory);
 	s >> Member< std::wstring >(L"settings", m_settings);
 	s >> Member< bool >(L"verbose", m_verbose);

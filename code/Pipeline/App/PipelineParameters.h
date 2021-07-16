@@ -1,5 +1,4 @@
-#ifndef traktor_PipelineParameters_H
-#define traktor_PipelineParameters_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializer.h"
@@ -7,14 +6,17 @@
 namespace traktor
 {
 
+class Environment;
+
 class PipelineParameters : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	PipelineParameters();
+	PipelineParameters() = default;
 
-	PipelineParameters(
+	explicit PipelineParameters(
+		const Environment* environment,
 		const std::wstring& workingDirectory,
 		const std::wstring& settings,
 		bool verbose,
@@ -25,6 +27,8 @@ public:
 	);
 
 	virtual void serialize(ISerializer& s) override final;
+
+	const Environment* getEnvironment() const { return m_environment; }
 
 	const std::wstring& getWorkingDirectory() const { return m_workingDirectory; }
 
@@ -41,16 +45,14 @@ public:
 	const std::vector< Guid >& getRoots() const { return m_roots; }
 
 private:
+	Ref< const Environment > m_environment;
 	std::wstring m_workingDirectory;
 	std::wstring m_settings;
-	bool m_verbose;
-	bool m_progress;
-	bool m_rebuild;
-	bool m_noCache;
+	bool m_verbose = false;
+	bool m_progress = false;
+	bool m_rebuild = false;
+	bool m_noCache = false;
 	std::vector< Guid > m_roots;
 };
 
 }
-
-#endif	// traktor_PipelineParameters_H
-
