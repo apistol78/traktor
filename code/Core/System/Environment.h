@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 /*! OS environment.
  * \ingroup Core
  */
-class T_DLLCLASS Environment : public Object
+class T_DLLCLASS Environment : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -32,6 +32,8 @@ public:
 	std::wstring get(const std::wstring& key) const;
 
 	const std::map< std::wstring, std::wstring >& get() const;
+
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::map< std::wstring, std::wstring > m_env;

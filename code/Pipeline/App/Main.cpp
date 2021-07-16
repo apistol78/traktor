@@ -21,6 +21,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
@@ -626,6 +627,7 @@ int slave(const CommandLine& cmdLine)
 	}
 
 #if defined(_WIN32)
+	// Get handle of parent process so we can terminate slave when master terminates.
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	DWORD dwParentPID = 0;
 
@@ -684,7 +686,18 @@ int slave(const CommandLine& cmdLine)
 
 		bool success = false;
 		if (params)
-			success = perform(params);
+		{
+			success = true;
+			if (params->getEnvironment() != nullptr)
+			{
+				for (auto it : params->getEnvironment()->get())
+					success &= OS::getInstance().setEnvironment(it.first, it.second);
+				if (!success)
+					traktor::log::error << L"Unable to set slave environment." << Endl;
+			}
+			if (success)
+				success &= perform(params);
+		}
 		else
 			traktor::log::error << L"Unable to read pipeline parameters." << Endl;
 
@@ -815,6 +828,7 @@ int master(const CommandLine& cmdLine)
 		settingsFile = cmdLine.getOption('s', L"settings").getString();
 
 	PipelineParameters params(
+		OS::getInstance().getEnvironment(),
 		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
 		settingsFile,
 		cmdLine.hasOption('v', L"verbose"),
@@ -959,6 +973,7 @@ int standalone(const CommandLine& cmdLine)
 		settingsFile = cmdLine.getOption('s', L"settings").getString();
 
 	PipelineParameters params(
+		OS::getInstance().getEnvironment(),
 		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
 		settingsFile,
 		cmdLine.hasOption('v', L"verbose"),
