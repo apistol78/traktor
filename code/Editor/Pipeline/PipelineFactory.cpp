@@ -24,7 +24,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		return std::wcscmp(lh->getName(), rh->getName()) < 0;
 	});
 
-	log::info << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
+	log::debug << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
 	for (auto pipelineType : sortedPipelineTypes)
 	{
 		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >(pipelineType->createInstance());
@@ -40,10 +40,10 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 		const uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
 
-		log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
-		log::info << IncreaseIndent;
-		log::info << pipelineSettings.getLog();
-		log::info << DecreaseIndent;
+		log::debug << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
+		log::debug << IncreaseIndent;
+		log::debug << pipelineSettings.getLog();
+		log::debug << DecreaseIndent;
 
 		for (auto assetType : pipeline->getAssetTypes())
 		{
