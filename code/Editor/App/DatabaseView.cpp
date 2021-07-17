@@ -74,34 +74,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView::Filt
 		namespace
 		{
 
-struct WizardToolPred
-{
-	bool operator () (const IWizardTool* a, const IWizardTool* b) const
-	{
-		return compareIgnoreCase(a->getDescription(), b->getDescription()) < 0;
-	}
-};
-
-struct GroupByNamePred
-{
-	bool operator () (const db::Group* a, const db::Group* b) const
-	{
-		return compareIgnoreCase(a->getName(), b->getName()) < 0;
-	}
-};
-
-struct InstanceByNamePred
-{
-	bool operator () (const db::Instance* a, const db::Instance* b) const
-	{
-		return compareIgnoreCase(a->getName(), b->getName()) < 0;
-	}
-};
-
 class DefaultFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS;
-
 public:
 	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
@@ -114,14 +88,10 @@ public:
 	}
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.DefaultFilter", DefaultFilter, DatabaseView::Filter)
-
 class TextFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS;
-
 public:
-	TextFilter(const std::wstring& filter)
+	explicit TextFilter(const std::wstring& filter)
 	:	m_filter(filter)
 	{
 	}
@@ -140,14 +110,10 @@ private:
 	WildCompare m_filter;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.TextFilter", TextFilter, DatabaseView::Filter)
-
 class GuidFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS;
-
 public:
-	GuidFilter(const Guid& filter)
+	explicit GuidFilter(const Guid& filter)
 	:	m_filter(filter)
 	{
 	}
@@ -166,14 +132,10 @@ private:
 	Guid m_filter;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidFilter", GuidFilter, DatabaseView::Filter)
-
 class TypeSetFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS;
-
 public:
-	TypeSetFilter(const TypeInfoSet& typeSet)
+	explicit TypeSetFilter(const TypeInfoSet& typeSet)
 	:	m_typeSet(typeSet)
 	{
 	}
@@ -202,14 +164,10 @@ private:
 	mutable TypeInfoSet m_typeSet;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.TypeSetFilter", TypeSetFilter, DatabaseView::Filter)
-
 class GuidSetFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS;
-
 public:
-	GuidSetFilter(const std::set< Guid >& guidSet)
+	explicit GuidSetFilter(const std::set< Guid >& guidSet)
 	:	m_guidSet(guidSet)
 	{
 	}
@@ -228,12 +186,10 @@ private:
 	mutable std::set< Guid > m_guidSet;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
-
 class CollectInstanceTypes
 {
 public:
-	CollectInstanceTypes(TypeInfoSet& outInstanceTypes)
+	explicit CollectInstanceTypes(TypeInfoSet& outInstanceTypes)
 	:	m_outInstanceTypes(outInstanceTypes)
 	{
 	}
@@ -543,7 +499,9 @@ void DatabaseView::setDatabase(db::Database* db)
 		}
 
 		// Sort wizard based on their description.
-		m_wizardTools.sort(WizardToolPred());
+		m_wizardTools.sort([](const IWizardTool* a, const IWizardTool* b) {
+			return compareIgnoreCase(a->getDescription(), b->getDescription()) < 0;
+		});
 
 		// Populate menus.
 		int32_t nextWizardId = 0;
@@ -1190,7 +1148,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
-	childGroups.sort(GroupByNamePred());
+	childGroups.sort([](const db::Group* a, const db::Group* b) {
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	});
 
 	for (auto childGroup : childGroups)
 		buildTreeItem(treeView, groupItem, childGroup);
@@ -1201,7 +1161,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
-	childInstances.sort(InstanceByNamePred());
+	childInstances.sort([](const db::Instance* a, const db::Instance* b) {
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	});
 
 	for (auto childInstance : childInstances)
 	{
@@ -1264,7 +1226,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
-	childGroups.sort(GroupByNamePred());
+	childGroups.sort([](const db::Group* a, const db::Group* b) {
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	});
 
 	for (auto childGroup : childGroups)
 		buildTreeItemSplit(treeView, groupItem, childGroup);
@@ -1324,7 +1288,9 @@ void DatabaseView::updateGridInstances()
 		if (group)
 			db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
 	}
-	childInstances.sort(InstanceByNamePred());
+	childInstances.sort([](const db::Instance* a, const db::Instance* b) {
+		return compareIgnoreCase(a->getName(), b->getName()) < 0;
+	});
 
 	bool showFiltered = m_toolFilterShow->isToggled();
 	bool showFavorites = m_toolFavoritesShow->isToggled();
