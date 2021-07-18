@@ -224,7 +224,20 @@ local outputs =
 		{
 			{ name = "TabClose", column = 2, row = 25, width = 1, height = 1, base = 12 },
 		}
-	},	
+	},
+	{
+		source = "UI.svg",
+		name = "UI_MessageBox",
+		path = "../runtime/themes/%s/Images/UI",
+		resources =
+		{
+			{ name = "IconExclamation", column = 0, row = 0, width = 2, height = 2, base = 24 },
+			{ name = "IconHand", column = 2, row = 0, width = 2, height = 2, base = 24 },
+			{ name = "IconError", column = 4, row = 0, width = 2, height = 2, base = 24 },
+			{ name = "IconQuestion", column = 6, row = 0, width = 2, height = 2, base = 24 },
+			{ name = "IconInformation", column = 8, row = 0, width = 2, height = 2, base = 24 },
+		}
+	},
 	{
 		name = "UI_TreeView",
 		path = "../runtime/themes/%s/Images/UI",
@@ -546,8 +559,8 @@ local dpis =
 
 -- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
-	local inkscape = "/snap/bin/inkscape"
-	-- local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
+	--local inkscape = "/snap/bin/inkscape"
+	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
 	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
 	stdout:printLn(cmd)
 	local result = run:execute(cmd) --, nil)

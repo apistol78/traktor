@@ -1,5 +1,5 @@
 #include "Ui/Application.h"
-#include "Ui/Bitmap.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Image.h"
 #include "Ui/StyleSheet.h"
 
@@ -10,14 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Image", Image, Widget)
 
-Image::Image()
-:	m_transparent(false)
-,	m_scale(false)
-,	m_keepAspect(false)
-{
-}
-
-bool Image::create(Widget* parent, Bitmap* image, int style)
+bool Image::create(Widget* parent, IBitmap* image, int style)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -76,7 +69,7 @@ Size Image::getMaximumSize() const
 	return m_image ? m_image->getSize() : Size(0, 0);
 }
 
-bool Image::setImage(Bitmap* image, bool transparent)
+bool Image::setImage(IBitmap* image, bool transparent)
 {
 	m_image = image;
 	m_transparent = transparent;
@@ -87,7 +80,7 @@ bool Image::setImage(Bitmap* image, bool transparent)
 	return true;
 }
 
-Ref< Bitmap > Image::getImage() const
+IBitmap* Image::getImage() const
 {
 	return m_image;
 }
