@@ -675,6 +675,26 @@
 			<second>$(Images.Path)/Images/UI/GridView.image</second>
 		</item>
 		<item>
+			<first>UI.IconExclamation</first>
+			<second>$(Images.Path)/Images/UI/IconExclamation.image</second>
+		</item>
+		<item>
+			<first>UI.IconHand</first>
+			<second>$(Images.Path)/Images/UI/IconHand.image</second>
+		</item>
+		<item>
+			<first>UI.IconError</first>
+			<second>$(Images.Path)/Images/UI/IconError.image</second>
+		</item>
+		<item>
+			<first>UI.IconQuestion</first>
+			<second>$(Images.Path)/Images/UI/IconQuestion.image</second>
+		</item>
+		<item>
+			<first>UI.IconInformation</first>
+			<second>$(Images.Path)/Images/UI/IconInformation.image</second>
+		</item>
+		<item>
 			<first>UI.LayerHidden</first>
 			<second>$(Images.Path)/Images/UI/LayerHidden.image</second>
 		</item>

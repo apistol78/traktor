@@ -15,7 +15,7 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
+class IBitmap;
 
 /*! Static image.
  * \ingroup UI
@@ -32,9 +32,7 @@ public:
 		WsScaleKeepAspect = (WsUser << 2),
 	};
 
-	Image();
-
-	bool create(Widget* parent, Bitmap* image = 0, int style = WsNone);
+	bool create(Widget* parent, IBitmap* image = nullptr, int style = WsNone);
 
 	virtual Size getMinimumSize() const override;
 
@@ -42,19 +40,19 @@ public:
 
 	virtual Size getMaximumSize() const override;
 
-	bool setImage(Bitmap* image, bool transparent = false);
+	bool setImage(IBitmap* image, bool transparent = false);
 
-	Ref< Bitmap > getImage() const;
+	IBitmap* getImage() const;
 
 	bool isTransparent() const;
 
 	bool scaling() const;
 
 private:
-	Ref< Bitmap > m_image;
-	bool m_transparent;
-	bool m_scale;
-	bool m_keepAspect;
+	Ref< IBitmap > m_image;
+	bool m_transparent = false;
+	bool m_scale = false;
+	bool m_keepAspect = false;
 
 	void eventPaint(PaintEvent* event);
 };
