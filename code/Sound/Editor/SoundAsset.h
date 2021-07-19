@@ -21,8 +21,6 @@ class T_DLLCLASS SoundAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	SoundAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	void setStream(bool stream) { m_stream = stream; }
@@ -43,10 +41,10 @@ private:
 	friend class SoundPipeline;
 
 	Guid m_category;
-	bool m_stream;
-	bool m_preload;
-	bool m_compressed;
-	float m_gain;
+	bool m_stream = false;
+	bool m_preload = false;
+	bool m_compressed = true;
+	float m_gain = 0.0f;
 };
 
 	}
