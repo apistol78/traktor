@@ -62,6 +62,7 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSound);
 
 	auto classSoundSystem = new AutoRuntimeClass< AudioSystem >();
+	classSoundSystem->addConstructor< IAudioDriver* >();
 	classSoundSystem->addMethod("getChannel", &AudioSystem::getChannel);
 	registrar->registerClass(classSoundSystem);
 

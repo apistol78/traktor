@@ -14,14 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 8, SoundAsset, editor::Asset)
 
-SoundAsset::SoundAsset()
-:	m_stream(false)
-,	m_preload(true)
-,	m_compressed(true)
-,	m_gain(0.0f)
-{
-}
-
 void SoundAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
