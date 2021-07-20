@@ -27,11 +27,13 @@ void Context::bind(WidgetData* widget, int32_t eventType, const std::function< v
 
 void Context::unbind(WidgetData* widget)
 {
+	// Remove from modal set.
 	auto it = std::find(m_modal.begin(), m_modal.end(), widget);
 	if (it != m_modal.end())
 		m_modal.erase(it);
 
-	m_bindings.erase(widget->window);
+	size_t nerased = m_bindings.erase(widget->window);
+	T_FATAL_ASSERT(nerased > 0);
 
 	if (m_grabbed == widget)
 		m_grabbed = nullptr;
@@ -47,13 +49,13 @@ void Context::defer(const std::function< void() >& fn)
 
 void Context::pushModal(WidgetData* widget)
 {
-	m_modal.push_back(widget);
+	//m_modal.push_back(widget);
 }
 
 void Context::popModal()
 {
-	T_FATAL_ASSERT(!m_modal.empty());
-	m_modal.pop_back();
+	//T_FATAL_ASSERT(!m_modal.empty());
+	//m_modal.pop_back();
 }
 
 void Context::grab(WidgetData* widget)
