@@ -292,6 +292,7 @@ void RenderViewVk::close()
 		m_surface = 0;
 	}
 
+	m_presentQueue = nullptr;
 	m_counter = -1;
 }
 
@@ -1253,7 +1254,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	uint32_t presentQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		VkBool32 supportsPresent;
+		VkBool32 supportsPresent = VK_FALSE;
 		vkGetPhysicalDeviceSurfaceSupportKHR(m_context->getPhysicalDevice(), i, m_surface, &supportsPresent);
 		if (supportsPresent)
 		{
@@ -1441,14 +1442,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 
 	// Check if debug marker extension is available.
-	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
-
-	AlignedVector< VkExtensionProperties > extensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
-
 	m_haveDebugMarkers = false;
 #if !defined(__ANDROID__) && !defined(__IOS__)
+	uint32_t extensionCount;
+	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, nullptr);
+	AlignedVector< VkExtensionProperties > extensions(extensionCount);
+	vkEnumerateDeviceExtensionProperties(m_context->getPhysicalDevice(), nullptr, &extensionCount, extensions.ptr());
 	for (auto extension : extensions)
 	{
 		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
