@@ -42,20 +42,16 @@ void Context::unbind(WidgetData* widget)
 		m_focused = nullptr;
 }
 
-void Context::defer(const std::function< void() >& fn)
-{
-	m_deferred.push_back(fn);
-}
-
 void Context::pushModal(WidgetData* widget)
 {
-	//m_modal.push_back(widget);
+	m_modal.push_back(widget);
 }
 
-void Context::popModal()
+void Context::popModal(WidgetData* widget)
 {
-	//T_FATAL_ASSERT(!m_modal.empty());
-	//m_modal.pop_back();
+	T_FATAL_ASSERT(!m_modal.empty());
+	T_FATAL_ASSERT(m_modal.back() == widget);
+	m_modal.pop_back();
 }
 
 void Context::grab(WidgetData* widget)
@@ -214,25 +210,22 @@ void Context::dispatch(XEvent& xe)
     default:
         break;
     }
-
-	for (auto fn : m_deferred)
-		fn();
-
-	m_deferred.clear();
 }
 
 void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe)
 {
+	// Find event listener binding.
     auto b = m_bindings.find(window);
     if (b == m_bindings.end())
         return;
 
-	T_FATAL_ASSERT(b->second.widget != nullptr);
+	const auto& binding = b->second;
+	T_FATAL_ASSERT(binding.widget != nullptr);
 
-	if (!always && b->second.widget != m_grabbed)
+	if (!always && binding.widget != m_grabbed)
 	{
 		// If widget or parents is disabled then ignore event.
-		for (const WidgetData* w = b->second.widget; w != nullptr; w = w->parent)
+		for (const WidgetData* w = binding.widget; w != nullptr; w = w->parent)
 		{
 			if (!w->enable)
 				return;
@@ -242,7 +235,7 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 		if (!m_modal.empty())
 		{
 			bool p = false;
-			for (const WidgetData* w = b->second.widget; w != nullptr; w = w->parent)
+			for (const WidgetData* w = binding.widget; w != nullptr; w = w->parent)
 			{
 				if (w == m_modal.back())
 				{
@@ -255,12 +248,13 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 		}
 	}
 
-	auto d = b->second.fns.find(eventType);
-	if (d == b->second.fns.end())
-		return;
-
-	std::function< void(XEvent& xe) > fn = d->second;
-	fn(xe);
+	// Find callback from event type.
+	auto d = binding.fns.find(eventType);
+	if (d != binding.fns.end())
+	{
+		std::function< void(XEvent& xe) > fn = d->second;
+		fn(xe);
+	}
 }
 
 Window Context::getRootWindow() const

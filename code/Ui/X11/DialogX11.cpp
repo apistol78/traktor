@@ -154,7 +154,7 @@ int DialogX11::showModal()
 	setVisible(false);
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_REMOVE);
 
-	m_context->popModal();
+	m_context->popModal(&m_data);
 
 	return m_result;
 }
