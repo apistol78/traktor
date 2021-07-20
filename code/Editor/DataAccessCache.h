@@ -56,7 +56,7 @@ public:
 			key,
 			[&](IStream* stream) -> Ref< Object > { return read(stream); },
 			[=](const Object* object, IStream* stream) -> bool { return write(mandatory_non_null_type_cast< const ObjectType* >(object), stream); },
-			[&]() -> Ref< Object > { return mandatory_non_null_type_cast< ObjectType* >(create()); }
+			[&]() -> Ref< Object > { return dynamic_type_cast< ObjectType* >(create()); }
 		));
 	}
 
