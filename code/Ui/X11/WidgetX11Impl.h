@@ -59,43 +59,37 @@ public:
 		stopTimer();
 		releaseCapture();
 
-		if (hasFocus())
-			m_context->setFocus(nullptr);
-
 		if (m_context != nullptr)
 		{
-			m_context->defer([&]() {
-				if (m_cairo != nullptr)
-				{
-					cairo_destroy(m_cairo);
-					m_cairo = nullptr;
-				}
+			m_context->unbind(&m_data);
 
-				if (m_surface != nullptr)
-				{
-					cairo_surface_destroy(m_surface);
-					m_surface = nullptr;
-				}
+			if (m_cairo != nullptr)
+			{
+				cairo_destroy(m_cairo);
+				m_cairo = nullptr;
+			}
 
-				if (m_xic != 0)
-				{
-					XDestroyIC(m_xic);
-					m_xic = 0;
-				}
+			if (m_surface != nullptr)
+			{
+				cairo_surface_destroy(m_surface);
+				m_surface = nullptr;
+			}
 
-				XDestroyWindow(m_context->getDisplay(), m_data.window);
+			if (m_xic != 0)
+			{
+				XDestroyIC(m_xic);
+				m_xic = 0;
+			}
 
-				m_context->unbind(&m_data);
-				m_context = nullptr;
+			XDestroyWindow(m_context->getDisplay(), m_data.window);
 
-				m_data.window = None;
-				m_data.parent = nullptr;
+			m_context = nullptr;
 
-				delete this;
-			});
+			m_data.window = None;
+			m_data.parent = nullptr;
+
+			delete this;
 		}
-
-		m_owner = nullptr;
 	}
 
 	virtual void setParent(IWidget* parent) override

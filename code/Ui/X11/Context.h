@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include <list>
 #include <map>
 #include <vector>
 #include <X11/Xlib.h>
@@ -29,14 +28,11 @@ public:
 	//! Unbind all callbacks for specified window.
     void unbind(WidgetData* widget);
 
-	//! Defer callback until all dispatches has finished.
-	void defer(const std::function< void() >& fn);
-
 	//! Push modal widget.
 	void pushModal(WidgetData* widget);
 
 	//! Pop modal widget.
-	void popModal();
+	void popModal(WidgetData* widget);
 
 	//! Grab input to widget.
 	void grab(WidgetData* widget);
@@ -65,20 +61,14 @@ public:
 private:
 	struct Binding
 	{
-		WidgetData* widget;
+		WidgetData* widget = nullptr;
 		std::map< int32_t, std::function< void(XEvent& xe) > > fns;
-
-		Binding()
-		:	widget(nullptr)
-		{
-		}
 	};
 
 	Display* m_display;
 	int m_screen;
 	XIM m_xim;
     std::map< Window, Binding > m_bindings;
-	std::list< std::function< void() > > m_deferred;
 	std::vector< WidgetData* > m_modal;
 	WidgetData* m_grabbed;
 	WidgetData* m_focused;
