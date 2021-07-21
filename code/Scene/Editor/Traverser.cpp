@@ -12,6 +12,8 @@ namespace traktor
 void Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
+	if (!reflection)
+		return;
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
@@ -39,6 +41,8 @@ void Traverser::visit(const ISerializable* object, const std::function< VisitorR
 void Traverser::visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
+	if (!reflection)
+		return;
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);

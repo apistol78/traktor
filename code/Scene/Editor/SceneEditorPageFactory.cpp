@@ -130,23 +130,48 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 
 Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* asset) const
 {
-	Ref< SceneAsset > mutableAsset = DeepClone(asset).create< SceneAsset >();
-	SmallMap< Guid, Guid > renamedMap;
+	Ref< ISerializable > mutableAsset = DeepClone(asset).create< ISerializable >();
+	if (!mutableAsset)
+		return nullptr;
 
-	// Rename all entities.
-	Traverser::visit(mutableAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+	if (auto mutableSceneAsset = dynamic_type_cast< SceneAsset* >(mutableAsset))
+	{
+		SmallMap< Guid, Guid > renamedMap;
+
+		// Rename all entities.
+		Traverser::visit(mutableSceneAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+			Guid newEntityId = Guid::create();
+			if (inoutEntityData->getId().isNotNull())
+				renamedMap.insert(inoutEntityData->getId(), newEntityId);
+			inoutEntityData->setId(newEntityId);
+			return Traverser::VrContinue;
+		});
+
+		// Also ensure attached data contain updated entity identities.
+		if (mutableSceneAsset->getControllerData() != nullptr)
+			renameIds(mutableSceneAsset->getControllerData(), renamedMap);
+		for (auto operationData : mutableSceneAsset->getOperationData())
+			renameIds(operationData, renamedMap);
+	}
+	else if (auto mutableEntityData = dynamic_type_cast< world::EntityData* >(mutableAsset))
+	{
+		SmallMap< Guid, Guid > renamedMap;
+
+		// Rename root entity data.
 		Guid newEntityId = Guid::create();
-		if (inoutEntityData->getId().isNotNull())
-			renamedMap.insert(inoutEntityData->getId(), newEntityId);
-		inoutEntityData->setId(newEntityId);
-		return Traverser::VrContinue;
-	});
+		if (mutableEntityData->getId().isNotNull())
+			renamedMap.insert(mutableEntityData->getId(), newEntityId);
+		mutableEntityData->setId(newEntityId);
 
-	// Also ensure attached data contain updated entity identities.
-	if (mutableAsset->getControllerData() != nullptr)
-		renameIds(mutableAsset->getControllerData(), renamedMap);
-	for (auto operationData : mutableAsset->getOperationData())
-		renameIds(operationData, renamedMap);
+		// Rename all entities.
+		Traverser::visit(mutableEntityData, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+			Guid newEntityId = Guid::create();
+			if (inoutEntityData->getId().isNotNull())
+				renamedMap.insert(inoutEntityData->getId(), newEntityId);
+			inoutEntityData->setId(newEntityId);
+			return Traverser::VrContinue;
+		});		
+	}
 
 	return mutableAsset;
 }
