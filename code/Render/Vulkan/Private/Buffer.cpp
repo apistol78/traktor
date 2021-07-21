@@ -23,6 +23,7 @@ Buffer::~Buffer()
 bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
 {
 	T_FATAL_ASSERT(m_buffer == 0);
+	T_FATAL_ASSERT(bufferSize > 0);
 
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

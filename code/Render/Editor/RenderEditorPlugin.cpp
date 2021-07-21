@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -72,7 +73,36 @@ void RenderEditorPlugin::destroy()
 
 bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 {
-	return false;
+	if (command == L"Render.PrintMemoryUsage")
+	{
+		Ref< IRenderSystem > renderSystem = m_editor->getStoreObject< IRenderSystem >(L"RenderSystem");
+		if (renderSystem)
+		{
+			RenderSystemStatistics rss;
+			renderSystem->getStatistics(rss);
+
+			log::info << L"Render system statistics ==================" << Endl;
+			log::info << IncreaseIndent;
+			log::info << L"Memory available: " << rss.memoryAvailable << Endl;
+			log::info << L"Memory usage: " << rss.memoryUsage << Endl;
+			log::info << L"Allocation count: " << rss.allocationCount << Endl;
+			log::info << L"Vertex buffers: " << rss.vertexBuffers << Endl;
+			log::info << L"Index buffers: " << rss.indexBuffers << Endl;
+			log::info << L"Struct buffers: " << rss.structBuffers << Endl;
+			log::info << L"Simple textures: " << rss.simpleTextures << Endl;
+			log::info << L"Cube textures: " << rss.cubeTextures << Endl;
+			log::info << L"Volume textures: " << rss.volumeTextures << Endl;
+			log::info << L"Render target sets: " << rss.renderTargetSets << Endl;
+			log::info << L"Programs: " << rss.programs << Endl;
+			log::info << DecreaseIndent;
+		}
+		else
+			log::info << L"No render system created." << Endl;
+
+		return true;
+	}
+	else
+		return false;
 }
 
 void RenderEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)

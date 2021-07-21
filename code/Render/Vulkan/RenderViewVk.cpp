@@ -63,11 +63,13 @@ RenderViewVk::RenderViewVk(
 :	m_context(context)
 ,	m_instance(instance)
 {
+	m_context->incrementViews();
 }
 
 RenderViewVk::~RenderViewVk()
 {
 	close();
+	m_context->decrementViews();
 }
 
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)

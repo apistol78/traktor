@@ -344,6 +344,7 @@ struct RenderSystemStatistics
 	// Memory usage.
 	uint64_t memoryAvailable = 0;
 	uint64_t memoryUsage = 0;
+	uint64_t allocationCount = 0;
 
 	// Number of alive resources.
 	uint32_t vertexBuffers = 0;

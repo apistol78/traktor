@@ -668,7 +668,9 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 	vmaCalculateStats(m_allocator, &stats);
 
 	outStatistics = m_statistics;
+	outStatistics.memoryAvailable = stats.total.unusedBytes;
 	outStatistics.memoryUsage = stats.total.usedBytes;
+	outStatistics.allocationCount = stats.total.allocationCount;
 }
 
 	}

@@ -31,6 +31,10 @@ public:
 
 	virtual ~Context();
 
+	void incrementViews();
+
+	void decrementViews();
+
 	void addDeferredCleanup(const cleanup_fn_t& fn);
 
 	bool needCleanup() const;
@@ -61,6 +65,7 @@ private:
 	VmaAllocator m_allocator;
 	VkPipelineCache m_pipelineCache;
 	VkDescriptorPool m_descriptorPool;
+	int32_t m_views;
 	uint32_t m_descriptorPoolRevision;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
