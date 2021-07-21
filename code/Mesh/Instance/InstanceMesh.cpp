@@ -28,15 +28,6 @@ struct SortRenderInstance
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
-InstanceMesh::InstanceMesh()
-:	m_maxInstanceCount(0)
-{
-}
-
-InstanceMesh::~InstanceMesh()
-{
-}
-
 const Aabb3& InstanceMesh::getBoundingBox() const
 {
 	return m_renderMesh->getBoundingBox();

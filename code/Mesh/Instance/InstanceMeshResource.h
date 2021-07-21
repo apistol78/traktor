@@ -32,14 +32,10 @@ public:
 	struct T_DLLCLASS Part
 	{
 		std::wstring shaderTechnique;
-		uint32_t meshPart;
-
-		Part();
+		uint32_t meshPart = 0;
 
 		void serialize(ISerializer& s);
 	};
-
-	InstanceMeshResource();
 
 	virtual Ref< IMesh > createMesh(
 		const std::wstring& name,
@@ -55,10 +51,10 @@ private:
 	friend class InstanceMeshConverter;
 	typedef std::list< Part > parts_t;
 
-	bool m_haveRenderMesh;
+	bool m_haveRenderMesh = false;
 	resource::Id< render::Shader > m_shader;
 	std::map< std::wstring, parts_t > m_parts;
-	int32_t m_maxInstanceCount;
+	int32_t m_maxInstanceCount = 0;
 };
 
 	}

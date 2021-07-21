@@ -33,7 +33,6 @@ class Shader;
 	namespace world
 	{
 
-class OccluderMesh;
 class IWorldCulling;
 class IWorldRenderPass;
 
@@ -71,9 +70,7 @@ public:
 		InstanceMeshData data0;
 		float distance;
 
-		RenderInstance()
-		{
-		}
+		RenderInstance() = default;
 
 		RenderInstance(const InstanceMeshData& data_, const InstanceMeshData& data0_, float distance_)
 		:	data(data_)
@@ -82,10 +79,6 @@ public:
 		{
 		}
 	};
-
-	InstanceMesh();
-
-	virtual ~InstanceMesh();
 
 	const Aabb3& getBoundingBox() const;
 
@@ -104,10 +97,9 @@ private:
 	friend class InstanceMeshResource;
 
 	resource::Proxy< render::Shader > m_shader;
-	Ref< world::OccluderMesh > m_occluderMesh;
 	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
-	int32_t m_maxInstanceCount;
+	int32_t m_maxInstanceCount = 0;
 };
 
 	}

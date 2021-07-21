@@ -29,11 +29,9 @@ struct T_MATH_ALIGN16 InstanceMeshData
 inline InstanceMeshData packInstanceMeshData(const Transform& transform)
 {
 	InstanceMeshData T_MATH_ALIGN16 imd;
-
 	transform.rotation().e.storeAligned(imd.rotation);
 	transform.translation().storeAligned(imd.translation);
 	imd.scale = 1.0f;
-
 	return imd;
 }
 
