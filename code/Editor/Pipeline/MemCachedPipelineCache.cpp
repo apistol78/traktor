@@ -196,12 +196,7 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 
 	uint64_t bytes = parseString< uint64_t >(stats["bytes"], 0);
 	uint64_t maxBytes = parseString< uint64_t >(stats["limit_maxbytes"], 0);
-	if (bytes >= 1024 * 1024)
-		os << L", " << (bytes / (1024 * 1024)) << L" MiB";
-	else if (bytes >= 1024)
-		os << L", " << (bytes / 1024) << L" KiB";
-	else
-		os << L", " << bytes << L" B";
+	os << L", " << formatByteSize(bytes);
 	if (maxBytes > 0)
 		os << L", " << ((bytes * 100) / maxBytes) << L" %";
 

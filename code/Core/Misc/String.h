@@ -305,6 +305,11 @@ bool T_DLLCLASS split(const std::wstring& str, wchar_t delim, std::wstring& outL
  */
 std::wstring T_DLLCLASS str(const wchar_t* const format, ...);
 
+/*! Byte size formatting helper.
+ * \ingroup Core
+ */
+std::wstring T_DLLCLASS formatByteSize(uint64_t size);
+
 /*! Duration formatting helper.
  * \ingroup Core
  */
