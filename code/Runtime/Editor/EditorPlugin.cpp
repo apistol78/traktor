@@ -362,7 +362,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	std::wstring systemOs = L"rpi";
 #endif
 
-#if !defined(__LINUX__) && !defined(__RPI__)
+#if !defined(__RPI__)
 	bool hidden = m_editor->getSettings()->getProperty< bool >(L"Runtime.PipelineHidden", true);
 
 	m_pipelineSlaveProcess = OS::getInstance().execute(
