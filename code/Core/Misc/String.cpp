@@ -185,6 +185,18 @@ std::wstring str(const wchar_t* const format, ...)
 	return buf;
 }
 
+std::wstring formatByteSize(uint64_t size)
+{
+	if (size >= 1024 * 1024 * 1024)
+		return str(L"%d GiB", size / (1024 * 1024 * 1024));
+	else if (size >= 1024 * 1024)
+		return str(L"%d MiB", size / (1024 * 1024));
+	else if (size >= 1024)
+		return str(L"%d KiB", size / 1024);
+	else
+		return str(L"%d B", size);
+}
+
 std::wstring formatDuration(double duration)
 {
 	int32_t ms = (int32_t)(duration * 1000.0) % 1000;

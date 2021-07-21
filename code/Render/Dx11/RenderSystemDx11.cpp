@@ -239,9 +239,9 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 			log::info << L"DeviceId " << dad.DeviceId << Endl;
 			log::info << L"SubSysId " << dad.SubSysId << Endl;
 			log::info << L"Revision " << dad.Revision << Endl;
-			log::info << L"DedicatedVideoMemory " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
-			log::info << L"DedicatedSystemMemory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
-			log::info << L"SharedSystemMemory " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+			log::info << L"DedicatedVideoMemory " << formatByteSize(dad.DedicatedVideoMemory) << Endl;
+			log::info << L"DedicatedSystemMemory " << formatByteSize(dad.DedicatedSystemMemory) << Endl;
+			log::info << L"SharedSystemMemory " << formatByteSize(dad.SharedSystemMemory) << Endl;
 			log::info << L"Feature level " << ((d3dFeatureLevel >> 12) & 0xf) << L"." << ((d3dFeatureLevel >> 8) & 0xf) << Endl;
 			log::info << DecreaseIndent;
 		}

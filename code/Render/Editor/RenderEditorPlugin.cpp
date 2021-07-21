@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -83,8 +84,8 @@ bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 
 			log::info << L"Render system statistics ==================" << Endl;
 			log::info << IncreaseIndent;
-			log::info << L"Memory available: " << rss.memoryAvailable << Endl;
-			log::info << L"Memory usage: " << rss.memoryUsage << Endl;
+			log::info << L"Memory available: " << formatByteSize(rss.memoryAvailable) << Endl;
+			log::info << L"Memory usage: " << formatByteSize(rss.memoryUsage) << Endl;
 			log::info << L"Allocation count: " << rss.allocationCount << Endl;
 			log::info << L"Vertex buffers: " << rss.vertexBuffers << Endl;
 			log::info << L"Index buffers: " << rss.indexBuffers << Endl;
