@@ -20,12 +20,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 7, InstanceMeshResource, MeshResource)
 
-InstanceMeshResource::InstanceMeshResource()
-:	m_haveRenderMesh(false)
-,	m_maxInstanceCount(0)
-{
-}
-
 Ref< IMesh > InstanceMeshResource::createMesh(
 	const std::wstring& name,
 	IStream* dataStream,
@@ -34,7 +28,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
-	Ref< world::OccluderMesh > occluderMesh;
 	Ref< render::Mesh > renderMesh;
 
 	if (m_haveRenderMesh)
@@ -52,7 +45,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
 		return nullptr;
 
-	instanceMesh->m_occluderMesh = occluderMesh;
 	instanceMesh->m_renderMesh = renderMesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
@@ -88,11 +80,6 @@ void InstanceMeshResource::serialize(ISerializer& s)
 		MemberStlList< Part, MemberComposite< Part > >
 	>(L"parts", m_parts);
 	s >> Member< int32_t >(L"maxInstanceCount", m_maxInstanceCount);
-}
-
-InstanceMeshResource::Part::Part()
-:	meshPart(0)
-{
 }
 
 void InstanceMeshResource::Part::serialize(ISerializer& s)

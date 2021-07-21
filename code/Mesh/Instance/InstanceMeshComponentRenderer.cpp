@@ -83,7 +83,6 @@ void InstanceMeshComponentRenderer::build(
 			return;
 	}
 
-	T_FATAL_ASSERT(m_meshInstances[mesh].size() < InstanceMesh::MaxInstanceCount);
 	m_meshInstances[mesh].push_back(InstanceMesh::RenderInstance(
 		packInstanceMeshData(transform),
 		packInstanceMeshData(transformLast),
