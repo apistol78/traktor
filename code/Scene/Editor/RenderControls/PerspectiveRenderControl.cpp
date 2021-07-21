@@ -190,6 +190,7 @@ void PerspectiveRenderControl::destroy()
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_screenRenderer);
 	safeClose(m_renderView);
 	safeDestroy(m_containerAspect);
 }

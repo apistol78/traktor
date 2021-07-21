@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderEditorPluginFactory", 0, R
 
 void RenderEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+	outCommands.push_back(ui::Command(L"Render.PrintMemoryUsage"));
 }
 
 Ref< editor::IEditorPlugin > RenderEditorPluginFactory::createEditorPlugin(editor::IEditor* editor) const
