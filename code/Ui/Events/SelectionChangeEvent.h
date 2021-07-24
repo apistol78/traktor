@@ -24,9 +24,9 @@ class T_DLLCLASS SelectionChangeEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	SelectionChangeEvent(EventSubject* sender);
+	explicit SelectionChangeEvent(EventSubject* sender);
 
-	SelectionChangeEvent(EventSubject* sender, Object* item);
+	explicit SelectionChangeEvent(EventSubject* sender, Object* item);
 
 	Object* getItem() const;
 

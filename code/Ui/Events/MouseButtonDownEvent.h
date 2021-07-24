@@ -24,7 +24,7 @@ class T_DLLCLASS MouseButtonDownEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MouseButtonDownEvent(EventSubject* sender, int32_t button, const ui::Point& position);
+	explicit MouseButtonDownEvent(EventSubject* sender, int32_t button, const ui::Point& position);
 
 	int32_t getButton() const;
 

@@ -23,7 +23,7 @@ class T_DLLCLASS ContentChangeEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ContentChangeEvent(EventSubject* sender);
+	explicit ContentChangeEvent(EventSubject* sender);
 };
 
 	}

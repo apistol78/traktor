@@ -24,7 +24,7 @@ class T_DLLCLASS MouseMoveEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MouseMoveEvent(EventSubject* sender, int32_t button, const ui::Point& position);
+	explicit MouseMoveEvent(EventSubject* sender, int32_t button, const ui::Point& position);
 
 	int32_t getButton() const;
 

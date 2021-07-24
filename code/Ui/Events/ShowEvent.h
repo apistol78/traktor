@@ -23,7 +23,7 @@ class T_DLLCLASS ShowEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ShowEvent(EventSubject* sender, bool visible);
+	explicit ShowEvent(EventSubject* sender, bool visible);
 
 	bool isVisible() const;
 

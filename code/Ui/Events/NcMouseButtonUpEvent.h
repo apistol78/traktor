@@ -24,7 +24,7 @@ class T_DLLCLASS NcMouseButtonUpEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	NcMouseButtonUpEvent(EventSubject* sender, int32_t button, const ui::Point& position);
+	explicit NcMouseButtonUpEvent(EventSubject* sender, int32_t button, const ui::Point& position);
 
 	int32_t getButton() const;
 

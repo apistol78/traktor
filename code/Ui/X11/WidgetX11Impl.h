@@ -379,7 +379,7 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) override
 	{
-		if (!m_data.visible)
+		if (!m_data.visible || !m_data.mapped)
 			return;
 
 		if (!immediate)
@@ -539,8 +539,6 @@ protected:
 	    	XMapWindow(m_context->getDisplay(), m_data.window);
 			m_data.mapped = true;
 		}
-
-		XFlush(m_context->getDisplay());
 
 		// Create input context.
 		if ((m_xic = XCreateIC(

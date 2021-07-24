@@ -25,7 +25,7 @@ class T_DLLCLASS TabSelectionChangeEvent : public SelectionChangeEvent
 	T_RTTI_CLASS;
 
 public:
-	TabSelectionChangeEvent(EventSubject* sender, TabPage* tabPage);
+	explicit TabSelectionChangeEvent(EventSubject* sender, TabPage* tabPage);
 
 	TabPage* getTabPage() const;
 

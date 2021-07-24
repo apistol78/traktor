@@ -25,7 +25,7 @@ class T_DLLCLASS ChildEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ChildEvent(EventSubject* sender, Widget* parent, Widget* child, bool link);
+	explicit ChildEvent(EventSubject* sender, Widget* parent, Widget* child, bool link);
 
 	Widget* getParent() const;
 

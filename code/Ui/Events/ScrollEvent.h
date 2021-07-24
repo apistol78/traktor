@@ -23,7 +23,7 @@ class T_DLLCLASS ScrollEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ScrollEvent(EventSubject* sender, int32_t position);
+	explicit ScrollEvent(EventSubject* sender, int32_t position);
 
 	int32_t getPosition() const;
 

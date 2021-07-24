@@ -223,6 +223,7 @@ private:
 	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
 	int32_t m_buildStep;
 	std::wstring m_buildStepMessage;
+	Semaphore m_buildStepMessageLock;
 	uint32_t m_propertiesHash;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
 

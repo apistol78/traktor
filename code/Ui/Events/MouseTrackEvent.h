@@ -23,7 +23,7 @@ class T_DLLCLASS MouseTrackEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MouseTrackEvent(EventSubject* sender, bool entered);
+	explicit MouseTrackEvent(EventSubject* sender, bool entered);
 
 	bool entered() const;
 

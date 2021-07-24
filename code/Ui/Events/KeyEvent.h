@@ -25,7 +25,7 @@ class T_DLLCLASS KeyEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	KeyEvent(
+	explicit KeyEvent(
 		EventSubject* sender,
 		VirtualKey virtualKey,
 		uint32_t systemKey,

@@ -26,7 +26,7 @@ class T_DLLCLASS PaintEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	PaintEvent(EventSubject* sender, Canvas& canvas, const Rect& rc);
+	explicit PaintEvent(EventSubject* sender, Canvas& canvas, const Rect& rc);
 
 	Canvas& getCanvas() const;
 

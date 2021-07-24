@@ -24,7 +24,7 @@ class T_DLLCLASS SizeEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	SizeEvent(EventSubject* sender, const Size& size);
+	explicit SizeEvent(EventSubject* sender, const Size& size);
 
 	const Size& getSize() const;
 

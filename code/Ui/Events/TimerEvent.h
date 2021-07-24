@@ -24,7 +24,7 @@ class T_DLLCLASS TimerEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	TimerEvent(EventSubject* sender, uint32_t id);
+	explicit TimerEvent(EventSubject* sender, uint32_t id);
 
 	uint32_t getId() const;
 

@@ -176,14 +176,16 @@ private:
 class BuildStatus : public RefCountImpl< ui::BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
-	BuildStatus(int32_t& step, std::wstring& message)
+	BuildStatus(int32_t& step, std::wstring& message, Semaphore& messageLock)
 	:	m_step(step)
 	,	m_message(message)
+	,	m_messageLock(messageLock)
 	{
 	}
 
 	virtual bool read(int32_t& outStep, std::wstring& outStatus) override final
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_messageLock);
 		outStep = m_step;
 		outStatus = !m_message.empty() ? m_message : L"...";
 		return true;
@@ -192,14 +194,7 @@ public:
 private:
 	int32_t& m_step;
 	std::wstring& m_message;
-};
-
-struct EditorToolPredicate
-{
-	bool operator () (const IEditorTool* lh, const IEditorTool* rh) const
-	{
-		return compareIgnoreCase(lh->getDescription(), rh->getDescription()) < 0;
-	}
+	Semaphore& m_messageLock;
 };
 
 bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSettings, Ref< PropertyGroup >* outSettings)
@@ -750,8 +745,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 				m_editorTools.push_back(tool);
 		}
 
-		EditorToolPredicate predicate;
-		m_editorTools.sort(predicate);
+		m_editorTools.sort([](const IEditorTool* lh, const IEditorTool* rh) {
+			return compareIgnoreCase(lh->getDescription(), rh->getDescription()) < 0;
+		});
 
 		for (uint32_t i = 0; i < m_editorTools.size(); ++i)
 		{
@@ -2007,7 +2003,7 @@ void EditorForm::buildWaitUntilFinished()
 	// Show a dialog if processing seems to take more than N second(s).
 	ui::BackgroundWorkerDialog dialog;
 	dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
+	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage, m_buildStepMessageLock));
 	dialog.destroy();
 
 	// As build thread is no longer in use we can safely release it's resources.
@@ -2049,9 +2045,16 @@ Object* EditorForm::getStoreObject(const std::wstring& name) const
 void EditorForm::beginBuild(int32_t index, int32_t count, const PipelineDependency* dependency)
 {
 	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
+
 	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
 	m_buildStep = (index * 1000) / count;
-	m_buildStepMessage = dependency->outputPath;
+
+	// Update message, need to be protected since it's being
+	// read from another thread.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildStepMessageLock);
+		m_buildStepMessage = dependency->outputPath;
+	}
 }
 
 void EditorForm::endBuild(int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result)

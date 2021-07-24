@@ -24,7 +24,7 @@ class T_DLLCLASS MoveEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MoveEvent(EventSubject* sender, const Point& position);
+	explicit MoveEvent(EventSubject* sender, const Point& position);
 
 	const Point& getPosition() const;
 

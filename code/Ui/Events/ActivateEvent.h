@@ -23,7 +23,7 @@ class T_DLLCLASS ActivateEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ActivateEvent(EventSubject* sender, bool activate);
+	explicit ActivateEvent(EventSubject* sender, bool activate);
 
 	bool activate() const;
 
