@@ -651,12 +651,18 @@ int slave(const CommandLine& cmdLine)
 	CloseHandle(hSnapshot);
 
 	HANDLE hParentProcess = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, FALSE, dwParentPID);
+#elif defined(__LINUX__)
+	// Get ID of parent process, if parent ID change then we need to terminate since editor has terminated.
+	pid_t parentPID = getppid();
 #endif
 
 	while (!g_receivedBreakSignal)
 	{
 #if defined(_WIN32)
 		if (hParentProcess != NULL && WaitForSingleObject(hParentProcess, 0) == WAIT_OBJECT_0)
+			break;
+#elif defined(__LINUX__)
+		if (getppid() != parentPID)
 			break;
 #endif
 
@@ -1007,16 +1013,12 @@ int main(int argc, const char** argv)
 #endif
 
 		CommandLine cmdLine(argc, argv);
-#if !defined(__APPLE__) && !defined(__LINUX__) && !defined(__RPI__)
 		if (cmdLine.hasOption(L"slave"))
 			result = slave(cmdLine);
 		else if (cmdLine.hasOption(L"standalone"))
 			result = standalone(cmdLine);
 		else
 			result = master(cmdLine);
-#else
-		result = standalone(cmdLine);
-#endif
 
 #if defined(_WIN32) && !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
