@@ -9,24 +9,14 @@ namespace traktor
 
 struct WidgetData
 {
-	WidgetData* parent;
-	Window window;
-	bool topLevel;
-	bool visible;
-	bool enable;
-	bool grabbed;
-	bool focus;
-
-	WidgetData()
-	:	parent(nullptr)
-	,	window(None)
-	,	topLevel(false)
-	,	visible(false)
-	,	enable(true)
-	,	grabbed(false)
-	,	focus(false)
-	{
-	}
+	WidgetData* parent = nullptr;
+	Window window = None;
+	bool topLevel = false;
+	bool mapped = false;
+	bool visible = false;
+	bool enable = true;
+	bool grabbed = false;
+	bool focus = false;
 };
 
 	}

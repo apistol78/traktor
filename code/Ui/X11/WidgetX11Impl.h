@@ -124,21 +124,38 @@ public:
 		{
 			m_data.visible = visible;
 
-			if (visible)
+			if (visible)	// Becoming visible.
 			{
-				int32_t width = std::max< int32_t >(m_rect.getWidth(), 1);
-				int32_t height = std::max< int32_t >(m_rect.getHeight(), 1);
+				if (m_rect.area() > 0)
+				{
+					if (!m_data.mapped)
+					{
+						XMapWindow(m_context->getDisplay(), m_data.window);
+						m_data.mapped = true;
+					}
 
-				// Resize window.
-				XMapWindow(m_context->getDisplay(), m_data.window);
-				XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, width, height);
+					// Resize window.
+					XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
 
-				// Resize surface.
-				cairo_xlib_surface_set_size(m_surface, width, height);
+					// Resize surface.
+					cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());
+				}
+				else
+				{
+					if (m_data.mapped)
+					{
+						XUnmapWindow(m_context->getDisplay(), m_data.window);
+						m_data.mapped = false;
+					}
+				}
 			}
-			else
+			else	// Becoming hidden.
 			{
-				XUnmapWindow(m_context->getDisplay(), m_data.window);
+				if (m_data.mapped)
+				{
+					XUnmapWindow(m_context->getDisplay(), m_data.window);
+					m_data.mapped = false;
+				}
 			}
 
 			ShowEvent showEvent(m_owner, visible);
@@ -210,25 +227,40 @@ public:
 
 	virtual void setRect(const Rect& rect) override
 	{
-		const Size current = m_rect.getSize();
+		if (m_rect == rect)
+			return;
 
+		const Size fromSize = m_rect.getSize();
 		m_rect = rect;
 
-		if (m_data.visible && m_rect.area() > 0)
+		if (!m_data.visible)
+			return;
+
+		if (m_rect.area() > 0)
 		{
-			XMapWindow(m_context->getDisplay(), m_data.window);
-			if (m_rect.getSize() != current)
+			if (!m_data.mapped)
 			{
-				XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
-			 	cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());
+				XMapWindow(m_context->getDisplay(), m_data.window);
+				m_data.mapped = true;
 			}
-			else
-				XMoveWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top);
+
+			// Resize window.
+			XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
+
+			// Resize surface.
+			cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());			
 		}
 		else
-			XUnmapWindow(m_context->getDisplay(), m_data.window);
+		{
+			if (m_data.mapped)
+			{
+				XUnmapWindow(m_context->getDisplay(), m_data.window);
+				m_data.mapped = false;
+			}
+		}
 
-		if (m_data.visible && m_rect.getSize() != current)
+		// Issue resized event if size changed, not if only position changed.
+		if (m_rect.getSize() != fromSize)
 		{
 			SizeEvent sizeEvent(m_owner, m_rect.getSize());
 			m_owner->raiseEvent(&sizeEvent);
@@ -464,6 +496,7 @@ protected:
 		m_data.parent = (parent != nullptr ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr);
 		m_data.topLevel = topLevel;
 		m_data.visible = visible;
+		m_data.mapped = false;
 
 		m_rect = rect;
 
@@ -502,7 +535,10 @@ protected:
 		}
 
 		if (visible && m_rect.area() > 0)
+		{
 	    	XMapWindow(m_context->getDisplay(), m_data.window);
+			m_data.mapped = true;
+		}
 
 		XFlush(m_context->getDisplay());
 

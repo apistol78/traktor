@@ -140,9 +140,24 @@ int DialogX11::showModal()
 
         if (nr > 0)
 		{
+			SmallSet< Window > exposeWindows;
+
+			// Read all pending events, do not dispatch expose events
+			// directly since we synthesize those later to reduce number of redraws.
 			while (XPending(m_context->getDisplay()))
 			{
 				XNextEvent(m_context->getDisplay(), &e);
+				if (e.type != Expose)
+					m_context->dispatch(e);
+				else
+					exposeWindows.insert(e.xexpose.window);
+			}
+
+			for (auto window : exposeWindows)
+			{
+				e.type = Expose;
+				e.xexpose.window = window;
+				e.xexpose.count = 0;
 				m_context->dispatch(e);
 			}
 		}
