@@ -197,7 +197,6 @@ void Splitter::update(const Rect* rc, bool immediate)
 		else
 			rcLeft.setSize(Size(inner.getWidth(), position - ui::dpi96(c_splitterSize) / 2));
 		left->setRect(rcLeft);
-		left->update();
 
 		Rect rcRight(0, 0, 0, 0);
 		if (m_vertical == true)
@@ -211,13 +210,9 @@ void Splitter::update(const Rect* rc, bool immediate)
 			rcRight.setSize(Size(inner.getWidth(), inner.getHeight() - (position + ui::dpi96(c_splitterSize) / 2) - 1));
 		}
 		right->setRect(rcRight);
-		right->update();
 	}
 	else if (left != nullptr)
-	{
 		left->setRect(inner);
-		left->update();
-	}
 
 	Widget::update(rc, immediate);
 }

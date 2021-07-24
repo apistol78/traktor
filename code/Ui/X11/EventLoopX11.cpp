@@ -78,11 +78,28 @@ bool EventLoopX11::process(EventSubject* owner)
 
         if (nr > 0)
 		{
+			SmallSet< Window > exposeWindows;
+
+			// Read all pending events, do not dispatch expose events
+			// directly since we synthesize those later to reduce number of redraws.
 			while (XPending(m_context->getDisplay()))
 			{
 				XNextEvent(m_context->getDisplay(), &e);
-				if (!preTranslateEvent(owner, e))
-					m_context->dispatch(e);
+				if (e.type != Expose)
+				{
+					if (!preTranslateEvent(owner, e))
+						m_context->dispatch(e);
+				}
+				else
+					exposeWindows.insert(e.xexpose.window);
+			}
+
+			for (auto window : exposeWindows)
+			{
+				e.type = Expose;
+				e.xexpose.window = window;
+				e.xexpose.count = 0;
+				m_context->dispatch(e);
 			}
 		}
 		else
@@ -123,12 +140,29 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 
         if (nr > 0)
 		{
+			SmallSet< Window > exposeWindows;
+
+			// Read all pending events, do not dispatch expose events
+			// directly since we synthesize those later to reduce number of redraws.
 			while (XPending(m_context->getDisplay()))
 			{
 				XNextEvent(m_context->getDisplay(), &e);
-				if (!preTranslateEvent(owner, e))
-					m_context->dispatch(e);
+				if (e.type != Expose)
+				{
+					if (!preTranslateEvent(owner, e))
+						m_context->dispatch(e);
+				}
+				else
+					exposeWindows.insert(e.xexpose.window);
 				idle = true;
+			}
+
+			for (auto window : exposeWindows)
+			{
+				e.type = Expose;
+				e.xexpose.window = window;
+				e.xexpose.count = 0;
+				m_context->dispatch(e);
 			}
 		}
 		else
