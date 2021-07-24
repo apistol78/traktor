@@ -600,6 +600,7 @@ void ModelToolDialog::addStatistic(const std::wstring& name, const std::wstring&
 
 void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
 {
+	event->consume();
 	destroy();
 }
 

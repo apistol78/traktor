@@ -24,7 +24,7 @@ class T_DLLCLASS MouseDoubleClickEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MouseDoubleClickEvent(EventSubject* sender, int32_t button, const ui::Point& position);
+	explicit MouseDoubleClickEvent(EventSubject* sender, int32_t button, const ui::Point& position);
 
 	int32_t getButton() const;
 

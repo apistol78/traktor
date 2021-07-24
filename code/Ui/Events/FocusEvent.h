@@ -23,7 +23,7 @@ class T_DLLCLASS FocusEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	FocusEvent(EventSubject* sender, bool gotFocus);
+	explicit FocusEvent(EventSubject* sender, bool gotFocus);
 
 	bool gotFocus() const;
 

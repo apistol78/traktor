@@ -24,7 +24,7 @@ class T_DLLCLASS MouseWheelEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MouseWheelEvent(EventSubject* sender, int32_t rotation, const ui::Point& position);
+	explicit MouseWheelEvent(EventSubject* sender, int32_t rotation, const ui::Point& position);
 
 	int32_t getRotation() const;
 

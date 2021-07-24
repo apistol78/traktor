@@ -23,7 +23,7 @@ class T_DLLCLASS IdleEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	IdleEvent(EventSubject* sender);
+	explicit IdleEvent(EventSubject* sender);
 
 	void requestMore();
 

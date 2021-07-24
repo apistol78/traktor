@@ -25,7 +25,7 @@ class T_DLLCLASS FileDropEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	FileDropEvent(EventSubject* sender, const std::vector< Path >& files);
+	explicit FileDropEvent(EventSubject* sender, const std::vector< Path >& files);
 
 	const std::vector< Path >& getFiles() const;
 

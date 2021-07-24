@@ -24,9 +24,9 @@ class T_DLLCLASS ButtonClickEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ButtonClickEvent(EventSubject* sender, const Command& command);
+	explicit ButtonClickEvent(EventSubject* sender, const Command& command);
 
-	ButtonClickEvent(EventSubject* sender);
+	explicit ButtonClickEvent(EventSubject* sender);
 
 	const Command& getCommand() const;
 

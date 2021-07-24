@@ -24,9 +24,9 @@ class T_DLLCLASS CommandEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	CommandEvent(EventSubject* sender, const Command& command);
+	explicit CommandEvent(EventSubject* sender, const Command& command);
 
-	CommandEvent(EventSubject* sender);
+	explicit CommandEvent(EventSubject* sender);
 
 	const Command& getCommand() const;
 

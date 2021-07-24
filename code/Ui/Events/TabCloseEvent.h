@@ -25,7 +25,7 @@ class T_DLLCLASS TabCloseEvent : public CloseEvent
 	T_RTTI_CLASS;
 
 public:
-	TabCloseEvent(EventSubject* sender, TabPage* tabPage);
+	explicit TabCloseEvent(EventSubject* sender, TabPage* tabPage);
 
 	TabPage* getTabPage() const;
 

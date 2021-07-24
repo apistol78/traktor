@@ -23,7 +23,7 @@ class T_DLLCLASS CloseEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	CloseEvent(EventSubject* sender);
+	explicit CloseEvent(EventSubject* sender);
 
 	void cancel();
 

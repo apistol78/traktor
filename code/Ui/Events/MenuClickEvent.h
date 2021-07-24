@@ -26,7 +26,7 @@ class T_DLLCLASS MenuClickEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	MenuClickEvent(EventSubject* sender, MenuItem* item, const Command& command);
+	explicit MenuClickEvent(EventSubject* sender, MenuItem* item, const Command& command);
 
 	MenuItem* getItem() const;
 

@@ -24,7 +24,7 @@ class T_DLLCLASS NcMouseButtonDownEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	NcMouseButtonDownEvent(EventSubject* sender, int32_t button, const ui::Point& position);
+	explicit NcMouseButtonDownEvent(EventSubject* sender, int32_t button, const ui::Point& position);
 
 	int32_t getButton() const;
 

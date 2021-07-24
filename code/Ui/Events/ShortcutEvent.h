@@ -24,7 +24,7 @@ class T_DLLCLASS ShortcutEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ShortcutEvent(EventSubject* sender, const Command& command);
+	explicit ShortcutEvent(EventSubject* sender, const Command& command);
 
 	const Command& getCommand() const;
 
