@@ -5,7 +5,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 
@@ -28,7 +28,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	void serialize(ISerializer& s) const
 	{
 		s >> Member< uint32_t >(L"pipelineHash", m_ref.pipelineHash);
 		s >> Member< uint32_t >(L"sourceAssetHash", m_ref.sourceAssetHash);
@@ -49,7 +49,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	void serialize(ISerializer& s) const
 	{
 		s >> Member< uint64_t >(L"size", m_ref.size);
 		s >> MemberComposite< DateTime >(L"lastWriteTime", m_ref.lastWriteTime);
@@ -110,14 +110,14 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 
 	if (version == c_version)
 	{
-		s >> MemberStlMap<
+		s >> MemberSmallMap<
 			Guid,
 			PipelineDependencyHash,
 			Member< Guid >,
 			MemberPipelineDependencyHash
 		>(L"dependencies", m_dependencies);
 
-		s >> MemberStlMap<
+		s >> MemberSmallMap<
 			std::wstring,
 			PipelineFileHash,
 			Member< std::wstring >,
@@ -155,14 +155,14 @@ void PipelineDbFlat::endTransaction()
 			uint32_t version = c_version;
 			s >> Member< uint32_t >(L"version", version);
 
-			s >> MemberStlMap<
+			s >> MemberSmallMap<
 				Guid,
 				PipelineDependencyHash,
 				Member< Guid >,
 				MemberPipelineDependencyHash
 			>(L"dependencies", m_dependencies);
 
-			s >> MemberStlMap<
+			s >> MemberSmallMap<
 				std::wstring,
 				PipelineFileHash,
 				Member< std::wstring >,
@@ -205,7 +205,7 @@ void PipelineDbFlat::setFile(const Path& path, const PipelineFileHash& file)
 		endTransaction();
 }
 
-bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile)
+bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
@@ -213,6 +213,34 @@ bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile)
 	if (it == m_files.end())
 		return false;
 
+	outFile = it->second;
+	return true;
+}
+
+uint32_t PipelineDbFlat::getDependencyCount() const
+{
+	return (uint32_t)m_dependencies.size();
+}
+
+bool PipelineDbFlat::getDependencyByIndex(uint32_t index, Guid& outGuid, PipelineDependencyHash& outHash) const
+{
+	auto it = m_dependencies.begin();
+	std::advance(it, index);
+	outGuid = it->first;
+	outHash = it->second;
+	return true;
+}
+
+uint32_t PipelineDbFlat::getFileCount() const
+{
+	return (uint32_t)m_files.size();
+}
+
+bool PipelineDbFlat::getFileByIndex(uint32_t index, Path& outPath, PipelineFileHash& outFile) const
+{
+	auto it = m_files.begin();
+	std::advance(it, index);
+	outPath = it->first;
 	outFile = it->second;
 	return true;
 }

@@ -48,7 +48,20 @@ public:
 
 	virtual void setFile(const Path& path, const PipelineFileHash& file) = 0;
 
-	virtual bool getFile(const Path& path, PipelineFileHash& outFile) = 0;
+	virtual bool getFile(const Path& path, PipelineFileHash& outFile) const = 0;
+
+	/*! \name Inspection interface. */
+	//@{
+
+	virtual uint32_t getDependencyCount() const = 0;
+
+	virtual bool getDependencyByIndex(uint32_t index, Guid& outGuid, PipelineDependencyHash& outHash) const = 0;
+
+	virtual uint32_t getFileCount() const = 0;
+
+	virtual bool getFileByIndex(uint32_t index, Path& outPath, PipelineFileHash& outFile) const = 0;
+
+	//@}
 };
 
 	}

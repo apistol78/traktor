@@ -36,18 +36,10 @@ enum PipelineBuildReason
  */
 struct PipelineDependencyHash
 {
-	uint32_t pipelineHash;		/*!< Hash of pipeline version and settings. */
-	uint32_t sourceAssetHash;	/*!< Hash of source instances. */
-	uint32_t sourceDataHash;	/*!< Hash of source instance data streams. */
-	uint32_t filesHash;			/*!< Hash of external files. */
-
-	PipelineDependencyHash()
-	:	pipelineHash(0)
-	,	sourceAssetHash(0)
-	,	sourceDataHash(0)
-	,	filesHash(0)
-	{
-	}
+	uint32_t pipelineHash = 0;		/*!< Hash of pipeline version and settings. */
+	uint32_t sourceAssetHash = 0;	/*!< Hash of source instances. */
+	uint32_t sourceDataHash = 0;	/*!< Hash of source instance data streams. */
+	uint32_t filesHash = 0;			/*!< Hash of external files. */
 
 	bool operator == (const PipelineDependencyHash& rh) const
 	{
@@ -69,15 +61,9 @@ struct PipelineDependencyHash
  */
 struct PipelineFileHash
 {
-	uint64_t size;			/*!< Size of file. */
-	DateTime lastWriteTime;	/*!< Last write time of file. */
-	uint32_t hash;			/*!< Hash of file's content. */
-
-	PipelineFileHash()
-	:	size(0)
-	,	hash(0)
-	{
-	}
+	uint64_t size = 0;			/*!< Size of file. */
+	DateTime lastWriteTime;		/*!< Last write time of file. */
+	uint32_t hash = 0;			/*!< Hash of file's content. */
 };
 
 	}

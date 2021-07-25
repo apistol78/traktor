@@ -25,7 +25,7 @@ std::wstring CheckAssetsTool::getDescription() const
 
 Ref< ui::IBitmap > CheckAssetsTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool CheckAssetsTool::needOutputResources(std::set< Guid >& outDependencies) const

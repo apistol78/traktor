@@ -202,7 +202,7 @@ void PipelineDbSql::setFile(const Path& path, const PipelineFileHash& file)
 		log::error << L"Unable to update pipeline file hash in database" << Endl;
 }
 
-bool PipelineDbSql::getFile(const Path& path, PipelineFileHash& outFile)
+bool PipelineDbSql::getFile(const Path& path, PipelineFileHash& outFile) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
@@ -223,6 +223,26 @@ bool PipelineDbSql::getFile(const Path& path, PipelineFileHash& outFile)
 	outFile.hash = rs->getInt32(L"hash");
 
 	return true;
+}
+
+uint32_t PipelineDbSql::getDependencyCount() const
+{
+	return 0;
+}
+
+bool PipelineDbSql::getDependencyByIndex(uint32_t index, Guid& outGuid, PipelineDependencyHash& outHash) const
+{
+	return false;
+}
+
+uint32_t PipelineDbSql::getFileCount() const
+{
+	return 0;
+}
+
+bool PipelineDbSql::getFileByIndex(uint32_t index, Path& outPath, PipelineFileHash& outFile) const
+{
+	return false;
 }
 
 	}

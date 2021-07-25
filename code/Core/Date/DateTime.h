@@ -22,13 +22,13 @@ class T_DLLCLASS DateTime : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	DateTime();
+	DateTime() = default;
 
 	/*! Initialize DateTime object from seconds since the Epoch.
 	 *
 	 * \param seconds Seconds since the Epoch 1970-01-01 00:00:00 UTC.
 	 */
-	DateTime(uint64_t seconds);
+	explicit DateTime(uint64_t seconds);
 
 	/*! Initialize DateTime object with given date.
 	 *
@@ -39,7 +39,7 @@ public:
 	 * \param minute Minute (0 - 59).
 	 * \param second Second (0 - 59).
 	 */
-	DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second);
+	explicit DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second);
 
 	/*! Return current date. */
 	static DateTime now();
@@ -92,7 +92,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint64_t m_epoch;
+	uint64_t m_epoch = 0;
 };
 
 }
