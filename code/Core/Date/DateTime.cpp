@@ -23,11 +23,6 @@ void getLocalTime(time_t t, struct tm* T)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.DateTime", 0, DateTime, ISerializable)
 
-DateTime::DateTime()
-:	m_epoch(0)
-{
-}
-
 DateTime::DateTime(uint64_t seconds)
 :	m_epoch(seconds)
 {

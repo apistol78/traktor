@@ -45,7 +45,15 @@ public:
 
 	virtual void setFile(const Path& path, const PipelineFileHash& file) override final;
 
-	virtual bool getFile(const Path& path, PipelineFileHash& outFile) override final;
+	virtual bool getFile(const Path& path, PipelineFileHash& outFile) const override final;
+
+	virtual uint32_t getDependencyCount() const override final;
+
+	virtual bool getDependencyByIndex(uint32_t index, Guid& outGuid, PipelineDependencyHash& outHash) const override final;
+
+	virtual uint32_t getFileCount() const override final;
+
+	virtual bool getFileByIndex(uint32_t index, Path& outPath, PipelineFileHash& outFile) const override final;
 
 private:
 	mutable ReaderWriterLock m_lock;

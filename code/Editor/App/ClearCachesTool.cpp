@@ -53,7 +53,7 @@ std::wstring ClearCachesTool::getDescription() const
 
 Ref< ui::IBitmap > ClearCachesTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool ClearCachesTool::needOutputResources(std::set< Guid >& outDependencies) const

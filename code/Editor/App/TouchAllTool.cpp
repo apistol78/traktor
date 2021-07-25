@@ -21,7 +21,7 @@ std::wstring TouchAllTool::getDescription() const
 
 Ref< ui::IBitmap > TouchAllTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool TouchAllTool::needOutputResources(std::set< Guid >& outDependencies) const
