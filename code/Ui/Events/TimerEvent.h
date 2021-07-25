@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Ui/Event.h"
-#include "Ui/Command.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,12 +23,7 @@ class T_DLLCLASS TimerEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	explicit TimerEvent(EventSubject* sender, uint32_t id);
-
-	uint32_t getId() const;
-
-private:
-	uint32_t m_id;
+	explicit TimerEvent(EventSubject* sender);
 };
 
 	}

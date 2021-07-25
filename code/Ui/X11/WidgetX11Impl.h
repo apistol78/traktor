@@ -208,10 +208,10 @@ public:
 	virtual void startTimer(int interval) override
 	{
 		stopTimer();
-		m_timer = Timers::getInstance().bind(interval, [=](int32_t){
+		m_timer = Timers::getInstance().bind(interval, [=](){
 			if (!isVisible())
 				return;
-			TimerEvent timerEvent(m_owner, 0);
+			TimerEvent timerEvent(m_owner);
 			m_owner->raiseEvent(&timerEvent);
 		});
 	}

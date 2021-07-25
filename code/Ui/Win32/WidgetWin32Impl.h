@@ -835,7 +835,7 @@ protected:
 		// Disable all timers until event is processed.
 		KillTimer(m_hWnd, 1000);
 
-		TimerEvent c(m_owner, uint32_t(wParam));
+		TimerEvent c(m_owner);
 		m_owner->raiseEvent(&c);
 		if (!c.consumed())
 			outPass = true;

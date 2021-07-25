@@ -1,5 +1,5 @@
 #include "Core/Assert.h"
-#include "Core/Containers/StaticVector.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/X11/Timers.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ Timers& Timers::getInstance()
     return s_instance;
 }
 
-int32_t Timers::bind(int32_t interval, const std::function< void(int32_t) >& fn)
+int32_t Timers::bind(int32_t interval, const std::function< void() >& fn)
 {
     int32_t id = m_nid++;
     T_FATAL_ASSERT(m_timers.find(id) == m_timers.end());
@@ -35,21 +35,18 @@ void Timers::unbind(int32_t id)
 
 void Timers::update(double s)
 {
-    StaticVector< std::function< void(int32_t) >, 4 > fns;
+    AlignedVector< std::function< void() > > fns;
     for (auto& it : m_timers)
     {
         Timer& t = it.second;
         if ((t.until -= s) <= 0.0)
         {
-            if (!fns.full())
-            {
-                t.until = t.interval / 1000.0;
-                fns.push_back(t.fn);
-            }
+            t.until = t.interval / 1000.0;
+            fns.push_back(t.fn);
         }
     }
     for (auto fn : fns)
-        fn(0);
+        fn();
 }
 
 Timers::Timers()
