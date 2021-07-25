@@ -388,7 +388,7 @@ void ToolFormCocoa::event_windowDidResize()
 
 void ToolFormCocoa::callbackTimer(void* controlId)
 {
-	TimerEvent timerEvent(m_owner, 0);
+	TimerEvent timerEvent(m_owner);
 	m_owner->raiseEvent(&timerEvent);
 }
 

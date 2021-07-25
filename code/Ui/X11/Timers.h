@@ -14,7 +14,7 @@ class Timers
 public:
     static Timers& getInstance();
 
-    int32_t bind(int32_t interval, const std::function< void(int32_t) >& fn);
+    int32_t bind(int32_t interval, const std::function< void() >& fn);
 
     void unbind(int32_t id);
 
@@ -25,7 +25,7 @@ private:
     {
         int32_t interval;
         double until;
-        std::function< void(int32_t) > fn;
+        std::function< void() > fn;
     };
 
     std::map< int32_t, Timer > m_timers;
