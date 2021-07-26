@@ -57,4 +57,4 @@ LINK_FLAG_OUTPUT=-o
 ADDITIONAL_INCLUDE_PATHS=
 ADDITIONAL_LIBRARY_PATHS=
 
-BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/linux/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run
+BINARY_INCLUDE=$(RUN) $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run
