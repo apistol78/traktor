@@ -360,32 +360,36 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create memory allocator.
-	// VmaVulkanFunctions vf = {};
-	// vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
-	// vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
-	// vf.vkAllocateMemory = vkAllocateMemory;
-	// vf.vkFreeMemory = vkFreeMemory;
-	// vf.vkMapMemory = vkMapMemory;
-	// vf.vkUnmapMemory = vkUnmapMemory;
-	// vf.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
-	// vf.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
-	// vf.vkBindBufferMemory = vkBindBufferMemory;
-	// vf.vkBindImageMemory = vkBindImageMemory;
-	// vf.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
-	// vf.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
-	// vf.vkCreateBuffer = vkCreateBuffer;
-	// vf.vkDestroyBuffer = vkDestroyBuffer;
-	// vf.vkCreateImage = vkCreateImage;
-	// vf.vkDestroyImage = vkDestroyImage;
-	// vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
-	// vf.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
-	// vf.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+#if defined(__RPI__)
+	VmaVulkanFunctions vf = {};
+	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+	vf.vkAllocateMemory = vkAllocateMemory;
+	vf.vkFreeMemory = vkFreeMemory;
+	vf.vkMapMemory = vkMapMemory;
+	vf.vkUnmapMemory = vkUnmapMemory;
+	vf.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+	vf.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+	vf.vkBindBufferMemory = vkBindBufferMemory;
+	vf.vkBindImageMemory = vkBindImageMemory;
+	vf.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+	vf.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+	vf.vkCreateBuffer = vkCreateBuffer;
+	vf.vkDestroyBuffer = vkDestroyBuffer;
+	vf.vkCreateImage = vkCreateImage;
+	vf.vkDestroyImage = vkDestroyImage;
+	vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
+	vf.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
+	vf.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
+#endif
 
 	VmaAllocatorCreateInfo aci = {};
 	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
-	//aci.pVulkanFunctions = &vf;
+#if defined(__RPI__)
+	aci.pVulkanFunctions = &vf;
+#endif
 	aci.instance = m_instance;
 #if defined(__IOS__)
 	aci.preferredLargeHeapBlockSize = 32 * 1024 * 1024;
