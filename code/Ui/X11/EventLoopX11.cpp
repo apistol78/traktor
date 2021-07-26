@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Timer/Timer.h"
@@ -109,7 +111,10 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 		struct timeval tv;
 		tv.tv_usec = 1 * 1000;
 		tv.tv_sec = 0;
-		if (select(fd + 1, &fds, nullptr, nullptr, &tv) > 0)
+		select(fd + 1, &fds, nullptr, nullptr, &tv);
+
+		// Process events; do this even if select doesn't return any waiting
+		// due to some strange behaviour of X11 events.
 		{
 			exposeWindows.reset();
 
