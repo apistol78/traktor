@@ -38,9 +38,12 @@ fi
 if [[ `uname -s` == Linux* ]]; then
 	if [[ `uname -m` == arm* ]]; then
 		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.SolutionBuilder.App"
+		export RUN="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.Run.App"
 	else
 		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
+		export RUN="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.Run.App"
 	fi
 elif [[ `uname -s` == Darwin* ]]; then
 	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.SolutionBuilder.App"
+	export RUN="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.Run.App"
 fi
