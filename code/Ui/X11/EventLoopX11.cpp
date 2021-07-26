@@ -97,32 +97,44 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 	Timer timer;
 	XEvent e;
 
+	int fd = ConnectionNumber(m_context->getDisplay());
 	bool idle = true;
+
 	while (!m_terminated)
 	{
-		exposeWindows.reset();
+		fd_set fds;
+		FD_ZERO(&fds);
+		FD_SET(fd, &fds);
 
-		// Read all pending events, do not dispatch expose events
-		// directly since we synthesize those later to reduce number of redraws.
-		while (XPending(m_context->getDisplay()))
+		struct timeval tv;
+		tv.tv_usec = 1 * 1000;
+		tv.tv_sec = 0;
+		if (select(fd + 1, &fds, nullptr, nullptr, &tv) > 0)
 		{
-			XNextEvent(m_context->getDisplay(), &e);
-			if (e.type != Expose)
+			exposeWindows.reset();
+
+			// Read all pending events, do not dispatch expose events
+			// directly since we synthesize those later to reduce number of redraws.
+			while (XPending(m_context->getDisplay()))
 			{
-				if (!preTranslateEvent(owner, e))
-					m_context->dispatch(e);
+				XNextEvent(m_context->getDisplay(), &e);
+				if (e.type != Expose)
+				{
+					if (!preTranslateEvent(owner, e))
+						m_context->dispatch(e);
+				}
+				else
+					exposeWindows.insert(e.xexpose.window);
+				idle = true;
 			}
-			else
-				exposeWindows.insert(e.xexpose.window);
-			idle = true;
-		}
 
-		for (auto window : exposeWindows)
-		{
-			e.type = Expose;
-			e.xexpose.window = window;
-			e.xexpose.count = 0;
-			m_context->dispatch(e);
+			for (auto window : exposeWindows)
+			{
+				e.type = Expose;
+				e.xexpose.window = window;
+				e.xexpose.count = 0;
+				m_context->dispatch(e);
+			}
 		}
 
 		if (idle)
