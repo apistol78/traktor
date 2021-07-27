@@ -72,9 +72,6 @@ public:
 	 * "Editor.SettingsChanged"
 	 *  Issued when Editor settings has changed.
 	 *
-	 * "Editor.ShouldSave"
-	 *  Issued when Editor is about to save page's document.
-	 *
 	 * Commands are also propagated from shortcuts
 	 * or toolbar clicks.
 	 *

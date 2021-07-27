@@ -263,6 +263,8 @@ private:
 
 	void saveCurrentDocument();
 
+	void saveAsCurrentDocument();
+
 	void saveAllDocuments();
 
 	void closeCurrentEditor();

@@ -60,6 +60,7 @@
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/QuickOpenDialog.h"
+#include "Editor/App/SaveAsDialog.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/Shortcut.h"
 #include "Editor/App/ThumbnailGenerator.h"
@@ -515,6 +516,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(m_menuItemRecent);
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAs"), i18n::Text(L"MENU_FILE_SAVE_AS")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
@@ -772,6 +774,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Collect all shortcut commands from all editors.
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Save"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.SaveAs"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.SaveAll"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseEditor"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseAllOtherEditors"));
@@ -2172,16 +2175,13 @@ void EditorForm::saveCurrentDocument()
 	// Get active editor page and commit it's primary instance.
 	if (m_activeEditorPage != nullptr)
 	{
-		ui::Command shouldSave(L"Editor.ShouldSave");
-		m_activeEditorPage->handleCommand(shouldSave);
-
 		bool result = m_activeDocument->save();
 		checkModified();
 
 		if (result)
 		{
-			m_statusBar->setText(0, L"Document saved successfully");
-			log::info << L"Document saved successfully" << Endl;
+			m_statusBar->setText(0, L"Document saved successfully.");
+			log::info << L"Document saved successfully." << Endl;
 		}
 		else
 		{
@@ -2192,6 +2192,79 @@ void EditorForm::saveCurrentDocument()
 				ui::MbOk | ui::MbIconExclamation
 			);
 		}
+	}
+}
+
+void EditorForm::saveAsCurrentDocument()
+{
+	if (m_activeEditorPage == nullptr)
+		return;
+
+	SaveAsDialog saveAsDialog(this, m_mergedSettings);
+	if (!saveAsDialog.create(this, m_sourceDatabase))
+		return;
+
+	if (saveAsDialog.showModal() != ui::DrOk)
+	{
+		saveAsDialog.destroy();
+		return;
+	}
+
+	Ref< db::Group > group = saveAsDialog.getGroup();
+	if (group == nullptr)
+	{
+		saveAsDialog.destroy();
+		return;
+	}
+
+	std::wstring newInstanceName = saveAsDialog.getInstanceName();
+	if (newInstanceName.empty())
+	{
+		saveAsDialog.destroy();
+		return;
+	}
+
+	saveAsDialog.destroy();
+
+	// Get source object from document.
+	ISerializable* sourceObject = m_activeDocument->getObject(0);
+	if (!sourceObject)
+		return;
+
+	// Create new instance in selected group.
+	Ref< db::Instance > newInstance = group->createInstance(newInstanceName);
+	if (!newInstance)
+		return;
+
+	newInstance->setObject(sourceObject);
+
+	// Replace instance in document.
+	m_activeDocument->replaceInstance(0, newInstance);
+
+	// Change name of active tab.
+	m_activeTabPage->setText(newInstance->getName());
+	m_tabGroupContainer->update();
+
+	// Save document with new instance.
+	bool result = m_activeDocument->save();
+	checkModified();
+
+	// Update database view.
+	m_dataBaseView->updateView();
+
+	if (result)
+	{
+		m_statusBar->setText(0, L"Document saved successfully.");
+		log::info << L"Document saved successfully." << Endl;
+	}
+	else
+	{
+		ui::MessageBox::show(
+			this,
+			i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
+			i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
+			ui::MbOk | ui::MbIconExclamation
+		);
 	}
 }
 
@@ -2216,9 +2289,6 @@ void EditorForm::saveAllDocuments()
 
 			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 			T_ASSERT(document);
-
-			ui::Command shouldSave(L"Editor.ShouldSave");
-			editorPage->handleCommand(shouldSave);
 
 			allSuccessfull &= document->save();
 		}
@@ -2577,6 +2647,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Save")
 		saveCurrentDocument();
+	else if (command == L"Editor.SaveAs")
+		saveAsCurrentDocument();
 	else if (command == L"Editor.SaveAll")
 		saveAllDocuments();
 	else if (command == L"Editor.CloseEditor")

@@ -503,7 +503,11 @@
 		</item>
 		<item>
 			<first>MENU_FILE_SAVE</first>
-			<second>Save...</second>
+			<second>Save</second>
+		</item>
+		<item>
+			<first>MENU_FILE_SAVE_AS</first>
+			<second>Save as...</second>
 		</item>
 		<item>
 			<first>MENU_FILE_SAVE_ALL</first>
@@ -616,6 +620,10 @@
 		<item>
 			<first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
 			<second>Instance not saved</second>
+		</item>
+		<item>
+			<first>SAVE_AS_TITLE</first>
+			<second>Save as...</second>
 		</item>
 		<item>
 			<first>STATUS_BUILDING</first>

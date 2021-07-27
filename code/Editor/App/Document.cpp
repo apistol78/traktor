@@ -150,7 +150,15 @@ bool Document::redo(Ref< const ISerializable >* outMeta)
 		*outMeta = redoState.meta;
 
 	m_redoHistory.pop_back();
+	return true;
+}
 
+bool Document::replaceInstance(uint32_t index, db::Instance* instance)
+{
+	if (index >= m_instances.size())
+		return false;
+
+	m_instances[index] = instance;
 	return true;
 }
 
@@ -160,13 +168,13 @@ bool Document::save()
 	{
 		if (m_objects[i] && !m_instances[i]->setObject(m_objects[i]))
 		{
-			log::error << L"Unable to save document; failed to set instance object" << Endl;
+			log::error << L"Unable to save document; failed to set instance object." << Endl;
 			return false;
 		}
 
 		if (!m_instances[i]->commit(db::CfKeepCheckedOut))
 		{
-			log::error << L"Unable to save document; failed to commit instance" << Endl;
+			log::error << L"Unable to save document; failed to commit instance." << Endl;
 			return false;
 		}
 
@@ -200,7 +208,6 @@ bool Document::close()
 	m_objects.clear();
 	m_objectHashes.clear();
 	m_undoHistory.clear();
-
 	return true;
 }
 
