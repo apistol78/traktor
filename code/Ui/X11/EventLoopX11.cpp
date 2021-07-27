@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Timer/Timer.h"
