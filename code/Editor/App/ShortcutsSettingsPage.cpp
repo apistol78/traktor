@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -32,6 +33,8 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* o
 	m_gridShortcuts->create(container, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridShortcuts->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), ui::dpi96(200)));
 	m_gridShortcuts->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::dpi96(200)));
+	m_gridShortcuts->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_INUSE"), ui::dpi96(500)));
+	m_gridShortcuts->setSortColumn(0, false, ui::GridView::SmLexical);
 	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
 	Ref< ui::Container > containerEdit = new ui::Container();
@@ -49,18 +52,19 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* o
 	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
 	{
-		for (std::list< ui::Command >::const_iterator i = shortcutCommands.begin(); i != shortcutCommands.end(); ++i)
+		for (const auto& shortcutCommand : shortcutCommands)
 		{
-			Ref< const PropertyString > constPropertyKey = dynamic_type_cast< const PropertyString* >(shortcutGroup->getProperty(i->getName()));
+			Ref< const PropertyString > constPropertyKey = dynamic_type_cast< const PropertyString* >(shortcutGroup->getProperty(shortcutCommand.getName()));
 			Ref< PropertyString > propertyKey = new PropertyString(PropertyString::get(constPropertyKey));
 
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(new ui::GridItem(
-				i->getName()
+				shortcutCommand.getName()
 			));
 			row->add(new ui::GridItem(
 				i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED")
 			));
+			row->add(new ui::GridItem(L""));
 			row->setData(L"PROPERTYKEY", propertyKey);
 			m_gridShortcuts->addRow(row);
 		}
@@ -103,7 +107,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 	for (auto row : m_gridShortcuts->getRows())
 	{
 		const RefArray< ui::GridItem >& items = row->get();
-		T_ASSERT(items.size() == 2);
+		T_ASSERT(items.size() == 3);
 
 		Ref< PropertyString > propertyKey = row->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT(propertyKey);
@@ -132,9 +136,34 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 			keyDesc = keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 
 			items[1]->setText(keyDesc);
+
+			// Check if combination is used by any other shortcuts.
+			StringOutputStream ss;
+			for (auto duplicateRow : m_gridShortcuts->getRows())
+			{
+				if (duplicateRow == row)
+					continue;
+
+				const RefArray< ui::GridItem >& duplicateItems = duplicateRow->get();
+				T_ASSERT(items.size() == 3);
+
+				Ref< PropertyString > duplicatePropertyKey = duplicateRow->getData< PropertyString >(L"PROPERTYKEY");
+				T_ASSERT(duplicatePropertyKey);
+
+				if (PropertyString::get(propertyKey) == PropertyString::get(duplicatePropertyKey))
+				{
+					if (!ss.empty())
+						ss << L", ";
+					ss << duplicateItems[0]->getText();
+				}
+			}
+			items[2]->setText(ss.str());			
 		}
 		else
+		{
 			items[1]->setText(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED"));
+			items[2]->setText(L"");
+		}
 	}
 	m_gridShortcuts->update();
 }
