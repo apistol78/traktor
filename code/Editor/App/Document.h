@@ -39,6 +39,8 @@ public:
 
 	virtual bool redo(Ref< const ISerializable >* outMeta) override final;
 
+	bool replaceInstance(uint32_t index, db::Instance* instance);
+
 	bool save();
 
 	bool modified() const;
