@@ -254,6 +254,10 @@
 			<second>Shortcuts</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_SHORTCUT_INUSE</first>
+			<second>Used by other shortcut(s)</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED</first>
 			<second>(Not assigned)</second>
 		</item>
