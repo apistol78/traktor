@@ -122,48 +122,17 @@ int DialogX11::showModal()
 
 	for (m_modal = true; m_modal; )
 	{
-        int nr = 0;
-		if (!XPending(m_context->getDisplay()))
-		{
-			fd_set fds;
-			FD_ZERO(&fds);
-			FD_SET(fd, &fds);
+		fd_set fds;
+		FD_ZERO(&fds);
+		FD_SET(fd, &fds);
 
-			struct timeval tv;
-			tv.tv_usec = 100 * 1000;
-			tv.tv_sec = 0;
+		struct timeval tv;
+		tv.tv_usec = 1 * 1000;
+		tv.tv_sec = 0;
+		select(fd + 1, &fds, nullptr, nullptr, &tv);
 
-			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
-		}
-		else
-			nr = 1;
-
-        if (nr > 0)
-		{
-			SmallSet< Window > exposeWindows;
-
-			// Read all pending events, do not dispatch expose events
-			// directly since we synthesize those later to reduce number of redraws.
-			while (XPending(m_context->getDisplay()))
-			{
-				XNextEvent(m_context->getDisplay(), &e);
-				if (e.type != Expose)
-					m_context->dispatch(e);
-				else
-					exposeWindows.insert(e.xexpose.window);
-			}
-
-			for (auto window : exposeWindows)
-			{
-				e.type = Expose;
-				e.xexpose.window = window;
-				e.xexpose.count = 0;
-				m_context->dispatch(e);
-			}
-		}
-
-		double dt = timer.getDeltaTime();
-		Timers::getInstance().update(dt);
+		if (!Application::getInstance()->process())
+			break;
 	}
 
 	setVisible(false);
