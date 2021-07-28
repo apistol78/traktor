@@ -77,7 +77,11 @@ end
 -- Common build function, use this if nothing special is needed for content build.
 function commonBuild(args)
 	stdout:printLn("Building asset(s)...")
-	local cmdline = tools.pipeline .. " -v -l -p -s=Pipeline"
+	local cmdline = tools.pipeline
+	if os:getEnvironment("DEPLOY_BUILD_VERBOSE") == "YES" then
+		cmdline = cmdline .. " -verbose"
+	end
+	cmdline = cmdline .. " -log -progress -settings=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
 	end

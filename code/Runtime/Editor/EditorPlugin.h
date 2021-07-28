@@ -14,9 +14,6 @@
 
 namespace traktor
 {
-
-class IProcess;
-
 	namespace net
 	{
 
@@ -133,7 +130,6 @@ private:
 
 	Thread* m_threadHostEnumerator;
 	Thread* m_threadTargetActions;
-	Ref< IProcess > m_pipelineSlaveProcess;
 
 	void updateTargetLists();
 

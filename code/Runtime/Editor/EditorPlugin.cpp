@@ -10,8 +10,6 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
-#include "Core/System/IProcess.h"
-#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -345,34 +343,6 @@ void EditorPlugin::handleWorkspaceOpened()
 	// Get connection manager.
 	m_connectionManager = m_editor->getStoreObject< db::ConnectionManager >(L"DbConnectionManager");
 
-	// Create slave pipeline process.
-	std::wstring systemRoot = m_editor->getSettings()->getProperty< std::wstring >(L"Runtime.SystemRoot", L"$(TRAKTOR_HOME)");
-
-#if defined(_WIN32)
-#	if defined(_WIN64)
-	std::wstring systemOs = L"win64";
-#	else
-	std::wstring systemOs = L"win32";
-#	endif
-#elif defined(__APPLE__)
-	std::wstring systemOs = L"osx";
-#elif defined(__LINUX__)
-	std::wstring systemOs = L"linux";
-#elif defined(__RPI__)
-	std::wstring systemOs = L"rpi";
-#endif
-
-#if !defined(__RPI__)
-	bool hidden = m_editor->getSettings()->getProperty< bool >(L"Runtime.PipelineHidden", true);
-
-	m_pipelineSlaveProcess = OS::getInstance().execute(
-		systemRoot + L"/bin/latest/" + systemOs + L"/releaseshared/Traktor.Pipeline.App -slave",
-		L"",
-		nullptr,
-		hidden ? OS::EfMute : OS::EfNone
-	);
-#endif
-
 	// Enable widgets.
 	m_toolBar->setEnable(true);
 
@@ -381,14 +351,6 @@ void EditorPlugin::handleWorkspaceOpened()
 
 void EditorPlugin::handleWorkspaceClosed()
 {
-	// Terminate slave pipeline process.
-	if (m_pipelineSlaveProcess)
-	{
-		m_pipelineSlaveProcess->terminate(0);
-		m_pipelineSlaveProcess->wait(10000);
-		m_pipelineSlaveProcess = nullptr;
-	}
-
 	m_toolTargets->removeAll();
 	m_toolBar->update();
 
