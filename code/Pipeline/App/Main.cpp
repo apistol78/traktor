@@ -21,9 +21,6 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
-#include "Core/System/Environment.h"
-#include "Core/System/IProcess.h"
-#include "Core/System/ISharedMemory.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Mutex.h"
 #include "Core/Thread/Thread.h"
@@ -51,17 +48,8 @@
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Editor/Pipeline/PipelineSettings.h"
-#include "Net/BidirectionalObjectTransport.h"
-#include "Net/Network.h"
-#include "Net/SocketAddressIPv4.h"
-#include "Net/SocketStream.h"
-#include "Net/TcpSocket.h"
-#include "Net/Discovery/DiscoveryManager.h"
-#include "Net/Discovery/NetworkService.h"
 #include "Pipeline/App/PipelineLog.h"
 #include "Pipeline/App/PipelineParameters.h"
-#include "Pipeline/App/PipelineResult.h"
-#include "Pipeline/App/ReadOnlyObjectCache.h"
 #include "Xml/XmlDeserializer.h"
 
 #if defined(_WIN32)
@@ -71,8 +59,6 @@
 #endif
 
 using namespace traktor;
-
-const uint16_t c_defaultIPCPort = 52412;
 
 #if defined(_WIN32)
 
@@ -119,7 +105,7 @@ std::wstring getExceptionString(DWORD exceptionCode)
 	}
 }
 
-void* g_exceptionAddress = 0;
+void* g_exceptionAddress = nullptr;
 LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 {
 	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
@@ -166,35 +152,6 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 }
 
 #endif
-
-class LogRedirect : public ILogTarget
-{
-public:
-	LogRedirect(
-		ILogTarget* originalTarget,
-		net::BidirectionalObjectTransport* transport
-	)
-	:	m_originalTarget(originalTarget)
-	,	m_transport(transport)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
-	{
-		if (m_originalTarget)
-			m_originalTarget->log(threadId, level, str);
-
-		if (m_transport->connected())
-		{
-			const PipelineLog tlog(threadId, level, str);
-			m_transport->send(&tlog);
-		}
-	}
-
-private:
-	Ref< ILogTarget > m_originalTarget;
-	Ref< net::BidirectionalObjectTransport > m_transport;
-};
 
 struct StatusListener : public editor::IPipelineBuilder::IListener
 {
@@ -281,11 +238,8 @@ struct ConnectionAndCache
 	Ref< editor::PipelineInstanceCache > cache;
 };
 
-Mutex g_pipelineMutex(Guid(L"{91B42B2E-652D-4251-BA5B-9683F30518DD}"));
 bool g_receivedBreakSignal = false;
 bool g_success = false;
-std::map< std::wstring, ConnectionAndCache > g_databaseConnections;
-std::set< std::wstring > g_loadedModules;
 
 #if defined(_WIN32)
 
@@ -304,11 +258,6 @@ void threadBuild(editor::PipelineBuilder& pipelineBuilder, const editor::Pipelin
 
 ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstring& connectionString, bool create)
 {
-	// Check if database is already opened.
-	auto it = g_databaseConnections.find(connectionString);
-	if (it != g_databaseConnections.end())
-		return it->second;
-
 	log::info << L"Opening database \"" << connectionString << L"\"..." << Endl;
 
 	// Open or create new database.
@@ -319,62 +268,15 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 			return ConnectionAndCache();
 	}
 
-	g_databaseConnections[connectionString].database = database;
-
 	// Also create an instance cache.
+	Ref< editor::PipelineInstanceCache > cache;
 	if (!create)
 	{
 		std::wstring cachePath = settings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
-		g_databaseConnections[connectionString].cache = new editor::PipelineInstanceCache(database, cachePath);
+		cache = new editor::PipelineInstanceCache(database, cachePath);
 	}
 
-	return g_databaseConnections[connectionString];
-}
-
-void updateDatabases()
-{
-	Ref< const db::IEvent > event;
-	bool remote;
-
-	for (auto it : g_databaseConnections)
-	{
-		while (it.second.database->getEvent(event, remote))
-		{
-			if (remote)
-			{
-				if (auto instanceCreated = dynamic_type_cast< const db::EvtInstanceCreated* >(event))
-				{
-					Ref< db::Instance > instance = it.second.database->getInstance(instanceCreated->getInstanceGuid());
-					if (instance)
-						log::info << L"Database event; instance \"" << instance->getName() << L"\" created" << Endl;
-					else
-						log::info << L"Database event; instance \"" << instanceCreated->getInstanceGuid().format() << L"\" created" << Endl;
-
-					if (it.second.cache)
-						it.second.cache->flush(instanceCreated->getInstanceGuid());
-				}
-				else if (auto instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
-				{
-					Ref< db::Instance > instance = it.second.database->getInstance(instanceCommited->getInstanceGuid());
-					if (instance)
-						log::info << L"Database event; instance \"" << instance->getName() << L"\" committed" << Endl;
-					else
-						log::info << L"Database event; instance \"" << instanceCommited->getInstanceGuid().format() << L"\" committed" << Endl;
-
-					if (it.second.cache)
-						it.second.cache->flush(instanceCommited->getInstanceGuid());
-				}
-				else if (auto instanceRemoved = dynamic_type_cast< const db::EvtInstanceRemoved* >(event))
-				{
-					log::info << L"Database event; instance \"" << instanceRemoved->getInstanceGuid().format() << L"\" removed" << Endl;
-					if (it.second.cache)
-						it.second.cache->flush(instanceRemoved->getInstanceGuid());
-				}
-				else
-					log::info << L"Database event; " << type_name(event) << Endl;
-			}
-		}
-	}
+	return { database, cache };
 }
 
 bool perform(const PipelineParameters* params)
@@ -409,17 +311,13 @@ bool perform(const PipelineParameters* params)
 	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 	for (const auto& module : modules)
 	{
-		if (g_loadedModules.find(module) == g_loadedModules.end())
+		Library library;
+		if (!library.open(module, modulePathsFlatten, true))
 		{
-			Library library;
-			if (!library.open(module, modulePathsFlatten, true))
-			{
-				traktor::log::error << L"Unable to load module \"" << module << L"\"." << Endl;
-				return false;
-			}
-			library.detach();
-			g_loadedModules.insert(module);
+			traktor::log::error << L"Unable to load module \"" << module << L"\"." << Endl;
+			return false;
 		}
+		library.detach();
 	}
 
 	// Open database connections.
@@ -601,308 +499,12 @@ bool perform(const PipelineParameters* params)
 	return g_success;
 }
 
-int slave(const CommandLine& cmdLine)
-{
-#if defined(_WIN32)
-	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
-#endif
-
-	uint16_t port = c_defaultIPCPort;
-	if (cmdLine.hasOption(L"port"))
-		port = uint16_t(cmdLine.getOption(L"port").getInteger());
-
-	net::TcpSocket socket;
-	if (!socket.bind(net::SocketAddressIPv4(port)))
-	{
-		traktor::log::error << L"Unable to bind socket to port " << port << L"." << Endl;
-		return 1;
-	}
-
-	traktor::log::info << L"Waiting..." << Endl;
-
-	if (!socket.listen())
-	{
-		traktor::log::error << L"Unable to listen on socket." << Endl;
-		return 1;
-	}
-
-#if defined(_WIN32)
-	// Get handle of parent process so we can terminate slave when master terminates.
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	DWORD dwParentPID = 0;
-
-	PROCESSENTRY32 pe = { 0 };
-	pe.dwSize = sizeof(PROCESSENTRY32);
-
-	if (Process32First(hSnapshot, &pe))
-	{
-		DWORD dwPID = GetCurrentProcessId();
-		do
-		{
-			if (pe.th32ProcessID == dwPID)
-			{
-				dwParentPID = pe.th32ParentProcessID;
-				break;
-			}
-		}
-		while (Process32Next(hSnapshot, &pe));
-	}
-
-	CloseHandle(hSnapshot);
-
-	HANDLE hParentProcess = OpenProcess(SYNCHRONIZE | PROCESS_QUERY_INFORMATION, FALSE, dwParentPID);
-#elif defined(__LINUX__)
-	// Get ID of parent process, if parent ID change then we need to terminate since editor has terminated.
-	pid_t parentPID = getppid();
-#endif
-
-	while (!g_receivedBreakSignal)
-	{
-#if defined(_WIN32)
-		if (hParentProcess != NULL && WaitForSingleObject(hParentProcess, 0) == WAIT_OBJECT_0)
-			break;
-#elif defined(__LINUX__)
-		if (getppid() != parentPID)
-			break;
-#endif
-
-		updateDatabases();
-
-		if (socket.select(true, false, false, 250) <= 0)
-			continue;
-
-		Ref< net::TcpSocket > client = socket.accept();
-		if (!client)
-			continue;
-
-		client->setNoDelay(true);
-
-		Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(client);
-
-		Ref< ILogTarget > infoTarget    = traktor::log::info.   getGlobalTarget();
-		Ref< ILogTarget > warningTarget = traktor::log::warning.getGlobalTarget();
-		Ref< ILogTarget > errorTarget   = traktor::log::error.  getGlobalTarget();
-
-		traktor::log::info   .setGlobalTarget(new LogRedirect(infoTarget,    transport));
-		traktor::log::warning.setGlobalTarget(new LogRedirect(warningTarget, transport));
-		traktor::log::error  .setGlobalTarget(new LogRedirect(errorTarget,   transport));
-
-		Ref< PipelineParameters > params;
-		transport->recv< PipelineParameters >(1000, params);
-
-		bool success = false;
-		if (params)
-		{
-			success = true;
-			if (params->getEnvironment() != nullptr)
-			{
-				for (auto it : params->getEnvironment()->get())
-					success &= OS::getInstance().setEnvironment(it.first, it.second);
-				if (!success)
-					traktor::log::error << L"Unable to set slave environment." << Endl;
-			}
-			if (success)
-				success &= perform(params);
-		}
-		else
-			traktor::log::error << L"Unable to read pipeline parameters." << Endl;
-
-		const PipelineResult result(success ? 0 : 1);
-		transport->send(&result);
-
-		traktor::log::info   .setGlobalTarget(infoTarget);
-		traktor::log::warning.setGlobalTarget(warningTarget);
-		traktor::log::error  .setGlobalTarget(errorTarget);
-
-		transport->close();
-		transport = nullptr;
-	}
-
-#if defined(_WIN32)
-	CloseHandle(hParentProcess);
-#endif
-
-	traktor::log::info << L"Bye" << Endl;
-	return 0;
-}
-
-int master(const CommandLine& cmdLine)
-{
-	Ref< traktor::IStream > logFile;
-	int32_t result = 1;
-
-	if (cmdLine.hasOption('l', L"log"))
-	{
-		RefArray< File > logs;
-		FileSystem::getInstance().find(L"Pipeline_*.log", logs);
-
-		// Get "alive" log ids.
-		std::vector< int32_t > logIds;
-		for (auto log : logs)
-		{
-			std::wstring logName = log->getPath().getFileNameNoExtension();
-			size_t p = logName.find(L'_');
-			if (p != logName.npos)
-			{
-				int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
-				if (id != -1)
-					logIds.push_back(id);
-			}
-		}
-
-		int32_t nextLogId = 0;
-		if (!logIds.empty())
-		{
-			std::sort(logIds.begin(), logIds.end());
-
-			// Don't keep more than 10 log files.
-			while (logIds.size() >= 10)
-			{
-				StringOutputStream ss;
-				ss << L"Pipeline_" << logIds.front() << L".log";
-				FileSystem::getInstance().remove(ss.str());
-				logIds.erase(logIds.begin());
-			}
-
-			nextLogId = logIds.back() + 1;
-		}
-
-		// Create new log file.
-		StringOutputStream ss;
-		ss << L"Pipeline_" << nextLogId << L".log";
-		if ((logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite)) != nullptr)
-		{
-			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
-			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
-
-			traktor::log::info   .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
-			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
-			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
-
-			traktor::log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
-		}
-		else
-			traktor::log::error << L"Unable to create log file; logging only to std pipes." << Endl;
-	}
-
-	uint16_t port = c_defaultIPCPort;
-	if (cmdLine.hasOption(L"port"))
-		port = uint16_t(cmdLine.getOption(L"port").getInteger());
-
-	if (!g_pipelineMutex.existing())
-	{
-		Path executable = OS::getInstance().getExecutable();
-
-		Ref< IProcess > slaveProcess = OS::getInstance().execute(
-			executable.getPathName() + L" -slave",
-			L"",
-			OS::getInstance().getEnvironment(),
-			OS::EfDetach
-		);
-		if (!slaveProcess)
-			return 1;
-
-		slaveProcess->setPriority(IProcess::Below);
-	}
-
-	std::vector< Guid > roots;
-	if (cmdLine.getCount() > 0)
-	{
-		for (int32_t i = 0; i < cmdLine.getCount(); ++i)
-		{
-			Guid assetGuid(cmdLine.getString(i));
-			if (assetGuid.isNull() || !assetGuid.isValid())
-			{
-				traktor::log::error << L"Invalid root asset guid (" << i << L" \"" << cmdLine.getString(i) << L"\")." << Endl;
-				return 1;
-			}
-			roots.push_back(assetGuid);
-		}
-	}
-
-	Ref< net::TcpSocket > socket = new net::TcpSocket();
-	if (!socket->connect(net::SocketAddressIPv4(L"localhost", port)))
-	{
-		traktor::log::error << L"Unable to establish connection with pipeline slave using port " << port << L"." << Endl;
-		return 1;
-	}
-
-	socket->setNoDelay(true);
-
-	std::wstring settingsFile = L"Traktor.Editor";
-	if (cmdLine.hasOption('s', L"settings"))
-		settingsFile = cmdLine.getOption('s', L"settings").getString();
-
-	PipelineParameters params(
-		OS::getInstance().getEnvironment(),
-		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
-		settingsFile,
-		cmdLine.hasOption('v', L"verbose"),
-		cmdLine.hasOption('p', L"progress"),
-		cmdLine.hasOption('f', L"force"),
-		cmdLine.hasOption('n', L"no-cache"),
-		roots
-	);
-
-	Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
-
-	transport->send(&params);
-	for (;;)
-	{
-		Ref< ISerializable > slaveMessage;
-		if (transport->recv< ISerializable >(1000, slaveMessage) == net::BidirectionalObjectTransport::RtDisconnected)
-			break;
-
-		if (const PipelineLog* slaveLog = dynamic_type_cast< const PipelineLog* >(slaveMessage))
-		{
-			switch (slaveLog->getLevel())
-			{
-			default:
-			case 0:
-				traktor::log::info.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
-				break;
-			case 1:
-				traktor::log::warning.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
-				break;
-			case 2:
-				traktor::log::error.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
-				break;
-			case 3:
-				traktor::log::debug.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
-				break;
-			}
-		}
-		else if (const PipelineResult* slaveResult = dynamic_type_cast< const PipelineResult* >(slaveMessage))
-		{
-			result = slaveResult->getResult();
-		}
-	}
-
-	transport->close();
-	transport = nullptr;
-
-	if (logFile)
-	{
-		traktor::log::info.setBuffer(nullptr);
-		traktor::log::warning.setBuffer(nullptr);
-		traktor::log::error.setBuffer(nullptr);
-		traktor::log::debug.setBuffer(nullptr);
-
-		logFile->close();
-		logFile = nullptr;
-	}
-
-	return result;
-}
-
 int standalone(const CommandLine& cmdLine)
 {
 #if defined(_WIN32)
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
 #endif
 
-	traktor::log::info << L"Standalone Mode" << Endl;
-
 	Ref< traktor::IStream > logFile;
 
 	if (cmdLine.hasOption('l', L"log"))
@@ -962,7 +564,7 @@ int standalone(const CommandLine& cmdLine)
 	std::vector< Guid > roots;
 	if (cmdLine.getCount() > 0)
 	{
-		for (int32_t i = 0; i < cmdLine.getCount(); ++i)
+		for (uint32_t i = 0; i < cmdLine.getCount(); ++i)
 		{
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
@@ -1001,8 +603,6 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << L"Pipeline; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'." << Endl;
 
-	net::Network::initialize();
-
 #if !defined(_DEBUG)
 	try
 #endif
@@ -1013,12 +613,7 @@ int main(int argc, const char** argv)
 #endif
 
 		CommandLine cmdLine(argc, argv);
-		if (cmdLine.hasOption(L"slave"))
-			result = slave(cmdLine);
-		else if (cmdLine.hasOption(L"standalone"))
-			result = standalone(cmdLine);
-		else
-			result = master(cmdLine);
+		result = standalone(cmdLine);
 
 #if defined(_WIN32) && !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
@@ -1043,6 +638,5 @@ int main(int argc, const char** argv)
 	}
 #endif
 
-	net::Network::finalize();
 	return result;
 }
