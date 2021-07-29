@@ -437,7 +437,7 @@ local outputs =
 		path = "../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
-			{ name = "Logos", column = 0, row = 0, width = 13, height = 1, base = 24 },
+			{ name = "Logos", column = 0, row = 0, width = 14, height = 1, base = 24 },
 			{ name = "TargetPlay", column = 0, row = 1, width = 1, height = 1, base = 24 },
 			{ name = "TargetBuild", column = 1, row = 1, width = 1, height = 1, base = 24 },
 			{ name = "TargetMigrate", column = 2, row = 1, width = 1, height = 1, base = 24 },
