@@ -384,7 +384,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 #endif
 
 	VmaAllocatorCreateInfo aci = {};
+#if !defined(__RPI__)
 	aci.vulkanApiVersion = VK_API_VERSION_1_2;
+#endif
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
 #if defined(__RPI__)
