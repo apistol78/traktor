@@ -1,7 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/PipelineDependencySet.h"
 
@@ -26,16 +26,21 @@ uint32_t PipelineDependencySet::add(const Guid& dependencyGuid, PipelineDependen
 	return index;
 }
 
-PipelineDependency* PipelineDependencySet::get(uint32_t index) const
+PipelineDependency* PipelineDependencySet::get(uint32_t index)
+{
+	return m_dependencies[index];
+}
+
+const PipelineDependency* PipelineDependencySet::get(uint32_t index) const
 {
 	return m_dependencies[index];
 }
 
 uint32_t PipelineDependencySet::get(const Guid& dependencyGuid) const
 {
-	std::map< Guid, uint32_t >::const_iterator i = m_indices.find(dependencyGuid);
-	if (i != m_indices.end())
-		return i->second;
+	auto it = m_indices.find(dependencyGuid);
+	if (it != m_indices.end())
+		return it->second;
 	else
 		return DiInvalid;
 }
@@ -59,7 +64,7 @@ void PipelineDependencySet::dump(OutputStream& os) const
 void PipelineDependencySet::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< PipelineDependency >(L"dependencies", m_dependencies);
-	s >> MemberStlMap< Guid, uint32_t >(L"indices", m_indices);
+	s >> MemberSmallMap< Guid, uint32_t >(L"indices", m_indices);
 }
 
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -36,7 +36,9 @@ public:
 
 	uint32_t add(const Guid& dependencyGuid, PipelineDependency* dependency);
 
-	PipelineDependency* get(uint32_t index) const;
+	PipelineDependency* get(uint32_t index);
+
+	const PipelineDependency* get(uint32_t index) const;
 
 	uint32_t get(const Guid& dependencyGuid) const;
 
@@ -48,7 +50,7 @@ public:
 
 private:
 	RefArray< PipelineDependency > m_dependencies;
-	std::map< Guid, uint32_t > m_indices;
+	SmallMap< Guid, uint32_t > m_indices;
 };
 
 	}
