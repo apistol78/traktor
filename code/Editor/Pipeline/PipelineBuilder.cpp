@@ -435,7 +435,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	if (index == PipelineDependencySet::DiInvalid)
 		return false;
 
-	PipelineDependency* dependency = dependencySet.get(index);
+	const PipelineDependency* dependency = dependencySet.get(index);
 	T_ASSERT(dependency != nullptr);
 
 	if (m_listener)
@@ -444,10 +444,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			m_progressEnd,
 			dependency
 		);
-
-	// Append hash of build params.
-	if (cacheable)
-		dependency->sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
 
 	// Calculate hash entry.
 	PipelineDependencyHash currentDependencyHash;
@@ -459,6 +455,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		currentDependencyHash.sourceDataHash,
 		currentDependencyHash.filesHash
 	);
+
+	// Add hash of build params to source data hash.
+	if (cacheable)
+		currentDependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
 
 	// Check database if this build already exist in output.
 	if (!m_rebuild && cacheable)
