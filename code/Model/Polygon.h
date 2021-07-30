@@ -30,7 +30,7 @@ class T_DLLCLASS Polygon : public ISerializable
 public:
 	typedef StaticVector< uint32_t, 32 > vertices_t;
 
-	Polygon();
+	Polygon() = default;
 
 	Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2);
 
@@ -76,9 +76,9 @@ public:
 	bool operator == (const Polygon& r) const;
 
 private:
-	uint32_t m_material;
-	uint32_t m_normal;
-	uint32_t m_smoothGroup;
+	uint32_t m_material = c_InvalidIndex;
+	uint32_t m_normal = c_InvalidIndex;
+	uint32_t m_smoothGroup = 0;
 	vertices_t m_vertices;
 };
 

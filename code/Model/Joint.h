@@ -3,6 +3,7 @@
 #include <string>
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Model/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ class T_DLLCLASS Joint : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Joint();
+	Joint() = default;
 
 	explicit Joint(const std::wstring& name);
 
@@ -55,10 +56,10 @@ public:
 	bool operator == (const Joint& rh) const;
 
 private:
-	uint32_t m_parent;
+	uint32_t m_parent = c_InvalidIndex;
 	std::wstring m_name;
-	Transform m_transform;
-	float m_length;
+	Transform m_transform = Transform::identity();
+	float m_length = 1.0f;
 };
 
 	}

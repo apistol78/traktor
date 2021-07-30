@@ -2,7 +2,6 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Model/Joint.h"
-#include "Model/Types.h"
 
 namespace traktor
 {
@@ -11,18 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Joint", 0, Joint, ISerializable)
 
-Joint::Joint()
-:	m_parent(c_InvalidIndex)
-,	m_transform(Transform::identity())
-,	m_length(1.0f)
-{
-}
-
 Joint::Joint(const std::wstring& name)
-:	m_parent(c_InvalidIndex)
-,	m_name(name)
-,	m_transform(Transform::identity())
-,	m_length(1.0f)
+:	m_name(name)
 {
 }
 
