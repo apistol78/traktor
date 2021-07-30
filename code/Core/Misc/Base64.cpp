@@ -41,6 +41,22 @@ bool isBase64(wchar_t c)
 	return false;
 }
 
+bool nextBase64(const std::wstring& b64, size_t& pos, wchar_t& outChar)
+{
+	const size_t ln = b64.size();
+	while (pos < ln)
+	{
+		if (isBase64(b64[pos]))
+		{
+			outChar = b64[pos];
+			pos++;
+			return true;
+		}
+		pos++;
+	}
+	return false;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Base64", Base64, Object)
@@ -89,26 +105,17 @@ std::wstring Base64::encode(const AlignedVector< uint8_t >& data, bool insertCrL
 
 AlignedVector< uint8_t > Base64::decode(const std::wstring& b64) const
 {
-	std::wstring str;
-	for (size_t i = 0; i < b64.length(); ++i)
-	{
-		if (isBase64(b64[i]))
-			str += b64[i];
-	}
-
 	AlignedVector< uint8_t > data;
-	data.reserve((str.length() * 3) / 4);
+	data.reserve(b64.length() / 4);
 
-	for (size_t i = 0; i < str.length(); i += 4)
+	for (size_t i = 0; i < b64.length(); )
 	{
 		wchar_t c1 = L'A', c2 = L'A', c3 = L'A', c4 = L'A';
-		c1 = str[i];
-		if (i + 1 < str.length())
-			c2 = str[i + 1];
-		if (i + 2 < str.length())
-			c3 = str[i + 2];
-		if (i + 3 < str.length())
-			c4 = str[i + 3];
+
+		nextBase64(b64, i, c1);
+		nextBase64(b64, i, c2);
+		nextBase64(b64, i, c3);
+		nextBase64(b64, i, c4);
 
 		uint8_t uc1 = 0, uc2 = 0, uc3 = 0, uc4 = 0;
 		uc1 = dec(c1);
