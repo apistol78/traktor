@@ -29,7 +29,7 @@ namespace traktor
 		{
 
 const uint32_t c_uniformBufferInFlight = 4;
-const uint32_t c_uniformBufferDrawPerFrame = 100;
+const uint32_t c_uniformBufferDrawPerFrame = 200;
 
 render::Handle s_handleTargetSize(L"_vk_targetSize");
 
