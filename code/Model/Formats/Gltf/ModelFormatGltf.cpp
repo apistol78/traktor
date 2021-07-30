@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Misc/Base64.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 #include "Json/JsonDocument.h"
@@ -158,8 +159,19 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				return nullptr;
 
 			std::wstring uri = buffer->getMemberValue(L"uri").getWideString();
-			if ((bufferStreams[i] = FileSystem::getInstance().open(dirPath + Path(uri), File::FmRead)) == nullptr)
-				return nullptr;
+
+			if (startsWith(uri, L"data:application/octet-stream;base64,"))
+			{
+				AlignedVector< uint8_t > data = Base64().decode(uri.substr(37));
+				Ref< DynamicMemoryStream > ms = new DynamicMemoryStream(true, false);
+				ms->getBuffer().swap(data);
+				bufferStreams[i] = ms;
+			}
+			else
+			{
+				if ((bufferStreams[i] = FileSystem::getInstance().open(dirPath + Path(uri), File::FmRead)) == nullptr)
+					return nullptr;
+			}
 		}
 	}
 
