@@ -47,16 +47,11 @@ public:
 	{
 		std::wstring name;
 		std::wstring channel;
-		bool anisotropic;
+		bool anisotropic = false;
 		Guid texture;
 		Ref< drawing::Image > image;	//!< Not serializable.
 
-		Map()
-		:	name(L"")
-		,	channel(L"")
-		,	anisotropic(false)
-		{
-		}
+		Map() = default;
 
 		Map(const std::wstring& name_, const std::wstring& channel_, bool anisotropic_ = true, const Guid& texture_ = Guid())
 		:	name(name_)
@@ -69,7 +64,7 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	Material();
+	Material() = default;
 
 	explicit Material(const std::wstring& name);
 
@@ -158,7 +153,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::wstring m_name;
+	std::wstring m_name = L"Unnamed";
 	Map m_diffuseMap;
 	Map m_specularMap;
 	Map m_roughnessMap;
@@ -168,16 +163,16 @@ private:
 	Map m_reflectiveMap;
 	Map m_normalMap;
 	Map m_lightMap;
-	Color4f m_color;
-	float m_diffuseTerm;
-	float m_specularTerm;
-	float m_roughness;
-	float m_metalness;
-	float m_transparency;
-	float m_emissive;
-	float m_reflective;
-	BlendOperator m_blendOperator;
-	bool m_doubleSided;
+	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_diffuseTerm = 1.0f;
+	float m_specularTerm = 1.0f;
+	float m_roughness = 0.8f;
+	float m_metalness = 0.0f;
+	float m_transparency = 0.0f;
+	float m_emissive = 0.0f;
+	float m_reflective = 0.0f;
+	BlendOperator m_blendOperator = BoDecal;
+	bool m_doubleSided = false;
 };
 
 	}

@@ -13,39 +13,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Vertex", 0, Vertex, ISerializable)
 
-Vertex::Vertex()
-:	m_position(c_InvalidIndex)
-,	m_color(c_InvalidIndex)
-,	m_normal(c_InvalidIndex)
-,	m_tangent(c_InvalidIndex)
-,	m_binormal(c_InvalidIndex)
-{
-}
-
 Vertex::Vertex(uint32_t position)
 :	m_position(position)
-,	m_color(c_InvalidIndex)
-,	m_normal(c_InvalidIndex)
-,	m_tangent(c_InvalidIndex)
-,	m_binormal(c_InvalidIndex)
 {
 }
 
 Vertex::Vertex(uint32_t position, uint32_t normal)
 :	m_position(position)
-,	m_color(c_InvalidIndex)
 ,	m_normal(normal)
-,	m_tangent(c_InvalidIndex)
-,	m_binormal(c_InvalidIndex)
 {
 }
 
 Vertex::Vertex(uint32_t position, uint32_t normal, uint32_t texCoord)
 :	m_position(position)
-,	m_color(c_InvalidIndex)
 ,	m_normal(normal)
-,	m_tangent(c_InvalidIndex)
-,	m_binormal(c_InvalidIndex)
 {
 	m_texCoords.push_back(texCoord);
 }

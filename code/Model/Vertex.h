@@ -29,7 +29,7 @@ class T_DLLCLASS Vertex : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Vertex();
+	Vertex() = default;
 
 	explicit Vertex(uint32_t position);
 
@@ -80,11 +80,11 @@ public:
 	bool operator == (const Vertex& r) const;
 
 private:
-	uint32_t m_position;
-	uint32_t m_color;
-	uint32_t m_normal;
-	uint32_t m_tangent;
-	uint32_t m_binormal;
+	uint32_t m_position = c_InvalidIndex;
+	uint32_t m_color = c_InvalidIndex;
+	uint32_t m_normal = c_InvalidIndex;
+	uint32_t m_tangent = c_InvalidIndex;
+	uint32_t m_binormal = c_InvalidIndex;
 	StaticVector< uint32_t, 4 > m_texCoords;
 	AlignedVector< float > m_jointInfluences;
 };

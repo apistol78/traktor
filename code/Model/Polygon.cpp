@@ -11,17 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Polygon", 0, Polygon, ISerializable)
 
-Polygon::Polygon()
-:	m_material(c_InvalidIndex)
-,	m_normal(c_InvalidIndex)
-,	m_smoothGroup(0)
-{
-}
-
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2)
 :	m_material(material)
-,	m_normal(c_InvalidIndex)
-,	m_smoothGroup(0)
 ,	m_vertices(2)
 {
 	m_vertices[0] = vertex1;
@@ -30,8 +21,6 @@ Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2)
 
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3)
 :	m_material(material)
-,	m_normal(c_InvalidIndex)
-,	m_smoothGroup(0)
 ,	m_vertices(3)
 {
 	m_vertices[0] = vertex1;
@@ -41,8 +30,6 @@ Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t
 
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3, uint32_t vertex4)
 :	m_material(material)
-,	m_normal(c_InvalidIndex)
-,	m_smoothGroup(0)
 ,	m_vertices(4)
 {
 	m_vertices[0] = vertex1;
