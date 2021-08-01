@@ -58,7 +58,7 @@ public:
 private:
 	uint32_t m_parent = c_InvalidIndex;
 	std::wstring m_name;
-	Transform m_transform = Transform::identity();
+	Transform m_transform = traktor::Transform::identity();
 	float m_length = 1.0f;
 };
 
