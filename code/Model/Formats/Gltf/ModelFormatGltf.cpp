@@ -313,6 +313,23 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					mt.setMetalnessMap(Material::Map(name, L"UV0", true));
 					mt.setRoughnessMap(Material::Map(name, L"UV0", true));
 				}
+
+				float metallicFactor = pbrMetallicRoughness->getMember(L"metallicFactor") != nullptr ? pbrMetallicRoughness->getMemberValue(L"metallicFactor").getFloat() : 1.0f;
+				mt.setMetalness(metallicFactor);
+
+				float roughnessFactor = pbrMetallicRoughness->getMemberValue(L"roughnessFactor").getFloat();
+				mt.setRoughness(roughnessFactor);
+
+				auto baseColorFactor = pbrMetallicRoughness->getMemberValue(L"baseColorFactor").getObject< json::JsonArray >();
+				if (baseColorFactor != nullptr && baseColorFactor->size() >= 4)
+				{
+					mt.setColor(Color4f(
+						baseColorFactor->get(0).getFloat(),
+						baseColorFactor->get(1).getFloat(),
+						baseColorFactor->get(2).getFloat(),
+						baseColorFactor->get(3).getFloat()
+					));
+				}
 			}
 
 			md->addMaterial(mt);
