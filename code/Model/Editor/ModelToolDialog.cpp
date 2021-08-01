@@ -1270,6 +1270,74 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popView();
 				m_primitiveRenderer->popDepthState();
 			}
+
+			{
+				// Draw frame.
+				const float c_arrowLength = 0.4f;
+				const float c_frameSize = 0.2f;
+
+				float w = 2.0f * aspect;
+				float h = 2.0f;
+
+				m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
+				m_primitiveRenderer->pushWorld(Matrix44::identity());
+				m_primitiveRenderer->pushView(
+					translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
+					scale(c_frameSize, c_frameSize, c_frameSize)
+				);
+
+				m_primitiveRenderer->pushDepthState(false, true, false);
+				m_primitiveRenderer->drawSolidQuad(
+					Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
+					Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+					Vector4(1.0f, -1.0f, 1.0f, 1.0f),
+					Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
+					Color4ub(0, 0, 0, 32)
+				);
+				m_primitiveRenderer->popDepthState();
+
+				m_primitiveRenderer->pushDepthState(true, true, false);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
+					Color4ub(255, 0, 0, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + viewTransform.axisX(),
+					0.8f,
+					Color4ub(255, 0, 0, 255)
+				);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 255, 0, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + viewTransform.axisY(),
+					0.8f,
+					Color4ub(0, 255, 0, 255)
+				);
+
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 0, 255, 255)
+				);
+				m_primitiveRenderer->drawArrowHead(
+					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
+					Vector4::origo() + viewTransform.axisZ(),
+					0.8f,
+					Color4ub(0, 0, 255, 255)
+				);
+
+				m_primitiveRenderer->popWorld();
+				m_primitiveRenderer->popView();
+				m_primitiveRenderer->popDepthState();
+			}
 		}
 
 		m_primitiveRenderer->end(0);
