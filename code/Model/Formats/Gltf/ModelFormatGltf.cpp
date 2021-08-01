@@ -15,6 +15,49 @@ namespace traktor
 		namespace
 		{
 
+Matrix44 parseTransform(const json::JsonObject* node)
+{
+	Matrix44 transform = Matrix44::identity();
+	if (node->getMember(L"translation") != nullptr)
+	{
+		auto translation = node->getMemberValue(L"translation").getObject< json::JsonArray >();
+		if (translation != nullptr && translation->size() >= 3)
+		{
+			transform = transform * translate(
+				translation->get(0).getFloat(),
+				translation->get(1).getFloat(),
+				translation->get(2).getFloat()
+			);
+		}
+	}
+	if (node->getMember(L"rotation") != nullptr)
+	{
+		auto rotation = node->getMemberValue(L"rotation").getObject< json::JsonArray >();
+		if (rotation != nullptr && rotation->size() >= 4)
+		{
+			transform = transform * Quaternion(
+				rotation->get(0).getFloat(),
+				rotation->get(1).getFloat(),
+				rotation->get(2).getFloat(),
+				rotation->get(3).getFloat()
+			).toMatrix44();
+		}
+	}
+	if (node->getMember(L"scale") != nullptr)
+	{
+		auto scale = node->getMemberValue(L"scale").getObject< json::JsonArray >();
+		if (scale != nullptr && scale->size() >= 3)
+		{
+			transform = transform * traktor::scale(
+				scale->get(0).getFloat(),
+				scale->get(1).getFloat(),
+				scale->get(2).getFloat()
+			);
+		}
+	}
+	return transform;
+}
+
 bool decodeAsIndices(
 	int32_t index,
 	json::JsonArray* accessors,
@@ -181,6 +224,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto images = docobj->getMemberValue(L"images").getObject< json::JsonArray >();
 
 	Ref< Model > md = new Model();
+	md->addUniqueTexCoordChannel(L"UV0");
 
 	// Parse materials.
 	auto materials = docobj->getMemberValue(L"materials").getObject< json::JsonArray >();
@@ -213,7 +257,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 
 				auto image = images->get(source).getObject< json::JsonObject >();
 				auto uri = image->getMemberValue(L"uri").getWideString();
-				mt.setNormalMap(Material::Map(uri, 0, true));
+				mt.setNormalMap(Material::Map(uri, L"UV0", true));
 			}
 
 			auto pbrMetallicRoughness = material->getMemberValue(L"pbrMetallicRoughness").getObject< json::JsonObject >();
@@ -232,8 +276,16 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 						return nullptr;
 
 					auto image = images->get(source).getObject< json::JsonObject >();
-					auto uri = image->getMemberValue(L"uri").getWideString();
-					mt.setDiffuseMap(Material::Map(uri, 0, true));
+
+					std::wstring name;
+					if (image->getMember(L"uri") != nullptr)
+						name = image->getMemberValue(L"uri").getWideString();
+					else if (image->getMember(L"name") != nullptr)
+						name = image->getMemberValue(L"name").getWideString();
+					if (name.empty())
+						return nullptr;
+
+					mt.setDiffuseMap(Material::Map(name, L"UV0", true));
 				}
 
 				auto metallicRoughnessTexture = pbrMetallicRoughness->getMemberValue(L"metallicRoughnessTexture").getObject< json::JsonObject >();
@@ -249,9 +301,17 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 						return nullptr;
 
 					auto image = images->get(source).getObject< json::JsonObject >();
-					auto uri = image->getMemberValue(L"uri").getWideString();
-					mt.setMetalnessMap(Material::Map(uri, 0, true));
-					mt.setRoughnessMap(Material::Map(uri, 0, true));
+
+					std::wstring name;
+					if (image->getMember(L"uri") != nullptr)
+						name = image->getMemberValue(L"uri").getWideString();
+					else if (image->getMember(L"name") != nullptr)
+						name = image->getMemberValue(L"name").getWideString();
+					if (name.empty())
+						return nullptr;
+
+					mt.setMetalnessMap(Material::Map(name, L"UV0", true));
+					mt.setRoughnessMap(Material::Map(name, L"UV0", true));
 				}
 			}
 
@@ -260,14 +320,30 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	}
 
 	// Parse geometry.
+	auto nodes = docobj->getMemberValue(L"nodes").getObject< json::JsonArray >();
 	auto meshes = docobj->getMemberValue(L"meshes").getObject< json::JsonArray >();
-	if (meshes)
+	if (nodes && meshes)
 	{
-		for (uint32_t i = 0; i < meshes->size(); ++i)
+		const Matrix44 Tpost = scale(1.0f, 1.0f, -1.0f);
+
+		for (uint32_t i = 0; i < nodes->size(); ++i)
 		{
-			auto mesh = meshes->get(i).getObject< json::JsonObject >();
+			auto node = nodes->get(i).getObject< json::JsonObject >();
+			if (!node)
+				return nullptr;
+
+			if (node->getMember(L"mesh") == nullptr)
+				continue;
+
+			const int32_t meshIndex = node->getMemberValue(L"mesh").getInt32();
+			if (meshIndex < 0 || meshIndex >= (int32_t)meshes->size())
+				continue;
+
+			auto mesh = meshes->get(meshIndex).getObject< json::JsonObject >();
 			if (!mesh)
 				return nullptr;
+
+			Matrix44 Tnode = Tpost * parseTransform(node);
 
 			auto primitives = mesh->getMemberValue(L"primitives").getObject< json::JsonArray >();
 			if (!primitives)
@@ -324,13 +400,19 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					dataTexCoord0s
 				);
 
+				const uint32_t vertexBase = md->getVertexCount();
+
 				for (uint32_t k = 0; k < dataPositions.size(); ++k)
 				{
 					Vertex vx;
-					vx.setPosition(md->addPosition(dataPositions[k] * Vector4(-1.0f, 1.0f, 1.0f, 0.0f) + Vector4(0.0f, 0.0f, 0.0f, 1.0f)));
+					vx.setPosition(md->addPosition(
+						Tnode * dataPositions[k].xyz1()
+					));
 
 					if (dataNormals.size() == dataPositions.size())
-						vx.setNormal(md->addUniqueNormal(dataNormals[k] * Vector4(-1.0f, 1.0f, 1.0f, 0.0f)));
+						vx.setNormal(md->addUniqueNormal(
+							Tnode * dataNormals[k].xyz0()
+						));
 
 					if (dataTexCoord0s.size() == dataPositions.size())
 						vx.setTexCoord(0, md->addUniqueTexCoord(
@@ -347,9 +429,9 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				{
 					Polygon pol;
 					pol.setMaterial(material);
-					pol.addVertex(dataIndices[k + 0]);
-					pol.addVertex(dataIndices[k + 1]);
-					pol.addVertex(dataIndices[k + 2]);
+					pol.addVertex(vertexBase + dataIndices[k + 0]);
+					pol.addVertex(vertexBase + dataIndices[k + 1]);
+					pol.addVertex(vertexBase + dataIndices[k + 2]);
 					md->addPolygon(pol);
 				}
 			}
