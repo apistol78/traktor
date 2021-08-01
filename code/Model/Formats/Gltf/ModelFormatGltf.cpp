@@ -101,6 +101,49 @@ bool decodeAsIndices(
 	return true;
 }
 
+bool decodeAsScalars(
+	int32_t index,
+	json::JsonArray* accessors,
+	json::JsonArray* bufferViews,
+	const RefArray< IStream >& bufferStreams,
+	AlignedVector< float >& outData
+)
+{
+	auto accessor = accessors->get(index).getObject< json::JsonObject >();
+
+	int32_t bufferViewIndex = accessor->getMemberValue(L"bufferView").getInt32();
+	int32_t componentType = accessor->getMemberValue(L"componentType").getInt32();
+	std::wstring type = accessor->getMemberValue(L"type").getWideString();
+	int32_t count = accessor->getMemberValue(L"count").getInt32();
+
+	if (componentType != 5126)	// must be float
+		return false;
+
+	if (type != L"SCALAR")
+		return false;
+
+	auto bufferView = bufferViews->get(bufferViewIndex).getObject< json::JsonObject >();
+	if (!bufferView)
+		return false;
+
+	int32_t buffer = bufferView->getMemberValue(L"buffer").getInt32();
+	int32_t byteOffset = bufferView->getMemberValue(L"byteOffset").getInt32();
+
+	IStream* bufferStream = bufferStreams[buffer];
+	bufferStream->seek(IStream::SeekSet, byteOffset);
+
+	outData.resize(count);
+	for (int32_t i = 0; i < count; ++i)
+	{
+		float v;
+		if (bufferStream->read(&v, sizeof(v)) != sizeof(v))
+			return false;
+		outData[i] = v;
+	}
+
+	return true;
+}
+
 bool decodeAsVectors(
 	int32_t index,
 	json::JsonArray* accessors,
@@ -336,13 +379,69 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 		}
 	}
 
-	// Parse geometry.
 	auto nodes = docobj->getMemberValue(L"nodes").getObject< json::JsonArray >();
-	auto meshes = docobj->getMemberValue(L"meshes").getObject< json::JsonArray >();
-	if (nodes && meshes)
-	{
-		const Matrix44 Tpost = scale(1.0f, 1.0f, -1.0f);
+	if (!nodes)
+		return nullptr;
 
+	const Matrix44 Tpost = scale(1.0f, 1.0f, -1.0f);
+
+	// Parse skeleton.
+	auto skins = docobj->getMemberValue(L"skins").getObject< json::JsonArray >();
+	if (skins && skins->size() > 0)
+	{
+		auto skin = skins->get(0).getObject< json::JsonObject >();
+		auto joints = skin->getMemberValue(L"joints").getObject< json::JsonArray >();
+
+		AlignedVector< Joint > modelJoints;
+		SmallMap< int32_t, int32_t > jointMap;
+
+		for (uint32_t i = 0; i < joints->size(); ++i)
+		{
+			int32_t jointIndex = joints->get(i).getInt32();
+
+			auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
+			if (!jointNode)
+				return nullptr;
+
+			std::wstring name = jointNode->getMemberValue(L"name").getWideString();
+			Matrix44 Tnode = Tpost * parseTransform(jointNode);
+
+			Joint& jnt = modelJoints.push_back();
+			jnt.setName(name);
+			jnt.setTransform(Transform(Tnode));
+
+			jointMap[jointIndex] = (int32_t)(modelJoints.size());
+		}
+
+		// Update relationship between joints.
+		for (uint32_t i = 0; i < joints->size(); ++i)
+		{
+			int32_t jointIndex = joints->get(i).getInt32();
+			T_ASSERT(jointMap[jointIndex] == (int32_t)i);
+
+			auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
+			if (!jointNode)
+				return nullptr;
+
+			auto children = jointNode->getMemberValue(L"children").getObject< json::JsonArray >();
+			if (!children)
+				continue;
+
+			for (uint32_t j = 0; j < children->size(); ++j)
+			{
+				int32_t childIndex = children->get(j).getInt32();
+				int32_t childModelJoint = jointMap[childIndex];
+				modelJoints[childModelJoint].setParent(i);
+			}
+		}
+
+		md->setJoints(modelJoints);
+	}
+
+	// Parse geometry.
+	auto meshes = docobj->getMemberValue(L"meshes").getObject< json::JsonArray >();
+	if (meshes)
+	{
 		for (uint32_t i = 0; i < nodes->size(); ++i)
 		{
 			auto node = nodes->get(i).getObject< json::JsonObject >();
@@ -382,11 +481,15 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				int32_t position = attributes->getMemberValue(L"POSITION").getInt32();
 				int32_t normal = attributes->getMemberValue(L"NORMAL").getInt32();
 				int32_t texCoord0 = attributes->getMemberValue(L"TEXCOORD_0").getInt32();
+				int32_t joints0 = attributes->getMemberValue(L"JOINTS_0").getInt32();
+				int32_t weights0 = attributes->getMemberValue(L"WEIGHTS_0").getInt32();
 
 				AlignedVector< int32_t > dataIndices;
 				AlignedVector< Vector4 > dataPositions;
 				AlignedVector< Vector4 > dataNormals;
 				AlignedVector< Vector4 > dataTexCoord0s;
+				AlignedVector< Vector4 > dataJoints;
+				AlignedVector< Vector4 > dataWeights;
 
 				decodeAsIndices(
 					indices,
@@ -416,6 +519,20 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					bufferStreams,
 					dataTexCoord0s
 				);
+				decodeAsVectors(
+					joints0,
+					accessors,
+					bufferViews,
+					bufferStreams,
+					dataJoints
+				);
+				decodeAsVectors(
+					weights0,
+					accessors,
+					bufferViews,
+					bufferStreams,
+					dataWeights
+				);
 
 				const uint32_t vertexBase = md->getVertexCount();
 
@@ -438,6 +555,21 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 								dataTexCoord0s[k].y()
 							)
 						));
+
+					if (dataJoints.size() == dataPositions.size())
+					{
+						int32_t T_MATH_ALIGN16 jointIndices[4];
+						dataJoints[k].storeIntegersAligned(jointIndices);
+
+						float T_MATH_ALIGN16 jointWeights[4];
+						dataWeights[k].storeAligned(jointWeights);
+
+						for (int32_t ii = 0; ii < 4; ++ii)
+						{
+							if (jointWeights[ii] > FUZZY_EPSILON)
+								vx.setJointInfluence(jointIndices[ii], jointWeights[ii]);
+						}
+					}
 
 					md->addVertex(vx);
 				}
