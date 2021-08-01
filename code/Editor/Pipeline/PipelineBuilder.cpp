@@ -254,12 +254,10 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 
 		if (reasons[i] != 0)
 		{
-			WorkEntry we;
+			auto& we = m_workSet.push_back();
 			we.dependency = dependency;
 			we.buildParams = nullptr;
 			we.reason = reasons[i];
-			we.adhoc = false;
-			m_workSet.push_back(we);
 		}
 	}
 
@@ -1048,8 +1046,7 @@ void PipelineBuilder::buildThread(
 				result
 			);
 
-		if (!we.adhoc)
-			Atomic::increment(m_progress);
+		Atomic::increment(m_progress);
 	}
 }
 

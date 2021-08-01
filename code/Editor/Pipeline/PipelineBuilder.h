@@ -90,7 +90,6 @@ private:
 		Ref< const PipelineDependency > dependency;
 		Ref< const Object > buildParams;
 		uint32_t reason;
-		bool adhoc;
 	};
 
 	struct BuiltCacheEntry
@@ -117,7 +116,7 @@ private:
 	Semaphore m_builtCacheLock;
 	Semaphore m_workSetLock;
 	Ref< PipelineProfiler > m_profiler;
-	std::list< WorkEntry > m_workSet;
+	AlignedVector< WorkEntry > m_workSet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	ThreadLocal m_buildInstances;
