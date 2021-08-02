@@ -122,6 +122,7 @@ laststat(A) ::= RETURN explist1(B) .				{ A = copy(B); }
 
 binding(A) ::= LOCAL namelist .						{ A = null(); }
 binding(A) ::= LOCAL namelist EQUAL explist1(B) .	{ A = copy(B); }
+binding(A) ::= LOCAL namelist LESS CONST GREATER EQUAL explist1(B) .	{ A = copy(B); }
 binding(A) ::= LOCAL FUNCTION NAME(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, true, C->node), B->line); }
 
 funcname(A) ::= dottedname(B) .						{ A = copy(B); }
