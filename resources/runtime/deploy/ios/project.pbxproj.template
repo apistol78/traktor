@@ -32,9 +32,8 @@ end
 
 
 -- Ensure product name is valid.
-local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
-local productIdentifier = environment:get("DEPLOY_PROJECT_IDENTIFIER")
-
+local productName < const > = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
+local productIdentifier < const > = environment:get("DEPLOY_PROJECT_IDENTIFIER")
 
 -- Determine all libraries, frameworks and bundles which must be linked.
 local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
@@ -129,18 +128,18 @@ for _, a in ipairs(additional) do
 		output:printLn("\t\t" .. a.fileRef .. " /* " .. a.file .. " */ = {isa = PBXFileReference; path = " .. a.file .. "; sourceTree = \"<group>\"; };")
 end
 for _, b in ipairs(bundles) do
-		output:printLn("\t\t" .. b.fileRef .. " /* " .. b.file .. " */ = {isa = PBXFileReference; lastKnownFileType = \"wrapper.plug-in\"; path = " .. b.file .. "; sourceTree = \"<group>\"; };")
+		output:printLn("\t\t" .. b.fileRef .. " /* " .. b.file .. " */ = {isa = PBXFileReference; lastKnownFileType = \"wrapper.plug-in\"; path = bin/" .. b.file .. "; sourceTree = \"<group>\"; };")
 end
 for _, f in ipairs(frameworks) do
 		if fileSystem:exist(Path("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic/" .. f.file)) then
-			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " .. f.file .. "; path = " .. f.file .. "; sourceTree = \"<group>\"; };")
+			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " .. f.file .. "; path = bin/" .. f.file .. "; sourceTree = \"<group>\"; };")
 		else
 			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " .. f.file .. "; path = System/Library/Frameworks/" .. f.file .. "; sourceTree = SDKROOT; };")
 		end
 end
 for _, f in ipairs(xcframeworks) do
 		if fileSystem:exist(Path("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic/" .. f.file)) then
-			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = " .. f.file .. "; path = " .. f.file .. "; sourceTree = \"<group>\"; };")
+			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = " .. f.file .. "; path = bin/" .. f.file .. "; sourceTree = \"<group>\"; };")
 		else
 			output:printLn("\t\t" .. f.fileRef .. " /* " .. f.file .. " */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = " .. f.file .. "; path = System/Library/Frameworks/" .. f.file .. "; sourceTree = SDKROOT; };")
 		end
@@ -388,7 +387,7 @@ for _, module in ipairs(modules) do
 	if string.sub(module, 1, 9) ~= "libExtern" then
 		output:printLn("					\"-force_load\",")
 	end
-	output:printLn("					\"" .. module .. "\",")
+	output:printLn("					\"bin/" .. module .. "\",")
 end
 --!>				);
 			};
@@ -421,7 +420,7 @@ for _, module in ipairs(modules) do
 	if string.sub(module, 1, 9) ~= "libExtern" then
 		output:printLn("					\"-force_load\",")
 	end
-	output:printLn("					\"" .. module .. "\",")
+	output:printLn("					\"bin/" .. module .. "\",")
 end
 --!>				);
 			};
