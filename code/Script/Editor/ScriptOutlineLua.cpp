@@ -50,6 +50,7 @@ const std::map< std::wstring, int32_t >& getTuples()
 	static std::map< std::wstring, int32_t > tuples;
 	if (tuples.empty())
 	{
+		tuples[L"const"] = TOKEN_CONST;
 		tuples[L"until"] = TOKEN_UNTIL;
 		tuples[L"do"] = TOKEN_DO;
 		tuples[L"end"] = TOKEN_END;
