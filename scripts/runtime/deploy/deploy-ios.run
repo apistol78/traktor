@@ -160,11 +160,11 @@ function deploy(args)
 			end
 			run:pushd(p)
 			if deployFiles ~= "" then
-				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/bin\" " .. deployFiles) -- , nil)
 				if run:exitCode() ~= 0 then return run:exitCode() end
 			end
 			for _, bundle in ipairs(deployBundles) do
-				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*") -- nil)
+				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/bin\" " .. bundle .. "/*.*") -- nil)
 			end
 			run:popd()
 		end
@@ -269,7 +269,7 @@ function migrate(args)
 		local paths = nil
 		if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 
-		-- Find files to deploy; qualitfy through paths.
+		-- Find files to deploy; qualify through paths.
 		local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 		for _, p in ipairs(paths) do
 			local deployFiles = ""
@@ -286,11 +286,11 @@ function migrate(args)
 			end
 			run:pushd(p)
 			if deployFiles ~= "" then
-				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/bin\" " .. deployFiles) -- , nil)
 				if run:exitCode() ~= 0 then return run:exitCode() end
 			end
 			for _, bundle in ipairs(deployBundles) do
-				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*") -- nil)
+				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)/bin\" " .. bundle .. "/*.*") -- nil)
 			end
 			run:popd()
 		end
@@ -308,6 +308,27 @@ function migrate(args)
 			return 1
 		end
 ]]
+
+	else
+
+		-- Get shared paths.
+		local paths = nil
+		if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+
+		-- Create the binary folder; containing all binaries necessary for xcode to build product.
+		run:mkdir("bin")
+
+		-- Find files to copy to binary folder; qualify through paths.
+		local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+		for _, p in ipairs(paths) do
+			for _, f in ipairs(files) do
+				local qf = Path(p):concat(Path(f))
+				if FileSystem.getInstance():exist(qf) then
+					run:replace(qf.pathName, "bin")
+				end
+			end
+		end		
+
 	end
 
 	stdout:printLn("Migrate finished.")
