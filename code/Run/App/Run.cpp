@@ -266,13 +266,36 @@ bool Run::rm(const std::wstring& path)
 bool Run::copy(const std::wstring& source, const std::wstring& target)
 {
 	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
+	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
 	RefArray< File > sourceFiles;
 	FileSystem::getInstance().find(sourcePath, sourceFiles);
-	for (RefArray< File >::const_iterator i = sourceFiles.begin(); i != sourceFiles.end(); ++i)
+
+	for (auto sourceFile : sourceFiles)
 	{
-		if (!FileSystem::getInstance().copy(target, (*i)->getPath(), false))
-			return false;
+		if (!sourceFile->isDirectory())
+		{
+			// If target specifies an existing directory then copy file into this directory.
+			std::wstring targetFileName = target;
+			if (targetFile && targetFile->isDirectory())
+				targetFileName = target + L"/" + sourceFile->getPath().getFileName();
+
+			if (!FileSystem::getInstance().copy(targetFileName, sourceFile->getPath(), false))
+				return false;
+		}
+		else
+		{
+			// Source file is a directory; recursively copy directory.
+			std::wstring sourceDirectory = sourceFile->getPath().getFileName();
+			if (sourceDirectory != L"." && sourceDirectory != L"..")
+			{
+				if (!FileSystem::getInstance().makeDirectory(target + L"/" + sourceDirectory))
+					return false;
+
+				if (!copy(sourceFile->getPath().getPathName() + L"/*", target + L"/" + sourceDirectory))
+					return false;
+			}
+		}
 	}
 
 	return true;
@@ -281,13 +304,36 @@ bool Run::copy(const std::wstring& source, const std::wstring& target)
 bool Run::replace(const std::wstring& source, const std::wstring& target)
 {
 	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
+	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
 	RefArray< File > sourceFiles;
 	FileSystem::getInstance().find(sourcePath, sourceFiles);
-	for (RefArray< File >::const_iterator i = sourceFiles.begin(); i != sourceFiles.end(); ++i)
+
+	for (auto sourceFile : sourceFiles)
 	{
-		if (!FileSystem::getInstance().copy(target, (*i)->getPath(), true))
-			return false;
+		if (!sourceFile->isDirectory())
+		{
+			// If target specifies an existing directory then copy file into this directory.
+			std::wstring targetFileName = target;
+			if (targetFile && targetFile->isDirectory())
+				targetFileName = target + L"/" + sourceFile->getPath().getFileName();
+
+			if (!FileSystem::getInstance().copy(targetFileName, sourceFile->getPath(), true))
+				return false;
+		}
+		else
+		{
+			// Source file is a directory; recursively copy directory.
+			std::wstring sourceDirectory = sourceFile->getPath().getFileName();
+			if (sourceDirectory != L"." && sourceDirectory != L"..")
+			{
+				if (!FileSystem::getInstance().makeDirectory(target + L"/" + sourceDirectory))
+					return false;
+
+				if (!replace(sourceFile->getPath().getPathName() + L"/*", target + L"/" + sourceDirectory))
+					return false;
+			}
+		}
 	}
 
 	return true;
