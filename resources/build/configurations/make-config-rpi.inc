@@ -54,6 +54,8 @@ LINK_FLAGS_COMMON=\
     -fuse-ld=lld\
     --target=arm-linux-gnueabihf\
     --sysroot=$(SYSROOT)\
+    -lpthread\
+    -ldl\
     -Wl,-rpath=\$$ORIGIN\
     -Wl,-gc-sections
 
