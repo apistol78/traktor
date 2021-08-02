@@ -798,12 +798,7 @@ protected:
 		T_FATAL_ASSERT(m_surface != nullptr);
 		m_pendingExposure = false;
 
-		if (!m_data.visible)
-			return;
-
-		XWindowAttributes xa;
-		XGetWindowAttributes(m_context->getDisplay(), m_data.window, &xa);
-		if (xa.map_state != IsViewable)
+		if (!m_data.visible || !m_data.mapped)
 			return;
 
 		Size sz = m_rect.getSize();
