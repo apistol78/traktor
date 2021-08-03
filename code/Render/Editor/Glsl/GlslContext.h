@@ -152,7 +152,7 @@ private:
 
 		Scope() = default;
 
-		Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
+		explicit Scope(const InputPin* inputPin_, const OutputPin* outputPin_)
 		:	inputPin(inputPin_)
 		,	outputPin(outputPin_)
 		{
