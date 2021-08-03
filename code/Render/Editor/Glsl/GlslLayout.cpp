@@ -13,10 +13,16 @@ void GlslLayout::add(GlslResource* resource)
 	T_ASSERT(resource->m_layout == nullptr);
 	m_resources.push_back(resource);
 
+	// Note! Emitter assumes the first three resources are GlslUniformBuffer;s
+	// but since they will be sorted first due to it's name it's currently safe to ignore this
+	// explicit constraint.
 	m_resources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
-		if (type_name(r0) < type_name(r1))
+		const wchar_t* tn0 = type_name(r0);
+		const wchar_t* tn1 = type_name(r1);
+		int32_t c = wcscmp(tn0, tn1);
+		if (c < 0)
 			return false;
-		else if (type_name(r0) > type_name(r1))
+		else if (c > 0)
 			return true;
 		if (r0->getOrdinal() >= r1->getOrdinal())
 			return false;

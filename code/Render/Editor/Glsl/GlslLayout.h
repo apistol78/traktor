@@ -31,7 +31,7 @@ public:
 
 	/*! Get typed resource at index. */
 	template < typename T >
-	T* get(int32_t index) { return checked_type_cast< T* >(get(index)); }
+	T* get(int32_t index) { return mandatory_non_null_type_cast< T* >(get(index)); }
 
 	/*! Get resource by name. */
 	const GlslResource* get(const std::wstring& name) const;

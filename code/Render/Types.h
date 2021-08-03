@@ -121,7 +121,6 @@ enum Address
 };
 
 /*! Render state. */
-#pragma pack(1)
 struct RenderState
 {
 	CullMode cullMode = CmCounterClockWise;
@@ -149,10 +148,8 @@ struct RenderState
 	uint32_t stencilReference = 0x00000000;
 	uint32_t stencilMask = 0xffffffff;
 };
-#pragma pack()
 
 /*! Sampler state. */
-#pragma pack(1)
 struct SamplerState
 {
 	Filter minFilter = FtLinear;
@@ -166,7 +163,6 @@ struct SamplerState
 	bool ignoreMips = false;
 	bool useAnisotropic = false;
 };
-#pragma pack()
 
 /*! Render view event types. */
 enum RenderEventType
