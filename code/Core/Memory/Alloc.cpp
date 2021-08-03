@@ -28,10 +28,7 @@ void* Alloc::acquire(size_t size, const char* tag)
 {
 	void* ptr = std::malloc(size + sizeof(Block));
 	if (!ptr)
-	{
-		std::cerr << "Out of memory; trying to allocate " << size << " byte(s)" << std::endl;
 		T_FATAL_ERROR;
-	}
 
 	Block* block = static_cast< Block* >(ptr);
 	block->magic = c_magic;
@@ -46,7 +43,7 @@ void Alloc::free(void* ptr)
 {
 	if (ptr)
 	{
-		Block* block = static_cast< Block* >(ptr) - 1;
+		Block* block = (Block*)ptr - 1;
 		T_FATAL_ASSERT_M(block->magic == c_magic, L"Invalid free");
 		Atomic::add(s_allocated, -(int64_t)(block->size + sizeof(Block)));
 		std::free(block);
@@ -59,17 +56,10 @@ void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 
 	uint8_t* ptr = (uint8_t*)Alloc::acquire(size + sizeof(intptr_t) + align - 1, tag);
 	if (!ptr)
-	{
-		std::cerr << "Out of memory; trying to allocate " << size << " byte(s)" << std::endl;
 		T_FATAL_ERROR;
-	}
 
 	uint8_t* alignedPtr = alignUp(ptr + sizeof(intptr_t), align);
-	*(intptr_t*)(alignedPtr - sizeof(intptr_t)) = intptr_t(ptr);
-
-	intptr_t originalPtr = *((intptr_t*)(alignedPtr) - 1);
-	Block* block = static_cast< Block* >((void*)originalPtr) - 1;
-	T_FATAL_ASSERT_M(block->magic == c_magic, L"Invalid free");
+	*(intptr_t*)(alignedPtr - sizeof(intptr_t)) = (intptr_t)ptr;
 
 	return alignedPtr;
 }
@@ -85,7 +75,7 @@ void Alloc::freeAlign(void* ptr)
 
 size_t Alloc::count()
 {
-	return size_t(s_count);
+	return (size_t)s_count;
 }
 
 size_t Alloc::allocated()
