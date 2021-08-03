@@ -1,3 +1,4 @@
+#include <set>
 #include <fontconfig/fontconfig.h>
 #include <X11/Xresource.h>
 #include "Core/Log/Log.h"
@@ -178,6 +179,7 @@ void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 	if (fs == nullptr)
 		return;
 
+	std::set< std::wstring > fonts;
 	for (int i = 0; fs && i < fs->nfont; ++i)
 	{
 		FcPattern* font = fs->fonts[i];
@@ -186,10 +188,9 @@ void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 
 		FcChar8 *family;
 		if (FcPatternGetString(font, FC_FAMILY, 0, &family) == FcResultMatch)
-		{
-			outFonts.push_back(mbstows((const char*)family));
-		}
+			fonts.insert(mbstows((const char*)family));
 	}
+	outFonts.insert(outFonts.begin(), fonts.begin(), fonts.end());
 
 	FcFontSetDestroy(fs);
 }
