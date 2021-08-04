@@ -302,7 +302,7 @@ struct BuildCombinationTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 88, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 89, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
