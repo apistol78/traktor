@@ -1,15 +1,15 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
-#include "Render/Editor/Texture/CubeMap.h"
 
 namespace traktor
 {
-	namespace render
+	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeMap", CubeMap, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.CubeMap", CubeMap, Object)
 
 CubeMap::CubeMap(int32_t size, const drawing::PixelFormat& pixelFormat)
 :	m_size(size)

@@ -19,6 +19,7 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Instance.h"
+#include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ChainFilter.h"
@@ -40,7 +41,6 @@
 #include "Editor/PipelineDependency.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
-#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
@@ -469,7 +469,7 @@ bool TextureOutputPipeline::buildOutput(
 	}
 
 	// Generate sphere map from cube map.
-	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
+	if (textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
 		drawing::SphereMapFilter sphereMapFilter;
@@ -976,7 +976,7 @@ bool TextureOutputPipeline::buildOutput(
 	}
 	else if (textureOutput->m_textureType == TtCube)
 	{
-		Ref< CubeMap > cubeMap = CubeMap::createFromImage(image);
+		Ref< drawing::CubeMap > cubeMap = drawing::CubeMap::createFromImage(image);
 		if (!cubeMap)
 		{
 			log::error << L"Unable to convert image into cubemap; unknown layout." << Endl;

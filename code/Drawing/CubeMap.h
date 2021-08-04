@@ -7,7 +7,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EDITOR_EXPORT)
+#if defined(T_DRAWING_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -21,13 +21,8 @@ namespace traktor
 class Image;
 class PixelFormat;
 
-	}
-
-	namespace render
-	{
-
 /*! CubeMap wrapper.
- * \ingroup Render
+ * \ingroup Drawing
  */
 class T_DLLCLASS CubeMap : public Object
 {
