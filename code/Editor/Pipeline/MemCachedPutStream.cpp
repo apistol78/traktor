@@ -121,25 +121,29 @@ bool MemCachedPutStream::uploadBlock()
 
 	if (!m_proto->sendCommand(command))
 	{
-		log::error << L"Unable to store cache block; unable to send command" << Endl;
+		log::error << L"Unable to store cache block; unable to send command." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
 	if (!m_proto->writeData(m_block, m_inblock))
 	{
-		log::error << L"Unable to store cache block; unable to write data" << Endl;
+		log::error << L"Unable to store cache block; unable to write data." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
 	if (!m_proto->readReply(reply))
 	{
-		log::error << L"Unable to store cache block; unable to read reply" << Endl;
+		log::error << L"Unable to store cache block; unable to read reply." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
 	if (reply != "STORED")
 	{
-		log::error << L"Unable to store cache block; server unable to store data" << Endl;
+		log::error << L"Unable to store cache block; server unable to store data." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
@@ -161,6 +165,7 @@ void MemCachedPutStream::uploadEndBlock()
 	if (!m_proto->sendCommand(command))
 	{
 		log::error << L"Unable to store cache block; unable to send command." << Endl;
+		m_proto = nullptr;
 		return;
 	}
 
@@ -168,18 +173,21 @@ void MemCachedPutStream::uploadEndBlock()
 	if (!m_proto->writeData(endData, 1))
 	{
 		log::error << L"Unable to store cache block; unable to write data." << Endl;
+		m_proto = nullptr;
 		return;
 	}
 
 	if (!m_proto->readReply(reply))
 	{
 		log::error << L"Unable to store cache block; unable to read reply." << Endl;
+		m_proto = nullptr;
 		return;
 	}
 
 	if (reply != "STORED")
 	{
 		log::error << L"Unable to store cache block; server unable to store data." << Endl;
+		m_proto = nullptr;
 		return;
 	}
 }

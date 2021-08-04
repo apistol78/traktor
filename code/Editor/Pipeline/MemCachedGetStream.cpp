@@ -39,7 +39,8 @@ bool MemCachedGetStream::requestEndBlock()
 
 	if (!m_proto->sendCommand(command))
 	{
-		log::error << L"Unable to request cache block; unable to send command" << Endl;
+		log::error << L"Unable to request cache block; unable to send command." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
@@ -48,7 +49,8 @@ bool MemCachedGetStream::requestEndBlock()
 	{
 		if (!m_proto->readReply(reply))
 		{
-			log::error << L"Unable to request cache block; unable to receive reply" << Endl;
+			log::error << L"Unable to request cache block; unable to receive reply." << Endl;
+			m_proto = nullptr;
 			return false;
 		}
 
@@ -57,7 +59,8 @@ bool MemCachedGetStream::requestEndBlock()
 
 		if (args.empty())
 		{
-			log::error << L"Unable to request cache block; empty reply" << Endl;
+			log::error << L"Unable to request cache block; empty reply." << Endl;
+			m_proto = nullptr;
 			return false;
 		}
 
@@ -65,21 +68,24 @@ bool MemCachedGetStream::requestEndBlock()
 		{
 			if (args.size() < 4)
 			{
-				log::error << L"Unable to request cache block; malformed reply" << Endl;
+				log::error << L"Unable to request cache block; malformed reply." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
 			uint32_t bytes = parseString< uint32_t >(args[3]);
 			if (bytes != 1)
 			{
-				log::error << L"Unable to request cache block; invalid size, end block must be one byte" << Endl;
+				log::error << L"Unable to request cache block; invalid size, end block must be one byte." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
 			uint8_t endData[] = { 0x00, 0x00, 0x00 };
 			if (!m_proto->readData(endData, 1))
 			{
-				log::error << L"Unable to request cache block; unable to receive data" << Endl;
+				log::error << L"Unable to request cache block; unable to receive data." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
@@ -91,7 +97,7 @@ bool MemCachedGetStream::requestEndBlock()
 		else
 		{
 			if (args[0] != "END")
-				log::error << L"Unable to request cache block; server error " << mbstows(args[0]) << Endl;
+				log::error << L"Unable to request cache block; server error " << mbstows(args[0]) << L"." << Endl;
 			break;
 		}
 	}
@@ -112,7 +118,8 @@ bool MemCachedGetStream::requestNextBlock()
 
 	if (!m_proto->sendCommand(command))
 	{
-		log::error << L"Unable to request cache block; unable to send command" << Endl;
+		log::error << L"Unable to request cache block; unable to send command." << Endl;
+		m_proto = nullptr;
 		return false;
 	}
 
@@ -123,7 +130,8 @@ bool MemCachedGetStream::requestNextBlock()
 	{
 		if (!m_proto->readReply(reply))
 		{
-			log::error << L"Unable to request cache block; unable to receive reply" << Endl;
+			log::error << L"Unable to request cache block; unable to receive reply." << Endl;
+			m_proto = nullptr;
 			return false;
 		}
 
@@ -132,7 +140,8 @@ bool MemCachedGetStream::requestNextBlock()
 
 		if (args.empty())
 		{
-			log::error << L"Unable to request cache block; empty reply" << Endl;
+			log::error << L"Unable to request cache block; empty reply." << Endl;
+			m_proto = nullptr;
 			return false;
 		}
 
@@ -140,7 +149,8 @@ bool MemCachedGetStream::requestNextBlock()
 		{
 			if (args.size() < 4)
 			{
-				log::error << L"Unable to request cache block; malformed reply" << Endl;
+				log::error << L"Unable to request cache block; malformed reply." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
@@ -150,13 +160,15 @@ bool MemCachedGetStream::requestNextBlock()
 			uint32_t avail = MaxBlockSize - m_in;
 			if (bytes > avail)
 			{
-				log::error << L"Unable to request cache block; data block too big" << Endl;
+				log::error << L"Unable to request cache block; data block too big." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
 			if (!m_proto->readData(&m_block[m_in], bytes))
 			{
-				log::error << L"Unable to request cache block; unable to receive data" << Endl;
+				log::error << L"Unable to request cache block; unable to receive data." << Endl;
+				m_proto = nullptr;
 				return false;
 			}
 
