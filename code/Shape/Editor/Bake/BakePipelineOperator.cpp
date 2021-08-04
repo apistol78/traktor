@@ -24,6 +24,7 @@
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
@@ -47,7 +48,6 @@
 #include "Render/Types.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/AliasTextureResource.h"
 #include "Scene/Editor/IEntityReplicator.h"
@@ -251,10 +251,10 @@ void addSky(
 				skyImage->apply(&scaleFilter);
 			}
 
-			Ref< const render::CubeMap > sourceRadianceCube = render::CubeMap::createFromImage(skyImage);
+			Ref< const drawing::CubeMap > sourceRadianceCube = drawing::CubeMap::createFromImage(skyImage);
 			T_FATAL_ASSERT(sourceRadianceCube);
 
-			Ref< render::CubeMap > radianceCube = new render::CubeMap(128, drawing::PixelFormat::getRGBAF32());
+			Ref< drawing::CubeMap > radianceCube = new drawing::CubeMap(128, drawing::PixelFormat::getRGBAF32());
 
 			Random random;
 			RefArray< Job > jobs;

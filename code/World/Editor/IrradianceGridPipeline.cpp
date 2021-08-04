@@ -10,10 +10,10 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
+#include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
-#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
 #include "World/Editor/IrradianceGridAsset.h"
@@ -110,7 +110,7 @@ bool IrradianceGridPipeline::buildOutput(
 
 	safeClose(file);
 
-	Ref< render::CubeMap > cubeMap = render::CubeMap::createFromImage(skyImage);
+	Ref< drawing::CubeMap > cubeMap = drawing::CubeMap::createFromImage(skyImage);
 	if (!cubeMap)
 	{
 		log::error << L"Irradiance grid pipeline failed; unable to create cube map from image." << Endl;
