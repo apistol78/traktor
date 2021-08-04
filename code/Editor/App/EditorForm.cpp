@@ -64,7 +64,9 @@
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/Shortcut.h"
 #include "Editor/App/ThumbnailGenerator.h"
-#include "Editor/App/WebBrowserPage.h"
+#if defined(_WIN32)
+#	include "Editor/App/WebBrowserPage.h"
+#endif
 #include "Editor/App/WorkspaceDialog.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
@@ -536,7 +538,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->addItem(menuEdit);
 
 	Ref< ui::ToolBarMenu > menuView = new ui::ToolBarMenu(i18n::Text(L"MENU_VIEW"), L"");
+#if defined(_WIN32)
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHome"), i18n::Text(L"MENU_VIEW_HOME")));
+#endif
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewLog"), i18n::Text(L"MENU_VIEW_LOG")));
@@ -1343,6 +1347,7 @@ bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* par
 
 bool EditorForm::openBrowser(const net::Url& url)
 {
+#if defined(_WIN32)
 	ui::Tab* tab = m_tabGroups.front();
 	if (!tab)
 		return false;
@@ -1356,6 +1361,9 @@ bool EditorForm::openBrowser(const net::Url& url)
 	tab->addPage(tabPage);
 	tab->update(nullptr, true);
 	return true;
+#else
+	return false;
+#endif
 }
 
 IEditorPage* EditorForm::getActiveEditorPage()
@@ -1577,10 +1585,12 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	m_mru->usedFile(workspacePath);
 
+#if defined(_WIN32)
 	// Create "Home" page.
 	std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 	if (!url.empty())
 		openBrowser(net::Url(url));
+#endif
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Traktor.Editor.mru", m_mru);
 	updateMRU();
@@ -2781,12 +2791,14 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			settingsDialog.destroy();
 		}
 	}
+#if defined(_WIN32)
 	else if (command == L"Editor.ViewHome")
 	{
 		std::wstring url = m_mergedSettings->getProperty< std::wstring >(L"Editor.HomeUrl", L"");
 		if (!url.empty())
 			openBrowser(net::Url(url));
 	}
+#endif
 	else if (command == L"Editor.ViewDatabase")
 	{
 		m_dataBaseView->show();
