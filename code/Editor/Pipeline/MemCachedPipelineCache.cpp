@@ -169,11 +169,14 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 	}
 
 	SmallMap< std::string, std::string > stats;
-	for(;;)
+	for(int32_t i = 0; i < 100; ++i)
 	{
 		std::string reply;
 		if (!proto->readReply(reply))
+		{
+			proto = nullptr;
 			break;
+		}
 
 		if (reply == "END")
 			break;
@@ -186,6 +189,7 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 		stats[args[1]] = args[2];
 	}
 
+	if (proto)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_protos.push_back(proto);
