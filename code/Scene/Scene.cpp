@@ -15,13 +15,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 Scene::Scene(
 	ISceneController* controller,
 	world::Entity* rootEntity,
-	world::WorldRenderSettings* worldRenderSettings,
-	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
+	world::WorldRenderSettings* worldRenderSettings
 )
 :	m_rootEntity(rootEntity)
 ,	m_controller(controller)
 ,	m_worldRenderSettings(worldRenderSettings)
-,	m_imageProcessParams(imageProcessParams)
 {
 }
 
@@ -29,7 +27,6 @@ Scene::Scene(ISceneController* controller, Scene* scene)
 :	m_rootEntity(scene->m_rootEntity)
 ,	m_controller(controller)
 ,	m_worldRenderSettings(scene->m_worldRenderSettings)
-,	m_imageProcessParams(scene->m_imageProcessParams)
 {
 }
 
@@ -38,7 +35,6 @@ Scene::~Scene()
 	m_rootEntity = nullptr;
 	m_controller = nullptr;
 	m_worldRenderSettings = nullptr;
-	m_imageProcessParams.clear();
 }
 
 void Scene::destroy()
@@ -46,7 +42,6 @@ void Scene::destroy()
 	safeDestroy(m_rootEntity);
 	m_controller = nullptr;
 	m_worldRenderSettings = nullptr;
-	m_imageProcessParams.clear();
 }
 
 void Scene::updateController(const world::UpdateParams& update)
@@ -74,11 +69,6 @@ ISceneController* Scene::getController() const
 world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
-}
-
-const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& Scene::getImageProcessParams() const
-{
-	return m_imageProcessParams;
 }
 
 	}

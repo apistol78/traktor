@@ -44,21 +44,16 @@ bool ScenePermutationPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const ScenePermutationAsset* scenePermutationAsset = checked_type_cast< const ScenePermutationAsset*, false >(sourceAsset);
+	const ScenePermutationAsset* scenePermutationAsset = mandatory_non_null_type_cast< const ScenePermutationAsset* >(sourceAsset);
 
 	Ref< const SceneAsset > templateScene = pipelineDepends->getObjectReadOnly< SceneAsset >(scenePermutationAsset->m_scene);
 	if (!templateScene)
 	{
-		log::error << L"Scene permutation pipeline failed; Unable to read scene template" << Endl;
+		log::error << L"Scene permutation pipeline failed; Unable to read scene template." << Endl;
 		return false;
 	}
 
 	pipelineDepends->addDependency(scenePermutationAsset->m_scene, editor::PdfUse);
-
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = scenePermutationAsset->m_overrideImageProcessParams;
-	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
-
 	return true;
 }
 
@@ -77,7 +72,7 @@ bool ScenePermutationPipeline::buildOutput(
 	Ref< const SceneAsset > scenePermutation = checked_type_cast< const SceneAsset*, true >(buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams));
 	if (!scenePermutation)
 	{
-		log::error << L"Scene permutation pipeline failed; unable to generate scene permutation" << Endl;
+		log::error << L"Scene permutation pipeline failed; unable to generate scene permutation." << Endl;
 		return false;
 	}
 
@@ -95,7 +90,7 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
-	const ScenePermutationAsset* scenePermutationAsset = checked_type_cast< const ScenePermutationAsset*, false >(sourceAsset);
+	const ScenePermutationAsset* scenePermutationAsset = mandatory_non_null_type_cast< const ScenePermutationAsset* >(sourceAsset);
 
 	Ref< const SceneAsset > templateScene = pipelineBuilder->getObjectReadOnly< SceneAsset >(scenePermutationAsset->m_scene);
 	T_ASSERT(templateScene);
@@ -107,14 +102,6 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
-
-	SmallMap< std::wstring, resource::Id< render::ITexture > > params = templateScene->getImageProcessParams();
-
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& overrideParams = scenePermutationAsset->m_overrideImageProcessParams;
-	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = overrideParams.begin(); i != overrideParams.end(); ++i)
-		params[i->first] = i->second;
-
-	scenePermutation->setImageProcessParams(params);
 
 	for (auto layer : scenePermutation->getLayers())
 	{

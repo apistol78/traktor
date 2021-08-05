@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/SmallMap.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -16,13 +14,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ITexture;
-
-	}
-
 	namespace world
 	{
 
@@ -50,11 +41,10 @@ class T_DLLCLASS Scene : public Object
 	T_RTTI_CLASS;
 
 public:
-	Scene(
+	explicit Scene(
 		ISceneController* controller,
 		world::Entity* rootEntity,
-		world::WorldRenderSettings* worldRenderSettings,
-		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& imageProcessParams
+		world::WorldRenderSettings* worldRenderSettings
 	);
 
 	explicit Scene(ISceneController* controller, Scene* scene);
@@ -73,13 +63,10 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getImageProcessParams() const;
-
 private:
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_imageProcessParams;
 };
 
 	}

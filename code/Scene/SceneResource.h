@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 #include "World/WorldRenderSettings.h"
@@ -15,22 +14,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
-	namespace render
-	{
-
-class ImageProcessData;
-class IRenderSystem;
-class ITexture;
-
-	}
-
 	namespace world
 	{
 
@@ -56,19 +39,11 @@ class T_DLLCLASS SceneResource : public ISerializable
 public:
 	SceneResource();
 
-	Ref< Scene > createScene(
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		world::IEntityBuilder* entityBuilder
-	) const;
+	Ref< Scene > createScene(world::IEntityBuilder* entityBuilder) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
-
-	void setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams);
-
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getImageProcessParams() const;
 
 	void setEntityData(world::EntityData* entityData);
 
@@ -82,7 +57,6 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };

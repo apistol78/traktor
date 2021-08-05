@@ -14,7 +14,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.ScenePermutationAsset", 4, ScenePermutationAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.ScenePermutationAsset", 5, ScenePermutationAsset, ISerializable)
 
 void ScenePermutationAsset::serialize(ISerializer& s)
 {
@@ -23,7 +23,12 @@ void ScenePermutationAsset::serialize(ISerializer& s)
 	s >> Member< Guid >(L"scene", m_scene, AttributeType(type_of< SceneAsset >()));
 	s >> MemberStlList< std::wstring >(L"includeLayers", m_includeLayers);
 	s >> MemberRef< world::WorldRenderSettings >(L"overrideWorldRenderSettings", m_overrideWorldRenderSettings);
-	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"overrideImageProcessParams", m_overrideImageProcessParams);
+
+	if (s.getVersion() < 5)
+	{
+		SmallMap< std::wstring, resource::Id< render::ITexture > > overrideImageProcessParams;
+		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"overrideImageProcessParams", overrideImageProcessParams);
+	}
 }
 
 	}

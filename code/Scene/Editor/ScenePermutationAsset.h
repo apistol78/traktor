@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -38,7 +37,6 @@ private:
 	Guid m_scene;
 	std::list< std::wstring > m_includeLayers;
 	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
-	SmallMap< std::wstring, resource::Id< render::ITexture > > m_overrideImageProcessParams;
 };
 
 	}

@@ -457,20 +457,11 @@ void SceneEditorContext::buildEntities()
 			controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
 		}
 
-		// Bind post process parameters.
-		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
-		for (const auto param : m_sceneAsset->getImageProcessParams())
-		{
-			if (!m_resourceManager->bind(param.second, postProcessParams[render::getParameterHandle(param.first)]))
-				log::error << L"Unable to bind post processing parameter \"" << param.first << L"\"" << Endl;
-		}
-
 		// Create our scene.
 		m_scene = new Scene(
 			controller,
 			rootEntity,
-			m_sceneAsset->getWorldRenderSettings(),
-			postProcessParams
+			m_sceneAsset->getWorldRenderSettings()
 		);
 	}
 	else

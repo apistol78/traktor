@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 #include "World/WorldTypes.h"
@@ -16,14 +15,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ImageProcessData;
-class ITexture;
-
-	}
-
 	namespace world
 	{
 
@@ -48,10 +39,6 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setImageProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& imageProcessParams);
-
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getImageProcessParams() const;
-
 	void setLayers(const RefArray< world::LayerEntityData >& layers);
 
 	const RefArray< world::LayerEntityData >& getLayers() const;
@@ -68,7 +55,6 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 	RefArray< ISerializable > m_operationData;
