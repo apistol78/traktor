@@ -360,7 +360,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Create memory allocator.
-#if defined(__RPI__) || defined(__IOS__)
 	VmaVulkanFunctions vf = {};
 	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
 	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
@@ -381,17 +380,16 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
 	vf.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2KHR;
 	vf.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2KHR;
-#endif
 
 	VmaAllocatorCreateInfo aci = {};
 #if !defined(__RPI__) && !defined(__ANDROID__) && !defined(__IOS__)
-	aci.vulkanApiVersion = VK_API_VERSION_1_2;
+	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
+	//if (vf.vkGetBufferMemoryRequirements2KHR != nullptr && vf.vkGetImageMemoryRequirements2KHR != nullptr)
+	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 #endif
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
-#if defined(__RPI__)
 	aci.pVulkanFunctions = &vf;
-#endif
 	aci.instance = m_instance;
 #if defined(__IOS__)
 	aci.preferredLargeHeapBlockSize = 32 * 1024 * 1024;

@@ -28,8 +28,13 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_uniformBufferInFlight = 4;
-const uint32_t c_uniformBufferDrawPerFrame = 200;
+const uint32_t c_uniformBufferFramesInFlight = 3;
+const uint32_t c_uniformBufferCount[] =
+{
+	c_uniformBufferFramesInFlight * 2,		// Once
+	c_uniformBufferFramesInFlight * 20,		// Frame
+	c_uniformBufferFramesInFlight * 200		// Draw
+};
 
 render::Handle s_handleTargetSize(L"_vk_targetSize");
 
@@ -201,19 +206,26 @@ bool ProgramVk::create(
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		m_uniformBuffers[i].size = resource->m_uniformBufferSizes[i] * sizeof(float);
-		if (m_uniformBuffers[i].size > 0)
+		if (m_uniformBuffers[i].size == 0)
+			continue;
+
+		m_uniformBuffers[i].alignedSize = alignUp(m_uniformBuffers[i].size, uniformBufferOffsetAlignment);
+		m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
+
+		Ref< Buffer > buffer = new Buffer(m_context);
+		if (!buffer->create(
+			m_uniformBuffers[i].alignedSize * c_uniformBufferCount[i],
+			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			true,
+			true
+		))
 		{
-			m_uniformBuffers[i].alignedSize = alignUp(m_uniformBuffers[i].size, uniformBufferOffsetAlignment);
-			m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
-			m_uniformBuffers[i].buffer = new Buffer(m_context);
-			m_uniformBuffers[i].buffer->create(
-				m_uniformBuffers[i].alignedSize * c_uniformBufferInFlight * c_uniformBufferDrawPerFrame,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-				true,
-				true
-			);
-			m_uniformBuffers[i].ptr = m_uniformBuffers[i].buffer->lock();
+			buffer->destroy();
+			return false;
 		}
+
+		m_uniformBuffers[i].buffer = buffer;
+		m_uniformBuffers[i].ptr = m_uniformBuffers[i].buffer->lock();
 	}
 
 	// Create samplers.
@@ -312,7 +324,7 @@ bool ProgramVk::validateGraphics(
 			m_uniformBuffers[i].size
 		);
 		m_uniformBuffers[i].offset = offset;
-		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % (c_uniformBufferInFlight * c_uniformBufferDrawPerFrame);
+		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % c_uniformBufferCount[i];
 		m_uniformBuffers[i].dirty = false;
 	}
 
