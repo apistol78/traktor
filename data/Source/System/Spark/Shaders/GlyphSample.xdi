@@ -22,7 +22,7 @@
 			</position>
 			<parameterName>Spark_Texture</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{C6E0009D-09A5-BD4F-913D-141A64A9A7B5}</id>
@@ -273,7 +273,6 @@ ENTRY
 	float2 tm = mn * mx;
 	Output = tm.x * tm.y;
 }
-
 			]]>
 			</script>
 		</item>

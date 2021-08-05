@@ -90,7 +90,7 @@
 			</position>
 			<parameterName>Spark_FrameBounds</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{8D32C31A-96DD-DB45-94BE-A665C6260DDB}</id>
@@ -127,7 +127,7 @@
 			</position>
 			<parameterName>Spark_FrameTransform</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{08A88758-44F0-5544-A120-0BBFFBD49D54}</id>

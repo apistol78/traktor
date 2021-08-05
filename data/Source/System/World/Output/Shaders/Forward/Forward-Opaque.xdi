@@ -641,7 +641,7 @@ Eye direction
 			</position>
 			<parameterName>World_OcclusionMap</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{82E78EEA-807E-2C41-8D8A-E3FDD3C6F309}</id>
