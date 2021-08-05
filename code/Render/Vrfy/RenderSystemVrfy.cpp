@@ -25,26 +25,34 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
+RenderSystemVrfy::RenderSystemVrfy(bool useRenderDoc)
+:	m_useRenderDoc(useRenderDoc)
+{
+}
+
 bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 {
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32) && !defined(_DEBUG) && 0
+#if defined(_WIN32) && !defined(_DEBUG)
 	// Try to load RenderDoc capture.
-	m_libRenderDoc = new Library();
-	if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
+	if (m_useRenderDoc)
 	{
-		pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-		int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
-		if (ret != 1)
-			m_apiRenderDoc = nullptr;
-	}
-	else
-		m_libRenderDoc = nullptr;
+		m_libRenderDoc = new Library();
+		if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
+		{
+			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
+			int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
+			if (ret != 1)
+				m_apiRenderDoc = nullptr;
+		}
+		else
+			m_libRenderDoc = nullptr;
 
-	//if (m_apiRenderDoc)
-	//	m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
+		//if (m_apiRenderDoc)
+		//	m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
+	}
 #endif
 
 	if (!m_renderSystem->create(desc))

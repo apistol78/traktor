@@ -48,6 +48,7 @@ private:
 	Ref< ui::Edit > m_editSkipMips;
 	Ref< ui::Edit > m_editClampSize;
 	Ref< ui::CheckBox > m_checkBoxValidation;
+	Ref< ui::CheckBox > m_checkBoxRenderDoc;
 };
 
 	}
