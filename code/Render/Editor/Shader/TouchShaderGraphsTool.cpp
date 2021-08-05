@@ -24,7 +24,7 @@ std::wstring TouchShaderGraphsTool::getDescription() const
 
 Ref< ui::IBitmap > TouchShaderGraphsTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool TouchShaderGraphsTool::needOutputResources(std::set< Guid >& outDependencies) const

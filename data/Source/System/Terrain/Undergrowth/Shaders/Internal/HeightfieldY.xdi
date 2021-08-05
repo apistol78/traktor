@@ -267,7 +267,7 @@
 			</position>
 			<parameterName>Terrain_SurfaceAlbedo</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3FB9D546-6F49-9548-86F2-45E9B9C8F50A}</id>

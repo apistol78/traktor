@@ -39,7 +39,7 @@
 			</position>
 			<parameterName>World_ProbeTexture</parameterName>
 			<type>PtTextureCube</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{50E06897-C251-0D43-9A87-3EBAF324E59F}</id>
