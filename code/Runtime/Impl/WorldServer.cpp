@@ -147,7 +147,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
-	resourceManager->addFactory(new scene::SceneFactory(renderSystem, m_entityBuilder));
+	resourceManager->addFactory(new scene::SceneFactory(m_entityBuilder));
 	resourceManager->addFactory(new terrain::TerrainFactory());
 	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityBuilder));
 }

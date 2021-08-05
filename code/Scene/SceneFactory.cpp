@@ -10,12 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(
-	render::IRenderSystem* renderSystem,
-	world::IEntityBuilder* entityBuilder
-)
-:	m_renderSystem(renderSystem)
-,	m_entityBuilder(entityBuilder)
+SceneFactory::SceneFactory(world::IEntityBuilder* entityBuilder)
+:	m_entityBuilder(entityBuilder)
 {
 }
 
@@ -37,14 +33,10 @@ bool SceneFactory::isCacheable(const TypeInfo& productType) const
 Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
 	Ref< SceneResource > sceneResource = instance->getObject< SceneResource >();
-	if (!sceneResource)
+	if (sceneResource)
+		return sceneResource->createScene(m_entityBuilder);
+	else
 		return nullptr;
-
-	return sceneResource->createScene(
-		resourceManager,
-		m_renderSystem,
-		m_entityBuilder
-	);
 }
 
 	}

@@ -243,9 +243,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	for (auto entityFactory : entityFactories)
 		entityBuilder->addFactory(entityFactory);
 
-	m_context->getResourceManager()->addFactory(
-		new SceneFactory(m_context->getRenderSystem(), entityBuilder)
-	);
+	m_context->getResourceManager()->addFactory(new SceneFactory(entityBuilder));
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();

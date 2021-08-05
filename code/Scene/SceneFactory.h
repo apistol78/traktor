@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class IRenderSystem;
-
-	}
-
 	namespace world
 	{
 
@@ -40,13 +33,9 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 public:
 	/*! Construct scene factory.
 	 *
-	 * \param renderSystem Render system.
 	 * \param entityBuilder Entity builder.
 	 */
-	SceneFactory(
-		render::IRenderSystem* renderSystem,
-		world::IEntityBuilder* entityBuilder
-	);
+	explicit SceneFactory(world::IEntityBuilder* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -57,7 +46,6 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 
 private:
-	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< world::IEntityBuilder > m_entityBuilder;
 };
 

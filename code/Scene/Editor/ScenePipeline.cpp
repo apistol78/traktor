@@ -24,7 +24,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 16, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 17, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -114,9 +114,6 @@ bool ScenePipeline::buildDependencies(
 		if (!spo->addDependencies(pipelineDepends, operationData, sceneAsset))
 			return false;
 	}
-
-	for (const auto& param : sceneAsset->getImageProcessParams())
-		pipelineDepends->addDependency(param.second, editor::PdfBuild | editor::PdfResource);
 
 	for (const auto& layer : sceneAsset->getLayers())
 		pipelineDepends->addDependency(layer);
@@ -221,7 +218,6 @@ bool ScenePipeline::buildOutput(
 	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
-	sceneResource->setImageProcessParams(sceneAsset->getImageProcessParams());
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
 
