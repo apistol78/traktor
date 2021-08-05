@@ -230,29 +230,26 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 	}
 
 	// Rasterize every path in shape.
-	const AlignedVector< Path >& paths = shape.getPaths();
-	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	for (const auto& path : shape.getPaths())
 	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
-		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		const AlignedVector< Vector2 >& points = path.getPoints();
+		const AlignedVector< SubPath >& subPaths = path.getSubPaths();
+		for (const auto& subPath : subPaths)
 		{
-			int32_t fs0 = j->fillStyle0 - 1;
-			int32_t fs1 = j->fillStyle1 - 1;
-			int32_t ls = j->lineStyle - 1;
-
+			const int32_t fs0 = subPath.fillStyle0 - 1;
+			const int32_t fs1 = subPath.fillStyle1 - 1;
+			const int32_t ls = subPath.lineStyle - 1;
 			T_ASSERT(fs0 >= 0 || fs1 >= 0 || ls >= 0);
 
 			m_raster->clear();
 
-			const AlignedVector< SubPathSegment >& segments = j->segments;
-			for (AlignedVector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
+			for (const auto& segment : subPath.segments)
 			{
-				m_raster->moveTo(rasterTransform * points[k->pointsOffset]);
-				if (k->type == SpgtLinear)
-					m_raster->lineTo(rasterTransform * points[k->pointsOffset + 1]);
+				m_raster->moveTo(rasterTransform * points[segment.pointsOffset]);
+				if (segment.type == SpgtLinear)
+					m_raster->lineTo(rasterTransform * points[segment.pointsOffset + 1]);
 				else
-					m_raster->quadricTo(rasterTransform * points[k->pointsOffset + 1], rasterTransform * points[k->pointsOffset + 2]);
+					m_raster->quadricTo(rasterTransform * points[segment.pointsOffset + 1], rasterTransform * points[segment.pointsOffset + 2]);
 			}
 
 			if (fs0 >= 0 || fs1 >= 0)
@@ -318,28 +315,25 @@ void SwDisplayRenderer::renderGlyph(
 		m_transform;
 
 	// Rasterize every path in shape.
-	const AlignedVector< Path >& paths = glyph->getPaths();
-	for (AlignedVector< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	for (const auto& path : glyph->getPaths())
 	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
-		for (AlignedVector< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
+		const AlignedVector< Vector2 >& points = path.getPoints();
+		const AlignedVector< SubPath >& subPaths = path.getSubPaths();
+		for (const auto& subPath : subPaths)
 		{
-			int32_t fs0 = j->fillStyle0 - 1;
-			int32_t fs1 = j->fillStyle1 - 1;
-
+			const int32_t fs0 = subPath.fillStyle0 - 1;
+			const int32_t fs1 = subPath.fillStyle1 - 1;
 			T_ASSERT(fs0 >= 0 || fs1 >= 0);
 
 			m_raster->clear();
 
-			const AlignedVector< SubPathSegment >& segments = j->segments;
-			for (AlignedVector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
+			for (const auto& segment : subPath.segments)
 			{
-				m_raster->moveTo(rasterTransform * points[k->pointsOffset]);
-				if (k->type == SpgtLinear)
-					m_raster->lineTo(rasterTransform * points[k->pointsOffset + 1]);
+				m_raster->moveTo(rasterTransform * points[segment.pointsOffset]);
+				if (segment.type == SpgtLinear)
+					m_raster->lineTo(rasterTransform * points[segment.pointsOffset + 1]);
 				else
-					m_raster->quadricTo(rasterTransform * points[k->pointsOffset + 1], rasterTransform * points[k->pointsOffset + 2]);
+					m_raster->quadricTo(rasterTransform * points[segment.pointsOffset + 1], rasterTransform * points[segment.pointsOffset + 2]);
 			}
 
 			if (fs0 >= 0 || fs1 >= 0)
