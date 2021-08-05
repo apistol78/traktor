@@ -83,6 +83,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkBoxValidation = new ui::CheckBox();
 	m_checkBoxValidation->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_VALIDATION"), false);
 
+	m_checkBoxRenderDoc = new ui::CheckBox();
+	m_checkBoxRenderDoc->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RENDERDOC"), false);
+
 	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	TypeInfoSet renderSystemTypes;
@@ -115,6 +118,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editSkipMips->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.SkipMips", 0)));
 	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
 	m_checkBoxValidation->setChecked(settings->getProperty< bool >(L"Editor.RenderValidation", true));
+	m_checkBoxRenderDoc->setChecked(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -135,6 +139,7 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.SkipMips", parseString< int32_t >(m_editSkipMips->getText()));
 	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
 	settings->setProperty< PropertyBoolean >(L"Editor.RenderValidation", m_checkBoxValidation->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.UseRenderDoc", m_checkBoxRenderDoc->isChecked());
 	return true;
 }
 

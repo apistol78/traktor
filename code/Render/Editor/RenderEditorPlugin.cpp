@@ -42,7 +42,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT(renderSystem);
 
-	Ref< IRenderSystem > renderSystemVrfy = new RenderSystemVrfy();
+	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
 
 	RenderSystemDesc desc;
 	desc.capture = renderSystem;
@@ -51,7 +51,6 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
 	desc.validation = settings->getProperty< bool >(L"Editor.RenderValidation", true);
 	desc.programCache = settings->getProperty< bool >(L"Editor.UseProgramCache", false);
-
 	if (!renderSystemVrfy->create(desc))
 	{
 		ui::MessageBox::show(parent, std::wstring(L"Unable to create render system \"") + renderSystemTypeName + std::wstring(L"\""), L"Error", ui::MbIconError | ui::MbOk);

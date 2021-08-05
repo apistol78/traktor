@@ -37,6 +37,10 @@ class T_DLLCLASS RenderSystemVrfy : public IRenderSystem
 	T_RTTI_CLASS;
 
 public:
+	RenderSystemVrfy() = default;
+
+	explicit RenderSystemVrfy(bool useRenderDoc);
+
 	virtual bool create(const RenderSystemDesc& desc) override final;
 
 	virtual void destroy() override final;
@@ -79,6 +83,7 @@ public:
 
 private:
 	Ref< IRenderSystem > m_renderSystem;
+	bool m_useRenderDoc = false;
 	Ref< Library > m_libRenderDoc;
 	RENDERDOC_API_1_4_1* m_apiRenderDoc = nullptr;
 	Ref< ResourceTracker > m_resourceTracker;
