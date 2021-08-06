@@ -11,15 +11,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityC
 ProbeComponent::ProbeComponent(
 	const resource::Proxy< render::ICubeTexture >& texture,
 	float intensity,
-	bool local,
 	const Aabb3& volume,
+	bool local,
+	bool capture,
 	bool dirty
 )
 :	m_owner(nullptr)
 ,	m_texture(texture)
 ,	m_intensity(intensity)
-,	m_local(local)
 ,	m_volume(volume)
+,	m_local(local)
+,	m_capture(capture)
 ,	m_dirty(dirty)
 {
 }

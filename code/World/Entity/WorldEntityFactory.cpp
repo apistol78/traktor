@@ -241,8 +241,9 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		return new ProbeComponent(
 			texture,
 			probeComponentData->getIntensity(),
-			probeComponentData->getLocal(),
 			probeComponentData->getVolume(),
+			probeComponentData->getLocal(),
+			probeComponentData->getTexture().isNull(),	// Probes with no specified texture should capture it's surrounding dynamically.
 			dirty
 		);
 	}
