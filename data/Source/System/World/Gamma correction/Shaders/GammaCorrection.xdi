@@ -164,7 +164,7 @@
 			</position>
 			<parameterName>LUT</parameterName>
 			<type>PtTexture3D</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{56F22CE1-1F5A-2145-890A-4D6B9154F01D}</id>
