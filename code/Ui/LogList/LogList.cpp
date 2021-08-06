@@ -11,6 +11,7 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/ScrollBar.h"
+#include "Ui/Events/LogActivateEvent.h"
 #include "Ui/LogList/LogList.h"
 
 // Resources
@@ -31,6 +32,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	addEventHandler< PaintEvent >(this, &LogList::eventPaint);
 	addEventHandler< SizeEvent >(this, &LogList::eventSize);
 	addEventHandler< MouseButtonDownEvent >(this, &LogList::eventMouseButtonDown);
+	addEventHandler< MouseDoubleClickEvent >(this, &LogList::eventMouseDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
 
 	m_scrollBar = new ScrollBar();
@@ -72,6 +74,7 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 				if (m_lookup->lookupLogSymbol(id, symbol))
 				{
 					e.text = e.text.substr(0, j) + symbol + e.text.substr(j + 38);
+					e.symbolId = id;
 					continue;
 				}
 			}
@@ -369,6 +372,19 @@ void LogList::eventMouseButtonDown(MouseButtonDownEvent* event)
 	m_selectedEntry = row;
 
 	update();
+}
+
+void LogList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
+{
+	if (m_selectedEntry < 0)
+		return;
+
+	const auto& entry = m_logFiltered[m_selectedEntry];
+	if (entry.symbolId.isNotNull())
+	{
+		LogActivateEvent event(this, entry.symbolId);
+		raiseEvent(&event);
+	}
 }
 
 void LogList::eventMouseWheel(MouseWheelEvent* event)

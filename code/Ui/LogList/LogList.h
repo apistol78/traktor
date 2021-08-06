@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticMap.h"
 #include "Core/Thread/Semaphore.h"
@@ -15,9 +16,6 @@
 
 namespace traktor
 {
-
-class Guid;
-
 	namespace ui
 	{
 
@@ -65,6 +63,7 @@ private:
 		uint32_t threadId;
 		LogLevel level;
 		std::wstring text;
+		Guid symbolId;
 	};
 
 	typedef AlignedVector< Entry > log_list_t;
@@ -90,6 +89,8 @@ private:
 	void eventSize(SizeEvent* event);
 
 	void eventMouseButtonDown(MouseButtonDownEvent* event);
+
+	void eventMouseDoubleClick(MouseDoubleClickEvent* event);
 
 	void eventMouseWheel(MouseWheelEvent* event);
 

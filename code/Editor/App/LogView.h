@@ -11,6 +11,7 @@ class ILogTarget;
 	namespace ui
 	{
 
+class LogActivateEvent;
 class Menu;
 class ToolBar;
 class ToolBarButton;
@@ -51,6 +52,8 @@ private:
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventLogActivate(ui::LogActivateEvent* event);
 
 	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const override final;
 };
