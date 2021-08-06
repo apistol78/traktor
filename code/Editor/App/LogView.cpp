@@ -12,6 +12,7 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Events/LogActivateEvent.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -92,6 +93,7 @@ bool LogView::create(ui::Widget* parent)
 	m_log = new ui::LogList();
 	m_log->create(this, ui::WsNone, this);
 	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
+	m_log->addEventHandler< ui::LogActivateEvent >(this, &LogView::eventLogActivate);
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_log->getFont().getSize();
@@ -142,6 +144,13 @@ void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
 		m_log->copyLog(m_log->getFilter());
 	else if (selected->getCommand() == L"Editor.Log.Clear")
 		m_log->removeAll();
+}
+
+void LogView::eventLogActivate(ui::LogActivateEvent* event)
+{
+	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(event->getSymbolId());
+	if (instance)
+		m_editor->openEditor(instance);
 }
 
 bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const
