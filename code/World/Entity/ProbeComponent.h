@@ -34,8 +34,9 @@ public:
 	ProbeComponent(
 		const resource::Proxy< render::ICubeTexture >& texture,
 		float intensity,
-		bool local,
 		const Aabb3& volume,
+		bool local,
+		bool capture,
 		bool dirty
 	);
 
@@ -63,6 +64,8 @@ public:
 
 	const Aabb3& getVolume() const { return m_volume; }
 
+	bool shouldCapture() const { return m_capture; }
+
 	void setDirty(bool dirty) { m_dirty = dirty; }
 
 	bool getDirty() const { return m_dirty; }
@@ -71,8 +74,9 @@ private:
 	Entity* m_owner;
 	resource::Proxy< render::ICubeTexture > m_texture;
 	float m_intensity;
-	bool m_local;
 	Aabb3 m_volume;
+	bool m_local;
+	bool m_capture;
 	bool m_dirty;
 };
 
