@@ -45,13 +45,15 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 		instances
 	);
 
+    
     struct UniformInfo
     {
-        SmallSet< ParameterType > types;
-        SmallSet< UpdateFrequency > frequencies;
-        SmallSet< uint32_t > lengths;
+        Guid instance;
+        ParameterType type;
+        UpdateFrequency frequency;
+        int32_t length;
     };
-	SmallMap< std::wstring, UniformInfo > uniformInfos;
+	SmallMap< std::wstring, AlignedVector< UniformInfo > > uniformInfos;
 
 	for (auto instance : instances)
 	{
@@ -68,9 +70,12 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 		for (auto uniformNode : uniformNodes)
 		{
             auto& ui = uniformInfos[uniformNode->getParameterName()];
-            ui.types.insert(uniformNode->getParameterType());
-            ui.frequencies.insert(uniformNode->getFrequency());
-            ui.lengths.insert(1);
+            ui.push_back({
+                instance->getGuid(),
+                uniformNode->getParameterType(),
+                uniformNode->getFrequency(),
+                1
+            });
         }
 
 		RefArray< IndexedUniform > indexedUniformNodes;
@@ -78,9 +83,12 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 		for (auto indexedUniformNode : indexedUniformNodes)
 		{
             auto& ui = uniformInfos[indexedUniformNode->getParameterName()];
-            ui.types.insert(indexedUniformNode->getParameterType());
-            ui.frequencies.insert(indexedUniformNode->getFrequency());
-            ui.lengths.insert(indexedUniformNode->getLength());
+            ui.push_back({
+                instance->getGuid(),
+                indexedUniformNode->getParameterType(),
+                indexedUniformNode->getFrequency(),
+                indexedUniformNode->getLength()
+            });
         }
 	}
 
@@ -104,11 +112,13 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 
     for (auto it : uniformInfos)
     {
-        // log::info << it.first << L" " << parameterTypeNames[*it.second.types.begin()] << L"[" << *it.second.lengths.begin() << L"], (" << updateFrequencyNames[*it.second.frequencies.begin()] << L")." << Endl;
-        if (it.second.types.size() != 1 || it.second.frequencies.size() != 1 || it.second.lengths.size() != 1)
-        {
-            log::warning << L"PARAMETER \"" << it.first << L"\" MISMATCH!" << Endl;
-        }
+        log::info << it.first << Endl;
+        log::info << IncreaseIndent;
+
+        for (const auto& ui : it.second)
+            log::info << ui.instance.format() << L", " << parameterTypeNames[ui.type] << L"[" << ui.length << L"], (" << updateFrequencyNames[ui.frequency] << L")" << Endl;
+
+        log::info << DecreaseIndent;
     }
 
 	return true;
