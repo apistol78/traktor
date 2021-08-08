@@ -544,8 +544,8 @@ public:
 	}
 
 private:
-	ItemType m_items[Capacity];
 	size_t m_size;
+	ItemType m_items[Capacity];
 };
 
 }

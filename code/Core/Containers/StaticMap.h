@@ -21,9 +21,7 @@ public:
 	typedef typename StaticVector< pair_t, Capacity >::iterator iterator;
 	typedef typename StaticVector< pair_t, Capacity >::const_iterator const_iterator;
 
-	StaticMap()
-	{
-	}
+	StaticMap() = default;
 
 	StaticMap(const StaticMap& src)
 	:	m_data(src.m_data)
@@ -106,7 +104,10 @@ public:
 			else if (pair.first > m_data[i].first)
 				is = i + 1;
 			else if (pair.first == m_data[i].first)
+			{
+				m_data[i].second = pair.second;
 				return;
+			}
 		}
 
 		T_ASSERT(is <= m_data.size());
