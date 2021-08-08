@@ -26,7 +26,7 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	class DescriptorSetKey : public StaticVector< intptr_t, 16 >
+	class DescriptorSetKey : public StaticVector< intptr_t, 20 >
 	{
 	public:
 		bool operator < (const DescriptorSetKey& rh) const;
@@ -95,16 +95,9 @@ private:
 	{
 		uint32_t size = 0;
 		uint32_t alignedSize = 0;
-
 		AlignedVector< float > data;
-		bool dirty = true;
-
 		UniformBufferRange range;
-
-		//Ref< Buffer > buffer;
-		//void* ptr = nullptr;
-		//uint32_t offset = 0;
-		//uint32_t count = 0;
+		bool dirty = true;
 	};
 
 	struct Sampler

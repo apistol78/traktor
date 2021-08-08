@@ -15,6 +15,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const uint32_t c_uniformBufferCount[] = { 1000, 10000, 100000 };
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Context", Context, Object)
 
@@ -99,7 +105,7 @@ Context::Context(
 
 	// Create uniform buffer pools.
 	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
-		m_uniformBufferPools[i] = new UniformBufferPool(this);
+		m_uniformBufferPools[i] = new UniformBufferPool(this, c_uniformBufferCount[i]);
 }
 
 Context::~Context()
