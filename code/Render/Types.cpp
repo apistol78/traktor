@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -22,6 +23,7 @@ public:
 
 	handle_t getHandle(const std::wstring& name)
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		auto it = m_handles.find(name);
 		if (it != m_handles.end())
 			return it->second;
@@ -32,6 +34,7 @@ public:
 
 	std::wstring getName(handle_t handle) const
 	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		for (const auto it : m_handles)
 		{
 			if (it.second == handle)
@@ -41,6 +44,7 @@ public:
 	}
 
 private:
+	mutable Semaphore m_lock;
 	StaticMap< std::wstring, handle_t, 4096 > m_handles;
 	handle_t m_nextUnusedHandle;
 };
