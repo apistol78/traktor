@@ -23,12 +23,13 @@ public:
 private:
 	friend class Context;
 
-	Context* m_context;
+	Context* m_context = nullptr;
 	SmallMap< uint32_t, RefArray< UniformBufferChain > > m_chains;
 	AlignedVector< UniformBufferRange > m_frees[4];
-	uint32_t m_count;
+	uint32_t m_blockCount = 0;
+	uint32_t m_count = 0;
 
-	explicit UniformBufferPool(Context* context);
+	explicit UniformBufferPool(Context* context, uint32_t blockCount);
 };
 
 	}

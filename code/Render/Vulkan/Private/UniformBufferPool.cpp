@@ -39,9 +39,9 @@ bool UniformBufferPool::allocate(uint32_t size, UniformBufferRange& outRange)
 	}
 
 	// No chain found which has a free block, create new chain and allocate from that.
-	Ref< UniformBufferChain > chain = UniformBufferChain::create(m_context, 1024, size);
+	Ref< UniformBufferChain > chain = UniformBufferChain::create(m_context, m_blockCount, size);
 	if (!chain)
-		return nullptr;
+		return false;
 
 	chain->allocate(outRange);
 	chains.push_back(chain);
@@ -55,8 +55,9 @@ void UniformBufferPool::free(const UniformBufferRange& range)
 	m_frees[idx].push_back(range);
 }
 
-UniformBufferPool::UniformBufferPool(Context* context)
+UniformBufferPool::UniformBufferPool(Context* context, uint32_t blockCount)
 :	m_context(context)
+,	m_blockCount(blockCount)
 {
 }
 
