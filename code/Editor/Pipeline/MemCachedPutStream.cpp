@@ -110,6 +110,9 @@ void MemCachedPutStream::flush()
 
 bool MemCachedPutStream::uploadBlock()
 {
+	if (!m_proto)
+		return false;
+
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
@@ -153,6 +156,9 @@ bool MemCachedPutStream::uploadBlock()
 
 void MemCachedPutStream::uploadEndBlock()
 {
+	if (!m_proto)
+		return;
+
 	std::stringstream ss;
 	std::string command;
 	std::string reply;

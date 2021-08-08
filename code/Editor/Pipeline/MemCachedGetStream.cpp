@@ -28,6 +28,9 @@ MemCachedGetStream::MemCachedGetStream(MemCachedPipelineCache* cache, MemCachedP
 
 bool MemCachedGetStream::requestEndBlock()
 {
+	if (!m_proto)
+		return false;
+
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
@@ -107,6 +110,9 @@ bool MemCachedGetStream::requestEndBlock()
 
 bool MemCachedGetStream::requestNextBlock()
 {
+	if (!m_proto)
+		return false;
+
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
