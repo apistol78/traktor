@@ -636,6 +636,9 @@ void RenderViewVk::present()
 		if (frame.graphicsCommandBuffer->wait() && frame.computeCommandBuffer->wait())
 			m_context->performCleanup();
 	}
+
+	// Recycle uniform buffers.
+	m_context->recycle();
 }
 
 bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
