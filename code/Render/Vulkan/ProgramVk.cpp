@@ -212,20 +212,20 @@ bool ProgramVk::create(
 		m_uniformBuffers[i].alignedSize = alignUp(m_uniformBuffers[i].size, uniformBufferOffsetAlignment);
 		m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
 
-		Ref< Buffer > buffer = new Buffer(m_context);
-		if (!buffer->create(
-			m_uniformBuffers[i].alignedSize * c_uniformBufferCount[i],
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			true,
-			true
-		))
-		{
-			buffer->destroy();
-			return false;
-		}
+		//Ref< Buffer > buffer = new Buffer(m_context);
+		//if (!buffer->create(
+		//	m_uniformBuffers[i].alignedSize * c_uniformBufferCount[i],
+		//	VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		//	true,
+		//	true
+		//))
+		//{
+		//	buffer->destroy();
+		//	return false;
+		//}
 
-		m_uniformBuffers[i].buffer = buffer;
-		m_uniformBuffers[i].ptr = m_uniformBuffers[i].buffer->lock();
+		//m_uniformBuffers[i].buffer = buffer;
+		//m_uniformBuffers[i].ptr = m_uniformBuffers[i].buffer->lock();
 	}
 
 	// Create samplers.
@@ -301,9 +301,6 @@ bool ProgramVk::validateGraphics(
 	float targetSize[2]
 )
 {
-	if (!validateDescriptorSet())
-		return false;
-
 	// Set implicit parameters.
 	setVectorParameter(
 		s_handleTargetSize,
@@ -316,17 +313,31 @@ bool ProgramVk::validateGraphics(
 		if (!m_uniformBuffers[i].size || !m_uniformBuffers[i].dirty)
 			continue;
 
-		uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
-		uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+		auto pool = m_context->getUniformBufferPool(i);
+
+		if (m_uniformBuffers[i].range.ptr)
+			pool->free(m_uniformBuffers[i].range);
+
+		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
+			return false;
+
+		//uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
+		//uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+
 		std::memcpy(
-			ptr,
+			m_uniformBuffers[i].range.ptr,
 			m_uniformBuffers[i].data.c_ptr(),
 			m_uniformBuffers[i].size
 		);
-		m_uniformBuffers[i].offset = offset;
-		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % c_uniformBufferCount[i];
+
+		//m_uniformBuffers[i].offset = offset;
+		//m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % c_uniformBufferCount[i];
+
 		m_uniformBuffers[i].dirty = false;
 	}
+
+	if (!validateDescriptorSet())
+		return false;
 
 	// Get offsets into buffers.
 	StaticVector< uint32_t, 3+8 > bufferOffsets;
@@ -334,7 +345,7 @@ bool ProgramVk::validateGraphics(
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
-		bufferOffsets.push_back(m_uniformBuffers[i].offset);
+		bufferOffsets.push_back(m_uniformBuffers[i].range.offset);
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
@@ -365,26 +376,37 @@ bool ProgramVk::validateGraphics(
 
 bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 {
-	if (!validateDescriptorSet())
-		return false;
-
 	// Update content of uniform buffers.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (!m_uniformBuffers[i].size || !m_uniformBuffers[i].dirty)
 			continue;
 
-		uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
-		uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+		auto pool = m_context->getUniformBufferPool(i);
+
+		if (m_uniformBuffers[i].range.ptr)
+			pool->free(m_uniformBuffers[i].range);
+
+		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
+			return false;
+
+		//uint32_t offset = m_uniformBuffers[i].count * m_uniformBuffers[i].alignedSize;
+		//uint8_t* ptr = (uint8_t*)m_uniformBuffers[i].ptr + offset;
+
 		std::memcpy(
-			ptr,
+			m_uniformBuffers[i].range.ptr,
 			m_uniformBuffers[i].data.c_ptr(),
 			m_uniformBuffers[i].size
 		);
-		m_uniformBuffers[i].offset = offset;
-		m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % (4 * 1000);
+
+		//m_uniformBuffers[i].offset = offset;
+		//m_uniformBuffers[i].count = (m_uniformBuffers[i].count + 1) % c_uniformBufferCount[i];
+
 		m_uniformBuffers[i].dirty = false;
 	}
+
+	if (!validateDescriptorSet())
+		return false;
 
 	// Get offsets into buffers.
 	StaticVector< uint32_t, 3+8 > bufferOffsets;
@@ -392,7 +414,7 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
-		bufferOffsets.push_back(m_uniformBuffers[i].offset);
+		bufferOffsets.push_back(m_uniformBuffers[i].range.offset);
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
@@ -415,15 +437,15 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 
 void ProgramVk::destroy()
 {
-	for (auto& ub : m_uniformBuffers)
-	{
-		if (ub.buffer)
-		{
-			ub.buffer->unlock();
-			ub.buffer->destroy();
-			ub.buffer = nullptr;
-		}
-	}
+	//for (auto& ub : m_uniformBuffers)
+	//{
+	//	if (ub.buffer)
+	//	{
+	//		ub.buffer->unlock();
+	//		ub.buffer->destroy();
+	//		ub.buffer = nullptr;
+	//	}
+	//}
 
 	for (auto it : m_descriptorSets)
 	{
@@ -542,6 +564,12 @@ bool ProgramVk::validateDescriptorSet()
 
 	// Create key from current bound resources.
 	DescriptorSetKey key;
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (!m_uniformBuffers[i].size)
+			continue;
+		key.push_back((intptr_t)m_uniformBuffers[i].range.chain);
+	}	
 	for (const auto& texture : m_textures)
 	{
 		if (!texture.texture)
@@ -587,7 +615,7 @@ bool ProgramVk::validateDescriptorSet()
 			continue;
 
 		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = *m_uniformBuffers[i].buffer;
+		bufferInfo.buffer = *m_uniformBuffers[i].range.chain->getBuffer();
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 

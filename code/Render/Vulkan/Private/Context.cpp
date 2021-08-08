@@ -9,6 +9,7 @@
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
+#include "Render/Vulkan/Private/UniformBufferPool.h"
 
 namespace traktor
 {
@@ -95,10 +96,21 @@ Context::Context(
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
+
+	// Create uniform buffer pools.
+	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+		m_uniformBufferPools[i] = new UniformBufferPool(this);
 }
 
 Context::~Context()
 {
+	// Destroy uniform buffer pools.
+	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+	{
+		m_uniformBufferPools[i]->destroy();
+		m_uniformBufferPools[i] = nullptr;
+	}
+
 	// Destroy descriptor pool.
 	if (m_descriptorPool != 0)
 	{
@@ -161,6 +173,12 @@ void Context::performCleanup()
 		vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
 		m_descriptorPoolRevision++;
 	}
+}
+
+void Context::recycle()
+{
+	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+		m_uniformBufferPools[i]->recycle();
 }
 
 bool Context::savePipelineCache()

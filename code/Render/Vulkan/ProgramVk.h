@@ -4,6 +4,7 @@
 #include "Core/Containers/StaticVector.h"
 #include "Render/IProgram.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
+#include "Render/Vulkan/Private/UniformBufferPool.h"
 
 namespace traktor
 {
@@ -94,12 +95,16 @@ private:
 	{
 		uint32_t size = 0;
 		uint32_t alignedSize = 0;
+
 		AlignedVector< float > data;
-		Ref< Buffer > buffer;
-		void* ptr = nullptr;
-		uint32_t offset = 0;
-		uint32_t count = 0;
 		bool dirty = true;
+
+		UniformBufferRange range;
+
+		//Ref< Buffer > buffer;
+		//void* ptr = nullptr;
+		//uint32_t offset = 0;
+		//uint32_t count = 0;
 	};
 
 	struct Sampler
