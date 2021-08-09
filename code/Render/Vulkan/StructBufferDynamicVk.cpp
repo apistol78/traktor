@@ -1,4 +1,3 @@
-#include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/StructBufferDynamicVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -37,27 +36,32 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 	if (!m_buffer->create(m_alignedBufferSize * inFlightCount, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
 		return false;
 
+	m_ptr = (uint8_t*)m_buffer->lock();
+	if (!m_ptr)
+		return false;
+
 	return true;
 }
 
 void StructBufferDynamicVk::destroy()
 {
-	safeDestroy(m_buffer);
+	if (m_buffer)
+	{
+		m_buffer->unlock();
+		m_buffer->destroy();
+		m_buffer = nullptr;
+	}
 	m_context = nullptr;
+	m_ptr = nullptr;
 }
 
 void* StructBufferDynamicVk::lock()
 {
-	uint8_t* ptr = (uint8_t*)m_buffer->lock();
-	if (!ptr)
-		return nullptr;
-
-	return ptr + m_index * m_alignedBufferSize;
+	return m_ptr + m_index * m_alignedBufferSize;
 }
 
 void StructBufferDynamicVk::unlock()
 {
-	m_buffer->unlock();
 	m_offset = m_index * m_alignedBufferSize;
 	m_index = (m_index + 1) % m_inFlightCount;
 }

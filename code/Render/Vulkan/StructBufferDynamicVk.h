@@ -29,6 +29,7 @@ private:
 	uint32_t m_alignedBufferSize = 0;
 	int32_t m_inFlightCount = 0;
 	int32_t m_index = 0;
+	uint8_t* m_ptr = nullptr;
 };
 
 	}
