@@ -51,6 +51,7 @@ ReflectionMember* RfmCompound::findMember(const ReflectionMemberPredicate& predi
 
 void RfmCompound::findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const
 {
+	outMembers.reserve(outMembers.capacity() + m_members.size());
 	for (auto member : m_members)
 	{
 		if (predicate(member))
