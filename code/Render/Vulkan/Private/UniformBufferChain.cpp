@@ -1,4 +1,3 @@
-#include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/UniformBufferChain.h"
 
@@ -33,7 +32,12 @@ Ref< UniformBufferChain > UniformBufferChain::create(Context* context, uint32_t 
 
 void UniformBufferChain::destroy()
 {
-	safeDestroy(m_buffer);
+	if (m_buffer)
+	{
+		m_buffer->unlock();
+		m_buffer->destroy();
+		m_buffer = nullptr;
+	}
 }
 
 bool UniformBufferChain::allocate(UniformBufferRange& outRange)
