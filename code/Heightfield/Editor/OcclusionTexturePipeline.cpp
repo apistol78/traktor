@@ -34,6 +34,7 @@
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/EntityData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
+#include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -50,43 +51,6 @@ struct MeshAndTransform
 	resource::Id< mesh::IMesh > mesh;
 	Transform transform;
 };
-
-Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	while (!objectMembers.empty())
-	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
-		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
-			if (!externalEntityData)
-				return nullptr;
-
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
-			if (!resolvedEntityData)
-				return nullptr;
-
-			resolvedEntityData->setId(externalEntityDataRef->getId());
-			resolvedEntityData->setName(externalEntityDataRef->getName());
-			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
-
-			objectMember->set(resolvedEntityData);
-		}
-		else if (objectMember->get())
-		{
-			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
-		}
-	}
-
-	return reflection->clone();
-}
 
 void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform >& outMeshes)
 {
@@ -351,7 +315,7 @@ bool OcclusionTexturePipeline::buildOutput(
 		if (!occluderData)
 			return false;
 
-		occluderData = resolveAllExternal(pipelineBuilder, occluderData);
+		occluderData = world::resolveExternal(pipelineBuilder, occluderData, Guid::null, nullptr);
 
 		AlignedVector< MeshAndTransform > meshes;
 		collectMeshes(occluderData, meshes);
