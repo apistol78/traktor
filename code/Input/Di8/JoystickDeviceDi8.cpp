@@ -37,7 +37,7 @@ T readStateValueByOffset(const DIJOYSTATE2& state, uint32_t offset)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.JoystickDeviceDi8", JoystickDeviceDi8, IInputDevice)
 
-JoystickDeviceDi8::JoystickDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
+JoystickDeviceDi8::JoystickDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
 :	m_hWnd(hWnd)
 ,	m_device(device)
 ,	m_connected(false)

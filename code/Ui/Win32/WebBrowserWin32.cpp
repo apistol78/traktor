@@ -476,7 +476,7 @@ bool WebBrowserWin32::create(IWidget* parent, const std::wstring& url)
 	}
 #endif
 
-	ComRef< OleInPlaceSite > inPlaceSite = new OleInPlaceSite(m_hWnd);
+	ComRef< OleInPlaceSite > inPlaceSite(new OleInPlaceSite(m_hWnd));
 	m_clientSite = new OleClientSite(inPlaceSite);
 	m_storage = new OleStorage();
 

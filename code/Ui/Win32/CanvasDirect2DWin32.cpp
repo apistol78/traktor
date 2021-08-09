@@ -23,10 +23,6 @@ int32_t s_instanceCount = 0;
 		}
 
 CanvasDirect2DWin32::CanvasDirect2DWin32()
-:	m_inPaint(false)
-,	m_strokeWidth(1.0f)
-,	m_underline(false)
-,	m_clip(false)
 {
 	Atomic::increment(s_instanceCount);
 

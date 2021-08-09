@@ -24,7 +24,7 @@ class T_DLLCLASS KeyboardDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	void destroy();
 

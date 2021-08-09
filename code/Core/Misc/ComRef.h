@@ -18,7 +18,7 @@ struct ComRef
 public:
 	ComRef() = default;
 
-	ComRef(T* ptr)
+	explicit ComRef(T* ptr)
 	:	m_ptr(ptr)
 	{
 		if (m_ptr != nullptr)

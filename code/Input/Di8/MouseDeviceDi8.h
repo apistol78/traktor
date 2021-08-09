@@ -23,7 +23,7 @@ class T_DLLCLASS MouseDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 

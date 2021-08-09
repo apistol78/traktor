@@ -27,8 +27,6 @@ class T_DLLCLASS InputDriverDi8 : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	InputDriverDi8();
-
 	virtual ~InputDriverDi8();
 
 	void destroy();
@@ -46,8 +44,8 @@ private:
 
 	bool addDevice(const DIDEVICEINSTANCE* instance);
 
-	HWND m_hWnd;
-	uint32_t m_inputCategories;
+	HWND m_hWnd = NULL;
+	uint32_t m_inputCategories = 0;
 	RefArray< IInputDevice > m_devices;
 	ComRef< IDirectInput8 > m_directInput;
 };

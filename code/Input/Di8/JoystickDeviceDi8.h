@@ -23,7 +23,7 @@ class T_DLLCLASS JoystickDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	JoystickDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	JoystickDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 
