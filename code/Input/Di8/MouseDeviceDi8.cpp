@@ -43,7 +43,7 @@ const float c_mouseDeltaLimit = 100.0f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceDi8", MouseDeviceDi8, IInputDevice)
 
-MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
+MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
 :	m_hWnd(hWnd)
 ,	m_device(device)
 ,	m_connected(false)

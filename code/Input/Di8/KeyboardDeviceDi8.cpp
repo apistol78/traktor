@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceDi8", KeyboardDeviceDi8, IInputDevice)
 
-KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
+KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
 :	m_hWnd(hWnd)
 ,	m_pWndProc(0)
 ,	m_device(device)

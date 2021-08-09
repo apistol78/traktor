@@ -194,13 +194,6 @@ HWND getMyProcessWindow()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverDi8", 0, InputDriverDi8, IInputDriver)
 
-InputDriverDi8::InputDriverDi8()
-:	m_directInput(0)
-,	m_hWnd(NULL)
-,	m_inputCategories(0)
-{
-}
-
 InputDriverDi8::~InputDriverDi8()
 {
 	destroy();
@@ -320,13 +313,13 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	switch (inputCategory)
 	{
 	case CtMouse:
-		inputDevice = new MouseDeviceDi8(m_hWnd, device.get(), deviceInstance);
+		inputDevice = new MouseDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
 	case CtKeyboard:
-		inputDevice = new KeyboardDeviceDi8(m_hWnd, device.get(), deviceInstance);
+		inputDevice = new KeyboardDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
 	case CtJoystick:
-		inputDevice = new JoystickDeviceDi8(m_hWnd, device.get(), deviceInstance);
+		inputDevice = new JoystickDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
 	default:
 		T_FATAL_ERROR;

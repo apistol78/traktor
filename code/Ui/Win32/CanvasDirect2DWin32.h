@@ -108,7 +108,7 @@ private:
 		ComRef< ID2D1Bitmap > bitmap;
 	};
 
-	bool m_inPaint;
+	bool m_inPaint = false;
 	ComRef< ID2D1HwndRenderTarget > m_d2dRenderTarget;
 	ComRef< ID2D1SolidColorBrush > m_d2dForegroundBrush;
 	ComRef< ID2D1SolidColorBrush > m_d2dBackgroundBrush;
@@ -119,9 +119,9 @@ private:
 	DWRITE_FONT_METRICS m_fontMetrics;
 	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
 	Font m_font;
-	float m_strokeWidth;
-	bool m_underline;
-	bool m_clip;
+	float m_strokeWidth = 1.0f;
+	bool m_underline = false;
+	bool m_clip = false;
 
 	ID2D1Bitmap* getCachedBitmap(const ISystemBitmap* bm);
 
