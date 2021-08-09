@@ -566,16 +566,10 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (lightmapDiffuse)
 		{
 
-lightmapDiffuse->save(L"data/Temp/LM_" + tracerOutput->getLightmapDiffuseInstance()->getName() + L"_Raw.png");
-
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 
-lightmapDiffuse->save(L"data/Temp/LM_" + tracerOutput->getLightmapDiffuseInstance()->getName() + L"_Denoised.png");
-
 			seamFilter(renderModel, channel, lightmapDiffuse);
-
-lightmapDiffuse->save(L"data/Temp/LM_" + tracerOutput->getLightmapDiffuseInstance()->getName() + L"_Seam.png");
 
 			lightmapDiffuse->clearAlpha(1.0f);
 
