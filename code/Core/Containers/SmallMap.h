@@ -27,9 +27,7 @@ public:
 	typedef typename AlignedVector< pair_t >::reverse_iterator reverse_iterator;
 	typedef typename AlignedVector< pair_t >::const_reverse_iterator const_reverse_iterator;
 
-	SmallMap()
-	{
-	}
+	SmallMap() = default;
 
 	SmallMap(const SmallMap& src)
 	:	m_data(src.m_data)
@@ -42,6 +40,11 @@ public:
 		m_data = std::move(src.m_data);
 	}
 #endif
+
+	void swap(SmallMap& src)
+	{
+		m_data.swap(src.m_data);
+	}
 
 	void reserve(size_t capacity)
 	{

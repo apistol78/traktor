@@ -138,12 +138,18 @@ void Context::decrementViews()
 void Context::addDeferredCleanup(const cleanup_fn_t& fn)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
-	m_cleanupFns.push_back(fn);
 
 	// In case there are no render views which can perform cleanup
 	// after each frame, we do this immediately.
-	if (m_views == 0)
-		performCleanup();
+	if (m_views > 0)
+		m_cleanupFns.push_back(fn);
+	else
+	{
+		for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+			m_uniformBufferPools[i]->flush();
+
+		fn(this);
+	}
 }
 
 bool Context::needCleanup() const
