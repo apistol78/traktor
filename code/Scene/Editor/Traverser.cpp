@@ -11,13 +11,15 @@ namespace traktor
 
 bool Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
 {
+	if (!object)
+		return true;
+
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
 		return false;
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
 	for (auto member : objectMembers)
 	{
 		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
@@ -42,20 +44,22 @@ bool Traverser::visit(const ISerializable* object, const std::function< VisitorR
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool Traverser::visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor)
 {
+	if (!object)
+		return true;
+
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
 		return false;
 
- 	RefArray< ReflectionMember > objectMembers;
- 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
 	bool needToApply = false;
 
+ 	RefArray< ReflectionMember > objectMembers;
+ 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 	for (auto member : objectMembers)
 	{
 		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
