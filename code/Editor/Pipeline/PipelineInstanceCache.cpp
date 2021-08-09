@@ -27,22 +27,18 @@ PipelineInstanceCache::PipelineInstanceCache(db::Database* database, const std::
 	FileSystem::getInstance().makeAllDirectories(m_cacheDirectory);
 }
 
-PipelineInstanceCache::~PipelineInstanceCache()
-{
-}
-
 Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	DateTime lastModifyDate;
 
 	// First check if this object has already been read during this build.
-	std::map< Guid, CacheEntry >::iterator i = m_readCache.find(instanceGuid);
-	if (i != m_readCache.end())
+	auto it = m_readCache.find(instanceGuid);
+	if (it != m_readCache.end())
 	{
-		T_FATAL_ASSERT (i->second.object);
-		T_ASSERT(DeepHash(i->second.object).get() == i->second.hash);
-		return i->second.object;
+		T_FATAL_ASSERT (it->second.object);
+		T_ASSERT(DeepHash(it->second.object).get() == it->second.hash);
+		return it->second.object;
 	}
 
 	// Get instance from database.
@@ -122,9 +118,9 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 void PipelineInstanceCache::flush(const Guid& instanceGuid)
 {
 	// Remove from in-memory map.
-	std::map< Guid, CacheEntry >::iterator i = m_readCache.find(instanceGuid);
-	if (i != m_readCache.end())
-		m_readCache.erase(i);
+	auto it = m_readCache.find(instanceGuid);
+	if (it != m_readCache.end())
+		m_readCache.erase(it);
 
 	// Generate cached instance filename.
 	std::wstring cachedFileName = instanceGuid.format();
