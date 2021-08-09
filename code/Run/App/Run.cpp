@@ -212,7 +212,7 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
 			{
 				if (!nullOutput)
-					log::info << str << Endl;
+					log::error << str << Endl;
 				stdErr << str << Endl;
 			}
 		}
@@ -254,9 +254,9 @@ bool Run::rm(const std::wstring& path)
 
 	RefArray< File > sourceFiles;
 	FileSystem::getInstance().find(sourcePath, sourceFiles);
-	for (RefArray< File >::const_iterator i = sourceFiles.begin(); i != sourceFiles.end(); ++i)
+	for (auto sourceFile : sourceFiles)
 	{
-		if (!FileSystem::getInstance().remove((*i)->getPath()))
+		if (!FileSystem::getInstance().remove(sourceFile->getPath()))
 			return false;
 	}
 

@@ -110,12 +110,12 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
 
 	RefArray< const Feature > features;
-	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
+	for (const auto& featureId : featureIds)
 	{
-		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
+		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(featureId);
 		if (!feature)
 		{
-			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
+			log::warning << L"Unable to get feature \"" << featureId.format() << L"\"; feature skipped." << Endl;
 			continue;
 		}
 		features.push_back(feature);
@@ -124,11 +124,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	features.sort(FeaturePriorityPred());
 
 	// Insert target's features into pipeline configuration.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	for (auto feature : features)
 	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
@@ -394,13 +391,13 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	if (!errors.empty())
 	{
 		log::error << L"Unsuccessful build, error(s):" << Endl;
-		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
-			log::error << L"\t" << *i << Endl;
+		for (const auto& error : errors)
+			log::error << L"\t" << error << Endl;
 	}
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
-		log::error << L"Process failed with exit code " << exitCode << Endl;
+		log::error << L"Process failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }
