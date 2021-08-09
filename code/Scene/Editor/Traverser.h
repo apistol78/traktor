@@ -39,9 +39,9 @@ public:
         VrFailed
     };
 
-    static void visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
+    static bool visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
 
-    static void visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
+    static bool visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
 };
 
     }
