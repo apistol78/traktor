@@ -475,7 +475,7 @@ bool perform(const PipelineParameters* params)
 
 	// Execute build thread; keep watching if we've
 	// received a break signal thus terminate thread early.
-	bt->start(Thread::Above);
+	bt->start();
 	while (!bt->wait(100))
 	{
 		if (g_receivedBreakSignal)
