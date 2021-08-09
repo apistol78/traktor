@@ -176,8 +176,8 @@ bool MeshPipeline::buildOutput(
 		T_ASSERT(triangle.getVertices().size() == 3);
 
 		Mesh::Triangle shapeTriangle;
-		for (int j = 0; j < 3; ++j)
-			shapeTriangle.indices[j] = model->getVertex(triangle.getVertex(j)).getPosition();
+		for (int i = 0; i < 3; ++i)
+			shapeTriangle.indices[i] = model->getVertex(triangle.getVertex(i)).getPosition();
 
 		auto it = materialMap.find(triangle.getMaterial());
 		if (it != materialMap.end())
@@ -206,8 +206,8 @@ bool MeshPipeline::buildOutput(
 			T_ASSERT(triangle.getVertices().size() == 3);
 
 			Mesh::Triangle hullTriangle;
-			for (int j = 0; j < 3; ++j)
-				hullTriangle.indices[j] = hull.getVertex(triangle.getVertex(j)).getPosition();
+			for (int i = 0; i < 3; ++i)
+				hullTriangle.indices[i] = hull.getVertex(triangle.getVertex(i)).getPosition();
 
 			auto it = materialMap.find(triangle.getMaterial());
 			if (it != materialMap.end())
@@ -249,18 +249,18 @@ bool MeshPipeline::buildOutput(
 			position -= Voffset / Scalar(Vtotal);
 
 		centerOfGravity += Voffset / Scalar(Vtotal);
-		log::info << L"Hull volume " << Vtotal << L" unit^3." << Endl;
+		log::debug << L"Hull volume " << Vtotal << L" unit^3." << Endl;
 	}
 
 	// Log statistics.
-	log::info << int32_t(positions.size()) << L" vertex(es)." << Endl;
-	log::info << int32_t(meshShapeTriangles.size()) << L" shape triangle(s)." << Endl;
+	log::debug << int32_t(positions.size()) << L" vertex(es)." << Endl;
+	log::debug << int32_t(meshShapeTriangles.size()) << L" shape triangle(s)." << Endl;
 	if (meshAsset->m_calculateConvexHull)
 	{
-		log::info << int32_t(meshHullTriangles.size()) << L" hull triangle(s)." << Endl;
-		log::info << L"Offset " << centerOfGravity << L"." << Endl;
+		log::debug << int32_t(meshHullTriangles.size()) << L" hull triangle(s)." << Endl;
+		log::debug << L"Offset " << centerOfGravity << L"." << Endl;
 	}
-	log::info << meshAsset->m_margin << L" unit(s) margin." << Endl;
+	log::debug << meshAsset->m_margin << L" unit(s) margin." << Endl;
 
 	Mesh mesh;
 	mesh.setVertices(positions);
