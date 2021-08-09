@@ -9,11 +9,11 @@ namespace traktor
     namespace scene
     {
 
-void Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
+bool Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
-		return;
+		return false;
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
@@ -24,25 +24,32 @@ void Traverser::visit(const ISerializable* object, const std::function< VisitorR
 		if (!objectMember->get())
 			continue;
 
-		const world::EntityData* entityData = dynamic_type_cast< const world::EntityData* >(objectMember->get());
-		if (entityData)
+		if (auto entityData = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
 		{
 			VisitorResult result = visitor(entityData);
 			if (result == VrContinue)
-				Traverser::visit(entityData, visitor);
+			{
+				if (!Traverser::visit(entityData, visitor))
+					return false;
+			}
 			else if (result == VrFailed)
-				break;
+				return false;
 		}
 		else if (objectMember->get())
-			Traverser::visit((const ISerializable*)objectMember->get(), visitor);
+		{
+			if (!Traverser::visit((const ISerializable*)objectMember->get(), visitor))
+				return false;
+		}
 	}
+
+	return false;
 }
 
-void Traverser::visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor)
+bool Traverser::visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
-		return;
+		return false;
 
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
@@ -60,9 +67,12 @@ void Traverser::visit(ISerializable* object, const std::function< VisitorResult(
 		{
 			VisitorResult result = visitor(entityData);
 			if (result == VrContinue)
-				Traverser::visit(entityData, visitor);
+			{
+				if (!Traverser::visit(entityData, visitor))
+					return false;
+			}
 			else if (result == VrFailed)
-				break;
+				return false;
 
 			if (entityData != objectMember->get())
 			{
@@ -71,11 +81,16 @@ void Traverser::visit(ISerializable* object, const std::function< VisitorResult(
 			}
 		}
 		else if (objectMember->get())
-			Traverser::visit(objectMember->get(), visitor);
+		{
+			if (!Traverser::visit(objectMember->get(), visitor))
+				return false;
+		}
 	}
 
 	if (needToApply)
 		reflection->apply(object);
+
+	return true;
 }
 
     }
