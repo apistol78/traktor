@@ -13,9 +13,6 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Reflection/Reflection.h"
-#include "Core/Reflection/RfpMemberType.h"
-#include "Core/Reflection/RfmObject.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -31,6 +28,7 @@
 #include "Terrain/OceanComponentData.h"
 #include "World/EntityData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
+#include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -72,50 +70,6 @@ void copyUnaligned3(float out[3], const Vector4& source)
 	out[0] = source.x();
 	out[1] = source.y();
 	out[2] = source.z();
-}
-
-template < typename PipelineType >
-Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializable* object)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	while (!objectMembers.empty())
-	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
-		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
-			if (!externalEntityData)
-				return nullptr;
-
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(
-				pipeline,
-				externalEntityData
-			));
-			if (!resolvedEntityData)
-				return nullptr;
-
-			resolvedEntityData->setId(externalEntityDataRef->getId());
-			resolvedEntityData->setName(externalEntityDataRef->getName());
-			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
-
-			objectMember->set(resolvedEntityData);
-		}
-		else if (objectMember->get())
-		{
-			objectMember->set(resolveAllExternal(
-				pipeline,
-				objectMember->get()
-			));
-		}
-	}
-
-	return reflection->clone();
 }
 
 		}
@@ -202,7 +156,7 @@ bool NavMeshPipeline::buildOutput(
 		return false;
 	}
 
-	sourceData = resolveAllExternal(pipelineBuilder, sourceData);
+	sourceData = world::resolveExternal(pipelineBuilder, sourceData, Guid::null, nullptr);
 
 	AlignedVector< NavMeshSourceModel > navModels;
 	float oceanHeight = -std::numeric_limits< float >::max();

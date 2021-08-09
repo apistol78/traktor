@@ -10,9 +10,6 @@
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-#include "Core/Reflection/Reflection.h"
-#include "Core/Reflection/RfmObject.h"
-#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -68,6 +65,7 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
@@ -84,61 +82,6 @@ const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_lightmapDirectionalIdSeed(L"{BBCB9EFD-F519-49BE-A47A-66B7F1F0F5D1}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
-
-/*! Resolve external entities, ie flatten scene without external references. */
-Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed, AlignedVector< Guid >* outExternalEntities)
-{
-	Ref< Reflection > reflection = Reflection::create(object);
-
- 	RefArray< ReflectionMember > objectMembers;
- 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	for (auto member : objectMembers)
-	{
-		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
-		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
-		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
-			if (!externalEntityData)
-				return nullptr;
-
-			if (outExternalEntities)
-				outExternalEntities->push_back(externalEntityDataRef->getEntityData());
-
-			Guid entityDataId = externalEntityDataRef->getId().permutation(seed);
-
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData, entityDataId, outExternalEntities));
-			if (!resolvedEntityData)
-				return nullptr;
-
-			resolvedEntityData->setId(entityDataId);
-			resolvedEntityData->setName(externalEntityDataRef->getName());
-			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
-
-			for (auto componentData : externalEntityDataRef->getComponents())
-				resolvedEntityData->setComponent(componentData);			
-
-			objectMember->set(resolvedEntityData);
-		}
-		else if (const world::EntityData* entityDataRef = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
-		{
-			Guid entityDataId = entityDataRef->getId().permutation(seed);
-
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, entityDataRef, entityDataId, outExternalEntities));
-			if (!resolvedEntityData)
-				return nullptr;
-
-			resolvedEntityData->setId(entityDataId);
-			objectMember->set(resolvedEntityData);
-		}
-		else if (objectMember->get())
-		{
-			objectMember->set(resolveAllExternal(pipeline, objectMember->get(), seed, outExternalEntities));
-		}
-	}
-
-	return reflection->clone();
-}
 
 /*! Add light to tracer scene.
  * \return True if light should be removed from scene (fully baked).
@@ -444,7 +387,7 @@ bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 	{
 		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineDepends, layer, Guid::null, &externalEntityIds));
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(pipelineDepends, layer, Guid::null, &externalEntityIds));
 		if (!flattenedLayer)
 			return false;
 
@@ -518,7 +461,7 @@ bool BakePipelineOperator::build(
 	{
 		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer, Guid::null, nullptr));
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(pipelineBuilder, layer, Guid::null, nullptr));
 		if (!flattenedLayer)
 			return false;
 
