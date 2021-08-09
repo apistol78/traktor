@@ -1,4 +1,5 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
@@ -21,6 +22,7 @@
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/EntityData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor
 {
@@ -80,40 +82,54 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 
 	// Collect all models from prefab component.
 	RefArray< model::Model > models;
-	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
 	{
-		if (auto meshComponentData = entityData->getComponent< mesh::MeshComponentData >())
+		// Check editor attributes component if we should include entity.
+		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
+		{
+			if (!editorAttributes->include || editorAttributes->dynamic)
+				return scene::Traverser::VrSkip;
+		}		
+
+		if (auto meshComponentData = inEntityData->getComponent< mesh::MeshComponentData >())
 		{
 			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(
 				meshComponentData->getMesh()
 			);
 			if (!meshAsset)
+			{
+				log::error << L"Prefab failed; unable to read mesh asset \"" << Guid(meshComponentData->getMesh()).format() << L"\"." << Endl;
 				return scene::Traverser::VrFailed;
+			}
 
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
 
 			Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 			if (!model)
+			{
+				log::error << L"Prefab failed; unable to read model \"" << filePath.getPathName() << L"\"." << Endl;
 				return scene::Traverser::VrFailed;
+			}
 
 			model::Transform(
 				translate(meshAsset->getOffset()) *
 				scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
 			).apply(*model);
 			model::Transform(
-				(worldInv * entityData->getTransform()).toMatrix44()
+				(worldInv * inEntityData->getTransform()).toMatrix44()
 			).apply(*model);
 
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
 			models.push_back(model);
 		}
+
 		return scene::Traverser::VrContinue;
 	});
 
 	// Create merged model.
 	Ref< model::Model > outputModel = new model::Model();
-	for (int32_t i = 0; i < (int32_t)models.size(); ++i)
-		model::MergeModel(*models[i], Transform::identity(), 0.001f).apply(*outputModel);
+	for (auto mdl : models)
+		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
 
 	return outputModel;
 }
@@ -132,6 +148,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 
 	// Collect all material textures, and also collect all collision
 	// geometry if any.
+	RefArray< const world::EntityData > dynamicEntityDatas;
 	std::map< std::wstring, Guid > materialTemplates;
 	std::map< std::wstring, Guid > materialTextures;
 	std::map< std::wstring, Guid > materialPhysics;
@@ -143,13 +160,28 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 
 	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inoutEntityData) -> scene::Traverser::VisitorResult
 	{
+		// Check editor attributes component if we should include entity.
+		if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
+		{
+			if (!editorAttributes->include)
+				return scene::Traverser::VrSkip;
+			if (editorAttributes->dynamic)
+			{
+				dynamicEntityDatas.push_back(inoutEntityData);
+				return scene::Traverser::VrSkip;
+			}
+		}	
+
 		if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
 		{
 			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(
 				meshComponentData->getMesh()
 			);
 			if (!meshAsset)
+			{
+				log::error << L"Prefab failed; unable to read mesh asset \"" << Guid(meshComponentData->getMesh()).format() << L"\"." << Endl;
 				return scene::Traverser::VrFailed;
+			}
 
 			// Insert material templates.
 			for (const auto& mt : meshAsset->getMaterialTemplates())
@@ -161,8 +193,10 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 			{
 				Ref< const render::TextureSet > textureSet = pipelineBuilder->getObjectReadOnly< render::TextureSet >(textureSetId);
 				if (!textureSet)
+				{
+					log::error << L"Prefab failed; unable to read texture set \"" << textureSetId.format() << L"\"." << Endl;
 					return scene::Traverser::VrFailed;
-
+				}
 				materialTextures = textureSet->get();
 			}
 
@@ -187,19 +221,25 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 					meshShape->getMesh()
 				);
 				if (!meshAsset)
+				{
+					log::error << L"Prefab failed; unable to read collision mesh \"" << Guid(meshShape->getMesh()).format() << L"\"." << Endl;
 					return scene::Traverser::VrFailed;
+				}
 
 				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
 
-				Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, L"");
-				if (!model)
+				Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, L"");
+				if (!shapeModel)
+				{
+					log::error << L"Prefab failed; unable to read collision model \"" << filePath.getPathName() << L"\"." << Endl;
 					return scene::Traverser::VrFailed;
+				}
 
 				model::Transform(
 					(worldInv * inoutEntityData->getTransform()).toMatrix44()
-				).apply(*model);
+				).apply(*shapeModel);
 
-				shapeModels.push_back(model);
+				shapeModels.push_back(shapeModel);
 
 				collisionGroup.insert(meshShape->getCollisionGroup().begin(), meshShape->getCollisionGroup().end());
 				collisionMask.insert(meshShape->getCollisionMask().begin(), meshShape->getCollisionMask().end());
@@ -216,12 +256,8 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 		return scene::Traverser::VrContinue;
 	});
 
-	// Use average material properties as default for physics shape.
-	if (!shapeModels.empty())
-	{
-		friction /= (float)shapeModels.size();
-		restitution /= (float)shapeModels.size();
-	}
+	// Create output group component containing merged meshes and rest of dynamic entities.
+	Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
 
 	// Create and build a new mesh asset referencing the modified model.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
@@ -233,6 +269,12 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 		outputGuid,
 		model
 	);
+
+	Ref< world::EntityData > outputMeshEntity = new world::EntityData();
+	outputMeshEntity->setId(Guid::create());
+	outputMeshEntity->setTransform(entityData->getTransform());
+	outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid)));
+	outputGroup->addEntityData(outputMeshEntity);
 
 	if (!shapeModels.empty())
 	{
@@ -252,15 +294,9 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 			outputModel
 		);
 
-		// Create group containing both visual mesh and collision shape mesh.
-		Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
-		
-		Ref< world::EntityData > outputMeshEntity = new world::EntityData();
-		outputMeshEntity->setId(Guid::create());
-		outputMeshEntity->setComponent(
-			new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid))
-		);
-		outputGroup->addEntityData(outputMeshEntity);
+		// Use average material properties as default for physics shape.
+		friction /= (float)shapeModels.size();
+		restitution /= (float)shapeModels.size();
 
 		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeGuid));
 		outputShapeDesc->setCollisionGroup(collisionGroup);
@@ -274,11 +310,14 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 		outputShapeMeshEntity->setId(Guid::create());
 		outputShapeMeshEntity->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
 		outputGroup->addEntityData(outputShapeMeshEntity);
-
-		return outputGroup;
 	}
-	else
-		return new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid));
+
+	// Add dynamic entities last.
+	// \note Entity hierarchy is not preserved.
+	for (auto dynamicEntityData : dynamicEntityDatas)
+		outputGroup->addEntityData(DeepClone(dynamicEntityData).create< world::EntityData >());
+
+	return outputGroup;
 }
 
 	}
