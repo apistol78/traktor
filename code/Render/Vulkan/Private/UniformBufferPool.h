@@ -16,6 +16,8 @@ public:
 
 	void recycle();
 
+	void flush();
+
 	bool allocate(uint32_t size, UniformBufferRange& outRange);
 
 	void free(const UniformBufferRange& range);

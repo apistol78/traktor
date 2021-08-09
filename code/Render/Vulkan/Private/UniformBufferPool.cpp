@@ -7,12 +7,7 @@ namespace traktor
 
 void UniformBufferPool::destroy()
 {
-	for (auto it : m_chains)
-	{
-		for (auto chain : it.second)
-			chain->destroy();
-	}
-	m_chains.clear();
+	flush();
 }
 
 void UniformBufferPool::recycle()
@@ -25,6 +20,20 @@ void UniformBufferPool::recycle()
 	frees.resize(0);
 
 	m_count++;
+}
+
+void UniformBufferPool::flush()
+{
+	for (int32_t i = 0; i < sizeof_array(m_frees); ++i)
+		m_frees[i].resize(0);
+
+	SmallMap< uint32_t, RefArray< UniformBufferChain > > chains;
+	chains.swap(m_chains);
+	for (auto it : chains)
+	{
+		for (auto chain : it.second)
+			chain->destroy();
+	}
 }
 
 bool UniformBufferPool::allocate(uint32_t size, UniformBufferRange& outRange)
