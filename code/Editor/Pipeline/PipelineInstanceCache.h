@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IPipelineInstanceCache.h"
 
@@ -34,8 +34,6 @@ class T_DLLCLASS PipelineInstanceCache : public IPipelineInstanceCache
 public:
 	PipelineInstanceCache(db::Database* database, const std::wstring& cacheDirectory);
 
-	virtual ~PipelineInstanceCache();
-
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
 	virtual void flush(const Guid& instanceGuid) override final;
@@ -50,7 +48,7 @@ private:
 	Semaphore m_lock;
 	Ref< db::Database > m_database;
 	std::wstring m_cacheDirectory;
-	std::map< Guid, CacheEntry > m_readCache;
+	SmallMap< Guid, CacheEntry > m_readCache;
 };
 
 	}
