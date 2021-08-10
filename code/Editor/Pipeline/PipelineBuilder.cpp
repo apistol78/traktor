@@ -332,8 +332,15 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 		log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 		if (m_verbose)
 		{
-			for (auto duration : m_profiler->getDurations())
-				log::info << formatDuration(duration.second) << L" in " << duration.first->getName() << Endl;
+			AlignedVector< std::pair< const TypeInfo*, PipelineProfiler::Duration > > durations(m_profiler->getDurations().begin(), m_profiler->getDurations().end());
+			std::sort(durations.begin(), durations.end(), [](const std::pair< const TypeInfo*, PipelineProfiler::Duration >& lh, const std::pair< const TypeInfo*, PipelineProfiler::Duration >& rh) {
+				return lh.second.seconds > rh.second.seconds;
+			});
+			double totalDuration = 0.0;
+			for (const auto& duration : durations)
+				totalDuration += duration.second.seconds;
+			for (const auto& duration : durations)
+				log::info << formatDuration(duration.second.seconds) << L" (" << duration.second.count << L", " << str(L"%.1f", (100.0 * duration.second.seconds) / totalDuration) << L"%) in " << duration.first->getName() << Endl;
 		}
 	}
 	else

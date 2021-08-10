@@ -19,7 +19,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Model/Joint.h"
 #include "Model/Model.h"
-#include "Model/ModelFormat.h"
+#include "Model/ModelCache.h"
 #include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
 
@@ -33,6 +33,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 9, Animat
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
 
@@ -86,7 +87,7 @@ bool AnimationPipeline::buildOutput(
 
 	// Read source model.
 	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + animationAsset->getFileName());
-	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(filePath);
+	Ref< model::Model > modelAnimation = model::ModelCache(m_modelCachePath).get(filePath, L"");
 	if (!modelAnimation)
 	{
 		log::error << L"Unable to build animation; no such file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
@@ -105,7 +106,7 @@ bool AnimationPipeline::buildOutput(
 		}
 
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
-		modelSkeleton = model::ModelFormat::readAny(filePath);
+		modelSkeleton = model::ModelCache(m_modelCachePath).get(filePath, L"");
 		if (!modelSkeleton)
 		{
 			log::error << L"Unable to build animation; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;

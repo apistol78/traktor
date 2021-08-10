@@ -37,9 +37,12 @@ void PipelineProfiler::end(const TypeInfo& pipelineType)
 		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 		auto it = m_durations.find(&pipelineType);
 		if (it != m_durations.end())
-			it->second += exclusive;
+		{
+			it->second.count++;
+			it->second.seconds += exclusive;
+		}
 		else
-			m_durations.insert(&pipelineType, exclusive);
+			m_durations.insert(&pipelineType, { 1, exclusive });
 	}
 
 	delete current;

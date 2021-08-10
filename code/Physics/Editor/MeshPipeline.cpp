@@ -10,7 +10,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
-#include "Model/ModelFormat.h"
+#include "Model/ModelCache.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
@@ -33,6 +33,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 11, MeshPipeline
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
 
@@ -95,7 +96,7 @@ bool MeshPipeline::buildOutput(
 	else
 	{
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-		model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter());
+		model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 	}
 
 	if (!model)
