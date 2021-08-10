@@ -118,6 +118,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), 8, ui::Command(L"Scene.Editor.SingleView")));
 	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), 9, ui::Command(L"Scene.Editor.DoubleView")));
 	m_toolBarActions->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), 10, ui::Command(L"Scene.Editor.QuadrupleView")));
+	m_toolBarActions->addItem(new ui::ToolBarSeparator());
 	m_toolBarActions->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScenePreviewControl::eventToolBarActionClicked);
 
 	// Let plugins create additional toolbar items.
