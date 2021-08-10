@@ -48,7 +48,6 @@
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Editor/Pipeline/PipelineSettings.h"
-#include "Pipeline/App/PipelineLog.h"
 #include "Pipeline/App/PipelineParameters.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -56,6 +55,13 @@
 #	include <windows.h>
 #	include <tlhelp32.h>
 #	include "Pipeline/App/Win32/StackWalker.h"
+#endif
+
+#if defined(__LINUX__) || defined(__RPI__)
+#	include <execinfo.h>
+#	include <signal.h>
+#	include <stdlib.h>
+#	include <unistd.h>
 #endif
 
 using namespace traktor;
@@ -149,6 +155,19 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	}
 
 	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+#endif
+
+#if defined(__LINUX__) || defined(__RPI__)
+
+void signalExceptionHandler(int sig)
+{
+	void* array[10];
+	size_t size = backtrace(array, 10);
+	fprintf(stderr, "Error: signal %d:\n", sig);
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	exit(1);	
 }
 
 #endif
@@ -602,6 +621,10 @@ int main(int argc, const char** argv)
 	int32_t result = 1;
 
 	traktor::log::info << L"Pipeline; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'." << Endl;
+
+#if defined(__LINUX__) || defined(__RPI__)
+	signal(SIGSEGV, signalExceptionHandler);
+#endif
 
 #if !defined(_DEBUG)
 	try
