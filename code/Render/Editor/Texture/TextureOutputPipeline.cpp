@@ -39,6 +39,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
@@ -884,7 +885,10 @@ bool TextureOutputPipeline::buildOutput(
 		else
 			compressor = new UnCompressor();
 
+		log::info << L"Compressing texture..." << Endl;
+		pipelineBuilder->getProfiler()->begin(type_of(compressor));
 		compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
+		pipelineBuilder->getProfiler()->end(type_of(compressor));
 
 		streamData->close();
 
@@ -1049,7 +1053,10 @@ bool TextureOutputPipeline::buildOutput(
 			else
 				compressor = new UnCompressor();
 
+			log::info << L"Compressing texture..." << Endl;
+			pipelineBuilder->getProfiler()->begin(type_of(compressor));
 			compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
+			pipelineBuilder->getProfiler()->end(type_of(compressor));
 		}
 
 		streamData->close();

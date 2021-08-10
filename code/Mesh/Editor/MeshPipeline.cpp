@@ -19,6 +19,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 #include "Mesh/MeshResource.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -34,7 +35,6 @@
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
-#include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
@@ -339,7 +339,11 @@ bool MeshPipeline::buildOutput(
 		}
 
 		for (auto operation : operations)
+		{
+			pipelineBuilder->getProfiler()->begin(type_of(operation));
 			operation->apply(*model);
+			pipelineBuilder->getProfiler()->end(type_of(operation));
+		}
 
 		models.push_back(model);
 	}
@@ -363,7 +367,11 @@ bool MeshPipeline::buildOutput(
 		}
 
 		for (auto operation : operations)
-			operation->apply(*model);		
+		{
+			pipelineBuilder->getProfiler()->begin(type_of(operation));
+			operation->apply(*model);
+			pipelineBuilder->getProfiler()->end(type_of(operation));
+		}		
 
 		models.push_back(model);
 	}
@@ -684,7 +692,7 @@ bool MeshPipeline::buildOutput(
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
 	for (std::map< uint32_t, Ref< render::ShaderGraph > >::iterator i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
 	{
-		Ref< render::ShaderGraph > materialTechniqueShaderGraph = i->second; // DeepClone(i->second).create< render::ShaderGraph >();
+		Ref< render::ShaderGraph > materialTechniqueShaderGraph = i->second;
 		for (auto node : materialTechniqueShaderGraph->getNodes())
 			materialShaderGraph->addNode(node);
 		for (auto edge : materialTechniqueShaderGraph->getEdges())
