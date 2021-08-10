@@ -57,29 +57,77 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	}
 
 	// Create staging buffer.
-	const uint32_t imageSize = getTextureSize(m_desc.format, m_desc.side, m_desc.side, 1);
+	const uint32_t imageSize = getTextureSize(m_desc.format, m_desc.side, m_desc.side, m_desc.mipCount) * 6;
 
 	m_stagingBuffer = new Buffer(m_context);
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Upload initial data.
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	if (!commandBuffer)
+		return false;
+
+	uint8_t* bits = (uint8_t*)m_stagingBuffer->lock();
+	if (!bits)
+		return false;
+
 	for (int32_t side = 0; side < 6; ++side)
 	{
 		for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
 		{
-			Lock lck = { 0 };
-			if (!lock(side, mip, lck))
-				return false;
+			const uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
 
-			uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
 			if (m_desc.immutable)
-				std::memcpy(lck.bits, m_desc.initialData[side * m_desc.mipCount + mip].data, mipSize);
+				std::memcpy(bits, m_desc.initialData[side * m_desc.mipCount + mip].data, mipSize);
 			else
-				std::memset(lck.bits, 0, mipSize);
+				std::memset(bits, 0, mipSize);
 		
-			unlock(side, mip);
+			bits += mipSize;
 		}
 	}
+
+	m_stagingBuffer->unlock();
+
+	// Change layout of texture to be able to copy staging buffer into texture.
+	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, m_desc.mipCount, 0, 6);
+
+	// Copy staging buffer into texture.
+	uint32_t offset = 0;
+	for (int32_t side = 0; side < 6; ++side)
+	{
+		for (int32_t mip = 0; mip < m_desc.mipCount; ++mip)
+		{
+			const uint32_t mipSide = getTextureMipSize(m_desc.side, mip);
+			const uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.side, m_desc.side, mip);
+
+			VkBufferImageCopy region = {};
+			region.bufferOffset = offset;
+			region.bufferRowLength = 0;
+			region.bufferImageHeight = 0;
+			region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			region.imageSubresource.mipLevel = mip;
+			region.imageSubresource.baseArrayLayer = side;
+			region.imageSubresource.layerCount = 1;
+			region.imageOffset = { 0, 0, 0 };
+			region.imageExtent = { mipSide, mipSide, 1 };
+
+			vkCmdCopyBufferToImage(
+				*commandBuffer,
+				*m_stagingBuffer,
+				m_textureImage->getVkImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&region
+			);
+
+			offset += mipSize;
+		}
+	}
+
+	// Change layout of texture to optimal sampling.
+	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, m_desc.mipCount, 0, 6);
+
+	commandBuffer->submitAndWait();
 
 	// Free staging buffer if immutable, no longer
 	// allowed to update texture.

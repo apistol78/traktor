@@ -77,8 +77,6 @@ bool SimpleTextureVk::create(
 
 	for (int32_t mip = 0; mip < desc.mipCount; ++mip)
 	{
-		const uint32_t mipWidth = getTextureMipSize(desc.width, mip);
-		const uint32_t mipHeight = getTextureMipSize(desc.height, mip);
 		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
 
 		if (desc.immutable)
