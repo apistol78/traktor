@@ -433,9 +433,12 @@ bool RenderSystemVk::reset(const RenderSystemDesc& desc)
 
 void RenderSystemVk::getInformation(RenderSystemInformation& outInfo) const
 {
-	outInfo.dedicatedMemoryTotal = 0;
+	VmaStats stats = {};
+	vmaCalculateStats(m_allocator, &stats);
+
+	outInfo.dedicatedMemoryTotal = stats.total.unusedBytes + stats.total.usedBytes;
 	outInfo.sharedMemoryTotal = 0;
-	outInfo.dedicatedMemoryAvailable = 0;
+	outInfo.dedicatedMemoryAvailable = stats.total.unusedBytes;
 	outInfo.sharedMemoryAvailable = 0;
 }
 
