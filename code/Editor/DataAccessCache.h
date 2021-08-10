@@ -3,11 +3,11 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Thread/Event.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Event.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
