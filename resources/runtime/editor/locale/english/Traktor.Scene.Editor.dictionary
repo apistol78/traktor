@@ -198,6 +198,14 @@
 			<second>Remove</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_MESSAGE</first>
+			<second>Are you sure you want to rename all entity IDs?</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_TITLE</first>
+			<second>Rename all entity IDs?</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_RENDER_TIME</first>
 			<second>Render time {0} ms, FPS {1}</second>
 		</item>

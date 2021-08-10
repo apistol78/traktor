@@ -5,6 +5,10 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfmPrimitive.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -55,6 +59,7 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
@@ -90,6 +95,33 @@ namespace traktor
 		{
 
 const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
+
+void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
+{
+	Ref< Reflection > reflection = Reflection::create(object);
+
+	// Rename all id;s in this object first.
+	RefArray< ReflectionMember > idMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), idMembers);
+	for (auto idMember : idMembers)
+	{
+		auto id = static_cast< RfmPrimitiveGuid* >(idMember.ptr());
+		auto it = renamedMap.find(id->get());
+		if (it != renamedMap.end())
+			id->set(it->second);
+	}
+
+	// Recurse with child objects.
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	for (auto objectMember : objectMembers)
+	{
+		auto object = static_cast< RfmObject* >(objectMember.ptr());
+		renameIds(object->get(), renamedMap);
+	}
+
+	reflection->apply(object);
+}
 
 bool isChildEntitySelected(const EntityAdapter* entityAdapter)
 {
@@ -868,6 +900,30 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			selectedEntity->setVisible(false);
 
 		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.RenameAllEntityIds")
+	{
+		if (ui::MessageBox::show(m_editControl, i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_MESSAGE"), i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_TITLE"), ui::MbIconExclamation | ui::MbYesNo) == ui::DrYes)
+		{
+			SmallMap< Guid, Guid > renamedMap;
+
+			// Create new IDs for each entity.
+			RefArray< EntityAdapter > entities;
+			m_context->getEntities(entities, SceneEditorContext::GfDescendants);
+			for (auto entity : entities)
+			{
+				Guid newEntityId = Guid::create();
+				if (entity->getEntityData()->getId().isNotNull())
+					renamedMap.insert(entity->getEntityData()->getId(), newEntityId);
+				entity->getEntityData()->setId(newEntityId);
+			}
+
+			// Also ensure attached data contain updated entity identities.
+			if (m_context->getSceneAsset()->getControllerData() != nullptr)
+				renameIds(m_context->getSceneAsset()->getControllerData(), renamedMap);
+			for (auto operationData : m_context->getSceneAsset()->getOperationData())
+				renameIds(operationData, renamedMap);
+		}
 	}
 	else
 	{
