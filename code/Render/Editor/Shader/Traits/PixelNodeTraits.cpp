@@ -27,9 +27,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelNodeTraits", 0, PixelNodeTr
 
 TypeInfoSet PixelNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PixelOutput >();
-	return typeSet;
+	return makeTypeInfoSet< PixelOutput >();
 }
 
 bool PixelNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
@@ -55,8 +53,7 @@ PinType PixelNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	const PixelOutput* pixelOutputNode = checked_type_cast< const PixelOutput* >(node);
-
+	const PixelOutput* pixelOutputNode = mandatory_non_null_type_cast< const PixelOutput* >(node);
 	RenderState rs = pixelOutputNode->getRenderState();
 
 	const OutputPin* statePin = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(5));
@@ -82,8 +79,6 @@ PinType PixelNodeTraits::getInputPinType(
 	}
 	else
 		return PntScalar4;
-
-	return PntScalar3;
 }
 
 int32_t PixelNodeTraits::getInputPinGroup(

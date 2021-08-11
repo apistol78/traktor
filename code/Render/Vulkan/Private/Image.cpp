@@ -401,7 +401,7 @@ bool Image::changeLayout(
 	T_ASSERT(mipLevel + mipCount <= m_mipCount);
 	T_ASSERT(layerLevel + layerCount <= m_layerCount);
 
-	auto& imageLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
+	auto imageLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
 	if (imageLayout == newLayout)
 		return true;
 
@@ -433,7 +433,14 @@ bool Image::changeLayout(
 		1, &imb
 	);
 
-	imageLayout = imb.newLayout;
+	for (uint32_t layer = 0; layer < layerCount; ++layer)
+	{
+		for (uint32_t mip = 0; mip < mipCount; ++mip)
+		{
+			m_imageLayouts[(layerLevel + layer) * m_mipCount + (mipLevel + mip)] = imb.newLayout;
+		}
+	}
+
 	return true;
 }
 

@@ -3,10 +3,12 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/StructBuffer.h"
+#include "Render/StructElement.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Vertex.h"
@@ -33,6 +35,9 @@ const static float c_extents[4][2] =
 	{ -1.0f,  1.0f }
 };
 
+const render::Handle s_handlePoints(L"Spray_Points");
+const render::Handle s_handlePointsOffset(L"Spray_PointsOffset");
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
@@ -40,38 +45,46 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
 :	m_lod1Distance(lod1Distance)
 ,	m_lod2Distance(lod2Distance)
-,	m_count(0)
-,	m_vertexTop(0)
-,	m_vertex(0)
+,	m_point(nullptr)
 ,	m_pointOffset(0)
 {
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, positionAndOrientation), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, velocityAndRandom), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, extentAlphaAndSize), 1));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, colorAndAge), 2));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, extent), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
 
-	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
-	{
-		m_vertexBuffers[i] = renderSystem->createVertexBuffer(vertexElements, c_pointCount * 4 * sizeof(EmitterVertex), true);
-		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
-	}
+	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 4 * sizeof(EmitterVertex), false);
+	T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_pointCount * 6 * sizeof(uint16_t), false);
+	EmitterVertex* vertex = (EmitterVertex*)m_vertexBuffer->lock();
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		vertex->extent[0] = c_extents[i][0];
+		vertex->extent[1] = c_extents[i][1];
+		vertex->extent[2] = 0.0f;
+		vertex->extent[3] = 0.0f;
+		vertex++;
+	}
+	m_vertexBuffer->unlock();
+
+	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, 6 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
-	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
-	for (uint32_t i = 0; i < c_pointCount * 4; i += 4)
-	{
-		*index++ = i + 0;
-		*index++ = i + 1;
-		*index++ = i + 2;
-		*index++ = i + 0;
-		*index++ = i + 2;
-		*index++ = i + 3;
-	}
+	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+	*index++ = 0;
+	*index++ = 1;
+	*index++ = 2;
+	*index++ = 0;
+	*index++ = 2;
+	*index++ = 3;
 	m_indexBuffer->unlock();
+
+	AlignedVector< render::StructElement > structElements;
+	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, positionAndOrientation)));
+	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, velocityAndRandom)));
+	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, alphaAndSize)));
+	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, colorAndAge)));
+	m_structBuffer = renderSystem->createStructBuffer(structElements, c_pointCount * sizeof(EmitterPoint), true);
+	T_ASSERT_M (m_structBuffer, L"Unable to create struct buffer");
 }
 
 PointRenderer::~PointRenderer()
@@ -82,15 +95,8 @@ PointRenderer::~PointRenderer()
 void PointRenderer::destroy()
 {
 	safeDestroy(m_indexBuffer);
-
-	if (m_vertex)
-	{
-		m_vertexBuffers[m_count]->unlock();
-		m_vertex = nullptr;
-	}
-
-	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
-		safeDestroy(m_vertexBuffers[i]);
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_structBuffer);
 }
 
 void PointRenderer::render(
@@ -113,21 +119,20 @@ void PointRenderer::render(
 	if (size > avail)
 		size = avail;
 
-	if (!m_vertex)
+	if (!m_point)
 	{
-		m_vertexTop =
-		m_vertex = static_cast< EmitterVertex* >(m_vertexBuffers[m_count]->lock());
-		if (!m_vertex)
+		m_point = (EmitterPoint*)m_structBuffer->lock();
+		if (!m_point)
 			return;
 	}
 
 	Batch& back = m_batches.push_back();
 	back.shader = shader;
-	back.offset = m_pointOffset * 3 * 2;
+	back.offset = m_pointOffset;
 	back.count = 0;
 	back.distance = std::numeric_limits< float >::max();
 
-	Vector4 cameraOffsetV = cameraPlane.normal() * Scalar(cameraOffset);
+	const Vector4 cameraOffsetV = cameraPlane.normal() * Scalar(cameraOffset);
 
 	for (int32_t i = 0; i < size; ++i)
 	{
@@ -153,27 +158,19 @@ void PointRenderer::render(
 
 		Vector4 position = point.position + cameraOffsetV;
 
-		for (int32_t j = 0; j < 4; ++j)
-		{
-			// \note We're assuming locked vertex buffer is 16-aligned.
-			position.storeAligned(m_vertex->positionAndOrientation);
-
-			point.velocity.storeAligned(m_vertex->velocityAndRandom);
-			point.color.storeAligned(m_vertex->colorAndAge);
-
-			m_vertex->positionAndOrientation[3] = point.orientation;
-			m_vertex->velocityAndRandom[3] = point.random;
-			m_vertex->extentAlphaAndSize[0] = c_extents[j][0];
-			m_vertex->extentAlphaAndSize[1] = c_extents[j][1];
-			m_vertex->extentAlphaAndSize[2] = alpha;
-			m_vertex->extentAlphaAndSize[3] = point.size;
-			m_vertex->colorAndAge[3] = age;
-
-			m_vertex++;
-		}
+		// \note We're assuming locked vertex buffer is 16-aligned.
+		position.storeAligned(m_point->positionAndOrientation);
+		point.velocity.storeAligned(m_point->velocityAndRandom);
+		point.color.storeAligned(m_point->colorAndAge);
+		m_point->positionAndOrientation[3] = point.orientation;
+		m_point->velocityAndRandom[3] = point.random;
+		m_point->alphaAndSize[0] = alpha;
+		m_point->alphaAndSize[1] = point.size;
+		m_point->colorAndAge[3] = age;
+		m_point++;
 
 		back.distance = min(back.distance, distance);
-		back.count += 2;
+		back.count++;
 
 		m_pointOffset++;
 	}
@@ -186,8 +183,6 @@ void PointRenderer::flush(
 {
 	if (m_pointOffset > 0)
 	{
-		T_ASSERT(m_vertex);
-
 		for (const auto& batch : m_batches)
 		{
 			if (!batch.count || !batch.shader)
@@ -197,40 +192,36 @@ void PointRenderer::flush(
 			if (!sp)
 				continue;
 
-			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"PointRenderer");
+			auto renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >(T_FILE_LINE_W);
 
 			renderBlock->distance = batch.distance;
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
-			renderBlock->vertexBuffer = m_vertexBuffers[m_count];
+			renderBlock->vertexBuffer = m_vertexBuffer;
 			renderBlock->primitive = render::PtTriangles;
-			renderBlock->offset = batch.offset;
-			renderBlock->count = batch.count;
+			renderBlock->offset = 0;
+			renderBlock->count = 2;
 			renderBlock->minIndex = 0;
-			renderBlock->maxIndex = m_pointOffset * 4;
+			renderBlock->maxIndex = 3;
+			renderBlock->instanceCount = batch.count;
 
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
+			renderBlock->programParams->setFloatParameter(s_handlePointsOffset, batch.offset);
+			renderBlock->programParams->setStructBufferParameter(s_handlePoints, m_structBuffer);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
 				sp.priority,
 				renderBlock
 			);
-
-			m_vertex = nullptr;
 		}
 
+		m_point = nullptr;
 		m_pointOffset = 0;
 
-		if (!m_vertex)
-		{
-			m_vertexBuffers[m_count]->unlock();
-			m_count = (m_count + 1) % sizeof_array(m_vertexBuffers);
-		}
-		else
-			m_vertex = m_vertexTop;
+		m_structBuffer->unlock();
 	}
 
 	m_batches.resize(0);
