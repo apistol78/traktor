@@ -2314,7 +2314,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		{
 			// Storage buffer already exist; \tbd ensure elements match.
 			existingStorageBuffer->addStage(getBindStage(cx));
-			return false;
+			return true;
 		}
 		else
 		{

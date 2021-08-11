@@ -636,12 +636,23 @@ bool ProgramCompilerVk::generate(
 
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
-			cx.getEmitter().emit(cx, pixelOutputs[0]);
-			cx.getEmitter().emit(cx, vertexOutputs[0]);
+			bool result = true;
+			result &= cx.getEmitter().emit(cx, pixelOutputs[0]);
+			result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
+			if (!result)
+			{
+				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;
+				return false;
+			}
 		}
 		else if (computeOutputs.size() == 1)
 		{
-			cx.getEmitter().emit(cx, computeOutputs[0]);
+			bool result = cx.getEmitter().emit(cx, computeOutputs[0]);
+			if (!result)
+			{
+				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;
+				return false;
+			}
 		}
 		else
 		{

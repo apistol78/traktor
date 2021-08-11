@@ -27,13 +27,14 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
-	uint32_t storageBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minStorageBufferOffsetAlignment;
+	const uint32_t storageBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minStorageBufferOffsetAlignment;
 
-	m_alignedBufferSize = alignUp(bufferSize, storageBufferOffsetAlignment);
 	m_inFlightCount = inFlightCount;
+	m_range = alignUp(bufferSize, storageBufferOffsetAlignment);
+	m_size = m_range * m_inFlightCount;
 
 	m_buffer = new Buffer(m_context);
-	if (!m_buffer->create(m_alignedBufferSize * inFlightCount, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
+	if (!m_buffer->create(m_size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
 		return false;
 
 	m_ptr = (uint8_t*)m_buffer->lock();
@@ -57,12 +58,12 @@ void StructBufferDynamicVk::destroy()
 
 void* StructBufferDynamicVk::lock()
 {
-	return m_ptr + m_index * m_alignedBufferSize;
+	return m_ptr + m_index * m_range;
 }
 
 void StructBufferDynamicVk::unlock()
 {
-	m_offset = m_index * m_alignedBufferSize;
+	m_offset = m_index * m_range;
 	m_index = (m_index + 1) % m_inFlightCount;
 }
 

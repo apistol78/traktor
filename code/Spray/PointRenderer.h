@@ -23,6 +23,7 @@ namespace traktor
 
 class IRenderSystem;
 class RenderContext;
+class StructBuffer;
 class VertexBuffer;
 class IndexBuffer;
 
@@ -38,7 +39,7 @@ class IWorldRenderPass;
 	namespace spray
 	{
 
-struct EmitterVertex;
+struct EmitterPoint;
 
 /*! Particle renderer.
  * \ingroup Spray
@@ -88,14 +89,16 @@ private:
 		uint32_t offset;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffers[8];
+	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< render::StructBuffer > m_structBuffer;
+
 	float m_lod1Distance;
 	float m_lod2Distance;
-	int32_t m_count;
-	EmitterVertex* m_vertexTop;
-	EmitterVertex* m_vertex;
+
+	EmitterPoint* m_point;
 	int32_t m_pointOffset;
+	
 	AlignedVector< Batch > m_batches;
 };
 

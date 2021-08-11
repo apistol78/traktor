@@ -32,6 +32,8 @@ bool StructBufferStaticVk::create()
 	if (!m_buffer->create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
 		return false;
 
+	m_range = bufferSize;
+	m_size = bufferSize;
 	return true;
 }
 
@@ -46,12 +48,8 @@ void* StructBufferStaticVk::lock()
 {
 	T_FATAL_ASSERT(m_stageBuffer == nullptr);
 
-	const uint32_t bufferSize = getBufferSize();
-	if (!bufferSize)
-		return nullptr;
-
 	m_stageBuffer = new Buffer(m_context);
-	if (!m_stageBuffer->create(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+	if (!m_stageBuffer->create(m_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
 		return nullptr;
 
 	return m_stageBuffer->lock();

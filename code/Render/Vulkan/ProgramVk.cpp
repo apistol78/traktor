@@ -676,7 +676,7 @@ bool ProgramVk::validateDescriptorSet()
 		auto& bufferInfo = bufferInfos.push_back();
 		bufferInfo.buffer = sbvk->getVkBuffer();
 		bufferInfo.offset = 0;
-		bufferInfo.range = sbvk->getBufferSize();
+		bufferInfo.range = sbvk->getVkBufferRange();
 
 		auto& write = writes.push_back();
 		write = {};
