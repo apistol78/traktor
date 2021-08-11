@@ -15,17 +15,17 @@ void FeedbackManager::addListener(FeedbackType type, IFeedbackListener* listener
 
 void FeedbackManager::removeListener(FeedbackType type, IFeedbackListener* listener)
 {
-	std::vector< IFeedbackListener* >& listeners = m_listeners[type];
-	std::vector< IFeedbackListener* >::iterator it = std::find(listeners.begin(), listeners.end(), listener);
+	auto& listeners = m_listeners[type];
+	auto it = std::find(listeners.begin(), listeners.end(), listener);
 	if (it != listeners.end())
 		listeners.erase(it);
 }
 
 void FeedbackManager::apply(FeedbackType type, const float* values, int32_t count)
 {
-	std::vector< IFeedbackListener* >& listeners = m_listeners[type];
-	for (std::vector< IFeedbackListener* >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-		(*i)->feedbackValues(type, values, count);
+	auto& listeners = m_listeners[type];
+	for (auto listener : listeners)
+		listener->feedbackValues(type, values, count);
 }
 
 	}

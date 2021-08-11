@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <vector>
+#include "Core/Containers/SmallMap.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ public:
 	virtual void apply(FeedbackType type, const float* values, int32_t count) override final;
 
 private:
-	std::map< FeedbackType, std::vector< IFeedbackListener* > > m_listeners;
+	SmallMap< FeedbackType, AlignedVector< IFeedbackListener* > > m_listeners;
 };
 
 	}

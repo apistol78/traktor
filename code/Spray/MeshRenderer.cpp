@@ -14,18 +14,6 @@ const uint32_t c_maxInstances = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.MeshRenderer", MeshRenderer, Object)
 
-MeshRenderer::MeshRenderer()
-{
-}
-
-MeshRenderer::~MeshRenderer()
-{
-}
-
-void MeshRenderer::destroy()
-{
-}
-
 void MeshRenderer::render(
 	mesh::InstanceMesh* mesh,
 	bool meshOrientationFromVelocity,

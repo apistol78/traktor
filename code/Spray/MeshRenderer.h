@@ -47,12 +47,6 @@ class T_DLLCLASS MeshRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	MeshRenderer();
-
-	virtual ~MeshRenderer();
-
-	void destroy();
-
 	void render(
 		mesh::InstanceMesh* mesh,
 		bool meshOrientationFromVelocity,
