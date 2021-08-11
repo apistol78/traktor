@@ -128,12 +128,12 @@ void LocalDatabase::close()
 	}
 }
 
-Ref< IProviderBus > LocalDatabase::getBus()
+IProviderBus* LocalDatabase::getBus()
 {
 	return m_bus;
 }
 
-Ref< IProviderGroup > LocalDatabase::getRootGroup()
+IProviderGroup* LocalDatabase::getRootGroup()
 {
 	return m_rootGroup;
 }

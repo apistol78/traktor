@@ -37,9 +37,9 @@ public:
 
 	virtual void close() override final;
 
-	virtual Ref< IProviderBus > getBus() override final;
+	virtual IProviderBus* getBus() override final;
 
-	virtual Ref< IProviderGroup > getRootGroup() override final;
+	virtual IProviderGroup* getRootGroup() override final;
 
 private:
 	Ref< CompactContext > m_context;

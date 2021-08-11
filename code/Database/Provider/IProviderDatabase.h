@@ -49,13 +49,13 @@ public:
 	 *
 	 * \return Event bus interface.
 	 */
-	virtual Ref< IProviderBus > getBus() = 0;
+	virtual IProviderBus* getBus() = 0;
 
 	/*! Get database's root group.
 	 *
 	 * \return Root group.
 	 */
-	virtual Ref< IProviderGroup > getRootGroup() = 0;
+	virtual IProviderGroup* getRootGroup() = 0;
 };
 
 	}
