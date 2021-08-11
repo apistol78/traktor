@@ -20,6 +20,7 @@ void StdOutput::print(const std::wstring& s)
 #else
 	fprintf(m_handle, "%s", wstombs(s).c_str());
 #endif
+	fflush(m_handle);
 }
 
 void StdOutput::printLn(const std::wstring& s)
@@ -29,6 +30,7 @@ void StdOutput::printLn(const std::wstring& s)
 #else
 	fprintf(m_handle, "%s\n", wstombs(s).c_str());
 #endif
+	fflush(m_handle);
 }
 
 	}
