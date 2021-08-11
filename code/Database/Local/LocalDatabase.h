@@ -5,9 +5,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_LOCAL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -36,9 +36,9 @@ public:
 
 	virtual void close() override final;
 
-	virtual Ref< IProviderBus > getBus() override final;
+	virtual IProviderBus* getBus() override final;
 
-	virtual Ref< IProviderGroup > getRootGroup() override final;
+	virtual IProviderGroup* getRootGroup() override final;
 
 private:
 	Ref< Context > m_context;

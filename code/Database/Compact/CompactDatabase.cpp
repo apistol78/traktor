@@ -125,12 +125,12 @@ void CompactDatabase::close()
 	}
 }
 
-Ref< IProviderBus > CompactDatabase::getBus()
+IProviderBus* CompactDatabase::getBus()
 {
 	return nullptr;
 }
 
-Ref< IProviderGroup > CompactDatabase::getRootGroup()
+IProviderGroup* CompactDatabase::getRootGroup()
 {
 	return m_rootGroup;
 }

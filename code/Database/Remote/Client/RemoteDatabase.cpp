@@ -78,6 +78,9 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 
 void RemoteDatabase::close()
 {
+	m_rootGroup = nullptr;
+	m_bus = nullptr;
+
 	if (m_connection)
 	{
 		Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmClose());
@@ -89,22 +92,34 @@ void RemoteDatabase::close()
 	}
 }
 
-Ref< IProviderBus > RemoteDatabase::getBus()
+IProviderBus* RemoteDatabase::getBus()
 {
 	if (!m_connection)
 		return nullptr;
 
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetBus());
-	return result ? new RemoteBus(m_connection, result->get()) : nullptr;
+	if (!m_bus)
+	{
+		Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetBus());
+		if (result)
+			m_bus = new RemoteBus(m_connection, result->get());
+	}
+	
+	return m_bus;
 }
 
-Ref< IProviderGroup > RemoteDatabase::getRootGroup()
+IProviderGroup* RemoteDatabase::getRootGroup()
 {
 	if (!m_connection)
 		return nullptr;
 
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetRootGroup());
-	return result ? new RemoteGroup(m_connection, result->get()) : nullptr;
+	if (!m_rootGroup)
+	{
+		Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetRootGroup());
+		if (result)
+			m_rootGroup = new RemoteGroup(m_connection, result->get());
+	}
+
+	return m_rootGroup;
 }
 
 	}
