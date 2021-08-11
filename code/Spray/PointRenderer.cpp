@@ -94,6 +94,12 @@ PointRenderer::~PointRenderer()
 
 void PointRenderer::destroy()
 {
+	if (m_point)
+	{
+		m_structBuffer->unlock();
+		m_point = nullptr;
+	}
+
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_structBuffer);
