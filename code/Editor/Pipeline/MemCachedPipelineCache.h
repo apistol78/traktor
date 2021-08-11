@@ -24,6 +24,8 @@ class T_DLLCLASS MemCachedPipelineCache : public IPipelineCache
 	T_RTTI_CLASS;
 
 public:
+	MemCachedPipelineCache();
+
 	virtual ~MemCachedPipelineCache();
 
 	virtual bool create(const PropertyGroup* settings) override final;

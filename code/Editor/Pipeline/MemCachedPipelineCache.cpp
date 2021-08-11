@@ -15,6 +15,7 @@
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
 #include "Editor/Pipeline/MemCachedPutStream.h"
+#include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
 
@@ -36,9 +37,15 @@ std::string generateKey(const Guid& guid, const PipelineDependencyHash& hash)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPipelineCache", MemCachedPipelineCache, IPipelineCache)
 
+MemCachedPipelineCache::MemCachedPipelineCache()
+{
+	net::Network::initialize();
+}
+
 MemCachedPipelineCache::~MemCachedPipelineCache()
 {
 	destroy();
+	net::Network::finalize();
 }
 
 bool MemCachedPipelineCache::create(const PropertyGroup* settings)
@@ -56,7 +63,6 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 		return false;
 	}
 	m_protos.push_back(proto);
-
 	return true;
 }
 
