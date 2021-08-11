@@ -420,7 +420,7 @@ function migrate(args)
 	end
 
 	-- Build apk package.
-	stdout:printLn("Building Android APK package...")
+	stdout:printLn("Building Android package...")
 
 	local apk = os:getEnvironment("DEPLOY_PROJECT_NAME"):gsub("[ .,;:-]", "_")
 	local result = false
@@ -448,7 +448,7 @@ function migrate(args)
 		return 1
 	end
 	if not result then
-		stderr:printLn("Failed to generate Android APK package.")
+		stderr:printLn("Failed to generate Android package.")
 		return 1
 	end
 
@@ -458,8 +458,9 @@ function migrate(args)
 
 	-- Ensure device is ready.
 	if not isDeviceConnected() then
-		stderr:printLn("No device ready; ensure an Android device is connected and properly configured.")
-		return 1
+		stdout:printLn("No device ready; ensure an Android device is connected and properly configured.")
+		stdout:printLn("Migrate finished.")
+		return 0
 	end
 
 	-- Install application on attached device.
@@ -470,6 +471,7 @@ function migrate(args)
 		return 1
 	end
 
+	stdout:printLn("Migrate finished.")
 	return 0
 end
 
