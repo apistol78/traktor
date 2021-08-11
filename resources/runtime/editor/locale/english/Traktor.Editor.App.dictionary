@@ -285,6 +285,10 @@
 			<first>DATABASE_WIZARDS</first>
 			<second>Wizards...</second>
 		</item>
+    <item>
+      <first>DEPENDENCIES_AS_DOT_WIZARDTOOL_DESCRIPTION</first>
+      <second>Copy dependencies as dot graph</second>
+    </item>
 		<item>
 			<first>EDITOR_ABOUT_TITLE</first>
 			<second>About</second>

@@ -57,7 +57,7 @@ bool DependenciesAsDotWizardTool::launch(ui::Widget* parent, IEditor* editor, db
 			ss << L"\"" << dependency->outputGuid.format() << L"\" -> \"" << child->outputGuid.format() << L"\";" << Endl;
 		}
 		for (const auto& file : dependency->files)
-			ss << L"\"" << dependency->outputGuid.format() << L"\" -> \"" << file.filePath.getPathName() << L"\";" << Endl;
+			ss << L"\"" << dependency->outputGuid.format() << L"\" -> \"" << file.filePath.getOriginal() << L"\";" << Endl;
 	}
 
 	ss << DecreaseIndent;
