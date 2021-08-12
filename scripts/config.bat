@@ -35,9 +35,6 @@ set ASTCENC_SDK=%TRAKTOR_HOME%\3rdp\astc-encoder-master-201104
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
-:: Export name of shadow launch binary.
-set SHADOWLAUNCH=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.ShadowLaunch.App
-
 :: Export path to Ninja binary.
 set NINJA=%TRAKTOR_HOME%\3rdp\ninja\win\ninja
 
