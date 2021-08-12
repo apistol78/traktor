@@ -49,12 +49,10 @@ bool SimpleAnimationController::evaluate(
 
 	float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
 
-	Pose pose;
-	m_animation->getPose(poseTime, m_linearInterpolation, m_indexHint, pose);
-
+	m_animation->getPose(poseTime, m_linearInterpolation, m_indexHint, m_evaluationPose);
 	calculatePoseTransforms(
 		skeleton,
-		&pose,
+		&m_evaluationPose,
 		outPoseTransforms
 	);
 

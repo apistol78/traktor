@@ -26,6 +26,10 @@ class T_DLLCLASS Pose : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	void reset();
+
+	void reserve(uint32_t jointCapacity);
+
 	void setJointTransform(uint32_t jointIndex, const Transform& jointTransform);
 
 	Transform getJointTransform(uint32_t jointIndex) const;

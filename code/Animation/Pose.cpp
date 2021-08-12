@@ -10,6 +10,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Pose", 0, Pose, ISerializable)
 
+void Pose::reset()
+{
+	m_joints.resize(0);
+}
+
+void Pose::reserve(uint32_t jointCapacity)
+{
+	m_joints.reserve(jointCapacity);
+}
+
 void Pose::setJointTransform(uint32_t jointIndex, const Transform& jointTransform)
 {
 	Joint& joint = getEditJoint(jointIndex);
@@ -52,7 +62,7 @@ const Pose::Joint* Pose::getJoint(uint32_t jointIndex) const
 			s = m + 1;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Pose::Joint& Pose::getEditJoint(uint32_t jointIndex)

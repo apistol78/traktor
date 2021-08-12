@@ -135,6 +135,8 @@ void blendPoses(
 	int minRange, maxRange;
 	indices.range(minRange, maxRange);
 
+	outPose->reset();
+	outPose->reserve(maxRange - minRange);
 	for (int i = minRange; i < maxRange; ++i)
 	{
 		if (!indices(i))
