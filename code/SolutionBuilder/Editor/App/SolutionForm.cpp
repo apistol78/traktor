@@ -188,25 +188,31 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFilter"), L"Add New Filter"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFile"), L"Add New File"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Clone"), L"Clone Project"));
+	m_menuProject->add(new ui::MenuItem(L"-"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
 
 	m_menuAggregation = new ui::Menu();
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddFile"), L"Add New File"));
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuAggregation->add(new ui::MenuItem(L"-"));
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.Remove"), L"Remove"));
 
 	m_menuConfiguration = new ui::Menu();
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.AddAggregation"), L"Add New Aggregation"));
+	m_menuConfiguration->add(new ui::MenuItem(L"-"));
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.Remove"), L"Remove"));
 
 	m_menuFilter = new ui::Menu();
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFilter"), L"Add New Filter"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFile"), L"Add New File"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuFilter->add(new ui::MenuItem(L"-"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.Remove"), L"Remove"));
 
 	m_menuFile = new ui::Menu();
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Flatten"), L"Flatten Wild-card..."));
+	m_menuFile->add(new ui::MenuItem(L"-"));
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Remove"), L"Remove"));
 
 	m_menuAggregationItem = new ui::Menu();
@@ -407,16 +413,15 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 	treeFilter->setData(L"PROJECT", project);
 	treeFilter->setData(L"FILTER", filter);
 
-	const RefArray< ProjectItem >& items = filter->getItems();
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : filter->getItems())
 	{
-		if (is_a< Filter >(*i))
-			createTreeFilterItem(treeFilter, project, static_cast< Filter* >(*i));
+		if (is_a< Filter >(item))
+			createTreeFilterItem(treeFilter, project, static_cast< Filter* >(item));
 	}
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : filter->getItems())
 	{
-		if (is_a< sb::File >(*i))
-			createTreeFileItem(treeFilter, project, static_cast< sb::File* >(*i));
+		if (is_a< sb::File >(item))
+			createTreeFileItem(treeFilter, project, static_cast< sb::File* >(item));
 	}
 
 	return treeFilter;
@@ -789,6 +794,18 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 					}
 					fileDialog.destroy();
 				}
+			}
+			else if (command == L"Project.Clone")
+			{
+				auto solutionItem = selectedItem->getParent();
+				auto solution = solutionItem->getData< Solution >(L"SOLUTION");
+
+				Ref< Project > clonedProject = DeepClone(project).create< Project >();
+				clonedProject->setName(project->getName() + L" (Clone)");
+				solution->addProject(clonedProject);
+
+				createTreeProjectItem(solutionItem, clonedProject);
+				solutionItem->expand();	
 			}
 			else if (command == L"Project.Remove")
 			{
