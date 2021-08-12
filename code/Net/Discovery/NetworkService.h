@@ -24,12 +24,9 @@ class T_DLLCLASS NetworkService : public IService
 	T_RTTI_CLASS;
 
 public:
-	NetworkService();
+	NetworkService() = default;
 
-	NetworkService(
-		const std::wstring& type,
-		const PropertyGroup* properties
-	);
+	explicit NetworkService(const std::wstring& type, const PropertyGroup* properties);
 
 	const std::wstring& getType() const;
 
@@ -44,4 +41,3 @@ private:
 
 	}
 }
-

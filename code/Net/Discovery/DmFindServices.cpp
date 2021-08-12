@@ -36,10 +36,6 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", 0, DmFindServices, IDiscoveryMessage)
 
-DmFindServices::DmFindServices()
-{
-}
-
 DmFindServices::DmFindServices(const Guid& managerGuid, const SocketAddressIPv4& replyTo)
 :	m_managerGuid(managerGuid)
 ,	m_replyTo(replyTo)

@@ -10,10 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetworkService", 1, NetworkService, IService)
 
-NetworkService::NetworkService()
-{
-}
-
 NetworkService::NetworkService(
 	const std::wstring& type,
 	const PropertyGroup* properties
