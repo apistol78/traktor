@@ -120,7 +120,6 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 {
-	const int32_t resolutionDenom = 1;
 	VkResult result;
 	int32_t width = 64;
 	int32_t height = 64;
@@ -172,6 +171,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	}
 
 	// Get size of surfce.
+	const int32_t resolutionDenom = 2;
 	width = ANativeWindow_getWidth(sci.window) / resolutionDenom;
 	height = ANativeWindow_getHeight(sci.window) / resolutionDenom;
 #elif defined(__MAC__)
@@ -1312,11 +1312,11 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	uint32_t desiredImageCount = 2;
 
 	// Always use 3 buffers on iOS, seems to be preferred by MoltenVK.
-#if defined(__IOS__)
+#if defined(__IOS__) || defined(__ANDROID__)
 	desiredImageCount = 3;
 #endif
 
-#if defined(__ANDROID__) || defined(__IOS__)
+#if defined(__IOS__)
 	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
 	{
 		presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
@@ -1333,13 +1333,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::debug << L"Using FIFO presentation mode." << Endl;
+		log::info << L"Using FIFO presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
+		log::info << L"Using FIFO (relaxed) presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
+		log::info << L"Using IMMEDIATE presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::debug << L"Using MAILBOX presentation mode." << Endl;
+		log::info << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
@@ -1390,7 +1390,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, presentImages.ptr());
 
-	log::debug << L"Using " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
+	log::info << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
