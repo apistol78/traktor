@@ -688,7 +688,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 	instance = m_outputDatabase->createInstance(
 		instancePath,
-		db::CifDefault,
+		db::CifReplaceExisting,
 		&instanceGuid
 	);
 	if (instance)

@@ -38,7 +38,10 @@ bool NoFileStore::add(const Path& filePath)
 
 bool NoFileStore::remove(const Path& filePath)
 {
-	return FileSystem::getInstance().remove(filePath);
+	// Try to remove file, if remove fails then we assume file didn't exist thus
+	// file store's remove succeeded.
+	FileSystem::getInstance().remove(filePath);
+	return true;
 }
 
 bool NoFileStore::edit(const Path& filePath)

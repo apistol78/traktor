@@ -1,9 +1,9 @@
 #pragma once
 
-#include <map>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/ConnectionString.h"
 #include "Database/IGroupEventListener.h"
@@ -141,7 +141,7 @@ private:
 	Ref< IProviderBus > m_providerBus;
 	Ref< Group > m_rootGroup;
 	mutable Semaphore m_lock;
-	std::map< Guid, Ref< Instance > > m_instanceMap;
+	SmallMap< Guid, Ref< Instance > > m_instanceMap;
 	uint64_t m_lastEntrySqnr;
 
 	// \name IInstanceEventListener

@@ -65,6 +65,11 @@ void LocalInstanceMeta::removeBlob(const std::wstring& name)
 	m_blobs.erase(name);
 }
 
+void LocalInstanceMeta::removeAllBlobs()
+{
+	m_blobs.clear();
+}
+
 bool LocalInstanceMeta::haveBlob(const std::wstring& name) const
 {
 	return m_blobs.find(name) != m_blobs.end();

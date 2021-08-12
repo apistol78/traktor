@@ -181,13 +181,13 @@ bool Instance::commit(uint32_t flags)
 
 		if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 		{
-			log::error << L"Instance commit failed; cannot keep checked out as instance was removed" << Endl;
+			log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;
 			return false;
 		}
 
 		if (!m_providerInstance->commitTransaction())
 		{
-			log::error << L"Instance commit failed; commitTransaction failed" << Endl;
+			log::error << L"Instance commit failed; commitTransaction failed." << Endl;
 			return false;
 		}
 
@@ -195,7 +195,7 @@ bool Instance::commit(uint32_t flags)
 		{
 			if (!m_providerInstance->closeTransaction())
 			{
-				log::error << L"Instance commit failed; closeTransaction failed" << Endl;
+				log::error << L"Instance commit failed; closeTransaction failed." << Endl;
 				return false;
 			}
 		}
@@ -239,6 +239,7 @@ bool Instance::commit(uint32_t flags)
 	if ((m_transactionFlags & TfRemoved) != 0)
 		internalDestroy();
 
+	m_transactionFlags = 0;
 	return true;
 }
 
