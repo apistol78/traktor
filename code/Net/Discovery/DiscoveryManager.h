@@ -28,7 +28,7 @@ class SocketAddressIPv4;
 class IDiscoveryMessage;
 class IService;
 
-/*! \brief
+/*! Discovery manager modes.
  * \ingroup Net
  */
 enum DiscoveryManagerMode
@@ -46,8 +46,6 @@ class T_DLLCLASS DiscoveryManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	DiscoveryManager();
-
 	bool create(uint32_t mode);
 
 	void destroy();
@@ -85,9 +83,9 @@ private:
 	Ref< MulticastUdpSocket > m_multicastRecvSocket;
 	Ref< UdpSocket > m_directSocket;
 	SocketAddressIPv4 m_replyToAddress;
-	Thread* m_threadMulticastListener;
+	Thread* m_threadMulticastListener = nullptr;
 	Guid m_managerGuid;
-	uint32_t m_mode;
+	uint32_t m_mode = 0;
 	AlignedVector< LocalService > m_localServices;
 	Semaphore m_localServicesLock;
 	SmallMap< Guid, ExternalService > m_externalServices;

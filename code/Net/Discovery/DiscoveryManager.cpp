@@ -33,12 +33,6 @@ OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object)
 
-DiscoveryManager::DiscoveryManager()
-:	m_threadMulticastListener(0)
-,	m_mode(0)
-{
-}
-
 bool DiscoveryManager::create(uint32_t mode)
 {
 	// Create multicast sockets.

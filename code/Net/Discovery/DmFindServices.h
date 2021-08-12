@@ -14,9 +14,9 @@ class DmFindServices : public IDiscoveryMessage
 	T_RTTI_CLASS;
 
 public:
-	DmFindServices();
+	DmFindServices() = default;
 
-	DmFindServices(const Guid& managerGuid, const SocketAddressIPv4& replyTo);
+	explicit DmFindServices(const Guid& managerGuid, const SocketAddressIPv4& replyTo);
 
 	const Guid& getManagerGuid() const { return m_managerGuid; }
 

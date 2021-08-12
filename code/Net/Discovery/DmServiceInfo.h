@@ -16,10 +16,9 @@ class DmServiceInfo : public IDiscoveryMessage
 	T_RTTI_CLASS;
 
 public:
-	DmServiceInfo(
-		const Guid& serviceGuid = Guid(),
-		IService* service = 0
-	);
+	DmServiceInfo() = default;
+
+	explicit DmServiceInfo(const Guid& serviceGuid, IService* service);
 
 	const Guid& getServiceGuid() const { return m_serviceGuid; }
 
