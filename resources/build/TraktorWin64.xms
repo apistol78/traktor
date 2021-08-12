@@ -6134,15 +6134,6 @@
 																			</items>
 																		</item>
 																		<item type="Filter">
-																			<name>Lwo</name>
-																			<items>
-																				<item type="File">
-																					<fileName>Formats/Lwo/*.*</fileName>
-																					<items/>
-																				</item>
-																			</items>
-																		</item>
-																		<item type="Filter">
 																			<name>Obj</name>
 																			<items>
 																				<item type="File">
@@ -6195,12 +6186,6 @@
 																	<inheritIncludePaths>true</inheritIncludePaths>
 																	<link>LnkYes</link>
 																	<project ref="/object/projects/item/dependencies/item/project"/>
-																</item>
-																<item type="ExternalDependency" version="3">
-																	<inheritIncludePaths>true</inheritIncludePaths>
-																	<link>LnkYes</link>
-																	<solutionFileName>ExternWin64.xms</solutionFileName>
-																	<projectName>Extern.lwObject</projectName>
 																</item>
 																<item type="ProjectDependency" version="3">
 																	<inheritIncludePaths>true</inheritIncludePaths>
@@ -18144,7 +18129,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[4]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18307,7 +18292,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Remote.Client.App</name>
