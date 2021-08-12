@@ -22,7 +22,7 @@ namespace traktor
 		namespace
 		{
 
-void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstanceMap)
+void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstanceMap)
 {
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);

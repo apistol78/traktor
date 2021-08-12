@@ -43,18 +43,37 @@ bool ActionRemoveAllData::execute(Context* context)
 		}
 	}
 
+	if (!fileStore->edit(instanceMetaPath))
+	{
+		log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
+		return false;
+	}
+
+	instanceMeta->removeAllBlobs();
+
+	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+	{
+		log::error << L"Unable to write instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
+		return false;
+	}
 	return true;
 }
 
 bool ActionRemoveAllData::undo(Context* context)
 {
 	Ref< IFileStore > fileStore = context->getFileStore();
+
+	// Rollback all removed data blobs.
 	for (const auto& renamedFile : m_renamedFiles)
 	{
 		if (!fileStore->rollback(renamedFile))
 			return false;
 	}
 	m_renamedFiles.clear();
+
+	// Rollback meta also since it contain named references to blobs.
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	fileStore->rollback(instanceMetaPath);
 	return true;
 }
 

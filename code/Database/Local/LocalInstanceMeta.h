@@ -34,6 +34,8 @@ public:
 
 	void removeBlob(const std::wstring& name);
 
+	void removeAllBlobs();
+
 	bool haveBlob(const std::wstring& name) const;
 
 	const SmallSet< std::wstring >& getBlobs() const;

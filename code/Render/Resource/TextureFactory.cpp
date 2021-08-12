@@ -77,7 +77,10 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
+	{
+		log::error << L"Unable to read texture; no data associated with instance." << Endl;
 		return nullptr;
+	}
 
 	Reader reader(stream);
 
@@ -85,7 +88,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	reader >> version;
 	if (version != 12)
 	{
-		log::error << L"Unable to read texture, unknown version " << version << Endl;
+		log::error << L"Unable to read texture; unknown version " << version << L"." << Endl;
 		return nullptr;
 	}
 
@@ -244,7 +247,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	{
 		if (imageWidth != imageHeight)
 		{
-			log::error << L"Unable to create texture, width and height must be identical on cube textures" << Endl;
+			log::error << L"Unable to create CUBE texture resource; width and height must be identical on cube textures." << Endl;
 			return nullptr;
 		}
 
