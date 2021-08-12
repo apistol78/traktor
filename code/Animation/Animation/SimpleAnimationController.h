@@ -55,6 +55,7 @@ private:
 	int32_t m_indexHint;
 	float m_timeOffset;
 	float m_lastTime;
+	Pose m_evaluationPose;
 };
 
 	}
