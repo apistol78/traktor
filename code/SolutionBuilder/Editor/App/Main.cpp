@@ -36,17 +36,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryWin32(),
-		0
+		nullptr
 	);
 #elif defined(__APPLE__)
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryCocoa(),
-		0
+		nullptr
 	);
 #elif defined(__LINUX__) || defined(__RPI__)
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryX11(),
-		0
+		nullptr
 	);
 #endif
 
