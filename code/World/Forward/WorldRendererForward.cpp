@@ -556,6 +556,29 @@ void WorldRendererForward::setupTileDataPass(
 		Scalar vnz = viewFrustum.getNearZ();
 		Scalar vfz = viewFrustum.getFarZ();
 
+		// Calculate XY tile frustums.
+		Frustum tileFrustums[ClusterDimXY * ClusterDimXY];
+		for (int32_t y = 0; y < ClusterDimXY; ++y)
+		{
+			Scalar fy = Scalar((float)y) * dy;
+			for (int32_t x = 0; x < ClusterDimXY; ++x)
+			{
+				Scalar fx = Scalar((float)x) * dx;
+				
+				Vector4 a = tl + vx * fx + vy * fy;
+				Vector4 b = tl + vx * (fx + dx) + vy * fy;
+				Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
+				Vector4 d = tl + vx * fx + vy * (fy + dy);
+				
+				auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
+				tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
+				tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
+				tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
+				tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
+			}
+		}
+
+		// Group lights per cluster.
 		for (int32_t z = 0; z < ClusterDimZ; ++z)
 		{
 			Scalar snz = vnz * power(vfz / vnz, Scalar(z) / Scalar(ClusterDimZ));
@@ -609,30 +632,13 @@ void WorldRendererForward::setupTileDataPass(
 			if (sliceLights.empty())
 				continue;
 
-			Frustum tileFrustum;
-			tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
-			tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
-
 			for (int32_t y = 0; y < ClusterDimXY; ++y)
 			{
-				Scalar fy = Scalar((float)y) * dy;
 				for (int32_t x = 0; x < ClusterDimXY; ++x)
 				{
-					Scalar fx = Scalar((float)x) * dx;
-				
-					Vector4 a = tl + vx * fx + vy * fy;
-					Vector4 b = tl + vx * (fx + dx) + vy * fy;
-					Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
-					Vector4 d = tl + vx * fx + vy * (fy + dy);
-				
-					tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
-					tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
-					tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
-					tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
-
-					const uint32_t tileOffset = x + y * ClusterDimXY + z * ClusterDimXY * ClusterDimXY;
-					tileShaderData[tileOffset].lightOffsetAndCount[0] = (int32_t)lightOffset;
-					tileShaderData[tileOffset].lightOffsetAndCount[1] = 0;
+					auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
+					tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
+					tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
 
 					int32_t count = 0;
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
@@ -665,7 +671,10 @@ void WorldRendererForward::setupTileDataPass(
 							break;
 					}
 
+					const uint32_t tileOffset = x + y * ClusterDimXY + z * ClusterDimXY * ClusterDimXY;
+					tileShaderData[tileOffset].lightOffsetAndCount[0] = (int32_t)lightOffset;
 					tileShaderData[tileOffset].lightOffsetAndCount[1] = count;
+
 					lightOffset += count;
 				}
 			}
