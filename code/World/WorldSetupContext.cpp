@@ -1,4 +1,5 @@
 #include "World/IEntityRenderer.h"
+#include "World/Renderable.h"
 #include "World/WorldSetupContext.h"
 #include "World/WorldEntityRenderers.h"
 
@@ -16,13 +17,24 @@ WorldSetupContext::WorldSetupContext(const WorldEntityRenderers* entityRenderers
 {
 }
 
-void WorldSetupContext::setup(const WorldRenderView& worldRenderView, const Object* renderable) const
+void WorldSetupContext::setup(const WorldRenderView& worldRenderView, const Renderable* renderable) const
 {
 	if (!renderable)
 		return;
-	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
+
+	IEntityRenderer* renderer = nullptr;
+
+	if (renderable->m_entityRenderers == m_entityRenderers)
+		renderer = renderable->m_entityRenderer;
+	else
+	{
+		renderer = m_entityRenderers->find(type_of(renderable));
+		renderable->m_entityRenderers = m_entityRenderers;
+		renderable->m_entityRenderer = renderer;
+	}
+
 	if (renderer)
-		renderer->setup(*this, worldRenderView, const_cast< Object* >(renderable));
+		renderer->setup(*this, worldRenderView, const_cast< Renderable* >(renderable));
 }
 
 void WorldSetupContext::flush() const

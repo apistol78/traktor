@@ -24,7 +24,7 @@ void EntityRenderer::gather(
 	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
-	const Entity* entity = mandatory_non_null_type_cast< const Entity* >(renderable);
+	const Entity* entity = static_cast< const Entity* >(renderable);
 	for (auto component : entity->getComponents())
 		context.gather(component, outLights, outProbes);
 }
@@ -35,7 +35,7 @@ void EntityRenderer::setup(
 	Object* renderable
 )
 {
-	Entity* entity = mandatory_non_null_type_cast< Entity* >(renderable);
+	Entity* entity = static_cast< Entity* >(renderable);
 	for (auto component : entity->getComponents())
 		context.setup(worldRenderView, component);
 }
@@ -53,7 +53,7 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
-	Entity* entity = mandatory_non_null_type_cast< Entity* >(renderable);
+	Entity* entity = static_cast< Entity* >(renderable);
 	for (auto component : entity->getComponents())
 		context.build(worldRenderView, worldRenderPass, component);
 }

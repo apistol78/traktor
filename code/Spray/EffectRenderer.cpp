@@ -62,7 +62,7 @@ void EffectRenderer::build(
 	Object* renderable
 )
 {
-	auto effectComponent = mandatory_non_null_type_cast< EffectComponent* >(renderable);
+	auto effectComponent = static_cast< EffectComponent* >(renderable);
 
 	// Do we need to render anything with this technique?
 	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))

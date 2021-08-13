@@ -7,6 +7,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
@@ -393,16 +394,20 @@ void WorldRendererForward::setup(
 	}
 
 	// Gather active lights for this frame.
-	auto& lights = m_frames[frame].lights;
-	auto& probes = m_frames[frame].probes;
-	lights.resize(0);
-	probes.resize(0);
-	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights, probes);
-	if (lights.size() > c_maxLightCount)
-		lights.resize(c_maxLightCount);
+	{
+		T_PROFILER_SCOPE(L"WorldRendererForward gather");
+		auto& lights = m_frames[frame].lights;
+		auto& probes = m_frames[frame].probes;
+		lights.resize(0);
+		probes.resize(0);
+		WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights, probes);
+		if (lights.size() > c_maxLightCount)
+			lights.resize(c_maxLightCount);
+	}
 
 	// Add additional passes by entity renderers.
 	{
+		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
 		context.setup(worldRenderView, rootEntity);
 		context.flush();
@@ -509,6 +514,7 @@ void WorldRendererForward::setupTileDataPass(
 	int32_t frame
 )
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupTileDataPass");
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Enqueue light clustering as a job, is synchronized in before rendering.
 	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
@@ -679,6 +685,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 	render::handle_t outputTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupGBufferPass");
 	const float clearZ = m_settings.viewFarZ;
 
 	// Add GBuffer target set.
@@ -746,6 +753,8 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 	render::handle_t gbufferTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupVelocityPass");
+
 	// Add Velocity target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -828,6 +837,8 @@ render::handle_t WorldRendererForward::setupAmbientOcclusionPass(
 	if (m_ambientOcclusion == nullptr)
 		return 0;
 
+	T_PROFILER_SCOPE(L"WorldRendererForward setupAmbientOcclusionPass");
+
 	// Add ambient occlusion target set.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
@@ -875,6 +886,8 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 {
 	if (m_reflectionsQuality == Quality::Disabled)
 		return 0;
+
+	T_PROFILER_SCOPE(L"WorldRendererForward setupReflectionsPass");
 
 	// Add reflections target.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -998,6 +1011,8 @@ void WorldRendererForward::setupLightPass(
 	render::handle_t& outShadowMapAtlasTargetSetId
 )
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupLightPass");
+
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
@@ -1343,6 +1358,7 @@ void WorldRendererForward::setupVisualPass(
 	int32_t frame
 )
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupVisualPass");
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
 	// Find first, non-local, probe.
@@ -1488,6 +1504,7 @@ void WorldRendererForward::setupProcessPass(
 	render::handle_t visualReadTargetSetId
 ) const
 {
+	T_PROFILER_SCOPE(L"WorldRendererForward setupProcessPass");
 	render::ImageGraphView view;
 
 	view.viewFrustum = worldRenderView.getViewFrustum();

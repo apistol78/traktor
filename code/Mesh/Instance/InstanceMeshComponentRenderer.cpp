@@ -54,7 +54,7 @@ void InstanceMeshComponentRenderer::build(
 	Object* renderable
 )
 {
-	InstanceMeshComponent* meshComponent = mandatory_non_null_type_cast< InstanceMeshComponent* >(renderable);
+	InstanceMeshComponent* meshComponent = static_cast< InstanceMeshComponent* >(renderable);
 	InstanceMesh* mesh = meshComponent->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))

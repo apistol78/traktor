@@ -22,7 +22,7 @@ void LightRenderer::gather(
 	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
-	const LightComponent* lightComponent = mandatory_non_null_type_cast< const LightComponent* >(renderable);
+	const LightComponent* lightComponent = static_cast< const LightComponent* >(renderable);
 	if (lightComponent->getLightType() != LightType::LtDisabled)
 		outLights.push_back(lightComponent);
 }

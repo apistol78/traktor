@@ -33,7 +33,10 @@ public:
 
 	void remove(IEntityRenderer* entityRenderer);
 
-	IEntityRenderer* find(const TypeInfo& entityType) const;
+	IEntityRenderer* find(const TypeInfo& entityType) const {
+		const auto it = m_entityRendererMap.find(&entityType);
+		return it != m_entityRendererMap.end() ? it->second : nullptr;		
+	}
 
 	const RefArray< IEntityRenderer >& get() const { return m_entityRenderers; }
 

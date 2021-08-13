@@ -25,6 +25,7 @@ class RenderGraph;
 	{
 
 class Entity;
+class Renderable;
 class WorldEntityRenderers;
 
 /*! World setup context.
@@ -37,7 +38,7 @@ class T_DLLCLASS WorldSetupContext : public Object
 public:
 	WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph);
 
-	void setup(const WorldRenderView& worldRenderView, const Object* renderable) const;
+	void setup(const WorldRenderView& worldRenderView, const Renderable* renderable) const;
 
 	void flush() const;
 

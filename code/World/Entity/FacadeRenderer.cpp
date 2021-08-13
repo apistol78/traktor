@@ -30,7 +30,7 @@ void FacadeRenderer::gather(
 	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
-	auto facadeComponent = mandatory_non_null_type_cast< const FacadeComponent* >(renderable);
+	auto facadeComponent = static_cast< const FacadeComponent* >(renderable);
 	for (auto childEntity : facadeComponent->getVisibleEntities())
 		context.gather(childEntity, outLights, outProbes);
 }
@@ -41,7 +41,7 @@ void FacadeRenderer::setup(
 	Object* renderable
 )
 {
-	auto facadeComponent = mandatory_non_null_type_cast< const FacadeComponent* >(renderable);
+	auto facadeComponent = static_cast< const FacadeComponent* >(renderable);
 	for (auto childEntity : facadeComponent->getVisibleEntities())
 		context.setup(worldRenderView, childEntity);
 }

@@ -111,7 +111,7 @@ void DecalRenderer::build(
 	Object* renderable
 )
 {
-	DecalComponent* decalComponent = mandatory_non_null_type_cast< DecalComponent* >(renderable);
+	DecalComponent* decalComponent = static_cast< DecalComponent* >(renderable);
 	const Transform& transform = decalComponent->getTransform();
 
 	float s = decalComponent->getSize();

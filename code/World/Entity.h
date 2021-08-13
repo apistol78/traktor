@@ -5,6 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
+#include "World/Renderable.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -25,7 +26,7 @@ class IEntityComponent;
 /*! World entity class.
  * \ingroup World
  */
-class T_DLLCLASS Entity : public Object
+class T_DLLCLASS Entity : public Renderable
 {
 	T_RTTI_CLASS;
 

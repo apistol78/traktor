@@ -43,7 +43,7 @@ void MeshComponentRenderer::build(
 	Object* renderable
 )
 {
-	MeshComponent* meshComponent = mandatory_non_null_type_cast< MeshComponent* >(renderable);
+	MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
 	meshComponent->build(context, worldRenderView, worldRenderPass);
 }
 

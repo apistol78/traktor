@@ -5,7 +5,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IEntityComponent", IEntityComponent, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IEntityComponent", IEntityComponent, Renderable)
 
 	}
 }

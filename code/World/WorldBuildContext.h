@@ -26,6 +26,7 @@ class RenderContext;
 
 class Entity;
 class IWorldRenderPass;
+class Renderable;
 class WorldEntityRenderers;
 class WorldRenderView;
 
@@ -39,7 +40,7 @@ class T_DLLCLASS WorldBuildContext : public Object
 public:
 	WorldBuildContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderContext* renderContext);
 
-	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, const Object* renderable) const;
+	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, const Renderable* renderable) const;
 
 	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass) const;
 

@@ -19,6 +19,7 @@ namespace traktor
 class Entity;
 class LightComponent;
 class ProbeComponent;
+class Renderable;
 class WorldEntityRenderers;
 
 /*! World gather context.
@@ -31,7 +32,7 @@ class T_DLLCLASS WorldGatherContext : public Object
 public:
 	explicit WorldGatherContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity);
 
-	void gather(const Object* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const;
+	void gather(const Renderable* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const;
 
 	const Entity* getRootEntity() const { return m_rootEntity; }
 

@@ -23,8 +23,6 @@ class T_DLLCLASS GroupRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	explicit GroupRenderer();
-
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
