@@ -154,10 +154,15 @@ void ProfilerDialog::receivedPerfSets()
 	m_performanceGrid->removeAllRows();
 
 	const TpsRuntime& runtime = m_connection->getPerformance< TpsRuntime >();
+
+	m_varianceUpdate.insert(runtime.update);
+	m_varianceBuild.insert(runtime.build);
+	m_varianceRender.insert(runtime.render);
+
 	m_performanceGrid->addRow(createPerformanceRow(L"FPS", str(L"%.2f", runtime.fps)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Update", str(L"%.2f ms", runtime.update * 1000.0f)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms", runtime.build * 1000.0f)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Render", str(L"%.2f ms", runtime.render * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Update", str(L"%.2f ms (%.2f ms, %.2f)", runtime.update * 1000.0f, m_varianceUpdate.getMean() * 1000.0f, m_varianceUpdate.getVariance())));
+	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms (%.2f ms, %.2f)", runtime.build * 1000.0f, m_varianceBuild.getMean() * 1000.0f, m_varianceBuild.getVariance())));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render", str(L"%.2f ms (%.2f ms, %.2f)", runtime.render * 1000.0f, m_varianceRender.getMean() * 1000.0f, m_varianceRender.getVariance())));
 	m_performanceGrid->addRow(createPerformanceRow(L"Physics", str(L"%.2f ms", runtime.physics * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Input", str(L"%.2f ms", runtime.input * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Garbage Collect", str(L"%.2f ms", runtime.garbageCollect * 1000.0f)));
@@ -206,6 +211,10 @@ void ProfilerDialog::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	{
 		double currentTime = m_chart->positionToTime(getInnerRect().getWidth() / 2);
 		m_chart->showRange(currentTime - 0.5f / 60.0f, currentTime + 0.5f / 60.0f);
+
+		m_varianceUpdate = Variance();
+		m_varianceBuild = Variance();
+		m_varianceRender = Variance();
 	}
 }
 

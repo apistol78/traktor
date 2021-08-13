@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Variance.h"
 #include "Runtime/Editor/TargetConnection.h"
 #include "Ui/Dialog.h"
 
@@ -42,6 +43,9 @@ private:
 	Ref< ui::BuildChartControl > m_chart;
 	SmallMap< uint32_t, int32_t > m_threadIdToLane;
 	SmallMap< uint16_t, std::wstring > m_dictionary;
+	Variance m_varianceUpdate;
+	Variance m_varianceBuild;
+	Variance m_varianceRender;
 	int32_t m_nextThreadLane;
 	bool m_recording;
 
