@@ -364,11 +364,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 #endif
 
 			// Build this pass.
+			T_PROFILER_BEGIN(L"RenderGraph build \"" + pass->getName() + L"\"");
 			for (const auto& build : pass->getBuilds())
 			{
 				build(*this, renderContext);
 				T_FATAL_ASSERT(!renderContext->havePendingDraws());
 			}
+			T_PROFILER_END();
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 			if (m_profiler)

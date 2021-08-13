@@ -12,15 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupRenderer", GroupRenderer, IEntityRenderer)
 
-GroupRenderer::GroupRenderer()
-{
-}
-
 const TypeInfoSet GroupRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet<
-		GroupComponent
-	>();
+	return makeTypeInfoSet< GroupComponent >();
 }
 
 void GroupRenderer::gather(
@@ -30,11 +24,9 @@ void GroupRenderer::gather(
 	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
-	if (auto groupComponent = dynamic_type_cast< const GroupComponent* >(renderable))
-	{
-		for (auto childEntity : groupComponent->getEntities())
-			context.gather(childEntity, outLights, outProbes);
-	}
+	auto groupComponent = static_cast< const GroupComponent* >(renderable);
+	for (auto childEntity : groupComponent->getEntities())
+		context.gather(childEntity, outLights, outProbes);
 }
 
 void GroupRenderer::setup(
@@ -43,11 +35,9 @@ void GroupRenderer::setup(
 	Object* renderable
 )
 {
-	if (auto groupComponent = dynamic_type_cast< GroupComponent* >(renderable))
-	{
-		for (auto childEntity : groupComponent->getEntities())
-			context.setup(worldRenderView, childEntity);
-	}
+	auto groupComponent = static_cast< GroupComponent* >(renderable);
+	for (auto childEntity : groupComponent->getEntities())
+		context.setup(worldRenderView, childEntity);
 }
 
 void GroupRenderer::setup(
@@ -63,11 +53,9 @@ void GroupRenderer::build(
 	Object* renderable
 )
 {
-	if (auto groupComponent = dynamic_type_cast< GroupComponent* >(renderable))
-	{
-		for (auto childEntity : groupComponent->getEntities())
-			context.build(worldRenderView, worldRenderPass, childEntity);
-	}
+	auto groupComponent = static_cast< GroupComponent* >(renderable);
+	for (auto childEntity : groupComponent->getEntities())
+		context.build(worldRenderView, worldRenderPass, childEntity);
 }
 
 void GroupRenderer::build(

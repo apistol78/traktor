@@ -1,4 +1,5 @@
 #include "World/IEntityRenderer.h"
+#include "World/Renderable.h"
 #include "World/WorldGatherContext.h"
 #include "World/WorldEntityRenderers.h"
 
@@ -15,11 +16,22 @@ WorldGatherContext::WorldGatherContext(const WorldEntityRenderers* entityRendere
 {
 }
 
-void WorldGatherContext::gather(const Object* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const
+void WorldGatherContext::gather(const Renderable* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const
 {
 	if (!renderable)
 		return;
-	IEntityRenderer* renderer = m_entityRenderers->find(type_of(renderable));
+
+	IEntityRenderer* renderer = nullptr;
+
+	if (renderable->m_entityRenderers == m_entityRenderers)
+		renderer = renderable->m_entityRenderer;
+	else
+	{
+		renderer = m_entityRenderers->find(type_of(renderable));
+		renderable->m_entityRenderers = m_entityRenderers;
+		renderable->m_entityRenderer = renderer;
+	}
+
 	if (renderer)
 		renderer->gather(*this, renderable, outLights, outProbes);
 }

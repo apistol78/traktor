@@ -47,11 +47,5 @@ void WorldEntityRenderers::remove(IEntityRenderer* entityRenderer)
 	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
 }
 
-IEntityRenderer* WorldEntityRenderers::find(const TypeInfo& entityType) const
-{
-	const auto i = m_entityRendererMap.find(&entityType);
-	return i != m_entityRendererMap.end() ? i->second : nullptr;
-}
-
 	}
 }

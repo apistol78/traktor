@@ -170,7 +170,7 @@ void ProbeRenderer::gather(
 	AlignedVector< const ProbeComponent* >& outProbes
 )
 {
-	const ProbeComponent* probeComponent = mandatory_non_null_type_cast< const ProbeComponent* >(renderable);
+	const ProbeComponent* probeComponent = static_cast< const ProbeComponent* >(renderable);
 	outProbes.push_back(probeComponent);
 }
 
@@ -491,7 +491,7 @@ void ProbeRenderer::build(
 	Object* renderable
 )
 {
-	ProbeComponent* probeComponent = mandatory_non_null_type_cast< ProbeComponent* >(renderable);
+	ProbeComponent* probeComponent = static_cast< ProbeComponent* >(renderable);
 
 	if (!m_probeShader)
 		return;
