@@ -26,12 +26,7 @@ class AccShapeVertexPool : public Object
 public:
 	struct Range
 	{
-		render::VertexBuffer* vertexBuffer;
-
-		Range()
-		:	vertexBuffer(0)
-		{
-		}
+		render::VertexBuffer* vertexBuffer = nullptr;
 	};
 
 	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames, const AlignedVector< render::VertexElement >& vertexElements);
