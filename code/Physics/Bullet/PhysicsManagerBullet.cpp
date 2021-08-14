@@ -236,6 +236,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
 
+#if 0
 		// Fix up hit normal, Bullet always report "edge" normal which is incorrect sometimes.
 		if (convexResult.m_localShapeInfo)
 		{
@@ -253,6 +254,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 				}
 			}
 		}
+#endif
 
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
 	}
