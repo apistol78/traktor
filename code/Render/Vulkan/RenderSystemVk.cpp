@@ -575,7 +575,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	if (dynamic)
 	{
 		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(m_context, bufferSize, vibd, vads, cs.get(), m_statistics.vertexBuffers);
-		if (vb->create(4))
+		if (vb->create(3))
 			return vb;
 	}
 	else
@@ -602,7 +602,7 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 	if (dynamic)
 	{
 		Ref< StructBufferDynamicVk > buffer = new StructBufferDynamicVk(m_context, bufferSize, m_statistics.structBuffers);
-		if (buffer->create(4))
+		if (buffer->create(3))
 			return buffer;
 	}
 	else
