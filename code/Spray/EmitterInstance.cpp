@@ -36,18 +36,6 @@ const uint32_t c_maxEmitSingleShot = 400;
 
 const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
-#if defined(_WIN32) || defined(__APPLE__)
-int pointPredicate(void* context, const void* lh, const void* rh)
-#else
-int pointPredicate(const void* lh, const void* rh, void* context)
-#endif
-{
-	const Plane& cameraPlane = *static_cast< const Plane* >(context);
-	const Point& plh = *static_cast< const Point* >(lh);
-	const Point& prh = *static_cast< const Point* >(rh);
-	return (cameraPlane.distance(plh.position) < cameraPlane.distance(prh.position)) ? 1 : -1;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
@@ -353,13 +341,9 @@ void EmitterInstance::updateTask(float deltaTime)
 		m_skip < 4
 	)
 	{
-#if defined(_WIN32)
-		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif defined(__LINUX__) || defined(__RPI__)
-		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(__PS3__) && !defined(__PS4__)
-		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
-#endif
+		std::sort(m_renderPoints.begin(), m_renderPoints.end(), [=](const Point& lh, const Point& rh) {
+			return (bool)(m_sortPlane.distance(lh.position) < m_sortPlane.distance(rh.position));
+		});
 	}
 
 	if (m_emitter->getEffect())
