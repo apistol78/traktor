@@ -198,23 +198,28 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	))
 		return;
 
-	const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
-	const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
-
 	auto jointBufferLast = m_jointBuffers[0];
 	auto jointBufferCurrent = m_jointBuffers[1];
 
-	// Interpolate between updates to get current build skin transforms.
-	mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
-	for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
+	// Update joint buffers only for first pass of frame, buffers are implicitly double buffered
+	// and cannot be updated multiple times per frame.
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
 	{
-		auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
-		auto rotation = lerp(skinTransformsLastUpdate[i], skinTransformsCurrentUpdate[i], interval);
-		translation.storeAligned(jointData->translation);
-		rotation.storeAligned(jointData->rotation);
-		jointData++;
+		const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
+		const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
+
+		// Interpolate between updates to get current build skin transforms.
+		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
+		for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
+		{
+			auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
+			auto rotation = lerp(skinTransformsLastUpdate[i], skinTransformsCurrentUpdate[i], interval);
+			translation.storeAligned(jointData->translation);
+			rotation.storeAligned(jointData->rotation);
+			jointData++;
+		}
+		jointBufferCurrent->unlock();
 	}
-	jointBufferCurrent->unlock();
 
 	m_mesh->build(
 		context.getRenderContext(),
