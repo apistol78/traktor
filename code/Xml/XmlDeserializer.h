@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Serialization/Serializer.h"
 #include "Xml/XmlPullParser.h"
 
@@ -91,20 +92,15 @@ private:
 	struct Entry
 	{
 		std::wstring name;
-		int index;
-		SmallMap< std::wstring, int > dups;
-
-		Entry()
-		:	index(0)
-		{
-		}
+		int32_t index = 0;
+		SmallMap< std::wstring, int32_t > dups;
 	};
 
 	AlignedVector< Entry > m_stack;
 	uint32_t m_stackPointer;
 	SmallMap< std::wstring, Ref< ISerializable > > m_refs;
 	std::wstring m_value;
-	AlignedVector< float > m_values;
+	StaticVector< float, 16 > m_values;
 
 	std::wstring stackPath();
 

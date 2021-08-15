@@ -45,7 +45,7 @@ private:
 	XML_Parser m_parser;
 	uint8_t m_buf[4096];
 	bool m_done;
-	std::vector< wchar_t > m_cdata;
+	AlignedVector< wchar_t > m_cdata;
 	XmlPullParser::Event m_eventQueue[1024];
 	uint32_t m_eventQueueHead;
 	uint32_t m_eventQueueTail;
@@ -75,13 +75,13 @@ XmlPullParserImpl::XmlPullParserImpl(IStream* stream, const std::wstring& name)
 ,	m_eventQueueHead(0)
 ,	m_eventQueueTail(0)
 {
-	m_parser = XML_ParserCreate(0);
+	m_parser = XML_ParserCreate(nullptr);
 	T_ASSERT_M (m_parser, L"Unable to create XML parser");
 
 	XML_SetUserData(m_parser, this);
 	XML_SetElementHandler(m_parser, startElement, endElement);
 	XML_SetCharacterDataHandler(m_parser, characterData);
-	XML_SetUnknownEncodingHandler(m_parser, unknownEncoding, 0);
+	XML_SetUnknownEncodingHandler(m_parser, unknownEncoding, nullptr);
 
 	m_eventQueue[0].type = XmlPullParser::EventType::StartDocument;
 	m_eventQueueTail++;
@@ -109,7 +109,7 @@ bool XmlPullParserImpl::parse()
 {
 	if (!m_done)
 	{
-		int nread = m_stream->read(m_buf, sizeof(m_buf));
+		int64_t nread = m_stream->read(m_buf, sizeof(m_buf));
 		if (nread < 0)
 		{
 			log::error << L"Unexpected out-of-data in XML parser (" << m_name << L")." << Endl;
@@ -117,10 +117,10 @@ bool XmlPullParserImpl::parse()
 		}
 
 		m_done = nread < sizeof(m_buf);
-		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
+		if (XML_Parse(m_parser, (const char*)m_buf, (int)nread, m_done) == XML_STATUS_ERROR)
 		{
 			XML_Size line = XML_GetCurrentLineNumber(m_parser);
-			log::error << L"XML parse error at line " << int32_t(line) << L" (" << m_name << L")." << Endl;
+			log::error << L"XML parse error at line " << (int32_t)line << L" (" << m_name << L")." << Endl;
 
 			XmlPullParser::Event* evt = allocEvent();
 			if (!evt)
@@ -128,7 +128,6 @@ bool XmlPullParserImpl::parse()
 
 			evt->type = XmlPullParser::EventType::Invalid;
 			pushEvent();
-
 			return true;
 		}
 	}
@@ -152,7 +151,7 @@ bool XmlPullParserImpl::parse()
 
 XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 {
-	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];
+	auto& evt = m_eventQueue[m_eventQueueTail];
 	evt.type = XmlPullParser::EventType::Invalid;
 	evt.value.clear();
 	evt.attr.clear();
@@ -162,6 +161,7 @@ XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 void XmlPullParserImpl::pushEvent()
 {
 	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
+	T_ASSERT(m_eventQueueTail != m_eventQueueHead);
 }
 
 void XmlPullParserImpl::pushCharacterData()
@@ -206,7 +206,7 @@ void XMLCALL XmlPullParserImpl::startElement(void* userData, const XML_Char* nam
 		evt->type = XmlPullParser::EventType::StartElement;
 		evt->value = xmltows(name);
 
-		for (int i = 0; atts[i]; i += 2)
+		for (int32_t i = 0; atts[i]; i += 2)
 			evt->attr.push_back(std::make_pair(xmltows(atts[i]), xmltows(atts[i + 1])));
 
 		pp->pushEvent();
@@ -236,7 +236,7 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 	T_ASSERT(len > 0);
 
 	std::wstring ws = xmltows(s, &s[len]);
-	pp->m_cdata.insert(pp->m_cdata.end(), ws.begin(), ws.end());
+	pp->m_cdata.insert(pp->m_cdata.end(), ws.c_str(), ws.c_str() + len);
 }
 
 int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info)
@@ -248,9 +248,9 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 		for (int32_t i = 0; i < 256; ++i)
 			info->map[i] = i;
 
-		info->data = 0;
-		info->convert = 0;
-		info->release = 0;
+		info->data = nullptr;
+		info->convert = nullptr;
+		info->release = nullptr;
 
 		return XML_STATUS_OK;
 	}

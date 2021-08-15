@@ -51,7 +51,6 @@ XmlDeserializer::XmlDeserializer(IStream* stream, const std::wstring& name)
 {
 	T_ASSERT_M (stream->canRead(), L"Incorrect direction on input stream");
 	m_stack.reserve(32);
-	m_values.reserve(16);
 }
 
 Serializer::Direction XmlDeserializer::getDirection() const
@@ -169,7 +168,7 @@ void XmlDeserializer::operator >> (const Member< Color4ub >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(4);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->r = uint8_t(m_values[0]);
@@ -183,7 +182,7 @@ void XmlDeserializer::operator >> (const Member< Color4f >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(4);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->set(
@@ -206,7 +205,7 @@ void XmlDeserializer::operator >> (const Member< Vector2 >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(2);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 2);
 
 	m->x = m_values[0];
@@ -218,7 +217,7 @@ void XmlDeserializer::operator >> (const Member< Vector4 >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(4);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->set(
@@ -234,15 +233,13 @@ void XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(3 * 3);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 3 * 3);
 
 	for (int r = 0; r < 3; ++r)
 	{
 		for (int c = 0; c < 3; ++c)
-		{
 			m->e[r][c] = m_values[r * 3 + c];
-		}
 	}
 }
 
@@ -251,7 +248,7 @@ void XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(4 * 4);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4 * 4);
 
 	for (int r = 0; r < 4; ++r)
@@ -266,7 +263,7 @@ void XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	T_CHECK_STATUS;
 	nextElementValue(m.getName(), m_value);
 
-	m_values.resize(0); m_values.reserve(4);
+	m_values.resize(0);
 	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->e.set(
