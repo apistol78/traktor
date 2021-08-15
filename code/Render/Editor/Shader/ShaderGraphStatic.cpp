@@ -701,7 +701,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
 
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
@@ -716,12 +719,16 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 		if (!state)
 			continue;
 
-		pixelOutputNode->setPriority(state->getPriority());
-		pixelOutputNode->setRenderState(state->getRenderState());
-		pixelOutputNode->setPrecisionHint(state->getPrecisionHint());
+		Ref< PixelOutput > resolvedPixelOutput = new PixelOutput();
+		resolvedPixelOutput->setTechnique(pixelOutputNode->getTechnique());
+		resolvedPixelOutput->setPriority(state->getPriority());
+		resolvedPixelOutput->setRenderState(state->getRenderState());
+		resolvedPixelOutput->setRegisterCount(pixelOutputNode->getRegisterCount());
+		resolvedPixelOutput->setPrecisionHint(state->getPrecisionHint());
 
 		shaderGraph->removeEdge(edge);
 		shaderGraph->removeNode(state);
+		shaderGraph->replace(pixelOutputNode, resolvedPixelOutput);
 
 		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 	}
