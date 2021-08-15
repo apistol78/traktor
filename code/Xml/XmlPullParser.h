@@ -2,13 +2,14 @@
 
 #include <string>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_XML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -40,21 +41,16 @@ public:
 	};
 
 	typedef std::pair< std::wstring, std::wstring > Attribute;
-	typedef std::vector< Attribute > Attributes;
+	typedef AlignedVector< Attribute > Attributes;
 
 	struct Event
 	{
-		EventType type;
+		EventType type = EventType::Invalid;
 		std::wstring value;
 		Attributes attr;
-
-		Event()
-		:	type(EventType::Invalid)
-		{
-		}
 	};
 
-	XmlPullParser(IStream* stream, const std::wstring& name = L"");
+	explicit XmlPullParser(IStream* stream, const std::wstring& name = L"");
 
 	virtual ~XmlPullParser();
 

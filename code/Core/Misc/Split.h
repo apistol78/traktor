@@ -99,6 +99,9 @@ struct Split
 		typename String::size_type n = str.length();
 		typename String::size_type start, stop;
 
+		if (max == 0)
+			return 0;
+
 		start = str.find_first_not_of(delimiters);
 		while (start < n)
 		{
@@ -107,15 +110,13 @@ struct Split
 				stop = n;
 
 			if (stop > start || keepEmpty)
-				out.push_back(_CP::convert(str.substr(start, stop - start)));
-			start = stop + 1;
-
-			if (out.size() >= max)
 			{
-				if (start < n)
-					out.push_back(_CP::convert(str.substr(start)));
-				break;
+				out.push_back(_CP::convert(str.substr(start, stop - start)));
+				if (out.size() >= max)
+					break;
 			}
+
+			start = stop + 1;
 		}
 
 		if (n == 0 && keepEmpty)
@@ -131,7 +132,7 @@ struct Split
 		typename String::size_type x = delimiter.length();
 		typename String::size_type start, stop;
 
-		if (n == 0)
+		if (n == 0 || max == 0)
 			return 0;
 
 		start = 0;
@@ -142,16 +143,13 @@ struct Split
 				stop = n;
 
 			if (stop > start)
+			{
 				out.push_back(_CP::convert(str.substr(start, stop - start)));
+				if (out.size() >= max)
+					break;
+			}
 
 			start = stop + x;
-
-			if (out.size() >= max)
-			{
-				if (start < n)
-					out.push_back(_CP::convert(str.substr(start)));
-				break;
-			}
 		}
 
 		return out.size();

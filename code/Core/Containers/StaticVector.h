@@ -31,10 +31,7 @@ public:
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
 
-		const_iterator()
-		:	m_ptr(nullptr)
-		{
-		}
+		const_iterator() = default;
 
 		const_iterator(const const_iterator& r)
 		:	m_ptr(r.m_ptr)
@@ -144,7 +141,7 @@ public:
 
 	protected:
 		friend class StaticVector;
-		ItemType* m_ptr;
+		ItemType* m_ptr = nullptr;
 
 		explicit const_iterator(const ItemType* ptr)
 		:	m_ptr(const_cast< ItemType* >(ptr))
@@ -262,18 +259,15 @@ public:
 
 	enum { Capacity = Capacity_ };
 
-	StaticVector()
-	:	m_size(0)
-	{
-	}
+	StaticVector() = default;
 
-	StaticVector(size_t size)
+	explicit StaticVector(size_t size)
 	:	m_size(size)
 	{
 	}
 
 	template < typename IteratorType >
-	StaticVector(const IteratorType& from, const IteratorType& to)
+	explicit StaticVector(const IteratorType& from, const IteratorType& to)
 	:	m_size(0)
 	{
 		for (IteratorType i = from; i != to; ++i)
@@ -516,6 +510,24 @@ public:
 		return m_items;
 	}
 
+	/*!
+	 */
+	ItemType& operator [] (size_t index)
+	{
+		T_ASSERT(index < Capacity);
+		return m_items[index];
+	}
+
+	/*!
+	 */
+	const ItemType& operator [] (size_t index) const
+	{
+		T_ASSERT(index < Capacity);
+		return m_items[index];
+	}
+
+	/*!
+	 */
 	StaticVector& operator = (const StaticVector& src)
 	{
 		for (size_t i = 0; i < src.m_size; ++i)
@@ -524,6 +536,8 @@ public:
 		return *this;
 	}
 
+	/*!
+	 */
 	bool operator == (const StaticVector& rh) const
 	{
 		if (m_size != rh.m_size)
@@ -538,13 +552,15 @@ public:
 		return true;
 	}
 
+	/*!
+	 */
 	bool operator != (const StaticVector& rh) const
 	{
 		return !(*this == rh);
 	}
 
 private:
-	size_t m_size;
+	size_t m_size = 0;
 	ItemType m_items[Capacity];
 };
 
