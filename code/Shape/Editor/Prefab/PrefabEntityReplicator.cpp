@@ -272,6 +272,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 
 	Ref< world::EntityData > outputMeshEntity = new world::EntityData();
 	outputMeshEntity->setId(Guid::create());
+	outputMeshEntity->setName(entityData->getName());
 	outputMeshEntity->setTransform(entityData->getTransform());
 	outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputGuid)));
 	outputGroup->addEntityData(outputMeshEntity);

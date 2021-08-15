@@ -1,7 +1,9 @@
 #include <limits>
 #include <functional>
 #include "Core/Functor/Functor.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -82,6 +84,37 @@ const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_lightmapDirectionalIdSeed(L"{BBCB9EFD-F519-49BE-A47A-66B7F1F0F5D1}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
+
+/*! Log entity hierarchy. */
+void describeEntity(OutputStream& os, const world::EntityData* entityData)
+{
+	RefArray< const world::EntityData > children;
+	scene::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> scene::Traverser::VisitorResult
+	{
+		children.push_back(childEntityData);
+		return scene::Traverser::VrSkip;
+	});
+
+	os << entityData->getName() << L" " << entityData->getId().format() << Endl;
+
+	if (!entityData->getComponents().empty())
+	{
+		os << L"Components:" << Endl;
+		os << IncreaseIndent;
+		for (auto component : entityData->getComponents())
+			os << type_name(component) << Endl;
+		os << DecreaseIndent;
+	}
+
+	if (!children.empty())
+	{
+		os << L"Children:" << Endl;
+		os << IncreaseIndent;
+		for (auto child : children)
+			describeEntity(os, child);
+		os << DecreaseIndent;
+	}
+}
 
 /*! Add light to tracer scene.
  * \return True if light should be removed from scene (fully baked).
@@ -340,6 +373,9 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	if (!tracerEnable)
 		return true;
 
+	// Create temporary output path for debug info etc.
+	FileSystem::getInstance().makeAllDirectories(L"temp/Bake");
+
 	// Create entity replicators.
 	TypeInfoSet entityReplicatorTypes;
 	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
@@ -475,6 +511,18 @@ bool BakePipelineOperator::build(
 			}
 		}
 
+		// Log pre-"layer entity hierarchy".
+		{
+			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (Before).txt", File::FmWrite);
+			if (f)
+			{
+				Ref< FileOutputStream > fos = new FileOutputStream(f, new Utf8Encoding());
+				describeEntity(*fos, flattenedLayer);
+				fos->close();
+				f->close();
+			}
+		}
+
 		// Collect all entities from layer.
 		RefArray< world::EntityData > flattenEntityData;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
@@ -507,6 +555,19 @@ bool BakePipelineOperator::build(
 
 			return scene::Traverser::VrContinue;
 		});
+
+		// Log flatten-"layer entity hierarchy".
+		{
+			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (Flatten).txt", File::FmWrite);
+			if (f)
+			{
+				Ref< FileOutputStream > fos = new FileOutputStream(f, new Utf8Encoding());
+				for (auto flatten : flattenEntityData)
+					describeEntity(*fos, flatten);
+				fos->close();
+				f->close();
+			}
+		}
 
 		// Traverse and visit all entities in layer.
 		for (auto inoutEntityData : flattenEntityData)
@@ -695,6 +756,18 @@ bool BakePipelineOperator::build(
 				lightmapDiffuseId.permutate();
 				lightmapDirectionalId.permutate();
 				outputId.permutate();
+			}
+		}
+
+		// Log post-"layer entity hierarchy".
+		{
+			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (After).txt", File::FmWrite);
+			if (f)
+			{
+				Ref< FileOutputStream > fos = new FileOutputStream(f, new Utf8Encoding());
+				describeEntity(*fos, flattenedLayer);
+				fos->close();
+				f->close();
 			}
 		}
 
