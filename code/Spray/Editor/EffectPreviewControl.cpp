@@ -478,9 +478,13 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_sceneInstance->updateEntity(update);
 
 	// Build a root entity by gathering entities from containers.
-	world::GroupComponent rootGroup;
+	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	Ref< world::Entity > rootEntity = new world::Entity();
+	rootEntity->setComponent(rootGroup);
+
 	// m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
-	rootGroup.addEntity(m_sceneInstance->getRootEntity());
+	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+
 	if (m_effectEntity)
 	{
 		float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
@@ -499,11 +503,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_effectEntity->setTransform(effectTransform);
 		m_effectEntity->update(update);
-		rootGroup.addEntity(m_effectEntity);
-	}
 
-	world::Entity rootEntity;
-	rootEntity.setComponent(&rootGroup);
+		rootGroup->addEntity(m_effectEntity);
+	}
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -517,7 +519,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_worldRenderView, &rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
