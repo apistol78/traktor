@@ -23,15 +23,12 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 
 		if (pinCount > 0)
 		{
-			m_inputPins.reserve(pinCount);
+			m_inputPins = new InputPin [pinCount];
+			m_inputPinCount = pinCount;
 
-			InputPin* pins = new InputPin [pinCount];
+			InputPin* ptr = m_inputPins;
 			for (auto pin = inputPins; pin->name; ++pin)
-			{
-				*pins = InputPin(this, c_null, pin->name, pin->optional);
-				m_inputPins.push_back(pins);
-				++pins;
-			}
+				*ptr++ = InputPin(this, c_null, pin->name, pin->optional);
 		}
 	}
 
@@ -43,47 +40,42 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 
 		if (pinCount > 0)
 		{
-			m_outputPins.reserve(pinCount);
+			m_outputPins = new OutputPin [pinCount];
+			m_outputPinCount = pinCount;
 
-			OutputPin* pins = new OutputPin [pinCount];
+			OutputPin* ptr = m_outputPins;
 			for (auto pin = outputPins; pin->name; ++pin)
-			{
-				*pins = OutputPin(this, c_null, pin->name);
-				m_outputPins.push_back(pins);
-				++pins;
-			}
+				*ptr++ = OutputPin(this, c_null, pin->name); 
 		}
 	}
 }
 
 ImmutableNode::~ImmutableNode()
 {
-	if (!m_inputPins.empty())
-		delete[] m_inputPins.front();
-	if (!m_outputPins.empty())
-		delete[] m_outputPins.front();
+	delete[] m_inputPins;
+	delete[] m_outputPins;
 }
 
 int ImmutableNode::getInputPinCount() const
 {
-	return (int)m_inputPins.size();
+	return m_inputPinCount;
 }
 
 const InputPin* ImmutableNode::getInputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < (int)m_inputPins.size());
-	return m_inputPins[index];
+	T_ASSERT(index >= 0 && index < m_inputPinCount);
+	return &m_inputPins[index];
 }
 
 int ImmutableNode::getOutputPinCount() const
 {
-	return (int)m_outputPins.size();
+	return m_outputPinCount;
 }
 
 const OutputPin* ImmutableNode::getOutputPin(int index) const
 {
-	T_ASSERT(index >= 0 && index < (int)m_outputPins.size());
-	return m_outputPins[index];
+	T_ASSERT(index >= 0 && index < m_outputPinCount);
+	return &m_outputPins[index];
 }
 
 	}

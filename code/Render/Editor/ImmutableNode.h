@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
@@ -41,7 +40,7 @@ public:
 		const wchar_t* name;
 	};
 
-	ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
+	explicit ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
 
 	virtual ~ImmutableNode();
 
@@ -54,8 +53,10 @@ public:
 	virtual const OutputPin* getOutputPin(int index) const override final;
 
 private:
-	AlignedVector< InputPin* > m_inputPins;
-	AlignedVector< OutputPin* > m_outputPins;
+	InputPin* m_inputPins = nullptr;
+	OutputPin* m_outputPins = nullptr;
+	int32_t m_inputPinCount = 0;
+	int32_t m_outputPinCount = 0;
 
 	ImmutableNode& operator = (const ImmutableNode&) { T_FATAL_ERROR; return *this; }
 };
