@@ -53,7 +53,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 4 * sizeof(EmitterVertex), false);
-	T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
+	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	EmitterVertex* vertex = (EmitterVertex*)m_vertexBuffer->lock();
 	for (int32_t i = 0; i < 4; ++i)
