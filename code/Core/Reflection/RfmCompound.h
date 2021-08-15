@@ -28,7 +28,7 @@ public:
 
 	void addMember(ReflectionMember* member);
 
-	void removeMember(ReflectionMember* member);
+	bool removeMember(ReflectionMember* member);
 
 	uint32_t getMemberCount() const;
 

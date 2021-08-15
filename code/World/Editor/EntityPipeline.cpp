@@ -19,6 +19,28 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+bool removeMember(RfmCompound* owner, ReflectionMember* member)
+{
+	if (owner->removeMember(member))
+		return true;
+
+	// Unable to remove from this compound, recurse with each member compound.
+	for (auto c : owner->getMembers())
+	{
+		if (auto cc = dynamic_type_cast< RfmCompound* >(c))
+		{
+			if (removeMember(cc, member))
+				return true;
+		}
+	}
+
+	return false;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipeline, editor::IPipeline)
 
@@ -125,24 +147,6 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const Object* buildParams
 ) const
 {
-	auto ownerEntityData = dynamic_type_cast< const EntityData* >(sourceAsset);
-
-	// Check if entity and if entity should be included, also attributes should
-	// be kept when building for editor.
-	if (!m_editor && ownerEntityData)
-	{
-		auto editorAttributes = ownerEntityData->getComponent< EditorAttributesComponentData >();
-		if (editorAttributes != nullptr)
-		{
-			if (!editorAttributes->include)
-				return nullptr;
-
-			// Remove editor attributes from entity data before we build it, this
-			// is a bit naughty but it's a bit too expensive to clone too much.
-			((EntityData*)sourceAsset)->removeComponent(editorAttributes);
-		}
-	}
-
 	// Ensure we have a reflection of source asset.
 	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
@@ -151,6 +155,31 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	RefArray< ReflectionMember > objectMembers;
 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 
+	// Remove editor attributes component; can not be used in runtime.
+	if (!m_editor)
+	{
+		for (;;)
+		{
+			auto it = std::find_if(objectMembers.begin(), objectMembers.end(), [](ReflectionMember* member) {
+				return is_a< EditorAttributesComponentData >(static_cast< RfmObject* >(member)->get());
+			});
+			if (it != objectMembers.end())
+			{
+				ReflectionMember* member = *it;
+
+				auto attributes = static_cast< const EditorAttributesComponentData* >(static_cast< RfmObject* >(member)->get());
+				if (!attributes->include)
+					return nullptr;
+
+				removeMember(reflection, member);
+				objectMembers.erase(it);
+			}
+			else
+				break;
+		}
+	}
+
+	auto ownerEntityData = dynamic_type_cast< const EntityData* >(sourceAsset);
 	while (!objectMembers.empty())
 	{
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
