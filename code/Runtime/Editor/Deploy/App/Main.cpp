@@ -63,6 +63,7 @@ int main(int argc, const char** argv)
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings               Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
+		log::info << L"    -v,-verbose                Verbose building." << Endl;
 		log::info << L"    -f,-force                  Force build." << Endl;
 		log::info << L"    -debug                     Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link               Statically link product in deploy or migrate actions." << Endl;
@@ -145,6 +146,8 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", false);
 	if (cmdLine.hasOption(L"sequential-build"))
 		settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", true);
 
 	db::ConnectionString sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	sourceDatabaseCS.set(L"fileStore", L"");

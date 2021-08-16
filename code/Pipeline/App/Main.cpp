@@ -298,30 +298,33 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 	return { database, cache };
 }
 
-bool perform(const PipelineParameters* params)
+bool perform(const PipelineParameters& params)
 {
-	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(params->getWorkingDirectory()))
+	if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(params.getWorkingDirectory()))
 	{
 		traktor::log::error << L"Unable to change working directory." << Endl;
 		return false;
 	}
 
-	bool verbose = params->getVerbose();
+	const bool verbose = params.getVerbose();
 	if (verbose)
-		traktor::log::info << L"Using settings \"" << params->getSettings() << L"\"." << Endl;
+		traktor::log::info << L"Using settings \"" << params.getSettings() << L"\"." << Endl;
 
-	Ref< PropertyGroup > settings = loadSettings(params->getSettings());
+	Ref< PropertyGroup > settings = loadSettings(params.getSettings());
 	if (!settings)
 	{
-		traktor::log::error << L"Unable to load pipeline settings \"" << params->getSettings() << L"\"." << Endl;
+		traktor::log::error << L"Unable to load pipeline settings \"" << params.getSettings() << L"\"." << Endl;
 		return false;
 	}
 
-	if (params->getNoCache())
+	if (params.getNoCache())
 	{
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
+
+	if (verbose)
+		settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", true);
 
 	// Load necessary modules.
 	std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
@@ -432,7 +435,7 @@ bool perform(const PipelineParameters* params)
 
 	pipelineDb->beginTransaction();
 
-	const std::vector< Guid >& roots = params->getRoots();
+	const std::vector< Guid >& roots = params.getRoots();
 	if (!roots.empty())
 	{
 		for (const auto& root : roots)
@@ -463,7 +466,7 @@ bool perform(const PipelineParameters* params)
 #endif
 
 	AutoPtr< StatusListener > statusListener;
-	if (params->getProgress())
+	if (params.getProgress())
 		statusListener.reset(new StatusListener());
 
 	// Build output.
@@ -477,10 +480,10 @@ bool perform(const PipelineParameters* params)
 		dataAccessCache,
 		statusListener.ptr(),
 		settings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-		params->getVerbose()
+		params.getVerbose()
 	);
 
-	if (params->getRebuild())
+	if (params.getRebuild())
 		traktor::log::info << L"Rebuilding " << pipelineDependencySet.size() << L" asset(s)..." << Endl;
 	else
 		traktor::log::info << L"Building " << pipelineDependencySet.size() << L" asset(s)..." << Endl;
@@ -488,7 +491,7 @@ bool perform(const PipelineParameters* params)
 	traktor::log::info << IncreaseIndent;
 
 	Thread* bt = ThreadManager::getInstance().create(
-		makeStaticFunctor< editor::PipelineBuilder&, const editor::PipelineDependencySet*, bool >(&threadBuild, pipelineBuilder, &pipelineDependencySet, params->getRebuild()),
+		makeStaticFunctor< editor::PipelineBuilder&, const editor::PipelineDependencySet*, bool >(&threadBuild, pipelineBuilder, &pipelineDependencySet, params.getRebuild()),
 		L"Build thread"
 	);
 
@@ -610,7 +613,7 @@ int standalone(const CommandLine& cmdLine)
 		roots
 	);
 
-	bool success = perform(&params);
+	bool success = perform(params);
 
 	traktor::log::info << L"Bye" << Endl;
 	return success ? 0 : 1;
