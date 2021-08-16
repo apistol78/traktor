@@ -63,7 +63,6 @@ int main(int argc, const char** argv)
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings               Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
-		log::info << L"    -standalone                Build using a standalone pipeline." << Endl;
 		log::info << L"    -f,-force                  Force build." << Endl;
 		log::info << L"    -debug                     Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link               Statically link product in deploy or migrate actions." << Endl;
@@ -212,7 +211,6 @@ int main(int argc, const char** argv)
 			targetConfiguration,
 			outputPath,
 			nullptr,
-			cmdLine.hasOption(L"standalone"),
 			cmdLine.hasOption(L'f', L"force")
 		).execute(nullptr);
 	}

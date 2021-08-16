@@ -46,7 +46,6 @@ public:
 		const TargetConfiguration* targetConfiguration,
 		const std::wstring& outputPath,
 		const PropertyGroup* tweakSettings,
-		bool standAlone,
 		bool force
 	);
 
@@ -60,7 +59,6 @@ private:
 	Ref< const TargetConfiguration > m_targetConfiguration;
 	std::wstring m_outputPath;
 	Ref< const PropertyGroup > m_tweakSettings;
-	bool m_standAlone;
 	bool m_force;
 };
 
