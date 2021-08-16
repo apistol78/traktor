@@ -1767,9 +1767,6 @@ void EditorForm::buildAssetsForOpenedEditors()
 	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 	std::vector< Guid > assetGuids;
 
-	PipelineFactory pipelineFactory(m_mergedSettings);
-	PipelineInstanceCache pipelineInstanceCache(m_sourceDatabase, cachePath);
-
 	for (auto tab : m_tabGroups)
 	{
 		for (int i = 0; i < tab->getPageCount(); ++i)

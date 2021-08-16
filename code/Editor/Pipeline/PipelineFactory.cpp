@@ -2,6 +2,8 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineSettings.h"
@@ -15,6 +17,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Objec
 
 PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
+	const bool verbose = settings->getProperty< bool >(L"Pipeline.Verbose", false);
+
 	TypeInfoSet pipelineTypes;
 	type_of< IPipeline >().findAllOf(pipelineTypes, false);
 
@@ -24,7 +28,11 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		return std::wcscmp(lh->getName(), rh->getName()) < 0;
 	});
 
-	log::debug << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
+	if (verbose)
+		log::info << L"Creating " << (int32_t)sortedPipelineTypes.size() << L" pipelines..." << Endl;
+
+	uint32_t completeHash = 0;
+
 	for (auto pipelineType : sortedPipelineTypes)
 	{
 		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >(pipelineType->createInstance());
@@ -39,11 +47,15 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		}
 
 		const uint32_t pipelineHash = pipelineSettings.getHash() + type_of(pipeline).getVersion();
+		completeHash += pipelineHash;
 
-		log::debug << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
-		log::debug << IncreaseIndent;
-		log::debug << pipelineSettings.getLog();
-		log::debug << DecreaseIndent;
+		if (verbose)
+		{
+			log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
+			log::info << IncreaseIndent;
+			log::info << pipelineSettings.getLog();
+			log::info << DecreaseIndent;
+		}
 
 		for (auto assetType : pipeline->getAssetTypes())
 		{
@@ -74,6 +86,9 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 		m_pipelines[&type_of(pipeline)] = pipeline;
 	}
+
+	if (verbose)
+		log::info << L"Pipeline signature hash " << str(L"0x%08x", completeHash) << L"." << Endl;
 }
 
 PipelineFactory::~PipelineFactory()
