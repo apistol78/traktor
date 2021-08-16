@@ -14,8 +14,6 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_globalLockId(L"{BF9144AA-FA5C-49D6-8E5B-9593EEE92148}");
-
 uint32_t hash(const std::wstring& text)
 {
 	Adler32 cs;
@@ -30,8 +28,7 @@ uint32_t hash(const std::wstring& text)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelCache", ModelCache, Object)
 
 ModelCache::ModelCache(const Path& cachePath)
-:	m_lock(c_globalLockId)
-,	m_cachePath(cachePath)
+:	m_cachePath(cachePath)
 {
 }
 
@@ -71,8 +68,15 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	// Write cached copy of post-operation model.
 	{
 		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
-		FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly());
-		ModelFormat::writeAny(cachedFileName, model);
+		Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
+
+		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
+			return nullptr;
+
+		if (ModelFormat::writeAny(intermediateFileName, model))
+			FileSystem::getInstance().move(cachedFileName, intermediateFileName, true);
+		else
+			return nullptr;
 	}
 
 	// Return model; should be same as one we've written to cache.

@@ -747,10 +747,16 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 	shaderGraph->findNodesOf< Variable >(variableNodes);
 
 	// Ignore variables of other scopes.
-	auto it = std::remove_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* variableNode) {
-		return (resolve == VrtLocal && variableNode->isGlobal()) || (resolve == VrtGlobal && !variableNode->isGlobal());
-	});
-	variableNodes.erase(it, variableNodes.end());
+	for (;;)
+	{
+		auto it = std::find_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* variableNode) {
+			return (resolve == VrtLocal && variableNode->isGlobal()) || (resolve == VrtGlobal && !variableNode->isGlobal());
+		});
+		if (it != variableNodes.end())
+			variableNodes.erase(it);
+		else
+			break;
+	}
 
 	// Join variable references.
 	for (const auto variableNode : variableNodes)
