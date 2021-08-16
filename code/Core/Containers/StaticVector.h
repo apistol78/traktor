@@ -498,20 +498,6 @@ public:
 
 	/*!
 	 */
-	operator ItemType* ()
-	{
-		return m_items;
-	}
-
-	/*!
-	 */
-	operator const ItemType* () const
-	{
-		return m_items;
-	}
-
-	/*!
-	 */
 	ItemType& operator [] (size_t index)
 	{
 		T_ASSERT(index < Capacity);
