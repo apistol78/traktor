@@ -71,7 +71,6 @@ BuildTargetAction::BuildTargetAction(
 	const TargetConfiguration* targetConfiguration,
 	const std::wstring& outputPath,
 	const PropertyGroup* tweakSettings,
-	bool standAlone,
 	bool force
 )
 :	m_database(database)
@@ -81,7 +80,6 @@ BuildTargetAction::BuildTargetAction(
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_outputPath(outputPath)
 ,	m_tweakSettings(tweakSettings)
-,	m_standAlone(standAlone)
 ,	m_force(force)
 {
 }
@@ -319,8 +317,6 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	if (m_globalSettings->getProperty< bool >(L"Pipeline.Verbose", false))
 		ss << L" -verbose";
-	if (m_standAlone)
-		ss << L" -standalone";
 	if (m_force)
 		ss << L" -force";
 

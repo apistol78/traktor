@@ -138,7 +138,6 @@ int main(int argc, const char** argv)
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings                   Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
 		log::info << L"    -v,-verbose                    Verbose building." << Endl;
-		log::info << L"    -standalone                    Build using a standalone pipeline." << Endl;
 		log::info << L"    -f,-force                      Force build." << Endl;
 		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
 		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
@@ -273,8 +272,6 @@ int main(int argc, const char** argv)
 	StringOutputStream ss;
 	ss << L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Pipeline.App -s=Pipeline";
 
-	if (cmdLine.hasOption(L"standalone"))
-		ss << L" -standalone";
 	if (cmdLine.hasOption(L'v', L"verbose"))
 		ss << L" -v";
 	if (cmdLine.hasOption(L'f', L"force"))
