@@ -270,8 +270,15 @@ int main(int argc, const char** argv)
 	}
 
 	StringOutputStream ss;
+#if defined(_WIN32)
 	ss << L"$(TRAKTOR_HOME)/bin/latest/win64/releaseshared/Traktor.Pipeline.App -s=Pipeline";
-
+#elif defined(__LINUX__)
+	ss << L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+#elif defined(__RPI__)
+	ss << L"$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+#elif defined(__OSX__)
+	ss << L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Pipeline.App -s=Pipeline";
+#endif
 	if (cmdLine.hasOption(L'v', L"verbose"))
 		ss << L" -v";
 	if (cmdLine.hasOption(L'f', L"force"))
