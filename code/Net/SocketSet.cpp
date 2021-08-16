@@ -63,7 +63,7 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 			fd.events |= POLLOUT;
 	}
 
-	int32_t rv = ::poll(fds, fds.size(), timeout);
+	int32_t rv = ::poll(fds.ptr(), fds.size(), timeout);
 	if (rv <= 0)
 		return 0;
 
