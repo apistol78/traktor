@@ -17239,7 +17239,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES</sourcePath>
 			<configurations>
@@ -20696,7 +20696,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.ES.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/ES/Editor</sourcePath>
 			<configurations>

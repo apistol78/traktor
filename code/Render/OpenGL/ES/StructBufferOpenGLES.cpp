@@ -98,5 +98,10 @@ void StructBufferOpenGLES::unlock()
 	m_lock = nullptr;
 }
 
+const IBufferView* StructBufferOpenGLES::getBufferView() const
+{
+	return nullptr;
+}
+
 	}
 }
