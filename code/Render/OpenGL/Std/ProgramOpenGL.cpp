@@ -330,13 +330,13 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	}
 }
 
-void ProgramOpenGL::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramOpenGL::setBufferViewParameter(handle_t handle, const IBufferView* bufferView) 
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(i->second.buffer < m_sbuffers.size());
-		m_sbuffers[i->second.buffer] = structBuffer;
+		T_FATAL_ASSERT(i->second.buffer < m_bufferViews.size());
+		m_bufferViews[i->second.buffer] = (const BufferViewOpenGL*)bufferView;
 	}
 }
 
@@ -402,12 +402,11 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 	}
 
 	// Bind sbuffers.
-	for (uint32_t i = 0; i < m_sbuffers.size(); ++i)
+	for (uint32_t i = 0; i < m_bufferViews.size(); ++i)
 	{
-		StructBufferOpenGL* sbufferOpenGL = checked_type_cast< StructBufferOpenGL* >(m_sbuffers[i]);
 #if !defined(__APPLE__)
-		if (sbufferOpenGL)
-			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, sbufferOpenGL->getBuffer())); }
+		if (m_bufferViews[i])
+			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, m_bufferViews[i]->getBuffer())); }
 		else
 			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, 0)); }
 #endif
@@ -482,7 +481,7 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 	}
 
 	// Allocate sbuffer slots.
-	m_sbuffers.resize(resourceOpenGL->m_sbufferCount);
+	m_bufferViews.resize(resourceOpenGL->m_sbufferCount);
 
 	// Setup parameter mapping.
 	for (auto p : resourceOpenGL->m_parameters)

@@ -10708,7 +10708,7 @@
 		<item ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[12]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/Std</sourcePath>
 			<configurations>
@@ -20526,7 +20526,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL/Std/Editor</sourcePath>
 			<configurations>
