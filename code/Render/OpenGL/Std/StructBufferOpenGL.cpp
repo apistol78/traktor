@@ -44,6 +44,8 @@ StructBufferOpenGL::StructBufferOpenGL(ResourceContextOpenGL* resourceContext, c
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	T_OGL_SAFE(glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, nullptr, GL_DYNAMIC_COPY));
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+
+	m_bufferView = BufferViewOpenGL(m_buffer);
 #endif
 }
 
@@ -86,6 +88,11 @@ void StructBufferOpenGL::unlock()
 #endif
 
 	m_lock = nullptr;
+}
+
+const IBufferView* StructBufferOpenGL::getBufferView() const
+{
+	return &m_bufferView;
 }
 
 	}

@@ -3,7 +3,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
-#include "Render/OpenGL/Std/TypesOpenGL.h"
+#include "Render/OpenGL/Std/BufferViewOpenGL.h"
 
 namespace traktor
 {
@@ -42,7 +42,7 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
+	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
@@ -57,45 +57,24 @@ public:
 private:
 	struct ParameterMap
 	{
-		uint32_t buffer;	//!< Uniform buffer index.
-		uint32_t offset;	//!< Offset into uniform buffer's data.
-		uint32_t size;		//!< Number of floats.
-
-		ParameterMap()
-		:	buffer(0)
-		,	offset(0)
-		,	size(0)
-		{
-		}
+		uint32_t buffer = 0;	//!< Uniform buffer index.
+		uint32_t offset = 0;	//!< Offset into uniform buffer's data.
+		uint32_t size = 0;		//!< Number of floats.
 	};
 
 	struct UniformBuffer
 	{
-		uint32_t size;
+		uint32_t size = 0;
 		AlignedVector< float > data;
-		GLuint object;
-		bool dirty;
-
-		UniformBuffer()
-		:	size(0)
-		,	object(0)
-		,	dirty(true)
-		{
-		}
+		GLuint object = 0;
+		bool dirty = true;
 	};
 
 	struct Sampler
 	{
-		GLint unit;
-		uint32_t state;
-		uint32_t textureIndex;
-
-		Sampler()
-		:	unit(0)
-		,	state(0)
-		,	textureIndex(0)
-		{
-		}
+		GLint unit = 0;
+		uint32_t state = 0;
+		uint32_t textureIndex = 0;
 	};
 
 	Ref< ResourceContextOpenGL > m_resourceContext;
@@ -107,7 +86,7 @@ private:
 	UniformBuffer m_uniformBuffers[3];
 	RefArray< ITexture > m_textures;
 	AlignedVector< Sampler > m_samplers;
-	RefArray< StructBuffer > m_sbuffers;
+	RefArray< const BufferViewOpenGL > m_bufferViews;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 
 	ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);

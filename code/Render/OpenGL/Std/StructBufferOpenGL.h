@@ -2,7 +2,7 @@
 
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
-#include "Render/OpenGL/Std/Platform.h"
+#include "Render/OpenGL/Std/BufferViewOpenGL.h"
 
 namespace traktor
 {
@@ -29,11 +29,12 @@ public:
 
 	virtual void unlock() override final;
 
-	GLuint getBuffer() const { return m_buffer; }
+	virtual const IBufferView* getBufferView() const override final;
 
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_buffer;
+	BufferViewOpenGL m_bufferView;
 	uint8_t* m_lock;
 };
 
