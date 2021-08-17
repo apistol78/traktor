@@ -87,6 +87,12 @@ void StructBufferVrfy::unlock()
 	m_locked = false;
 }
 
+const IBufferView* StructBufferVrfy::getBufferView() const
+{
+	T_CAPTURE_ASSERT(m_structBuffer, L"Struct buffer destroyed.");
+	return m_structBuffer->getBufferView();
+}
+
 void StructBufferVrfy::verifyGuard() const
 {
 	const uint32_t bufferSize = getBufferSize();

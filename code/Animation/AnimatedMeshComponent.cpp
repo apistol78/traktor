@@ -203,7 +203,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	// Update joint buffers only for first pass of frame, buffers are implicitly double buffered
 	// and cannot be updated multiple times per frame.
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0)
 	{
 		const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
 		const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];

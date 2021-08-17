@@ -189,6 +189,8 @@ void PointRenderer::flush(
 {
 	if (m_pointOffset > 0)
 	{
+		m_structBuffer->unlock();
+
 		for (const auto& batch : m_batches)
 		{
 			if (!batch.count || !batch.shader)
@@ -215,7 +217,7 @@ void PointRenderer::flush(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->setFloatParameter(s_handlePointsOffset, batch.offset);
-			renderBlock->programParams->setStructBufferParameter(s_handlePoints, m_structBuffer);
+			renderBlock->programParams->setBufferViewParameter(s_handlePoints, m_structBuffer->getBufferView());
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
@@ -226,8 +228,6 @@ void PointRenderer::flush(
 
 		m_point = nullptr;
 		m_pointOffset = 0;
-
-		m_structBuffer->unlock();
 	}
 
 	m_batches.resize(0);

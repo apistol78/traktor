@@ -15,6 +15,8 @@ namespace traktor
 	namespace render
 	{
 
+class IBufferView;
+
 /*! Struct buffer.
  * \ingroup Render
  */
@@ -40,6 +42,9 @@ public:
 
 	/*! Unlock access. */
 	virtual void unlock() = 0;
+
+	/*! */
+	virtual const IBufferView* getBufferView() const = 0;
 
 protected:
 	StructBuffer(uint32_t bufferSize);

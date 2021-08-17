@@ -2,6 +2,7 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/IRenderSystem.h"
 #include "Render/StructElement.h"
+#include "Render/StructBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -71,8 +72,8 @@ void SkinnedMesh::build(
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setStructBufferParameter(s_handleLastJoints, lastJointTransforms);
-		renderBlock->programParams->setStructBufferParameter(s_handleJoints, jointTransforms);
+		renderBlock->programParams->setBufferViewParameter(s_handleLastJoints, lastJointTransforms->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
 
 		renderBlock->programParams->endParameters(renderContext);
 

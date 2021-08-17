@@ -6,6 +6,7 @@
 #include "Core/Class/Boxes/BoxedPointer.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
+#include "Render/IBufferView.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
@@ -237,7 +238,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedProgramParameters->addMethod("setMatrixParameter", &BoxedProgramParameters::setMatrixParameter);
 	classBoxedProgramParameters->addMethod("setMatrixArrayParameter", &BoxedProgramParameters::setMatrixArrayParameter);
 	classBoxedProgramParameters->addMethod("setTextureParameter", &BoxedProgramParameters::setTextureParameter);
-	classBoxedProgramParameters->addMethod("setStructBufferParameter", &BoxedProgramParameters::setStructBufferParameter);
+	classBoxedProgramParameters->addMethod("setBufferViewParameter", &BoxedProgramParameters::setBufferViewParameter);
 	classBoxedProgramParameters->addMethod("setStencilReference", &BoxedProgramParameters::setStencilReference);
 	registrar->registerClass(classBoxedProgramParameters);
 
@@ -343,9 +344,9 @@ void BoxedProgramParameters::setTextureParameter(const handle_t handle, ITexture
 	m_programParameters->setTextureParameter(handle, texture);
 }
 
-void BoxedProgramParameters::setStructBufferParameter(const handle_t handle, StructBuffer* structBuffer)
+void BoxedProgramParameters::setBufferViewParameter(const handle_t handle, const IBufferView* bufferView)
 {
-	m_programParameters->setStructBufferParameter(handle, structBuffer);
+	m_programParameters->setBufferViewParameter(handle, bufferView);
 }
 
 void BoxedProgramParameters::setStencilReference(uint32_t stencilReference)

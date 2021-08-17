@@ -1,15 +1,12 @@
-#pragma optimize( "", off )
-
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
+#include "Render/StructBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/Editor/Overlays/TilesOverlay.h"
-
 #include "World/Forward/WorldRendererForward.h"
-
 
 namespace traktor
 {
@@ -81,7 +78,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		pp->setVectorParameter(c_handleDebugViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 		pp->setVectorParameter(c_handleDebugMagicCoeffs, magicCoeffs);
 		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(0));
-		pp->setStructBufferParameter(c_handleDebugTileBuffer, tileSBuffer);
+		pp->setBufferViewParameter(c_handleDebugTileBuffer, tileSBuffer->getBufferView());
 		pp->endParameters(renderContext);
 
 		screenRenderer->draw(renderContext, m_shader, perm, pp);

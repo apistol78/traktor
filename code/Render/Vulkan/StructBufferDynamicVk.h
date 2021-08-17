@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
+#include "Render/Vulkan/Private/Buffer.h"
 
 namespace traktor
 {
@@ -25,9 +27,15 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const override final;
+
 private:
-	int32_t m_inFlightCount = 0;
-	int32_t m_index = 0;
+	Ref< Buffer > m_buffer;
+	BufferViewVk* m_bufferViews = nullptr;
+	uint32_t m_inFlightCount = 0;
+	uint32_t m_range = 0;
+	uint32_t m_index = 0;
+	uint32_t m_view = 0;
 	uint8_t* m_ptr = nullptr;
 };
 

@@ -31,11 +31,23 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 
 	m_inFlightCount = inFlightCount;
 	m_range = alignUp(bufferSize, storageBufferOffsetAlignment);
-	m_size = m_range * m_inFlightCount;
+	
+	const uint32_t size = m_range * m_inFlightCount;
 
 	m_buffer = new Buffer(m_context);
-	if (!m_buffer->create(m_size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
+	if (!m_buffer->create(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
 		return false;
+
+	m_bufferViews = new BufferViewVk [m_inFlightCount];
+	for (uint32_t i = 0; i < m_inFlightCount; ++i)
+	{
+		m_bufferViews[i] = BufferViewVk(
+			*m_buffer,
+			i * m_range,
+			m_range,
+			size
+		);
+	}
 
 	m_ptr = (uint8_t*)m_buffer->lock();
 	if (!m_ptr)
@@ -46,12 +58,19 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 
 void StructBufferDynamicVk::destroy()
 {
+	if (m_bufferViews)
+	{
+		delete[] m_bufferViews;
+		m_bufferViews = nullptr;
+	}
+
 	if (m_buffer)
 	{
 		m_buffer->unlock();
 		m_buffer->destroy();
 		m_buffer = nullptr;
 	}
+
 	m_context = nullptr;
 	m_ptr = nullptr;
 }
@@ -63,8 +82,13 @@ void* StructBufferDynamicVk::lock()
 
 void StructBufferDynamicVk::unlock()
 {
-	m_offset = m_index * m_range;
+	m_view = m_index;
 	m_index = (m_index + 1) % m_inFlightCount;
+}
+
+const IBufferView* StructBufferDynamicVk::getBufferView() const
+{
+	return &m_bufferViews[m_view];
 }
 
 	}
