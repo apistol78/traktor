@@ -55,7 +55,7 @@ void ProgramPs4::setTextureParameter(handle_t handle, ITexture* texture)
 {
 }
 
-void ProgramPs4::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramPs4::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_FATAL_ERROR;
 }
