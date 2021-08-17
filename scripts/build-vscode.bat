@@ -31,3 +31,12 @@ if "%PLATFORM%" == "PS3" (
     %TRAKTOR_HOME%\3rdp\jom\jom /L /F "Traktor Ps3 SPU.mak" %CONFIG%
     popd    
 )
+
+if "%PLATFORM%" == "PS4" (
+::    call %~dp0config-vs-legacy.bat 14.0
+    call %~dp0config-vs-x64.bat
+    pushd "%TRAKTOR_HOME%\build\ps4"
+    msbuild "Extern Ps4.sln" /nologo /maxcpucount /p:BuildInParallel=true /p:Configuration=%CONFIG% /p:Platform="ORBIS"
+    msbuild "Traktor Ps4.sln" /nologo /maxcpucount /p:BuildInParallel=true /p:Configuration=%CONFIG% /p:Platform="ORBIS"
+    popd
+)
