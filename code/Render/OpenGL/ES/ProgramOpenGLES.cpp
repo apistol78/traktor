@@ -264,7 +264,7 @@ void ProgramOpenGLES::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textures[i->second] = texture;
 }
 
-void ProgramOpenGLES::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramOpenGLES::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_FATAL_ERROR;
 }

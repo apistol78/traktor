@@ -28,7 +28,7 @@ public:
 
 	virtual void unlock() override final;
 
-	//GLuint getBuffer() const { return m_buffer; }
+	virtual const IBufferView* getBufferView() const override final;
 
 private:
 	Ref< ContextOpenGLES > m_context;
