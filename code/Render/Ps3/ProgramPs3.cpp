@@ -464,7 +464,7 @@ void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
 	m_dirty |= DfTexture;
 }
 
-void ProgramPs3::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramPs3::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_FATAL_ERROR;
 }
