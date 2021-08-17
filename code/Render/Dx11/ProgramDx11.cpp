@@ -63,7 +63,7 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 ,	m_stencilReference(0)
 ,	m_d3dVertexShaderHash(0)
 ,	m_parameterTextureArrayDirty(false)
-,	m_parameterStructBufferArrayDirty(false)
+,	m_parameterBufferViewArrayDirty(false)
 #if defined(_DEBUG)
 ,	m_bindCount(0)
 #endif
@@ -222,7 +222,7 @@ bool ProgramDx11::create(
 
 	m_parameterFloatArray.resize(resource->m_parameterScalarSize, 0.0f);
 	m_parameterTextureArray.resize(resource->m_parameterTextureSize);
-	m_parameterStructBufferArray.resize(resource->m_parameterStructBufferSize);
+	m_parameterBufferViewArray.resize(resource->m_parameterStructBufferSize);
 
 	// Create state objects.
 	m_d3dRasterizerState = resourceCache.getRasterizerState(resource->m_d3dRasterizerDesc);
@@ -350,13 +350,13 @@ void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 	}
 }
 
-void ProgramDx11::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramDx11::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		m_parameterStructBufferArray[i->second.offset] = checked_type_cast< StructBufferDx11* >(structBuffer);
-		m_parameterStructBufferArrayDirty = true;
+		m_parameterBufferViewArray[i->second.offset] = (const BufferViewDx11*)bufferView;
+		m_parameterBufferViewArrayDirty = true;
 	}
 }
 
@@ -411,7 +411,7 @@ bool ProgramDx11::bind(
 		);
 
 	// Bind resource views.
-	if (m_parameterTextureArrayDirty || m_parameterStructBufferArrayDirty || stateCache.getActiveProgram() != this)
+	if (m_parameterTextureArrayDirty || m_parameterBufferViewArrayDirty || stateCache.getActiveProgram() != this)
 	{
 		// Bind this program's resources.
 		if (!m_vertexState.textureResourceIndices.empty() || !m_vertexState.structBufferResourceIndices.empty())
@@ -449,9 +449,9 @@ bool ProgramDx11::bind(
 			// Struct buffer resource views.
 			for (const auto& resourceIndex : m_vertexState.structBufferResourceIndices)
 			{
-				StructBufferDx11* structBuffer = m_parameterStructBufferArray[resourceIndex.second];
-				if (structBuffer)
-					d3dVSResourceViews[resourceIndex.first] = structBuffer->getD3D11ShaderResourceView();
+				const BufferViewDx11* bufferView = m_parameterBufferViewArray[resourceIndex.second];
+				if (bufferView)
+					d3dVSResourceViews[resourceIndex.first] = bufferView->getD3D11ShaderResourceView();
 			}
 
 			d3dDeviceContext->VSSetShaderResources(0, sizeof_array(d3dVSResourceViews), d3dVSResourceViews);
@@ -492,16 +492,16 @@ bool ProgramDx11::bind(
 			// Struct buffer resource views.
 			for (const auto& resourceIndex : m_pixelState.structBufferResourceIndices)
 			{
-				StructBufferDx11* structBuffer = m_parameterStructBufferArray[resourceIndex.second];
-				if (structBuffer)
-					d3dPSResourceViews[resourceIndex.first] = structBuffer->getD3D11ShaderResourceView();
+				const BufferViewDx11* bufferView = m_parameterBufferViewArray[resourceIndex.second];
+				if (bufferView)
+					d3dPSResourceViews[resourceIndex.first] = bufferView->getD3D11ShaderResourceView();
 			}
 
 			d3dDeviceContext->PSSetShaderResources(0, sizeof_array(d3dPSResourceViews), d3dPSResourceViews);
 		}
 
 		m_parameterTextureArrayDirty = false;
-		m_parameterStructBufferArrayDirty = false;
+		m_parameterBufferViewArrayDirty = false;
 	}
 
 	stateCache.setVertexShader(m_d3dVertexShader);
