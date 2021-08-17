@@ -6,6 +6,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/System/OS.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
 #include "Ui/Application.h"
 #include "Ui/MessageBox.h"
@@ -244,7 +245,8 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_pageConfiguration->hide();
 
 	// Load MRU registry.
-	Ref< IStream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmRead);
+	std::wstring recentFileName = OS::getInstance().getWritableFolderPath() + L"/Traktor/SolutionBuilder/SolutionBuilder.mru";
+	Ref< IStream > file = FileSystem::getInstance().open(recentFileName, traktor::File::FmRead);
 	if (file)
 	{
 		m_mru = xml::XmlDeserializer(file).readObject< MRU >();
@@ -569,7 +571,9 @@ bool SolutionForm::commandExit()
 	}
 
 	// Save MRU registry.
-	Ref< IStream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmWrite);
+	Path recentFileName = OS::getInstance().getWritableFolderPath() + L"/Traktor/SolutionBuilder/SolutionBuilder.mru";
+	FileSystem::getInstance().makeAllDirectories(recentFileName.getPathOnly());
+	Ref< IStream > file = FileSystem::getInstance().open(recentFileName, traktor::File::FmWrite);
 	if (file)
 	{
 		xml::XmlSerializer(file).writeObject(m_mru);
