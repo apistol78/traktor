@@ -4,6 +4,7 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/StructBuffer.h"
 #include "Render/StructElement.h"
+#include "Render/Dx11/BufferViewDx11.h"
 #include "Render/Dx11/Platform.h"
 
 namespace traktor
@@ -30,6 +31,8 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const;
+
 	ID3D11ShaderResourceView* getD3D11ShaderResourceView() { return m_d3dBufferResourceView; }
 
 private:
@@ -37,8 +40,9 @@ private:
 	ComRef< ID3D11Buffer > m_d3dBuffer;
 	ComRef< ID3D11ShaderResourceView > m_d3dBufferResourceView;
 	ComRef< ID3D11UnorderedAccessView > m_d3dBufferUnorderedView;
+	BufferViewDx11 m_bufferView;
 
-	StructBufferDx11(uint32_t bufferSize);
+	explicit StructBufferDx11(uint32_t bufferSize);
 };
 
 	}

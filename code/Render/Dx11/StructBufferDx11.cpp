@@ -78,6 +78,8 @@ Ref< StructBufferDx11 > StructBufferDx11::create(
 			return nullptr;
 	}
 
+	structBuffer->m_bufferView = BufferViewDx11(structBuffer->m_d3dBufferResourceView);
+
 	return structBuffer;
 }
 
@@ -111,6 +113,11 @@ void StructBufferDx11::unlock()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 
 	m_context->getD3DDeviceContext()->Unmap(m_d3dBuffer, 0);
+}
+
+const IBufferView* StructBufferDx11::getBufferView() const
+{
+	return &m_bufferView;
 }
 
 StructBufferDx11::StructBufferDx11(uint32_t bufferSize)

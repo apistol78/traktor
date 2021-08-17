@@ -13,11 +13,11 @@ namespace traktor
 	{
 
 class Blob;
+class BufferViewDx11;
 class ContextDx11;
 class ProgramResourceDx11;
 class ResourceCache;
 class StateCache;
-class StructBufferDx11;
 class HlslProgram;
 
 /*!
@@ -50,7 +50,7 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
+	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
@@ -141,9 +141,9 @@ private:
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	RefArray< ITexture > m_parameterTextureArray;
-	RefArray< StructBufferDx11 > m_parameterStructBufferArray;
+	RefArray< const BufferViewDx11 > m_parameterBufferViewArray;
 	bool m_parameterTextureArrayDirty;
-	bool m_parameterStructBufferArrayDirty;
+	bool m_parameterBufferViewArrayDirty;
 
 #if defined(_DEBUG)
 	int32_t m_bindCount;
