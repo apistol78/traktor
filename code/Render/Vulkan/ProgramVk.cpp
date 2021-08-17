@@ -2,13 +2,13 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
+#include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Buffer.h"
@@ -320,10 +320,10 @@ bool ProgramVk::validateGraphics(
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
-		if (!sbuffer.sbuffer)
+		if (!sbuffer.bufferView)
 			continue;
-		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
-		bufferOffsets.push_back(sbvk->getVkBufferOffset());
+		auto bvvk = sbuffer.bufferView;
+		bufferOffsets.push_back(bvvk->getVkBufferOffset());
 	}
 
 	vkCmdBindDescriptorSets(
@@ -383,10 +383,10 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
-		if (!sbuffer.sbuffer)
+		if (!sbuffer.bufferView)
 			continue;
-		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
-		bufferOffsets.push_back(sbvk->getVkBufferOffset());
+		auto bvvk = sbuffer.bufferView;
+		bufferOffsets.push_back(bvvk->getVkBufferOffset());
 	}
 
 	vkCmdBindDescriptorSets(
@@ -503,11 +503,11 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textures[i->second.offset].texture = texture;
 }
 
-void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramVk::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-		m_sbuffers[i->second.offset].sbuffer = structBuffer;
+		m_sbuffers[i->second.offset].bufferView = (const BufferViewVk*)bufferView;
 }
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)
@@ -543,9 +543,9 @@ bool ProgramVk::validateDescriptorSet()
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
-		if (!sbuffer.sbuffer)
+		if (!sbuffer.bufferView)
 			continue;
-		key.push_back((intptr_t)sbuffer.sbuffer.c_ptr());
+		key.push_back((intptr_t)sbuffer.bufferView);
 	}
 
 	// Get already created descriptor set for bound resources.
@@ -668,15 +668,15 @@ bool ProgramVk::validateDescriptorSet()
 	// Add sbuffer bindings.
 	for (const auto& sbuffer : m_sbuffers)
 	{
-		if (!sbuffer.sbuffer)
+		if (!sbuffer.bufferView)
 			continue;
 
-		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
+		auto bvvk = sbuffer.bufferView;
 
 		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = sbvk->getVkBuffer();
+		bufferInfo.buffer = bvvk->getVkBuffer();
 		bufferInfo.offset = 0;
-		bufferInfo.range = sbvk->getVkBufferRange();
+		bufferInfo.range = bvvk->getVkBufferRange();
 
 		auto& write = writes.push_back();
 		write = {};

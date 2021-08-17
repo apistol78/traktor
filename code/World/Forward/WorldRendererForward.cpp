@@ -1027,13 +1027,9 @@ void WorldRendererForward::setupLightPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	const auto& lights = m_frames[frame].lights;
 
-	// Lock light buffer, will get unlocked from render thread since data is written both
-	// here and then before rendering.
-	if (m_frames[frame].lightSBufferData == nullptr)
-	{
-		if ((m_frames[frame].lightSBufferData = m_frames[frame].lightSBuffer->lock()) == nullptr)
-			return;
-	}
+	if ((m_frames[frame].lightSBufferData = m_frames[frame].lightSBuffer->lock()) == nullptr)
+		return;
+
 	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferData;
 
 	// Reset this frame's atlas packer.
@@ -1129,42 +1125,56 @@ void WorldRendererForward::setupLightPass(
 			Vector4 lightPosition = lightTransform.translation().xyz1();
 			Vector4 lightDirection = lightTransform.axisY().xyz0();
 
-			rp->addBuild(
-				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-				{
-					WorldBuildContext wc(
-						m_entityRenderers,
-						rootEntity,
-						renderContext
-					);
+			auto* lsd = &lightShaderData[lightCascadeIndex];
 
-					auto* lsd = &lightShaderData[lightCascadeIndex];
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			{
+				Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
+				Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
 
-					for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+				// Create sliced view frustum.
+				Frustum sliceViewFrustum = viewFrustum;
+				sliceViewFrustum.setNearZ(zn);
+				sliceViewFrustum.setFarZ(zf);
+
+				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Frustum shadowFrustum;
+
+				shadowProjection.calculate(
+					viewInverse,
+					lightPosition,
+					lightDirection,
+					sliceViewFrustum,
+					shadowSettings.farZ,
+					shadowSettings.quantizeProjection,
+					shadowLightView,
+					shadowLightProjection,
+					shadowFrustum
+				);
+
+				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
+				viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
+				viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
+				viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
+
+				// Write slice coordinates to shaders.
+				Vector4(
+					(float)(slice * sliceDim) / shmw,
+					0.0f,
+					(float)sliceDim / shmw,
+					1.0f
+				).storeUnaligned(lsd->atlasTransform);
+
+				rp->addBuild(
+					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 					{
-						Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
-						Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
-
-						// Create sliced view frustum.
-						Frustum sliceViewFrustum = viewFrustum;
-						sliceViewFrustum.setNearZ(zn);
-						sliceViewFrustum.setFarZ(zf);
-
-						// Calculate shadow map projection.
-						Matrix44 shadowLightView;
-						Matrix44 shadowLightProjection;
-						Frustum shadowFrustum;
-
-						shadowProjection.calculate(
-							viewInverse,
-							lightPosition,
-							lightDirection,
-							sliceViewFrustum,
-							shadowSettings.farZ,
-							shadowSettings.quantizeProjection,
-							shadowLightView,
-							shadowLightProjection,
-							shadowFrustum
+						WorldBuildContext wc(
+							m_entityRenderers,
+							rootEntity,
+							renderContext
 						);
 
 						// Render shadow map.
@@ -1211,23 +1221,9 @@ void WorldRendererForward::setupLightPass(
 						wc.build(shadowRenderView, shadowPass, rootEntity);
 						wc.flush(shadowRenderView, shadowPass);
 						renderContext->merge(render::RpAll);
-
-						Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-						viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
-						viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
-						viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
-						viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
-
-						// Write slice coordinates to shaders.
-						Vector4(
-							(float)(slice * sliceDim) / shmw,
-							0.0f,
-							(float)sliceDim / shmw,
-							1.0f
-						).storeUnaligned(lsd->atlasTransform);
 					}
-				}
-			);
+				);
+			}
 		}
 
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
@@ -1237,6 +1233,52 @@ void WorldRendererForward::setupLightPass(
 			Vector4 lightPosition = lightTransform.translation().xyz1();
 			Vector4 lightDirection = lightTransform.axisY().xyz0();
 
+			auto* lsd = &lightShaderData[lightAtlasIndex];
+
+			// Calculate shadow map projection.
+			Matrix44 shadowLightView;
+			Matrix44 shadowLightProjection;
+			Frustum shadowFrustum;
+
+			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
+			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
+
+			Vector4 lightAxisX, lightAxisY, lightAxisZ;
+			lightAxisZ = -lightDirection;
+			lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
+			lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+
+			shadowLightView = Matrix44(
+				lightAxisX,
+				lightAxisY,
+				lightAxisZ,
+				lightPosition
+			);
+			shadowLightView = shadowLightView.inverse();
+
+			Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+			viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
+			viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
+			viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
+			viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
+
+			// Calculate size of shadow region based on distance from eye.
+			float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
+			int32_t denom = (int32_t)std::floor(distance / 4.0f);
+			int32_t atlasSize = 128 >> std::min(denom, 4);
+					
+			Packer::Rectangle atlasRect;
+			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
+				return;
+
+			// Write atlas coordinates to shaders.
+			Vector4(
+				(float)(atlasOffset + atlasRect.x) / shmw,
+				(float)atlasRect.y / shmh,
+				(float)atlasRect.width / shmw,
+				(float)atlasRect.height / shmh
+			).storeUnaligned(lsd->atlasTransform);	
+
 			rp->addBuild(
 				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
@@ -1245,38 +1287,6 @@ void WorldRendererForward::setupLightPass(
 						rootEntity,
 						renderContext
 					);
-
-					auto* lsd = &lightShaderData[lightAtlasIndex];
-
-					// Calculate size of shadow region based on distance from eye.
-					float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
-					int32_t denom = (int32_t)std::floor(distance / 4.0f);
-					int32_t atlasSize = 128 >> std::min(denom, 4);
-					
-					Packer::Rectangle atlasRect;
-					if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
-						return;
-
-					// Calculate shadow map projection.
-					Matrix44 shadowLightView;
-					Matrix44 shadowLightProjection;
-					Frustum shadowFrustum;
-
-					shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
-					shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
-
-					Vector4 lightAxisX, lightAxisY, lightAxisZ;
-					lightAxisZ = -lightDirection;
-					lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
-					lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
-
-					shadowLightView = Matrix44(
-						lightAxisX,
-						lightAxisY,
-						lightAxisZ,
-						lightPosition
-					);
-					shadowLightView = shadowLightView.inverse();
 
 					// Render shadow map.
 					WorldRenderView shadowRenderView;
@@ -1322,37 +1332,15 @@ void WorldRendererForward::setupLightPass(
 					wc.build(shadowRenderView, shadowPass, rootEntity);
 					wc.flush(shadowRenderView, shadowPass);
 					renderContext->merge(render::RpAll);
-
-					Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-					viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
-					viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
-					viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
-					viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
-
-					// Write atlas coordinates to shaders.
-					Vector4(
-						(float)(atlasOffset + atlasRect.x) / shmw,
-						(float)atlasRect.y / shmh,
-						(float)atlasRect.width / shmw,
-						(float)atlasRect.height / shmh
-					).storeUnaligned(lsd->atlasTransform);					
 				}
 			);
 		}
 
-		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-			{
-				if (m_frames[frame].lightSBufferData != nullptr)
-				{
-					m_frames[frame].lightSBuffer->unlock();
-					m_frames[frame].lightSBufferData = nullptr;
-				}
-			}
-		);
-
 		renderGraph.addPass(rp);
 	}
+
+	m_frames[frame].lightSBuffer->unlock();
+	m_frames[frame].lightSBufferData = nullptr;
 }
 
 void WorldRendererForward::setupVisualPass(
@@ -1446,12 +1434,12 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0], (float)size[1], (float)size[2], 0.0f));
 				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
 				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
-				sharedParams->setStructBufferParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer());
+				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer()->getBufferView());
 			}
 
-			sharedParams->setStructBufferParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer);
-			sharedParams->setStructBufferParameter(s_handleLightIndexSBuffer, m_frames[frame].lightIndexSBuffer);
-			sharedParams->setStructBufferParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer);
+			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_frames[frame].lightIndexSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer->getBufferView());
 
 			if (probe)
 			{

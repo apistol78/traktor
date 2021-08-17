@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/Private/Buffer.h"
 
@@ -28,8 +29,13 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const override final;
+
 private:
+	Ref< Buffer > m_buffer;
 	Ref< Buffer > m_stageBuffer;
+	BufferViewVk m_bufferView;
+	uint32_t m_size = 0;
 };
 
 	}

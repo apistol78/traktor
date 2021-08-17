@@ -19,10 +19,10 @@ class Matrix44;
 	namespace render
 	{
 
+class IBufferView;
 class IProgram;
 class ITexture;
 class RenderContext;
-class StructBuffer;
 
 /*! Program parameter values.
  * \ingroup Render
@@ -54,7 +54,7 @@ public:
 
 	void setTextureParameter(handle_t handle, ITexture* texture);
 
-	void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer);
+	void setBufferViewParameter(handle_t handle, const IBufferView* bufferView);
 
 	void setStencilReference(uint32_t stencilReference);
 

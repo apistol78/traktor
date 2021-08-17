@@ -27,6 +27,8 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const override final;
+
 	StructBuffer* getStructBuffer() const { return m_structBuffer; }
 
 	uint32_t getStructSize() const { return m_structSize; }

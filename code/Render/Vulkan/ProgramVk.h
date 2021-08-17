@@ -12,6 +12,7 @@ namespace traktor
 	{
 
 class Buffer;
+class BufferViewVk;
 class CommandBuffer;
 class Context;
 class PipelineLayoutCache;
@@ -60,7 +61,7 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
+	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
@@ -121,7 +122,7 @@ private:
 		std::wstring name;
 #endif
 		uint32_t binding;
-		Ref< StructBuffer > sbuffer;
+		const BufferViewVk* bufferView = nullptr;
 	};
 
 #if defined(_DEBUG)

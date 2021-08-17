@@ -101,7 +101,7 @@ enum ParameterTypes
 	PmtMatrix,
 	PmtMatrixArray,
 	PmtTexture,
-	PmtStructBuffer,
+	PmtBufferView,
 	PmtStencilReference,
 	PmtAttachedParameters
 };
@@ -181,12 +181,12 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	write< ITexture* >(m_parameterLast, texture);
 }
 
-void ProgramParameters::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+void ProgramParameters::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_ASSERT(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int8_t >(m_parameterLast, PmtStructBuffer);
-	write< StructBuffer* >(m_parameterLast, structBuffer);
+	write< int8_t >(m_parameterLast, PmtBufferView);
+	write< const IBufferView* >(m_parameterLast, bufferView);
 }
 
 void ProgramParameters::setStencilReference(uint32_t stencilReference)
@@ -255,10 +255,10 @@ void ProgramParameters::fixup(IProgram* program) const
 			}
 			break;
 
-		case PmtStructBuffer:
+		case PmtBufferView:
 			{
-				auto structBuffer = read< StructBuffer* >(parameter);
-				program->setStructBufferParameter(handle, structBuffer);
+				auto bufferView = read< const IBufferView* >(parameter);
+				program->setBufferViewParameter(handle, bufferView);
 			}
 			break;
 

@@ -20,8 +20,8 @@ class Matrix44;
 	namespace render
 	{
 
+class IBufferView;
 class ITexture;
-class StructBuffer;
 
 /*! Shader program
  * \ingroup Render
@@ -47,11 +47,10 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) = 0;
 
-	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) = 0;
+	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) = 0;
 
 	virtual void setStencilReference(uint32_t stencilReference) = 0;
 };
 
 	}
 }
-

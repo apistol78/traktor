@@ -17,9 +17,9 @@ namespace traktor
 	namespace render
 	{
 
+class IBufferView;
 class ITexture;
 class ProgramParameters;
-class StructBuffer;
 
 class T_DLLCLASS RenderClassFactory : public IRuntimeClassFactory
 {
@@ -52,7 +52,7 @@ public:
 
 	void setTextureParameter(const handle_t handle, ITexture* texture);
 
-	void setStructBufferParameter(const handle_t handle, StructBuffer* structBuffer);
+	void setBufferViewParameter(const handle_t handle, const IBufferView* bufferView);
 
 	void setStencilReference(uint32_t stencilReference);
 
