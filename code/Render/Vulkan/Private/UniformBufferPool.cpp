@@ -54,7 +54,6 @@ bool UniformBufferPool::allocate(uint32_t size, UniformBufferRange& outRange)
 
 	chain->allocate(outRange);
 	chains.push_back(chain);
-
 	return true;
 }
 
@@ -64,8 +63,9 @@ void UniformBufferPool::free(const UniformBufferRange& range)
 	m_frees[idx].push_back(range);
 }
 
-UniformBufferPool::UniformBufferPool(Context* context, uint32_t blockCount)
-:	m_context(context)
+UniformBufferPool::UniformBufferPool(Context* context, uint32_t blockCount, const wchar_t* const name)
+:	m_name(name)
+,	m_context(context)
 ,	m_blockCount(blockCount)
 {
 }
