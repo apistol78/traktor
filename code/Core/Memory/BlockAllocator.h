@@ -22,22 +22,20 @@ namespace traktor
 class T_DLLCLASS BlockAllocator
 {
 public:
-	BlockAllocator(void* top, int count, size_t size);
+	explicit BlockAllocator(void* top, int32_t count, size_t size);
 
-	void* top();
+	void* top() { return m_top; }
 
 	void* alloc();
 
 	bool free(void* p);
 
-	bool belong(const void* p) const { 
-		return (p >= m_top && p < m_end);
-	}
+	bool belong(const void* p) const { return (p >= m_top && p < m_end); }
 
 private:
-	size_t* m_top;
-	size_t* m_end;
-	size_t* m_free;
+	intptr_t* m_top;
+	intptr_t* m_end;
+	intptr_t* m_free;
 #if defined (_DEBUG)
 	size_t m_alloced;
 	size_t m_size;

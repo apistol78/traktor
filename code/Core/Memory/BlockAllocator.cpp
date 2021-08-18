@@ -3,33 +3,28 @@
 namespace traktor
 {
 
-BlockAllocator::BlockAllocator(void* top, int count, size_t size)
-:	m_top(0)
-,	m_end(0)
-,	m_free(0)
+BlockAllocator::BlockAllocator(void* top, int32_t count, size_t size)
+:	m_top(nullptr)
+,	m_end(nullptr)
+,	m_free(nullptr)
 #if defined(_DEBUG)
 ,	m_alloced(0)
 ,	m_size(size)
 ,	m_full(false)
 #endif
 {
-	T_ASSERT((size % sizeof(size_t)) == 0);
-	size_t blockSize = size / sizeof(size_t);
+	T_ASSERT((size % sizeof(intptr_t)) == 0);
+	size_t blockSize = size / sizeof(intptr_t);
 
-	m_top = static_cast< size_t* >(top);
+	m_top = (intptr_t*)top;
 	m_end = m_top + count * blockSize;
 
-	int i; size_t j;
+	int32_t i; size_t j;
 	for (i = 0, j = 0; i < count - 1; ++i, j += blockSize)
-		m_top[j] = reinterpret_cast< size_t >(&m_top[j + blockSize]);
+		m_top[j] = (intptr_t)(&m_top[j + blockSize]);
 
 	m_top[j] = 0;
 	m_free = m_top;
-}
-
-void* BlockAllocator::top()
-{
-	return m_top;
 }
 
 void* BlockAllocator::alloc()
@@ -39,7 +34,7 @@ void* BlockAllocator::alloc()
 	if (m_free)
 	{
 		p = m_free;
-		m_free = reinterpret_cast< size_t* >(*m_free);
+		m_free = (intptr_t*)(*m_free);
 		T_ASSERT(m_free >= m_top && m_free < m_end || m_free == nullptr);
 
 #if defined(_DEBUG)
@@ -54,17 +49,17 @@ void* BlockAllocator::alloc()
 	}
 #endif
 
-	T_ASSERT(((size_t*)p >= m_top && (size_t*)p < m_end) || p == nullptr);
+	T_ASSERT(((intptr_t*)p >= m_top && (intptr_t*)p < m_end) || p == nullptr);
 	return p;
 }
 
 bool BlockAllocator::free(void* p)
 {
-	size_t* block = static_cast< size_t* >(p);
+	intptr_t* block = (intptr_t*)p;
 	if (block < m_top || block >= m_end)
 		return false;
 
-	*block = reinterpret_cast< size_t >(m_free);
+	*block = (intptr_t)m_free;
 	m_free = block;
 	T_ASSERT(m_free >= m_top && m_free < m_end);
 
