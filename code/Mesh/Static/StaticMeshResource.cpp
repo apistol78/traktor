@@ -52,15 +52,20 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	for (const auto& tp : m_parts)
 	{
-		render::handle_t worldTechnique = render::getParameterHandle(tp.first);
-		staticMesh->m_parts[worldTechnique].reserve(tp.second.size());
+		const render::handle_t worldTechnique = render::getParameterHandle(tp.first);
+
+		auto& r = staticMesh->m_techniqueParts[worldTechnique];
+		r.first = (uint32_t)staticMesh->m_parts.size();
+
+		staticMesh->m_parts.reserve(tp.second.size());
 		for (const auto& p : tp.second)
 		{
-			StaticMesh::Part part;
+			StaticMesh::Part& part = staticMesh->m_parts.push_back();
 			part.shaderTechnique = render::getParameterHandle(p.shaderTechnique);
 			part.meshPart = p.meshPart;
-			staticMesh->m_parts[worldTechnique].push_back(part);
 		}
+
+		r.second = (uint32_t)staticMesh->m_parts.size();
 	}
 
 #if defined(_DEBUG)

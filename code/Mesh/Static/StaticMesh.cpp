@@ -16,21 +16,16 @@ const Aabb3& StaticMesh::getBoundingBox() const
 	return m_renderMesh->getBoundingBox();
 }
 
-// bool StaticMesh::supportTechnique(render::handle_t technique) const
-// {
-// 	return m_parts.find(technique) != m_parts.end();
-// }
-
-const AlignedVector< StaticMesh::Part >* StaticMesh::findParts(render::handle_t technique) const
+const StaticMesh::techniqueParts_t* StaticMesh::findTechniqueParts(render::handle_t technique) const
 {
-	auto it = m_parts.find(technique);
-	return it != m_parts.end() ? &it->second : nullptr;
+	auto it = m_techniqueParts.find(technique);
+	return it != m_techniqueParts.end() ? &it->second : nullptr;
 }
 
 void StaticMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
-	const parts_t* parts,
+	const techniqueParts_t& techniqueParts,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
 	float distance,
@@ -38,8 +33,10 @@ void StaticMesh::build(
 )
 {
 	const auto& meshParts = m_renderMesh->getParts();
-	for (const auto& part : *parts)
+	for (uint32_t i = techniqueParts.first; i < techniqueParts.second; ++i)
 	{
+		const auto& part = m_parts[i];
+
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
 		auto sp = m_shader->getProgram(permutation);

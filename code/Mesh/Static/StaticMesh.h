@@ -55,18 +55,16 @@ public:
 		uint32_t meshPart;
 	};
 
-	typedef AlignedVector< Part > parts_t;
+	typedef std::pair< uint32_t, uint32_t > techniqueParts_t;
 
 	const Aabb3& getBoundingBox() const;
 
-	// bool supportTechnique(render::handle_t technique) const;
-
-	const parts_t* findParts(render::handle_t technique) const;
+	const techniqueParts_t* findTechniqueParts(render::handle_t technique) const;
 
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
-		const parts_t* parts,
+		const techniqueParts_t& techniqueParts,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
 		float distance,
@@ -78,7 +76,8 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
-	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
+	AlignedVector< Part > m_parts;
+	SmallMap< render::handle_t, techniqueParts_t > m_techniqueParts;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif
