@@ -97,29 +97,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Application", Application, IApplication)
 
-Application::Application()
-#if !defined(__EMSCRIPTEN__)
-:	m_threadDatabase(nullptr)
-,	m_threadRender(nullptr)
-,	m_maxSimulationUpdates(1)
-#else
-:	m_maxSimulationUpdates(1)
-#endif
-,	m_deltaTimeError(0)
-,	m_renderViewActive(true)
-,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_updateDuration(0.0f)
-,	m_buildDuration(0.0f)
-,	m_renderCpuDuration(0.0f)
-,	m_renderGpuDuration(0.0f)
-,	m_renderGpuDurationQuery(-1)
-,	m_renderCollisions(0)
-,	m_frameBuild(0)
-,	m_frameRender(0)
-,	m_stateRender(nullptr)
-{
-}
-
 bool Application::create(
 	const PropertyGroup* defaultSettings,
 	PropertyGroup* settings,
@@ -679,7 +656,7 @@ bool Application::update()
 			// keep game in sync with render time.
 			const float simulationEndTime = (m_updateInfo.m_stateTime + dFT);
 			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
-			const int32_t updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
+			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
@@ -692,7 +669,7 @@ bool Application::update()
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
-					float excessTime = std::max(m_renderCpuDuration - m_buildDuration - m_updateDuration * updateCount, 0.0f);
+					float excessTime = std::max(m_renderCpuDurations[1] - m_buildDuration - m_updateDuration * updateCount, 0.0f);
 					updateInterval = std::min(excessTime / updateCount, 0.03f);
 
 					// Need some wait margin as events, especially on Windows, have very low accuracy.
@@ -895,6 +872,9 @@ bool Application::update()
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
 						T_PROFILER_END();
+
+						double renderEnd = m_timer.getElapsedTime();
+						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
 					}
 					
 					T_PROFILER_BEGIN(L"Application render present");
@@ -924,9 +904,9 @@ bool Application::update()
 #endif
 
 				double renderEnd = m_timer.getElapsedTime();
-				m_renderCpuDuration = (float)(renderEnd - renderBegin);
+				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDuration));
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
 			}
 		}
 
@@ -969,7 +949,8 @@ bool Application::update()
 					tp.input = (float)(inputDuration / updateCount);
 				}		
 				tp.build = (float)(buildTimeEnd - buildTimeStart);
-				tp.render = m_renderGpuDuration;
+				tp.renderCPU = m_renderCpuDurations[0];
+				tp.renderGPU = m_renderGpuDuration;
 				tp.garbageCollect = (float)gcDuration;
 				tp.steps = (float)updateCount;
 				tp.interval = updateInterval;
@@ -1163,6 +1144,9 @@ void Application::threadRender()
 						renderView->endFrame();
 						T_PROFILER_END();
 
+						double renderEnd = m_timer.getElapsedTime();
+						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
+
 						T_PROFILER_BEGIN(L"Application render present");
 						renderView->present();
 						T_PROFILER_END();
@@ -1191,9 +1175,9 @@ void Application::threadRender()
 				}
 
 				double renderEnd = m_timer.getElapsedTime();
-				m_renderCpuDuration = float(renderEnd - renderBegin);
+				m_renderCpuDurations[1] = float(renderEnd - renderBegin);
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDuration));
+				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
 				m_stateRender = nullptr;
 			}
 

@@ -317,14 +317,14 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		topRect.left += ui::dpi96(40);
 		canvas.drawText(topRect, str(L"Update: %.1f ms", runtime.update * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(120);
+		topRect.left += ui::dpi96(80);
 		canvas.drawText(topRect, str(L"Build: %.1f ms", runtime.build * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(120);
-		canvas.drawText(topRect, str(L"Render: %.1f ms", runtime.render * 1000.0f), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(75);
+		canvas.drawText(topRect, str(L"Render (CPU): %.1f ms", runtime.renderCPU * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += ui::dpi96(120);
-		canvas.drawText(topRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);
+		topRect.left += ui::dpi96(110);
+		canvas.drawText(topRect, str(L"Render (GPU): %.1f ms", runtime.renderGPU * 1000.0f), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
 		middleRect.top = performanceRect.top + ui::dpi96(c_performanceLineHeight) * 2;
@@ -333,11 +333,14 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		middleRect.left += ui::dpi96(46);
 		canvas.drawText(middleRect, str(L"Physics: %.1f ms", runtime.physics * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::dpi96(120);
+		middleRect.left += ui::dpi96(80);
 		canvas.drawText(middleRect, str(L"Input: %.1f ms", runtime.input * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += ui::dpi96(120);
+		middleRect.left += ui::dpi96(75);
 		canvas.drawText(middleRect, str(L"Simulate: %d, %.1f%%, %d", (int32_t)runtime.steps, runtime.interval * 100.0f, runtime.collisions), ui::AnLeft, ui::AnCenter);
+
+		middleRect.left += ui::dpi96(110);
+		canvas.drawText(middleRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);
 
 		performanceRect = performanceRect.offset(0, ui::dpi96(c_performanceHeight + c_commandHeight));
 	}
