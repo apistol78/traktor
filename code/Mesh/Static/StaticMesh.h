@@ -55,13 +55,18 @@ public:
 		uint32_t meshPart;
 	};
 
+	typedef AlignedVector< Part > parts_t;
+
 	const Aabb3& getBoundingBox() const;
 
-	bool supportTechnique(render::handle_t technique) const;
+	// bool supportTechnique(render::handle_t technique) const;
+
+	const parts_t* findParts(render::handle_t technique) const;
 
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
+		const parts_t* parts,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
 		float distance,
