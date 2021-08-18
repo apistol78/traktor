@@ -21,11 +21,13 @@ const Aabb3& AutoLodMesh::getBoundingBox(float lodDistance) const
 
 bool AutoLodMesh::supportTechnique(float lodDistance, render::handle_t technique) const
 {
-	StaticMesh* staticMesh = getStaticMesh(lodDistance);
-	if (staticMesh)
-		return staticMesh->supportTechnique(technique);
-	else
-		return true;
+	//StaticMesh* staticMesh = getStaticMesh(lodDistance);
+	//if (staticMesh)
+	//	return staticMesh->supportTechnique(technique);
+	//else
+	//	return true;
+
+	return false;
 }
 
 void AutoLodMesh::build(
@@ -38,16 +40,16 @@ void AutoLodMesh::build(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	StaticMesh* staticMesh = getStaticMesh(lodDistance);
-	if (staticMesh)
-		staticMesh->build(
-			renderContext,
-			worldRenderPass,
-			lastWorldTransform,
-			worldTransform,
-			distance,
-			parameterCallback
-		);
+	//StaticMesh* staticMesh = getStaticMesh(lodDistance);
+	//if (staticMesh)
+	//	staticMesh->build(
+	//		renderContext,
+	//		worldRenderPass,
+	//		lastWorldTransform,
+	//		worldTransform,
+	//		distance,
+	//		parameterCallback
+	//	);
 }
 
 StaticMesh* AutoLodMesh::getStaticMesh(float lodDistance) const

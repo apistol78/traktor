@@ -117,54 +117,54 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 
 void PrecipitationComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
-		return;
+	//if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+	//	return;
 
-	Vector4& lastEyePosition = m_lastEyePosition[worldRenderView.getIndex()];
-	Quaternion& rotation = m_rotation[worldRenderView.getIndex()];
+	//Vector4& lastEyePosition = m_lastEyePosition[worldRenderView.getIndex()];
+	//Quaternion& rotation = m_rotation[worldRenderView.getIndex()];
 
-	Matrix44 view = worldRenderView.getView();
-	Matrix44 viewInv = view.inverse();
-	Vector4 eyePosition = viewInv.translation().xyz1();
-	Vector4 movement = lastEyePosition - eyePosition;
+	//Matrix44 view = worldRenderView.getView();
+	//Matrix44 viewInv = view.inverse();
+	//Vector4 eyePosition = viewInv.translation().xyz1();
+	//Vector4 movement = lastEyePosition - eyePosition;
 
-	Vector4 pivot = Vector4::zero();
-	Scalar angle(0.0f);
+	//Vector4 pivot = Vector4::zero();
+	//Scalar angle(0.0f);
 
-	if (movement.length2() > Scalar(FUZZY_EPSILON))
-	{
-		pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
-		angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
-	}
+	//if (movement.length2() > Scalar(FUZZY_EPSILON))
+	//{
+	//	pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
+	//	angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
+	//}
 
-	lastEyePosition = eyePosition;
+	//lastEyePosition = eyePosition;
 
-	rotation = lerp(
-		rotation,
-		Quaternion::fromAxisAngle(pivot, angle),
-		m_tiltRate / 60.0f
-	);
+	//rotation = lerp(
+	//	rotation,
+	//	Quaternion::fromAxisAngle(pivot, angle),
+	//	m_tiltRate / 60.0f
+	//);
 
-	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+	//const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
-	PrecipitationMeshCallback mc;
-	mc.m_frustumEdges[0] = viewFrustum.corners[4] - viewFrustum.corners[0];
-	mc.m_frustumEdges[1] = viewFrustum.corners[5] - viewFrustum.corners[1];
-	mc.m_frustumEdges[2] = viewFrustum.corners[6] - viewFrustum.corners[2];
-	mc.m_frustumEdges[3] = viewFrustum.corners[7] - viewFrustum.corners[3];
-	mc.m_parallaxDistance = m_parallaxDistance;
-	mc.m_depthDistance = m_depthDistance;
-	mc.m_opacity = m_opacity;
-	mc.m_layerAngle = m_layerAngle;
+	//PrecipitationMeshCallback mc;
+	//mc.m_frustumEdges[0] = viewFrustum.corners[4] - viewFrustum.corners[0];
+	//mc.m_frustumEdges[1] = viewFrustum.corners[5] - viewFrustum.corners[1];
+	//mc.m_frustumEdges[2] = viewFrustum.corners[6] - viewFrustum.corners[2];
+	//mc.m_frustumEdges[3] = viewFrustum.corners[7] - viewFrustum.corners[3];
+	//mc.m_parallaxDistance = m_parallaxDistance;
+	//mc.m_depthDistance = m_depthDistance;
+	//mc.m_opacity = m_opacity;
+	//mc.m_layerAngle = m_layerAngle;
 
-	m_mesh->build(
-		context.getRenderContext(),
-		worldRenderPass,
-		Transform(rotation),
-		Transform(rotation),
-		0.0f,
-		&mc
-	);
+	//m_mesh->build(
+	//	context.getRenderContext(),
+	//	worldRenderPass,
+	//	Transform(rotation),
+	//	Transform(rotation),
+	//	0.0f,
+	//	&mc
+	//);
 }
 
 	}
