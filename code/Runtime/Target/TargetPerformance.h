@@ -40,7 +40,8 @@ public:
 	float fps = 0.0f;
 	float update = 0.0f;
 	float build = 0.0f;
-	float render = 0.0f;
+	float renderCPU = 0.0f;
+	float renderGPU = 0.0f;
 	float physics = 0.0f;
 	float input = 0.0f;
 	float garbageCollect = 0.0f;

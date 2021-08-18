@@ -63,8 +63,6 @@ class T_DLLCLASS Application : public IApplication
 	T_RTTI_CLASS;
 
 public:
-	Application();
-
 	bool create(
 		const PropertyGroup* defaultSettings,
 		PropertyGroup* settings,
@@ -102,27 +100,27 @@ private:
 	Ref< StateManager > m_stateManager;
 	Semaphore m_lockUpdate;
 #if !defined(__EMSCRIPTEN__)
-	Thread* m_threadDatabase;
-	Thread* m_threadRender;
+	Thread* m_threadDatabase = nullptr;
+	Thread* m_threadRender = nullptr;
 #endif
 	Timer m_timer;
-	int32_t m_maxSimulationUpdates;
-	int32_t m_deltaTimeError;
+	int32_t m_maxSimulationUpdates = 1;
+	int32_t m_deltaTimeError = 0;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
-	bool m_renderViewActive;
-	Color4f m_backgroundColor;
-	float m_updateDuration;
-	float m_buildDuration;
-	float m_renderCpuDuration;
-	float m_renderGpuDuration;
-	int32_t m_renderGpuDurationQuery;
-	uint32_t m_renderCollisions;
+	bool m_renderViewActive = true;
+	Color4f m_backgroundColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	float m_updateDuration = 0.0f;
+	float m_buildDuration = 0.0f;
+	float m_renderCpuDurations[2] = { 0.0f, 0.0f };
+	float m_renderGpuDuration = 0.0f;
+	int32_t m_renderGpuDurationQuery = -1;
+	uint32_t m_renderCollisions = 0;
 	Semaphore m_lockRender;
 	Signal m_signalRenderBegin;
 	Signal m_signalRenderFinish;
-	uint32_t m_frameBuild;
-	uint32_t m_frameRender;
+	uint32_t m_frameBuild = 0;
+	uint32_t m_frameRender = 0;
 	Ref< IState > m_stateRender;
 	UpdateInfo m_updateInfoRender;
 	render::RenderViewStatistics m_renderViewStats;

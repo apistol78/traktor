@@ -157,12 +157,14 @@ void ProfilerDialog::receivedPerfSets()
 
 	m_varianceUpdate.insert(runtime.update);
 	m_varianceBuild.insert(runtime.build);
-	m_varianceRender.insert(runtime.render);
+	m_varianceRenderCPU.insert(runtime.renderCPU);
+	m_varianceRenderGPU.insert(runtime.renderGPU);
 
 	m_performanceGrid->addRow(createPerformanceRow(L"FPS", str(L"%.2f", runtime.fps)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Update", str(L"%.2f ms (%.2f ms, %.2f)", runtime.update * 1000.0f, m_varianceUpdate.getMean() * 1000.0f, m_varianceUpdate.getVariance())));
-	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms (%.2f ms, %.2f)", runtime.build * 1000.0f, m_varianceBuild.getMean() * 1000.0f, m_varianceBuild.getVariance())));
-	m_performanceGrid->addRow(createPerformanceRow(L"Render", str(L"%.2f ms (%.2f ms, %.2f)", runtime.render * 1000.0f, m_varianceRender.getMean() * 1000.0f, m_varianceRender.getVariance())));
+	m_performanceGrid->addRow(createPerformanceRow(L"Update", str(L"%.2f ms (%.2f ms, %.2f)", runtime.update * 1000.0f, m_varianceUpdate.getMean() * 1000.0f, m_varianceUpdate.getVariance() * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms (%.2f ms, %.2f)", runtime.build * 1000.0f, m_varianceBuild.getMean() * 1000.0f, m_varianceBuild.getVariance() * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render (CPU)", str(L"%.2f ms (%.2f ms, %.2f)", runtime.renderCPU * 1000.0f, m_varianceRenderCPU.getMean() * 1000.0f, m_varianceRenderCPU.getVariance() * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render (GPU)", str(L"%.2f ms (%.2f ms, %.2f)", runtime.renderGPU * 1000.0f, m_varianceRenderGPU.getMean() * 1000.0f, m_varianceRenderGPU.getVariance() * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Physics", str(L"%.2f ms", runtime.physics * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Input", str(L"%.2f ms", runtime.input * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Garbage Collect", str(L"%.2f ms", runtime.garbageCollect * 1000.0f)));
@@ -214,7 +216,8 @@ void ProfilerDialog::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 		m_varianceUpdate = Variance();
 		m_varianceBuild = Variance();
-		m_varianceRender = Variance();
+		m_varianceRenderCPU = Variance();
+		m_varianceRenderGPU = Variance();
 	}
 }
 

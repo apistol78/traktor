@@ -75,7 +75,8 @@ bool TpsRuntime::check(const TargetPerfSet& old) const
 		std::abs(fps - o.fps) >= 0.2f ||
 		std::abs(update - o.update) >= 0.0001f ||
 		std::abs(build - o.build) >= 0.0001f ||
-		std::abs(render - o.render) >= 0.0001f ||
+		std::abs(renderCPU - o.renderCPU) >= 0.0001f ||
+		std::abs(renderGPU - o.renderGPU) >= 0.0001f ||
 		std::abs(physics - o.physics) >= 0.0001f ||
 		std::abs(input - o.input) >= 0.0001f ||
 		std::abs(garbageCollect - o.garbageCollect) >= 0.001f ||
@@ -89,7 +90,8 @@ void TpsRuntime::serialize(ISerializer& s)
 	s >> Member< float >(L"fps", fps);
 	s >> Member< float >(L"update", update);
 	s >> Member< float >(L"build", build);
-	s >> Member< float >(L"render", render);
+	s >> Member< float >(L"renderCPU", renderCPU);
+	s >> Member< float >(L"renderGPU", renderGPU);
 	s >> Member< float >(L"physics", physics);
 	s >> Member< float >(L"input", input);
 	s >> Member< float >(L"garbageCollect", garbageCollect);
