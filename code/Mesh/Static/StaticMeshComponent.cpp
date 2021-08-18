@@ -46,12 +46,9 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	auto parts = m_mesh->findParts(worldRenderPass.getTechnique());
-	if (!parts)
+	const StaticMesh::techniqueParts_t* techniqueParts = m_mesh->findTechniqueParts(worldRenderPass.getTechnique());
+	if (!techniqueParts)
 		return;
-
-	// if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
-	// 	return;
 
 	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 
@@ -76,7 +73,7 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 	m_mesh->build(
 		context.getRenderContext(),
 		worldRenderPass,
-		parts,
+		*techniqueParts,
 		m_lastTransform,
 		worldTransform,
 		distance,
