@@ -13,12 +13,12 @@ namespace traktor
 	namespace render
 	{
 
+class BufferViewDx11;
 class ContextDx11;
-class VertexBufferDx11;
-class IndexBufferDx11;
 class ProgramDx11;
 class RenderTargetDx11;
 class RenderTargetSetDx11;
+class VertexLayoutDx11;
 
 /*!
  * \ingroup DX11
@@ -30,12 +30,12 @@ class RenderViewDx11
 	T_RTTI_CLASS;
 
 public:
-	RenderViewDx11(
+	explicit RenderViewDx11(
 		ContextDx11* context,
 		Window* window
 	);
 
-	RenderViewDx11::RenderViewDx11(
+	explicit RenderViewDx11(
 		ContextDx11* context,
 		IDXGISwapChain* dxgiSwapChain
 	);
@@ -86,9 +86,7 @@ public:
 
 	virtual void endPass() override final;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
-
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
@@ -134,8 +132,9 @@ private:
 	bool m_cursorVisible;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
-	Ref< VertexBufferDx11 > m_currentVertexBuffer;
-	Ref< IndexBufferDx11 > m_currentIndexBuffer;
+	Ref< const VertexLayoutDx11 > m_currentVertexLayout;
+	Ref< const BufferViewDx11 > m_currentVertexBuffer;
+	Ref< const BufferViewDx11 > m_currentIndexBuffer;
 	Ref< ProgramDx11 > m_currentProgram;
 	RenderState m_renderState;
 	int32_t m_targetSize[2];

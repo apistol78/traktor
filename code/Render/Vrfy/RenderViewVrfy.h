@@ -75,9 +75,7 @@ public:
 
 	virtual void endPass() override final;
 
-	virtual void draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives) override final;
-
-	virtual void draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 

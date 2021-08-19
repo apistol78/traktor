@@ -59,7 +59,7 @@ public:
 		ID3D11DeviceContext* d3dDeviceContext,
 		StateCache& stateCache,
 		uint32_t d3dInputElementsHash,
-		const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
+		const AlignedVector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 		const int32_t targetSize[2]
 	);
 

@@ -7,8 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferViewDx11", BufferViewDx11, IBufferView)
 
-BufferViewDx11::BufferViewDx11(ID3D11ShaderResourceView* d3dBufferResourceView)
-:	m_d3dBufferResourceView(d3dBufferResourceView)
+BufferViewDx11::BufferViewDx11(ID3D11Buffer* d3dBuffer, ID3D11ShaderResourceView* d3dBufferResourceView)
+:	m_d3dBuffer(d3dBuffer)
+,	m_d3dBufferResourceView(d3dBufferResourceView)
 {
 }
 

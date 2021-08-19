@@ -5,6 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Dx11/Platform.h"
+#include "Render/Dx11/BufferViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
@@ -14,7 +15,6 @@
 #include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StateCache.h"
-#include "Render/Dx11/StructBufferDx11.h"
 #include "Render/Dx11/VolumeTextureDx11.h"
 
 namespace traktor
@@ -370,7 +370,7 @@ bool ProgramDx11::bind(
 	ID3D11DeviceContext* d3dDeviceContext,
 	StateCache& stateCache,
 	uint32_t d3dInputElementsHash,
-	const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
+	const AlignedVector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 	const int32_t targetSize[2]
 )
 {

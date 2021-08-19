@@ -2,11 +2,10 @@
 #	include <renderdoc_app.h>
 #endif
 #include "Core/Library/Library.h"
-#include "Render/StructElement.h"
 #include "Render/VertexElement.h"
+#include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/Error.h"
-#include "Render/Vrfy/IndexBufferVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
 #include "Render/Vrfy/RenderSystemVrfy.h"
@@ -14,8 +13,6 @@
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/StructBufferVrfy.h"
-#include "Render/Vrfy/VertexBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
@@ -120,46 +117,24 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
-Ref< VertexBuffer > RenderSystemVrfy::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
 {
-	T_CAPTURE_TRACE(L"createVertexBuffer");
-	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid vertex buffer size.");
+	T_CAPTURE_TRACE(L"createBuffer");
+	T_CAPTURE_ASSERT(usage != 0, L"Invalid usage.");
+	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid buffer size.");
 
-	uint32_t vertexSize = getVertexSize(vertexElements);
-	T_CAPTURE_ASSERT(bufferSize % vertexSize == 0, L"Invalid vertex buffer size, is not aligned with size of vertex.");
-
-	Ref< VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, bufferSize, dynamic);
-	if (!vertexBuffer)
+	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic);
+	if (!buffer)
 		return nullptr;
 
-	return new VertexBufferVrfy(m_resourceTracker, vertexBuffer, bufferSize, vertexSize);
+	return new BufferVrfy(m_resourceTracker, buffer, bufferSize);
 }
 
-Ref< IndexBuffer > RenderSystemVrfy::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)
 {
-	T_CAPTURE_TRACE(L"createIndexBuffer");
-	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid index buffer size.");
-
-	Ref< IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(indexType, bufferSize, dynamic);
-	if (!indexBuffer)
-		return nullptr;
-
-	return new IndexBufferVrfy(m_resourceTracker, indexBuffer, indexType, bufferSize);
-}
-
-Ref< StructBuffer > RenderSystemVrfy::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
-{
-	T_CAPTURE_TRACE(L"createStructBuffer");
-	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid structure buffer size.");
-
-	uint32_t structSize = getStructSize(structElements);
-	T_CAPTURE_ASSERT(bufferSize % structSize == 0, L"Invalid struct buffer size, is not aligned with size of struct.");
-
-	Ref< StructBuffer > structBuffer = m_renderSystem->createStructBuffer(structElements, bufferSize, dynamic);
-	if (!structBuffer)
-		return nullptr;
-
-	return new StructBufferVrfy(m_resourceTracker, structBuffer, bufferSize, structSize);	
+	T_CAPTURE_TRACE(L"createBuffer");
+	T_CAPTURE_ASSERT(!vertexElements.empty(), L"Invalid vertex layout.");
+	return m_renderSystem->createVertexLayout(vertexElements);
 }
 
 Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

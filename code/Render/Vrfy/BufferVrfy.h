@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Render/VertexBuffer.h"
+#include "Core/Ref.h"
+#include "Render/Buffer.h"
 
 namespace traktor
 {
@@ -12,14 +13,14 @@ class ResourceTracker;
 /*!
  * \ingroup Vrfy
  */
-class VertexBufferVrfy : public VertexBuffer
+class BufferVrfy : public Buffer
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit VertexBufferVrfy(ResourceTracker* resourceTracker, VertexBuffer* vertexBuffer, uint32_t bufferSize, uint32_t vertexSize);
+	explicit BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize);
 
-	virtual ~VertexBufferVrfy();
+	virtual ~BufferVrfy();
 
 	virtual void destroy() override final;
 
@@ -29,21 +30,21 @@ public:
 
 	virtual const IBufferView* getBufferView() const override final;
 
-	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
+	//StructBuffer* getStructBuffer() const { return m_structBuffer; }
 
-	uint32_t getVertexSize() const { return m_vertexSize; }
+	//uint32_t getStructSize() const { return m_structSize; }
 
-private:
-	friend class RenderViewVrfy;
-
+protected:
 	Ref< ResourceTracker > m_resourceTracker;
-	Ref< VertexBuffer > m_vertexBuffer;
-	uint32_t m_vertexSize;
+	Ref< Buffer > m_buffer;
 	bool m_locked = false;
 	uint8_t* m_device = nullptr;
 	uint8_t* m_shadow = nullptr;
+	void* m_callstack[8] = { 0 };
 
 	void verifyGuard() const;
+
+	void verifyUntouched() const;
 };
 
 	}

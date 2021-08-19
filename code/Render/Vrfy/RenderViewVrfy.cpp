@@ -4,17 +4,15 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/Vrfy/Error.h"
+#include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/CubeTextureVrfy.h"
-#include "Render/Vrfy/IndexBufferVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/VertexBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor
@@ -228,128 +226,51 @@ void RenderViewVrfy::endPass()
 	m_insidePass = false;
 }
 
-void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives)
+void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	//T_CAPTURE_TRACE(L"draw");
-	//T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
-	//T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+	T_CAPTURE_TRACE(L"draw");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
-	//ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
-	//T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
+	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
+	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
 
-	//if (!programVrfy)
-	//	return;
+	if (!programVrfy)
+		return;
 
-	//T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
-	//T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
+	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
+	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
 
-	//if (!vertexBuffer)
-	//	return;
+	if (!vertexBuffer)
+		return;
 
 	//VertexBufferVrfy* vb = checked_type_cast< VertexBufferVrfy* >(vertexBuffer);
 	//IndexBufferVrfy* ib = checked_type_cast< IndexBufferVrfy* >(indexBuffer);
 
-	//T_CAPTURE_ASSERT(vb->m_vertexBuffer, L"Trying to draw with destroyed vertex buffer.");
+	// Validate draw call.
+	uint32_t vertexCount = 0;
+	switch (primitives.type)
+	{
+	case PtPoints:
+		vertexCount = primitives.count;
+		break;
 
-	//// Validate draw call.
-	//uint32_t vertexCount = 0;
-	//switch (primitives.type)
-	//{
-	//case PtPoints:
-	//	vertexCount = primitives.count;
-	//	break;
+	case PtLineStrip:
+		T_ASSERT(0);
+		break;
 
-	//case PtLineStrip:
-	//	T_ASSERT(0);
-	//	break;
+	case PtLines:
+		vertexCount = primitives.count * 2;
+		break;
 
-	//case PtLines:
-	//	vertexCount = primitives.count * 2;
-	//	break;
+	case PtTriangleStrip:
+		vertexCount = primitives.count + 2;
+		break;
 
-	//case PtTriangleStrip:
-	//	vertexCount = primitives.count + 2;
-	//	break;
-
-	//case PtTriangles:
-	//	vertexCount = primitives.count * 3;
-	//	break;
-	//}
-
-	//if (primitives.indexed)
-	//{
-	//	T_CAPTURE_ASSERT(ib, L"Drawing indexed primitives but no index buffer.");
-	//	if (!ib)
-	//		return;
-
-	//	T_CAPTURE_ASSERT(ib->m_indexBuffer, L"Trying to draw with destroyed index buffer.");
-
-	//	uint32_t maxVertexCount = ib->getBufferSize();
-	//	if (ib->getIndexType() == ItUInt16)
-	//		maxVertexCount /= 2;
-	//	else
-	//		maxVertexCount /= 4;
-
-	//	T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of index buffer.");
-	//}
-	//else
-	//{
-	//	T_CAPTURE_ASSERT(!ib, L"Drawing non-indexed primitives but index buffer provided.");
-
-	//	uint32_t maxVertexCount = vb->getBufferSize() / vb->getVertexSize();
-	//	T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
-	//}
-
-	//programVrfy->verify();
-
-	//m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programVrfy->m_program, primitives);
-}
-
-void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
-{
-	//T_CAPTURE_TRACE(L"draw");
-	//T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
-	//T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
-
-	//ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
-	//T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
-
-	//if (!programVrfy)
-	//	return;
-
-	//T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
-	//T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
-
-	//if (!vertexBuffer)
-	//	return;
-
-	//VertexBufferVrfy* vb = checked_type_cast< VertexBufferVrfy* >(vertexBuffer);
-	//IndexBufferVrfy* ib = checked_type_cast< IndexBufferVrfy* >(indexBuffer);
-
-	//// Validate draw call.
-	//uint32_t vertexCount = 0;
-	//switch (primitives.type)
-	//{
-	//case PtPoints:
-	//	vertexCount = primitives.count;
-	//	break;
-
-	//case PtLineStrip:
-	//	T_ASSERT(0);
-	//	break;
-
-	//case PtLines:
-	//	vertexCount = primitives.count * 2;
-	//	break;
-
-	//case PtTriangleStrip:
-	//	vertexCount = primitives.count + 2;
-	//	break;
-
-	//case PtTriangles:
-	//	vertexCount = primitives.count * 3;
-	//	break;
-	//}
+	case PtTriangles:
+		vertexCount = primitives.count * 3;
+		break;
+	}
 
 	//if (primitives.indexed)
 	//{
@@ -373,9 +294,9 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IBufferView* in
 	//	T_CAPTURE_ASSERT(primitives.offset + vertexCount <= maxVertexCount, L"Trying to draw more primitives than size of vertex buffer.");
 	//}
 
-	//programVrfy->verify();
+	programVrfy->verify();
 
-	//m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programVrfy->m_program, primitives, instanceCount);
+	m_renderView->draw(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitives, instanceCount);
 }
 
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)

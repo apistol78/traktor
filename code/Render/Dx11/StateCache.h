@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
@@ -17,7 +16,7 @@ class ProgramDx11;
 class StateCache : public Object
 {
 public:
-	StateCache(ID3D11DeviceContext* d3dDeviceContext);
+	explicit StateCache(ID3D11DeviceContext* d3dDeviceContext);
 
 	void reset();
 
@@ -37,7 +36,7 @@ public:
 
 	void setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology);
 
-	void setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements);
+	void setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const AlignedVector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements);
 
 	void setActiveProgram(ProgramDx11* program);
 
