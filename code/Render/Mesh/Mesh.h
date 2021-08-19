@@ -19,8 +19,8 @@ namespace traktor
 	namespace render
 	{
 
-class VertexBuffer;
-class IndexBuffer;
+class Buffer;
+class IVertexLayout;
 
 /*! Render mesh.
  * \ingroup Render
@@ -38,9 +38,13 @@ public:
 
 	void setVertexElements(const AlignedVector< VertexElement >& vertexDeclaration);
 
-	void setVertexBuffer(VertexBuffer* vertexBuffer);
+	void setVertexLayout(const IVertexLayout* vertexLayout);
 
-	void setIndexBuffer(IndexBuffer* indexBuffer);
+	void setVertexBuffer(Buffer* vertexBuffer);
+
+	void setIndexType(IndexType indexType);
+
+	void setIndexBuffer(Buffer* indexBuffer);
 
 	void setParts(const AlignedVector< Part >& parts);
 
@@ -48,9 +52,13 @@ public:
 
 	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
-	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
+	const IVertexLayout* getVertexLayout() const { return m_vertexLayout; }
 
-	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
+	Buffer* getVertexBuffer() const { return m_vertexBuffer; }
+
+	IndexType getIndexType() const { return m_indexType; }
+
+	Buffer* getIndexBuffer() const { return m_indexBuffer; }
 
 	const AlignedVector< Part >& getParts() const { return m_parts; }
 
@@ -58,8 +66,10 @@ public:
 
 private:
 	AlignedVector< VertexElement > m_vertexElements;
-	Ref< VertexBuffer > m_vertexBuffer;
-	Ref< IndexBuffer > m_indexBuffer;
+	Ref< const IVertexLayout > m_vertexLayout;
+	Ref< Buffer > m_vertexBuffer;
+	IndexType m_indexType;
+	Ref< Buffer > m_indexBuffer;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };

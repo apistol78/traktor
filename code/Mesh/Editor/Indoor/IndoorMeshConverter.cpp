@@ -14,11 +14,10 @@
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Model/Model.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
 
 namespace traktor
 {

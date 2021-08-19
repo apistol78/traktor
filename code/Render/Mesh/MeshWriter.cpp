@@ -1,7 +1,6 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Core/Math/Half.h"
 #include "Core/Io/Writer.h"
 
@@ -16,17 +15,17 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 
-	writer << uint32_t(3);
+	writer << uint32_t(4);
 
-	const AlignedVector< VertexElement >& vertexElements = mesh->getVertexElements();
+	const auto& vertexElements = mesh->getVertexElements();
 	writer << uint32_t(vertexElements.size());
 
-	for (AlignedVector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (const auto& vertexElement : vertexElements)
 	{
-		writer << uint32_t(i->getDataUsage());
-		writer << uint32_t(i->getDataType());
-		writer << uint32_t(i->getOffset());
-		writer << uint32_t(i->getIndex());
+		writer << uint32_t(vertexElement.getDataUsage());
+		writer << uint32_t(vertexElement.getDataType());
+		writer << uint32_t(vertexElement.getOffset());
+		writer << uint32_t(vertexElement.getIndex());
 	}
 
 	uint32_t vertexBufferSize = 0;
@@ -39,7 +38,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	uint32_t indexBufferSize = 0;
 	if (mesh->getIndexBuffer())
 	{
-		indexType = mesh->getIndexBuffer()->getIndexType();
+		indexType = mesh->getIndexType();
 		indexBufferSize = mesh->getIndexBuffer()->getBufferSize();
 	}
 
@@ -51,47 +50,47 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 		for (uint32_t i = 0; i < vertexBufferSize; )
 		{
-			for (AlignedVector< VertexElement >::const_iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
+			for (const auto& vertexElement : vertexElements)
 			{
-				switch (j->getDataType())
+				switch (vertexElement.getDataType())
 				{
 				case DtFloat1:
-					writer.write(&vertex[i + j->getOffset()], 1, sizeof(float));
+					writer.write(&vertex[i + vertexElement.getOffset()], 1, sizeof(float));
 					break;
 
 				case DtFloat2:
-					writer.write(&vertex[i + j->getOffset()], 2, sizeof(float));
+					writer.write(&vertex[i + vertexElement.getOffset()], 2, sizeof(float));
 					break;
 
 				case DtFloat3:
-					writer.write(&vertex[i + j->getOffset()], 3, sizeof(float));
+					writer.write(&vertex[i + vertexElement.getOffset()], 3, sizeof(float));
 					break;
 
 				case DtFloat4:
-					writer.write(&vertex[i + j->getOffset()], 4, sizeof(float));
+					writer.write(&vertex[i + vertexElement.getOffset()], 4, sizeof(float));
 					break;
 
 				case DtByte4:
 				case DtByte4N:
-					writer.write(&vertex[i + j->getOffset()], 4, sizeof(uint8_t));
+					writer.write(&vertex[i + vertexElement.getOffset()], 4, sizeof(uint8_t));
 					break;
 
 				case DtShort2:
 				case DtShort2N:
-					writer.write(&vertex[i + j->getOffset()], 2, sizeof(int16_t));
+					writer.write(&vertex[i + vertexElement.getOffset()], 2, sizeof(int16_t));
 					break;
 
 				case DtShort4:
 				case DtShort4N:
-					writer.write(&vertex[i + j->getOffset()], 4, sizeof(int16_t));
+					writer.write(&vertex[i + vertexElement.getOffset()], 4, sizeof(int16_t));
 					break;
 
 				case DtHalf2:
-					writer.write(&vertex[i + j->getOffset()], 2, sizeof(half_t));
+					writer.write(&vertex[i + vertexElement.getOffset()], 2, sizeof(half_t));
 					break;
 
 				case DtHalf4:
-					writer.write(&vertex[i + j->getOffset()], 4, sizeof(half_t));
+					writer.write(&vertex[i + vertexElement.getOffset()], 4, sizeof(half_t));
 					break;
 				}
 			}

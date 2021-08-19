@@ -17,12 +17,12 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
 class IRenderTargetSet;
+class IVertexLayout;
 class ScreenRenderer;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -94,8 +94,9 @@ private:
 	Ref< IWorldRenderer > m_worldRenderer;
 	resource::Proxy< render::Shader > m_probeShader;
 	resource::Proxy< render::Shader > m_filterShader;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::IRenderTargetSet > m_depthTargetSet;
 	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.

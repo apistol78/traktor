@@ -4,10 +4,9 @@
 #include "Core/Thread/JobManager.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Blend/BlendMesh.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -147,35 +146,35 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 
 	for (uint32_t i = 0; i < VertexBufferCount; ++i)
 	{
-		instance->vertexBuffers[i] = m_renderSystem->createVertexBuffer(
-			m_meshes[0]->getVertexElements(),
+		instance->vertexBuffers[i] = m_renderSystem->createBuffer(
+			render::BuVertex,
 			m_meshes[0]->getVertexBuffer()->getBufferSize(),
 			true
 		);
 		if (!instance->vertexBuffers[i])
-			return 0;
+			return nullptr;
 	}
 
-	Ref< render::IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(
-		m_meshes[0]->getIndexBuffer()->getIndexType(),
+	Ref< render::Buffer > indexBuffer = m_renderSystem->createBuffer(
+		render::BuIndex,
 		m_meshes[0]->getIndexBuffer()->getBufferSize(),
 		false
 	);
 	if (!indexBuffer)
-		return 0;
+		return nullptr;
 
 	// Copy indices from template's index buffer.
 	void* sourceIndices = m_meshes[0]->getIndexBuffer()->lock();
 	void* destIndices = indexBuffer->lock();
 	if (!sourceIndices || !destIndices)
-		return 0;
+		return nullptr;
 	std::memcpy(destIndices, sourceIndices, m_meshes[0]->getIndexBuffer()->getBufferSize());
 	m_meshes[0]->getIndexBuffer()->unlock();
 	indexBuffer->unlock();
 
 	// Create render mesh.
 	instance->mesh = new render::Mesh();
-	instance->mesh->setVertexElements(m_meshes[0]->getVertexElements());
+	instance->mesh->setVertexLayout(m_meshes[0]->getVertexLayout());
 	instance->mesh->setVertexBuffer(0);
 	instance->mesh->setIndexBuffer(indexBuffer);
 	instance->mesh->setParts(m_meshes[0]->getParts());
@@ -220,7 +219,7 @@ void BlendMesh::build(
 		}
 		if (update)
 		{
-			render::VertexBuffer* vertexBuffer = instance->vertexBuffers[instance->count % VertexBufferCount];
+			render::Buffer* vertexBuffer = instance->vertexBuffers[instance->count % VertexBufferCount];
 
 			const AlignedVector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
 			uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -286,12 +285,14 @@ void BlendMesh::build(
 		if (!sp)
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"BlendMesh");
+		auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"BlendMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
-		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
+		renderBlock->indexBuffer = instance->mesh->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = instance->mesh->getIndexType();
+		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = instance->mesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);

@@ -10,8 +10,8 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
-#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
@@ -275,7 +275,7 @@ bool ProgramVk::create(
 
 bool ProgramVk::validateGraphics(
 	CommandBuffer* commandBuffer,
-	float targetSize[2]
+	const float targetSize[2]
 )
 {
 	// Set implicit parameters.

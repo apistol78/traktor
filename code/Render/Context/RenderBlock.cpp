@@ -34,9 +34,12 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 
 	renderView->draw(
 		vertexBuffer,
+		vertexLayout,
 		indexBuffer,
+		indexType,
 		program,
-		primitives
+		primitives,
+		1
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);
@@ -51,7 +54,9 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 
 	renderView->draw(
 		vertexBuffer,
+		vertexLayout,
 		indexBuffer,
+		indexType,
 		program,
 		primitives,
 		count
@@ -71,7 +76,9 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 
 	renderView->draw(
 		vertexBuffer,
+		vertexLayout,
 		indexBuffer,
+		indexType,
 		program,
 		p,
 		instanceCount
@@ -91,9 +98,12 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 
 	renderView->draw(
 		vertexBuffer,
-		0,
+		vertexLayout,
+		nullptr,
+		ItVoid,
 		program,
-		p
+		p,
+		1
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);
@@ -110,9 +120,12 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 
 	renderView->draw(
 		vertexBuffer,
+		vertexLayout,
 		indexBuffer,
+		indexType,
 		program,
-		p
+		p,
+		1
 	);
 
 	T_CONTEXT_POP_MARKER(renderView);

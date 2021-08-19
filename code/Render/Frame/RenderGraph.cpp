@@ -264,7 +264,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		// Allocate query handles from render context's heap since they get automatically
 		// freed when the context is reset.
-		queryHandles = (int32_t*)renderContext->alloc((m_passes.size() + 1) * sizeof(int32_t), alignOf< int32_t >());
+		queryHandles = (int32_t*)renderContext->alloc((uint32_t)(m_passes.size() + 1) * sizeof(int32_t), (uint32_t)alignOf< int32_t >());
 		referenceQueryHandle = queryHandles;
 		passQueryHandles = queryHandles + 1;
 

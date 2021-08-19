@@ -8,15 +8,15 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
-#include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/VertexBufferVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -941,53 +941,45 @@ void RenderViewVk::endPass()
 	m_targetFrameBuffer = 0;
 }
 
-void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
+void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	draw(vertexBuffer, indexBuffer, program, primitives, 1);
-}
+	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);
+	const VertexLayoutVk* vlv = static_cast< const VertexLayoutVk* >(vertexLayout);
+	ProgramVk* p = static_cast< ProgramVk* >(program);
 
-void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
-{
-	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
-	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 	auto& frame = m_frames[m_currentImageIndex];
 
-	validateGraphicsPipeline(vb, p, primitives.type);
+	validateGraphicsPipeline(vlv, p, primitives.type);
 
-	float targetSize[] =
-	{
-		(float)m_targetSet->getWidth(),
-		(float)m_targetSet->getHeight()
-	};
+	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
 	p->validateGraphics(frame.graphicsCommandBuffer, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
 	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type] + c_primitiveAdd[primitives.type];
 
-	if (frame.boundVertexBuffer != vb)
+	if (frame.boundVertexBuffer != vbv)
 	{
-		VkBuffer vbb = vb->getVkBuffer();
-		VkDeviceSize offsets = {};
-		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &vbb, &offsets);
-		frame.boundVertexBuffer = vb;
+		const VkBuffer buffer = vbv->getVkBuffer();
+		const VkDeviceSize offset = vbv->getVkBufferOffset();
+		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
+		frame.boundVertexBuffer = vbv;
 	}
 
 	if (indexBuffer && primitives.indexed)
 	{
-		IndexBufferVk* ib = mandatory_non_null_type_cast< IndexBufferVk* >(indexBuffer);
-
-		if (frame.boundIndexBuffer != ib)
+		const BufferViewVk* ibv = static_cast< const BufferViewVk* >(indexBuffer);
+		if (frame.boundIndexBuffer != ibv)
 		{
-			VkBuffer ibb = ib->getVkBuffer();
-			VkDeviceSize offset = {};
+			const VkBuffer buffer = ibv->getVkBuffer();
+			const VkDeviceSize offset = ibv->getVkBufferOffset();
 			vkCmdBindIndexBuffer(
 				*frame.graphicsCommandBuffer,
-				ibb,
+				buffer,
 				offset,
-				(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
+				(indexType == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 			);
-			frame.boundIndexBuffer = ib;
+			frame.boundIndexBuffer = ibv;
 		}
 
 		vkCmdDrawIndexed(
@@ -1471,13 +1463,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	return true;
 }
 
-bool RenderViewVk::validateGraphicsPipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, ProgramVk* p, PrimitiveType pt)
 {
 	auto& frame = m_frames[m_currentImageIndex];
 	
 	// Calculate pipeline key.
 	const uint8_t primitiveId = (uint8_t)pt;
-	const uint32_t declHash = vb->getHash();
+	const uint32_t declHash = vertexLayout->getHash();
 	const uint32_t shaderHash = p->getShaderHash();
 	const auto key = std::make_tuple(primitiveId, (intptr_t)m_targetRenderPass, declHash, shaderHash);
 
@@ -1514,9 +1506,9 @@ bool RenderViewVk::validateGraphicsPipeline(VertexBufferVk* vb, ProgramVk* p, Pr
 		VkPipelineVertexInputStateCreateInfo visci = {};
 		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		visci.vertexBindingDescriptionCount = 1;
-		visci.pVertexBindingDescriptions = &vb->getVkVertexInputBindingDescription();
-		visci.vertexAttributeDescriptionCount = (uint32_t)vb->getVkVertexInputAttributeDescriptions().size();
-		visci.pVertexAttributeDescriptions = vb->getVkVertexInputAttributeDescriptions().c_ptr();
+		visci.pVertexBindingDescriptions = &vertexLayout->getVkVertexInputBindingDescription();
+		visci.vertexAttributeDescriptionCount = (uint32_t)vertexLayout->getVkVertexInputAttributeDescriptions().size();
+		visci.pVertexAttributeDescriptions = vertexLayout->getVkVertexInputAttributeDescriptions().c_ptr();
 
 		VkPipelineShaderStageCreateInfo ssci[2] = {};
 		ssci[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

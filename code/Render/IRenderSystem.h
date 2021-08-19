@@ -18,17 +18,15 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class ICubeTexture;
 class IProgram;
 class IRenderTargetSet;
 class IRenderView;
 class ISimpleTexture;
+class IVertexLayout;
 class IVolumeTexture;
 class ProgramResource;
-class StructBuffer;
-class StructElement;
-class VertexBuffer;
 class VertexElement;
 
 /*! Render system interface.
@@ -105,29 +103,16 @@ public:
 	/*! \name Factory methods. */
 	//@{
 
-	/*! Create vertex buffer.
+	/*! Create buffer.
 	 *
-	 * \param vertexElements Vertex element declaration.
-	 * \param bufferSize Size of vertex buffer in bytes.
-	 * \param dynamic If vertex buffer is frequently updated.
-	 */
-	virtual Ref< VertexBuffer > createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) = 0;
-
-	/*! Create index buffer.
-	 *
-	 * \param indexType Type of index, 16 or 32 bit.
+	 * \param usage Buffer usage flags.
 	 * \param bufferSize Size of index buffer in bytes.
 	 * \param dynamic If index buffer is frequently updated.
 	 */
-	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) = 0;
 
-	/*! Create structure buffer.
-	 *
-	 * \param vertexElements Structure element declaration.
-	 * \param bufferSize Size of vertex buffer in bytes.
-	 * \param dynamic If structure buffer is frequently updated.
-	 */
-	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic) = 0;
+	/*! Create vertex layout. */
+	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) = 0;
 
 	/*! Create simple, 2d, texture. */
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) = 0;

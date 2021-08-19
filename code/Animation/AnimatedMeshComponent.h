@@ -27,8 +27,8 @@ class SkinnedMesh;
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
-class StructBuffer;
 
 	}
 
@@ -120,7 +120,7 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms[2];
-	Ref< render::StructBuffer > m_jointBuffers[2];
+	Ref< render::Buffer > m_jointBuffers[2];
 	int32_t m_index;
 	mutable Ref< Job > m_updatePoseControllerJob;
 

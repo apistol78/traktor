@@ -16,12 +16,12 @@ class IResourceManager;
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
 class ITexture;
+class IVertexLayout;
 class RenderPass;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -65,8 +65,9 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_shaderGlyph;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	uint8_t* m_vertex;
 	uint32_t m_offset;
 	uint32_t m_count;

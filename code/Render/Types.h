@@ -175,6 +175,14 @@ enum RenderEventType
 	ReLost = 6
 };
 
+/*! Buffer usage flags. */
+enum BufferUsage
+{
+	BuVertex = 1,
+	BuIndex = 2,
+	BuStructured = 4
+};
+
 /*! Clear target flags. */
 enum ClearFlag
 {
@@ -238,8 +246,9 @@ enum UpdateFrequency
 /*! Index type. */
 enum IndexType
 {
-	ItUInt16,			//!< Unsigned 16 bit indices.
-	ItUInt32			//!< Unsigned 32 bit indices.
+	ItVoid		= 0,	//!< No type.
+	ItUInt16	= 1,	//!< Unsigned 16 bit indices.
+	ItUInt32	= 2		//!< Unsigned 32 bit indices.
 };
 
 /*! Texture type. */
@@ -343,9 +352,7 @@ struct RenderSystemStatistics
 	uint64_t allocationCount = 0;
 
 	// Number of alive resources.
-	uint32_t vertexBuffers = 0;
-	uint32_t indexBuffers = 0;
-	uint32_t structBuffers = 0;
+	uint32_t buffers = 0;
 	uint32_t simpleTextures = 0;
 	uint32_t cubeTextures = 0;
 	uint32_t volumeTextures = 0;

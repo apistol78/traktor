@@ -2,8 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/Endian.h"
-#include "Render/IndexBuffer.h"
-#include "Render/VertexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
@@ -26,7 +25,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 
 	uint32_t version;
 	reader >> version;
-	if (version != 3)
+	if (version != 4)
 		return nullptr;
 
 	uint32_t vertexElementCount;

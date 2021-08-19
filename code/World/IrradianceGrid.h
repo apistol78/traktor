@@ -18,7 +18,7 @@ namespace traktor
     namespace render
     {
 
-class StructBuffer;
+class Buffer;
 
     }
 
@@ -56,19 +56,19 @@ public:
     IrradianceGrid(
         gridSize_t size,
         const Aabb3& boundingBox,
-        render::StructBuffer* buffer
+        render::Buffer* buffer
     );
 
     const gridSize_t& getSize() const { return m_size; }
 
     const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
-    render::StructBuffer* getBuffer() const { return m_buffer; }
+    render::Buffer* getBuffer() const { return m_buffer; }
 
 private:
     gridSize_t m_size;
     Aabb3 m_boundingBox;
-    Ref< render::StructBuffer > m_buffer;
+    Ref< render::Buffer > m_buffer;
 };
 
     }

@@ -1,10 +1,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
@@ -76,16 +75,17 @@ bool AccGlyph::create(
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(
-		vertexElements,
+	m_vertexBuffer = renderSystem->createBuffer(
+		render::BuVertex,
 		c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
 		true
 	);
 	if (!m_vertexBuffer)
 		return false;
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_glyphCount * 6 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_glyphCount * 6 * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 
@@ -213,8 +213,10 @@ void AccGlyph::render(
 
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
 		renderBlock->program = sp.program;
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+		renderBlock->indexType = render::ItUInt16;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitive = render::PtTriangles;
 		renderBlock->offset = offset * 6;
 		renderBlock->count = count * 2;

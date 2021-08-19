@@ -20,12 +20,12 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class ImageGraph;
 class IRenderTargetSet;
 class ITexture;
 class ScreenRenderer;
 class Shader;
-class StructBuffer;
 
 	}
 
@@ -76,9 +76,9 @@ public:
 private:
 	struct Frame
 	{
-		Ref< render::StructBuffer > lightSBuffer;
+		Ref< render::Buffer > lightSBuffer;
 		void* lightSBufferMemory;
-		Ref< render::StructBuffer > tileSBuffer;
+		Ref< render::Buffer > tileSBuffer;
 		void* tileSBufferMemory;
 	};
 

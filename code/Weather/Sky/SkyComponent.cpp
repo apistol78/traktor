@@ -1,8 +1,7 @@
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/ITexture.h"
-#include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Weather/Sky/SkyComponent.h"
 #include "World/IWorldRenderPass.h"
@@ -25,14 +24,16 @@ render::handle_t s_handleWeather_SkySunDirection;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
 SkyComponent::SkyComponent(
-	render::VertexBuffer* vertexBuffer,
-	render::IndexBuffer* indexBuffer,
+	const render::IVertexLayout* vertexLayout,
+	render::Buffer* vertexBuffer,
+	render::Buffer* indexBuffer,
 	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< render::ITexture >& texture,
 	float offset
 )
-:	m_vertexBuffer(vertexBuffer)
+:	m_vertexLayout(vertexLayout)
+,	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
 ,	m_primitives(primitives)
 ,	m_shader(shader)
@@ -88,14 +89,16 @@ void SkyComponent::build(
 
 	Vector4 sunDirection = m_transform.axisY();
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
+	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
 
 	// Render sky after all opaques but before of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+	renderBlock->indexType = render::ItUInt16;
+	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);

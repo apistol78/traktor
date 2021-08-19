@@ -55,8 +55,6 @@ public:
 		Ref< render::Mesh > mesh[2];
 	};
 
-	StreamMesh();
-
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;

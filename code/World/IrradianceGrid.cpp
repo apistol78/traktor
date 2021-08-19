@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.IrradianceGrid", IrradianceGrid, Object)
 IrradianceGrid::IrradianceGrid(
     gridSize_t size,
     const Aabb3& boundingBox,
-    render::StructBuffer* buffer
+    render::Buffer* buffer
 )
 :   m_boundingBox(boundingBox)
 ,   m_buffer(buffer)

@@ -33,12 +33,13 @@ class IResourceManager;
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class IRenderView;
 class ISimpleTexture;
 class ITexture;
+class IVertexLayout;
 class Shader;
-class VertexBuffer;
 
 struct Vertex;
 
@@ -339,14 +340,14 @@ private:
 	{
 		uint32_t projection;
 		DepthState depthState;
-		Ref< VertexBuffer > vertexBuffer;
+		Ref< Buffer > vertexBuffer;
 		Ref< ITexture > texture;
 		Primitives primitives;
 	};
 
 	struct Frame
 	{
-		RefArray< VertexBuffer > vertexBuffers;
+		RefArray< Buffer > vertexBuffers;
 		AlignedVector< Matrix44 > projections;
 		AlignedVector< Batch > batches;
 	};
@@ -355,7 +356,8 @@ private:
 	Ref< IRenderSystem > m_renderSystem;
 	resource::Proxy< Shader > m_shader;
 	resource::Proxy< ISimpleTexture > m_fontTexture;
-	RefArray< VertexBuffer > m_freeVertexBuffers;
+	Ref< const IVertexLayout > m_vertexLayout;
+	RefArray< Buffer > m_freeVertexBuffers;
 	Semaphore m_lock;
 
 	// Frame

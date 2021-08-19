@@ -4,10 +4,10 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Half.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
 #include "Spark/ColorTransform.h"
@@ -639,7 +639,7 @@ void AccShape::render(
 
 		if (programSolid)
 		{
-			render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set solid parameters");
+			auto renderBlockSolid = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set solid parameters");
 			renderBlockSolid->program = programSolid;
 			renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockSolid->programParams->beginParameters(renderContext);
@@ -656,7 +656,7 @@ void AccShape::render(
 
 		if (programTextured)
 		{
-			render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set textured parameters");
+			auto renderBlockTextured = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set textured parameters");
 			renderBlockTextured->program = programTextured;
 			renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockTextured->programParams->beginParameters(renderContext);
@@ -673,7 +673,7 @@ void AccShape::render(
 
 		if (programLine)
 		{
-			render::NullRenderBlock* renderBlockLine = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set line parameters");
+			auto renderBlockLine = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set line parameters");
 			renderBlockLine->program = programLine;
 			renderBlockLine->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockLine->programParams->beginParameters(renderContext);
@@ -694,9 +694,10 @@ void AccShape::render(
 			{
 				if (programSolid)
 				{
-					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
+					auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 					renderBlock->program = programSolid;
-					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
+					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer->getBufferView();
+					renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 					renderBlock->primitive = batch.primitives.type;
 					renderBlock->offset = batch.primitives.offset;
 					renderBlock->count = batch.primitives.count;
@@ -707,9 +708,10 @@ void AccShape::render(
 			{
 				if (programTextured)
 				{
-					render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
+					auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
 					renderBlock->program = programTextured;
-					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer;
+					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer->getBufferView();
+					renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 					renderBlock->primitive = batch.primitives.type;
 					renderBlock->offset = batch.primitives.offset;
 					renderBlock->count = batch.primitives.count;
@@ -727,9 +729,10 @@ void AccShape::render(
 		{
 			if (programLine)
 			{
-				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
+				auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 				renderBlock->program = programLine;
-				renderBlock->vertexBuffer = batch.vertexRange.vertexBuffer;
+				renderBlock->vertexBuffer = batch.vertexRange.vertexBuffer->getBufferView();
+				renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 				renderBlock->primitive = batch.primitives.type;
 				renderBlock->offset = batch.primitives.offset;
 				renderBlock->count = batch.primitives.count;
@@ -742,7 +745,6 @@ void AccShape::render(
 				renderContext->enqueue(renderBlock);
 			}
 		}
-
 	});
 }
 

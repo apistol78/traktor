@@ -1,9 +1,10 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/IVertexLayout.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 
@@ -31,9 +32,11 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 	AlignedVector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(ScreenVertex, pos)));
 	vertexElements.push_back(VertexElement(DuCustom, DtFloat2, offsetof(ScreenVertex, texCoord)));
-	T_FATAL_ASSERT(getVertexSize(vertexElements) == sizeof(ScreenVertex));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
+	if (!m_vertexLayout)
+		return false;
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 6 * sizeof(ScreenVertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(BuVertex, 6 * sizeof(ScreenVertex), false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -62,7 +65,7 @@ void ScreenRenderer::destroy()
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
 	if (program)
-		renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
+		renderView->draw(m_vertexBuffer->getBufferView(), m_vertexLayout, nullptr, ItVoid, program, m_primitives, 1);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)
@@ -90,7 +93,8 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 	rb->program = program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
-	rb->vertexBuffer = m_vertexBuffer;
+	rb->vertexBuffer = m_vertexBuffer->getBufferView();
+	rb->vertexLayout = m_vertexLayout;
 	rb->primitives = m_primitives;
 	renderContext->enqueue(rb);
 }

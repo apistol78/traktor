@@ -27,12 +27,12 @@ class Heightfield;
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class ISimpleTexture;
 class ITexture;
+class IVertexLayout;
 class RenderContext;
-class VertexBuffer;
-class IndexBuffer;
 
 	}
 
@@ -92,7 +92,7 @@ public:
 		float maxHeight;
 		float error[LodCount];
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-		Ref< render::VertexBuffer > vertexBuffer;
+		Ref< render::Buffer > vertexBuffer;
 #endif
 		int32_t lastPatchLod;
 		int32_t lastSurfaceLod;
@@ -160,9 +160,10 @@ private:
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	uint32_t m_cacheSize;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	Ref< render::VertexBuffer > m_vertexBuffer;
+	Ref< render::Buffer > m_vertexBuffer;
 #endif
 	render::Primitives m_primitives[LodCount];
 	float m_patchLodDistance;

@@ -17,13 +17,14 @@ namespace traktor
 	namespace render
 	{
 
+class BufferViewVk;
 class CommandBuffer;
 class Context;
 class ProgramVk;
 class Queue;
 class RenderPassCache;
 class RenderTargetSetVk;
-class VertexBufferVk;
+class VertexLayoutVk;
 
 /*!
  * \ingroup Vulkan
@@ -92,9 +93,7 @@ public:
 
 	virtual void endPass() override final;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
-
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
@@ -124,8 +123,8 @@ private:
 
 		VkPipeline boundPipeline = 0;
 		VkPipeline boundComputePipeline = 0;
-		IndexBufferVk* boundIndexBuffer = nullptr;
-		VertexBufferVk* boundVertexBuffer = nullptr;
+		const BufferViewVk* boundIndexBuffer = nullptr;
+		const BufferViewVk* boundVertexBuffer = nullptr;
 	};
 
 	struct PipelineEntry
@@ -182,7 +181,7 @@ private:
 
 	bool create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks);
 
-	bool validateGraphicsPipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
+	bool validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, ProgramVk* p, PrimitiveType pt);
 
 	bool validateComputePipeline(ProgramVk* p);
 

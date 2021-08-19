@@ -27,6 +27,8 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const override final;
+
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
 
 private:

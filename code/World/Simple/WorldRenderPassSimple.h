@@ -15,8 +15,8 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class ISimpleTexture;
-class StructBuffer;
 
 	}
 

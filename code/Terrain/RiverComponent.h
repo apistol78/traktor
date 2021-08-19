@@ -17,11 +17,11 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
+class IVertexLayout;
 class RenderContext;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -72,8 +72,9 @@ public:
 	);
 
 private:
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
 };

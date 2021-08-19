@@ -21,26 +21,33 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	uint32_t indexBufferSize
 ) const
 {
-	Ref< VertexBuffer > vertexBuffer;
-	Ref< IndexBuffer > indexBuffer;
+	Ref< const IVertexLayout > vertexLayout;
+	Ref< Buffer > vertexBuffer;
+	Ref< Buffer > indexBuffer;
 
 	if (vertexBufferSize > 0)
 	{
-		vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, vertexBufferSize, false);
+		vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+		if (!vertexLayout)
+			return nullptr;
+
+		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false);
 		if (!vertexBuffer)
 			return nullptr;
 	}
 
 	if (indexBufferSize > 0)
 	{
-		indexBuffer = m_renderSystem->createIndexBuffer(indexType, indexBufferSize, false);
+		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false);
 		if (!indexBuffer)
 			return nullptr;
 	}
 
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);
+	mesh->setVertexLayout(vertexLayout);
 	mesh->setVertexBuffer(vertexBuffer);
+	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
 	return mesh;
 }

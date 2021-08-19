@@ -16,12 +16,13 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IProgram;
 class IRenderSystem;
 class IRenderView;
+class IVertexLayout;
 class ProgramParameters;
 class RenderContext;
-class VertexBuffer;
 
 /*! Screen renderer.
  * \ingroup Render
@@ -62,7 +63,8 @@ public:
 	// !}
 
 private:
-	Ref< VertexBuffer > m_vertexBuffer;
+	Ref< const IVertexLayout > m_vertexLayout;
+	Ref< Buffer > m_vertexBuffer;
 	Primitives m_primitives;
 };
 

@@ -120,8 +120,8 @@ bool AccDisplayRenderer::create(
 	fillVertexElements[4] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(AccShape::FillVertex, color), 0);
 	T_FATAL_ASSERT (render::getVertexSize(fillVertexElements) == sizeof(AccShape::FillVertex));
 
-	m_fillVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1, fillVertexElements);
-	if (!m_fillVertexPool->create())
+	m_fillVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
+	if (!m_fillVertexPool->create(fillVertexElements))
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (fill)." << Endl;
 		return false;
@@ -132,8 +132,8 @@ bool AccDisplayRenderer::create(
 	lineVertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(AccShape::LineVertex, lineOffset), 0);
 	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
 
-	m_lineVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1, lineVertexElements);
-	if (!m_lineVertexPool->create())
+	m_lineVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
+	if (!m_lineVertexPool->create(lineVertexElements))
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (line)." << Endl;
 		return false;

@@ -33,10 +33,10 @@ class ModelCache;
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
+class IVertexLayout;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -97,8 +97,9 @@ private:
 	TransformPath m_path;
 	bool m_dirty;
 
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	AlignedVector< MaterialBatch > m_batches;
 };
 

@@ -5,9 +5,8 @@
 #include "Resource/IResourceManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Resource/Member.h"
 #include "Weather/Sky/SkyComponent.h"
@@ -54,9 +53,10 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
+	Ref< const render::IVertexLayout > vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	Ref< render::VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(
-		vertexElements,
+	Ref< render::Buffer > vertexBuffer = renderSystem->createBuffer(
+		render::BuVertex,
 		c_vertexCount * sizeof(float) * 2,
 		false
 	);
@@ -80,8 +80,8 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	vertexBuffer->unlock();
 
-	Ref< render::IndexBuffer > indexBuffer = renderSystem->createIndexBuffer(
-		render::ItUInt16,
+	Ref< render::Buffer > indexBuffer = renderSystem->createBuffer(
+		render::BuIndex,
 		c_indexCount * sizeof(uint16_t),
 		false
 	);
@@ -117,6 +117,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	);
 
 	return new SkyComponent(
+		vertexLayout,
 		vertexBuffer,
 		indexBuffer,
 		primitives,

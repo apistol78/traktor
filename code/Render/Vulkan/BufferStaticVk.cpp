@@ -1,5 +1,5 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Vulkan/StructBufferStaticVk.h"
+#include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -10,26 +10,26 @@ namespace traktor
 	namespace render
 	{
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferStaticVk", StructBufferStaticVk, StructBufferVk)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferStaticVk", BufferStaticVk, BufferVk)
 
-StructBufferStaticVk::StructBufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances)
-:	StructBufferVk(context, bufferSize, instances)
+BufferStaticVk::BufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances)
+:	BufferVk(context, bufferSize, instances)
 {
 }
 
-StructBufferStaticVk::~StructBufferStaticVk()
+BufferStaticVk::~BufferStaticVk()
 {
 	destroy();
 }
 
-bool StructBufferStaticVk::create()
+bool BufferStaticVk::create(uint32_t usageBits)
 {
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
 		return false;
 
-	m_buffer = new Buffer(m_context);
-	if (!m_buffer->create(bufferSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
+	m_buffer = new ApiBuffer(m_context);
+	if (!m_buffer->create(bufferSize, usageBits | VK_BUFFER_USAGE_TRANSFER_DST_BIT, false, true))
 		return false;
 
 	m_bufferView = BufferViewVk(*m_buffer, 0, bufferSize, bufferSize);
@@ -37,25 +37,25 @@ bool StructBufferStaticVk::create()
 	return true;
 }
 
-void StructBufferStaticVk::destroy()
+void BufferStaticVk::destroy()
 {
 	safeDestroy(m_buffer);
 	safeDestroy(m_stageBuffer);
 	m_context = nullptr;
 }
 
-void* StructBufferStaticVk::lock()
+void* BufferStaticVk::lock()
 {
 	T_FATAL_ASSERT(m_stageBuffer == nullptr);
 
-	m_stageBuffer = new Buffer(m_context);
+	m_stageBuffer = new ApiBuffer(m_context);
 	if (!m_stageBuffer->create(m_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
 		return nullptr;
 
 	return m_stageBuffer->lock();
 }
 
-void StructBufferStaticVk::unlock()
+void BufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();
 
@@ -77,7 +77,7 @@ void StructBufferStaticVk::unlock()
 	safeDestroy(m_stageBuffer);
 }
 
-const IBufferView* StructBufferStaticVk::getBufferView() const
+const IBufferView* BufferStaticVk::getBufferView() const
 {
 	return &m_bufferView;
 }

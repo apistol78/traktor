@@ -16,9 +16,9 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
-class VertexBuffer;
+class IVertexLayout;
 
 	}
 
@@ -70,8 +70,9 @@ public:
 	) override final;
 
 private:
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	RefArray< DecalComponent > m_decalComponents;
 };
 

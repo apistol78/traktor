@@ -20,13 +20,13 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class IRenderTargetSet;
 class ITexture;
+class IVertexLayout;
 class RenderContext;
 class PrimitiveRenderer;
-class VertexBuffer;
-class IndexBuffer;
 
 	}
 
@@ -90,8 +90,9 @@ private:
 	resource::Proxy< render::Shader > m_impostorShader;
 	resource::Proxy< CloudMask > m_mask;
 	RefArray< render::IRenderTargetSet > m_impostorTargets;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	render::handle_t m_handleBillboardView;
 	render::handle_t m_handleImpostorTarget;
 	uint32_t m_impostorSliceCount;

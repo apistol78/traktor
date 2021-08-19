@@ -2,26 +2,26 @@
 
 #include "Core/Ref.h"
 #include "Render/Vulkan/BufferViewVk.h"
-#include "Render/Vulkan/StructBufferVk.h"
-#include "Render/Vulkan/Private/Buffer.h"
+#include "Render/Vulkan/BufferVk.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-class Buffer;
+class ApiBuffer;
 
-class StructBufferStaticVk : public StructBufferVk
+class BufferStaticVk : public BufferVk
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit StructBufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances);
+	explicit BufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances);
 
-	virtual ~StructBufferStaticVk();
+	virtual ~BufferStaticVk();
 
-	bool create();
+	bool create(uint32_t usageBits);
 
 	virtual void destroy() override final;
 
@@ -32,8 +32,8 @@ public:
 	virtual const IBufferView* getBufferView() const override final;
 
 private:
-	Ref< Buffer > m_buffer;
-	Ref< Buffer > m_stageBuffer;
+	Ref< ApiBuffer > m_buffer;
+	Ref< ApiBuffer > m_stageBuffer;
 	BufferViewVk m_bufferView;
 	uint32_t m_size = 0;
 };

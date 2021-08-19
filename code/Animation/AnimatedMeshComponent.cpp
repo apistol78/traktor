@@ -9,7 +9,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
-#include "Render/StructBuffer.h"
+#include "Render/Buffer.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"

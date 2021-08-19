@@ -2,9 +2,8 @@
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/StructBuffer.h"
-#include "Render/StructElement.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 #include "World/IEntityEvent.h"
@@ -78,16 +77,6 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		if (!m_renderSystem)
 			return nullptr;
 
-		AlignedVector< render::StructElement > layout;
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shR4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shG4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB0_3)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shB4_7)));
-		layout.push_back(render::StructElement(render::DtFloat4, offsetof(IrradianceGridData, shRGB_8)));
-		T_FATAL_ASSERT(sizeof(IrradianceGridData) == render::getStructSize(layout));
-
 		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
 		if (!resource)
 			return nullptr;
@@ -119,9 +108,9 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		reader >> mx[1];
 		reader >> mx[2];
 
-		Ref< render::StructBuffer > buffer = m_renderSystem->createStructBuffer(
-			layout,
-			render::getStructSize(layout) * size[0] * size[1] * size[2],
+		Ref< render::Buffer > buffer = m_renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(IrradianceGridData) * size[0] * size[1] * size[2],
 			false
 		);
 		if (!buffer)

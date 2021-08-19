@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class Buffer;
+class ApiBuffer;
 class Context;
 class Image;
 
@@ -45,7 +45,7 @@ public:
 private:
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
-	Ref< Buffer > m_stagingBuffer;
+	Ref< ApiBuffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	VolumeTextureCreateDesc m_desc;
 };

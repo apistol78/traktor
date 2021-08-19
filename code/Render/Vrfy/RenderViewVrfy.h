@@ -29,7 +29,7 @@ class RenderViewVrfy : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-	RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView);
+	explicit RenderViewVrfy(const RenderViewDesc& desc, IRenderSystem* renderSystem, IRenderView* renderView);
 
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
@@ -75,9 +75,9 @@ public:
 
 	virtual void endPass() override final;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
+	virtual void draw(const IBufferView* vertexBuffer, const IBufferView* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 

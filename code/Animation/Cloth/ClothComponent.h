@@ -2,10 +2,9 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
 
@@ -104,8 +103,9 @@ private:
 	uint32_t m_triangleCount;
 	traktor::Aabb3 m_aabb;
 	bool m_updateRequired;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
 };
 

@@ -179,9 +179,7 @@ void ProfilerDialog::receivedPerfSets()
 	const TpsRender& render = m_connection->getPerformance< TpsRender >();
 	m_performanceGrid->addRow(createPerformanceRow(L"Memory (GPU) Available", str(L"%d KiB", render.renderSystemStats.memoryAvailable / 1024)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Memory (GPU) Usage", str(L"%d KiB", render.renderSystemStats.memoryUsage / 1024)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Vertex Buffers", str(L"%d", render.renderSystemStats.vertexBuffers)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Index Buffers", str(L"%d", render.renderSystemStats.indexBuffers)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Struct Buffers", str(L"%d", render.renderSystemStats.structBuffers)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Buffers", str(L"%d", render.renderSystemStats.buffers)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Simple Textures", str(L"%d", render.renderSystemStats.simpleTextures)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Cube Textures", str(L"%d", render.renderSystemStats.cubeTextures)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Volume Textures", str(L"%d", render.renderSystemStats.volumeTextures)));

@@ -2,7 +2,7 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
-#include "Render/StructBuffer.h"
+#include "Render/Buffer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
@@ -83,7 +83,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 
 void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)
 {
-	render::StructBuffer* jointTransforms = m_jointTransforms[m_count];
+	render::Buffer* jointTransforms = m_jointTransforms[m_count];
 	SkinnedMesh::JointData* jointData = (SkinnedMesh::JointData*)jointTransforms->lock();
 
 	//const auto& jointMap = m_mesh->getJointMap();

@@ -21,11 +21,10 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
+class IVertexLayout;
 class RenderContext;
-class StructBuffer;
-class VertexBuffer;
-class IndexBuffer;
 
 	}
 
@@ -89,13 +88,12 @@ private:
 		uint32_t offset;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
-	Ref< render::StructBuffer > m_structBuffer;
-
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
+	Ref< render::Buffer > m_structBuffer;
 	float m_lod1Distance;
 	float m_lod2Distance;
-
 	EmitterPoint* m_point;
 	int32_t m_pointOffset;
 	

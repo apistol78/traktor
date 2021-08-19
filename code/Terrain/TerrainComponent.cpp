@@ -4,10 +4,9 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
@@ -422,12 +421,13 @@ void TerrainComponent::build(
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
 		auto rb = renderContext->alloc< render::SimpleRenderBlock >(L"Terrain patch");
-
 		rb->distance = visiblePatch.distance;
 		rb->program = program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
-		rb->indexBuffer = m_indexBuffer;
-		rb->vertexBuffer = m_vertexBuffer;
+		rb->indexBuffer = m_indexBuffer->getBufferView();
+		rb->indexType = render::ItUInt32;
+		rb->vertexBuffer = m_vertexBuffer->getBufferView();
+		rb->vertexLayout = m_vertexLayout;
 		rb->primitives = m_primitives[patch.lastPatchLod];
 
 		rb->programParams->beginParameters(renderContext);
@@ -651,8 +651,8 @@ bool TerrainComponent::createPatches()
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 
-	m_vertexBuffer = m_renderSystem->createVertexBuffer(
-		vertexElements,
+	m_vertexBuffer = m_renderSystem->createBuffer(
+		render::BuVertex,
 		patchVertexCount * vertexSize,
 		false
 	);
@@ -678,14 +678,16 @@ bool TerrainComponent::createPatches()
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 #endif
 
+	m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+
 	m_patches.reserve(m_patchCount * m_patchCount);
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
-				vertexElements,
+			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(
+				render::BuVertex,
 				patchVertexCount * vertexSize,
 				false
 			);
@@ -941,8 +943,8 @@ bool TerrainComponent::createPatches()
 #endif
 	}
 
-	m_indexBuffer = m_renderSystem->createIndexBuffer(
-		render::ItUInt32,
+	m_indexBuffer = m_renderSystem->createBuffer(
+		render::BuIndex,
 		uint32_t(indices.size() * sizeof(uint32_t)),
 		false
 	);

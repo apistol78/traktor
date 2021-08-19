@@ -25,10 +25,10 @@ class WorldRenderView;
 	namespace render
 	{
 
+class Buffer;
 class RenderContext;
-class VertexBuffer;
-class IndexBuffer;
 class ITexture;
+class IVertexLayout;
 
 	}
 
@@ -40,9 +40,10 @@ class T_DLLCLASS SkyComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	SkyComponent(
-		render::VertexBuffer* vertexBuffer,
-		render::IndexBuffer* indexBuffer,
+	explicit SkyComponent(
+		const render::IVertexLayout* vertexLayout,
+		render::Buffer* vertexBuffer,
+		render::Buffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< render::ITexture >& texture,
@@ -68,8 +69,9 @@ public:
 	);
 
 private:
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;

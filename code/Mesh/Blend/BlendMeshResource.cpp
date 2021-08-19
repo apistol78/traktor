@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshResource.h"
-#include "Render/VertexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/RenderMeshFactory.h"

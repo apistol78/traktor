@@ -9,8 +9,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
+#include "Render/Vulkan/BufferDynamicVk.h"
+#include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
-#include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderSystemVk.h"
@@ -19,10 +20,7 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/StructBufferDynamicVk.h"
-#include "Render/Vulkan/StructBufferStaticVk.h"
-#include "Render/Vulkan/VertexBufferDynamicVk.h"
-#include "Render/Vulkan/VertexBufferStaticVk.h"
+#include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
@@ -436,9 +434,9 @@ void RenderSystemVk::getInformation(RenderSystemInformation& outInfo) const
 	VmaStats stats = {};
 	vmaCalculateStats(m_allocator, &stats);
 
-	outInfo.dedicatedMemoryTotal = stats.total.unusedBytes + stats.total.usedBytes;
+	outInfo.dedicatedMemoryTotal = (uint32_t)(stats.total.unusedBytes + stats.total.usedBytes);
 	outInfo.sharedMemoryTotal = 0;
-	outInfo.dedicatedMemoryAvailable = stats.total.unusedBytes;
+	outInfo.dedicatedMemoryAvailable = (uint32_t)stats.total.unusedBytes;
 	outInfo.sharedMemoryAvailable = 0;
 }
 
@@ -549,7 +547,35 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 		return nullptr;
 }
 
-Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+{
+	uint32_t usageBits = 0;
+	if ((usage & BuVertex) != 0)
+		usageBits |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	if ((usage & BuIndex) != 0)
+		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+	if ((usage & BuStructured) != 0)
+		usageBits |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+	if (usageBits == 0)
+		return nullptr;
+
+	if (dynamic)
+	{
+		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, bufferSize, m_statistics.buffers);
+		if (buffer->create(usageBits, 3))
+			return buffer;
+	}
+	else
+	{
+		Ref< BufferStaticVk > buffer = new BufferStaticVk(m_context, bufferSize, m_statistics.buffers);
+		if (buffer->create(usageBits))
+			return buffer;
+	}
+
+	return nullptr;
+}
+
+Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)
 {
 	VkVertexInputBindingDescription vibd = {};
 	vibd.binding = 0;
@@ -557,61 +583,21 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	vibd.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	AlignedVector< VkVertexInputAttributeDescription > vads;
-	for (auto ve : vertexElements)
+	for (auto vertexElement : vertexElements)
 	{
 		auto& vad = vads.push_back();
-		vad.location = VertexAttributes::getLocation(ve.getDataUsage(), ve.getIndex());
+		vad.location = VertexAttributes::getLocation(vertexElement.getDataUsage(), vertexElement.getIndex());
 		vad.binding = 0;
-		vad.format = c_vkVertexElementFormats[ve.getDataType()];
-		vad.offset = ve.getOffset();
+		vad.format = c_vkVertexElementFormats[vertexElement.getDataType()];
+		vad.offset = vertexElement.getOffset();
 	}
 
-	// Calculate hash of vertex declaration.
 	Adler32 cs;
 	cs.begin();
 	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();
 
-	if (dynamic)
-	{
-		Ref< VertexBufferDynamicVk > vb = new VertexBufferDynamicVk(m_context, bufferSize, vibd, vads, cs.get(), m_statistics.vertexBuffers);
-		if (vb->create(3))
-			return vb;
-	}
-	else
-	{
-		Ref< VertexBufferStaticVk > vb = new VertexBufferStaticVk(m_context, bufferSize, vibd, vads, cs.get(), m_statistics.vertexBuffers);
-		if (vb->create())
-			return vb;
-	}
-
-	return nullptr;
-}
-
-Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
-{
-	Ref< IndexBufferVk > buffer = new IndexBufferVk(m_context, indexType, bufferSize, m_statistics.indexBuffers);
-	if (buffer->create())
-		return buffer;
-	else
-		return nullptr;
-}
-
-Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
-{
-	if (dynamic)
-	{
-		Ref< StructBufferDynamicVk > buffer = new StructBufferDynamicVk(m_context, bufferSize, m_statistics.structBuffers);
-		if (buffer->create(3))
-			return buffer;
-	}
-	else
-	{
-		Ref< StructBufferStaticVk > buffer = new StructBufferStaticVk(m_context, bufferSize, m_statistics.structBuffers);
-		if (buffer->create())
-			return buffer;
-	}
-	return nullptr;
+	return new VertexLayoutVk(vibd, vads, cs.get());
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

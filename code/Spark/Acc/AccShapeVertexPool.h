@@ -11,8 +11,9 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
-class VertexBuffer;
+class IVertexLayout;
 
 	}
 
@@ -26,12 +27,12 @@ class AccShapeVertexPool : public Object
 public:
 	struct Range
 	{
-		render::VertexBuffer* vertexBuffer = nullptr;
+		render::Buffer* vertexBuffer = nullptr;
 	};
 
-	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames, const AlignedVector< render::VertexElement >& vertexElements);
+	explicit AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames);
 
-	bool create();
+	bool create(const AlignedVector< render::VertexElement >& vertexElements);
 
 	void destroy();
 
@@ -41,21 +42,24 @@ public:
 
 	void cycleGarbage();
 
+	const render::IVertexLayout* getVertexLayout() const { return m_vertexLayout; }
+
 private:
 	struct VertexRange
 	{
-		Ref< render::VertexBuffer > vertexBuffer;
+		Ref< render::Buffer > vertexBuffer;
 		int32_t vertexCount;
 	};
 
 	typedef std::list< VertexRange > vr_list_t;
 
 	Ref< render::IRenderSystem > m_renderSystem;
-	AlignedVector< render::VertexElement > m_vertexElements;
+	Ref< const render::IVertexLayout > m_vertexLayout;
 	vr_list_t m_usedRanges;
 	vr_list_t m_freeRanges;
 	AlignedVector< vr_list_t > m_garbageRanges;
-	uint32_t m_frame;
+	uint32_t m_vertexSize = 0;
+	uint32_t m_frame = 0;
 };
 
 	}

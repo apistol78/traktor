@@ -2,6 +2,7 @@
 #include "Core/Io/IStream.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Stream/StreamMesh.h"
+#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
@@ -32,10 +33,6 @@ struct NamedMeshPart
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMesh", StreamMesh, IMesh)
-
-StreamMesh::StreamMesh()
-{
-}
 
 const Aabb3& StreamMesh::getBoundingBox() const
 {
@@ -98,12 +95,14 @@ void StreamMesh::build(
 		if (j == meshParts.end())
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"StreamMesh");
+		auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"StreamMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
-		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
+		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = instance->mesh[0]->getIndexType();
+		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = instance->mesh[0]->getVertexLayout();
 		renderBlock->primitives = j->primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);

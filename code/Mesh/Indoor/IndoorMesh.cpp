@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Indoor/IndoorMesh.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
@@ -103,8 +104,10 @@ void IndoorMesh::build(
 			renderBlock->distance = distance;
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+			renderBlock->indexBuffer = m_mesh->getIndexBuffer()->getBufferView();
+			renderBlock->indexType = m_mesh->getIndexType();
+			renderBlock->vertexBuffer = m_mesh->getVertexBuffer()->getBufferView();
+			renderBlock->vertexLayout = m_mesh->getVertexLayout();
 			renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 			renderBlock->programParams->beginParameters(renderContext);

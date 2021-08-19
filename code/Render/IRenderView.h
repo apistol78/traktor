@@ -18,13 +18,13 @@ namespace traktor
 	namespace render
 	{
 
+class IBufferView;
 class IRenderSystem;
 class IRenderTargetSet;
-class VertexBuffer;
-class IndexBuffer;
 class ITexture;
 class ISimpleTexture;
 class ICubeTexture;
+class IVertexLayout;
 class IVolumeTexture;
 class IProgram;
 
@@ -140,22 +140,15 @@ public:
 
 	/*! Draw primitives.
 	 *
-	 * \param vertexBuffer Vertex buffer containing geometry.
-	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
-	 * \param program Program to be used.
-	 * \param primitives Set of primitives to render.
-	 */
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) = 0;
-
-	/*! Draw primitives using instancing.
-	 *
-	 * \param vertexBuffer Vertex buffer containing geometry.
-	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
+	 * \param vertexBuffer View of buffer containing geometry.
+	 * \param vertexLayout Layout of vertices in vertex buffer.
+	 * \param indexBuffer View of buffer to be used for indices; null if no indices should be used.
+	 * \param indexType Type of indices in index buffer.
 	 * \param program Program to be used.
 	 * \param primitives Set of primitives to render.
 	 * \param instanceCount Number of instances.
 	 */
-	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
+	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
 
 	/*! Enqueue compute task.
 	 *

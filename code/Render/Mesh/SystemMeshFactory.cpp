@@ -1,7 +1,6 @@
-#include "Render/Mesh/SystemMeshFactory.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Mesh/SystemMeshFactory.h"
 
 namespace traktor
 {
@@ -10,11 +9,11 @@ namespace traktor
 		namespace
 		{
 
-class InternalVertexBuffer : public VertexBuffer
+class InternalBuffer : public Buffer
 {
 public:
-	InternalVertexBuffer(int bufferSize)
-	:	VertexBuffer(bufferSize)
+	explicit InternalBuffer(uint32_t bufferSize)
+	:	Buffer(bufferSize)
 	,	m_data(bufferSize)
 	{
 	}
@@ -22,23 +21,7 @@ public:
 	virtual void destroy() override final {}
 	virtual void* lock() override final { return &m_data[0]; }
 	virtual void unlock() override final {}
-
-private:
-	AlignedVector< uint8_t > m_data;
-};
-
-class InternalIndexBuffer : public IndexBuffer
-{
-public:
-	InternalIndexBuffer(IndexType indexType, int bufferSize)
-	:	IndexBuffer(indexType, bufferSize)
-	,	m_data(bufferSize)
-	{
-	}
-
-	virtual void destroy() override final {}
-	virtual void* lock() override final { return &m_data[0]; }
-	virtual void unlock() override final {}
+	virtual const IBufferView* getBufferView() const override final { return nullptr; }
 
 private:
 	AlignedVector< uint8_t > m_data;
@@ -55,18 +38,19 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	uint32_t indexBufferSize
 ) const
 {
-	Ref< VertexBuffer > vertexBuffer;
-	Ref< IndexBuffer > indexBuffer;
+	Ref< Buffer > vertexBuffer;
+	Ref< Buffer > indexBuffer;
 
 	if (vertexBufferSize > 0)
-		vertexBuffer = new InternalVertexBuffer(vertexBufferSize);
+		vertexBuffer = new InternalBuffer(vertexBufferSize);
 
 	if (indexBufferSize > 0)
-		indexBuffer = new InternalIndexBuffer(indexType, indexBufferSize);
+		indexBuffer = new InternalBuffer(indexBufferSize);
 
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);
+	mesh->setIndexType(indexType);
 	mesh->setIndexBuffer(indexBuffer);
 	return mesh;
 }
