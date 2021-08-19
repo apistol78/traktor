@@ -240,51 +240,11 @@
 			<name>Clip</name>
 		</item>
 		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
-			<id>{A3327A66-04B7-6B4D-8653-E604C90D353A}</id>
-			<comment/>
-			<position>
-				<first>129</first>
-				<second>-143</second>
-			</position>
-			<name>ClipBounds_OpenGL</name>
-			<inputPins>
-				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
-					<name>Bounds</name>
-					<type>PtVector</type>
-					<samplerId/>
-				</item>
-				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
-					<name>Position</name>
-					<type>PtVector</type>
-					<samplerId/>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
-					<name>Inside</name>
-					<type>PtScalar</type>
-				</item>
-			</outputPins>
-			<samplers/>
-			<script>
-			<![CDATA[
-ENTRY
-{
-	vec2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw, Position.xy);
-	Inside = s.x * s.y;
-}
-			]]>
-			</script>
-		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>-224</second>
+				<first>291</first>
+				<second>-210</second>
 			</position>
 			<name>ClipBounds_Dx11</name>
 			<inputPins>
@@ -340,8 +300,8 @@ ENTRY
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>-62</second>
+				<first>294</first>
+				<second>-116</second>
 			</position>
 			<name>ClipBounds_Vulkan</name>
 			<inputPins>
@@ -373,7 +333,6 @@ ENTRY
 	vec2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw + 1.0, Position.xy);
 	Inside = s.x * s.y;
 }
-
 			]]>
 			</script>
 		</item>
@@ -611,57 +570,27 @@ ENTRY
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Inside</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>DX11</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Inside</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>OpenGL</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Inside</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>OpenGL ES2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Bounds</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[25]"/>
-				<name>Bounds</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Bounds</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -671,11 +600,11 @@ ENTRY
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Other</name>
 			</destination>
 		</item>
@@ -695,17 +624,7 @@ ENTRY
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Position</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[27]"/>
 				<name>Position</name>
 			</destination>
 		</item>
@@ -715,17 +634,17 @@ ENTRY
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[27]"/>
 				<name>Bounds</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[27]"/>
 				<name>Inside</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Vulkan</name>
 			</destination>
 		</item>

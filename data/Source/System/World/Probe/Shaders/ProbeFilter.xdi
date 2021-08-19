@@ -823,7 +823,6 @@ ENTRY
 		0.0f
 	);
 }
-
 			]]>
 			</script>
 		</item>
@@ -889,7 +888,6 @@ ENTRY
     float3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
     Output = float4(normalize(sampleVec), 0.0f);
 }
-
 			]]>
 			</script>
 		</item>
@@ -1483,26 +1481,6 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
 				<name>Vulkan</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<name>OpenGL ES2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<name>OpenGL</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

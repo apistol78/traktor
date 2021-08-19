@@ -82,7 +82,6 @@ ENTRY
     
     Output = vec4(float(Index) / Count, radicalInverseVDC, 0, 0);
 }
-
 			]]>
 			</script>
 		</item>
@@ -122,26 +121,6 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>OpenGL</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>OpenGL ES2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

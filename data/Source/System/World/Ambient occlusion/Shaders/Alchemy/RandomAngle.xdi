@@ -14,8 +14,8 @@
 			<id>{C6BADCE6-CFC4-594C-B6AD-C4DE071C26AC}</id>
 			<comment/>
 			<position>
-				<first>510</first>
-				<second>296</second>
+				<first>681</first>
+				<second>351</second>
 			</position>
 			<name>RandomAngle_GLSL</name>
 			<inputPins/>
@@ -75,26 +75,6 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Vulkan</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>OpenGL ES2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>OpenGL</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

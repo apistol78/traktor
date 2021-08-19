@@ -997,16 +997,6 @@ Light space position
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
-				<name>Emscripten</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[36]"/>
 				<name>RaspberryPI</name>
 			</destination>
 		</item>
