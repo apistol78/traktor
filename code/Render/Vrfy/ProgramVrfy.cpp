@@ -4,7 +4,6 @@
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/StructBufferVrfy.h"
 #include "Render/Vrfy/VolumeTextureVrfy.h"
 
 namespace traktor

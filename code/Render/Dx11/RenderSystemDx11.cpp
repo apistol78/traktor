@@ -2,24 +2,20 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
+#include "Render/Dx11/BufferDynamicDx11.h"
+#include "Render/Dx11/BufferStaticDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
-#include "Render/Dx11/IndexBufferDynamicDx11.h"
-#include "Render/Dx11/IndexBufferStaticDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/RenderSystemDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ResourceCache.h"
-#include "Render/Dx11/SharedBufferHeapDx11.h"
-#include "Render/Dx11/SimpleBufferHeapDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
-#include "Render/Dx11/StructBufferDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
-#include "Render/Dx11/VertexBufferDynamicDx11.h"
-#include "Render/Dx11/VertexBufferStaticDx11.h"
+#include "Render/Dx11/VertexLayoutDx11.h"
 #include "Render/Dx11/VolumeTextureDx11.h"
 #include "Render/Dx11/Window.h"
 
@@ -284,32 +280,6 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	}
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
-
-	// Create a heap for static vertex buffers; as each different vertex size
-	// will create a new buffer we must be somewhat conservative of actual buffer size.
-	D3D11_BUFFER_DESC dbd;
-	dbd.ByteWidth = 16 * 1024 * 1024;
-	dbd.Usage = D3D11_USAGE_DEFAULT;
-	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	dbd.CPUAccessFlags = 0;
-	dbd.MiscFlags = 0;
-#if 0
-	m_vertexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
-#else
-	m_vertexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);
-#endif
-
-	dbd.ByteWidth = 4 * 1024 * 1024;
-	dbd.Usage = D3D11_USAGE_DEFAULT;
-	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	dbd.CPUAccessFlags = 0;
-	dbd.MiscFlags = 0;
-#if 0
-	m_indexBufferStaticHeap = new SharedBufferHeapDx11(m_context, dbd);
-#else
-	m_indexBufferStaticHeap = new SimpleBufferHeapDx11(m_context, dbd);
-#endif
-
 	m_resourceCache = new ResourceCache(d3dDevice, desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 
 	// Check if lock is mandatory when creating resources.
@@ -329,15 +299,11 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 void RenderSystemDx11::destroy()
 {
 	m_resourceCache = nullptr;
-
 	if (m_context)
 	{
 		m_context->deleteResources();
 		m_context = nullptr;
 	}
-
-	safeDestroy(m_indexBufferStaticHeap);
-	safeDestroy(m_vertexBufferStaticHeap);
 }
 
 bool RenderSystemDx11::reset(const RenderSystemDesc& desc)
@@ -461,7 +427,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 
 	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D24_UNORM_S8_UINT, scd.SampleDesc))
 	{
-		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
+		log::error << L"Unable to create render view; unsupported MSAA." << Endl;
 		return 0;
 	}
 
@@ -472,7 +438,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
+		log::error << L"Unable to create render view; CreateSwapChain failed." << Endl;
 		return 0;
 	}
 
@@ -489,28 +455,42 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	return renderView;
 }
 
-Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+//Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+//{
+//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
+//	if (!dynamic)
+//		return VertexBufferStaticDx11::create(m_context, m_vertexBufferStaticHeap, bufferSize, vertexElements);
+//	else
+//		return VertexBufferDynamicDx11::create(m_context, bufferSize, vertexElements);
+//}
+//
+//Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+//{
+//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
+//	if (!dynamic)
+//		return IndexBufferStaticDx11::create(m_context, m_indexBufferStaticHeap, indexType, bufferSize);
+//	else
+//		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
+//}
+//
+//Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
+//{
+//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
+//	return StructBufferDx11::create(m_context, structElements, bufferSize);
+//}
+
+Ref< Buffer > RenderSystemDx11::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	if (!dynamic)
-		return VertexBufferStaticDx11::create(m_context, m_vertexBufferStaticHeap, bufferSize, vertexElements);
+		return BufferStaticDx11::create(m_context, usage, bufferSize);
 	else
-		return VertexBufferDynamicDx11::create(m_context, bufferSize, vertexElements);
+		return BufferDynamicDx11::create(m_context, usage, bufferSize);
 }
 
-Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< const IVertexLayout > RenderSystemDx11::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)
 {
-	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-	if (!dynamic)
-		return IndexBufferStaticDx11::create(m_context, m_indexBufferStaticHeap, indexType, bufferSize);
-	else
-		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
-}
-
-Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
-{
-	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-	return StructBufferDx11::create(m_context, structElements, bufferSize);
+	return VertexLayoutDx11::create(vertexElements);
 }
 
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)

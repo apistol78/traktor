@@ -110,7 +110,7 @@ void StateCache::setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology)
 	}
 }
 
-void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements)
+void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const AlignedVector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements)
 {
 	uint64_t d3dSignatureHash = (uint64_t(d3dVertexShaderHash) << 32) | d3dInputElementsHash;
 	if (m_d3dSignatureHash != d3dSignatureHash)

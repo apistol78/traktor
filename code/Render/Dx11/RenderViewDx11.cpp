@@ -1,17 +1,17 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/Dx11/RenderViewDx11.h"
+#include "Render/Dx11/BufferViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
-#include "Render/Dx11/IndexBufferDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/RenderTargetDepthDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
+#include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/Utilities.h"
-#include "Render/Dx11/VertexBufferDx11.h"
+#include "Render/Dx11/VertexLayoutDx11.h"
 
 namespace traktor
 {
@@ -781,96 +781,36 @@ void RenderViewDx11::endPass()
 		rs.renderTarget[1]->unbind();
 }
 
-void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
-{
-	const RenderState& rs = m_renderState;
-
-	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
-	m_currentIndexBuffer = checked_type_cast< IndexBufferDx11* >(indexBuffer);
-	m_currentProgram = checked_type_cast< ProgramDx11* >(program);
-
-	// Prepare buffers.
-	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
-	if (m_currentIndexBuffer)
-		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
-
-	// Bind program with device, handle input mapping of vertex elements.
-	if (!m_currentProgram->bind(
-		m_context->getD3DDevice(),
-		m_context->getD3DDeviceContext(),
-		m_stateCache,
-		m_currentVertexBuffer->getD3D11InputElementsHash(),
-		m_currentVertexBuffer->getD3D11InputElements(),
-		rs.targetSize
-	))
-		return;
-
-	// Draw primitives.
-	T_ASSERT(c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
-	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
-
-	UINT vertexCount = 0;
-	switch (primitives.type)
-	{
-	case PtPoints:
-		vertexCount = primitives.count;
-		break;
-
-	case PtLineStrip:
-		T_ASSERT(0);
-		break;
-
-	case PtLines:
-		vertexCount = primitives.count * 2;
-		break;
-
-	case PtTriangleStrip:
-		vertexCount = primitives.count + 2;
-		break;
-
-	case PtTriangles:
-		vertexCount = primitives.count * 3;
-		break;
-	}
-
-	if (primitives.indexed)
-		m_context->getD3DDeviceContext()->DrawIndexed(
-			vertexCount,
-			primitives.offset + m_currentIndexBuffer->getD3D11BaseIndexOffset(),
-			m_currentVertexBuffer->getD3D11BaseVertexOffset()
-		);
-	else
-		m_context->getD3DDeviceContext()->Draw(
-			vertexCount,
-			primitives.offset + m_currentVertexBuffer->getD3D11BaseVertexOffset()
-		);
-
-	m_drawCalls++;
-	m_primitiveCount += primitives.count;
-}
-
-void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+void RenderViewDx11::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	T_ASSERT(instanceCount > 0);
 
 	const RenderState& rs = m_renderState;
 
-	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
-	m_currentIndexBuffer = checked_type_cast< IndexBufferDx11* >(indexBuffer);
+	m_currentVertexLayout = checked_type_cast< const VertexLayoutDx11* >(vertexLayout);
+	m_currentVertexBuffer = checked_type_cast< const BufferViewDx11* >(vertexBuffer);
+	m_currentIndexBuffer = checked_type_cast< const BufferViewDx11* >(indexBuffer);
 	m_currentProgram = checked_type_cast< ProgramDx11* >(program);
 
 	// Prepare buffers.
-	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
+	m_stateCache.setVertexBuffer(m_currentVertexBuffer->getD3D11Buffer(), m_currentVertexLayout->getD3D11Stride());
 	if (m_currentIndexBuffer)
-		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
+	{
+		if (indexType == ItUInt16)
+			m_stateCache.setIndexBuffer(m_currentIndexBuffer->getD3D11Buffer(), DXGI_FORMAT_R16_UINT);
+		else if (indexType == ItUInt32)
+			m_stateCache.setIndexBuffer(m_currentIndexBuffer->getD3D11Buffer(), DXGI_FORMAT_R32_UINT);
+		else
+			return;
+	}
 
 	// Bind program with device, handle input mapping of vertex elements.
 	if (!m_currentProgram->bind(
 		m_context->getD3DDevice(),
 		m_context->getD3DDeviceContext(),
 		m_stateCache,
-		m_currentVertexBuffer->getD3D11InputElementsHash(),
-		m_currentVertexBuffer->getD3D11InputElements(),
+		m_currentVertexLayout->getD3D11InputElementsHash(),
+		m_currentVertexLayout->getD3D11InputElements(),
 		rs.targetSize
 	))
 		return;
@@ -907,15 +847,15 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		m_context->getD3DDeviceContext()->DrawIndexedInstanced(
 			vertexCount,
 			instanceCount,
-			primitives.offset + m_currentIndexBuffer->getD3D11BaseIndexOffset(),
-			m_currentVertexBuffer->getD3D11BaseVertexOffset(),
+			primitives.offset,
+			0,
 			0
 		);
 	else
 		m_context->getD3DDeviceContext()->DrawInstanced(
 			vertexCount,
 			instanceCount,
-			primitives.offset + m_currentVertexBuffer->getD3D11BaseVertexOffset(),
+			primitives.offset,
 			0
 		);
 

@@ -2,9 +2,9 @@
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ResourceTracker.h"
-#include "Render/Vrfy/StructBufferVrfy.h"
 
 namespace traktor
 {
@@ -17,13 +17,12 @@ constexpr int32_t c_guardBytes = 16;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferVrfy", StructBufferVrfy, StructBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
-StructBufferVrfy::StructBufferVrfy(ResourceTracker* resourceTracker, StructBuffer* structBuffer, uint32_t bufferSize, uint32_t structSize)
-:	StructBuffer(bufferSize)
+BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize)
+:	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
-,	m_structBuffer(structBuffer)
-,	m_structSize(structSize)
+,	m_buffer(buffer)
 {
 	m_resourceTracker->add(this);
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
@@ -31,7 +30,7 @@ StructBufferVrfy::StructBufferVrfy(ResourceTracker* resourceTracker, StructBuffe
 	getCallStack(8, m_callstack, 2);
 }
 
-StructBufferVrfy::~StructBufferVrfy()
+BufferVrfy::~BufferVrfy()
 {
 	verifyGuard();
 	verifyUntouched();
@@ -39,27 +38,27 @@ StructBufferVrfy::~StructBufferVrfy()
 	m_resourceTracker->remove(this);
 }
 
-void StructBufferVrfy::destroy()
+void BufferVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (m_structBuffer, L"Struct buffer already destroyed.");
+	T_CAPTURE_ASSERT (m_buffer, L"Buffer already destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked struct buffer.");
 	verifyGuard();
 	verifyUntouched();
-	safeDestroy(m_structBuffer);
+	safeDestroy(m_buffer);
 }
 
-void* StructBufferVrfy::lock()
+void* BufferVrfy::lock()
 {
-	T_CAPTURE_ASSERT (m_structBuffer, L"Struct buffer destroyed.");
-	T_CAPTURE_ASSERT (!m_locked, L"Struct buffer already locked.");
+	T_CAPTURE_ASSERT (m_buffer, L"Buffer destroyed.");
+	T_CAPTURE_ASSERT (!m_locked, L"Buffer already locked.");
 
 	verifyGuard();
 	verifyUntouched();	
 
-	if (!m_structBuffer)
+	if (!m_buffer)
 		return nullptr;
 
-	m_device = (uint8_t*)m_structBuffer->lock();
+	m_device = (uint8_t*)m_buffer->lock();
 	if (m_device)
 	{
 		m_locked = true;
@@ -70,30 +69,30 @@ void* StructBufferVrfy::lock()
 		return nullptr;
 }
 
-void StructBufferVrfy::unlock()
+void BufferVrfy::unlock()
 {
-	T_CAPTURE_ASSERT(m_structBuffer, L"Struct buffer destroyed.");
-	T_CAPTURE_ASSERT(m_locked, L"Struct buffer not locked.");
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
+	T_CAPTURE_ASSERT(m_locked, L"Buffer not locked.");
 
 	verifyGuard();
 
-	if (!m_structBuffer)
+	if (!m_buffer)
 		return;
 
 	std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
 	std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
 
-	m_structBuffer->unlock();
+	m_buffer->unlock();
 	m_locked = false;
 }
 
-const IBufferView* StructBufferVrfy::getBufferView() const
+const IBufferView* BufferVrfy::getBufferView() const
 {
-	T_CAPTURE_ASSERT(m_structBuffer, L"Struct buffer destroyed.");
-	return m_structBuffer->getBufferView();
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer destroyed.");
+	return m_buffer->getBufferView();
 }
 
-void StructBufferVrfy::verifyGuard() const
+void BufferVrfy::verifyGuard() const
 {
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < c_guardBytes; ++i)
@@ -103,7 +102,7 @@ void StructBufferVrfy::verifyGuard() const
 	}
 }
 
-void StructBufferVrfy::verifyUntouched() const
+void BufferVrfy::verifyUntouched() const
 {
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < bufferSize; ++i)
