@@ -28,9 +28,7 @@ public:
 	{
 		s >> Member< uint64_t >(L"memoryAvailable", m_ref.memoryAvailable);
 		s >> Member< uint64_t >(L"memoryUsage", m_ref.memoryUsage);
-		s >> Member< uint32_t >(L"vertexBuffers", m_ref.vertexBuffers);
-		s >> Member< uint32_t >(L"indexBuffers", m_ref.indexBuffers);
-		s >> Member< uint32_t >(L"structBuffers", m_ref.structBuffers);
+		s >> Member< uint32_t >(L"buffers", m_ref.buffers);
 		s >> Member< uint32_t >(L"simpleTextures", m_ref.simpleTextures);
 		s >> Member< uint32_t >(L"cubeTextures", m_ref.cubeTextures);
 		s >> Member< uint32_t >(L"volumeTextures", m_ref.volumeTextures);

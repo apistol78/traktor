@@ -12,10 +12,10 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
+class IVertexLayout;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -82,8 +82,9 @@ private:
 
 	UndergrowthComponentData m_layerData;
 
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Cluster > m_clusters;
 	SmallMap< int32_t, ViewState > m_viewState;

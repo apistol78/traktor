@@ -17,11 +17,12 @@ class IResourceManager;
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class ITexture;
+class IVertexLayout;
 class RenderPass;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -68,7 +69,8 @@ private:
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 	resource::Proxy< render::Shader > m_shaderBlit;
-	Ref< render::VertexBuffer > m_vertexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffer;
 };
 
 	}

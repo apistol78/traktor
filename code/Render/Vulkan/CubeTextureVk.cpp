@@ -4,8 +4,8 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/CubeTextureVk.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
-#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
@@ -59,7 +59,7 @@ bool CubeTextureVk::create(const wchar_t* const tag)
 	// Create staging buffer.
 	const uint32_t imageSize = getTextureSize(m_desc.format, m_desc.side, m_desc.side, m_desc.mipCount) * 6;
 
-	m_stagingBuffer = new Buffer(m_context);
+	m_stagingBuffer = new ApiBuffer(m_context);
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Upload initial data.

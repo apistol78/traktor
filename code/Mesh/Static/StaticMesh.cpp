@@ -1,5 +1,6 @@
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Static/StaticMesh.h"
+#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -47,8 +48,10 @@ void StaticMesh::build(
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
-		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
+		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = m_renderMesh->getIndexType();
+		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);

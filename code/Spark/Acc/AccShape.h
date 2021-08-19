@@ -16,11 +16,11 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class ITexture;
 class RenderPass;
 class Shader;
-class VertexBuffer;
 
 	}
 

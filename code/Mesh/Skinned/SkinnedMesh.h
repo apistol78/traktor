@@ -19,10 +19,10 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class ITexture;
 class RenderContext;
-class StructBuffer;
 class Mesh;
 
 	}
@@ -69,8 +69,8 @@ public:
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
-		render::StructBuffer* lastJointTransforms,
-		render::StructBuffer* jointTransforms,
+		render::Buffer* lastJointTransforms,
+		render::Buffer* jointTransforms,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);
@@ -79,7 +79,7 @@ public:
 
 	const SmallMap< std::wstring, int32_t >& getJointMap() const;
 
-	static Ref< render::StructBuffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
+	static Ref< render::Buffer > createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount);
 
 private:
 	friend class SkinnedMeshResource;

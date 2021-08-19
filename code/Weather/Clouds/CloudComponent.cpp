@@ -5,12 +5,11 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Weather/Clouds/CloudComponent.h"
@@ -221,8 +220,9 @@ bool CloudComponent::create(
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(Vertex, index)));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 4 * sizeof(Vertex) * c_instanceCount, false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 * sizeof(Vertex) * c_instanceCount, false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -239,7 +239,7 @@ bool CloudComponent::create(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_instanceCount * 6 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_instanceCount * 6 * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 
@@ -490,12 +490,14 @@ void CloudComponent::buildCluster(
 					auto sp = m_particleShader->getProgram(perm);
 					T_ASSERT(sp);
 
-					render::IndexedRenderBlock* particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+					auto particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 					particleRenderBlock->distance = 0.0f;
 					particleRenderBlock->program = sp.program;
 					particleRenderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-					particleRenderBlock->indexBuffer = m_indexBuffer;
-					particleRenderBlock->vertexBuffer = m_vertexBuffer;
+					particleRenderBlock->indexBuffer = m_indexBuffer->getBufferView();
+					particleRenderBlock->indexType = render::ItUInt16;
+					particleRenderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+					particleRenderBlock->vertexLayout = m_vertexLayout;
 					particleRenderBlock->primitive = render::PtTriangles;
 					particleRenderBlock->offset = 0;
 					particleRenderBlock->count = instanceCount * 2;
@@ -545,12 +547,12 @@ void CloudComponent::buildCluster(
 		if (sliceNearZ < nearZ + FUZZY_EPSILON)
 			sliceNearZ = nearZ + FUZZY_EPSILON;
 
-		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
-
+		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 		renderBlock->distance = sliceNearZ;
 		renderBlock->program = m_impostorShader->getProgram().program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;

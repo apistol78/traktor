@@ -2,8 +2,8 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Spark/Acc/AccShapeVertexPool.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/VertexBuffer.h"
 
 namespace traktor
 {
@@ -12,22 +12,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccShapeVertexPool", AccShapeVertexPool, Object)
 
-AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount, const AlignedVector< render::VertexElement >& vertexElements)
+AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount)
 :	m_renderSystem(renderSystem)
-,	m_vertexElements(vertexElements)
-,	m_frame(0)
 {
 	m_garbageRanges.resize(frameCount);
 }
 
-bool AccShapeVertexPool::create()
+bool AccShapeVertexPool::create(const AlignedVector< render::VertexElement >& vertexElements)
 {
+	m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+	m_vertexSize = render::getVertexSize(vertexElements);
 	return true;
 }
 
 void AccShapeVertexPool::destroy()
 {
-	for (uint32_t i = 0; i < uint32_t(m_garbageRanges.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)m_garbageRanges.size(); ++i)
 		cycleGarbage();
 
 	for (auto& freeRange : m_freeRanges)
@@ -55,9 +55,9 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 		}
 	}
 
-	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
-		m_vertexElements,
-		vertexCount * render::getVertexSize(m_vertexElements),
+	Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(
+		render::BuVertex,
+		vertexCount * m_vertexSize,
 		true
 	);
 	if (!vertexBuffer)
@@ -92,7 +92,7 @@ void AccShapeVertexPool::releaseRange(const Range& range)
 
 void AccShapeVertexPool::cycleGarbage()
 {
-	m_frame = (m_frame + 1) % uint32_t(m_garbageRanges.size());
+	m_frame = (m_frame + 1) % (uint32_t)m_garbageRanges.size();
 	m_freeRanges.insert(m_freeRanges.end(), m_garbageRanges[m_frame].begin(), m_garbageRanges[m_frame].end());
 	m_garbageRanges[m_frame].clear();
 }

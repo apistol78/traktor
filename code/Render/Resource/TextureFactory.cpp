@@ -144,7 +144,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[i - skipMips].data = data;
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
-				int32_t nread = readerData.read(data, mipPitch);
+				int64_t nread = readerData.read(data, mipPitch);
 				T_ASSERT(nread == mipPitch);
 
 				data += mipPitch;
@@ -223,7 +223,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 				if (i >= skipMips)
 				{
-					int32_t nread = readerData.read(data, mipPitch);
+					int64_t nread = readerData.read(data, mipPitch);
 					T_ASSERT(nread == mipPitch);
 
 					data += mipPitch;
@@ -281,7 +281,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[side * mipCount + i].data = data;
 				desc.initialData[side * mipCount + i].pitch = getTextureRowPitch(desc.format, desc.side, i);
 
-				int32_t nread = readerData.read(data, mipPitch);
+				int64_t nread = readerData.read(data, mipPitch);
 				T_ASSERT(nread == mipPitch);
 
 				data += mipPitch;

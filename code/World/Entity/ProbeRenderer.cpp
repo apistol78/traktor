@@ -1,14 +1,13 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Buffer.h"
 #include "Render/ICubeTexture.h"
-#include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -71,8 +70,9 @@ ProbeRenderer::ProbeRenderer(
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, (4 + 8) * sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, (4 + 8) * sizeof(Vertex), false);
 	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	Vector4 extents[8];
@@ -99,7 +99,7 @@ ProbeRenderer::ProbeRenderer(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
@@ -542,8 +542,10 @@ void ProbeRenderer::build(
 	rb->distance = 0.0f;
 	rb->program = program;
 	rb->programParams = renderContext->alloc< render::ProgramParameters >();
-	rb->indexBuffer = m_indexBuffer;
-	rb->vertexBuffer = m_vertexBuffer;
+	rb->indexBuffer = m_indexBuffer->getBufferView();
+	rb->indexType = render::ItUInt16;
+	rb->vertexBuffer = m_vertexBuffer->getBufferView();
+	rb->vertexLayout = m_vertexLayout;
 	rb->primitive = render::PtTriangles;
 		
 	if (!probeComponent->getLocal())

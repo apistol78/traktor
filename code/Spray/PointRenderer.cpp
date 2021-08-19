@@ -3,12 +3,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/StructBuffer.h"
-#include "Render/StructElement.h"
 #include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Vertex.h"
@@ -51,8 +48,9 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, extent), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 4 * sizeof(EmitterVertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 * sizeof(EmitterVertex), false);
 	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	EmitterVertex* vertex = (EmitterVertex*)m_vertexBuffer->lock();
@@ -66,7 +64,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	}
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, 6 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 6 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
@@ -78,12 +76,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	*index++ = 3;
 	m_indexBuffer->unlock();
 
-	AlignedVector< render::StructElement > structElements;
-	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, positionAndOrientation)));
-	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, velocityAndRandom)));
-	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, alphaAndSize)));
-	structElements.push_back(render::StructElement(render::DtFloat4, offsetof(EmitterPoint, colorAndAge)));
-	m_structBuffer = renderSystem->createStructBuffer(structElements, c_pointCount * sizeof(EmitterPoint), true);
+	m_structBuffer = renderSystem->createBuffer(render::BuStructured, c_pointCount * sizeof(EmitterPoint), true);
 	T_ASSERT_M (m_structBuffer, L"Unable to create struct buffer");
 }
 
@@ -205,8 +198,10 @@ void PointRenderer::flush(
 			renderBlock->distance = batch.distance;
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_indexBuffer;
-			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+			renderBlock->indexType = render::ItUInt16;
+			renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+			renderBlock->vertexLayout = m_vertexLayout;
 			renderBlock->primitive = render::PtTriangles;
 			renderBlock->offset = 0;
 			renderBlock->count = 2;

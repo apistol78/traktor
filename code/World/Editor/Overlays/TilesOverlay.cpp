@@ -1,7 +1,7 @@
+#include "Render/Buffer.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/StructBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
@@ -66,7 +66,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 
 		// Need to figure out "current" frame since m_count is incremented after world renderer has setup.
 		int32_t currentFrame = (worldRendererForward->m_count - 1) % (int32_t)worldRendererForward->m_frames.size();
-		render::StructBuffer* tileSBuffer = worldRendererForward->m_frames[currentFrame].tileSBuffer;
+		render::Buffer* tileSBuffer = worldRendererForward->m_frames[currentFrame].tileSBuffer;
 		if (!tileSBuffer)
 			return;
 

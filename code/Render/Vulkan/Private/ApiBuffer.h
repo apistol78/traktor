@@ -14,20 +14,20 @@ class Context;
 /*!
  * \ingroup Vulkan
  */
-class Buffer : public Object
+class ApiBuffer : public Object
 {
     T_RTTI_CLASS;
 
 public:
-    Buffer() = delete;
+    ApiBuffer() = delete;
 
-    Buffer(const Buffer&) = delete;
+    ApiBuffer(const ApiBuffer&) = delete;
 
-    Buffer(Buffer&&) = delete;
+    ApiBuffer(ApiBuffer&&) = delete;
 
-    explicit Buffer(Context* context);
+    explicit ApiBuffer(Context* context);
 
-    virtual ~Buffer();
+    virtual ~ApiBuffer();
 
 	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
 

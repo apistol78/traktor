@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Mesh/Instance/InstanceMesh.h"
+#include "Render/Buffer.h"
 #include "Render/IProgram.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
@@ -106,12 +107,14 @@ void InstanceMesh::build(
 				instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 			}
 
-			render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh opaque");
+			auto renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh opaque");
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
-			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
+			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
+			renderBlock->indexType = m_renderMesh->getIndexType();
+			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
+			renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 			renderBlock->primitives = meshParts[part.meshPart].primitives;
 			renderBlock->count = batchCount;
 
@@ -175,12 +178,14 @@ void InstanceMesh::build(
 					instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 				}
 
-				render::InstancingRenderBlock* renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh blend");
+				auto renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh blend");
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 				renderBlock->program = sp.program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
-				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
+				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
+				renderBlock->indexType = m_renderMesh->getIndexType();
+				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
+				renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 				renderBlock->primitives = meshParts[part.meshPart].primitives;
 				renderBlock->count = batchCount;
 

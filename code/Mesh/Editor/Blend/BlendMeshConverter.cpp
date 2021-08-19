@@ -11,11 +11,10 @@
 #include "Model/Operations/SortCacheCoherency.h"
 #include "Model/Operations/SortProjectedArea.h"
 #include "Model/Operations/Triangulate.h"
-#include "Render/Mesh/SystemMeshFactory.h"
+#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Mesh/SystemMeshFactory.h"
 
 namespace traktor
 {

@@ -1,6 +1,6 @@
 #include "Core/Config.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
-#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/Context.h"
 
 namespace traktor
@@ -8,19 +8,19 @@ namespace traktor
     namespace render
     {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Buffer", Buffer, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ApiBuffer", ApiBuffer, Object)
 
-Buffer::Buffer(Context* context)
+ApiBuffer::ApiBuffer(Context* context)
 :	m_context(context)
 {
 }
 
-Buffer::~Buffer()
+ApiBuffer::~ApiBuffer()
 {
 	T_FATAL_ASSERT_M(m_context == nullptr, L"Buffer not properly destroyed.");
 }
 
-bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
+bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess)
 {
 	T_FATAL_ASSERT(m_buffer == 0);
 	T_FATAL_ASSERT(bufferSize > 0);
@@ -50,7 +50,7 @@ bool Buffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, boo
     return true;
 }
 
-void Buffer::destroy()
+void ApiBuffer::destroy()
 {
 	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer still locked.");
 	if (m_buffer != 0)
@@ -67,7 +67,7 @@ void Buffer::destroy()
 	m_context = nullptr;
 }
 
-void* Buffer::lock()
+void* ApiBuffer::lock()
 {
 	T_FATAL_ASSERT_M(m_locked == nullptr, L"Buffer already locked.");
 	if (vmaMapMemory(m_context->getAllocator(), m_allocation, &m_locked) != VK_SUCCESS)
@@ -75,7 +75,7 @@ void* Buffer::lock()
 	return m_locked;
 }
 
-void Buffer::unlock()
+void ApiBuffer::unlock()
 {
 	T_FATAL_ASSERT_M(m_locked != nullptr, L"Buffer not locked.");
 	vmaUnmapMemory(m_context->getAllocator(), m_allocation);

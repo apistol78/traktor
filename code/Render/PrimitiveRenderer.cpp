@@ -6,6 +6,7 @@
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
+#include "Render/Buffer.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -13,7 +14,6 @@
 #include "Render/Shader.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -87,6 +87,14 @@ bool PrimitiveRenderer::create(
 	m_view.push_back(Matrix44::identity());
 	m_world.push_back(Matrix44::identity());
 	m_depthState.push_back(DepthState(true, false, false));
+
+	AlignedVector< VertexElement > vertexElements;
+	vertexElements.push_back(VertexElement(DuPosition, DtFloat4, offsetof(Vertex, pos), 0));
+	vertexElements.push_back(VertexElement(DuCustom, DtHalf2, offsetof(Vertex, texCoord), 0));
+	vertexElements.push_back(VertexElement(DuColor, DtByte4N, offsetof(Vertex, rgb), 0));
+	T_ASSERT(getVertexSize(vertexElements) == sizeof(Vertex));
+	if ((m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements)) == nullptr)
+		return false;
 
 	updateTransforms();
 	return true;
@@ -162,10 +170,13 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 			program->setTextureParameter(s_handleTexture, batch.texture);
 
 		renderView->draw(
-			batch.vertexBuffer,
+			batch.vertexBuffer->getBufferView(),
+			m_vertexLayout,
 			nullptr,
+			ItVoid,
 			program,
-			batch.primitives
+			batch.primitives,
+			1
 		);
 	}
 
@@ -1113,13 +1124,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		if (m_freeVertexBuffers.empty())
 		{
 			// No free buffers; need to allocate a new buffer.
-			AlignedVector< VertexElement > vertexElements;
-			vertexElements.push_back(VertexElement(DuPosition, DtFloat4, offsetof(Vertex, pos), 0));
-			vertexElements.push_back(VertexElement(DuCustom, DtHalf2, offsetof(Vertex, texCoord), 0));
-			vertexElements.push_back(VertexElement(DuColor, DtByte4N, offsetof(Vertex, rgb), 0));
-			T_ASSERT(getVertexSize(vertexElements) == sizeof(Vertex));
-
-			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, c_bufferCount * sizeof(Vertex), true);
+			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(BuVertex, c_bufferCount * sizeof(Vertex), true);
 			if (!vertexBuffer)
 				return nullptr;
 
@@ -1128,7 +1133,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		T_ASSERT(!m_freeVertexBuffers.empty());
 
 		// Pick buffer from free list.
-		Ref< render::VertexBuffer > vertexBuffer = m_freeVertexBuffers.front();
+		Ref< render::Buffer > vertexBuffer = m_freeVertexBuffers.front();
 		m_freeVertexBuffers.pop_front();
 
 		// Lock new buffer.

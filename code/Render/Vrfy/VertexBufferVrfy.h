@@ -27,6 +27,8 @@ public:
 
 	virtual void unlock() override final;
 
+	virtual const IBufferView* getBufferView() const override final;
+
 	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 
 	uint32_t getVertexSize() const { return m_vertexSize; }

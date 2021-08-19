@@ -114,8 +114,9 @@ bool ClothComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(ClothVertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat4, offsetof(ClothVertex, normal)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, /*2 * */resolutionX * resolutionY * sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, /*2 * */resolutionX * resolutionY * sizeof(ClothVertex), true);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -123,7 +124,7 @@ bool ClothComponent::create(
 	m_resolutionY = resolutionY;
 	m_triangleCount = quadsX * quadsY * 2/* * 2*/;
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, m_triangleCount * 3 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, m_triangleCount * 3 * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 
@@ -204,13 +205,14 @@ void ClothComponent::build(
 	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
-	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
-
+	auto renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 	renderBlock->distance = 0.0f;
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+	renderBlock->indexType = render::ItUInt16;
+	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitive = render::PtTriangles;
 	renderBlock->offset = 0;
 	renderBlock->count = m_triangleCount;

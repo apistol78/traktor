@@ -18,12 +18,12 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class IBufferView;
 class IProgram;
 class IRenderTargetSet;
 class IRenderView;
+class IVertexLayout;
 class ProgramParameters;
-class VertexBuffer;
 
 /*! Render block base class.
  * \ingroup Render
@@ -73,8 +73,10 @@ public:
 class T_DLLCLASS SimpleRenderBlock : public DrawableRenderBlock
 {
 public:
-	IndexBuffer* indexBuffer = nullptr;
-	VertexBuffer* vertexBuffer = nullptr;
+	const IBufferView* indexBuffer = nullptr;
+	IndexType indexType = ItVoid;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
 	Primitives primitives;
 
 	virtual void render(IRenderView* renderView) const override final;
@@ -86,8 +88,10 @@ public:
 class T_DLLCLASS InstancingRenderBlock : public DrawableRenderBlock
 {
 public:
-	IndexBuffer* indexBuffer = nullptr;
-	VertexBuffer* vertexBuffer = nullptr;
+	const IBufferView* indexBuffer = nullptr;
+	IndexType indexType = ItVoid;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
 	Primitives primitives;
 	uint32_t count = 0;
 
@@ -100,8 +104,10 @@ public:
 class T_DLLCLASS IndexedInstancingRenderBlock : public DrawableRenderBlock
 {
 public:
-	IndexBuffer* indexBuffer = nullptr;
-	VertexBuffer* vertexBuffer = nullptr;
+	const IBufferView* indexBuffer = nullptr;
+	IndexType indexType = ItVoid;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;
@@ -118,7 +124,8 @@ public:
 class T_DLLCLASS NonIndexedRenderBlock : public DrawableRenderBlock
 {
 public:
-	VertexBuffer* vertexBuffer = nullptr;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;
@@ -132,8 +139,10 @@ public:
 class T_DLLCLASS IndexedRenderBlock : public DrawableRenderBlock
 {
 public:
-	IndexBuffer* indexBuffer = nullptr;
-	VertexBuffer* vertexBuffer = nullptr;
+	const IBufferView* indexBuffer = nullptr;
+	IndexType indexType = ItVoid;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
 	PrimitiveType primitive = PtPoints;
 	uint32_t offset = 0;
 	uint32_t count = 0;

@@ -6,10 +6,9 @@
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
 #include "Resource/IResourceManager.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Terrain/Terrain.h"
@@ -88,9 +87,10 @@ bool UndergrowthComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtHalf2, offsetof(Vertex, texCoord)));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(
-		vertexElements,
+	m_vertexBuffer = renderSystem->createBuffer(
+		render::BuVertex,
 		4 * sizeof(Vertex),
 		false
 	);
@@ -112,8 +112,8 @@ bool UndergrowthComponent::create(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createIndexBuffer(
-		render::ItUInt16,
+	m_indexBuffer = renderSystem->createBuffer(
+		render::BuIndex,
 		3 * 2 * 2 * sizeof(uint16_t),
 		false
 	);
@@ -271,13 +271,15 @@ void UndergrowthComponent::build(
 				instanceData2[k] = vs.plants[(j + cluster.from) * 2 + 1];
 			}
 
-			render::IndexedInstancingRenderBlock* renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
+			auto renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >();
 
 			renderBlock->distance = vs.distances[i];
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_indexBuffer;
-			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+			renderBlock->indexType = render::ItUInt16;
+			renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+			renderBlock->vertexLayout = m_vertexLayout;
 			renderBlock->primitive = render::PtTriangles;
 			renderBlock->offset = 0;
 			renderBlock->count = 2 * 2;

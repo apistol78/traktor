@@ -4,8 +4,8 @@
 #include "Core/Misc/TString.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
-#include "Render/Vulkan/Private/Buffer.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
@@ -63,7 +63,7 @@ bool SimpleTextureVk::create(
 	// Create staging buffer.
 	const uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 
-	m_stagingBuffer = new Buffer(m_context);
+	m_stagingBuffer = new ApiBuffer(m_context);
 	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
 
 	// Upload initial data.

@@ -1,0 +1,27 @@
+#pragma once
+
+#include "Render/Buffer.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+class Context;
+
+class BufferVk : public Buffer
+{
+	T_RTTI_CLASS;
+
+public:
+	explicit BufferVk(Context* context, uint32_t bufferSize, uint32_t& instances);
+
+	virtual ~BufferVk();
+
+protected:
+	Context* m_context = nullptr;
+	uint32_t& m_instances;
+};
+
+	}
+}

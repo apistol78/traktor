@@ -12,12 +12,22 @@ void Mesh::setVertexElements(const AlignedVector< VertexElement >& vertexElement
 	m_vertexElements = vertexElements;
 }
 
-void Mesh::setVertexBuffer(VertexBuffer* vertexBuffer)
+void Mesh::setVertexLayout(const IVertexLayout* vertexLayout)
+{
+	m_vertexLayout = vertexLayout;
+}
+
+void Mesh::setVertexBuffer(Buffer* vertexBuffer)
 {
 	m_vertexBuffer = vertexBuffer;
 }
 
-void Mesh::setIndexBuffer(IndexBuffer* indexBuffer)
+void Mesh::setIndexType(IndexType indexType)
+{
+	m_indexType = indexType;
+}
+
+void Mesh::setIndexBuffer(Buffer* indexBuffer)
 {
 	m_indexBuffer = indexBuffer;
 }

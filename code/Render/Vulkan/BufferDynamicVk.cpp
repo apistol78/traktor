@@ -1,4 +1,4 @@
-#include "Render/Vulkan/StructBufferDynamicVk.h"
+#include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 
@@ -7,19 +7,19 @@ namespace traktor
 	namespace render
 	{
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.StructBufferDynamicVk", StructBufferDynamicVk, StructBufferVk)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferDynamicVk", BufferDynamicVk, BufferVk)
 
-StructBufferDynamicVk::StructBufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t& instances)
-:	StructBufferVk(context, bufferSize, instances)
+BufferDynamicVk::BufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t& instances)
+:	BufferVk(context, bufferSize, instances)
 {
 }
 
-StructBufferDynamicVk::~StructBufferDynamicVk()
+BufferDynamicVk::~BufferDynamicVk()
 {
 	destroy();
 }
 
-bool StructBufferDynamicVk::create(int32_t inFlightCount)
+bool BufferDynamicVk::create(uint32_t usageBits, int32_t inFlightCount)
 {
 	const uint32_t bufferSize = getBufferSize();
 	if (!bufferSize)
@@ -35,8 +35,8 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 	
 	const uint32_t size = m_range * m_inFlightCount;
 
-	m_buffer = new Buffer(m_context);
-	if (!m_buffer->create(size, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, true, true))
+	m_buffer = new ApiBuffer(m_context);
+	if (!m_buffer->create(size, usageBits, true, true))
 		return false;
 
 	m_bufferViews = new BufferViewVk [m_inFlightCount];
@@ -57,7 +57,7 @@ bool StructBufferDynamicVk::create(int32_t inFlightCount)
 	return true;
 }
 
-void StructBufferDynamicVk::destroy()
+void BufferDynamicVk::destroy()
 {
 	if (m_bufferViews)
 	{
@@ -76,18 +76,18 @@ void StructBufferDynamicVk::destroy()
 	m_ptr = nullptr;
 }
 
-void* StructBufferDynamicVk::lock()
+void* BufferDynamicVk::lock()
 {
 	return m_ptr + m_index * m_range;
 }
 
-void StructBufferDynamicVk::unlock()
+void BufferDynamicVk::unlock()
 {
 	m_view = m_index;
 	m_index = (m_index + 1) % m_inFlightCount;
 }
 
-const IBufferView* StructBufferDynamicVk::getBufferView() const
+const IBufferView* BufferDynamicVk::getBufferView() const
 {
 	return &m_bufferViews[m_view];
 }

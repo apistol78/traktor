@@ -18,11 +18,11 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
+class IVertexLayout;
 class RenderContext;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -75,8 +75,9 @@ private:
 		Vector4 timeAndAge;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffers[4];
-	Ref< render::IndexBuffer > m_indexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_vertexBuffers[4];
+	Ref< render::Buffer > m_indexBuffer;
 	uint32_t m_count;
 	TrailVertex* m_vertex;
 	AlignedVector< Batch > m_batches;

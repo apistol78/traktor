@@ -5,13 +5,12 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/StructBuffer.h"
-#include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
@@ -346,21 +345,9 @@ bool WorldRendererDeferred::create(
 	// Allocate light lists.
 	for (auto& frame : m_frames)
 	{
-		AlignedVector< render::StructElement > lightShaderDataStruct;
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, typeRangeRadius)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, position)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, direction)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, color)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight0)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight1)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight2)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight3)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, atlasTransform)));
-		T_FATAL_ASSERT(sizeof(LightShaderData) == render::getStructSize(lightShaderDataStruct));
-
-		frame.lightSBuffer = renderSystem->createStructBuffer(
-			lightShaderDataStruct,
-			render::getStructSize(lightShaderDataStruct) * c_maxLightCount,
+		frame.lightSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(LightShaderData) * c_maxLightCount,
 			true
 		);
 		if (!frame.lightSBuffer)
@@ -370,15 +357,9 @@ bool WorldRendererDeferred::create(
 		if (!frame.lightSBufferMemory)
 			return false;
 
-		AlignedVector< render::StructElement > tileShaderDataStruct;
-		tileShaderDataStruct.push_back(render::StructElement(render::DtShort4, offsetof(TileShaderData, lights)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, lightCount)));
-		tileShaderDataStruct.push_back(render::StructElement(render::DtByte4, offsetof(TileShaderData, pad)));
-		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
-
-		frame.tileSBuffer = renderSystem->createStructBuffer(
-			tileShaderDataStruct,
-			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		frame.tileSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
 			true
 		);
 		if (!frame.tileSBuffer)

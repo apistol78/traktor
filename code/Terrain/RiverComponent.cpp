@@ -1,10 +1,9 @@
 #include <algorithm>
 #include "Core/Math/Hermite.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
@@ -60,7 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RiverComponent", RiverComponent, world:
 
 bool RiverComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const RiverComponentData& data)
 {
-	const AlignedVector< RiverComponentData::ControlPoint >& path = data.getPath();
+	const auto& path = data.getPath();
 	if (path.size() < 2)
 		return false;
 
@@ -92,9 +91,10 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, 4 * sizeof(float)));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(
-		vertexElements,
+	m_vertexBuffer = renderSystem->createBuffer(
+		render::BuVertex,
 		uint32_t(silouette.size() * sizeof(float) * 6),
 		false
 	);
@@ -121,8 +121,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 
 	uint32_t triangleCount = uint32_t(silouette.size() - 2);
 
-	m_indexBuffer = renderSystem->createIndexBuffer(
-		render::ItUInt16,
+	m_indexBuffer = renderSystem->createBuffer(
+		render::BuIndex,
 		triangleCount * 3 * sizeof(uint16_t),
 		false
 	);
@@ -192,13 +192,14 @@ void RiverComponent::build(
 	if (!sp)
 		return;			
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"River");
-
+	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"River");
 	renderBlock->distance = 0.0f;
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+	renderBlock->indexType = render::ItUInt16;
+	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);

@@ -81,6 +81,16 @@ void VertexBufferVrfy::unlock()
 	m_locked = false;
 }
 
+const IBufferView* VertexBufferVrfy::getBufferView() const
+{
+	T_CAPTURE_ASSERT (m_vertexBuffer, L"Vertex buffer destroyed.");
+
+	if (!m_vertexBuffer)
+		return nullptr;
+
+	return m_vertexBuffer->getBufferView();
+}
+
 void VertexBufferVrfy::verifyGuard() const
 {
 	const uint32_t bufferSize = getBufferSize();

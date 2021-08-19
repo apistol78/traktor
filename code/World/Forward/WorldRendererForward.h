@@ -23,10 +23,10 @@ class Job;
 	namespace render
 	{
 
+class Buffer;
 class ImageGraph;
 class ISimpleTexture;
 class ScreenRenderer;
-class StructBuffer;
 
 	}
 
@@ -86,9 +86,9 @@ private:
 
 	struct Frame
 	{
-		Ref< render::StructBuffer > lightSBuffer;
-		Ref< render::StructBuffer > lightIndexSBuffer;
-		Ref< render::StructBuffer > tileSBuffer;
+		Ref< render::Buffer > lightSBuffer;
+		Ref< render::Buffer > lightIndexSBuffer;
+		Ref< render::Buffer > tileSBuffer;
 		AlignedVector< const LightComponent* > lights;
 		AlignedVector< const ProbeComponent* > probes;
 		Ref< Packer > shadowAtlasPacker;

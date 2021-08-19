@@ -1,8 +1,8 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
@@ -60,8 +60,9 @@ bool AccQuad::create(
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 2 * 3 * sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 2 * 3 * sizeof(Vertex), false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -139,9 +140,10 @@ void AccQuad::render(
 
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
+		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
 		renderBlock->program = program;
-		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
@@ -176,9 +178,10 @@ void AccQuad::blit(
 {
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
+		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
 		renderBlock->program = m_shaderBlit->getProgram().program;
-		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;

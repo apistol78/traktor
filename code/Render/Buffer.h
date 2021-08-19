@@ -17,10 +17,10 @@ namespace traktor
 
 class IBufferView;
 
-/*! Struct buffer.
+/*! GPU buffer.
  * \ingroup Render
  */
-class T_DLLCLASS StructBuffer : public Object
+class T_DLLCLASS Buffer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -47,7 +47,7 @@ public:
 	virtual const IBufferView* getBufferView() const = 0;
 
 protected:
-	StructBuffer(uint32_t bufferSize);
+	explicit Buffer(uint32_t bufferSize);
 
 private:
 	uint32_t m_bufferSize;

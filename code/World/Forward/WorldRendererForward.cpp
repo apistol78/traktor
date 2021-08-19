@@ -8,13 +8,12 @@
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Buffer.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
-#include "Render/StructBuffer.h"
-#include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraph.h"
@@ -260,47 +259,27 @@ bool WorldRendererForward::create(
 	for (auto& frame : m_frames)
 	{
 		// Lights struct buffer.
-		AlignedVector< render::StructElement > lightShaderDataStruct;
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, typeRangeRadius)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, position)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, direction)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, color)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight0)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight1)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight2)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight3)));
-		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, atlasTransform)));
-		T_FATAL_ASSERT(sizeof(LightShaderData) == render::getStructSize(lightShaderDataStruct));
-
-		frame.lightSBuffer = renderSystem->createStructBuffer(
-			lightShaderDataStruct,
-			render::getStructSize(lightShaderDataStruct) * c_maxLightCount,
+		frame.lightSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(LightShaderData) * c_maxLightCount,
 			true
 		);
 		if (!frame.lightSBuffer)
 			return false;
 
 		// Tile light index array buffer.
-		AlignedVector< render::StructElement > lightIndexShaderDataStruct;
-		lightIndexShaderDataStruct.push_back(render::StructElement(render::DtInteger4, offsetof(LightIndexShaderData, lightIndex)));
-		T_FATAL_ASSERT(sizeof(LightIndexShaderData) == render::getStructSize(lightIndexShaderDataStruct));
-
-		frame.lightIndexSBuffer = renderSystem->createStructBuffer(
-			lightIndexShaderDataStruct,
-			render::getStructSize(lightIndexShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
+		frame.lightIndexSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(LightIndexShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
 			true
 		);
 		if (!frame.lightIndexSBuffer)
 			return false;
 
 		// Tile cluster buffer.
-		AlignedVector< render::StructElement > tileShaderDataStruct;
-		tileShaderDataStruct.push_back(render::StructElement(render::DtInteger4, offsetof(TileShaderData, lightOffsetAndCount)));
-		T_FATAL_ASSERT(sizeof(TileShaderData) == render::getStructSize(tileShaderDataStruct));
-
-		frame.tileSBuffer = renderSystem->createStructBuffer(
-			tileShaderDataStruct,
-			render::getStructSize(tileShaderDataStruct) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		frame.tileSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
 			true
 		);
 		if (!frame.tileSBuffer)

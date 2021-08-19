@@ -22,11 +22,11 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class ITexture;
 class Mesh;
 class RenderContext;
-class VertexBuffer;
 
 	}
 
@@ -58,7 +58,7 @@ public:
 
 	struct Instance : public Object
 	{
-		Ref< render::VertexBuffer > vertexBuffers[VertexBufferCount];
+		Ref< render::Buffer > vertexBuffers[VertexBufferCount];
 		Ref< render::Mesh > mesh;
 		AlignedVector< float > weights;
 		uint32_t count;

@@ -19,12 +19,12 @@ namespace traktor
 	namespace render
 	{
 
-class IndexBuffer;
+class Buffer;
 class IRenderSystem;
 class ITexture;
+class IVertexLayout;
 class RenderContext;
 class Shader;
-class VertexBuffer;
 
 	}
 
@@ -109,8 +109,9 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionTexture;
 	resource::Proxy< Terrain > m_terrain;
-	Ref< render::IndexBuffer > m_indexBuffer;
-	Ref< render::VertexBuffer > m_vertexBuffer;
+	Ref< const render::IVertexLayout > m_vertexLayout;
+	Ref< render::Buffer > m_indexBuffer;
+	Ref< render::Buffer > m_vertexBuffer;
 	render::Primitives m_primitives;
 	Color4f m_shallowTint;
 	Color4f m_reflectionTint;

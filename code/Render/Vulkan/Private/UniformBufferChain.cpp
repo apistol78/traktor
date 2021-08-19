@@ -1,4 +1,4 @@
-#include "Render/Vulkan/Private/Buffer.h"
+#include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/UniformBufferChain.h"
 
 namespace traktor
@@ -8,7 +8,7 @@ namespace traktor
 
 Ref< UniformBufferChain > UniformBufferChain::create(Context* context, uint32_t blockCount, uint32_t blockSize)
 {
-	Ref< Buffer > buffer = new Buffer(context);
+	Ref< ApiBuffer > buffer = new ApiBuffer(context);
 	if (!buffer->create(
 		blockCount * blockSize,
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -58,7 +58,7 @@ void UniformBufferChain::free(const UniformBufferRange& range)
 	m_allocator.free(range.ptr);
 }
 
-UniformBufferChain::UniformBufferChain(Buffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize)
+UniformBufferChain::UniformBufferChain(ApiBuffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize)
 :	m_buffer(buffer)
 ,	m_allocator(top, blockCount, blockSize)
 {

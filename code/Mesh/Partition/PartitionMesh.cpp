@@ -2,6 +2,7 @@
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Partition/IPartition.h"
 #include "Mesh/Partition/PartitionMesh.h"
+#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -62,12 +63,14 @@ void PartitionMesh::build(
 		Vector4 center = worldView * part.boundingBox.getCenter();
 		Scalar distancePart = center.z() + part.boundingBox.getExtent().length();
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"PartitionMesh");
+		auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"PartitionMesh");
 		renderBlock->distance = distancePart;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+		renderBlock->indexBuffer = m_mesh->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = m_mesh->getIndexType();
+		renderBlock->vertexBuffer = m_mesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = m_mesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);

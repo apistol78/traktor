@@ -1,8 +1,7 @@
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/StructElement.h"
-#include "Render/StructBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
@@ -36,8 +35,8 @@ void SkinnedMesh::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
-	render::StructBuffer* lastJointTransforms,
-	render::StructBuffer* jointTransforms,
+	render::Buffer* lastJointTransforms,
+	render::Buffer* jointTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -58,8 +57,10 @@ void SkinnedMesh::build(
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+		renderBlock->indexBuffer = m_mesh->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = m_mesh->getIndexType();
+		renderBlock->vertexBuffer = m_mesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = m_mesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
@@ -94,14 +95,9 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 	return m_jointMap;
 }
 
-Ref< render::StructBuffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
+Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
 {
-	AlignedVector< render::StructElement > jointDataStruct;
-	jointDataStruct.push_back({ render::DtFloat4, offsetof(JointData, translation) });
-	jointDataStruct.push_back({ render::DtFloat4, offsetof(JointData, rotation) });
-	T_FATAL_ASSERT(sizeof(JointData) == render::getStructSize(jointDataStruct));
-
-	return renderSystem->createStructBuffer(jointDataStruct, jointCount * sizeof(JointData), true);
+	return renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true);
 }
 
 	}

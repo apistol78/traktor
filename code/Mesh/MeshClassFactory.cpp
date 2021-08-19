@@ -23,9 +23,9 @@
 #include "Mesh/Static/StaticMeshComponent.h"
 #include "Mesh/Stream/StreamMesh.h"
 #include "Mesh/Stream/StreamMeshComponent.h"
+#include "Render/Buffer.h"
 #include "Render/ITexture.h"
 #include "Render/RenderClassFactory.h"
-#include "Render/StructBuffer.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Resource/ResourceCast.h"
 

@@ -58,5 +58,15 @@ void IndexBufferVrfy::unlock()
 	m_locked = false;
 }
 
+const IBufferView* IndexBufferVrfy::getBufferView() const
+{
+	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer destroyed.");
+
+	if (!m_indexBuffer)
+		return nullptr;
+
+	return m_indexBuffer->getBufferView();
+}
+
 	}
 }

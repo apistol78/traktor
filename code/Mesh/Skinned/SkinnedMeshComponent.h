@@ -18,8 +18,8 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
-class StructBuffer;
 
 	}
 
@@ -48,7 +48,7 @@ public:
 
 private:
 	resource::Proxy< SkinnedMesh > m_mesh;
-	Ref< render::StructBuffer > m_jointTransforms[2];
+	Ref< render::Buffer > m_jointTransforms[2];
 	int32_t m_count;
 };
 

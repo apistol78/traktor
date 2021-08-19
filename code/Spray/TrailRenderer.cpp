@@ -3,10 +3,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Spray/TrailRenderer.h"
@@ -40,14 +39,15 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(TrailVertex), L"Incorrect size of vertex");
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 	{
-		m_vertexBuffers[i] = renderSystem->createVertexBuffer(vertexElements, c_trailCount * c_stripeLength * 2 * sizeof(TrailVertex), true);
+		m_vertexBuffers[i] = renderSystem->createBuffer(render::BuVertex, c_trailCount * c_stripeLength * 2 * sizeof(TrailVertex), true);
 		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_trailCount * c_stripeLength * 2 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_trailCount * c_stripeLength * 2 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
@@ -207,8 +207,10 @@ void TrailRenderer::flush(
 		renderBlock->distance = -std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffers[m_count];
+		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+		renderBlock->indexType = render::ItUInt16;
+		renderBlock->vertexBuffer = m_vertexBuffers[m_count]->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = offset;
 		renderBlock->count = batch.points * 2 - 2;

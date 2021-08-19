@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-class Buffer;
+class ApiBuffer;
 class Context;
 class UniformBufferChain;
 
@@ -31,13 +31,13 @@ public:
 
 	void free(const UniformBufferRange& range);
 
-	Buffer* getBuffer() const { return m_buffer; }
+	ApiBuffer* getBuffer() const { return m_buffer; }
 
 private:
-	Ref< Buffer > m_buffer;
+	Ref< ApiBuffer > m_buffer;
 	BlockAllocator m_allocator;
 
-	explicit UniformBufferChain(Buffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize);
+	explicit UniformBufferChain(ApiBuffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize);
 };
 
 	}

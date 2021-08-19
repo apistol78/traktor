@@ -2,14 +2,13 @@
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
@@ -76,8 +75,9 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(OceanVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(OceanVertex, edge)));
+	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, c_gridSize * c_gridSize * sizeof(OceanVertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, c_gridSize * c_gridSize * sizeof(OceanVertex), false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -109,7 +109,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt32, c_gridCells * 6 * sizeof(uint32_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_gridCells * 6 * sizeof(uint32_t), false);
 	if (!m_indexBuffer)
 		return false;
 
@@ -234,11 +234,12 @@ void OceanComponent::build(
 		return;
 
 	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Ocean");
-
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = sp.program;
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+	renderBlock->indexType = render::ItUInt32;
+	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

@@ -2,10 +2,9 @@
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 //#include "Model/Operations/Triangulate.h"
-#include "Render/IndexBuffer.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
@@ -147,9 +146,10 @@ void SplineEntity::update(const world::UpdateParams& update)
 				vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
 				vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
 				vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+				m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 
-				m_vertexBuffer = m_renderSystem->createVertexBuffer(
-					vertexElements,
+				m_vertexBuffer = m_renderSystem->createBuffer(
+					render::BuVertex,
 					(nvertices + 4 * 128) * sizeof(Vertex),
 					false
 				);
@@ -176,7 +176,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
 			{
 				safeDestroy(m_indexBuffer);
-            	m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, (nindices + 3 * 128) * sizeof(uint16_t), false);
+            	m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint16_t), false);
 			}
 
             uint16_t* index = (uint16_t*)m_indexBuffer->lock();
@@ -237,12 +237,13 @@ void SplineEntity::build(
 	auto renderContext = context.getRenderContext();
 	for (const auto& batch : m_batches)
 	{
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Solid");
-
+		auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Solid");
 		renderBlock->distance = std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+		renderBlock->indexType = render::ItUInt16;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitives = batch.primitives;
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
