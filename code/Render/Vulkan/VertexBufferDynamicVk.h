@@ -44,7 +44,7 @@ public:
 private:
 	Context* m_context = nullptr;
 	RefArray< Buffer > m_buffers;
-	int32_t m_index;
+	int32_t m_index = 0;
 };
 
 	}
