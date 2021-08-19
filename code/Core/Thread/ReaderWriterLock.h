@@ -61,9 +61,7 @@ public:
 	void releaseWriter();
 
 private:
-#if !defined(__EMSCRIPTEN__)
 	std::shared_timed_mutex m_lock;
-#endif
 };
 
 }

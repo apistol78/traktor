@@ -1,7 +1,7 @@
 // If non zero then registry size is fixed.
 #define T_REGISTRY_SIZE 16384
 
-#if T_REGISTRY_SIZE != 0 && !defined(_WIN32) && !defined(__PS4__)
+#if T_REGISTRY_SIZE != 0 && !defined(_WIN32)
 #	include <alloca.h>
 #endif
 #include "Core/Misc/TString.h"
@@ -246,7 +246,7 @@ uint32_t type_difference(const TypeInfo& base, const TypeInfo& type)
 
 void __forceLinkReference(const TypeInfo& type)
 {
-#if !defined(__EMSCRIPTEN__) && !defined(_XBOX)
+#if !defined(_XBOX)
 	wchar_t* dummy = static_cast< wchar_t* >(alloca(256 * sizeof(wchar_t)));
 #	if defined(_WIN32)
 	wcscpy_s(dummy, 256, type.getName());

@@ -15,9 +15,7 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-#if !defined(__EMSCRIPTEN__)
-#	define T_USE_UPDATE_JOBS
-#endif
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {

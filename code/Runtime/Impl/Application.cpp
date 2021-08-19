@@ -304,7 +304,6 @@ bool Application::create(
 	if (m_onlineServer && m_audioServer)
 		m_onlineServer->setupVoice(m_audioServer);
 
-#if !defined(__EMSCRIPTEN__)
 	// Database monitoring thread.
 	if (settings->getProperty< bool >(L"Runtime.DatabaseThread", false))
 	{
@@ -313,7 +312,6 @@ bool Application::create(
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
-#endif
 
 	// Initial, startup, state.
 	T_DEBUG(L"Creating plugins...");
@@ -355,7 +353,6 @@ bool Application::create(
 
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
-#if !defined(__EMSCRIPTEN__)
 	// Create render thread if enabled and we're running on a multi core system.
 	if (
 		OS::getInstance().getCPUCoreCount() >= 2 &&
@@ -380,7 +377,6 @@ bool Application::create(
 	}
 	else
 		log::info << L"Using single threaded rendering." << Endl;
-#endif
 
 	m_settings = settings;
 	return true;
@@ -389,8 +385,6 @@ bool Application::create(
 void Application::destroy()
 {
 	Profiler::getInstance().setListener(nullptr);
-
-#if !defined(__EMSCRIPTEN__)
 
 	if (m_threadRender)
 	{
@@ -405,8 +399,6 @@ void Application::destroy()
 		ThreadManager::getInstance().destroy(m_threadDatabase);
 		m_threadDatabase = nullptr;
 	}
-
-#endif
 
 	JobManager::getInstance().stop();
 
@@ -453,11 +445,6 @@ bool Application::update()
 		log::warning << L"Connection to target manager lost; terminating application..." << Endl;
 		return false;
 	}
-
-#if defined(__EMSCRIPTEN__)
-	// As Emscripten cannot do threads we need to poll database "manually" in main thread.
-	pollDatabase();
-#endif
 
 	// Update render server.
 	RenderServer::UpdateResult updateResult;
@@ -513,8 +500,6 @@ bool Application::update()
 	{
 		// Transition begun; need to synchronize rendering thread as
 		// it require current state.
-
-#if !defined(__EMSCRIPTEN__)
 		if (
 			m_threadRender &&
 #	if !defined(_DEBUG)
@@ -527,7 +512,6 @@ bool Application::update()
 			log::error << L"Unable to synchronize render thread; render thread seems to be stuck." << Endl;
 			return false;
 		}
-#endif
 
 		// Ensure state transition is safe.
 		{
@@ -665,7 +649,6 @@ bool Application::update()
 				// If we're doing multiple updates per frame then we're rendering bound; so in order
 				// to keep input updating periodically we need to make sure we wait a bit, as long
 				// as we don't collide with end-of-rendering.
-#if !defined(__EMSCRIPTEN__)
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
@@ -681,7 +664,6 @@ bool Application::update()
 						++m_renderCollisions;
 					}
 				}
-#endif
 
 				// Update input.
 				double inputTimeStart = m_timer.getElapsedTime();
@@ -721,10 +703,8 @@ bool Application::update()
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
 					// Ensure render thread is finished before we leave.
-#if !defined(__EMSCRIPTEN__)
 					if (m_threadRender)
 						m_signalRenderFinish.wait(1000);
-#endif
 					return false;
 				}
 
@@ -774,10 +754,8 @@ bool Application::update()
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{
 				// Ensure render thread is finished before we leave.
-#if !defined(__EMSCRIPTEN__)
 				if (m_threadRender)
 					m_signalRenderFinish.wait(1000);
-#endif
 				return false;
 			}
 
@@ -816,7 +794,6 @@ bool Application::update()
 
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
 		{
-#if !defined(__EMSCRIPTEN__)
 			if (m_threadRender)
 			{
 				T_PROFILER_SCOPE(L"Application sync render");
@@ -841,7 +818,6 @@ bool Application::update()
 				}
 			}
 			else
-#endif
 			{
 				T_PROFILER_SCOPE(L"Application render");
 				double renderBegin = m_timer.getElapsedTime();
@@ -895,13 +871,11 @@ bool Application::update()
 					renderView->getStatistics(m_renderViewStats);
 					T_PROFILER_END();
 				}
-#if !defined(__EMSCRIPTEN__)
 				else
 				{
 					// Yield main thread.
 					m_threadRender->sleep(10);
 				}
-#endif
 
 				double renderEnd = m_timer.getElapsedTime();
 				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
@@ -1083,8 +1057,6 @@ void Application::pollDatabase()
 	}
 }
 
-#if !defined(__EMSCRIPTEN__)
-
 void Application::threadDatabase()
 {
 	while (!m_threadDatabase->stopped())
@@ -1186,8 +1158,6 @@ void Application::threadRender()
 		}
 	}
 }
-
-#endif
 
 	}
 }

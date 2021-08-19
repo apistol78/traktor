@@ -67,16 +67,12 @@ Ref< Stage > StageLoader::get()
 
 Ref< StageLoader > StageLoader::createAsync(IEnvironment* environment, const Guid& stageGuid, const Object* params)
 {
-#if !defined(__EMSCRIPTEN__)
 	Ref< StageLoader > stageLoader = new StageLoader();
 	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< IEnvironment*, Guid, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
 	if (stageLoader->m_job)
 		return stageLoader;
 	else
 		return nullptr;
-#else
-	return create(environment, stageGuid, params);
-#endif
 }
 
 Ref< StageLoader > StageLoader::create(IEnvironment* environment, const Guid& stageGuid, const Object* params)

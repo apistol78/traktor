@@ -39,30 +39,6 @@ echo Downloading OSX...
 %TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_OSX/.lastFinished/traktor_osx.zip traktor_osx.zip
 :skip_osx
 
-if /i %PLATFORM% == "" ( goto :download_pnacl )
-if /i %PLATFORM% == "pnacl" ( goto :download_pnacl )
-goto :skip_pnacl
-:download_pnacl
-echo Downloading PNaCl...
-%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_PNaCl/.lastFinished/traktor_pnacl.zip traktor_pnacl.zip
-:skip_pnacl
-
-if /i %PLATFORM% == "" ( goto :download_emscripten )
-if /i %PLATFORM% == "emscripten" ( goto :download_emscripten )
-goto :skip_emscripten
-:download_emscripten
-echo Downloading Emscripten...
-%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_PNaCl/.lastFinished/traktor_emscripten.zip traktor_emscripten.zip
-:skip_emscripten
-
-if /i %PLATFORM% == "" ( goto :download_win32 )
-if /i %PLATFORM% == "win32" ( goto :download_win32 )
-goto :skip_win32
-:download_win32
-echo Downloading Win32...
-%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_Win32/.lastFinished/traktor_win32.zip traktor_win32.zip
-:skip_win32
-
 if /i %PLATFORM% == "" ( goto :download_win64 )
 if /i %PLATFORM% == "win64" ( goto :download_win64 )
 goto :skip_win64
@@ -70,14 +46,6 @@ goto :skip_win64
 echo Downloading Win64...
 %TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_Win32/.lastFinished/traktor_win64.zip traktor_win64.zip
 :skip_win64
-
-if /i %PLATFORM% == "" ( goto :download_mobile6 )
-if /i %PLATFORM% == "mobile6" ( goto :download_mobile6 )
-goto :skip_mobile6
-:download_mobile6
-echo Downloading Mobile6...
-%TRAKTOR_HOME%\bin\win32\HttpGet %BUILD_SERVER%/guestAuth/repository/download/Traktor_Win32/.lastFinished/traktor_mobile6.zip traktor_mobile6.zip
-:skip_mobile6
 
 if /i %PLATFORM% == "" ( goto :download_ps3 )
 if /i %PLATFORM% == "ps3" ( goto :download_ps3 )
@@ -119,30 +87,10 @@ rmdir /s /q "%TRAKTOR_HOME%\bin\latest\osx"
 %TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\osx" traktor_osx.zip
 :no_osx
 
-if not exist traktor_pnacl.zip ( goto :no_pnacl )
-rmdir /s /q "%TRAKTOR_HOME%\bin\latest\pnacl"
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\pnacl" traktor_pnacl.zip
-:no_pnacl
-
-if not exist traktor_emscripten.zip ( goto :no_emscripten )
-rmdir /s /q "%TRAKTOR_HOME%\bin\latest\emscripten"
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\emscripten" traktor_emscripten.zip
-:no_emscripten
-
-if not exist traktor_win32.zip ( goto :no_win32 )
-rmdir /s /q "%TRAKTOR_HOME%\bin\latest\win32"
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\win32" traktor_win32.zip
-:no_win32
-
 if not exist traktor_win64.zip ( goto :no_win64 )
 rmdir /s /q "%TRAKTOR_HOME%\bin\latest\win64"
 %TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\win64" traktor_win64.zip
 :no_win64
-
-if not exist traktor_mobile6.zip ( goto :no_mobile6 )
-rmdir /s /q "%TRAKTOR_HOME%\bin\latest\mobile6"
-%TRAKTOR_HOME%\bin\win32\7za x -y -o"%TRAKTOR_HOME%\bin\latest\mobile6" traktor_mobile6.zip
-:no_mobile6
 
 if not exist traktor_ps3.zip ( goto :no_ps3 )
 rmdir /s /q "%TRAKTOR_HOME%\bin\latest\ps3"

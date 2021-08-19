@@ -42,7 +42,7 @@ public:
 	const addrinfo* getAddrInfo(int socktype) const;
 
 private:
-#if !defined(__PS3__) && !defined(__PS4__) && !defined(__EMSCRIPTEN__) && !defined(_XBOX)
+#if !defined(__PS3__) && !defined(_XBOX)
 	addrinfo* m_info;
 #endif
 };

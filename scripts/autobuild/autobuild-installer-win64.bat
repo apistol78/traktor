@@ -10,10 +10,6 @@ pushd "%TRAKTOR_HOME%/build/installer"
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/android/releasestatic" -gg -sfrag -sreg -cg cmp_bin_latest_android -dr bin_latest_android -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Android_ReleaseStatic.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/android/releasestatic" Traktor_Bin_Latest_Android_ReleaseStatic.wxs
 
-:: Create a file list of "emscripten binaries".
-%TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/emscripten/releasestatic" -gg -sfrag -sreg -cg cmp_bin_latest_emscripten -dr bin_latest_emscripten -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Emscripten_ReleaseStatic.wxs
-%TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/emscripten/releasestatic" Traktor_Bin_Latest_Emscripten_ReleaseStatic.wxs
-
 :: Create a file list of "linux binaries".
 %TRAKTOR_HOME%/3rdp/wix/heat dir "%TRAKTOR_HOME%/bin/latest/linux/releaseshared" -gg -sfrag -sreg -cg cmp_bin_latest_linux -dr bin_latest_linux -var var.TRAKTOR_WHERE -template fragment -t "%TRAKTOR_HOME%/code/Installer/Filter.xslt" -out Traktor_Bin_Latest_Linux_ReleaseShared.wxs
 %TRAKTOR_HOME%/3rdp/wix/candle -arch x64 -dTRAKTOR_WHERE="%TRAKTOR_HOME%/bin/latest/linux/releaseshared" Traktor_Bin_Latest_Linux_ReleaseShared.wxs
@@ -58,7 +54,6 @@ pushd "%TRAKTOR_HOME%/build/installer"
 	-ext WixUIExtension ^
 	Traktor.wixobj ^
 	Traktor_Bin_Latest_Android_ReleaseStatic.wixobj ^
-	Traktor_Bin_Latest_Emscripten_ReleaseStatic.wixobj ^
 	Traktor_Bin_Latest_Linux_ReleaseShared.wixobj ^
 	Traktor_Bin_Latest_Ios_ReleaseStatic.wixobj ^
 	Traktor_Bin_Latest_Osx_ReleaseShared.wixobj ^

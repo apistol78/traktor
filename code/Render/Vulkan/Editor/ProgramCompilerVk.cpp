@@ -451,7 +451,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
-			programResource->m_uniformBufferSizes[uniformBuffer->getBinding(GlslDialect::OpenGL)] = size;
+			programResource->m_uniformBufferSizes[uniformBuffer->getBinding(GlslDialect::Vulkan)] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{

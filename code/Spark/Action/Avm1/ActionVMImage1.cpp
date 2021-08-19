@@ -22,7 +22,7 @@ namespace traktor
 
 Timer s_timer;
 
-#if defined(__IOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__)
+#if defined(__IOS__) || defined(__ANDROID__)
 
 template < int Size >
 struct UnalignedView {};
@@ -95,11 +95,7 @@ void ActionVMImage1::prepare()
 		state.length = 1;
 		if (op & 0x80)
 		{
-#if defined(__EMSCRIPTEN__)
-			uint16_t length = unalignedRead< uint16_t >(state.pc + 1);
-#else
 			uint16_t& length = *reinterpret_cast< uint16_t* >(state.pc + 1);
-#endif
 #if defined(T_BIG_ENDIAN)
 			swap8in32(length);
 #endif

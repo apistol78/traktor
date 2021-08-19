@@ -234,10 +234,6 @@
 			<second>Android API level</second>
 		</item>
 		<item>
-			<first>RUNTIME_SETTINGS_EMSCRIPTEN_SDK</first>
-			<second>Emscripten SDK</second>
-		</item>
-		<item>
 			<first>RUNTIME_SETTINGS_ENVIRONMENT</first>
 			<second>Environment</second>
 		</item>

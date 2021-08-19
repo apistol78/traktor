@@ -11,9 +11,7 @@
 #	include <netinet/in.h>
 #	include <netinet/tcp.h>
 #	include <arpa/inet.h>
-#	if !defined(__PS4__)
-#		include <netdb.h>
-#	endif
+#	include <netdb.h>
 #	include <unistd.h>
 
 #	if defined(__PS3__)

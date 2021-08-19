@@ -141,7 +141,6 @@ uint64_t DateTime::getSecondsSinceEpoch() const
 
 std::wstring DateTime::format(const std::wstring& fmt) const
 {
-#if !defined(__EMSCRIPTEN__)
 	struct tm T;
 	getLocalTime(m_epoch, &T);
 
@@ -149,9 +148,6 @@ std::wstring DateTime::format(const std::wstring& fmt) const
 	wcsftime(buf, sizeof_array(buf), fmt.c_str(), &T);
 
 	return buf;
-#else
-	return L"";
-#endif
 }
 
 DateTime::operator uint64_t () const
