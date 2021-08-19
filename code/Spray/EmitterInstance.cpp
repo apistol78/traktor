@@ -14,7 +14,7 @@
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
 
-#if !defined(__IOS__) && !defined(__ANDROID__) && !defined(__EMSCRIPTEN__)
+#if !defined(__IOS__) && !defined(__ANDROID__)
 #	define T_USE_UPDATE_JOBS
 #endif
 

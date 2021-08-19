@@ -3,7 +3,7 @@
 #define T_VERIFY_ENABLE 1
 
 #if T_VERIFY_ENABLE
-#	if !defined(__ANDROID__) && !defined(__PS3__) && !defined(__PS4__)
+#	if !defined(__ANDROID__) && !defined(__PS3__)
 #		include "Core/Class/RuntimeException.h"
 #		include "Core/Io/StringOutputStream.h"
 

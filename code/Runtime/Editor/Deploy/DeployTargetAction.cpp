@@ -222,8 +222,6 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidToolchain", L""));
 	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidApiLevel", L""));
 
-	env->set(L"DEPLOY_EMSCRIPTEN", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.Emscripten", L"$(EMSDK)"), 0));
-
 	// Flatten feature deploy variables.
 	for (const auto& value : deploy->getValues())
 		env->set(value.first, implodePropertyValue(value.second));

@@ -26,7 +26,7 @@ class Window;
 /*! DirectX 10 render system.
  * \ingroup DX11
  *
- * OpenGL render system implementation.
+ * DX11 render system implementation.
  */
 class T_DLLCLASS RenderSystemDx11 : public IRenderSystem
 {

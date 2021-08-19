@@ -2,8 +2,6 @@
 
 #if defined(__PS3__)
 #	include <sys/synchronization.h>
-#elif defined(__PS4__)
-#	include <kernel.h>
 #endif
 #include <string>
 #include "Core/Guid.h"
@@ -41,8 +39,6 @@ public:
 private:
 #if defined(__PS3__)
 	sys_mutex_t m_mutex;
-#elif defined(__PS4__)
-	ScePthreadMutex m_mutex;
 #else
 	void* m_handle;
 #endif

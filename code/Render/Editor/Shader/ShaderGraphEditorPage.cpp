@@ -188,12 +188,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"Android");
-	m_toolPlatform->add(L"Emscripten");
 	m_toolPlatform->add(L"iOS");
 	m_toolPlatform->add(L"Linux");
 	m_toolPlatform->add(L"macOS");
 	m_toolPlatform->add(L"PS3");
-	m_toolPlatform->add(L"PS4");
 	m_toolPlatform->add(L"RaspberryPI");
 	m_toolPlatform->add(L"Windows");
 	m_toolBar->addItem(m_toolPlatform);
@@ -203,11 +201,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolRenderer = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
 	m_toolRenderer->add(L"DX11");
-	m_toolRenderer->add(L"OpenGL");
-	m_toolRenderer->add(L"OpenGL ES2");
 	m_toolRenderer->add(L"Vulkan");
 	m_toolRenderer->add(L"GCM");
-	m_toolRenderer->add(L"GNM");
 	m_toolBar->addItem(m_toolRenderer);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.RendererPermutation")));
 

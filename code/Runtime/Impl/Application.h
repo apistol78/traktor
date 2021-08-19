@@ -99,10 +99,8 @@ private:
 	Ref< Environment > m_environment;
 	Ref< StateManager > m_stateManager;
 	Semaphore m_lockUpdate;
-#if !defined(__EMSCRIPTEN__)
 	Thread* m_threadDatabase = nullptr;
 	Thread* m_threadRender = nullptr;
-#endif
 	Timer m_timer;
 	int32_t m_maxSimulationUpdates = 1;
 	int32_t m_deltaTimeError = 0;
@@ -130,13 +128,9 @@ private:
 
 	void pollDatabase();
 
-#if !defined(__EMSCRIPTEN__)
-
 	void threadDatabase();
 
 	void threadRender();
-
-#endif
 };
 
 	}

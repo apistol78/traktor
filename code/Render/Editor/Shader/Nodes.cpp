@@ -1350,12 +1350,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", 0, Platform, Immutabl
 const ImmutableNode::InputPinDesc c_Platform_i[] =
 {
 	{ L"Android", true },
-	{ L"Emscripten", true },
 	{ L"iOS", true },
 	{ L"Linux", true },
 	{ L"macOS", true },
 	{ L"PS3", true },
-	{ L"PS4", true },
 	{ L"RaspberryPI", true },
 	{ L"Windows", true },
 	{ L"Other", false },
@@ -1555,11 +1553,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Renderer", 0, Renderer, Immutabl
 const ImmutableNode::InputPinDesc c_Renderer_i[] =
 {
 	{ L"DX11", true },
-	{ L"OpenGL", true },
-	{ L"OpenGL ES2", true },
 	{ L"Vulkan", true },
 	{ L"GCM", true },
-	{ L"GNM", true },
 	{ L"Other", false },
 	{ 0 }
 };

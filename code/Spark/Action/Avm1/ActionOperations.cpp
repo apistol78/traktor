@@ -29,7 +29,7 @@ namespace traktor
 		namespace
 		{
 
-#if defined(__IOS__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__)
+#if defined(__IOS__) || defined(__ANDROID__)
 
 template < int Size >
 struct UnalignedView {};
