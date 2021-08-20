@@ -576,8 +576,9 @@ void RenderViewVk::endFrame()
 	auto& frame = m_frames[m_currentImageIndex];
 
 	frame.boundPipeline = 0;
-	frame.boundIndexBuffer = nullptr;
-	frame.boundVertexBuffer = nullptr;
+	frame.boundComputePipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
 
 	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
@@ -958,18 +959,18 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type] + c_primitiveAdd[primitives.type];
 
-	if (frame.boundVertexBuffer != vbv)
+	if (frame.boundVertexBuffer != *vbv)
 	{
 		const VkBuffer buffer = vbv->getVkBuffer();
 		const VkDeviceSize offset = vbv->getVkBufferOffset();
 		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
-		frame.boundVertexBuffer = vbv;
+		frame.boundVertexBuffer = *vbv;
 	}
 
 	if (indexBuffer && primitives.indexed)
 	{
 		const BufferViewVk* ibv = static_cast< const BufferViewVk* >(indexBuffer);
-		if (frame.boundIndexBuffer != ibv)
+		if (frame.boundIndexBuffer != *ibv)
 		{
 			const VkBuffer buffer = ibv->getVkBuffer();
 			const VkDeviceSize offset = ibv->getVkBufferOffset();
@@ -979,7 +980,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 				offset,
 				(indexType == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 			);
-			frame.boundIndexBuffer = ibv;
+			frame.boundIndexBuffer = *ibv;
 		}
 
 		vkCmdDrawIndexed(
