@@ -13,6 +13,7 @@ void PolymorphicDispatch::set(uint32_t argc, const IRuntimeDispatch* dispatch)
 	m_dispatches[argc] = dispatch;
 }
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 std::wstring PolymorphicDispatch::signature() const
 {
 	std::wstring s;
@@ -27,6 +28,7 @@ std::wstring PolymorphicDispatch::signature() const
 	}
 	return s;
 }
+#endif
 
 Any PolymorphicDispatch::invoke(ITypedObject* self, uint32_t argc, const Any* argv) const
 {

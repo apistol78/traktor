@@ -32,10 +32,12 @@ struct Method_0 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -61,10 +63,12 @@ struct Method_0 < ClassType, void, Const > final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void";
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -92,10 +96,12 @@ struct Method_1 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -127,10 +133,12 @@ struct Method_1 < ClassType, void, Argument1Type, Const > final : public IRuntim
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -164,10 +172,12 @@ struct Method_2 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -202,10 +212,12 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > final :
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -242,10 +254,12 @@ struct Method_3 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -283,10 +297,12 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -326,10 +342,12 @@ struct Method_4 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -370,10 +388,12 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -416,10 +436,12 @@ struct Method_5 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -463,10 +485,12 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -512,10 +536,12 @@ struct Method_6 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -562,10 +588,12 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -614,10 +642,12 @@ struct Method_7 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -667,10 +697,12 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -722,10 +754,12 @@ struct Method_8 final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName() + L"," + CastAny< Argument8Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -778,10 +812,12 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName() + L"," + CastAny< Argument8Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{

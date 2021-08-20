@@ -31,10 +31,12 @@ struct PropertySet final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ValueType >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -63,10 +65,12 @@ struct PropertyGet final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ValueType >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -92,10 +96,12 @@ struct FnPropertySet final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ValueType >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -124,10 +130,12 @@ struct FnPropertyGet final : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< ValueType >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{

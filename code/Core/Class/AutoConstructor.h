@@ -18,10 +18,12 @@ template<
 >
 struct Constructor_0 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return L"";
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -35,10 +37,12 @@ template<
 >
 struct Constructor_1 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< Argument1Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -58,10 +62,12 @@ template<
 >
 struct Constructor_2 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -84,10 +90,12 @@ template<
 >
 struct Constructor_3 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -113,10 +121,12 @@ template<
 >
 struct Constructor_4 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -145,6 +155,7 @@ template<
 >
 struct Constructor_5 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return
@@ -154,6 +165,7 @@ struct Constructor_5 : public IRuntimeDispatch
 			CastAny< Argument4Type >::typeName() + L"," +
 			CastAny< Argument5Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -185,6 +197,7 @@ template<
 >
 struct Constructor_6 : public IRuntimeDispatch
 {
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return
@@ -195,6 +208,7 @@ struct Constructor_6 : public IRuntimeDispatch
 			CastAny< Argument5Type >::typeName() + L"," +
 			CastAny< Argument6Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -233,10 +247,12 @@ struct FnConstructor_1 : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
  		return CastAny< Argument1Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -266,12 +282,14 @@ struct FnConstructor_2 : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return
 	 		CastAny< Argument1Type >::typeName() + L"," +
 			CastAny< Argument2Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -304,6 +322,7 @@ struct FnConstructor_3 : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return
@@ -311,6 +330,7 @@ struct FnConstructor_3 : public IRuntimeDispatch
 			CastAny< Argument2Type >::typeName() + L"," +
 			CastAny< Argument3Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -346,6 +366,7 @@ struct FnConstructor_4 : public IRuntimeDispatch
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final
 	{
 		return
@@ -354,6 +375,7 @@ struct FnConstructor_4 : public IRuntimeDispatch
 			CastAny< Argument3Type >::typeName() + L"," +
 			CastAny< Argument4Type >::typeName();
 	}
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
