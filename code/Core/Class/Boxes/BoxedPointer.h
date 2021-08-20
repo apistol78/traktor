@@ -55,8 +55,8 @@ private:
 template < >
 struct CastAny < void*, true >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"void*";
+	static std::wstring typeName() {
+		return L"void*";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPointer >(value.getObjectUnsafe());
@@ -75,8 +75,8 @@ struct CastAny < void*, true >
 template < >
 struct CastAny < const void*, true >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const void*";
+	static std::wstring typeName() {
+		return L"const void*";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPointer >(value.getObjectUnsafe());

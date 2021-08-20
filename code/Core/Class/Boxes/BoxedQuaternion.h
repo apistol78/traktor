@@ -93,8 +93,8 @@ private:
 template < >
 struct CastAny < Quaternion, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Quaternion";
+	static std::wstring typeName() {
+		return L"traktor.Quaternion";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());
@@ -113,8 +113,8 @@ struct CastAny < Quaternion, false >
 template < >
 struct CastAny < const Quaternion&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Quaternion&";
+	static std::wstring typeName() {
+		return L"const traktor.Quaternion&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedQuaternion >(value.getObjectUnsafe());

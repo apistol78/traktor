@@ -83,8 +83,8 @@ private:
 template < >
 struct CastAny < Color4f, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Color4f";
+	static std::wstring typeName() {
+		return L"traktor.Color4f";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());
@@ -103,8 +103,8 @@ struct CastAny < Color4f, false >
 template < >
 struct CastAny < const Color4f&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Color4f&";
+	static std::wstring typeName() {
+		return L"const traktor.Color4f&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedColor4f >(value.getObjectUnsafe());

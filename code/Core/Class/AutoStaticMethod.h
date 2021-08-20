@@ -26,14 +26,14 @@ struct StaticMethod_0 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_0(static_method_t method)
+	explicit StaticMethod_0(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss);
+		return CastAny< ReturnType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -54,14 +54,14 @@ struct StaticMethod_0 < ClassType, void > final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_0(static_method_t method)
+	explicit StaticMethod_0(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void";
+		return L"void";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -84,14 +84,14 @@ struct StaticMethod_1 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_1(static_method_t method)
+	explicit StaticMethod_1(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -118,14 +118,14 @@ struct StaticMethod_1 < ClassType, void, Argument1Type > final : public IRuntime
 
 	static_method_t m_method;
 
-	StaticMethod_1(static_method_t method)
+	explicit StaticMethod_1(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -154,14 +154,14 @@ struct StaticMethod_2 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_2(static_method_t method)
+	explicit StaticMethod_2(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -191,14 +191,14 @@ struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > final : 
 
 	static_method_t m_method;
 
-	StaticMethod_2(static_method_t method)
+	explicit StaticMethod_2(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -230,14 +230,14 @@ struct StaticMethod_3 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_3(static_method_t method)
+	explicit StaticMethod_3(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -270,14 +270,14 @@ struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 	static_method_t m_method;
 
-	StaticMethod_3(static_method_t method)
+	explicit StaticMethod_3(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -312,14 +312,14 @@ struct StaticMethod_4 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_4(static_method_t method)
+	explicit StaticMethod_4(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -355,14 +355,14 @@ struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 	static_method_t m_method;
 
-	StaticMethod_4(static_method_t method)
+	explicit StaticMethod_4(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -400,14 +400,14 @@ struct StaticMethod_5 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_5(static_method_t method)
+	explicit StaticMethod_5(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -446,14 +446,14 @@ struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 	static_method_t m_method;
 
-	StaticMethod_5(static_method_t method)
+	explicit StaticMethod_5(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -494,14 +494,14 @@ struct StaticMethod_6 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_6(static_method_t method)
+	explicit StaticMethod_6(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -543,14 +543,14 @@ struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 	static_method_t m_method;
 
-	StaticMethod_6(static_method_t method)
+	explicit StaticMethod_6(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -594,14 +594,14 @@ struct StaticMethod_7 final : public IRuntimeDispatch
 
 	static_method_t m_method;
 
-	StaticMethod_7(static_method_t method)
+	explicit StaticMethod_7(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -646,14 +646,14 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 
 	static_method_t m_method;
 
-	StaticMethod_7(static_method_t method)
+	explicit StaticMethod_7(static_method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final

@@ -26,7 +26,7 @@ class T_DLLCLASS OperatorDispatch : public IRuntimeDispatch
 public:
 	void add(const IRuntimeDispatch* dispatch);
 
-	virtual void signature(OutputStream& ss) const override final;
+	virtual std::wstring signature() const override final;
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final;
 

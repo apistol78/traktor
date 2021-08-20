@@ -35,9 +35,9 @@ ActionValue T_DLLCLASS castAnyToAction(const Any& value);
 template < >
 struct CastAny < spark::ActionValue, false >
 {
-	static OutputStream& typeName(OutputStream& ss)
+	static std::wstring typeName()
 	{
-		return ss << L"spark::ActionValue";
+		return L"spark::ActionValue";
 	}
 
 	static bool accept(const Any& value)
@@ -62,9 +62,9 @@ struct CastAny < spark::ActionValue, false >
 template < >
 struct CastAny < const spark::ActionValue&, false >
 {
-	static OutputStream& typeName(OutputStream& ss)
+	static std::wstring typeName()
 	{
-		return ss << L"const spark::ActionValue&";
+		return L"const spark::ActionValue&";
 	}
 
 	static bool accept(const Any& value)

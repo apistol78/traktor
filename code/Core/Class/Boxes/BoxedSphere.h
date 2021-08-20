@@ -61,8 +61,8 @@ private:
 template < >
 struct CastAny < Sphere, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Sphere";
+	static std::wstring typeName() {
+		return L"traktor.Sphere";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedSphere >(value.getObjectUnsafe());
@@ -81,8 +81,8 @@ struct CastAny < Sphere, false >
 template < >
 struct CastAny < const Sphere&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Sphere&";
+	static std::wstring typeName() {
+		return L"const traktor.Sphere&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedSphere >(value.getObjectUnsafe());

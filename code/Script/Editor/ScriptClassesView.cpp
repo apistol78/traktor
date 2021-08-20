@@ -64,7 +64,7 @@ public:
 		if (runtimeClass->getConstructorDispatch())
 		{
 			ss.reset();
-			runtimeClass->getConstructorDispatch()->signature(ss);
+			ss << runtimeClass->getConstructorDispatch()->signature();
 
 			std::vector< std::wstring > polys;
 			Split< std::wstring >::any(ss.str(), L";", polys, true);
@@ -101,9 +101,9 @@ public:
 		{
 			ss.reset();
 			if (runtimeClass->getPropertyGetDispatch(i))
-				runtimeClass->getPropertyGetDispatch(i)->signature(ss);
+				ss << runtimeClass->getPropertyGetDispatch(i)->signature();
 			else if (runtimeClass->getPropertySetDispatch(i))
-				runtimeClass->getPropertySetDispatch(i)->signature(ss);
+				ss << runtimeClass->getPropertySetDispatch(i)->signature();
 
 			std::vector< std::wstring > s;
 			Split< std::wstring >::any(ss.str(), L",", s, true);
@@ -118,7 +118,7 @@ public:
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
 		{
 			ss.reset();
-			runtimeClass->getMethodDispatch(i)->signature(ss);
+			ss << runtimeClass->getMethodDispatch(i)->signature();
 
 			std::vector< std::wstring > s;
 			Split< std::wstring >::any(ss.str(), L",", s, true);
@@ -136,7 +136,7 @@ public:
 		for (uint32_t i = 0; i < runtimeClass->getStaticMethodCount(); ++i)
 		{
 			ss.reset();
-			runtimeClass->getStaticMethodDispatch(i)->signature(ss);
+			ss << runtimeClass->getStaticMethodDispatch(i)->signature();
 
 			std::vector< std::wstring > s;
 			Split< std::wstring >::any(ss.str(), L",", s, true);

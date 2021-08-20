@@ -90,8 +90,8 @@ private:
 template < >
 struct CastAny < Matrix44, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Matrix44";
+	static std::wstring typeName() {
+		return L"traktor.Matrix44";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());
@@ -110,8 +110,8 @@ struct CastAny < Matrix44, false >
 template < >
 struct CastAny < const Matrix44&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Matrix44&";
+	static std::wstring typeName() {
+		return L"const traktor.Matrix44&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedMatrix44 >(value.getObjectUnsafe());

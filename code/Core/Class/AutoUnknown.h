@@ -30,8 +30,9 @@ struct Unknown final : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -40,7 +41,7 @@ struct Unknown final : public IRuntimeDispatch
 
 		std::string methodName = argv[0].getString();
 		return (*m_unknown)(
-			mandatory_non_null_type_cast< ClassType* >(self),
+			T_VERIFY_CAST_SELF(ClassType, self),
 			methodName,
 			argc - 1,
 			&argv[1]

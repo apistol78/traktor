@@ -18,8 +18,9 @@ template<
 >
 struct Constructor_0 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -34,9 +35,9 @@ template<
 >
 struct Constructor_1 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< Argument1Type >::typeName(ss);
+		return CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -57,10 +58,9 @@ template<
 >
 struct Constructor_2 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss);
+		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -84,11 +84,9 @@ template<
 >
 struct Constructor_3 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss);
+		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -115,12 +113,9 @@ template<
 >
 struct Constructor_4 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss); ss << L",";
-		CastAny< Argument4Type >::typeName(ss);
+		return CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -150,13 +145,14 @@ template<
 >
 struct Constructor_5 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss); ss << L",";
-		CastAny< Argument4Type >::typeName(ss); ss << L",";
-		CastAny< Argument5Type >::typeName(ss);
+		return
+			CastAny< Argument1Type >::typeName() + L"," +
+			CastAny< Argument2Type >::typeName() + L"," +
+			CastAny< Argument3Type >::typeName() + L"," +
+			CastAny< Argument4Type >::typeName() + L"," +
+			CastAny< Argument5Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -189,14 +185,15 @@ template<
 >
 struct Constructor_6 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
- 		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss); ss << L",";
-		CastAny< Argument4Type >::typeName(ss); ss << L",";
-		CastAny< Argument5Type >::typeName(ss); ss << L",";
-		CastAny< Argument6Type >::typeName(ss);
+		return
+ 			CastAny< Argument1Type >::typeName() + L"," +
+			CastAny< Argument2Type >::typeName() + L"," +
+			CastAny< Argument3Type >::typeName() + L"," +
+			CastAny< Argument4Type >::typeName() + L"," +
+			CastAny< Argument5Type >::typeName() + L"," +
+			CastAny< Argument6Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -231,14 +228,14 @@ struct FnConstructor_1 : public IRuntimeDispatch
 	typedef Ref< ClassType > (*fn_t)(Argument1Type);
 	fn_t fn;
 
-	FnConstructor_1(fn_t fn_)
+	explicit FnConstructor_1(fn_t fn_)
 	:	fn(fn_)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
- 		CastAny< Argument1Type >::typeName(ss);
+ 		return CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -264,15 +261,16 @@ struct FnConstructor_2 : public IRuntimeDispatch
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type);
 	fn_t fn;
 
-	FnConstructor_2(fn_t fn_)
+	explicit FnConstructor_2(fn_t fn_)
 	:	fn(fn_)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
- 		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss);
+		return
+	 		CastAny< Argument1Type >::typeName() + L"," +
+			CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -301,16 +299,17 @@ struct FnConstructor_3 : public IRuntimeDispatch
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type);
 	fn_t fn;
 
-	FnConstructor_3(fn_t fn_)
+	explicit FnConstructor_3(fn_t fn_)
 	:	fn(fn_)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
- 		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss);
+		return
+ 			CastAny< Argument1Type >::typeName() + L"," +
+			CastAny< Argument2Type >::typeName() + L"," +
+			CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -342,17 +341,18 @@ struct FnConstructor_4 : public IRuntimeDispatch
 	typedef Ref< ClassType > (*fn_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 	fn_t fn;
 
-	FnConstructor_4(fn_t fn_)
+	explicit FnConstructor_4(fn_t fn_)
 	:	fn(fn_)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
- 		CastAny< Argument1Type >::typeName(ss); ss << L",";
-		CastAny< Argument2Type >::typeName(ss); ss << L",";
-		CastAny< Argument3Type >::typeName(ss); ss << L",";
-		CastAny< Argument4Type >::typeName(ss);
+		return
+ 			CastAny< Argument1Type >::typeName() + L"," +
+			CastAny< Argument2Type >::typeName() + L"," +
+			CastAny< Argument3Type >::typeName() + L"," +
+			CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final

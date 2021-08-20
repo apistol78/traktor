@@ -72,8 +72,8 @@ private:
 template < >
 struct CastAny < Frustum, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Frustum";
+	static std::wstring typeName() {
+		return L"traktor.Frustum";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());
@@ -92,8 +92,8 @@ struct CastAny < Frustum, false >
 template < >
 struct CastAny < const Frustum&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Frustum&";
+	static std::wstring typeName() {
+		return L"const traktor.Frustum&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedFrustum >(value.getObjectUnsafe());

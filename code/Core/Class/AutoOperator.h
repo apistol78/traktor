@@ -27,13 +27,14 @@ struct Operator final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Operator(method_t method)
+	explicit Operator(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -42,8 +43,7 @@ struct Operator final : public IRuntimeDispatch
 
 		if (CastAny< Argument1Type >::accept(argv[0]))
 		{
-			ClassType* target = mandatory_non_null_type_cast< ClassType* >(self);
-			return CastAny< ReturnType >::set((target->*m_method)(
+			return CastAny< ReturnType >::set((T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 				CastAny< Argument1Type >::get(argv[0])
 			));
 		}

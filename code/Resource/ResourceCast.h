@@ -13,9 +13,9 @@ namespace traktor
 template < typename ResourceType >
 struct CastAny < resource::Proxy< ResourceType >, false >
 {
-	static OutputStream& typeName(OutputStream& ss)
+	static std::wstring typeName()
 	{
-		return ss << L"resource::Proxy<" << type_name< ResourceType >() << L">";
+		return str(L"resource::Proxy< %ls >", type_name< ResourceType >());
 	}
 
 	static bool accept(const Any& value)
@@ -44,9 +44,9 @@ struct CastAny < resource::Proxy< ResourceType >, false >
 template < typename ResourceType >
 struct CastAny < const resource::Proxy< ResourceType >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss)
+	static std::wstring typeName()
 	{
-		return ss << L"resource::Proxy<" << type_name< ResourceType >() << L">";
+		return str(L"resource::Proxy< %ls >", type_name< ResourceType >());
 	}
 
 	static bool accept(const Any& value)

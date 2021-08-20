@@ -109,11 +109,11 @@ private:
 template < >
 struct CastAny < Vector4, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Vector4";
+	static std::wstring typeName() {
+		return L"traktor.Vector4";
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
+		return value.isObject< BoxedVector4 >();
 	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
@@ -129,11 +129,11 @@ struct CastAny < Vector4, false >
 template < >
 struct CastAny < const Vector4&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Vector4&";
+	static std::wstring typeName() {
+		return L"const traktor.Vector4&";
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< BoxedVector4 >(value.getObjectUnsafe());
+		return value.isObject< BoxedVector4 >();
 	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));

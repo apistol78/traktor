@@ -11,8 +11,9 @@ void OperatorDispatch::add(const IRuntimeDispatch* dispatch)
 	m_dispatches.push_back(dispatch);
 }
 
-void OperatorDispatch::signature(OutputStream& ss) const
+std::wstring OperatorDispatch::signature() const
 {
+	return L"";
 }
 
 Any OperatorDispatch::invoke(ITypedObject* self, uint32_t argc, const Any* argv) const

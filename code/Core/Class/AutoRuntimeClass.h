@@ -33,9 +33,7 @@ class AutoRuntimeClass final : public RuntimeClass
 public:
 	T_NO_COPY_CLASS(AutoRuntimeClass);
 
-	AutoRuntimeClass()
-	{
-	}
+	AutoRuntimeClass() = default;
 
 	void setUnknownHandler(typename Unknown< ClassType >::unknown_fn_t unknown)
 	{
@@ -582,12 +580,9 @@ public:
 	template < typename ValueType >
 	void addProperty(const char* const propertyName, ValueType (ClassType::*getter)() const)
 	{
-		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< ValueType >::typeName(),
 			nullptr,
 			getter != nullptr ? new PropertyGet< ClassType, ValueType, true >(getter) : nullptr
 		);
@@ -596,12 +591,9 @@ public:
 	template < typename SetterValueType, typename GetterValueType >
 	void addProperty(const char* const propertyName, void (ClassType::*setter)(SetterValueType value), GetterValueType (ClassType::*getter)() const)
 	{
-		StringOutputStream ss;
-		CastAny< GetterValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< GetterValueType >::typeName(),
 			setter != nullptr ? new PropertySet< ClassType, SetterValueType >(setter) : nullptr,
 			getter != nullptr ? new PropertyGet< ClassType, GetterValueType, true >(getter) : nullptr
 		);
@@ -610,12 +602,9 @@ public:
 	template < typename ValueType >
 	void addProperty(const char* const propertyName, ValueType (ClassType::*getter)())
 	{
-		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< ValueType >::typeName(),
 			nullptr,
 			getter != nullptr ? new PropertyGet< ClassType, ValueType, false >(getter) : nullptr
 		);
@@ -624,12 +613,9 @@ public:
 	template < typename SetterValueType, typename GetterValueType >
 	void addProperty(const char* const propertyName, void (ClassType::*setter)(SetterValueType value), GetterValueType (ClassType::*getter)())
 	{
-		StringOutputStream ss;
-		CastAny< GetterValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< GetterValueType >::typeName(),
 			setter != nullptr ? new PropertySet< ClassType, SetterValueType >(setter) : nullptr,
 			getter != nullptr ? new PropertyGet< ClassType, GetterValueType, false >(getter) : nullptr
 		);
@@ -638,12 +624,9 @@ public:
 	template < typename ValueType >
 	void addProperty(const char* const propertyName, ValueType (*getter)(ClassType* self))
 	{
-		StringOutputStream ss;
-		CastAny< ValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< ValueType >::typeName(),
 			nullptr,
 			getter != nullptr ? new FnPropertyGet< ClassType, ValueType >(getter) : nullptr
 		);
@@ -652,12 +635,9 @@ public:
 	template < typename SetterValueType, typename GetterValueType >
 	void addProperty(const char* const propertyName, void (*setter)(ClassType* self, SetterValueType value), GetterValueType (*getter)(ClassType* self))
 	{
-		StringOutputStream ss;
-		CastAny< GetterValueType >::typeName(ss);
-
 		RuntimeClass::addProperty(
 			propertyName,
-			ss.str(),
+			CastAny< GetterValueType >::typeName(),
 			setter != nullptr ? new FnPropertySet< ClassType, SetterValueType >(setter) : nullptr,
 			getter != nullptr ? new FnPropertyGet< ClassType, GetterValueType >(getter) : nullptr
 		);
