@@ -82,8 +82,8 @@ private:
 template < typename InnerType >
 struct CastAny < std::vector< InnerType >, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.StdVector< InnerType >";
+	static std::wstring typeName() {
+		return L"traktor.StdVector< T >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());
@@ -102,8 +102,8 @@ struct CastAny < std::vector< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const std::vector< InnerType >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.StdVector< InnerType >&";
+	static std::wstring typeName() {
+		return L"const traktor.StdVector< T >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedStdVector >(value.getObjectUnsafe());

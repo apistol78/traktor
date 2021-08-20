@@ -76,8 +76,8 @@ private:
 template < typename InnerType >
 struct CastAny < RefArray< InnerType >, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.RefArray< " << type_name< InnerType >() << L" >";
+	static std::wstring typeName() {
+		return str(L"traktor.RefArray< %ls >", type_name< InnerType >());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());
@@ -96,8 +96,8 @@ struct CastAny < RefArray< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const RefArray< InnerType >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.RefArray< " << type_name< InnerType >() << L" >&";
+	static std::wstring typeName() {
+		return str(L"const traktor.RefArray< %ls >", type_name< InnerType >());
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRefArray >(value.getObjectUnsafe());

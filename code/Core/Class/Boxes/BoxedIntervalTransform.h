@@ -47,8 +47,8 @@ private:
 template < >
 struct CastAny < IntervalTransform, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.IntervalTransform";
+	static std::wstring typeName() {
+		return L"traktor.IntervalTransform";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedIntervalTransform >(value.getObjectUnsafe());
@@ -67,8 +67,8 @@ struct CastAny < IntervalTransform, false >
 template < >
 struct CastAny < const IntervalTransform&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.IntervalTransform&";
+	static std::wstring typeName() {
+		return L"const traktor.IntervalTransform&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedIntervalTransform >(value.getObjectUnsafe());

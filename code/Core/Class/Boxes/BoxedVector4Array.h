@@ -81,8 +81,8 @@ private:
 template < >
 struct CastAny < AlignedVector< Vector4 >, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.AlignedVector< traktor.Vector4 >";
+	static std::wstring typeName() {
+		return L"traktor.AlignedVector< traktor.Vector4 >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());
@@ -101,8 +101,8 @@ struct CastAny < AlignedVector< Vector4 >, false >
 template < >
 struct CastAny < const AlignedVector< Vector4 >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.AlignedVector< traktor.Vector4 >&";
+	static std::wstring typeName() {
+		return L"const traktor.AlignedVector< traktor.Vector4 >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedVector4Array >(value.getObjectUnsafe());

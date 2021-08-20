@@ -62,8 +62,8 @@ private:
 template < typename InnerType >
 struct CastAny< Range< InnerType >, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Range< InnerType >";
+	static std::wstring typeName() {
+		return L"traktor.Range< InnerType >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());
@@ -82,8 +82,8 @@ struct CastAny< Range< InnerType >, false >
 template < typename InnerType >
 struct CastAny< const Range< InnerType >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Range< InnerType >&";
+	static std::wstring typeName() {
+		return L"const traktor.Range< InnerType >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRange >(value.getObjectUnsafe());

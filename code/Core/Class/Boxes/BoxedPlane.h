@@ -83,8 +83,8 @@ private:
 template < >
 struct CastAny < Plane, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Plane";
+	static std::wstring typeName() {
+		return L"traktor.Plane";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());
@@ -103,8 +103,8 @@ struct CastAny < Plane, false >
 template < >
 struct CastAny < const Plane&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Plane&";
+	static std::wstring typeName() {
+		return L"const traktor.Plane&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedPlane >(value.getObjectUnsafe());

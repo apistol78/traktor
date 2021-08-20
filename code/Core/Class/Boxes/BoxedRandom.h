@@ -51,8 +51,8 @@ private:
 template < >
 struct CastAny < Random, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Random";
+	static std::wstring typeName() {
+		return L"traktor.Random";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());
@@ -71,8 +71,8 @@ struct CastAny < Random, false >
 template < >
 struct CastAny < const Random&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Random&";
+	static std::wstring typeName() {
+		return L"const traktor.Random&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedRandom >(value.getObjectUnsafe());

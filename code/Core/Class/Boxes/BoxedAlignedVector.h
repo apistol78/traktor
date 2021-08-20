@@ -83,8 +83,8 @@ private:
 template < typename InnerType >
 struct CastAny < AlignedVector< InnerType >, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.AlignedVector< InnerType >";
+	static std::wstring typeName() {
+		return L"traktor.AlignedVector< InnerType >";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAlignedVector >(value.getObjectUnsafe());
@@ -103,8 +103,8 @@ struct CastAny < AlignedVector< InnerType >, false >
 template < typename InnerType >
 struct CastAny < const AlignedVector< InnerType >&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.AlignedVector< InnerType >&";
+	static std::wstring typeName() {
+		return L"const traktor.AlignedVector< InnerType >&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedAlignedVector >(value.getObjectUnsafe());

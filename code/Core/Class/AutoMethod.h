@@ -27,19 +27,19 @@ struct Method_0 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_0(method_t method)
+	explicit Method_0(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss);
+		return CastAny< ReturnType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)();
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)();
 		return CastAny< ReturnType >::set(returnValue);
 	}
 };
@@ -56,19 +56,19 @@ struct Method_0 < ClassType, void, Const > final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_0(method_t method)
+	explicit Method_0(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void";
+		return L"void";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)();
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)();
 		return Any();
 	}
 };
@@ -87,14 +87,14 @@ struct Method_1 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_1(method_t method)
+	explicit Method_1(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -102,7 +102,7 @@ struct Method_1 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
 		);
 		return CastAny< ReturnType >::set(returnValue);
@@ -122,14 +122,14 @@ struct Method_1 < ClassType, void, Argument1Type, Const > final : public IRuntim
 
 	method_t m_method;
 
-	Method_1(method_t method)
+	explicit Method_1(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -137,7 +137,7 @@ struct Method_1 < ClassType, void, Argument1Type, Const > final : public IRuntim
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
 		);
 		return Any();
@@ -159,14 +159,14 @@ struct Method_2 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_2(method_t method)
+	explicit Method_2(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -175,7 +175,7 @@ struct Method_2 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
 		T_VERIFY_ARGUMENT_TYPE(1, Argument2Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1])
 		);
@@ -197,14 +197,14 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > final :
 
 	method_t m_method;
 
-	Method_2(method_t method)
+	explicit Method_2(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -213,7 +213,7 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > final :
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
 		T_VERIFY_ARGUMENT_TYPE(1, Argument2Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1])
 		);
@@ -237,14 +237,14 @@ struct Method_3 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_3(method_t method)
+	explicit Method_3(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -254,7 +254,7 @@ struct Method_3 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(1, Argument2Type)
 		T_VERIFY_ARGUMENT_TYPE(2, Argument3Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2])
@@ -278,14 +278,14 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_3(method_t method)
+	explicit Method_3(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -295,7 +295,7 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(1, Argument2Type)
 		T_VERIFY_ARGUMENT_TYPE(2, Argument3Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2])
@@ -321,14 +321,14 @@ struct Method_4 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_4(method_t method)
+	explicit Method_4(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -339,7 +339,7 @@ struct Method_4 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(2, Argument3Type)
 		T_VERIFY_ARGUMENT_TYPE(3, Argument4Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -365,14 +365,14 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_4(method_t method)
+	explicit Method_4(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -383,7 +383,7 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(2, Argument3Type)
 		T_VERIFY_ARGUMENT_TYPE(3, Argument4Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -411,14 +411,14 @@ struct Method_5 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_5(method_t method)
+	explicit Method_5(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -430,7 +430,7 @@ struct Method_5 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(3, Argument4Type)
 		T_VERIFY_ARGUMENT_TYPE(4, Argument5Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -458,14 +458,14 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_5(method_t method)
+	explicit Method_5(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -477,7 +477,7 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(3, Argument4Type)
 		T_VERIFY_ARGUMENT_TYPE(4, Argument5Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -507,14 +507,14 @@ struct Method_6 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_6(method_t method)
+	explicit Method_6(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -527,7 +527,7 @@ struct Method_6 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(4, Argument5Type)
 		T_VERIFY_ARGUMENT_TYPE(5, Argument6Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -557,14 +557,14 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_6(method_t method)
+	explicit Method_6(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -577,7 +577,7 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(4, Argument5Type)
 		T_VERIFY_ARGUMENT_TYPE(5, Argument6Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -609,14 +609,14 @@ struct Method_7 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_7(method_t method)
+	explicit Method_7(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -630,7 +630,7 @@ struct Method_7 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(5, Argument6Type)
 		T_VERIFY_ARGUMENT_TYPE(6, Argument7Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -662,14 +662,14 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_7(method_t method)
+	explicit Method_7(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; ss << CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss);
+		return L"void," + ss << CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -683,7 +683,7 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(5, Argument6Type)
 		T_VERIFY_ARGUMENT_TYPE(6, Argument7Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -717,14 +717,14 @@ struct Method_8 final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	Method_8(method_t method)
+	explicit Method_8(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ReturnType >::typeName(ss); ss << L","; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
+		return CastAny< ReturnType >::typeName() + L"," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName() + L"," + CastAny< Argument8Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -739,7 +739,7 @@ struct Method_8 final : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_TYPE(6, Argument7Type)
 		T_VERIFY_ARGUMENT_TYPE(7, Argument8Type)
 
-		ReturnType returnValue = (mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		ReturnType returnValue = (T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),
@@ -773,14 +773,14 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 	method_t m_method;
 
-	Method_8(method_t method)
+	explicit Method_8(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		ss << L"void,"; CastAny< Argument1Type >::typeName(ss); ss << L","; CastAny< Argument2Type >::typeName(ss); ss << L","; CastAny< Argument3Type >::typeName(ss); ss << L","; CastAny< Argument4Type >::typeName(ss); ss << L","; CastAny< Argument5Type >::typeName(ss); ss << L","; CastAny< Argument6Type >::typeName(ss); ss << L","; CastAny< Argument7Type >::typeName(ss); ss << L","; CastAny< Argument8Type >::typeName(ss);
+		return L"void," + CastAny< Argument1Type >::typeName() + L"," + CastAny< Argument2Type >::typeName() + L"," + CastAny< Argument3Type >::typeName() + L"," + CastAny< Argument4Type >::typeName() + L"," + CastAny< Argument5Type >::typeName() + L"," + CastAny< Argument6Type >::typeName() + L"," + CastAny< Argument7Type >::typeName() + L"," + CastAny< Argument8Type >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -795,7 +795,7 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 		T_VERIFY_ARGUMENT_TYPE(6, Argument7Type)
 		T_VERIFY_ARGUMENT_TYPE(7, Argument8Type)
 
-		(mandatory_non_null_type_cast< ClassType* >(self)->*m_method)(
+		(T_VERIFY_CAST_SELF(ClassType, self)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2]),

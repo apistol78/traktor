@@ -26,14 +26,14 @@ struct PropertySet final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	PropertySet(method_t method)
+	explicit PropertySet(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ValueType >::typeName(ss);
+		return CastAny< ValueType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -58,14 +58,14 @@ struct PropertyGet final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	PropertyGet(method_t method)
+	explicit PropertyGet(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ValueType >::typeName(ss);
+		return CastAny< ValueType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -87,14 +87,14 @@ struct FnPropertySet final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	FnPropertySet(method_t method)
+	explicit FnPropertySet(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ValueType >::typeName(ss);
+		return CastAny< ValueType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -119,14 +119,14 @@ struct FnPropertyGet final : public IRuntimeDispatch
 
 	method_t m_method;
 
-	FnPropertyGet(method_t method)
+	explicit FnPropertyGet(method_t method)
 	:	m_method(method)
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
-		CastAny< ValueType >::typeName(ss);
+		return CastAny< ValueType >::typeName();
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final

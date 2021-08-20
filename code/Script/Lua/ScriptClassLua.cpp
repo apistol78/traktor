@@ -32,8 +32,9 @@ public:
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
@@ -91,8 +92,9 @@ public:
 		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_ref);
 	}
 
-	virtual void signature(OutputStream& ss) const override final
+	virtual std::wstring signature() const override final
 	{
+		return L"";
 	}
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final

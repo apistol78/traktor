@@ -65,8 +65,8 @@ private:
 template < >
 struct CastAny < Bezier3rd, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Bezier3rd";
+	static std::wstring typeName() {
+		return L"traktor.Bezier3rd";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedBezier3rd >(value.getObjectUnsafe());
@@ -85,8 +85,8 @@ struct CastAny < Bezier3rd, false >
 template < >
 struct CastAny < const Bezier3rd&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Bezier3rd&";
+	static std::wstring typeName() {
+		return L"const traktor.Bezier3rd&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedBezier3rd >(value.getObjectUnsafe());

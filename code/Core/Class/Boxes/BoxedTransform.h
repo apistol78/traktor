@@ -82,8 +82,8 @@ private:
 template < >
 struct CastAny < Transform, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"traktor.Transform";
+	static std::wstring typeName() {
+		return L"traktor.Transform";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
@@ -102,8 +102,8 @@ struct CastAny < Transform, false >
 template < >
 struct CastAny < const Transform&, false >
 {
-	static OutputStream& typeName(OutputStream& ss) {
-		return ss << L"const traktor.Transform&";
+	static std::wstring typeName() {
+		return L"const traktor.Transform&";
 	}
 	static bool accept(const Any& value) {
 		return value.isObject() && is_a< BoxedTransform >(value.getObjectUnsafe());
