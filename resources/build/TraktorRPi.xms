@@ -9379,6 +9379,7 @@
 					<definitions>
 						<item>T_SCRIPT_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9408,6 +9409,7 @@
 					<definitions>
 						<item>T_SCRIPT_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9437,6 +9439,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9466,6 +9469,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9551,6 +9555,7 @@
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>T_LUA_5_2</item>
 						<item>_DEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9582,6 +9587,7 @@
 						<item>T_SCRIPT_LUA_EXPORT</item>
 						<item>T_LUA_5_2</item>
 						<item>NDEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9613,6 +9619,7 @@
 						<item>T_STATIC</item>
 						<item>T_LUA_5_2</item>
 						<item>_DEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9644,6 +9651,7 @@
 						<item>T_STATIC</item>
 						<item>T_LUA_5_2</item>
 						<item>NDEBUG</item>
+						<item>T_NEED_RUNTIME_SIGNATURE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
