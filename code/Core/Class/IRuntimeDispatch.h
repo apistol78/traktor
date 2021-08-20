@@ -24,7 +24,9 @@ class T_DLLCLASS IRuntimeDispatch : public Object
 	T_RTTI_CLASS;
 
 public:
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const = 0;
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;
 };
