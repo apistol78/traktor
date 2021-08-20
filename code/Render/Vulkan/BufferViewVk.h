@@ -28,6 +28,14 @@ public:
 
 	uint32_t getVkBufferSize() const { return m_size; }
 
+	bool operator == (const BufferViewVk& rh) const {
+		return m_buffer == rh.m_buffer && m_offset == rh.m_offset;
+	}
+
+	bool operator != (const BufferViewVk& rh) const {
+		return m_buffer != rh.m_buffer || m_offset != rh.m_offset;
+	}
+
 private:
 	VkBuffer m_buffer = 0;
 	uint32_t m_offset = 0;

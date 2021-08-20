@@ -123,8 +123,8 @@ private:
 
 		VkPipeline boundPipeline = 0;
 		VkPipeline boundComputePipeline = 0;
-		const BufferViewVk* boundIndexBuffer = nullptr;
-		const BufferViewVk* boundVertexBuffer = nullptr;
+		BufferViewVk boundIndexBuffer;
+		BufferViewVk boundVertexBuffer;
 	};
 
 	struct PipelineEntry
