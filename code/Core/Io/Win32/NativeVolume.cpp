@@ -96,9 +96,13 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	WIN32_FIND_DATA ffd;
 	HANDLE hfd;
 
-	hfd = FindFirstFile(
+	hfd = FindFirstFileEx(
 		wstots(getSystemPath(mask)).c_str(),
-		&ffd
+		FindExInfoBasic,
+		&ffd,
+		FindExSearchNameMatch,
+		NULL,
+		FIND_FIRST_EX_LARGE_FETCH
 	);
 	if (hfd != INVALID_HANDLE_VALUE)
 	{
@@ -127,7 +131,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 		FindClose(hfd);
 	}
 
-	return int(out.size());
+	return (int)out.size();
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
