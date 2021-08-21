@@ -391,7 +391,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
-		log::error << L"Process failed with exit code " << exitCode << L"." << Endl;
+		log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }
