@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Core/Object.h"
+#include "Core/Class/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
