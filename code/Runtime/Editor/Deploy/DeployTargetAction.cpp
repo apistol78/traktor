@@ -291,7 +291,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
-		log::error << L"Process failed with exit code " << exitCode << Endl;
+		log::error << L"Process \"" << deployTool.getExecutable() << L" deploy\" failed with exit code " << exitCode << L"." << Endl;
 
 	if (progressListener)
 		progressListener->notifyTargetActionProgress(2, 2);

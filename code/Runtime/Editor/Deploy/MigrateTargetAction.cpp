@@ -321,7 +321,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 
 	int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
-		log::error << L"Process failed with exit code " << exitCode << Endl;
+		log::error << L"Process \"" << deployTool.getExecutable() << L" migrate\" failed with exit code " << exitCode << L"." << Endl;
 
 	return exitCode == 0;
 }
