@@ -276,7 +276,7 @@ int main(int argc, const char** argv)
 	ss << L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Pipeline.App -s=Pipeline";
 #elif defined(__RPI__)
 	ss << L"$(TRAKTOR_HOME)/bin/latest/rpi/releaseshared/Traktor.Pipeline.App -s=Pipeline";
-#elif defined(__OSX__)
+#elif defined(__APPLE__)
 	ss << L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Pipeline.App -s=Pipeline";
 #endif
 	if (cmdLine.hasOption(L'v', L"verbose"))
