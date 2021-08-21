@@ -1,10 +1,12 @@
 #include "Core/Class/Boxes/BoxedStdVector.h"
+#include "Core/Debug/CallStack.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -18,6 +20,10 @@
 #include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 
+#if defined(_WIN32)
+#	include <windows.h>
+#endif
+
 namespace
 {
 
@@ -25,6 +31,67 @@ traktor::Ref< traktor::script::IScriptCompiler > g_scriptCompiler;
 traktor::Ref< traktor::script::IScriptManager > g_scriptManager;
 
 }
+
+#if defined(_WIN32)
+
+LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
+{
+	bool ouputCallStack = true;
+
+	switch (ep->ExceptionRecord->ExceptionCode)
+	{
+	case EXCEPTION_ACCESS_VIOLATION:
+	case EXCEPTION_DATATYPE_MISALIGNMENT:
+	case EXCEPTION_STACK_OVERFLOW:
+	case EXCEPTION_ILLEGAL_INSTRUCTION:
+	case EXCEPTION_PRIV_INSTRUCTION:
+	case EXCEPTION_IN_PAGE_ERROR:
+	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+	case EXCEPTION_INVALID_DISPOSITION:
+	case EXCEPTION_GUARD_PAGE:
+		ouputCallStack = true;
+		break;
+
+	case EXCEPTION_BREAKPOINT:
+	case EXCEPTION_SINGLE_STEP:
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+	case EXCEPTION_FLT_DENORMAL_OPERAND:
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+	case EXCEPTION_FLT_INEXACT_RESULT:
+	case EXCEPTION_FLT_INVALID_OPERATION:
+	case EXCEPTION_FLT_OVERFLOW:
+	case EXCEPTION_FLT_STACK_CHECK:
+	case EXCEPTION_FLT_UNDERFLOW:
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:
+	case EXCEPTION_INT_OVERFLOW:
+	default:
+		ouputCallStack = false;
+		break;
+	}
+
+	if (ouputCallStack)
+	{
+		traktor::log::info << L"RUNTIME EXCEPTION OCCURED AT:" << traktor::Endl;
+
+		void* callstack[16] = { nullptr };
+		traktor::getCallStack(16, callstack, 2);
+		for (int32_t i = 0; i < 16; ++i)
+		{
+			std::wstring symbol;
+			traktor::getSymbolFromAddress(callstack[i], symbol);
+
+			std::wstring fileName;
+			int32_t line;
+			traktor::getSourceFromAddress(callstack[i], fileName, line);
+
+			traktor::log::info << L"\t" << traktor::str(L"0x%016x", callstack[i]) << L"    " << symbol << L"    " << fileName << L"(" << line << L")" << traktor::Endl;
+		}
+	}
+
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+#endif
 
 namespace traktor
 {
@@ -158,68 +225,86 @@ using namespace traktor;
 
 int main(int argc, const char** argv)
 {
-	CommandLine cmdLine(argc, argv);
-
-	if (cmdLine.getCount() < 1)
-	{
-		log::info << L"Traktor.Run.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
-		log::info << Endl;
-		log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
-		log::info << Endl;
-		log::info << L"  Options:" << Endl;
-		log::info << L"    -as-run                   Run file as run" << Endl;
-		log::info << L"    -as-template              Run file as template" << Endl;
-		log::info << Endl;
-		log::info << L"  For .run files:" << Endl;
-		log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
-		log::info << Endl;
-		log::info << L"  For .template files:" << Endl;
-		log::info << L"    -o,-output=filename       Output file (default stdout)" << Endl;
-		return 0;
-	}
-
-	Path fileName = cmdLine.getString(0);
-
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
-	if (!file)
-	{
-		log::error << L"Failed to open \"" << fileName.getPathName() << L"\"." << Endl;
-		return 1;
-	}
-
-	Utf8Encoding encoding;
-	BufferedStream stream(file);
-	StringReader reader(&stream, &encoding);
-	StringOutputStream ss;
-
-	std::wstring tmp;
-	while (reader.readLine(tmp) >= 0)
-		ss << tmp << Endl;
-
-	safeClose(file);
-
-	std::wstring text = ss.str();
-
-	g_scriptCompiler = new script::ScriptCompilerLua();
-	g_scriptManager = new script::ScriptManagerLua();
-
-	run::Run::registerRuntimeClasses(g_scriptManager);
-	net::Network::initialize();
-
 	int32_t result = 1;
+	try
+	{
+#if defined(_WIN32) && !defined(_DEBUG)
+		PVOID eh = nullptr;
+		T_ANONYMOUS_VAR(EnterLeave)(
+			makeFunctor([&]() {
+				eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
+			}),
+			makeFunctor([&]() {
+				RemoveVectoredExceptionHandler(eh);
+			})
+		);
+		SetErrorMode(SEM_NOGPFAULTERRORBOX);
+#endif
 
-	bool explicitRun = cmdLine.hasOption(L"as-run");
-	bool explicitTemplate = cmdLine.hasOption(L"as-template");
+		CommandLine cmdLine(argc, argv);
 
-	if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
-		result = run::executeRun(text, fileName, cmdLine);
-	else if ((!explicitRun && explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"template") == 0)
-		result = run::executeTemplate(text, fileName, cmdLine);
-	else
-		log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;
+		if (cmdLine.getCount() < 1)
+		{
+			log::info << L"Traktor.Run.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+			log::info << Endl;
+			log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
+			log::info << Endl;
+			log::info << L"  Options:" << Endl;
+			log::info << L"    -as-run                   Run file as run" << Endl;
+			log::info << L"    -as-template              Run file as template" << Endl;
+			log::info << Endl;
+			log::info << L"  For .run files:" << Endl;
+			log::info << L"    -e,-entry-point=function  Script entry point (default \"main\")" << Endl;
+			log::info << Endl;
+			log::info << L"  For .template files:" << Endl;
+			log::info << L"    -o,-output=filename       Output file (default stdout)" << Endl;
+			return 0;
+		}
 
-	net::Network::finalize();
+		Path fileName = cmdLine.getString(0);
 
-	safeDestroy(g_scriptManager);
+		Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+		if (!file)
+		{
+			log::error << L"Failed to open \"" << fileName.getPathName() << L"\"." << Endl;
+			return 1;
+		}
+
+		Utf8Encoding encoding;
+		BufferedStream stream(file);
+		StringReader reader(&stream, &encoding);
+		StringOutputStream ss;
+
+		std::wstring tmp;
+		while (reader.readLine(tmp) >= 0)
+			ss << tmp << Endl;
+
+		safeClose(file);
+
+		std::wstring text = ss.str();
+
+		g_scriptCompiler = new script::ScriptCompilerLua();
+		g_scriptManager = new script::ScriptManagerLua();
+
+		run::Run::registerRuntimeClasses(g_scriptManager);
+		net::Network::initialize();
+
+		bool explicitRun = cmdLine.hasOption(L"as-run");
+		bool explicitTemplate = cmdLine.hasOption(L"as-template");
+
+		if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
+			result = run::executeRun(text, fileName, cmdLine);
+		else if ((!explicitRun && explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"template") == 0)
+			result = run::executeTemplate(text, fileName, cmdLine);
+		else
+			log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;
+
+		net::Network::finalize();
+		safeDestroy(g_scriptManager);
+	}
+	catch(...)
+	{
+		log::error << L"Unhandled exception occurred." << Endl;
+	}
 	return result;
 }
