@@ -81,12 +81,14 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 
 	if (parallell)
 	{
-		//RefArray< Functor > jobs(4);
-		//jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &intermediate[0]);
-		//jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &intermediate[1]);
-		//jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &intermediate[2]);
-		//jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, (uint32_t)m_samplePoints.size(), &intermediate[3]);
-		//JobManager::getInstance().fork(jobs);
+		const uint32_t nsp = (uint32_t)m_samplePoints.size();
+
+		Job::task_t jobs[4];
+		jobs[0] = [&](){ generateCoefficientsJob(function, 0 * sc, 1 * sc, &intermediate[0]); };
+		jobs[1] = [&](){ generateCoefficientsJob(function, 1 * sc, 2 * sc, &intermediate[1]); };
+		jobs[2] = [&](){ generateCoefficientsJob(function, 2 * sc, 3 * sc, &intermediate[2]); };
+		jobs[3] = [&](){ generateCoefficientsJob(function, 3 * sc,    nsp, &intermediate[3]); };
+		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 	}
 	else
 	{
