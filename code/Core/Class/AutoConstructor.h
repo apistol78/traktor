@@ -18,7 +18,9 @@ class AutoConstructor : public IRuntimeDispatch
 public:
 	AutoConstructor() = default;
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final { return L""; }
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
@@ -51,7 +53,9 @@ public:
 	{
 	}
 
+#if defined(T_NEED_RUNTIME_SIGNATURE)
 	virtual std::wstring signature() const override final { return L""; }
+#endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
