@@ -28,6 +28,8 @@
 			T_FATAL_ASSERT_M (argc >= (required), L"Not enough arguments.");
 #	endif
 
+#include "Core/Class/CastAny.h"
+
 namespace traktor
 {
 	template < typename ... ArgumentTypes >
