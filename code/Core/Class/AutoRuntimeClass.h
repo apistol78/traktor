@@ -43,110 +43,22 @@ public:
 	/*! \name Constructors */
 	/*! \{ */
 
-	void addConstructor()
-	{
-		RuntimeClass::addConstructor(0, new Constructor_0< ClassType >());
-	}
-
 	template <
-		typename Argument1Type
+		typename ... ArgumentTypes
 	>
 	void addConstructor()
 	{
-		RuntimeClass::addConstructor(1, new Constructor_1< ClassType, Argument1Type >());
+		auto dispatch = new AutoConstructor< ClassType, ArgumentTypes ... >();
+		RuntimeClass::addConstructor(sizeof ... (ArgumentTypes), dispatch);
 	}
 
 	template <
-		typename Argument1Type,
-		typename Argument2Type
+		typename ... ArgumentTypes
 	>
-	void addConstructor()
+	void addConstructor(typename AutoConstructorFactory< ClassType, ArgumentTypes ... >::factory_t factory)
 	{
-		RuntimeClass::addConstructor(2, new Constructor_2< ClassType, Argument1Type, Argument2Type >());
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addConstructor()
-	{
-		RuntimeClass::addConstructor(3, new Constructor_3< ClassType, Argument1Type, Argument2Type, Argument3Type >());
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addConstructor()
-	{
-		RuntimeClass::addConstructor(4, new Constructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >());
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type
-	>
-	void addConstructor()
-	{
-		RuntimeClass::addConstructor(5, new Constructor_5< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >());
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type
-	>
-	void addConstructor()
-	{
-		RuntimeClass::addConstructor(6, new Constructor_6< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >());
-	}
-
-	template <
-		typename Argument1Type
-	>
-	void addConstructor(typename FnConstructor_1< ClassType, Argument1Type >::fn_t fn)
-	{
-		RuntimeClass::addConstructor(1, new FnConstructor_1< ClassType, Argument1Type >(fn));
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type
-	>
-	void addConstructor(typename FnConstructor_2< ClassType, Argument1Type, Argument2Type >::fn_t fn)
-	{
-		RuntimeClass::addConstructor(2, new FnConstructor_2< ClassType, Argument1Type, Argument2Type >(fn));
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addConstructor(typename FnConstructor_3< ClassType, Argument1Type, Argument2Type, Argument3Type >::fn_t fn)
-	{
-		RuntimeClass::addConstructor(3, new FnConstructor_3< ClassType, Argument1Type, Argument2Type, Argument3Type >(fn));
-	}
-
-	template <
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addConstructor(typename FnConstructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::fn_t fn)
-	{
-		RuntimeClass::addConstructor(4, new FnConstructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(fn));
+		auto dispatch = new AutoConstructorFactory< ClassType, ArgumentTypes ... >(factory);
+		RuntimeClass::addConstructor(sizeof ... (ArgumentTypes), dispatch);
 	}
 
 	/*! \} */
@@ -155,327 +67,33 @@ public:
 	/*! \{ */
 
 	template <
-		typename ReturnType
+		typename ReturnType,
+		typename ... ArgumentTypes
 	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)())
+	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(ArgumentTypes ...))
 	{
-		RuntimeClass::addMethod(methodName, 0, new Method_0< ClassType, ReturnType, false >(method));
-	}
-
-	template <
-		typename ReturnType
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)() const)
-	{
-		RuntimeClass::addMethod(methodName, 0, new Method_0< ClassType, ReturnType, true >(method));
-	}
-
-	template <
-		typename ReturnType
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*))
-	{
-		RuntimeClass::addMethod(methodName, 0, new MethodTrunk_0< ClassType, ReturnType >(method));
+		auto dispatch = new AutoMethod< false, ClassType, ReturnType, ArgumentTypes ... >(method);
+		RuntimeClass::addMethod(methodName, sizeof...(ArgumentTypes), dispatch);
 	}
 
 	template <
 		typename ReturnType,
-		typename Argument1Type
+		typename ... ArgumentTypes
 	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type))
+	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(ArgumentTypes ...) const)
 	{
-		RuntimeClass::addMethod(methodName, 1, new Method_1< ClassType, ReturnType, Argument1Type, false >(method));
+		auto dispatch = new AutoMethod< true, ClassType, ReturnType, ArgumentTypes ... >(method);
+		RuntimeClass::addMethod(methodName, sizeof...(ArgumentTypes), dispatch);
 	}
 
 	template <
 		typename ReturnType,
-		typename Argument1Type
+		typename ... ArgumentTypes
 	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type) const)
+	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, ArgumentTypes ...))
 	{
-		RuntimeClass::addMethod(methodName, 1, new Method_1< ClassType, ReturnType, Argument1Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type))
-	{
-		RuntimeClass::addMethod(methodName, 1, new MethodTrunk_1< ClassType, ReturnType, Argument1Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type))
-	{
-		RuntimeClass::addMethod(methodName, 2, new Method_2< ClassType, ReturnType, Argument1Type, Argument2Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 2, new Method_2< ClassType, ReturnType, Argument1Type, Argument2Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type))
-	{
-		RuntimeClass::addMethod(methodName, 2, new MethodTrunk_2< ClassType, ReturnType, Argument1Type, Argument2Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type))
-	{
-		RuntimeClass::addMethod(methodName, 3, new Method_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 3, new Method_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type))
-	{
-		RuntimeClass::addMethod(methodName, 3, new MethodTrunk_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type))
-	{
-		RuntimeClass::addMethod(methodName, 4, new Method_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 4, new Method_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type))
-	{
-		RuntimeClass::addMethod(methodName, 4, new MethodTrunk_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
-	{
-		RuntimeClass::addMethod(methodName, 5, new Method_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 5, new Method_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
-	{
-		RuntimeClass::addMethod(methodName, 5, new MethodTrunk_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
-	{
-		RuntimeClass::addMethod(methodName, 6, new Method_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 6, new Method_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
-	{
-		RuntimeClass::addMethod(methodName, 6, new MethodTrunk_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
-	{
-		RuntimeClass::addMethod(methodName, 7, new Method_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 7, new Method_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
-	{
-		RuntimeClass::addMethod(methodName, 7, new MethodTrunk_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type,
-		typename Argument8Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type))
-	{
-		RuntimeClass::addMethod(methodName, 8, new Method_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, false >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type,
-		typename Argument8Type
-	>
-	void addMethod(const char* const methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const)
-	{
-		RuntimeClass::addMethod(methodName, 8, new Method_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, true >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type,
-		typename Argument8Type
-	>
-	void addMethod(const char* const methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type))
-	{
-		RuntimeClass::addMethod(methodName, 8, new MethodTrunk_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >(method));
+		auto dispatch = new AutoMethodTrunk< ClassType, ReturnType, ArgumentTypes ... >(method);
+		RuntimeClass::addMethod(methodName, sizeof...(ArgumentTypes), dispatch);
 	}
 
 	/*! \} */
@@ -484,95 +102,13 @@ public:
 	/*! \{ */
 
 	template <
-		typename ReturnType
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)())
-	{
-		RuntimeClass::addStaticMethod(methodName, 0, new StaticMethod_0< ClassType, ReturnType >(method));
-	}
-
-	template <
 		typename ReturnType,
-		typename Argument1Type
+		typename ... ArgumentTypes
 	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type))
+	void addStaticMethod(const char* const methodName, ReturnType (*method)(ArgumentTypes ...))
 	{
-		RuntimeClass::addStaticMethod(methodName, 1, new StaticMethod_1< ClassType, ReturnType, Argument1Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 2, new StaticMethod_2< ClassType, ReturnType, Argument1Type, Argument2Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 3, new StaticMethod_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 4, new StaticMethod_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 5, new StaticMethod_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 6, new StaticMethod_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
-	}
-
-	template <
-		typename ReturnType,
-		typename Argument1Type,
-		typename Argument2Type,
-		typename Argument3Type,
-		typename Argument4Type,
-		typename Argument5Type,
-		typename Argument6Type,
-		typename Argument7Type
-	>
-	void addStaticMethod(const char* const methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
-	{
-		RuntimeClass::addStaticMethod(methodName, 7, new StaticMethod_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
+		auto dispatch = new AutoStaticMethod< ClassType, ReturnType, ArgumentTypes ... >(method);
+		RuntimeClass::addStaticMethod(methodName, sizeof...(ArgumentTypes), dispatch);
 	}
 
 	/*! \} */
