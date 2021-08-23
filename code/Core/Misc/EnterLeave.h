@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Functor/Functor.h"
+#include <functional>
 
 namespace traktor
 {
@@ -11,22 +11,21 @@ namespace traktor
 class EnterLeave
 {
 public:
-	inline EnterLeave(Functor* enter, Functor* leave)
+	explicit EnterLeave(const std::function< void() >& enter, const std::function< void() >& leave)
 	:	m_leave(leave)
 	{
 		if (enter)
-			(*enter)();
+			enter();
 	}
 
 	inline ~EnterLeave()
 	{
 		if (m_leave)
-			(*m_leave)();
+			m_leave();
 	}
 
 private:
-	Ref< Functor > m_leave;
+	std::function< void() > m_leave;
 };
 
 }
-
