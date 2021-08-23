@@ -231,12 +231,12 @@ int main(int argc, const char** argv)
 #if defined(_WIN32) && !defined(_DEBUG)
 		PVOID eh = nullptr;
 		T_ANONYMOUS_VAR(EnterLeave)(
-			makeFunctor([&]() {
+			[&]() {
 				eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
-			}),
-			makeFunctor([&]() {
+			},
+			[&]() {
 				RemoveVectoredExceptionHandler(eh);
-			})
+			}
 		);
 		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 #endif

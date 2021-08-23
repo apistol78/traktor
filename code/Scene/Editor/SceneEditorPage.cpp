@@ -1,7 +1,6 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"

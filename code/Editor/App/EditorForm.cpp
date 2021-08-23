@@ -1108,12 +1108,12 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 
 bool EditorForm::openEditor(db::Instance* instance)
 {
-	T_ASSERT(instance);
-
 	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
+		[this](){ setCursor(ui::CrWait); },
+		[this](){ resetCursor(); }
 	);
+
+	T_ASSERT(instance);
 
 	// Activate page if already opened for this instance.
 	for (auto tab : m_tabGroups)
@@ -1284,12 +1284,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 bool EditorForm::openDefaultEditor(db::Instance* instance)
 {
-	T_ASSERT(instance);
-
 	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
+		[this](){ setCursor(ui::CrWait); },
+		[this](){ resetCursor(); }
 	);
+
+	T_ASSERT(instance);
 
 	// Checkout instance for exclusive editing.
 	if (!instance->checkout())
@@ -1955,8 +1955,8 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 void EditorForm::buildAssets(bool rebuild)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
+		[this](){ setCursor(ui::CrWait); },
+		[this](){ resetCursor(); }
 	);
 
 	if (!m_workspaceSettings)
@@ -2163,8 +2163,8 @@ void EditorForm::moveNewTabGroup()
 void EditorForm::saveCurrentDocument()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
+		[this](){ setCursor(ui::CrWait); },
+		[this](){ resetCursor(); }
 	);
 
 	// First iterate all object editor dialogs to see if focus is in any of those,
@@ -2278,8 +2278,8 @@ void EditorForm::saveAsCurrentDocument()
 void EditorForm::saveAllDocuments()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
+		[this](){ setCursor(ui::CrWait); },
+		[this](){ resetCursor(); }
 	);
 
 	bool allSuccessfull = true;

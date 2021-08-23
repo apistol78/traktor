@@ -2,7 +2,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Format.h"
-#include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
