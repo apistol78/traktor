@@ -496,7 +496,7 @@ void WorldRendererForward::setupTileDataPass(
 	T_PROFILER_SCOPE(L"WorldRendererForward setupTileDataPass");
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Enqueue light clustering as a job, is synchronized in before rendering.
-	m_frames[frame].tileJob = JobManager::getInstance().add(makeFunctor([=]() {
+	m_frames[frame].tileJob = JobManager::getInstance().add([=]() {
 #endif
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
 		const auto& lights = m_frames[frame].lights;
@@ -662,7 +662,7 @@ void WorldRendererForward::setupTileDataPass(
 		m_frames[frame].lightIndexSBuffer->unlock();
 		m_frames[frame].tileSBuffer->unlock();
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
-	}));
+	});
 #endif
 }
 

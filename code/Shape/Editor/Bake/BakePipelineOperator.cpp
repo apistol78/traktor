@@ -237,7 +237,7 @@ void addSky(
 
 			for (int32_t side = 0; side < 6; ++side)
 			{
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor([=, &sourceRadianceCube, &radianceCube, &random]() {
+				Ref< Job > job = JobManager::getInstance().add([=, &sourceRadianceCube, &radianceCube, &random]() {
 					for (int32_t y = 0; y < 128; ++y)
 					{
 						for (int32_t x = 0; x < 128; ++x)
@@ -259,7 +259,7 @@ void addSky(
 							radianceCube->set(d, cl);
 						}
 					}
-				}));
+				});
 				jobs.push_back(job);
 			}
 

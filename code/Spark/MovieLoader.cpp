@@ -37,7 +37,9 @@ public:
 	,	m_triangulate(triangulate)
 	,	m_includeAS(includeAS)
 	{
-		m_job = JobManager::getInstance().add(makeFunctor< MovieLoaderHandle >(this, &MovieLoaderHandle::loader));
+		m_job = JobManager::getInstance().add([this](){
+			loader();
+		});
 	}
 
 	virtual bool wait() override final

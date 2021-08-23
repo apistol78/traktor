@@ -358,7 +358,9 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 		if (!compiler)
 			return;
 
-		m_reflectJob = JobManager::getInstance().add(makeFunctor(this, &ShaderViewer::jobReflect, m_pendingShaderGraph, compiler));
+		m_reflectJob = JobManager::getInstance().add([=](){
+			jobReflect(m_pendingShaderGraph, compiler);
+		});
 
 		m_lastShaderGraph = m_pendingShaderGraph;
 		m_pendingShaderGraph = nullptr;

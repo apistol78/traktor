@@ -329,7 +329,9 @@ void SearchToolDialog::search(const std::wstring& needle)
 	bool caseSensitive = m_checkCaseSensitive->isChecked();
 
 	m_gridResults->removeAllRows();
-	m_jobSearch = JobManager::getInstance().add(makeFunctor(this, &SearchToolDialog::jobSearch, needle, regExp, caseSensitive));
+	m_jobSearch = JobManager::getInstance().add([=](){
+		jobSearch(needle, regExp, caseSensitive);
+	});
 
 	m_editSearch->setEnable(false);
 	m_checkRegExp->setEnable(false);

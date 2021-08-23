@@ -246,12 +246,12 @@ void BlendMesh::build(
 					BlendMeshTask task3(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[2], pivots[3]);
 					BlendMeshTask task4(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[3], pivots[4]);
 
-					RefArray< Functor > jobs(4);
-					jobs[0] = makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute);
-					jobs[1] = makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute);
-					jobs[2] = makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute);
-					jobs[3] = makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute);
-					JobManager::getInstance().fork(jobs);
+					Job::task_t jobs[4];
+					jobs[0] = [&](){ task1.execute(); };
+					jobs[1] = [&](){ task2.execute(); };
+					jobs[2] = [&](){ task3.execute(); };
+					jobs[3] = [&](){ task4.execute(); };
+					JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 				}
 				else
 #endif

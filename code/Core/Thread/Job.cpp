@@ -18,7 +18,7 @@ class JobHeap : public ISingleton
 public:
 	static JobHeap& getInstance()
 	{
-		static JobHeap* s_instance = 0;
+		static JobHeap* s_instance = nullptr;
 		if (!s_instance)
 		{
 			s_instance = new JobHeap();
@@ -113,9 +113,9 @@ void Job::operator delete (void* ptr)
 	JobHeap::getInstance().free(ptr);
 }
 
-Job::Job(Event& jobFinishedEvent, Functor* functor)
+Job::Job(Event& jobFinishedEvent, const std::function< void() >& task)
 :	m_jobFinishedEvent(jobFinishedEvent)
-,	m_functor(functor)
+,	m_task(task)
 ,	m_finished(0)
 {
 }

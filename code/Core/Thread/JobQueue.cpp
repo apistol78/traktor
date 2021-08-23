@@ -1,5 +1,4 @@
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/Job.h"
 #include "Core/Thread/JobQueue.h"
 #include "Core/Thread/ThreadManager.h"
 
@@ -7,11 +6,6 @@ namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.JobQueue", JobQueue, Object)
-
-JobQueue::JobQueue()
-:	m_pending(0)
-{
-}
 
 JobQueue::~JobQueue()
 {
@@ -51,9 +45,9 @@ void JobQueue::destroy()
 	m_workerThreads.clear();
 }
 
-Ref< Job > JobQueue::add(Functor* functor)
+Ref< Job > JobQueue::add(const Job::task_t& task)
 {
-	Ref< Job > job = new Job(m_jobFinishedEvent, functor);
+	Ref< Job > job = new Job(m_jobFinishedEvent, task);
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		m_jobQueue.push_back(job);
@@ -63,26 +57,29 @@ Ref< Job > JobQueue::add(Functor* functor)
 	return job;
 }
 
-void JobQueue::fork(const RefArray< Functor >& functors)
+void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 {
 	RefArray< Job > jobs;
 
+	if (ntasks == 0)
+		return;
+
 	// Create jobs for given functors.
-	if (functors.size() > 1)
+	if (ntasks > 1)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
-		jobs.resize(functors.size());
-		for (uint32_t i = 1; i < functors.size(); ++i)
+		jobs.resize(ntasks);
+		for (size_t i = 1; i < ntasks; ++i)
 		{
-			jobs[i] = new Job(m_jobFinishedEvent, functors[i]);
+			jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
 			m_jobQueue.push_back(jobs[i]);
 			Atomic::increment(m_pending);
 		}
-		m_jobQueuedEvent.pulse((int32_t)(functors.size() - 1));
+		m_jobQueuedEvent.pulse((int32_t)(ntasks - 1));
 	}
 
 	// Execute first functor on caller thread.
-	(*functors[0])();
+	tasks[0]();
 
 	// Wait until all jobs has finished.
 	for (uint32_t i = 1; i < jobs.size(); )
@@ -140,7 +137,7 @@ void JobQueue::threadWorker()
 
 		// Execute job.
 		T_FATAL_ASSERT(job->m_finished == 0);
-		(*job->m_functor)();
+		job->m_task();
 		T_FATAL_ASSERT(job->m_finished == 0);
 		Atomic::exchange(job->m_finished, 1);
 

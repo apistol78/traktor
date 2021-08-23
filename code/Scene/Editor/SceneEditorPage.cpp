@@ -429,10 +429,10 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
-	Ref< Job > job = JobManager::getInstance().add(makeFunctor([&]() {
+	Ref< Job > job = JobManager::getInstance().add([&]() {
 		createSceneAsset();
 		updateScene();
-	}));
+	});
 
 	// Show a dialog if processing seems to take more than N second(s).
 	ui::BackgroundWorkerDialog dialog;

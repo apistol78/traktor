@@ -37,7 +37,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 {
 #if !defined(__PS3__)
 	Ref< MoveQueryResult > result = new MoveQueryResult();
-	JobManager::getInstance().add(makeFunctor([=](){
+	JobManager::getInstance().add([=](){
 		T_ANONYMOUS_VAR(Ref< NavMesh >)(this);
 
 		dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
@@ -143,7 +143,7 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 
 		result->succeed(outputQuery);
 		return;
-	}));
+	});
 	return result;
 #else
 	return nullptr;
