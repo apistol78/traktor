@@ -14,9 +14,6 @@
 namespace traktor
 {
 
-class Job;
-class Functor;
-
 /*! Job manager.
  * \ingroup Core
  *
@@ -37,7 +34,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(Functor* functor) { return m_queue.add(functor); }
+	Ref< Job > add(const Job::task_t& functor) { return m_queue.add(functor); }
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *
@@ -45,7 +42,7 @@ public:
 	 * is always run on the caller thread to reduce
 	 * work for kernel scheduler.
 	 */
-	void fork(const RefArray< Functor >& functors) { return m_queue.fork(functors); }
+	void fork(const Job::task_t* tasks, size_t ntasks) { return m_queue.fork(tasks, ntasks); }
 
 	/*! Wait until all jobs are finished.
 	 *

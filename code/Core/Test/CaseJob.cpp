@@ -33,14 +33,14 @@ void CaseJob::run()
 		g_job = 0;
 		g_active = 0;
 
-		RefArray< Functor > jobs;
+		Job::task_t jobs[1000];
 		for (int32_t i = 0; i < 1000; ++i)
 		{
 			g_counts[i] = 0;
-			jobs.push_back(makeStaticFunctor(jobTask, i));
+			jobs[i] = [=](){ jobTask(i); };
 		}
 
-		JobManager::getInstance().fork(jobs);
+		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 
 		CASE_ASSERT_EQUAL(g_active, 0);
 		CASE_ASSERT_EQUAL(g_job, 1000);
@@ -59,7 +59,7 @@ void CaseJob::run()
 		for (int32_t i = 0; i < 1000; ++i)
 		{
 			g_counts[i] = 0;
-			JobManager::getInstance().add(makeStaticFunctor(jobTask, i));
+			JobManager::getInstance().add([=](){ jobTask(i); });
 		}
 
 		bool result = JobManager::getInstance().wait();

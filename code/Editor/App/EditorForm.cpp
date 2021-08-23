@@ -2367,13 +2367,6 @@ void EditorForm::closeCurrentEditor()
 
 void EditorForm::closeAllEditors()
 {
-#if 0
-	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
-	);
-#endif
-
 	for (auto tab : m_tabGroups)
 	{
 		// Get all other pages to close; ignore home.
@@ -2441,13 +2434,6 @@ void EditorForm::closeAllEditors()
 
 void EditorForm::closeAllOtherEditors()
 {
-#if 0
-	T_ANONYMOUS_VAR(EnterLeave)(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
-	);
-#endif
-
 	//// Get all other pages to close; ignore active page and home.
 	//RefArray< ui::TabPage > closePages;
 	//for (int32_t i = 0; i < m_tab->getPageCount(); ++i)

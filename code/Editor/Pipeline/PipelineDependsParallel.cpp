@@ -96,7 +96,9 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), outputPath, outputGuid, flags));
+	Ref< Job > job = JobManager::getInstance().add([=](){
+		jobAddDependency(parentDependency, sourceAsset, outputPath, outputGuid, flags);
+	});
 	if (job)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
@@ -116,7 +118,9 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< db::Instance >(sourceAssetInstance), flags));
+	Ref< Job > job = JobManager::getInstance().add([=](){
+		jobAddDependency(parentDependency, sourceAssetInstance, flags);
+	});
 	if (job)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
@@ -136,7 +140,9 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	Ref< Job > job = JobManager::getInstance().add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
+	Ref< Job > job = JobManager::getInstance().add([=](){
+		jobAddDependency(parentDependency, sourceAssetGuid, flags);
+	});
 	if (job)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);

@@ -575,7 +575,9 @@ bool ShaderPipeline::buildOutput(
 			tasks.push_back(task);
 
 #if defined(T_USE_BUILD_COMBINATION_JOBS)
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
+			Ref< Job > job = JobManager::getInstance().add([=](){
+				task->execute();
+			});
 			jobs.push_back(job);
 #else
 			task->execute();

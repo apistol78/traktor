@@ -197,11 +197,9 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	if (size >= 64)
 	{
 		JobManager& jobManager = JobManager::getInstance();
-		m_job = jobManager.add(makeFunctor< EmitterInstance, float >(
-			this,
-			&EmitterInstance::updateTask,
-			context.deltaTime
-		));
+		m_job = jobManager.add([=](){
+			updateTask(context.deltaTime);
+		});
 	}
 	else
 		updateTask(context.deltaTime);

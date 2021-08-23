@@ -752,7 +752,9 @@ bool TextureOutputPipeline::buildOutput(
 
 					if (m_generateMipsThread)
 					{
-						Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
+						Ref< Job > job = JobManager::getInstance().add([=](){
+							task->execute();
+						});
 						T_ASSERT(job);
 
 						tasks[i] = task;

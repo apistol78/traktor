@@ -1,9 +1,11 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Event.h"
+#include "Core/Thread/Job.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
@@ -19,9 +21,6 @@
 namespace traktor
 {
 
-class Job;
-class Functor;
-
 /*! Job queue.
  * \ingroup Core
  */
@@ -30,8 +29,6 @@ class T_DLLCLASS JobQueue : public Object
 	T_RTTI_CLASS;
 
 public:
-	JobQueue();
-
 	virtual ~JobQueue();
 
 	/*! Create queue.
@@ -50,7 +47,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(Functor* functor);
+	Ref< Job > add(const Job::task_t& task);
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *
@@ -58,7 +55,7 @@ public:
 	 * is always run on the caller thread to reduce
 	 * work for kernel scheduler.
 	 */
-	void fork(const RefArray< Functor >& functors);
+	void fork(const Job::task_t* tasks, size_t ntasks);
 
 	/*! Wait until all jobs are finished.
 	 *
@@ -83,7 +80,7 @@ private:
 	Semaphore m_jobQueueLock;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
-	int32_t m_pending;
+	int32_t m_pending = 0;
 
 	void threadWorker();
 };

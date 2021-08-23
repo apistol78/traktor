@@ -1241,7 +1241,7 @@ void DatabaseView::updateTreeColors()
 	if (m_jobTreeColors && !m_jobTreeColors->wait(0))
 		return;
 
-	m_jobTreeColors = JobManager::getInstance().add(makeFunctor([&]() {
+	m_jobTreeColors = JobManager::getInstance().add([&]() {
 		RefArray< ui::TreeViewItem > items;
 		m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
 		for (auto item : items)
@@ -1265,7 +1265,7 @@ void DatabaseView::updateTreeColors()
 				}
 			}
 		}
-	}));
+	});
 }
 
 void DatabaseView::updateGridInstances()

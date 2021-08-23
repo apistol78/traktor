@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Ref.h"
 #include "Core/Thread/IWaitable.h"
 
@@ -15,7 +16,6 @@ namespace traktor
 {
 
 class Event;
-class Functor;
 
 /*! Job handle object.
  * \ingroup Core
@@ -25,6 +25,8 @@ class T_DLLCLASS Job
 ,	public IWaitable
 {
 public:
+	typedef std::function< void() > task_t;
+
 	virtual bool wait(int32_t timeout = -1) override final;
 
 	void stop();
@@ -39,10 +41,10 @@ private:
 	friend class JobQueue;
 
 	Event& m_jobFinishedEvent;
-	Ref< Functor > m_functor;
+	task_t m_task;
 	uint32_t m_finished;
 
-	explicit Job(Event& jobFinishedEvent, Functor* functor);
+	explicit Job(Event& jobFinishedEvent, const task_t& task);
 
 	Job() = delete;
 

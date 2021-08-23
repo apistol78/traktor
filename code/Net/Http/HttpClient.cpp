@@ -121,9 +121,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpClient", HttpClient, Object)
 Ref< HttpClientResult > HttpClient::get(const net::Url& url, const IHttpRequestContent* content)
 {
 	Ref< HttpClientResult > result = new HttpClientResult();
-	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
-		&executeRequestJob, L"GET", url, content, result)
-	);
+	result->m_job = JobManager::getInstance().add([=](){
+		executeRequestJob(L"GET", url, content, result);
+	});
 	if (result->m_job)
 		return result;
 	else
@@ -133,9 +133,9 @@ Ref< HttpClientResult > HttpClient::get(const net::Url& url, const IHttpRequestC
 Ref< HttpClientResult > HttpClient::put(const net::Url& url, const IHttpRequestContent* content)
 {
 	Ref< HttpClientResult > result = new HttpClientResult();
-	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
-		&executeRequestJob, L"PUT", url, content, result)
-	);
+	result->m_job = JobManager::getInstance().add([=](){
+		executeRequestJob(L"PUT", url, content, result);
+	});
 	if (result->m_job)
 		return result;
 	else
@@ -145,9 +145,9 @@ Ref< HttpClientResult > HttpClient::put(const net::Url& url, const IHttpRequestC
 Ref< HttpClientResult > HttpClient::post(const net::Url& url, const IHttpRequestContent* content)
 {
 	Ref< HttpClientResult > result = new HttpClientResult();
-	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
-		&executeRequestJob, L"POST", url, content, result)
-	);
+	result->m_job = JobManager::getInstance().add([=](){
+		executeRequestJob(L"POST", url, content, result);
+	});
 	if (result->m_job)
 		return result;
 	else

@@ -543,14 +543,14 @@ bool TracerProcessor::process(const TracerTask* task)
 		RefArray< Job > jobs;
 		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
 		{
-			Ref< Job > job = m_queue->add(makeFunctor([&, ty](){
+			Ref< Job > job = m_queue->add([&, ty](){
 				for (int32_t tx = 0; tx < width; tx += 16)
 				{
 					int32_t region[] = { tx, ty, std::min(tx + 16, width), std::min(ty + 16, height) };
 					rayTracer->traceLightmap(renderModel, &gbuffer, lightmapDiffuse, lightmapDirectional, region);
 					++m_status.current;
 				}
-			}));
+			});
 			jobs.push_back(job);
 		}
 		while (!jobs.empty())
@@ -653,9 +653,9 @@ bool TracerProcessor::process(const TracerTask* task)
 					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
 					const uint32_t index = x * gridY * gridZ + y * gridZ + z;
 
-					Ref< Job > job = m_queue->add(makeFunctor([&, position, index]() {
+					Ref< Job > job = m_queue->add([&, position, index]() {
 						shs[index] = rayTracer->traceProbe(position.xyz1());
-					}));
+					});
 					jobs.push_back(job);
 				}
 			}

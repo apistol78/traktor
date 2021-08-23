@@ -128,7 +128,7 @@ Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) cons
 
 	// 	auto position = lightEntityData->getTransform().translation().xyz1();
 
-	// 	auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
+	// 	auto job = JobManager::getInstance().add([&, lightComponentData]() {
 	// 		Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
 
 	// 		Ref< RayTracer::Context > context = tracer.createContext();
@@ -136,7 +136,7 @@ Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) cons
 	// 		shEngine.generateCoefficients(&shFunction, *shCoeffs);
 
 	// 		lightComponentData->setSHCoeffs(shCoeffs);
-	// 	}));
+	// 	});
 	// 	if (!job)
 	// 		return false;
 
@@ -171,7 +171,7 @@ Ref< drawing::Image > RayTracerLocal::traceDirect(const GBuffer* gbuffer) const
     {
         for (int32_t tx = 0; tx < width; tx += 16)
         {
-            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+            auto job = JobManager::getInstance().add([&, tx, ty]() {
                 SahTree::QueryCache sahCache;
                 RandomGeometry random;
 
@@ -196,7 +196,7 @@ Ref< drawing::Image > RayTracerLocal::traceDirect(const GBuffer* gbuffer) const
                         lightmapDirect->setPixel(x, y, direct.rgb1());
                     }
                 }
-            }));
+            });
             if (!job)
                 return nullptr;
 
@@ -228,7 +228,7 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
     {
         for (int32_t tx = 0; tx < width; tx += 16)
         {
-            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+            auto job = JobManager::getInstance().add([&, tx, ty]() {
                 SahTree::QueryResult result;
                 SahTree::QueryCache sahCache;
                 RandomGeometry random;
@@ -270,7 +270,7 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
                         lightmapIndirect->setPixel(x, y, indirect.rgb1());
                     }
                 }
-            }));
+            });
             if (!job)
                 return nullptr;
 
