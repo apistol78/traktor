@@ -7,7 +7,6 @@
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/OsX/Utilities.h"
-#include "Core/Functor/Functor.h"
 
 namespace traktor
 {

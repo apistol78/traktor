@@ -2,7 +2,7 @@
 
 #if defined(__IOS__)
 #	define T_VERIFY_ENABLE 0
-#	define T_VERIFY_USING_EXCEPTIONS 1
+#	define T_VERIFY_USING_EXCEPTIONS 0
 #elif defined(__ANDROID__)
 #	define T_VERIFY_ENABLE 0
 #	define T_VERIFY_USING_EXCEPTIONS 0
@@ -70,7 +70,6 @@ namespace traktor
 
 #	define T_VERIFY_ARGUMENT_COUNT(required)
 #	define T_VERIFY_ARGUMENT_TYPES
-#	define T_VERIFY_USING_EXCEPTIONS 0
 #	define T_VERIFY_CAST_SELF(ClassType, self) static_cast< ClassType* >(self)
 
 #endif

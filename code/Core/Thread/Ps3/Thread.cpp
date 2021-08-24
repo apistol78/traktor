@@ -2,7 +2,6 @@
 #include <sys/synchronization.h>
 #include <sys/process.h>
 #include <sys/timer.h>
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"

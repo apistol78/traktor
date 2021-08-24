@@ -6,7 +6,6 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Linux/Utilities.h"
-#include "Core/Functor/Functor.h"
 
 namespace traktor
 {
