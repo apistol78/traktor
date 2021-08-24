@@ -1,5 +1,4 @@
 #include <cstring>
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Thread.h"
@@ -36,7 +35,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 	// Create transmission thread.
 	if (asyncTx || asyncRx)
 	{
-		if (!ThreadPool::getInstance().spawn(makeFunctor(this, &OnlinePeer2PeerProvider::transmissionThread), m_thread))
+		if (!ThreadPool::getInstance().spawn([this](){ transmissionThread(); }, m_thread))
 		{
 			m_thread = nullptr;
 			m_asyncTx =

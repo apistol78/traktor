@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"

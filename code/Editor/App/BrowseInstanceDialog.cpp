@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyObject.h"
@@ -130,7 +129,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 
 	// Spawn preview generator thread.
 	ThreadPool::getInstance().spawn(
-		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview),
+		[this](){ threadGeneratePreview(); },
 		m_threadGeneratePreview
 	);
 
@@ -244,7 +243,7 @@ void BrowseInstanceDialog::updatePreviewList()
 				ui::PreviewItem* item = previewItems->get(i);
 				if (!item->getImage())
 				{
-					m_previewTasks.put(makeFunctor(this, &BrowseInstanceDialog::taskGeneratePreview, item));
+					m_previewTasks.put([=](){ taskGeneratePreview(item); });
 					m_previewTaskEvent.pulse();
 				}
 			}
@@ -297,7 +296,7 @@ void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
 
 void BrowseInstanceDialog::threadGeneratePreview()
 {
-	Ref< Functor > task;
+	std::function< void() > task;
 	while (m_threadGeneratePreview && !m_threadGeneratePreview->stopped())
 	{
 		if (!m_previewTasks.get(task))
@@ -305,7 +304,7 @@ void BrowseInstanceDialog::threadGeneratePreview()
 			m_previewTaskEvent.wait(100);
 			continue;
 		}
-		(*task)(); task = 0;
+		task();
 	}
 }
 

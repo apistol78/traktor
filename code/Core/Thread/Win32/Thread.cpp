@@ -1,7 +1,6 @@
 #include <process.h>
 #include "Core/System.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor

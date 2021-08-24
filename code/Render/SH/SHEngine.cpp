@@ -1,5 +1,4 @@
 #include <cmath>
-#include "Core/Functor/Functor.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"

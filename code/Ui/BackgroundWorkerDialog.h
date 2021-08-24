@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Ui/Dialog.h"
-#include "Core/Functor/Functor.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"

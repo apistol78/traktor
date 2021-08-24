@@ -1,5 +1,4 @@
 #include "Core/RefArray.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Thread.h"
@@ -49,7 +48,7 @@ bool XML::load(const std::wstring& url_)
 	if (m_thread)
 		return false;
 
-	ThreadPool::getInstance().spawn(makeFunctor< XML, std::wstring >(this, &XML::threadLoad, url_), m_thread);
+	ThreadPool::getInstance().spawn([=](){ threadLoad(url_); }, m_thread);
 	if (!m_thread)
 		return false;
 

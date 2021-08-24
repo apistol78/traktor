@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
@@ -11,7 +10,7 @@ namespace traktor
 void threadPoolDispatcher(
 	Event& eventAttachWork,
 	Event& eventFinishedWork,
-	Ref< Functor >& functorWork,
+	const ThreadPool::threadPoolFn_t& fn,
 	const std::atomic< int32_t >& alive
 )
 {
@@ -22,8 +21,7 @@ void threadPoolDispatcher(
 			continue;
 
 		// Execute work.
-		(*functorWork)();
-		functorWork = nullptr;
+		fn();
 
 		// Signal work has finished.
 		eventFinishedWork.broadcast();
@@ -43,7 +41,7 @@ ThreadPool& ThreadPool::getInstance()
 	return *s_instance;
 }
 
-bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority priority)
+bool ThreadPool::spawn(const threadPoolFn_t& fn, Thread*& outThread, Thread::Priority priority)
 {
 	for (uint32_t i = 0; i < sizeof_array(m_workerThreads); ++i)
 	{
@@ -55,7 +53,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority pr
 
 		if (worker.thread == nullptr)
 		{
-			worker.thread = ThreadManager::getInstance().create([&](){ threadPoolDispatcher(worker.eventAttachWork, worker.eventFinishedWork, worker.functorWork, worker.alive); }, L"Thread pool worker");
+			worker.thread = ThreadManager::getInstance().create([&](){ threadPoolDispatcher(worker.eventAttachWork, worker.eventFinishedWork, worker.fn, worker.alive); }, L"Thread pool worker");
 			if (!worker.thread)
 			{
 				worker.busy = 0;
@@ -67,7 +65,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority pr
 		outThread = worker.thread;
 		outThread->resume(priority);
 
-		worker.functorWork = functor;
+		worker.fn = fn;
 		worker.eventFinishedWork.reset();
 		worker.eventAttachWork.broadcast();
 		return true;

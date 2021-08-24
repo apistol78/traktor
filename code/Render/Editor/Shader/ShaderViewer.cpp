@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -358,8 +357,9 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 		if (!compiler)
 			return;
 
+		Ref< ShaderGraph > shaderGraph = m_pendingShaderGraph;
 		m_reflectJob = JobManager::getInstance().add([=](){
-			jobReflect(m_pendingShaderGraph, compiler);
+			jobReflect(shaderGraph, compiler);
 		});
 
 		m_lastShaderGraph = m_pendingShaderGraph;

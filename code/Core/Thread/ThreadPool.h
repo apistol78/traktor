@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <functional>
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Thread.h"
@@ -16,17 +17,17 @@
 namespace traktor
 {
 
-class Functor;
-
 /*! Thread pool manager.
  * \ingroup Core
  */
 class T_DLLCLASS ThreadPool : public ISingleton
 {
 public:
+	typedef std::function< void() > threadPoolFn_t;
+
 	static ThreadPool& getInstance();
 
-	bool spawn(Functor* functor, Thread*& outThread, Thread::Priority priority = Thread::Normal);
+	bool spawn(const threadPoolFn_t& fn, Thread*& outThread, Thread::Priority priority = Thread::Normal);
 
 	bool join(Thread* thread);
 
@@ -41,7 +42,7 @@ private:
 		Thread* thread = nullptr;
 		Event eventAttachWork;
 		Event eventFinishedWork;
-		Ref< Functor > functorWork;
+		threadPoolFn_t fn;
 		std::atomic< int32_t > alive;
 		std::atomic< int32_t > busy;
 

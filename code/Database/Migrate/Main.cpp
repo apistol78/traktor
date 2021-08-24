@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"

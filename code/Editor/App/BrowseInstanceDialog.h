@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/Event.h"
 #include "Ui/ConfigDialog.h"
@@ -7,7 +8,6 @@
 namespace traktor
 {
 
-class Functor;
 class PropertyGroup;
 class Thread;
 
@@ -60,7 +60,7 @@ private:
 	Ref< db::Instance > m_instance;
 
 	Thread* m_threadGeneratePreview;
-	ThreadsafeFifo< Ref< Functor > > m_previewTasks;
+	ThreadsafeFifo< std::function< void() > > m_previewTasks;
 	Event m_previewTaskEvent;
 
 	ui::TreeViewItem* buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);

@@ -1,5 +1,4 @@
 #include <cmath>
-#include "Core/Functor/Functor.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Test/CaseJob.h"
 

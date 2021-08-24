@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Test/CaseThreadPool.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
@@ -32,7 +31,7 @@ void threadBuilder()
         for (int32_t i = 0; i < 4; ++i)
         {
             ThreadPool::getInstance().spawn(
-                makeStaticFunctor(&threadWorker),
+                [](){ threadWorker(); },
                 threads[i]
             );
         } 
@@ -66,7 +65,7 @@ void CaseThreadPool::run()
         for (int32_t i = 0; i < 16; ++i)
         {
             bool result = ThreadPool::getInstance().spawn(
-                makeStaticFunctor(&threadWorker),
+                [](){ threadWorker(); },
                 threads[i]
             );
             CASE_ASSERT(result);
@@ -91,7 +90,7 @@ void CaseThreadPool::run()
 
         // Create "preview" thread.
         Thread* threadP = nullptr;
-        ThreadPool::getInstance().spawn(makeStaticFunctor(&threadPreview), threadP);
+        ThreadPool::getInstance().spawn([](){ threadPreview(); }, threadP);
         CASE_ASSERT(threadP != nullptr);
 
         ThreadManager::getInstance().getCurrentThread()->sleep(200);

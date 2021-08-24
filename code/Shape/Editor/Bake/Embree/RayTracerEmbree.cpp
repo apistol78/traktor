@@ -1,7 +1,6 @@
 #include <functional>
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix44.h"

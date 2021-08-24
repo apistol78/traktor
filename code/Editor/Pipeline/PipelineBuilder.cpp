@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
@@ -286,20 +285,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			for (int32_t i = 0; i < cpuCores; ++i)
 			{
 				ThreadPool::getInstance().spawn(
-					makeFunctor
-					<
-						PipelineBuilder,
-						const PipelineDependencySet*,
-						Thread*,
-						int32_t
-					>
-					(
-						this,
-						&PipelineBuilder::buildThread,
-						dependencySet,
-						ThreadManager::getInstance().getCurrentThread(),
-						i
-					),
+					[&, i]() { buildThread(dependencySet, ThreadManager::getInstance().getCurrentThread(), i); },
 					threads[i]
 				);
 			}

@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
