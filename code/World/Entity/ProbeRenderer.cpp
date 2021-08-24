@@ -231,7 +231,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.antiAlias = world::Quality::Disabled;
 		wcd.quality.imageProcess = world::Quality::Disabled;
 		wcd.multiSample = 0;
-		wcd.frameCount = 1;
 		wcd.gamma = 1.0f;
 		wcd.sharedDepthStencil = m_depthTargetSet;
 

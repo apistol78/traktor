@@ -84,20 +84,6 @@ public:
 private:
 	friend class TilesOverlay;
 
-	struct Frame
-	{
-		Ref< render::Buffer > lightSBuffer;
-		Ref< render::Buffer > lightIndexSBuffer;
-		Ref< render::Buffer > tileSBuffer;
-		AlignedVector< const LightComponent* > lights;
-		AlignedVector< const ProbeComponent* > probes;
-		Ref< Packer > shadowAtlasPacker;
-#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
-		Ref< Job > tileJob;
-#endif
-		void* lightSBufferData = nullptr;
-	};
-
 	WorldRenderSettings m_settings;
 	Quality m_toneMapQuality = Quality::Disabled;
 	Quality m_motionBlurQuality = Quality::Disabled;
@@ -128,7 +114,16 @@ private:
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
 
-	AlignedVector< Frame > m_frames;
+	Ref< render::Buffer > m_lightSBuffer;
+	Ref< render::Buffer > m_lightIndexSBuffer;
+	Ref< render::Buffer > m_tileSBuffer;
+	AlignedVector< const LightComponent* > m_lights;
+	AlignedVector< const ProbeComponent* > m_probes;
+	Ref< Packer > m_shadowAtlasPacker;
+#if defined(T_WORLD_FORWARD_USE_TILE_JOB)
+	Ref< Job > m_tileJob;
+#endif
+	void* m_lightSBufferData = nullptr;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count = 0;
@@ -137,8 +132,7 @@ private:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		int32_t frame
+		render::handle_t outputTargetSetId
 	);
 
 	render::handle_t setupGBufferPass(
@@ -178,7 +172,6 @@ private:
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		int32_t frame,
 		render::handle_t& outShadowMapAtlasTargetSetId
 	);
 
@@ -190,8 +183,7 @@ private:
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
-		render::handle_t shadowMapAtlasTargetSetId,
-		int32_t frame
+		render::handle_t shadowMapAtlasTargetSetId
 	);
 
 	void setupProcessPass(

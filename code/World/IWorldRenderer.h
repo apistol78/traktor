@@ -47,24 +47,13 @@ class WorldRenderView;
  */
 struct QualitySettings
 {
-	Quality toneMap;
-	Quality motionBlur;
-	Quality shadows;
-	Quality reflections;
-	Quality ambientOcclusion;
-	Quality antiAlias;
-	Quality imageProcess;
-
-	QualitySettings()
-	:	toneMap(Quality::Medium)
-	,	motionBlur(Quality::Disabled)
-	,	shadows(Quality::Disabled)
-	,	reflections(Quality::Disabled)
-	,	ambientOcclusion(Quality::Disabled)
-	,	antiAlias(Quality::Disabled)
-	,	imageProcess(Quality::Disabled)
-	{
-	}
+	Quality toneMap = Quality::Medium;
+	Quality motionBlur = Quality::Disabled;
+	Quality shadows = Quality::Disabled;
+	Quality reflections = Quality::Disabled;
+	Quality ambientOcclusion = Quality::Disabled;
+	Quality antiAlias = Quality::Disabled;
+	Quality imageProcess = Quality::Disabled;
 };
 
 /*! World renderer creation description.
@@ -72,23 +61,12 @@ struct QualitySettings
  */
 struct WorldCreateDesc
 {
-	const WorldRenderSettings* worldRenderSettings;
-	WorldEntityRenderers* entityRenderers;
+	const WorldRenderSettings* worldRenderSettings = nullptr;
+	WorldEntityRenderers* entityRenderers = nullptr;
 	QualitySettings quality;
-	uint32_t multiSample;
-	uint32_t frameCount;
-	float gamma;
-	render::IRenderTargetSet* sharedDepthStencil;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
-
-	WorldCreateDesc()
-	:	worldRenderSettings(nullptr)
-	,	entityRenderers(nullptr)
-	,	multiSample(0)
-	,	frameCount(0)
-	,	gamma(2.2f)
-	,	sharedDepthStencil(nullptr)
-	{
-	}
+	uint32_t multiSample = 0;
+	float gamma = 2.2f;
+	render::IRenderTargetSet* sharedDepthStencil = nullptr;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
 };
 
 /*! World renderer.

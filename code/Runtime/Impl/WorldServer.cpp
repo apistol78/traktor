@@ -305,7 +305,6 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
-	wcd.frameCount = m_renderServer->getThreadFrameQueueCount();
 	wcd.gamma = m_gamma;
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
