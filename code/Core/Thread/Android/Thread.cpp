@@ -5,7 +5,6 @@
 #include <sys/time.h>
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Android/Utilities.h"
-#include "Core/Functor/Functor.h"
 
 namespace traktor
 {
