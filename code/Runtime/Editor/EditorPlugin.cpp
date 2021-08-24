@@ -189,10 +189,10 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_site->createAdditionalPanel(m_container, ui::dpi96(200), false);
 
 	// Create threads.
-	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");
+	m_threadHostEnumerator = ThreadManager::getInstance().create([this](){ threadHostEnumerator(); }, L"Host enumerator");
 	m_threadHostEnumerator->start();
 
-	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
+	m_threadTargetActions = ThreadManager::getInstance().create([this](){ threadTargetActions(); }, L"Targets");
 	m_threadTargetActions->start();
 
 	m_container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);

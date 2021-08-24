@@ -212,7 +212,7 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 	bool importResult = false;
 
 	// Create download task.
-	Ref< Functor > fn = makeFunctor([&]() {
+	auto fn = [&]() {
 
 		// Download and each selected package.
 		Ref< net::HttpClient > httpClient = new net::HttpClient();
@@ -266,7 +266,7 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 		}
 
 		importResult = true;
-	});
+	};
 
 	// Execute download task, show busy dialog.
 	Thread* thread = ThreadManager::getInstance().create(fn);

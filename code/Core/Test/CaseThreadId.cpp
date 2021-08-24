@@ -31,7 +31,7 @@ void CaseThreadId::run()
 	for (int32_t i = 0; i < 16; ++i)
 		g_ids[i] = -1;
 	for (int32_t i = 0; i < 16; ++i)
-		threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadTest, i), L"Thread Id test");
+		threads[i] = ThreadManager::getInstance().create([=](){ threadTest(i); }, L"Thread Id test");
 	for (int32_t i = 0; i < 16; ++i)
 		threads[i]->start();
 	for (int32_t i = 0; i < 16; ++i)

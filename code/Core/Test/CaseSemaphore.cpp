@@ -58,7 +58,7 @@ void CaseSemaphore::run()
 	// Start 16 threads.
 	for (int i = 0; i < 16; ++i)
 	{
-		threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadStress, i), L"Semaphore test");
+		threads[i] = ThreadManager::getInstance().create([=](){ threadStress(i); }, L"Semaphore test");
 		threads[i]->start();
 	}
 

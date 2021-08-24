@@ -101,7 +101,7 @@ bool ScriptServer::create(
 	{
 		m_transport = transport;
 
-		m_scriptDebuggerThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadDebugger), L"Script debugger/profiler thread");
+		m_scriptDebuggerThread = ThreadManager::getInstance().create([this](){ threadDebugger(); }, L"Script debugger/profiler thread");
 		if (!m_scriptDebuggerThread)
 			return false;
 

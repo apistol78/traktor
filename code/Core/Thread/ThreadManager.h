@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
-#include "Core/Functor/Functor.h"
+#include <functional>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/CriticalSection.h"
 
@@ -27,6 +27,8 @@ class Thread;
 class T_DLLCLASS ThreadManager : public ISingleton
 {
 public:
+	typedef std::function< void() > threadFn_t;
+
 	static ThreadManager& getInstance();
 
 	/*! Create thread.
@@ -40,7 +42,7 @@ public:
 	 * \param hardwareCore Preferred hardware core, -1 = any core.
 	 * \return Thread object.
 	 */
-	Thread* create(Functor* functor, const wchar_t* const name = L"Unnamed", int hardwareCore = -1);
+	Thread* create(const threadFn_t& fn, const wchar_t* const name = L"Unnamed", int hardwareCore = -1);
 
 	/*! Destroy thread.
 	 *
@@ -66,7 +68,7 @@ protected:
 
 private:
 	CriticalSection m_threadsLock;
-	std::vector< Thread* > m_threads;
+	AlignedVector< Thread* > m_threads;
 	Thread* m_threadBase;
 
 	ThreadManager();

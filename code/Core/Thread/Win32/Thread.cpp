@@ -19,18 +19,15 @@ struct THREADNAME_INFO
 
 unsigned __stdcall threadProc(void* lparam)
 {
-	Functor* functor = reinterpret_cast< Functor* >(lparam);
-	(functor->operator())();
+	std::function< void() >* pfn = reinterpret_cast< std::function< void() >* >(lparam);
+	(*pfn)();
 	return 0;
 }
 
 	}
 
-Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore)
-:	m_handle(0)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
+Thread::Thread(const std::function< void() >& fn, const wchar_t* const name, int32_t hardwareCore)
+:	m_fn(fn)
 ,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
@@ -49,7 +46,7 @@ bool Thread::start(Priority priority)
 		0,
 		0,
 		&threadProc,
-		(void*)m_functor,
+		(void*)&m_fn,
 		CREATE_SUSPENDED,
 		&m_id
 	);

@@ -1,3 +1,4 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Test/CaseThreadPool.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
@@ -85,7 +86,7 @@ void CaseThreadPool::run()
 
     {
         // Create "builder" thread.
-        Thread* threadB = ThreadManager::getInstance().create(makeStaticFunctor(&threadBuilder));
+        Thread* threadB = ThreadManager::getInstance().create([](){ threadBuilder(); });
         threadB->start();
 
         // Create "preview" thread.

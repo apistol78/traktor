@@ -19,7 +19,7 @@ struct Internal
 	pthread_t thread;
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
-	Functor* functor;
+	std::function< void() > fn;
 	int32_t finished;
 };
 
@@ -27,7 +27,7 @@ void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
 
-	(in->functor->operator())();
+	in->fn();
 	Atomic::exchange(in->finished, 1);
 
 	pthread_cond_signal(&in->signal);
@@ -44,7 +44,7 @@ bool Thread::start(Priority priority)
 
 	Internal* in = new Internal();
 	in->thread = 0;
-	in->functor = m_functor;
+	in->fn = m_fn;
 	in->finished = 0;
 
 	m_handle = in;
@@ -190,20 +190,16 @@ bool Thread::finished() const
 	return const_cast< Thread* >(this)->wait(0);
 }
 
-Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore)
-:	m_handle(nullptr)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
+Thread::Thread(const std::function< void() >& fn, const wchar_t* const name, int32_t hardwareCore)
+:	m_fn(fn)
 ,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
-	if (!functor)
+	if (!fn)
 	{
 		// Assume is main thread, only main thread is allowed to pass null as functor.
 		Internal* in = new Internal();
 		in->thread = pthread_self();
-		in->functor = nullptr;
 		m_handle = in;
 	}
 }

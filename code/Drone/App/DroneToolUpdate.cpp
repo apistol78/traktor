@@ -71,14 +71,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 			return true;
 
 		ui::BackgroundWorkerStatus status(bundle->getItems().size());
-
-		Thread* updateThread = ThreadManager::getInstance().create(makeFunctor(
-			this,
-			&DroneToolUpdate::updateThread,
-			parent,
-			bundle.ptr(),
-			&status
-		), L"Update thread");
+		Thread* updateThread = ThreadManager::getInstance().create([&](){ DroneToolUpdate::updateThread(parent, bundle.ptr(), &status); }, L"Update thread");
 
 		ui::BackgroundWorkerDialog updateDialog;
 		updateDialog.create(parent, L"Updating...", L"Downloading update...", ui::Dialog::WsDefaultFixed | ui::Dialog::WsCenterDesktop);

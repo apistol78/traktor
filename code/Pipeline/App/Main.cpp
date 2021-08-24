@@ -490,10 +490,7 @@ bool perform(const PipelineParameters& params)
 
 	traktor::log::info << IncreaseIndent;
 
-	Thread* bt = ThreadManager::getInstance().create(
-		makeStaticFunctor< editor::PipelineBuilder&, const editor::PipelineDependencySet*, bool >(&threadBuild, pipelineBuilder, &pipelineDependencySet, params.getRebuild()),
-		L"Build thread"
-	);
+	Thread* bt = ThreadManager::getInstance().create([&](){ threadBuild(pipelineBuilder, &pipelineDependencySet, params.getRebuild()); }, L"Build thread");
 
 	// Execute build thread; keep watching if we've
 	// received a break signal thus terminate thread early.
