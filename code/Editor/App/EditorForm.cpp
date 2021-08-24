@@ -1502,12 +1502,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	int32_t progressStep = 0;
 
-	Thread* thread = ThreadManager::getInstance().create(makeFunctor< EditorForm, const Path&, int32_t& >(
-		this,
-		&EditorForm::threadOpenWorkspace,
-		workspacePath,
-		progressStep
-	), L"Open workspace thread");
+	Thread* thread = ThreadManager::getInstance().create([&](){ threadOpenWorkspace(workspacePath, progressStep); }, L"Open workspace thread");
 	if (!thread)
 		return false;
 
@@ -1597,7 +1592,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	updateTitle();
 
 	// Create asset monitor thread.
-	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
+	m_threadAssetMonitor = ThreadManager::getInstance().create([this](){ threadAssetMonitor(); }, L"Asset monitor");
 	m_threadAssetMonitor->start();
 
 	log::info << L"Workspace opened successfully." << Endl;
@@ -1925,19 +1920,7 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	buildWaitUntilFinished();
 
 	// Create build thread.
-	m_threadBuild = ThreadManager::getInstance().create(
-		makeFunctor<
-			EditorForm,
-			std::vector< Guid >,
-			bool
-		>(
-			this,
-			&EditorForm::buildAssetsThread,
-			assetGuids,
-			rebuild
-		),
-		L"Pipeline thread"
-	);
+	m_threadBuild = ThreadManager::getInstance().create([=](){ buildAssetsThread(assetGuids, rebuild); }, L"Pipeline thread");
 	if (m_threadBuild)
 	{
 		m_threadBuild->start(Thread::Above);

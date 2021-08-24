@@ -70,7 +70,7 @@ void CaseThread::run()
 
 		// Create and start all test threads.
 		for (int32_t i = 0; i < 16; ++i)
-			threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadSignal), L"Signal test");
+			threads[i] = ThreadManager::getInstance().create([](){ threadSignal(); }, L"Signal test");
 		for (int32_t i = 0; i < 16; ++i)
 			threads[i]->start();
 
@@ -111,7 +111,7 @@ void CaseThread::run()
 
 		// Create and start all test threads.
 		for (int32_t i = 0; i < 16; ++i)
-			threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadEvent), L"Event test");
+			threads[i] = ThreadManager::getInstance().create([](){ threadEvent(); }, L"Event test");
 		for (int32_t i = 0; i < 16; ++i)
 			threads[i]->start();
 
@@ -165,7 +165,7 @@ void CaseThread::run()
 
 		// Create and start all test threads.
 		for (int32_t i = 0; i < 16; ++i)
-			threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadEvent), L"Event test");
+			threads[i] = ThreadManager::getInstance().create([](){ threadEvent(); }, L"Event test");
 		for (int32_t i = 0; i < 16; ++i)
 			threads[i]->start();
 

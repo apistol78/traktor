@@ -41,7 +41,7 @@ bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const Pr
 	dialog.create(parent, i18n::Text(L"EDITOR_CHECK_SERIALIZABLE_CLASSES"), L"Checking serializable classes...", false);
 	
 	Thread* checkThread = ThreadManager::getInstance().create(
-		makeFunctor([]() {
+		[]() {
 			AutoArrayPtr< uint8_t, AllocFreeAlign > memory((uint8_t*)Alloc::acquireAlign(1024 * 1024, 16, T_FILE_LINE));
 
 			TypeInfoSet types;
@@ -95,7 +95,7 @@ bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const Pr
 
 				log::info << L"Class \"" << type->getName() << L"\" ok." << Endl;
 			}
-		}),
+		},
 		L"Serializable Checker"
 	);
 

@@ -48,7 +48,7 @@ bool Telemetry::create(const std::wstring& serverHost, const std::wstring& clien
 
 	// Create queue processing thread.
 	m_thread = ThreadManager::getInstance().create(
-		makeFunctor(this, &Telemetry::threadProcessQueue),
+		[this](){ threadProcessQueue(); },
 		L"Telemetry"
 	);
 	if (!m_thread || !m_thread->start())

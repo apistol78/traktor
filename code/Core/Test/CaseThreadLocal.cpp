@@ -36,7 +36,7 @@ void CaseThreadLocal::run()
     Thread* threads[16] = {};
 
     for (int32_t i = 0; i < 16; ++i)
-        threads[i] = ThreadManager::getInstance().create(makeStaticFunctor(threadTest, i), L"Thread local test");
+        threads[i] = ThreadManager::getInstance().create([=](){ threadTest(i); }, L"Thread local test");
     for (int32_t i = 0; i < 16; ++i)
         threads[i]->start();
     for (int32_t i = 0; i < 16; ++i)

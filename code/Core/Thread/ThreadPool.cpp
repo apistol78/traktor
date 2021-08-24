@@ -1,3 +1,4 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
@@ -54,16 +55,7 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority pr
 
 		if (worker.thread == nullptr)
 		{
-			worker.thread = ThreadManager::getInstance().create(
-				makeStaticFunctor< Event&, Event&, Ref< Functor >&, const std::atomic< int32_t >& >(
-					&threadPoolDispatcher,
-					worker.eventAttachWork,
-					worker.eventFinishedWork,
-					worker.functorWork,
-					worker.alive
-				),
-				L"Thread pool worker"
-			);
+			worker.thread = ThreadManager::getInstance().create([&](){ threadPoolDispatcher(worker.eventAttachWork, worker.eventFinishedWork, worker.functorWork, worker.alive); }, L"Thread pool worker");
 			if (!worker.thread)
 			{
 				worker.busy = 0;

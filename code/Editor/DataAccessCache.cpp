@@ -29,7 +29,7 @@ bool DataAccessCache::create(const Path& cachePath)
 	if (!FileSystem::getInstance().makeAllDirectories(m_cachePath))
 		return false;
 
-	m_writeThread = ThreadManager::getInstance().create(makeFunctor(this, &DataAccessCache::threadWriter), L"Data access cache");
+	m_writeThread = ThreadManager::getInstance().create([this](){ threadWriter(); }, L"Data access cache");
 	if (!m_writeThread)
 		return false;
 

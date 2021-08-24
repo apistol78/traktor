@@ -37,7 +37,7 @@ bool RemoteEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 		return false;
 	}
 
-	m_threadServer = ThreadManager::getInstance().create(makeFunctor(this, &RemoteEditorPlugin::threadServer), L"Remote server");
+	m_threadServer = ThreadManager::getInstance().create([this](){ threadServer(); }, L"Remote server");
 	m_threadServer->start();
 
 	return true;

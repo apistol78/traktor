@@ -58,10 +58,10 @@ void ThreadManager::destroy()
 	delete this;
 }
 
-Thread* ThreadManager::create(Functor* functor, const wchar_t* const name, int hardwareCore)
+Thread* ThreadManager::create(const threadFn_t& fn, const wchar_t* const name, int hardwareCore)
 {
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
-	Thread* thread = new Thread(functor, name, hardwareCore);
+	Thread* thread = new Thread(fn, name, hardwareCore);
 	m_threads.push_back(thread);
 	return thread;
 }

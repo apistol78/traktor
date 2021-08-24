@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Ref.h"
 #include "Core/Thread/IWaitable.h"
 
@@ -13,8 +14,6 @@
 
 namespace traktor
 {
-
-class Functor;
 
 /*! OS thread class.
  * \ingroup Core
@@ -62,14 +61,14 @@ public:
 private:
 	friend class ThreadManager;
 
-	void* m_handle;
-	uint32_t m_id;
-	bool m_stopped;
-	Ref< Functor > m_functor;
-	const wchar_t* const m_name;
-	int32_t m_hardwareCore;
+	void* m_handle = nullptr;
+	uint32_t m_id = 0;
+	bool m_stopped = false;
+	std::function< void() > m_fn;
+	const wchar_t* const m_name = nullptr;
+	int32_t m_hardwareCore = 0;
 
-	Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore);
+	explicit Thread(const std::function< void() >& fn, const wchar_t* const name, int32_t hardwareCore);
 
 	~Thread();
 };

@@ -16,7 +16,7 @@ namespace traktor
 struct Internal
 {
 	pthread_t thread;
-	Functor* functor;
+	std::function< void() > fn;
 	uint32_t* id;
 };
 
@@ -24,7 +24,7 @@ void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
 	*in->id = (uint32_t)in->thread;
-	(in->functor->operator())();
+	in->fn();
 	pthread_exit(0);
 	return nullptr;
 }
@@ -39,7 +39,7 @@ bool Thread::start(Priority priority)
 
 	Internal* in = new Internal();
 	in->thread = 0;
-	in->functor = m_functor;
+	in->fn = m_fn;
 	in->id = &m_id;
 
 	m_handle = in;
@@ -187,15 +187,12 @@ bool Thread::finished() const
 	return const_cast< Thread* >(this)->wait(0);
 }
 
-Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
-:	m_handle(nullptr)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
+Thread::Thread(const std::function< void() >& fn, const wchar_t* const name, int32_t hardwareCore)
+:	m_fn(fn)
 ,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
-	if (!functor)
+	if (!fn)
 	{
 		// Assume is main thread, only main thread is allowed to pass null as functor.
 		Internal* in = new Internal();

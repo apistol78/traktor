@@ -348,7 +348,7 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 {
 	T_FATAL_ASSERT(m_rayTracerType != nullptr);
 
-	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &TracerProcessor::processorThread), L"Tracer");
+	m_thread = ThreadManager::getInstance().create([this](){ processorThread(); }, L"Tracer");
 	m_thread->start();
 
 	if (!m_editor)
