@@ -252,43 +252,38 @@ bool WorldRendererForward::create(
 
 	m_imageGraphContext = new render::ImageGraphContext();
 
-	// Allocate light lists.
+	// Lights struct buffer.
+	m_lightSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		sizeof(LightShaderData) * c_maxLightCount,
+		true
+	);
+	if (!m_lightSBuffer)
+		return false;
+
+	// Tile light index array buffer.
+	m_lightIndexSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		sizeof(LightIndexShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
+		true
+	);
+	if (!m_lightIndexSBuffer)
+		return false;
+
+	// Tile cluster buffer.
+	m_tileSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		true
+	);
+	if (!m_tileSBuffer)
+		return false;
+
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
-	m_frames.resize(desc.frameCount);
-	for (auto& frame : m_frames)
-	{
-		// Lights struct buffer.
-		frame.lightSBuffer = renderSystem->createBuffer(
-			render::BuStructured,
-			sizeof(LightShaderData) * c_maxLightCount,
-			true
-		);
-		if (!frame.lightSBuffer)
-			return false;
-
-		// Tile light index array buffer.
-		frame.lightIndexSBuffer = renderSystem->createBuffer(
-			render::BuStructured,
-			sizeof(LightIndexShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
-			true
-		);
-		if (!frame.lightIndexSBuffer)
-			return false;
-
-		// Tile cluster buffer.
-		frame.tileSBuffer = renderSystem->createBuffer(
-			render::BuStructured,
-			sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
-			true
-		);
-		if (!frame.tileSBuffer)
-			return false;
-
-		frame.shadowAtlasPacker = new Packer(
-			shadowSettings.resolution,
-			shadowSettings.resolution
-		);
-	}
+	m_shadowAtlasPacker = new Packer(
+		shadowSettings.resolution,
+		shadowSettings.resolution
+	);
 
 	// Create irradiance grid.
 	if (!m_settings.irradianceGrid.isNull())
@@ -317,23 +312,17 @@ bool WorldRendererForward::create(
 	// Create default value textures.
 	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
-
-	m_count = 0;
 	return true;
 }
 
 void WorldRendererForward::destroy()
 {
-	for (auto& frame : m_frames)
-	{
-		if (frame.lightSBufferData != nullptr)
-			frame.lightSBuffer->unlock();
+	if (m_lightSBufferData != nullptr)
+		m_lightSBuffer->unlock();
 
-		safeDestroy(frame.lightSBuffer);
-		safeDestroy(frame.lightIndexSBuffer);
-		safeDestroy(frame.tileSBuffer);
-	}
-	m_frames.clear();
+	safeDestroy(m_lightSBuffer);
+	safeDestroy(m_lightIndexSBuffer);
+	safeDestroy(m_tileSBuffer);
 
 	safeDestroy(m_screenRenderer);
 	safeDestroy(m_blackTexture);
@@ -349,16 +338,16 @@ void WorldRendererForward::setup(
 	render::handle_t outputTargetSetId
 )
 {
-	int32_t frame = m_count % (int32_t)m_frames.size();
+	//int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Ensure tile job is finished, this should never happen since it will indicate
 	// previous frame hasn't been rendered.
-	if (m_frames[frame].tileJob != nullptr)
+	if (m_tileJob != nullptr)
 	{
-		m_frames[frame].tileJob->wait();
-		m_frames[frame].tileJob = nullptr;
+		m_tileJob->wait();
+		m_tileJob = nullptr;
 	}
 #endif
 
@@ -371,16 +360,14 @@ void WorldRendererForward::setup(
 		worldRenderView.setProjection(proj);
 	}
 
-	// Gather active lights for this frame.
+	// Gather active lights for this m_
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward gather");
-		auto& lights = m_frames[frame].lights;
-		auto& probes = m_frames[frame].probes;
-		lights.resize(0);
-		probes.resize(0);
-		WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, lights, probes);
-		if (lights.size() > c_maxLightCount)
-			lights.resize(c_maxLightCount);
+		m_lights.resize(0);
+		m_probes.resize(0);
+		WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights, m_probes);
+		if (m_lights.size() > c_maxLightCount)
+			m_lights.resize(c_maxLightCount);
 	}
 
 	// Add additional passes by entity renderers.
@@ -407,8 +394,7 @@ void WorldRendererForward::setup(
 		worldRenderView,
 		rootEntity,
 		renderGraph,
-		outputTargetSetId,
-		frame
+		outputTargetSetId
 	);
 
 	auto gbufferTargetSetId = setupGBufferPass(
@@ -449,7 +435,6 @@ void WorldRendererForward::setup(
 		rootEntity,
 		renderGraph,
 		outputTargetSetId,
-		frame,
 		shadowMapAtlasTargetSetId
 	);
 
@@ -461,8 +446,7 @@ void WorldRendererForward::setup(
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		0/*reflectionsTargetSetId*/,
-		shadowMapAtlasTargetSetId,
-		frame
+		shadowMapAtlasTargetSetId
 	);
 
 	setupProcessPass(
@@ -488,22 +472,21 @@ void WorldRendererForward::setupTileDataPass(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	int32_t frame
+	render::handle_t outputTargetSetId
 )
 {
 	T_PROFILER_SCOPE(L"WorldRendererForward setupTileDataPass");
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	// Enqueue light clustering as a job, is synchronized in before rendering.
-	m_frames[frame].tileJob = JobManager::getInstance().add([=]() {
+	m_tileJob = JobManager::getInstance().add([=]() {
 #endif
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
-		const auto& lights = m_frames[frame].lights;
+		const auto& lights = m_lights;
 
-		TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBuffer->lock();
+		TileShaderData* tileShaderData = (TileShaderData*)m_tileSBuffer->lock();
 		std::memset(tileShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData));
 
-		LightIndexShaderData* lightIndexShaderData = (LightIndexShaderData*)m_frames[frame].lightIndexSBuffer->lock();
+		LightIndexShaderData* lightIndexShaderData = (LightIndexShaderData*)m_lightIndexSBuffer->lock();
 		std::memset(lightIndexShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster * sizeof(LightIndexShaderData));
 
 		uint32_t lightOffset = 0;
@@ -658,8 +641,8 @@ void WorldRendererForward::setupTileDataPass(
 			}
 		}
 
-		m_frames[frame].lightIndexSBuffer->unlock();
-		m_frames[frame].tileSBuffer->unlock();
+		m_lightIndexSBuffer->unlock();
+		m_tileSBuffer->unlock();
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	});
 #endif
@@ -994,7 +977,6 @@ void WorldRendererForward::setupLightPass(
 	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
-	int32_t frame,
 	render::handle_t& outShadowMapAtlasTargetSetId
 )
 {
@@ -1003,15 +985,15 @@ void WorldRendererForward::setupLightPass(
 	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-	const auto& lights = m_frames[frame].lights;
+	const auto& lights = m_lights;
 
-	if ((m_frames[frame].lightSBufferData = m_frames[frame].lightSBuffer->lock()) == nullptr)
+	if ((m_lightSBufferData = m_lightSBuffer->lock()) == nullptr)
 		return;
 
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferData;
+	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBufferData;
 
 	// Reset this frame's atlas packer.
-	auto shadowAtlasPacker = m_frames[frame].shadowAtlasPacker;
+	auto shadowAtlasPacker = m_shadowAtlasPacker;
 	shadowAtlasPacker->reset();
 
 	Matrix44 view = worldRenderView.getView();
@@ -1317,8 +1299,8 @@ void WorldRendererForward::setupLightPass(
 		renderGraph.addPass(rp);
 	}
 
-	m_frames[frame].lightSBuffer->unlock();
-	m_frames[frame].lightSBufferData = nullptr;
+	m_lightSBuffer->unlock();
+	m_lightSBufferData = nullptr;
 }
 
 void WorldRendererForward::setupVisualPass(
@@ -1329,8 +1311,7 @@ void WorldRendererForward::setupVisualPass(
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t /*reflectionsTargetSetId*/,
-	render::handle_t shadowMapAtlasTargetSetId,
-	int32_t frame
+	render::handle_t shadowMapAtlasTargetSetId
 )
 {
 	T_PROFILER_SCOPE(L"WorldRendererForward setupVisualPass");
@@ -1338,7 +1319,7 @@ void WorldRendererForward::setupVisualPass(
 
 	// Find first, non-local, probe.
 	Ref< const ProbeComponent > probe;
-	for (auto p : m_frames[frame].probes)
+	for (auto p : m_probes)
 	{
 		if (!p->getLocal() && p->getTexture() != nullptr)
 		{
@@ -1370,7 +1351,7 @@ void WorldRendererForward::setupVisualPass(
 		{
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 			// Enure light clustering job has finished.
-            Ref< Job > tileJob = m_frames[frame].tileJob;
+            Ref< Job > tileJob = m_tileJob;
             if (tileJob)
             {
                 auto rb = renderContext->alloc< render::LambdaRenderBlock >();
@@ -1379,7 +1360,7 @@ void WorldRendererForward::setupVisualPass(
                 };
                 renderContext->enqueue(rb);
             }
-			m_frames[frame].tileJob = nullptr;
+			m_tileJob = nullptr;
 #endif
 
 			WorldBuildContext wc(
@@ -1415,9 +1396,9 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer()->getBufferView());
 			}
 
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_frames[frame].lightIndexSBuffer->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_tileSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightIndexSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
 
 			if (probe)
 			{

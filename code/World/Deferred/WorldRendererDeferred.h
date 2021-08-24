@@ -74,14 +74,6 @@ public:
 	virtual render::ImageGraphContext* getImageGraphContext() const override final;
 
 private:
-	struct Frame
-	{
-		Ref< render::Buffer > lightSBuffer;
-		void* lightSBufferMemory;
-		Ref< render::Buffer > tileSBuffer;
-		void* tileSBufferMemory;
-	};
-
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
 
@@ -124,8 +116,11 @@ private:
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	
 	Ref< WorldEntityRenderers > m_entityRenderers;
-	AlignedVector< Frame > m_frames;
 	AlignedVector< const LightComponent* > m_lights;
+	Ref< render::Buffer > m_lightSBuffer;
+	void* m_lightSBufferMemory = nullptr;
+	Ref< render::Buffer > m_tileSBuffer;
+	void* m_tileSBufferMemory = nullptr;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	Vector4 m_fogDistanceAndDensity;
@@ -210,8 +205,7 @@ private:
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMaskTargetSetId,
-		render::handle_t shadowMapAtlasTargetSetId,
-		int32_t frame
+		render::handle_t shadowMapAtlasTargetSetId
 	) const;
 
 	void setupProcessPass(

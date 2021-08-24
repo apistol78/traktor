@@ -149,7 +149,7 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob = JobManager::getInstance().add([&](){
+	m_updatePoseControllerJob = JobManager::getInstance().add([=](){
 		updatePoseController(m_index, update.alternateTime, update.deltaTime);
 	});
 #else

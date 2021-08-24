@@ -64,9 +64,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		if (!gbufferTargetSet)
 			return;
 
-		// Need to figure out "current" frame since m_count is incremented after world renderer has setup.
-		int32_t currentFrame = (worldRendererForward->m_count - 1) % (int32_t)worldRendererForward->m_frames.size();
-		render::Buffer* tileSBuffer = worldRendererForward->m_frames[currentFrame].tileSBuffer;
+		render::Buffer* tileSBuffer = worldRendererForward->m_tileSBuffer;
 		if (!tileSBuffer)
 			return;
 

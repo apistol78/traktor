@@ -199,9 +199,6 @@ bool WorldRendererDeferred::create(
 	m_gamma = desc.gamma;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
 
-	// Allocate frames.
-	m_frames.resize(desc.frameCount);
-
 	// Pack fog parameters.
 	if (m_settings.fog)
 	{
@@ -343,32 +340,29 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Allocate light lists.
-	for (auto& frame : m_frames)
-	{
-		frame.lightSBuffer = renderSystem->createBuffer(
-			render::BuStructured,
-			sizeof(LightShaderData) * c_maxLightCount,
-			true
-		);
-		if (!frame.lightSBuffer)
-			return false;
+	m_lightSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		sizeof(LightShaderData) * c_maxLightCount,
+		true
+	);
+	if (!m_lightSBuffer)
+		return false;
 
-		frame.lightSBufferMemory = frame.lightSBuffer->lock();
-		if (!frame.lightSBufferMemory)
-			return false;
+	m_lightSBufferMemory = m_lightSBuffer->lock();
+	if (!m_lightSBufferMemory)
+		return false;
 
-		frame.tileSBuffer = renderSystem->createBuffer(
-			render::BuStructured,
-			sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
-			true
-		);
-		if (!frame.tileSBuffer)
-			return false;
+	m_tileSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		true
+	);
+	if (!m_tileSBuffer)
+		return false;
 
-		frame.tileSBufferMemory = frame.tileSBuffer->lock();
-		if (!frame.tileSBufferMemory)
-			return false;
-	}
+	m_tileSBufferMemory = m_tileSBuffer->lock();
+	if (!m_tileSBufferMemory)
+		return false;
 
 	// Create irradiance grid.
 	if (!m_settings.irradianceGrid.isNull())
@@ -402,13 +396,8 @@ bool WorldRendererDeferred::create(
 
 void WorldRendererDeferred::destroy()
 {
-	for (auto& frame : m_frames)
-	{
-		safeDestroy(frame.lightSBuffer);
-		safeDestroy(frame.tileSBuffer);
-	}
-	m_frames.clear();
-
+	safeDestroy(m_lightSBuffer);
+	safeDestroy(m_tileSBuffer);
 	safeDestroy(m_shadowMapCascadeTargetSet);
 	safeDestroy(m_shadowMapAtlasTargetSet);
 	safeDestroy(m_screenRenderer);
@@ -425,7 +414,6 @@ void WorldRendererDeferred::setup(
 	render::handle_t outputTargetSetId
 )
 {
-	int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
 	// Jitter projection for TAA, calculate jitter in clip space.
@@ -445,8 +433,8 @@ void WorldRendererDeferred::setup(
 		m_lights.resize(c_maxLightCount);
 
 	// Begun writing light shader data; written both in setup and build.
-	LightShaderData* lightShaderData = (LightShaderData*)m_frames[frame].lightSBufferMemory;
-	TileShaderData* tileShaderData = (TileShaderData*)m_frames[frame].tileSBufferMemory;
+	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBufferMemory;
+	TileShaderData* tileShaderData = (TileShaderData*)m_tileSBufferMemory;
 
 	// Write all lights to sbuffer; without shadow map information.
 	const Matrix44& view = worldRenderView.getView();
@@ -594,8 +582,7 @@ void WorldRendererDeferred::setup(
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
 		shadowMaskTargetSetId,
-		shadowMapAtlasTargetSetId,
-		frame
+		shadowMapAtlasTargetSetId
 	);
 
 	setupProcessPass(
@@ -1420,8 +1407,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMaskTargetSetId,
-	render::handle_t shadowMapAtlasTargetSetId,
-	int32_t frame
+	render::handle_t shadowMapAtlasTargetSetId
 ) const
 {
 	T_PROFILER_SCOPE(L"World setup visual");
@@ -1485,8 +1471,8 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setTextureParameter(s_handleShadowMask, (shadowMaskTargetSet != nullptr) ? shadowMaskTargetSet->getColorTexture(0) : m_whiteTexture);
 			sharedParams->setTextureParameter(s_handleShadowMapAtlas, (shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : m_whiteTexture);
 			sharedParams->setTextureParameter(s_handleReflectionMap, (reflectionsTargetSet != nullptr) ? reflectionsTargetSet->getColorTexture(0) : m_whiteTexture);
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_frames[frame].lightSBuffer->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_frames[frame].tileSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_tileSBuffer->getBufferView());
 			if (m_irradianceGrid)
 			{
 				const auto size = m_irradianceGrid->getSize();
