@@ -1,6 +1,5 @@
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Compress/Lzf/InflateStreamLzf.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"

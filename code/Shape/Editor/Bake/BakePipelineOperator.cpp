@@ -1,6 +1,5 @@
 #include <limits>
 #include <functional>
-#include "Core/Functor/Functor.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Utf8Encoding.h"

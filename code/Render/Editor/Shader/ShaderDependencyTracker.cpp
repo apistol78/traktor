@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadPool.h"
 #include "Database/Database.h"
@@ -84,7 +83,7 @@ void ShaderDependencyTracker::scan(db::Database* database)
 		m_scanThread = nullptr;
 	}
 
-	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database* >(&scanDependencies, this, database), m_scanThread);
+	ThreadPool::getInstance().spawn([=](){ scanDependencies(this, database); }, m_scanThread);
 }
 
 void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
@@ -95,7 +94,7 @@ void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 		m_scanThread = nullptr;
 	}
 
-	ThreadPool::getInstance().spawn(makeStaticFunctor< Ref< ShaderDependencyTracker >, db::Database*, Guid >(&scanDependencies, this, database, shader), m_scanThread);
+	ThreadPool::getInstance().spawn([=](){ scanDependencies(this, database, shader); }, m_scanThread);
 }
 
 void ShaderDependencyTracker::addListener(IListener* listener)

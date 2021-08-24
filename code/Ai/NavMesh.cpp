@@ -2,7 +2,6 @@
 #include "Ai/MoveQuery.h"
 #include "Ai/MoveQueryResult.h"
 #include "Ai/NavMesh.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"

@@ -10,7 +10,6 @@
 #endif
 
 #include <cstring>
-#include "Core/Functor/Functor.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"

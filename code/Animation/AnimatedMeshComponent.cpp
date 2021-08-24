@@ -4,7 +4,6 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/MeshCulling.h"

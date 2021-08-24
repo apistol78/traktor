@@ -1,5 +1,4 @@
 #include <cstring>
-#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadPool.h"
@@ -64,7 +63,7 @@ bool VideoTexture::create(render::IRenderSystem* renderSystem, IVideoDecoder* de
 
 	m_timer.reset();
 
-	if (!ThreadPool::getInstance().spawn(makeFunctor(this, &VideoTexture::decodeThread), m_thread))
+	if (!ThreadPool::getInstance().spawn([this](){ decodeThread(); }, m_thread))
 		return false;
 
 	return true;

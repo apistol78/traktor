@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StreamStream.h"

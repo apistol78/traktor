@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Compress/Lzf/DeflateStreamLzf.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"

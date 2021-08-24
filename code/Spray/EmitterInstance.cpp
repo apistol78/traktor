@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Instance/InstanceMesh.h"

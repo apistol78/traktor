@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"

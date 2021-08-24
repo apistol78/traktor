@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Database/Remote/IMessage.h"
 #include "Database/Remote/Server/BusMessageListener.h"

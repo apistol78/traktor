@@ -225,15 +225,6 @@
 					<items/>
 				</item>
 				<item type="Filter">
-					<name>Functor</name>
-					<items>
-						<item type="File">
-							<fileName>Functor/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>Memory</name>
 					<items>
 						<item type="File">
