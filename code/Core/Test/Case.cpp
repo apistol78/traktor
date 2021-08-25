@@ -26,13 +26,15 @@ bool Case::execute(const IReport& report)
 
 	int64_t allocPost = (int64_t)Alloc::allocated();
 	int64_t allocBalance = (allocPost - allocPre) - m_allocdelta;
-	
+
+#if 0	
 	if (allocBalance != 0)
 	{
 		StringOutputStream ss;
 		ss << T_FILE_LINE_W << L" \"" << type_name(this) << L"\" failed; " << allocBalance << L" memory allocation leak."; \
 		failed(ss.str());
 	}
+#endif
 
 	m_report = nullptr;
 	return !m_failed;
