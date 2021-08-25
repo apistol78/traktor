@@ -45,7 +45,7 @@ public:
 
 private:
 	mutable Semaphore m_lock;
-	StaticMap< std::wstring, handle_t, 4096 > m_handles;
+	StaticMap< std::wstring, handle_t, 32768 > m_handles;
 	handle_t m_nextUnusedHandle;
 };
 
