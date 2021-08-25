@@ -35,7 +35,7 @@ class T_DLLCLASS BoidsComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	BoidsComponent(
+	explicit BoidsComponent(
 		const RefArray< world::Entity >& boidEntities,
 		const Vector4& spawnPositionDiagonal,
 		const Vector4& spawnVelocityDiagonal,
@@ -48,8 +48,6 @@ public:
 		float maxVelocity
 	);
 
-	virtual ~BoidsComponent();
-
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;
@@ -60,11 +58,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	void build(
-		const world::WorldBuildContext& context,
-		const world::WorldRenderView& worldRenderView,
-		const world::IWorldRenderPass& worldRenderPass
-	);
+	const RefArray< world::Entity >& getEntities() const { return m_boidEntities; }
 
 private:
 	struct Boid

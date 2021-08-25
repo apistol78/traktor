@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
-#include "World/Renderable.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ class Entity;
 /*! Entity component.
  * \ingroup World
  */
-class T_DLLCLASS IEntityComponent : public Renderable
+class T_DLLCLASS IEntityComponent : public Object
 {
 	T_RTTI_CLASS;
 

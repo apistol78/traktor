@@ -49,7 +49,14 @@ public:
 	virtual render::ImageGraphContext* getImageGraphContext() const override final;
 
 private:
+	struct Gather
+	{
+		IEntityRenderer* entityRenderer;
+		Object* renderable;
+	};
+
 	Ref< WorldEntityRenderers > m_entityRenderers;
+	AlignedVector< Gather > m_gathered;
 };
 
 	}

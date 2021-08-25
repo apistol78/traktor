@@ -16,6 +16,7 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -165,13 +166,18 @@ const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 
 void ProbeRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
-	const ProbeComponent* probeComponent = static_cast< const ProbeComponent* >(renderable);
-	outProbes.push_back(probeComponent);
+	context.include(this, renderable);
+}
+
+void ProbeRenderer::setup(
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
+	Object* renderable
+)
+{
 }
 
 void ProbeRenderer::setup(const WorldSetupContext& context)
@@ -475,14 +481,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 	}
 }
 
-void ProbeRenderer::setup(
-	const WorldSetupContext& context,
-	const WorldRenderView& worldRenderView,
-	Object* renderable
-)
-{
-}
-
 void ProbeRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
@@ -490,7 +488,7 @@ void ProbeRenderer::build(
 	Object* renderable
 )
 {
-	ProbeComponent* probeComponent = static_cast< ProbeComponent* >(renderable);
+	auto probeComponent = static_cast< ProbeComponent* >(renderable);
 
 	if (!m_probeShader)
 		return;

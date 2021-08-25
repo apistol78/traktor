@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::IEntityComponent)
 
 BoidsComponent::BoidsComponent(
 	const RefArray< world::Entity >& boidEntities,
@@ -39,10 +39,6 @@ BoidsComponent::BoidsComponent(
 		boid.position = m_transform * (random.nextUnit() * spawnPositionDiagonal + Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 		boid.velocity = random.nextUnit() * spawnVelocityDiagonal;
 	}
-}
-
-BoidsComponent::~BoidsComponent()
-{
 }
 
 void BoidsComponent::destroy()
@@ -141,16 +137,6 @@ void BoidsComponent::update(const world::UpdateParams& update)
 			m_boidEntities[i]->update(update);
 		}
 	}
-}
-
-void BoidsComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
-)
-{
-	for (auto boidEntity : m_boidEntities)
-		context.build(worldRenderView, worldRenderPass, boidEntity);
 }
 
 	}

@@ -1,8 +1,12 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Timer/Profiler.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/Entity.h"
+#include "World/IEntityRenderer.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
@@ -38,11 +42,26 @@ void WorldRendererSimple::setup(
 	render::handle_t outputTargetSetId
 )
 {
+	// Gather active renderables for this frame.
+	{
+		T_PROFILER_SCOPE(L"WorldRendererSimple gather");
+
+		m_gathered.resize(0);
+		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
+			m_gathered.push_back({ entityRenderer, renderable });
+		}).gather(const_cast< Entity* >(rootEntity));
+	}
+
 	// Add additional passes by entity renderers.
 	{
+		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
-		context.setup(worldRenderView, rootEntity);
-		context.flush();
+
+		for (auto gathered : m_gathered)
+			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
+	
+		for (auto entityRenderer : m_entityRenderers->get())
+			entityRenderer->setup(context);
 	}
 
 	// Add passes to render graph.
@@ -77,8 +96,12 @@ void WorldRendererSimple::setup(
 				worldRenderView.getView()
 			);
 
-			wc.build(worldRenderView, defaultPass, rootEntity);
-			wc.flush(worldRenderView, defaultPass);
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, defaultPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, defaultPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);

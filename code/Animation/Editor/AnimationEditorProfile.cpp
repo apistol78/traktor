@@ -1,4 +1,5 @@
 #include "Animation/AnimationEntityFactory.h"
+#include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Boids/BoidsRenderer.h"
 #include "Animation/Cloth/ClothRenderer.h"
@@ -63,6 +64,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new AnimatedMeshComponentRenderer());
 	outEntityRenderers.push_back(new BoidsRenderer());
 	outEntityRenderers.push_back(new ClothRenderer());
 }

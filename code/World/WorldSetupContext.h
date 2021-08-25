@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -25,7 +24,6 @@ class RenderGraph;
 	{
 
 class Entity;
-class Renderable;
 class WorldEntityRenderers;
 
 /*! World setup context.
@@ -36,11 +34,7 @@ class T_DLLCLASS WorldSetupContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph);
-
-	void setup(const WorldRenderView& worldRenderView, const Renderable* renderable) const;
-
-	void flush() const;
+	explicit WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph);
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 

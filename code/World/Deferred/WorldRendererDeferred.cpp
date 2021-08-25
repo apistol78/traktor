@@ -18,8 +18,10 @@
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
+#include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
@@ -425,12 +427,26 @@ void WorldRendererDeferred::setup(
 		worldRenderView.setProjection(proj);
 	}
 
-	// Gather active lights.
-	m_lights.resize(0);
-	AlignedVector< const ProbeComponent* > probes;
-	WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights, probes);
-	if (m_lights.size() > c_maxLightCount)
-		m_lights.resize(c_maxLightCount);
+	// Gather active renderables for this frame.
+	{
+		T_PROFILER_SCOPE(L"WorldRendererDeferred gather");
+
+		m_lights.resize(0);
+		m_gathered.resize(0);
+
+		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
+
+			// Gather lights separately as we need them for shadows and lighting.
+			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
+				m_lights.push_back(lightComponent);
+
+			m_gathered.push_back({ entityRenderer, renderable });
+
+		}).gather(const_cast< Entity* >(rootEntity));
+
+		if (m_lights.size() > c_maxLightCount)
+			m_lights.resize(c_maxLightCount);
+	}
 
 	// Begun writing light shader data; written both in setup and build.
 	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBufferMemory;
@@ -488,9 +504,14 @@ void WorldRendererDeferred::setup(
 
 	// Add additional passes by entity renderers.
 	{
+		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
-		context.setup(worldRenderView, rootEntity);
-		context.flush();
+
+		for (auto gathered : m_gathered)
+			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
+	
+		for (auto entityRenderer : m_entityRenderers->get())
+			entityRenderer->setup(context);
 	}
 
 	// Add visual target sets.
@@ -668,8 +689,13 @@ render::handle_t WorldRendererDeferred::setupGBufferPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, gbufferPass, rootEntity);
-			wc.flush(worldRenderView, gbufferPass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, gbufferPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, gbufferPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);
@@ -754,8 +780,12 @@ render::handle_t WorldRendererDeferred::setupVelocityPass(
 				false
 			);
 
-			wc.build(worldRenderView, velocityPass, rootEntity);
-			wc.flush(worldRenderView, velocityPass);
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, velocityPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, velocityPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);
@@ -936,8 +966,13 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
-				wc.build(shadowRenderView, shadowPass, rootEntity);
-				wc.flush(shadowRenderView, shadowPass);
+
+				for (auto gathered : m_gathered)
+					gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+	
+				for (auto entityRenderer : m_entityRenderers->get())
+					entityRenderer->build(wc, shadowRenderView, shadowPass);
+
 				renderContext->merge(render::RpAll);
 			}
 		}
@@ -1062,8 +1097,13 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
-				wc.build(shadowRenderView, shadowPass, rootEntity);
-				wc.flush(shadowRenderView, shadowPass);
+
+				for (auto gathered : m_gathered)
+					gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+	
+				for (auto entityRenderer : m_entityRenderers->get())
+					entityRenderer->build(wc, shadowRenderView, shadowPass);
+
 				renderContext->merge(render::RpAll);
 
 				// Write transposed matrix to shaders as shaders have row-major order.
@@ -1363,8 +1403,13 @@ render::handle_t WorldRendererDeferred::setupReflectionsPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, reflectionsPass, rootEntity);
-			wc.flush(worldRenderView, reflectionsPass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, reflectionsPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, reflectionsPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);
@@ -1495,8 +1540,13 @@ void WorldRendererDeferred::setupVisualPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, irradiancePass, rootEntity);
-			wc.flush(worldRenderView, irradiancePass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, irradiancePass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, irradiancePass);
+
 			renderContext->merge(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
@@ -1522,8 +1572,13 @@ void WorldRendererDeferred::setupVisualPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, deferredColorPass, rootEntity);
-			wc.flush(worldRenderView, deferredColorPass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, deferredColorPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, deferredColorPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);

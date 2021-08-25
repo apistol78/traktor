@@ -19,14 +19,12 @@ const TypeInfoSet GroupRenderer::getRenderableTypes() const
 
 void GroupRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
 	auto groupComponent = static_cast< const GroupComponent* >(renderable);
 	for (auto childEntity : groupComponent->getEntities())
-		context.gather(childEntity, outLights, outProbes);
+		context.gather(childEntity);
 }
 
 void GroupRenderer::setup(
@@ -35,9 +33,6 @@ void GroupRenderer::setup(
 	Object* renderable
 )
 {
-	auto groupComponent = static_cast< GroupComponent* >(renderable);
-	for (auto childEntity : groupComponent->getEntities())
-		context.setup(worldRenderView, childEntity);
 }
 
 void GroupRenderer::setup(
@@ -53,9 +48,6 @@ void GroupRenderer::build(
 	Object* renderable
 )
 {
-	auto groupComponent = static_cast< GroupComponent* >(renderable);
-	for (auto childEntity : groupComponent->getEntities())
-		context.build(worldRenderView, worldRenderPass, childEntity);
 }
 
 void GroupRenderer::build(

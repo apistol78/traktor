@@ -18,21 +18,17 @@ FacadeRenderer::FacadeRenderer()
 
 const TypeInfoSet FacadeRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet<
-		FacadeComponent
-	>();
+	return makeTypeInfoSet< FacadeComponent >();
 }
 
 void FacadeRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
 	auto facadeComponent = static_cast< const FacadeComponent* >(renderable);
 	for (auto childEntity : facadeComponent->getVisibleEntities())
-		context.gather(childEntity, outLights, outProbes);
+		context.gather(childEntity);
 }
 
 void FacadeRenderer::setup(
@@ -41,9 +37,6 @@ void FacadeRenderer::setup(
 	Object* renderable
 )
 {
-	auto facadeComponent = static_cast< const FacadeComponent* >(renderable);
-	for (auto childEntity : facadeComponent->getVisibleEntities())
-		context.setup(worldRenderView, childEntity);
 }
 
 void FacadeRenderer::setup(
@@ -59,9 +52,6 @@ void FacadeRenderer::build(
 	Object* renderable
 )
 {
-	auto facadeComponent = mandatory_non_null_type_cast< const FacadeComponent* >(renderable);
-	for (auto childEntity : facadeComponent->getVisibleEntities())
-		context.build(worldRenderView, worldRenderPass, childEntity);
 }
 
 void FacadeRenderer::build(

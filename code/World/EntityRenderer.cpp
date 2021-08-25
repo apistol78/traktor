@@ -19,14 +19,12 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 
 void EntityRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
 	const Entity* entity = static_cast< const Entity* >(renderable);
 	for (auto component : entity->getComponents())
-		context.gather(component, outLights, outProbes);
+		context.gather(component);
 }
 
 void EntityRenderer::setup(
@@ -35,9 +33,6 @@ void EntityRenderer::setup(
 	Object* renderable
 )
 {
-	Entity* entity = static_cast< Entity* >(renderable);
-	for (auto component : entity->getComponents())
-		context.setup(worldRenderView, component);
 }
 
 void EntityRenderer::setup(
@@ -53,9 +48,6 @@ void EntityRenderer::build(
 	Object* renderable
 )
 {
-	Entity* entity = static_cast< Entity* >(renderable);
-	for (auto component : entity->getComponents())
-		context.build(worldRenderView, worldRenderPass, component);
 }
 
 void EntityRenderer::build(

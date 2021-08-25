@@ -6,6 +6,7 @@
 #include "Spray/TrailRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -34,11 +35,10 @@ const TypeInfoSet EffectRenderer::getRenderableTypes() const
 
 void EffectRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void EffectRenderer::setup(
@@ -62,7 +62,7 @@ void EffectRenderer::build(
 	Object* renderable
 )
 {
-	auto effectComponent = static_cast< EffectComponent* >(renderable);
+	auto effectComponent = static_cast< const EffectComponent* >(renderable);
 
 	// Do we need to render anything with this technique?
 	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))

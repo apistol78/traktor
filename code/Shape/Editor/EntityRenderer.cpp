@@ -1,6 +1,7 @@
 #include "Shape/Editor/EntityRenderer.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Spline/SplineEntity.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -19,11 +20,10 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 
 void EntityRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void EntityRenderer::setup(

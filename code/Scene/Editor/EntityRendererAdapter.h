@@ -16,15 +16,13 @@ class EntityRendererAdapter : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
+	explicit EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
 		const world::WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const world::LightComponent* >& outLights,
-		AlignedVector< const world::ProbeComponent* >& outProbes
+		Object* renderable
 	) override final;
 
 	virtual void setup(

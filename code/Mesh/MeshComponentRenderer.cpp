@@ -1,5 +1,6 @@
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentRenderer.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -15,11 +16,10 @@ const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 
 void MeshComponentRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void MeshComponentRenderer::setup(
@@ -43,7 +43,7 @@ void MeshComponentRenderer::build(
 	Object* renderable
 )
 {
-	MeshComponent* meshComponent = static_cast< MeshComponent* >(renderable);
+	auto meshComponent = static_cast< MeshComponent* >(renderable);
 	meshComponent->build(context, worldRenderView, worldRenderPass);
 }
 

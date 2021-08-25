@@ -41,9 +41,7 @@ public:
 
 	virtual void gather(
 		const WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const LightComponent* >& outLights,
-		AlignedVector< const ProbeComponent* >& outProbes
+		Object* renderable
 	) override final;
 
 	virtual void setup(
@@ -73,7 +71,7 @@ private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
-	RefArray< DecalComponent > m_decalComponents;
+	RefArray< const DecalComponent > m_decalComponents;
 };
 
 	}

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,10 +15,7 @@ namespace traktor
 	namespace world
 	{
 
-class Entity;
 class IWorldRenderPass;
-class LightComponent;
-class ProbeComponent;
 class WorldBuildContext;
 class WorldGatherContext;
 class WorldRenderView;
@@ -40,23 +36,14 @@ public:
 
 	/*! Gather pass. 
 	 *
-	 * Called once per frame to gather active lights.
-	 *
-	 * \note
-	 * Currently specialized in gathering lights but
-	 * might be refactored in the future to be able
-	 * to gather other data as well.
+	 * Called once per frame to gather active renderables.
 	 *
 	 * \param context World context.
 	 * \param renderable Renderable instance.
-	 * \param outLights Gathered lights.
-	 * \param outProbes Gathered probes.
 	 */
 	virtual void gather(
 		const WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const LightComponent* >& outLights,
-		AlignedVector< const ProbeComponent* >& outProbes
+		Object* renderable
 	) = 0;
 
 	/*! Setup pass. */
@@ -71,10 +58,7 @@ public:
 		const WorldSetupContext& context
 	) = 0;
 
-	/*! Build pass.
-	 *
-	 * Build entity render blocks into render context.
-	 */
+	/*! Build pass. */
 	virtual void build(
 		const WorldBuildContext& context,
 		const WorldRenderView& worldRenderView,

@@ -37,9 +37,7 @@ public:
 
 	virtual void gather(
 		const world::WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const world::LightComponent* >& outLights,
-		AlignedVector< const world::ProbeComponent* >& outProbes
+		Object* renderable
 	) override final;
 
 	virtual void setup(

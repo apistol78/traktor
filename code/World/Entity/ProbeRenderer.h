@@ -59,9 +59,7 @@ public:
 
 	virtual void gather(
 		const WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const LightComponent* >& outLights,
-		AlignedVector< const ProbeComponent* >& outProbes
+		Object* renderable
 	) override final;
 
 	virtual void setup(
@@ -99,8 +97,8 @@ private:
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::IRenderTargetSet > m_depthTargetSet;
-	RefArray< ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
-	Ref< ProbeComponent > m_capture;			//!< Probe being captured.
+	RefArray< const ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
+	Ref< const ProbeComponent > m_capture;			//!< Probe being captured.
 	int32_t m_captureState;
 	int32_t m_captureMip;
 };
