@@ -57,7 +57,7 @@ public:
 
 	/*! Add variable.
 	 *
-	 * \return Result value of variable.
+	 * \return Initial value of variable.
 	 */
 	static T_ATOMIC_INLINE int32_t add(int32_t& value, int32_t delta);
 

@@ -26,7 +26,7 @@ void CaseAtomic::run()
 	{
 		int32_t value = 4;
 		int32_t retval = Atomic::add(value, 2);
-		CASE_ASSERT_EQUAL(retval, 6);
+		CASE_ASSERT_EQUAL(retval, 4);
 		CASE_ASSERT_EQUAL(value, 6);
 	}
 
