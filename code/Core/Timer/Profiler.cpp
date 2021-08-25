@@ -7,12 +7,6 @@
 
 namespace traktor
 {
-	namespace
-	{
-
-const size_t c_eventQueueThreshold = 64;
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Profiler", Profiler, Object)
 
@@ -60,7 +54,6 @@ void Profiler::beginEvent(const std::wstring& name)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		te = new ThreadEvents();
-		te->events.reserve(64);
 		m_threadEvents.push_back(te);
 		m_localThreadEvents.set(te);
 	}
@@ -96,7 +89,7 @@ void Profiler::endEvent()
 		te->events.pop_back();
 
 		// Report events if we've queued enough.
-		if (m_events.size() >= c_eventQueueThreshold)
+		if (m_events.size() >= MaxQueuedEvents)
 		{
 			if (m_dictionaryDirty)
 			{
@@ -142,7 +135,7 @@ void Profiler::addEvent(const std::wstring& name, double start, double duration)
 		e.end = start + duration;
 
 		// Report events if we've queued enough.
-		if (m_events.size() >= c_eventQueueThreshold)
+		if (m_events.full())
 		{
 			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
 			m_events.resize(0);

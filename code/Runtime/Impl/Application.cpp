@@ -79,7 +79,7 @@ public:
 		}		
 	}
 
-	virtual void reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final
+	virtual void reportProfilerEvents(double currentTime, const Profiler::eventQueue_t& events) override final
 	{
 		auto transport = m_targetManagerConnection->getTransport();
 		if (transport)

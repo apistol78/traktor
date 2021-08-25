@@ -34,7 +34,7 @@ class T_DLLCLASS RenderContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	RenderContext(uint32_t heapSize);
+	explicit RenderContext(uint32_t heapSize);
 
 	virtual ~RenderContext();
 
