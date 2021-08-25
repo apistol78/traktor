@@ -33,6 +33,7 @@ class ScreenRenderer;
 	namespace world
 	{
 
+class IEntityRenderer;
 class IrradianceGrid;
 class LightComponent;
 class Packer;
@@ -84,6 +85,12 @@ public:
 private:
 	friend class TilesOverlay;
 
+	struct Gather
+	{
+		IEntityRenderer* entityRenderer;
+		Object* renderable;
+	};
+	
 	WorldRenderSettings m_settings;
 	Quality m_toneMapQuality = Quality::Disabled;
 	Quality m_motionBlurQuality = Quality::Disabled;
@@ -117,6 +124,7 @@ private:
 	Ref< render::Buffer > m_lightSBuffer;
 	Ref< render::Buffer > m_lightIndexSBuffer;
 	Ref< render::Buffer > m_tileSBuffer;
+	AlignedVector< Gather > m_gathered;
 	AlignedVector< const LightComponent* > m_lights;
 	AlignedVector< const ProbeComponent* > m_probes;
 	Ref< Packer > m_shadowAtlasPacker;

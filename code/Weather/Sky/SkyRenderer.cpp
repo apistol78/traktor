@@ -1,6 +1,7 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -16,11 +17,10 @@ const TypeInfoSet SkyRenderer::getRenderableTypes() const
 
 void SkyRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void SkyRenderer::setup(
@@ -44,7 +44,7 @@ void SkyRenderer::build(
 	Object* renderable
 )
 {
-	auto skyComponent = mandatory_non_null_type_cast< SkyComponent* >(renderable);
+	auto skyComponent = static_cast< SkyComponent* >(renderable);
 	skyComponent->build(context.getRenderContext(), worldRenderView, worldRenderPass);
 }
 

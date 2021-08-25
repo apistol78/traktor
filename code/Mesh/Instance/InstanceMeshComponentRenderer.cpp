@@ -4,6 +4,7 @@
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -26,11 +27,10 @@ const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 
 void InstanceMeshComponentRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void InstanceMeshComponentRenderer::setup(
@@ -54,8 +54,8 @@ void InstanceMeshComponentRenderer::build(
 	Object* renderable
 )
 {
-	InstanceMeshComponent* meshComponent = static_cast< InstanceMeshComponent* >(renderable);
-	InstanceMesh* mesh = meshComponent->getMesh();
+	auto meshComponent = static_cast< InstanceMeshComponent* >(renderable);
+	auto mesh = meshComponent->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

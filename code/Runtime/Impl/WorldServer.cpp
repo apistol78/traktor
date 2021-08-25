@@ -5,6 +5,7 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
+#include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/AnimationEntityFactory.h"
 #include "Animation/Boids/BoidsRenderer.h"
 #include "Animation/Cloth/ClothRenderer.h"
@@ -193,6 +194,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
+	m_entityRenderers->add(new animation::AnimatedMeshComponentRenderer());
 	m_entityRenderers->add(new animation::BoidsRenderer());
 	m_entityRenderers->add(new animation::ClothRenderer());
 	m_entityRenderers->add(new weather::CloudRenderer());

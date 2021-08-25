@@ -5,6 +5,7 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainLayerComponent.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -53,11 +54,10 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 
 void EntityRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void EntityRenderer::setup(

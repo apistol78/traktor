@@ -22,14 +22,12 @@ class T_DLLCLASS MeshComponentRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getRenderableTypes() const override final;
+	virtual const TypeInfoSet getRenderableTypes() const override;
 
 	virtual void gather(
 		const world::WorldGatherContext& context,
-		const Object* renderable,
-		AlignedVector< const world::LightComponent* >& outLights,
-		AlignedVector< const world::ProbeComponent* >& outProbes
-	) override final;
+		Object* renderable
+	) override;
 
 	virtual void setup(
 		const world::WorldSetupContext& context,

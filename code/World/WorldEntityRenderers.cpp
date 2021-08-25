@@ -9,6 +9,32 @@ namespace traktor
 		namespace
 		{
 
+/*! Find only direct child types. */
+void findAllChildTypes(const TypeInfo* type, TypeInfoSet& outChildTypes)
+{
+	TypeInfoSet types;
+	type->findAllOf(types, false);
+	for (const auto descendantType : types)
+	{
+		if (descendantType->getSuper() == type)
+			outChildTypes.insert(descendantType);
+	}
+}
+
+/*! Fill entity render map until another "root" is found. */
+void fillEntityRenderMap(const TypeInfo* renderableType, IEntityRenderer* entityRenderer, WorldEntityRenderers::entity_renderer_map_t& outEntityRendererMap)
+{
+	if (outEntityRendererMap[renderableType] != nullptr)
+		return;
+
+	outEntityRendererMap[renderableType] = entityRenderer;
+
+	TypeInfoSet childTypes;
+	findAllChildTypes(renderableType, childTypes);
+	for (auto childType : childTypes)
+		fillEntityRenderMap(childType, entityRenderer, outEntityRendererMap);
+}
+
 /*! Create map between entities and it's associated entity renderer. */
 void updateEntityRendererMap(
 	const RefArray< IEntityRenderer >& entityRenderers,
@@ -16,15 +42,25 @@ void updateEntityRendererMap(
 )
 {
 	outEntityRendererMap.clear();
+
+	// First insert all exact matching entity types, "roots".
+	for (const auto entityRenderer : entityRenderers)
+	{
+		TypeInfoSet entityTypes = entityRenderer->getRenderableTypes();
+		for (const auto entityType : entityTypes)
+			outEntityRendererMap[entityType] = entityRenderer;
+	}
+
+	// Second pass we flood fill with derived entity types until we reach another "root".
 	for (const auto entityRenderer : entityRenderers)
 	{
 		TypeInfoSet entityTypes = entityRenderer->getRenderableTypes();
 		for (const auto entityType : entityTypes)
 		{
-			TypeInfoSet renderableTypes;
-			entityType->findAllOf(renderableTypes);
-			for (const auto renderableType : renderableTypes)
-				outEntityRendererMap[renderableType] = entityRenderer;
+			TypeInfoSet childTypes;
+			findAllChildTypes(entityType, childTypes);
+			for (const auto childType : childTypes)
+				fillEntityRenderMap(childType, entityRenderer, outEntityRendererMap);
 		}
 	}
 }

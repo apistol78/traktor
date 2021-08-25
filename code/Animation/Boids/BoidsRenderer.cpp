@@ -1,5 +1,7 @@
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Boids/BoidsRenderer.h"
+#include "World/Entity.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -15,11 +17,12 @@ const TypeInfoSet BoidsRenderer::getRenderableTypes() const
 
 void BoidsRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	auto boidsComponent = static_cast< BoidsComponent* >(renderable);
+	for (auto entity : boidsComponent->getEntities())
+		context.gather(entity);
 }
 
 void BoidsRenderer::setup(
@@ -43,8 +46,6 @@ void BoidsRenderer::build(
 	Object* renderable
 )
 {
-	auto boidsComponent = mandatory_non_null_type_cast< BoidsComponent* >(renderable);
-	boidsComponent->build(context, worldRenderView, worldRenderPass);
 }
 
 void BoidsRenderer::build(

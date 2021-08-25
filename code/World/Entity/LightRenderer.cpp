@@ -1,4 +1,4 @@
-#include <limits>
+#include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"
@@ -17,14 +17,12 @@ const TypeInfoSet LightRenderer::getRenderableTypes() const
 
 void LightRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
 	const LightComponent* lightComponent = static_cast< const LightComponent* >(renderable);
 	if (lightComponent->getLightType() != LightType::LtDisabled)
-		outLights.push_back(lightComponent);
+		context.include(this, renderable);
 }
 
 void LightRenderer::setup(

@@ -20,9 +20,11 @@
 #include "Render/Image2/ImageGraphData.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
+#include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/Packer.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldSetupContext.h"
@@ -360,12 +362,26 @@ void WorldRendererForward::setup(
 		worldRenderView.setProjection(proj);
 	}
 
-	// Gather active lights for this m_
+	// Gather active renderables for this frame.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward gather");
+
 		m_lights.resize(0);
 		m_probes.resize(0);
-		WorldGatherContext(m_entityRenderers, rootEntity).gather(rootEntity, m_lights, m_probes);
+		m_gathered.resize(0);
+
+		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
+
+			// Gather lights and probes separately as we need them for shadows and lighting.
+			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
+				m_lights.push_back(lightComponent);
+			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
+				m_probes.push_back(probeComponent);
+
+			m_gathered.push_back({ entityRenderer, renderable });
+
+		}).gather(const_cast< Entity* >(rootEntity));
+
 		if (m_lights.size() > c_maxLightCount)
 			m_lights.resize(c_maxLightCount);
 	}
@@ -374,8 +390,12 @@ void WorldRendererForward::setup(
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
-		context.setup(worldRenderView, rootEntity);
-		context.flush();
+
+		for (auto gathered : m_gathered)
+			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
+	
+		for (auto entityRenderer : m_entityRenderers->get())
+			entityRenderer->setup(context);
 	}
 
 	// Add visual target sets.
@@ -697,7 +717,7 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->endParameters(renderContext);
 
-			WorldRenderPassForward pass(
+			WorldRenderPassForward gbufferPass(
 				s_techniqueForwardGBufferWrite,
 				sharedParams,
 				worldRenderView,
@@ -705,8 +725,13 @@ render::handle_t WorldRendererForward::setupGBufferPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, pass, rootEntity);
-			wc.flush(worldRenderView, pass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, gbufferPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, gbufferPass);
+
 			renderContext->merge(render::RpAll);		
 		}
 	);
@@ -784,8 +809,12 @@ render::handle_t WorldRendererForward::setupVelocityPass(
 				IWorldRenderPass::PfNone
 			);
 
-			wc.build(worldRenderView, velocityPass, rootEntity);
-			wc.flush(worldRenderView, velocityPass);
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, velocityPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, velocityPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);
@@ -938,8 +967,13 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
-			wc.build(worldRenderView, reflectionsPass, rootEntity);
-			wc.flush(worldRenderView, reflectionsPass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, reflectionsPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, reflectionsPass);
+
 			renderContext->merge(render::RpAll);
 		}
 	);
@@ -1178,8 +1212,13 @@ void WorldRendererForward::setupLightPass(
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
-						wc.build(shadowRenderView, shadowPass, rootEntity);
-						wc.flush(shadowRenderView, shadowPass);
+
+						for (auto gathered : m_gathered)
+							gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+	
+						for (auto entityRenderer : m_entityRenderers->get())
+							entityRenderer->build(wc, shadowRenderView, shadowPass);
+
 						renderContext->merge(render::RpAll);
 					}
 				);
@@ -1289,8 +1328,13 @@ void WorldRendererForward::setupLightPass(
 					);
 
 					T_ASSERT(!renderContext->havePendingDraws());
-					wc.build(shadowRenderView, shadowPass, rootEntity);
-					wc.flush(shadowRenderView, shadowPass);
+
+					for (auto gathered : m_gathered)
+						gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+	
+					for (auto entityRenderer : m_entityRenderers->get())
+						entityRenderer->build(wc, shadowRenderView, shadowPass);
+
 					renderContext->merge(render::RpAll);
 				}
 			);
@@ -1440,8 +1484,13 @@ void WorldRendererForward::setupVisualPass(
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
-			wc.build(worldRenderView, defaultPass, rootEntity);
-			wc.flush(worldRenderView, defaultPass);
+
+			for (auto gathered : m_gathered)
+				gathered.entityRenderer->build(wc, worldRenderView, defaultPass, gathered.renderable);
+	
+			for (auto entityRenderer : m_entityRenderers->get())
+				entityRenderer->build(wc, worldRenderView, defaultPass);
+
 			wc.getRenderContext()->merge(render::RpAll);
 		}
 	);

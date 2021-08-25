@@ -1,7 +1,7 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,9 +17,7 @@ namespace traktor
 	{
 
 class Entity;
-class LightComponent;
-class ProbeComponent;
-class Renderable;
+class IEntityRenderer;
 class WorldEntityRenderers;
 
 /*! World gather context.
@@ -30,15 +28,20 @@ class T_DLLCLASS WorldGatherContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldGatherContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity);
+	typedef std::function< void(IEntityRenderer*, Object*) > gatherFn_t;
 
-	void gather(const Renderable* renderable, AlignedVector< const LightComponent* >& outLights, AlignedVector< const ProbeComponent* >& outProbes) const;
+	explicit WorldGatherContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, const gatherFn_t& filter);
+
+	void gather(Object* renderable) const;
+
+	void include(IEntityRenderer* entityRenderer, Object* renderable) const;
 
 	const Entity* getRootEntity() const { return m_rootEntity; }
 
 private:
 	const WorldEntityRenderers* m_entityRenderers;
 	const Entity* m_rootEntity;
+	gatherFn_t m_filter;
 };
 
 	}

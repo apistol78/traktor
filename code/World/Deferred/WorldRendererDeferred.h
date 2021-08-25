@@ -32,6 +32,7 @@ class Shader;
 	namespace world
 	{
 
+class IEntityRenderer;
 class IrradianceGrid;
 class LightComponent;
 class LightRendererDeferred;
@@ -74,6 +75,12 @@ public:
 	virtual render::ImageGraphContext* getImageGraphContext() const override final;
 
 private:
+	struct Gather
+	{
+		IEntityRenderer* entityRenderer;
+		Object* renderable;
+	};
+
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
 
@@ -116,6 +123,7 @@ private:
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	
 	Ref< WorldEntityRenderers > m_entityRenderers;
+	AlignedVector< Gather > m_gathered;
 	AlignedVector< const LightComponent* > m_lights;
 	Ref< render::Buffer > m_lightSBuffer;
 	void* m_lightSBufferMemory = nullptr;

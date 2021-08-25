@@ -225,9 +225,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		getParameterCallback()
 	);
 
-	for (auto binding : m_bindings)
-		context.build(worldRenderView, worldRenderPass, binding.entity);
-
 	// Save last rendered transform so we can properly write velocities next frame.
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfLast) != 0)
 	{

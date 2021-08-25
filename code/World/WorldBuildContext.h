@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -25,10 +24,7 @@ class RenderContext;
 	{
 
 class Entity;
-class IWorldRenderPass;
-class Renderable;
 class WorldEntityRenderers;
-class WorldRenderView;
 
 /*! World build context.
  * \ingroup World
@@ -38,11 +34,7 @@ class T_DLLCLASS WorldBuildContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	WorldBuildContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderContext* renderContext);
-
-	void build(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass, const Renderable* renderable) const;
-
-	void flush(const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass) const;
+	explicit WorldBuildContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderContext* renderContext);
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 

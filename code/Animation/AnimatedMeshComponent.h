@@ -105,6 +105,9 @@ public:
 	/*! Get pose evaluation controller. */
 	IPoseController* getPoseController() const { return m_poseController; }
 
+	/*! Get all joint entity bindings. */
+	const AlignedVector< Binding >& getBindings() const { return m_bindings; }
+
 	/*! Get all joint base transforms. */
 	const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }
 

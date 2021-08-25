@@ -1,5 +1,6 @@
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothRenderer.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -15,11 +16,10 @@ const TypeInfoSet ClothRenderer::getRenderableTypes() const
 
 void ClothRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void ClothRenderer::setup(

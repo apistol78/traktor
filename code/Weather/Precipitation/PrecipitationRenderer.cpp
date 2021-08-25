@@ -1,6 +1,7 @@
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 
 namespace traktor
 {
@@ -16,11 +17,10 @@ const TypeInfoSet PrecipitationRenderer::getRenderableTypes() const
 
 void PrecipitationRenderer::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void PrecipitationRenderer::setup(
@@ -44,7 +44,7 @@ void PrecipitationRenderer::build(
 	Object* renderable
 )
 {
-	auto precipitationComponent = mandatory_non_null_type_cast< PrecipitationComponent* >(renderable);
+	auto precipitationComponent = static_cast< PrecipitationComponent* >(renderable);
 	precipitationComponent->build(context, worldRenderView, worldRenderPass);
 }
 

@@ -68,7 +68,7 @@ public:
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer
-	);
+	) const;
 
 	Aabb3 getWorldBoundingBox() const;
 

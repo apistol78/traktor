@@ -5,6 +5,7 @@
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DecalComponent.h"
@@ -83,11 +84,10 @@ const TypeInfoSet DecalRenderer::getRenderableTypes() const
 
 void DecalRenderer::gather(
 	const WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const LightComponent* >& outLights,
-	AlignedVector< const ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
+	context.include(this, renderable);
 }
 
 void DecalRenderer::setup(
@@ -111,7 +111,7 @@ void DecalRenderer::build(
 	Object* renderable
 )
 {
-	DecalComponent* decalComponent = static_cast< DecalComponent* >(renderable);
+	const DecalComponent* decalComponent = static_cast< const DecalComponent* >(renderable);
 	const Transform& transform = decalComponent->getTransform();
 
 	float s = decalComponent->getSize();
@@ -149,7 +149,7 @@ void DecalRenderer::build(
 	uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalComponents.size()), c_maxRenderDecals);
 	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
-		DecalComponent* decalComponent = m_decalComponents[i];
+		const DecalComponent* decalComponent = m_decalComponents[i];
 		T_ASSERT(decalComponent);
 
 		const render::Shader* shader = decalComponent->getShader();

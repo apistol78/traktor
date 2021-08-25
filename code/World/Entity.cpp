@@ -6,7 +6,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Renderable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
 Entity::Entity(const std::wstring& name, const Transform& transform)
 :	m_name(name)

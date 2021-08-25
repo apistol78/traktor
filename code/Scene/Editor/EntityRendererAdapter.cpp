@@ -23,9 +23,7 @@ const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 
 void EntityRendererAdapter::gather(
 	const world::WorldGatherContext& context,
-	const Object* renderable,
-	AlignedVector< const world::LightComponent* >& outLights,
-	AlignedVector< const world::ProbeComponent* >& outProbes
+	Object* renderable
 )
 {
 	EntityAdapter* entityAdapter = m_cache->begin(renderable);
@@ -33,9 +31,7 @@ void EntityRendererAdapter::gather(
 	{
 		m_entityRenderer->gather(
 			context,
-			renderable,
-			outLights,
-			outProbes
+			renderable
 		);
 	}
 	m_cache->end();

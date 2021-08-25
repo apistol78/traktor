@@ -117,7 +117,7 @@ void EffectComponent::render(
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer
-)
+) const
 {
 	if (m_effectInstance)
 		m_effectInstance->render(
