@@ -1,11 +1,5 @@
 import(traktor)
 
-local function report(succeeded, message)
-	if not succeeded then
-		stdout:printLn(message)
-	end
-end
-
 function main(args)
 	-- Ensure we have unittest support built in.
 	if traktor.test.Case == nil then
@@ -13,7 +7,7 @@ function main(args)
 		return 1
 	end
 
-	local result = 0
+	local report = {}
 
 	local caseTypes = traktor.TypeInfo.findAllOf(traktor.test.Case, false)
 	for _, caseType in pairs(caseTypes) do
@@ -32,18 +26,63 @@ function main(args)
 		if include then
 			local case = caseType:createInstance()
 			if case ~= nil then
-				if case:execute(report) then
-					stdout:printLn(caseType.name .. " [OK]")
+
+				-- Execute test case, collect error messages only.
+				local messages = {}
+				local r = case:execute(
+					nil,
+					function(message)
+						table.insert(messages, message)
+					end
+				)
+
+				if r then
+					-- stdout:printLn(caseType.name .. " [OK]")
+					table.insert(report, { name = caseType.name, result = true, messages = "" })
 				else
-					stderr:printLn(caseType.name .. " [FAILED]")
-					result = result + 1
+					-- stderr:printLn(caseType.name .. " [FAILED]")
+					table.insert(report, { name = caseType.name, result = false, messages = messages })
 				end
 			else
 				stderr:printLn("Unable to instantiate case \"" .. caseType.name .. "\".")
-				result = result + 1
 			end
 		end
 	end
 
-	return result
+
+
+	-- JUnit
+
+	local testCount = 0
+	local testFailures = 0
+	for _, r in ipairs(report) do
+		testCount = testCount + 1
+		if not r.result then
+			testFailures = testFailures + 1
+		end
+	end
+
+	stdout:printLn("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")
+	stdout:printLn("<testsuites id=\"1\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\" time=\"1\">")
+	stdout:printLn("\t<testsuite id=\"2\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\" time=\"1\">")
+
+	for i, r in ipairs(report) do
+
+		stdout:printLn("\t\t<testcase id=\"" .. i .. "\" name=\"" .. r.name .. "\" time=\"1\">")
+
+		for _, m in ipairs(r.messages) do
+			stdout:printLn("\t\t\t<failure message=\"" .. m .. "\" type=\"WARNING\">")
+			stdout:printLn(m)
+			stdout:printLn("\t\t\t</failure>")
+		end
+
+		stdout:printLn("\t\t</testcase>")
+
+	end
+
+	stdout:printLn("\t</testsuite>")
+	stdout:printLn("</testsuites>")
+
+
+	return 0
 end

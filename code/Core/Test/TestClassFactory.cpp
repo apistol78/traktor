@@ -19,11 +19,10 @@ public:
     {
     }
 
-    virtual void report(bool succeeded, const std::wstring& message) const
+    virtual void report(const std::wstring& message) const
     {
 		Any argv[] =
 		{
-			CastAny< bool >::set(succeeded),
 			CastAny< const std::wstring& >::set(message)
 		};
         if (m_delegateReport)
@@ -34,10 +33,11 @@ private:
     IRuntimeDelegate* m_delegateReport;
 };
 
-bool Case_execute(Case* self, IRuntimeDelegate* delegateReport)
+bool Case_execute(Case* self, IRuntimeDelegate* delegateInfoReport, IRuntimeDelegate* delegateErrorReport)
 {
-    ReportDelegate report(delegateReport);
-    return self->execute(report);
+    ReportDelegate infoReport(delegateInfoReport);
+    ReportDelegate errorReport(delegateErrorReport);
+    return self->execute(infoReport, errorReport);
 }
 
         }

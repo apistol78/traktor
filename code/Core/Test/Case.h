@@ -29,14 +29,10 @@ class T_DLLCLASS Case : public Object
 public:
 	struct IReport
 	{
-		virtual void report(bool succeeded, const std::wstring& message) const = 0;
+		virtual void report(const std::wstring& message) const = 0;
 	};
 
-	Case();
-
-	virtual ~Case() {}
-
-	bool execute(const IReport& report);
+	bool execute(const IReport& infoReport, const IReport& errorReport);
 
 protected:
 	virtual void run() = 0;
@@ -46,9 +42,10 @@ protected:
 	void failed(const std::wstring& message);
 
 private:
-	const IReport* m_report;
-	bool m_failed;
-	int64_t m_allocdelta;
+	const IReport* m_infoReport = nullptr;
+	const IReport* m_errorReport = nullptr;
+	bool m_failed = false;
+	int64_t m_allocdelta = 0;
 };
 
 #define CASE_ASSERT(condition) \

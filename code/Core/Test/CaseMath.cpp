@@ -215,6 +215,7 @@ void CaseMath::run()
 		CASE_ASSERT(uv.y <= 1.0f);
 	}
 
+/*
 	RandomGeometry rnd;
 	for (int32_t i = 0; i < 1000; ++i)
 	{
@@ -272,6 +273,7 @@ void CaseMath::run()
 			CASE_ASSERT_COMPARE(phi, 1.0f + FUZZY_EPSILON, std::less_equal< float >());
 		}
 	}
+*/
 }
 
 	}
