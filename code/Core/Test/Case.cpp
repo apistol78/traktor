@@ -8,16 +8,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.test.Case", Case, Object)
 
-Case::Case()
-:	m_report(nullptr)
-,	m_failed(false)
-,	m_allocdelta(0)
+bool Case::execute(const IReport& infoReport, const IReport& errorReport)
 {
-}
-
-bool Case::execute(const IReport& report)
-{
-	m_report = &report;
+	m_infoReport = &infoReport;
+	m_errorReport = &errorReport;
 	m_allocdelta = 0;
 
 	int64_t allocPre = (int64_t)Alloc::allocated();
@@ -36,7 +30,8 @@ bool Case::execute(const IReport& report)
 	}
 #endif
 
-	m_report = nullptr;
+	m_infoReport = nullptr;
+	m_errorReport = nullptr;
 	return !m_failed;
 }
 
@@ -44,10 +39,10 @@ void Case::succeeded(const std::wstring& message)
 {
 	int64_t allocPre = (int64_t)Alloc::allocated();
 
-	if (m_report)
-		m_report->report(true, message);
-	else
-		log::info << message << Endl;
+	if (m_infoReport)
+		m_infoReport->report(message);
+	//else
+	//	log::info << message << Endl;
 
 	int64_t allocPost = (int64_t)Alloc::allocated();
 	m_allocdelta += (allocPost - allocPre);
@@ -57,10 +52,10 @@ void Case::failed(const std::wstring& message)
 {
 	int64_t allocPre = (int64_t)Alloc::allocated();
 
-	if (m_report)
-		m_report->report(false, message);
-	else
-		log::error << message << Endl;
+	if (m_errorReport)
+		m_errorReport->report(message);
+	//else
+	//	log::error << message << Endl;
 
 	int64_t allocPost = (int64_t)Alloc::allocated();
 	m_allocdelta += (allocPost - allocPre);
