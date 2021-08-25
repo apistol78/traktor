@@ -52,7 +52,7 @@ private:
 
 	virtual void receivedProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) override final;
 
-	virtual void receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final;
+	virtual void receivedProfilerEvents(double currentTime, const Profiler::eventQueue_t& events) override final;
 
 	virtual void receivedPerfSets() override final;
 

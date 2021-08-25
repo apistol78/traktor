@@ -93,7 +93,7 @@ void ProfilerDialog::receivedProfilerDictionary(const SmallMap< uint16_t, std::w
 	m_dictionary = dictionary;
 }
 
-void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
+void ProfilerDialog::receivedProfilerEvents(double currentTime, const Profiler::eventQueue_t& events)
 {
 	if (!m_recording)
 		return;

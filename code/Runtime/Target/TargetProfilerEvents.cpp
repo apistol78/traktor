@@ -1,6 +1,6 @@
 #include "Runtime/Target/TargetProfilerEvents.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberStaticVector.h"
 
 namespace traktor
 {
@@ -35,7 +35,7 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetProfilerEvents", 0, TargetProfilerEvents, ISerializable)
 
-TargetProfilerEvents::TargetProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events)
+TargetProfilerEvents::TargetProfilerEvents(double currentTime, const Profiler::eventQueue_t& events)
 :	m_currentTime(currentTime)
 ,	m_events(events)
 {
@@ -44,7 +44,7 @@ TargetProfilerEvents::TargetProfilerEvents(double currentTime, const AlignedVect
 void TargetProfilerEvents::serialize(ISerializer& s)
 {
 	s >> Member< double >(L"currentTime", m_currentTime);
-	s >> MemberAlignedVector< Profiler::Event, MemberProfilerEvent >(L"events", m_events);
+	s >> MemberStaticVector< Profiler::Event, Profiler::MaxQueuedEvents, MemberProfilerEvent >(L"events", m_events);
 }
 
 	}

@@ -3,6 +3,7 @@
 #include <string>
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/SpinLock.h"
@@ -44,6 +45,12 @@ class T_DLLCLASS Profiler
 	T_RTTI_CLASS;
 
 public:
+	enum 
+	{
+		MaxQueuedEvents = 64,
+		MaxDepth = 16
+	};
+
 	struct Event
 	{
 		uint16_t name;
@@ -53,6 +60,9 @@ public:
 		double end;
 	};
 
+	typedef StaticVector< Event, MaxQueuedEvents > eventQueue_t;
+	typedef StaticVector< Event, MaxDepth > eventStack_t;
+
 	/*! Profiler report listener.
 	 */
 	class IReportListener : public IRefCount
@@ -60,7 +70,7 @@ public:
 	public:
 		virtual void reportProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary) = 0;
 
-		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) = 0;
+		virtual void reportProfilerEvents(double currentTime, const eventQueue_t& events) = 0;
 	};
 
 	typedef void* handle_t;
@@ -94,7 +104,7 @@ protected:
 private:
 	struct ThreadEvents
 	{
-		AlignedVector< Event > events;
+		eventStack_t events;
 	};
 
 	Ref< IReportListener > m_listener;
@@ -103,7 +113,7 @@ private:
 	SmallMap< std::wstring, uint16_t > m_nameIds;
 	SmallMap< uint16_t, std::wstring > m_dictionary;
 	bool m_dictionaryDirty;
-	AlignedVector< Event > m_events;
+	eventQueue_t m_events;
 	AlignedVector< ThreadEvents* > m_threadEvents;
 	ThreadLocal m_localThreadEvents;
 	Timer m_timer;
