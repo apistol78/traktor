@@ -101,20 +101,22 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	if ((m_state & (BstPushed | BstHover)) != 0)
+	if (isEnable())
 	{
-		if ((m_state & BstPushed) != 0)
-			canvas.setBackground(ss->getColor(toolBar, L"item-background-color-pushed"));
-		else if ((m_state & BstHover) != 0)
-			canvas.setBackground(ss->getColor(toolBar, L"item-background-color-hover"));
+		if ((m_state & (BstPushed | BstHover)) != 0)
+		{
+			if ((m_state & BstPushed) != 0)
+				canvas.setBackground(ss->getColor(toolBar, L"item-background-color-pushed"));
+			else if ((m_state & BstHover) != 0)
+				canvas.setBackground(ss->getColor(toolBar, L"item-background-color-hover"));
 
-		canvas.fillRect(Rect(at, size));
-	}
-
-	if ((m_state & BstToggled) != 0)
-	{
-		canvas.setForeground(ss->getColor(toolBar, L"item-color-toggled"));
-		canvas.drawRect(Rect(at, size));
+			canvas.fillRect(Rect(at, size));
+		}
+		if ((m_state & BstToggled) != 0)
+		{
+			canvas.setForeground(ss->getColor(toolBar, L"item-color-toggled"));
+			canvas.drawRect(Rect(at, size));
+		}
 	}
 
 	int centerOffsetX = dpi96(4);
@@ -134,7 +136,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 	{
 		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		int centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(ss->getColor(toolBar, L"color"));
+		canvas.setForeground(ss->getColor(toolBar, isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text
