@@ -65,7 +65,7 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		m_screenSpaceCulling ? 0.001f : 0.0f,
 		distance
 	))
 		return;
