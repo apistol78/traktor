@@ -1,6 +1,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/GrayscaleFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/StyleSheet.h"
@@ -100,8 +101,8 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 		drawing::GrayscaleFilter grayscaleFilter;
 		image->apply(&grayscaleFilter);
 
-		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.1f, 0.4f);
-		image->apply(&brigtnessContrastFilter);
+		drawing::TransformFilter blurFilter(Color4f(1.0f, 1.0f, 1.0f, 0.25f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		image->apply(&blurFilter);
 
 		m_imageDisabled = new ui::Bitmap(image);
 	}
