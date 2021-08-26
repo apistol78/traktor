@@ -530,6 +530,7 @@ bool ProgramVk::validateDescriptorSet()
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
+		T_ASSERT(!key.full());
 		key.push_back((intptr_t)m_uniformBuffers[i].range.chain);
 	}	
 	for (const auto& texture : m_textures)
@@ -539,12 +540,14 @@ bool ProgramVk::validateDescriptorSet()
 		auto resolved = texture.texture->resolve();
 		if (!resolved)
 			continue;
+		T_ASSERT(!key.full());
 		key.push_back((intptr_t)resolved);
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.bufferView)
 			continue;
+		T_ASSERT(!key.full());
 		key.push_back((intptr_t)sbuffer.bufferView);
 	}
 
