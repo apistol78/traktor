@@ -118,11 +118,13 @@ public:
 	void drawWireAabb(
 		const Vector4& center,
 		const Vector4& extent,
+		float width,
 		const Color4ub& color
 	);
 
 	void drawWireAabb(
 		const Aabb3& aabb,
+		float width,
 		const Color4ub& color
 	);
 

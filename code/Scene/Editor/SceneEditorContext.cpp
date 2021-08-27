@@ -650,7 +650,7 @@ EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* en
 	return i != m_entityAdapterMap.end() ? i->second : nullptr;
 }
 
-EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const
+EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable, bool throughSelected) const
 {
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
@@ -675,6 +675,10 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 		// Do not trace non-pickable.
 		if (onlyPickable && !entityEditor->isPickable())
+			continue;
+
+		// Do no trace selected.
+		if (throughSelected && entityAdapter->isSelected())
 			continue;
 
 		// Trace bounding box to see if ray intersect.

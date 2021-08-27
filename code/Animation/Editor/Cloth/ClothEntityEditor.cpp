@@ -39,7 +39,7 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 		Aabb3 boundingBox = getEntityAdapter()->getBoundingBox();
 		
 		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(255, 255, 0, 200));
+		primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(255, 255, 0, 200));
 
 		if (getEntityAdapter()->isSelected())
 		{

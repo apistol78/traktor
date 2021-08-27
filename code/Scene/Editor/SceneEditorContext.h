@@ -231,7 +231,7 @@ public:
 
 	EntityAdapter* findAdapterFromEntity(const world::Entity* entity) const;
 
-	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const;
+	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable, bool throughSelected) const;
 
 	uint32_t queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const;
 

@@ -424,6 +424,7 @@ void PrimitiveRenderer::drawArrowHead(
 void PrimitiveRenderer::drawWireAabb(
 	const Vector4& center,
 	const Vector4& extent,
+	float width,
 	const Color4ub& color
 )
 {
@@ -432,12 +433,14 @@ void PrimitiveRenderer::drawWireAabb(
 			center - extent * Scalar(0.5f),
 			center + extent * Scalar(0.5f)
 		),
+		width,
 		color
 	);
 }
 
 void PrimitiveRenderer::drawWireAabb(
 	const Aabb3& aabb,
+	float width,
 	const Color4ub& color
 )
 {
@@ -453,6 +456,7 @@ void PrimitiveRenderer::drawWireAabb(
 		drawLine(
 			extents[edges[i * 2 + 0]],
 			extents[edges[i * 2 + 1]],
+			width,
 			color
 		);
 	}

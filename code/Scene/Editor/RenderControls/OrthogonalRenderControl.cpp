@@ -618,6 +618,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->drawWireAabb(
 				Vector4::origo(),
 				Vector4(0.1f, 0.1f, 0.1f, 0.0f),
+				1.0f,
 				m_colorCamera
 			);
 

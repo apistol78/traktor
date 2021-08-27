@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.BoxSourceRenderer", BoxSourceRenderer, So
 void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
 	const BoxSourceData* boxSource = checked_type_cast< const BoxSourceData* >(sourceData);
-	primitiveRenderer->drawWireAabb(boxSource->m_position, boxSource->m_extent, Color4ub(255, 255, 0));
+	primitiveRenderer->drawWireAabb(boxSource->m_position, boxSource->m_extent, 1.0f, Color4ub(255, 255, 0));
 }
 
 	}

@@ -29,7 +29,7 @@ void BoxShapeRenderer::draw(
 	primitiveRenderer->pushWorld((body1Transform[1] * shapeDesc->getLocalTransform()).toMatrix44());
 
 	primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
-	primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
+	primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(0, 255, 255));
 
 	primitiveRenderer->popWorld();
 }

@@ -30,7 +30,7 @@ void HeightfieldShapeRenderer::draw(
 	{
 		const Vector4& extent = heightfield->getWorldExtent();
 		Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
-		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
+		primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(0, 255, 255, 180));
 	}
 }
 
