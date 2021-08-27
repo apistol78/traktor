@@ -701,6 +701,8 @@ bool BakePipelineOperator::build(
 				if (lightmapDiffuseId.isNotNull())
 				{
 					lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+					if (!lightmapDiffuseInstance)
+						return false;
 					lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
 						resource::Id< render::ITexture >(c_lightmapProxyId)
 					));
@@ -711,6 +713,8 @@ bool BakePipelineOperator::build(
 				if (needDirectionalMap && lightmapDirectionalId.isNotNull())
 				{
 					lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
+					if (!lightmapDirectionalInstance)
+						return false;
 					lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
 						resource::Id< render::ITexture >(c_lightmapProxyId)
 					));
