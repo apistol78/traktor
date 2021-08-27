@@ -547,7 +547,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 		return nullptr;
 }
 
-Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t elementCount, uint32_t elementSize, bool dynamic)
 {
 	uint32_t usageBits = 0;
 	if ((usage & BuVertex) != 0)
@@ -561,13 +561,13 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 
 	if (dynamic)
 	{
-		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, bufferSize, m_statistics.buffers);
+		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, elementCount, elementSize, m_statistics.buffers);
 		if (buffer->create(usageBits, 3))
 			return buffer;
 	}
 	else
 	{
-		Ref< BufferStaticVk > buffer = new BufferStaticVk(m_context, bufferSize, m_statistics.buffers);
+		Ref< BufferStaticVk > buffer = new BufferStaticVk(m_context, elementCount, elementSize, m_statistics.buffers);
 		if (buffer->create(usageBits))
 			return buffer;
 	}

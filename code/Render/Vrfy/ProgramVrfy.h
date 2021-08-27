@@ -16,7 +16,7 @@ class ProgramVrfy : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag);
+	explicit ProgramVrfy(ResourceTracker* resourceTracker, IProgram* program, const wchar_t* const tag);
 
 	virtual ~ProgramVrfy();
 

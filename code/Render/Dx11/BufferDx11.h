@@ -20,7 +20,7 @@ class BufferDx11 : public Buffer
 protected:
 	Ref< ContextDx11 > m_context;
 
-	explicit BufferDx11(ContextDx11* context, uint32_t bufferSize);
+	explicit BufferDx11(ContextDx11* context, uint32_t elementCount, uint32_t elementSize);
 };
 
 	}

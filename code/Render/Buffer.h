@@ -25,6 +25,12 @@ class T_DLLCLASS Buffer : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! */
+	uint32_t getElementCount() const;
+
+	/*! */
+	uint32_t getElementSize() const;
+
 	/*! Get buffer size in bytes.
 	 *
 	 * \return Buffer size.
@@ -47,10 +53,11 @@ public:
 	virtual const IBufferView* getBufferView() const = 0;
 
 protected:
-	explicit Buffer(uint32_t bufferSize);
+	explicit Buffer(uint32_t elementCount, uint32_t elementSize);
 
 private:
-	uint32_t m_bufferSize;
+	uint32_t m_elementCount;
+	uint32_t m_elementSize;
 };
 
 	}

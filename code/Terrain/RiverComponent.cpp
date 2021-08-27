@@ -95,7 +95,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
-		uint32_t(silouette.size() * sizeof(float) * 6),
+		(uint32_t)silouette.size(),
+		6 * sizeof(float),
 		false
 	);
 	if (!m_vertexBuffer)
@@ -123,7 +124,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
-		triangleCount * 3 * sizeof(uint16_t),
+		triangleCount * 3,
+		sizeof(uint16_t),
 		false
 	);
 	if (!m_indexBuffer)

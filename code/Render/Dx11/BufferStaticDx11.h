@@ -22,7 +22,8 @@ public:
 	static Ref< BufferStaticDx11 > create(
 		ContextDx11* context,
 		uint32_t usage,
-		uint32_t bufferSize
+		uint32_t elementCount,
+		uint32_t elementSize
 	);
 
 	virtual void destroy() override;
@@ -40,7 +41,7 @@ private:
 	BufferViewDx11 m_bufferView;
 	AutoArrayPtr< uint8_t > m_data;
 
-	explicit BufferStaticDx11(ContextDx11* context, uint32_t bufferSize);
+	explicit BufferStaticDx11(ContextDx11* context, uint32_t elementCount, uint32_t elementSize);
 };
 	
 	}

@@ -344,7 +344,8 @@ bool WorldRendererDeferred::create(
 	// Allocate light lists.
 	m_lightSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		sizeof(LightShaderData) * c_maxLightCount,
+		c_maxLightCount,
+		sizeof(LightShaderData),
 		true
 	);
 	if (!m_lightSBuffer)
@@ -356,7 +357,8 @@ bool WorldRendererDeferred::create(
 
 	m_tileSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		sizeof(TileShaderData),
 		true
 	);
 	if (!m_tileSBuffer)

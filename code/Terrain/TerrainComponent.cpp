@@ -649,11 +649,12 @@ bool TerrainComponent::createPatches()
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
-	uint32_t vertexSize = render::getVertexSize(vertexElements);
+	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 
 	m_vertexBuffer = m_renderSystem->createBuffer(
 		render::BuVertex,
-		patchVertexCount * vertexSize,
+		patchVertexCount,
+		vertexSize,
 		false
 	);
 	if (!m_vertexBuffer)
@@ -945,7 +946,8 @@ bool TerrainComponent::createPatches()
 
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
-		uint32_t(indices.size() * sizeof(uint32_t)),
+		(uint32_t)indices.size(),
+		sizeof(uint32_t),
 		false
 	);
 	if (!m_indexBuffer)

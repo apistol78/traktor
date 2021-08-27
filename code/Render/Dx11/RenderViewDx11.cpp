@@ -796,6 +796,7 @@ void RenderViewDx11::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	m_stateCache.setVertexBuffer(m_currentVertexBuffer->getD3D11Buffer(), m_currentVertexLayout->getD3D11Stride());
 	if (m_currentIndexBuffer)
 	{
+		T_ASSERT(indexType != ItVoid);
 		if (indexType == ItUInt16)
 			m_stateCache.setIndexBuffer(m_currentIndexBuffer->getD3D11Buffer(), DXGI_FORMAT_R16_UINT);
 		else if (indexType == ItUInt32)

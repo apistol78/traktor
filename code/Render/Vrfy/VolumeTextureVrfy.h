@@ -17,7 +17,7 @@ class VolumeTextureVrfy : public IVolumeTexture
 	T_RTTI_CLASS;
 
 public:
-	VolumeTextureVrfy(ResourceTracker* resourceTracker, IVolumeTexture* texture);
+	explicit VolumeTextureVrfy(ResourceTracker* resourceTracker, IVolumeTexture* texture);
 
 	virtual ~VolumeTextureVrfy();
 

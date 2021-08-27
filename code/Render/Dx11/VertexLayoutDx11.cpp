@@ -35,6 +35,7 @@ Ref< VertexLayoutDx11 > VertexLayoutDx11::create(const AlignedVector< VertexElem
 	hash.end();
 
 	layout->m_d3dInputElementsHash = hash.get();
+	layout->m_d3dStride = getVertexSize(vertexElements);
 
 	return layout;
 }

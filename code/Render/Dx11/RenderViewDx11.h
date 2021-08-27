@@ -133,8 +133,8 @@ private:
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 	Ref< const VertexLayoutDx11 > m_currentVertexLayout;
-	Ref< const BufferViewDx11 > m_currentVertexBuffer;
-	Ref< const BufferViewDx11 > m_currentIndexBuffer;
+	const BufferViewDx11* m_currentVertexBuffer = nullptr;
+	const BufferViewDx11* m_currentIndexBuffer = nullptr;
 	Ref< ProgramDx11 > m_currentProgram;
 	RenderState m_renderState;
 	int32_t m_targetSize[2];

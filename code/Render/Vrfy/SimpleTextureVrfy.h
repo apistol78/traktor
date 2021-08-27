@@ -17,7 +17,7 @@ class SimpleTextureVrfy : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureVrfy(ResourceTracker* resourceTracker, ISimpleTexture* texture);
+	explicit SimpleTextureVrfy(ResourceTracker* resourceTracker, ISimpleTexture* texture);
 
 	virtual ~SimpleTextureVrfy();
 

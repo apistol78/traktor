@@ -12,9 +12,9 @@ namespace traktor
 class InternalBuffer : public Buffer
 {
 public:
-	explicit InternalBuffer(uint32_t bufferSize)
-	:	Buffer(bufferSize)
-	,	m_data(bufferSize)
+	explicit InternalBuffer(uint32_t elementCount, uint32_t elementSize)
+	:	Buffer(elementCount, elementSize)
+	,	m_data(elementCount * elementSize)
 	{
 	}
 
@@ -42,10 +42,19 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	Ref< Buffer > indexBuffer;
 
 	if (vertexBufferSize > 0)
-		vertexBuffer = new InternalBuffer(vertexBufferSize);
+	{
+		const uint32_t vertexSize = getVertexSize(vertexElements);
+		if (vertexSize == 0)
+			return nullptr;
+
+		vertexBuffer = new InternalBuffer(vertexBufferSize / vertexSize, vertexSize);
+	}
 
 	if (indexBufferSize > 0)
-		indexBuffer = new InternalBuffer(indexBufferSize);
+	{
+		const uint32_t indexSize = (indexType == ItUInt16) ? 2 : 4;
+		indexBuffer = new InternalBuffer(indexBufferSize / indexSize, indexSize);
+	}
 
 	Ref< Mesh > mesh = new Mesh();
 	mesh->setVertexElements(vertexElements);

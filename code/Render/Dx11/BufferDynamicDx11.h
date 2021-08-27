@@ -21,7 +21,8 @@ public:
 	static Ref< BufferDynamicDx11 > create(
 		ContextDx11* context,
 		uint32_t usage,
-		uint32_t bufferSize
+		uint32_t elementCount,
+		uint32_t elementSize
 	);
 
 	virtual void destroy() override;
@@ -37,9 +38,9 @@ private:
 	ComRef< ID3D11ShaderResourceView > m_d3dBufferResourceView;
 	ComRef< ID3D11UnorderedAccessView > m_d3dBufferUnorderedView;
 	BufferViewDx11 m_bufferView;
-	AutoArrayPtr< uint8_t > m_data;
+	AutoArrayPtr< uint8_t, AllocFreeAlign > m_data;
 
-	explicit BufferDynamicDx11(ContextDx11* context, uint32_t bufferSize);
+	explicit BufferDynamicDx11(ContextDx11* context, uint32_t elementCount, uint32_t elementSize);
 };
 	
 	}

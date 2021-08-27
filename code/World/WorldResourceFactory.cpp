@@ -110,7 +110,8 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 
 		Ref< render::Buffer > buffer = m_renderSystem->createBuffer(
 			render::BuStructured,
-			sizeof(IrradianceGridData) * size[0] * size[1] * size[2],
+			size[0] * size[1] * size[2],
+			sizeof(IrradianceGridData),
 			false
 		);
 		if (!buffer)
