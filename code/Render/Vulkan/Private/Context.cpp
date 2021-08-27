@@ -22,8 +22,7 @@ Context::Context(
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
 	VmaAllocator allocator,
-	uint32_t graphicsQueueIndex,
-	uint32_t computeQueueIndex
+	uint32_t graphicsQueueIndex
 )
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
@@ -37,7 +36,6 @@ Context::Context(
 
 	// Create queues.
 	m_graphicsQueue = Queue::create(this, graphicsQueueIndex);
-	m_computeQueue = (computeQueueIndex != graphicsQueueIndex) ? Queue::create(this, computeQueueIndex) : m_graphicsQueue;
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -159,7 +157,6 @@ void Context::performCleanup()
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
 
 		// Wait until GPU is idle to ensure resources are not used, or pending, in some queue before destroying them.

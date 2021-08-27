@@ -117,7 +117,6 @@ private:
 	struct Frame
 	{
 		Ref< CommandBuffer > graphicsCommandBuffer;
-		Ref< CommandBuffer > computeCommandBuffer;
 		VkSemaphore renderFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
 
