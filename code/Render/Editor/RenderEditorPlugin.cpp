@@ -27,37 +27,9 @@ RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
 
 bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
-	auto settings = m_editor->getSettings();
-
-	// Create render system.
-	std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
-
-	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName.c_str());
-	if (!renderSystemType)
-	{
-		ui::MessageBox::show(parent, std::wstring(L"Unable to instantiate render system \"") + renderSystemTypeName + std::wstring(L"\"\nNo such type"), L"Error", ui::MbIconError | ui::MbOk);
+	if (!createRenderSystem())
 		return false;
-	}
 
-	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
-	T_ASSERT(renderSystem);
-
-	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
-
-	RenderSystemDesc desc;
-	desc.capture = renderSystem;
-	desc.mipBias = settings->getProperty< float >(L"Editor.MipBias", 0.0f);
-	desc.maxAnisotropy = settings->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
-	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
-	desc.validation = settings->getProperty< bool >(L"Editor.RenderValidation", true);
-	desc.programCache = settings->getProperty< bool >(L"Editor.UseProgramCache", false);
-	if (!renderSystemVrfy->create(desc))
-	{
-		ui::MessageBox::show(parent, std::wstring(L"Unable to create render system \"") + renderSystemTypeName + std::wstring(L"\""), L"Error", ui::MbIconError | ui::MbOk);
-		return false;
-	}
-
-	m_editor->setStoreObject(L"RenderSystem", renderSystemVrfy);
 	return true;
 }
 
@@ -73,7 +45,12 @@ void RenderEditorPlugin::destroy()
 
 bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 {
-	if (command == L"Render.PrintMemoryUsage")
+	if (command == L"Editor.SettingsChanged")
+	{
+		createRenderSystem();
+		return true;
+	}
+	else if (command == L"Render.PrintMemoryUsage")
 	{
 		Ref< IRenderSystem > renderSystem = m_editor->getStoreObject< IRenderSystem >(L"RenderSystem");
 		if (renderSystem)
@@ -120,6 +97,51 @@ void RenderEditorPlugin::handleWorkspaceClosed()
 {
 	m_editor->setStoreObject(L"ShaderDependencyTracker", nullptr);
 	safeDestroy(m_tracker);
+}
+
+bool RenderEditorPlugin::createRenderSystem()
+{
+	auto settings = m_editor->getSettings();
+
+	// Create render system.
+	std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
+
+	// Check if render system is already instantiated.
+	auto renderSystemUnsafe = m_editor->getStoreObject< IRenderSystem >(L"RenderSystemUnsafe");
+	if (renderSystemUnsafe != nullptr)
+	{
+		if (type_name(renderSystemUnsafe) == renderSystemTypeName)
+			return true;
+	}
+
+	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName.c_str());
+	if (!renderSystemType)
+	{
+		ui::MessageBox::show(str(L"Unable to instantiate render system \"%ls\",\nNo such type.", renderSystemTypeName.c_str()), L"Error", ui::MbIconError | ui::MbOk);
+		return false;
+	}
+
+	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
+	T_ASSERT(renderSystem);
+
+	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
+
+	RenderSystemDesc desc;
+	desc.capture = renderSystem;
+	desc.mipBias = settings->getProperty< float >(L"Editor.MipBias", 0.0f);
+	desc.maxAnisotropy = settings->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
+	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
+	desc.validation = settings->getProperty< bool >(L"Editor.RenderValidation", true);
+	desc.programCache = settings->getProperty< bool >(L"Editor.UseProgramCache", false);
+	if (!renderSystemVrfy->create(desc))
+	{
+		ui::MessageBox::show(str(L"Unable to instantiate render system \"%ls\",\nFailed to initialize render system.", renderSystemTypeName.c_str()), L"Error", ui::MbIconError | ui::MbOk);
+		return false;
+	}
+
+	m_editor->setStoreObject(L"RenderSystem", renderSystemVrfy);
+	m_editor->setStoreObject(L"RenderSystemUnsafe", renderSystem);
+	return true;
 }
 
 	}
