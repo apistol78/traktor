@@ -237,7 +237,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	// Get physical device graphics queue.
 	uint32_t graphicsQueueIndex = ~0;
-	uint32_t computeQueueIndex = ~0;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
@@ -255,63 +254,26 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		}
 	}
 
-	// Select compute queue.
-	for (uint32_t i = 0; i < queueFamilyCount; ++i)
-	{
-		if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
-		{
-#if !defined(__RPI__)
-			// Ensure family can support two queues.
-			if (i == graphicsQueueIndex)
-			{
-				if (queueFamilyProperties[i].queueCount <= 1)
-					continue;
-			}
-#endif
-			computeQueueIndex = i;
-			break;
-		}
-	}
 	if (graphicsQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable graphics queue found." << Endl;
-		return false;
-	}
-	if (computeQueueIndex == ~0)
-	{
-		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
 		return false;
 	}
 
 	// Create logical device.
 	const float queuePriorities[] = { 1.0f, 1.0f };
 
-    VkDeviceQueueCreateInfo dqci[2] = {};
-	if (graphicsQueueIndex != computeQueueIndex)
-	{
-		dqci[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		dqci[0].queueFamilyIndex = graphicsQueueIndex;
-		dqci[0].queueCount = 1;
-		dqci[0].pQueuePriorities = queuePriorities;
-
-		dqci[1].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		dqci[1].queueFamilyIndex = computeQueueIndex;
-		dqci[1].queueCount = 1;
-		dqci[1].pQueuePriorities = queuePriorities;
-	}
-	else
-	{
-		dqci[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		dqci[0].queueFamilyIndex = graphicsQueueIndex;
-		dqci[0].queueCount = 2;
-		dqci[0].pQueuePriorities = queuePriorities;
-	}
+    VkDeviceQueueCreateInfo dqci = {};
+	dqci.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	dqci.queueFamilyIndex = graphicsQueueIndex;
+	dqci.queueCount = 1;
+	dqci.pQueuePriorities = queuePriorities;
 
     VkDeviceCreateInfo dci = {};
     dci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	dci.pNext = nullptr;
-    dci.queueCreateInfoCount = (graphicsQueueIndex != computeQueueIndex) ? 2 : 1;
-    dci.pQueueCreateInfos = dqci;
+    dci.queueCreateInfoCount = 1;
+    dci.pQueueCreateInfos = &dqci;
 	dci.enabledLayerCount = (uint32_t)validationLayers.size();
 	dci.ppEnabledLayerNames = validationLayers.c_ptr();
     dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
@@ -402,8 +364,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_physicalDevice,
 		m_logicalDevice,
 		m_allocator,
-		graphicsQueueIndex,
-		computeQueueIndex
+		graphicsQueueIndex
 	);
 
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);

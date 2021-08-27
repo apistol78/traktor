@@ -26,8 +26,7 @@ public:
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
 		VmaAllocator allocator,
-		uint32_t graphicsQueueIndex,
-		uint32_t computeQueueIndex
+		uint32_t graphicsQueueIndex
 	);
 
 	virtual ~Context();
@@ -60,8 +59,6 @@ public:
 
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
-	Queue* getComputeQueue() const { return m_computeQueue; }
-
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
 private:
@@ -73,7 +70,6 @@ private:
 	int32_t m_views;
 	uint32_t m_descriptorPoolRevision;
 	Ref< Queue > m_graphicsQueue;
-	Ref< Queue > m_computeQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
