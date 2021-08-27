@@ -33,6 +33,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 		primitiveRenderer->drawWireAabb(
 			Vector4::origo(),
 			Vector4(0.1f, 0.1f, 0.1f, 0.0f),
+			1.0f,
 			Color4ub(255, 255, 255, 255)
 		);
 
@@ -153,7 +154,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 			for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
 			{
 				primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
-				primitiveRenderer->drawWireAabb(*i, Color4ub(120, 255, 120, 255));
+				primitiveRenderer->drawWireAabb(*i, 1.0f, Color4ub(120, 255, 120, 255));
 			}
 
 			primitiveRenderer->popWorld();

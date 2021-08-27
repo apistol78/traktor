@@ -33,6 +33,7 @@ void PathComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			primitiveRenderer->drawWireAabb(
 				key.position,
 				Vector4(0.2f, 0.2f, 0.2f),
+				1.0f,
 				Color4ub(255, 255, 0)
 			);
 		}

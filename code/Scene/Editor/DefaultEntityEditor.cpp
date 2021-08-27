@@ -16,6 +16,7 @@
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/LightComponentData.h"
+#include "World/Entity/VolumeComponentData.h"
 
 namespace traktor
 {
@@ -49,6 +50,10 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 
 bool DefaultEntityEditor::isPickable() const
 {
+	const world::EntityData* entityData = m_entityAdapter->getEntityData();
+	if (getComponentOf< world::VolumeComponentData >(entityData) != nullptr)
+		return false;
+
 	return !isGroup();
 }
 
@@ -207,10 +212,10 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		if (m_entityAdapter->isSelected())
 		{
 			primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
-			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
+			primitiveRenderer->drawWireAabb(boundingBox, 3.0f, m_colorBoundingBoxSel);
 		}
 		else
-			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
+			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
 		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)

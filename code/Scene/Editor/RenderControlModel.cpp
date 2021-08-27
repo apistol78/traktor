@@ -161,7 +161,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 			Vector4 worldRayOrigin, worldRayDirection;
 			if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))
 			{
-				Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
+				Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true, true);
 
 				// De-select all other if shift isn't held.
 				if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) == 0)
@@ -200,33 +200,6 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 
 void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseDoubleClickEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	ui::Point mousePosition = event->getPosition();
-
-	if (event->getButton() != ui::MbtLeft)
-		return;
-	if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) != 0)
-		return;
-
-	Vector4 worldRayOrigin, worldRayDirection;
-	if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))
-	{
-		Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
-		if (
-			entityAdapter &&
-			entityAdapter->isSelected() &&
-			entityAdapter->isExternal()
-		)
-		{
-			Guid externalGuid;
-			entityAdapter->getExternalGuid(externalGuid);
-
-			Ref< db::Instance > instance = context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
-			if (instance)
-				context->getEditor()->openEditor(instance);
-		}
-	}
-
-	renderWidget->update();
 }
 
 void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseMoveEvent* event, SceneEditorContext* context, const TransformChain& transformChain)

@@ -25,7 +25,7 @@ void LineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 		Vector4 position = lerp(startPosition, endPosition, Scalar(k));
 
 		const Vector4 c_size(0.1f, 0.1f, 0.1f, 0.0f);
-		primitiveRenderer->drawWireAabb(Aabb3(position - c_size, position + c_size), Color4ub(255, 255, 0));
+		primitiveRenderer->drawWireAabb(Aabb3(position - c_size, position + c_size), 1.0f, Color4ub(255, 255, 0));
 	}
 }
 
