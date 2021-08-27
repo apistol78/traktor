@@ -27,7 +27,7 @@ bool Hlsl::generate(
 
 	if (!(
 		(vertexOutputs.size() == 1 && pixelOutputs.size() == 1) ||
-		computeOutputs.size() == 1
+		computeOutputs.size() >= 1
 	))
 	{
 		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L", CS " << computeOutputs.size() << L")." << Endl;
@@ -52,11 +52,14 @@ bool Hlsl::generate(
 	}
 	else
 	{
-		if (!cx.emit(computeOutputs[0]))
+		for (auto computeOutput : computeOutputs)
 		{
-			log::error << L"Unable to generate HLSL shader; emitter failed with compute graph." << Endl;
-			log::error << L"\t" << cx.getError() << Endl;
-			return false;
+			if (!cx.emit(computeOutput))
+			{
+				log::error << L"Unable to generate HLSL shader; emitter failed with compute graph." << Endl;
+				log::error << L"\t" << cx.getError() << Endl;
+				return false;
+			}	
 		}
 	}
 

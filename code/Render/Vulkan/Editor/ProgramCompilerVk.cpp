@@ -312,11 +312,12 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		program->addShader(vertexShader);
 		program->addShader(fragmentShader);
 	}
-	else if (computeOutputs.size() == 1)
+	else if (computeOutputs.size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
 
-		cx.getEmitter().emit(cx, computeOutputs[0]);
+		for (auto computeOutput : computeOutputs)
+			cx.getEmitter().emit(cx, computeOutput);
 
 		GlslRequirements computeRequirements = cx.requirements();
 
@@ -645,9 +646,11 @@ bool ProgramCompilerVk::generate(
 				return false;
 			}
 		}
-		else if (computeOutputs.size() == 1)
+		else if (computeOutputs.size() >= 1)
 		{
-			bool result = cx.getEmitter().emit(cx, computeOutputs[0]);
+			bool result = true;
+			for (auto computeOutput : computeOutputs)
+				result &= cx.getEmitter().emit(cx, computeOutput);
 			if (!result)
 			{
 				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;

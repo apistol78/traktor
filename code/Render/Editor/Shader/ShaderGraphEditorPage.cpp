@@ -121,23 +121,6 @@ private:
 	Ref< db::Database > m_db;
 };
 
-struct RemoveInputPortPred
-{
-	bool m_connectable;
-	bool m_optional;
-
-	RemoveInputPortPred(bool connectable, bool optional)
-	:	m_connectable(connectable)
-	,	m_optional(optional)
-	{
-	}
-
-	bool operator () (InputPort* ip) const
-	{
-		return ip->isConnectable() == m_connectable && ip->isOptional() == m_optional;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
@@ -1182,9 +1165,15 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	RefArray< InputPort > fragmentInputs;
 	fragmentGraph->findNodesOf< InputPort >(fragmentInputs);
 
-	RefArray< InputPort >::iterator
-		i = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, false)); fragmentInputs.erase(i, fragmentInputs.end());
-		i = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, true));  fragmentInputs.erase(i, fragmentInputs.end());
+	RefArray< InputPort >::iterator it;
+	it = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), [](InputPort* ip) {
+		return ip->isConnectable() == false && ip->isOptional() == false;
+	});
+	fragmentInputs.erase(it, fragmentInputs.end());
+	it = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), [](InputPort* ip) {
+		return ip->isConnectable() == false && ip->isOptional() == true;
+	});
+	fragmentInputs.erase(it, fragmentInputs.end());
 
 	// Get output ports.
 	RefArray< OutputPort > fragmentOutputs;
