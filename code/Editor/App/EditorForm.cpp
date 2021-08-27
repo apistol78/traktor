@@ -2738,6 +2738,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					updateShortcutTable();
 
 					// Notify editors about settings changed.
+					bool result = false;
 					for (auto tab : m_tabGroups)
 					{
 						for (int32_t i = 0; i < tab->getPageCount(); ++i)
@@ -2745,10 +2746,15 @@ bool EditorForm::handleCommand(const ui::Command& command)
 							Ref< ui::TabPage > tabPage = tab->getPage(i);
 							Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 							if (editorPage)
-								editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+								result |= editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 						}
 					}
-					m_propertiesView->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+
+					// Notify editor plugins about settings changed.
+					for (auto editorPluginSite : m_editorPluginSites)
+						editorPluginSite->handleCommand(ui::Command(L"Editor.SettingsChanged"), result);
+
+					result |= m_propertiesView->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 				}
 
 				update();
