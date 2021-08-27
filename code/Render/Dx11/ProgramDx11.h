@@ -28,7 +28,7 @@ class ProgramDx11 : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramDx11(ContextDx11* context);
+	explicit ProgramDx11(ContextDx11* context);
 
 	virtual ~ProgramDx11();
 
@@ -141,7 +141,7 @@ private:
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	RefArray< ITexture > m_parameterTextureArray;
-	RefArray< const BufferViewDx11 > m_parameterBufferViewArray;
+	AlignedVector< const BufferViewDx11* > m_parameterBufferViewArray;
 	bool m_parameterTextureArrayDirty;
 	bool m_parameterBufferViewArrayDirty;
 

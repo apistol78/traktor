@@ -147,7 +147,8 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 	{
 		instance->vertexBuffers[i] = m_renderSystem->createBuffer(
 			render::BuVertex,
-			m_meshes[0]->getVertexBuffer()->getBufferSize(),
+			m_meshes[0]->getVertexBuffer()->getElementCount(),
+			m_meshes[0]->getVertexBuffer()->getElementSize(),
 			true
 		);
 		if (!instance->vertexBuffers[i])
@@ -156,7 +157,8 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 
 	Ref< render::Buffer > indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
-		m_meshes[0]->getIndexBuffer()->getBufferSize(),
+		m_meshes[0]->getIndexBuffer()->getElementCount(),
+		m_meshes[0]->getIndexBuffer()->getElementSize(),
 		false
 	);
 	if (!indexBuffer)

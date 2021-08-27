@@ -257,7 +257,8 @@ bool WorldRendererForward::create(
 	// Lights struct buffer.
 	m_lightSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		sizeof(LightShaderData) * c_maxLightCount,
+		c_maxLightCount,
+		sizeof(LightShaderData),
 		true
 	);
 	if (!m_lightSBuffer)
@@ -266,7 +267,8 @@ bool WorldRendererForward::create(
 	// Tile light index array buffer.
 	m_lightIndexSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		sizeof(LightIndexShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
+		ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
+		sizeof(LightIndexShaderData),
 		true
 	);
 	if (!m_lightIndexSBuffer)
@@ -275,7 +277,8 @@ bool WorldRendererForward::create(
 	// Tile cluster buffer.
 	m_tileSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		sizeof(TileShaderData) * ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		ClusterDimXY * ClusterDimXY * ClusterDimZ,
+		sizeof(TileShaderData),
 		true
 	);
 	if (!m_tileSBuffer)

@@ -455,37 +455,13 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	return renderView;
 }
 
-//Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
-//{
-//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-//	if (!dynamic)
-//		return VertexBufferStaticDx11::create(m_context, m_vertexBufferStaticHeap, bufferSize, vertexElements);
-//	else
-//		return VertexBufferDynamicDx11::create(m_context, bufferSize, vertexElements);
-//}
-//
-//Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
-//{
-//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-//	if (!dynamic)
-//		return IndexBufferStaticDx11::create(m_context, m_indexBufferStaticHeap, indexType, bufferSize);
-//	else
-//		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
-//}
-//
-//Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize, bool dynamic)
-//{
-//	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
-//	return StructBufferDx11::create(m_context, structElements, bufferSize);
-//}
-
-Ref< Buffer > RenderSystemDx11::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
+Ref< Buffer > RenderSystemDx11::createBuffer(uint32_t usage, uint32_t elementCount, uint32_t elementSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
 	if (!dynamic)
-		return BufferStaticDx11::create(m_context, usage, bufferSize);
+		return BufferStaticDx11::create(m_context, usage, elementCount, elementSize);
 	else
-		return BufferDynamicDx11::create(m_context, usage, bufferSize);
+		return BufferDynamicDx11::create(m_context, usage, elementCount, elementSize);
 }
 
 Ref< const IVertexLayout > RenderSystemDx11::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)

@@ -160,7 +160,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 
 				m_vertexBuffer = m_renderSystem->createBuffer(
 					render::BuVertex,
-					(nvertices + 4 * 128) * sizeof(Vertex),
+					nvertices + 4 * 128, sizeof(Vertex),
 					false
 				);
 			}
@@ -186,7 +186,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
 			{
 				safeDestroy(m_indexBuffer);
-            	m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint16_t), false);
+            	m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, nindices + 3 * 128, sizeof(uint16_t), false);
 			}
 
             uint16_t* index = (uint16_t*)m_indexBuffer->lock();

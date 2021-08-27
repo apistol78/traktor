@@ -97,7 +97,7 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
 {
-	return renderSystem->createBuffer(render::BuStructured, jointCount * sizeof(JointData), true);
+	return renderSystem->createBuffer(render::BuStructured, jointCount, sizeof(JointData), true);
 }
 
 	}

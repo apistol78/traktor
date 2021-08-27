@@ -27,18 +27,23 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 
 	if (vertexBufferSize > 0)
 	{
+		const uint32_t vertexSize = getVertexSize(vertexElements);
+		if (vertexSize == 0)
+			return nullptr;
+
 		vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 		if (!vertexLayout)
 			return nullptr;
 
-		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false);
+		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize / vertexSize, vertexSize, false);
 		if (!vertexBuffer)
 			return nullptr;
 	}
 
 	if (indexBufferSize > 0)
 	{
-		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false);
+		const uint32_t indexSize = (indexType == ItUInt16) ? 2 : 4;
+		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize / indexSize, indexSize, false);
 		if (!indexBuffer)
 			return nullptr;
 	}

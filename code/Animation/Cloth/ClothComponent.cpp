@@ -116,7 +116,7 @@ bool ClothComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, /*2 * */resolutionX * resolutionY * sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, /*2 * */resolutionX * resolutionY, sizeof(ClothVertex), true);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -124,7 +124,7 @@ bool ClothComponent::create(
 	m_resolutionY = resolutionY;
 	m_triangleCount = quadsX * quadsY * 2/* * 2*/;
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, m_triangleCount * 3 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, m_triangleCount * 3, sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 

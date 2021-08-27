@@ -57,7 +57,8 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	Ref< render::Buffer > vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
-		c_vertexCount * sizeof(float) * 2,
+		c_vertexCount,
+		sizeof(float) * 2,
 		false
 	);
 	if (!vertexBuffer)
@@ -82,7 +83,8 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	Ref< render::Buffer > indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
-		c_indexCount * sizeof(uint16_t),
+		c_indexCount,
+		sizeof(uint16_t),
 		false
 	);
 	if (!indexBuffer)

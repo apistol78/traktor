@@ -18,7 +18,7 @@ class CubeTextureVrfy : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureVrfy(ResourceTracker* resourceTracker, ICubeTexture* texture);
+	explicit CubeTextureVrfy(ResourceTracker* resourceTracker, ICubeTexture* texture);
 
 	virtual ~CubeTextureVrfy();
 

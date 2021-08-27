@@ -222,7 +222,7 @@ bool ProgramDx11::create(
 
 	m_parameterFloatArray.resize(resource->m_parameterScalarSize, 0.0f);
 	m_parameterTextureArray.resize(resource->m_parameterTextureSize);
-	m_parameterBufferViewArray.resize(resource->m_parameterStructBufferSize);
+	m_parameterBufferViewArray.resize(resource->m_parameterStructBufferSize, nullptr);
 
 	// Create state objects.
 	m_d3dRasterizerState = resourceCache.getRasterizerState(resource->m_d3dRasterizerDesc);
