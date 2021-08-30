@@ -26,7 +26,7 @@ class T_DLLCLASS InflateStreamZip : public IStream
 	T_RTTI_CLASS;
 
 public:
-	InflateStreamZip(IStream* stream, uint32_t internalBufferSize = 4096);
+	explicit InflateStreamZip(IStream* stream, uint32_t internalBufferSize = 4096, bool negativeWindowBits = false);
 
 	virtual ~InflateStreamZip();
 

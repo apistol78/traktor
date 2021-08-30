@@ -300,7 +300,7 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 	extra[lfh.extraFieldLength] = '\0';
 
 	return new StreamStream(
-		new InflateStreamZip(m_zipFile),
+		new InflateStreamZip(m_zipFile, 4096, true),
 		m_zipFile->tell() + fi.uncompressedSize
 	);
 }

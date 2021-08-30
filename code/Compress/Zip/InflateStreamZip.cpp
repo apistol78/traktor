@@ -27,7 +27,7 @@ void inflateZFree(voidpf opaque, voidpf address)
 class InflateZipImpl : public RefCountImpl< IRefCount >
 {
 public:
-	InflateZipImpl(IStream* stream, uint32_t internalBufferSize)
+	InflateZipImpl(IStream* stream, uint32_t internalBufferSize, bool negativeWindowBits)
 	:	m_stream(stream)
 	,	m_buf(internalBufferSize)
 	,	m_startPosition(stream->tell())
@@ -38,7 +38,12 @@ public:
 		m_zstream.zalloc = &inflateZAlloc;
 		m_zstream.zfree = &inflateZFree;
 
-		int rc = inflateInit2(&m_zstream, -MAX_WBITS);
+		int rc;
+		if (!negativeWindowBits)
+			rc = inflateInit(&m_zstream);
+		else
+			rc = inflateInit2(&m_zstream, -MAX_WBITS);
+
 		T_FATAL_ASSERT (rc == Z_OK);
 	}
 
@@ -117,8 +122,8 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStreamZip", InflateStreamZip, IStream)
 
-InflateStreamZip::InflateStreamZip(IStream* stream, uint32_t internalBufferSize)
-:	m_impl(new InflateZipImpl(stream, internalBufferSize))
+InflateStreamZip::InflateStreamZip(IStream* stream, uint32_t internalBufferSize, bool negativeWindowBits)
+:	m_impl(new InflateZipImpl(stream, internalBufferSize, negativeWindowBits))
 {
 }
 
