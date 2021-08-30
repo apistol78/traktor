@@ -38,7 +38,7 @@ public:
 		m_zstream.zalloc = &inflateZAlloc;
 		m_zstream.zfree = &inflateZFree;
 
-		int rc = inflateInit(&m_zstream);
+		int rc = inflateInit2(&m_zstream, -MAX_WBITS);
 		T_FATAL_ASSERT (rc == Z_OK);
 	}
 

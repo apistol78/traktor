@@ -1,4 +1,4 @@
-#include "Compress/Zip/DeflateStreamZip.h"
+#include "Compress/Zip/InflateStreamZip.h"
 #include "Compress/Zip/ZipVolume.h"
 #include "Core/Io/File.h"
 #include "Core/Io/StreamStream.h"
@@ -181,6 +181,8 @@ ZipVolume::ZipVolume(IStream* zipFile)
 
 					directory = index;
 				}
+				else
+					directory = (int32_t)(std::distance(m_fileInfo.begin(), fiit));
 			}
 			else
 			{
@@ -197,6 +199,8 @@ ZipVolume::ZipVolume(IStream* zipFile)
 			}
 		}
 	}
+
+	//dump(0);
 }
 
 std::wstring ZipVolume::getDescription() const
@@ -228,7 +232,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 			if (!fi.isDirectory())
 			{
 				out.push_back(new File(
-					fi.name,
+					L"zip:" + getPathName(child),
 					fi.uncompressedSize,
 					File::FfNormal
 				));
@@ -236,7 +240,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 			else
 			{
 				out.push_back(new File(
-					fi.name,
+					L"zip:" + getPathName(child),
 					0,
 					File::FfDirectory
 				));
@@ -296,8 +300,8 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 	extra[lfh.extraFieldLength] = '\0';
 
 	return new StreamStream(
-		new DeflateStreamZip(m_zipFile),
-		fi.uncompressedSize
+		new InflateStreamZip(m_zipFile),
+		m_zipFile->tell() + fi.uncompressedSize
 	);
 }
 
@@ -369,6 +373,15 @@ std::wstring ZipVolume::getSystemPath(const Path& path) const
 		return txt;
 }
 
+std::wstring ZipVolume::getPathName(int32_t index) const
+{
+	const auto& fi = m_fileInfo[index];
+	if (fi.parent >= 0)
+		return getPathName(fi.parent) + L"/" + fi.name;
+	else
+		return fi.name;
+}
+
 int32_t ZipVolume::findFileInfoIndex(const Path& path) const
 {
 	std::wstring sp = getSystemPath(path);
@@ -396,6 +409,18 @@ int32_t ZipVolume::findFileInfoIndex(const Path& path) const
 	}
 
 	return index;
+}
+
+void ZipVolume::dump(int32_t index) const
+{
+	const auto& fi = m_fileInfo[index];
+	log::info << index << L". \"" << fi.name << L"\", parent " << fi.parent << L", " << (fi.isDirectory() ? L"directory" : L"file") << Endl;
+	log::info << IncreaseIndent;
+
+	for (auto c : fi.children)
+		dump(c);
+
+	log::info << DecreaseIndent;
 }
 
 	}
