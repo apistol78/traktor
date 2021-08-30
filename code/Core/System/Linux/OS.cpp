@@ -213,6 +213,24 @@ Ref< IProcess > OS::execute(
 			executable = resolvedCommandLine;
 	}
 
+	char wd[512] = { 0 };
+	if (!workingDirectory.empty())
+	{
+		// Since Raspberry PI doesn't support changing working directory
+		// in posix spawn we need to launch through "env" shim.
+#if defined(__RPI__)
+		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+
+		argv[argc++] = strdup("/bin/env");
+		argv[argc++] = strdup("-C");
+		argv[argc++] = strdup(wd);
+#else
+		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+#endif
+	}
+
 	// Convert all arguments; append bash if executing shell script.
 	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
@@ -259,14 +277,14 @@ Ref< IProcess > OS::execute(
 	// don't want child process searching our products by default.
 	if (env)
 	{
-		const std::map< std::wstring, std::wstring >& v = env->get();
+		const auto& v = env->get();
 		for (auto i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
 	else
 	{
 		Ref< Environment > env2 = getEnvironment();
-		const std::map< std::wstring, std::wstring >& v = env2->get();
+		const auto& v = env2->get();
 		for (auto i = v.begin(); i != v.end(); ++i)
 			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 	}
@@ -274,10 +292,6 @@ Ref< IProcess > OS::execute(
 	// Terminate argument and environment vectors.
 	envv[envc] = nullptr;
 	argv[argc] = nullptr;
-
-	char wd[512];
-	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
@@ -305,7 +319,6 @@ Ref< IProcess > OS::execute(
 #if !defined(__RPI__)
 		posix_spawn_file_actions_addchdir_np(fileActions, wd);
 #endif
-	
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
 	}
