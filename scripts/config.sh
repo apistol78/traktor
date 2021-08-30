@@ -25,25 +25,34 @@ export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Tools-master-201029
 export SPIRVCROSS_SDK=$TRAKTOR_HOME/3rdp/SPIRV-Cross-master-201009
 export ASTCENC_SDK=$TRAKTOR_HOME/3rdp/astc-encoder-master-201104
 
-# Platform specific 3rd party dependencies.
+# Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then
+	if [[ `uname -m` == arm* ]]; then
+		export TRAKTOR_PLATFORM=rpi
+	else
+		export TRAKTOR_PLATFORM=linux
+	fi
+elif [[ `uname -s` == Darwin* ]]; then
+	export TRAKTOR_PLATFORM=macos
+fi
+
+# Platform specific 3rd party dependencies.
+if [[ $TRAKTOR_PLATFORM == linux ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.5.2.x86_64.linux
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-1.3.0.x86_64.linux
-elif [[ `uname -s` == Darwin* ]]; then
+elif [[ $TRAKTOR_PLATFORM == macos ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.6.1.x86_64.macosx
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-1.3.0.x86_64.macos
 fi
 
 # Export name of solution builder binary.
-if [[ `uname -s` == Linux* ]]; then
-	if [[ `uname -m` == arm* ]]; then
-		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.SolutionBuilder.App"
-		export RUN="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.Run.App"
-	else
-		export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
-		export RUN="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.Run.App"
-	fi
-elif [[ `uname -s` == Darwin* ]]; then
+if [[ $TRAKTOR_PLATFORM == linux ]]; then
+	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.SolutionBuilder.App"
+	export RUN="$TRAKTOR_HOME/bin/linux/releasestatic/Traktor.Run.App"
+elif [[ $TRAKTOR_PLATFORM == rpi ]]; then
+	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.SolutionBuilder.App"
+	export RUN="$TRAKTOR_HOME/bin/rpi/releasestatic/Traktor.Run.App"
+elif [[ $TRAKTOR_PLATFORM == macos ]]; then
 	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.SolutionBuilder.App"
 	export RUN="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.Run.App"
 fi
