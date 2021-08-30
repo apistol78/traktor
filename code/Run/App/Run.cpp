@@ -1,3 +1,4 @@
+#include "Compress/ClassFactory.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/BoxedClassFactory.h"
 #include "Core/Class/CastAny.h"
@@ -549,6 +550,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	T_FORCE_LINK_REF(BoxedClassFactory);
 	T_FORCE_LINK_REF(CoreClassFactory1);
 	T_FORCE_LINK_REF(CoreClassFactory2);
+	T_FORCE_LINK_REF(compress::ClassFactory);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
 	T_FORCE_LINK_REF(json::JsonClassFactory);
 	T_FORCE_LINK_REF(net::NetClassFactory);
