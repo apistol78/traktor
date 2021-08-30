@@ -7,26 +7,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.DynamicMemoryStream", DynamicMemoryStream, IStream)
 
-DynamicMemoryStream::DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed, bool writeAllowed, const char* const name)
+DynamicMemoryStream::DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed, bool writeAllowed)
 :	m_buffer(nullptr)
 ,	m_readPosition(0)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
-#if defined(_DEBUG)
-,	m_name(name)
-#endif
 {
 	m_buffer = &buffer;
 }
 
-DynamicMemoryStream::DynamicMemoryStream(bool readAllowed, bool writeAllowed, const char* const name)
+DynamicMemoryStream::DynamicMemoryStream(bool readAllowed, bool writeAllowed)
 :	m_buffer(0)
 ,	m_readPosition(0)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
-#if defined(_DEBUG)
-,	m_name(name)
-#endif
 {
 	m_buffer = &m_internal;
 }

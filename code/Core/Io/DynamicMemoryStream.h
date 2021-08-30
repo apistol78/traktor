@@ -22,9 +22,9 @@ class T_DLLCLASS DynamicMemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
+	explicit DynamicMemoryStream(AlignedVector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true);
 
-	DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
+	explicit DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true);
 
 	virtual void close() override final;
 
@@ -56,9 +56,6 @@ private:
 	int64_t m_readPosition;
 	bool m_readAllowed;
 	bool m_writeAllowed;
-#if defined(_DEBUG)
-	const char* const m_name;
-#endif
 };
 
 }
