@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepClone", DeepClone, Object)
 DeepClone::DeepClone(const ISerializable* source)
 {
 	m_copy.reserve(c_initialCapacity);
-	DynamicMemoryStream stream(m_copy, false, true, T_FILE_LINE);
+	DynamicMemoryStream stream(m_copy, false, true);
 	BinarySerializer(&stream).writeObject(source);
 }
 
