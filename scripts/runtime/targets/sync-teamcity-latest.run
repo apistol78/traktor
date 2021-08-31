@@ -72,11 +72,11 @@ function main(argv)
 	local buildId = tonumber(xd.documentElement:getAttribute("id").value)
 	local artifactsHref = xd:getSingle("/build/artifacts"):getAttribute("href").value
 
-	-- Get last downloaded buildId from receipt.
+	-- Get last downloaded buildId.
 	local currentBuildId = 0
 	local xd = xml.Document()
-	if xd:loadFromFile(Path(binPath .. "/receipt.xml")) then
-		currentBuildId = tonumber(xd:getSingle("/receipt/buildId").value)
+	if xd:loadFromFile(Path(binPath .. "/build.xml")) then
+		currentBuildId = tonumber(xd:getSingle("/build/buildId").value)
 	end
 
 	stdout:printLn("Current build ID : " .. currentBuildId)
@@ -84,6 +84,15 @@ function main(argv)
 
 	-- In case a newer build exist we download and extract it's artifact.
 	if currentBuildId < buildId then
+
+		-- Create a file name for temporary artifact.
+		local tmpPath < const > = os.writableFolderPath .. "/Traktor/Download"
+		if not fileSystem:makeAllDirectories(Path(tmpPath)) then
+			stderr:printLn("Unable to create temporary folder for download.")
+			return 1
+		end
+		local tmpFile < const > = Path(tmpPath .. "/" .. Guid.create():format() .. ".zip")
+
 		local xd = downloadDocument(server .. artifactsHref)
 		local xfs = xd:get("/files/file")
 		for _, xf in pairs(xfs) do
@@ -103,29 +112,29 @@ function main(argv)
 			end
 
 			stdout:printLn("Downloading...")
-			local tf = fileSystem:open(Path("artifact.zip"), File.FmWrite)
+			local tf = fileSystem:open(tmpFile, File.FmWrite)
 			StreamCopy(tf, sf):execute()
 			tf:close()
 
 			-- Extract artifact.
 			stdout:printLn("Extracting...")
-			local zf = fileSystem:open(Path("artifact.zip"), File.FmRead)
+			local zf = fileSystem:open(tmpFile, File.FmRead)
 			fileSystem:mount("zip", traktor.compress.ZipVolume(zf))
 			traverse(binPath, "")
 			fileSystem:umount("zip")
 			zf:close()
 
 			-- Remove artifact.
-			fileSystem:remove(Path("artifact.zip"))
+			fileSystem:remove(tmpFile)
 		end
 	
-		-- Write a new receipt with latest build information.
-		local f = fileSystem:open(Path(binPath .. "/receipt.xml"), File.FmWrite)
+		-- Write a new build receipt with latest information.
+		local f = fileSystem:open(Path(binPath .. "/build.xml"), File.FmWrite)
 		local fs = traktor.run.StreamOutput(f, Utf8Encoding())
 		fs:printLn("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
-		fs:printLn("<receipt>")
+		fs:printLn("<build>")
 		fs:printLn("\t<buildId>" .. buildId .. "</buildId>")
-		fs:printLn("</receipt>")
+		fs:printLn("</build>")
 		f:close()
 	else
 		stdout:printLn("Up-to-date")
