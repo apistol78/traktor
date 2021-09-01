@@ -34,8 +34,8 @@
 #		if defined(__APPLE__)
 #			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 #				define T_MATH_USE_NEON
-#			elif !TARGET_OS_IPHONE
-#				define T_MATH_USE_SSE2
+//#			elif !TARGET_OS_IPHONE
+//#				define T_MATH_USE_SSE2
 #			endif
 #		elif defined(__LINUX__)
 #			define T_MATH_USE_SSE2
@@ -46,8 +46,8 @@
 #		if defined(__APPLE__)
 #			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
 #				define T_MATH_USE_NEON
-#			elif !TARGET_OS_IPHONE
-#				define T_MATH_USE_SSE2
+//#			elif !TARGET_OS_IPHONE
+//#				define T_MATH_USE_SSE2
 #			endif
 #		elif defined(__LINUX__)
 #			define T_MATH_USE_SSE2

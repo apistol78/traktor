@@ -20,16 +20,6 @@ bool compareEqual(const Vector4& a, const Vector4& b)
 	return true;
 }
 
-bool compareNotEqual(const Vector4& a, const Vector4& b)
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		if (std::fabs(a[i] - b[i]) > FUZZY_EPSILON)
-			return true;
-	}
-	return false;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseWinding", 0, CaseWinding, Case)

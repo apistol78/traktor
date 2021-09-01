@@ -150,10 +150,6 @@ void CaseMath::run()
 	CASE_ASSERT_COMPARE(pl2.distance(pt), 4.0f, fuzzyEqual);
 
 	Plane pl3 = rotateY(deg2rad(90.0f)) * pl1;
-
-	Vector4 pt3 = rotateY(deg2rad(90.0f)) * pt;
-	Scalar pl3d = pl3.distance(pt);	// 1.0f
-
 	CASE_ASSERT_COMPARE(pl3.distance(pt), 3.0f, fuzzyEqual);
 
 	// Plane buildFromCorners

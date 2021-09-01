@@ -33,27 +33,7 @@ void threadEvent()
 }
 
 Semaphore g_semaphore;
-uint32_t g_count = 0;
 uint32_t g_error = 0;
-
-void sharedAccess()
-{
-	g_semaphore.wait();
-	for (int32_t i = 0; i < 100; ++i)
-	{
-		g_count++;
-		if (g_count > 1)
-			g_error++;
-		g_count--;
-	}
-	g_semaphore.release();
-}
-
-void threadSemaphore()
-{
-	for (int32_t i = 0; i < 100000; ++i)
-		sharedAccess();
-}
 
 		}
 

@@ -57,6 +57,7 @@ namespace traktor
 			int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = {
 				( __check__< ArgumentTypes >(Is, argv[Is]), 0 ) ...
 			};
+            (void)__dummy__;
 		}
 	};
 }

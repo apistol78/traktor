@@ -25,7 +25,7 @@ Semaphore::Semaphore()
 	pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE);
 
 	int rc = pthread_mutex_init(&data->outer, &ma);
-	T_ASSERT (rc == 0);
+    T_ASSERT (rc == 0); (void)rc;
 
 	m_handle = data;
 }
@@ -48,7 +48,7 @@ void Semaphore::release()
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 
 	int rc = pthread_mutex_unlock(&data->outer);
-	T_ASSERT(rc == 0);
+    T_ASSERT(rc == 0); (void)rc;
 }
 
 }

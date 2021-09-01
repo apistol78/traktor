@@ -29,7 +29,7 @@ wchar_t StringReader::readChar()
 
 	T_ASSERT(m_count > 0);
 
-	int32_t result = m_encoding->translate(m_buffer, m_count, ch);
+	int32_t result = m_encoding->translate(m_buffer, (int)m_count, ch);
 	if (result <= 0)
 		return 0;
 
@@ -69,7 +69,7 @@ int64_t StringReader::readLine(std::wstring& out)
 		if (m_count <= 0)
 			break;
 
-		int32_t result = m_encoding->translate(m_buffer, m_count, ch);
+		int32_t result = m_encoding->translate(m_buffer, (int)m_count, ch);
 		if (result <= 0)
 		{
 			// Need more characters in buffer; read another byte.

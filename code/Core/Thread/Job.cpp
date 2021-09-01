@@ -45,7 +45,7 @@ public:
 
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_allocatorLock);
 		bool result = m_blockAllocator.free(ptr);
-		T_ASSERT_M (result, L"Invalid pointer");
+        T_ASSERT_M (result, L"Invalid pointer"); (void)result;
 		m_count--;
 	}
 

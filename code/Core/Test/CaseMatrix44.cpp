@@ -25,8 +25,6 @@ void CaseMatrix44::run()
 		);
 
 		Matrix44 Mc = ml * mr;
-		Matrix44 Mw = mr * ml;
-
 		CASE_ASSERT_EQUAL (Mc(0, 0), 33.0f);
 	}
 
@@ -60,14 +58,6 @@ void CaseMatrix44::run()
 	);
 
 	CASE_ASSERT_COMPARE(md.determinant(), 1.0f, fuzzyEqual);
-
-	Matrix44 mx = rotateX(PI / 2.0f);
-	Matrix44 my = rotateY(PI / 2.0f);
-	Matrix44 mz = rotateZ(PI / 2.0f);
-
-	Vector4 vx = mx * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-	Vector4 vy = my * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	Vector4 vz = mz * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 
 	}

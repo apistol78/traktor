@@ -33,6 +33,7 @@ public:
 		StringOutputStream ss;
 		ss << CastAny< ReturnType >::typeName();
 		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = { ( ss << L"," << CastAny< ArgumentTypes >::typeName(), 0) ... };
+        (void)__dummy__;
 		return ss.str();
 	}
 #endif

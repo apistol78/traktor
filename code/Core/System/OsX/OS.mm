@@ -112,12 +112,12 @@ std::wstring OS::getCurrentUser() const
 
 std::wstring OS::getUserHomePath() const
 {
+    glob_t* globbuf = (glob_t*)alloca(sizeof(glob_t));
 	char path[] = { "~" };
-	glob_t globbuf;
 	
-	if (glob(path, GLOB_TILDE, NULL, &globbuf) == 0)
+	if (glob(path, GLOB_TILDE, NULL, globbuf) == 0)
 	{
-		char* ep = globbuf.gl_pathv[0];
+		char* ep = globbuf->gl_pathv[0];
 		return mbstows(ep);
 	}
 	

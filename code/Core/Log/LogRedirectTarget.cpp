@@ -16,7 +16,7 @@ LogRedirectTarget::LogRedirectTarget(ILogTarget* target1, ILogTarget* target2)
 
 void LogRedirectTarget::log(uint32_t threadId, int32_t level, const wchar_t* str)
 {
-	for (const auto& target : m_targets)
+	for (auto target : m_targets)
 		target->log(threadId, level, str);
 }
 

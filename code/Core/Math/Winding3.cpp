@@ -93,8 +93,8 @@ bool Winding3::getProjection(Winding2& outProjection, Vector4& outU, Vector4& ou
 	Vector4 u, v;
 	orthogonalFrame(plane.normal(), u, v);
 
-	outProjection.resize(m_points.size());
-	for (size_t i = 0; i < m_points.size(); ++i)
+	outProjection.resize((uint32_t)m_points.size());
+	for (uint32_t i = 0; i < (uint32_t)m_points.size(); ++i)
 	{
 		outProjection[i] = Vector2(
 			dot3(u, m_points[i]),
