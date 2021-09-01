@@ -88,7 +88,6 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 
 bool JobQueue::wait(int32_t timeout)
 {
-	Thread* thread = ThreadManager::getInstance().getCurrentThread();
 	while (m_pending > 0)
 	{
 		if (!m_jobFinishedEvent.wait(timeout))

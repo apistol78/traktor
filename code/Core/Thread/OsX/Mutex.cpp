@@ -36,7 +36,7 @@ Mutex::Mutex()
 	pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE);
 
 	int rc = pthread_mutex_init(data->outer, &ma);
-	T_ASSERT (rc == 0);
+    T_ASSERT (rc == 0); (void)rc;
 
 	m_handle = data;
 }
@@ -60,7 +60,7 @@ Mutex::Mutex(const Guid& id)
 	pthread_mutexattr_setpshared(&ma, PTHREAD_PROCESS_SHARED);
 
 	int rc = pthread_mutex_init(data->outer, &ma);
-	T_ASSERT (rc == 0);
+    T_ASSERT (rc == 0); (void)rc;
 
 	m_handle = data;
 }
@@ -88,7 +88,7 @@ void Mutex::release()
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 	int rc = pthread_mutex_unlock(data->outer);
-	T_ASSERT(rc == 0);
+    T_ASSERT(rc == 0); (void)rc;
 }
 
 bool Mutex::existing() const

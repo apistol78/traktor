@@ -9,7 +9,7 @@ CriticalSection::CriticalSection()
 	pthread_mutex_t* mutex = new pthread_mutex_t();
 
 	int rc = pthread_mutex_init(mutex, 0);
-	T_ASSERT (rc == 0);
+    T_ASSERT (rc == 0); (void)rc;
 
 	m_handle = mutex;
 }
@@ -31,7 +31,7 @@ void CriticalSection::release()
 {
 	pthread_mutex_t* mutex = reinterpret_cast< pthread_mutex_t* >(m_handle);
 	int rc = pthread_mutex_unlock(mutex);
-	T_ASSERT (rc == 0);
+    T_ASSERT (rc == 0); (void)rc;
 }
 
 }

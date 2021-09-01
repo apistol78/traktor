@@ -14,14 +14,15 @@ bool Case::execute(const IReport& infoReport, const IReport& errorReport)
 	m_errorReport = &errorReport;
 	m_allocdelta = 0;
 
+#if 0
 	int64_t allocPre = (int64_t)Alloc::allocated();
-
+#endif
+    
 	run();
 
-	int64_t allocPost = (int64_t)Alloc::allocated();
-	int64_t allocBalance = (allocPost - allocPre) - m_allocdelta;
-
-#if 0	
+#if 0
+    int64_t allocPost = (int64_t)Alloc::allocated();
+    int64_t allocBalance = (allocPost - allocPre) - m_allocdelta;
 	if (allocBalance != 0)
 	{
 		StringOutputStream ss;

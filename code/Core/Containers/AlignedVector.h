@@ -637,7 +637,7 @@ public:
 	 */
 	void resize(size_t size)
 	{
-		ItemType T_ALIGN16 zero;
+        ItemType T_ALIGN16 zero = {};
 		resize(size, zero);
 	}
 
