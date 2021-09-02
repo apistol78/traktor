@@ -3,22 +3,13 @@
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
+export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/latest/osx/releaseshared/Traktor.SolutionBuilder.App"
+
 # Ensure correct path and build solution files.
 pushd $TRAKTOR_HOME
 
-CONFIG=$1
-if [ -z $CONFIG ] ; then
-	CONFIG="both"
-fi
-
-if [ $CONFIG == "static" ] ; then
-	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-static $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
-elif [ $CONFIG == "shared" ] ; then
-	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-shared $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugShared -r=ReleaseShared
-else
-	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-static $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
-	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-shared $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugShared -r=ReleaseShared
-fi
+$SOLUTIONBUILDER -f=xcode -xcode-workspace-template=$TRAKTOR_HOME/resources/build/configurations/xcode-workspace.sb -xcode-project-template=$TRAKTOR_HOME/resources/build/configurations/xcode-project.sb $TRAKTOR_HOME/resources/build/ExternOSX.xms
+$SOLUTIONBUILDER -f=xcode -xcode-workspace-template=$TRAKTOR_HOME/resources/build/configurations/xcode-workspace.sb -xcode-project-template=$TRAKTOR_HOME/resources/build/configurations/xcode-project.sb $TRAKTOR_HOME/resources/build/TraktorOSX.xms
 
 popd
 
