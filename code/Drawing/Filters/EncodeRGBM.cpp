@@ -126,7 +126,6 @@ EncodeRGBM::EncodeRGBM(float range, int32_t blockSizeX, int32_t blockSizeY, floa
 void EncodeRGBM::apply(Image* image) const
 {
 	const Scalar c_rangeDenom = 1.0_simd / Scalar(m_range);
-	const Scalar c_epsilon= 1e-6_simd;
 
 	Color4f cl;
 	for (int32_t y = 0; y < image->getHeight(); ++y)

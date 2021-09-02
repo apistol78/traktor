@@ -335,6 +335,10 @@ void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& o
 		v = -direction.y();
 		n = 1.0f / abs(direction.z());
 		break;
+			
+	default:
+		outX = outY = 0;
+		return;
 	}
 
 	u *= n;
@@ -369,6 +373,9 @@ void CubeMap::set(const Vector4& direction, const Color4f& value)
 		v = -direction.y();
 		n = 1.0f / abs(direction.z());
 		break;
+            
+    default:
+        return;
 	}
 
 	u *= n;
@@ -406,6 +413,9 @@ Color4f CubeMap::get(const Vector4& direction) const
 		v = -direction.y();
 		n = 1.0f / abs(direction.z());
 		break;
+			
+	default:
+		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	u *= n;
