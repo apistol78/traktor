@@ -73,6 +73,10 @@ local function split(s, delimiter)
     return result
 end
 
+local function endsWith(s, suffix)
+	return s:sub(-#suffix) == suffix
+end
+
 local function insertLast(t, iv)
 	for i, v in ipairs(t) do
 		if v == iv then
@@ -379,29 +383,29 @@ for _, configuration in pairs(project.configurations) do
 	frameWorksBuildPhase.runOnlyForDeploymentPostprocessing = 0
 	table.insert(frameWorksBuildPhases, frameWorksBuildPhase)
 
-	-- for _, library in pairs(libraries) do
+	for _, library in pairs(configuration.libraries) do
+		if endsWith(library, ".framework") then
+			local fileReference = {}
+			fileReference.isa = "PBXFileReference"
+			fileReference.id = createUid()
+			fileReference.comment = library .. " (" .. configuration.name .. ")"
+			fileReference.lastKnownFileType = "wrapper.framework"
+			fileReference.name = library
+			fileReference.path = library
+			fileReference.sourceTree = "SDKROOT"
+			table.insert(fileReferences, fileReference)
+			table.insert(frameworksGroup.children, fileReference)
 
-		-- local fileReference = {}
-		-- fileReference.isa = "PBXFileReference"
-		-- fileReference.id = createUid()
-		-- fileReference.comment = library .. " (" .. configuration.name .. ")"
-		-- fileReference.explicitFileType = "compiled.mach-o.dylib" -- explicitFileType(configuration)
-		-- fileReference.name = library
-		-- fileReference.path = library
-		-- fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
-		-- table.insert(fileReferences, fileReference)
-		-- table.insert(frameworksGroup.children, fileReference)
-
-		-- local buildFile = {}
-		-- buildFile.isa = "PBXBuildFile"
-		-- buildFile.id = createUid()
-		-- buildFile.comment = library .. " in Frameworks"
-		-- buildFile.name = library
-		-- buildFile.fileRef = fileReference
-		-- table.insert(buildFiles, buildFile)		
-		-- table.insert(frameWorksBuildPhase.files, buildFile)
-
-	-- end
+			local buildFile = {}
+			buildFile.isa = "PBXBuildFile"
+			buildFile.id = createUid()
+			buildFile.comment = library .. " in Frameworks"
+			buildFile.name = library
+			buildFile.fileRef = fileReference
+			table.insert(buildFiles, buildFile)		
+			table.insert(frameWorksBuildPhase.files, buildFile)
+		end
+	end
 
 	-- Create build configuration.
 	local buildConfiguration = {}
