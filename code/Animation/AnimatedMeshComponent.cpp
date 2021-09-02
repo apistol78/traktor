@@ -336,7 +336,7 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 		m_poseTransforms.resize(0);
 
 		// Evaluate pose transforms in object space.
-		bool continous = m_poseController->evaluate(
+		m_poseController->evaluate(
 			time,
 			deltaTime,
 			m_transform.get(),

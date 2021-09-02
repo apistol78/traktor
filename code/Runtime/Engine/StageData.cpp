@@ -29,7 +29,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.StageData", 11, StageData, ISerial
 
 Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* params) const
 {
-	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< IRuntimeClass > clazz;
 	resource::Proxy< render::Shader > shaderFade;
@@ -38,10 +37,12 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	// Load resource bundle.
 	if (m_resourceBundle.isNotNull())
 	{
-		bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
+        render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+
+        bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
 		if (!skipPreload)
 		{
-			uint32_t preloadLimit = environment->getSettings()->getProperty< int32_t >(L"Runtime.SkipPreloadLimit", 768) * 1024 * 1024;
+            uint32_t preloadLimit = environment->getSettings()->getProperty< int32_t >(L"Runtime.SkipPreloadLimit", 768) * 1024 * 1024;
 
 			// Get amount of dedicated video memory; we cannot preload if too little amount of memory available or unknown vendor.
 			render::RenderSystemInformation rsi;

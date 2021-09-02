@@ -531,7 +531,6 @@ void WorldRendererForward::setupTileDataPass(
 
 		const Vector4& tl = viewFrustum.corners[0];
 		const Vector4& tr = viewFrustum.corners[1];
-		const Vector4& br = viewFrustum.corners[2];
 		const Vector4& bl = viewFrustum.corners[3];
 
 		Vector4 vx = tr - tl;

@@ -121,6 +121,8 @@ bool ProgramVk::create(
 
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 	}
+    else
+        return false;
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);

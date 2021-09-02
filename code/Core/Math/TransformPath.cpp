@@ -88,19 +88,13 @@ public:
 		if (index_p >= 0)
 			outVp = m_keys[index_p];
 		else
-		{
-			index_p = nkeys - 1;
 			outVp = m_keys[0];
-		}
 
 		int32_t index_n = index_1 + 1;
 		if (index_n < nkeys)
 			outVn = m_keys[index_n];
 		else
-		{
-			index_n = nkeys - 1;
 			outVn = m_keys[nkeys - 1];
-		}
 
 		if (T0 < T1 - FUZZY_EPSILON)
 			inoutT = (inoutT - T0) / (T1 - T0);
@@ -108,8 +102,8 @@ public:
 			inoutT = 0.0f;
 
 		outTension = lerp(m_keys[index].tcb.x(), m_keys[index_1].tcb.x(), inoutT);
-		outBias = lerp(m_keys[index].tcb.y(), m_keys[index].tcb.y(), inoutT);
-		outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index].tcb.z(), inoutT);
+		outBias = lerp(m_keys[index].tcb.y(), m_keys[index_1].tcb.y(), inoutT);
+		outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index_1].tcb.z(), inoutT);
 	}
 
 	TransformPath::Key combine(

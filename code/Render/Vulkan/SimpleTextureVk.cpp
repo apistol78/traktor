@@ -188,7 +188,6 @@ void SimpleTextureVk::unlock(int32_t level)
 	// Copy staging buffer into texture.
 	uint32_t mipWidth = getTextureMipSize(m_desc.width, level);
 	uint32_t mipHeight = getTextureMipSize(m_desc.height, level);
-	uint32_t mipSize = getTextureMipPitch(m_desc.format, m_desc.width, m_desc.height, level);
 
 	VkBufferImageCopy region = {};
 	region.bufferOffset = 0;
