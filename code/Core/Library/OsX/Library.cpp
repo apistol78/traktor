@@ -27,66 +27,38 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 {
 	m_handle = 0;
 
-	// In case we're running debug build we first need to look for equivialent libraries.
-#if defined(_DEBUG)
+	std::wstring resolved = L"lib" + libraryName.getFileName() + L".dylib";
+	std::wstring errors;
+
+	// Use executable path first.
 	{
-		std::wstring resolved = L"lib" + libraryName.getFileName() + L"_d.dylib";
-
-		// Use executable path first.
+		std::wstring library = L"@executable_path/" + resolved;
+		std::string tmp1 = wstombs(library);
+		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		if (m_handle)
 		{
-			std::wstring library = L"@executable_path/" + resolved;
-			std::string tmp1 = wstombs(library);
-			m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-			if (m_handle)
-			{
-				T_DEBUG(L"Library \"" << library << L"\" loaded");
-				return true;
-			}
+			T_DEBUG(L"Library \"" << library << L"\" loaded");
+			return true;
 		}
-
-		// Try default paths second.
-		{
-			std::wstring library = resolved;
-			std::string tmp1 = wstombs(library);
-			m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-			if (m_handle)
-			{
-				T_DEBUG(L"Library \"" << library << L"\" loaded");
-				return true;
-			}
-		}
-	}
-#endif
-
-	{
-		std::wstring resolved = L"lib" + libraryName.getFileName() + L".dylib";
-
-		// Use executable path first.
-		{
-			std::wstring library = L"@executable_path/" + resolved;
-			std::string tmp1 = wstombs(library);
-			m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-			if (m_handle)
-			{
-				T_DEBUG(L"Library \"" << library << L"\" loaded");
-				return true;
-			}
-		}
-
-		// Try default paths second.
-		{
-			std::wstring library = resolved;
-			std::string tmp1 = wstombs(library);
-			m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-			if (m_handle)
-			{
-				T_DEBUG(L"Library \"" << library << L"\" loaded");
-				return true;
-			}
-		}
+		else
+			errors += mbstows(dlerror()) + L"\n";
 	}
 
-	log::error << L"Unable to open library \"" << libraryName.getFileName() << L"\"" << Endl;
+	// Try default paths second.
+	{
+		std::wstring library = resolved;
+		std::string tmp1 = wstombs(library);
+		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		if (m_handle)
+		{
+			T_DEBUG(L"Library \"" << library << L"\" loaded");
+			return true;
+		}
+		else
+			errors += mbstows(dlerror()) + L"\n";
+	}
+
+	log::error << L"Failed to load library \"" << libraryName.getPathName() << L"\"" << Endl << IncreaseIndent << errors << DecreaseIndent;
 	return false;
 }
 
