@@ -1,0 +1,866 @@
+<?--
+import(traktor)
+
+local function defaultBuildSettings()
+	return {
+		ALWAYS_SEARCH_USER_PATHS = "YES",
+		CLANG_ANALYZER_NONNULL = "YES",
+		CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = "YES_AGGRESSIVE",
+		CLANG_CXX_LANGUAGE_STANDARD = "c++14",
+		CLANG_CXX_LIBRARY = "libc++",
+		CLANG_ENABLE_MODULES = "YES",
+		-- CLANG_ENABLE_OBJC_ARC = "YES",
+		-- CLANG_ENABLE_OBJC_WEAK = "YES",
+		CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = "YES",
+		CLANG_WARN_BOOL_CONVERSION = "YES",
+		CLANG_WARN_COMMA = "YES",
+		CLANG_WARN_CONSTANT_CONVERSION = "YES",
+		CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = "YES",
+		CLANG_WARN_DIRECT_OBJC_ISA_USAGE = "YES_ERROR",
+		-- CLANG_WARN_DOCUMENTATION_COMMENTS = "YES",
+		CLANG_WARN_EMPTY_BODY = "YES",
+		CLANG_WARN_ENUM_CONVERSION = "YES",
+		CLANG_WARN_INFINITE_RECURSION = "YES",
+		CLANG_WARN_INT_CONVERSION = "YES",
+		CLANG_WARN_NON_LITERAL_NULL_CONVERSION = "YES",
+		CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = "YES",
+		CLANG_WARN_OBJC_LITERAL_CONVERSION = "YES",
+		CLANG_WARN_OBJC_ROOT_CLASS = "YES_ERROR",
+		CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "YES",
+		CLANG_WARN_RANGE_LOOP_ANALYSIS = "YES",
+		CLANG_WARN_STRICT_PROTOTYPES = "YES",
+		CLANG_WARN_SUSPICIOUS_MOVE = "YES",
+		CLANG_WARN_UNGUARDED_AVAILABILITY = "YES_AGGRESSIVE",
+		CLANG_WARN_UNREACHABLE_CODE = "YES",
+		CLANG_WARN__DUPLICATE_METHOD_MATCH = "YES",
+		CODE_SIGN_STYLE = "Automatic",
+		-- CONFIGURATION_BUILD_DIR = "../ReleaseStatic",
+		COPY_PHASE_STRIP = "NO",
+		DEBUG_INFORMATION_FORMAT = "dwarf",
+		--DEVELOPMENT_TEAM = MWNC6MCRE5;
+		ENABLE_STRICT_OBJC_MSGSEND = "YES",
+		ENABLE_TESTABILITY = "YES",
+		EXECUTABLE_PREFIX = "lib",
+		GCC_C_LANGUAGE_STANDARD = "gnu11",
+		GCC_DYNAMIC_NO_PIC = "NO",
+		GCC_NO_COMMON_BLOCKS = "YES",
+		GCC_OPTIMIZATION_LEVEL = 0,
+		GCC_PREPROCESSOR_DEFINITIONS = { "__MAC__", "_UNICODE", "UNICODE", "$(inherited)" },
+		GCC_WARN_64_TO_32_BIT_CONVERSION = "YES",
+		GCC_WARN_ABOUT_RETURN_TYPE = "YES_ERROR",
+		GCC_WARN_UNDECLARED_SELECTOR = "YES",
+		GCC_WARN_UNINITIALIZED_AUTOS = "YES_AGGRESSIVE",
+		GCC_WARN_UNUSED_FUNCTION = "YES",
+		GCC_WARN_UNUSED_VARIABLE = "YES",
+		MACOSX_DEPLOYMENT_TARGET = "11.3",
+		MTL_ENABLE_DEBUG_INFO = "INCLUDE_SOURCE",
+		MTL_FAST_MATH = "YES",
+		--ONLY_ACTIVE_ARCH = "YES",
+		--PRODUCT_NAME = "Traktor.Core",
+		SDKROOT = "macosx",
+		SKIP_INSTALL = "YES",
+		USER_HEADER_SEARCH_PATHS = { "${DERIVED_FILES_DIR}" }
+	}
+end
+
+local function split(s, delimiter)
+    local result = {}
+    for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
+    	if match ~= "" then
+        	table.insert(result, match)
+        end
+    end
+    return result
+end
+
+local function insertLast(t, iv)
+	for i, v in ipairs(t) do
+		if v == iv then
+			table.remove(t, i)
+			break
+		end
+	end
+	table.insert(t, iv)
+end
+
+local function productName(project, configuration)
+	if configuration.targetFormat == "StaticLibrary" then
+		return "lib" .. project.name .. ".a"
+	elseif configuration.targetFormat == "SharedLibrary" then
+		return "lib" .. project.name .. ".dylib"
+	elseif configuration.targetFormat == "Executable" or configuration.targetFormat == "ExecutableConsole" then
+		return project.name
+	else
+		error("Unknown target format " .. configuration.targetFormat)
+	end
+end
+
+local function productType(configuration)
+	if configuration.targetFormat == "StaticLibrary" then
+		return "com.apple.product-type.library.static"
+	elseif configuration.targetFormat == "SharedLibrary" then
+		return "com.apple.product-type.library.dynamic"
+	elseif configuration.targetFormat == "Executable" or configuration.targetFormat == "ExecutableConsole" then
+		return "com.apple.product-type.tool"
+	else
+		error("Unknown target format " .. configuration.targetFormat)
+	end
+end
+
+local function explicitFileType(configuration)
+	if configuration.targetFormat == "StaticLibrary" then
+		return "archive.ar"
+	elseif configuration.targetFormat == "SharedLibrary" then
+		return "compiled.mach-o.dylib"
+	elseif configuration.targetFormat == "Executable" or configuration.targetFormat == "ExecutableConsole" then
+		return "compiled.mach-o.executable"
+	else
+		error("Unknown target format " .. configuration.targetFormat)
+	end
+end
+
+local function collectFiles(project, projectOrFilter, enterGroup, leaveGroup, addFile)
+	for _, item in pairs(projectOrFilter.items) do
+		if isa(item, Filter) then
+			enterGroup(item)
+			collectFiles(project, item, enterGroup, leaveGroup, addFile)
+			leaveGroup(item)
+		else
+			local files = item:getSystemFiles(project:getSourcePath())
+			for _, file in pairs(files) do
+				addFile(file)
+			end
+		end
+	end
+end
+
+local function createUid()
+	local uid = ""
+	for i = 1, 12 do
+		uid = uid .. string.format("%02x", math.random(0, 255))
+	end
+	return string.upper(uid)
+end
+
+-- Tables containing all objects serialized into xcode project.
+local rootProject = {}
+local fileReferences = {}
+local groups = {}
+local buildFiles = {}
+local targetDependencyProxies = {}
+local referenceProxies = {}
+local frameWorksBuildPhases = {}
+local headersBuildPhases = {}
+local sourcesBuildPhases = {}
+local shellScriptBuildPhases = {}
+local targetDependencies = {}
+local nativeTargets = {}
+local buildConfigurations = {}
+local configurationLists = {}
+
+-- Create root group.
+local rootGroup = {}
+rootGroup.isa = "PBXGroup"
+rootGroup.id = createUid()
+rootGroup.comment = ""
+rootGroup.children = {}
+rootGroup.sourceTree = "<group>";
+table.insert(groups, rootGroup)
+
+-- Create products group.
+local productsGroup = {}
+productsGroup.isa = "PBXGroup"
+productsGroup.id = createUid()
+productsGroup.comment = "Products"
+productsGroup.children = {}
+productsGroup.name = "Products"
+productsGroup.sourceTree = "<group>";
+table.insert(groups, productsGroup)
+table.insert(rootGroup.children, productsGroup)
+
+-- Create proxy products group, not part of group tree.
+local proxyProductsGroup = {}
+proxyProductsGroup.isa = "PBXGroup"
+proxyProductsGroup.id = createUid()
+proxyProductsGroup.comment = "Proxy products"
+proxyProductsGroup.children = {}
+proxyProductsGroup.name = "Products"
+proxyProductsGroup.sourceTree = "<group>";
+table.insert(groups, proxyProductsGroup)
+
+-- Create frameworks group.
+local frameworksGroup = {}
+frameworksGroup.isa = "PBXGroup"
+frameworksGroup.id = createUid()
+frameworksGroup.comment = "Frameworks"
+frameworksGroup.children = {}
+frameworksGroup.name = "Frameworks"
+frameworksGroup.sourceTree = "<group>";
+table.insert(groups, frameworksGroup)
+table.insert(rootGroup.children, frameworksGroup)
+
+-- Create shared build configuration.
+local sharedBuildConfiguration = {}
+sharedBuildConfiguration.isa = "XCBuildConfiguration"
+sharedBuildConfiguration.id = createUid()
+sharedBuildConfiguration.comment = "Build configuration for PBXProject"
+sharedBuildConfiguration.name = "Omni"
+sharedBuildConfiguration.buildSettings = {}
+table.insert(buildConfigurations, sharedBuildConfiguration)
+
+-- Create shared configuration list.
+local sharedConfigurationList = {}
+sharedConfigurationList.isa = "XCConfigurationList"
+sharedConfigurationList.id = createUid()
+sharedConfigurationList.comment = "Build configuration list for PBXProject"
+sharedConfigurationList.buildConfigurations = { sharedBuildConfiguration }
+sharedConfigurationList.defaultConfigurationIsVisible = 0
+sharedConfigurationList.defaultConfigurationName = sharedBuildConfiguration.name;
+table.insert(configurationLists, sharedConfigurationList)
+
+-- Create root project.
+rootProject.isa = "PBXProject"
+rootProject.id = createUid()
+rootProject.attributes = {}
+rootProject.buildConfigurationList = sharedConfigurationList
+rootProject.compatibilityVersion = "Xcode 9.3"
+rootProject.developmentRegion = "en"
+rootProject.hasScannedForEncodings = 0
+rootProject.knownRegions = { "en" }
+rootProject.mainGroup = rootGroup
+rootProject.productRefGroup = productsGroup
+rootProject.projectDirPath = ""
+rootProject.projectReferences = {}
+rootProject.projectRoot = ""
+rootProject.targets = {}
+
+-- Collect input files and build groups.
+local headersBuildPhase = {}
+headersBuildPhase.isa = "PBXHeadersBuildPhase"
+headersBuildPhase.id = createUid()
+headersBuildPhase.comment = "Headers"
+headersBuildPhase.name = "Headers"
+headersBuildPhase.buildActionMask = 2147483647
+headersBuildPhase.files = {}
+headersBuildPhase.runOnlyForDeploymentPostprocessing = 0
+table.insert(headersBuildPhases, headersBuildPhase)
+
+local sourcesBuildPhase = {}
+sourcesBuildPhase.isa = "PBXSourcesBuildPhase"
+sourcesBuildPhase.id = createUid()
+sourcesBuildPhase.comment = "Sources"
+sourcesBuildPhase.name = "Sources"
+sourcesBuildPhase.buildActionMask = 2147483647
+sourcesBuildPhase.files = {}
+sourcesBuildPhase.runOnlyForDeploymentPostprocessing = 0
+table.insert(sourcesBuildPhases, sourcesBuildPhase)
+
+local currentGroup = rootGroup
+collectFiles(
+	project,
+	project,
+	function(filter)	-- enter
+		local group = {}
+		group.isa = "PBXGroup"
+		group.id = createUid()
+		group.comment = filter.name
+		group.children = {}
+		group.name = filter.name
+		group.sourceTree = "<group>";
+		group.parent = currentGroup
+		table.insert(groups, group)
+		table.insert(currentGroup.children, group)
+		currentGroup = group
+	end,
+	function(filter)	-- leave
+		currentGroup = currentGroup.parent
+	end,
+	function(file)		-- add file
+		local path = Path(file.pathNameNoVolume)
+		local ext = path.extension
+		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
+
+			local fileReference = {}
+			fileReference.isa = "PBXFileReference"
+			fileReference.id = createUid()
+			fileReference.comment = path.fileName
+			fileReference.name = path.fileName
+			fileReference.path = path.pathNameNoVolume
+			fileReference.sourceTree = "<group>"
+			table.insert(fileReferences, fileReference)
+			table.insert(currentGroup.children, fileReference)
+
+			local buildFile = {}
+			buildFile.isa = "PBXBuildFile"
+			buildFile.id = createUid()
+			buildFile.comment = path.fileName .. " in Sources"
+			buildFile.name = path.fileName
+			buildFile.fileRef = fileReference
+			table.insert(buildFiles, buildFile)
+			table.insert(sourcesBuildPhase.files, buildFile)
+
+		elseif ext == "h" or ext == "inl" or ext == "hpp" then
+
+			local fileReference = {}
+			fileReference.isa = "PBXFileReference"
+			fileReference.id = createUid()
+			fileReference.comment = path.fileName
+			fileReference.name = path.fileName
+			fileReference.path = path.pathNameNoVolume
+			fileReference.sourceTree = "<group>"
+			table.insert(fileReferences, fileReference)
+			table.insert(currentGroup.children, fileReference)
+
+			local buildFile = {}
+			buildFile.isa = "PBXBuildFile"
+			buildFile.id = createUid()
+			buildFile.comment = path.fileName .. " in Headers"
+			buildFile.name = path.fileName
+			buildFile.fileRef = fileReference
+			table.insert(buildFiles, buildFile)
+
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" then
+
+			local run < const > = Path("$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App").pathNameNoVolume
+			local binaryInclude < const > = Path("$(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run").pathNameNoVolume
+
+			local shellScriptBuildPhase = {}
+			shellScriptBuildPhase.isa = "PBXShellScriptBuildPhase"
+			shellScriptBuildPhase.id = createUid()
+			shellScriptBuildPhase.comment = "Build resource " .. path.fileName
+			shellScriptBuildPhase.buildActionMask = 2147483647
+			shellScriptBuildPhase.files = {}
+			shellScriptBuildPhase.inputFileListPaths = {}
+			shellScriptBuildPhase.inputPaths = { path.pathNameNoVolume }
+			shellScriptBuildPhase.outputFileListPaths = {}
+			shellScriptBuildPhase.outputPaths = { "${DERIVED_FILES_DIR}/Resources/" .. path.fileNameNoExtension .. ".h" }
+			shellScriptBuildPhase.runOnlyForDeploymentPostprocessing = 0
+			shellScriptBuildPhase.shellPath = "/bin/sh"
+			shellScriptBuildPhase.shellScript = 
+				run .. " " .. binaryInclude .. " " ..
+				"\"${SCRIPT_INPUT_FILE_0}\" " ..
+				"\"${SCRIPT_OUTPUT_FILE_0}\" " ..
+				"c_Resource" .. path.fileNameNoExtension 
+			table.insert(shellScriptBuildPhases, shellScriptBuildPhase)
+
+			local fileReference = {}
+			fileReference.isa = "PBXFileReference"
+			fileReference.id = createUid()
+			fileReference.comment = path.fileName
+			fileReference.name = path.fileName
+			fileReference.path = path.pathNameNoVolume
+			fileReference.sourceTree = "<group>"
+			table.insert(fileReferences, fileReference)
+			table.insert(currentGroup.children, fileReference)
+
+			local buildFile = {}
+			buildFile.isa = "PBXBuildFile"
+			buildFile.id = createUid()
+			buildFile.comment = path.fileName .. " in Resources"
+			buildFile.name = path.fileName
+			buildFile.fileRef = fileReference
+			table.insert(buildFiles, buildFile)
+			table.insert(shellScriptBuildPhase.files, buildFile)
+		end
+	end
+)
+
+-- Create a Xcode target for each configuration.
+for _, configuration in pairs(project.configurations) do
+
+	-- Create framework build phase.
+	local frameWorksBuildPhase = {}
+	frameWorksBuildPhase.isa = "PBXFrameworksBuildPhase"
+	frameWorksBuildPhase.id = createUid()
+	frameWorksBuildPhase.comment = "Frameworks (" .. configuration.name .. ")"
+	frameWorksBuildPhase.name = "Frameworks"
+	frameWorksBuildPhase.buildActionMask = 2147483647
+	frameWorksBuildPhase.files = {}
+	frameWorksBuildPhase.runOnlyForDeploymentPostprocessing = 0
+	table.insert(frameWorksBuildPhases, frameWorksBuildPhase)
+
+	-- for _, library in pairs(libraries) do
+
+		-- local fileReference = {}
+		-- fileReference.isa = "PBXFileReference"
+		-- fileReference.id = createUid()
+		-- fileReference.comment = library .. " (" .. configuration.name .. ")"
+		-- fileReference.explicitFileType = "compiled.mach-o.dylib" -- explicitFileType(configuration)
+		-- fileReference.name = library
+		-- fileReference.path = library
+		-- fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
+		-- table.insert(fileReferences, fileReference)
+		-- table.insert(frameworksGroup.children, fileReference)
+
+		-- local buildFile = {}
+		-- buildFile.isa = "PBXBuildFile"
+		-- buildFile.id = createUid()
+		-- buildFile.comment = library .. " in Frameworks"
+		-- buildFile.name = library
+		-- buildFile.fileRef = fileReference
+		-- table.insert(buildFiles, buildFile)		
+		-- table.insert(frameWorksBuildPhase.files, buildFile)
+
+	-- end
+
+	-- Create build configuration.
+	local buildConfiguration = {}
+	buildConfiguration.isa = "XCBuildConfiguration"
+	buildConfiguration.id = createUid()
+	buildConfiguration.comment = project.name .. " (" .. configuration.name .. ")"
+	buildConfiguration.name = "Omni"
+	buildConfiguration.buildSettings = defaultBuildSettings()
+	buildConfiguration.buildSettings["PRODUCT_NAME"] = project.name
+	if configuration.targetFormat == "SharedLibrary" then
+		buildConfiguration.buildSettings["INSTALL_PATH"] = "@executable_path"
+	end
+
+	-- Concatenate definitions.
+	local df = buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] or {}
+	for _, definition in pairs(configuration.definitions) do
+		table.insert(df, definition)
+	end
+	buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] = df
+
+	-- Concatenate include paths.
+	local ip = buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] or {}
+	for _, includePath in pairs(configuration.includePaths) do
+		table.insert(ip, Path(includePath).pathName)
+	end
+	buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] = ip
+
+	-- Add additional linker options.
+	local lo = buildConfiguration.buildSettings["OTHER_LDFLAGS"] or {}
+	if configuration.additionalLinkerOptions ~= "" then
+		table.insert(lo, configuration.additionalLinkerOptions)
+	end
+	buildConfiguration.buildSettings["OTHER_LDFLAGS"] = lo
+
+	-- Create explicit output directory for each configuration.
+	buildConfiguration.buildSettings["CONFIGURATION_BUILD_DIR"] = "../" .. configuration.name
+	table.insert(buildConfigurations, buildConfiguration)
+
+	-- Append configuration to list.
+	local configurationList = {}
+	configurationList.isa = "XCConfigurationList"
+	configurationList.id = createUid()
+	configurationList.comment = "Build configuration list for PBXNativeTarget \"" .. project.name .. "\" (" .. configuration.name .. ")"
+	configurationList.buildConfigurations = { buildConfiguration }
+	configurationList.defaultConfigurationIsVisible = 0
+	configurationList.defaultConfigurationName = buildConfiguration.name;
+	table.insert(configurationLists, configurationList)
+
+	-- Create our product file reference.
+	local fileReference = {}
+	fileReference.isa = "PBXFileReference"
+	fileReference.id = createUid()
+	fileReference.comment = productName(project, configuration) .. " (" .. configuration.name .. ")"
+	fileReference.name = productName(project, configuration)
+	fileReference.explicitFileType = explicitFileType(configuration)
+	fileReference.includeInIndex = 0
+	fileReference.path = fileReference.name
+	fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
+	table.insert(fileReferences, fileReference)
+
+	-- Create native target for each configuration.
+	local nativeTarget = {}
+	nativeTarget.isa = "PBXNativeTarget"
+	nativeTarget.id = createUid()
+	nativeTarget.comment = project.name .. " (" .. configuration.name .. ")"
+	nativeTarget.name = project.name .. " (" .. configuration.name .. ")"
+	nativeTarget.buildConfigurationList = configurationList
+	nativeTarget.buildPhases = {} -- headersBuildPhase, table.unpack(shellScriptBuildPhases), sourcesBuildPhase, frameWorksBuildPhase }
+	nativeTarget.buildRules = {}
+	nativeTarget.dependencies = {}
+	nativeTarget.productName = project.name;
+	nativeTarget.productReference = fileReference
+	nativeTarget.productType = productType(configuration)
+	table.insert(nativeTargets, nativeTarget)
+	table.insert(rootProject.targets, nativeTarget)
+
+	-- Add build phases to native target.
+	table.insert(nativeTarget.buildPhases, headersBuildPhase)
+	for _, shellScriptBuildPhase in ipairs(shellScriptBuildPhases) do
+		table.insert(nativeTarget.buildPhases, shellScriptBuildPhase)
+	end
+	table.insert(nativeTarget.buildPhases, sourcesBuildPhase)
+	table.insert(nativeTarget.buildPhases, frameWorksBuildPhase)
+
+	-- Create target dependency.
+	for _, dependency in pairs(project.dependencies) do
+		if isa(dependency, ProjectDependency) or isa(dependency, ExternalDependency) then
+			local dependencyConfiguration = dependency.project:getConfiguration(configuration:getName())
+
+			-- Locate project portal reference, create new if none found.
+			local fileReference = nil
+			for _, projectPortal in ipairs(rootProject.projectReferences) do
+				if projectPortal.path == dependency.project.name .. ".xcodeproj" then
+					fileReference = projectPortal
+					break
+				end
+			end
+			if fileReference == nil then
+				fileReference = {}
+				fileReference.isa = "PBXFileReference"
+				fileReference.id = createUid()
+				fileReference.comment = dependency.project.name .. ".xcodeproj"
+				fileReference.lastKnownFileType = "wrapper.pb-project"
+				fileReference.path = dependency.project.name .. ".xcodeproj"
+				fileReference.sourceTree = "<group>"
+				table.insert(fileReferences, fileReference)
+				table.insert(rootProject.projectReferences, fileReference)
+				table.insert(rootGroup.children, fileReference)
+			end
+
+			local targetDependencyProxy = {}
+			targetDependencyProxy.isa = "PBXContainerItemProxy"
+			targetDependencyProxy.id = createUid()
+			targetDependencyProxy.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			targetDependencyProxy.containerPortal = fileReference
+			targetDependencyProxy.proxyType = 1
+			targetDependencyProxy.remoteGlobalIDString = createUid()
+			targetDependencyProxy.remoteInfo = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			table.insert(targetDependencyProxies, targetDependencyProxy)
+
+			local targetDependency = {}
+			targetDependency.isa = "PBXTargetDependency"
+			targetDependency.id = createUid()
+			targetDependency.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			targetDependency.name = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			targetDependency.targetProxy = targetDependencyProxy
+			table.insert(targetDependencies, targetDependency)
+			table.insert(nativeTarget.dependencies, targetDependency)
+
+			local targetDependencyProxy = {}
+			targetDependencyProxy.isa = "PBXContainerItemProxy"
+			targetDependencyProxy.id = createUid()
+			targetDependencyProxy.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			targetDependencyProxy.containerPortal = fileReference
+			targetDependencyProxy.proxyType = 2
+			targetDependencyProxy.remoteGlobalIDString = createUid()
+			targetDependencyProxy.remoteInfo = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
+			table.insert(targetDependencyProxies, targetDependencyProxy)
+
+			local referenceProxy = {}
+			referenceProxy.isa = "PBXReferenceProxy"
+			referenceProxy.id = createUid()
+			referenceProxy.comment = productName(dependency.project, dependencyConfiguration)
+			referenceProxy.fileType = productType(dependencyConfiguration)
+			referenceProxy.path = productName(dependency.project, dependencyConfiguration)
+			referenceProxy.remoteRef = targetDependencyProxy
+			referenceProxy.sourceTree = "BUILD_PRODUCTS_DIR"
+			table.insert(referenceProxies, referenceProxy)
+			table.insert(proxyProductsGroup.children, referenceProxy)
+
+			-- Link to product from dependency.
+			local fileReference = {}
+			fileReference.isa = "PBXFileReference"
+			fileReference.id = createUid()
+			fileReference.comment = productName(dependency.project, dependencyConfiguration)
+			fileReference.explicitFileType = explicitFileType(dependencyConfiguration)
+			fileReference.name = productName(dependency.project, dependencyConfiguration)
+			fileReference.path = productName(dependency.project, dependencyConfiguration)
+			fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
+			table.insert(fileReferences, fileReference)
+			table.insert(frameworksGroup.children, fileReference)
+
+			local buildFile = {}
+			buildFile.isa = "PBXBuildFile"
+			buildFile.id = createUid()
+			buildFile.comment = productName(dependency.project, dependencyConfiguration) .. " in Frameworks"
+			buildFile.name = productName(dependency.project, dependencyConfiguration)
+			buildFile.fileRef = fileReference
+			table.insert(buildFiles, buildFile)		
+			table.insert(frameWorksBuildPhase.files, buildFile)
+		end
+	end
+end
+
+--?>// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+/* Begin PBXBuildFile section */
+<?--
+	for _, buildFile in ipairs(buildFiles) do
+		output:printLn("\t\t" .. buildFile.id .. " /* " .. buildFile.comment .. " */ = { isa = " .. buildFile.isa .. "; fileRef = " .. buildFile.fileRef.id .. " /* " .. buildFile.fileRef.name .. " */; };")
+	end
+--?>/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+<?--
+	for _, targetDependencyProxy in ipairs(targetDependencyProxies) do
+		output:printLn("\t\t" .. targetDependencyProxy.id .. " /* PBXContainerItemProxy */ = {")
+		output:printLn("\t\t\tisa = " .. targetDependencyProxy.isa .. ";")
+		output:printLn("\t\t\tcontainerPortal = " .. targetDependencyProxy.containerPortal.id .. " /* " .. targetDependencyProxy.containerPortal.comment .. " */;")
+		output:printLn("\t\t\tproxyType = " .. targetDependencyProxy.proxyType .. ";")
+		output:printLn("\t\t\tremoteGlobalIDString = " .. targetDependencyProxy.remoteGlobalIDString .. ";")
+		output:printLn("\t\t\tremoteInfo = \"" .. targetDependencyProxy.remoteInfo .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+<?--
+	for _, fileReference in ipairs(fileReferences) do
+		output:printLn("\t\t" .. fileReference.id .. " /* " .. fileReference.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. fileReference.isa .. ";")
+		if fileReference.lastKnownFileType ~= nil then
+			output:printLn("\t\t\tlastKnownFileType = \"" .. fileReference.lastKnownFileType .. "\";")
+		end
+		if fileReference.explicitFileType ~= nil then
+			output:printLn("\t\t\texplicitFileType = \"" .. fileReference.explicitFileType .. "\";")
+		end
+		if fileReference.includeInIndex ~= nil then
+			output:printLn("\t\t\tincludeInIndex = " .. fileReference.includeInIndex .. ";")
+		end
+		if fileReference.name ~= nil then
+			output:printLn("\t\t\tname = " .. fileReference.name .. ";")
+		end
+		output:printLn("\t\t\tpath = \"" .. fileReference.path .. "\";")
+		output:printLn("\t\t\tsourceTree = \"" .. fileReference.sourceTree .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+<?--
+	for _, frameWorksBuildPhase in ipairs(frameWorksBuildPhases) do
+		output:printLn("\t\t" .. frameWorksBuildPhase.id .. " /* " .. frameWorksBuildPhase.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. frameWorksBuildPhase.isa .. ";")
+		output:printLn("\t\t\tbuildActionMask = " .. frameWorksBuildPhase.buildActionMask .. ";")
+		output:printLn("\t\t\tfiles = (")
+		for _, file in ipairs(frameWorksBuildPhase.files) do
+			output:printLn("\t\t\t\t" .. file.id .. " /* " .. file.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\trunOnlyForDeploymentPostprocessing = " .. frameWorksBuildPhase.runOnlyForDeploymentPostprocessing .. ";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+<?--
+	for _, group in ipairs(groups) do
+		output:printLn("\t\t" .. group.id .. " /* " .. group.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. group.isa .. ";")
+		output:printLn("\t\t\tchildren = (")
+		for _, child in ipairs(group.children) do
+			output:printLn("\t\t\t\t" .. child.id .. " /* " .. child.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		if group.name ~= nil then
+			output:printLn("\t\t\tname = \"" .. group.name .. "\";")
+		end
+		output:printLn("\t\t\tsourceTree = \"" .. group.sourceTree .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+<?--
+	for _, headersBuildPhase in ipairs(headersBuildPhases) do
+		output:printLn("\t\t" .. headersBuildPhase.id .. " /* " .. headersBuildPhase.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. headersBuildPhase.isa .. ";")
+		output:printLn("\t\t\tbuildActionMask = " .. headersBuildPhase.buildActionMask .. ";")
+		output:printLn("\t\t\tfiles = (")
+		for _, file in ipairs(headersBuildPhase.files) do
+			output:printLn("\t\t\t\t" .. file.id .. " /* " .. file.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\trunOnlyForDeploymentPostprocessing = " .. headersBuildPhase.runOnlyForDeploymentPostprocessing .. ";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXAggregateTarget section */
+/* End PBXAggregateTarget section */
+
+/* Begin PBXNativeTarget section */
+<?--
+	for _, nativeTarget in ipairs(nativeTargets) do
+		output:printLn("\t\t" .. nativeTarget.id .. " /* " .. nativeTarget.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. nativeTarget.isa .. ";")
+		output:printLn("\t\t\tbuildConfigurationList = " .. nativeTarget.buildConfigurationList.id .. " /* Build configuration list for PBXNativeTarget \"" .. nativeTarget.name .. "\" */;")
+		output:printLn("\t\t\tbuildPhases = (")
+		for _, buildPhase in ipairs(nativeTarget.buildPhases) do
+			output:printLn("\t\t\t\t" .. buildPhase.id .. " /* " .. buildPhase.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tbuildRules = (")
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tdependencies = (")
+		for _, dependency in ipairs(nativeTarget.dependencies) do
+			output:printLn("\t\t\t\t" .. dependency.id .. " /* " .. dependency.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tname = \"" .. nativeTarget.name .. "\";")
+		output:printLn("\t\t\tproductName = \"" .. nativeTarget.name .. "\";")
+		output:printLn("\t\t\tproductReference = " .. nativeTarget.productReference.id .. " /* " .. nativeTarget.productReference.comment .. " */;")
+		output:printLn("\t\t\tproductType = \"" .. nativeTarget.productType .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+<?--
+	output:printLn("\t\t" .. rootProject.id .. " /* Project object */ = {")
+	output:printLn("\t\t\tisa = " .. rootProject.isa .. ";")
+	output:printLn("\t\t\tattributes = {")
+	for key, value in ipairs(rootProject.attributes) do
+		output:printLn("\t\t\t\t" .. key.. " = \"" .. value.. "\",")
+	end
+	output:printLn("\t\t\t};")
+	output:printLn("\t\t\tbuildConfigurationList = " .. rootProject.buildConfigurationList.id .. " /* " .. rootProject.buildConfigurationList.comment .. " */;")
+	output:printLn("\t\t\tcompatibilityVersion = \"" .. rootProject.compatibilityVersion .. "\";")
+	output:printLn("\t\t\tdevelopmentRegion = " .. rootProject.developmentRegion .. ";")
+	output:printLn("\t\t\thasScannedForEncodings = " .. rootProject.hasScannedForEncodings .. ";")
+	output:printLn("\t\t\tknownRegions = (")
+	for _, region in ipairs(rootProject.knownRegions) do
+		output:printLn("\t\t\t\t" .. region .. ",")
+	end
+	output:printLn("\t\t\t);")
+	output:printLn("\t\t\tmainGroup = " .. rootProject.mainGroup.id .. ";")
+	output:printLn("\t\t\tproductRefGroup = " .. rootProject.productRefGroup.id .. " /* " .. rootProject.productRefGroup.comment .. " */;")
+	output:printLn("\t\t\tprojectDirPath = \"" .. rootProject.projectDirPath .. "\";")
+	output:printLn("\t\t\tprojectReferences = (")
+	for _, reference in ipairs(rootProject.projectReferences) do
+		output:printLn("\t\t\t\t{")
+		output:printLn("\t\t\t\t\tProductGroup = " .. proxyProductsGroup.id .. " /* " .. proxyProductsGroup.comment .. " */;")
+		output:printLn("\t\t\t\t\tProjectRef = " .. reference.id .. " /* " .. reference.comment .. " */;")
+		output:printLn("\t\t\t\t},")
+	end
+	output:printLn("\t\t\t);")
+	output:printLn("\t\t\tprojectRoot = \"" .. rootProject.projectRoot .. "\";")
+	output:printLn("\t\t\ttargets = (")
+	for _, target in ipairs(rootProject.targets) do
+		output:printLn("\t\t\t\t" .. target.id .. " /* " .. target.comment .. " */,")
+	end
+	output:printLn("\t\t\t);")
+	output:printLn("\t\t};")
+--?>/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+<?--
+	for _, referenceProxy in ipairs(referenceProxies) do
+		output:printLn("\t\t" .. referenceProxy.id .. " /* " .. referenceProxy.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. referenceProxy.isa .. ";")
+		output:printLn("\t\t\tfileType = " .. referenceProxy.fileType .. ";")
+		output:printLn("\t\t\tpath = " .. referenceProxy.path .. ";")
+		output:printLn("\t\t\tremoteRef = " .. referenceProxy.remoteRef.id .. " /* " .. referenceProxy.remoteRef.comment .. " */;")
+		output:printLn("\t\t\tsourceTree = \"" .. referenceProxy.sourceTree .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXReferenceProxy section */
+
+/* Begin PBXShellScriptBuildPhase section */
+<?--
+	for _, shellScriptBuildPhase in ipairs(shellScriptBuildPhases) do
+		output:printLn("\t\t" .. shellScriptBuildPhase.id .. " /* " .. shellScriptBuildPhase.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. shellScriptBuildPhase.isa .. ";")
+		output:printLn("\t\t\tbuildActionMask = " .. shellScriptBuildPhase.buildActionMask .. ";")
+		output:printLn("\t\t\tfiles = (")
+		for _, file in ipairs(shellScriptBuildPhase.files) do
+			output:printLn("\t\t\t\t" .. file.id .. " /* " .. file.comment .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tinputFileListPaths = (")
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tinputPaths = (")
+		for _, inputPath in ipairs(shellScriptBuildPhase.inputPaths) do
+			output:printLn("\t\t\t\t\"" .. inputPath .. "\",")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\toutputFileListPaths = (")
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\toutputPaths = (")
+		for _, outputPath in ipairs(shellScriptBuildPhase.outputPaths) do
+			output:printLn("\t\t\t\t\"" .. outputPath .. "\",")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\trunOnlyForDeploymentPostprocessing = " .. shellScriptBuildPhase.runOnlyForDeploymentPostprocessing .. ";")
+		output:printLn("\t\t\tshellPath = \"" .. shellScriptBuildPhase.shellPath .. "\";")
+		output:printLn("\t\t\tshellScript = \"" .. shellScriptBuildPhase.shellScript:gsub("\"", "\\\\\\\"") .. "\";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+<?--
+	for _, sourcesBuildPhase in ipairs(sourcesBuildPhases) do
+		output:printLn("\t\t" .. sourcesBuildPhase.id .. " /* " .. sourcesBuildPhase.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. sourcesBuildPhase.isa .. ";")
+		output:printLn("\t\t\tbuildActionMask = " .. sourcesBuildPhase.buildActionMask .. ";")
+		output:printLn("\t\t\tfiles = (")
+		for _, file in ipairs(sourcesBuildPhase.files) do
+			output:printLn("\t\t\t\t" .. file.id .. " /* " .. file.name .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\trunOnlyForDeploymentPostprocessing = " .. sourcesBuildPhase.runOnlyForDeploymentPostprocessing .. ";")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+<?--
+	for _, targetDependency in ipairs(targetDependencies) do
+		output:printLn("\t\t" .. targetDependency.id .. " /* PBXTargetDependency */ = {")
+		output:printLn("\t\t\tisa = " .. targetDependency.isa .. ";")
+		output:printLn("\t\t\tname = \"" .. targetDependency.name .. "\";")
+		output:printLn("\t\t\ttargetProxy = " .. targetDependency.targetProxy.id .. " /* PBXContainerItemProxy */;")
+		output:printLn("\t\t};")
+	end
+--?>/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+<?--
+	for _, buildConfiguration in ipairs(buildConfigurations) do
+		output:printLn("\t\t" .. buildConfiguration.id .. " /* " .. buildConfiguration.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. buildConfiguration.isa .. ";")
+		output:printLn("\t\t\tbuildSettings = {")
+		for key, value in pairs(buildConfiguration.buildSettings) do
+			if type(value) == "string" then
+				output:printLn("\t\t\t\t" .. key .. " = \"" .. value .. "\";")
+			elseif type(value) == "table" then
+				output:printLn("\t\t\t\t" .. key .. " = (")
+				for _, cvalue in pairs(value) do
+					output:printLn("\t\t\t\t\t\"" .. cvalue .. "\",");
+				end
+				output:printLn("\t\t\t\t);")
+			else
+				output:printLn("\t\t\t\t" .. key .. " = " .. value .. ";")
+			end
+		end
+		output:printLn("\t\t\t};")
+		output:printLn("\t\t\tname = " .. buildConfiguration.name .. ";")
+		output:printLn("\t\t};")
+	end
+--?>/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+<?--
+	for _, configurationList in ipairs(configurationLists) do
+		output:printLn("\t\t" .. configurationList.id .. " /* " .. configurationList.comment .. " */ = {")
+		output:printLn("\t\t\tisa = " .. configurationList.isa .. ";")
+		output:printLn("\t\t\tbuildConfigurations = (")
+		for _, buildConfiguration in ipairs(configurationList.buildConfigurations) do
+			output:printLn("\t\t\t\t" .. buildConfiguration.id .. " /* " .. buildConfiguration.name .. " */,")
+		end
+		output:printLn("\t\t\t);")
+		output:printLn("\t\t\tdefaultConfigurationIsVisible = " .. configurationList.defaultConfigurationIsVisible .. ";")
+		output:printLn("\t\t\tdefaultConfigurationName = " .. configurationList.defaultConfigurationName .. ";")
+		output:printLn("\t\t};")
+	end
+--?>/* End XCConfigurationList section */
+	};
+	rootObject = <?-- output:print(rootProject.id) --?> /* Project object */;
+}

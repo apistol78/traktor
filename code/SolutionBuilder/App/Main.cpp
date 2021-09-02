@@ -6,6 +6,7 @@
 #include "Core/Timer/Timer.h"
 #include "SolutionBuilder/Version.h"
 #include "SolutionBuilder/Aggregation.h"
+#include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
@@ -19,7 +20,7 @@
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilder/Ninja/SolutionBuilderNinja.h"
-#include "SolutionBuilder/Xcode/SolutionBuilderXcode.h"
+#include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
 
 using namespace traktor;
 using namespace traktor::sb;
@@ -79,7 +80,7 @@ int main(int argc, const char** argv)
 		else if (ide == L"ninja")
 			builder = new SolutionBuilderNinja();
 		else if (ide == L"xcode")
-			builder = new SolutionBuilderXcode();
+			builder = new SolutionBuilderXcode2();
 		else if (ide == L"dependencies")
 			builder = new SolutionBuilderDependencies();
 		else
