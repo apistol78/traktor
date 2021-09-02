@@ -517,8 +517,6 @@ void Edit::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 	const FontMetric fm = canvas.getFontMetric();
 
-	bool hover = isEnable() && m_hover;
-
 	if (isEnable())
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
 	else

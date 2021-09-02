@@ -84,7 +84,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 						// source and finish.
 						m_outputData = new GenericInputSourceData(
 							m_category,
-							std::distance(m_deviceStates.begin(), i),
+							(int32_t)std::distance(m_deviceStates.begin(), i),
 							controlType,
 							m_analogue,
 							false		//<! \fixme
@@ -117,7 +117,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 
 							m_combinedData->addSource(new GenericInputSourceData(
 								m_category,
-								std::distance(m_deviceStates.begin(), i),
+								(int32_t)std::distance(m_deviceStates.begin(), i),
 								controlType,
 								m_analogue,
 								false		//<! \fixme

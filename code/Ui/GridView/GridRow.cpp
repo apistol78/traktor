@@ -82,7 +82,7 @@ uint32_t GridRow::add(GridItem* item)
 
 void GridRow::set(uint32_t index, GridItem* item)
 {
-	m_items.resize(std::max< uint32_t >(m_items.size(), index + 1));
+	m_items.resize(std::max< uint32_t >((uint32_t)m_items.size(), index + 1));
 	if (m_items[index])
 	{
 		T_ASSERT(m_items[index]->m_row == this);

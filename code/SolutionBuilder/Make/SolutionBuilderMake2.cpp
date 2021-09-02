@@ -82,7 +82,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		buf.resize(IEncoding::MaxEncodingSize * projectOut.length());
-		int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), projectOut.length(), buf.ptr());
+		int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), (int)projectOut.length(), buf.ptr());
 		file->write(buf.c_ptr(), nbuf);
 
 		file->close();
@@ -119,7 +119,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		buf.resize(IEncoding::MaxEncodingSize * cprojectOut.length());
-		int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), cprojectOut.length(), buf.ptr());
+		int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), (int)cprojectOut.length(), buf.ptr());
 		file->write(buf.c_ptr(), nbuf);
 
 		file->close();

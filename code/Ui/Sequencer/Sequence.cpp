@@ -15,7 +15,6 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 25;
 const int c_buttonSize = 18;
 
 		}

@@ -221,8 +221,8 @@ void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void*
 		this_->m_button[13] = bool(v != 0);
 	else if (usage >= 48 && usage <= 53)
 	{
-		int32_t min = IOHIDElementGetLogicalMin(element);
-		int32_t max = IOHIDElementGetLogicalMax(element);
+		int32_t min = (int32_t)IOHIDElementGetLogicalMin(element);
+		int32_t max = (int32_t)IOHIDElementGetLogicalMax(element);
 
 		if (max > min)
 		{

@@ -380,8 +380,6 @@ void RichEdit::insert(const std::wstring& text)
 
 int32_t RichEdit::getOffsetFromPosition(const Point& position)
 {
-	Rect rc = getEditRect();
-
 	uint32_t lineCount = (uint32_t)m_lines.size();
 	if (lineCount == 0)
 		return -1;
@@ -425,12 +423,9 @@ int32_t RichEdit::getCaretOffset() const
 
 int32_t RichEdit::getLineFromPosition(int32_t position)
 {
-	Rect rc = getEditRect();
-
-	uint32_t lineCount = uint32_t(m_lines.size());
+	uint32_t lineCount = (uint32_t)m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
 	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	uint32_t line = lineOffset + position / lineHeight;
 	return line < lineCount ? line : -1;

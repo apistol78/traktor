@@ -58,8 +58,6 @@ bool SolutionBuilderEclipse::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		const RefArray< ProjectItem >& items = project->getItems();
-
 		std::wstring projectPath = solution->getRootPath() + L"/" + project->getName();
 		std::wstring projectFileName = projectPath + L"/.project";
 		std::wstring cprojectFileName = projectPath + L"/.cproject";

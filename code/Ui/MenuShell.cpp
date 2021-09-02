@@ -58,7 +58,7 @@ void MenuShell::add(MenuItem* item)
 
 	if (m_scrollBar)
 	{
-		m_scrollBar->setRange(m_items.size());
+		m_scrollBar->setRange((int32_t)m_items.size());
 		m_scrollBar->setPage(m_maxItems - 1);
 		m_scrollBar->setVisible(m_items.size() > m_maxItems);
 	}

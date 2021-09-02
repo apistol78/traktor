@@ -81,7 +81,6 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		Size sz = m_imageNode[imageIndex]->getSize();
 
 		int32_t tw = sz.cx / 3;
-		int32_t th = sz.cy / 3;
 
 		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
 		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };

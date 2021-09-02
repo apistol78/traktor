@@ -77,7 +77,7 @@ Ref< ISerializable > ClipboardCocoa::getObject() const
 	if (!data)
 		return 0;
 
-	uint32_t length = [data length];
+	uint64_t length = [data length];
 	const void* ptr = [data bytes];
 
 	if (!ptr || !length)
