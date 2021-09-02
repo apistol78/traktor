@@ -93,6 +93,8 @@ private:
 	void eventMouseDoubleClick(MouseDoubleClickEvent* event);
 
 	void eventMouseWheel(MouseWheelEvent* event);
+    
+    void eventTimer(TimerEvent* event);
 
 	void eventScroll(ScrollEvent* event);
 };
