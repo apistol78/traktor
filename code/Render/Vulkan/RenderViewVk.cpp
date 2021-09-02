@@ -121,8 +121,8 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 {
 	VkResult result;
-	int32_t width = 64;
-	int32_t height = 64;
+	int32_t width = 0;
+	int32_t height = 0;
 
 	// Create renderable surface.
 #if defined(_WIN32)
@@ -153,7 +153,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	// Get size of surfce.
+	// Get size of surface.
 	VkSurfaceCapabilitiesKHR sc;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
 	width = sc.currentExtent.width;
@@ -170,7 +170,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		return false;
 	}
 
-	// Get size of surfce.
+	// Get size of surface.
 	const int32_t resolutionDenom = 2;
 	width = ANativeWindow_getWidth(sci.window) / resolutionDenom;
 	height = ANativeWindow_getHeight(sci.window) / resolutionDenom;
@@ -187,6 +187,12 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
+    
+    // Get size of surface.
+    VkSurfaceCapabilitiesKHR sc;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context->getPhysicalDevice(), m_surface, &sc);
+    width = sc.currentExtent.width;
+    height = sc.currentExtent.height;
 #elif defined(__IOS__)
 	VkIOSSurfaceCreateInfoMVK sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
