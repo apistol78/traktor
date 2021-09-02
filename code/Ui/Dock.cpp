@@ -39,21 +39,6 @@ bool Dock::create(Widget* parent)
 	m_hint->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
 	const int xy[] = { 0, 32, 32 + 29, 32 + 29 + 32 };
-	Point p[] =
-	{
-		Point(xy[1], xy[0]),
-		Point(xy[2], xy[0]),
-		Point(xy[2], xy[1]),
-		Point(xy[3], xy[1]),
-		Point(xy[3], xy[2]),
-		Point(xy[2], xy[2]),
-		Point(xy[2], xy[3]),
-		Point(xy[1], xy[3]),
-		Point(xy[1], xy[2]),
-		Point(xy[0], xy[2]),
-		Point(xy[0], xy[1]),
-		Point(xy[1], xy[1])
-	};
 
 	m_hintLeft = new ui::Image();
 	m_hintLeft->create(m_hint, Bitmap::load(c_ResourceDockLeft, sizeof(c_ResourceDockLeft), L"png"), false);
@@ -107,7 +92,7 @@ void Dock::update(const Rect* rc, bool immediate)
 	m_pane->update(innerRect, widgetRects);
 
 	// Update child widgets.
-	setChildRects(&widgetRects[0], widgetRects.size());
+	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size());
 
 	// Continue updating widget.
 	Widget::update(rc, immediate);

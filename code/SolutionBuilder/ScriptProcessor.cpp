@@ -154,25 +154,6 @@ RefArray< Path > File_getSystemFiles(sb::File* file, const std::wstring& sourceP
 	return systemFilesOut;
 }
 
-Path FileSystem_getAbsolutePath_1(FileSystem* fileSystem, const Path& relativePath)
-{
-	return fileSystem->getAbsolutePath(relativePath);
-}
-
-Path FileSystem_getAbsolutePath_2(FileSystem* fileSystem, const Path& basePath, const Path& relativePath)
-{
-	return fileSystem->getAbsolutePath(basePath, relativePath);
-}
-
-Ref< Path > FileSystem_getRelativePath(FileSystem* fileSystem, const Path& absolutePath, const Path& relativeToPath)
-{
-	Path relativePath;
-	if (fileSystem->getRelativePath(absolutePath, relativeToPath, relativePath))
-		return new Path(relativePath);
-	else
-		return nullptr;
-}
-
 Any HeaderScanner_get(HeaderScanner* self, const std::wstring& fileName, const std::wstring& projectPath)
 {
 	SmallSet< std::wstring > headerFiles;

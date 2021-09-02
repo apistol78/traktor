@@ -30,22 +30,12 @@ Point operator * (const Point& pt, float scale)
 	);
 }
 
-Point operator / (const Point& pt, float scale)
-{
-	return pt * (1.0f / scale);
-}
-
 Rect operator * (const Rect& rc, float scale)
 {
 	return Rect(
 		rc.getTopLeft() * scale,
 		rc.getBottomRight() * scale
 	);
-}
-
-Rect operator / (const Rect& rc, float scale)
-{
-	return rc * (1.0f / scale);
 }
 
 		}

@@ -13,39 +13,39 @@ class InputDeviceJoystickOsX : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	InputDeviceJoystickOsX(IOHIDDeviceRef deviceRef);
+	explicit InputDeviceJoystickOsX(IOHIDDeviceRef deviceRef);
 
-	virtual std::wstring getName() const;
+	virtual std::wstring getName() const override final;
 
-	virtual InputCategory getCategory() const;
+	virtual InputCategory getCategory() const override final;
 
-	virtual bool isConnected() const;
+	virtual bool isConnected() const override final;
 
-	virtual int32_t getControlCount();
+	virtual int32_t getControlCount() override final;
 
-	virtual std::wstring getControlName(int32_t control);
+	virtual std::wstring getControlName(int32_t control) override final;
 
-	virtual bool isControlAnalogue(int32_t control) const;
+	virtual bool isControlAnalogue(int32_t control) const override final;
 
-	virtual bool isControlStable(int32_t control) const;
+	virtual bool isControlStable(int32_t control) const override final;
 
-	virtual float getControlValue(int32_t control);
+	virtual float getControlValue(int32_t control) override final;
 
-	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const override final;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const override final;
 
-	virtual bool getKeyEvent(KeyEvent& outEvent);
+	virtual bool getKeyEvent(KeyEvent& outEvent) override final;
 
-	virtual void resetState();
+	virtual void resetState() override final;
 
-	virtual void readState();
+	virtual void readState() override final;
 
-	virtual bool supportRumble() const;
+	virtual bool supportRumble() const override final;
 
-	virtual void setRumble(const InputRumble& rumble);
+	virtual void setRumble(const InputRumble& rumble) override final;
 
-	virtual void setExclusive(bool exclusive);
+	virtual void setExclusive(bool exclusive) override final;
 
 private:
 	IOHIDDeviceRef m_deviceRef;

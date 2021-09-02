@@ -49,19 +49,6 @@ struct SortNodePred
 	}
 };
 
-Size operator * (const Size& sz, float scale)
-{
-	return Size(
-		(int32_t)std::floor(sz.cx * scale),
-		(int32_t)std::floor(sz.cy * scale)
-	);
-}
-
-Size operator / (const Size& sz, float scale)
-{
-	return sz * (1.0f / scale);
-}
-
 Point operator * (const Point& pt, float scale)
 {
 	return Point(

@@ -158,7 +158,6 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 		return false;
 
 	int32_t nc = (int32_t)m_cdef.size();
-	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
 	dimensionVector_t w;
 	dimensionVector_t h;
@@ -277,7 +276,7 @@ void TableLayout::update(Widget* widget)
 		}
 	}
 
-	widget->setChildRects(rects.c_ptr(), rects.size());
+	widget->setChildRects(rects.c_ptr(), (uint32_t)rects.size());
 }
 
 	}

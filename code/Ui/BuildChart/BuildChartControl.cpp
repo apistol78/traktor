@@ -73,7 +73,6 @@ const BuildChartControl::Task* BuildChartControl::getTaskFromPosition(const Poin
 	const Rect rc = getInnerRect();
 	const int32_t c_two = dpi96(2);
 	const int32_t c_four = dpi96(4);
-	const int32_t c_twenty = dpi96(20);
 
 	Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
 	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)

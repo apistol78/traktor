@@ -95,7 +95,6 @@ Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point
 void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	const StyleSheet* ss = graph->getStyleSheet();
-	const PaintSettings* settings = canvas->getPaintSettings();
 
 	Rect rc = node->calculateRect().offset(offset);
 
@@ -105,7 +104,6 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		Size sz = m_imageNode[imageIndex]->getSize();
 
 		int32_t tw = sz.cx / 3;
-		int32_t th = sz.cy / 3;
 
 		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
 		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };

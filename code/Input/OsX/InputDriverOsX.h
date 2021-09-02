@@ -28,13 +28,13 @@ class T_DLLCLASS InputDriverOsX : public IInputDriver
 public:
 	InputDriverOsX();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories);
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
-	virtual int getDeviceCount();
+	virtual int getDeviceCount() override final;
 
-	virtual Ref< IInputDevice > getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index) override final;
 
-	virtual UpdateResult update();
+	virtual UpdateResult update() override final;
 
 private:
 	bool m_devicesChanged;

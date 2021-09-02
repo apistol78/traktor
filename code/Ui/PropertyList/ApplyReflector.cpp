@@ -176,7 +176,7 @@ void ApplyReflector::operator >> (const Member< Vector4 >& m)
 
 void ApplyReflector::operator >> (const Member< Matrix33 >& m)
 {
-	PropertyItem* propertyItem = *m_propertyItemIterator++;
+	m_propertyItemIterator++;
 
 	VectorPropertyItem* propertyItemRow1 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
 	VectorPropertyItem* propertyItemRow2 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
@@ -195,7 +195,7 @@ void ApplyReflector::operator >> (const Member< Matrix33 >& m)
 
 void ApplyReflector::operator >> (const Member< Matrix44 >& m)
 {
-	PropertyItem* propertyItem = *m_propertyItemIterator++;
+	m_propertyItemIterator++;
 
 	VectorPropertyItem* propertyItemRow1 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
 	VectorPropertyItem* propertyItemRow2 = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);

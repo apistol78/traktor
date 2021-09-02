@@ -40,11 +40,6 @@ namespace traktor
 		namespace
 		{
 
-std::wstring quotifyString(const std::wstring& str)
-{
-	return replaceAll(str, L"\"", L"&quot;");
-}
-
 struct ProjectNamePredicate
 {
 	bool operator () (const Project* p0, const Project* p1) const
