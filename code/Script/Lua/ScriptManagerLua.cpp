@@ -40,18 +40,6 @@ Timer s_timer;
 const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
 
-#if defined(_DEBUG)
-std::wstring getObjectTypeName(lua_State* luaState, int32_t index)
-{
-	CHECK_LUA_STACK(luaState, 0);
-	lua_getfield(luaState, index, "__typename");
-	const char* tn = lua_tostring(luaState, -1);
-	std::wstring typeName = mbstows(tn != nullptr ? tn : "");
-	lua_pop(luaState, 1);
-	return typeName;
-}
-#endif
-
 inline ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 {
 	lua_rawgeti(luaState, index, c_tableKey_instance);

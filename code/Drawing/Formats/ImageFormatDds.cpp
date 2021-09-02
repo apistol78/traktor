@@ -218,18 +218,21 @@ void decompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width, const uint8_t* 
 			uint32_t finalColor;
 			switch (colorCode)
 			{
-				case 0:
-					finalColor = packRGBA(r0, g0, b0, finalAlpha);
-					break;
-				case 1:
-					finalColor = packRGBA(r1, g1, b1, finalAlpha);
-					break;
-				case 2:
-					finalColor = packRGBA((2*r0+r1)/3, (2*g0+g1)/3, (2*b0+b1)/3, finalAlpha);
-					break;
-				case 3:
-					finalColor = packRGBA((r0+2*r1)/3, (g0+2*g1)/3, (b0+2*b1)/3, finalAlpha);
-					break;
+            case 0:
+                finalColor = packRGBA(r0, g0, b0, finalAlpha);
+                break;
+            case 1:
+                finalColor = packRGBA(r1, g1, b1, finalAlpha);
+                break;
+            case 2:
+                finalColor = packRGBA((2*r0+r1)/3, (2*g0+g1)/3, (2*b0+b1)/3, finalAlpha);
+                break;
+            case 3:
+                finalColor = packRGBA((r0+2*r1)/3, (g0+2*g1)/3, (b0+2*b1)/3, finalAlpha);
+                break;
+            default:
+                finalColor = 0;
+                break;
 			}
  
 			if (x + i < width)
@@ -296,8 +299,6 @@ Ref< Image > ImageFormatDds::read(IStream* stream)
 	{
 		uint32_t blockCountX = (ddsh.dwWidth + 3) / 4;
 		uint32_t blockCountY = (ddsh.dwHeight + 3) / 4;
-		uint32_t blockWidth = (ddsh.dwWidth < 4) ? ddsh.dwWidth : 4;
-		uint32_t blockHeight = (ddsh.dwHeight < 4) ? ddsh.dwHeight : 4;
 	
 		for (uint32_t j = 0; j < blockCountY; j++)
 		{
@@ -313,8 +314,6 @@ Ref< Image > ImageFormatDds::read(IStream* stream)
 	{
 		uint32_t blockCountX = (ddsh.dwWidth + 3) / 4;
 		uint32_t blockCountY = (ddsh.dwHeight + 3) / 4;
-		uint32_t blockWidth = (ddsh.dwWidth < 4) ? ddsh.dwWidth : 4;
-		uint32_t blockHeight = (ddsh.dwHeight < 4) ? ddsh.dwHeight : 4;
 	
 		for (uint32_t j = 0; j < blockCountY; j++)
 		{
