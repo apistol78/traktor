@@ -170,6 +170,7 @@ local frameWorksBuildPhases = {}
 local headersBuildPhases = {}
 local sourcesBuildPhases = {}
 local shellScriptBuildPhases = {}
+local sharedShellScriptBuildPhases = {}
 local targetDependencies = {}
 local nativeTargets = {}
 local buildConfigurations = {}
@@ -359,6 +360,7 @@ collectFiles(
 				"\"${SCRIPT_OUTPUT_FILE_0}\" " ..
 				"c_Resource" .. path.fileNameNoExtension 
 			table.insert(shellScriptBuildPhases, shellScriptBuildPhase)
+			table.insert(sharedShellScriptBuildPhases, shellScriptBuildPhase)
 
 			local fileReference = {}
 			fileReference.isa = "PBXFileReference"
@@ -384,6 +386,38 @@ collectFiles(
 
 -- Create a Xcode target for each configuration.
 for _, configuration in pairs(project.configurations) do
+
+	-- Create aggregate copies.
+	local configurationShellScriptBuildPhases = {}
+	for _, aggregationItem in pairs(configuration.aggregationItems) do
+		local aggregateOutputPath < const > = Path(solution.aggregateOutputPath)
+		local sourceFile < const > = Path("../" .. configuration.name):concat(Path(aggregationItem.sourceFile))
+		local targetPath < const > = aggregateOutputPath:concat(Path(aggregationItem.targetPath))
+
+		--	output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
+		--	output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
+
+		local script =
+			"mkdir -p " .. targetPath.pathNameNoVolume .. "\n" ..
+			"cp -Rf " .. sourceFile.pathNameNoVolume .. " " .. targetPath.pathNameNoVolume .. "\n"
+
+		local shellScriptBuildPhase = {}
+		shellScriptBuildPhase.isa = "PBXShellScriptBuildPhase"
+		shellScriptBuildPhase.id = createUid()
+		shellScriptBuildPhase.comment = "Copy file"
+		shellScriptBuildPhase.alwaysOutOfDate = 1
+		shellScriptBuildPhase.buildActionMask = 2147483647
+		shellScriptBuildPhase.files = {}
+		shellScriptBuildPhase.inputFileListPaths = {}
+		shellScriptBuildPhase.inputPaths = {}
+		shellScriptBuildPhase.outputFileListPaths = {}
+		shellScriptBuildPhase.outputPaths = {}
+		shellScriptBuildPhase.runOnlyForDeploymentPostprocessing = 0
+		shellScriptBuildPhase.shellPath = "/bin/sh"
+		shellScriptBuildPhase.shellScript = script
+		table.insert(shellScriptBuildPhases, shellScriptBuildPhase)
+		table.insert(configurationShellScriptBuildPhases, shellScriptBuildPhase)
+	end
 
 	-- Create build configuration.
 	local buildConfiguration = {}
@@ -519,11 +553,14 @@ for _, configuration in pairs(project.configurations) do
 
 	-- Add build phases to native target.
 	table.insert(nativeTarget.buildPhases, headersBuildPhase)
-	for _, shellScriptBuildPhase in ipairs(shellScriptBuildPhases) do
+	for _, shellScriptBuildPhase in ipairs(sharedShellScriptBuildPhases) do
 		table.insert(nativeTarget.buildPhases, shellScriptBuildPhase)
 	end
 	table.insert(nativeTarget.buildPhases, sourcesBuildPhase)
 	table.insert(nativeTarget.buildPhases, frameWorksBuildPhase)
+	for _, shellScriptBuildPhase in ipairs(configurationShellScriptBuildPhases) do
+		table.insert(nativeTarget.buildPhases, shellScriptBuildPhase)
+	end
 
 	-- Create target dependencies; add dependencies from entire chain.
 	traverseDependencies(project, function(dependencyProject)
@@ -813,6 +850,9 @@ end
 	for _, shellScriptBuildPhase in ipairs(shellScriptBuildPhases) do
 		output:printLn("\t\t" .. shellScriptBuildPhase.id .. " /* " .. shellScriptBuildPhase.comment .. " */ = {")
 		output:printLn("\t\t\tisa = " .. shellScriptBuildPhase.isa .. ";")
+		if shellScriptBuildPhase.alwaysOutOfDate ~= nil then
+			output:printLn("\t\t\talwaysOutOfDate = " .. shellScriptBuildPhase.alwaysOutOfDate .. ";")
+		end
 		output:printLn("\t\t\tbuildActionMask = " .. shellScriptBuildPhase.buildActionMask .. ";")
 		output:printLn("\t\t\tfiles = (")
 		for _, file in ipairs(shellScriptBuildPhase.files) do
@@ -835,7 +875,7 @@ end
 		output:printLn("\t\t\t);")
 		output:printLn("\t\t\trunOnlyForDeploymentPostprocessing = " .. shellScriptBuildPhase.runOnlyForDeploymentPostprocessing .. ";")
 		output:printLn("\t\t\tshellPath = \"" .. shellScriptBuildPhase.shellPath .. "\";")
-		output:printLn("\t\t\tshellScript = \"" .. shellScriptBuildPhase.shellScript:gsub("\"", "\\\\\\\"") .. "\";")
+		output:printLn("\t\t\tshellScript = \"" .. shellScriptBuildPhase.shellScript:gsub("\"", "\\\\\\\""):gsub("\n", "\\n") .. "\";")
 		output:printLn("\t\t};")
 	end
 --?>/* End PBXShellScriptBuildPhase section */
