@@ -375,13 +375,14 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 	return true;
 }
 
-bool ScriptProcessor::generate(const Solution* solution, const Project* project, const std::wstring& projectPath, std::wstring& output) const
+bool ScriptProcessor::generate(const Solution* solution, const Project* project, const std::wstring& configurationName, const std::wstring& projectPath, std::wstring& output) const
 {
 	Ref< Output > o = new Output(m_sections);
 
 	m_scriptContext->setGlobal("output", Any::fromObject(o));
 	m_scriptContext->setGlobal("solution", Any::fromObject(const_cast< Solution* >(solution)));
 	m_scriptContext->setGlobal("project", Any::fromObject(const_cast< Project* >(project)));
+	m_scriptContext->setGlobal("configurationName", Any::fromString(configurationName));
 	m_scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
 	m_scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 

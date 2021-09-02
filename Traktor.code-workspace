@@ -8,11 +8,18 @@
 		},
 		{
 			"path": "scripts"
+		},
+		{
+			"path": "3rdp"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"functional": "cpp"
+			"functional": "cpp",
+			"set": "cpp",
+			"string": "cpp",
+			"xstring": "cpp",
+			"*.tcc": "cpp"
 		}
 	}
 }

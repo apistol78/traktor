@@ -67,7 +67,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 		// Generate project
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, L"", projectPath, projectOut))
 				return false;
 
 			Ref< IStream > file = FileSystem::getInstance().open(
@@ -91,7 +91,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 	// Generate workspace
 	{
 		std::wstring cprojectOut;
-		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), cprojectOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, L"", solution->getRootPath(), cprojectOut))
 			return false;
 
 		Ref< IStream > file = FileSystem::getInstance().open(

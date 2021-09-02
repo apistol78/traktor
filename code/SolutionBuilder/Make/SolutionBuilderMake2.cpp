@@ -17,10 +17,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMake2", SolutionBuilderMake2, SolutionBuilder)
 
-SolutionBuilderMake2::SolutionBuilderMake2()
-{
-}
-
 SolutionBuilderMake2::~SolutionBuilderMake2()
 {
 	safeDestroy(m_scriptProcessor);
@@ -71,7 +67,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 
 		// Generate project makefile.
 		std::wstring projectOut;
-		if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
+		if (!m_scriptProcessor->generate(solution, project, L"", projectPath, projectOut))
 			return false;
 
 		Ref< IStream > file = FileSystem::getInstance().open(
@@ -103,7 +99,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 	// Generate solution makefile.
 	{
 		std::wstring cprojectOut;
-		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), cprojectOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, L"", solution->getRootPath(), cprojectOut))
 			return false;
 
 		std::wstring solutionPath = solution->getRootPath() + L"/" + solution->getName() + L".mak";

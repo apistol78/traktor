@@ -73,7 +73,7 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 		// Generate project
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, L"", projectPath, projectOut))
 			{
 				log::error << L"Script processor failed using project template \"" << m_projectTemplate << L"\"." << Endl;
 				return false;
@@ -106,7 +106,7 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 	// Generate build file.
 	{
 		std::wstring solutionOut;
-		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), solutionOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, L"", solution->getRootPath(), solutionOut))
 		{
 			log::error << L"Script processor failed using solution template \"" << m_solutionTemplate << L"\"." << Endl;
 			return false;
