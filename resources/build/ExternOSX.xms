@@ -3476,7 +3476,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_LPNG128_EXPORT</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3501,7 +3501,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_LPNG128_EXPORT</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3526,7 +3526,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3556,7 +3556,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.11</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>PNG_ARM_NEON_OPT=0</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
