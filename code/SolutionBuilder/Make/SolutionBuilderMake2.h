@@ -23,8 +23,6 @@ class T_DLLCLASS SolutionBuilderMake2 : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderMake2();
-
 	virtual ~SolutionBuilderMake2();
 
 	virtual bool create(const CommandLine& cmdLine) override final;

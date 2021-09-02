@@ -38,7 +38,7 @@ public:
 
 	bool prepare(const std::wstring& fileName);
 
-	bool generate(const Solution* solution, const Project* project, const std::wstring& projectPath, std::wstring& output) const;
+	bool generate(const Solution* solution, const Project* project, const std::wstring& configurationName, const std::wstring& projectPath, std::wstring& output) const;
 
 private:
 	Ref< script::IScriptCompiler > m_scriptCompiler;

@@ -34,6 +34,7 @@ public:
 private:
 	std::wstring m_projectTemplate;
 	std::wstring m_workspaceTemplate;
+	std::wstring m_workspaceSchemeTemplate;
 	Ref< ScriptProcessor > m_scriptProcessor;
 };
 

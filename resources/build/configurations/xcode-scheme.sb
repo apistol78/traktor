@@ -1,0 +1,130 @@
+<?--
+
+local function productName(project, configuration)
+   if configuration.targetFormat == "StaticLibrary" then
+      return "lib" .. project.name .. ".a"
+   elseif configuration.targetFormat == "SharedLibrary" then
+      return "lib" .. project.name .. ".dylib"
+   elseif configuration.targetFormat == "Executable" or configuration.targetFormat == "ExecutableConsole" then
+      return project.name
+   else
+      error("Unknown target format " .. configuration.targetFormat)
+   end
+end
+
+local function createUid()
+   local uid = ""
+   for i = 1, 12 do
+      uid = uid .. string.format("%02x", math.random(0, 255))
+   end
+   return string.upper(uid)
+end
+
+--?><?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1250"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+<?-- 
+
+for _, project in pairs(solution.projects) do
+
+   local configuration = project:getConfiguration(configurationName)
+   if project.enable and configuration ~= nil then
+
+      local product = productName(project, configuration)
+
+--?>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "<?-- output:print(createUid()) --?>"
+               BuildableName = "<?-- output:print(product) --?>"
+               BlueprintName = "<?-- output:print(project.name .. " (" .. configurationName .. ")") --?>"
+               ReferencedContainer = "container:<?-- output:print(project.name) --?>.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+<?-- 
+
+   end
+end
+
+--?>      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Omni"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Omni"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "<?-- output:print(Path("$(TRAKTOR_HOME)").pathNameNoVolume) --?>"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "07E07A9D5105929100DA7AAA"
+            BuildableName = "Traktor.Editor.App"
+            BlueprintName = "Traktor.Editor.App (<?-- output:print(configurationName) --?>)"
+            ReferencedContainer = "container:Traktor.Editor.App.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "TRAKTOR_HOME"
+            value = "<?-- output:print(Path("$(TRAKTOR_HOME)").pathNameNoVolume) --?>"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Omni"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "<?-- output:print(Path("$(TRAKTOR_HOME)").pathNameNoVolume) --?>"
+      debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "07E07A9D5105929100DA7AAA"
+            BuildableName = "Traktor.Editor.App"
+            BlueprintName = "Traktor.Editor.App (<?-- output:print(configurationName) --?>)"
+            ReferencedContainer = "container:Traktor.Editor.App.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "TRAKTOR_HOME"
+            value = "<?-- output:print(Path("$(TRAKTOR_HOME)").pathNameNoVolume) --?>"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Omni">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Omni"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>

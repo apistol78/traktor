@@ -4,6 +4,7 @@ import(traktor)
 local function defaultBuildSettings()
 	return {
 		ALWAYS_SEARCH_USER_PATHS = "YES",
+		ARCHS = "x86_64",
 		CLANG_ANALYZER_NONNULL = "YES",
 		CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = "YES_AGGRESSIVE",
 		CLANG_CXX_LANGUAGE_STANDARD = "c++14",
@@ -34,13 +35,10 @@ local function defaultBuildSettings()
 		CLANG_WARN_UNREACHABLE_CODE = "YES",
 		CLANG_WARN__DUPLICATE_METHOD_MATCH = "YES",
 		CODE_SIGN_STYLE = "Automatic",
-		-- CONFIGURATION_BUILD_DIR = "../ReleaseStatic",
 		COPY_PHASE_STRIP = "NO",
 		DEBUG_INFORMATION_FORMAT = "dwarf",
-		--DEVELOPMENT_TEAM = MWNC6MCRE5;
 		ENABLE_STRICT_OBJC_MSGSEND = "YES",
 		ENABLE_TESTABILITY = "YES",
-		EXECUTABLE_PREFIX = "lib",
 		GCC_C_LANGUAGE_STANDARD = "gnu11",
 		GCC_DYNAMIC_NO_PIC = "NO",
 		GCC_NO_COMMON_BLOCKS = "YES",
@@ -55,8 +53,6 @@ local function defaultBuildSettings()
 		MACOSX_DEPLOYMENT_TARGET = "11.3",
 		MTL_ENABLE_DEBUG_INFO = "INCLUDE_SOURCE",
 		MTL_FAST_MATH = "YES",
-		--ONLY_ACTIVE_ARCH = "YES",
-		--PRODUCT_NAME = "Traktor.Core",
 		SDKROOT = "macosx",
 		SKIP_INSTALL = "YES",
 		USER_HEADER_SEARCH_PATHS = { "${DERIVED_FILES_DIR}" }
@@ -135,6 +131,23 @@ local function collectFiles(project, projectOrFilter, enterGroup, leaveGroup, ad
 				addFile(file)
 			end
 		end
+	end
+end
+
+local function traverseDependencies(project, visitor)
+	local visited = {}
+	local function traverseDependencies_R(project, visitor)
+		for _, dependency in pairs(project.dependencies) do
+			if visited[dependency.project] == nil then
+				visited[dependency.project] = "yes"
+				if visitor(dependency.project) then
+					traverseDependencies_R(dependency.project, visitor)
+				end
+			end
+		end
+	end
+	if visitor(project) then
+		traverseDependencies_R(project, visitor)
 	end
 end
 
@@ -372,6 +385,75 @@ collectFiles(
 -- Create a Xcode target for each configuration.
 for _, configuration in pairs(project.configurations) do
 
+	-- Create build configuration.
+	local buildConfiguration = {}
+	buildConfiguration.isa = "XCBuildConfiguration"
+	buildConfiguration.id = createUid()
+	buildConfiguration.comment = project.name .. " (" .. configuration.name .. ")"
+	buildConfiguration.name = "Omni"
+	buildConfiguration.buildSettings = defaultBuildSettings()
+	buildConfiguration.buildSettings["PRODUCT_NAME"] = project.name
+	if configuration.targetFormat == "SharedLibrary" then
+		buildConfiguration.buildSettings["EXECUTABLE_PREFIX"]= "lib"
+		buildConfiguration.buildSettings["INSTALL_PATH"] = "@executable_path"
+	end
+
+	-- Concatenate definitions.
+	local df = buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] or {}
+	for _, definition in pairs(configuration.definitions) do
+		table.insert(df, definition)
+	end
+	buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] = df
+
+	-- Concatenate include paths.
+	local ip = buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] or {}
+	for _, includePath in pairs(configuration.includePaths) do
+		table.insert(ip, Path(includePath).pathName)
+	end
+	buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] = ip
+
+	-- Add additional linker options.
+	local lo = buildConfiguration.buildSettings["OTHER_LDFLAGS"] or {}
+
+	-- Gather all libraries and library paths, add regardless if project is enable or disabled
+	traverseDependencies(project, function(dependencyProject)
+		local dependencyConfiguration = dependencyProject:getConfiguration(configuration.name)
+		if dependencyConfiguration == nil then
+			return false
+		end
+		if dependencyProject == project or dependencyConfiguration.targetFormat == "StaticLibrary" then
+			for _, libraryPath in pairs(dependencyConfiguration.libraryPaths) do
+				table.insert(lo, "-L" .. Path(libraryPath).pathNameNoVolume)
+			end
+			for _, library in pairs(dependencyConfiguration.libraries) do
+				if not endsWith(library, ".framework") then
+					table.insert(lo, "-l" .. library)
+				end
+			end
+			return true
+		end
+		return false
+	end)
+
+	if configuration.additionalLinkerOptions ~= "" then
+		table.insert(lo, configuration.additionalLinkerOptions)
+	end
+	buildConfiguration.buildSettings["OTHER_LDFLAGS"] = lo
+
+	-- Create explicit output directory for each configuration.
+	buildConfiguration.buildSettings["CONFIGURATION_BUILD_DIR"] = "../" .. configuration.name
+	table.insert(buildConfigurations, buildConfiguration)
+
+	-- Append configuration to list.
+	local configurationList = {}
+	configurationList.isa = "XCConfigurationList"
+	configurationList.id = createUid()
+	configurationList.comment = "Build configuration list for PBXNativeTarget \"" .. project.name .. "\" (" .. configuration.name .. ")"
+	configurationList.buildConfigurations = { buildConfiguration }
+	configurationList.defaultConfigurationIsVisible = 0
+	configurationList.defaultConfigurationName = buildConfiguration.name;
+	table.insert(configurationLists, configurationList)
+
 	-- Create framework build phase.
 	local frameWorksBuildPhase = {}
 	frameWorksBuildPhase.isa = "PBXFrameworksBuildPhase"
@@ -407,53 +489,6 @@ for _, configuration in pairs(project.configurations) do
 		end
 	end
 
-	-- Create build configuration.
-	local buildConfiguration = {}
-	buildConfiguration.isa = "XCBuildConfiguration"
-	buildConfiguration.id = createUid()
-	buildConfiguration.comment = project.name .. " (" .. configuration.name .. ")"
-	buildConfiguration.name = "Omni"
-	buildConfiguration.buildSettings = defaultBuildSettings()
-	buildConfiguration.buildSettings["PRODUCT_NAME"] = project.name
-	if configuration.targetFormat == "SharedLibrary" then
-		buildConfiguration.buildSettings["INSTALL_PATH"] = "@executable_path"
-	end
-
-	-- Concatenate definitions.
-	local df = buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] or {}
-	for _, definition in pairs(configuration.definitions) do
-		table.insert(df, definition)
-	end
-	buildConfiguration.buildSettings["GCC_PREPROCESSOR_DEFINITIONS"] = df
-
-	-- Concatenate include paths.
-	local ip = buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] or {}
-	for _, includePath in pairs(configuration.includePaths) do
-		table.insert(ip, Path(includePath).pathName)
-	end
-	buildConfiguration.buildSettings["USER_HEADER_SEARCH_PATHS"] = ip
-
-	-- Add additional linker options.
-	local lo = buildConfiguration.buildSettings["OTHER_LDFLAGS"] or {}
-	if configuration.additionalLinkerOptions ~= "" then
-		table.insert(lo, configuration.additionalLinkerOptions)
-	end
-	buildConfiguration.buildSettings["OTHER_LDFLAGS"] = lo
-
-	-- Create explicit output directory for each configuration.
-	buildConfiguration.buildSettings["CONFIGURATION_BUILD_DIR"] = "../" .. configuration.name
-	table.insert(buildConfigurations, buildConfiguration)
-
-	-- Append configuration to list.
-	local configurationList = {}
-	configurationList.isa = "XCConfigurationList"
-	configurationList.id = createUid()
-	configurationList.comment = "Build configuration list for PBXNativeTarget \"" .. project.name .. "\" (" .. configuration.name .. ")"
-	configurationList.buildConfigurations = { buildConfiguration }
-	configurationList.defaultConfigurationIsVisible = 0
-	configurationList.defaultConfigurationName = buildConfiguration.name;
-	table.insert(configurationLists, configurationList)
-
 	-- Create our product file reference.
 	local fileReference = {}
 	fileReference.isa = "PBXFileReference"
@@ -473,7 +508,7 @@ for _, configuration in pairs(project.configurations) do
 	nativeTarget.comment = project.name .. " (" .. configuration.name .. ")"
 	nativeTarget.name = project.name .. " (" .. configuration.name .. ")"
 	nativeTarget.buildConfigurationList = configurationList
-	nativeTarget.buildPhases = {} -- headersBuildPhase, table.unpack(shellScriptBuildPhases), sourcesBuildPhase, frameWorksBuildPhase }
+	nativeTarget.buildPhases = {}
 	nativeTarget.buildRules = {}
 	nativeTarget.dependencies = {}
 	nativeTarget.productName = project.name;
@@ -490,94 +525,104 @@ for _, configuration in pairs(project.configurations) do
 	table.insert(nativeTarget.buildPhases, sourcesBuildPhase)
 	table.insert(nativeTarget.buildPhases, frameWorksBuildPhase)
 
-	-- Create target dependency.
-	for _, dependency in pairs(project.dependencies) do
-		if isa(dependency, ProjectDependency) or isa(dependency, ExternalDependency) then
-			local dependencyConfiguration = dependency.project:getConfiguration(configuration:getName())
+	-- Create target dependencies; add dependencies from entire chain.
+	traverseDependencies(project, function(dependencyProject)
+		if not dependencyProject.enable then
+			return false
+		end
+		if dependencyProject == project then
+			return true
+		end
 
-			-- Locate project portal reference, create new if none found.
-			local fileReference = nil
-			for _, projectPortal in ipairs(rootProject.projectReferences) do
-				if projectPortal.path == dependency.project.name .. ".xcodeproj" then
-					fileReference = projectPortal
-					break
-				end
+		local dependencyConfiguration = dependencyProject:getConfiguration(configuration:getName())
+		if dependencyConfiguration == nil then
+			return false
+		end
+
+		-- Locate project portal reference, create new if none found.
+		local fileReference = nil
+		for _, projectPortal in ipairs(rootProject.projectReferences) do
+			if projectPortal.path == dependencyProject.name .. ".xcodeproj" then
+				fileReference = projectPortal
+				break
 			end
-			if fileReference == nil then
-				fileReference = {}
-				fileReference.isa = "PBXFileReference"
-				fileReference.id = createUid()
-				fileReference.comment = dependency.project.name .. ".xcodeproj"
-				fileReference.lastKnownFileType = "wrapper.pb-project"
-				fileReference.path = dependency.project.name .. ".xcodeproj"
-				fileReference.sourceTree = "<group>"
-				table.insert(fileReferences, fileReference)
-				table.insert(rootProject.projectReferences, fileReference)
-				table.insert(rootGroup.children, fileReference)
-			end
-
-			local targetDependencyProxy = {}
-			targetDependencyProxy.isa = "PBXContainerItemProxy"
-			targetDependencyProxy.id = createUid()
-			targetDependencyProxy.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			targetDependencyProxy.containerPortal = fileReference
-			targetDependencyProxy.proxyType = 1
-			targetDependencyProxy.remoteGlobalIDString = createUid()
-			targetDependencyProxy.remoteInfo = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			table.insert(targetDependencyProxies, targetDependencyProxy)
-
-			local targetDependency = {}
-			targetDependency.isa = "PBXTargetDependency"
-			targetDependency.id = createUid()
-			targetDependency.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			targetDependency.name = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			targetDependency.targetProxy = targetDependencyProxy
-			table.insert(targetDependencies, targetDependency)
-			table.insert(nativeTarget.dependencies, targetDependency)
-
-			local targetDependencyProxy = {}
-			targetDependencyProxy.isa = "PBXContainerItemProxy"
-			targetDependencyProxy.id = createUid()
-			targetDependencyProxy.comment = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			targetDependencyProxy.containerPortal = fileReference
-			targetDependencyProxy.proxyType = 2
-			targetDependencyProxy.remoteGlobalIDString = createUid()
-			targetDependencyProxy.remoteInfo = dependency.project.name .. " (" .. dependencyConfiguration.name .. ")"
-			table.insert(targetDependencyProxies, targetDependencyProxy)
-
-			local referenceProxy = {}
-			referenceProxy.isa = "PBXReferenceProxy"
-			referenceProxy.id = createUid()
-			referenceProxy.comment = productName(dependency.project, dependencyConfiguration)
-			referenceProxy.fileType = productType(dependencyConfiguration)
-			referenceProxy.path = productName(dependency.project, dependencyConfiguration)
-			referenceProxy.remoteRef = targetDependencyProxy
-			referenceProxy.sourceTree = "BUILD_PRODUCTS_DIR"
-			table.insert(referenceProxies, referenceProxy)
-			table.insert(proxyProductsGroup.children, referenceProxy)
-
-			-- Link to product from dependency.
-			local fileReference = {}
+		end
+		if fileReference == nil then
+			fileReference = {}
 			fileReference.isa = "PBXFileReference"
 			fileReference.id = createUid()
-			fileReference.comment = productName(dependency.project, dependencyConfiguration)
-			fileReference.explicitFileType = explicitFileType(dependencyConfiguration)
-			fileReference.name = productName(dependency.project, dependencyConfiguration)
-			fileReference.path = productName(dependency.project, dependencyConfiguration)
-			fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
+			fileReference.comment = dependencyProject.name .. ".xcodeproj"
+			fileReference.lastKnownFileType = "wrapper.pb-project"
+			fileReference.path = dependencyProject.name .. ".xcodeproj"
+			fileReference.sourceTree = "<group>"
 			table.insert(fileReferences, fileReference)
-			table.insert(frameworksGroup.children, fileReference)
-
-			local buildFile = {}
-			buildFile.isa = "PBXBuildFile"
-			buildFile.id = createUid()
-			buildFile.comment = productName(dependency.project, dependencyConfiguration) .. " in Frameworks"
-			buildFile.name = productName(dependency.project, dependencyConfiguration)
-			buildFile.fileRef = fileReference
-			table.insert(buildFiles, buildFile)		
-			table.insert(frameWorksBuildPhase.files, buildFile)
+			table.insert(rootProject.projectReferences, fileReference)
+			table.insert(rootGroup.children, fileReference)
 		end
-	end
+
+		local targetDependencyProxy = {}
+		targetDependencyProxy.isa = "PBXContainerItemProxy"
+		targetDependencyProxy.id = createUid()
+		targetDependencyProxy.comment = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		targetDependencyProxy.containerPortal = fileReference
+		targetDependencyProxy.proxyType = 1
+		targetDependencyProxy.remoteGlobalIDString = createUid()
+		targetDependencyProxy.remoteInfo = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		table.insert(targetDependencyProxies, targetDependencyProxy)
+
+		local targetDependency = {}
+		targetDependency.isa = "PBXTargetDependency"
+		targetDependency.id = createUid()
+		targetDependency.comment = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		targetDependency.name = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		targetDependency.targetProxy = targetDependencyProxy
+		table.insert(targetDependencies, targetDependency)
+		table.insert(nativeTarget.dependencies, targetDependency)
+
+		local targetDependencyProxy = {}
+		targetDependencyProxy.isa = "PBXContainerItemProxy"
+		targetDependencyProxy.id = createUid()
+		targetDependencyProxy.comment = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		targetDependencyProxy.containerPortal = fileReference
+		targetDependencyProxy.proxyType = 2
+		targetDependencyProxy.remoteGlobalIDString = createUid()
+		targetDependencyProxy.remoteInfo = dependencyProject.name .. " (" .. dependencyConfiguration.name .. ")"
+		table.insert(targetDependencyProxies, targetDependencyProxy)
+
+		local referenceProxy = {}
+		referenceProxy.isa = "PBXReferenceProxy"
+		referenceProxy.id = createUid()
+		referenceProxy.comment = productName(dependencyProject, dependencyConfiguration)
+		referenceProxy.fileType = productType(dependencyConfiguration)
+		referenceProxy.path = productName(dependencyProject, dependencyConfiguration)
+		referenceProxy.remoteRef = targetDependencyProxy
+		referenceProxy.sourceTree = "BUILD_PRODUCTS_DIR"
+		table.insert(referenceProxies, referenceProxy)
+		table.insert(proxyProductsGroup.children, referenceProxy)
+
+		-- Link to product from dependency.
+		local fileReference = {}
+		fileReference.isa = "PBXFileReference"
+		fileReference.id = createUid()
+		fileReference.comment = productName(dependencyProject, dependencyConfiguration)
+		fileReference.explicitFileType = explicitFileType(dependencyConfiguration)
+		fileReference.name = productName(dependencyProject, dependencyConfiguration)
+		fileReference.path = productName(dependencyProject, dependencyConfiguration)
+		fileReference.sourceTree = "BUILD_PRODUCTS_DIR"
+		table.insert(fileReferences, fileReference)
+		table.insert(frameworksGroup.children, fileReference)
+
+		local buildFile = {}
+		buildFile.isa = "PBXBuildFile"
+		buildFile.id = createUid()
+		buildFile.comment = productName(dependencyProject, dependencyConfiguration) .. " in Frameworks"
+		buildFile.name = productName(dependencyProject, dependencyConfiguration)
+		buildFile.fileRef = fileReference
+		table.insert(buildFiles, buildFile)		
+		table.insert(frameWorksBuildPhase.files, buildFile)
+
+		return false
+	end)
 end
 
 --?>// !$*UTF8*$!
