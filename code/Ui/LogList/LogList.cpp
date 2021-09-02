@@ -34,7 +34,8 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	addEventHandler< MouseButtonDownEvent >(this, &LogList::eventMouseButtonDown);
 	addEventHandler< MouseDoubleClickEvent >(this, &LogList::eventMouseDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
-
+    addEventHandler< TimerEvent >(this, &LogList::eventTimer);
+    
 	m_scrollBar = new ScrollBar();
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
@@ -47,6 +48,8 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
 
 	m_lookup = lookup;
+    
+    startTimer(100);
 	return true;
 }
 
@@ -97,8 +100,6 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 		if (m_threadIndices.find(e.threadId) == m_threadIndices.end())
 			m_threadIndices.insert(std::make_pair(e.threadId, m_nextThreadIndex++));
 	}
-
-	update();
 }
 
 void LogList::removeAll()
@@ -393,6 +394,13 @@ void LogList::eventMouseWheel(MouseWheelEvent* event)
 	position -= event->getRotation() * 4;
 	m_scrollBar->setPosition(position);
 	update();
+}
+    
+void LogList::eventTimer(TimerEvent* event)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
+	if (!m_pending.empty())
+		update();
 }
 
 void LogList::eventScroll(ScrollEvent* event)
