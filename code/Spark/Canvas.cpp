@@ -180,12 +180,12 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 
 			if (!segments.empty())
 			{
-				uint32_t from = outTriangles.size();
+				uint32_t from = (uint32_t)outTriangles.size();
 
 				triangulator.triangulate(segments, fillStyle, oddEven, outTriangles);
 				segments.resize(0);
 
-				uint32_t to = outTriangles.size();
+				uint32_t to = (uint32_t)outTriangles.size();
 
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)

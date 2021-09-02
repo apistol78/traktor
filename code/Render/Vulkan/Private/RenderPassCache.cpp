@@ -185,7 +185,7 @@ bool RenderPassCache::get(
 	rpci.subpassCount = 1;
 	rpci.pSubpasses = &subpass;
 
-	VkSubpassDependency dependencies[] = { {}, {} };
+	//VkSubpassDependency dependencies[] = { {}, {} };
 	//if (device.FamilyQueues().graphics.index == device.FamilyQueues().present.index)
 	//if (msaaResolve)
 	//{

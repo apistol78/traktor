@@ -703,8 +703,6 @@ void MovieRenderer::renderCharacter(
 				const TextLayout::Attribute& attrib = attribs[j->a];
 				const AlignedVector< TextLayout::Character >& chars = j->chars;
 
-				float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-
 				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
 					caretEndPosition = textOffsetX + i->offset + i->x + chars[k].x;

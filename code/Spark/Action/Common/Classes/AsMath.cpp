@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AsMath", AsMath, ActionObject)
 
 AsMath::AsMath(ActionContext* context)
 :	ActionObject(context)
-,	m_random(std::clock())
+,	m_random((uint32_t)std::clock())
 {
 	setMember("e", ActionValue(float(2.7182818284590452354)));
 	setMember("ln2", ActionValue(float(0.69314718055994530942)));

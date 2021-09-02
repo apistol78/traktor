@@ -58,13 +58,11 @@ namespace traktor
 		{
 
 const int32_t c_databasePollInterval = 5;
-const float c_maxDeltaTime = 1.0f / 5.0f;
-const int32_t c_maxDeltaTimeErrors = 300;
 
 class TargetPerformanceListener : public RefCountImpl< Profiler::IReportListener >
 {
 public:
-	TargetPerformanceListener(TargetManagerConnection* targetManagerConnection)
+	explicit TargetPerformanceListener(TargetManagerConnection* targetManagerConnection)
 	:	m_targetManagerConnection(targetManagerConnection)
 	{
 	}
@@ -588,6 +586,8 @@ bool Application::update()
 		// Measure delta time.
 		float deltaTime = float(m_timer.getDeltaTime());
 #if !defined(_DEBUG)
+		const float c_maxDeltaTime = 1.0f / 5.0f;
+		const int32_t c_maxDeltaTimeErrors = 300;
 		if (deltaTime > c_maxDeltaTime)
 		{
 			deltaTime = c_maxDeltaTime;

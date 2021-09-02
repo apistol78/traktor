@@ -287,8 +287,6 @@ void AccDisplayRenderer::begin(
 	const Aabb2& dirtyRegion
 )
 {
-	bool viewSizeChanged = bool(viewWidth != m_viewSize.x() || viewHeight != m_viewSize.y());
-
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_frameTransform = frameTransform;
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
