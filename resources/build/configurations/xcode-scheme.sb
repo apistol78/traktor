@@ -78,8 +78,11 @@ end
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         FilePath = "<?-- output:print(Path("$(TRAKTOR_HOME)").pathNameNoVolume) --?>/bin/latest/osx/<?-- output:print(string.lower(configurationName)) --?>/Traktor.Editor.App">
+      </PathRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "07E07A9D5105929100DA7AAA"
@@ -87,7 +90,7 @@ end
             BlueprintName = "Traktor.Editor.App (<?-- output:print(configurationName) --?>)"
             ReferencedContainer = "container:Traktor.Editor.App.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "TRAKTOR_HOME"
