@@ -344,10 +344,13 @@ for i, configuration in pairs(configurations) do
 		local targetPath = aggregateOutputPath:concat(Path(aggregationItem.targetPath))
 		if os == "windows" then
 			output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
-		elseif os == "osx" or os == "linux" then
+		elseif os == "linux" then
 			printWithColor(Color.Blue, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 			output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 			output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
+		elseif os == "osx" then
+			printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+			output:printLn("\t@$(COPY_AND_SIGN) \"" .. sourceFile.pathNameNoVolume .. "\" \"" .. targetPath.pathNameNoVolume .. "/\"")
 		end
 	end
 end
@@ -409,10 +412,13 @@ if #architectures > 0 then
 
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
-			elseif os == "osx" or os == "linux" then
+			elseif os == "linux" then
 				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
+			elseif os == "osx" then
+				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				output:printLn("\t@$(COPY_AND_SIGN) \"" .. sourceFile.pathNameNoVolume .. "\" \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
 		end
 
@@ -574,10 +580,13 @@ else -- No architectures
 
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
-			elseif os == "osx" or os == "linux" then
+			elseif os == "linux" then
 				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
+			elseif os == "osx" then
+				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				output:printLn("\t@$(COPY_AND_SIGN) \"" .. sourceFile.pathNameNoVolume .. "\" \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
 		end
 

@@ -43,7 +43,8 @@
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
 				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
-				"externalConsole": false,				
+				"externalConsole": false,
+				"MIMode": "lldb"			
 			}
 		},
 
