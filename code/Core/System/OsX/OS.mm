@@ -310,6 +310,13 @@ Ref< IProcess > OS::execute(
 			executable = resolvedCommandLine;
 	}
 
+	char wd[512] = { 0 };
+	if (!workingDirectory.empty())
+	{
+		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+	}
+
 	// Convert all arguments; append bash if executing shell script.
 	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
@@ -356,8 +363,8 @@ Ref< IProcess > OS::execute(
 	// don't want child process searching our products by default.
 	if (env)
 	{
-		const std::map< std::wstring, std::wstring >& v = env->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
+		const auto& v = env->get();
+		for (auto i = v.begin(); i != v.end(); ++i)
 		{
 			if (i->first != L"DYLD_LIBRARY_PATH")
 				envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
@@ -366,8 +373,8 @@ Ref< IProcess > OS::execute(
 	else
 	{
 		Ref< Environment > env2 = getEnvironment();
-		const std::map< std::wstring, std::wstring >& v = env2->get();
-		for (std::map< std::wstring, std::wstring >::const_iterator i = v.begin(); i != v.end(); ++i)
+		const auto& v = env2->get();
+		for (auto i = v.begin(); i != v.end(); ++i)
 		{
 			if (i->first != L"DYLD_LIBRARY_PATH")
 				envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
@@ -377,11 +384,6 @@ Ref< IProcess > OS::execute(
 	// Terminate argument and environment vectors.
 	envv[envc] = nullptr;
 	argv[argc] = nullptr;
-	
-	// Spawned process inherit working directory from our process; thus
-	// we need to temporarily change directory.
-	getcwd(cwd, sizeof(cwd));
-	chdir(wstombs(workingDirectory.getPathNameNoVolume()).c_str());
 
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
@@ -391,6 +393,7 @@ Ref< IProcess > OS::execute(
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
+		posix_spawn_file_actions_addchdir_np(fileActions, wd);
 		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
 		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
@@ -401,12 +404,13 @@ Ref< IProcess > OS::execute(
 	}
 	else
 	{
-		// Spawn process.
-		err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
-	}
+		fileActions = new posix_spawn_file_actions_t;
+		posix_spawn_file_actions_init(fileActions);
+		posix_spawn_file_actions_addchdir_np(fileActions, wd);
 
-	// Restore our working directory before returning.
-	chdir(cwd);
+		// Spawn process.
+		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
+	}
 	
 	if (err != 0)
 		return nullptr;
@@ -434,23 +438,11 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 
 bool OS::whereIs(const std::wstring& executable, Path& outPath) const
 {
-	std::wstring paths;
-
-	// Get system "PATH" environment variable.
-	if (!getEnvironment(L"PATH", paths))
-		return false;
-
-	// Try to locate binary in any of the paths specified in "PATH".
-	for (auto path : StringSplit< std::wstring >(paths, L";:,"))
+	if (executable == L"blender")
 	{
-		Ref< File > file = FileSystem::getInstance().get(path + L"/" + executable);
-		if (file)
-		{
-			outPath = file->getPath();
-			return true;
-		}
+		outPath = L"/Applications/Blender.app/Contents/MacOS/Blender";
+		return true;
 	}
-
 	return false;
 }
 
