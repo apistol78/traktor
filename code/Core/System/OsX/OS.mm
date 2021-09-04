@@ -59,6 +59,16 @@ OS& OS::getInstance()
 	return *s_instance;
 }
 
+std::wstring OS::getName() const
+{
+	return L"macOS";	
+}
+
+std::wstring OS::getIdentifier() const
+{
+	return L"macos";
+}
+
 uint32_t OS::getCPUCoreCount() const
 {
 	host_basic_info_data_t hostInfo;
