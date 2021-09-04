@@ -40,6 +40,12 @@ public:
 
 	static OS& getInstance();
 
+	/*! Get OS name. */
+	std::wstring getName() const;
+
+	/*! Get OS identifier. */
+	std::wstring getIdentifier() const;
+
 	/*! Get number of CPU cores.
 	 *
 	 * \return Number of CPU cores.
@@ -187,7 +193,7 @@ protected:
 	virtual void destroy() override final;
 
 private:
-	void* m_handle;
+	void* m_handle = nullptr;
 };
 
 }

@@ -34,7 +34,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
-	static OS* s_instance = 0;
+	static OS* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new OS();
@@ -42,6 +42,16 @@ OS& OS::getInstance()
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
+}
+
+std::wstring OS::getName() const
+{
+	return L"Linux";	
+}
+
+std::wstring OS::getIdentifier() const
+{
+	return L"linux";
 }
 
 uint32_t OS::getCPUCoreCount() const

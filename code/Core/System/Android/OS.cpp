@@ -32,6 +32,16 @@ OS& OS::getInstance()
 	return *s_instance;
 }
 
+std::wstring OS::getName() const
+{
+	return L"Android";	
+}
+
+std::wstring OS::getIdentifier() const
+{
+	return L"android";
+}
+
 uint32_t OS::getCPUCoreCount() const
 {
 	char possible[1024] = { '\0' };

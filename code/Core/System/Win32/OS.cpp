@@ -36,7 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
 
 OS& OS::getInstance()
 {
-	static OS* s_instance = 0;
+	static OS* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new OS();
@@ -44,6 +44,48 @@ OS& OS::getInstance()
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
+}
+
+std::wstring OS::getName() const
+{
+	OSVERSIONINFOEX osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	GetVersionEx((OSVERSIONINFO *) &osvi);
+
+	if (osvi.wProductType == VER_NT_WORKSTATION)
+	{
+		if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0)
+			return L"Windows 10";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+			return L"Windows 8.1";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+			return L"Windows 8";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+			return L"Windows 7";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+			return L"Windows Vista";
+		else
+			return str(L"Windows NT (%d.%d)", osvi.dwMajorVersion, osvi.dwMinorVersion);
+	}
+	else
+	{
+		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+			return L"Windows Server 2012 R2";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+			return L"Windows Server 2012";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+			return L"Windows Server 2008 R2";
+		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
+			return L"Windows Server 2008";
+		else
+			return str(L"Windows Server (%d.%d)", osvi.dwMajorVersion, osvi.dwMinorVersion);
+	}
+}
+
+std::wstring OS::getIdentifier() const
+{
+	return L"windows";
 }
 
 uint32_t OS::getCPUCoreCount() const

@@ -496,6 +496,8 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classOS->addConstant("EfMute", Any::fromInt32(OS::EfMute));
 	classOS->addConstant("EfDetach", Any::fromInt32(OS::EfDetach));
 	classOS->addStaticMethod("getInstance", &OS_getInstance);
+	classOS->addProperty("name", &OS::getName);
+	classOS->addProperty("identifier", &OS::getIdentifier);
 	classOS->addProperty("cpuCoreCount", &OS::getCPUCoreCount);
 	classOS->addProperty("executable", &OS::getExecutable);
 	classOS->addProperty("commandLine", &OS::getCommandLine);

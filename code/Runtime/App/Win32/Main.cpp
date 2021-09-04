@@ -243,46 +243,8 @@ void logSystemInfo()
 	log::info << L"\tAvailable virtual " << memInfo.ullAvailVirtual  / 1024 / 1024  << L" MiB" << Endl;
 
 	// Log OS Version
-	OSVERSIONINFOEX osvi;
-	ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	GetVersionEx((OSVERSIONINFO *) &osvi);
 	log::info << L"Operating System" << Endl;
-	if (osvi.wProductType == VER_NT_WORKSTATION)
-	{
-		if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0)
-			log::info << L"\tWindows 10";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
-			log::info << L"\tWindows 8.1";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
-			log::info << L"\tWindows 8";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
-			log::info << L"\tWindows 7";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
-			log::info << L"\tWindows Vista";
-	}
-	else
-	{
-		if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
-			log::info << L"\tWindows Server 2012 R2";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
-			log::info << L"\tWindows Server 2012";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
-			log::info << L"\tWindows Server 2008 R2";
-		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
-			log::info << L"\tWindows Server 2008";
-	}
-
-	bool is64bit = false;
-	if (isWindows64bit(is64bit))
-		log::info << L" (" << (is64bit ? L"64-bit" : L"32-bit") << L")";
-
-	if (osvi.szCSDVersion)
-		log::info << L" " << osvi.szCSDVersion << Endl;
-	else
-		log::info << Endl;
-	log::info << L"\tOS version " << uint32_t(osvi.dwMajorVersion) << L"." << uint32_t(osvi.dwMinorVersion) << L"." << uint32_t(osvi.dwBuildNumber) << Endl;
-	log::info << L"\tSP version " << uint32_t(osvi.wServicePackMajor) << L"." << uint32_t(osvi.wServicePackMinor) << Endl;
+	log::info << L"\t" << OS::getInstance().getName() << Endl;
 }
 
 void logDriverVersion()
