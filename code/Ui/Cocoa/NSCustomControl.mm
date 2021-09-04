@@ -61,7 +61,7 @@
 {
 	bool consumed = false;
 
-	if (m_eventsCallback)
+	if (m_eventsCallback && NSWidth(rect) > 0 && NSHeight(rect) > 0)
 		consumed = m_eventsCallback->event_drawRect(rect);
 
 	if (!consumed)
