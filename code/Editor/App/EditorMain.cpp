@@ -10,6 +10,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogRedirectTarget.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
@@ -53,7 +54,7 @@ namespace
 class LogStreamTarget : public ILogTarget
 {
 public:
-	LogStreamTarget(OutputStream* stream)
+	explicit LogStreamTarget(OutputStream* stream)
 	:	m_stream(stream)
 	{
 	}
@@ -114,7 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!Debugger::getInstance().isDebuggerAttached())
 	{
 		RefArray< File > logs;
-		FileSystem::getInstance().find(writableFolder + L"/Logs/Editor_*.log", logs);
+		FileSystem::getInstance().find(writableFolder + L"/Editor_*.log", logs);
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;
@@ -149,16 +150,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 		// Create new log file.
 		StringOutputStream ss;
-		ss << writableFolder << L"/Logs/Editor_" << nextLogId << L".log";
+		ss << writableFolder << L"/Editor_" << nextLogId << L".log";
 		logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite);
 		if (logFile)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-			log::info   .setGlobalTarget(logTarget);
-			log::warning.setGlobalTarget(logTarget);
-			log::error  .setGlobalTarget(logTarget);
+			Ref< ILogTarget > defaultInfoLog = log::info.getGlobalTarget();
+			Ref< ILogTarget > defaultWarningLog = log::info.getGlobalTarget();
+			Ref< ILogTarget > defaultErrorLog = log::info.getGlobalTarget();
+
+			log::info.setGlobalTarget(new LogRedirectTarget(defaultInfoLog, logTarget));
+			log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, logTarget));
+			log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, logTarget));
 
 			log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
 		}
