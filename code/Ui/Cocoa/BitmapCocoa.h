@@ -12,8 +12,6 @@ namespace traktor
 class BitmapCocoa : public ISystemBitmap
 {
 public:
-	BitmapCocoa();
-
 	virtual bool create(uint32_t width, uint32_t height) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -29,10 +27,10 @@ public:
 	inline NSImage* getNSImagePreAlpha() const { return m_imagePreAlpha; }
 
 private:
-	NSImage* m_image;
-	NSBitmapImageRep* m_imageRep;
-	NSImage* m_imagePreAlpha;
-	NSBitmapImageRep* m_imageRepPreAlpha;
+	NSImage* m_image = nullptr;
+	NSBitmapImageRep* m_imageRep = nullptr;
+	NSImage* m_imagePreAlpha = nullptr;
+	NSBitmapImageRep* m_imageRepPreAlpha = nullptr;
 };
 
 	}

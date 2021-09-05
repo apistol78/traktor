@@ -22,13 +22,7 @@
 
 - (void) setStringValue: (NSString*)aString
 {
-	if (m_string)
-		[m_string release];
-
 	m_string = aString;
-
-	if (m_string)
-		[m_string retain];
 }
 
 - (NSString*) stringValue
@@ -38,13 +32,7 @@
 
 - (void) setFont: (NSFont*)font
 {
-	if (m_font)
-		[m_font release];
-
 	m_font = font;
-
-	if (m_font)
-		[m_font retain];
 }
 
 - (NSFont*) font

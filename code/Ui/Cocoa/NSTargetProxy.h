@@ -9,16 +9,16 @@ namespace traktor
 
 struct ITargetProxyCallback
 {
-	virtual void targetProxy_Action(void* controlId) = 0;
+	virtual void targetProxy_Action(id controlId) = 0;
 
-	virtual void targetProxy_doubleAction(void* controlId) = 0;
+	virtual void targetProxy_doubleAction(id controlId) = 0;
 };
 
 template < typename TargetType >
 class TargetProxyCallbackImpl : public ITargetProxyCallback
 {
 public:
-	typedef void (TargetType::*method_t)(void* controlId);
+	typedef void (TargetType::*method_t)(id controlId);
 
 	TargetProxyCallbackImpl(TargetType* this_, method_t action, method_t doubleAction)
 	:	m_this(this_)
@@ -27,13 +27,13 @@ public:
 	{
 	}
 
-	virtual void targetProxy_Action(void* controlId)
+	virtual void targetProxy_Action(id controlId)
 	{
 		if (m_action)
 			(m_this->*m_action)(controlId);
 	}
 
-	virtual void targetProxy_doubleAction(void* controlId)
+	virtual void targetProxy_doubleAction(id controlId)
 	{
 		if (m_doubleAction)
 			(m_this->*m_doubleAction)(controlId);

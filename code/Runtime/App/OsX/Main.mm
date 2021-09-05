@@ -265,18 +265,16 @@ int main(int argc, const char** argv)
 		for (;;)
 		{
 			// Handle system events.
-			NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 			for (;;)
 			{
 				// Pop event from queue.
-				NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+				NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 				if (event == nil)
 					break;
 
 				// Dispatch event to appropriate responder.
 				[NSApp sendEvent: event];
 			}
-			[pool release];
 
 			// Update game application.
 			if (!application->update())

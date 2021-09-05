@@ -139,7 +139,7 @@ private:
 	int m_result;
 	NSTimer* m_timer;
 
-	void callbackTimer(void* controlId);
+	void callbackTimer(id controlId);
 };
 
 	}

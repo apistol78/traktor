@@ -7,11 +7,8 @@ namespace traktor
 	namespace ui
 	{
 
-CanvasCocoa::CanvasCocoa(NSView* view, NSFont* font)
-:	m_view(view)
-,	m_foregroundColor(0)
-,	m_backgroundColor(0)
-,	m_font(font)
+CanvasCocoa::CanvasCocoa(NSFont* font)
+:	m_font(font)
 ,	m_haveClipper(false)
 {
 	m_foregroundColor = [NSColor controlTextColor];
@@ -115,7 +112,6 @@ void CanvasCocoa::fillCircle(int x, int y, float radius)
 		endAngle: 360.0f
 	];
 	[path fill];
-	[path release];
 }
 
 void CanvasCocoa::drawCircle(int x, int y, float radius)
@@ -130,7 +126,6 @@ void CanvasCocoa::drawCircle(int x, int y, float radius)
 		endAngle: 360.0f
 	];
 	[path stroke];
-	[path release];
 }
 
 void CanvasCocoa::drawEllipticArc(int x, int y, int w, int h, float start, float end)
@@ -163,7 +158,6 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 		];
 
 	[gradient drawInRect: nrc angle: vertical ? 90.0f : 0.0f];
-	[gradient release];
 }
 
 void CanvasCocoa::drawRect(const Rect& rc)
@@ -207,7 +201,6 @@ void CanvasCocoa::fillPolygon(const Point* pnts, int count)
 	for (int i = 1; i < count; ++i)
 		[path lineToPoint: makeNSPoint(pnts[i])];
 	[path fill];
-	[path release];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
@@ -219,9 +212,9 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 	NSRect srcRect = makeNSRect(Rect(srcAt, size));
 
 	if (blendMode == 0)
-		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
+		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositingOperationCopy fraction: 1.0f];
 	else if ((blendMode & BmAlpha) != 0)
-		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
+		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositingOperationSourceOver fraction: 1.0f];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
@@ -233,9 +226,9 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	NSRect srcRect = makeNSRect(Rect(srcAt, srcSize));
 
 	if (blendMode == 0)
-		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
+		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositingOperationCopy fraction: 1.0f];
 	else if ((blendMode & BmAlpha) != 0)
-		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
+		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositingOperationSourceOver fraction: 1.0f];
 }
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)

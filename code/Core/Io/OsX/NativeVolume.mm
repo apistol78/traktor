@@ -1,4 +1,3 @@
-#include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -8,6 +7,7 @@
 #include "Core/Date/DateTime.h"
 #include "Core/Io/File.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Io/OsX/NativeStream.h"
 #include "Core/Io/OsX/NativeVolume.h"
 #include "Core/Log/Log.h"
@@ -53,7 +53,7 @@ Ref< File > NativeVolume::get(const Path& path)
 {
 	struct stat sb;
 	if (stat(wstombs(getSystemPath(path)).c_str(), &sb) != 0)
-		return 0;
+		return nullptr;
 
 	uint32_t flags = 0;
 	if (sb.st_mode & S_IFREG)
@@ -215,8 +215,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 		Ref< IVolume > volume = new NativeVolume(workingDirectory);
 		fileSystem.mount(L"C", volume);
 		fileSystem.setCurrentVolume(volume);
-
-		[directoryPath release];
 	}
 	else
 		log::error << L"Unable to retrieve current working directory" << Endl;
@@ -224,7 +222,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 
 	if (path.isRelative())
 	{
@@ -232,9 +230,7 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 		ss << tmp << L"/" << path.getPathName();
 	}
 	else
-	{
 		ss << path.getPathNameNoVolume();
-	}
 
 	return ss.str();
 }

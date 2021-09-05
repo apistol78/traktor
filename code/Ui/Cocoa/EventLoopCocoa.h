@@ -11,6 +11,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+#if __OBJC__
+@class NSEvent;
+#else
+typedef void NSEvent;
+#endif
+
 namespace traktor
 {
 	namespace ui
@@ -49,7 +55,7 @@ private:
 	bool m_idleMode;
 	std::vector< void* > m_modalWindows;
 
-	bool handleGlobalEvents(EventSubject* owner, void* event);
+	bool handleGlobalEvents(EventSubject* owner, NSEvent* event);
 };
 
 	}

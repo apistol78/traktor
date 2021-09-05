@@ -27,13 +27,8 @@ class WidgetCocoaImpl
 public:
 	typedef WidgetCocoaImpl< ControlType, NSControlType > class_t;
 
-	WidgetCocoaImpl(EventSubject* owner)
+	explicit WidgetCocoaImpl(EventSubject* owner)
 	:	m_owner(owner)
-	,	m_control(nullptr)
-	,	m_notificationProxy(nullptr)
-	,	m_timer(nullptr)
-	,	m_haveFocus(false)
-	,	m_tracking(false)
 	{
 	}
 
@@ -44,8 +39,6 @@ public:
 		{
 			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 			[notificationCenter removeObserver: m_notificationProxy];
-
-			[m_notificationProxy release];
 			m_notificationProxy = nullptr;
 		}
 
@@ -62,11 +55,7 @@ public:
 			[view removeFromSuperview];
 
 		// Release objects.
-		if (m_control)
-		{
-			[m_control release];
-			m_control = nullptr;
-		}
+		m_control = nullptr;
 	}
 
 	virtual void setParent(IWidget* parent) override
@@ -75,7 +64,7 @@ public:
 
 		[view removeFromSuperview];
 
-		NSView* contentView = (NSView*)parent->getInternalHandle();
+		NSView* contentView = (__bridge NSView*)parent->getInternalHandle();
 		T_ASSERT (contentView);
 
 		[contentView addSubview: view];
@@ -164,7 +153,7 @@ public:
 		ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< class_t >(
 			this,
 			&class_t::callbackTimer,
-			0
+			nullptr
 		);
 
 		NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
@@ -326,12 +315,12 @@ public:
 
 	virtual void* getInternalHandle() override
 	{
-		return m_control;
+		return (__bridge void*)m_control;
 	}
 
 	virtual SystemWindow getSystemWindow() override
 	{
-		return SystemWindow(m_control);
+		return SystemWindow((__bridge void*)m_control);
 	}
 
 	// IFontMetric
@@ -374,12 +363,12 @@ public:
 	}
 
 protected:
-	EventSubject* m_owner;
-	NSControlType* m_control;
-	NSNotificationProxy* m_notificationProxy;
-	NSTimer* m_timer;
-	bool m_haveFocus;
-	bool m_tracking;
+	EventSubject* m_owner = nullptr;
+	NSControlType* m_control = nullptr;
+	NSNotificationProxy* m_notificationProxy = nullptr;
+	NSTimer* m_timer = nullptr;
+	bool m_haveFocus = false;
+	bool m_tracking = false;
 
 	bool internalCreate()
 	{
@@ -415,7 +404,7 @@ protected:
 		}
 	}
 
-	void callbackTimer(void* controlId)
+	void callbackTimer(id controlId)
 	{
 		TimerEvent timerEvent(m_owner);
 		m_owner->raiseEvent(&timerEvent);

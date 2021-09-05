@@ -17,8 +17,6 @@ namespace traktor
 
 ToolFormCocoa::ToolFormCocoa(EventSubject* owner)
 :	m_owner(owner)
-,	m_parent(nullptr)
-,	m_timer(nullptr)
 {
 }
 
@@ -27,13 +25,13 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 	uint32_t styleMask = 0;
 
 	if (style & WsCaption)
-		styleMask |= NSTitledWindowMask;
+		styleMask |= NSWindowStyleMaskTitled;
 	if (style & WsCloseBox)
-		styleMask |= NSClosableWindowMask;
+		styleMask |= NSWindowStyleMaskClosable;
 	if (style & WsResizable)
-		styleMask |= NSResizableWindowMask;
+		styleMask |= NSWindowStyleMaskResizable;
 	if (style & WsMinimizeBox)
-		styleMask |= NSMiniaturizableWindowMask;
+		styleMask |= NSWindowStyleMaskMiniaturizable;
 
 	m_window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
@@ -52,7 +50,7 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 
 	if ((m_parent = parent) != nullptr)
 	{
-		NSControl* parentControl = (NSControl*)parent->getInternalHandle();
+		NSControl* parentControl = (__bridge NSControl*)parent->getInternalHandle();
 		NSWindow* parentWindow = [parentControl window];
 		[parentWindow addChildWindow: m_window ordered: NSWindowAbove];
 	}
@@ -72,7 +70,7 @@ int ToolFormCocoa::showModal()
 	NSModalSession session = [NSApp beginModalSessionForWindow: m_window];
 
 	EventLoopCocoa* eventLoop = static_cast< EventLoopCocoa* >(Application::getInstance()->getEventLoop());
-	eventLoop->pushModal(m_window);
+	//eventLoop->pushModal(m_window);
 
   	while (m_result < 0)
     {
@@ -80,7 +78,7 @@ int ToolFormCocoa::showModal()
 			break;
 	}
 
-	eventLoop->popModal();
+	//eventLoop->popModal();
 
     [NSApp endModalSession:session];
 
@@ -97,6 +95,7 @@ void ToolFormCocoa::endModal(int result)
 
 void ToolFormCocoa::destroy()
 {
+	/*
 	if (m_parent != nullptr)
 	{
 		NSControl* parentControl = (NSControl*)m_parent->getInternalHandle();
@@ -104,6 +103,7 @@ void ToolFormCocoa::destroy()
 		[parentWindow removeChildWindow: m_window];
 		m_parent = nullptr;
 	}
+	*/
 
 	// Release all timers.
 	stopTimer();
@@ -113,7 +113,6 @@ void ToolFormCocoa::destroy()
 	{
 		[m_window orderOut: nil];
 		[m_window setDelegate: nil];
-		[m_window release];
 		m_window = nullptr;
 	}
 }
@@ -200,7 +199,7 @@ void ToolFormCocoa::startTimer(int interval)
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< ToolFormCocoa >(
 		this,
 		&ToolFormCocoa::callbackTimer,
-		0
+		nullptr
 	);
 
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
@@ -332,12 +331,12 @@ void ToolFormCocoa::update(const Rect* rc, bool immediate)
 
 void* ToolFormCocoa::getInternalHandle()
 {
-	return [m_window contentView];
+	return (__bridge void*)[m_window contentView];
 }
 
 SystemWindow ToolFormCocoa::getSystemWindow()
 {
-	return SystemWindow(m_window);
+	return SystemWindow((__bridge void*)m_window);
 }
 
 void ToolFormCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
@@ -386,7 +385,7 @@ void ToolFormCocoa::event_windowDidResize()
 	m_owner->raiseEvent(&s);
 }
 
-void ToolFormCocoa::callbackTimer(void* controlId)
+void ToolFormCocoa::callbackTimer(id controlId)
 {
 	TimerEvent timerEvent(m_owner);
 	m_owner->raiseEvent(&timerEvent);

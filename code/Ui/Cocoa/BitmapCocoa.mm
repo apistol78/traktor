@@ -8,14 +8,6 @@ namespace traktor
 	namespace ui
 	{
 
-BitmapCocoa::BitmapCocoa()
-:	m_image(0)
-,	m_imageRep(0)
-,	m_imagePreAlpha(0)
-,	m_imageRepPreAlpha(0)
-{
-}
-
 bool BitmapCocoa::create(uint32_t width, uint32_t height)
 {
 	m_image = [[NSImage alloc] initWithSize: NSMakeSize(width, height)];
@@ -51,18 +43,6 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 
 void BitmapCocoa::destroy()
 {
-	if (m_image)
-		[m_image release];
-
-	if (m_imageRep)
-		[m_imageRep release];
-
-	if (m_imagePreAlpha)
-		[m_imagePreAlpha release];
-
-	if (m_imageRepPreAlpha)
-		[m_imageRepPreAlpha release];
-
 	m_image = nullptr;
 	m_imageRep = nullptr;
 	m_imagePreAlpha = nullptr;

@@ -28,7 +28,7 @@ void PathDialogCocoa::destroy()
 	if (m_openPanel)
 	{
 		[m_openPanel orderOut: nil];
-		m_openPanel = 0;
+		m_openPanel = nullptr;
 	}
 }
 

@@ -18,7 +18,6 @@ namespace traktor
 
 FormCocoa::FormCocoa(EventSubject* owner)
 :	m_owner(owner)
-,	m_timer(nullptr)
 {
 }
 
@@ -26,7 +25,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 {
 	m_window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
-		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+		styleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable
 		backing: NSBackingStoreBuffered
 		defer: YES
 	];
@@ -90,7 +89,7 @@ void FormCocoa::destroy()
 	if (m_window)
 	{
 		[m_window setDelegate: nil];
-		[m_window release]; m_window = nullptr;
+		m_window = nullptr;
 	}
 }
 
@@ -169,14 +168,14 @@ void FormCocoa::startTimer(int interval)
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< FormCocoa >(
 		this,
 		&FormCocoa::callbackTimer,
-		0
+		nullptr
 	);
 
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: targetCallback];
 
 	NSTimer* timer = [[NSTimer alloc]
-		initWithFireDate: nil
+		initWithFireDate: [NSDate dateWithTimeIntervalSinceNow: 1]
 		interval: (double)interval / 1000.0
 		target: targetProxy
 		selector: @selector(dispatchActionCallback:)
@@ -293,12 +292,12 @@ void FormCocoa::update(const Rect* rc, bool immediate)
 
 void* FormCocoa::getInternalHandle()
 {
-	return [m_window contentView];
+	return (__bridge void*)[m_window contentView];
 }
 
 SystemWindow FormCocoa::getSystemWindow()
 {
-	return SystemWindow(m_window);
+	return SystemWindow((__bridge void*)m_window);
 }
 
 void FormCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
@@ -336,7 +335,7 @@ void FormCocoa::event_windowDidResize()
 	m_owner->raiseEvent(&s);
 }
 
-void FormCocoa::callbackTimer(void* controlId)
+void FormCocoa::callbackTimer(id controlId)
 {
 	TimerEvent timerEvent(m_owner);
 	m_owner->raiseEvent(&timerEvent);

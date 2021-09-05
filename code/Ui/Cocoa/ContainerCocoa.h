@@ -14,7 +14,7 @@ class ContainerCocoa
 ,	public INSControlEventsCallback
 {
 public:
-	ContainerCocoa(EventSubject* owner);
+	explicit ContainerCocoa(EventSubject* owner);
 
 	// IWidget
 

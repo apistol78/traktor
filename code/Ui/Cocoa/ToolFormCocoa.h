@@ -132,13 +132,13 @@ public:
 	virtual void event_windowDidResignMain() override;
 
 private:
-	EventSubject* m_owner;
-	IWidget* m_parent;
-	NSWindow* m_window;
-	NSTimer* m_timer;
-	int32_t m_result;
+	EventSubject* m_owner = nullptr;
+	IWidget* m_parent = nullptr;
+	NSWindow* m_window = nullptr;
+	NSTimer* m_timer = nullptr;
+	int32_t m_result = 0;
 	
-	void callbackTimer(void* controlId);
+	void callbackTimer(id controlId);
 };
 
 	}
