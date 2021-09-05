@@ -173,3 +173,5 @@ LINK_LIBS=
 
 # Binary include
 BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run
+COPY_AND_SIGN=$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/resources/build/osx/CopyAndSign.run
+
