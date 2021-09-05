@@ -44,17 +44,15 @@ bool EventLoopCocoa::process(EventSubject* owner)
 
 	// Process a single event.
 	{
-		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
 		if (m_idleMode)
 		{
 			// Poll application events.
-			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			NSEvent* event = [NSApp nextEventMatchingMask: NSUIntegerMax untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 			if (event != nil)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -75,13 +73,13 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			// Get application events.
 			for (;;)
 			{
-				NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+				NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 				if (event == nil)
 					break;
 
 				if (!handleGlobalEvents(owner, event))
 				{
-					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -90,8 +88,6 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			}
 			m_idleMode = true;
 		}
-
-		[pool release];
 	}
 
 	return true;
@@ -107,17 +103,15 @@ int EventLoopCocoa::execute(EventSubject* owner)
 
 	while (!m_terminated)
 	{
-		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
 		if (m_idleMode)
 		{
 			// Poll application events.
-			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 			if (event != nil)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -136,12 +130,12 @@ int EventLoopCocoa::execute(EventSubject* owner)
 		else
 		{
 			// Get application events.
-			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantFuture] inMode: NSDefaultRunLoopMode dequeue: YES];
+			NSEvent* event = [NSApp nextEventMatchingMask: NSEventMaskAny untilDate: [NSDate distantFuture] inMode: NSDefaultRunLoopMode dequeue: YES];
 			if (event != nil)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -150,8 +144,6 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			}
 			m_idleMode = true;
 		}
-
-		[pool release];
 	}
 
 	return m_exitCode;
@@ -172,13 +164,13 @@ int32_t EventLoopCocoa::getAsyncKeyState() const
 {
 	int32_t keyState = KsNone;
 
-	if (m_modifierFlags & NSControlKeyMask)
+	if (m_modifierFlags & NSEventModifierFlagControl)
 		keyState |= KsControl;
-	if (m_modifierFlags & NSAlternateKeyMask)
+	if (m_modifierFlags & NSEventModifierFlagOption)
 		keyState |= KsMenu;
-	if (m_modifierFlags & NSShiftKeyMask)
+	if (m_modifierFlags & NSEventModifierFlagShift)
 		keyState |= KsShift;
-	if (m_modifierFlags & NSCommandKeyMask)
+	if (m_modifierFlags & NSEventModifierFlagCommand)
 		keyState |= KsCommand;
 
 	return keyState;
@@ -199,22 +191,20 @@ void EventLoopCocoa::popModal()
 	m_modalWindows.pop_back();
 }
 
-bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
+bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, NSEvent* event)
 {
-	NSEvent* evt = (NSEvent*)event;
-
 	// Record modifier flags.
-	m_modifierFlags = [evt modifierFlags];
+	m_modifierFlags = [event modifierFlags];
 
 	// Process key events; if they are globally consumed we don't dispatch further.
-	NSEventType eventType = [evt type];
-	if (eventType == NSKeyDown || eventType == NSKeyUp)
+	NSEventType eventType = [event type];
+	if (eventType == NSEventTypeKeyDown || eventType == NSEventTypeKeyUp)
 	{
-		uint32_t systemKey = [evt keyCode];
+		uint32_t systemKey = [event keyCode];
 		VirtualKey virtualKey = translateKeyCode(systemKey);
-		std::wstring chs = fromNSString([evt characters]);
+		std::wstring chs = fromNSString([event characters]);
 
-		if (eventType == NSKeyDown)
+		if (eventType == NSEventTypeKeyDown)
 		{
 			KeyDownEvent keyEvent(
 				owner,
@@ -246,9 +236,9 @@ bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 		pt.y = frame.size.height - pt.y;
 
 		int32_t button = 0;
-		if ([evt buttonNumber] == 1)
+		if ([event buttonNumber] == 1)
 			button = MbtLeft;
-		else if ([evt buttonNumber] == 2)
+		else if ([event buttonNumber] == 2)
 			button = MbtRight;
 
 		MouseButtonDownEvent mouseButtonDownEvent(
@@ -267,9 +257,9 @@ bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 		pt.y = frame.size.height - pt.y;
 
 		int32_t button = 0;
-		if ([evt buttonNumber] == 1)
+		if ([event buttonNumber] == 1)
 			button = MbtLeft;
-		else if ([evt buttonNumber] == 2)
+		else if ([event buttonNumber] == 2)
 			button = MbtRight;
 
 		MouseButtonUpEvent mouseButtonUpEvent(

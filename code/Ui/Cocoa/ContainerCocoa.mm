@@ -25,7 +25,7 @@ bool ContainerCocoa::create(IWidget* parent, int style)
 	];
 	[m_control setCallback: this];
 
-	NSView* contentView = (NSView*)parent->getInternalHandle();
+	NSView* contentView = (__bridge NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 
 	[contentView addSubview: m_control];

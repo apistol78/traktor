@@ -63,7 +63,7 @@ int DialogCocoa::showModal()
 	NSModalSession session = [NSApp beginModalSessionForWindow: m_window];
 
 	EventLoopCocoa* eventLoop = static_cast< EventLoopCocoa* >(Application::getInstance()->getEventLoop());
-	eventLoop->pushModal(m_window);
+	//eventLoop->pushModal(m_window);
 
   	while (m_result < 0)
     {
@@ -71,7 +71,7 @@ int DialogCocoa::showModal()
 			break;
 	}
 
-	eventLoop->popModal();
+	//eventLoop->popModal();
 
     [NSApp endModalSession:session];
 
@@ -100,7 +100,6 @@ void DialogCocoa::destroy()
 	{
 		[m_window orderOut: nil];
 		[m_window setDelegate: nil];
-		[m_window release];
 		m_window = nullptr;
 	}
 }
@@ -177,7 +176,7 @@ void DialogCocoa::startTimer(int interval)
 	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< DialogCocoa >(
 		this,
 		&DialogCocoa::callbackTimer,
-		0
+		nullptr
 	);
 
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
@@ -301,12 +300,12 @@ void DialogCocoa::update(const Rect* rc, bool immediate)
 
 void* DialogCocoa::getInternalHandle()
 {
-	return [m_window contentView];
+	return (__bridge void*)[m_window contentView];
 }
 
 SystemWindow DialogCocoa::getSystemWindow()
 {
-	return SystemWindow(m_window);
+	return SystemWindow((__bridge void*)m_window);
 }
 
 void DialogCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
@@ -360,7 +359,7 @@ bool DialogCocoa::event_windowShouldClose()
 		return false;
 }
 
-void DialogCocoa::callbackTimer(void* controlId)
+void DialogCocoa::callbackTimer(id controlId)
 {
 	TimerEvent timerEvent(m_owner);
 	m_owner->raiseEvent(&timerEvent);

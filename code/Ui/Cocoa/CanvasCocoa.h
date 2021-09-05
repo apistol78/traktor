@@ -15,7 +15,7 @@ class CanvasCocoa
 ,	public IFontMetric
 {
 public:
-	CanvasCocoa(NSView* view, NSFont* font);
+	explicit CanvasCocoa(NSFont* font);
 
 	virtual ~CanvasCocoa();
 
@@ -80,11 +80,10 @@ public:
 	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
 
 private:
-	NSView* m_view;
-	NSColor* m_foregroundColor;
-	NSColor* m_backgroundColor;
-	NSFont* m_font;
-	bool m_haveClipper;
+	NSColor* m_foregroundColor = nullptr;
+	NSColor* m_backgroundColor = nullptr;
+	NSFont* m_font = nullptr;
+	bool m_haveClipper = false;
 };
 
 	}

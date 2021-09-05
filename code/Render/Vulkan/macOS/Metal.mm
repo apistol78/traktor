@@ -8,6 +8,7 @@
 
 @interface MetalDelegate : NSObject< CALayerDelegate >
 {
+    id m_hack;
     NSView* m_view;
 }
 
@@ -24,6 +25,7 @@
 - (id) initWithView: (NSView*)view
 {
     m_view = view;
+    m_hack = self;  // !!HACK!! Ensure delegate isn't released by creating a ref cycle...
 	return self;
 }
 
@@ -52,8 +54,9 @@ namespace traktor
 
 void attachMetalLayer(void* view_)
 {
-    NSView* view = (NSView*)view_;
+    NSView* view = (__bridge NSView*)view_;
     T_FATAL_ASSERT([view isKindOfClass:[NSView class]]);
+
     if (![view.layer isKindOfClass:[CAMetalLayer class]])
     {
         CALayer* layer = [CAMetalLayer layer];
@@ -61,15 +64,17 @@ void attachMetalLayer(void* view_)
 
         view.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;        
         [view setWantsLayer:YES];
-
-        layer.delegate = [[MetalDelegate alloc] initWithView:view];
+   
+        auto delegate = [[MetalDelegate alloc] initWithView:view];
+        layer.delegate = delegate;
     } 
 }
 
 void* getMetalLayer(void* view_)
 {
-    NSView* view = (NSView*)view_;
-    return (CAMetalLayer*)view.layer;
+    NSView* view = (__bridge NSView*)view_;
+    CALayer* layer = (CALayer*)view.layer;
+    return (__bridge void*)layer;
 }
 
     }

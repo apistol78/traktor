@@ -19,7 +19,7 @@ class FormCocoa
 ,	public INSWindowEventsCallback
 {
 public:
-	FormCocoa(EventSubject* owner);
+	explicit FormCocoa(EventSubject* owner);
 
 	// IForm implementation
 
@@ -142,11 +142,11 @@ public:
 	virtual void event_windowDidResignMain() override final;
 
 private:
-	EventSubject* m_owner;
-	NSWindow* m_window;
-	NSTimer* m_timer;
+	EventSubject* m_owner = nullptr;
+	NSWindow* m_window = nullptr;
+	NSTimer* m_timer = nullptr;
 
-	void callbackTimer(void* controlId);
+	void callbackTimer(id controlId);
 };
 
 	}

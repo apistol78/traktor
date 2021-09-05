@@ -16,7 +16,7 @@ namespace traktor
 NSString* makeNSString(const std::wstring& str)
 {
 	std::string mbs = wstombs(Utf8Encoding(), str);
-	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
+	return [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
 }
 
 std::wstring fromNSString(const NSString* str)

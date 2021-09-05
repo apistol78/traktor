@@ -36,7 +36,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 
 	[m_control setFont: font];
 
-	NSView* contentView = (NSView*)parent->getInternalHandle();
+	NSView* contentView = (__bridge NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 
 	[contentView addSubview: m_control];
@@ -54,7 +54,7 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 		return false;
 
 	// Create wrapped canvas.
-	CanvasCocoa canvasImpl(m_control, font);
+	CanvasCocoa canvasImpl(font);
 	Canvas canvas(&canvasImpl);
 
 	Rect rc = fromNSRect(rect);
