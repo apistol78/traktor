@@ -20,8 +20,6 @@ class T_DLLCLASS FilePipelineCache : public IPipelineCache
 	T_RTTI_CLASS;
 
 public:
-	FilePipelineCache();
-
 	virtual bool create(const PropertyGroup* settings) override final;
 
 	virtual void destroy() override final;
@@ -35,9 +33,11 @@ public:
 	virtual void getInformation(OutputStream& os) override final;
 
 private:
-	bool m_accessRead;
-	bool m_accessWrite;
+	bool m_accessRead = true;
+	bool m_accessWrite = true;
 	std::wstring m_path;
+	uint32_t m_hits = 0;
+	uint32_t m_misses = 0;
 };
 
 	}
