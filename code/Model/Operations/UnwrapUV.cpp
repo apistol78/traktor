@@ -86,7 +86,7 @@ bool UnwrapUV::apply(Model& model) const
 	meshDecl.indexData = indices.c_ptr();
 	meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
 
-	xatlas::AddMeshError::Enum error = xatlas::AddMesh(atlas, meshDecl);
+	xatlas::AddMeshError error = xatlas::AddMesh(atlas, meshDecl);
 	if (error != xatlas::AddMeshError::Success) 
 	{
 		xatlas::Destroy(atlas);

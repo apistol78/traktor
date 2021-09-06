@@ -5297,7 +5297,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.xatlas</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -5305,7 +5305,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -5328,7 +5328,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -5351,7 +5351,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -5367,7 +5367,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.thekla_atlas.a</sourceFile>
+							<sourceFile>libExtern.xatlas.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5379,7 +5379,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-200804</item>
+						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -5395,7 +5395,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.thekla_atlas.a</sourceFile>
+							<sourceFile>libExtern.xatlas.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
