@@ -16,12 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.FilePipelineCache", FilePipelineCache, IPipelineCache)
 
-FilePipelineCache::FilePipelineCache()
-:	m_accessRead(true)
-,	m_accessWrite(true)
-{
-}
-
 bool FilePipelineCache::create(const PropertyGroup* settings)
 {
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.FileCache.Read", true);
@@ -51,8 +45,12 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 	// Open cached file.
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead | File::FmMapped);
 	if (!fileStream)
+	{
+		m_misses++;
 		return nullptr;
+	}
 
+	m_hits++;
 	return fileStream;
 }
 
@@ -103,7 +101,7 @@ void FilePipelineCache::getInformation(OutputStream& os)
 		os << L"read+write";
 	else
 		os << L"disabled";
-	os << L")";
+	os << L", " << m_hits << L" hits, " << m_misses << L" misses)";
 }
 
 bool FilePipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
