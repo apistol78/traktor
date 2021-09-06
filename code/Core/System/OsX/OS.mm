@@ -321,11 +321,8 @@ Ref< IProcess > OS::execute(
 	}
 
 	char wd[512] = { 0 };
-	if (!workingDirectory.empty())
-	{
-		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
-	}
+	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
 
 	// Convert all arguments; append bash if executing shell script.
 	if (endsWith(executable, L".sh"))
