@@ -1,4 +1,5 @@
 #include <sstream>
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
@@ -491,8 +492,9 @@ void SolutionForm::commandSave(bool saveAs)
 	Ref< IStream > file = FileSystem::getInstance().open(filePath, traktor::File::FmWrite);
 	if (file)
 	{
-		result = xml::XmlSerializer(file).writeObject(m_solution);
-		file->close();
+		BufferedStream bs(file);
+		result = xml::XmlSerializer(&bs).writeObject(m_solution);
+		bs.close();
 	}
 
 	if (result)
