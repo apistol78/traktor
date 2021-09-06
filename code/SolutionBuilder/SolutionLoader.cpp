@@ -1,7 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
-#include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/Dependency.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/SolutionLoader.h"
@@ -40,14 +39,6 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 		for (auto project : solution->getProjects())
 		{
 			for (auto dependency : project->getDependencies())
-			{
-				if (!dependency->resolve(Path(fileName), this))
-					return nullptr;
-			}
-		}
-		for (auto aggregation : solution->getAggregations())
-		{
-			for (auto dependency : aggregation->getDependencies())
 			{
 				if (!dependency->resolve(Path(fileName), this))
 					return nullptr;

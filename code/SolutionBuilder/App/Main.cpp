@@ -5,7 +5,6 @@
 #include "Core/Misc/TString.h"
 #include "Core/Timer/Timer.h"
 #include "SolutionBuilder/Version.h"
-#include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Project.h"

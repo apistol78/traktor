@@ -17,7 +17,6 @@ namespace traktor
 	namespace sb
 	{
 
-class Aggregation;
 class Configuration;
 class Project;
 
@@ -46,12 +45,6 @@ public:
 
 	const RefArray< Project >& getProjects() const;
 
-	void addAggregation(Aggregation* aggregation);
-
-	void removeAggregation(Aggregation* aggregation);
-
-	const RefArray< Aggregation >& getAggregations() const;
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -60,7 +53,6 @@ private:
 	std::wstring m_aggregateOutputPath;
 	RefArray< Configuration > m_configurations;
 	RefArray< Project > m_projects;
-	RefArray< Aggregation > m_aggregations;
 };
 
 	}

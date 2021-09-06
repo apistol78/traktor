@@ -19,6 +19,7 @@ namespace traktor
 class AggregationItem;
 class Dependency;
 
+// !DEPRECATED!
 class T_DLLCLASS Aggregation : public ISerializable
 {
 	T_RTTI_CLASS;

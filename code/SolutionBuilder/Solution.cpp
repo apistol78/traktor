@@ -12,7 +12,7 @@ namespace traktor
 	namespace sb
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 4, Solution, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 5, Solution, ISerializable)
 
 void Solution::setName(const std::wstring& name)
 {
@@ -71,25 +71,6 @@ void Solution::removeProject(Project* project)
 		}
 		project->setDependencies(dependencies);
 	}
-
-	// Remove project from any aggregation dependencies.
-	for (auto aggregation : m_aggregations)
-	{
-		RefArray< Dependency > dependencies = aggregation->getDependencies();
-		for (auto it = dependencies.begin(); it != dependencies.end(); )
-		{
-			if (!is_a< ProjectDependency >(*it))
-			{
-				it++;
-				continue;
-			}
-			if (static_cast< ProjectDependency* >((*it).ptr())->getProject() == project)
-				it = dependencies.erase(it);
-			else
-				it++;
-		}
-		aggregation->setDependencies(dependencies);
-	}
 }
 
 void Solution::setProjects(const RefArray< Project >& projects)
@@ -100,21 +81,6 @@ void Solution::setProjects(const RefArray< Project >& projects)
 const RefArray< Project >& Solution::getProjects() const
 {
 	return m_projects;
-}
-
-void Solution::addAggregation(Aggregation* aggregation)
-{
-	m_aggregations.push_back(aggregation);
-}
-
-void Solution::removeAggregation(Aggregation* aggregation)
-{
-	m_aggregations.remove(aggregation);
-}
-
-const RefArray< Aggregation >& Solution::getAggregations() const
-{
-	return m_aggregations;
 }
 
 void Solution::serialize(ISerializer& s)
@@ -133,8 +99,11 @@ void Solution::serialize(ISerializer& s)
 
 	s >> MemberRefArray< Project >(L"projects", m_projects);
 
-	if (s.getVersion() >= 2)
-		s >> MemberRefArray< Aggregation >(L"aggregations", m_aggregations);
+	if (s.getVersion() >= 2 && s.getVersion< Solution >() < 5)
+	{
+		RefArray< Aggregation > aggregations;
+		s >> MemberRefArray< Aggregation >(L"aggregations", aggregations);
+	}
 }
 
 	}
