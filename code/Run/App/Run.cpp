@@ -181,7 +181,7 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 		{
 			Ref< traktor::IStream > output = FileSystem::getInstance().open(saveOutputAs, File::FmWrite);
 			if (!output)
-				return -1;
+				return -2;
 
 			fileOutput = new FileOutputStream(output, new Utf8Encoding());
 		}

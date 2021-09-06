@@ -337,10 +337,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		process->getPipeStream(IProcess::SpStdErr)
 	);
 
+	std::vector< std::wstring > out;
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	while (!process->wait(0))
+	for (;;)
 	{
 		auto pipe = process->waitPipeStream(100);
 		if (pipe == process->getPipeStream(IProcess::SpStdOut))
@@ -351,7 +352,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 				std::wstring tmp = trim(str);
 				if (!tmp.empty() && tmp[0] == L':')
 				{
-					std::vector< std::wstring > out;
+					out.resize(0);
 					if (Split< std::wstring >::any(tmp, L":", out) == 2)
 					{
 						int32_t index = parseString< int32_t >(out[0]);
@@ -380,6 +381,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 				}
 			}
 		}
+		else if (process->wait(0))
+			break;
 	}
 
 	if (!errors.empty())

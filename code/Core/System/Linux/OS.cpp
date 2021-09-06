@@ -224,22 +224,22 @@ Ref< IProcess > OS::execute(
 	}
 
 	char wd[512] = { 0 };
+	// Since Raspberry PI doesn't support changing working directory
+	// in posix spawn we need to launch through "env" shim.
+#if defined(__RPI__)
 	if (!workingDirectory.empty())
 	{
-		// Since Raspberry PI doesn't support changing working directory
-		// in posix spawn we need to launch through "env" shim.
-#if defined(__RPI__)
 		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
 
 		argv[argc++] = strdup("/bin/env");
 		argv[argc++] = strdup("-C");
 		argv[argc++] = strdup(wd);
-#else
-		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
-#endif
 	}
+#else
+	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+#endif
 
 	// Convert all arguments; append bash if executing shell script.
 	if (endsWith(executable, L".sh"))
