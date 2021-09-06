@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="4">
+<object type="Solution" version="5">
 	<name>Extern Win64</name>
 	<rootPath>$(TRAKTOR_HOME)/build/win64</rootPath>
 	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/win64</aggregateOutputPath>
@@ -4509,7 +4509,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.angle.libGLESv2</name>
 			<sourcePath>$(ANGLE_SDK)/src/libGLESv2</sourcePath>
 			<configurations>
@@ -4700,7 +4700,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project type="Project" version="1">
-						<enable>true</enable>
+						<enable>false</enable>
 						<name>Extern.angle.libANGLE</name>
 						<sourcePath>$(ANGLE_SDK)/src</sourcePath>
 						<configurations>
@@ -5024,7 +5024,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.angle.libEGL</name>
 			<sourcePath>$(ANGLE_SDK)/src/libEGL</sourcePath>
 			<configurations>
@@ -7207,5 +7207,4 @@
 			<dependencies/>
 		</item>
 	</projects>
-	<aggregations/>
 </object>
