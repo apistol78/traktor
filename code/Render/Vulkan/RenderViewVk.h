@@ -10,6 +10,8 @@
 #	include "Render/Vulkan/Win32/Window.h"
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/Vulkan/Linux/Window.h"
+#elif defined(__MAC__)
+#	include "Render/Vulkan/macOS/Window.h"
 #endif
 
 namespace traktor
@@ -38,7 +40,7 @@ class RenderViewVk
 	T_RTTI_CLASS;
 
 public:
-	RenderViewVk(
+	explicit RenderViewVk(
 		Context* context,
 		VkInstance instance
 	);
@@ -134,7 +136,7 @@ private:
 
 	Context* m_context = nullptr;
 	VkInstance m_instance = 0;
-#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	Ref< Window > m_window;
 #endif
 	VkSurfaceKHR m_surface = 0;
