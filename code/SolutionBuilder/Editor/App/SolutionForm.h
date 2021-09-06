@@ -24,7 +24,6 @@ class ConfigurationPropertyPage;
 class ProjectPropertyPage;
 class SolutionPropertyPage;
 
-class Aggregation;
 class AggregationItem;
 class Configuration;
 class File;
@@ -50,13 +49,11 @@ private:
 	Ref< ui::TreeView > m_treeSolution;
 	Ref< ui::Menu > m_menuSolution;
 	Ref< ui::Menu > m_menuProject;
-	Ref< ui::Menu > m_menuAggregation;
 	Ref< ui::Menu > m_menuConfiguration;
 	Ref< ui::Menu > m_menuFilter;
 	Ref< ui::Menu > m_menuFile;
 	Ref< ui::Menu > m_menuAggregationItem;
 	Ref< ui::Container > m_pageContainer;
-	Ref< AggregationPropertyPage > m_pageAggregation;
 	Ref< AggregationItemPropertyPage > m_pageAggregationItem;
 	Ref< ConfigurationPropertyPage > m_pageConfiguration;
 	Ref< ProjectPropertyPage > m_pageProject;
@@ -78,15 +75,11 @@ private:
 
 	ui::TreeViewItem* createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project);
 
-	ui::TreeViewItem* createTreeAggregationItem(ui::TreeViewItem* parentItem, Aggregation* aggregation);
-
 	ui::TreeViewItem* createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration);
 
 	ui::TreeViewItem* createTreeFilterItem(ui::TreeViewItem* parentItem, Project* project, Filter* filter);
 
 	ui::TreeViewItem* createTreeFileItem(ui::TreeViewItem* parentItem, Project* project, sb::File* file);
-
-	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
 	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
 
@@ -119,4 +112,3 @@ private:
 
 	}
 }
-

@@ -5,6 +5,8 @@
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Dependency.h"
 
+// !DEPRECATED!
+
 namespace traktor
 {
 	namespace sb

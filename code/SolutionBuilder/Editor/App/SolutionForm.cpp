@@ -20,7 +20,6 @@
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 #include "SolutionBuilder/Version.h"
-#include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Project.h"
@@ -28,7 +27,6 @@
 #include "SolutionBuilder/Filter.h"
 #include "SolutionBuilder/File.h"
 #include "SolutionBuilder/Editor/App/AggregationItemPropertyPage.h"
-#include "SolutionBuilder/Editor/App/AggregationPropertyPage.h"
 #include "SolutionBuilder/Editor/App/ConfigurationPropertyPage.h"
 #include "SolutionBuilder/Editor/App/MRU.h"
 #include "SolutionBuilder/Editor/App/ProjectPropertyPage.h"
@@ -55,14 +53,6 @@ struct ProjectSortPredicate
 	bool operator () (const Project* p1, const Project* p2) const
 	{
 		return p1->getName().compare(p2->getName()) < 0;
-	}
-};
-
-struct AggregationsSortPredicate
-{
-	bool operator () (const Aggregation* a1, const Aggregation* a2) const
-	{
-		return a1->getName().compare(a2->getName()) < 0;
 	}
 };
 
@@ -182,7 +172,6 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 
 	m_menuSolution = new ui::Menu();
 	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddProject"), L"Add New Project"));
-	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddAggregation"), L"Add New Aggregation"));
 
 	m_menuProject = new ui::Menu();
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddConfiguration"), L"Add New Configuration"));
@@ -192,12 +181,6 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Clone"), L"Clone Project"));
 	m_menuProject->add(new ui::MenuItem(L"-"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
-
-	m_menuAggregation = new ui::Menu();
-	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddFile"), L"Add New File"));
-	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddExistingFiles"), L"Add Existing File(s)..."));
-	m_menuAggregation->add(new ui::MenuItem(L"-"));
-	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.Remove"), L"Remove"));
 
 	m_menuConfiguration = new ui::Menu();
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.AddAggregation"), L"Add New Aggregation"));
@@ -230,10 +213,6 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_pageProject->create(m_pageContainer);
 	m_pageProject->addEventHandler< ui::ContentChangeEvent >(this, &SolutionForm::eventPropertyPageChange);
 	m_pageProject->hide();
-
-	m_pageAggregation = new AggregationPropertyPage();
-	m_pageAggregation->create(m_pageContainer);
-	m_pageAggregation->hide();
 
 	m_pageAggregationItem = new AggregationItemPropertyPage();
 	m_pageAggregationItem->create(m_pageContainer);
@@ -283,7 +262,6 @@ void SolutionForm::hideAllPages()
 	m_pageSolution->hide();
 	m_pageProject->hide();
 	m_pageConfiguration->hide();
-	m_pageAggregation->hide();
 	m_pageAggregationItem->hide();
 }
 
@@ -318,11 +296,6 @@ void SolutionForm::updateSolutionTree()
 	projects.sort(ProjectSortPredicate());
 	for (auto project : projects)
 		createTreeProjectItem(treeSolution, project);
-
-	RefArray< Aggregation > aggregations = m_solution->getAggregations();
-	aggregations.sort(AggregationsSortPredicate());
-	for (auto aggregation : aggregations)
-		createTreeAggregationItem(treeSolution, aggregation);
 
 	m_treeSolution->applyState(treeState);
 }
@@ -377,22 +350,6 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	return treeProject;
 }
 
-ui::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::TreeViewItem* parentItem, Aggregation* aggregation)
-{
-	Ref< ui::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 1);
-	treeAggregation->setImage(0, 6);
-	treeAggregation->setData(L"PRIMARY", aggregation);
-	treeAggregation->setData(L"AGGREGATION", aggregation);
-
-	if (!aggregation->getEnable())
-		treeAggregation->disable();
-
-	for (auto item : aggregation->getItems())
-		createTreeAggregationItemItem(treeAggregation, aggregation, item);
-
-	return treeAggregation;
-}
-
 ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration)
 {
 	Ref< ui::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 1);
@@ -437,15 +394,6 @@ ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem,
 	treeFile->setData(L"PROJECT", project);
 	treeFile->setData(L"FILE", file);
 	return treeFile;
-}
-
-ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item)
-{
-	Ref< ui::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 1);
-	treeItem->setImage(0, 7);
-	treeItem->setData(L"PRIMARY", item);
-	treeItem->setData(L"AGGREGATION", aggregation);
-	return treeItem;
 }
 
 ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item)
@@ -719,16 +667,6 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 				createTreeProjectItem(selectedItem, project);
 				selectedItem->expand();
 			}
-			else if (command == L"Solution.AddAggregation")
-			{
-				Ref< Aggregation > aggregation = new Aggregation();
-				aggregation->setName(L"Unnamed");
-
-				solution->addAggregation(aggregation);
-
-				createTreeAggregationItem(selectedItem, aggregation);
-				selectedItem->expand();
-			}
 		}
 	}
 
@@ -814,61 +752,6 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"Project.Remove")
 			{
 				m_solution->removeProject(project);
-				m_treeSolution->removeItem(selectedItem);
-			}
-		}
-	}
-
-	Ref< Aggregation > aggregation = selectedItem->getData< Aggregation >(L"PRIMARY");
-	if (aggregation)
-	{
-		const ui::MenuItem* menuItem = m_menuAggregation->showModal(m_treeSolution, event->getPosition());
-		if (menuItem)
-		{
-			const ui::Command& command = menuItem->getCommand();
-			if (command == L"Aggregation.AddFile")
-			{
-				Ref< AggregationItem > item = new AggregationItem();
-				item->setSourceFile(L"*.*");
-				item->setTargetPath(L"");
-				aggregation->addItem(item);
-
-				createTreeAggregationItemItem(selectedItem, aggregation, item);
-				selectedItem->expand();
-			}
-			else if (command == L"Aggregation.AddExistingFiles")
-			{
-				ui::FileDialog fileDialog;
-				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
-				{
-					std::vector< Path > paths;
-					if (fileDialog.showModal(paths) == ui::DrOk)
-					{
-						Path rootPath = FileSystem::getInstance().getAbsolutePath(m_solution->getRootPath());
-
-						for (std::vector< Path >::iterator i = paths.begin(); i != paths.end(); ++i)
-						{
-							Path relativePath;
-							if (FileSystem::getInstance().getRelativePath(*i, rootPath, relativePath))
-							{
-								Ref< AggregationItem > item = new AggregationItem();
-								item->setSourceFile(relativePath.getPathName());
-								item->setTargetPath(L"");
-								aggregation->addItem(item);
-
-								createTreeAggregationItemItem(selectedItem, aggregation, item);
-								selectedItem->expand();
-							}
-							else
-								log::error << L"Unable to get relative path from \"" << i->getPathName() << L"\", not accessible from project's source path?" << Endl;
-						}
-					}
-					fileDialog.destroy();
-				}
-			}
-			else if (command == L"Aggregation.Remove")
-			{
-				m_solution->removeAggregation(aggregation);
 				m_treeSolution->removeItem(selectedItem);
 			}
 		}
@@ -1073,10 +956,6 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
 				if (parentItem)
 				{
-					Ref< Aggregation > parentAggregation = parentItem->getData< Aggregation >(L"PRIMARY");
-					if (parentAggregation)
-						parentAggregation->removeItem(aggregationItem);
-
 					Ref< Configuration > parentConfiguration = parentItem->getData< Configuration >(L"PRIMARY");
 					if (parentConfiguration)
 						parentConfiguration->removeAggregationItem(aggregationItem);
@@ -1104,7 +983,6 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 	m_pageSolution->hide();
 	m_pageProject->hide();
 	m_pageConfiguration->hide();
-	m_pageAggregation->hide();
 	m_pageAggregationItem->hide();
 
 	if (!treeItem)
@@ -1122,13 +1000,6 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 	{
 		m_pageProject->show();
 		m_pageProject->set(m_solution, project, m_solutionFileName);
-	}
-
-	Ref< Aggregation > aggregation = treeItem->getData< Aggregation >(L"PRIMARY");
-	if (aggregation)
-	{
-		m_pageAggregation->show();
-		m_pageAggregation->set(m_solution, aggregation);
 	}
 
 	Ref< Configuration > configuration = treeItem->getData< Configuration >(L"CONFIGURATION");
@@ -1159,10 +1030,6 @@ void SolutionForm::eventTreeChange(ui::TreeViewContentChangeEvent* event)
 	Ref< Project > project = treeItem->getData< Project >(L"PRIMARY");
 	if (project)
 		project->setName(treeItem->getText());
-
-	Ref< Aggregation > aggregation = treeItem->getData< Aggregation >(L"PRIMARY");
-	if (aggregation)
-		aggregation->setName(treeItem->getText());
 
 	Ref< Configuration > configuration = treeItem->getData< Configuration >(L"PRIMARY");
 	if (configuration)
