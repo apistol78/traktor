@@ -289,11 +289,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(m_editPanel, ui::WsDoubleBuffer);
-	m_statusBar->addColumn(ui::dpi96(100));	// Position
-	m_statusBar->addColumn(ui::dpi96(100));	// Orientation
-	m_statusBar->addColumn(ui::dpi96(100));	// Entity count
-	m_statusBar->addColumn(ui::dpi96(100));	// Time
-	m_statusBar->addColumn(ui::dpi96(100));	// Selected entity
+	m_statusBar->addColumn(0);	// Position
+	m_statusBar->addColumn(0);	// Orientation
+	m_statusBar->addColumn(0);	// Entity count
+	m_statusBar->addColumn(0);	// Time
+	m_statusBar->addColumn(0);	// Selected entity
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
