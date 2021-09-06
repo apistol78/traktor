@@ -52,7 +52,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -79,7 +79,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 
 				if (!handleGlobalEvents(owner, event))
 				{
-					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -111,7 +111,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -135,7 +135,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					//if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
 					{
 						[NSApp sendEvent: event];
 						[NSApp updateWindows];
@@ -181,7 +181,7 @@ bool EventLoopCocoa::isKeyDown(VirtualKey vk) const
 	return false;
 }
 
-void EventLoopCocoa::pushModal(void* modalWindow)
+void EventLoopCocoa::pushModal(NSWindow* modalWindow)
 {
 	m_modalWindows.push_back(modalWindow);
 }

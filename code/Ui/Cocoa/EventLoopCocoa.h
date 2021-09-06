@@ -13,8 +13,10 @@
 
 #if __OBJC__
 @class NSEvent;
+@class NSWindow;
 #else
 typedef void NSEvent;
+typedef void NSWindow;
 #endif
 
 namespace traktor
@@ -43,7 +45,7 @@ public:
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
 
-	void pushModal(void* modalWindow);
+	void pushModal(NSWindow* modalWindow);
 
 	void popModal();
 
@@ -53,7 +55,7 @@ private:
 	bool m_terminated;
 	uint32_t m_modifierFlags;
 	bool m_idleMode;
-	std::vector< void* > m_modalWindows;
+	std::vector< NSWindow* > m_modalWindows;
 
 	bool handleGlobalEvents(EventSubject* owner, NSEvent* event);
 };
