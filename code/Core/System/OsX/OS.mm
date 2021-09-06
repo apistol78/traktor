@@ -175,7 +175,11 @@ bool OS::exploreFile(const std::wstring& file) const
 
 bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
 {
-	return false;
+	return bool(setenv(
+		wstombs(name).c_str(),
+		wstombs(value).c_str(),
+		1
+	) == 0);
 }
 
 Ref< Environment > OS::getEnvironment() const
