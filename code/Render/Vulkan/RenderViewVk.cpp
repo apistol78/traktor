@@ -74,7 +74,7 @@ RenderViewVk::~RenderViewVk()
 
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	// Create render window.
 	m_window = new Window();
 	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
@@ -108,6 +108,19 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
     if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		return false;
+	}
+#elif defined(__MAC__)
+
+	// Attach Metal layer to provided view.
+	attachMetalLayer(m_window->getView());
+
+	VkMetalSurfaceCreateInfoEXT  sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+	sci.pLayer = getMetalLayer(m_window->getView());
+    if (vkCreateMetalSurfaceEXT(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create macOS renderable surface." << Endl;
 		return false;
 	}
 #endif
