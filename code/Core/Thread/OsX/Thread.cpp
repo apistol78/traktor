@@ -19,16 +19,16 @@ struct Internal
 	pthread_mutex_t mutex;
 	pthread_cond_t signal;
 	std::function< void() > fn;
+	uint32_t* id;
 	int32_t finished;
 };
 
 void* trampoline(void* data)
 {
 	Internal* in = reinterpret_cast< Internal* >(data);
-
+	*in->id = (uint32_t)(intptr_t)in->thread;
 	in->fn();
 	Atomic::exchange(in->finished, 1);
-
 	pthread_cond_signal(&in->signal);
 	return 0;
 }
@@ -44,6 +44,7 @@ bool Thread::start(Priority priority)
 	Internal* in = new Internal();
 	in->thread = 0;
 	in->fn = m_fn;
+	in->id = &m_id;
 	in->finished = 0;
 
 	m_handle = in;
