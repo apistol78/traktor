@@ -23,8 +23,6 @@ class T_DLLCLASS StatusBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	StatusBar();
-
 	bool create(Widget* parent, int style = WsNone);
 
 	void setAlert(bool alert);
@@ -43,7 +41,7 @@ private:
 	};
 
 	AlignedVector< Column > m_columns;
-	bool m_alert;
+	bool m_alert = false;
 
 	void eventSize(SizeEvent* event);
 

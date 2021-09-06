@@ -16,11 +16,6 @@ const int32_t c_preferedHeight = 23;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StatusBar", StatusBar, Widget)
 
-StatusBar::StatusBar()
-:	m_alert(false)
-{
-}
-
 bool StatusBar::create(Widget* parent, int style)
 {
 	if (!Widget::create(parent, style))
@@ -28,7 +23,6 @@ bool StatusBar::create(Widget* parent, int style)
 
 	addEventHandler< SizeEvent >(this, &StatusBar::eventSize);
 	addEventHandler< PaintEvent >(this, &StatusBar::eventPaint);
-
 	return true;
 }
 
@@ -118,7 +112,7 @@ void StatusBar::eventPaint(PaintEvent* event)
 	}
 
 	// Draw scale grip if parent is a form and isn't maximized.
-	Ref< Form > parentForm = dynamic_type_cast< Form* >(getParent());
+	Form* parentForm = dynamic_type_cast< Form* >(getParent());
 	if (parentForm && !parentForm->isMaximized())
 	{
 		rc = rc.inflate(-dpi96(2), -dpi96(2));
