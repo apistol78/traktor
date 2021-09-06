@@ -18,6 +18,8 @@ class CanvasWin32
 ,	public IFontMetric
 {
 public:
+	virtual ~CanvasWin32() {}
+
 	/*!
 	 * \param doubleBuffer Double buffered draw.
 	 * \param hDC If non null, use context for drawing.
