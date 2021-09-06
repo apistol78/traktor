@@ -347,7 +347,8 @@ Ref< IProcess > OS::execute(
 			size_t j = arguments.find(L'\"', i + 1);
 			if (j != arguments.npos)
 			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i + 1, j - i - 1)).c_str());
+				std::wstring tmp = trim(arguments.substr(i + 1, j - i - 1));
+				argv[argc++] = strdup(wstombs(tmp).c_str());
 				i = j + 1;
 			}
 			else
@@ -358,12 +359,14 @@ Ref< IProcess > OS::execute(
 			size_t j = arguments.find(L' ', i + 1);
 			if (j != arguments.npos)
 			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i, j - i)).c_str());
+				std::wstring tmp = trim(arguments.substr(i, j - i));
+				argv[argc++] = strdup(wstombs(tmp).c_str());
 				i = j + 1;
 			}
 			else
 			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i)).c_str());
+				std::wstring tmp = trim(arguments.substr(i));
+				argv[argc++] = strdup(wstombs(tmp).c_str());
 				break;
 			}
 		}
