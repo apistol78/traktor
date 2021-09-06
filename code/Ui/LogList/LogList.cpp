@@ -331,21 +331,31 @@ void LogList::eventPaint(PaintEvent* event)
 		Rect rcCount = inner;
 		rcCount.top = rcCount.bottom - m_itemHeight;
 
-		rcCount.left = inner.right - w * 2;
-		rcCount.right = inner.right - w * 1;
+		int32_t x = inner.right;
+		if (m_logCount[2] > 0)
+		{
+			rcCount.left = x - w;
+			rcCount.right = x;
 
-		canvas.setForeground(levelColors[1]);
-		canvas.setBackground(levelBgColors[1]);
-		canvas.fillRect(rcCount);
-		canvas.drawText(rcCount, ws, AnCenter, AnCenter);
+			canvas.setForeground(levelColors[2]);
+			canvas.setBackground(levelBgColors[2]);
+			canvas.fillRect(rcCount);
+			canvas.drawText(rcCount, es, AnCenter, AnCenter);
 
-		rcCount.left = inner.right - w * 1;
-		rcCount.right = inner.right - w * 0;
+			x -= w;	
+		}
+		if (m_logCount[1] > 0)
+		{
+			rcCount.left = x - w;
+			rcCount.right = x;
 
-		canvas.setForeground(levelColors[2]);
-		canvas.setBackground(levelBgColors[2]);
-		canvas.fillRect(rcCount);
-		canvas.drawText(rcCount, es, AnCenter, AnCenter);
+			canvas.setForeground(levelColors[1]);
+			canvas.setBackground(levelBgColors[1]);
+			canvas.fillRect(rcCount);
+			canvas.drawText(rcCount, ws, AnCenter, AnCenter);
+
+			x -= w;	
+		}
 	}
 
 	event->consume();
