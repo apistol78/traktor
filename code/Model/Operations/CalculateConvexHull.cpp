@@ -66,9 +66,6 @@ uint32_t calculateAdjacency(const AlignedVector< HullFace >& faces, AlignedVecto
 				{
 					int na1 = faces[k].i[m];
 					int na2 = faces[k].i[(m + 1) % 3];
-
-					T_ASSERT_M(!(a1 == na1 && a2 == na2), L"Adjacent face with different winding");
-
 					if (a1 == na2 && a2 == na1)
 					{
 						adj.n[j] = k;
