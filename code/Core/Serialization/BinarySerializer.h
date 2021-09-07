@@ -1,8 +1,7 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/Serializer.h"
 
 // import/export mechanism.
@@ -89,11 +88,11 @@ public:
 private:
 	Ref< IStream > m_stream;
 	Direction m_direction;
-	std::map< uint64_t, Ref< ISerializable > > m_readCache;
-	std::map< ISerializable*, uint64_t > m_writeCache;
+	SmallMap< uint64_t, Ref< ISerializable > > m_readCache;
+	SmallMap< ISerializable*, uint64_t > m_writeCache;
 	uint64_t m_nextCacheId;
-	std::vector< const TypeInfo* > m_typeReadCache;
-	std::map< const TypeInfo*, uint32_t > m_typeWriteCache;
+	AlignedVector< const TypeInfo* > m_typeReadCache;
+	SmallMap< const TypeInfo*, uint32_t > m_typeWriteCache;
 	uint32_t m_nextTypeCacheId;
 };
 

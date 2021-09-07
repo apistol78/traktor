@@ -587,11 +587,11 @@ void BinarySerializer::operator >> (const Member< Vector4 >& m)
 	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, e, 4);
-		(*m) = Vector4::loadUnaligned(e);
+		(*m) = Vector4::loadAligned(e);
 	}
 	else
 	{
-		(*m).storeUnaligned(e);
+		(*m).storeAligned(e);
 		write_primitives< float >(m_stream, e, 4);
 	}
 }
@@ -620,11 +620,11 @@ void BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, values, 16);
-		(*m) = Matrix44::loadUnaligned(values);
+		(*m) = Matrix44::loadAligned(values);
 	}
 	else
 	{
-		(*m).storeUnaligned(values);
+		(*m).storeAligned(values);
 		write_primitives< float >(m_stream, values, 16);
 	}
 }
@@ -637,11 +637,11 @@ void BinarySerializer::operator >> (const Member< Quaternion >& m)
 	if (m_direction == Direction::Read)
 	{
 		read_primitives< float >(m_stream, e, 4);
-		m->e = Vector4::loadUnaligned(e);
+		m->e = Vector4::loadAligned(e);
 	}
 	else
 	{
-		m->e.storeUnaligned(e);
+		m->e.storeAligned(e);
 		write_primitives< float >(m_stream, e, 4);
 	}
 }
@@ -745,7 +745,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 						}
 
 						baseType = TypeInfo::find(typeName.c_str());
-						if (!ensure(baseType != 0))
+						if (!ensure(baseType != nullptr))
 						{
 							log::error << L"Unable to read \"" << m.getName() << L"\"; no such base type \"" << typeName << L"\"." << Endl;
 							return;
@@ -771,7 +771,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 			else
 			{
 				object = static_cast< ISerializable* >(m_readCache[hash]);
-				if (!ensure(object != 0))
+				if (!ensure(object != nullptr))
 				{
 					log::error << L"Unable to read \"" << m.getName() << L"\"; no such reference." << Endl;
 					return;
@@ -788,12 +788,12 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 		{
 			T_ASSERT(type_of(object).isInstantiable());
 
-			std::map< ISerializable*, uint64_t >::iterator i = m_writeCache.find(object);
-			if (i != m_writeCache.end())
+			auto it = m_writeCache.find(object);
+			if (it != m_writeCache.end())
 			{
 				if (!write_primitive< bool >(m_stream, true))
 					return;
-				if (!write_primitive< uint64_t >(m_stream, i->second))
+				if (!write_primitive< uint64_t >(m_stream, it->second))
 					return;
 			}
 			else
@@ -807,7 +807,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return;
 
-				std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(&type);
+				auto it = m_typeWriteCache.find(&type);
 				if (it != m_typeWriteCache.end())
 					write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 				else
@@ -835,7 +835,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				{
 					if (ti->getVersion() > 0)
 					{
-						std::map< const TypeInfo*, uint32_t >::const_iterator it = m_typeWriteCache.find(ti);
+						auto it = m_typeWriteCache.find(ti);
 						if (it != m_typeWriteCache.end())
 							write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 						else
