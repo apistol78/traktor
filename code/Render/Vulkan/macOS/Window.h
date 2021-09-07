@@ -11,6 +11,8 @@ namespace traktor
 class Window : public Object
 {
 public:
+    virtual ~Window();
+
 	bool create(int32_t width, int32_t height);
 
 	void setTitle(const wchar_t* title);
@@ -29,13 +31,9 @@ public:
 
 	bool update(RenderEvent& outEvent);
 
-	// int32_t getWidth() const { return m_width; }
+	bool isFullScreen() const;
 
-	// int32_t getHeight() const { return m_height; }
-
-	// bool isFullScreen() const { return m_fullScreen; }
-
-	// bool isActive() const { return m_active; }
+	bool isActive() const;
 
     void* getView() const;
 
