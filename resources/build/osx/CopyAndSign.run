@@ -1,27 +1,48 @@
 import(traktor)
 
-function main(argv)
-	local sourceFiles < const > = argv:get(0)
-	local targetPath < const > = Path(argv:get(1)).pathName
-
-	fileSystem:makeAllDirectories(Path(targetPath))
-
-	local files = fileSystem:find(sourceFiles)
-	for _, file in pairs(files) do
-		if not (file.path.fileName == "." or file.path.fileName == "..") then
-
-			if not run:replace(
-				file.path.pathName,
-				targetPath .. "/" .. file.path.fileName
-			) then
-				stderr:printLn("Unable to copy " .. file.path.pathName .. " to " .. targetPath)
-				return 1
+local function traverse(path, rf, visitor)
+	local fa = fileSystem:find(path)
+	for _, f in pairs(fa) do
+		local p = f.path
+		local fn = p.fileName
+		local pn = p.pathName
+		if f.directory then
+			if fn ~= "." and fn ~= ".." then
+				traverse(pn .. "/*.*", rf .. "/" .. fn, visitor)
 			end
-
-			run:execute("/bin/chmod u+x " .. targetPath .. "/" .. file.path.fileName, nil)
-			run:execute("/usr/bin/codesign --force -s - --entitlements $(TRAKTOR_HOME)/resources/build/osx/EnableDebuggingEntitlement.xml " .. targetPath .. "/" .. file.path.fileName, nil)
+		else
+			visitor(p, rf)
 		end
 	end
+end
+
+function main(argv)
+	local sourcePath < const > = argv:get(0)
+	local targetPath < const > = Path(argv:get(1)).pathName
+
+	-- Check if source path points to a file or directory.
+	local sf = fileSystem:get(Path(sourcePath))
+	local sourceIsDirectory = (sf ~= nil and sf.directory)
+
+	traverse(sourcePath, targetPath, function(p, rf)
+		local tf = rf .. "/" .. p.fileName
+
+		-- Ensure target path exist.
+		fileSystem:makeAllDirectories(Path(rf))
+
+		-- Replace target if it already exist.
+		if not run:replace(
+			p.pathName,
+			tf
+		) then
+			stderr:printLn("Unable to copy " .. p.pathName .. " to " .. tf)
+			return 1
+		end
+
+		-- Ensure target is executable and properly signed for debugging.
+		run:execute("/bin/chmod u+x " .. tf, nil)
+		run:execute("/usr/bin/codesign --force -s - --entitlements $(TRAKTOR_HOME)/resources/build/osx/EnableDebuggingEntitlement.xml " .. tf, nil)
+	end)
 
 	return 0
 end
