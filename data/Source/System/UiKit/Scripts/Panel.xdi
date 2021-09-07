@@ -32,6 +32,11 @@ function Panel:setColor(color)
 	return self
 end
 
+function Panel:setOnClick(fn)
+	self._clickFn = fn
+	return self
+end
+
 -- Private
 
 function Panel:_initialize(parent, mc, layout)
@@ -40,7 +45,12 @@ function Panel:_initialize(parent, mc, layout)
 	self._background_mc = mc:getMember("background_mc")
 	self._inner_mc = mc:getMember("innerContainer_mc")
 
+	self:addEventListener(MousePressEvent, self, self._onMousePress)
+	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+
 	self:_loadStyle()
+
+	self._isPressed = false
 end
 
 function Panel:_loadStyle()
@@ -50,6 +60,19 @@ end
 
 function Panel:_getInnerClip()
 	return self._inner_mc
+end
+
+function Panel:_onMousePress(event)
+	self._isPressed = true
+	return true
+end
+
+function Panel:_onMouseRelease(event)
+	if event.inside then
+		if self._clickFn ~= nil then self._clickFn(self) end
+		self._isPressed = false
+	end
+	return true
 end
 
 	]]>
