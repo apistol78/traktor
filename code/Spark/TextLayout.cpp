@@ -390,28 +390,6 @@ void TextLayout::newLine()
 
 void TextLayout::end()
 {
-	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
-	for (AlignedVector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-	{
-		i->x = m_bounds.mn.x;
-		i->y += m_fontHeight;
-		i->offset = 0.0f;
-
-		if (i->words.empty())
-			continue;
-
-		// Calculate alignment.
-		if (m_alignment == StaRight || m_alignment == StaCenter)
-		{
-			float offset = boundsWidth - i->width;
-
-			if (m_alignment == StaCenter)
-				offset /= 2.0f;
-
-			i->x = m_bounds.mn.x + offset;
-		}
-	}
-
 	// Calculate height of last line.
 	float lineHeight = m_fontHeight + m_leading;
 	if (!m_attribs.empty())
@@ -421,7 +399,29 @@ void TextLayout::end()
 		{
 			float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 			float fontScale = coordScale * m_fontHeight;
-			lineHeight += attrib.font->getDescent() * fontScale;
+			lineHeight = attrib.font->getDescent() * fontScale;
+		}
+	}
+
+	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
+	for (auto& line : m_lines)
+	{
+		line.x = m_bounds.mn.x;
+		line.y += lineHeight;
+		line.offset = 0.0f;
+
+		if (line.words.empty())
+			continue;
+
+		// Calculate alignment.
+		if (m_alignment == StaRight || m_alignment == StaCenter)
+		{
+			float offset = boundsWidth - line.width;
+
+			if (m_alignment == StaCenter)
+				offset /= 2.0f;
+
+			line.x = m_bounds.mn.x + offset;
 		}
 	}
 
