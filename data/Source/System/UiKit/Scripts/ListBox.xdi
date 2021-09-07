@@ -97,7 +97,7 @@ function ListBox:_initialize(parent, mc, skin)
 	self._index = 0
 
 	self._panel = Panel(self, FloodLayout(16, 16), skin)
-	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
+	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 4), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(Color4f(0.0, 0.0, 0.0, 0.2))
 
 	self:_loadStyle()
