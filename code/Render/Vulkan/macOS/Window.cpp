@@ -6,6 +6,12 @@ namespace traktor
 	namespace render
 	{
 
+Window::~Window()
+{
+    if (m_window)
+        cglwDestroyWindow(m_window);
+}
+
 bool Window::create(int32_t width, int32_t height)
 {
     DisplayMode displayMode;
@@ -48,6 +54,16 @@ void Window::center()
 bool Window::update(RenderEvent& outEvent)
 {
     return cglwUpdateWindow(m_window, outEvent);
+}
+
+bool Window::isFullScreen() const
+{
+    return cglwIsFullscreen(m_window);
+}
+
+bool Window::isActive() const
+{
+    return cglwIsActive(m_window);
 }
 
 void* Window::getView() const

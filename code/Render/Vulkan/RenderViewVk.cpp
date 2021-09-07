@@ -426,7 +426,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32) || defined(__ANDROID__) || defined(__MAC__) || defined(__IOS__)
+#if defined(_WIN32) || defined(__ANDROID__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isActive();
@@ -442,7 +442,7 @@ bool RenderViewVk::isFullScreen() const
 {
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
-#elif defined(__ANDROID__) || defined(__MAC__) || defined(__IOS__)
+#elif defined(__ANDROID__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isFullScreen();
@@ -492,6 +492,8 @@ SystemWindow RenderViewVk::getSystemWindow()
 	return SystemWindow(*m_window);
 #elif defined(__LINUX__) || defined(__RPI__)
 	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
+#elif defined(__MAC__)
+	return SystemWindow(m_window->getView());
 #else
 	return SystemWindow();
 #endif
@@ -1319,13 +1321,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::info << L"Using FIFO presentation mode." << Endl;
+		log::debug << L"Using FIFO presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::info << L"Using FIFO (relaxed) presentation mode." << Endl;
+		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::info << L"Using IMMEDIATE presentation mode." << Endl;
+		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::info << L"Using MAILBOX presentation mode." << Endl;
+		log::debug << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
@@ -1376,7 +1378,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, presentImages.ptr());
 
-	log::info << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
+	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -1443,7 +1445,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
 		{
-			log::info << L"Found debug marker extension; debug markers enabled." << Endl;
+			log::debug << L"Found debug marker extension; debug markers enabled." << Endl;
 			m_haveDebugMarkers = true;
 			break;
 		}
