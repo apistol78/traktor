@@ -192,18 +192,16 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 			const TextLayout* layout = edit.getTextLayout();
 			T_ASSERT(layout);
 
-			const AlignedVector< TextLayout::Line >& lines = layout->getLines();
-			const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
-
+			const auto& attribs = layout->getAttributes();
 			float textOffsetX = 0.0f;
 			float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * edit.getScroll();
 
-			for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+			for (const auto& line : layout->getLines())
 			{
-				for (AlignedVector< TextLayout::Word >::const_iterator j = i->words.begin(); j != i->words.end(); ++j)
+				for (const auto& word : line.words)
 				{
-					const TextLayout::Attribute& attrib = attribs[j->a];
-					const AlignedVector< TextLayout::Character >& chars = j->chars;
+					const TextLayout::Attribute& attrib = attribs[word.a];
+					const AlignedVector< TextLayout::Character >& chars = word.chars;
 
 					float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 					float fontScale = coordScale * layout->getFontHeight();
@@ -218,7 +216,7 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 							if (!glyphShape)
 								continue;
 
-							Matrix33 glyphTransform = transform * translate(textOffsetX + i->offset + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale);
+							Matrix33 glyphTransform = transform * translate(textOffsetX + line.offset + line.x + chars[k].x, textOffsetY + line.y) * scale(fontScale, fontScale);
 
 							const Aabb2& shapeBounds = glyphShape->getShapeBounds();
 

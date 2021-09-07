@@ -177,12 +177,10 @@ bool EditInstance::parseText(const std::wstring& text)
 
 	if (m_layout)
 	{
-		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
-		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+		for (const auto& line : m_layout->getLines())
 		{
-			const AlignedVector< TextLayout::Word >& words = lines.back().words;
-			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
-				m_caret += (int32_t)j->chars.size();
+			for (const auto& word : line.words)
+				m_caret += (int32_t)word.chars.size();
 		}
 	}
 
@@ -198,12 +196,10 @@ bool EditInstance::parseHtml(const std::wstring& html)
 
 	if (m_layout)
 	{
-		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
-		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+		for (const auto& line : m_layout->getLines())
 		{
-			const AlignedVector< TextLayout::Word >& words = lines.back().words;
-			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
-				m_caret += (int32_t)j->chars.size();
+			for (const auto& word : line.words)
+				m_caret += (int32_t)word.chars.size();
 		}
 	}
 
@@ -318,7 +314,7 @@ int32_t EditInstance::getMaxScroll() const
 {
 	if (m_layout)
 	{
-		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
+		const auto& lines = m_layout->getLines();
 
 		float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
 		float editHeight = m_textBounds.mx.y - m_textBounds.mn.y;
@@ -339,9 +335,7 @@ Ref< TextLayout > EditInstance::prepareTextLayout() const
 	T_ASSERT(font);
 
 	Ref< TextLayout > layout = new TextLayout();
-
 	layout->begin();
-
 	layout->setBounds(m_textBounds);
 	layout->setLeading(m_edit->getLeading());
 	layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
