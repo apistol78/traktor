@@ -30,7 +30,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 	];
 	[m_control setCallback: this];
 
-	NSFont* font = [NSFont controlContentFontOfSize: 11.0];
+	NSFont* font = getDefaultFont();
 	if (!font)
 		return false;
 

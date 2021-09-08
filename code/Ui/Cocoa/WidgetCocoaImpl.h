@@ -224,7 +224,11 @@ public:
 	{
 		NSFont* font = [m_control font];
 		if (!font)
-			font = [NSFont controlContentFontOfSize: 11];
+		{
+			font = getDefaultFont();
+			if (!font)
+				return Font();
+		}
 
 		return Font(
 			fromNSString([font fontName]),
@@ -329,7 +333,11 @@ public:
 	{
 		NSFont* font = [m_control font];
 		if (!font)
-			font = [NSFont controlContentFontOfSize: 11];
+		{
+			font = getDefaultFont();
+			if (!font)
+				return;
+		}
 
 		outAscent = [font ascender];
 		outDescent = [font descender];
@@ -352,7 +360,11 @@ public:
 
 		NSFont* font = [m_control font];
 		if (!font)
-			font = [NSFont controlContentFontOfSize: 11];
+		{
+			font = getDefaultFont();
+			if (!font)
+				return Size(0, 0);
+		}
 
 		[attributes setObject: font forKey:NSFontAttributeName];
 
