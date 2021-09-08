@@ -230,5 +230,12 @@ VirtualKey translateKeyCode(NSUInteger keyCode)
 	return VkNull;
 }
 
+NSFont* getDefaultFont()
+{
+	NSControlSize controlSize = {};
+	CGFloat fontSize = [NSFont systemFontSizeForControlSize: controlSize];
+	return [NSFont controlContentFontOfSize: fontSize];
+}
+
 	}
 }

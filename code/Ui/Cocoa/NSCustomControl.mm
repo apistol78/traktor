@@ -10,7 +10,7 @@
 	{
 		m_string = nil;
 		m_font = nil;
-		m_eventsCallback = 0;
+		m_eventsCallback = nullptr;
 	}
 	return self;
 }

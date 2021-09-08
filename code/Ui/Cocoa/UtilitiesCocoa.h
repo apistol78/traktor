@@ -43,6 +43,8 @@ OutputStream& formatNSRect(OutputStream& os, const NSRect& rc);
 
 VirtualKey translateKeyCode(NSUInteger keyCode);
 
+NSFont* getDefaultFont();
+
 	}
 }
 

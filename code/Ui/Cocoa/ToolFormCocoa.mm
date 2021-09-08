@@ -360,7 +360,9 @@ int32_t ToolFormCocoa::getLineSpacing() const
 
 Size ToolFormCocoa::getExtent(const std::wstring& text) const
 {
-	NSFont* font = [NSFont controlContentFontOfSize: 11];
+	NSFont* font = getDefaultFont();
+	if (!font)
+		return Size(0, 0);
 
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
 	[attributes setObject: font forKey:NSFontAttributeName];

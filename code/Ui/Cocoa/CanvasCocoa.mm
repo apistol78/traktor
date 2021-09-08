@@ -250,18 +250,19 @@ void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 void* CanvasCocoa::getSystemHandle()
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 void CanvasCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
-	outAscent = 0;
-	outDescent = 0;
+	outAscent = [m_font ascender];
+	outDescent = [m_font descender];
 }
 
 int32_t CanvasCocoa::getAdvance(wchar_t ch, wchar_t next) const
 {
-	return 0;
+	wchar_t s[] = { ch, 0 };
+	return getExtent(s).cx;
 }
 
 int32_t CanvasCocoa::getLineSpacing() const
