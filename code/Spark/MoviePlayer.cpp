@@ -106,19 +106,22 @@ void MoviePlayer::destroy()
 		// thus need to have access to context etc.
 		ActionContext* context = m_movieInstance->getContext();
 		T_ASSERT(context);
-		context->setFocus(0);
-		context->setPressed(0);
+		context->setFocus(nullptr);
+		context->setPressed(nullptr);
+
+		// Release values in pool.
+		context->getPool().flush();
 
 		// Then destroy root movie instance.
 		safeDestroy(m_movieInstance);
 	}
 
-	m_actionVM = 0;
-	m_externalInterface = 0;
-	m_stage =  0;
-	m_key = 0;
-	m_mouse = 0;
-	m_movie = 0;
+	m_actionVM = nullptr;
+	m_externalInterface = nullptr;
+	m_stage =  nullptr;
+	m_key = nullptr;
+	m_mouse = nullptr;
+	m_movie = nullptr;
 
 	m_events.clear();
 	m_fsCommands.clear();
@@ -204,8 +207,8 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 			}
 		}
 		ActionValueArray argv;
-		for (AlignedVector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
-			i->second->call(i->first, argv);
+		for (const auto& intervalFn : intervalFns)
+			intervalFn.second->call(intervalFn.first, argv);
 	}
 
 	// Issue all events in sequence as each event possibly update
@@ -222,43 +225,42 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 	if (!m_events.empty())
 	{
 		T_PROFILER_SCOPE(L"MoviePlayer events");
-		for (AlignedVector< Event >::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
+		for (const auto& event : m_events)
 		{
-			const Event& evt = *i;
-			switch (evt.eventType)
+			switch (event.eventType)
 			{
 			case EvtKey:
-				m_movieInstance->eventKey(evt.unicode);
+				m_movieInstance->eventKey(event.unicode);
 				break;
 
 			case EvtKeyDown:
 				if (m_key)
-					m_key->eventKeyDown(evt.keyCode);
-				m_movieInstance->eventKeyDown(evt.keyCode);
+					m_key->eventKeyDown(event.keyCode);
+				m_movieInstance->eventKeyDown(event.keyCode);
 				break;
 
 			case EvtKeyUp:
 				if (m_key)
-					m_key->eventKeyUp(evt.keyCode);
-				m_movieInstance->eventKeyUp(evt.keyCode);
+					m_key->eventKeyUp(event.keyCode);
+				m_movieInstance->eventKeyUp(event.keyCode);
 				break;
 
 			case EvtMouseDown:
 				if (m_mouse)
-					m_mouse->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-				m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+					m_mouse->eventMouseDown(event.mouse.x, event.mouse.y, event.mouse.button);
+				m_movieInstance->eventMouseDown(event.mouse.x, event.mouse.y, event.mouse.button);
 				break;
 
 			case EvtMouseUp:
 				if (m_mouse)
-					m_mouse->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-				m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+					m_mouse->eventMouseUp(event.mouse.x, event.mouse.y, event.mouse.button);
+				m_movieInstance->eventMouseUp(event.mouse.x, event.mouse.y, event.mouse.button);
 				break;
 
 			case EvtMouseMove:
 				{
 					if (m_mouse)
-						m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+						m_mouse->eventMouseMove(event.mouse.x, event.mouse.y, event.mouse.button);
 
 					// Check if mouse cursor still over "rolled over" character.
 					if (context->getRolledOver())
@@ -269,7 +271,7 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 						{
 							Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
 							Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
-							Vector2 xy = intoCharacter * Vector2(float(evt.mouse.x), float(evt.mouse.y));
+							Vector2 xy = intoCharacter * Vector2(float(event.mouse.x), float(event.mouse.y));
 							inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 						}
 						if (!inside)
@@ -280,18 +282,18 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 						}
 					}
 
-					m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+					m_movieInstance->eventMouseMove(event.mouse.x, event.mouse.y, event.mouse.button);
 				}
 				break;
 
 			case EvtMouseWheel:
 				if (m_mouse)
-					m_mouse->eventMouseWheel(evt.mouse.x, evt.mouse.y, evt.mouse.delta);
+					m_mouse->eventMouseWheel(event.mouse.x, event.mouse.y, event.mouse.delta);
 				break;
 
 			case EvtViewResize:
 				if (m_stage)
-					m_stage->eventResize(evt.view.width, evt.view.height);
+					m_stage->eventResize(event.view.width, event.view.height);
 				break;
 			}
 		}

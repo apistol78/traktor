@@ -44,11 +44,11 @@ CharacterInstance::~CharacterInstance()
 	if (m_context)
 	{
 		if (m_context->getFocus() == this)
-			m_context->setFocus(0);
+			m_context->setFocus(nullptr);
 	}
 
-	m_context = 0;
-	m_parent = 0;
+	m_context = nullptr;
+	m_parent = nullptr;
 	m_eventScripts.clear();
 
 	ActionObjectRelay::dereference();
@@ -65,15 +65,15 @@ void CharacterInstance::destroy()
 	if (m_context)
 	{
 		if (m_context->getFocus() == this)
-			m_context->setFocus(0);
+			m_context->setFocus(nullptr);
 		if (m_context->getPressed() == this)
-			m_context->setPressed(0);
+			m_context->setPressed(nullptr);
 		if (m_context->getRolledOver() == this)
-			m_context->setRolledOver(0);
+			m_context->setRolledOver(nullptr);
 	}
 
-	m_context = 0;
-	m_parent = 0;
+	m_context = nullptr;
+	m_parent = nullptr;
 	m_eventScripts.clear();
 
 	ActionObjectRelay::dereference();
@@ -106,7 +106,7 @@ void CharacterInstance::setUserObject(IRefCount* userObject)
 
 void CharacterInstance::clearCacheObject()
 {
-	m_cacheObject = 0;
+	m_cacheObject = nullptr;
 }
 
 std::string CharacterInstance::getTarget() const
@@ -351,7 +351,7 @@ bool CharacterInstance::haveScriptEvent(uint32_t eventName)
 	if (!self->getMember(eventName, memberValue))
 		return false;
 
-	return memberValue.getObject< ActionFunction >() != 0;
+	return memberValue.getObject< ActionFunction >() != nullptr;
 }
 
 bool CharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
@@ -385,8 +385,8 @@ void CharacterInstance::trace(visitor_t visitor) const
 
 void CharacterInstance::dereference()
 {
-	m_context = 0;
-	m_parent = 0;
+	m_context = nullptr;
+	m_parent = nullptr;
 	ActionObjectRelay::dereference();
 }
 
