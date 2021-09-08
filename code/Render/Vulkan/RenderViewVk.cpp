@@ -236,20 +236,20 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
-	if (!m_eventQueue.empty())
+#elif defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
+	if (m_window)
 	{
-		outEvent = m_eventQueue.front();
-		m_eventQueue.pop_front();
-		return true;
+		if (m_window->update(outEvent))
+			return true;
 	}
-	else
-		return false;
-#elif defined(__LINUX__) || defined(__RPI__)
-	return m_window ? m_window->update(outEvent) : false;
-#else
-	return false;
 #endif
+
+	if (m_eventQueue.empty())
+		return false;
+
+	outEvent = m_eventQueue.front();
+	m_eventQueue.pop_front();
+	return true;
 }
 
 void RenderViewVk::close()
@@ -503,7 +503,7 @@ bool RenderViewVk::beginFrame()
 {
 	// Might reach here with a non-created instance, pending reset, so
 	// we need to make sure we have an instance first.
-	if (m_lost || m_frames.empty())
+	if (m_lost)
 		return false;
 
 	// Do this first so we remember, count number of frames.

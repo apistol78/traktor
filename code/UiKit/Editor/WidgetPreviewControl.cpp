@@ -214,7 +214,15 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_moviePlayer)
 		return;
 
-	ui::Size sz = getInnerRect().getSize();
+	const ui::Size sz = getInnerRect().getSize();
+
+	// Render view events; reset view if it has become lost.
+	render::RenderEvent re;
+	while (m_renderView->nextEvent(re))
+	{
+		if (re.type == render::ReLost)
+			m_renderView->reset(sz.cx, sz.cy);
+	}
 
 	// Initialize scaffolding.
 	if (m_scaffoldingClass.changed())
