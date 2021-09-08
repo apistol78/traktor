@@ -24,7 +24,7 @@ int xerrorHandler(Display* display, XErrorEvent* ee)
 {
 	char msg[512] = { 0 };
 	XGetErrorText(display, ee->error_code, msg, sizeof_array(msg));
-	log::error << L"X11 error: request_code " << (int32_t)ee->request_code << L", error_code " << (int32_t)ee->error_code << L" (" << mbstows(msg) << L")" << Endl;
+	log::debug << L"X11 error: request_code " << (int32_t)ee->request_code << L", error_code " << (int32_t)ee->error_code << L" (" << mbstows(msg) << L")" << Endl;
 	return 0;
 }
 
