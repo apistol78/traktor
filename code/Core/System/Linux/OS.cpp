@@ -186,6 +186,7 @@ Ref< IProcess > OS::execute(
 ) const
 {
 	posix_spawn_file_actions_t* fileActions = nullptr;
+	char cwd[512];
 	char* envv[4096];
 	char* argv[1024];
 	int envc = 0;
@@ -194,109 +195,59 @@ Ref< IProcess > OS::execute(
 	pid_t pid;
 	int childStdOut[2] = { 0, 0 };
 	int childStdErr[2] = { 0, 0 };
-	std::wstring executable;
-	std::wstring arguments;
 
 	// Resolve entire command line.
 	std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
 
-	// Extract executable file from command line.
-	if (resolvedCommandLine.empty())
+	// Split command line into argv.
+	AlignedVector< std::wstring > resolvedArguments;
+	if (!splitCommandLine(resolvedCommandLine, resolvedArguments))
 		return nullptr;
-	if (resolvedCommandLine[0] == L'\"')
-	{
-		size_t i = resolvedCommandLine.find(L'\"', 1);
-		if (i == resolvedCommandLine.npos)
-			return nullptr;
-		executable = resolvedCommandLine.substr(1, i - 1);
-		arguments = trim(resolvedCommandLine.substr(i + 1));
-	}
-	else
-	{
-		size_t i = resolvedCommandLine.find(L' ');
-		if (i != resolvedCommandLine.npos)
-		{
-			executable = resolvedCommandLine.substr(0, i);
-			arguments = trim(resolvedCommandLine.substr(i + 1));
-		}
-		else
-			executable = resolvedCommandLine;
-	}
+	if (resolvedArguments.empty())
+		return nullptr;
 
-	char wd[512] = { 0 };
+	// Extract executable file.
+	std::wstring executable = resolvedArguments.front();
+	if (executable.empty())
+		return nullptr;
+
 	// Since Raspberry PI doesn't support changing working directory
 	// in posix spawn we need to launch through "env" shim.
 #if defined(__RPI__)
 	if (!workingDirectory.empty())
 	{
 		Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-		strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+		strcpy(cwd, wstombs(awd.getPathNameNoVolume()).c_str());
 
 		argv[argc++] = strdup("/bin/env");
 		argv[argc++] = strdup("-C");
-		argv[argc++] = strdup(wd);
+		argv[argc++] = strdup(cwd);
 	}
 #else
 	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+	strcpy(cwd, wstombs(awd.getPathNameNoVolume()).c_str());
 #endif
 
-	// Convert all arguments; append bash if executing shell script.
+	// Start with bash if executing shell script.
 	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
-	else
-	{
-		// Ensure file has executable permission.
-		struct stat st;
-		if (stat(wstombs(executable).c_str(), &st) == 0)
-			chmod(wstombs(executable).c_str(), st.st_mode | S_IXUSR);
-	}
 
+	// Convert all arguments into utf-8.
 	argv[argc++] = strdup(wstombs(executable).c_str());
-	size_t i = 0;
-	while (i < arguments.length())
-	{
-		if (arguments[i] == L'\"')
-		{
-			size_t j = arguments.find(L'\"', i + 1);
-			if (j != arguments.npos)
-			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i + 1, j - i - 1)).c_str());
-				i = j + 2;
-			}
-			else
-				return nullptr;
-		}
-		else
-		{
-			size_t j = arguments.find(L' ', i + 1);
-			if (j != arguments.npos)
-			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i, j - i)).c_str());
-				i = j + 1;
-			}
-			else
-			{
-				argv[argc++] = strdup(wstombs(arguments.substr(i)).c_str());
-				break;
-			}
-		}
-	}
+	for (auto it = resolvedArguments.begin() + 1; it != resolvedArguments.end(); ++it)
+		argv[argc++] = strdup(wstombs(*it).c_str());
 
-	// Convert environment variables; don't pass "DYLIB_LIBRARY_PATH" along as we
-	// don't want child process searching our products by default.
+	// Convert environment variables.
 	if (env)
 	{
-		const auto& v = env->get();
-		for (auto i = v.begin(); i != v.end(); ++i)
-			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+		for (auto it : env->get())
+			envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
 	}
 	else
 	{
 		Ref< Environment > env2 = getEnvironment();
-		const auto& v = env2->get();
-		for (auto i = v.begin(); i != v.end(); ++i)
-			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+		for (auto it : env2->get())
+			envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
 	}
 
 	// Terminate argument and environment vectors.
@@ -312,7 +263,7 @@ Ref< IProcess > OS::execute(
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
 #if !defined(__RPI__)
-		posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
 		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
@@ -327,7 +278,7 @@ Ref< IProcess > OS::execute(
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
 #if !defined(__RPI__)
-		posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,8 +50,6 @@ public:
 
 	explicit CommandLine(int argc, const char** argv);
 
-	explicit CommandLine(const std::vector< std::wstring >& argv);
-
 	explicit CommandLine(const std::wstring& file, const std::wstring& args);
 
 	const std::wstring& getFile() const;
@@ -76,13 +74,15 @@ public:
 
 private:
 	std::wstring m_file;
-	std::vector< Option > m_opts;
-	std::vector< std::wstring > m_args;
+	AlignedVector< Option > m_opts;
+	AlignedVector< std::wstring > m_args;
 	Option m_invOpt;
 
 	std::wstring trim(const std::wstring& s) const;
 
-	void parse(const std::wstring& args);
+	bool parse(const std::wstring& args);
+
+	void parse(int argc, const char** argv);
 };
 
 }

@@ -13,77 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.CommandLine", CommandLine, Object)
 CommandLine::CommandLine(int argc, const char** argv)
 {
 	m_file = mbstows(argv[0]);
-
-#if !defined(_WIN32)
-	StringOutputStream ss;
-	for (int i = 1; i < argc; ++i)
-	{
-		if (i > 1)
-			ss << L" ";
-		ss << mbstows(argv[i]);
-	}
-	parse(ss.str());
-#else
-	for (int i = 1; i < argc; ++i)
-	{
-		std::wstring a = mbstows(argv[i]);
-		if (a[0] == L'-')
-		{
-			const wchar_t* cs = a.c_str() + 1;
-			const wchar_t* value = wcschr(cs, L'=');
-			if (value)
-				m_opts.push_back(Option(
-					std::wstring(cs, value),
-					trim(value + 1)
-				));
-			else
-				m_opts.push_back(Option(
-					std::wstring(cs),
-					L""
-				));
-		}
-		else
-			m_args.push_back(trim(a));
-	}
-#endif
-}
-
-CommandLine::CommandLine(const std::vector< std::wstring >& argv)
-{
-	m_file = argv[0];
-
-#if !defined(_WIN32)
-	StringOutputStream ss;
-	for (size_t i = 1; i < argv.size(); ++i)
-	{
-		if (i > 1)
-			ss << L" ";
-		ss << argv[i];
-	}
-	parse(ss.str());
-#else
-	for (size_t i = 1; i < argv.size(); ++i)
-	{
-		std::wstring a = argv[i];
-		if (a[0] == L'-')
-		{
-			const wchar_t* cs = a.c_str() + 1;
-			const wchar_t* value = wcschr(cs, L'=');
-			if (value)
-				m_opts.push_back(Option(
-					std::wstring(cs, value),
-					trim(value + 1)
-				));
-			else
-				m_opts.push_back(Option(
-					std::wstring(cs),
-					L""
-				));
-		}
-		else
-			m_args.push_back(trim(a));
-	}
-#endif
+	parse(argc - 1, argv + 1);
 }
 
 CommandLine::CommandLine(const std::wstring& file, const std::wstring& args)
@@ -183,42 +113,46 @@ std::wstring CommandLine::trim(const std::wstring& s) const
 	return s;
 }
 
-void CommandLine::parse(const std::wstring& args)
+bool CommandLine::parse(const std::wstring& args)
 {
-	std::vector< std::wstring > argv;
-	wchar_t ch;
+	AlignedVector< std::wstring > argv;
 
-	for (size_t i = 0; i < args.length(); )
+	size_t i = 0;
+	while (i < args.length())
 	{
-		ch = args[i];
-		if (ch == L' ' || ch == L'\t')
-		{
-			++i;
-			continue;
-		}
+		StringOutputStream ss;
 
-		size_t s = i;
+		// Trim whitespace.
+		while (i < args.length() && (args[i] == L' ' || args[i] == L'\t'))
+			++i;
+		if (i >= args.length())
+			break;
+
+		// Parse argument until unescaped whitespace or end of line.
 		while (i < args.length())
 		{
-			ch = args[i];
-			if (ch == L' ' || ch == '\t')
-				break;
-
-			++i;
-
-			if (ch == L'\"')
+			if (args[i] == L'\"' || args[i] == L'\'')
 			{
-				while (i < args.length())
-				{
-					ch = args[i++];
-					if (ch == L'\"')
-						break;
-				}
+				size_t j = args.find(args[i], i + 1);
+				if (j == args.npos)
+					return false;
+				ss << args.substr(i + 1, j - i - 1);
+				i = j;
 			}
+			else if (args[i] == L'\\')
+			{
+				if (++i >= args.length())
+					return false;
+				ss << args[i];
+			}
+			else if (args[i] == L' ' || args[i] == L'\t')
+				break;
+			else
+				ss << args[i];
+			++i;
 		}
 
-		if (i > s)
-			argv.push_back(args.substr(s, i - s));
+		argv.push_back(ss.str());
 	}
 
 	for (size_t i = 0; i < argv.size(); ++i)
@@ -240,6 +174,33 @@ void CommandLine::parse(const std::wstring& args)
 		}
 		else
 			m_args.push_back(trim(argv[i]));
+	}
+
+	return true;
+}
+
+void CommandLine::parse(int argc, const char** argv)
+{
+	for (int i = 0; i < argc; ++i)
+	{
+		std::wstring a = mbstows(argv[i]);
+		if (a[0] == L'-')
+		{
+			const wchar_t* cs = a.c_str() + 1;
+			const wchar_t* value = wcschr(cs, L'=');
+			if (value)
+				m_opts.push_back(Option(
+					std::wstring(cs, value),
+					trim(value + 1)
+				));
+			else
+				m_opts.push_back(Option(
+					std::wstring(cs),
+					L""
+				));
+		}
+		else
+			m_args.push_back(trim(a));
 	}
 }
 

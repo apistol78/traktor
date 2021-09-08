@@ -70,7 +70,6 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBase64);
 
 	auto classCommandLine = new AutoRuntimeClass< CommandLine >();
-	classCommandLine->addConstructor< const std::vector< std::wstring >& >();
 	classCommandLine->addConstructor< const std::wstring&, const std::wstring& >();
 	classCommandLine->addProperty("file", &CommandLine::getFile);
 	classCommandLine->addProperty("count", &CommandLine::getCount);
