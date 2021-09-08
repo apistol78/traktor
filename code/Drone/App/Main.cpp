@@ -27,30 +27,25 @@ int main(int argc, const char** argv)
 #else
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
-	std::vector< std::wstring > argv;
-
 	// If global mutex already was created then
 	// the server is already running.
 	if (g_globalMutex.existing())
 		return 0;
 
-	TCHAR szFilename[MAX_PATH] = _T("");
-	GetModuleFileName(NULL, szFilename, sizeof(szFilename));
-	argv.push_back(tstows(szFilename));
-
-	Split< std::wstring >::any(mbstows(szCmdLine), L" \t", argv);
-	CommandLine cmdLine(argv);
+	wchar_t file[MAX_PATH] = L"";
+	GetModuleFileName(NULL, file, sizeof_array(file));
+	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryWin32(),
-		0
+		nullptr
 	);
 #else
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryWx(),
-		0
+		nullptr
 	);
 #endif
 
