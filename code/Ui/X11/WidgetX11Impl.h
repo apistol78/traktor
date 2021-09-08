@@ -136,9 +136,6 @@ public:
 
 					// Resize window.
 					XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
-
-					// Resize surface.
-					cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());
 				}
 				else
 				{
@@ -246,9 +243,6 @@ public:
 
 			// Resize window.
 			XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, m_rect.getWidth(), m_rect.getHeight());
-
-			// Resize surface.
-			cairo_xlib_surface_set_size(m_surface, m_rect.getWidth(), m_rect.getHeight());			
 		}
 		else
 		{
@@ -537,6 +531,7 @@ protected:
 		if (visible && m_rect.area() > 0)
 		{
 	    	XMapWindow(m_context->getDisplay(), m_data.window);
+			XFlush(m_context->getDisplay());
 			m_data.mapped = true;
 		}
 
@@ -552,27 +547,32 @@ protected:
 			return false;
 		}
 
-		m_surface = cairo_xlib_surface_create(
-			m_context->getDisplay(),
-			m_data.window,
-			DefaultVisual(m_context->getDisplay(), m_context->getScreen()),
-			m_rect.getWidth(),
-			m_rect.getHeight()
-		);
+		if ((style & WsNoCanvas) == 0)
+		{
+			m_surface = cairo_xlib_surface_create(
+				m_context->getDisplay(),
+				m_data.window,
+				DefaultVisual(m_context->getDisplay(), m_context->getScreen()),
+				m_rect.getWidth(),
+				m_rect.getHeight()
+			);
 
-		m_cairo = cairo_create(m_surface);
-		setFont(Font(L"Ubuntu Regular", 11));
+			m_cairo = cairo_create(m_surface);
+			setFont(Font(L"Ubuntu Regular", 11));
+		}
 
 		// Focus in.
 		m_context->bind(&m_data, FocusIn, [this](XEvent& xe) {
-			XSetICFocus(m_xic);
+			if (m_xic != 0)
+				XSetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, true);
 			m_owner->raiseEvent(&focusEvent);
 		});
 
 		// Focus out.
 		m_context->bind(&m_data, FocusOut, [this](XEvent& xe) {
-			XUnsetICFocus(m_xic);
+			if (m_xic != 0)
+				XUnsetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, false);
 			m_owner->raiseEvent(&focusEvent);
 		});
@@ -764,18 +764,16 @@ protected:
 					Size(xe.xconfigure.width, xe.xconfigure.height)
 				);
 
-				int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
-				int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
+				// int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
+				// int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
 
-				int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
-				int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
+				// int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
+				// int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
 
-				if (oldWidth != newWidth || oldHeight != newHeight)
+				// if (oldWidth != newWidth || oldHeight != newHeight)
+				if (rect.getSize() != m_rect.getSize())
 				{
 					m_rect = rect;
-
-					if (m_data.visible)
-						cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
 
 					SizeEvent sizeEvent(m_owner, m_rect.getSize());
 					m_owner->raiseEvent(&sizeEvent);
@@ -795,7 +793,6 @@ protected:
 
 	void draw(const Rect* rc)
 	{
-		T_FATAL_ASSERT(m_surface != nullptr);
 		m_pendingExposure = false;
 
 		if (!m_data.visible || !m_data.mapped)
@@ -805,21 +802,38 @@ protected:
 		if (sz.cx <= 0 || sz.cy <= 0)
 			return;
 
-		cairo_push_group(m_cairo);
+		if (m_cairo != nullptr)
+		{
+			int32_t cw = cairo_xlib_surface_get_width(m_surface);
+			int32_t ch = cairo_xlib_surface_get_height(m_surface);
+			if (cw != sz.cx || ch != sz.cy)
+				cairo_xlib_surface_set_size(m_surface, sz.cx, sz.cy);
 
-		CanvasX11 canvasImpl(m_cairo);
-		Canvas canvas(&canvasImpl);
-		PaintEvent paintEvent(
-			m_owner,
-			canvas,
-			rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-		);
-		m_owner->raiseEvent(&paintEvent);
+			cairo_push_group_with_content(m_cairo, CAIRO_CONTENT_COLOR);
 
-		cairo_pop_group_to_source(m_cairo);
-		cairo_paint(m_cairo);
+			CanvasX11 canvasImpl(m_cairo);
+			Canvas canvas(&canvasImpl);
+			PaintEvent paintEvent(
+				m_owner,
+				canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&paintEvent);
 
-		cairo_surface_flush(m_surface);
+			cairo_pop_group_to_source(m_cairo);
+			cairo_paint(m_cairo);
+			cairo_surface_flush(m_surface);
+		}
+		else
+		{
+			Canvas canvas(nullptr);
+			PaintEvent p(
+				m_owner,
+				canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&p);			
+		}
 	}
 
 	void setWmProperty(const char* const property, int32_t value)

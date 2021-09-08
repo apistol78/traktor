@@ -32,11 +32,6 @@ WidgetType* getAncestorOf(Widget* widget)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dialog", Dialog, Container)
 
-Dialog::Dialog()
-:	m_modal(false)
-{
-}
-
 bool Dialog::create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout)
 {
 	IDialog* dialog = Application::getInstance()->getWidgetFactory()->createDialog(this);
@@ -46,7 +41,7 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 		return false;
 	}
 
-	if (!dialog->create(parent ? parent->getIWidget() : 0, text, width, height, style))
+	if (!dialog->create(parent ? parent->getIWidget() : nullptr, text, width, height, style))
 	{
 		dialog->destroy();
 		return false;

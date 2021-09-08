@@ -34,8 +34,6 @@ public:
 		WsDefaultResizable = WsCenterParent | WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
 	};
 
-	Dialog();
-
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefaultResizable, Layout* layout = 0);
 
 	void setIcon(IBitmap* icon);
@@ -49,7 +47,7 @@ public:
 	virtual bool acceptLayout() const override;
 
 private:
-	bool m_modal;
+	bool m_modal = false;
 
 	void eventChild(ChildEvent* event);
 };

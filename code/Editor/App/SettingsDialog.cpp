@@ -91,8 +91,8 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 
 void SettingsDialog::destroy()
 {
-	for (RefArray< ISettingsPage >::iterator i = m_settingPages.begin(); i != m_settingPages.end(); ++i)
-		(*i)->destroy();
+	for (auto settingPage : m_settingPages)
+		settingPage->destroy();
 
 	m_settingPages.resize(0);
 
@@ -103,8 +103,8 @@ void SettingsDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	if (event->getCommand() == ui::DrOk)
 	{
-		for (RefArray< ISettingsPage >::iterator i = m_settingPages.begin(); i != m_settingPages.end(); ++i)
-			(*i)->apply(m_settings);
+		for (auto settingPage : m_settingPages)
+			settingPage->apply(m_settings);
 	}
 }
 
