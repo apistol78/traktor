@@ -288,110 +288,59 @@ Ref< IProcess > OS::execute(
 	posix_spawn_file_actions_t* fileActions = 0;
 	char cwd[512];
 	char* envv[256];
-	char* argv[64];
+	char* argv[256];
 	int envc = 0;
 	int argc = 0;
 	int err;
 	pid_t pid;
 	int childStdOut[2] = { 0 };
 	int childStdErr[2] = { 0 };
-	std::wstring executable;
-	std::wstring arguments;
 
 	// Resolve entire command line.
 	std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
 
-	// Extract executable file from command line.
-	if (resolvedCommandLine.empty())
+	// Split command line into argv.
+	AlignedVector< std::wstring > resolvedArguments;
+	if (!splitCommandLine(resolvedCommandLine, resolvedArguments))
 		return nullptr;
-	if (resolvedCommandLine[0] == L'\"')
-	{
-		size_t i = resolvedCommandLine.find(L'\"', 1);
-		if (i == resolvedCommandLine.npos)
-			return nullptr;
-		executable = resolvedCommandLine.substr(1, i - 1);
-		arguments = trim(resolvedCommandLine.substr(i + 1));
-	}
-	else
-	{
-		size_t i = resolvedCommandLine.find(L' ');
-		if (i != resolvedCommandLine.npos)
-		{
-			executable = resolvedCommandLine.substr(0, i);
-			arguments = trim(resolvedCommandLine.substr(i + 1));
-		}
-		else
-			executable = resolvedCommandLine;
-	}
+	if (resolvedArguments.empty())
+		return nullptr;
 
-	char wd[512] = { 0 };
+	// Extract executable file.
+	std::wstring executable = resolvedArguments.front();
+	if (executable.empty())
+		return nullptr;
+
+	// Convert working directory into absolute path.
 	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
-	strcpy(wd, wstombs(awd.getPathNameNoVolume()).c_str());
+	strcpy(cwd, wstombs(awd.getPathNameNoVolume()).c_str());
 
-	// Convert all arguments; append bash if executing shell script.
+	// Start with bash if executing shell script.
 	if (endsWith(executable, L".sh"))
 		argv[argc++] = strdup("/bin/sh");
-	else
-	{
-		// Ensure file has executable permission.
-		struct stat st;
-		if (stat(wstombs(executable).c_str(), &st) == 0)
-			chmod(wstombs(executable).c_str(), st.st_mode | S_IXUSR);
-	}
-	
+
+	// Convert all arguments into utf-8.
 	argv[argc++] = strdup(wstombs(executable).c_str());
-	size_t i = 0;
-	while (i < arguments.length())
-	{
-		if (arguments[i] == L'\"')
-		{
-			size_t j = arguments.find(L'\"', i + 1);
-			if (j != arguments.npos)
-			{
-				std::wstring tmp = trim(arguments.substr(i + 1, j - i - 1));
-				argv[argc++] = strdup(wstombs(tmp).c_str());
-				i = j + 1;
-			}
-			else
-				return 0;
-		}
-		else
-		{
-			size_t j = arguments.find(L' ', i + 1);
-			if (j != arguments.npos)
-			{
-				std::wstring tmp = trim(arguments.substr(i, j - i));
-				argv[argc++] = strdup(wstombs(tmp).c_str());
-				i = j + 1;
-			}
-			else
-			{
-				std::wstring tmp = trim(arguments.substr(i));
-				argv[argc++] = strdup(wstombs(tmp).c_str());
-				break;
-			}
-		}
-	}
+	for (auto it = resolvedArguments.begin() + 1; it != resolvedArguments.end(); ++it)
+		argv[argc++] = strdup(wstombs(*it).c_str());
 
 	// Convert environment variables; don't pass "DYLIB_LIBRARY_PATH" along as we
 	// don't want child process searching our products by default.
 	if (env)
 	{
-		const auto& v = env->get();
-		for (auto i = v.begin(); i != v.end(); ++i)
+		for (auto it : env->get())
 		{
-			if (i->first != L"DYLD_LIBRARY_PATH")
-				envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+			if (it.first != L"DYLD_LIBRARY_PATH")
+				envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
 		}
 	}
 	else
 	{
 		Ref< Environment > env2 = getEnvironment();
-		const auto& v = env2->get();
-		for (auto i = v.begin(); i != v.end(); ++i)
+		for (auto it : env2->get())
 		{
-			if (i->first != L"DYLD_LIBRARY_PATH")
-				envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+			if (it.first != L"DYLD_LIBRARY_PATH")
+				envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
 		}
 	}
 
@@ -407,7 +356,7 @@ Ref< IProcess > OS::execute(
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
-		posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
 		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
@@ -420,14 +369,24 @@ Ref< IProcess > OS::execute(
 	{
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
-		posix_spawn_file_actions_addchdir_np(fileActions, wd);
+		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
 	}
 	
+	// Free arguments.
+	for (char** arg = argv; *arg != nullptr; ++arg)
+		free(*arg);
+	for (char** env = envv; *env != nullptr; ++env)
+		free(*env);
+
 	if (err != 0)
+	{
+		posix_spawn_file_actions_destroy(fileActions);
+		delete fileActions;
 		return nullptr;
+	}
 
 	return new ProcessOsX(pid, fileActions, childStdOut[0], childStdErr[0]);
 	

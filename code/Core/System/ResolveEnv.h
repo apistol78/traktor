@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/System/OS.h"
 
 // import/export mechanism.
@@ -15,9 +16,10 @@ namespace traktor
 
 class Environment;
 
-/*! Resolve all environment variable references in input string.
- */
+/*! Resolve all environment variable references in input string. */
 std::wstring T_DLLCLASS resolveEnv(const std::wstring& s, const Environment* env);
 
-}
+/*! Split command line into argv. */
+bool T_DLLCLASS splitCommandLine(const std::wstring& commandLine, AlignedVector< std::wstring >& outArgv);
 
+}
