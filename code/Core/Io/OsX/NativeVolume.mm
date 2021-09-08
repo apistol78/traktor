@@ -133,11 +133,24 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 
 Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
+	const uint32_t mrw = (mode & (File::FmRead | File::FmWrite));
+
+	const char* m = nullptr;
+	if (mrw == File::FmRead)
+		m = "rb";
+	else if (mrw == File::FmWrite)
+		m = "wb";
+	else if (mrw == (File::FmRead | File::FmWrite))
+		m = "w+b";
+	
+	if (!m)
+		return nullptr;
+
 	FILE* fp = fopen(
 		wstombs(getSystemPath(filename)).c_str(),
-		((mode & File::FmRead) != 0) ? "rb" : "wb"
+		m
 	);
-	return bool(fp != 0) ? new NativeStream(fp, mode) : 0;
+	return bool(fp != nullptr) ? new NativeStream(fp, mode) : nullptr;
 }
 
 bool NativeVolume::exist(const Path& filename)
