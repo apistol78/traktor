@@ -309,16 +309,11 @@ void logDriverVersion()
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
-	// Our code begin here.
-	std::vector< std::wstring > argv;
 	SystemApplication sysapp;
 
-	wchar_t szFilename[MAX_PATH] = L"";
-	GetModuleFileName(NULL, szFilename, sizeof_array(szFilename));
-	argv.push_back(szFilename);
-
-	Split< std::wstring >::any(mbstows(szCmdLine), L" \t", argv);
-	CommandLine cmdLine(argv);
+	wchar_t file[MAX_PATH] = L"";
+	GetModuleFileName(NULL, file, sizeof_array(file));
+	CommandLine cmdLine(file, mbstows(szCmdLine));
 	Ref< traktor::IStream > logFile;
 
 	if (!checkPreconditions())
