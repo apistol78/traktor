@@ -261,6 +261,14 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 
 	ui::Size sz = getInnerRect().getSize();
 
+	// Render view events; reset view if it has become lost.
+	render::RenderEvent re;
+	while (m_renderView->nextEvent(re))
+	{
+		if (re.type == render::ReLost)
+			m_renderView->reset(sz.cx, sz.cy);
+	}
+
 	// Add passes to render graph.
 	m_displayRenderer->beginSetup(m_renderGraph);
 	m_moviePlayer->render(m_movieRenderer);

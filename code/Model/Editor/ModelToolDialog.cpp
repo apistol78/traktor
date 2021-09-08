@@ -872,11 +872,16 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	T_ASSERT(m_renderView);
 	T_ASSERT(m_primitiveRenderer);
 
-	if (!m_renderView->beginFrame())
+	// Render view events; reset view if it has become lost.
+	render::RenderEvent re;
+	while (m_renderView->nextEvent(re))
 	{
-		m_renderView->reset(rc.getWidth(), rc.getHeight());
-		return;
+		if (re.type == render::ReLost)
+			m_renderView->reset(rc.getWidth(), rc.getHeight());
 	}
+
+	if (!m_renderView->beginFrame())
+		return;
 
 	render::Clear cl;
 	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;

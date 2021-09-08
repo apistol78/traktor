@@ -488,9 +488,17 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
+	// Render view events; reset view if it has become lost.
+	bool lost = false;
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
+	{
+		if (re.type == render::ReLost)
+			lost = true;
+	}
+
 	// Check if size has changed since last render; need to reset renderer if so.
 	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
 	{
 		if (!m_renderView->reset(sz.cx, sz.cy))
 			return;
