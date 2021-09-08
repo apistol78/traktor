@@ -131,7 +131,7 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 		wstombs(getSystemPath(filename)).c_str(),
 		m
 	);
-	return bool(fp != 0) ? new NativeStream(fp, mode) : nullptr;
+	return bool(fp != nullptr) ? new NativeStream(fp, mode) : nullptr;
 }
 
 bool NativeVolume::exist(const Path& filename)
