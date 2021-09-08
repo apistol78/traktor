@@ -14,9 +14,6 @@ bool UserWidgetX11::create(IWidget* parent, int style)
 {
 	WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
 
-	XSetWindowAttributes attributes = {};
-	attributes.backing_store = WhenMapped;
-
 	Window window = XCreateWindow(
 		m_context->getDisplay(),
 		parentData->window,
@@ -28,8 +25,8 @@ bool UserWidgetX11::create(IWidget* parent, int style)
 		0,
 		InputOutput,
 		CopyFromParent,
-		CWBackingStore,
-		&attributes
+		0,
+		nullptr
 	);
 
 	return WidgetX11Impl< IUserWidget >::create(
