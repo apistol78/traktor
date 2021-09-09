@@ -32,7 +32,7 @@ class JointBullet
 ,	public JointSolver
 {
 public:
-	JointBullet(IWorldCallback* callback, Constraint* constraint, BodyBullet* body1, BodyBullet* body2)
+	explicit JointBullet(IWorldCallback* callback, Constraint* constraint, BodyBullet* body1, BodyBullet* body2)
 	:	m_callback(callback)
 	,	m_constraint(constraint)
 	,	m_body1(body1)
@@ -58,9 +58,9 @@ public:
 
 		invokeOnce< IWorldCallback, Joint*, btTypedConstraint* >(m_callback, &IWorldCallback::destroyConstraint, this, m_constraint);
 
-		m_constraint = 0;
-		m_body1 = 0;
-		m_body2 = 0;
+		m_constraint = nullptr;
+		m_body1 = nullptr;
+		m_body2 = nullptr;
 	}
 
 	virtual Body* getBody1() override final

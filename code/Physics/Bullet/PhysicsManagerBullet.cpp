@@ -1781,11 +1781,21 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	// Destroy joints which still reference body begin destroyed, this is a bad pattern
+	// since it means we're destroying bodies before joints but since we cannot
+	// assume order from components we need to handle it.
+	RefArray< Joint > joints = m_joints;
+	for (auto joint : joints)
+	{
+		if (joint->getBody1() == body || joint->getBody2() == body)
+			joint->destroy();
+	}
+
+	T_FATAL_ASSERT(rigidBody->getNumConstraintRefs() == 0);
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
-	auto it = std::find(m_bodies.begin(), m_bodies.end(), body);
-	T_ASSERT(it != m_bodies.end());
-	m_bodies.erase(it);
+	bool removed = m_bodies.remove(body);
+	T_FATAL_ASSERT(removed);
 
 	delete rigidBody->getMotionState();
 	delete rigidBody;
@@ -1798,9 +1808,8 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 
 	m_dynamicsWorld->removeConstraint(constraint);
 
-	auto it = std::find(m_joints.begin(), m_joints.end(), joint);
-	T_ASSERT(it != m_joints.end());
-	m_joints.erase(it);
+	bool removed = m_joints.remove(joint);
+	T_FATAL_ASSERT(removed);
 
 	delete constraint;
 }
