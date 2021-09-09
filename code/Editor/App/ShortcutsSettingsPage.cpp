@@ -87,7 +87,7 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 	for (auto row : m_gridShortcuts->getRows())
 	{
 		const RefArray< ui::GridItem >& items = row->get();
-		T_ASSERT(items.size() == 2);
+		T_ASSERT(items.size() == 3);
 
 		Ref< PropertyString > propertyKey = row->getData< PropertyString >(L"PROPERTYKEY");
 		T_ASSERT(propertyKey);
