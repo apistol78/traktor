@@ -230,11 +230,14 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 {
 #if defined(_WIN32)
-	MSG msg;
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	if (m_window)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		MSG msg;
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 #elif defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	if (m_window)
