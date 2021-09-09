@@ -12,7 +12,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Canvas", Canvas, Object)
 Canvas::Canvas(ICanvas* canvas)
 :	m_canvas(canvas)
 {
-	T_ASSERT_M (m_canvas, L"Invalid canvas implementation");
 }
 
 void Canvas::setForeground(const Color4ub& foreground)
