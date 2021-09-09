@@ -49,7 +49,9 @@ private:
 	bool m_accessWrite = true;
 	Semaphore m_lock;
 	RefArray< MemCachedProto > m_protos;
-
+	uint32_t m_hits = 0;
+	uint32_t m_misses = 0;
+	
 	Ref< MemCachedProto > acquireProto();
 };
 

@@ -101,7 +101,9 @@ void FilePipelineCache::getInformation(OutputStream& os)
 		os << L"read+write";
 	else
 		os << L"disabled";
-	os << L", " << m_hits << L" hits, " << m_misses << L" misses)";
+	if (m_accessRead)
+		os << L", " << m_hits << L" hits, " << m_misses << L" misses";
+	os << L")";
 }
 
 bool FilePipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
