@@ -255,8 +255,12 @@ void* CanvasCocoa::getSystemHandle()
 
 void CanvasCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
-	outAscent = [m_font ascender];
-	outDescent = [m_font descender];
+	float a =  [m_font ascender];
+	float b = -[m_font descender];
+	float c =  [m_font leading];
+
+	outAscent = (int32_t)a;
+	outDescent = (int32_t)(b + c);
 }
 
 int32_t CanvasCocoa::getAdvance(wchar_t ch, wchar_t next) const

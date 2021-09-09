@@ -339,8 +339,12 @@ public:
 				return;
 		}
 
-		outAscent = [font ascender];
-		outDescent = [font descender];
+		float a =  [font ascender];
+		float b = -[font descender];
+		float c =  [font leading];
+
+		outAscent = (int32_t)a;
+		outDescent = (int32_t)(b + c);
 	}
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
