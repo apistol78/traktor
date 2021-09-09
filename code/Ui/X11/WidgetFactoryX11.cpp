@@ -197,12 +197,51 @@ void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryX11::getDesktopRects(std::list< Rect >& outRects) const
 {
-	int32_t width = DisplayWidth(m_context->getDisplay(), m_context->getScreen());
-	int32_t height = DisplayHeight(m_context->getDisplay(), m_context->getScreen());
-	outRects.push_back(Rect(
-		0, 0,
-		width, height
-	));
+	Atom type;
+	int format;
+	uint64_t num;
+	uint64_t leftovers;
+	uint8_t* data = nullptr;
+
+	Atom atomWorkArea = XInternAtom(m_context->getDisplay(), "_NET_WORKAREA", False);
+	Window win = XRootWindow(m_context->getDisplay(), m_context->getScreen());
+
+	int result = XGetWindowProperty(
+		m_context->getDisplay(),
+		win,
+		atomWorkArea,
+		0,
+		4 * 32,
+		False,
+		AnyPropertyType,
+		&type,
+		&format,
+		&num,
+		&leftovers,
+		&data
+	);
+
+	if (result != Success)
+	{
+		int32_t width = DisplayWidth(m_context->getDisplay(), m_context->getScreen());
+		int32_t height = DisplayHeight(m_context->getDisplay(), m_context->getScreen());
+		outRects.push_back(Rect(
+			0, 0,
+			width, height
+		));
+		return;
+	}
+
+	const long* workareas = (const long*)data;
+	for (int desktop = 0; desktop < num / 4; ++desktop)
+	{
+		outRects.push_back(Rect(
+			workareas[desktop * 4],
+			workareas[desktop * 4 + 1],
+			workareas[desktop * 4 + 2],
+			workareas[desktop * 4 + 3]
+		));
+	}
 }
 
 	}
