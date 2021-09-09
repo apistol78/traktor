@@ -3,6 +3,14 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
@@ -15,7 +23,7 @@ class Guid;
 /*! Pipeline database instance object read-only cache.
  * \ingroup Editor
  */
-class IPipelineInstanceCache : public Object
+class T_DLLCLASS IPipelineInstanceCache : public Object
 {
 	T_RTTI_CLASS;
 
