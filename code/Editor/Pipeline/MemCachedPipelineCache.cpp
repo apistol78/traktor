@@ -83,12 +83,19 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 
 		// Request end block; do not try to open non-finished, uncommitted cache streams.
 		if (!stream->requestEndBlock())
+		{
+			m_misses++;
 			return nullptr;
+		}
 
 		// Request first block of data.
 		if (!stream->requestNextBlock())
+		{
+			m_misses++;
 			return nullptr;
+		}
 
+		m_hits++;
 		return stream;
 	}
 	else
@@ -209,6 +216,9 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 	os << L", " << formatByteSize(bytes);
 	if (maxBytes > 0)
 		os << L", " << ((bytes * 100) / maxBytes) << L" %";
+
+	if (m_accessRead)
+		os << L", " << m_hits << L" hits, " << m_misses << L" misses";
 
 #if defined(_DEBUG)
 	uint64_t evictions = parseString< uint64_t >(stats["evictions"], 0);
