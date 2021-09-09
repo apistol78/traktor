@@ -69,7 +69,8 @@ const char* c_deviceExtensions[] =
 	"VK_KHR_storage_buffer_storage_class",	// Required by VK_KHR_16bit_storage, VK_KHR_8bit_storage and VK_KHR_shader_float16_int8.
 	"VK_KHR_16bit_storage",
 	"VK_KHR_8bit_storage",
-	"VK_KHR_shader_float16_int8"
+	"VK_KHR_shader_float16_int8",
+	"VK_EXT_memory_budget"
 };
 #endif
 
@@ -346,6 +347,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	// \note Disabled for now, not clear if we need it and until we do let's leave it disabled.
 	//if (vf.vkGetBufferMemoryRequirements2KHR != nullptr && vf.vkGetImageMemoryRequirements2KHR != nullptr)
 	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
+
+	aci.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 #endif
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
