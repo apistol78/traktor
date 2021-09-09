@@ -49,14 +49,14 @@ bool RenderPassCache::get(
 
 	// We do not wish to support loading of MSAA target which implies
 	// we might need to store it also.
-#if defined(_DEBUG)
-	if (msaaResolve)
-	{
-		bool cl = ((spec.clear & CfColor) != 0);
-		bool ld = ((spec.load & TfColor) != 0);
-		T_FATAL_ASSERT(!(!cl && ld));
-	}
-#endif
+// #if defined(_DEBUG)
+// 	if (msaaResolve)
+// 	{
+// 		bool cl = ((spec.clear & CfColor) != 0);
+// 		bool ld = ((spec.load & TfColor) != 0);
+// 		T_FATAL_ASSERT(!(!cl && ld));
+// 	}
+// #endif
 
 	for (int32_t i = 0; spec.colorTargetFormats[i] != VK_FORMAT_UNDEFINED && i < RenderTargetSetCreateDesc::MaxTargets; ++i)
 	{

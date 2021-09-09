@@ -104,6 +104,11 @@ bool CommandBuffer::submitAndWait()
 	return true;
 }
 
+void CommandBuffer::externalSynced()
+{
+	m_submitted = false;
+}
+
 CommandBuffer::operator VkCommandBuffer ()
 {
 	T_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);

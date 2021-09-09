@@ -271,7 +271,7 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		if (frame.graphicsCommandBuffer)
-			frame.graphicsCommandBuffer->wait();
+			frame.graphicsCommandBuffer->externalSynced();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
@@ -369,7 +369,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	for (auto& frame : m_frames)
 	{
 		if (frame.graphicsCommandBuffer)
-			frame.graphicsCommandBuffer->wait();
+			frame.graphicsCommandBuffer->externalSynced();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);

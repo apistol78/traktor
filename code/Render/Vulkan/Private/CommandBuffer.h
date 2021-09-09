@@ -30,6 +30,9 @@ public:
 
 	bool submitAndWait();
 
+	/*! Can only be called after caller has made sure GPU is idle. */
+	void externalSynced();
+
 	operator VkCommandBuffer ();
 
 private:
