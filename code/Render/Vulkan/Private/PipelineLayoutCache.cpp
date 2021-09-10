@@ -1,6 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
@@ -39,6 +39,7 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 		ss << L".pBindings[" << i << L"] = {" << Endl;
 		ss << L"\t.binding = " << binding.binding << Endl;
 		ss << L"\t.descriptorType = " << c_descriptorTypes[binding.descriptorType] << Endl;
+		ss << L"\t.stageFlags = " << (uint32_t)binding.stageFlags << Endl;
 		ss << L"}" << Endl;
 	}
 	return ss.str();
@@ -113,7 +114,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayout
 
 VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(&sci, sizeof(sci));
 	cs.end();

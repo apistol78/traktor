@@ -16,8 +16,8 @@
 #include <spirv_msl.hpp>
 
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -520,28 +520,28 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	// Calculate hashes.
 	{
-		Adler32 checksum;
+		Murmur3 checksum;
 		checksum.begin();
 		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_vertexShaderHash = checksum.get();
 	}
 	{
-		Adler32 checksum;
+		Murmur3 checksum;
 		checksum.begin();
 		checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_fragmentShaderHash = checksum.get();
 	}
 	{
-		Adler32 checksum;
+		Murmur3 checksum;
 		checksum.begin();
 		checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
 		checksum.end();
 		programResource->m_computeShaderHash = checksum.get();
 	}
 	{
-		Adler32 checksum;
+		Murmur3 checksum;
 		checksum.begin();
 		checksum.feed(cx.getRenderState());
 		checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
@@ -551,7 +551,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		programResource->m_shaderHash = checksum.get();
 	}
 	{
-		Adler32 checksum;
+		Murmur3 checksum;
 		checksum.begin();
 
 		for (int32_t i = 0; i < 3; ++i)

@@ -1,5 +1,5 @@
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
@@ -16,7 +16,7 @@ namespace traktor
 
 uint32_t hash(const std::wstring& text)
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(text);
 	cs.end();

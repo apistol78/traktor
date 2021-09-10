@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
 
 namespace traktor
@@ -17,7 +17,7 @@ GlslSampler::GlslSampler(const std::wstring& name, uint8_t stages, const Sampler
 
 int32_t GlslSampler::getOrdinal() const
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(getName());
 	cs.end();

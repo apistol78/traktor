@@ -1,5 +1,5 @@
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDbSql.h"
 #include "Sql/IResultSet.h"
@@ -16,7 +16,7 @@ const int32_t c_version = 7;
 
 int32_t hash(const std::wstring& s)
 {
-	Adler32 a;
+	Murmur3 a;
 	a.begin();
 	a.feed(s.c_str(), s.length() * sizeof(wchar_t));
 	a.end();

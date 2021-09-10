@@ -1,5 +1,5 @@
 #include <cmath>
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -86,7 +86,7 @@ uint32_t Vertex::getJointInfluenceCount() const
 
 uint32_t Vertex::getHash() const
 {
-	Adler32 adler;
+	Murmur3 adler;
 
 	adler.begin();
 	adler.feed(&m_position, sizeof(m_position));

@@ -1,5 +1,5 @@
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/InputPin.h"

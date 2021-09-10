@@ -3,9 +3,9 @@
 #endif
 #include <cstring>
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
@@ -556,7 +556,7 @@ Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVecto
 		vad.offset = vertexElement.getOffset();
 	}
 
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();

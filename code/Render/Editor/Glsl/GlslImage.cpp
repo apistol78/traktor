@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ GlslImage::GlslImage(const std::wstring& name, uint8_t stages)
 
 int32_t GlslImage::getOrdinal() const
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(getName());
 	cs.end();
