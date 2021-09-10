@@ -21,7 +21,6 @@ extern const render::Handle s_techniqueShadow;
 // Shader parameters.
 extern const render::Handle s_handleColorMap;
 extern const render::Handle s_handleDecalParams;
-extern const render::Handle s_handleDepthEnable;
 extern const render::Handle s_handleDepthMap;
 extern const render::Handle s_handleExposure;
 extern const render::Handle s_handleExtent;

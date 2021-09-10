@@ -19,7 +19,6 @@ const render::Handle s_techniqueShadow(L"World_ShadowWrite");
 // Shader parameters.
 const render::Handle s_handleColorMap(L"World_ColorMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
-const render::Handle s_handleDepthEnable(L"World_DepthEnable");
 const render::Handle s_handleDepthMap(L"World_DepthMap");
 const render::Handle s_handleExposure(L"World_Exposure");
 const render::Handle s_handleExtent(L"World_Extent");
