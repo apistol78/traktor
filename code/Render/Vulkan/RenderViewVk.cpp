@@ -512,6 +512,9 @@ bool RenderViewVk::beginFrame()
 	// Do this first so we remember, count number of frames.
 	m_counter++;
 
+	// Update VMA once each frame. 
+	vmaSetCurrentFrameIndex(m_context->getAllocator(), m_counter);
+
 	// Get next target from swap chain.
     vkAcquireNextImageKHR(
 		m_context->getLogicalDevice(),
