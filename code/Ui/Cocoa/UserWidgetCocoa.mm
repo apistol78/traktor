@@ -73,7 +73,7 @@ bool UserWidgetCocoa::event_viewDidEndLiveResize()
 bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 {
 	NSPoint mousePosition = [theEvent locationInWindow];
-	mousePosition = [m_control convertPointFromBase: mousePosition];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
 
 	if (button == 1)
 		button = MbtLeft;
@@ -114,7 +114,7 @@ bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent, int button)
 		return false;
 
 	NSPoint mousePosition = [theEvent locationInWindow];
-	mousePosition = [m_control convertPointFromBase: mousePosition];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
 
 	if (button == 1)
 		button = MbtLeft;
@@ -139,7 +139,10 @@ bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 		return false;
 
 	NSPoint mousePosition = [theEvent locationInWindow];
-	mousePosition = [m_control convertPointFromBase: mousePosition];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
+
+	//mousePosition = [m_control convertPointFromBacking: mousePosition];
+	//mousePosition.y = height + mousePosition.y;
 
 	if (button == 1)
 		button = MbtLeft;
