@@ -199,8 +199,8 @@ void WidgetFactoryX11::getDesktopRects(std::list< Rect >& outRects) const
 {
 	Atom type;
 	int format;
-	uint64_t num;
-	uint64_t leftovers;
+	unsigned long num;
+	unsigned long leftovers;
 	uint8_t* data = nullptr;
 
 	Atom atomWorkArea = XInternAtom(m_context->getDisplay(), "_NET_WORKAREA", False);
