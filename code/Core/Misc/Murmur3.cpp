@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Misc/Murmur3.h"
 
 namespace traktor
