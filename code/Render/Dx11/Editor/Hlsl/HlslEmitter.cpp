@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx11/Platform.h"
@@ -1781,7 +1781,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	else
 		(UINT&)dsd.Filter |= 0x80;
 
-	Adler32 samplerHash;
+	Murmur3 samplerHash;
 	samplerHash.begin();
 	samplerHash.feed(&dsd, sizeof(dsd));
 	samplerHash.end();
@@ -2034,7 +2034,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		else
 			(UINT&)dsd.Filter |= 0x80;
 
-		Adler32 samplerHash;
+		Murmur3 samplerHash;
 		samplerHash.begin();
 		samplerHash.feed(&dsd, sizeof(dsd));
 		samplerHash.end();

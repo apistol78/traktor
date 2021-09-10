@@ -8,7 +8,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberArray.h"
@@ -23,8 +23,8 @@ namespace traktor
 class HashSerializer : public Serializer
 {
 public:
-	HashSerializer(Adler32& adler)
-	:	m_adler(adler)
+	HashSerializer(Murmur3& hasher)
+	:	m_hasher(hasher)
 	,	m_writtenCount(0)
 	{
 	}
@@ -36,135 +36,135 @@ public:
 
 	virtual void operator >> (const Member< bool >& m) override final
 	{
-		m_adler.feed< uint8_t >(m ? 0xff : 0x00);
+		m_hasher.feed< uint8_t >(m ? 0xff : 0x00);
 	}
 
 	virtual void operator >> (const Member< int8_t >& m) override final
 	{
-		m_adler.feed< int8_t >(m);
+		m_hasher.feed< int8_t >(m);
 	}
 
 	virtual void operator >> (const Member< uint8_t >& m) override final
 	{
-		m_adler.feed< uint8_t >(m);
+		m_hasher.feed< uint8_t >(m);
 	}
 
 	virtual void operator >> (const Member< int16_t >& m) override final
 	{
-		m_adler.feed< int64_t >(m);
+		m_hasher.feed< int64_t >(m);
 	}
 
 	virtual void operator >> (const Member< uint16_t >& m) override final
 	{
-		m_adler.feed< uint16_t >(m);
+		m_hasher.feed< uint16_t >(m);
 	}
 
 	virtual void operator >> (const Member< int32_t >& m) override final
 	{
-		m_adler.feed< int32_t >(m);
+		m_hasher.feed< int32_t >(m);
 	}
 
 	virtual void operator >> (const Member< uint32_t >& m) override final
 	{
-		m_adler.feed< uint32_t >(m);
+		m_hasher.feed< uint32_t >(m);
 	}
 
 	virtual void operator >> (const Member< int64_t >& m) override final
 	{
-		m_adler.feed< int64_t >(m);
+		m_hasher.feed< int64_t >(m);
 	}
 
 	virtual void operator >> (const Member< uint64_t >& m) override final
 	{
-		m_adler.feed< uint64_t >(m);
+		m_hasher.feed< uint64_t >(m);
 	}
 
 	virtual void operator >> (const Member< float >& m) override final
 	{
-		m_adler.feed< float >(m);
+		m_hasher.feed< float >(m);
 	}
 
 	virtual void operator >> (const Member< double >& m) override final
 	{
-		m_adler.feed< double >(m);
+		m_hasher.feed< double >(m);
 	}
 
 	virtual void operator >> (const Member< std::string >& m) override final
 	{
 		const std::string& str = m;
-		m_adler.feed(str.data(), str.size());
+		m_hasher.feed(str.data(), str.size());
 	}
 
 	virtual void operator >> (const Member< std::wstring >& m) override final
 	{
 		const std::wstring& str = m;
-		m_adler.feed(str.data(), str.size() * sizeof(wchar_t));
+		m_hasher.feed(str.data(), str.size() * sizeof(wchar_t));
 	}
 
 	virtual void operator >> (const Member< Guid >& m) override final
 	{
 		const Guid& guid = m;
-		m_adler.feed((const uint8_t*)guid, 16);
+		m_hasher.feed((const uint8_t*)guid, 16);
 	}
 
 	virtual void operator >> (const Member< Path >& m) override final
 	{
 		std::wstring path = m->getOriginal();
-		m_adler.feed(path.data(), path.size() * sizeof(wchar_t));
+		m_hasher.feed(path.data(), path.size() * sizeof(wchar_t));
 	}
 
 	virtual void operator >> (const Member< Color4ub >& m) override final
 	{
-		m_adler.feed< uint8_t >(m->r);
-		m_adler.feed< uint8_t >(m->g);
-		m_adler.feed< uint8_t >(m->b);
-		m_adler.feed< uint8_t >(m->a);
+		m_hasher.feed< uint8_t >(m->r);
+		m_hasher.feed< uint8_t >(m->g);
+		m_hasher.feed< uint8_t >(m->b);
+		m_hasher.feed< uint8_t >(m->a);
 	}
 
 	virtual void operator >> (const Member< Color4f >& m) override final
 	{
 		float T_MATH_ALIGN16 e[4];
 		m->storeAligned(e);
-		m_adler.feed(e, sizeof(e));
+		m_hasher.feed(e, sizeof(e));
 	}
 
 	virtual void operator >> (const Member< Scalar >& m) override final
 	{
 		float v = (float)(const Scalar&)m;
-		m_adler.feed< float >(v);
+		m_hasher.feed< float >(v);
 	}
 
 	virtual void operator >> (const Member< Vector2 >& m) override final
 	{
-		m_adler.feed< float >(m->x);
-		m_adler.feed< float >(m->y);
+		m_hasher.feed< float >(m->x);
+		m_hasher.feed< float >(m->y);
 	}
 
 	virtual void operator >> (const Member< Vector4 >& m) override final
 	{
 		float T_MATH_ALIGN16 e[4];
 		m->storeAligned(e);
-		m_adler.feed(e, sizeof(e));
+		m_hasher.feed(e, sizeof(e));
 	}
 
 	virtual void operator >> (const Member< Matrix33 >& m) override final
 	{
 		for (int i = 0; i < 3 * 3; ++i)
-			m_adler.feed< float >(m->m[i]);
+			m_hasher.feed< float >(m->m[i]);
 	}
 
 	virtual void operator >> (const Member< Matrix44 >& m) override final
 	{
 		float T_MATH_ALIGN16 e[16];
 		m->storeAligned(e);
-		m_adler.feed(e, sizeof(e));
+		m_hasher.feed(e, sizeof(e));
 	}
 
 	virtual void operator >> (const Member< Quaternion >& m) override final
 	{
 		float T_MATH_ALIGN16 e[4];
 		m->e.storeAligned(e);
-		m_adler.feed(e, sizeof(e));
+		m_hasher.feed(e, sizeof(e));
 	}
 
 	virtual void operator >> (const Member< ISerializable* >& m) override final
@@ -178,20 +178,20 @@ public:
 				m_written.insert(std::make_pair(object, ++m_writtenCount));
 
 				const wchar_t* const typeName = type_of(object).getName();
-				m_adler.feed(typeName, wcslen(typeName) * sizeof(wchar_t));
+				m_hasher.feed(typeName, wcslen(typeName) * sizeof(wchar_t));
 
 				serialize(object);
 			}
 			else
-				m_adler.feed< uint32_t >(it->second);
+				m_hasher.feed< uint32_t >(it->second);
 		}
 		else
-			m_adler.feed< uint32_t >(0);
+			m_hasher.feed< uint32_t >(0);
 	}
 
 	virtual void operator >> (const Member< void* >& m) override final
 	{
-		m_adler.feed(m.getBlob(), m.getBlobSize());
+		m_hasher.feed(m.getBlob(), m.getBlobSize());
 	}
 
 	virtual void operator >> (const MemberArray& m) override final
@@ -212,7 +212,7 @@ public:
 	}
 
 private:
-	Adler32& m_adler;
+	Murmur3& m_hasher;
 	SmallMap< ISerializable*, uint32_t > m_written;
 	uint32_t m_writtenCount;
 };
@@ -226,7 +226,7 @@ DeepHash::DeepHash(const ISerializable* object)
 {
 	if (object)
 	{
-		Adler32 a;
+		Murmur3 a;
 		a.begin();
 		HashSerializer(a).writeObject(object);
 		a.end();

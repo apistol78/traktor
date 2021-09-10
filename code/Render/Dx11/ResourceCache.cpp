@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ResourceCache.h"
 
@@ -12,7 +12,7 @@ namespace traktor
 template < typename T >
 uint32_t hash(const T& item)
 {
-	Adler32 a;
+	Murmur3 a;
 	a.begin();
 	a.feed(&item, sizeof(T));
 	a.end();

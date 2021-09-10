@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Dx11/VertexLayoutDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 
@@ -29,7 +29,7 @@ Ref< VertexLayoutDx11 > VertexLayoutDx11::create(const AlignedVector< VertexElem
 		layout->m_d3dInputElements[i].InstanceDataStepRate = 0;
 	}
 
-	Adler32 hash;
+	Murmur3 hash;
 	hash.begin();
 	hash.feed(&layout->m_d3dInputElements[0], layout->m_d3dInputElements.size() * sizeof(D3D11_INPUT_ELEMENT_DESC));
 	hash.end();

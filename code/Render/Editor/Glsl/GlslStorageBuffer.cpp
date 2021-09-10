@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslStorageBuffer.h"
 
 namespace traktor
@@ -21,7 +21,7 @@ bool GlslStorageBuffer::add(const std::wstring& elementName, DataType elementTyp
 
 int32_t GlslStorageBuffer::getOrdinal() const
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(getName());
 	cs.end();

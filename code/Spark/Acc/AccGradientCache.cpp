@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Resource/Proxy.h"
@@ -91,7 +91,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 	const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
 	T_ASSERT(colorRecords.size() > 1);
 
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(style.getGradientType());
 	for (AlignedVector< FillStyle::ColorRecord >::const_iterator i = colorRecords.begin(); i != colorRecords.end(); ++i)

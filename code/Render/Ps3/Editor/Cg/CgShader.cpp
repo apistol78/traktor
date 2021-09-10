@@ -1,5 +1,5 @@
 #include "Render/Ps3/Editor/Cg/CgShader.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -163,7 +163,7 @@ uint32_t CgShader::addUniform(const std::wstring& uniform, CgType type, uint32_t
 			}
 		}
 
-		Adler32 cs;
+		Murmur3 cs;
 		cs.begin();
 		cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
 		cs.end();

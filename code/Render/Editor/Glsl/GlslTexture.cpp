@@ -1,4 +1,4 @@
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 
 namespace traktor
@@ -16,7 +16,7 @@ GlslTexture::GlslTexture(const std::wstring& name, uint8_t stages, GlslType unif
 
 int32_t GlslTexture::getOrdinal() const
 {
-	Adler32 cs;
+	Murmur3 cs;
 	cs.begin();
 	cs.feed(getName());
 	cs.end();

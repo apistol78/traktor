@@ -2,7 +2,7 @@
 #include <iomanip>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -2134,7 +2134,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			//	GL_INVALID_ENUM
 			//};
 
-			Adler32 samplerHash;
+			Murmur3 samplerHash;
 			samplerHash.feed(node->getInputPin(i)->getName());
 			samplerHash.feed(samplerState.minFilter);
 			samplerHash.feed(samplerState.mipFilter);

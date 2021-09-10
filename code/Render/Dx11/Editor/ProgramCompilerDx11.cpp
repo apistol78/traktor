@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/ComRef.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -574,7 +574,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 
 	// Calculate vertex shader hash.
 	{
-		Adler32 hash;
+		Murmur3 hash;
 		hash.begin();
 		hash.feed(d3dVertexShader->GetBufferPointer(), d3dVertexShader->GetBufferSize());
 		hash.end();
@@ -583,7 +583,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 
 	// Calculate pixel shader hash.
 	{
-		Adler32 hash;
+		Murmur3 hash;
 		hash.begin();
 		hash.feed(d3dPixelShader->GetBufferPointer(), d3dPixelShader->GetBufferSize());
 		hash.end();

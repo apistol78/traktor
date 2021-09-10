@@ -1,7 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Misc/Murmur3.h"
 #include "Core/Misc/Save.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
@@ -419,7 +419,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 			if (dataStream)
 			{
 				uint8_t buffer[4096];
-				Adler32 a32;
+				Murmur3 a32;
 				int64_t r;
 
 				a32.begin();
@@ -466,7 +466,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 		if (fileStream)
 		{
 			uint8_t buffer[4096];
-			Adler32 a32;
+			Murmur3 a32;
 			int64_t r;
 
 			a32.begin();
