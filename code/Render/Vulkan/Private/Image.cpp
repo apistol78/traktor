@@ -51,6 +51,7 @@ bool Image::createSimple(
 	ici.flags = 0;
 
 	VmaAllocationCreateInfo aci = {};
+	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 	{
@@ -112,6 +113,7 @@ bool Image::createCube(
 	ici.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
 
 	VmaAllocationCreateInfo aci = {};
+	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 	{
@@ -174,6 +176,7 @@ bool Image::createVolume(
 	ici.flags = 0;
 
 	VmaAllocationCreateInfo aci = {};
+	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
 	aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
 	{
