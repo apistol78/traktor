@@ -1,5 +1,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/Entity.h"
@@ -8,6 +10,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
+#include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 #include "World/Simple/WorldRendererSimple.h"
@@ -17,6 +20,24 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSystem, float value)
+{
+	render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 1;
+	stcd.height = 1;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR32F;
+	stcd.sRGB = false;
+	stcd.immutable = true;
+	stcd.initialData[0].data = &value;
+	stcd.initialData[0].pitch = 4;
+	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererSimple", 0, WorldRendererSimple, IWorldRenderer)
 
@@ -27,12 +48,14 @@ bool WorldRendererSimple::create(
 )
 {
 	m_entityRenderers = desc.entityRenderers;
+	m_depthTexture = create1x1Texture(renderSystem, desc.worldRenderSettings->viewFarZ);
 	return true;
 }
 
 void WorldRendererSimple::destroy()
 {
 	m_entityRenderers = nullptr;
+	safeDestroy(m_depthTexture);
 }
 
 void WorldRendererSimple::setup(
@@ -87,6 +110,7 @@ void WorldRendererSimple::setup(
 			globalProgramParams->beginParameters(renderContext);
 			globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
+			globalProgramParams->setTextureParameter(s_handleDepthMap, m_depthTexture);
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.

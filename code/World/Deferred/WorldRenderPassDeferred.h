@@ -27,13 +27,12 @@ class T_DLLCLASS WorldRenderPassDeferred : public IWorldRenderPass
 public:
 	WorldRenderPassDeferred() = delete;
 
-	WorldRenderPassDeferred(
+	explicit WorldRenderPassDeferred(
 		render::handle_t technique,
 		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		bool fogEnabled,
-		bool depthEnable,
 		bool irradianceEnable
 	);
 
