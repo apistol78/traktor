@@ -39,8 +39,23 @@ VkShaderStageFlags getShaderStageFlags(uint8_t resourceStages)
 		flags |= VK_SHADER_STAGE_FRAGMENT_BIT;
 	if (resourceStages & ProgramResourceVk::BsCompute)
 		flags |= VK_SHADER_STAGE_COMPUTE_BIT;
+	T_ASSERT(flags != 0);
 	return flags;
 }
+
+#if defined(_DEBUG)
+std::wstring getShaderStageNames(uint8_t resourceStages)
+{
+	std::wstring names = L"";
+	if (resourceStages & ProgramResourceVk::BsVertex)
+		names += L"+vertex";
+	if (resourceStages & ProgramResourceVk::BsFragment)
+		names += L"+fragment";
+	if (resourceStages & ProgramResourceVk::BsCompute)
+		names += L"+compute";
+	return names;
+}
+#endif
 
 bool storeIfNotEqual(const float* source, int32_t length, float* dest)
 {
@@ -246,7 +261,7 @@ bool ProgramVk::create(
 #if !defined(_DEBUG)
 		m_textures.push_back({ resourceTexture.binding });
 #else
-		m_textures.push_back({ resourceTexture.name, resourceTexture.binding });
+		m_textures.push_back({ resourceTexture.name + L" (" + getShaderStageNames(resourceTexture.stages) + L")", resourceTexture.binding });
 #endif
 	}
 
@@ -256,7 +271,7 @@ bool ProgramVk::create(
 #if !defined(_DEBUG)
 		m_sbuffers.push_back({ resourceSBuffer.binding });
 #else
-		m_sbuffers.push_back({ resourceSBuffer.name, resourceSBuffer.binding });
+		m_sbuffers.push_back({ resourceSBuffer.name + L" (" + getShaderStageNames(resourceSBuffer.stages) + L")", resourceSBuffer.binding });
 #endif
 	}
 
@@ -532,24 +547,21 @@ bool ProgramVk::validateDescriptorSet()
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
-		T_ASSERT(!key.full());
 		key.push_back((intptr_t)m_uniformBuffers[i].range.chain);
 	}	
 	for (const auto& texture : m_textures)
 	{
 		if (!texture.texture)
-			continue;
+			return false;
 		auto resolved = texture.texture->resolve();
 		if (!resolved)
-			continue;
-		T_ASSERT(!key.full());
+			return false;
 		key.push_back((intptr_t)resolved);
 	}
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.bufferView)
-			continue;
-		T_ASSERT(!key.full());
+			return false;
 		key.push_back((intptr_t)sbuffer.bufferView);
 	}
 
@@ -621,11 +633,9 @@ bool ProgramVk::validateDescriptorSet()
 	// Add texture bindings.
 	for (const auto& texture : m_textures)
 	{
-		if (!texture.texture)
-			continue;
+		T_ASSERT(texture.texture);
 		auto resolved = texture.texture->resolve();
-		if (!resolved)
-			continue;
+		T_ASSERT(resolved);
 
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = 0;
@@ -673,9 +683,7 @@ bool ProgramVk::validateDescriptorSet()
 	// Add sbuffer bindings.
 	for (const auto& sbuffer : m_sbuffers)
 	{
-		if (!sbuffer.bufferView)
-			continue;
-
+		T_ASSERT(sbuffer.bufferView);
 		auto bvvk = sbuffer.bufferView;
 
 		auto& bufferInfo = bufferInfos.push_back();
