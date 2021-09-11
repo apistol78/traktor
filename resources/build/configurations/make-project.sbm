@@ -397,6 +397,7 @@ if #architectures > 0 then
 				ws = " "
 			end
 
+			output:printLn("\t-@$(RM) ../" .. configuration.name .. "/" .. productName)
 			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration.name .. "/" .. productName)
 			for _, a in ipairs(architectures) do
 				output:print(" ../" ..configuration.name .. "_" .. a .. "/" .. productName)
