@@ -92,7 +92,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 		);
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

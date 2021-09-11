@@ -1194,13 +1194,9 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	// Remove input ports and pins which match.
 	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); )
 	{
-		std::vector< const InputPin* >::iterator j = externalInputPins.begin();
-		while (j != externalInputPins.end())
-		{
-			if ((*i)->getName() == (*j)->getName())
-				break;
-			++j;
-		}
+		auto j = std::find_if(externalInputPins.begin(), externalInputPins.end(), [&](const InputPin* externalInputPin) {
+			return externalInputPin->getName() == (*i)->getName();
+		});
 		if (j != externalInputPins.end())
 		{
 			i = fragmentInputs.erase(i);
@@ -1213,13 +1209,9 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	// Remove output ports and pins which match.
 	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); )
 	{
-		std::vector< const OutputPin* >::iterator j = externalOutputPins.begin();
-		while (j != externalOutputPins.end())
-		{
-			if ((*i)->getName() == (*j)->getName())
-				break;
-			++j;
-		}
+		auto j = std::find_if(externalOutputPins.begin(), externalOutputPins.end(), [&](const OutputPin* externalOutputPin) {
+			return externalOutputPin->getName() == (*i)->getName();
+		});
 		if (j != externalOutputPins.end())
 		{
 			i = fragmentOutputs.erase(i);
