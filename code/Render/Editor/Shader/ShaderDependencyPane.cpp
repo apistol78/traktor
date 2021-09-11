@@ -36,7 +36,7 @@ bool ShaderDependencyPane::create(ui::Widget* parent)
 	setText(i18n::Text(L"SHADERGRAPH_REFEREES"));
 
 	m_refereeList = new ui::ListBox();
-	m_refereeList->create(this, ui::ListBox::WsSingle);
+	m_refereeList->create(this, ui::ListBox::WsSingle | ui::ListBox::WsSort);
 
 	if (m_dependencyTracker)
 	{
@@ -71,7 +71,7 @@ void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid&
 	for (int32_t i = 0; i < count; ++i)
 	{
 		Ref< db::Instance > instance = m_refereeList->getData< db::Instance >(i);
-		if (instance != 0 && instance->getGuid() == fromShader)
+		if (instance != nullptr && instance->getGuid() == fromShader)
 		{
 			m_refereeList->remove(i);
 			break;
