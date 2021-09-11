@@ -170,28 +170,10 @@ const wchar_t* type_name()
 /*! Create type info set from single type.
  * \ingroup Core
  */
-template < typename T1 >
+template < typename ... Ts >
 inline TypeInfoSet makeTypeInfoSet()
 {
-	return makeTypeInfoSet(type_of< T1 >());
-}
-
-/*! Create type info set from two types.
- * \ingroup Core
- */
-template < typename T1, typename T2 >
-inline TypeInfoSet makeTypeInfoSet()
-{
-	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >());
-}
-
-/*! Create type info set from three types.
- * \ingroup Core
- */
-template < typename T1, typename T2, typename T3 >
-inline TypeInfoSet makeTypeInfoSet()
-{
-	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >(), type_of< T3 >());
+	return makeTypeInfoSet(type_of< Ts >() ... );
 }
 
 /*! Check if type is identical.
