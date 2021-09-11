@@ -196,6 +196,11 @@ function LINK(solution, project, configuration, architecture, sourcePath, source
 	end	
 
 	if format == "StaticLibrary" then
+		if os == "windows" then
+			output:printLn("\t-@$(RM) ..\\" .. configuration.name .. ao .. "\\" .. productName)
+		else
+			output:printLn("\t-@$(RM) ../" .. configuration.name .. ao .. "/" .. productName)
+		end
 		output:printLn("\t" .. iar .. " $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration.name .. ao .. "/" .. productName .. " $(" .. configuration.name .. ao .. "_OBJS)")
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
