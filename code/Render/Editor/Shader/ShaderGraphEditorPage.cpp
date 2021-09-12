@@ -1195,7 +1195,9 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); )
 	{
 		auto j = std::find_if(externalInputPins.begin(), externalInputPins.end(), [&](const InputPin* externalInputPin) {
-			return externalInputPin->getName() == (*i)->getName();
+			return
+				externalInputPin->getName() == (*i)->getName() &&
+				externalInputPin->isOptional() == (*i)->isOptional();
 		});
 		if (j != externalInputPins.end())
 		{
