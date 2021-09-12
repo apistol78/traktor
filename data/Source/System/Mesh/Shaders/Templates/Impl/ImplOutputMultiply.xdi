@@ -5,7 +5,7 @@
 			<id>{6E2953BD-D875-4319-88EE-419E91C433D7}</id>
 			<comment/>
 			<position>
-				<first>363</first>
+				<first>366</first>
 				<second>555</second>
 			</position>
 			<name>T_Irradiance</name>
@@ -18,7 +18,7 @@
 			<id>{970E6522-9A1C-4654-8AE8-095C4C3AEB01}</id>
 			<comment/>
 			<position>
-				<first>343</first>
+				<first>356</first>
 				<second>473</second>
 			</position>
 			<name>T_SurfaceColor</name>
@@ -31,7 +31,7 @@
 			<id>{33A4892D-5B50-467B-B64D-6C25D1BDC81E}</id>
 			<comment/>
 			<position>
-				<first>363</first>
+				<first>386</first>
 				<second>514</second>
 			</position>
 			<name>T_Emissive</name>
@@ -44,7 +44,7 @@
 			<id>{A6BDC149-1340-4010-BEBB-65AF380DF34A}</id>
 			<comment/>
 			<position>
-				<first>363</first>
+				<first>366</first>
 				<second>596</second>
 			</position>
 			<name>T_Metalness</name>
@@ -57,7 +57,7 @@
 			<id>{3B8ED08F-0FEA-4CAC-969E-ABCEEEFA705A}</id>
 			<comment/>
 			<position>
-				<first>343</first>
+				<first>356</first>
 				<second>678</second>
 			</position>
 			<name>T_Transparency</name>
@@ -70,7 +70,7 @@
 			<id>{10759E56-9D9F-4B67-B2A5-2E7A331264CE}</id>
 			<comment/>
 			<position>
-				<first>343</first>
+				<first>366</first>
 				<second>637</second>
 			</position>
 			<name>T_Roughness</name>
@@ -92,6 +92,11 @@
 					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
 				</item>
 				<item>
 					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
@@ -128,9 +133,23 @@
 					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
+					<name>Write velocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Alpha</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Cast shadow</first>
 					<second>0</second>
@@ -155,16 +174,33 @@
 					<first>Transparent</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>Write velocity</first>
+					<second>1</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{FC7CA365-D6F6-DD49-A349-D546B126C987}</id>
 			<comment/>
 			<position>
-				<first>363</first>
+				<first>386</first>
 				<second>719</second>
 			</position>
 			<name>T_Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C7559BB8-F158-486B-B08C-4758FF303201}</id>
+			<comment/>
+			<position>
+				<first>326</first>
+				<second>760</second>
+			</position>
+			<name>T_ViewNormalDetail</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -230,6 +266,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>View normal</name>
 			</destination>
 		</item>
 	</edges>

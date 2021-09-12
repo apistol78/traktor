@@ -54,11 +54,6 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{6D3E40F6-FC88-EB46-A0F6-AF8807F4BDDA}</id>
-					<name>T_ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
 					<id>{3A154CB7-54D1-7E48-BF6E-A50A59320649}</id>
 					<name>T_ViewTangent</name>
 					<optional>false</optional>
@@ -74,10 +69,6 @@
 					<name>T_ViewNormal</name>
 				</item>
 				<item>
-					<id>{B8496494-4662-8944-B86F-DE09D25832E1}</id>
-					<name>T_ViewPosition</name>
-				</item>
-				<item>
 					<id>{B4DCFDCF-602A-AA42-A983-2A96C1E5A990}</id>
 					<name>T_ViewTangent</name>
 				</item>
@@ -88,8 +79,8 @@
 			<id>{9855CB64-63DB-D04E-87B5-6274094F5663}</id>
 			<comment/>
 			<position>
-				<first>-484</first>
-				<second>208</second>
+				<first>-664</first>
+				<second>205</second>
 			</position>
 			<fragmentGuid>{AEBE83FB-68D4-9D45-A672-0A8487A197CD}</fragmentGuid>
 			<inputPins/>
@@ -265,6 +256,11 @@
 					<name>T_Transparency</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{45D7012F-47A2-4774-B5E7-A192921D58F8}</id>
+					<name>T_ViewNormalDetail</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -286,6 +282,10 @@
 				</item>
 				<item>
 					<first>T_Transparency</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>T_ViewNormalDetail</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -363,8 +363,8 @@
 			<id>{EE0C8176-54FB-CE4C-89A6-C3C03B0F23B8}</id>
 			<comment/>
 			<position>
-				<first>996</first>
-				<second>550</second>
+				<first>-315</first>
+				<second>674</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -619,7 +619,7 @@ Tag_NormalTexCoord
 			]]>
 			</comment>
 			<position>
-				<first>-72</first>
+				<first>-76</first>
 				<second>748</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
@@ -663,16 +663,6 @@ Tag_NormalTexCoord
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>T_ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_ViewPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -783,26 +773,6 @@ Tag_NormalTexCoord
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>T_ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1063,6 +1033,36 @@ Tag_NormalTexCoord
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>T_TexCoordNormalMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ViewNormalDetail</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

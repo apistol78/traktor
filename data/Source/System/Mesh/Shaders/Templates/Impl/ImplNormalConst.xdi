@@ -2,24 +2,11 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{AA08AEDE-6660-DA49-B9CE-7B8A0A11E519}</id>
-			<comment/>
-			<position>
-				<first>596</first>
-				<second>44</second>
-			</position>
-			<name>T_ViewPosition</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{3BCA4AE4-E171-164F-8AE5-6787AA581FBE}</id>
 			<comment/>
 			<position>
-				<first>598</first>
-				<second>82</second>
+				<first>600</first>
+				<second>79</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -31,8 +18,8 @@
 			<id>{4AA2503A-6162-A145-9515-5F920832B6B5}</id>
 			<comment/>
 			<position>
-				<first>596</first>
-				<second>121</second>
+				<first>600</first>
+				<second>119</second>
 			</position>
 			<name>T_ViewTangent</name>
 			<connectable>true</connectable>
@@ -44,23 +31,14 @@
 			<id>{F957BA2B-D070-494A-B06E-A477CC726746}</id>
 			<comment/>
 			<position>
-				<first>592</first>
-				<second>160</second>
+				<first>600</first>
+				<second>159</second>
 			</position>
 			<name>T_ViewBinormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{3C55D3FB-CBDD-8645-920E-3F53290FEF62}</id>
-			<comment/>
-			<position>
-				<first>892</first>
-				<second>48</second>
-			</position>
-			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A50D3A5A-1226-A345-B3D4-BA9F763EADFF}</id>
@@ -93,8 +71,8 @@
 			<id>{46898871-9F7C-D04A-BCA0-78B45F20637F}</id>
 			<comment/>
 			<position>
-				<first>606</first>
-				<second>4</second>
+				<first>610</first>
+				<second>39</second>
 			</position>
 			<name>T_TexCoord</name>
 			<connectable>true</connectable>
@@ -110,7 +88,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -120,7 +98,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -130,17 +108,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
