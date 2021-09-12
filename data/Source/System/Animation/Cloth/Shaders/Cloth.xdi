@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{093A2505-14BD-784C-ACEE-D02395680CBE}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,7 @@
 				<second>89</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{6B54EDE8-000D-0442-8AB2-C4BA6175CDFC}</id>
@@ -105,6 +106,11 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
 					<name>Cast shadow</name>
 					<optional>true</optional>
@@ -139,9 +145,23 @@
 					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
+					<name>Write velocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Alpha</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Cast shadow</first>
 					<second>1</second>
@@ -165,6 +185,10 @@
 				<item>
 					<first>Transparent</first>
 					<second>0</second>
+				</item>
+				<item>
+					<first>Write velocity</first>
+					<second>1</second>
 				</item>
 			</values>
 		</item>

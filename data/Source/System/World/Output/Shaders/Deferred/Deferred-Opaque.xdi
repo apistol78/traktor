@@ -83,8 +83,8 @@ World_DeferredGBufferWrite
 			<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			<comment/>
 			<position>
-				<first>63</first>
-				<second>258</second>
+				<first>83</first>
+				<second>257</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -96,8 +96,8 @@ World_DeferredGBufferWrite
 			<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			<comment/>
 			<position>
-				<first>43</first>
-				<second>358</second>
+				<first>63</first>
+				<second>355</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -109,10 +109,10 @@ World_DeferredGBufferWrite
 			<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			<comment/>
 			<position>
-				<first>43</first>
-				<second>108</second>
+				<first>13</first>
+				<second>110</second>
 			</position>
-			<name>ViewNormal</name>
+			<name>ViewNormalDetail</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -122,8 +122,8 @@ World_DeferredGBufferWrite
 			<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			<comment/>
 			<position>
-				<first>23</first>
-				<second>458</second>
+				<first>43</first>
+				<second>453</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -135,8 +135,8 @@ World_DeferredGBufferWrite
 			<id>{A664B618-FCD7-408A-81C9-A3773F959224}</id>
 			<comment/>
 			<position>
-				<first>23</first>
-				<second>158</second>
+				<first>43</first>
+				<second>159</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -148,8 +148,8 @@ World_DeferredGBufferWrite
 			<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			<comment/>
 			<position>
-				<first>43</first>
-				<second>308</second>
+				<first>63</first>
+				<second>306</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -162,7 +162,7 @@ World_DeferredGBufferWrite
 			<comment/>
 			<position>
 				<first>63</first>
-				<second>408</second>
+				<second>404</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -174,7 +174,7 @@ World_DeferredGBufferWrite
 			<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
 			<comment/>
 			<position>
-				<first>73</first>
+				<first>93</first>
 				<second>208</second>
 			</position>
 			<name>Alpha</name>

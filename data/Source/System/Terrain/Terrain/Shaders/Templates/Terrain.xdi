@@ -448,6 +448,11 @@ Generated texture from surface cache.
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
 					<name>Write velocity</name>
 					<optional>true</optional>

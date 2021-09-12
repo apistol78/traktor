@@ -5,8 +5,8 @@
 			<id>{4E36EC8B-5317-45CD-9008-23F6B945CC9C}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
-				<second>522</second>
+				<first>1157</first>
+				<second>518</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{D710345F-679E-414F-845A-EE9D399114DC}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
-				<second>575</second>
+				<first>1147</first>
+				<second>570</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>469</second>
+				<second>466</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{EEF85D37-46B1-422A-8C5A-E23DABA4EB3E}</id>
 			<comment/>
 			<position>
-				<first>1157</first>
-				<second>363</second>
+				<first>1177</first>
+				<second>362</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -57,7 +57,7 @@
 			<id>{F6A033FD-B0FB-498A-93C7-B28292F04459}</id>
 			<comment/>
 			<position>
-				<first>1137</first>
+				<first>1147</first>
 				<second>310</second>
 			</position>
 			<name>T_SurfaceColor</name>
@@ -71,7 +71,7 @@
 			<comment/>
 			<position>
 				<first>1157</first>
-				<second>416</second>
+				<second>414</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -134,6 +134,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
 					<name>Write velocity</name>
 					<optional>true</optional>
@@ -179,10 +184,23 @@
 			<id>{7561B5F6-B46D-054E-A128-723113665F8C}</id>
 			<comment/>
 			<position>
-				<first>1157</first>
-				<second>628</second>
+				<first>1177</first>
+				<second>622</second>
 			</position>
 			<name>T_Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3EC5AA20-AB36-405E-A6F8-26C21D9F60D6}</id>
+			<comment/>
+			<position>
+				<first>1117</first>
+				<second>674</second>
+			</position>
+			<name>T_ViewNormalDetail</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -248,6 +266,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>View normal</name>
 			</destination>
 		</item>
 	</edges>

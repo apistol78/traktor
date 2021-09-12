@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{2B9A9470-607A-5342-A8B5-DD5D153D5C84}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,7 @@
 				<second>944</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{09D8CE50-5B0F-5941-BAB5-93EEC1A1B78C}</id>
@@ -177,6 +178,16 @@
 					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
+					<name>Write velocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -207,6 +218,10 @@
 				<item>
 					<first>Transparent</first>
 					<second>0</second>
+				</item>
+				<item>
+					<first>Write velocity</first>
+					<second>1</second>
 				</item>
 			</values>
 		</item>
