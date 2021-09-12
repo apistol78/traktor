@@ -360,34 +360,6 @@
 			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{EE0C8176-54FB-CE4C-89A6-C3C03B0F23B8}</id>
-			<comment/>
-			<position>
-				<first>-315</first>
-				<second>674</second>
-			</position>
-			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
-					<name>ViewVelocity</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{61CA8F81-F792-C743-A9CB-68C9C350854E}</id>
 			<comment>
 			<![CDATA[
@@ -778,11 +750,21 @@ Tag_NormalTexCoord
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>T_ViewVelocity</name>
+				<name>T_TexCoord0</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<name>ViewVelocity</name>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord1</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>T_TexCoord1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -867,27 +849,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_TexCoord0</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>T_TexCoord0</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_TexCoord1</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>T_TexCoord1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -897,7 +859,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -907,7 +869,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -917,7 +879,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -927,7 +889,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -937,7 +899,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -947,7 +909,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -961,6 +923,16 @@ Tag_NormalTexCoord
 				<name>T_TexCoord0</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>T_TexCoord0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_TexCoord0</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<name>T_TexCoord0</name>
 			</destination>
@@ -978,11 +950,11 @@ Tag_NormalTexCoord
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>T_TexCoord0</name>
+				<name>T_TexCoord1</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>T_TexCoord0</name>
+				<node ref="/object/nodes/item[15]"/>
+				<name>T_TexCoord1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1007,17 +979,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_TexCoord1</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>T_TexCoord1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -1027,7 +989,7 @@ Tag_NormalTexCoord
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -1043,26 +1005,6 @@ Tag_NormalTexCoord
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_ViewNormalDetail</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>
