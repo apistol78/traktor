@@ -220,6 +220,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 
 	if (m_modify == MtModifier)
 	{
+		const bool snapOverrideEnable = ((event->getKeyState() & ui::KsControl) != 0);
+
 		IModifier* modifier = context->getModifier();
 		T_ASSERT(modifier);
 
@@ -266,7 +268,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			worldRayOrigin,
 			worldRayDirection,
 			mouseDelta,
-			viewDelta
+			viewDelta,
+			snapOverrideEnable
 		);
 	}
 	else if (m_modify == MtCamera)

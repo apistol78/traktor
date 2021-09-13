@@ -57,7 +57,8 @@ public:
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection,
 		const Vector4& screenDelta,
-		const Vector4& viewDelta
+		const Vector4& viewDelta,
+		bool snapOverrideEnable
 	) override final;
 
 	virtual void end(const TransformChain& transformChain) override final;

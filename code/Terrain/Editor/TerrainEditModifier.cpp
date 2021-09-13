@@ -559,7 +559,8 @@ void TerrainEditModifier::apply(
 	const Vector4& worldRayOrigin,
 	const Vector4& worldRayDirection,
 	const Vector4& screenDelta,
-	const Vector4& viewDelta
+	const Vector4& viewDelta,
+	bool snapOverrideEnable
 )
 {
 	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
