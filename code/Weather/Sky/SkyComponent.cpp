@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
 #include "Render/ITexture.h"
@@ -14,10 +15,9 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleWeather_SkyRadius;
-render::handle_t s_handleWeather_SkyOffset;
-render::handle_t s_handleWeather_SkyTexture;
-render::handle_t s_handleWeather_SkySunDirection;
+const render::Handle s_handleWeather_SkyRadius(L"Weather_SkyRadius");
+const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
+const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
 
 		}
 
@@ -29,8 +29,7 @@ SkyComponent::SkyComponent(
 	render::Buffer* indexBuffer,
 	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
-	const resource::Proxy< render::ITexture >& texture,
-	float offset
+	const resource::Proxy< render::ITexture >& texture
 )
 :	m_vertexLayout(vertexLayout)
 ,	m_vertexBuffer(vertexBuffer)
@@ -39,12 +38,7 @@ SkyComponent::SkyComponent(
 ,	m_shader(shader)
 ,	m_texture(texture)
 ,	m_transform(Transform::identity())
-,	m_offset(offset)
 {
-	s_handleWeather_SkyRadius = render::getParameterHandle(L"Weather_SkyRadius");
-	s_handleWeather_SkyOffset = render::getParameterHandle(L"Weather_SkyOffset");
-	s_handleWeather_SkyTexture = render::getParameterHandle(L"Weather_SkyTexture");
-	s_handleWeather_SkySunDirection = render::getParameterHandle(L"Weather_SkySunDirection");
 }
 
 SkyComponent::~SkyComponent()
@@ -87,7 +81,7 @@ void SkyComponent::build(
 	if (!sp)
 		return;
 
-	Vector4 sunDirection = m_transform.axisY();
+	float rotation = m_transform.rotation().toEulerAngles().x();
 
 	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
 
@@ -105,9 +99,8 @@ void SkyComponent::build(
 
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - abs(m_offset) - 10.0f);
-	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyOffset, m_offset);
-	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
+	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
+	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 
 	renderBlock->programParams->endParameters(renderContext);

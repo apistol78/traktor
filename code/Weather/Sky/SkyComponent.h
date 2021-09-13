@@ -46,8 +46,7 @@ public:
 		render::Buffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
-		const resource::Proxy< render::ITexture >& texture,
-		float offset
+		const resource::Proxy< render::ITexture >& texture
 	);
 
 	virtual ~SkyComponent();
@@ -76,7 +75,6 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;
 	Transform m_transform;
-	float m_offset;
 };
 
 	}

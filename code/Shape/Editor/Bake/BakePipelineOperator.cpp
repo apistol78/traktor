@@ -172,6 +172,7 @@ void addSky(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
 	const weather::SkyComponentData* skyComponentData,
+	const Transform& skyTransform,
 	float attenuation,
 	TracerTask* tracerTask
 )
@@ -183,6 +184,12 @@ void addSky(
 	Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(textureId);
 	if (!textureAsset)
 		return;
+
+	const Quaternion headRotation = Quaternion::fromEulerAngles(
+		skyTransform.rotation().toEulerAngles().x(),
+		0.0f,
+		0.0f
+	);
 
 	uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
 
@@ -241,7 +248,7 @@ void addSky(
 					{
 						for (int32_t x = 0; x < 128; ++x)
 						{
-							Vector4 d = radianceCube->getDirection(side, x, y);
+							Vector4 d = headRotation * radianceCube->getDirection(side, x, y);
 							Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
 							Scalar totalWeight = 0.0_simd;
 							for (int32_t i = 0; i < 10000; ++i)
@@ -580,7 +587,7 @@ bool BakePipelineOperator::build(
 
 			// Add sky source.
 			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
-				addSky(pipelineBuilder, m_assetPath, skyComponentData, configuration->getSkyAttenuation(), tracerTask);
+				addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), configuration->getSkyAttenuation(), tracerTask);
 
 			// Get volume for irradiance grid.
 			if (inoutEntityData->getName() == L"Irradiance")

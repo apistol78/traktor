@@ -54,7 +54,6 @@ public:
 private:
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;
-	float m_offset;
 };
 
 	}
