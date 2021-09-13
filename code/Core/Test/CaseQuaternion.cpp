@@ -1,5 +1,6 @@
 #include "Core/Test/CaseQuaternion.h"
 #include "Core/Test/MathCompare.h"
+#include "Core/Math/Polar.h"
 #include "Core/Math/RandomGeometry.h"
 
 namespace traktor
@@ -11,6 +12,38 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseQuaternion", 0, CaseQuaternion
 
 void CaseQuaternion::run()
 {
+	// Check to/from euler angles.
+	{
+		Random rnd;
+
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			float head = rnd.nextFloat() * TWO_PI;
+			float pitch = rnd.nextFloat() * TWO_PI;
+			float bank = rnd.nextFloat() * TWO_PI;
+
+			Quaternion q0 = Quaternion::fromEulerAngles(head, pitch, bank);
+
+			float ph, pp, pb;
+			q0.toEulerAngles(ph, pp, pb);
+			Quaternion q1 = Quaternion::fromEulerAngles(ph, pp, pb);
+
+			for (int32_t t = 0; t <= 10; ++t)
+			{
+				for (int32_t p = 0; p <= 10; ++p)
+				{
+					Vector4 unit = Polar((p / 10.0f) * PI, (t / 10.0f) * TWO_PI).toUnitCartesian();
+
+					Vector4 u0 = q0 * unit;
+					Vector4 u1 = q1 * unit;
+
+					CASE_ASSERT_COMPARE(u0, u1, compareVectorEqual);
+				}
+			}
+		}
+	}
+
+	// Check rotation around each axis.
 	{
 		RandomGeometry rnd;
 		for (int i = 0; i < 10; ++i)
