@@ -29,6 +29,6 @@
 	<alphaCoverageReference>0.5</alphaCoverageReference>
 	<sharpenRadius>5</sharpenRadius>
 	<sharpenStrength>1</sharpenStrength>
-	<noiseStrength>0.1</noiseStrength>
+	<noiseStrength>0.01</noiseStrength>
 	<systemTexture>false</systemTexture>
 </object>
