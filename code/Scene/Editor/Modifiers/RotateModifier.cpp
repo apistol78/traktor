@@ -52,31 +52,15 @@ void RotateModifier::selectionChanged()
 
 	m_baseTransforms.clear();
 	m_center = Vector4::zero();
-
 	for (auto entityAdapter : m_entityAdapters)
 	{
 		Transform T = entityAdapter->getTransform();
 		m_baseTransforms.push_back(T);
 		m_center += T.translation();
 	}
-
 	if (!m_entityAdapters.empty())
 		m_center /= Scalar(float(m_entityAdapters.size()));
-
 	m_center = m_center.xyz1();
-
-	m_deltaHead = 0.0f;
-	m_deltaPitch = 0.0f;
-	m_deltaBank = 0.0f;
-
-	if (m_baseTransforms.size() == 1)
-		m_baseTransforms.front().rotation().toEulerAngles(m_baseHead, m_basePitch, m_baseBank);
-	else
-	{
-		m_baseHead = 0.0f;
-		m_basePitch = 0.0f;
-		m_baseBank = 0.0f;
-	}
 
 	m_axisEnable = 0;
 }
@@ -227,6 +211,9 @@ bool RotateModifier::begin(
 	int32_t mouseButton
 )
 {
+	m_deltaHead = 0.0f;
+	m_deltaPitch = 0.0f;
+	m_deltaBank = 0.0f;
 	return true;
 }
 
@@ -236,7 +223,8 @@ void RotateModifier::apply(
 	const Vector4& worldRayOrigin,
 	const Vector4& worldRayDirection,
 	const Vector4& screenDelta,
-	const Vector4& viewDelta
+	const Vector4& viewDelta,
+	bool snapOverrideEnable
 )
 {
 	const float c_constantDeltaScale = 0.02f;
@@ -255,7 +243,22 @@ void RotateModifier::apply(
 
 	if (m_entityAdapters.size() == 1)
 	{
-		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
+		float head = m_baseHead + m_deltaHead;
+		float pitch = m_basePitch + m_deltaPitch;
+		float bank = m_baseBank + m_deltaBank;
+
+		if (snapOverrideEnable)
+		{
+			const float snapAngle = deg2rad(45.0f);
+			if ((m_axisEnable & 1) != 0)
+				head = std::floor(head / snapAngle + 0.5f) * snapAngle;
+			if ((m_axisEnable & 2) != 0)
+				pitch = std::floor(pitch / snapAngle + 0.5f) * snapAngle;
+			if ((m_axisEnable & 4) != 0)
+				bank = std::floor(bank / snapAngle + 0.5f) * snapAngle;
+		}
+
+		Quaternion Q = Quaternion::fromEulerAngles(head, pitch, bank);
 
 		Transform T = m_entityAdapters.front()->getTransform();
 		Transform Tn(T.translation(), Q);
@@ -281,6 +284,25 @@ void RotateModifier::apply(
 
 void RotateModifier::end(const TransformChain& transformChain)
 {
+	m_baseTransforms.clear();
+	for (auto entityAdapter : m_entityAdapters)
+	{
+		Transform T = entityAdapter->getTransform();
+		m_baseTransforms.push_back(T);
+	}
+
+	if (m_baseTransforms.size() == 1)
+		m_baseTransforms.front().rotation().toEulerAngles(m_baseHead, m_basePitch, m_baseBank);
+	else
+	{
+		m_baseHead = 0.0f;
+		m_basePitch = 0.0f;
+		m_baseBank = 0.0f;
+	}
+
+	m_deltaHead = 0.0f;
+	m_deltaPitch = 0.0f;
+	m_deltaBank = 0.0f;
 }
 
 void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const

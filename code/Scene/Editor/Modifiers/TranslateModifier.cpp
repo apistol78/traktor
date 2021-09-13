@@ -61,7 +61,7 @@ void TranslateModifier::selectionChanged()
 			m_center += baseTranslation;
 
 		m_center /= Scalar(float(m_baseTranslations.size()));
-		m_center = snap(m_center.xyz1(), 1 | 2 | 4);
+		m_center = snap(m_center.xyz1(), 1 | 2 | 4, false);
 	}
 }
 
@@ -177,7 +177,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		{
 			Transform T = m_entityAdapters[i]->getTransform0();
 			m_entityAdapters[i]->setTransform(Transform(
-				snap(m_baseTranslations[i], 1 | 2 | 4),
+				snap(m_baseTranslations[i], 1 | 2 | 4, false),
 				T.rotation()
 			));
 		}
@@ -206,7 +206,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		{
 			Transform T = m_entityAdapters[i]->getTransform0();
 			m_entityAdapters[i]->setTransform(Transform(
-				snap(m_baseTranslations[i] + delta, m_axisHot),
+				snap(m_baseTranslations[i] + delta, m_axisHot, false),
 				T.rotation()
 			));
 		}
@@ -235,7 +235,8 @@ void TranslateModifier::apply(
 	const Vector4& worldRayOrigin,
 	const Vector4& worldRayDirection,
 	const Vector4& screenDelta,
-	const Vector4& viewDelta
+	const Vector4& viewDelta,
+	bool snapOverrideEnable
 )
 {
 	Vector4 cp = transformChain.worldToClip(m_center);
@@ -249,7 +250,7 @@ void TranslateModifier::apply(
 		worldDelta *= Vector4(1.0f, 1.0f, 0.0f);
 	m_center += worldDelta;
 
-	Vector4 baseDelta = snap(m_center, 1 | 2 | 4) - m_center0;
+	Vector4 baseDelta = snap(m_center, 1 | 2 | 4, snapOverrideEnable) - m_center0;
 	if (!(m_axisEnable & 1))
 		baseDelta *= Vector4(0.0f, 1.0f, 1.0f);
 	if (!(m_axisEnable & 2))
@@ -262,7 +263,7 @@ void TranslateModifier::apply(
 		Transform T = m_entityAdapters[i]->getTransform();
 		m_entityAdapters[i]->setTransform(Transform(
 			//m_baseTranslations[i] + baseDelta,	<< Snap in object space
-			snap(m_baseTranslations[i] + baseDelta, m_axisEnable),	//< Snap in world space.
+			snap(m_baseTranslations[i] + baseDelta, m_axisEnable, snapOverrideEnable),	//< Snap in world space.
 			T.rotation()
 		));
 	}
@@ -432,9 +433,9 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popWorld();
 }
 
-Vector4 TranslateModifier::snap(const Vector4& position, uint32_t axisEnable) const
+Vector4 TranslateModifier::snap(const Vector4& position, uint32_t axisEnable, bool snapOverrideEnable) const
 {
-	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+	if (m_context->getSnapMode() == SceneEditorContext::SmGrid && !snapOverrideEnable)
 	{
 		float spacing = m_context->getSnapSpacing();
 		if (spacing > 0.0f)

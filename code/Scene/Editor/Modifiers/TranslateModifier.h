@@ -56,7 +56,8 @@ public:
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection,
 		const Vector4& screenDelta,
-		const Vector4& viewDelta
+		const Vector4& viewDelta,
+		bool snapOverrideEnable
 	) override final;
 
 	virtual void end(const TransformChain& transformChain) override final;
@@ -79,7 +80,7 @@ private:
 	uint32_t m_axisEnable;
 	uint32_t m_axisHot;
 
-	Vector4 snap(const Vector4& position, uint32_t axisEnable) const;
+	Vector4 snap(const Vector4& position, uint32_t axisEnable, bool snapOverrideEnable) const;
 };
 
 	}
