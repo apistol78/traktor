@@ -120,14 +120,14 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	ThreadLocal m_buildInstances;
-	int32_t m_progress;
 	int32_t m_progressEnd;
-	int32_t m_succeeded;
-	int32_t m_succeededBuilt;
-	int32_t m_failed;
-	int32_t m_cacheHit;
-	int32_t m_cacheMiss;
-	int32_t m_cacheVoid;
+	std::atomic< int32_t > m_progress;
+	std::atomic< int32_t > m_succeeded;
+	std::atomic< int32_t > m_succeededBuilt;
+	std::atomic< int32_t > m_failed;
+	std::atomic< int32_t > m_cacheHit;
+	std::atomic< int32_t > m_cacheMiss;
+	std::atomic< int32_t > m_cacheVoid;
 
 	/*! Perform build. */
 	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);

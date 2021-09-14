@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Thread/Atomic.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"

@@ -49,7 +49,7 @@ public:
 private:
 	resource::Proxy< SkinnedMesh > m_mesh;
 	Ref< render::Buffer > m_jointTransforms[2];
-	int32_t m_count;
+	std::atomic< int32_t > m_count;
 };
 
 	}

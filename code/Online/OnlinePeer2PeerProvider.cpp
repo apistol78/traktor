@@ -23,7 +23,8 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(ISessionManager* sessionManager
 ,	m_whenUpdate(0.0)
 ,	m_asyncTx(asyncTx)
 ,	m_asyncRx(asyncRx)
-,	m_thread(0)
+,	m_thread(nullptr)
+,	m_rxQueuePending(0)
 {
 	Ref< IUser > fromUser;
 	uint8_t data[1600];

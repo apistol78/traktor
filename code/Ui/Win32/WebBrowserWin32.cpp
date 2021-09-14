@@ -37,7 +37,7 @@ public:
 	}
 
 private:
-	AtomicRefCount m_refCount;
+	std::atomic< ULONG > m_refCount = 0;
 };
 
 template < typename Class1, typename Class2 >
@@ -65,7 +65,7 @@ public:
 	}
 
 private:
-	AtomicRefCount m_refCount;
+	std::atomic< ULONG > m_refCount = 0;
 };
 
 

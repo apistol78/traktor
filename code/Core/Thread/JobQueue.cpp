@@ -7,6 +7,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.JobQueue", JobQueue, Object)
 
+JobQueue::JobQueue()
+:	m_pending(0)
+{
+}
+
 JobQueue::~JobQueue()
 {
 	destroy();
@@ -48,7 +53,7 @@ Ref< Job > JobQueue::add(const Job::task_t& task)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		m_jobQueue.push_back(job);
-		Atomic::increment(m_pending);
+		m_pending++;
 	}
 	m_jobQueuedEvent.pulse();
 	return job;
@@ -70,7 +75,7 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 		{
 			jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
 			m_jobQueue.push_back(jobs[i]);
-			Atomic::increment(m_pending);
+			m_pending++;
 		}
 		m_jobQueuedEvent.pulse((int32_t)(ntasks - 1));
 	}
@@ -103,9 +108,9 @@ bool JobQueue::waitCurrent(int32_t timeout)
 
 void JobQueue::stop()
 {
-	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)m_workerThreads.size(); ++i)
 		m_workerThreads[i]->stop(0);
-	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)m_workerThreads.size(); ++i)
 		m_workerThreads[i]->stop();
 }
 
@@ -135,10 +140,10 @@ void JobQueue::threadWorker()
 		T_FATAL_ASSERT(job->m_finished == 0);
 		job->m_task();
 		T_FATAL_ASSERT(job->m_finished == 0);
-		Atomic::exchange(job->m_finished, 1);
+		job->m_finished = 1;
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
-		Atomic::decrement(m_pending);
+		m_pending--;
 		m_jobFinishedEvent.broadcast();
 	}
 }

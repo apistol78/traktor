@@ -486,8 +486,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
-			Atomic::increment(m_cacheHit);
-			Atomic::increment(m_succeededBuilt);
+			m_cacheHit++;
+			m_succeededBuilt++;
 
 			if (m_listener)
 				m_listener->endBuild(
@@ -505,10 +505,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			return true;
 		}
 		else
-			Atomic::increment(m_cacheMiss);
+			m_cacheMiss++;
 	}
 	else if (m_cache)
-		Atomic::increment(m_cacheVoid);
+		m_cacheVoid++;
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
@@ -773,8 +773,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
-			Atomic::increment(m_cacheHit);
-			Atomic::increment(m_succeededBuilt);
+			m_cacheHit++;
+			m_succeededBuilt++;
 
 			// Restore previous set but also insert built instances from synthesized build;
 			// when caching is enabled then synthesized built instances should be included in parent build as well.
@@ -784,10 +784,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 			return BrSucceeded;
 		}
 		else
-			Atomic::increment(m_cacheMiss);
+			m_cacheMiss++;
 	}
 	else
-		Atomic::increment(m_cacheVoid);
+		m_cacheVoid++;
 
 	LogTargetFilter infoTarget(log::info.getLocalTarget(), !m_verbose);
 	LogTargetFilter warningTarget(log::warning.getLocalTarget(), false);
@@ -817,7 +817,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	m_profiler->end(*dependency->pipelineType);
 
 	if (result)
-		Atomic::increment(m_succeededBuilt);
+		m_succeededBuilt++;
 
 	double buildTime = timer.getElapsedTime();
 
@@ -1028,9 +1028,9 @@ void PipelineBuilder::buildThread(
 
 		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
-			Atomic::increment(m_succeeded);
+			m_succeeded++;
 		else
-			Atomic::increment(m_failed);
+			m_failed++;
 
 		if (m_listener)
 			m_listener->endBuild(
@@ -1040,7 +1040,7 @@ void PipelineBuilder::buildThread(
 				result
 			);
 
-		Atomic::increment(m_progress);
+		m_progress++;
 	}
 }
 

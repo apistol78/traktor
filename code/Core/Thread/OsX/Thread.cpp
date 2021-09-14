@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include "Core/Misc/TString.h"
-#include "Core/Thread/Atomic.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/OsX/Utilities.h"
 
@@ -20,7 +19,7 @@ struct Internal
 	pthread_cond_t signal;
 	std::function< void() > fn;
 	uint32_t* id;
-	int32_t finished;
+	std::atomic< bool > finished;
 };
 
 void* trampoline(void* data)
@@ -28,7 +27,7 @@ void* trampoline(void* data)
 	Internal* in = reinterpret_cast< Internal* >(data);
 	*in->id = (uint32_t)(intptr_t)in->thread;
 	in->fn();
-	Atomic::exchange(in->finished, 1);
+	in->finished = true;
 	pthread_cond_signal(&in->signal);
 	return 0;
 }
@@ -45,7 +44,7 @@ bool Thread::start(Priority priority)
 	in->thread = 0;
 	in->fn = m_fn;
 	in->id = &m_id;
-	in->finished = 0;
+	in->finished = false;
 
 	m_handle = in;
 
@@ -116,7 +115,7 @@ bool Thread::wait(int timeout)
 		addMilliSecToTimeSpec(&ts, timeout);
 
 		pthread_mutex_lock(&in->mutex);
-		for (int rc = 0; rc == 0 && in->finished == 0; )
+		for (int rc = 0; rc == 0 && in->finished == false; )
 		{
 			rc = pthread_cond_timedwait(
 				&in->signal,
@@ -124,7 +123,7 @@ bool Thread::wait(int timeout)
 				&ts
 			);
 		}
-		bool finished = (bool)(in->finished != 0);
+		bool finished = in->finished;
 		pthread_mutex_unlock(&in->mutex);
 
 		if (!finished)
@@ -133,7 +132,7 @@ bool Thread::wait(int timeout)
 
 	int rc = pthread_join(
 		in->thread,
-		0
+		nullptr
 	);
 	return bool(rc == 0);
 }

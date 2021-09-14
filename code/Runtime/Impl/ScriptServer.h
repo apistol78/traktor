@@ -87,7 +87,7 @@ private:
 	Ref< input::InputSystem > m_inputSystem;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
-	int32_t m_callSamplesIndex;
+	std::atomic< int32_t > m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;
 
 	void threadDebugger();

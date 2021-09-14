@@ -291,7 +291,7 @@ void ScriptServer::threadDebugger()
 			}
 			samples.clear();
 
-			Atomic::exchange(m_callSamplesIndex, index);
+			m_callSamplesIndex = index;
 		}
 	}
 

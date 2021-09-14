@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, ActionObjectRelay)
 
-int32_t CharacterInstance::ms_instanceCount = 0;
+std::atomic< int32_t > CharacterInstance::ms_instanceCount(0);
 
 CharacterInstance::CharacterInstance(
 	ActionContext* context,
@@ -31,7 +31,7 @@ CharacterInstance::CharacterInstance(
 ,	m_visible(true)
 ,	m_enabled(true)
 {
-	Atomic::increment(ms_instanceCount);
+	ms_instanceCount++;
 
 	m_cxform.mul = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	m_cxform.add = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
@@ -52,7 +52,7 @@ CharacterInstance::~CharacterInstance()
 	m_eventScripts.clear();
 
 	ActionObjectRelay::dereference();
-	Atomic::decrement(ms_instanceCount);
+	ms_instanceCount--;
 }
 
 int32_t CharacterInstance::getInstanceCount()

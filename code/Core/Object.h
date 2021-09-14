@@ -18,23 +18,11 @@ struct IObjectRefDebugger;
 /*! Managed object base class.
  * \ingroup Core
  */
-class T_DLLCLASS Object : public ITypedObject
+class T_DLLCLASS Object : public RefCountImpl< ITypedObject >
 {
 	T_RTTI_CLASS;
 
 public:
-	Object() = default;
-
-	Object(const Object& object)
-	{
-		// Do not copy reference count.
-	}
-
-	Object(Object&& object)
-	{
-		// Do not move reference count.
-	}
-
 	virtual void addRef(void* owner) const override
 #if !defined(_DEBUG)
 	{
@@ -71,25 +59,14 @@ public:
 
 	void operator delete (void* ptr, void* memory);
 
-	Object& operator = (const Object&)
-	{
-		// Do not copy reference count-
-		return *this;
-	}
-
-	Object& operator = (Object&&)
-	{
-		// Do not move reference count-
-		return *this;
-	}
-
 	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
 
 	static int32_t getHeapObjectCount();
 
 private:
+#if defined(_DEBUG)
 	static IObjectRefDebugger* ms_refDebugger;
-	mutable AtomicRefCount m_refCount;
+#endif
 
 	void finalRelease() const;
 };

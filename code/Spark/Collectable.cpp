@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Collectable", Collectable, Object)
 
-int32_t Collectable::ms_instanceCount = 0;
+std::atomic< int32_t > Collectable::ms_instanceCount(0);
 
 Collectable::Collectable()
 :	m_prev(nullptr)
@@ -18,14 +18,14 @@ Collectable::Collectable()
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 {
-	Atomic::increment(ms_instanceCount);
+	ms_instanceCount++;
 }
 
 Collectable::~Collectable()
 {
 	T_ASSERT(m_next == nullptr);
 	T_ASSERT(m_prev == nullptr);
-	Atomic::decrement(ms_instanceCount);
+	ms_instanceCount++;
 	delete m_weakRefDisposes;
 }
 

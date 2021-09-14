@@ -31,7 +31,7 @@ struct ObjectHeader
 
 #pragma pack()
 
-static int32_t s_heapObjectCount = 0;
+static std::atomic< int32_t > s_heapObjectCount(0);
 
 ATTRIBUTE_NO_SANITIZE_ADDRESS
 inline bool isObjectHeapAllocated(const void* ptr)
@@ -44,7 +44,9 @@ inline bool isObjectHeapAllocated(const void* ptr)
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
+#if defined(_DEBUG)
 IObjectRefDebugger* Object::ms_refDebugger = nullptr;
+#endif
 
 #if defined(_DEBUG)
 void Object::addRef(void* owner) const
@@ -86,7 +88,7 @@ void* Object::operator new (size_t size)
 		ms_refDebugger->addObject(object, size);
 #endif
 
-	Atomic::increment(s_heapObjectCount);
+	s_heapObjectCount++;
 	return object;
 }
 
@@ -110,7 +112,7 @@ void Object::operator delete (void* ptr)
 		IAllocator* allocator = getAllocator();
 		allocator->free(header);
 
-		Atomic::decrement(s_heapObjectCount);
+		s_heapObjectCount--;
 	}
 }
 
@@ -120,7 +122,9 @@ void Object::operator delete (void* ptr, void* memory)
 
 void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
 {
+#if defined(_DEBUG)
 	ms_refDebugger = refDebugger;
+#endif
 }
 
 int32_t Object::getHeapObjectCount()

@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Atomic.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"

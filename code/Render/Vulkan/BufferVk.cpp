@@ -1,3 +1,4 @@
+#include "Core/Thread/Atomic.h"
 #include "Render/Vulkan/BufferVk.h"
 
 namespace traktor

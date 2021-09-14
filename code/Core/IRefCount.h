@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Core/Thread/Atomic.h"
+#include <atomic>
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,36 +27,6 @@ public:
 	virtual void release(void* owner) const = 0;
 };
 
-/*! Reference count value with atomic inc/dec operations.
- * \ingroup Core
- */
-class T_DLLCLASS AtomicRefCount
-{
-public:
-	AtomicRefCount()
-	:	m_value(0)
-	{
-	}
-
-	operator int32_t () const
-	{
-		return m_value;
-	}
-
-	int32_t operator ++ ()
-	{
-		return Atomic::increment(m_value);
-	}
-
-	int32_t operator -- ()
-	{
-		return Atomic::decrement(m_value);
-	}
-
-private:
-	int32_t m_value;
-};
-
 /*! Reference counted implementation.
  * \ingroup Core
  */
@@ -63,6 +34,23 @@ template < typename T >
 class RefCountImpl : public T
 {
 public:
+	RefCountImpl()
+	:	m_refCount(0)
+	{
+	}
+
+	RefCountImpl(const RefCountImpl& object)
+	:	m_refCount(0)
+	{
+		// Do not copy reference count.
+	}
+
+	RefCountImpl(RefCountImpl&& object)
+	:	m_refCount(0)
+	{
+		// Do not move reference count.
+	}
+
 	virtual void addRef(void* owner) const override
 	{
 		++m_refCount;
@@ -75,8 +63,20 @@ public:
 			delete this;
 	}
 
-private:
-	mutable AtomicRefCount m_refCount;
+	RefCountImpl& operator = (const RefCountImpl&)
+	{
+		// Do not copy reference count.
+		return *this;
+	}
+
+	RefCountImpl& operator = (RefCountImpl&&)
+	{
+		// Do not move reference count.
+		return *this;
+	}
+
+protected:
+	mutable std::atomic< int32_t > m_refCount;
 };
 
 #if defined(T_TYPESAFE_REF)
