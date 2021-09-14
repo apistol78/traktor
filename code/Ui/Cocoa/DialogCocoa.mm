@@ -3,15 +3,14 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
+#include "Ui/Canvas.h"
 #include "Ui/EventSubject.h"
+#include "Ui/Cocoa/CanvasCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
 #include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
-#include "Ui/Events/CloseEvent.h"
-#include "Ui/Events/MoveEvent.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/TimerEvent.h"
+#include "Ui/Events/AllEvents.h"
 
 namespace traktor
 {
@@ -21,6 +20,7 @@ namespace traktor
 DialogCocoa::DialogCocoa(EventSubject* owner)
 :	m_owner(owner)
 ,	m_window(nullptr)
+,	m_control(nullptr)
 ,	m_result(0)
 ,	m_timer(nullptr)
 {
@@ -28,10 +28,10 @@ DialogCocoa::DialogCocoa(EventSubject* owner)
 
 bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	uint32_t styleMask = NSTitledWindowMask | NSClosableWindowMask;
+	uint32_t styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
 
 	if (style & WsResizable)
-		styleMask |= NSResizableWindowMask;
+		styleMask |= NSWindowStyleMaskResizable;
 
 	m_window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
@@ -45,9 +45,16 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] initWithCallback: this];
 	[m_window setDelegate: proxy];
 
-	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
-	[m_window setContentView: contentView];
+	m_control = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, width, height)];
+	[m_control setCallback: this];
 
+	NSFont* font = getDefaultFont();
+	if (!font)
+		return false;
+
+	[m_control setFont: font];
+	
+	[m_window setContentView: m_control];
 	return true;
 }
 
@@ -63,7 +70,7 @@ int DialogCocoa::showModal()
 	NSModalSession session = [NSApp beginModalSessionForWindow: m_window];
 
 	EventLoopCocoa* eventLoop = static_cast< EventLoopCocoa* >(Application::getInstance()->getEventLoop());
-	//eventLoop->pushModal(m_window);
+	eventLoop->pushModal(m_window);
 
   	while (m_result < 0)
     {
@@ -71,7 +78,7 @@ int DialogCocoa::showModal()
 			break;
 	}
 
-	//eventLoop->popModal();
+	eventLoop->popModal();
 
     [NSApp endModalSession:session];
 
@@ -94,6 +101,10 @@ void DialogCocoa::destroy()
 {
 	// Release all timers.
 	stopTimer();
+
+	// Detach ourself from being callback.
+	if (m_control)
+		[m_control setCallback: nil];
 
 	// Release objects.
 	if (m_window)
@@ -131,11 +142,13 @@ void DialogCocoa::setVisible(bool visible)
 {
 	if (visible)
 		[m_window makeKeyAndOrderFront: nil];
+	else
+		[m_window orderOut: nil];
 }
 
 bool DialogCocoa::isVisible() const
 {
-	return false;
+	return (bool)[m_window isVisible];
 }
 
 void DialogCocoa::setEnable(bool enable)
@@ -183,7 +196,7 @@ void DialogCocoa::startTimer(int interval)
 	[targetProxy setCallback: targetCallback];
 
 	NSTimer* timer = [[NSTimer alloc]
-		initWithFireDate: nil
+		initWithFireDate: [NSDate date]
 		interval: (double)interval / 1000.0
 		target: targetProxy
 		selector: @selector(dispatchActionCallback:)
@@ -208,13 +221,13 @@ void DialogCocoa::stopTimer()
 
 void DialogCocoa::setRect(const Rect& rect)
 {
-	[m_window setFrame: makeNSRect(rect) display: YES];
+	NSRect frame = makeNSRect(rect);
+	[m_window setFrame: flipNSRect(frame) display: YES];
 }
 
 Rect DialogCocoa::getRect() const
 {
-	NSView* contentView = [m_window contentView];
-	NSRect frame = [m_window frame];
+	NSRect frame = flipNSRect([m_window frame]);
 	return fromNSRect(frame);
 }
 
@@ -257,17 +270,32 @@ Point DialogCocoa::getMousePosition(bool relative) const
 
 Point DialogCocoa::screenToClient(const Point& pt) const
 {
-	return Point(0, 0);
+	NSRect windowFrame = flipNSRect([m_window contentRectForFrameRect: [m_window frame]]);
+
+	NSPoint pointInScreen = makeNSPoint(pt);
+	NSPoint pointInWindow = pointInScreen;
+	pointInWindow.x -= windowFrame.origin.x;
+	pointInWindow.y -= windowFrame.origin.y;
+
+	return fromNSPoint(pointInWindow);
 }
 
 Point DialogCocoa::clientToScreen(const Point& pt) const
 {
-	return Point(0, 0);
+	NSRect windowFrame = flipNSRect([m_window contentRectForFrameRect: [m_window frame]]);
+
+	NSPoint pointInScreen = makeNSPoint(pt);
+	pointInScreen.x += windowFrame.origin.x;
+	pointInScreen.y += windowFrame.origin.y;
+
+	return fromNSPoint(pointInScreen);
 }
 
 bool DialogCocoa::hitTest(const Point& pt) const
 {
-	return false;
+	Point cpt = screenToClient(pt);
+	Rect rcInner = getInnerRect();
+	return rcInner.inside(cpt);
 }
 
 void DialogCocoa::setChildRects(const IWidgetRect* childRects, uint32_t count)
@@ -291,7 +319,7 @@ Size DialogCocoa::getPreferedSize() const
 
 Size DialogCocoa::getMaximumSize() const
 {
-	return Size(0, 0);
+	return Size(65535, 65535);
 }
 
 void DialogCocoa::update(const Rect* rc, bool immediate)
@@ -379,6 +407,188 @@ void DialogCocoa::event_windowDidBecomeMain()
 
 void DialogCocoa::event_windowDidResignMain()
 {
+}
+
+bool DialogCocoa::event_drawRect(const NSRect& rect)
+{
+	if (!m_owner->hasEventHandler< PaintEvent >())
+		return false;
+
+	NSFont* font = [m_control font];
+	if (!font)
+		return false;
+
+	// Create wrapped canvas.
+	CanvasCocoa canvasImpl(font);
+	Canvas canvas(&canvasImpl);
+
+	Rect rc = fromNSRect(rect);
+	PaintEvent paintEvent(m_owner, canvas, rc);
+	m_owner->raiseEvent(&paintEvent);
+
+	return paintEvent.consumed();
+}
+
+bool DialogCocoa::event_viewDidEndLiveResize()
+{
+	Size sz = getRect().getSize();
+	SizeEvent s(m_owner, sz);
+	m_owner->raiseEvent(&s);
+	return true;
+}
+
+bool DialogCocoa::event_mouseDown(NSEvent* theEvent, int button)
+{
+	NSPoint mousePosition = [theEvent locationInWindow];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
+
+	if (button == 1)
+		button = MbtLeft;
+	else if (button == 2)
+		button = MbtRight;
+
+	if ([theEvent clickCount] <= 1)
+	{
+		if (!m_owner->hasEventHandler< MouseButtonDownEvent >())
+			return false;
+
+		MouseButtonDownEvent mouseEvent(
+			m_owner,
+			button,
+			fromNSPoint(mousePosition)
+		);
+		m_owner->raiseEvent(&mouseEvent);
+	}
+	else
+	{
+		if (!m_owner->hasEventHandler< MouseDoubleClickEvent >())
+			return false;
+
+		MouseDoubleClickEvent mouseEvent(
+			m_owner,
+			button,
+			fromNSPoint(mousePosition)
+		);
+		m_owner->raiseEvent(&mouseEvent);
+	}
+
+	return true;
+}
+
+bool DialogCocoa::event_mouseUp(NSEvent* theEvent, int button)
+{
+	if (!m_owner->hasEventHandler< MouseButtonUpEvent >())
+		return false;
+
+	NSPoint mousePosition = [theEvent locationInWindow];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
+
+	if (button == 1)
+		button = MbtLeft;
+	else if (button == 2)
+		button = MbtRight;
+
+	MouseButtonUpEvent mouseEvent(
+		m_owner,
+		button,
+		fromNSPoint(mousePosition)
+	);
+
+	if ([theEvent clickCount] <= 1)
+		m_owner->raiseEvent(&mouseEvent);
+
+	return true;
+}
+
+bool DialogCocoa::event_mouseMoved(NSEvent* theEvent, int button)
+{
+	if (!m_owner->hasEventHandler< MouseMoveEvent >())
+		return false;
+
+	NSPoint mousePosition = [theEvent locationInWindow];
+	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
+
+	//mousePosition = [m_control convertPointFromBacking: mousePosition];
+	//mousePosition.y = height + mousePosition.y;
+
+	if (button == 1)
+		button = MbtLeft;
+	else if (button == 2)
+		button = MbtRight;
+
+	MouseMoveEvent mouseEvent(
+		m_owner,
+		button,
+		fromNSPoint(mousePosition)
+	);
+	m_owner->raiseEvent(&mouseEvent);
+
+	return true;
+}
+
+bool DialogCocoa::event_keyDown(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler< KeyDownEvent >())
+		return false;
+
+	NSString* chs = [theEvent characters];
+
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+
+	KeyDownEvent keyEvent(
+		m_owner,
+		translateKeyCode(keyCode),
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(&keyEvent);
+
+	return true;
+}
+
+bool DialogCocoa::event_keyUp(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler< KeyUpEvent >())
+		return false;
+
+	NSString* chs = [theEvent characters];
+
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+
+	KeyUpEvent keyEvent(
+		m_owner,
+		translateKeyCode(keyCode),
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(&keyEvent);
+
+	return true;
+}
+
+bool DialogCocoa::event_performKeyEquivalent(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler< KeyEvent >())
+		return false;
+
+	NSString* chs = [theEvent characters];
+	if (!chs || [chs length] <= 0)
+		return false;
+
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = (wchar_t)[chs characterAtIndex: 0];
+
+	KeyEvent keyEvent(
+		m_owner,
+		translateKeyCode(keyCode),
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(&keyEvent);
+
+	return true;
 }
 
 	}
