@@ -59,9 +59,9 @@ public:
 	int32_t getRevision() const { return m_revision; }
 
 private:
-	static int32_t ms_nextTag;
+	static std::atomic< int32_t > ms_nextTag;
 	int32_t m_tag = 0;
-	int32_t m_revision = 0;
+	std::atomic< int32_t > m_revision = 0;
 	AutoArrayPtr< uint32_t > m_bits;
 	AutoArrayPtr< uint32_t > m_bitsPreMulAlpha;
 	uint32_t m_width = 0;

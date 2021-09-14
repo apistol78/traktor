@@ -8,11 +8,11 @@ namespace traktor
 	namespace ui
 	{
 
-int32_t BitmapWin32::ms_nextTag = 1;
+std::atomic< int32_t > BitmapWin32::ms_nextTag(1);
 
 BitmapWin32::BitmapWin32()
 {
-	m_tag = Atomic::increment(ms_nextTag);
+	m_tag = ms_nextTag++;
 }
 
 bool BitmapWin32::create(uint32_t width, uint32_t height)
@@ -137,7 +137,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 	m_haveAlpha |= srcHasAlpha;
 
 	// Increment revision of system image.
-	Atomic::increment(m_revision);
+	m_revision++;
 }
 
 Ref< drawing::Image > BitmapWin32::getImage() const
