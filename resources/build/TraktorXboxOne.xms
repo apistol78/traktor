@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="4">
+<object type="Solution" version="5">
 	<name>Traktor Xbox One</name>
 	<rootPath>$(TRAKTOR_HOME)/build/xbox-one</rootPath>
 	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/xbox-one</aggregateOutputPath>
@@ -8393,5 +8393,4 @@
 			</dependencies>
 		</item>
 	</projects>
-	<aggregations/>
 </object>
