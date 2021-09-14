@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <atomic>
 #include <cstdlib>
 #include <iostream>
 #include "Core/Memory/Alloc.h"
