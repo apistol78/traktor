@@ -6,6 +6,8 @@
 #include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IDialog.h"
 
+@class NSCustomControl;
+
 namespace traktor
 {
 	namespace ui
@@ -17,6 +19,7 @@ class DialogCocoa
 :	public IDialog
 ,	public IFontMetric
 ,	public INSWindowEventsCallback
+,	public INSControlEventsCallback
 {
 public:
 	DialogCocoa(EventSubject* owner);
@@ -133,9 +136,28 @@ public:
 
 	virtual void event_windowDidResignMain() override;
 
+	// INSControlEventsCallback
+
+	virtual bool event_drawRect(const NSRect& rect) override final;
+
+	virtual bool event_viewDidEndLiveResize() override final;
+
+	virtual bool event_mouseDown(NSEvent* theEvent, int button) override final;
+
+	virtual bool event_mouseUp(NSEvent* theEvent, int button) override final;
+
+	virtual bool event_mouseMoved(NSEvent* theEvent, int button) override final;
+
+	virtual bool event_keyDown(NSEvent* theEvent) override final;
+
+	virtual bool event_keyUp(NSEvent* theEvent) override final;
+
+	virtual bool event_performKeyEquivalent(NSEvent* theEvent) override final;
+
 private:
 	EventSubject* m_owner;
 	NSWindow* m_window;
+	NSCustomControl* m_control;
 	int m_result;
 	NSTimer* m_timer;
 
