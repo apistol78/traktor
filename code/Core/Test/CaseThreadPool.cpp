@@ -9,13 +9,13 @@ namespace traktor
 		namespace
 		{
 
-int32_t g_count = 0;
+std::atomic< int32_t > g_count(0);
 bool g_errorBuilder = false;
 
 void threadWorker()
 {
     Thread* current = ThreadManager::getInstance().getCurrentThread();
-    Atomic::increment(g_count);
+    g_count++;
     current->sleep(10);
 }
 
@@ -80,7 +80,7 @@ void CaseThreadPool::run()
             CASE_ASSERT(result);
         }
 
-        CASE_ASSERT(g_count == 16);
+        CASE_ASSERT((int32_t)g_count == 16);
     }
 
     {

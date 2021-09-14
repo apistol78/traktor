@@ -14,22 +14,22 @@ namespace traktor
 Signal g_signal1;
 Signal g_signal2;
 Event g_event;
-int32_t g_got;
+std::atomic< int32_t > g_got;
 
 void threadSignal()
 {
 	g_signal1.wait();
-	Atomic::increment(g_got);
+	g_got++;
 	g_signal2.wait();
-	Atomic::increment(g_got);
+	g_got++;
 	g_signal1.wait();
-	Atomic::increment(g_got);
+	g_got++;
 }
 
 void threadEvent()
 {
 	if (g_event.wait(5000))
-		Atomic::increment(g_got);
+		g_got++;
 }
 
 Semaphore g_semaphore;
@@ -58,17 +58,17 @@ void CaseThread::run()
 
 		g_signal1.reset();
 
-		CASE_ASSERT_EQUAL(g_got, 16);
+		CASE_ASSERT_EQUAL((int32_t)g_got, 16);
 
 		g_signal2.set();
 		ThreadManager::getInstance().getCurrentThread()->sleep(200);
 
-		CASE_ASSERT_EQUAL(g_got, 32);
+		CASE_ASSERT_EQUAL((int32_t)g_got, 32);
 
 		g_signal1.set();
 		ThreadManager::getInstance().getCurrentThread()->sleep(200);
 
-		CASE_ASSERT_EQUAL(g_got, 48);
+		CASE_ASSERT_EQUAL((int32_t)g_got, 48);
 
 		int32_t finished = 0;
 		for (int32_t i = 0; i < 16; ++i)
@@ -114,7 +114,7 @@ void CaseThread::run()
 
 		// Ensure only one thread got woken by the pulse.
 		CASE_ASSERT_EQUAL(finished, 2);
-		CASE_ASSERT_EQUAL(g_got, 2);
+		CASE_ASSERT_EQUAL((int32_t)g_got, 2);
 
 		// Broadcast event.
 		g_event.broadcast();
@@ -132,7 +132,7 @@ void CaseThread::run()
 
 		// Ensure all threads got woken and thus terminated by the broadcast.
 		CASE_ASSERT_EQUAL(finished, 16);
-		CASE_ASSERT_EQUAL(g_got, 16);
+		CASE_ASSERT_EQUAL((int32_t)g_got, 16);
 
 		// Cleanup all threads.
 		for (int32_t i = 0; i < 16; ++i)

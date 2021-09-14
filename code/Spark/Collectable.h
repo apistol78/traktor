@@ -77,7 +77,7 @@ private:
 		TcWhite = 3
 	};
 
-	static int32_t ms_instanceCount;
+	static std::atomic< int32_t > ms_instanceCount;
 	Collectable* m_prev;	//!< Intrusive list chain members.
 	Collectable* m_next;
 	mutable SmallSet< IWeakRefDispose* >* m_weakRefDisposes;

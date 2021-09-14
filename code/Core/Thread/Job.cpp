@@ -92,7 +92,7 @@ bool Job::wait(int32_t timeout)
 
 void Job::stop()
 {
-	Atomic::exchange(m_finished, 1);
+	m_finished = 1;
 }
 
 bool Job::stopped() const

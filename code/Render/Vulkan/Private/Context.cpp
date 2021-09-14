@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Atomic.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"

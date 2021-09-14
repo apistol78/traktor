@@ -275,7 +275,7 @@ protected:
 	virtual void dereference() override;
 
 private:
-	static int32_t ms_instanceCount;
+	static std::atomic< int32_t > ms_instanceCount;
 
 	std::string m_name;
 	Matrix33 m_transform;

@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Atomic.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"

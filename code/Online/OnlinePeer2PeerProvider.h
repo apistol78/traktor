@@ -83,7 +83,7 @@ private:
 	Semaphore m_rxQueueLock;
 	Semaphore m_txQueueLock;
 	Signal m_txQueueSignal;
-	AtomicRefCount m_rxQueuePending;
+	std::atomic< int32_t > m_rxQueuePending;
 	CircularVector< RxTxData, 128 > m_rxQueue;
 	CircularVector< RxTxData, 128 > m_txQueue;
 

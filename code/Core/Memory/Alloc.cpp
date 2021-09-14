@@ -3,7 +3,6 @@
 #include <iostream>
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
-#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {
@@ -19,8 +18,8 @@ struct Block
 #pragma pack()
 
 const uint32_t c_magic = 'LIVE';
-int32_t s_count = 0;
-int64_t s_allocated = 0;
+std::atomic< int32_t > s_count(0);
+std::atomic< int64_t > s_allocated(0);
 
 	}
 
@@ -34,8 +33,8 @@ void* Alloc::acquire(size_t size, const char* tag)
 	block->magic = c_magic;
 	block->size = size;
 
-	Atomic::increment(s_count);
-	Atomic::add(s_allocated, size + sizeof(Block));
+	s_count++;
+	s_allocated += size + sizeof(Block);
 	return block + 1;
 }
 
@@ -45,7 +44,7 @@ void Alloc::free(void* ptr)
 	{
 		Block* block = (Block*)ptr - 1;
 		T_FATAL_ASSERT_M(block->magic == c_magic, L"Invalid free");
-		Atomic::add(s_allocated, -(int64_t)(block->size + sizeof(Block)));
+		s_allocated -= (int64_t)(block->size + sizeof(Block));
 		std::free(block);
 	}
 }

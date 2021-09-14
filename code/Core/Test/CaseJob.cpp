@@ -9,16 +9,16 @@ namespace traktor
 		namespace
 		{
 
-int32_t g_job;
-int32_t g_active;
-int32_t g_counts[1000];
+std::atomic< int32_t > g_job;
+std::atomic< int32_t > g_active;
+std::atomic< int32_t > g_counts[1000];
 
 void jobTask(int32_t index)
 {
-	Atomic::increment(g_active);
-	Atomic::increment(g_counts[index]);
-	Atomic::increment(g_job);
-	Atomic::decrement(g_active);
+	g_active++;
+	g_counts[index]++;
+	g_job++;
+	g_active--;
 }
 
 		}
@@ -41,8 +41,8 @@ void CaseJob::run()
 
 		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 
-		CASE_ASSERT_EQUAL(g_active, 0);
-		CASE_ASSERT_EQUAL(g_job, 1000);
+		CASE_ASSERT_EQUAL((int32_t)g_active, 0);
+		CASE_ASSERT_EQUAL((int32_t)g_job, 1000);
 
 		bool correct = true;
 		for (int32_t i = 0; i < 1000; ++i)
@@ -64,8 +64,8 @@ void CaseJob::run()
 		bool result = JobManager::getInstance().wait();
 		CASE_ASSERT(result);
 
-		CASE_ASSERT_EQUAL(g_active, 0);
-		CASE_ASSERT_EQUAL(g_job, 1000);
+		CASE_ASSERT_EQUAL((int32_t)g_active, 0);
+		CASE_ASSERT_EQUAL((int32_t)g_job, 1000);
 
 		bool correct = true;
 		for (int32_t i = 0; i < 1000; ++i)

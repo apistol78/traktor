@@ -2,6 +2,7 @@
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Memory/FastAllocator.h"
 #include "Core/Memory/SystemConstruct.h"
+#include "Core/Thread/Atomic.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 

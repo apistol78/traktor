@@ -42,7 +42,7 @@ private:
 
 	Event& m_jobFinishedEvent;
 	task_t m_task;
-	uint32_t m_finished;
+	std::atomic< uint32_t > m_finished;
 
 	explicit Job(Event& jobFinishedEvent, const task_t& task);
 

@@ -29,6 +29,8 @@ class T_DLLCLASS JobQueue : public Object
 	T_RTTI_CLASS;
 
 public:
+	JobQueue();
+
 	virtual ~JobQueue();
 
 	/*! Create queue.
@@ -80,7 +82,7 @@ private:
 	Semaphore m_jobQueueLock;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
-	int32_t m_pending = 0;
+	std::atomic< int32_t > m_pending;
 
 	void threadWorker();
 };
