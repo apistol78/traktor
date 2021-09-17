@@ -106,11 +106,12 @@ const net::SocketAddressIPv4& Peer::getServerAddress() const
 
 void Peer::dictionaryPut(const Key& key, const Blob* blob)
 {
+	if (!m_client->have(key))
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 		m_queue.push_back(key);
+		m_eventQueued.broadcast();
 	}
-	m_eventQueued.broadcast();
 }
 
 	}
