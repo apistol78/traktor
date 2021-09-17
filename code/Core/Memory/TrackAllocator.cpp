@@ -64,8 +64,6 @@ TrackAllocator::~TrackAllocator()
 			}
 		}
 		*/
-
-		__debugbreak();
 #else
 		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)

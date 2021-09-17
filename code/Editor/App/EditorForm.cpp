@@ -68,14 +68,15 @@
 #	include "Editor/App/WebBrowserPage.h"
 #endif
 #include "Editor/App/WorkspaceDialog.h"
-#include "Editor/Pipeline/FilePipelineCache.h"
-#include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
+#include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
+#include "Editor/Pipeline/File/FilePipelineCache.h"
+#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
@@ -1551,16 +1552,25 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	// Create pipeline cache.
 	safeDestroy(m_pipelineCache);
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false))
 	{
-		m_pipelineCache = new editor::MemCachedPipelineCache();
+		m_pipelineCache = new editor::AvalanchePipelineCache();
+		if (!m_pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create pipeline avalanche cache; cache disabled." << Endl;
+			m_pipelineCache = nullptr;
+		}
+	}
+	else if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
+	{
+		m_pipelineCache = new editor::MemcachedPipelineCache();
 		if (!m_pipelineCache->create(m_mergedSettings))
 		{
 			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
 			m_pipelineCache = nullptr;
 		}
 	}
-	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+	else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
 		m_pipelineCache = new editor::FilePipelineCache();
 		if (!m_pipelineCache->create(m_mergedSettings))
@@ -2715,16 +2725,25 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 					// Create pipeline cache.
 					safeDestroy(m_pipelineCache);
-					if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
+					if (m_mergedSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false))
 					{
-						m_pipelineCache = new editor::MemCachedPipelineCache();
+						m_pipelineCache = new editor::AvalanchePipelineCache();
+						if (!m_pipelineCache->create(m_mergedSettings))
+						{
+							traktor::log::warning << L"Unable to create pipeline avalanche cache; cache disabled." << Endl;
+							m_pipelineCache = nullptr;
+						}
+					}
+					else if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
+					{
+						m_pipelineCache = new editor::MemcachedPipelineCache();
 						if (!m_pipelineCache->create(m_mergedSettings))
 						{
 							traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
 							m_pipelineCache = nullptr;
 						}
 					}
-					if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+					else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
 					{
 						m_pipelineCache = new editor::FilePipelineCache();
 						if (!m_pipelineCache->create(m_mergedSettings))

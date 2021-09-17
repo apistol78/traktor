@@ -38,8 +38,6 @@
 #include "Editor/Assets.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipeline.h"
-#include "Editor/Pipeline/FilePipelineCache.h"
-#include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 #include "Editor/PipelineDependencySet.h"
@@ -48,6 +46,9 @@
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Editor/Pipeline/PipelineSettings.h"
+#include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
+#include "Editor/Pipeline/File/FilePipelineCache.h"
+#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
 #include "Pipeline/App/PipelineParameters.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -319,7 +320,7 @@ bool perform(const PipelineParameters& params)
 
 	if (params.getNoCache())
 	{
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
@@ -382,16 +383,25 @@ bool perform(const PipelineParameters& params)
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
-	if (settings->getProperty< bool >(L"Pipeline.MemCached", false))
+	if (settings->getProperty< bool >(L"Pipeline.AvalancheCache", false))
 	{
-		pipelineCache = new editor::MemCachedPipelineCache();
+		pipelineCache = new editor::AvalanchePipelineCache();
+		if (!pipelineCache->create(settings))
+		{
+			traktor::log::warning << L"Unable to create pipeline avalanche cache; cache disabled." << Endl;
+			pipelineCache = nullptr;
+		}
+	}
+	else if (settings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
+	{
+		pipelineCache = new editor::MemcachedPipelineCache();
 		if (!pipelineCache->create(settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
 			pipelineCache = nullptr;
 		}
 	}
-	if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
+	else if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
 		pipelineCache = new editor::FilePipelineCache();
 		if (!pipelineCache->create(settings))

@@ -6,8 +6,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Editor/Pipeline/FilePipelineCache.h"
-#include "Editor/Pipeline/FilePipelinePutStream.h"
+#include "Editor/Pipeline/File/FilePipelineCache.h"
+#include "Editor/Pipeline/File/FilePipelinePutStream.h"
 
 namespace traktor
 {

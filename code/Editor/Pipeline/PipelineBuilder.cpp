@@ -941,7 +941,10 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 	uint32_t instanceCount = 0;
 	reader >> instanceCount;
 	if (instanceCount == 0)
-		return false;
+	{
+		stream->close();
+		return true;
+	}
 
 	AlignedVector< DirectoryEntry > directory(instanceCount);
 	for (uint32_t i = 0; i < instanceCount; ++i)

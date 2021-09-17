@@ -6,18 +6,18 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
-#include "Editor/Pipeline/MemCachedGetStream.h"
-#include "Editor/Pipeline/MemCachedPipelineCache.h"
-#include "Editor/Pipeline/MemCachedProto.h"
+#include "Editor/Pipeline/Memcached/MemcachedGetStream.h"
+#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
+#include "Editor/Pipeline/Memcached/MemcachedProto.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedGetStream", MemCachedGetStream, IStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemcachedGetStream", MemcachedGetStream, IStream)
 
-MemCachedGetStream::MemCachedGetStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key)
+MemcachedGetStream::MemcachedGetStream(MemcachedPipelineCache* cache, MemcachedProto* proto, const std::string& key)
 :	m_cache(cache)
 ,	m_proto(proto)
 ,	m_key(key)
@@ -26,7 +26,7 @@ MemCachedGetStream::MemCachedGetStream(MemCachedPipelineCache* cache, MemCachedP
 {
 }
 
-bool MemCachedGetStream::requestEndBlock()
+bool MemcachedGetStream::requestEndBlock()
 {
 	if (!m_proto)
 		return false;
@@ -108,7 +108,7 @@ bool MemCachedGetStream::requestEndBlock()
 	return gotEndBlock;
 }
 
-bool MemCachedGetStream::requestNextBlock()
+bool MemcachedGetStream::requestNextBlock()
 {
 	if (!m_proto)
 		return false;
@@ -195,7 +195,7 @@ bool MemCachedGetStream::requestNextBlock()
 	return true;
 }
 
-void MemCachedGetStream::close()
+void MemcachedGetStream::close()
 {
 	if (m_proto)
 	{
@@ -205,37 +205,37 @@ void MemCachedGetStream::close()
 	}
 }
 
-bool MemCachedGetStream::canRead() const
+bool MemcachedGetStream::canRead() const
 {
 	return true;
 }
 
-bool MemCachedGetStream::canWrite() const
+bool MemcachedGetStream::canWrite() const
 {
 	return false;
 }
 
-bool MemCachedGetStream::canSeek() const
+bool MemcachedGetStream::canSeek() const
 {
 	return false;
 }
 
-int64_t MemCachedGetStream::tell() const
+int64_t MemcachedGetStream::tell() const
 {
 	return 0;
 }
 
-int64_t MemCachedGetStream::available() const
+int64_t MemcachedGetStream::available() const
 {
 	return 0;
 }
 
-int64_t MemCachedGetStream::seek(SeekOriginType origin, int64_t offset)
+int64_t MemcachedGetStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return 0;
 }
 
-int64_t MemCachedGetStream::read(void* block, int64_t nbytes)
+int64_t MemcachedGetStream::read(void* block, int64_t nbytes)
 {
 	uint8_t* writePtr = static_cast< uint8_t* >(block);
 	int64_t navail = nbytes;
@@ -264,12 +264,12 @@ int64_t MemCachedGetStream::read(void* block, int64_t nbytes)
 	return nbytes - navail;
 }
 
-int64_t MemCachedGetStream::write(const void* block, int64_t nbytes)
+int64_t MemcachedGetStream::write(const void* block, int64_t nbytes)
 {
 	return 0;
 }
 
-void MemCachedGetStream::flush()
+void MemcachedGetStream::flush()
 {
 }
 

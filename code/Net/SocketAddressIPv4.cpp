@@ -271,5 +271,13 @@ bool SocketAddressIPv4::getBestInterface(Interface& outInterface)
 	return true;
 }
 
+bool SocketAddressIPv4::operator == (const SocketAddressIPv4& rh) const
+{
+	return
+		m_sockaddr.sin_family == rh.m_sockaddr.sin_family &&
+		m_sockaddr.sin_port == rh.m_sockaddr.sin_port &&
+		m_sockaddr.sin_addr.s_addr == rh.m_sockaddr.sin_addr.s_addr;
+}
+
 	}
 }

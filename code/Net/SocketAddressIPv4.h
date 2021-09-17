@@ -70,6 +70,8 @@ public:
 
 	static bool getBestInterface(Interface& outInterface);
 
+	bool operator == (const SocketAddressIPv4& rh) const;
+
 private:
 	sockaddr_in m_sockaddr;
 };

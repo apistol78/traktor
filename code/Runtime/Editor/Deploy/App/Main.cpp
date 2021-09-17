@@ -67,8 +67,9 @@ int main(int argc, const char** argv)
 		log::info << L"    -f,-force                  Force build." << Endl;
 		log::info << L"    -debug                     Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link               Statically link product in deploy or migrate actions." << Endl;
-		log::info << L"    -file-cache                Specify pipeline file cache directory." << Endl;
+		log::info << L"    -avalanche-cache=host:port Specify pipeline avalanche host." << Endl;
 		log::info << L"    -memcached-cache=host:port Specify pipeline memcached host." << Endl;
+		log::info << L"    -file-cache                Specify pipeline file cache directory." << Endl;
 		log::info << L"    -sequential-depends        Disable multithreaded pipeline dependency scanner." << Endl;
 		log::info << L"    -sequential-build          Disable multithreaded pipeline build." << Endl;
 		return 1;
@@ -106,19 +107,32 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Runtime.StaticallyLinked", true);
 
 	// If cache has is explicitly set then we first clear property to ensure exclusivly enabled.
-	if (cmdLine.hasOption(L"file-cache") || cmdLine.hasOption(L"memcached-cache"))
+	if (cmdLine.hasOption(L"avalanche-cache") || cmdLine.hasOption(L"memcached-cache") || cmdLine.hasOption(L"file-cache"))
 	{
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 	}
 
-	if (cmdLine.hasOption(L"file-cache"))
+	if (cmdLine.hasOption(L"avalanche-cache"))
 	{
+		std::wstring host = cmdLine.getOption(L"avalanche-cache").getString();
+		int32_t port = 40001;
+
+		size_t i = host.find(L':');
+		if (i != std::wstring::npos)
+		{
+			port = parseString< int32_t >(host.substr(i + 1));
+			host = host.substr(0, i);
+		}
+
 		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
-		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
+
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", host);
+		settings->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", true);
 	}
 
 	if (cmdLine.hasOption(L"memcached-cache"))
@@ -135,11 +149,20 @@ int main(int argc, const char** argv)
 
 		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
 
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
-		settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", host);
-		settings->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", port);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", host);
+		settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", true);
+	}
+
+	if (cmdLine.hasOption(L"file-cache"))
+	{
+		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
 	}
 
 	if (cmdLine.hasOption(L"sequential-depends"))

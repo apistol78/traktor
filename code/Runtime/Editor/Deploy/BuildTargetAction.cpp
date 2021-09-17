@@ -161,19 +161,19 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			}
 		}
 
-		bool memCachedEnable = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached", false);
-		if (memCachedEnable)
+		bool memcachedEnable = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false);
+		if (memcachedEnable)
 		{
-			std::wstring memCachedHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.MemCached.Host", L"");
-			int32_t memCachedPort = m_globalSettings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 0);
-			bool memCachedRead = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached.Read", false);
-			bool memCachedWrite = m_globalSettings->getProperty< bool >(L"Pipeline.MemCached.Write", false);
+			std::wstring memcachedHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.MemcachedCache.Host", L"");
+			int32_t memcachedPort = m_globalSettings->getProperty< int32_t >(L"Pipeline.MemcachedCache.Port", 0);
+			bool memcachedRead = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache.Read", false);
+			bool memcachedWrite = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache.Write", false);
 
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
-			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.MemCached.Host", memCachedHost);
-			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", memCachedPort);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", memCachedRead);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", memCachedWrite);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
+			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", memcachedHost);
+			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", memcachedPort);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", memcachedRead);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", memcachedWrite);
 		}
 	}
 
