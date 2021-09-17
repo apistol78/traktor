@@ -44,7 +44,8 @@ public:
 	void removeListener(IListener* listener);
 
 private:
-	mutable Semaphore m_lock;
+	mutable Semaphore m_lockBlobs;
+	mutable Semaphore m_lockListeners;
 	SmallMap< Key, Ref< const Blob > > m_blobs;
 	AlignedVector< IListener* > m_listeners;
 };
