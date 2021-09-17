@@ -27,6 +27,8 @@ class T_DLLCLASS AvalanchePipelineCache : public IPipelineCache
 	T_RTTI_CLASS;
 
 public:
+	virtual ~AvalanchePipelineCache();
+
 	virtual bool create(const PropertyGroup* settings) override final;
 
 	virtual void destroy() override final;

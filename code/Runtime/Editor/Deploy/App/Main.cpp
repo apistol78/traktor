@@ -127,7 +127,6 @@ int main(int argc, const char** argv)
 		}
 
 		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
-
 		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", true);
 		settings->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", host);
 		settings->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", port);
@@ -148,7 +147,6 @@ int main(int argc, const char** argv)
 		}
 
 		settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", true);
-
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
 		settings->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", host);
 		settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", port);

@@ -134,11 +134,13 @@ Ref< IStream > Client::put(const Key& key)
 
 Ref< net::TcpSocket > Client::establish(uint8_t command)
 {
-	while (!m_sockets.empty())
+	for (;;)
 	{
 		Ref< net::TcpSocket > socket;
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			if (m_sockets.empty())
+				break;
 			socket = m_sockets.front();
 			m_sockets.pop_front();
 		}
