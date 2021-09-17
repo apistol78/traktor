@@ -27,7 +27,7 @@ bool Client::ping()
 {
 	Ref< net::TcpSocket > socket = establish(c_commandPing);
 	if (!socket)
-		return nullptr;
+		return false;
 
 	net::SocketStream socketStream(socket, true, true);
 	if (socketStream.write(&c_commandPing, sizeof(c_commandPing)) != sizeof(c_commandPing))
@@ -49,7 +49,7 @@ bool Client::have(const Key& key)
 {
 	Ref< net::TcpSocket > socket = establish(c_commandStat);
 	if (!socket)
-		return nullptr;
+		return false;
 
 	net::SocketStream socketStream(socket, true, true);
 	if (!key.write(&socketStream))
@@ -82,11 +82,11 @@ Ref< IStream > Client::get(const Key& key)
 
 	net::SocketStream socketStream(socket, true, true);
 	if (!key.write(&socketStream))
-		return false;
+		return nullptr;
 
 	uint8_t reply = 0;
 	if (socketStream.read(&reply, sizeof(reply)) != sizeof(reply))
-		return false;
+		return nullptr;
 
 	if (reply != c_replyOk)
 	{
@@ -100,7 +100,7 @@ Ref< IStream > Client::get(const Key& key)
 
 	int64_t blobSize = 0;
 	if (socketStream.read(&blobSize, sizeof(blobSize)) != sizeof(blobSize))
-		return false;
+		return nullptr;
 
 	return new ClientGetStream(this, socket, blobSize);
 }
@@ -113,11 +113,11 @@ Ref< IStream > Client::put(const Key& key)
 
 	net::SocketStream socketStream(socket, true, true);
 	if (!key.write(&socketStream))
-		return false;
+		return nullptr;
 
 	uint8_t reply = 0;
 	if (socketStream.read(&reply, sizeof(reply)) != sizeof(reply))
-		return false;
+		return nullptr;
 
 	if (reply != c_replyOk)
 	{
