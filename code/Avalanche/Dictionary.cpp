@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Avalanche/Blob.h"
 #include "Avalanche/Dictionary.h"
 #include "Core/Thread/Acquire.h"
