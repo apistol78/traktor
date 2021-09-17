@@ -120,14 +120,14 @@ bool Application::create(
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	std::set< std::wstring > modules = defaultSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	auto modules = defaultSettings->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
+	for (const auto& module : modules)
 	{
 		Ref< Library > library = new Library();
-		if (library->open(*i))
+		if (library->open(module))
 			m_libraries.push_back(library);
 		else
-			log::warning << L"Unable to load module \"" << *i << L"\"" << Endl;
+			log::warning << L"Unable to load module \"" << module << L"\"" << Endl;
 	}
 #endif
 

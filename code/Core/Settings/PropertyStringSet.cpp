@@ -1,4 +1,5 @@
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Core/Settings/PropertyStringSet.h"
 
 namespace traktor
@@ -18,7 +19,7 @@ PropertyStringSet::value_type_t PropertyStringSet::get(const IPropertyValue* val
 
 void PropertyStringSet::serialize(ISerializer& s)
 {
-	s >> MemberStlSet< std::wstring >(L"value", m_value);
+	s >> MemberSmallSet< std::wstring >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyStringSet::join(const IPropertyValue* right) const

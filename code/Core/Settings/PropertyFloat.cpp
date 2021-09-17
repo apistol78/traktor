@@ -13,7 +13,7 @@ PropertyFloat::PropertyFloat(value_type_t value)
 
 PropertyFloat::value_type_t PropertyFloat::get(const IPropertyValue* value)
 {
-	return value ? checked_type_cast< const PropertyFloat* >(value)->m_value : false;
+	return value ? checked_type_cast< const PropertyFloat* >(value)->m_value : 0.0f;
 }
 
 void PropertyFloat::serialize(ISerializer& s)

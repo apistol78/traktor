@@ -328,8 +328,8 @@ bool perform(const PipelineParameters& params)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", true);
 
 	// Load necessary modules.
-	std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
-	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+	auto modulePaths = settings->getProperty< SmallSet< std::wstring > >(L"Editor.ModulePaths");
+	auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Editor.Modules");
 
 	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 	for (const auto& module : modules)

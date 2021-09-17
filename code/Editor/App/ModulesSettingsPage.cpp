@@ -41,9 +41,9 @@ bool ModulesSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	buttonResetModules->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_RESET_MODULES"));
 	buttonResetModules->addEventHandler< ui::ButtonClickEvent >(this, &ModulesSettingsPage::eventResetModules);
 
-	std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-		m_listModules->add(*i);
+	auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Editor.Modules");
+	for (const auto& module : modules)
+		m_listModules->add(module);
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_MODULES"));
 
@@ -57,7 +57,7 @@ void ModulesSettingsPage::destroy()
 
 bool ModulesSettingsPage::apply(PropertyGroup* settings)
 {
-	std::set< std::wstring > modules;
+	SmallSet< std::wstring > modules;
 	for (int32_t i = 0; i < m_listModules->count(); ++i)
 		modules.insert(m_listModules->getItem(i));
 	settings->setProperty< PropertyStringSet >(L"Editor.Modules", modules);
@@ -94,9 +94,8 @@ void ModulesSettingsPage::eventRemoveModule(ui::ButtonClickEvent* event)
 void ModulesSettingsPage::eventResetModules(ui::ButtonClickEvent* event)
 {
 	m_listModules->removeAll();
-	const std::set< std::wstring >& modules = m_originalSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-		m_listModules->add(*i);
+	for (const auto& module : m_originalSettings->getProperty< SmallSet< std::wstring > >(L"Editor.Modules"))
+		m_listModules->add(module);
 }
 
 	}

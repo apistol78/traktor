@@ -154,7 +154,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	if (settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor"))
 		m_preprocessor->setDefinition(L"_EDITOR");
 
-	std::set< std::wstring > definitions = settings->getPropertyIncludeHash< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
+	auto definitions = settings->getPropertyIncludeHash< SmallSet< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
 	for (const auto& definition : definitions)
 		m_preprocessor->setDefinition(definition);
 

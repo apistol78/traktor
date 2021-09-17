@@ -60,8 +60,9 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 					m_queue.swap(queued);
 				}
-				for (const auto& key : queued)
+				for (size_t i = 0; i < queued.size(); ++i)
 				{
+					const auto& key = queued[i];	
 					Ref< const Blob > blob = m_dictionary->get(key);
 					if (blob)
 					{
@@ -69,7 +70,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 						Ref< IStream > peerStream = m_client->replicate(key);
 						if (readStream && peerStream)
 						{
-							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+							log::info << L"[" << (i + 1) << L"/" << queued.size() << L"] Replicating " << key.format() << L" to peer..." << Endl;
 							StreamCopy(peerStream, readStream).execute();
 							peerStream->close();
 							readStream->close();
@@ -92,6 +93,7 @@ Peer::~Peer()
 {
 	if (m_thread && !m_finished)
 	{
+		m_eventQueued.broadcast();
 		m_cancel = true;
 		ThreadPool::getInstance().join(m_thread);
 		T_FATAL_ASSERT(m_finished);

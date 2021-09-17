@@ -245,8 +245,8 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 
-		std::set< std::wstring > modulePaths = settings->getProperty< std::set< std::wstring > >(L"Migrate.ModulePaths");
-		std::set< std::wstring > modules = settings->getProperty< std::set< std::wstring > >(L"Migrate.Modules");
+		auto modulePaths = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.ModulePaths");
+		auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.Modules");
 
 		std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 		for (const auto& module : modules)

@@ -541,10 +541,10 @@ void DatabaseView::updateView()
 		m_rootInstances.clear();
 		m_favoriteInstances.clear();
 
-		for (const auto& rootInstance : m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances"))
+		for (const auto& rootInstance : m_editor->getSettings()->getProperty< AlignedVector< std::wstring > >(L"Editor.RootInstances"))
 			m_rootInstances.insert(Guid(rootInstance));
 
-		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.FavoriteInstances"))
+		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< AlignedVector< std::wstring > >(L"Editor.FavoriteInstances"))
 			m_favoriteInstances.insert(Guid(favoriteInstance));
 
 		int32_t viewMode = m_toolViewMode->getSelected();
@@ -889,7 +889,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			else
 				m_rootInstances.erase(it);
 
-			std::vector< std::wstring > rootInstances;
+			AlignedVector< std::wstring > rootInstances;
 			for (const auto& rootInstance : m_rootInstances)
 				rootInstances.push_back(rootInstance.format());
 
@@ -909,7 +909,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			else
 				m_favoriteInstances.erase(it);
 
-			std::vector< std::wstring > favoriteInstances;
+			AlignedVector< std::wstring > favoriteInstances;
 			for (const auto& favoriteInstance : m_favoriteInstances)
 				favoriteInstances.push_back(favoriteInstance.format());
 
@@ -1082,7 +1082,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				}
 			}
 
-			std::vector< std::wstring > favoriteInstances;
+			AlignedVector< std::wstring > favoriteInstances;
 			for (const auto& favoriteInstance : m_favoriteInstances)
 				favoriteInstances.push_back(favoriteInstance.format());
 

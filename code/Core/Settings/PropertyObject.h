@@ -25,7 +25,7 @@ public:
 
 	PropertyObject();
 
-	PropertyObject(value_type_t value);
+	explicit PropertyObject(value_type_t value);
 
 	static value_type_t get(const IPropertyValue* value);
 

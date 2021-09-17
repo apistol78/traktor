@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ class T_DLLCLASS PropertyStringArray : public IPropertyValue
 	T_RTTI_CLASS;
 
 public:
-	typedef std::vector< std::wstring > value_type_t;
+	typedef AlignedVector< std::wstring > value_type_t;
 
 	PropertyStringArray(const value_type_t& value = value_type_t());
 
@@ -43,11 +43,11 @@ private:
  * \ingroup Core
  */
 template< >
-struct PropertyTrait< std::vector< std::wstring > >
+struct PropertyTrait< AlignedVector< std::wstring > >
 {
 	typedef PropertyStringArray property_type_t;
-	typedef const std::vector< std::wstring >& default_value_type_t;
-	typedef std::vector< std::wstring > return_type_t;
+	typedef const AlignedVector< std::wstring >& default_value_type_t;
+	typedef AlignedVector< std::wstring > return_type_t;
 };
 
 }

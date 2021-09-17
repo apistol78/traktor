@@ -43,12 +43,12 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return PropertyString::get(valueString);
 	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
 	{
-		std::vector< std::wstring > ss = PropertyStringArray::get(valueStringArray);
+		auto ss = PropertyStringArray::get(valueStringArray);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
 	{
-		std::set< std::wstring > ss = PropertyStringSet::get(valueStringSet);
+		auto ss = PropertyStringSet::get(valueStringSet);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else

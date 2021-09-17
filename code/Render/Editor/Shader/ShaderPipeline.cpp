@@ -318,7 +318,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_programCachePath = settings->getPropertyExcludeHash< std::wstring >(L"ShaderPipeline.ProgramCache.Path");
 	m_compilerSettings = settings->getPropertyIncludeHash< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform", L"");
-	m_includeOnlyTechniques = settings->getPropertyIncludeHash< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
+	m_includeOnlyTechniques = settings->getPropertyIncludeHash< SmallSet< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_frequentUniformsAsLinear = settings->getPropertyIncludeHash< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
 	m_optimize = settings->getPropertyIncludeHash< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
 	m_validate = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.Validate", m_validate);

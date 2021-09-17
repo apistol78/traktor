@@ -274,7 +274,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 				// Create pipeline settings.
 				Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
-				std::set< std::wstring > scriptPrepDefinitions;
+				SmallSet< std::wstring > scriptPrepDefinitions;
 				scriptPrepDefinitions.insert(L"_DEBUG");
 				pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
 				pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
@@ -495,7 +495,7 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 		tweakSettings->setProperty< PropertyBoolean >(L"Render.Validation", true);
 
 		// Use our own high level verification layer also.
-		std::set< std::wstring > modules = tweakSettings->getProperty< std::set< std::wstring > >(L"Runtime.Modules");
+		auto modules = tweakSettings->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
 		modules.insert(L"Traktor.Render.Vrfy");
 		tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
 		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemVrfy");
@@ -542,9 +542,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 
 		// Create pipeline settings.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
-		std::set< std::wstring > scriptPrepDefinitions;
-		scriptPrepDefinitions.insert(L"_DEBUG");
-		pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
+		pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", { L"_DEBUG" });
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
 
 		// Create "tweak" settings.
@@ -625,11 +623,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 		// Create pipeline settings.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
 		if ((event->getKeyState() & ui::KsControl) == 0)
-		{
-			std::set< std::wstring > scriptPrepDefinitions;
-			scriptPrepDefinitions.insert(L"_DEBUG");
-			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
-		}
+			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", { L"_DEBUG" });
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);
 
 		// Create "tweak" settings.
@@ -714,11 +708,7 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 		// Expose _DEBUG script definition when launching through editor, ie not migrating.
 		Ref< PropertyGroup > pipelineSettings = new PropertyGroup();
 		if ((event->getKeyState() & ui::KsControl) == 0)
-		{
-			std::set< std::wstring > scriptPrepDefinitions;
-			scriptPrepDefinitions.insert(L"_DEBUG");
-			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", scriptPrepDefinitions);
-		}
+			pipelineSettings->setProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions", { L"_DEBUG" });
 
 		// Also add property for pipelines to indicate we're launching through editor.
 		pipelineSettings->setProperty< PropertyBoolean >(L"Pipeline.EditorDeploy", true);

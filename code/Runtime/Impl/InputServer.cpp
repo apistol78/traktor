@@ -80,7 +80,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 		mergedSettings = defaultSettings->merge(settings, PropertyGroup::MmJoin);
 
 	// Instanciate input drivers.
-	std::set< std::wstring > driverTypes = mergedSettings->getProperty< std::set< std::wstring > >(L"Input.DriverTypes");
+	auto driverTypes = mergedSettings->getProperty< SmallSet< std::wstring > >(L"Input.DriverTypes");
 	for (const auto& driverType : driverTypes)
 	{
 		Ref< input::IInputDriver > driver = dynamic_type_cast< input::IInputDriver* >(TypeInfo::createInstance(driverType.c_str()));

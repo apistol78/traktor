@@ -33,7 +33,7 @@ public:
 
 	PropertyGroup();
 
-	PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value);
+	explicit PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue > >& value);
 
 	static value_type_t get(const IPropertyValue* value);
 

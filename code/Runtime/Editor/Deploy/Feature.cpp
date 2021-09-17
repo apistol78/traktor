@@ -90,21 +90,10 @@ void Feature::serialize(ISerializer& s)
 
 void Feature::Platform::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 7);
 	s >> Member< Guid >(L"platform", platform, AttributeType(type_of< traktor::runtime::Platform >()));
-
-	if (s.getVersion() >= 5)
-		s >> Member< std::wstring >(L"executableFile", executableFile);
-
-	if (s.getVersion() >= 7)
-		s >> MemberRef< PropertyGroup >(L"deploy", deploy);
-	else
-	{
-		std::list< std::wstring > deployFiles;
-		s >> MemberStlList< std::wstring >(L"deployFiles", deployFiles);
-
-		deploy = new PropertyGroup();
-		deploy->setProperty(L"DEPLOY_FILES", new PropertyStringSet(std::set< std::wstring >(deployFiles.begin(), deployFiles.end())));
-	}
+	s >> Member< std::wstring >(L"executableFile", executableFile);
+	s >> MemberRef< PropertyGroup >(L"deploy", deploy);
 }
 
 	}
