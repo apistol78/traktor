@@ -11,10 +11,10 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
-#include "Editor/Pipeline/MemCachedPipelineCache.h"
-#include "Editor/Pipeline/MemCachedProto.h"
-#include "Editor/Pipeline/MemCachedGetStream.h"
-#include "Editor/Pipeline/MemCachedPutStream.h"
+#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
+#include "Editor/Pipeline/Memcached/MemcachedProto.h"
+#include "Editor/Pipeline/Memcached/MemcachedGetStream.h"
+#include "Editor/Pipeline/Memcached/MemcachedPutStream.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
@@ -35,28 +35,28 @@ std::string generateKey(const Guid& guid, const PipelineDependencyHash& hash)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPipelineCache", MemCachedPipelineCache, IPipelineCache)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemcachedPipelineCache", MemcachedPipelineCache, IPipelineCache)
 
-MemCachedPipelineCache::MemCachedPipelineCache()
+MemcachedPipelineCache::MemcachedPipelineCache()
 {
 	net::Network::initialize();
 }
 
-MemCachedPipelineCache::~MemCachedPipelineCache()
+MemcachedPipelineCache::~MemcachedPipelineCache()
 {
 	destroy();
 	net::Network::finalize();
 }
 
-bool MemCachedPipelineCache::create(const PropertyGroup* settings)
+bool MemcachedPipelineCache::create(const PropertyGroup* settings)
 {
-	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.MemCached.Host");
-	int32_t port = settings->getProperty< int32_t >(L"Pipeline.MemCached.Port", 11211);
+	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.MemcachedCache.Host");
+	int32_t port = settings->getProperty< int32_t >(L"Pipeline.MemcachedCache.Port", 11211);
 	m_addr = net::SocketAddressIPv4(host, port);
-	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemCached.Read", true);
-	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemCached.Write", true);
+	m_accessRead = settings->getProperty< bool >(L"Pipeline.MemcachedCache.Read", true);
+	m_accessWrite = settings->getProperty< bool >(L"Pipeline.MemcachedCache.Write", true);
 
-	Ref< MemCachedProto > proto = acquireProto();
+	Ref< MemcachedProto > proto = acquireProto();
 	if (!proto)
 	{
 		log::error << L"Memcached pipeline cache failed; unable to connect to memcached at \"" << host << L"\" @ " << port << L"." << Endl;
@@ -66,20 +66,20 @@ bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 	return true;
 }
 
-void MemCachedPipelineCache::destroy()
+void MemcachedPipelineCache::destroy()
 {
 	m_protos.clear();
 }
 
-Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
+Ref< IStream > MemcachedPipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedProto > proto = acquireProto();
+		Ref< MemcachedProto > proto = acquireProto();
 		if (!proto)
 			return nullptr;
 
-		Ref< MemCachedGetStream > stream = new MemCachedGetStream(this, proto, generateKey(guid, hash));
+		Ref< MemcachedGetStream > stream = new MemcachedGetStream(this, proto, generateKey(guid, hash));
 
 		// Request end block; do not try to open non-finished, uncommitted cache streams.
 		if (!stream->requestEndBlock())
@@ -102,24 +102,24 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 		return nullptr;
 }
 
-Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
+Ref< IStream > MemcachedPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (m_accessWrite)
 	{
-		Ref< MemCachedProto > proto = acquireProto();
+		Ref< MemcachedProto > proto = acquireProto();
 		if (proto)
-			return new MemCachedPutStream(this, proto, generateKey(guid, hash));
+			return new MemcachedPutStream(this, proto, generateKey(guid, hash));
 	}
 	return nullptr;
 }
 
-bool MemCachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
+bool MemcachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
 
-	Ref< MemCachedProto > proto = acquireProto();
+	Ref< MemcachedProto > proto = acquireProto();
 	if (!proto)
 		return false;
 
@@ -156,7 +156,7 @@ bool MemCachedPipelineCache::commit(const Guid& guid, const PipelineDependencyHa
 	return true;
 }
 
-void MemCachedPipelineCache::getInformation(OutputStream& os)
+void MemcachedPipelineCache::getInformation(OutputStream& os)
 {
 	os << L"Memcached cache (";
 	if (m_accessRead && !m_accessWrite)
@@ -168,7 +168,7 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 	else
 		os << L"disabled";
 
-	Ref< MemCachedProto > proto = acquireProto();
+	Ref< MemcachedProto > proto = acquireProto();
 	if (!proto)
 	{
 		os << L")";
@@ -229,9 +229,9 @@ void MemCachedPipelineCache::getInformation(OutputStream& os)
 	os << L")";
 }
 
-Ref< MemCachedProto > MemCachedPipelineCache::acquireProto()
+Ref< MemcachedProto > MemcachedPipelineCache::acquireProto()
 {
-	Ref< MemCachedProto > proto;
+	Ref< MemcachedProto > proto;
 
 	// Try to get an already established connection.
 	{
@@ -249,7 +249,7 @@ Ref< MemCachedProto > MemCachedPipelineCache::acquireProto()
 		Ref< net::TcpSocket > socket = new net::TcpSocket();
 		if (!socket->connect(m_addr))
 			return nullptr;
-		proto = new MemCachedProto(socket);
+		proto = new MemcachedProto(socket);
 	}
 
 	return proto;

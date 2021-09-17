@@ -424,7 +424,11 @@ int main(int argc, const char** argv)
 	if (verbose)
 		log::info << L"Traktor.Remote.Client.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
-	net::Network::initialize();
+	if (!net::Network::initialize())
+	{
+		log::error << L"Unable to initialize networking." << Endl;
+		return 1;
+	}
 
 	if (compareIgnoreCase(cmdLine.getString(0), L"deploy") == 0)
 		ret = deploy(cmdLine);

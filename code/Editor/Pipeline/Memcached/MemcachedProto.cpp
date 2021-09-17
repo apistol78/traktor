@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
-#include "Editor/Pipeline/MemCachedProto.h"
+#include "Editor/Pipeline/Memcached/MemcachedProto.h"
 #include "Net/Socket.h"
 
 namespace traktor
@@ -9,14 +9,14 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedProto", MemCachedProto, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemcachedProto", MemcachedProto, Object)
 
-MemCachedProto::MemCachedProto(net::Socket* socket)
+MemcachedProto::MemcachedProto(net::Socket* socket)
 :	m_socket(socket)
 {
 }
 
-bool MemCachedProto::sendCommand(const std::string& command)
+bool MemcachedProto::sendCommand(const std::string& command)
 {
 	uint32_t length = command.length();
 	uint8_t buf[1024];
@@ -30,7 +30,7 @@ bool MemCachedProto::sendCommand(const std::string& command)
 	return true;
 }
 
-bool MemCachedProto::readReply(std::string& outReply)
+bool MemcachedProto::readReply(std::string& outReply)
 {
 	StaticVector< char, 1024 > buffer;
 	for (;;)
@@ -60,7 +60,7 @@ bool MemCachedProto::readReply(std::string& outReply)
 	return true;
 }
 
-bool MemCachedProto::readData(uint8_t* data, uint32_t dataLength)
+bool MemcachedProto::readData(uint8_t* data, uint32_t dataLength)
 {
 	int32_t dataReceived = 0;
 	while (dataReceived < dataLength + 2)
@@ -80,7 +80,7 @@ bool MemCachedProto::readData(uint8_t* data, uint32_t dataLength)
 	return eod[0] == '\r' && eod[1] == '\n';
 }
 
-bool MemCachedProto::writeData(uint8_t* data, uint32_t dataLength)
+bool MemcachedProto::writeData(uint8_t* data, uint32_t dataLength)
 {
 	data[dataLength] = '\r';
 	data[dataLength + 1] = '\n';

@@ -162,6 +162,10 @@
 			<second>Use multiple threads for scanning dependencies</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_PIPELINE_ENABLE_AVALANCHE</first>
+			<second>Use avalanche cache</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
 			<second>Use file cache</second>
 		</item>

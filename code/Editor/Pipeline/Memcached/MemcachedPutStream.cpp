@@ -1,21 +1,22 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
-#include "Editor/Pipeline/MemCachedPipelineCache.h"
-#include "Editor/Pipeline/MemCachedPutStream.h"
-#include "Editor/Pipeline/MemCachedProto.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
+#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
+#include "Editor/Pipeline/Memcached/MemcachedPutStream.h"
+#include "Editor/Pipeline/Memcached/MemcachedProto.h"
+
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPutStream", MemCachedPutStream, IStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemcachedPutStream", MemcachedPutStream, IStream)
 
-MemCachedPutStream::MemCachedPutStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key)
+MemcachedPutStream::MemcachedPutStream(MemcachedPipelineCache* cache, MemcachedProto* proto, const std::string& key)
 :	m_cache(cache)
 ,	m_proto(proto)
 ,	m_key(key)
@@ -24,7 +25,7 @@ MemCachedPutStream::MemCachedPutStream(MemCachedPipelineCache* cache, MemCachedP
 {
 }
 
-void MemCachedPutStream::close()
+void MemcachedPutStream::close()
 {
 	if (!m_proto)
 		return;
@@ -39,42 +40,42 @@ void MemCachedPutStream::close()
 	}
 }
 
-bool MemCachedPutStream::canRead() const
+bool MemcachedPutStream::canRead() const
 {
 	return false;
 }
 
-bool MemCachedPutStream::canWrite() const
+bool MemcachedPutStream::canWrite() const
 {
 	return true;
 }
 
-bool MemCachedPutStream::canSeek() const
+bool MemcachedPutStream::canSeek() const
 {
 	return false;
 }
 
-int64_t MemCachedPutStream::tell() const
+int64_t MemcachedPutStream::tell() const
 {
 	return 0;
 }
 
-int64_t MemCachedPutStream::available() const
+int64_t MemcachedPutStream::available() const
 {
 	return 0;
 }
 
-int64_t MemCachedPutStream::seek(SeekOriginType origin, int64_t offset)
+int64_t MemcachedPutStream::seek(SeekOriginType origin, int64_t offset)
 {
 	return 0;
 }
 
-int64_t MemCachedPutStream::read(void* block, int64_t nbytes)
+int64_t MemcachedPutStream::read(void* block, int64_t nbytes)
 {
 	return 0;
 }
 
-int64_t MemCachedPutStream::write(const void* block, int64_t nbytes)
+int64_t MemcachedPutStream::write(const void* block, int64_t nbytes)
 {
 	const uint8_t* blockPtr = static_cast< const uint8_t* >(block);
 	int64_t written = 0;
@@ -102,13 +103,13 @@ int64_t MemCachedPutStream::write(const void* block, int64_t nbytes)
 	return written;
 }
 
-void MemCachedPutStream::flush()
+void MemcachedPutStream::flush()
 {
 	if (m_inblock > 0)
 		uploadBlock();
 }
 
-bool MemCachedPutStream::uploadBlock()
+bool MemcachedPutStream::uploadBlock()
 {
 	if (!m_proto)
 		return false;
@@ -154,7 +155,7 @@ bool MemCachedPutStream::uploadBlock()
 	return true;
 }
 
-void MemCachedPutStream::uploadEndBlock()
+void MemcachedPutStream::uploadEndBlock()
 {
 	if (!m_proto)
 		return;

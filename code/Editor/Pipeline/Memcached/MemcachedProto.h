@@ -16,12 +16,12 @@ class Socket;
 	namespace editor
 	{
 
-class MemCachedProto : public Object
+class MemcachedProto : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit MemCachedProto(net::Socket* socket);
+	explicit MemcachedProto(net::Socket* socket);
 
 	bool sendCommand(const std::string& command);
 

@@ -1,6 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
-#include "Editor/Pipeline/FilePipelinePutStream.h"
+#include "Editor/Pipeline/File/FilePipelinePutStream.h"
 
 namespace traktor
 {

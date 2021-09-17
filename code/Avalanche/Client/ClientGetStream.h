@@ -5,20 +5,24 @@
 
 namespace traktor
 {
-	namespace editor
+	namespace net
 	{
 
-class MemCachedPipelineCache;
-class MemCachedProto;
+class TcpSocket;
 
-class MemCachedPutStream : public IStream
+	}
+
+	namespace avalanche
+	{
+
+class Client;
+
+class ClientGetStream : public IStream
 {
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxBlockSize = 65536 };
-
-	MemCachedPutStream(MemCachedPipelineCache* cache, MemCachedProto* proto, const std::string& key);
+	explicit ClientGetStream(Client* client, net::TcpSocket* socket, int64_t blobSize);
 
 	virtual void close() override final;
 
@@ -41,18 +45,11 @@ public:
 	virtual void flush() override final;
 
 private:
-	Ref< MemCachedPipelineCache > m_cache;
-	Ref< MemCachedProto > m_proto;
-	std::string m_key;
-	uint8_t m_block[MaxBlockSize + 2];
-	uint32_t m_inblock;
-	uint32_t m_index;
-
-	bool uploadBlock();
-
-	void uploadEndBlock();
+	Ref< Client > m_client;
+	Ref< net::TcpSocket > m_socket;
+	int64_t m_blobSize;
+	int64_t m_offset;
 };
 
 	}
 }
-

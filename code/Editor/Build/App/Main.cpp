@@ -179,7 +179,7 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption(L"file-cache") || cmdLine.hasOption(L"memcached-cache"))
 	{
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
 	}
 
 	if (cmdLine.hasOption(L"file-cache"))
@@ -236,11 +236,11 @@ int main(int argc, const char** argv)
 			}
 		}
 
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
-		settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", host);
-		settings->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", port);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", read);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", write);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", host);
+		settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", read);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"sequential-depends"))

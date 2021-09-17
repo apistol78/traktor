@@ -17,16 +17,16 @@ namespace traktor
 	namespace editor
 	{
 
-class MemCachedProto;
+class MemcachedProto;
 
-class T_DLLCLASS MemCachedPipelineCache : public IPipelineCache
+class T_DLLCLASS MemcachedPipelineCache : public IPipelineCache
 {
 	T_RTTI_CLASS;
 
 public:
-	MemCachedPipelineCache();
+	MemcachedPipelineCache();
 
-	virtual ~MemCachedPipelineCache();
+	virtual ~MemcachedPipelineCache();
 
 	virtual bool create(const PropertyGroup* settings) override final;
 
@@ -41,18 +41,18 @@ public:
 	virtual void getInformation(OutputStream& os) override final;
 
 private:
-	friend class MemCachedGetStream;
-	friend class MemCachedPutStream;
+	friend class MemcachedGetStream;
+	friend class MemcachedPutStream;
 
 	net::SocketAddressIPv4 m_addr;
 	bool m_accessRead = true;
 	bool m_accessWrite = true;
 	Semaphore m_lock;
-	RefArray< MemCachedProto > m_protos;
+	RefArray< MemcachedProto > m_protos;
 	uint32_t m_hits = 0;
 	uint32_t m_misses = 0;
 	
-	Ref< MemCachedProto > acquireProto();
+	Ref< MemcachedProto > acquireProto();
 };
 
 	}
