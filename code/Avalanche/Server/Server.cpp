@@ -27,7 +27,7 @@ bool Server::create(const PropertyGroup* settings)
 	const int32_t listenPort = settings->getProperty< int32_t >(L"Avalanche.Port", 40001);
 
 	m_serverSocket = new net::TcpSocket();
-	if (!m_serverSocket->bind(net::SocketAddressIPv4(listenPort)))
+	if (!m_serverSocket->bind(net::SocketAddressIPv4(listenPort), true))
 	{
 		log::error << L"Unable to bind server socket." << Endl;
 		return false;

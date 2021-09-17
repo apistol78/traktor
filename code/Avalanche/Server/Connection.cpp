@@ -191,7 +191,7 @@ bool Connection::process()
 					}
 					else if (subcmd == c_subCommandPutCommit)
 					{
-						if (m_dictionary->put(key, blob))
+						if (m_dictionary->put(key, blob, true))
 						{
 							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
 							if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
@@ -222,6 +222,99 @@ bool Connection::process()
 			else
 			{
 				log::error << L"[PUT " << key.format() << L"] Failed to create blob." << Endl;
+				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+					return false;
+			}
+		}
+		break;
+
+	case c_commandReplicate:
+		{
+			Key key = Key::read(&clientStream);
+			if (!key.valid())
+			{
+				log::warning << L"Failed to read key; terminating connection." << Endl;
+				return false;
+			}
+
+			if (m_dictionary->get(key) != nullptr)
+			{
+				log::error << L"[REP " << key.format() << L"] Cannot replace already existing blob." << Endl;
+				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+					return false;
+
+				return true;
+			}
+
+			Ref< Blob > blob = m_dictionary->create();
+			if (blob)
+			{
+				if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+					return false;
+
+				for (;;)
+				{
+					int32_t subcmd = m_clientSocket->recv();
+					if (subcmd == c_subCommandPutAppend)
+					{
+						int64_t chunkSize;
+						if (clientStream.read(&chunkSize, sizeof(chunkSize)) != sizeof(chunkSize))
+							return false;
+
+						auto appendStream = blob->append(chunkSize);
+						if (appendStream)
+						{
+							if (StreamCopy(appendStream, &clientStream).execute(chunkSize))
+							{
+								if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+									return false;
+							}
+							else
+							{
+								log::error << L"[REP " << key.format() << L"] Unable to receive " << chunkSize << L" byte(s) from client; terminating connection." << Endl;
+								return false;
+							}
+						}
+						else
+						{
+							log::error << L"[REP " << key.format() << L"] Failed to append data to blob." << Endl;
+							if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+								return false;
+						}
+					}
+					else if (subcmd == c_subCommandPutCommit)
+					{
+						if (m_dictionary->put(key, blob, false))
+						{
+							log::info << L"[REP " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
+							if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+								return false;
+						}
+						else
+						{
+							if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+								return false;
+						}
+						break;
+					}
+					else if (subcmd == c_subCommandPutDiscard)
+					{
+						log::info << L"[REP " << key.format() << L"] Discarded" << Endl;
+						if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+							return false;
+						break;
+					}
+					else
+					{
+						if (subcmd >= 0)
+							log::error << L"[REP " << key.format() << L"] Invalid sub-command from client; terminating connection." << Endl;
+						return false;
+					}
+				}
+			}
+			else
+			{
+				log::error << L"[REP " << key.format() << L"] Failed to create blob." << Endl;
 				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 					return false;
 			}

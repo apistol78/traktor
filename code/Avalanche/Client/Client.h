@@ -44,6 +44,8 @@ public:
 
 	Ref< IStream > put(const Key& key);
 
+	Ref< IStream > replicate(const Key& key);
+
 	const net::SocketAddressIPv4& getServerAddress() const { return m_serverAddress; }
 
 private:
