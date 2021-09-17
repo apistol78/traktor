@@ -1,4 +1,5 @@
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Settings/PropertyStringArray.h"
 
 namespace traktor
@@ -18,7 +19,7 @@ PropertyStringArray::value_type_t PropertyStringArray::get(const IPropertyValue*
 
 void PropertyStringArray::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< std::wstring >(L"value", m_value);
+	s >> MemberAlignedVector< std::wstring >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyStringArray::join(const IPropertyValue* right) const

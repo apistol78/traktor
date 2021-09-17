@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ class T_DLLCLASS PropertyStringSet : public IPropertyValue
 	T_RTTI_CLASS;
 
 public:
-	typedef std::set< std::wstring > value_type_t;
+	typedef SmallSet< std::wstring > value_type_t;
 
 	PropertyStringSet(const value_type_t& value = value_type_t());
 
@@ -43,11 +43,11 @@ private:
  * \ingroup Core
  */
 template< >
-struct PropertyTrait< std::set< std::wstring > >
+struct PropertyTrait< SmallSet< std::wstring > >
 {
 	typedef PropertyStringSet property_type_t;
-	typedef const std::set< std::wstring >& default_value_type_t;
-	typedef std::set< std::wstring > return_type_t;
+	typedef const SmallSet< std::wstring >& default_value_type_t;
+	typedef SmallSet< std::wstring > return_type_t;
 };
 
 }

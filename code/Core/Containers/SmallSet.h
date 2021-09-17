@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include "Core/Containers/AlignedVector.h"
 
 #if defined(T_CXX11)
@@ -37,6 +38,11 @@ public:
 		m_data = std::move(src.m_data);
 	}
 #endif
+
+	SmallSet(const std::initializer_list< Key >& iv)
+	:	m_data(iv)
+	{
+	}
 
 	iterator begin()
 	{

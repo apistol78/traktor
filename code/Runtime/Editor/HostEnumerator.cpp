@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.HostEnumerator", HostEnumerator, Object
 HostEnumerator::HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager)
 :	m_discoveryManager(discoveryManager)
 {
-	for (const auto& host : settings->getProperty< std::vector< std::wstring > >(L"Runtime.RemoteHosts"))
+	for (const auto& host : settings->getProperty< AlignedVector< std::wstring > >(L"Runtime.RemoteHosts"))
 	{
 		Host h;
 		h.host = host;
@@ -108,7 +108,7 @@ void HostEnumerator::update()
 			Host h;
 			h.description = properties->getProperty< std::wstring >(L"Description");
 			h.host = properties->getProperty< std::wstring >(L"Host");
-			h.platforms = properties->getProperty< std::vector< std::wstring > >(L"Platforms");
+			h.platforms = properties->getProperty< AlignedVector< std::wstring > >(L"Platforms");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == host);
 			m_pending.push_back(h);
 		}

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -558,6 +559,16 @@ public:
 		src.m_data = nullptr;
 		src.m_size = 0;
 		src.m_capacity = 0;
+	}
+
+	AlignedVector(const std::initializer_list< ItemType >& iv) noexcept
+	:	m_data(nullptr)
+	,	m_size(0)
+	,	m_capacity(0)
+	{
+		reserve(iv.size());
+		for (auto it = std::begin(iv); it != std::end(iv); ++it)
+			push_back(*it);
 	}
 
 	explicit AlignedVector(size_t size, const ItemType& value = ItemType())

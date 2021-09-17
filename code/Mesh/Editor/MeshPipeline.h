@@ -74,7 +74,7 @@ private:
 	bool m_promoteHalf;
 	bool m_enableCustomShaders;
 	bool m_enableCustomTemplates;
-	std::set< std::wstring > m_includeOnlyTechniques;
+	SmallSet< std::wstring > m_includeOnlyTechniques;
 	std::wstring m_programCompilerTypeName;
 	std::wstring m_platform;
 	bool m_editor;

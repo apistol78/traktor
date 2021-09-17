@@ -20,7 +20,7 @@ PropertyGroup::PropertyGroup(const SmallMap< std::wstring, Ref< IPropertyValue >
 
 PropertyGroup::value_type_t PropertyGroup::get(const IPropertyValue* value)
 {
-	return value ? checked_type_cast< PropertyGroup* >(value->clone()) : 0;
+	return value ? checked_type_cast< PropertyGroup* >(value->clone()) : nullptr;
 }
 
 void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue* value)
@@ -61,7 +61,7 @@ IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 	if (pos == propertyName.npos)
 	{
 		auto it = m_value.find(propertyName);
-		return it != m_value.end() ? it->second.ptr() : 0;
+		return it != m_value.end() ? it->second.ptr() : nullptr;
 	}
 	else
 	{

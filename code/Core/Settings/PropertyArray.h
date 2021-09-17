@@ -26,7 +26,7 @@ public:
 
 	PropertyArray();
 
-	PropertyArray(const RefArray< IPropertyValue >& values);
+	explicit PropertyArray(const RefArray< IPropertyValue >& values);
 
 	static value_type_t get(const IPropertyValue* value);
 

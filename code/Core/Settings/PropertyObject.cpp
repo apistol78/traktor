@@ -18,7 +18,7 @@ PropertyObject::PropertyObject(value_type_t value)
 
 PropertyObject::value_type_t PropertyObject::get(const IPropertyValue* value)
 {
-	return value ? checked_type_cast< const PropertyObject* >(value)->m_value : value_type_t(0);
+	return value ? checked_type_cast< const PropertyObject* >(value)->m_value : nullptr;
 }
 
 void PropertyObject::serialize(ISerializer& s)

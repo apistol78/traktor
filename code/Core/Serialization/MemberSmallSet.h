@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/SmallSet.h"
+#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberArray.h"
 
 namespace traktor

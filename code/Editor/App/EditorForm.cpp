@@ -1964,7 +1964,7 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << IncreaseIndent;
 
 	std::vector< Guid > assetGuids;
-	for (const auto& rootInstance : m_workspaceSettings->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances"))
+	for (const auto& rootInstance : m_workspaceSettings->getProperty< AlignedVector< std::wstring > >(L"Editor.RootInstances"))
 	{
 		const Guid rootInstanceId(rootInstance);
 		if (m_sourceDatabase->getInstance(rootInstanceId) != nullptr)
@@ -2496,10 +2496,10 @@ void EditorForm::loadModules()
 {
 #if !defined(T_STATIC)
 	std::vector< Path > modulePaths;
-	for (const auto& path : m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths"))
+	for (const auto& path : m_mergedSettings->getProperty< SmallSet< std::wstring > >(L"Editor.ModulePaths"))
 		modulePaths.push_back(FileSystem::getInstance().getAbsolutePath(path));
 
-	for (const auto& module : m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules"))
+	for (const auto& module : m_mergedSettings->getProperty< SmallSet< std::wstring > >(L"Editor.Modules"))
 	{
 		Ref< Library > library = new Library();
 		if (library->open(module, modulePaths, true))

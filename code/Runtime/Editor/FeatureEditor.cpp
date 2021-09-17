@@ -122,13 +122,13 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		fp.deploy = DeepClone(m_selectedPlatform->deploy).create< PropertyGroup >();
 
 		if (fp.deploy->getProperty(L"DEPLOY_SHARED_PATH_DEBUG") != nullptr)
-			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_DEBUG", std::set< std::wstring >({ L"__path_shared_debug" }));
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_DEBUG", SmallSet< std::wstring >({ L"__path_shared_debug" }));
 		if (fp.deploy->getProperty(L"DEPLOY_SHARED_PATH_RELEASE") != nullptr)
-			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_RELEASE", std::set< std::wstring >({ L"__path_shared_release" }));
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_SHARED_PATH_RELEASE", SmallSet< std::wstring >({ L"__path_shared_release" }));
 		if (fp.deploy->getProperty(L"DEPLOY_STATIC_PATH_DEBUG") != nullptr)
-			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_DEBUG", std::set< std::wstring >({ L"__path_static_debug" }));
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_DEBUG", SmallSet< std::wstring >({ L"__path_static_debug" }));
 		if (fp.deploy->getProperty(L"DEPLOY_STATIC_PATH_RELEASE") != nullptr)
-			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_RELEASE", std::set< std::wstring >({ L"__path_static_release" }));
+			fp.deploy->setProperty< PropertyStringSet >(L"DEPLOY_STATIC_PATH_RELEASE", SmallSet< std::wstring >({ L"__path_static_release" }));
 
 		m_feature->addPlatform(fp);
 		m_listPlatforms->add(platformInstance->getName(), platformInstance);
@@ -220,7 +220,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		if (!m_selectedPlatform)
 			return;
 
-		auto values = m_selectedPlatform->deploy->getProperty< std::set< std::wstring > >(m_selectedKey);
+		auto values = m_selectedPlatform->deploy->getProperty< SmallSet< std::wstring > >(m_selectedKey);
 
 		if (event->getIndex() < 0)	// Add value
 		{
@@ -317,7 +317,7 @@ void FeatureEditor::selectKey(const std::wstring& key)
 	{
 		if (m_selectedPlatform->deploy != nullptr)
 		{
-			for (auto v : m_selectedPlatform->deploy->getProperty< std::set< std::wstring > >(key))
+			for (auto v : m_selectedPlatform->deploy->getProperty< SmallSet< std::wstring > >(key))
 				m_listValues->add(v);
 		}
 		m_listValues->setEnable(true);

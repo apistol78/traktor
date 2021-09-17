@@ -48,7 +48,7 @@ private:
 	{
 		std::wstring description;
 		std::wstring host;
-		std::vector< std::wstring > platforms;
+		AlignedVector< std::wstring > platforms;
 		bool local;
 
 		Host();

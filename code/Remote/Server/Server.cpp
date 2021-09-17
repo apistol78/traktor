@@ -109,7 +109,7 @@ bool Server::update()
 		if (m_verbose)
         	log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 
-	    std::vector< std::wstring > platforms;
+	    AlignedVector< std::wstring > platforms;
 #if defined(_WIN32)
         platforms.push_back(L"Android");
         platforms.push_back(L"PS3");

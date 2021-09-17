@@ -1,3 +1,6 @@
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
+#	include <signal.h>
+#endif
 #include "Avalanche/Server/Server.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
@@ -17,6 +20,11 @@ int main(int argc, const char** argv)
 {
 #if defined(T_STATIC)
 	__module__Traktor_Core();
+#endif
+
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
+	struct sigaction sa = { SIG_IGN };
+	sigaction(SIGPIPE, &sa, nullptr);
 #endif
 
 	CommandLine cmdLine(argc, argv);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 
