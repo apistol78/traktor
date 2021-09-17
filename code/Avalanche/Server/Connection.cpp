@@ -74,7 +74,6 @@ bool Connection::process()
 			Ref< const Blob > blob = m_dictionary->get(key);
 			if (blob)
 			{
-				log::info << L"[STAT " << key.format() << L"] Blob size = " << blob->size() << Endl;
 				if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
 					return false;
 
@@ -84,7 +83,6 @@ bool Connection::process()
 			}
 			else
 			{
-				log::info << L"[STAT " << key.format() << L"] No such blob." << Endl;
 				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 					return false;
 			}
@@ -115,22 +113,22 @@ bool Connection::process()
 
 					if (!StreamCopy(&clientStream, readStream).execute(blob->size()))
 					{
-						log::error << L"[ GET " << key.format() << L"] Unable to send " << blob->size() << L" byte(s) to client; terminating connection." << Endl;
+						log::error << L"[GET " << key.format() << L"] Unable to send " << blob->size() << L" byte(s) to client; terminating connection." << Endl;
 						return false;
 					}
 					else
-						log::info << L"[ GET " << key.format() << L"] Sent " << blob->size() << L" bytes successfully." << Endl;
+						log::info << L"[GET " << key.format() << L"] Sent " << blob->size() << L" bytes successfully." << Endl;
 				}
 				else
 				{
-					log::error <<  L"[ GET " << key.format() << L"] Unable to acquire read stream from blob." << Endl;
+					log::error <<  L"[GET " << key.format() << L"] Unable to acquire read stream from blob." << Endl;
 					if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 						return false;
 				}
 			}
 			else
 			{
-				log::info << L"[ GET " << key.format() << L"] No such blob." << Endl;
+				log::info << L"[GET " << key.format() << L"] No such blob." << Endl;
 				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 					return false;
 			}
@@ -148,7 +146,7 @@ bool Connection::process()
 
 			if (m_dictionary->get(key) != nullptr)
 			{
-				log::error << L"[ PUT " << key.format() << L"] Cannot replace already existing blob." << Endl;
+				log::error << L"[PUT " << key.format() << L"] Cannot replace already existing blob." << Endl;
 				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 					return false;
 
@@ -180,13 +178,13 @@ bool Connection::process()
 							}
 							else
 							{
-								log::error << L"[ PUT " << key.format() << L"] Unable to receive " << chunkSize << L" byte(s) from client; terminating connection." << Endl;
+								log::error << L"[PUT " << key.format() << L"] Unable to receive " << chunkSize << L" byte(s) from client; terminating connection." << Endl;
 								return false;
 							}
 						}
 						else
 						{
-							log::error << L"[ PUT " << key.format() << L"] Failed to append data to blob." << Endl;
+							log::error << L"[PUT " << key.format() << L"] Failed to append data to blob." << Endl;
 							if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 								return false;
 						}
@@ -195,7 +193,7 @@ bool Connection::process()
 					{
 						if (m_dictionary->put(key, blob))
 						{
-							log::info << L"[ PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
+							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
 							if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
 								return false;
 						}
@@ -208,7 +206,7 @@ bool Connection::process()
 					}
 					else if (subcmd == c_subCommandPutDiscard)
 					{
-						log::info << L"[ PUT " << key.format() << L"] Discarded" << Endl;
+						log::info << L"[PUT " << key.format() << L"] Discarded" << Endl;
 						if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
 							return false;
 						break;
@@ -216,14 +214,14 @@ bool Connection::process()
 					else
 					{
 						if (subcmd >= 0)
-							log::error << L"[ PUT " << key.format() << L"] Invalid sub-command from client; terminating connection." << Endl;
+							log::error << L"[PUT " << key.format() << L"] Invalid sub-command from client; terminating connection." << Endl;
 						return false;
 					}
 				}
 			}
 			else
 			{
-				log::error << L"[ PUT " << key.format() << L"] Failed to create blob." << Endl;
+				log::error << L"[PUT " << key.format() << L"] Failed to create blob." << Endl;
 				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
 					return false;
 			}
