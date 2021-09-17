@@ -39,7 +39,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
-						Ref< IStream > peerStream = m_client->put(key);
+						Ref< IStream > peerStream = m_client->replicate(key);
 						if (readStream && peerStream)
 						{
 							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
@@ -66,7 +66,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
-						Ref< IStream > peerStream = m_client->put(key);
+						Ref< IStream > peerStream = m_client->replicate(key);
 						if (readStream && peerStream)
 						{
 							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;

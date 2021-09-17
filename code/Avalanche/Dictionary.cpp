@@ -25,17 +25,20 @@ Ref< const Blob > Dictionary::get(const Key& key) const
 		return nullptr;
 }
 
-bool Dictionary::put(const Key& key, const Blob* blob)
+bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
 {
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
 		m_blobs[key] = blob;
 	}
+
+	if (invokeListeners)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)
 			listener->dictionaryPut(key, blob);
 	}
+
 	return true;
 }
 
