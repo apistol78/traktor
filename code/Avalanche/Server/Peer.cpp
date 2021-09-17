@@ -17,44 +17,52 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 :	m_client(new Client(serverAddress))
 ,	m_dictionary(dictionary)
+,	m_cancel(false)
+,	m_finished(false)
 {
-
-	auto fn = [=]()
-	{
-		// Initially replicate all entries of our dictionary to newly found peer.
-		AlignedVector< Key > keys;
-		m_dictionary->snapshotKeys(keys);
-		for (const auto& key : keys)
+	// Initially replicate all entries of our dictionary to newly found peer.
+	ThreadPool::getInstance().spawn([=]()
 		{
-			if (m_thread->stopped())
-				break;
-			if (!m_client->have(key))
+			AlignedVector< Key > keys;
+			m_dictionary->snapshotKeys(keys);
+			for (const auto& key : keys)
 			{
-				Ref< const Blob > blob = m_dictionary->get(key);
-				if (blob)
+				if (m_thread->stopped() || m_cancel)
+					break;
+				if (!m_client->have(key))
 				{
-					Ref< IStream > readStream = blob->read();
-					Ref< IStream > peerStream = m_client->put(key);
-					if (readStream && peerStream)
+					Ref< const Blob > blob = m_dictionary->get(key);
+					if (blob)
 					{
-						log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
-						StreamCopy(peerStream, readStream).execute();
-						peerStream->close();
-						readStream->close();
+						Ref< IStream > readStream = blob->read();
+						Ref< IStream > peerStream = m_client->put(key);
+						if (readStream && peerStream)
+						{
+							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+							StreamCopy(peerStream, readStream).execute();
+							peerStream->close();
+							readStream->close();
+						}
 					}
 				}
 			}
-		}
-		log::info << L"Peer up-to-date with our dictionary." << Endl;
-	};
-
-	ThreadPool::getInstance().spawn(fn, m_thread);
+			log::info << L"Peer up-to-date with our dictionary." << Endl;
+			m_finished = true;
+		},
+		m_thread
+	);
 
 	m_dictionary->addListener(this);
 }
 
 Peer::~Peer()
 {
+	if (m_thread && !m_finished)
+	{
+		m_cancel = true;
+		ThreadPool::getInstance().join(m_thread);
+		T_FATAL_ASSERT(m_finished);
+	}
 	m_dictionary->removeListener(this);
 }
 
