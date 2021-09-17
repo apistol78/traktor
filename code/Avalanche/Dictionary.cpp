@@ -17,7 +17,7 @@ Ref< Blob > Dictionary::create() const
 
 Ref< const Blob > Dictionary::get(const Key& key) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
 	auto it = m_blobs.find(key);
 	if (it != m_blobs.end())
 		return it->second;
@@ -28,17 +28,20 @@ Ref< const Blob > Dictionary::get(const Key& key) const
 bool Dictionary::put(const Key& key, const Blob* blob)
 {
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
 		m_blobs[key] = blob;
 	}
-	for (auto listener : m_listeners)
-		listener->dictionaryPut(key, blob);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
+		for (auto listener : m_listeners)
+			listener->dictionaryPut(key, blob);
+	}
 	return true;
 }
 
 void Dictionary::snapshotKeys(AlignedVector< Key >& outKeys) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
 	outKeys.reserve(m_blobs.size());
 	for (auto it : m_blobs)
 		outKeys.push_back(it.first);
@@ -46,13 +49,13 @@ void Dictionary::snapshotKeys(AlignedVector< Key >& outKeys) const
 
 void Dictionary::addListener(IListener* listener)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 	m_listeners.push_back(listener);
 }
 
 void Dictionary::removeListener(IListener* listener)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 	auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
 	m_listeners.erase(it);
 }

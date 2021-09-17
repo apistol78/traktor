@@ -22,7 +22,7 @@ namespace traktor
 
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
 const uint16_t c_discoveryMulticastPort = 41100;
-const int32_t c_maxUnresponsiveTickCount = 10;
+const int32_t c_maxUnresponsiveTickCount = 30;
 
 OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 {
