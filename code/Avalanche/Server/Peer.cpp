@@ -33,16 +33,15 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 				Ref< const Blob > blob = m_dictionary->get(key);
 				if (blob)
 				{
-					log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
-
 					Ref< IStream > readStream = blob->read();
 					Ref< IStream > peerStream = m_client->put(key);
-
-					StreamCopy(peerStream, readStream).execute();
-
-					peerStream->close();
-					readStream->close();
-
+					if (readStream && peerStream)
+					{
+						log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+						StreamCopy(peerStream, readStream).execute();
+						peerStream->close();
+						readStream->close();
+					}
 				}
 			}
 		}
@@ -68,15 +67,15 @@ void Peer::dictionaryPut(const Key& key, const Blob* blob)
 {
 	if (!m_client->have(key))
 	{
-		log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
-
 		Ref< IStream > readStream = blob->read();
 		Ref< IStream > peerStream = m_client->put(key);
-
-		StreamCopy(peerStream, readStream).execute();
-
-		peerStream->close();
-		readStream->close();
+		if (readStream && peerStream)
+		{
+			log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+			StreamCopy(peerStream, readStream).execute();
+			peerStream->close();
+			readStream->close();
+		}
 	}
 }
 
