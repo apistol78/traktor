@@ -44,6 +44,8 @@ private:
 	Ref< Client > m_client;
 	Dictionary* m_dictionary = nullptr;
 	Thread* m_thread = nullptr;
+	std::atomic< bool > m_cancel;
+	std::atomic< bool > m_finished;
 };
 
 	}
