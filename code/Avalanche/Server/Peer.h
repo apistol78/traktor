@@ -3,6 +3,8 @@
 #include "Avalanche/Dictionary.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Thread/Event.h"
+#include "Core/Thread/Semaphore.h"
 #include "Net/SocketAddressIPv4.h"
 
 // import/export mechanism.
@@ -46,6 +48,9 @@ private:
 	Thread* m_thread = nullptr;
 	std::atomic< bool > m_cancel;
 	std::atomic< bool > m_finished;
+	AlignedVector< Key > m_queue;
+	Semaphore m_queueLock;
+	Event m_eventQueued;
 };
 
 	}

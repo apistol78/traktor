@@ -5,6 +5,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadPool.h"
 
 namespace traktor
@@ -20,15 +21,18 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 ,	m_cancel(false)
 ,	m_finished(false)
 {
-	// Initially replicate all entries of our dictionary to newly found peer.
 	ThreadPool::getInstance().spawn([=]()
 		{
+			// Initially replicate all entries of our dictionary to newly found peer.
 			AlignedVector< Key > keys;
 			m_dictionary->snapshotKeys(keys);
 			for (const auto& key : keys)
 			{
 				if (m_thread->stopped() || m_cancel)
-					break;
+				{
+					m_finished = true;
+					return;
+				}
 				if (!m_client->have(key))
 				{
 					Ref< const Blob > blob = m_dictionary->get(key);
@@ -47,6 +51,35 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 				}
 			}
 			log::info << L"Peer up-to-date with our dictionary." << Endl;
+
+			// Process queue of updated blobs.
+			while (!(m_thread->stopped() || m_cancel))
+			{
+				AlignedVector< Key > queued;
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
+					m_queue.swap(queued);
+				}
+				for (const auto& key : queued)
+				{
+					Ref< const Blob > blob = m_dictionary->get(key);
+					if (blob)
+					{
+						Ref< IStream > readStream = blob->read();
+						Ref< IStream > peerStream = m_client->put(key);
+						if (readStream && peerStream)
+						{
+							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+							StreamCopy(peerStream, readStream).execute();
+							peerStream->close();
+							readStream->close();
+						}
+					}
+				}
+				if (m_queue.empty())
+					m_eventQueued.wait(100);
+			}
+
 			m_finished = true;
 		},
 		m_thread
@@ -73,18 +106,11 @@ const net::SocketAddressIPv4& Peer::getServerAddress() const
 
 void Peer::dictionaryPut(const Key& key, const Blob* blob)
 {
-	if (!m_client->have(key))
 	{
-		Ref< IStream > readStream = blob->read();
-		Ref< IStream > peerStream = m_client->put(key);
-		if (readStream && peerStream)
-		{
-			log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
-			StreamCopy(peerStream, readStream).execute();
-			peerStream->close();
-			readStream->close();
-		}
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
+		m_queue.push_back(key);
 	}
+	m_eventQueued.broadcast();
 }
 
 	}
