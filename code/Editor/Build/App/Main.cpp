@@ -96,30 +96,6 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 	if (!outOriginalSettings)
 		return false;
 
-	//if (outSettings)
-	//{
-	//	std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
-
-	//	*outSettings = DeepClone(outOriginalSettings).create< PropertyGroup >();
-	//	T_FATAL_ASSERT (*outSettings);
-
-	//	// Read user properties.
-	//	if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != nullptr)
-	//	{
-	//		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file, userFile).readObject< PropertyGroup >();
-	//		file->close();
-
-	//		if (!userSettings)
-	//		{
-	//			log::error << L"Error while parsing properties \"" << userFile << L"\"" << Endl;
-	//			return false;
-	//		}
-
-	//		*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmJoin);
-	//		T_FATAL_ASSERT (*outSettings);
-	//	}
-	//}
-
 	return true;
 }
 
@@ -139,10 +115,12 @@ int main(int argc, const char** argv)
 		log::info << L"    -s,-settings                   Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;
 		log::info << L"    -v,-verbose                    Verbose building." << Endl;
 		log::info << L"    -f,-force                      Force build." << Endl;
-		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
-		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
+		log::info << L"    -avalanche-cache=host:port     Specify pipeline avalanche host." << Endl;
+		log::info << L"    -avalanche-cache-access=r|w|rw Avalanche cache access." << Endl;
 		log::info << L"    -memcached-cache=host:port     Specify pipeline memcached host." << Endl;
 		log::info << L"    -memcached-cache-access=r|w|rw Memcached cache access." << Endl;
+		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
+		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
 		log::info << L"    -sequential-depends            Disable multithreaded pipeline dependency scanner." << Endl;
 		log::info << L"    -sequential-build              Disable multithreaded pipeline build." << Endl;
 		return 1;
@@ -176,22 +154,33 @@ int main(int argc, const char** argv)
 	settings->setProperty< PropertyBoolean >(L"Pipeline.TargetEditor.Build", true);
 
 	// If cache has is explicitly set then we first clear property to ensure exclusivly enabled.
-	if (cmdLine.hasOption(L"file-cache") || cmdLine.hasOption(L"memcached-cache"))
+	if (cmdLine.hasOption(L"avalanche-cache") || cmdLine.hasOption(L"memcached-cache") || cmdLine.hasOption(L"file-cache"))
 	{
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
-	if (cmdLine.hasOption(L"file-cache"))
+	if (cmdLine.hasOption(L"avalanche-cache"))
 	{
+		std::wstring host = cmdLine.getOption(L"avalanche-cache").getString();
+		int32_t port = 40001;
+
+		size_t i = host.find(L':');
+		if (i != std::wstring::npos)
+		{
+			port = parseString< int32_t >(host.substr(i + 1));
+			host = host.substr(0, i);
+		}
+
 		bool read = true;
 		bool write = true;
-		if (cmdLine.hasOption(L"file-cache-access"))
+		if (cmdLine.hasOption(L"avalanche-cache-access"))
 		{
 			read =
 			write = false;
 
-			std::wstring access = cmdLine.getOption(L"file-cache-access").getString();
+			std::wstring access = cmdLine.getOption(L"avalanche-cache-access").getString();
 			for (auto ch : access)
 			{
 				if (ch == L'r')
@@ -201,10 +190,11 @@ int main(int argc, const char** argv)
 			}
 		}
 
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
-		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", read);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", write);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", host);
+		settings->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", read);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"memcached-cache"))
@@ -241,6 +231,31 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", port);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", read);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", write);
+	}
+
+	if (cmdLine.hasOption(L"file-cache"))
+	{
+		bool read = true;
+		bool write = true;
+		if (cmdLine.hasOption(L"file-cache-access"))
+		{
+			read =
+			write = false;
+
+			std::wstring access = cmdLine.getOption(L"file-cache-access").getString();
+			for (auto ch : access)
+			{
+				if (ch == L'r')
+					read = true;
+				if (ch == L'w')
+					write = true;
+			}
+		}
+
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
+		settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", cmdLine.getOption(L"file-cache").getString());
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", read);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"sequential-depends"))

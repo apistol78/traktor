@@ -9,8 +9,16 @@
 
 using namespace traktor;
 
+#if defined(T_STATIC)
+extern "C" void __module__Traktor_Core();
+#endif
+
 int main(int argc, const char** argv)
 {
+#if defined(T_STATIC)
+	__module__Traktor_Core();
+#endif
+
 	CommandLine cmdLine(argc, argv);
 
 	if (cmdLine.hasOption('h', L"help"))

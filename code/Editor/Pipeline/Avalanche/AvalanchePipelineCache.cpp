@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
+#include "Net/Network.h"
 
 namespace traktor
 {
@@ -17,7 +18,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.AvalanchePipelineCache", AvalanchePipeli
 
 bool AvalanchePipelineCache::create(const PropertyGroup* settings)
 {
-	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host");
+	if (!net::Network::initialize())
+		return false;
+
+	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
 	int32_t port = settings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 40001);
 
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.FileCache.Read", true);
@@ -25,6 +29,12 @@ bool AvalanchePipelineCache::create(const PropertyGroup* settings)
 
 	m_client = new avalanche::Client(net::SocketAddressIPv4(host, port));
 	return true;
+}
+
+AvalanchePipelineCache::~AvalanchePipelineCache()
+{
+	destroy();
+	net::Network::finalize();
 }
 
 void AvalanchePipelineCache::destroy()

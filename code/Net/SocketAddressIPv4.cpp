@@ -71,18 +71,23 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 {
 	uint32_t ia = INADDR_NONE;
 
-	// Try to resolve address, first try string denoted IP number as it will
-	// probably fail faster than gethostbyname.
-	ia = inet_addr(wstombs(host).c_str());
+	if (host == L"localhost")
+		ia = INADDR_LOOPBACK;
+	else
+	{
+		// Try to resolve address, first try string denoted IP number as it will
+		// probably fail faster than gethostbyname.
+		ia = inet_addr(wstombs(host).c_str());
 
 #if !defined(_XBOX)
-	if (ia == INADDR_NONE)
-	{
-		hostent* hostent = gethostbyname(wstombs(host).c_str());
-		if (hostent != 0)
-			ia = *reinterpret_cast< uint32_t* >(hostent->h_addr_list[0]);
-	}
+		if (ia == INADDR_NONE)
+		{
+			hostent* hostent = gethostbyname(wstombs(host).c_str());
+			if (hostent != 0)
+				ia = *reinterpret_cast< uint32_t* >(hostent->h_addr_list[0]);
+		}
 #endif
+	}
 
 	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
 	m_sockaddr.sin_family = AF_INET;

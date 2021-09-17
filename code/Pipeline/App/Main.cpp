@@ -391,6 +391,8 @@ bool perform(const PipelineParameters& params)
 			traktor::log::warning << L"Unable to create pipeline avalanche cache; cache disabled." << Endl;
 			pipelineCache = nullptr;
 		}
+		else
+			log::info << L"Avalanche pipeline cache created successfully." << Endl;
 	}
 	else if (settings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
 	{
@@ -400,6 +402,8 @@ bool perform(const PipelineParameters& params)
 			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
 			pipelineCache = nullptr;
 		}
+		else
+			log::info << L"Memcached pipeline cache created successfully." << Endl;
 	}
 	else if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
@@ -409,7 +413,11 @@ bool perform(const PipelineParameters& params)
 			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
 			pipelineCache = nullptr;
 		}
+		else
+			log::info << L"File pipeline cache created successfully." << Endl;
 	}
+	else
+		log::info << L"Pipeline cache disabled." << Endl;
 
 	// Create pipeline factory.
 	editor::PipelineFactory pipelineFactory(settings);
