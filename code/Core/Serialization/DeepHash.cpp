@@ -98,7 +98,11 @@ public:
 	virtual void operator >> (const Member< std::wstring >& m) override final
 	{
 		const std::wstring& str = m;
-		m_hasher.feed(str.data(), str.size() * sizeof(wchar_t));
+		for (size_t i = 0; i < str.length(); ++i)
+		{
+			uint32_t ch = (uint32_t)str[i];
+			m_hasher.feed(ch);
+		}
 	}
 
 	virtual void operator >> (const Member< Guid >& m) override final
@@ -110,7 +114,11 @@ public:
 	virtual void operator >> (const Member< Path >& m) override final
 	{
 		std::wstring path = m->getOriginal();
-		m_hasher.feed(path.data(), path.size() * sizeof(wchar_t));
+		for (size_t i = 0; i < path.length(); ++i)
+		{
+			uint32_t ch = (uint32_t)path[i];
+			m_hasher.feed(ch);
+		}
 	}
 
 	virtual void operator >> (const Member< Color4ub >& m) override final
@@ -178,7 +186,11 @@ public:
 				m_written.insert(std::make_pair(object, ++m_writtenCount));
 
 				const wchar_t* const typeName = type_of(object).getName();
-				m_hasher.feed(typeName, wcslen(typeName) * sizeof(wchar_t));
+				for (size_t i = 0; typeName[i]; ++i)
+				{
+					uint32_t ch = (uint32_t)typeName[i];
+					m_hasher.feed(ch);
+				}
 
 				serialize(object);
 			}
