@@ -6,6 +6,7 @@
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Net/Network.h"
@@ -29,18 +30,16 @@ int main(int argc, const char** argv)
 
 	CommandLine cmdLine(argc, argv);
 
+	log::info << L"Traktor.Avalanche.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	if (cmdLine.hasOption('h', L"help"))
 	{
-		log::info << L"Traktor.Avalanche.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
-		log::info << L"Usage:" << Endl;
-		log::info << Endl;
-		log::info << L"  Traktor.Avalanche.Serve.App (options)" << Endl;
-		log::info << L"    -p, -port    Port number." << Endl;
+		log::info << L"Usage: Traktor.Avalanche.Server.App (options)" << Endl;
+		log::info << L"    -m, -master  Master node." << Endl;
+		log::info << L"    -p, -port    Port number (default 40001)." << Endl;
 		log::info << L"    -h, -help    Help" << Endl;
 		return 0;
 	}
-
-	log::info << L"Traktor.Avalanche.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	int32_t port = 40001;
 	if (cmdLine.hasOption('p', L"port"))
@@ -48,6 +47,7 @@ int main(int argc, const char** argv)
 
 	Ref< PropertyGroup > settings = new PropertyGroup();
 	settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
+	settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
 
 	if (!net::Network::initialize())
 	{
