@@ -181,7 +181,7 @@ void TcpSocket::setQuickAck(bool quickAck)
 	DWORD dummy = 0;
     #define SIO_TCP_SET_ACK_FREQUENCY _WSAIOW(IOC_VENDOR, 23)
     WSAIoctl(m_socket, SIO_TCP_SET_ACK_FREQUENCY, &frequency, sizeof(frequency), NULL, 0, &dummy, NULL, NULL);
-#else
+#elif defined(__OSX__) && !defined(__IOS__)
 	uint32_t opt = quickAck ? 1 : 0;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_QUICKACK, (const char*)&opt, sizeof(opt));
 #endif
