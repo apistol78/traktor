@@ -7,6 +7,8 @@ namespace traktor
 	namespace runtime
 	{
 
+#if defined(_WIN32)
+
 class LaunchRenderDocTool : public editor::IEditorTool
 {
 	T_RTTI_CLASS;
@@ -20,6 +22,8 @@ public:
 
 	virtual bool launch(ui::Widget* parent, editor::IEditor* runtime, const PropertyGroup* param) override final;
 };
+
+#endif
 
 	}
 }
