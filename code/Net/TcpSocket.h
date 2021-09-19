@@ -58,6 +58,9 @@ public:
 
 	/*! Set "no delay" option; ie disable Nagle algorithm. */
 	void setNoDelay(bool noDelay);
+
+	/*! Set "quick ack" option. */
+	void setQuickAck(bool quickAck);
 };
 
 	}

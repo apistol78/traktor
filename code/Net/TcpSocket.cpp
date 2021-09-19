@@ -141,7 +141,7 @@ Ref< TcpSocket > TcpSocket::accept()
 
 	socklen_t len = sizeof(in);
 	if ((client = ::accept(m_socket, (struct sockaddr*)&in, &len)) == INVALID_SOCKET)
-		return 0;
+		return nullptr;
 
 	return new TcpSocket(client);
 }
@@ -152,7 +152,7 @@ Ref< SocketAddress > TcpSocket::getLocalAddress()
 
 	socklen_t len = sizeof(in);
 	if (getsockname(m_socket, (struct sockaddr*)&in, &len) != 0)
-		return 0;
+		return nullptr;
 
 	return new SocketAddressIPv4(in);
 }
@@ -163,7 +163,7 @@ Ref< SocketAddress > TcpSocket::getRemoteAddress()
 
 	socklen_t len = sizeof(in);
 	if (getpeername(m_socket, (struct sockaddr*)&in, &len) != 0)
-		return 0;
+		return nullptr;
 
 	return new SocketAddressIPv4(in);
 }
@@ -172,6 +172,19 @@ void TcpSocket::setNoDelay(bool noDelay)
 {
 	uint32_t opt = noDelay ? 1 : 0;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt, sizeof(opt));
+}
+
+void TcpSocket::setQuickAck(bool quickAck)
+{
+#if defined(_WIN32)
+	int32_t frequency = quickAck ? 1 : 2;
+	DWORD dummy = 0;
+    #define SIO_TCP_SET_ACK_FREQUENCY _WSAIOW(IOC_VENDOR, 23)
+    WSAIoctl(m_socket, SIO_TCP_SET_ACK_FREQUENCY, &frequency, sizeof(frequency), NULL, 0, &dummy, NULL, NULL);
+#else
+	uint32_t opt = quickAck ? 1 : 0;
+	setsockopt(m_socket, IPPROTO_TCP, TCP_QUICKACK, (const char*)&opt, sizeof(opt));
+#endif
 }
 
 	}
