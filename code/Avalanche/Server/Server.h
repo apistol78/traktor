@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 
@@ -48,12 +49,11 @@ public:
 private:
     Ref< net::TcpSocket > m_serverSocket;
     RefArray< Connection > m_connections;
-
     Ref< net::DiscoveryManager > m_discoveryManager;
-
     RefArray< Peer > m_peers;
-
     Ref< Dictionary > m_dictionary;
+    Guid m_instanceId;
+    bool m_master = false;
 };
 
     }

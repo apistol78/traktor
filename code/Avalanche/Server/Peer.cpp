@@ -39,7 +39,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
-						Ref< IStream > peerStream = m_client->replicate(key);
+						Ref< IStream > peerStream = m_client->put(key);
 						if (readStream && peerStream)
 						{
 							log::info << L"Replicating " << key.format() << L" to peer " << name << L"." << Endl;
@@ -67,7 +67,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
-						Ref< IStream > peerStream = m_client->replicate(key);
+						Ref< IStream > peerStream = m_client->put(key);
 						if (readStream && peerStream)
 						{
 							log::info << L"[" << (i + 1) << L"/" << queued.size() << L"] Replicating " << key.format() << L" to peer " << name << L"." << Endl;

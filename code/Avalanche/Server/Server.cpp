@@ -32,6 +32,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Server", Server, Object)
 
 bool Server::create(const PropertyGroup* settings)
 {
+	m_instanceId = Guid::create();
+	T_ASSERT(m_instanceId.isValid());
+
 	// Create server listening socket.
 	const int32_t listenPort = settings->getProperty< int32_t >(L"Avalanche.Port", 40001);
 
@@ -64,6 +67,7 @@ bool Server::create(const PropertyGroup* settings)
 	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.Identifier", OS::getInstance().getIdentifier());
 	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.ComputerName", OS::getInstance().getComputerName());
 	publishSettings->setProperty< PropertyString >(L"Avalanche.Host", itf.addr->getHostName());
+	publishSettings->setProperty< PropertyString >(L"Avalanche.InstanceID", m_instanceId.format());
 
 	m_discoveryManager = new net::DiscoveryManager();
 	m_discoveryManager->create(net::MdFindServices | net::MdPublishServices);
@@ -74,6 +78,9 @@ bool Server::create(const PropertyGroup* settings)
 
 	// Create our dictionary.
 	m_dictionary = new Dictionary();
+	m_master = settings->getProperty< bool >(L"Avalanche.Master", false);
+
+	log::info << L"Server started successfully (" << (m_master ? L"Master" : L"Slave") << L")." << Endl;
 	return true;
 }
 
@@ -110,7 +117,7 @@ bool Server::update()
 		}
 	}
 
-	// Search for peers.
+	// Search for master peers.
 	RefArray< Peer > peers;
 	RefArray< net::NetworkService > services;
 	m_discoveryManager->findServices< net::NetworkService >(services);
@@ -119,6 +126,16 @@ bool Server::update()
 		if (service->getType() == L"Traktor.Avalanche")
 		{
 			auto settings = service->getProperties();
+			if (!settings)
+				continue;
+
+			bool peerMaster = settings->getProperty< bool >(L"Avalanche.Master", false);
+			if (!m_master && !peerMaster)
+				continue;
+
+			Guid peerInstanceId = Guid(settings->getProperty< std::wstring >(L"Avalanche.InstanceID", L""));
+			if (!peerInstanceId.isValid())
+				continue;
 
 			net::SocketAddressIPv4 peerAddress(
 				settings->getProperty< std::wstring >(L"Avalanche.Host"),
@@ -146,6 +163,7 @@ bool Server::update()
 					log::info << L"  Name          : " << peerName << Endl;
 					log::info << L"  Identifier    : " << peerIdentifier << Endl;
 					log::info << L"  Computer name : " << peerComputerName << Endl;
+					log::info << L"  Instance ID   : " << peerInstanceId.format() << Endl;
 					log::info << L"  Version       : " << majorVersion << L"." << minorVersion << Endl;
 
 					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());

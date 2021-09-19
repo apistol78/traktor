@@ -132,33 +132,6 @@ Ref< IStream > Client::put(const Key& key)
 	return new ClientPutStream(this, socket);
 }
 
-Ref< IStream > Client::replicate(const Key& key)
-{
-	Ref< net::TcpSocket > socket = establish(c_commandReplicate);
-	if (!socket)
-		return nullptr;
-
-	net::SocketStream socketStream(socket, true, true);
-	if (!key.write(&socketStream))
-		return nullptr;
-
-	uint8_t reply = 0;
-	if (socketStream.read(&reply, sizeof(reply)) != sizeof(reply))
-		return nullptr;
-
-	if (reply != c_replyOk)
-	{
-		if (reply == c_replyFailure)
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			m_sockets.push_back(socket);
-		}
-		return nullptr;
-	}
-
-	return new ClientPutStream(this, socket);
-}
-
 Ref< net::TcpSocket > Client::establish(uint8_t command)
 {
 	for (;;)
