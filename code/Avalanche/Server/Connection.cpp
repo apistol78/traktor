@@ -21,6 +21,15 @@ Connection::Connection(Dictionary* dictionary)
 {
 }
 
+Connection::~Connection()
+{
+	if (m_thread)
+	{
+		ThreadPool::getInstance().join(m_thread);
+		T_FATAL_ASSERT(m_finished);
+	}
+}
+
 bool Connection::create(net::TcpSocket* clientSocket)
 {
 	m_clientSocket = clientSocket;

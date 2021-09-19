@@ -9,6 +9,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/System/OS.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
@@ -49,6 +50,9 @@ bool Server::create(const PropertyGroup* settings)
 
 	// Broadcast our self on the network.
 	Ref< PropertyGroup > publishSettings = DeepClone(settings).create< PropertyGroup >();
+	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.Name", OS::getInstance().getName());
+	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.Identifier", OS::getInstance().getIdentifier());
+	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.ComputerName", OS::getInstance().getComputerName());
 	publishSettings->setProperty< PropertyString >(L"Avalanche.Host", itf.addr->getHostName());
 
 	m_discoveryManager = new net::DiscoveryManager();
@@ -121,6 +125,14 @@ bool Server::update()
 			else
 			{
 				log::info << L"Found new peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+
+				std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
+				std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
+				std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
+				log::info << L"  Name          : " << peerName << Endl;
+				log::info << L"  Identifier    : " << peerIdentifier << Endl;
+				log::info << L"  Computer name : " << peerComputerName << Endl;
+
 				peers.push_back(new Peer(peerAddress, m_dictionary));
 			}
 		}
