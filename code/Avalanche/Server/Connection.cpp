@@ -5,6 +5,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/ThreadPool.h"
+#include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
@@ -34,15 +35,21 @@ bool Connection::create(net::TcpSocket* clientSocket)
 {
 	m_clientSocket = clientSocket;
 
+	std::wstring name = L"<unknown>";
+
+	auto remoteAddress = dynamic_type_cast< const net::SocketAddressIPv4* >(clientSocket->getRemoteAddress());
+	if (remoteAddress)
+		name = remoteAddress->getHostName();
+
 	auto fn = [=]()
 	{
-		log::info << L"Connection established, ready to process requests." << Endl;
+		log::info << L"Connection with " << name << L" established, ready to process requests." << Endl;
 		while (!m_thread->stopped())
 		{
 			if (!process())
 				break;
 		}
-		log::info << L"Connection terminated." << Endl;
+		log::info << L"Connection with " << name << L" terminated." << Endl;
 		m_finished = true;
 	};
 
