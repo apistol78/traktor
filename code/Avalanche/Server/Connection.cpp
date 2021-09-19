@@ -41,6 +41,8 @@ bool Connection::create(net::TcpSocket* clientSocket)
 	if (remoteAddress)
 		name = remoteAddress->getHostName();
 
+	clientSocket->setQuickAck(true);
+
 	auto fn = [=]()
 	{
 		log::info << L"Connection with " << name << L" established, ready to process requests." << Endl;
