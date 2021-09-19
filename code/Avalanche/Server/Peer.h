@@ -32,7 +32,7 @@ class T_DLLCLASS Peer
 	T_RTTI_CLASS;
 
 public:
-	explicit Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary);
+	explicit Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name, Dictionary* dictionary);
 
 	virtual ~Peer();
 

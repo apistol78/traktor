@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 
-Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
+Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name, Dictionary* dictionary)
 :	m_client(new Client(serverAddress))
 ,	m_dictionary(dictionary)
 ,	m_cancel(false)
@@ -42,7 +42,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 						Ref< IStream > peerStream = m_client->replicate(key);
 						if (readStream && peerStream)
 						{
-							log::info << L"Replicating " << key.format() << L" to peer..." << Endl;
+							log::info << L"Replicating " << key.format() << L" to peer " << name << L"." << Endl;
 							StreamCopy(peerStream, readStream).execute();
 							peerStream->close();
 							readStream->close();
@@ -50,7 +50,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 					}
 				}
 			}
-			log::info << L"Peer up-to-date with our dictionary." << Endl;
+			log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
 
 			// Process queue of updated blobs.
 			while (!(m_thread->stopped() || m_cancel))
@@ -70,7 +70,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, Dictionary* dictionary)
 						Ref< IStream > peerStream = m_client->replicate(key);
 						if (readStream && peerStream)
 						{
-							log::info << L"[" << (i + 1) << L"/" << queued.size() << L"] Replicating " << key.format() << L" to peer..." << Endl;
+							log::info << L"[" << (i + 1) << L"/" << queued.size() << L"] Replicating " << key.format() << L" to peer " << name << L"." << Endl;
 							StreamCopy(peerStream, readStream).execute();
 							peerStream->close();
 							readStream->close();
