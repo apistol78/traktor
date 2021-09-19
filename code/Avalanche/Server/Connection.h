@@ -35,6 +35,8 @@ class T_DLLCLASS Connection : public Object
 public:
 	explicit Connection(Dictionary* dictionary);
 
+	virtual ~Connection();
+
 	bool create(net::TcpSocket* clientSocket);
 
 	bool update();
