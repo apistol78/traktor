@@ -26,9 +26,7 @@ class T_DLLCLASS InflateStreamLzo : public IStream
 	T_RTTI_CLASS;
 
 public:
-	InflateStreamLzo(IStream* stream, uint32_t blockSize = 64 * 1024);
-
-	virtual ~InflateStreamLzo();
+	explicit InflateStreamLzo(IStream* stream, uint32_t blockSize = 64 * 1024);
 
 	virtual void close() override final;
 

@@ -29,7 +29,8 @@ public:
 
 	void close()
 	{
-		m_stream = 0;
+		m_stream->close();
+		m_stream = nullptr;
 	}
 
 	int64_t read(void* block, int64_t nbytes)
@@ -223,7 +224,7 @@ void InflateStreamLzf::close()
 	if (m_impl)
 	{
 		m_impl->close();
-		m_impl = 0;
+		m_impl = nullptr;
 	}
 }
 

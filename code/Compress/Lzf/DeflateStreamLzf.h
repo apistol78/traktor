@@ -26,7 +26,7 @@ class T_DLLCLASS DeflateStreamLzf : public IStream
 	T_RTTI_CLASS;
 
 public:
-	DeflateStreamLzf(IStream* stream, uint32_t blockSize = 64 * 1024);
+	explicit DeflateStreamLzf(IStream* stream, uint32_t blockSize = 64 * 1024);
 
 	virtual ~DeflateStreamLzf();
 
