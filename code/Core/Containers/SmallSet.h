@@ -138,14 +138,15 @@ public:
 		return true;
 	}
 
-	bool insert(const const_iterator& from, const const_iterator& to)
+	uint32_t insert(const const_iterator& from, const const_iterator& to)
 	{
+		uint32_t inserted = 0;
 		for (const_iterator i = from; i != to; ++i)
 		{
-			if (!insert(*i))
-				return false;
+			if (insert(*i))
+				++inserted;
 		}
-		return true;
+		return inserted;
 	}
 
 	void erase(const iterator& at)
