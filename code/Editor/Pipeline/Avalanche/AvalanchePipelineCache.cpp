@@ -1,4 +1,6 @@
 #include "Avalanche/Client/Client.h"
+#include "Compress/Lzo/DeflateStreamLzo.h"
+#include "Compress/Lzo/InflateStreamLzo.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -60,7 +62,7 @@ Ref< IStream > AvalanchePipelineCache::get(const Guid& guid, const PipelineDepen
 	}
 
 	m_hits++;
-	return new BufferedStream(stream, 16384);
+	return new compress::InflateStreamLzo(stream);
 }
 
 Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
@@ -77,7 +79,7 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 	if (!stream)
 		return nullptr;
 
-	return new BufferedStream(stream, 16384);
+	return new compress::DeflateStreamLzo(stream, 16384);
 }
 
 void AvalanchePipelineCache::getInformation(OutputStream& os)
