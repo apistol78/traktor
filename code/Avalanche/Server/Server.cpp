@@ -4,6 +4,7 @@
 #include "Avalanche/Server/Peer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -19,6 +20,13 @@ namespace traktor
 {
 	namespace avalanche
 	{
+		namespace
+		{
+
+const int32_t c_majorVersion = 1;
+const int32_t c_minorVersion = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Server", Server, Object)
 
@@ -50,6 +58,8 @@ bool Server::create(const PropertyGroup* settings)
 
 	// Broadcast our self on the network.
 	Ref< PropertyGroup > publishSettings = DeepClone(settings).create< PropertyGroup >();
+	publishSettings->setProperty< PropertyInteger >(L"Avalanche.Version.Major", c_majorVersion);
+	publishSettings->setProperty< PropertyInteger >(L"Avalanche.Version.Minor", c_minorVersion);
 	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.Name", OS::getInstance().getName());
 	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.Identifier", OS::getInstance().getIdentifier());
 	publishSettings->setProperty< PropertyString >(L"Avalanche.OS.ComputerName", OS::getInstance().getComputerName());
@@ -124,16 +134,23 @@ bool Server::update()
 				peers.push_back(*it);
 			else
 			{
-				log::info << L"Found new peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+				int32_t majorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Major", 0);
+				int32_t minorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Minor", 0);
+				if (majorVersion >= c_majorVersion)
+				{
+					std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
+					std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
+					std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
 
-				std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
-				std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
-				std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
-				log::info << L"  Name          : " << peerName << Endl;
-				log::info << L"  Identifier    : " << peerIdentifier << Endl;
-				log::info << L"  Computer name : " << peerComputerName << Endl;
+					log::info << L"Found peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+					log::info << L"  Name          : " << peerName << Endl;
+					log::info << L"  Identifier    : " << peerIdentifier << Endl;
+					log::info << L"  Computer name : " << peerComputerName << Endl;
+					log::info << L"  Version       : " << majorVersion << L"." << minorVersion << Endl;
 
-				peers.push_back(new Peer(peerAddress, m_dictionary));
+					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
+					peers.push_back(new Peer(peerAddress, name, m_dictionary));
+				}
 			}
 		}
 	}
