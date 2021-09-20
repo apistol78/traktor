@@ -15,8 +15,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 
-Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name, Dictionary* dictionary)
+Peer::Peer(
+	const net::SocketAddressIPv4& serverAddress,
+	const Guid& instanceId,
+	const std::wstring& name,
+	Dictionary* dictionary
+)
 :	m_client(new Client(serverAddress))
+,	m_instanceId(instanceId)
 ,	m_dictionary(dictionary)
 ,	m_finished(false)
 {
@@ -49,7 +55,8 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name
 					}
 				}
 			}
-			log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
+			if (!keys.empty())
+				log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
 
 			// Process queue of updated blobs.
 			while (!m_thread->stopped())

@@ -147,7 +147,7 @@ bool Server::update()
 				continue;
 
 			auto it = std::find_if(m_peers.begin(), m_peers.end(), [&](Peer* peer) {
-				return peer->getServerAddress() == peerAddress;
+				return peer->getInstanceId() == peerInstanceId;
 			});
 			if (it != m_peers.end())
 				peers.push_back(*it);
@@ -169,7 +169,7 @@ bool Server::update()
 					log::info << L"  Version       : " << majorVersion << L"." << minorVersion << Endl;
 
 					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
-					peers.push_back(new Peer(peerAddress, name, m_dictionary));
+					peers.push_back(new Peer(peerAddress, peerInstanceId, name, m_dictionary));
 				}
 			}
 		}
