@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Avalanche/Dictionary.h"
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Thread/Event.h"
@@ -32,9 +33,16 @@ class T_DLLCLASS Peer
 	T_RTTI_CLASS;
 
 public:
-	explicit Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name, Dictionary* dictionary);
+	explicit Peer(
+		const net::SocketAddressIPv4& serverAddress,
+		const Guid& instanceId,
+		const std::wstring& name,
+		Dictionary* dictionary
+	);
 
 	virtual ~Peer();
+
+	const Guid& getInstanceId() const { return m_instanceId; }
 
 	const net::SocketAddressIPv4& getServerAddress() const;
 
@@ -44,6 +52,7 @@ public:
 
 private:
 	Ref< Client > m_client;
+	Guid m_instanceId;
 	Dictionary* m_dictionary = nullptr;
 	Thread* m_thread = nullptr;
 	std::atomic< bool > m_finished;
