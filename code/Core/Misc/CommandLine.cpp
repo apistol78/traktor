@@ -16,6 +16,12 @@ CommandLine::CommandLine(int argc, const char** argv)
 	parse(argc - 1, argv + 1);
 }
 
+CommandLine::CommandLine(int argc, const wchar_t** argv)
+{
+	m_file = argv[0];
+	parse(argc - 1, argv + 1);
+}
+
 CommandLine::CommandLine(const std::wstring& file, const std::wstring& args)
 :	m_file(file)
 {
@@ -184,6 +190,31 @@ void CommandLine::parse(int argc, const char** argv)
 	for (int i = 0; i < argc; ++i)
 	{
 		std::wstring a = mbstows(argv[i]);
+		if (a[0] == L'-')
+		{
+			const wchar_t* cs = a.c_str() + 1;
+			const wchar_t* value = wcschr(cs, L'=');
+			if (value)
+				m_opts.push_back(Option(
+					std::wstring(cs, value),
+					trim(value + 1)
+				));
+			else
+				m_opts.push_back(Option(
+					std::wstring(cs),
+					L""
+				));
+		}
+		else
+			m_args.push_back(trim(a));
+	}
+}
+
+void CommandLine::parse(int argc, const wchar_t** argv)
+{
+	for (int i = 0; i < argc; ++i)
+	{
+		std::wstring a = argv[i];
 		if (a[0] == L'-')
 		{
 			const wchar_t* cs = a.c_str() + 1;

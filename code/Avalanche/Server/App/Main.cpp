@@ -1,9 +1,12 @@
-#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
+#if defined(_WIN32)
+#	include <Windows.h>
+#elif defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
 #	include <signal.h>
 #endif
 #include "Avalanche/Server/Server.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -15,6 +18,194 @@ using namespace traktor;
 
 #if defined(T_STATIC)
 extern "C" void __module__Traktor_Core();
+#endif
+
+#if defined(_WIN32)
+
+TCHAR* serviceName = TEXT("Traktor Avalanche Service");
+SERVICE_STATUS serviceStatus;
+SERVICE_STATUS_HANDLE serviceStatusHandle = 0;
+std::atomic< bool > serviceRunning = true;
+
+void WINAPI serviceControlHandler(DWORD controlCode)
+{
+	switch (controlCode)
+	{
+	case SERVICE_CONTROL_INTERROGATE:
+		break;
+
+	case SERVICE_CONTROL_SHUTDOWN:
+	case SERVICE_CONTROL_STOP:
+		serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+		SetServiceStatus(serviceStatusHandle, &serviceStatus);
+		serviceRunning = false;
+		return;
+
+	case SERVICE_CONTROL_PAUSE:
+		break;
+
+	case SERVICE_CONTROL_CONTINUE:
+		break;
+
+	default:
+		break;
+	}
+
+	SetServiceStatus(serviceStatusHandle, &serviceStatus);
+}
+
+void WINAPI serviceMain(DWORD argc, TCHAR* argv[])
+{
+	CommandLine cmdLine((int)argc, (const wchar_t**)argv);
+
+	// Initialise service status.
+	serviceStatus.dwServiceType = SERVICE_WIN32;
+	serviceStatus.dwCurrentState = SERVICE_STOPPED;
+	serviceStatus.dwControlsAccepted = 0;
+	serviceStatus.dwWin32ExitCode = NO_ERROR;
+	serviceStatus.dwServiceSpecificExitCode = NO_ERROR;
+	serviceStatus.dwCheckPoint = 0;
+	serviceStatus.dwWaitHint = 0;
+	serviceStatusHandle = RegisterServiceCtrlHandler(serviceName, serviceControlHandler);
+
+	if (serviceStatusHandle)
+	{
+		// Service is starting.
+		serviceStatus.dwCurrentState = SERVICE_START_PENDING;
+		SetServiceStatus(serviceStatusHandle, &serviceStatus);
+
+		int32_t port = 40001;
+		if (cmdLine.hasOption('p', L"port"))
+			port = cmdLine.getOption('p', L"port").getInteger();
+
+		Ref< PropertyGroup > settings = new PropertyGroup();
+		settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
+		settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
+
+		if (!net::Network::initialize())
+		{
+			log::error << L"Unable to initialize networking." << Endl;
+			serviceStatus.dwControlsAccepted &= ~(SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
+			serviceStatus.dwCurrentState = SERVICE_STOPPED;
+			SetServiceStatus(serviceStatusHandle, &serviceStatus);
+			return;
+		}
+
+		Ref< avalanche::Server > server = new avalanche::Server();
+		if (!server->create(settings))
+		{
+			log::error << L"Unable to create server." << Endl;
+			serviceStatus.dwControlsAccepted &= ~(SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
+			serviceStatus.dwCurrentState = SERVICE_STOPPED;
+			SetServiceStatus(serviceStatusHandle, &serviceStatus);
+			return;
+		}
+
+		// Running
+		serviceStatus.dwControlsAccepted |= (SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
+		serviceStatus.dwCurrentState = SERVICE_RUNNING;
+		SetServiceStatus(serviceStatusHandle, &serviceStatus);
+
+		while (serviceRunning)
+		{
+			if (!server->update())
+				break;
+		}
+
+		// Service was stopped.
+		serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+		SetServiceStatus(serviceStatusHandle, &serviceStatus);
+
+		safeDestroy(server);
+		net::Network::finalize();
+
+		// Service is now stopped.
+		serviceStatus.dwControlsAccepted &= ~(SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
+		serviceStatus.dwCurrentState = SERVICE_STOPPED;
+		SetServiceStatus(serviceStatusHandle, &serviceStatus);
+	}
+}
+
+bool installService(const std::wstring& arguments)
+{
+	TCHAR path[_MAX_PATH + 1];
+	if (GetModuleFileName(0, path, sizeof_array(path)) == 0)
+	{
+		log::error << L"Unable to get module filename." << Endl;
+		return false;
+	}
+
+	std::wstring imagePath;
+	if (!arguments.empty())
+		imagePath = str(L"\"%s\" %s", path, arguments.c_str());
+	else
+		imagePath = str(L"\"%s\"", path);
+
+	SC_HANDLE serviceControlManager = OpenSCManager(0, 0, SC_MANAGER_CREATE_SERVICE);
+	if (!serviceControlManager)
+	{
+		log::error << L"Unable to open SCM manager." << Endl;
+		return false;
+	}
+
+	SC_HANDLE service = CreateService(
+		serviceControlManager,
+		serviceName,
+		serviceName,
+		SERVICE_ALL_ACCESS,
+		SERVICE_WIN32_OWN_PROCESS,
+		SERVICE_AUTO_START,
+		SERVICE_ERROR_IGNORE,
+		imagePath.c_str(),
+		0,
+		0,
+		0,
+		nullptr, // L"NT AUTHORITY\\NetworkService",
+		0
+	);
+	if (service)
+		CloseServiceHandle(service);
+	else
+		log::error << L"Unable to create service." << Endl;
+
+	CloseServiceHandle(serviceControlManager);
+	return service != NULL;
+}
+
+bool uninstallService()
+{
+	SC_HANDLE serviceControlManager = OpenSCManager(0, 0, SC_MANAGER_CONNECT);
+	if (!serviceControlManager)
+	{
+		log::error << L"Unable to open SCM manager." << Endl;
+		return false;
+	}
+
+	SC_HANDLE service = OpenService(serviceControlManager, serviceName, SERVICE_QUERY_STATUS | DELETE);
+	if (!service)
+	{
+		log::error << L"Unable to open service." << Endl;
+		CloseServiceHandle(serviceControlManager);
+		return false;
+	}
+
+	SERVICE_STATUS serviceStatus;
+	if (!QueryServiceStatus(service, &serviceStatus))
+	{
+		log::error << L"Unable to query service status." << Endl;
+		CloseServiceHandle(serviceControlManager);
+		return false;
+	}
+	
+	bool deleted = false;
+	if (serviceStatus.dwCurrentState == SERVICE_STOPPED)
+		deleted = (DeleteService(service) != FALSE);
+
+	CloseServiceHandle(service);
+	CloseServiceHandle(serviceControlManager);
+	return deleted;
+}
+
 #endif
 
 int main(int argc, const char** argv)
@@ -32,18 +223,65 @@ int main(int argc, const char** argv)
 
 	log::info << L"Traktor.Avalanche.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
-	if (cmdLine.hasOption('h', L"help"))
-	{
-		log::info << L"Usage: Traktor.Avalanche.Server.App (options)" << Endl;
-		log::info << L"    -m, -master  Master node." << Endl;
-		log::info << L"    -p, -port    Port number (default 40001)." << Endl;
-		log::info << L"    -h, -help    Help" << Endl;
-		return 0;
-	}
-
 	int32_t port = 40001;
 	if (cmdLine.hasOption('p', L"port"))
 		port = cmdLine.getOption('p', L"port").getInteger();
+
+	if (cmdLine.hasOption('h', L"help") || port <= 0)
+	{
+		log::info << L"Usage: Traktor.Avalanche.Server.App (options)" << Endl;
+		log::info << L"    -m, -master        Master node." << Endl;
+		log::info << L"    -p, -port          Port number (default 40001)." << Endl;
+#if defined(_WIN32)
+		log::info << L"    -install-service   Install as NT service." << Endl;
+		log::info << L"    -uninstall-service Uninstall as NT service." << Endl;
+#endif
+		log::info << L"    -h, -help          Help" << Endl;
+		return 0;
+	}
+
+#if defined(_WIN32)
+	if (cmdLine.hasOption(L"install-service"))
+	{
+		std::wstring arguments = str(L"-run-service -p=%d", port);
+		if (cmdLine.hasOption('m', L"master"))
+			arguments += L" -m";
+
+		if (installService(arguments))
+		{
+			log::info << L"Installed Traktor Avalanche NT service successfully." << Endl;
+			return 0;
+		}
+		else
+		{
+			log::error << L"Unable to install Traktor Avalanche NT service." << Endl;
+			return 1;
+		}
+	}
+	if (cmdLine.hasOption(L"uninstall-service"))
+	{
+		if (uninstallService())
+		{
+			log::info << L"Uninstalled Traktor Avalanche NT service successfully." << Endl;
+			return 0;
+		}
+		else
+		{
+			log::error << L"Unable to uninstall Traktor Avalanche NT service." << Endl;
+			return 1;
+		}
+	}
+	if (cmdLine.hasOption(!"run-service"))
+	{
+		SERVICE_TABLE_ENTRY serviceTable[] =
+		{
+			{ serviceName, serviceMain },
+			{ 0, 0 }
+		};
+		StartServiceCtrlDispatcher(serviceTable);
+		return 0;
+	}
+#endif
 
 	Ref< PropertyGroup > settings = new PropertyGroup();
 	settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);

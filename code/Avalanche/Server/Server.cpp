@@ -86,6 +86,8 @@ bool Server::create(const PropertyGroup* settings)
 
 void Server::destroy()
 {
+	m_connections.clear();
+	m_peers.clear();
 	safeClose(m_serverSocket);
 	safeDestroy(m_discoveryManager);
 	m_dictionary = nullptr;
