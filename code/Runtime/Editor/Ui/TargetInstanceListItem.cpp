@@ -65,6 +65,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetInstanceListItem", TargetInstance
 TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_instance(instance)
 ,	m_lastInstanceState((TargetState)-1)
+,	m_selected(false)
 {
 	m_bitmapLogos = new ui::StyleBitmap(L"Runtime.Logos");
 
@@ -85,6 +86,11 @@ ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 	return ui::Size(128, ui::dpi96(28 + connections.size() * (c_performanceHeight + c_commandHeight)));
+}
+
+void TargetInstanceListItem::setSelected(bool selected)
+{
+	m_selected = selected;
 }
 
 void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& rect)
@@ -221,9 +227,10 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
-	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::dpi96(28);
+	ui::Rect controlRect = rect;
+	controlRect.bottom = rect.top + ui::dpi96(28);
 
-	canvas.setBackground(ss->getColor(getWidget(), L"item-background-color"));
+	canvas.setBackground(ss->getColor(getWidget(), m_selected ? L"item-background-color-selected" : L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;

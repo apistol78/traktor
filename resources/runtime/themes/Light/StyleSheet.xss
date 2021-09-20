@@ -70,6 +70,10 @@
 					<second>255, 255, 255, 255</second>
 				</item>
 				<item>
+					<first>item-background-color-selected</first>
+					<second>190, 219, 255, 255</second>
+				</item>
+				<item>
 					<first>item-connection-background-color</first>
 					<second>220, 220, 220, 255</second>
 				</item>

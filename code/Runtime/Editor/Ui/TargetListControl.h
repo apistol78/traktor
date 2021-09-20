@@ -10,7 +10,7 @@ namespace traktor
 
 class TargetInstanceListItem;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetListControl : public ui::AutoWidget
@@ -28,6 +28,8 @@ private:
 	RefArray< TargetInstanceListItem > m_items;
 
 	virtual void layoutCells(const ui::Rect& rc) override final;
+
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
 };
 
 	}
