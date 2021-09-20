@@ -30,9 +30,11 @@ class TargetInstanceListItem : public ui::AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance);
+	explicit TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance);
 
 	ui::Size getSize() const;
+
+	void setSelected(bool selected);
 
 	virtual void placeCells(ui::AutoWidget* widget, const ui::Rect& rect) override final;
 
@@ -50,6 +52,7 @@ private:
 	RefArray< ui::ChildWidgetCell > m_editCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
+	bool m_selected;
 
 	void eventPlayButtonClick(ui::ButtonClickEvent* event);
 

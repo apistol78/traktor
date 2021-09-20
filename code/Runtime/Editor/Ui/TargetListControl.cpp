@@ -14,6 +14,7 @@ bool TargetListControl::create(ui::Widget* parent)
 	if (!ui::AutoWidget::create(parent, ui::WsDoubleBuffer))
 		return false;
 
+	addEventHandler< ui::MouseButtonDownEvent >(this, &TargetListControl::eventButtonDown);
 	return true;
 }
 
@@ -32,15 +33,35 @@ void TargetListControl::removeAll()
 void TargetListControl::layoutCells(const ui::Rect& rc)
 {
 	ui::Rect targetRect = rc;
-	for (RefArray< TargetInstanceListItem >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (auto item : m_items)
 	{
-		ui::Size itemSize = (*i)->getSize();
+		ui::Size itemSize = item->getSize();
 
 		targetRect.bottom = targetRect.top + itemSize.cy;
-		placeCell(*i, targetRect);
+		placeCell(item, targetRect);
 
 		targetRect.top = targetRect.bottom;
 	}
+}
+
+void TargetListControl::eventButtonDown(ui::MouseButtonDownEvent* event)
+{
+	// Only allow selection with left mouse button.
+	if (event->getButton() != ui::MbtLeft)
+		return;
+
+	const ui::Point& position = event->getPosition();
+
+	TargetInstanceListItem* hitItem = dynamic_type_cast< TargetInstanceListItem* >(hitTest(position));
+	if (hitItem != nullptr)
+	{
+		for (auto item : m_items)
+			item->setSelected(item == hitItem);
+	}
+
+	ui::SelectionChangeEvent selectionChange(this);
+	raiseEvent(&selectionChange);
+	requestUpdate();
 }
 
 	}
