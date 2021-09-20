@@ -50,6 +50,8 @@ public:
 
 	explicit CommandLine(int argc, const char** argv);
 
+	explicit CommandLine(int argc, const wchar_t** argv);
+
 	explicit CommandLine(const std::wstring& file, const std::wstring& args);
 
 	const std::wstring& getFile() const;
@@ -83,6 +85,8 @@ private:
 	bool parse(const std::wstring& args);
 
 	void parse(int argc, const char** argv);
+
+	void parse(int argc, const wchar_t** argv);
 };
 
 }

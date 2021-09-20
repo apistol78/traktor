@@ -26,7 +26,7 @@ Connection::~Connection()
 {
 	if (m_thread)
 	{
-		ThreadPool::getInstance().join(m_thread);
+		ThreadPool::getInstance().stop(m_thread);
 		T_FATAL_ASSERT(m_finished);
 	}
 }

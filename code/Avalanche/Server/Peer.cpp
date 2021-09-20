@@ -18,7 +18,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name, Dictionary* dictionary)
 :	m_client(new Client(serverAddress))
 ,	m_dictionary(dictionary)
-,	m_cancel(false)
 ,	m_finished(false)
 {
 	ThreadPool::getInstance().spawn([=]()
@@ -28,7 +27,7 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name
 			m_dictionary->snapshotKeys(keys);
 			for (const auto& key : keys)
 			{
-				if (m_thread->stopped() || m_cancel)
+				if (m_thread->stopped())
 				{
 					m_finished = true;
 					return;
@@ -53,14 +52,14 @@ Peer::Peer(const net::SocketAddressIPv4& serverAddress, const std::wstring& name
 			log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
 
 			// Process queue of updated blobs.
-			while (!(m_thread->stopped() || m_cancel))
+			while (!m_thread->stopped())
 			{
 				AlignedVector< Key > queued;
 				{
 					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 					m_queue.swap(queued);
 				}
-				for (size_t i = 0; i < queued.size(); ++i)
+				for (size_t i = 0; i < queued.size() && !m_thread->stopped(); ++i)
 				{
 					const auto& key = queued[i];	
 					Ref< const Blob > blob = m_dictionary->get(key);
@@ -94,8 +93,7 @@ Peer::~Peer()
 	if (m_thread && !m_finished)
 	{
 		m_eventQueued.broadcast();
-		m_cancel = true;
-		ThreadPool::getInstance().join(m_thread);
+		ThreadPool::getInstance().stop(m_thread);
 		T_FATAL_ASSERT(m_finished);
 	}
 	m_dictionary->removeListener(this);
