@@ -56,7 +56,7 @@ bool SolutionBuilderXcode2::generate(Solution* solution)
 
 		log::info << L"Generating " << project->getName() << L"..." << Endl;
 
-		std::wstring projectPath = solution->getRootPath() + L"/wip/" + project->getName() + L".xcodeproj";
+		std::wstring projectPath = solution->getRootPath() + L"/" + project->getName() + L".xcodeproj";
 		if (!FileSystem::getInstance().makeAllDirectories(projectPath))
 		{
 			log::error << L"Unable to create project output directory \"" << projectPath << L"\"." << Endl;
@@ -95,7 +95,7 @@ bool SolutionBuilderXcode2::generate(Solution* solution)
 	}
 
 	{
-		std::wstring workspacePath = solution->getRootPath() + L"/wip/" + solution->getName() + L".xcworkspace";
+		std::wstring workspacePath = solution->getRootPath() + L"/" + solution->getName() + L".xcworkspace";
 		if (!FileSystem::getInstance().makeAllDirectories(workspacePath))
 		{
 			log::error << L"Unable to create project output directory \"" << workspacePath << L"\"." << Endl;
@@ -141,7 +141,7 @@ bool SolutionBuilderXcode2::generate(Solution* solution)
 		}
 	}
 
-	std::wstring schemePath = solution->getRootPath() + L"/wip/" + solution->getName() + L".xcworkspace/xcshareddata/xcschemes";
+	std::wstring schemePath = solution->getRootPath() + L"/" + solution->getName() + L".xcworkspace/xcshareddata/xcschemes";
 	if (!FileSystem::getInstance().makeAllDirectories(schemePath))
 	{
 		log::error << L"Unable to create project output directory \"" << schemePath << L"\"." << Endl;
