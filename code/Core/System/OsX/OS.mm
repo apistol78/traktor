@@ -286,11 +286,9 @@ Ref< IProcess > OS::execute(
 #if !defined(__IOS__)
 
 	posix_spawn_file_actions_t* fileActions = 0;
-	char cwd[512];
-	char* envv[256];
-	char* argv[256];
-	int envc = 0;
-	int argc = 0;
+	char cwd[4096];
+	AlignedVector< char* > envv;
+	AlignedVector< char* > argv;
 	int err;
 	pid_t pid;
 	int childStdOut[2] = { 0 };
@@ -317,12 +315,12 @@ Ref< IProcess > OS::execute(
 
 	// Start with bash if executing shell script.
 	if (endsWith(executable, L".sh"))
-		argv[argc++] = strdup("/bin/sh");
+		argv.push_back(strdup("/bin/sh"));
 
 	// Convert all arguments into utf-8.
-	argv[argc++] = strdup(wstombs(executable).c_str());
+	argv.push_back(strdup(wstombs(executable).c_str()));
 	for (auto it = resolvedArguments.begin() + 1; it != resolvedArguments.end(); ++it)
-		argv[argc++] = strdup(wstombs(*it).c_str());
+		argv.push_back(strdup(wstombs(*it).c_str()));
 
 	// Convert environment variables; don't pass "DYLIB_LIBRARY_PATH" along as we
 	// don't want child process searching our products by default.
@@ -331,7 +329,7 @@ Ref< IProcess > OS::execute(
 		for (auto it : env->get())
 		{
 			if (it.first != L"DYLD_LIBRARY_PATH")
-				envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
+				envv.push_back(strdup(wstombs(it.first + L"=" + it.second).c_str()));
 		}
 	}
 	else
@@ -340,13 +338,13 @@ Ref< IProcess > OS::execute(
 		for (auto it : env2->get())
 		{
 			if (it.first != L"DYLD_LIBRARY_PATH")
-				envv[envc++] = strdup(wstombs(it.first + L"=" + it.second).c_str());
+				envv.push_back(strdup(wstombs(it.first + L"=" + it.second).c_str()));
 		}
 	}
 
 	// Terminate argument and environment vectors.
-	envv[envc] = nullptr;
-	argv[argc] = nullptr;
+	envv.push_back(nullptr);
+	argv.push_back(nullptr);
 
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
@@ -363,7 +361,7 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
 
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
+		err = posix_spawn(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
 	}
 	else
 	{
@@ -372,15 +370,21 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, 0, argv, envv);
+		err = posix_spawn(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
 	}
 	
 	// Free arguments.
-	for (char** arg = argv; *arg != nullptr; ++arg)
-		free(*arg);
-	for (char** env = envv; *env != nullptr; ++env)
-		free(*env);
-
+	for (auto arg : argv)
+	{
+		if (arg)
+			free(arg);
+	}
+	for (auto env : envv)
+	{
+		if (env)
+			free(env);
+	}
+	
 	if (err != 0)
 	{
 		posix_spawn_file_actions_destroy(fileActions);
