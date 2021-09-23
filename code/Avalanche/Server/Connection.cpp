@@ -246,6 +246,17 @@ bool Connection::process()
 		}
 		break;
 
+	case c_commandStats:
+		{
+			Dictionary::Stats stats;
+			m_dictionary->getStats(stats);
+			if (clientStream.write(&stats.blobCount, sizeof(uint32_t)) != sizeof(uint32_t))
+				return false;
+			if (clientStream.write(&stats.memoryUsage, sizeof(uint64_t)) != sizeof(uint64_t))
+				return false;
+		}
+		break;
+
 	default:
 		if (cmd >= 0)
 			log::error << L"Invalid command from client; terminating connection." << Endl;

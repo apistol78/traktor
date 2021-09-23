@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
@@ -26,6 +27,12 @@ class T_DLLCLASS Dictionary : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Stats
+	{
+		uint32_t blobCount = 0;
+		uint64_t memoryUsage = 0;
+	};
+
 	struct IListener
 	{
 		virtual void dictionaryPut(const Key& key, const Blob* blob) = 0;
@@ -43,11 +50,14 @@ public:
 
 	void removeListener(IListener* listener);
 
+	bool getStats(Stats& outStats) const;
+
 private:
-	mutable Semaphore m_lockBlobs;
+	mutable ReaderWriterLock m_lockBlobs;
 	mutable Semaphore m_lockListeners;
 	SmallMap< Key, Ref< const Blob > > m_blobs;
 	AlignedVector< IListener* > m_listeners;
+	Stats m_stats;
 };
 
 	}

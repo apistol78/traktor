@@ -132,6 +132,26 @@ Ref< IStream > Client::put(const Key& key)
 	return new ClientPutStream(this, socket);
 }
 
+bool Client::stats(Dictionary::Stats& outStats)
+{
+	Ref< net::TcpSocket > socket = establish(c_commandStats);
+	if (!socket)
+		return nullptr;
+
+	net::SocketStream socketStream(socket, true, true);
+
+	if (socketStream.read(&outStats.blobCount, sizeof(uint32_t)) != sizeof(uint32_t))
+		return false;
+	if (socketStream.read(&outStats.memoryUsage, sizeof(uint64_t)) != sizeof(uint64_t))
+		return false;
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_sockets.push_back(socket);
+	}
+	return true;
+}
+
 Ref< net::TcpSocket > Client::establish(uint8_t command)
 {
 	for (;;)
