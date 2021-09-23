@@ -284,6 +284,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< bool >(L"Runtime.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< bool >(L"Runtime.StaticallyLinked", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_BUILD_VERBOSE", m_globalSettings->getProperty< bool >(L"Pipeline.Verbose", false) ? L"YES" : L"");
+	env->set(L"DEPLOY_BUILD_FORCE", m_force ? L"YES" : L"");
 
 	env->set(L"DEPLOY_ANDROID_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidHome", L"$(ANDROID_HOME)"), 0));
 	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));

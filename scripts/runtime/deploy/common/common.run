@@ -81,6 +81,9 @@ function commonBuild(args)
 	if os:getEnvironment("DEPLOY_BUILD_VERBOSE") == "YES" then
 		cmdline = cmdline .. " -verbose"
 	end
+	if os:getEnvironment("DEPLOY_BUILD_FORCE") == "YES" then
+		cmdline = cmdline .. " -force"
+	end
 	cmdline = cmdline .. " -log -progress -settings=Pipeline"
 	for i = 1, args.size - 1 do
 		cmdline = cmdline .. " " .. args:get(i)
