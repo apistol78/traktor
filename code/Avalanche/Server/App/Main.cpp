@@ -221,7 +221,7 @@ int main(int argc, const char** argv)
 
 	CommandLine cmdLine(argc, argv);
 
-	log::info << L"Traktor.Avalanche.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+	log::info << L"Traktor.Avalanche.Server.App " << avalanche::Server::c_majorVersion << L"." << avalanche::Server::c_minorVersion << L"; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	int32_t port = 40001;
 	if (cmdLine.hasOption('p', L"port"))

@@ -31,7 +31,7 @@ bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
 		m_blobs[key] = blob;
 		m_stats.blobCount++;
-		m_stats.memoryUsage = blob->size();
+		m_stats.memoryUsage += blob->size();
 	}
 
 	if (invokeListeners)

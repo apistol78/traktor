@@ -20,13 +20,6 @@ namespace traktor
 {
 	namespace avalanche
 	{
-		namespace
-		{
-
-const int32_t c_majorVersion = 2;
-const int32_t c_minorVersion = 0;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Server", Server, Object)
 
