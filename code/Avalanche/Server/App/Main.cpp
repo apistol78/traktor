@@ -208,6 +208,15 @@ bool uninstallService()
 
 #endif
 
+bool g_running = true;
+
+#if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
+void abortHandler(int s)
+{
+	g_running = false;
+}
+#endif
+
 int main(int argc, const char** argv)
 {
 #if defined(T_STATIC)
@@ -215,8 +224,17 @@ int main(int argc, const char** argv)
 #endif
 
 #if defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
-	struct sigaction sa = { SIG_IGN };
-	sigaction(SIGPIPE, &sa, nullptr);
+	{
+		struct sigaction sa = { SIG_IGN };
+		sigaction(SIGPIPE, &sa, nullptr);
+	}
+	{
+		struct sigaction sa;
+		sa.sa_handler = abortHandler;
+		sigemptyset(&sa.sa_mask);
+		sa.sa_flags = 0;
+		sigaction(SIGINT, &sa, nullptr);
+	}
 #endif
 
 	CommandLine cmdLine(argc, argv);
@@ -297,12 +315,14 @@ int main(int argc, const char** argv)
 	if (!server->create(settings))
 		return 1;
 
-	while (server->update())
+	while (g_running && server->update())
 		;
 
 	server->destroy();
 	server = nullptr;
 
 	net::Network::finalize();
+
+	log::info << L"Bye." << Endl;
 	return 0;
 }
