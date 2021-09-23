@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Avalanche/Key.h"
+#include "Avalanche/Dictionary.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -43,6 +43,8 @@ public:
 	Ref< IStream > get(const Key& key);
 
 	Ref< IStream > put(const Key& key);
+
+	bool stats(Dictionary::Stats& outStats);
 
 	const net::SocketAddressIPv4& getServerAddress() const { return m_serverAddress; }
 

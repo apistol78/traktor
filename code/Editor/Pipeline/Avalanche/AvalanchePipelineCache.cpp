@@ -4,6 +4,7 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -84,6 +85,9 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 
 void AvalanchePipelineCache::getInformation(OutputStream& os)
 {
+	avalanche::Dictionary::Stats stats;
+	m_client->stats(stats);
+
 	os << L"Avalanche cache (";
 	if (m_accessRead && !m_accessWrite)
 		os << L"read";
@@ -93,6 +97,7 @@ void AvalanchePipelineCache::getInformation(OutputStream& os)
 		os << L"read+write";
 	else
 		os << L"disabled";
+	os << L", " << stats.blobCount << L" blobs, " << formatByteSize(stats.memoryUsage);
 	if (m_accessRead)
 		os << L", " << m_hits << L" hits, " << m_misses << L" misses";
 	os << L")";

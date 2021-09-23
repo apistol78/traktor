@@ -23,7 +23,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_majorVersion = 1;
+const int32_t c_majorVersion = 2;
 const int32_t c_minorVersion = 0;
 
 		}

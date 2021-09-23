@@ -17,7 +17,7 @@ Ref< Blob > Dictionary::create() const
 
 Ref< const Blob > Dictionary::get(const Key& key) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
 	auto it = m_blobs.find(key);
 	if (it != m_blobs.end())
 		return it->second;
@@ -28,8 +28,10 @@ Ref< const Blob > Dictionary::get(const Key& key) const
 bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
 {
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
+		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
 		m_blobs[key] = blob;
+		m_stats.blobCount++;
+		m_stats.memoryUsage = blob->size();
 	}
 
 	if (invokeListeners)
@@ -44,7 +46,7 @@ bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
 
 void Dictionary::snapshotKeys(AlignedVector< Key >& outKeys) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBlobs);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
 	outKeys.reserve(m_blobs.size());
 	for (auto it : m_blobs)
 		outKeys.push_back(it.first);
@@ -61,6 +63,13 @@ void Dictionary::removeListener(IListener* listener)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 	auto it = std::find(m_listeners.begin(), m_listeners.end(), listener);
 	m_listeners.erase(it);
+}
+
+bool Dictionary::getStats(Stats& outStats) const
+{
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
+	outStats = m_stats;
+	return true;
 }
 
 	}
