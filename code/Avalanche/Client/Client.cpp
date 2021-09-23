@@ -136,7 +136,7 @@ bool Client::stats(Dictionary::Stats& outStats)
 {
 	Ref< net::TcpSocket > socket = establish(c_commandStats);
 	if (!socket)
-		return nullptr;
+		return false;
 
 	net::SocketStream socketStream(socket, true, true);
 
