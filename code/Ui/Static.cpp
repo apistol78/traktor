@@ -21,10 +21,12 @@ bool Static::create(Widget* parent, const std::wstring& text)
 	return true;
 }
 
-Size Static::getPreferedSize() const
+void Static::setText(const std::wstring& text)
 {
-	Size extent(0, 0);
+	Widget::setText(text);
 
+	// Calculate prefered size from new text.
+	Size extent(0, 0);
 	auto fontMetric = getFontMetric();
 	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
 	{
@@ -32,8 +34,12 @@ Size Static::getPreferedSize() const
 		extent.cx = std::max(sz.cx, extent.cx);
 		extent.cy += sz.cy;
 	}
+	m_preferedSize = extent + Size(dpi96(1), dpi96(1));
+}
 
-	return extent + Size(dpi96(1), dpi96(1));
+Size Static::getPreferedSize() const
+{
+	return m_preferedSize;
 }
 
 Size Static::getMaximumSize() const

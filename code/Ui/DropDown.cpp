@@ -31,12 +31,15 @@ bool DropDown::create(Widget* parent, int32_t style)
 	addEventHandler< MouseButtonDownEvent >(this, &DropDown::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &DropDown::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &DropDown::eventPaint);
+
+	updatePreferedSize();
 	return true;
 }
 
 int32_t DropDown::add(const std::wstring& item, Object* data)
 {
 	m_items.push_back({ item, data, false });
+	updatePreferedSize();
 	return (int32_t)m_items.size() - 1;
 }
 
@@ -47,12 +50,14 @@ bool DropDown::remove(int32_t index)
 
 	auto i = m_items.begin() + index;
 	m_items.erase(i);
+	updatePreferedSize();
 	return true;
 }
 
 void DropDown::removeAll()
 {
 	m_items.resize(0);
+	updatePreferedSize();
 }
 
 int32_t DropDown::count() const
@@ -63,6 +68,7 @@ int32_t DropDown::count() const
 void DropDown::setItem(int32_t index, const std::wstring& item)
 {
 	m_items[index].text = item;
+	updatePreferedSize();
 }
 
 void DropDown::setData(int32_t index, Object* data)
@@ -159,6 +165,17 @@ Object* DropDown::getSelectedData() const
 
 Size DropDown::getPreferedSize() const
 {
+	return m_preferedSize;
+}
+
+Size DropDown::getMaximumSize() const
+{
+	Size preferredSize = getPreferedSize();
+	return Size(65535, preferredSize.cy);
+}
+
+void DropDown::updatePreferedSize()
+{
 	const int32_t marginX = dpi96(16);
 	const int32_t marginY = dpi96(4);
 
@@ -172,13 +189,7 @@ Size DropDown::getPreferedSize() const
 		w = std::max(w, iw);
 	}
 
-	return Size(w + marginX * 2, h + marginY * 2);
-}
-
-Size DropDown::getMaximumSize() const
-{
-	Size preferredSize = getPreferedSize();
-	return Size(65535, preferredSize.cy);
+	m_preferedSize = Size(w + marginX * 2, h + marginY * 2);
 }
 
 void DropDown::eventMouseTrack(MouseTrackEvent* event)

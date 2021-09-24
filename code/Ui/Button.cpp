@@ -31,8 +31,11 @@ bool Button::create(Widget* parent, const std::wstring& text, int style)
 	return true;
 }
 
-Size Button::getPreferedSize() const
+void Button::setText(const std::wstring& text)
 {
+	Widget::setText(text);
+
+	// Calculate prefered size from new text.
 	const int32_t marginX = dpi96(16);
 	const int32_t marginY = dpi96(4);
 
@@ -40,7 +43,12 @@ Size Button::getPreferedSize() const
 	int32_t w = fm.getExtent(getText()).cx;
 	int32_t h = fm.getHeight();
 
-	return Size(w + marginX * 2, h + marginY * 2);
+	m_preferedSize = Size(w + marginX * 2, h + marginY * 2);
+}
+
+Size Button::getPreferedSize() const
+{
+	return m_preferedSize;
 }
 
 Size Button::getMaximumSize() const
