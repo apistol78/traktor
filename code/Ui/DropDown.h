@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -92,9 +91,12 @@ private:
 		bool selected;
 	};
 
-	std::vector< Item > m_items;
+	AlignedVector< Item > m_items;
+	Size m_preferedSize;
 	bool m_multiple;
 	bool m_hover;
+
+	void updatePreferedSize();
 
 	void eventMouseTrack(MouseTrackEvent* event);
 

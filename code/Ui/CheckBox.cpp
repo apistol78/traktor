@@ -47,14 +47,22 @@ bool CheckBox::isChecked() const
 	return m_checked;
 }
 
-Size CheckBox::getPreferedSize() const
+void CheckBox::setText(const std::wstring& text)
 {
+	Widget::setText(text);
+
+	// Calculate prefered size from new text.
 	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
 	const int32_t width = getFontMetric().getExtent(getText()).cx;
-	return Size(
+	m_preferedSize = Size(
 		width + m_imageUnchecked->getSize().cx + dpi96(4),
 		std::max(height, m_imageUnchecked->getSize().cy)
 	);
+}
+
+Size CheckBox::getPreferedSize() const
+{
+	return m_preferedSize;
 }
 
 void CheckBox::eventPaint(PaintEvent* event)

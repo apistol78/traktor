@@ -33,11 +33,14 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
 
+	virtual void setText(const std::wstring& text) override;
+
 	virtual Size getPreferedSize() const override;
 
 	virtual Size getMaximumSize() const override;
 
 private:
+	Size m_preferedSize;
 	bool m_pushed;
 	bool m_hover;
 

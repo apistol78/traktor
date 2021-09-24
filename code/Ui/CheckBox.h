@@ -31,9 +31,12 @@ public:
 
 	bool isChecked() const;
 
+	virtual void setText(const std::wstring& text) override;
+
 	virtual Size getPreferedSize() const override;
 
 private:
+	Size m_preferedSize;
 	Ref< IBitmap > m_imageUnchecked;
 	Ref< IBitmap > m_imageChecked;
 	bool m_checked;
