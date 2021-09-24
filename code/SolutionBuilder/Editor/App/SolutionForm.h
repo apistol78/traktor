@@ -83,6 +83,14 @@ private:
 
 	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
 
+	Solution* getSelectedSolution() const;
+
+	Project* getSelectedProject() const;
+
+	Configuration* getSelectedConfiguration() const;
+
+	Filter* getSelectedFilter() const;
+
 	bool loadSolution(const Path& fileName);
 
 	void commandNew();
@@ -92,6 +100,10 @@ private:
 	void commandSave(bool saveAs);
 
 	bool commandExit();
+
+	void commandCopy(bool cut);
+
+	void commandPaste();
 
 	void eventTimer(ui::TimerEvent*);
 

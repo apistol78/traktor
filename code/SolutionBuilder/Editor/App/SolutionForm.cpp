@@ -1,4 +1,3 @@
-#include <sstream>
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
@@ -10,6 +9,7 @@
 #include "Core/System/OS.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
@@ -24,7 +24,9 @@
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Filter.h"
 #include "SolutionBuilder/File.h"
 #include "SolutionBuilder/Editor/App/AggregationItemPropertyPage.h"
@@ -48,14 +50,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-struct ProjectSortPredicate
-{
-	bool operator () (const Project* p1, const Project* p2) const
-	{
-		return p1->getName().compare(p2->getName()) < 0;
-	}
-};
 
 Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
@@ -120,7 +114,10 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkO, ui::Command(L"File.Open"));
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkS, ui::Command(L"File.Save"));
 	m_shortcutTable->addCommand(ui::KsCommand | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
-	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"File.Exit"));
+	m_shortcutTable->addCommand(ui::KsCommand | ui::KsShift, ui::VkX, ui::Command(L"File.Exit"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"Edit.Cut"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkC, ui::Command(L"Edit.Copy"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkV, ui::Command(L"Edit.Paste"));
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &SolutionForm::eventShortcut);
 
 	m_menuBar = new ui::ToolBar();
@@ -138,6 +135,12 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.Exit"), L"Exit"));
 	m_menuBar->addItem(menuFile);
+
+	Ref< ui::ToolBarMenu > menuEdit = new ui::ToolBarMenu(L"Edit", L"");
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Edit.Cut"), L"Cut"));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Edit.Copy"), L"Copy"));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Edit.Paste"), L"Paste"));
+	m_menuBar->addItem(menuEdit);
 
 	Ref< ui::ToolBarMenu > menuTools = new ui::ToolBarMenu(L"Tools", L"");
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddAggregates"), L"Add aggregates..."));
@@ -268,17 +271,14 @@ void SolutionForm::hideAllPages()
 
 void SolutionForm::updateTitle()
 {
-	std::wstringstream ss;
-
+	StringOutputStream ss;
 	ss << SB_TITLE;
-
 	if (m_solution)
 	{
 		ss << L" - " << (m_solutionFileName.empty() ? L"[Unnamed]" : m_solutionFileName);
 		if (isModified())
 			ss << L"*";
 	}
-
 	setText(ss.str());
 }
 
@@ -294,11 +294,14 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setData(L"SOLUTION", m_solution);
 
 	RefArray< Project > projects = m_solution->getProjects();
-	projects.sort(ProjectSortPredicate());
+	projects.sort([](const Project* p1, const Project* p2) {
+		return p1->getName().compare(p2->getName()) < 0;
+	});
 	for (auto project : projects)
 		createTreeProjectItem(treeSolution, project);
 
 	m_treeSolution->applyState(treeState);
+	treeSolution->expand();
 }
 
 void SolutionForm::updateMRU()
@@ -325,6 +328,7 @@ bool SolutionForm::isModified() const
 ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project)
 {
 	Ref< ui::TreeViewItem > treeProject = m_treeSolution->createItem(parentItem, project->getName(), 1);
+	treeProject->setEditable(true);
 	treeProject->setImage(0, 1);
 	treeProject->setData(L"PRIMARY", project);
 	treeProject->setData(L"PROJECT", project);
@@ -354,6 +358,7 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration)
 {
 	Ref< ui::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 1);
+	treeConfiguration->setEditable(true);
 	treeConfiguration->setImage(0, 5);
 	treeConfiguration->setData(L"PRIMARY", configuration);
 	treeConfiguration->setData(L"PROJECT", project);
@@ -368,6 +373,7 @@ ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* pa
 ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentItem, Project* project, Filter* filter)
 {
 	Ref< ui::TreeViewItem > treeFilter = m_treeSolution->createItem(parentItem, filter->getName(), 1);
+	treeFilter->setEditable(true);
 	treeFilter->setImage(0, 2, 3);
 	treeFilter->setData(L"PRIMARY", filter);
 	treeFilter->setData(L"PROJECT", project);
@@ -390,6 +396,7 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem, Project* project, sb::File* file)
 {
 	Ref< ui::TreeViewItem > treeFile = m_treeSolution->createItem(parentItem, file->getFileName(), 1);
+	treeFile->setEditable(true);
 	treeFile->setImage(0, 4);
 	treeFile->setData(L"PRIMARY", file);
 	treeFile->setData(L"PROJECT", project);
@@ -400,11 +407,92 @@ ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem,
 ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item)
 {
 	Ref< ui::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 1);
+	treeItem->setEditable(false);
 	treeItem->setImage(0, 7);
 	treeItem->setData(L"PRIMARY", item);
 	treeItem->setData(L"PROJECT", project);
 	treeItem->setData(L"CONFIGURATION", configuration);
 	return treeItem;
+}
+
+Solution* SolutionForm::getSelectedSolution() const
+{
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return nullptr;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	while (selectedItem)
+	{
+		Solution* solution = selectedItem->getData< Solution >(L"PRIMARY");
+		if (solution)
+			return solution;
+
+		selectedItem = selectedItem->getParent();
+	}
+
+	return nullptr;
+}
+
+Project* SolutionForm::getSelectedProject() const
+{
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return nullptr;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	while (selectedItem)
+	{
+		Project* project = selectedItem->getData< Project >(L"PRIMARY");
+		if (project)
+			return project;
+
+		selectedItem = selectedItem->getParent();
+	}
+
+	return nullptr;
+}
+
+Configuration* SolutionForm::getSelectedConfiguration() const
+{
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return nullptr;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	while (selectedItem)
+	{
+		Configuration* configuration = selectedItem->getData< Configuration >(L"PRIMARY");
+		if (configuration)
+			return configuration;
+
+		selectedItem = selectedItem->getParent();
+	}
+
+	return nullptr;
+}
+
+Filter* SolutionForm::getSelectedFilter() const
+{
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return nullptr;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	while (selectedItem)
+	{
+		Filter* filter = selectedItem->getData< Filter >(L"PRIMARY");
+		if (filter)
+			return filter;
+
+		selectedItem = selectedItem->getParent();
+	}
+
+	return nullptr;
 }
 
 bool SolutionForm::loadSolution(const Path& fileName)
@@ -432,7 +520,7 @@ void SolutionForm::commandNew()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
 			return;
 	}
 
@@ -451,7 +539,7 @@ void SolutionForm::commandOpen()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
 			return;
 	}
 
@@ -516,7 +604,7 @@ bool SolutionForm::commandExit()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
 			return false;
 	}
 
@@ -532,6 +620,113 @@ bool SolutionForm::commandExit()
 
 	ui::Application::getInstance()->exit(0);
 	return true;
+}
+
+void SolutionForm::commandCopy(bool cut)
+{
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeSolution->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (selectedItems.size() != 1)
+		return;
+
+	Ref< ui::TreeViewItem > selectedItem = selectedItems.front();
+	if (!selectedItem)
+		return;
+
+	ISerializable* primary = selectedItem->getData< ISerializable >(L"PRIMARY");
+	if (!primary)
+		return;
+		
+	if (
+		is_a< Project >(primary) ||
+		is_a< Configuration >(primary) ||
+		is_a< Filter >(primary) ||
+		is_a< File >(primary) ||
+		is_a< AggregationItem >(primary)
+	)
+		ui::Application::getInstance()->getClipboard()->setObject(primary);
+}
+
+void SolutionForm::commandPaste()
+{
+	Ref< ISerializable > paste = ui::Application::getInstance()->getClipboard()->getObject();
+	if (!paste)
+		return;
+
+	if (auto pasteProject = dynamic_type_cast< Project* >(paste))
+	{
+		if (auto intoSolution = getSelectedSolution())
+		{
+			const auto& projects = intoSolution->getProjects();
+
+			// Ensure project doesn't already exist in solution.
+			auto it = std::find_if(projects.begin(), projects.end(), [&](const Project* p) {
+				return p->getName() == pasteProject->getName();
+			});
+			if (it != projects.end())
+			{
+				ui::MessageBox::show(this, L"Project " + pasteProject->getName() + L" already exists\nin solution.", L"Error", ui::MbIconExclamation | ui::MbOk);
+				return;
+			}
+
+			// Replace dependencies.
+			RefArray< Dependency > resolvedDependencies;
+			for (auto dependency : pasteProject->getDependencies())
+			{
+				if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
+				{
+					auto it = std::find_if(projects.begin(), projects.end(), [&](const Project* p) {
+						return p->getName() == projectDependency->getName();
+					});
+					if (it != projects.end())
+						resolvedDependencies.push_back(new ProjectDependency(*it));
+				}
+				else if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(dependency))
+				{
+					// Always add external dependencies.
+					resolvedDependencies.push_back(externalDependency);
+				}
+			}
+			pasteProject->setDependencies(resolvedDependencies);
+
+			// Finally add project to solution.
+			intoSolution->addProject(pasteProject);
+			updateSolutionTree();
+		}
+	}
+	else if (auto pasteConfiguration = dynamic_type_cast< Configuration* >(paste))
+	{
+		if (auto intoProject = getSelectedProject())
+		{
+			if (intoProject->getConfiguration(pasteConfiguration->getName()) == nullptr)
+			{
+				intoProject->addConfiguration(pasteConfiguration);
+				updateSolutionTree();
+			}
+		}
+	}
+	else if (auto pasteFilter = dynamic_type_cast< Filter* >(paste))
+	{
+		if (auto intoFilter = getSelectedFilter())
+			intoFilter->addItem(pasteFilter);
+		else if (auto intoProject = getSelectedProject())
+			intoProject->addItem(pasteFilter);
+		updateSolutionTree();
+	}
+	else if (auto pasteFile = dynamic_type_cast< File* >(paste))
+	{
+		if (auto intoFilter = getSelectedFilter())
+			intoFilter->addItem(pasteFile);
+		else if (auto intoProject = getSelectedProject())
+			intoProject->addItem(pasteFile);
+		updateSolutionTree();
+	}
+	else if (auto pasteAggregationItem = dynamic_type_cast< AggregationItem* >(paste))
+	{
+		if (auto intoConfiguration = getSelectedConfiguration())
+			intoConfiguration->addAggregationItem(pasteAggregationItem);
+		updateSolutionTree();
+	}
 }
 
 void SolutionForm::eventTimer(ui::TimerEvent*)
@@ -561,6 +756,12 @@ void SolutionForm::eventShortcut(ui::ShortcutEvent* event)
 		commandSave(true);
 	else if (command == L"File.Exit")
 		commandExit();
+	else if (command == L"Edit.Cut")
+		commandCopy(true);
+	else if (command == L"Edit.Copy")
+		commandCopy(false);
+	else if (command == L"Edit.Paste")
+		commandPaste();
 }
 
 void SolutionForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)
@@ -600,6 +801,12 @@ void SolutionForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (command == L"File.Exit")
 		commandExit();
+	else if (command == L"Edit.Cut")
+		commandCopy(true);
+	else if (command == L"Edit.Copy")
+		commandCopy(false);
+	else if (command == L"Edit.Paste")
+		commandPaste();
 	else if (command == L"Tools.AddAggregates")
 	{
 		AddAggregatesTool addAggregates;
