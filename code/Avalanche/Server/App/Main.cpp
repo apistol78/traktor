@@ -1,9 +1,22 @@
 #if defined(_WIN32)
 #	include <Windows.h>
 #elif defined(__LINUX__) || defined(__RPI__) || defined(__APPLE__)
+#	include <sys/types.h>
+#	include <sys/stat.h>
 #	include <signal.h>
+#	include <stdio.h>
+#	include <stdlib.h>
+#	include <fcntl.h>
+#	include <errno.h>
+#	include <unistd.h>
+#	include <syslog.h>
+#	include <string.h>
 #endif
 #include "Avalanche/Server/Server.h"
+#include "Core/Io/AnsiEncoding.h"
+#include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -253,6 +266,8 @@ int main(int argc, const char** argv)
 #if defined(_WIN32)
 		log::info << L"    -install-service   Install as NT service." << Endl;
 		log::info << L"    -uninstall-service Uninstall as NT service." << Endl;
+#elif defined(__LINUX__) || defined(__RPI__)
+		log::info << L"    -daemon            Launch as a daemon." << Endl;
 #endif
 		log::info << L"    -h, -help          Help" << Endl;
 		return 0;
@@ -289,7 +304,7 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 	}
-	if (cmdLine.hasOption(!"run-service"))
+	if (cmdLine.hasOption(L"run-service"))
 	{
 		SERVICE_TABLE_ENTRY serviceTable[] =
 		{
@@ -298,6 +313,40 @@ int main(int argc, const char** argv)
 		};
 		StartServiceCtrlDispatcher(serviceTable);
 		return 0;
+	}
+#elif defined(__LINUX__) || defined(__RPI__)
+	if (cmdLine.hasOption(L"daemon"))
+	{
+		pid_t pid = fork();
+		if (pid < 0)
+		{
+			log::error << L"Unable to fork into daemon." << Endl;
+			return 1;
+		}
+		if (pid > 0)
+		{
+			log::info << L"Daemon started succesfully (pid " << (int32_t)pid << L")." << Endl;
+			return 0;
+		}
+
+		umask(0);
+
+		pid_t sid = setsid();
+		if (sid < 0)
+			return 1;
+
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
+
+		// Write daemon pid to run file.
+		Ref< IStream > pf = FileSystem::getInstance().open(L"/var/run/Traktor.Avalanche.Server.App.pid", File::FmWrite);
+		if (pf)
+		{
+			FileOutputStream(pf, new AnsiEncoding()) << (uint32_t)sid << Endl;
+			pf->close();
+			pf = nullptr;
+		}
 	}
 #endif
 
