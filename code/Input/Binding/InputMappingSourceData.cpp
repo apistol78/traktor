@@ -1,6 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMappingSourceData.h"
 
@@ -13,26 +13,26 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingSourceData", 0, InputMap
 
 void InputMappingSourceData::setSourceData(const std::wstring& id, IInputSourceData* data)
 {
-	if (data != 0)
+	if (data != nullptr)
 		m_sourceData[id] = data;
 	else
-		m_sourceData.erase(id);
+		m_sourceData.remove(id);
 }
 
 IInputSourceData* InputMappingSourceData::getSourceData(const std::wstring& id)
 {
-	std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = m_sourceData.find(id);
-	return i != m_sourceData.end() ? i->second : 0;
+	auto it = m_sourceData.find(id);
+	return it != m_sourceData.end() ? it->second : nullptr;
 }
 
-const std::map< std::wstring, Ref< IInputSourceData > >& InputMappingSourceData::getSourceData() const
+const SmallMap< std::wstring, Ref< IInputSourceData > >& InputMappingSourceData::getSourceData() const
 {
 	return m_sourceData;
 }
 
 void InputMappingSourceData::serialize(ISerializer& s)
 {
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		std::wstring,
 		Ref< IInputSourceData >,
 		Member< std::wstring >,

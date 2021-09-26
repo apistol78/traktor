@@ -110,24 +110,22 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(
 
 		if (mergeInputAsset->getSourceData())
 		{
-			const std::map< std::wstring, Ref< IInputSourceData > >& sourceData = mergeInputAsset->getSourceData()->getSourceData();
-			for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator j = sourceData.begin(); j != sourceData.end(); ++j)
+			for (const auto& it : mergeInputAsset->getSourceData()->getSourceData())
 			{
 				mergedSourceData->setSourceData(
-					j->first,
-					j->second
+					it.first,
+					it.second
 				);
 			}
 		}
 
 		if (mergeInputAsset->getStateData())
 		{
-			const std::map< std::wstring, Ref< InputStateData > >& stateData = mergeInputAsset->getStateData()->getStateData();
-			for (std::map< std::wstring, Ref< InputStateData > >::const_iterator j = stateData.begin(); j != stateData.end(); ++j)
+			for (const auto& it : mergeInputAsset->getStateData()->getStateData())
 			{
 				mergedStateData->setStateData(
-					j->first,
-					j->second
+					it.first,
+					it.second
 				);
 			}
 		}
@@ -136,24 +134,22 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(
 	// Finally merge asset's own input definitions.
 	if (inputAsset->getSourceData())
 	{
-		const std::map< std::wstring, Ref< IInputSourceData > >& sourceData = inputAsset->getSourceData()->getSourceData();
-		for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator j = sourceData.begin(); j != sourceData.end(); ++j)
+		for (const auto& it : inputAsset->getSourceData()->getSourceData())
 		{
 			mergedSourceData->setSourceData(
-				j->first,
-				j->second
+				it.first,
+				it.second
 			);
 		}
 	}
 
 	if (inputAsset->getStateData())
 	{
-		const std::map< std::wstring, Ref< InputStateData > >& stateData = inputAsset->getStateData()->getStateData();
-		for (std::map< std::wstring, Ref< InputStateData > >::const_iterator j = stateData.begin(); j != stateData.end(); ++j)
+		for (const auto& it : inputAsset->getStateData()->getStateData())
 		{
 			mergedStateData->setStateData(
-				j->first,
-				j->second
+				it.first,
+				it.second
 			);
 		}
 	}
