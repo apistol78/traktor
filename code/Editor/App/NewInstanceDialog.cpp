@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -47,11 +48,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, u
 
 NewInstanceDialog::NewInstanceDialog(PropertyGroup* settings)
 :	m_settings(settings)
-,	m_type(0)
+,	m_type(nullptr)
 {
 }
 
-bool NewInstanceDialog::create(ui::Widget* parent)
+bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGroup)
 {
 	TypeInfoSet types;
 	type_of< ISerializable >().findAllOf(types);
@@ -108,11 +109,10 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 1);
 	groupRoot->setImage(0, 0, 1);
 
-	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
-	{
-		const TypeInfo* type = *i;
-		T_ASSERT(type);
+	Ref< ui::TreeViewItem > selectGroup;
 
+	for (auto type : types)
+	{
 		if (!type->isEditable())
 			continue;
 
@@ -120,19 +120,33 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 		if (!Split< std::wstring >::any(type->getName(), L".", parts))
 			continue;
 
-		std::wstring className = parts.back(); parts.pop_back();
+		std::wstring className = parts.back();
+		parts.pop_back();
 
 		Ref< ui::TreeViewItem > group = groupRoot;
-		for (std::vector< std::wstring >::iterator j = parts.begin(); j != parts.end(); ++j)
+		for (auto part : parts)
 		{
-			Ref< ui::TreeViewItem > child = group->findChild(*j);
+			Ref< ui::TreeViewItem > child = group->findChild(part);
 			if (!child)
 			{
-				child = m_categoryTree->createItem(group, *j, 1);
+				child = m_categoryTree->createItem(group, part, 1);
 				child->setImage(0, 0, 1);
 				child->expand();
 			}
 			group = child;
+		}
+
+		if (!initialGroup.empty())
+		{
+			StringOutputStream ss;
+			for (size_t i = 0; i < parts.size(); ++i)
+			{
+				if (i > 0)
+					ss << L".";
+				ss << parts[i];
+			}
+			if (initialGroup == ss.str())
+				selectGroup = group;
 		}
 
 		Ref< ui::PreviewItems > items = group->getData< ui::PreviewItems >(L"ITEMS");
@@ -170,6 +184,13 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	if (state)
 		m_categoryTree->applyState(state);
 
+	// Select initial group if found.
+	if (selectGroup)
+	{
+		selectGroup->select();
+		selectGroup->show();
+	}
+
 	updatePreviewList();
 	return true;
 }
@@ -198,7 +219,6 @@ const std::wstring& NewInstanceDialog::getInstanceName() const
 void NewInstanceDialog::updatePreviewList()
 {
 	RefArray< ui::TreeViewItem > items;
-
 	m_categoryTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (!items.empty())
 	{
@@ -206,7 +226,7 @@ void NewInstanceDialog::updatePreviewList()
 		m_typeList->setItems(previewItems);
 	}
 	else
-		m_typeList->setItems(0);
+		m_typeList->setItems(nullptr);
 }
 
 void NewInstanceDialog::eventDialogClick(ui::ButtonClickEvent* event)
@@ -219,7 +239,7 @@ void NewInstanceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	if (typeInfoWrapper)
 		m_type = &typeInfoWrapper->m_typeInfo;
 	else
-		m_type = 0;
+		m_type = nullptr;
 
 	m_instanceName = m_editInstanceName->getText();
 }

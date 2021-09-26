@@ -3,203 +3,221 @@
 	<map>
 		<item>
 			<first>TRAKTOR_AI_NAVMESHASSET</first>
-			<second>AI navigation meshes</second>
+			<second>AI navigation mesh</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RUNTIME_FEATURE</first>
-			<second>Target features</second>
-		</item>
-		<item>
-			<first>TRAKTOR_RUNTIME_GAMEENTITYDATA</first>
-			<second>Game entities</second>
+			<second>Target feature</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RUNTIME_PLATFORM</first>
-			<second>Target platforms</second>
+			<second>Target platform</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RUNTIME_STAGEDATA</first>
-			<second>Stages</second>
+			<second>Stage</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RUNTIME_TARGET</first>
-			<second>Targets</second>
+			<second>Target</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
-			<second>Animated mesh entities</second>
+			<second>Animated mesh entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_ANIMATION</first>
-			<second>Animations</second>
+			<second>Animation</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_ANIMATIONASSET</first>
-			<second>Animation assets</second>
+			<second>Animation asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_SKELETON</first>
-			<second>Animation skeletons</second>
+			<second>Animation skeleton</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_SKELETONASSET</first>
-			<second>Skeleton assets</second>
+			<second>Skeleton asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_STATEGRAPH</first>
-			<second>Animation state graphs</second>
+			<second>Animation state graph</second>
 		</item>
 		<item>
 			<first>TRAKTOR_EDITOR_ASSETS</first>
-			<second>Assets</second>
+			<second>Asset</second>
 		</item>
 		<item>
-			<first>TRAKTOR_FLASH_FLASHMOVIEASSET</first>
-			<second>Flash assets</second>
+			<first>TRAKTOR_SPARK_MOVIEASSET</first>
+			<second>Flash asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_HF_HEIGHTFIELDASSET</first>
-			<second>Heightfield assets</second>
+			<second>Heightfield asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_HF_MATERIALMASKASSET</first>
-			<second>Heightfield material masks</second>
+			<second>Heightfield material mask</second>
 		</item>
 		<item>
 			<first>TRAKTOR_HF_OCCLUSIONTEXTUREASSET</first>
-			<second>Heightfield occlusion textures</second>
+			<second>Heightfield occlusion texture</second>
 		</item>
 		<item>
 			<first>TRAKTOR_I18N_DICTIONARY</first>
-			<second>Language dictionaries</second>
+			<second>Language dictionary</second>
 		</item>
 		<item>
 			<first>TRAKTOR_INPUT_INPUTMAPPINGASSET</first>
-			<second>Input assets</second>
+			<second>Input asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_LODMESHENTITYDATA</first>
-			<second>LOD mesh entities</second>
+			<second>LOD mesh entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_MESHASSET</first>
-			<second>Mesh assets</second>
+			<second>Mesh asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_MESHENTITYDATA</first>
-			<second>Mesh entities</second>
+			<second>Mesh entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ONLINE_GCGAMECONFIGURATION</first>
-			<second>GameCenter provider</second>
+			<second>GameCenter game configuration</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ONLINE_LOCALGAMECONFIGURATION</first>
-			<second>Local provider</second>
+			<second>Local game configuration</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ONLINE_STEAMGAMECONFIGURATION</first>
-			<second>Steam game configurations</second>
+			<second>Steam game configuration</second>
 		</item>
 		<item>
 			<first>TRAKTOR_PHYSICS_MESHASSET</first>
-			<second>Physics meshes</second>
+			<second>Physics mesh</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_BFNTEXTUREASSET</first>
-			<second>BFN texture assets</second>
+			<second>BFN texture asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_SHADERGRAPH</first>
-			<second>Shaders</second>
+			<second>Shader</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_TEXTUREASSET</first>
-			<second>Texture assets</second>
+			<second>Texture asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
-			<second>Resource bundles</second>
+			<second>Resource bundle</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SCENE_SCENEASSET</first>
-			<second>Scenes</second>
+			<second>Scene</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SCENE_SCENEPERMUTATIONASSET</first>
-			<second>Scene permutations</second>
+			<second>Scene permutation</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SCRIPT_SCRIPT</first>
-			<second>Scripts</second>
+			<second>Script</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_BANKASSET</first>
-			<second>Sound banks</second>
+			<second>Sound bank</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_SOUNDASSET</first>
-			<second>Sound assets</second>
+			<second>Sound asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_SOUNDCATEGORY</first>
-			<second>Sound categories</second>
+			<second>Sound category</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SPRAY_EFFECTDATA</first>
-			<second>Effects</second>
+			<second>Effect</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
-			<second>Effect entities</second>
+			<second>Effect entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SPRAY_POINTSETASSET</first>
-			<second>Effect pointset assets</second>
+			<second>Effect point set asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_TERRAIN_TERRAINASSET</first>
-			<second>Terrain assets</second>
+			<second>Terrain asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_VIDEO_VIDEOASSET</first>
-			<second>Video assets</second>
+			<second>Video asset</second>
 		</item>
 		<item>
 			<first>TRAKTOR_WEATHER_SKYENTITYDATA</first>
-			<second>Sky entities</second>
+			<second>Sky entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_WORLD_ENTITYDATA</first>
-			<second>Entities</second>
-		</item>
-		<item>
-			<first>TRAKTOR_WORLD_GROUPENTITYDATA</first>
-			<second>Group entities</second>
+			<second>Entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MODEL_MATERIAL</first>
-			<second>Materials</second>
+			<second>Model material</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SPRAY_SPAWNEFFECTEVENTDATA</first>
-			<second>Effect spawns</second>
+			<second>Effect spawn</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_SONGASSET</first>
-			<second>Songs</second>
+			<second>Song</second>
 		</item>
 		<item>
 			<first>TRAKTOR_UIKIT_WIDGETSCAFFOLDING</first>
-			<second>UI scaffoldings</second>
+			<second>UI scaffolding</second>
 		</item>
 		<item>
 			<first>TRAKTOR_PHYSICS_COLLISIONSPECIFICATION</first>
-			<second>Collision specifications</second>
+			<second>Collision specification</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_TEXTURESET</first>
-			<second>Texture sets</second>
+			<second>Texture set</second>
 		</item>
+		<item>
+			<first>TRAKTOR_SOUND_GRAPHASSET</first>
+			<second>Sound graph</second>
+		</item>
+		<item>
+			<first>TRAKTOR_SHAPE_BAKECONFIGURATION</first>
+			<second>Lightmap bake configuration</second>
+		</item>
+		<item>
+			<first>TRAKTOR_RENDER_IMAGEGRAPHASSET</first>
+			<second>Image graph</second>
+		</item>
+		<item>
+			<first>TRAKTOR_PHYSICS_MATERIAL</first>
+			<second>Physics material</second>
+		</item>
+		<item>
+			<first>TRAKTOR_WORLD_IRRADIANCEGRIDASSET</first>
+			<second>Irradiance grid</second>
+		</item>
+<!--
+		<item>
+			<first>TRAKTOR_</first>
+			<second></second>
+		</item>
+-->
 	</map>
 </object>

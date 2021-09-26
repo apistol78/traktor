@@ -25,9 +25,9 @@ class NewInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	NewInstanceDialog(PropertyGroup* settings);
+	explicit NewInstanceDialog(PropertyGroup* settings);
 
-	bool create(ui::Widget* parent);
+	bool create(ui::Widget* parent, const std::wstring& initialGroup);
 
 	virtual void destroy() override final;
 
