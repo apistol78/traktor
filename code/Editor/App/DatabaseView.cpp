@@ -940,10 +940,43 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	{
 		if (command == L"Editor.Database.NewInstance")	// New instance...
 		{
-			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
-			newInstanceDlg.create(this);
+			// Count number of individual type groups to determine initial folder selected.
+			std::map< std::wstring, int32_t > groupNames;
 
-			if (newInstanceDlg.showModal() == ui::DrOk && newInstanceDlg.getType() != 0)
+			RefArray< db::Instance > childInstances;
+			group->getChildInstances(childInstances);
+
+			for (auto childInstance : childInstances)
+			{
+				const TypeInfo* type = childInstance->getPrimaryType();
+				if (type)
+				{
+					std::wstring typeName = type->getName();
+					size_t ln = typeName.find_last_of(L'.');
+					if (ln > 0 && ln != typeName.npos)
+					{
+						std::wstring groupName = typeName.substr(0, ln);
+						groupNames[groupName]++;
+					}
+				}
+			}
+
+			std::vector< std::pair< std::wstring, int32_t > > tmp;
+			tmp.insert(tmp.begin(), groupNames.begin(), groupNames.end());
+
+			std::sort(tmp.begin(), tmp.end(), [](
+				const std::pair< std::wstring, int32_t >& lh,
+				const std::pair< std::wstring, int32_t >& rh
+			) {
+				return lh.second > rh.second;
+			});
+
+			std::wstring initialGroupHint = !tmp.empty() ? tmp.front().first : L"";
+
+			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
+			newInstanceDlg.create(this, initialGroupHint);
+
+			if (newInstanceDlg.showModal() == ui::DrOk && newInstanceDlg.getType() != nullptr)
 			{
 				const TypeInfo* type = newInstanceDlg.getType();
 
@@ -1329,7 +1362,7 @@ void DatabaseView::updateGridInstances()
 		Ref< ui::GridRow > row = new ui::GridRow();
 		row->add(new ui::GridItem(L""));
 		row->add(new ui::GridItem(childInstance->getName()));
-		row->add(new ui::GridItem(primaryType->getName()));
+		row->add(new ui::GridItem(getCategoryText(primaryType)));
 		row->setData(L"INSTANCE", childInstance);
 		m_gridInstances->addRow(row);
 	}
