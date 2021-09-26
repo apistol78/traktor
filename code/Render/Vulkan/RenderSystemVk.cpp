@@ -314,9 +314,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	s16.pNext = &f16;
 #endif
 
-    if (vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice) != VK_SUCCESS)
+    if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create logical device." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create logical device (" << getHumanResult(result) << L")." << Endl;
 		return false;
 	}
 
