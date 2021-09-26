@@ -213,6 +213,10 @@
 			<first>TRAKTOR_WORLD_IRRADIANCEGRIDASSET</first>
 			<second>Irradiance grid</second>
 		</item>
+		<item>
+			<first>TRAKTOR_INPUT_RUMBLEEFFECT</first>
+			<second>Rumble effect</second>
+		</item>		
 <!--
 		<item>
 			<first>TRAKTOR_</first>
