@@ -236,6 +236,49 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.GridHeader</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>63, 63, 70, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridItem</typeName>
+			<colors>
+				<item>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridRow</typeName>
+			<colors>
+				<item>
+					<first>background-color-hover</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>57, 135, 214, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>70, 70, 74, 255</second>
+				</item>
+				<item>
+					<first>line-color-selected</first>
+					<second>38, 79, 120, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.GridView</typeName>
 			<colors>
 				<item>
@@ -467,16 +510,8 @@
 					<second>40, 40, 40, 255</second>
 				</item>
 				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
-				</item>
-				<item>
-					<first>item-color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
 					<first>line-color</first>
-					<second>40, 40, 40, 255</second>
+					<second>60, 60, 62, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -754,45 +789,19 @@
 			</colors>
 		</item>
 		<item>
-			<typeName>traktor.ui.GridHeader</typeName>
+			<typeName>traktor.ui.PropertyItem</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>63, 63, 70, 255</second>
-				</item>
-				<item>
-					<first>line-color</first>
-					<second>120, 120, 120, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridItem</typeName>
-			<colors>
-				<item>
-					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridRow</typeName>
-			<colors>
-				<item>
-					<first>background-color-hover</first>
-					<second>70, 70, 74, 255</second>
+					<second>37, 37, 38, 255</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>57, 135, 214, 255</second>
+					<second>0, 122, 204, 255</second>
 				</item>
 				<item>
-					<first>line-color</first>
-					<second>70, 70, 74, 255</second>
-				</item>
-				<item>
-					<first>line-color-selected</first>
-					<second>38, 79, 120, 255</second>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
 		</item>
