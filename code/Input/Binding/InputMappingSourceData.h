@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -32,12 +32,12 @@ public:
 
 	IInputSourceData* getSourceData(const std::wstring& id);
 
-	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
+	const SmallMap< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::map< std::wstring, Ref< IInputSourceData > > m_sourceData;
+	SmallMap< std::wstring, Ref< IInputSourceData > > m_sourceData;
 };
 
 	}

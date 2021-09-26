@@ -215,9 +215,8 @@ bool InputMappingEditor::create(ui::Container* parent)
 	InputMappingSourceData* sourceData = m_mappingAsset->getSourceData();
 	if (sourceData)
 	{
-		const std::map< std::wstring, Ref< IInputSourceData > >& sd = sourceData->getSourceData();
-		for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
-			m_listValueSources->add(i->first, i->second);
+		for (const auto& it : sourceData->getSourceData())
+			m_listValueSources->add(it.first, it.second);
 	}
 
 	// Build popup menu.
@@ -348,27 +347,26 @@ void InputMappingEditor::updateGraphView()
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
 	T_ASSERT(stateData);
 
-	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
-	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
+	for (const auto& it : stateData->getStateData())
 	{
-		InputMappingAsset::Position p = m_mappingAsset->getPosition(i->second);
+		InputMappingAsset::Position p = m_mappingAsset->getPosition(it.second);
 
 		Ref< ui::Node > node = m_graph->createNode(
 			L"State",
-			i->first,
+			it.first,
 			ui::Point(p.x, p.y),
 			new ui::OutputNodeShape()
 		);
-		node->setData(L"NAME", new PropertyString(i->first));
-		node->setData(L"DATA", i->second);
+		node->setData(L"NAME", new PropertyString(it.first));
+		node->setData(L"DATA", it.second);
 		Ref< ui::Pin > inputPin = node->createInputPin(L"Input", false);
 
 		// Create edge to input node.
-		if (i->second->getSource() != 0)
+		if (it.second->getSource() != nullptr)
 		{
 			for (auto node : m_graph->getNodes())
 			{
-				if (node->getData< IInputNode >(L"DATA") == i->second->getSource())
+				if (node->getData< IInputNode >(L"DATA") == it.second->getSource())
 				{
 					m_graph->addEdge(new ui::Edge(
 						node->findOutputPin(L"Value"),
@@ -515,7 +513,7 @@ void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 	if (event->getIndex() < 0)	// Add item.
 	{
 		// Ensure name doesn't clash with existing.
-		const std::map< std::wstring, Ref< IInputSourceData > >& sd = sourceData->getSourceData();
+		const auto& sd = sourceData->getSourceData();
 		if (sd.find(event->getText()) != sd.end())
 			return;
 
@@ -534,19 +532,19 @@ void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 	else if (event->getText().empty())	// Remove item.
 	{
 		std::wstring id = m_listValueSources->getItem(event->getIndex());
-		sourceData->setSourceData(id, 0);
+		sourceData->setSourceData(id, nullptr);
 		event->consume();
 	}
 	else	// Rename item.
 	{
 		// Ensure name doesn't clash with existing.
-		const std::map< std::wstring, Ref< IInputSourceData > >& sd = sourceData->getSourceData();
+		const auto& sd = sourceData->getSourceData();
 		if (sd.find(event->getText()) != sd.end())
 			return;
 
 		std::wstring fromId = m_listValueSources->getItem(event->getIndex());
 		Ref< IInputSourceData > inputSourceData = sourceData->getSourceData(fromId);
-		sourceData->setSourceData(fromId, 0);
+		sourceData->setSourceData(fromId, nullptr);
 		sourceData->setSourceData(event->getText(), inputSourceData);
 		event->consume();
 	}

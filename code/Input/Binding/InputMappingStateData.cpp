@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputStateData.h"
 
@@ -17,17 +17,17 @@ void InputMappingStateData::setStateData(const std::wstring& id, InputStateData*
 	if (data)
 		m_stateData[id] = data;
 	else
-		m_stateData.erase(id);
+		m_stateData.remove(id);
 }
 
-const std::map< std::wstring, Ref< InputStateData > >& InputMappingStateData::getStateData() const
+const SmallMap< std::wstring, Ref< InputStateData > >& InputMappingStateData::getStateData() const
 {
 	return m_stateData;
 }
 
 void InputMappingStateData::serialize(ISerializer& s)
 {
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		std::wstring,
 		Ref< InputStateData >,
 		Member< std::wstring >,

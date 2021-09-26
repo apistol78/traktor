@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -31,12 +31,12 @@ class T_DLLCLASS InputMappingStateData : public ISerializable
 public:
 	void setStateData(const std::wstring& id, InputStateData* data);
 
-	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
+	const SmallMap< std::wstring, Ref< InputStateData > >& getStateData() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::map< std::wstring, Ref< InputStateData > > m_stateData;
+	SmallMap< std::wstring, Ref< InputStateData > > m_stateData;
 };
 
 	}

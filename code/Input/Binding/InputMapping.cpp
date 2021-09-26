@@ -34,36 +34,34 @@ bool InputMapping::create(
 	m_sources.clear();
 	m_states.clear();
 
-	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
-	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
+	for (const auto& it : sourceData->getSourceData())
 	{
-		if (!i->second)
+		if (!it.second)
 			continue;
 
-		Ref< IInputSource > source = i->second->createInstance(m_deviceControlManager);
+		Ref< IInputSource > source = it.second->createInstance(m_deviceControlManager);
 		if (!source)
 		{
-			log::error << L"Unable to create source instance \"" << i->first << L"\"" << Endl;
+			log::error << L"Unable to create source instance \"" << it.first << L"\"." << Endl;
 			return false;
 		}
 
-		m_sources[getParameterHandle(i->first)] = source;
+		m_sources[getParameterHandle(it.first)] = source;
 	}
 
-	const std::map< std::wstring, Ref< InputStateData > >& stateDataMap = stateData->getStateData();
-	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = stateDataMap.begin(); i != stateDataMap.end(); ++i)
+	for (const auto& it : stateData->getStateData())
 	{
-		if (!i->second)
+		if (!it.second)
 			continue;
 
 		Ref< InputState > state = new InputState();
-		if (!state->create(i->second))
+		if (!state->create(it.second))
 		{
-			log::error << L"Unable to create state \"" << i->first << L"\"" << Endl;
+			log::error << L"Unable to create state \"" << it.first << L"\"." << Endl;
 			return false;
 		}
 
-		m_states[getParameterHandle(i->first)] = state;
+		m_states[getParameterHandle(it.first)] = state;
 	}
 
 	return true;
@@ -79,32 +77,32 @@ void InputMapping::update(float dT, bool inputEnable)
 		m_deviceControlManager->update();
 
 		// Update value set with state's current values.
-		for (SmallMap< handle_t, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
+		for (auto& it : m_states)
 		{
-			float value = i->second->getValue();
-			m_valueSet.set(i->first, value);
+			float value = it.second->getValue();
+			m_valueSet.set(it.first, value);
 		}
 
 		// Prepare all sources for a new state.
-		for (SmallMap< handle_t, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-			i->second->prepare(m_T, dT);
+		for (auto& it : m_sources)
+			it.second->prepare(m_T, dT);
 
 		// Input value set by updating all sources.
-		for (SmallMap< handle_t, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+		for (auto& it : m_sources)
 		{
-			float value = i->second->read(m_T, dT);
+			float value = it.second->read(m_T, dT);
 
 			// Reset idle timer when value change.
-			float currentValue = m_valueSet.get(i->first);
+			float currentValue = m_valueSet.get(it.first);
 			if (std::abs(currentValue - value) > FUZZY_EPSILON)
 				m_idleTimer = 0.0f;
 
-			m_valueSet.set(i->first, value);
+			m_valueSet.set(it.first, value);
 		}
 
 		// Update states.
-		for (SmallMap< handle_t, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
-			i->second->update(m_valueSet, m_T, dT);
+		for (auto& it : m_states)
+			it.second->update(m_valueSet, m_T, dT);
 
 		m_T += dT;
 	}
@@ -112,8 +110,8 @@ void InputMapping::update(float dT, bool inputEnable)
 
 void InputMapping::reset()
 {
-	for (SmallMap< handle_t, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
-		i->second->reset();
+	for (auto& it : m_states)
+		it.second->reset();
 }
 
 void InputMapping::reset(handle_t id)
@@ -135,8 +133,8 @@ float InputMapping::getValue(handle_t id) const
 
 IInputSource* InputMapping::getSource(handle_t id) const
 {
-	SmallMap< handle_t, Ref< IInputSource > >::const_iterator i = m_sources.find(id);
-	return i != m_sources.end() ? i->second : 0;
+	auto it = m_sources.find(id);
+	return it != m_sources.end() ? it->second : nullptr;
 }
 
 const SmallMap< handle_t, Ref< IInputSource > >& InputMapping::getSources() const
@@ -146,8 +144,8 @@ const SmallMap< handle_t, Ref< IInputSource > >& InputMapping::getSources() cons
 
 InputState* InputMapping::getState(handle_t id) const
 {
-	SmallMap< handle_t, Ref< InputState > >::const_iterator i = m_states.find(id);
-	return i != m_states.end() ? i->second : 0;
+	auto it = m_states.find(id);
+	return it != m_states.end() ? it->second : nullptr;
 }
 
 const SmallMap< handle_t, Ref< InputState > >& InputMapping::getStates() const
