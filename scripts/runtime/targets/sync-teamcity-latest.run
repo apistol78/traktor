@@ -118,15 +118,26 @@ function main(argv)
 
 			-- Move existing target folder, this allows us to replace Windows binaries even
 			-- if target is running locally.
-			if not fileSystem:move(
-				Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. ".old"),
-				Path(binPath),
-				true
-			) then
-				stderr:printLn("Unable to move old build.")
-				return 1
+			if os.identifier == "windows" then
+				if not fileSystem:move(
+					Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. ".old"),
+					Path(binPath),
+					true
+				) then
+					stderr:printLn("Unable to move old build.")
+					return 1
+				end
+			else
+				if not fileSystem:move(
+					Path(Path(binPath).pathOnlyNoVolume .. "/" .. Path(binPath).fileName .. ".old"),
+					Path(binPath),
+					true
+				) then
+					stderr:printLn("Unable to move old build.")
+					return 1
+				end
 			end
-
+			
 			-- Extract artifact.
 			stdout:printLn("Extracting...")
 			local zf = fileSystem:open(tmpFile, File.FmRead)
