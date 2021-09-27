@@ -145,9 +145,9 @@ public:
 		if (!instanceType)
 			return false;
 
-		for (TypeInfoSet::const_iterator i = m_typeSet.begin(); i != m_typeSet.end(); ++i)
+		for (auto type : m_typeSet)
 		{
-			if (is_type_of(**i, *instanceType))
+			if (is_type_of(*type, *instanceType))
 				return true;
 		}
 
@@ -381,6 +381,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_gridInstances->addColumn(new ui::GridColumn(L"", ui::dpi96(20)));
 	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(140)));
 	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(140)));
+	m_gridInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_gridInstances->addEventHandler< ui::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
 	m_gridInstances->setVisible(false);
 
@@ -520,17 +521,15 @@ void DatabaseView::setDatabase(db::Database* db)
 
 	// Ensure database views is cleaned.
 	m_treeDatabase->removeAllItems();
-	m_treeState = nullptr;
-
 	updateView();
 }
 
 void DatabaseView::updateView()
 {
-	bool shouldApplyState = bool(m_treeState != nullptr);
+	const int32_t viewMode = m_toolViewMode->getSelected();
 
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
-	m_treeState = m_treeState ? m_treeState->merge(treeState) : treeState;
+	Ref< ui::HierarchicalState > gridState = m_gridInstances->captureState();
 
 	m_treeDatabase->removeAllItems();
 	m_gridInstances->removeAllRows();
@@ -546,8 +545,6 @@ void DatabaseView::updateView()
 
 		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< AlignedVector< std::wstring > >(L"Editor.FavoriteInstances"))
 			m_favoriteInstances.insert(Guid(favoriteInstance));
-
-		int32_t viewMode = m_toolViewMode->getSelected();
 
 		if (viewMode == 0)	// Hierarchy
 			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
@@ -616,7 +613,6 @@ void DatabaseView::updateView()
 		{
 			m_gridInstances->setVisible(true);
 			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
-			updateGridInstances();
 		}
 
 		setEnable(true);
@@ -624,11 +620,13 @@ void DatabaseView::updateView()
 	else
 		setEnable(false);
 
-	if (shouldApplyState)
-		m_treeDatabase->applyState(m_treeState);
+	m_treeDatabase->applyState(treeState);
+	m_gridInstances->applyState(gridState);
+
+	if (viewMode == 2)
+		updateGridInstances();
 
 	m_splitter->update();
-
 	updateTreeColors();
 }
 
@@ -650,15 +648,34 @@ bool DatabaseView::highlight(const db::Instance* instance)
 
 bool DatabaseView::handleCommand(const ui::Command& command)
 {
-	RefArray< ui::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
-		return false;
+	ui::TreeViewItem* treeItem = nullptr;
 
-	Ref< ui::TreeViewItem > treeItem = items.front();
-	T_ASSERT(treeItem);
+	Ref< db::Group > group;
+	Ref< db::Instance > instance;
 
-	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
-	Ref< db::Instance > instance = treeItem->getData< db::Instance >(L"INSTANCE");
+	const int32_t viewMode = m_toolViewMode->getSelected();
+	if (viewMode == 0)	// Hierarchy
+	{	
+		RefArray< ui::TreeViewItem > items;
+		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+			return false;
+
+		treeItem = items.front();
+		group = treeItem->getData< db::Group >(L"GROUP");
+		instance = treeItem->getData< db::Instance >(L"INSTANCE");
+	}
+	else if (viewMode == 2)	// Split
+	{
+		RefArray< ui::TreeViewItem > items;
+		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+			return false;
+
+		group = items.front()->getData< db::Group >(L"GROUP");
+
+		auto selectedItem = m_gridInstances->getSelectedRow();
+		if (selectedItem)
+			instance = selectedItem->getData< db::Instance >(L"INSTANCE");
+	}
 
 	if (group && instance)
 	{
@@ -700,12 +717,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				{
 					instance->setObject(data);
 					if (instance->commit())
-					{
-						// Type might have changed; ensure icon is updated.
-						int32_t iconIndex = getIconIndex(type);
-						treeItem->setImage(1, iconIndex);
-						m_treeDatabase->update();
-					}
+						updateView();
 					else
 						log::error << L"Unable to commit instance." << Endl;
 				}
@@ -717,7 +729,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.Rename")	// Rename
 		{
-			treeItem->edit();
+			if (treeItem)
+				treeItem->edit();
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
@@ -733,8 +746,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (!instance->commit())
 				return false;
 
-			m_treeDatabase->removeItem(treeItem);
-			m_treeDatabase->update();
+			updateView();
 		}
 		else if (command == L"Editor.Database.Clone")	// Clone
 		{
@@ -767,14 +779,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), 2);
-			treeCloneItem->setImage(0, -1);
-			treeCloneItem->setImage(1, treeItem->getImage(1), treeItem->getExpandedImage(1));
-			treeCloneItem->setEditable(true);
-			treeCloneItem->setData(L"GROUP", group);
-			treeCloneItem->setData(L"INSTANCE", instanceClone);
-
-			m_treeDatabase->update();
+			updateView();
 		}
 		else if (command == L"Editor.Database.DefaultEditInstance")	// Default edit instance
 		{
@@ -991,18 +996,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				{
 					instance->setObject(data);
 					if (instance->commit())
-					{
-						int32_t iconIndex = getIconIndex(type);
-
-						Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, 2);
-						instanceItem->setImage(0, -1);
-						instanceItem->setImage(1, iconIndex);
-						instanceItem->setEditable(true);
-						instanceItem->setData(L"GROUP", group);
-						instanceItem->setData(L"INSTANCE", instance);
-
-						m_treeDatabase->update();
-					}
+						updateView();
 				}
 			}
 
@@ -1012,22 +1006,12 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
 			if (newGroup)
-			{
-				Ref< ui::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 1);
-				groupItem->setImage(0, 0, 1);
-				groupItem->setEditable(true);
-				groupItem->setData(L"GROUP", newGroup);
-
-				m_treeDatabase->update();
-
-				// Enter edit mode directly as user probably don't want to call
-				// the group "Unnamed".
-				groupItem->edit();
-			}
+				updateView();
 		}
 		else if (command == L"Editor.Database.Rename")	// Rename
 		{
-			treeItem->edit();
+			if (treeItem)
+				treeItem->edit();
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
@@ -1037,8 +1021,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (!group->remove())
 				return false;
 
-			m_treeDatabase->removeItem(treeItem);
-			m_treeDatabase->update();
+			updateView();
 		}
 		else if (command == L"Editor.Paste")	// Paste instance into group
 		{
@@ -1084,17 +1067,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					return false;
 				}
 
-				int32_t iconIndex = getIconIndex(&type_of(pasteInstance.object));
-
-				Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, 2);
-				treeCloneItem->setImage(0, -1);
-				treeCloneItem->setImage(1, iconIndex);
-				treeCloneItem->setEditable(true);
-				treeCloneItem->setData(L"GROUP", group);
-				treeCloneItem->setData(L"INSTANCE", instanceCopy);
+				updateView();
 			}
-
-			m_treeDatabase->update();
 		}
 		else if (command == L"Editor.Database.FavoriteEntireGroup" || command == L"Editor.Database.UnFavoriteEntireGroup")
 		{
@@ -1363,6 +1337,7 @@ void DatabaseView::updateGridInstances()
 		row->add(new ui::GridItem(L""));
 		row->add(new ui::GridItem(childInstance->getName()));
 		row->add(new ui::GridItem(getCategoryText(primaryType)));
+		row->setData(L"GROUP", childInstance->getParent());
 		row->setData(L"INSTANCE", childInstance);
 		m_gridInstances->addRow(row);
 	}
@@ -1592,33 +1567,48 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+	ui::Associative* selectedItem = nullptr;
+	if (event->getSender() == m_treeDatabase)
+	{
+		RefArray< ui::TreeViewItem > items;
+		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
+			return;
+		selectedItem = items.front();
+	}
+	else if (event->getSender() == m_gridInstances)
+	{
+		selectedItem = m_gridInstances->getSelectedRow();
+	}
+	else
 		return;
 
-	ui::TreeViewItem* treeItem = items.front();
-	T_ASSERT(treeItem);
+	T_ASSERT(selectedItem);
 
-	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
-	Ref< db::Instance > instance = treeItem->getData< db::Instance >(L"INSTANCE");
+	Ref< db::Group > group = selectedItem->getData< db::Group >(L"GROUP");
+	Ref< db::Instance > instance = selectedItem->getData< db::Instance >(L"INSTANCE");
 
 	if (group && instance)
 	{
 		Ref< ui::Menu > menuInstance;
-
 		if (is_type_of< Asset >(*instance->getPrimaryType()))
 			menuInstance = m_menuInstanceAsset;
 		else
 			menuInstance = m_menuInstance;
 
-		const ui::MenuItem* selected = menuInstance->showModal(m_treeDatabase, event->getPosition());
+		const ui::MenuItem* selected = menuInstance->showModal(
+			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
+			event->getPosition()
+		);
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
 	else if (group)
 	{
 		bool showFavorites = m_toolFavoritesShow->isToggled();
-		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(m_treeDatabase, event->getPosition());
+		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
+			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
+			event->getPosition()
+		);
 		if (selected)
 			handleCommand(selected->getCommand());
 	}

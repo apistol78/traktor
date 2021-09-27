@@ -22,6 +22,7 @@ class GridItem;
 class GridColumn;
 class GridHeader;
 class GridRow;
+class HierarchicalState;
 
 /*! Grid view control.
  * \ingroup UI
@@ -89,6 +90,10 @@ public:
 	void deselectAll();
 
 	void setMultiSelect(bool multiSelect);
+
+	Ref< HierarchicalState > captureState() const;
+
+	void applyState(const HierarchicalState* state);
 
 private:
 	friend class GridItem;
