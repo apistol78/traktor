@@ -116,6 +116,17 @@ function main(argv)
 			StreamCopy(tf, sf):execute()
 			tf:close()
 
+			-- Move existing target folder, this allows us to replace Windows binaries even
+			-- if target is running locally.
+			if not fileSystem:move(
+				Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. ".old"),
+				Path(binPath),
+				true
+			) then
+				stderr:printLn("Unable to move old build.")
+				return 1
+			end
+
 			-- Extract artifact.
 			stdout:printLn("Extracting...")
 			local zf = fileSystem:open(tmpFile, File.FmRead)
