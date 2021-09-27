@@ -11,6 +11,7 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/HierarchicalState.h"
 
 namespace traktor
 {
@@ -77,6 +78,16 @@ int32_t indexOf(const RefArray< GridRow >& rows, const GridRow* row)
 		return int32_t(std::distance(rows.begin(), i));
 	else
 		return -1;
+}
+
+std::wstring getRowPath(GridRow* row)
+{
+	if (row->get().empty())
+		return L"";
+	if (row->getParent() != nullptr)
+		return getRowPath(row->getParent()) + L"/" + row->get(0)->getText();
+	else
+		return row->get(0)->getText();
 }
 
 		}
@@ -258,6 +269,36 @@ void GridView::deselectAll()
 void GridView::setMultiSelect(bool multiSelect)
 {
 	m_multiSelect = multiSelect;
+}
+
+Ref< HierarchicalState > GridView::captureState() const
+{
+	Ref< HierarchicalState > state = new HierarchicalState();
+	RefArray< GridRow > rows;
+	getRows(rows, GfDescendants);
+	for (auto row : rows)
+	{
+		state->addState(
+			getRowPath(row),
+			(row->getState() & GridRow::RsExpanded) != 0,
+			(row->getState() & GridRow::RsSelected) != 0
+		);
+	}
+	return state;
+}
+
+void GridView::applyState(const HierarchicalState* state)
+{
+	RefArray< GridRow > rows;
+	getRows(rows, GfDescendants);
+	for (auto row : rows)
+	{
+		std::wstring path = getRowPath(row);
+		row->setState(
+			(state->getExpanded(path) ? GridRow::RsExpanded : 0) |
+			(state->getSelected(path) ? GridRow::RsSelected : 0)
+		);
+	}
 }
 
 void GridView::layoutCells(const Rect& rc)

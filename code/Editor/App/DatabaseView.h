@@ -89,7 +89,6 @@ private:
 	Ref< ui::Splitter > m_splitter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::GridView > m_gridInstances;
-	Ref< ui::HierarchicalState > m_treeState;
 	Ref< ui::Menu > m_menuGroup[2];
 	Ref< ui::Menu > m_menuInstance;
 	Ref< ui::Menu > m_menuInstanceAsset;
