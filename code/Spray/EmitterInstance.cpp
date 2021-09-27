@@ -339,7 +339,7 @@ void EmitterInstance::updateTask(float deltaTime)
 	)
 	{
 		std::sort(m_renderPoints.begin(), m_renderPoints.end(), [=](const Point& lh, const Point& rh) {
-			return (bool)(m_sortPlane.distance(lh.position) < m_sortPlane.distance(rh.position));
+			return (bool)(m_sortPlane.distance(lh.position) > m_sortPlane.distance(rh.position));
 		});
 	}
 
