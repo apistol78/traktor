@@ -31,6 +31,12 @@ bool AvalanchePipelineCache::create(const PropertyGroup* settings)
 	m_accessWrite = settings->getProperty< bool >(L"Pipeline.FileCache.Write", true);
 
 	m_client = new avalanche::Client(net::SocketAddressIPv4(host, port));
+	if (!m_client->ping())
+	{
+		safeDestroy(m_client);
+		return false;
+	}
+
 	return true;
 }
 
