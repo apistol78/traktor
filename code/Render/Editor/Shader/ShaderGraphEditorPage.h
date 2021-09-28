@@ -55,6 +55,7 @@ class External;
 class INodeFacade;
 class Node;
 class QuickMenuTool;
+class Script;
 class ShaderDependencyPane;
 class ShaderGraph;
 class ShaderViewer;
@@ -76,6 +77,8 @@ public:
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
+	void editScript(Script* script);
+
 	void createEditorGraph();
 
 private:
@@ -88,7 +91,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolRenderer;
 	Ref< ui::ToolBarDropDown > m_toolTechniques;
 	Ref< ui::GraphControl > m_editorGraph;
-	Ref< ui::SyntaxRichEdit > m_scriptEdit;
+	Ref< ui::SyntaxRichEdit > m_scriptEditor;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::Container > m_variablesContainer;
@@ -96,6 +99,7 @@ private:
 	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
+	Ref< Script > m_script;
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
 
@@ -112,6 +116,8 @@ private:
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventDoubleClick(ui::MouseDoubleClickEvent* event);
 
 	void eventSelect(ui::SelectEvent* event);
 

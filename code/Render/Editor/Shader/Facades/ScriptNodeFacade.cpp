@@ -3,7 +3,6 @@
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
-#include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/DefaultNodeShape.h"
@@ -14,79 +13,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-class ScriptNodeInstanceData : public Object
-{
-	T_RTTI_CLASS;
-
-public:
-	ScriptNodeInstanceData(
-		editor::IEditor* editor,
-		ShaderGraphEditorPage* page,
-		ui::GraphControl* graphControl,
-		ShaderGraph* shaderGraph,
-		Script* scriptNode
-	)
-	:	m_editor(editor)
-	,	m_page(page)
-	,	m_graphControl(graphControl)
-	,	m_shaderGraph(shaderGraph)
-	,	m_scriptNode(scriptNode)
-	{
-	}
-
-	void edit()
-	{
-		if (m_dialog)
-		{
-			m_dialog->show();
-			return;
-		}
-
-		m_dialog = new ScriptNodeDialog(m_editor, m_scriptNode);
-		m_dialog->create(m_graphControl);
-		m_dialog->show();
-
-		m_dialog->addEventHandler< ui::ButtonClickEvent >(this, &ScriptNodeInstanceData::eventClick);
-		m_dialog->addEventHandler< ui::CloseEvent >(this, &ScriptNodeInstanceData::eventCloseDialog);
-	}
-
-private:
-	editor::IEditor* m_editor;
-	ShaderGraphEditorPage* m_page;
-	ui::GraphControl* m_graphControl;
-	ShaderGraph* m_shaderGraph;
-	Script* m_scriptNode;
-	Ref< ScriptNodeDialog > m_dialog;
-
-	void eventClick(ui::ButtonClickEvent* event)
-	{
-		const ui::Command& command = event->getCommand();
-		if (command.getId() == ui::DrOk || command.getId() == ui::DrApply)
-		{
-			// Apply changes to script node.
-			bool needCompleteRebuild = false;
-			m_dialog->apply(m_shaderGraph, m_scriptNode, needCompleteRebuild);
-
-			// Call back to page to ensure entire editor graph is rebuilt.
-			if (needCompleteRebuild)
-				m_page->createEditorGraph();
-		}
-		if (command.getId() == ui::DrOk || command.getId() == ui::DrCancel)
-			safeDestroy(m_dialog);
-	}
-
-	void eventCloseDialog(ui::CloseEvent* event)
-	{
-		safeDestroy(m_dialog);
-	}
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeInstanceData", ScriptNodeInstanceData, Object)
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeFacade", ScriptNodeFacade, INodeFacade)
 
@@ -151,8 +77,6 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(scriptNode->getComment());
-	editorNode->setData(L"INSTANCE", new ScriptNodeInstanceData(editor, m_page, graphControl, shaderGraph, scriptNode));
-
 	return editorNode;
 }
 
@@ -164,10 +88,9 @@ void ScriptNodeFacade::editShaderNode(
 	Node* shaderNode
 )
 {
-	ScriptNodeInstanceData* instanceData = editorNode->getData< ScriptNodeInstanceData >(L"INSTANCE");
-	T_ASSERT(instanceData);
-
-	instanceData->edit();
+	m_page->editScript(
+		mandatory_non_null_type_cast< Script* >(shaderNode)
+	);
 }
 
 void ScriptNodeFacade::refreshEditorNode(
