@@ -21,7 +21,7 @@ class ScriptNodeFacade : public INodeFacade
 	T_RTTI_CLASS;
 
 public:
-	ScriptNodeFacade(ShaderGraphEditorPage* page);
+	explicit ScriptNodeFacade(ShaderGraphEditorPage* page);
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,
