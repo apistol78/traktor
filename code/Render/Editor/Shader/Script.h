@@ -1,9 +1,7 @@
 #pragma once
 
-#include <map>
 #include <vector>
 #include "Render/Editor/Node.h"
-#include "Render/Editor/Shader/TypedInputPin.h"
 #include "Render/Editor/Shader/TypedOutputPin.h"
 
 // import/export mechanism.
@@ -42,7 +40,7 @@ public:
 
 	const std::wstring& getScript() const;
 
-	const InputPin* addInputPin(const Guid& id, const std::wstring& name, ParameterType type);
+	const InputPin* addInputPin(const Guid& id, const std::wstring& name);
 
 	const OutputPin* addOutputPin(const Guid& id, const std::wstring& name, ParameterType type);
 
@@ -54,10 +52,6 @@ public:
 
 	void removeAllOutputPins();
 
-	ParameterType getInputPinType(int index) const;
-
-	std::wstring getInputPinSamplerId(int index) const;
-
 	ParameterType getOutputPinType(int index) const;
 
 	virtual int getInputPinCount() const override final;
@@ -68,15 +62,12 @@ public:
 
 	virtual const OutputPin* getOutputPin(int index) const override final;
 
-	const std::map< std::wstring, SamplerState >& getSamplers() const;
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
-	std::vector< TypedInputPin* > m_inputPins;
+	std::vector< InputPin* > m_inputPins;
 	std::vector< TypedOutputPin* > m_outputPins;
-	std::map< std::wstring, SamplerState > m_samplers;
 	std::wstring m_script;
 };
 

@@ -100,7 +100,7 @@
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{96DAC79C-073F-0C48-9BC0-C2478A79E114}</id>
 			<comment/>
 			<position>
@@ -108,6 +108,7 @@
 				<second>88</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EBFE9622-E726-5A49-8877-455D7C7A3934}</id>

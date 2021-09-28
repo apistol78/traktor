@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{168D6590-EA07-D547-A692-8EFF7350C7C0}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,7 @@
 				<second>191</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{835313B6-72C4-1F48-94AE-B1F186772A56}</id>
@@ -490,7 +491,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{25098B3A-6C90-2A4C-93AF-3005EB94261D}</id>
 			<comment/>
 			<position>
@@ -502,14 +503,10 @@
 				<item>
 					<id>{9D79F225-1C98-9D48-A68B-A22EC5F7E303}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Index</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -519,7 +516,6 @@
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

@@ -332,7 +332,7 @@
 				<second>-955</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
@@ -344,14 +344,10 @@
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
 					<name>I</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>N</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -361,7 +357,6 @@
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 float RadicalInverse_VdC(uint bits) 
@@ -443,7 +438,7 @@ ENTRY
 			<name>L_N</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
@@ -455,20 +450,14 @@ ENTRY
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
 					<name>Xi</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>N</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Roughness</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -478,7 +467,6 @@ ENTRY
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 const float PI = 3.14159265359;
@@ -772,7 +760,7 @@ V
 			<name>L_SampleCount</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{C40E3CAF-E9D7-AA49-BAA2-E9674921BBED}</id>
 			<comment/>
 			<position>
@@ -784,14 +772,10 @@ V
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
 					<name>I</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>N</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -801,7 +785,6 @@ V
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 float RadicalInverse_VdC(uint bits) 
@@ -826,7 +809,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{20A0B7BE-ACB5-9C4B-A412-BAF9436B71AA}</id>
 			<comment/>
 			<position>
@@ -838,20 +821,14 @@ ENTRY
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
 					<name>Xi</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>N</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Roughness</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -861,7 +838,6 @@ ENTRY
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 const float PI = 3.14159265359;

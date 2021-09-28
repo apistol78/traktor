@@ -81,7 +81,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{26655A59-4118-4B4F-9A1A-D4E1856B17BD}</id>
 			<comment/>
 			<position>
@@ -89,6 +89,7 @@
 				<second>243</second>
 			</position>
 			<technique>Default</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 	</nodes>
 	<edges>

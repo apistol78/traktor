@@ -52,7 +52,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{262E7F3E-FEEF-4F49-A849-5F0FB23F410C}</id>
 			<comment/>
 			<position>
@@ -60,6 +60,7 @@
 				<second>-58</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C4C3BACB-A683-B14B-B7FF-8F98A921F3E0}</id>
@@ -119,7 +120,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -131,20 +132,14 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>LineStart</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>LineEnd</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -154,7 +149,6 @@
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

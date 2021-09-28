@@ -149,7 +149,6 @@
 			<comment>
 			<![CDATA[
 Setup global variables required by material shaders.
-
 			]]>
 			</comment>
 			<position>

@@ -1,5 +1,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "I18N/Text.h"
+#include "Render/Editor/InputPin.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
@@ -29,7 +30,7 @@ Ref< Node > ScriptNodeFacade::createShaderNode(
 {
 	Ref< Script > sc = new Script();
 	sc->setName(L"Unnamed");
-	sc->addInputPin(Guid::create(), L"Input", PtScalar);
+	sc->addInputPin(Guid::create(), L"Input");
 	sc->addOutputPin(Guid::create(), L"Output", PtScalar);
 	sc->setScript(
 		L"ENTRY\n"

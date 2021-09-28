@@ -71,7 +71,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{02ABC34A-FAA4-B049-AEEF-CA0790E14D57}</id>
 			<comment/>
 			<position>
@@ -79,6 +79,7 @@
 				<second>416</second>
 			</position>
 			<technique>World_DepthWrite</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{5035E4C1-5676-8F41-80AA-ACA3CC43C029}</id>

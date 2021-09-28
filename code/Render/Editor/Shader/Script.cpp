@@ -6,6 +6,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Render/Editor/InputPin.h"
 #include "Render/Editor/Shader/Script.h"
 
 namespace traktor
@@ -33,12 +34,12 @@ private:
 	std::wstring m_name;
 };
 
-class MemberTypedInputPin : public MemberComplex
+class MemberInputPin : public MemberComplex
 {
 public:
-	typedef TypedInputPin* value_type;
+	typedef InputPin* value_type;
 
-	MemberTypedInputPin(const wchar_t* const name, Node* node, value_type& pin)
+	MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_node(node)
 	,	m_pin(pin)
@@ -63,50 +64,47 @@ public:
 		{
 			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
-			ParameterType type = m_pin->getType();
-			std::wstring samplerId = m_pin->getSamplerId();
 
 			if (s.getVersion() >= 1)
 				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
-			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
-			s >> Member< std::wstring >(L"samplerId", samplerId);
 		}
 		else	// Direction::Read
 		{
 			Guid id;
 			std::wstring name = L"";
-			ParameterType type;
-			std::wstring samplerId = L"";
 
 			if (s.getVersion() >= 1)
 				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
-			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
-			s >> Member< std::wstring >(L"samplerId", samplerId);
+
+			if (s.getVersion() < 2)
+			{
+				ParameterType type;
+				std::wstring samplerId = L"";
+
+				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+				s >> Member< std::wstring >(L"samplerId", samplerId);
+			}
 
 			if (m_pin)
 			{
-				*m_pin = TypedInputPin(
+				*m_pin = InputPin(
 					m_node,
 					id,
 					name,
-					false,
-					type,
-					samplerId
+					false
 				);
 			}
 			else
 			{
-				m_pin = new TypedInputPin(
+				m_pin = new InputPin(
 					m_node,
 					id,
 					name,
-					false,
-					type,
-					samplerId
+					false
 				);
 			}
 		}
@@ -302,7 +300,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 1, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 2, Script, Node)
 
 Script::~Script()
 {
@@ -332,9 +330,9 @@ const std::wstring& Script::getScript() const
 	return m_script;
 }
 
-const InputPin* Script::addInputPin(const Guid& id, const std::wstring& name, ParameterType type)
+const InputPin* Script::addInputPin(const Guid& id, const std::wstring& name)
 {
-	TypedInputPin* inputPin = new TypedInputPin(this, id, name, false, type);
+	InputPin* inputPin = new InputPin(this, id, name, false);
 	m_inputPins.push_back(inputPin);
 	return inputPin;
 }
@@ -348,11 +346,11 @@ const OutputPin* Script::addOutputPin(const Guid& id, const std::wstring& name, 
 
 void Script::removeInputPin(const std::wstring& name)
 {
-	std::vector< TypedInputPin* >::iterator i = std::find_if(m_inputPins.begin(), m_inputPins.end(), NamedPinPredicate< TypedInputPin >(name));
-	if (i != m_inputPins.end())
+	auto it = std::find_if(m_inputPins.begin(), m_inputPins.end(), NamedPinPredicate< InputPin >(name));
+	if (it != m_inputPins.end())
 	{
-		delete *i;
-		m_inputPins.erase(i);
+		delete *it;
+		m_inputPins.erase(it);
 	}
 }
 
@@ -372,24 +370,12 @@ void Script::removeAllOutputPins()
 
 void Script::removeOutputPin(const std::wstring& name)
 {
-	std::vector< TypedOutputPin* >::iterator i = std::find_if(m_outputPins.begin(), m_outputPins.end(), NamedPinPredicate< TypedOutputPin >(name));
-	if (i != m_outputPins.end())
+	auto it = std::find_if(m_outputPins.begin(), m_outputPins.end(), NamedPinPredicate< TypedOutputPin >(name));
+	if (it != m_outputPins.end())
 	{
-		delete *i;
-		m_outputPins.erase(i);
+		delete *it;
+		m_outputPins.erase(it);
 	}
-}
-
-ParameterType Script::getInputPinType(int index) const
-{
-	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
-	return m_inputPins[index]->getType();
-}
-
-std::wstring Script::getInputPinSamplerId(int index) const
-{
-	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
-	return m_inputPins[index]->getSamplerId();
 }
 
 ParameterType Script::getOutputPinType(int index) const
@@ -420,24 +406,25 @@ const OutputPin* Script::getOutputPin(int index) const
 	return m_outputPins[index];
 }
 
-const std::map< std::wstring, SamplerState >& Script::getSamplers() const
-{
-	return m_samplers;
-}
-
 void Script::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", this, m_inputPins);
+	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", this, m_outputPins);
-	s >> MemberStlMap<
-		std::wstring,
-		SamplerState,
-		Member< std::wstring >,
-		MemberSamplerState
-	>(L"samplers", m_samplers);
+
+	if (s.getVersion() < 2)
+	{
+		std::map< std::wstring, SamplerState > samplers;
+		s >> MemberStlMap<
+			std::wstring,
+			SamplerState,
+			Member< std::wstring >,
+			MemberSamplerState
+		>(L"samplers", samplers);
+	}
+
 	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine() | AttributePrivate());
 }
 
