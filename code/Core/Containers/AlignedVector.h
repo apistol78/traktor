@@ -938,9 +938,19 @@ public:
 		// Initialize grown item.
 		Constructor::construct(m_data[size]);
 
-		// Move items to make room for item to be inserted.
-		for (size_t i = size; i > offset; --i)
-			swap(i, i - 1);
+		// Move items to make room for item to be inserted,
+		// swap non-trivial items since they may contain expensive
+		// cleanup (allocation etc).
+		if (std::is_trivial< ItemType >::value)
+		{
+			for (size_t i = size; i > offset; --i)
+				move(i, i - 1);
+		}
+		else
+		{
+			for (size_t i = size; i > offset; --i)
+				swap(i, i - 1);
+		}
 
 		// Copy insert item into location.
 		Constructor::destroy(m_data[offset]);
