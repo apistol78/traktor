@@ -418,22 +418,22 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 
 			ui::Rect bounds(0, 0, 0, 0);
-			for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+			for (auto node : selectedNodes)
 			{
-				Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
+				Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
 				T_ASSERT(shaderNode);
 				data->addNode(shaderNode);
 
-				if (i != selectedNodes.begin())
+				if (node != selectedNodes.front())
 				{
-					ui::Rect rc = (*i)->calculateRect();
+					ui::Rect rc = node->calculateRect();
 					bounds.left = std::min(bounds.left, rc.left);
 					bounds.top = std::min(bounds.top, rc.top);
 					bounds.right = std::max(bounds.right, rc.right);
 					bounds.bottom = std::max(bounds.bottom, rc.bottom);
 				}
 				else
-					bounds = (*i)->calculateRect();
+					bounds = node->calculateRect();
 			}
 
 			data->setBounds(bounds);
@@ -467,6 +467,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				{
 					m_shaderGraph->removeNode(selectedNode->getData< Node >(L"SHADERNODE"));
 					m_editorGraph->removeNode(selectedNode);
+
+					// Ensure script editor is hidden if script node is being cut.
+					if (selectedNode->getData< Node >(L"SHADERNODE") == m_script)
+						editScript(nullptr);
 				}
 			}
 		}
@@ -546,6 +550,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
 			m_editorGraph->removeNode(node);
 			m_shaderGraph->removeNode(shaderNode);
+
+			// Ensure script editor is hidden if script node is being deleted.
+			if (shaderNode == m_script)
+				editScript(nullptr);
 		}
 
 		updateGraph();
