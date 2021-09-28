@@ -10,7 +10,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{C6BADCE6-CFC4-594C-B6AD-C4DE071C26AC}</id>
 			<comment/>
 			<position>
@@ -26,7 +26,6 @@
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

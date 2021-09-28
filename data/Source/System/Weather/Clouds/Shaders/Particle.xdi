@@ -40,7 +40,7 @@
 				<second>-240</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{84815E21-983D-414A-BEC7-45638AFD13EC}</id>
 			<comment/>
 			<position>
@@ -48,6 +48,7 @@
 				<second>-244</second>
 			</position>
 			<technique>Opacity</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B1B71D89-E82E-1545-9670-CA828AE2752A}</id>
@@ -391,7 +392,7 @@ Particle gradient
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{CABAF013-6C68-9844-9441-18EA51B5140C}</id>
 			<comment/>
 			<position>
@@ -399,6 +400,7 @@ Particle gradient
 				<second>-188</second>
 			</position>
 			<technique>Default</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D5804558-EBDF-0C42-88ED-38E415281A76}</id>

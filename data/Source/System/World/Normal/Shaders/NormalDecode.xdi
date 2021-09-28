@@ -23,7 +23,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{880BE04D-3BC5-2240-9487-0172694A8A3F}</id>
 			<comment/>
 			<position>
@@ -35,8 +35,6 @@
 				<item>
 					<id>{DA9ACBD6-F7FA-A94E-8899-6FA792C62441}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -46,7 +44,6 @@
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY
@@ -61,7 +58,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{6F506D66-9BDF-4A4E-BCBC-A5072E00DF98}</id>
 			<comment/>
 			<position>
@@ -73,8 +70,6 @@ ENTRY
 				<item>
 					<id>{DA9ACBD6-F7FA-A94E-8899-6FA792C62441}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -84,7 +79,6 @@ ENTRY
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY
@@ -96,7 +90,6 @@ ENTRY
 	n.xy += (n.xy >= float2(0.0f, 0.0f)) ? tt : -tt;
 	Output = float4(normalize(n), 0.0f);
 }
-
 			]]>
 			</script>
 		</item>

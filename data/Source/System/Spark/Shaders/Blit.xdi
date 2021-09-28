@@ -90,7 +90,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{8F180DB2-5206-7543-A74B-836BFF733982}</id>
 			<comment/>
 			<position>
@@ -98,6 +98,7 @@
 				<second>1034</second>
 			</position>
 			<technique>Default</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{41B909D5-B985-F344-BBAC-8A590842E041}</id>

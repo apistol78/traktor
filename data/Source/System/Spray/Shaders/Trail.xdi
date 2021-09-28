@@ -20,7 +20,7 @@
 				<second>300</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{7C246850-B16F-B042-B5A2-48E759B3E905}</id>
 			<comment/>
 			<position>
@@ -28,6 +28,7 @@
 				<second>286</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{78C00170-E620-DB4F-B351-EF022F10350B}</id>

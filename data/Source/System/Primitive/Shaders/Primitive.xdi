@@ -25,7 +25,7 @@
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{D7E0B373-6478-D042-839E-2896992A71F0}</id>
 			<comment/>
 			<position>
@@ -33,6 +33,7 @@
 				<second>-444</second>
 			</position>
 			<technique>Default</technique>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
 			<id>{137E9C81-4791-E842-BB39-B76567FAE7D0}</id>
@@ -154,7 +155,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.State" version="7,traktor.render.Node:1">
+		<item type="traktor.render.State" version="8,traktor.render.Node:1">
 			<id>{E55C75D8-FBD9-4443-B76E-A916C5F8CB43}</id>
 			<comment/>
 			<position>
@@ -198,8 +199,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="7,traktor.render.Node:1">
+		<item type="traktor.render.State" version="8,traktor.render.Node:1">
 			<id>{FB92494C-8708-904A-BD91-4B05A8AC0DF8}</id>
 			<comment/>
 			<position>
@@ -243,6 +245,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{6D101AA6-E857-A540-9456-8A1C7DEB83BE}</id>
@@ -271,7 +274,7 @@
 			</position>
 			<parameterName>DepthTest</parameterName>
 		</item>
-		<item type="traktor.render.State" version="7,traktor.render.Node:1">
+		<item type="traktor.render.State" version="8,traktor.render.Node:1">
 			<id>{B42D7E26-F9E8-AF43-8595-C9AE27EE070C}</id>
 			<comment/>
 			<position>
@@ -315,8 +318,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="7,traktor.render.Node:1">
+		<item type="traktor.render.State" version="8,traktor.render.Node:1">
 			<id>{F7C5B831-AD17-BD4E-81DE-650EB465D2E0}</id>
 			<comment/>
 			<position>
@@ -360,6 +364,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{67E92362-7F07-8C4C-B3C7-09989044890E}</id>
@@ -424,7 +429,7 @@
 			</position>
 			<parameterName>Depth</parameterName>
 		</item>
-		<item type="traktor.render.State" version="7,traktor.render.Node:1">
+		<item type="traktor.render.State" version="8,traktor.render.Node:1">
 			<id>{E0A606B7-4B4F-D54B-849A-31BFCFD9BF29}</id>
 			<comment/>
 			<position>
@@ -468,6 +473,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 	</nodes>
 	<edges>

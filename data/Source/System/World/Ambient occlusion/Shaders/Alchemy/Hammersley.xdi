@@ -36,7 +36,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{C6BADCE6-CFC4-594C-B6AD-C4DE071C26AC}</id>
 			<comment/>
 			<position>
@@ -48,14 +48,10 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Index</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Count</name>
-					<type>PtScalar</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -65,7 +61,6 @@
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

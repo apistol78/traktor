@@ -187,7 +187,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{441FB1E2-3D57-8940-A790-0827F2837AED}</id>
 			<comment/>
 			<position>
@@ -199,8 +199,6 @@
 				<item>
 					<id>{D779D338-6192-2E46-A9C2-04815518657B}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -210,7 +208,6 @@
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY
@@ -240,7 +237,7 @@ ENTRY
 				<second>177</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{39C6FFB5-F818-1A41-95ED-2F01925FE9AE}</id>
 			<comment/>
 			<position>
@@ -252,8 +249,6 @@ ENTRY
 				<item>
 					<id>{D779D338-6192-2E46-A9C2-04815518657B}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -263,7 +258,6 @@ ENTRY
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

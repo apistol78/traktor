@@ -2072,8 +2072,6 @@ bool emitScript(GlslContext& cx, Script* node)
 	int32_t inputPinCount = node->getInputPinCount();
 	int32_t outputPinCount = node->getOutputPinCount();
 
-	const std::map< std::wstring, SamplerState >& samplers = node->getSamplers();
-
 	RefArray< GlslVariable > ins(inputPinCount);
 	RefArray< GlslVariable > outs(outputPinCount);
 
@@ -2094,88 +2092,6 @@ bool emitScript(GlslContext& cx, Script* node)
 		ins[i] = cx.emitInput(node->getInputPin(i));
 		if (!ins[i])
 			return false;
-
-		if (node->getInputPinType(i) >= PtTexture2D)
-		{
-			std::wstring samplerId = node->getInputPinSamplerId(i);
-			if (samplerId.empty())
-				return false;
-
-			auto it = samplers.find(samplerId);
-			if (it == samplers.end())
-				return false;
-
-			const SamplerState& samplerState = it->second;
-
-			//const GLenum c_glFilter[] =
-			//{
-			//	GL_NEAREST,
-			//	GL_LINEAR
-			//};
-
-			//const GLenum c_glWrap[] =
-			//{
-			//	GL_REPEAT,
-			//	GL_REPEAT,
-			//	GL_CLAMP_TO_EDGE,
-			//	GL_CLAMP_TO_EDGE
-			//};
-
-			//const GLenum c_glCompare[] =
-			//{
-			//	GL_ALWAYS,
-			//	GL_NEVER,
-			//	GL_LESS,
-			//	GL_LEQUAL,
-			//	GL_GREATER,
-			//	GL_GEQUAL,
-			//	GL_EQUAL,
-			//	GL_NOTEQUAL,
-			//	GL_INVALID_ENUM
-			//};
-
-			Murmur3 samplerHash;
-			samplerHash.feed(node->getInputPin(i)->getName());
-			samplerHash.feed(samplerState.minFilter);
-			samplerHash.feed(samplerState.mipFilter);
-			samplerHash.feed(samplerState.magFilter);
-			samplerHash.feed(samplerState.addressU);
-			samplerHash.feed(samplerState.addressV);
-			samplerHash.feed(samplerState.addressW);
-			samplerHash.feed(samplerState.compare);
-
-			// Define sampler.
-			//bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, in[i]->getName(), stage);
-			//if (defineStates)
-			//{
-			//	RenderStateOpenGL& rs = cx.getRenderState();
-
-			//	bool minLinear = samplerState.minFilter != FtPoint;
-			//	bool mipLinear = samplerState.mipFilter != FtPoint;
-
-			//	if (!minLinear && !mipLinear)
-			//		rs.samplerStates[stage].minFilter = GL_NEAREST;
-			//	else if (!minLinear && mipLinear)
-			//		rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-			//	else if (minLinear && !mipLinear)
-			//		rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-			//	else
-			//		rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
-
-			//	rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
-			//	rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
-			//	rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
-			//	rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
-			//	rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
-			//}
-
-			//if (!cx.getShader().haveUniform(samplerId))
-			//{
-			//	auto& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
-			//	fu << L"uniform sampler " << samplerId << L";" << Endl;
-			//	cx.getShader().addUniform(samplerId);
-			//}
-		}
 	}
 
 	// Define script instance.

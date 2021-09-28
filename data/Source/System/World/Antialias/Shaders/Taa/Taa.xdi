@@ -545,7 +545,7 @@ Merge
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{7602FB25-8F9D-CB48-AF40-98D40931C352}</id>
 			<comment/>
 			<position>
@@ -557,20 +557,14 @@ Merge
 				<item>
 					<id>{4990718C-4C4E-6C41-A192-06B9DB382674}</id>
 					<name>Input</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Min</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Max</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -580,7 +574,6 @@ Merge
 					<type>PtVector</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

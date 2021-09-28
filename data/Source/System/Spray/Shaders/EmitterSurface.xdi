@@ -51,7 +51,7 @@
 				<second>406</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{B3B35EA0-F0FD-A943-B8CF-727BDC59A17E}</id>
 			<comment/>
 			<position>
@@ -59,6 +59,7 @@
 				<second>408</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{F159BA89-7831-4746-A16A-F96787D57DAD}</id>

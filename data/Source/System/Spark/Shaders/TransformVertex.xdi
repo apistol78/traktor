@@ -239,7 +239,7 @@
 			</position>
 			<name>Clip</name>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
 			<comment/>
 			<position>
@@ -251,14 +251,10 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Bounds</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -268,7 +264,6 @@
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY
@@ -296,7 +291,7 @@ ENTRY
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
 			<comment/>
 			<position>
@@ -308,14 +303,10 @@ ENTRY
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Bounds</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
-					<type>PtVector</type>
-					<samplerId/>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -325,7 +316,6 @@ ENTRY
 					<type>PtScalar</type>
 				</item>
 			</outputPins>
-			<samplers/>
 			<script>
 			<![CDATA[
 ENTRY

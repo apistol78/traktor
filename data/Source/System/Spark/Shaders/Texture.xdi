@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{BE2504AA-EE0C-1C44-A9DB-8A6E9D3D09A3}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,7 @@
 				<second>-158</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BFE2F27C-D766-2D44-A9FA-28635FCF73F2}</id>

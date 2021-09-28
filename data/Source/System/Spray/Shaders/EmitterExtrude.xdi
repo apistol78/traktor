@@ -63,7 +63,7 @@ View position
 				<second>425</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
 			<id>{978A6E32-208B-6947-9387-535CE769FE85}</id>
 			<comment/>
 			<position>
@@ -71,6 +71,7 @@ View position
 				<second>427</second>
 			</position>
 			<technique/>
+			<precisionHint>PhUndefined</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{69E44B45-1652-304C-A026-275DCC2466D6}</id>

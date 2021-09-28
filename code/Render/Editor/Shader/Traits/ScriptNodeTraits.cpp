@@ -27,9 +27,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ScriptNodeTraits", 0, ScriptNode
 
 TypeInfoSet ScriptNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Script >();
-	return typeSet;
+	return makeTypeInfoSet< Script >();
 }
 
 bool ScriptNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
@@ -75,27 +73,12 @@ PinType ScriptNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	T_ASSERT(is_a< Script >(node));
-	T_ASSERT(inputPin->getNode() == node);
-
-	const TypedInputPin* typedInputPin = static_cast< const TypedInputPin* >(inputPin);
-	switch (typedInputPin->getType())
+	for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 	{
-	case PtScalar:
-		return PntScalar1;
-	case PtVector:
-		return PntScalar4;
-	case PtMatrix:
-		return PntMatrix;
-	case PtTexture2D:
-		return PntTexture2D;
-	case PtTexture3D:
-		return PntTexture3D;
-	case PtTextureCube:
-		return PntTextureCube;
-	default:
-		return PntVoid;
+		if (node->getInputPin(i) == inputPin)
+			return inputPinTypes[i];
 	}
+	return PntVoid;
 }
 
 int32_t ScriptNodeTraits::getInputPinGroup(
