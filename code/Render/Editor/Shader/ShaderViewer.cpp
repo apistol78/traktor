@@ -33,7 +33,7 @@
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/DropDown.h"
-#include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -189,15 +189,15 @@ bool ShaderViewer::create(ui::Widget* parent)
 	// Create read-only syntax rich editors.
 	m_shaderEditVertex = new ui::SyntaxRichEdit();
 	m_shaderEditVertex->create(tabPageVertex, L"", ui::WsDoubleBuffer);
-	m_shaderEditVertex->setLanguage(new ui::SyntaxLanguageHlsl());
+	m_shaderEditVertex->setLanguage(new ui::SyntaxLanguageGlsl());
 
 	m_shaderEditPixel = new ui::SyntaxRichEdit();
 	m_shaderEditPixel->create(tabPagePixel, L"", ui::WsDoubleBuffer);
-	m_shaderEditPixel->setLanguage(new ui::SyntaxLanguageHlsl());
+	m_shaderEditPixel->setLanguage(new ui::SyntaxLanguageGlsl());
 
 	m_shaderEditCompute = new ui::SyntaxRichEdit();
 	m_shaderEditCompute->create(tabPageCompute, L"", ui::WsDoubleBuffer);
-	m_shaderEditCompute->setLanguage(new ui::SyntaxLanguageHlsl());
+	m_shaderEditCompute->setLanguage(new ui::SyntaxLanguageGlsl());
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
