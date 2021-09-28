@@ -71,7 +71,7 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridRowDoubleClickEvent.h"
 #include "Ui/GridView/GridView.h"
-#include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -215,7 +215,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create script editor control.
 	m_scriptEditor = new ui::SyntaxRichEdit();
 	m_scriptEditor->create(splitter, L"", ui::WsDoubleBuffer);
-	m_scriptEditor->setLanguage(new ui::SyntaxLanguageHlsl());
+	m_scriptEditor->setLanguage(new ui::SyntaxLanguageGlsl());
 	m_scriptEditor->hide();
 	m_scriptEditor->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventScriptChange);
 
