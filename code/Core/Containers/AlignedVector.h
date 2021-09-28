@@ -940,7 +940,7 @@ public:
 
 		// Move items to make room for item to be inserted.
 		for (size_t i = size; i > offset; --i)
-			move(i, i - 1);
+			swap(i, i - 1);
 
 		// Copy insert item into location.
 		Constructor::destroy(m_data[offset]);
@@ -1087,17 +1087,17 @@ private:
 	size_t m_size;
 	size_t m_capacity;
 
-#if !defined(__PS3__)
 	void move(size_t target, size_t source)
 	{
 		m_data[target] = std::move(m_data[source]);
 	}
-#else
-	void move(size_t target, size_t source)
+
+	void swap(size_t target, size_t source)
 	{
-		m_data[target] = m_data[source];
+		auto tmp = std::move(m_data[target]);
+		m_data[target] = std::move(m_data[source]);
+		m_data[source] = std::move(tmp);
 	}
-#endif
 
 	void grow(size_t count)
 	{

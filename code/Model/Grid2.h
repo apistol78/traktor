@@ -113,10 +113,10 @@ public:
 	{
 		m_values.swap(values);
 		m_indices.reset();
-
+		m_indices.reserve(m_values.size());
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
-			Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
+			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
 			int32_t x = int32_t(p.x);
 			int32_t y = int32_t(p.y);
@@ -130,10 +130,10 @@ public:
 	{
 		m_values = values;
 		m_indices.reset();
-
+		m_indices.reserve(m_values.size());
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
-			Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
+			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
 			int32_t x = int32_t(p.x);
 			int32_t y = int32_t(p.y);
