@@ -49,7 +49,9 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_lookup = lookup;
     
-    startTimer(100);
+#if defined(__APPLE__)
+	startTimer(100);
+#endif
 	return true;
 }
 
@@ -100,6 +102,10 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 		if (m_threadIndices.find(e.threadId) == m_threadIndices.end())
 			m_threadIndices.insert(std::make_pair(e.threadId, m_nextThreadIndex++));
 	}
+
+#if !defined(__APPLE__)
+	update();
+#endif
 }
 
 void LogList::removeAll()
@@ -218,6 +224,9 @@ void LogList::eventPaint(PaintEvent* event)
 
 	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), m_itemHeight));
 
+	// Determine "max width" of thread identifier.
+	const int32_t threadIdWidth = canvas.getFontMetric().getExtent(L"000>").cx;
+
 	// Advance by scroll offset, keep a page worth of lines.
 	int32_t advanceCount = m_scrollBar->getPosition();
 	advanceCount = std::max(0, advanceCount);
@@ -287,8 +296,9 @@ void LogList::eventPaint(PaintEvent* event)
 		}
 
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
-		canvas.drawText(textRect, toString(threadIndex) + L">", AnLeft, AnCenter);
-		textRect.left += dpi96(20);
+
+		canvas.drawText(textRect, str(L"%d>", threadIndex), AnLeft, AnCenter);
+		textRect.left += threadIdWidth;
 
 		size_t s = 0;
 		while (s < entry.text.length())
@@ -408,9 +418,11 @@ void LogList::eventMouseWheel(MouseWheelEvent* event)
     
 void LogList::eventTimer(TimerEvent* event)
 {
+#if defined(__APPLE__)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
 	if (!m_pending.empty())
 		update();
+#endif
 }
 
 void LogList::eventScroll(ScrollEvent* event)
