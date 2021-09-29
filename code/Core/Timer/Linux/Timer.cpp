@@ -28,9 +28,7 @@ double Timer::getElapsedTime() const
 
 double Timer::getDeltaTime()
 {
-	timespec ts = {};
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	double current = ts.tv_sec + ts.tv_nsec / 1e9;
+	double current = getElapsedTime();
 	double delta = current - m_last;
 	m_last = current;
 	return delta;
