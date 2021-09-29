@@ -50,7 +50,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl
 
 ScenePreviewControl::ScenePreviewControl()
 :	m_splitCount(StSingle)
-,	m_lastDeltaTime(0.0f)
 ,	m_lastTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
 {
@@ -452,12 +451,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 	{
 		Ref< Scene > scene = m_context->getScene();
 
-		// Filter delta time.
-		float deltaTime = float(m_timer.getDeltaTime());
-		deltaTime = std::min(deltaTime, 1.0f / 10.0f);
-		deltaTime = float(deltaTime * 0.2f + m_lastDeltaTime * 0.8f);
-		m_lastDeltaTime = deltaTime;
-
+		float deltaTime = (float)m_timer.getDeltaTime();
 		float scaledTime = m_context->getTime();
 		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 
@@ -489,7 +483,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 				scene->updateEntity(update);
 
 				m_context->getEntityEventManager()->update(update);
-				m_context->getPhysicsManager()->update(1.0f / 60.0f, false);
+				m_context->getPhysicsManager()->update(c_updateDeltaTime, false);
 
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
