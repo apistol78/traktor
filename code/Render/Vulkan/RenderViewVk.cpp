@@ -1285,11 +1285,17 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
 	vkGetPhysicalDeviceSurfaceFormatsKHR(m_context->getPhysicalDevice(), m_surface, &surfaceFormatCount, surfaceFormats.ptr());
 
-	VkFormat colorFormat = surfaceFormats[0].format;
-	if (colorFormat == VK_FORMAT_UNDEFINED)
-		colorFormat = VK_FORMAT_B8G8R8_UNORM;
-
-	VkColorSpaceKHR colorSpace = surfaceFormats[0].colorSpace;
+	VkFormat colorFormat = VK_FORMAT_UNDEFINED;
+	VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	for (uint32_t i = 0; i < surfaceFormatCount; ++i)
+	{
+		if (surfaceFormats[i].format != VK_FORMAT_B8G8R8A8_SRGB)
+		{
+			colorFormat = surfaceFormats[i].format;
+			colorSpace = surfaceFormats[i].colorSpace;
+			break;
+		}
+	}
 
 	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width <= -1)
@@ -1411,7 +1417,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 #if defined(__IOS__)
 		VK_FORMAT_D16_UNORM_S8_UINT,
 #else
-		VK_FORMAT_D24_UNORM_S8_UINT,
+	    VK_FORMAT_D32_SFLOAT_S8_UINT,
 #endif
 		L"Primary Depth"
 	))
