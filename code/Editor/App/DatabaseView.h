@@ -6,7 +6,6 @@
 namespace traktor
 {
 
-class Job;
 class PropertyGroup;
 
 	namespace ui
@@ -102,16 +101,12 @@ private:
 	std::set< Guid > m_favoriteInstances;
 	std::wstring m_filterText;
 	int32_t m_filterCountDown;
-	int32_t m_colorCountDown;
-	Ref< Job > m_jobTreeColors;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
 	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
 	Ref< ui::TreeViewItem > buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
-
-	void updateTreeColors();
 
 	void updateGridInstances();
 
@@ -128,8 +123,6 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 
 	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
-
-	void eventInstanceStateChange(ui::TreeViewItemStateChangeEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 

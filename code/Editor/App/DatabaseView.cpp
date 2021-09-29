@@ -13,8 +13,6 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/System/OS.h"
-#include "Core/Thread/JobManager.h"
-#include "Core/Thread/Job.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -288,7 +286,6 @@ DatabaseView::DatabaseView(IEditor* editor)
 :	m_editor(editor)
 ,	m_filter(new DefaultFilter())
 ,	m_filterCountDown(-1)
-,	m_colorCountDown(-1)
 {
 }
 
@@ -366,9 +363,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
-	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TreeColors"), 4);
 	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
-	m_treeDatabase->addEventHandler< ui::TreeViewItemStateChangeEvent >(this, &DatabaseView::eventInstanceStateChange);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
@@ -472,8 +467,6 @@ bool DatabaseView::create(ui::Widget* parent)
 
 void DatabaseView::destroy()
 {
-	if (m_jobTreeColors)
-		m_jobTreeColors->wait();
 	ui::Container::destroy();
 }
 
@@ -594,9 +587,8 @@ void DatabaseView::updateView()
 							iconIndex += 23;
 					}
 
-					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, instance->getName(), 2);
-					instanceItem->setImage(0, -1);
-					instanceItem->setImage(1, iconIndex);
+					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, instance->getName(), 1);
+					instanceItem->setImage(0, iconIndex);
 
 					if (m_rootInstances.find(instance->getGuid()) != m_rootInstances.end())
 						instanceItem->setBold(true);
@@ -627,7 +619,6 @@ void DatabaseView::updateView()
 		updateGridInstances();
 
 	m_splitter->update();
-	updateTreeColors();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
@@ -1202,7 +1193,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 				iconIndex += 23;
 		}
 
-		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, childInstance->getName(), 2);
+		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, childInstance->getName(), 1);
 		instanceItem->setImage(0, iconIndex);
 
 		if (m_rootInstances.find(childInstance->getGuid()) != m_rootInstances.end())
@@ -1240,38 +1231,6 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 		buildTreeItemSplit(treeView, groupItem, childGroup);
 
 	return groupItem;
-}
-
-void DatabaseView::updateTreeColors()
-{
-	if (m_jobTreeColors && !m_jobTreeColors->wait(0))
-		return;
-
-	m_jobTreeColors = JobManager::getInstance().add([&]() {
-		RefArray< ui::TreeViewItem > items;
-		m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
-		for (auto item : items)
-		{
-			Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
-			if (instance)
-			{
-				int32_t image = 0;
-
-				if ((instance->getFlags() & db::IfReadOnly) != 0)
-					image |= 1;
-				if ((instance->getFlags() & db::IfModified) != 0)
-					image |= 2;
-
-				image += 2 + 23 + 23;	// Offset to correct image sequence.
-
-				if (image != item->getImage(1))
-				{
-					item->setImage(1, image);
-					m_treeDatabase->requestUpdate();
-				}
-			}
-		}
-	});
 }
 
 void DatabaseView::updateGridInstances()
@@ -1529,11 +1488,6 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 
 		updateView();
 	}
-	if (--m_colorCountDown <= 0)
-	{
-		updateTreeColors();
-		m_colorCountDown = 10;
-	}
 }
 
 void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
@@ -1546,11 +1500,6 @@ void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 
 	m_editor->openEditor(instance);
 	event->consume();
-}
-
-void DatabaseView::eventInstanceStateChange(ui::TreeViewItemStateChangeEvent* event)
-{
-	updateTreeColors();
 }
 
 void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
