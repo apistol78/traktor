@@ -142,7 +142,10 @@ bool ProgramVk::create(
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
-	uint32_t uniformBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minUniformBufferOffsetAlignment;
+	uint32_t uniformBufferOffsetAlignment = std::max< uint32_t >(
+		(uint32_t)deviceProperties.limits.minUniformBufferOffsetAlignment,
+		sizeof(intptr_t)
+	);
 
 	// Create descriptor set layouts for shader uniforms.
 	AlignedVector< VkDescriptorSetLayoutBinding  > dslb;
