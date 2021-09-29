@@ -238,12 +238,11 @@ void addSky(
 
 			Ref< drawing::CubeMap > radianceCube = new drawing::CubeMap(128, drawing::PixelFormat::getRGBAF32());
 
-			Random random;
 			RefArray< Job > jobs;
-
 			for (int32_t side = 0; side < 6; ++side)
 			{
-				Ref< Job > job = JobManager::getInstance().add([=, &sourceRadianceCube, &radianceCube, &random]() {
+				Ref< Job > job = JobManager::getInstance().add([=, &sourceRadianceCube, &radianceCube]() {
+					Random random;
 					for (int32_t y = 0; y < 128; ++y)
 					{
 						for (int32_t x = 0; x < 128; ++x)
@@ -268,7 +267,6 @@ void addSky(
 				});
 				jobs.push_back(job);
 			}
-
 			while (!jobs.empty())
 			{
 				jobs.back()->wait();
