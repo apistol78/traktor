@@ -24,7 +24,7 @@ class ISerializer;
 class T_DLLCLASS MemberArray
 {
 public:
-	MemberArray(const wchar_t* const name, const Attribute* attributes);
+	explicit MemberArray(const wchar_t* const name, const Attribute* attributes);
 
 	virtual ~MemberArray() {}
 

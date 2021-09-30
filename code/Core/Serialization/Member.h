@@ -27,14 +27,14 @@ class Member
 public:
 	typedef T value_type;
 
-	Member(const wchar_t* const name, value_type& ref)
+	explicit Member(const wchar_t* const name, value_type& ref)
 	:	m_name(name)
 	,	m_ref(ref)
-	,	m_attributes(0)
+	,	m_attributes(nullptr)
 	{
 	}
 
-	Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_attributes(&attributes)
@@ -100,14 +100,14 @@ class Member < ISerializable* >
 public:
 	typedef Ref< ISerializable > value_type;
 
-	Member(const wchar_t* const name, value_type& ref)
+	explicit Member(const wchar_t* const name, value_type& ref)
 	:	m_name(name)
 	,	m_ref(ref)
-	,	m_attributes(0)
+	,	m_attributes(nullptr)
 	{
 	}
 
-	Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_attributes(&attributes)
@@ -170,7 +170,7 @@ template < >
 class Member< void* >
 {
 public:
-	Member< void* >(const wchar_t* const name, void* blob, uint32_t& blobSize)
+	explicit Member< void* >(const wchar_t* const name, void* blob, uint32_t& blobSize)
 	:	m_name(name)
 	,	m_blob(blob)
 	,	m_blobSize(blobSize)

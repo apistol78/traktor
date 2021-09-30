@@ -17,14 +17,14 @@ class MemberStaticVector : public MemberArray
 public:
 	typedef StaticVector< ValueType, Capacity > value_type;
 
-	MemberStaticVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberStaticVector(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_index(0)
 	{
 	}
 
-	MemberStaticVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStaticVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_index(0)

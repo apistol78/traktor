@@ -17,7 +17,7 @@ class MemberRefArray : public MemberArray
 public:
 	typedef RefArray< Class > value_type;
 
-	MemberRefArray(const wchar_t* const name, value_type& ref)
+	explicit MemberRefArray(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name, nullptr)
 	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
@@ -26,7 +26,7 @@ public:
 		setAttributes(&m_attribute);
 	}
 
-	MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, nullptr)
 	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
@@ -37,8 +37,8 @@ public:
 
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
-		m_ref.resize(size);
 		m_ref.reserve(capacity);
+		m_ref.resize(size);
 	}
 
 	virtual size_t size() const override final

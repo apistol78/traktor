@@ -20,7 +20,7 @@ namespace traktor
 class T_DLLCLASS MemberType : public MemberComplex
 {
 public:
-	MemberType(const wchar_t* const name, const TypeInfo*& type);
+	explicit MemberType(const wchar_t* const name, const TypeInfo*& type);
 
 	virtual void serialize(ISerializer& s) const override final;
 

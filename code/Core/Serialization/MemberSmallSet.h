@@ -14,14 +14,14 @@ class MemberSmallSet : public MemberArray
 public:
 	typedef SmallSet< ValueType > value_type;
 
-	MemberSmallSet(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberSmallSet(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
 	}
 
-	MemberSmallSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberSmallSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())

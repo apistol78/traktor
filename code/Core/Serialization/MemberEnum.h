@@ -52,7 +52,7 @@ public:
 		EnumType val;
 	};
 
-	MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys)
+	explicit MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys)
 	:	MemberEnumBase(name)
 	,	m_keys(keys)
 	,	m_en(en)
@@ -104,7 +104,7 @@ template < typename EnumType, typename ValueType = uint32_t >
 class MemberEnumByValue : public MemberComplex
 {
 public:
-	MemberEnumByValue(const wchar_t* const name, EnumType& en)
+	explicit MemberEnumByValue(const wchar_t* const name, EnumType& en)
 	:	MemberComplex(name, false)
 	,	m_en(en)
 	{

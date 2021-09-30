@@ -22,9 +22,9 @@ class ISerializer;
 class T_DLLCLASS MemberComplex
 {
 public:
-	MemberComplex(const wchar_t* const name, bool compound);
+	explicit MemberComplex(const wchar_t* const name, bool compound);
 
-	MemberComplex(const wchar_t* const name, bool compound, const Attribute& attributes);
+	explicit MemberComplex(const wchar_t* const name, bool compound, const Attribute& attributes);
 
 	virtual ~MemberComplex();
 

@@ -18,14 +18,14 @@ class MemberAlignedVector : public MemberArray
 public:
 	typedef AlignedVector< ValueType > value_type;
 
-	MemberAlignedVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberAlignedVector(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_index(0)
 	{
 	}
 
-	MemberAlignedVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberAlignedVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_index(0)
@@ -34,8 +34,8 @@ public:
 
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
-		m_ref.resize(size);
 		m_ref.reserve(capacity);
+		m_ref.resize(size);
 	}
 
 	virtual size_t size() const override final

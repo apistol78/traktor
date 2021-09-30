@@ -18,7 +18,7 @@ public:
 	typedef typename IsPointer< Class >::base_t class_type;
 	typedef class_type value_type;
 
-	MemberAggregate(const wchar_t* const name, value_type& ref)
+	explicit MemberAggregate(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
