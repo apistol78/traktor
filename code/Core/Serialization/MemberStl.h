@@ -23,14 +23,14 @@ class MemberStlVector : public MemberArray
 public:
 	typedef std::vector< ValueType > value_type;
 
-	MemberStlVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberStlVector(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_index(0)
 	{
 	}
 
-	MemberStlVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStlVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_index(0)
@@ -39,8 +39,8 @@ public:
 
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
-		m_ref.resize(size);
 		m_ref.reserve(capacity);
+		m_ref.resize(size);
 	}
 
 	virtual size_t size() const override final
@@ -58,7 +58,7 @@ public:
 			std::memset(zero, 0, sizeof(zero));
 
 			ValueType* item = new (zero) ValueType();
-			if (!s.ensure(item != 0))
+			if (!s.ensure(item != nullptr))
 				return;
 
 			s >> ValueMember(L"item", *item);
@@ -101,14 +101,14 @@ class MemberStlList : public MemberArray
 public:
 	typedef std::list< ValueType > value_type;
 
-	MemberStlList(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberStlList(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
 	}
 
-	MemberStlList(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStlList(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
@@ -160,14 +160,14 @@ class MemberStlSet : public MemberArray
 public:
 	typedef std::set< ValueType > value_type;
 
-	MemberStlSet(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name, 0)
+	explicit MemberStlSet(const wchar_t* const name, value_type& ref)
+	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
 	}
 
-	MemberStlSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStlSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
@@ -215,13 +215,13 @@ class MemberStlPair : public MemberComplex
 public:
 	typedef std::pair< FirstType, SecondType > value_type;
 
-	MemberStlPair(const wchar_t* const name, value_type& ref)
+	explicit MemberStlPair(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
 	}
 
-	MemberStlPair(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStlPair(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberComplex(name, true, attributes)
 	,	m_ref(ref)
 	{
@@ -250,14 +250,14 @@ public:
 	typedef std::map< KeyType, ValueType > value_type;
 	typedef MemberStlPair< KeyType, ValueType, KeyMember, ValueMember > pair_member;
 
-	MemberStlMap(const wchar_t* const name, value_type& ref)
+	explicit MemberStlMap(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name, nullptr)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
 	}
 
-	MemberStlMap(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	explicit MemberStlMap(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())

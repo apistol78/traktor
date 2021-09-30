@@ -18,7 +18,7 @@ class MemberInplaceRef : public MemberComplex
 public:
 	typedef InplaceRef< Class > value_type;
 
-	MemberInplaceRef(const wchar_t* const name, value_type ref)
+	explicit MemberInplaceRef(const wchar_t* const name, value_type ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{

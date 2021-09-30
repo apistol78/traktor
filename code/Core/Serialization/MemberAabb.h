@@ -11,7 +11,7 @@ namespace traktor
 class MemberAabb2 : public MemberComplex
 {
 public:
-	MemberAabb2(const wchar_t* const name, Aabb2& ref)
+	explicit MemberAabb2(const wchar_t* const name, Aabb2& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -30,7 +30,7 @@ private:
 class MemberAabb3 : public MemberComplex
 {
 public:
-	MemberAabb3(const wchar_t* const name, Aabb3& ref)
+	explicit MemberAabb3(const wchar_t* const name, Aabb3& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
