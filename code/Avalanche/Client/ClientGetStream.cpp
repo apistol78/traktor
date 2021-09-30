@@ -3,7 +3,7 @@
 #include "Avalanche/Client/ClientGetStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
-#include "Net/TcpSocket.h"
+#include "Net/SocketStream.h"
 
 namespace traktor
 {
@@ -12,9 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.ClientGetStream", ClientGetStream, IStream)
 
-ClientGetStream::ClientGetStream(Client* client, net::TcpSocket* socket, int64_t blobSize)
+ClientGetStream::ClientGetStream(Client* client, net::SocketStream* stream, int64_t blobSize)
 :	m_client(client)
-,	m_socket(socket)
+,	m_stream(stream)
 ,	m_blobSize(blobSize)
 ,	m_offset(0)
 {
@@ -25,15 +25,21 @@ void ClientGetStream::close()
 	uint8_t dummy[1024];
 
 	// Ensure entire stream is consumed.
-	while (m_socket != nullptr && m_offset < m_blobSize)
-		read(dummy, 1024);
-
-	// Return socket to be reused.
-	if (m_socket)
+	while (m_stream != nullptr && m_offset < m_blobSize)
+	{
+		if (read(dummy, 1024) < 0)
+		{
+			m_stream = nullptr;
+			break;
+		}
+	}
+	
+		// Return socket to be reused.
+	if (m_stream)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_client->m_lock);
-		m_client->m_sockets.push_back(m_socket);
-		m_socket = nullptr;
+		m_client->m_streams.push_back(m_stream);
+		m_stream = nullptr;
 	}
 }
 
@@ -69,7 +75,7 @@ int64_t ClientGetStream::seek(SeekOriginType origin, int64_t offset)
 
 int64_t ClientGetStream::read(void* block, int64_t nbytes)
 {
-	if (!m_socket)
+	if (!m_stream)
 		return -1;
 
 	if (nbytes <= 0)
@@ -87,10 +93,10 @@ int64_t ClientGetStream::read(void* block, int64_t nbytes)
 			break;
 		T_FATAL_ASSERT(ptr + nread <= end);
 
-		int64_t ngot = m_socket->recv(ptr, (int32_t)nread);
+		int64_t ngot = m_stream->read(ptr, (int32_t)nread);
 		if (ngot <= 0)
 		{
-			m_socket = nullptr;
+			m_stream = nullptr;
 			break;
 		}
 		T_FATAL_ASSERT(ngot <= nread);

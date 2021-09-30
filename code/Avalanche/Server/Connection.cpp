@@ -34,6 +34,7 @@ Connection::~Connection()
 bool Connection::create(net::TcpSocket* clientSocket)
 {
 	m_clientSocket = clientSocket;
+	m_clientStream = new net::SocketStream(clientSocket, true, true, 5000);
 
 	std::wstring name = L"<unknown>";
 
@@ -68,21 +69,28 @@ bool Connection::update()
 
 bool Connection::process()
 {
-	net::SocketStream clientStream(m_clientSocket, true, true);
+	int32_t result = m_clientSocket->select(true, false, false, 500);
+	if (result == 0)
+		return true;
+	else if (result < 0)
+		return false;
 
-	int32_t cmd = m_clientSocket->recv();
+	uint8_t cmd = 0;
+	if (m_clientStream->read(&cmd, sizeof(uint8_t)) != sizeof(uint8_t))
+		return false;
+
 	switch (cmd)
 	{
 	case c_commandPing:
 		{
-			if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+			if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 				return false;
 		}
 		break;
 
 	case c_commandStat:
 		{
-			Key key = Key::read(&clientStream);
+			Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -92,16 +100,16 @@ bool Connection::process()
 			Ref< const Blob > blob = m_dictionary->get(key);
 			if (blob)
 			{
-				if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 
 				int64_t blobSize = blob->size();
-				if (clientStream.write(&blobSize, sizeof(blobSize)) != sizeof(blobSize))
+				if (m_clientStream->write(&blobSize, sizeof(int64_t)) != sizeof(int64_t))
 					return false;
 			}
 			else
 			{
-				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 			}
 		}
@@ -109,7 +117,7 @@ bool Connection::process()
 
 	case c_commandGet:
 		{
-			Key key = Key::read(&clientStream);
+			Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -122,14 +130,14 @@ bool Connection::process()
 				auto readStream = blob->read();
 				if (readStream)
 				{
-					if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+					if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 						return false;
 
 					int64_t blobSize = blob->size();
-					if (clientStream.write(&blobSize, sizeof(blobSize)) != sizeof(blobSize))
+					if (m_clientStream->write(&blobSize, sizeof(int64_t)) != sizeof(int64_t))
 						return false;
 
-					if (!StreamCopy(&clientStream, readStream).execute(blob->size()))
+					if (!StreamCopy(m_clientStream, readStream).execute(blob->size()))
 					{
 						log::error << L"[GET " << key.format() << L"] Unable to send " << blob->size() << L" byte(s) to client; terminating connection." << Endl;
 						return false;
@@ -140,14 +148,14 @@ bool Connection::process()
 				else
 				{
 					log::error <<  L"[GET " << key.format() << L"] Unable to acquire read stream from blob." << Endl;
-					if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+					if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 						return false;
 				}
 			}
 			else
 			{
 				log::info << L"[GET " << key.format() << L"] No such blob." << Endl;
-				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 			}
 		}
@@ -155,7 +163,7 @@ bool Connection::process()
 
 	case c_commandPut:
 		{
-			Key key = Key::read(&clientStream);
+			Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -165,7 +173,7 @@ bool Connection::process()
 			if (m_dictionary->get(key) != nullptr)
 			{
 				log::error << L"[PUT " << key.format() << L"] Cannot replace already existing blob." << Endl;
-				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 
 				return true;
@@ -174,7 +182,7 @@ bool Connection::process()
 			Ref< Blob > blob = m_dictionary->create();
 			if (blob)
 			{
-				if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 
 				for (;;)
@@ -183,15 +191,15 @@ bool Connection::process()
 					if (subcmd == c_subCommandPutAppend)
 					{
 						int64_t chunkSize;
-						if (clientStream.read(&chunkSize, sizeof(chunkSize)) != sizeof(chunkSize))
+						if (m_clientStream->read(&chunkSize, sizeof(int64_t)) != sizeof(int64_t))
 							return false;
 
 						auto appendStream = blob->append(chunkSize);
 						if (appendStream)
 						{
-							if (StreamCopy(appendStream, &clientStream).execute(chunkSize))
+							if (StreamCopy(appendStream, m_clientStream).execute(chunkSize))
 							{
-								if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+								if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 									return false;
 							}
 							else
@@ -203,7 +211,7 @@ bool Connection::process()
 						else
 						{
 							log::error << L"[PUT " << key.format() << L"] Failed to append data to blob." << Endl;
-							if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+							if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 								return false;
 						}
 					}
@@ -212,12 +220,12 @@ bool Connection::process()
 						if (m_dictionary->put(key, blob, true))
 						{
 							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
-							if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+							if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 								return false;
 						}
 						else
 						{
-							if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+							if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 								return false;
 						}
 						break;
@@ -225,7 +233,7 @@ bool Connection::process()
 					else if (subcmd == c_subCommandPutDiscard)
 					{
 						log::info << L"[PUT " << key.format() << L"] Discarded" << Endl;
-						if (clientStream.write(&c_replyOk, sizeof(c_replyOk)) != sizeof(c_replyOk))
+						if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 							return false;
 						break;
 					}
@@ -240,7 +248,7 @@ bool Connection::process()
 			else
 			{
 				log::error << L"[PUT " << key.format() << L"] Failed to create blob." << Endl;
-				if (clientStream.write(&c_replyFailure, sizeof(c_replyFailure)) != sizeof(c_replyFailure))
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 			}
 		}
@@ -250,16 +258,15 @@ bool Connection::process()
 		{
 			Dictionary::Stats stats;
 			m_dictionary->getStats(stats);
-			if (clientStream.write(&stats.blobCount, sizeof(uint32_t)) != sizeof(uint32_t))
+			if (m_clientStream->write(&stats.blobCount, sizeof(uint32_t)) != sizeof(uint32_t))
 				return false;
-			if (clientStream.write(&stats.memoryUsage, sizeof(uint64_t)) != sizeof(uint64_t))
+			if (m_clientStream->write(&stats.memoryUsage, sizeof(uint64_t)) != sizeof(uint64_t))
 				return false;
 		}
 		break;
 
 	default:
-		if (cmd >= 0)
-			log::error << L"Invalid command from client; terminating connection." << Endl;
+		log::error << L"Invalid command from client; terminating connection." << Endl;
 		return false;
 	}
 

@@ -8,7 +8,7 @@ namespace traktor
 	namespace net
 	{
 
-class TcpSocket;
+class SocketStream;
 
 	}
 
@@ -22,7 +22,7 @@ class ClientGetStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	explicit ClientGetStream(Client* client, net::TcpSocket* socket, int64_t blobSize);
+	explicit ClientGetStream(Client* client, net::SocketStream* stream, int64_t blobSize);
 
 	virtual void close() override final;
 
@@ -46,7 +46,7 @@ public:
 
 private:
 	Ref< Client > m_client;
-	Ref< net::TcpSocket > m_socket;
+	Ref< net::SocketStream > m_stream;
 	int64_t m_blobSize;
 	int64_t m_offset;
 };
