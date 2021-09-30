@@ -5,7 +5,6 @@
 #include "Core/Io/Writer.h"
 #include "Core/Thread/Acquire.h"
 #include "Net/SocketStream.h"
-#include "Net/TcpSocket.h"
 
 namespace traktor
 {
@@ -14,32 +13,38 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.ClientPutStream", ClientPutStream, IStream)
 
-ClientPutStream::ClientPutStream(Client* client, net::TcpSocket* socket)
+ClientPutStream::ClientPutStream(Client* client, net::SocketStream* stream)
 :	m_client(client)
-,	m_socket(socket)
+,	m_stream(stream)
 {
 }
 
 void ClientPutStream::close()
 {
-	if (!m_socket)
+	if (!m_stream)
 		return;
 
-	net::SocketStream socketStream(m_socket, true, true);
-	Reader socketReader(&socketStream);
-	Writer socketWriter(&socketStream);
-
-	socketWriter << (uint8_t)c_subCommandPutCommit;
+	const uint8_t cmd = c_subCommandPutCommit;
+	if (m_stream->write(&cmd, sizeof(uint8_t)) != sizeof(uint8_t))
+	{
+		m_stream = nullptr;
+		return;
+	}
 
 	uint8_t reply = 0;
-	socketReader >> reply;
+	if (m_stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+	{
+		m_stream = nullptr;
+		return;
+	}
+
 	if (reply == c_replyOk)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_client->m_lock);
-		m_client->m_sockets.push_back(m_socket);
+		m_client->m_streams.push_back(m_stream);
 	}
 
-	m_socket = nullptr;
+	m_stream = nullptr;
 }
 
 bool ClientPutStream::canRead() const
@@ -79,25 +84,33 @@ int64_t ClientPutStream::read(void* block, int64_t nbytes)
 
 int64_t ClientPutStream::write(const void* block, int64_t nbytes)
 {
-	if (!m_socket)
+	if (!m_stream)
 		return -1;
 
 	if (nbytes <= 0)
 		return 0;
 
-	net::SocketStream socketStream(m_socket, true, true);
-	Reader socketReader(&socketStream);
-	Writer socketWriter(&socketStream);
-
-	socketWriter << (uint8_t)c_subCommandPutAppend;
-	socketWriter << (int64_t)nbytes;
-	socketWriter.write(block, nbytes);
+	const uint8_t cmd = c_subCommandPutAppend;
+	if (m_stream->write(&cmd, sizeof(uint8_t)) != sizeof(uint8_t))
+	{
+		m_stream = nullptr;
+		return -1;
+	}
+	if (m_stream->write(&nbytes, sizeof(int64_t)) != sizeof(int64_t))
+	{
+		m_stream = nullptr;
+		return -1;
+	}
+	if (m_stream->write(block, nbytes) != nbytes)
+	{
+		m_stream = nullptr;
+		return -1;
+	}
 
 	uint8_t reply = 0;
-	socketReader >> reply;
-	if (reply != c_replyOk)
+	if (m_stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
 	{
-		m_socket = nullptr;
+		m_stream = nullptr;
 		return -1;
 	}
 

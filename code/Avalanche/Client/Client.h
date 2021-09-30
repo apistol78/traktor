@@ -20,7 +20,7 @@ namespace traktor
 	namespace net
 	{
 
-class TcpSocket;
+class SocketStream;
 
 	}
 
@@ -53,10 +53,10 @@ private:
 	friend class ClientPutStream;
 
 	net::SocketAddressIPv4 m_serverAddress;
-	RefArray< net::TcpSocket > m_sockets;
+	RefArray< net::SocketStream > m_streams;
 	Semaphore m_lock;
 
-	Ref< net::TcpSocket > establish(uint8_t command);
+	Ref< net::SocketStream > establish(uint8_t command);
 };
 
 	}

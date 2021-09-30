@@ -19,6 +19,7 @@ class Thread;
 	namespace net
 	{
 
+class SocketStream;
 class TcpSocket;
 
 	}
@@ -44,6 +45,7 @@ public:
 private:
 	Dictionary* m_dictionary = nullptr;
 	Ref< net::TcpSocket > m_clientSocket;
+	Ref< net::SocketStream > m_clientStream;
 	Thread* m_thread = nullptr;
 	std::atomic< bool > m_finished;
 
