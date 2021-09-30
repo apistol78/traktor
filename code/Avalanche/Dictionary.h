@@ -42,7 +42,7 @@ public:
 
 	Ref< const Blob > get(const Key& key) const;
 
-	bool put(const Key& key, const Blob* blob, bool invokeListeners);
+	bool put(const Key& key, const Blob* blob);
 
 	void snapshotKeys(AlignedVector< Key >& outKeys) const;
 

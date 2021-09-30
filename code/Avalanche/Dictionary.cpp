@@ -25,7 +25,7 @@ Ref< const Blob > Dictionary::get(const Key& key) const
 		return nullptr;
 }
 
-bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
+bool Dictionary::put(const Key& key, const Blob* blob)
 {
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
@@ -34,7 +34,6 @@ bool Dictionary::put(const Key& key, const Blob* blob, bool invokeListeners)
 		m_stats.memoryUsage += blob->size();
 	}
 
-	if (invokeListeners)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)
