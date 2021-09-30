@@ -40,6 +40,11 @@ struct AlignedVectorConstructorBase < ItemType, false >
 	{
 		item.~ItemType();
 	}
+
+	static void move(ItemType& uninitialized, ItemType& source)
+	{
+		new (&uninitialized) ItemType(std::move(source));
+	}
 };
 
 template < typename ItemType >
@@ -56,6 +61,11 @@ struct AlignedVectorConstructorBase < ItemType, true >
 
 	static void destroy(ItemType& item)
 	{
+	}
+
+	static void move(ItemType& uninitialized, ItemType& source)
+	{
+		uninitialized = std::move(source);
 	}
 };
 
@@ -698,10 +708,7 @@ public:
 			if (m_data)
 			{
 				for (size_t i = 0; i < m_size; ++i)
-				{
-					Constructor::construct(data[i], m_data[i]);
-					Constructor::destroy(m_data[i]);
-				}
+					Constructor::move(data[i], m_data[i]);
 				getAllocator()->free(m_data);
 			}
 
@@ -938,22 +945,11 @@ public:
 		// Initialize grown item.
 		Constructor::construct(m_data[size]);
 
-		// Move items to make room for item to be inserted,
-		// swap non-trivial items since they may contain expensive
-		// cleanup (allocation etc).
-		if (std::is_trivial< ItemType >::value)
-		{
-			for (size_t i = size; i > offset; --i)
-				move(i, i - 1);
-		}
-		else
-		{
-			for (size_t i = size; i > offset; --i)
-				swap(i, i - 1);
-		}
+		// Move items to make space for new item.
+		for (size_t i = size; i > offset; --i)
+			move(i, i - 1);
 
 		// Copy insert item into location.
-		Constructor::destroy(m_data[offset]);
 		Constructor::construct(m_data[offset], item);
 
 		return iterator(&m_data[offset]);
@@ -969,8 +965,8 @@ public:
 	template< typename IteratorType >
 	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
 	{
-		typename IteratorType::const_pointer fptr = &(*from);
-		typename IteratorType::const_pointer tptr = &(*to);
+		auto fptr = &(*from);
+		auto tptr = &(*to);
 
 		size_t size = m_size;
 		size_t offset = size_t(where.m_ptr - m_data);
@@ -983,7 +979,7 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		int32_t mv = int32_t(size - offset);
+		int32_t mv = (int32_t)(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);
@@ -993,10 +989,7 @@ public:
 
 		// Copy insert items into location.
 		for (size_t i = 0; i < count; ++i)
-		{
-			Constructor::destroy(m_data[i + offset]);
 			Constructor::construct(m_data[i + offset], fptr[i]);
-		}
 
 		return iterator(&m_data[offset]);
 	}
@@ -1021,7 +1014,7 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		int32_t mv = int32_t(size - offset);
+		int32_t mv = (int32_t)(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);
@@ -1031,10 +1024,7 @@ public:
 
 		// Copy insert items into location.
 		for (size_t i = 0; i < count; ++i)
-		{
-			Constructor::destroy(m_data[i + offset]);
 			Constructor::construct(m_data[i + offset], from[i]);
-		}
 
 		return iterator(&m_data[offset]);
 	}
@@ -1099,14 +1089,7 @@ private:
 
 	void move(size_t target, size_t source)
 	{
-		m_data[target] = std::move(m_data[source]);
-	}
-
-	void swap(size_t target, size_t source)
-	{
-		auto tmp = std::move(m_data[target]);
-		m_data[target] = std::move(m_data[source]);
-		m_data[source] = std::move(tmp);
+		Constructor::move(m_data[target], m_data[source]);
 	}
 
 	void grow(size_t count)
