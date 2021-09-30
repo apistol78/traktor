@@ -94,7 +94,9 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	{
 		const std::wstring& description = m_hostEnumerator->getDescription(id);
 		canvas.setForeground(ss->getColor(this, /*isEnable() ?*/ L"color" /*: L"color-disabled"*/));
+		canvas.setClipRect(rcText);
 		canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
+		canvas.resetClipRect();
 	}
 }
 
