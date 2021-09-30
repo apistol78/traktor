@@ -217,7 +217,7 @@ bool Connection::process()
 					}
 					else if (subcmd == c_subCommandPutCommit)
 					{
-						if (m_dictionary->put(key, blob, true))
+						if (m_dictionary->put(key, blob))
 						{
 							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
 							if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
