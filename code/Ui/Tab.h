@@ -50,7 +50,7 @@ public:
 
 	TabPage* getPageAt(const Point& position) const;
 
-	void removePage(TabPage* page);
+	bool removePage(TabPage* page);
 
 	void removeAllPages();
 
