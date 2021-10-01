@@ -2949,16 +2949,15 @@ void EditorForm::eventTabFocus(ui::FocusEvent* event)
 			break;
 		}
 	}
+	if (m_tabGroupLastFocus == nullptr)
+		m_tabGroupLastFocus = m_tabGroups.front();
 
 	// Change active page from focus change.
-	if (m_tabGroupLastFocus != nullptr)
+	ui::TabPage* tabPage = m_tabGroupLastFocus->getActivePage();
+	if (tabPage != nullptr)
 	{
-		ui::TabPage* tabPage = m_tabGroupLastFocus->getActivePage();
-		if (tabPage != nullptr)
-		{
-			IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-			setActiveEditorPage(editorPage);
-		}
+		IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+		setActiveEditorPage(editorPage);
 	}
 }
 
