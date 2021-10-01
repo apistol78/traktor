@@ -438,20 +438,22 @@ void PipelineDependsIncremental::updateDependencyHashes(
 					m_pipelineDb->setFile(fauxDataPath, fileHash);
 				}
 			}
+			else
+				log::warning << L"Unable to read dependency instance data \"" << dataName << L"\", hash will be inconsistent." << Endl;
 		}
 	}
 
 	// Calculate external file hashes.
 	dependency->filesHash = 0;
-	for (PipelineDependency::external_files_t::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
+	for (const auto& dependencyFile : dependency->files)
 	{
 		if (m_pipelineDb)
 		{
-			Ref< File > file = FileSystem::getInstance().get(i->filePath);
+			Ref< File > file = FileSystem::getInstance().get(dependencyFile.filePath);
 			if (file)
 			{
 				PipelineFileHash fileHash;
-				if (m_pipelineDb->getFile(i->filePath, fileHash))
+				if (m_pipelineDb->getFile(dependencyFile.filePath, fileHash))
 				{
 					if (fileHash.lastWriteTime == file->getLastWriteTime())
 					{
@@ -462,7 +464,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 			}
 		}
 
-		Ref< IStream > fileStream = FileSystem::getInstance().open(i->filePath, File::FmRead);
+		Ref< IStream > fileStream = FileSystem::getInstance().open(dependencyFile.filePath, File::FmRead);
 		if (fileStream)
 		{
 			uint8_t buffer[4096];
@@ -479,17 +481,19 @@ void PipelineDependsIncremental::updateDependencyHashes(
 
 			if (m_pipelineDb)
 			{
-				Ref< File > file = FileSystem::getInstance().get(i->filePath);
+				Ref< File > file = FileSystem::getInstance().get(dependencyFile.filePath);
 				if (file)
 				{
 					PipelineFileHash fileHash;
 					fileHash.size = file->getSize();
 					fileHash.lastWriteTime = file->getLastWriteTime();
 					fileHash.hash = a32.get();
-					m_pipelineDb->setFile(i->filePath, fileHash);
+					m_pipelineDb->setFile(dependencyFile.filePath, fileHash);
 				}
 			}
 		}
+		else
+			log::warning << L"Unable to read dependency file \"" << dependencyFile.filePath.getPathName() << L"\", hash will be inconsistent." << Endl;
 	}
 }
 
