@@ -198,6 +198,7 @@ private:
 	Ref< ui::ProgressBar > m_buildProgress;
 	Ref< ui::MultiSplitter > m_tabGroupContainer;
 	RefArray< ui::Tab > m_tabGroups;
+	Ref< ui::Tab > m_tabGroupLastFocus;	//!< Tab group which last received focus; only use for determine which group to add new pages.
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
@@ -208,10 +209,9 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< DataAccessCache > m_dataAccessCache;
-	Ref< ui::TabPage > m_activeTabPage;
-	Ref< IEditorPage > m_activeEditorPage;
 	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
+	Ref< IEditorPage > m_activeEditorPage;
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;
@@ -226,6 +226,8 @@ private:
 	Semaphore m_buildStepMessageLock;
 	uint32_t m_propertiesHash;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
+
+	ui::TabPage* getActiveTabPage() const;
 
 	void findEditorFactory(const TypeInfo& assetType, Ref< IEditorPageFactory >& outEditorPageFactory, Ref< IObjectEditorFactory >& outObjectEditorFactory) const;
 
@@ -267,6 +269,8 @@ private:
 
 	void saveAllDocuments();
 
+	bool closeEditor(ui::TabPage* tabPage);
+
 	void closeCurrentEditor();
 
 	void closeAllEditors();
@@ -285,7 +289,7 @@ private:
 
 	void checkModified();
 
-	bool currentModified();
+	bool isModified(ui::TabPage* tabPage);
 
 	bool anyModified();
 

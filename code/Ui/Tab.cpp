@@ -137,11 +137,11 @@ TabPage* Tab::getPageAt(const Point& position) const
 	return nullptr;
 }
 
-void Tab::removePage(TabPage* page)
+bool Tab::removePage(TabPage* page)
 {
 	auto it = std::find(m_pages.begin(), m_pages.end(), PageState(page));
 	if (it == m_pages.end())
-		return;
+		return false;
 
 	m_pages.erase(it);
 
@@ -162,6 +162,8 @@ void Tab::removePage(TabPage* page)
 		else
 			m_selectedPage = nullptr;
 	}
+
+	return true;
 }
 
 void Tab::removeAllPages()
