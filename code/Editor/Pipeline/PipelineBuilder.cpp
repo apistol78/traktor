@@ -196,7 +196,40 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			)
 			{
 				if (m_verbose)
-					log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (or new pipeline version)." << Endl;
+				{
+					log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified (";
+
+					bool prepend = false;
+					if (previousDependencyHash.pipelineHash != pipelineHash)
+					{
+						log::info << L"pipeline";
+						prepend = true;
+					}
+					if (previousDependencyHash.sourceAssetHash != sourceAssetHash)
+					{
+						if (prepend)
+							log::info << L"-, ";
+						log::info << L"source asset";
+						prepend = true;
+					}
+					if (previousDependencyHash.sourceDataHash != sourceDataHash)
+					{
+						if (prepend)
+							log::info << L"-, ";
+						log::info << L"source data";
+						prepend = true;
+					}
+					if (previousDependencyHash.filesHash != filesHash)
+					{
+						if (prepend)
+							log::info << L"-, ";
+						log::info << L"file";
+						prepend = true;
+					}
+
+					log::info << L" hash mismatch)." << Endl;
+				}
+
 #if defined(_DEBUG)
 				log::info << IncreaseIndent;
 				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.pipelineHash, 8); log::info << L")" << Endl;
