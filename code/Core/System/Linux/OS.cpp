@@ -131,7 +131,8 @@ bool OS::openFile(const std::wstring& file) const
 
 bool OS::editFile(const std::wstring& file) const
 {
-	return false;
+	system(("xdg-open " + wstombs(file)).c_str());
+	return true;
 }
 
 bool OS::exploreFile(const std::wstring& file) const
