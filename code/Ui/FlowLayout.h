@@ -28,7 +28,7 @@ class T_DLLCLASS FlowLayout : public Layout
 public:
 	FlowLayout();
 
-	FlowLayout(int marginX, int marginY, int padX, int padY);
+	explicit FlowLayout(int32_t marginX, int32_t marginY, int32_t padX, int32_t padY);
 
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 
@@ -38,7 +38,7 @@ private:
 	Size m_margin;
 	Size m_pad;
 
-	void calculateRects(Widget* widget, std::vector< WidgetRect >& outRects);
+	bool calculateRects(Widget* widget, std::vector< WidgetRect >& outRects) const;
 };
 
 	}

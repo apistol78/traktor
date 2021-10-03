@@ -14,44 +14,48 @@ FlowLayout::FlowLayout()
 {
 }
 
-FlowLayout::FlowLayout(int marginX, int marginY, int padX, int padY) :
-	m_margin(marginX, marginY),
-	m_pad(padX, padY)
+FlowLayout::FlowLayout(int32_t marginX, int32_t marginY, int32_t padX, int32_t padY)
+:	m_margin(marginX, marginY)
+,	m_pad(padX, padY)
 {
 }
 
 bool FlowLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
 	std::vector< WidgetRect > rects;
+	if (!calculateRects(widget, rects))
+		return false;
 
-	calculateRects(widget, rects);
-
-	result.cx = result.cy = 0;
-	for (std::vector< WidgetRect >::iterator i = rects.begin(); i != rects.end(); ++i)
+	result.cx =
+	result.cy = 0;
+	for (const auto& wr : rects)
 	{
-		result.cx = std::max< int >(result.cx, i->rect.right);
-		result.cy = std::max< int >(result.cy, i->rect.bottom);
+		result.cx = std::max< int >(result.cx, wr.rect.right);
+		result.cy = std::max< int >(result.cy, wr.rect.bottom);
 	}
 
 	result += m_margin;
-
 	return true;
 }
 
 void FlowLayout::update(Widget* widget)
 {
 	std::vector< WidgetRect > widgetRects;
-	calculateRects(widget, widgetRects);
+	if (!calculateRects(widget, widgetRects))
+		return;
 	widget->setChildRects(&widgetRects[0], (uint32_t)widgetRects.size());
 }
 
-void FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRects)
+bool FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRects) const
 {
 	Point pos(m_margin.cx, m_margin.cy);
-	int max = 0;
+	int32_t max = 0;
 
 	Rect innerRect = widget->getInnerRect();
-	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
+	if (innerRect.area() <= 0)
+		return false;
+
+	for (Widget* child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
 	{
 		if (!child->acceptLayout())
 			continue;
@@ -69,11 +73,13 @@ void FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRe
 		if (ext.y > max)
 			max = ext.y;
 
-		ext.x = std::min< int >(ext.x, innerRect.right - m_margin.cx);
+		ext.x = std::min< int32_t >(ext.x, innerRect.right - m_margin.cx);
 		outRects.push_back(WidgetRect(child, Rect(pos, ext)));
 
 		pos.x = ext.x + m_pad.cx;
 	}
+
+	return true;
 }
 
 	}
