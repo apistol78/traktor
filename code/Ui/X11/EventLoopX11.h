@@ -1,8 +1,8 @@
-#ifndef traktor_ui_EventLoopX11_H
-#define traktor_ui_EventLoopX11_H
+#pragma once
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include "Core/Timer/Timer.h"
 #include "Ui/Itf/IEventLoop.h"
 
 // import/export mechanism.
@@ -23,7 +23,7 @@ class Assoc;
 class T_DLLCLASS EventLoopX11 : public IEventLoop
 {
 public:
-	EventLoopX11(Context* context);
+	explicit EventLoopX11(Context* context);
 
 	virtual ~EventLoopX11();
 
@@ -44,6 +44,7 @@ public:
 private:
 	Ref< Context > m_context;
 	XIC m_xic;
+	Timer m_timer;
 	bool m_terminated;
 	int32_t m_exitCode;
 	int32_t m_keyState;
@@ -53,6 +54,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_ui_EventLoopX11_H
-

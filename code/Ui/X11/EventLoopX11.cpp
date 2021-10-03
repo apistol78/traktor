@@ -1,6 +1,5 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
-#include "Core/Timer/Timer.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/Events/MouseButtonDownEvent.h"
@@ -48,45 +47,41 @@ void EventLoopX11::destroy()
 		XDestroyIC(m_xic);
 		m_xic = 0;
 	}
-
 	delete this;
 }
 
 bool EventLoopX11::process(EventSubject* owner)
 {
 	SmallSet< Window > exposeWindows;
-	Timer timer;
 	XEvent e;
 
-	while (!m_terminated && XPending(m_context->getDisplay()))
+	if (m_terminated)
+		return false;
+
+	// Read all pending events, do not dispatch expose events
+	// directly since we synthesize those later to reduce number of redraws.
+	while (XPending(m_context->getDisplay()))
 	{
-		exposeWindows.reset();
-
-		// Read all pending events, do not dispatch expose events
-		// directly since we synthesize those later to reduce number of redraws.
-		while (XPending(m_context->getDisplay()))
+		XNextEvent(m_context->getDisplay(), &e);
+		if (e.type != Expose)
 		{
-			XNextEvent(m_context->getDisplay(), &e);
-			if (e.type != Expose)
-			{
-				if (!preTranslateEvent(owner, e))
-					m_context->dispatch(e);
-			}
-			else
-				exposeWindows.insert(e.xexpose.window);
+			if (!preTranslateEvent(owner, e))
+				m_context->dispatch(e);
 		}
-
-		for (auto window : exposeWindows)
-		{
-			e.type = Expose;
-			e.xexpose.window = window;
-			e.xexpose.count = 0;
-			m_context->dispatch(e);
-		}
-
-		double dt = timer.getDeltaTime();
-		Timers::getInstance().update(dt);
+		else
+			exposeWindows.insert(e.xexpose.window);
 	}
+
+	for (auto window : exposeWindows)
+	{
+		e.type = Expose;
+		e.xexpose.window = window;
+		e.xexpose.count = 0;
+		m_context->dispatch(e);
+	}
+
+	double dt = m_timer.getDeltaTime();
+	Timers::getInstance().update(dt);
 
 	return !m_terminated;
 }
@@ -94,7 +89,6 @@ bool EventLoopX11::process(EventSubject* owner)
 int32_t EventLoopX11::execute(EventSubject* owner)
 {
 	SmallSet< Window > exposeWindows;
-	Timer timer;
 	XEvent e;
 
 	int fd = ConnectionNumber(m_context->getDisplay());
@@ -148,7 +142,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 				idle = false;
 		}
 
-		double dt = timer.getDeltaTime();
+		double dt = m_timer.getDeltaTime();
 		Timers::getInstance().update(dt);
 	}
 
