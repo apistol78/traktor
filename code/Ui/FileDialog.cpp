@@ -10,6 +10,7 @@
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/FlowLayout.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Splitter.h"
@@ -41,7 +42,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		return false;
 
 	m_containerPath = new Container();
-	m_containerPath->create(this, WsNone, new TableLayout(L"*,*,*,*,*,*,*,*,*", L"100%", dpi96(4), dpi96(4)));
+	m_containerPath->create(this, WsNone, new FlowLayout(dpi96(4), dpi96(4), dpi96(4), dpi96(4)));
 
 	m_gridFiles = new GridView();
 	m_gridFiles->create(this, GridView::WsColumnHeader | WsDoubleBuffer);
