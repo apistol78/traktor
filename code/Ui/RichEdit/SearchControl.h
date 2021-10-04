@@ -45,7 +45,7 @@ public:
 
 	virtual void show() override final;
 
-	virtual ui::Size getPreferedSize() const override final;
+	virtual ui::Size getPreferredSize(const Size& hint) const override final;
 
 private:
 	Ref< ui::Edit > m_editSearch;

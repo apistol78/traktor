@@ -38,10 +38,10 @@ Size Panel::getMinimumSize() const
 	return sz;
 }
 
-Size Panel::getPreferedSize() const
+Size Panel::getPreferredSize(const Size& hint) const
 {
 	Size titleSize = getFontMetric().getExtent(getText());
-	Size sz = Container::getPreferedSize();
+	Size sz = Container::getPreferredSize(hint);
 	sz.cx += 2;
 	sz.cy += 3 + titleSize.cy;
 	return sz;

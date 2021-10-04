@@ -64,7 +64,7 @@ Color4ub ColorControl::getColor() const
 	return m_color;
 }
 
-Size ColorControl::getPreferedSize() const
+Size ColorControl::getPreferredSize(const Size& hint) const
 {
 	const int32_t width = dpi96(c_width);
 	const int32_t height = dpi96(c_height);

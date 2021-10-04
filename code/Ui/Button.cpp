@@ -46,14 +46,14 @@ void Button::setText(const std::wstring& text)
 	m_preferedSize = Size(w + marginX * 2, h + marginY * 2);
 }
 
-Size Button::getPreferedSize() const
+Size Button::getPreferredSize(const Size& hint) const
 {
 	return m_preferedSize;
 }
 
 Size Button::getMaximumSize() const
 {
-	return getPreferedSize();
+	return m_preferedSize;
 }
 
 void Button::eventMouseTrack(MouseTrackEvent* event)

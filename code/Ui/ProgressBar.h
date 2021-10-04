@@ -35,7 +35,7 @@ public:
 
 	int32_t getProgress() const;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 

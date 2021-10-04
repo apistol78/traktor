@@ -33,7 +33,7 @@ public:
 
 	virtual void setText(const std::wstring& text) override;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 private:
 	Size m_preferedSize;

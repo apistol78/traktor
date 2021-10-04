@@ -63,7 +63,7 @@ std::wstring ShortcutEdit::getText() const
 	return keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 }
 
-Size ShortcutEdit::getPreferedSize() const
+Size ShortcutEdit::getPreferredSize(const Size& hint) const
 {
 	return Size(
 		ui::dpi96(c_preferedWidth),

@@ -315,7 +315,7 @@ Size ToolFormCocoa::getMinimumSize() const
 	return Size(0, 0);
 }
 
-Size ToolFormCocoa::getPreferedSize() const
+Size ToolFormCocoa::getPreferredSize(const Size& hint) const
 {
 	return Size(0, 0);
 }

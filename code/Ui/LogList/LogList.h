@@ -55,7 +55,7 @@ public:
 
 	bool copyLog(uint8_t filter = ~0);
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 private:
 	struct Entry

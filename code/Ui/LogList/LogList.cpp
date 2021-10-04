@@ -153,7 +153,7 @@ bool LogList::copyLog(uint8_t filter)
 	return Application::getInstance()->getClipboard()->setText(ss.str());
 }
 
-Size LogList::getPreferedSize() const
+Size LogList::getPreferredSize(const Size& hint) const
 {
 	return Size(200, 150);
 }
@@ -217,7 +217,7 @@ void LogList::eventPaint(PaintEvent* event)
 	// Get inner rectangle, adjust for scrollbar.
 	Rect inner = getInnerRect();
 	if (m_scrollBar->isVisible(false))
-		inner.right -= m_scrollBar->getPreferedSize().cx;
+		inner.right -= m_scrollBar->getPreferredSize(inner.getSize()).cx;
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(inner);
@@ -373,11 +373,10 @@ void LogList::eventPaint(PaintEvent* event)
 
 void LogList::eventSize(SizeEvent* event)
 {
-	int32_t width = m_scrollBar->getPreferedSize().cx;
+	const Rect inner = getInnerRect();
+	int32_t width = m_scrollBar->getPreferredSize(inner.getSize()).cx;
 
-	Rect inner = getInnerRect();
 	Rect rc(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
-
 	m_scrollBar->setRect(rc);
 
 	updateScrollBar();

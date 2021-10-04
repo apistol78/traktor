@@ -43,7 +43,7 @@ void ColorSliderControl::setMarker(int32_t marker)
 	update();
 }
 
-Size ColorSliderControl::getPreferedSize() const
+Size ColorSliderControl::getPreferredSize(const Size& hint) const
 {
 	const int32_t sliderWidth = dpi96(24);
 	const int32_t sliderHeight = dpi96(256);

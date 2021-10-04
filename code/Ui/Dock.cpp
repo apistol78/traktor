@@ -192,7 +192,7 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 
 		// Determine size of form.
 		Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
-		Size preferredSize = widget ? widget->getPreferedSize() : Size(100, 100);
+		Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
 		Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
 
 		// Create floating form.

@@ -99,7 +99,7 @@ public:
 
 	bool playing() const;
 
-	virtual ui::Size getPreferedSize() const override final;
+	virtual ui::Size getPreferredSize(const ui::Size& hint) const override final;
 
 	MoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 

@@ -79,27 +79,27 @@ Size QuadSplitter::getMinimumSize() const
 	return size;
 }
 
-Size QuadSplitter::getPreferedSize() const
+Size QuadSplitter::getPreferredSize(const Size& hint) const
 {
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
 	Size size(c_splitterSize, c_splitterSize);
 	size.cx += std::max(
-		widgets[0] ? widgets[0]->getPreferedSize().cx : 0,
-		widgets[3] ? widgets[3]->getPreferedSize().cx : 0
+		widgets[0] ? widgets[0]->getPreferredSize(hint).cx : 0,
+		widgets[3] ? widgets[3]->getPreferredSize(hint).cx : 0
 	);
 	size.cx += std::max(
-		widgets[1] ? widgets[1]->getPreferedSize().cx : 0,
-		widgets[2] ? widgets[2]->getPreferedSize().cx : 0
+		widgets[1] ? widgets[1]->getPreferredSize(hint).cx : 0,
+		widgets[2] ? widgets[2]->getPreferredSize(hint).cx : 0
 	);
 	size.cy += std::max(
-		widgets[0] ? widgets[0]->getPreferedSize().cy : 0,
-		widgets[1] ? widgets[1]->getPreferedSize().cy : 0
+		widgets[0] ? widgets[0]->getPreferredSize(hint).cy : 0,
+		widgets[1] ? widgets[1]->getPreferredSize(hint).cy : 0
 	);
 	size.cy += std::max(
-		widgets[2] ? widgets[2]->getPreferedSize().cy : 0,
-		widgets[3] ? widgets[3]->getPreferedSize().cy : 0
+		widgets[2] ? widgets[2]->getPreferredSize(hint).cy : 0,
+		widgets[3] ? widgets[3]->getPreferredSize(hint).cy : 0
 	);
 
 	return size;

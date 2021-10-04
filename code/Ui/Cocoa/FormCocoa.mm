@@ -276,7 +276,7 @@ Size FormCocoa::getMinimumSize() const
 	return Size(0, 0);
 }
 
-Size FormCocoa::getPreferedSize() const
+Size FormCocoa::getPreferredSize(const Size& hint) const
 {
 	return Size(0, 0);
 }

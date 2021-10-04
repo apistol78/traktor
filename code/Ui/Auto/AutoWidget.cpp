@@ -251,9 +251,9 @@ void AutoWidget::updateLayout()
 	bool scrollBarVisibleV = m_scrollBarV->isVisible(false);
 
 	if (scrollBarVisibleH)
-		innerRect.bottom -= m_scrollBarH->getPreferedSize().cy;
+		innerRect.bottom -= m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
 	if (scrollBarVisibleV)
-		innerRect.right -= m_scrollBarV->getPreferedSize().cx;
+		innerRect.right -= m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
 
 	if (innerRect.getWidth() <= 0 || innerRect.getHeight() <= 0)
 		return;
@@ -301,9 +301,9 @@ void AutoWidget::updateLayout()
 		Rect innerRect = getInnerRect();
 
 		if (m_scrollBarH->isVisible(false))
-			innerRect.bottom -= m_scrollBarH->getPreferedSize().cy;
+			innerRect.bottom -= m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
 		if (m_scrollBarV->isVisible(false))
-			innerRect.right -= m_scrollBarV->getPreferedSize().cx;
+			innerRect.right -= m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
 
 		m_headerCell.cell = nullptr;
 		m_footerCell.cell = nullptr;
@@ -330,10 +330,10 @@ void AutoWidget::updateLayout()
 
 void AutoWidget::placeScrollBars()
 {
-	int32_t width = m_scrollBarV->getPreferedSize().cx;
-	int32_t height = m_scrollBarH->getPreferedSize().cy;
-
 	Rect innerRect = getInnerRect();
+
+	int32_t width = m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
+	int32_t height = m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
 
 	if (m_headerCell.cell)
 		innerRect.top = m_headerCell.rc.bottom + 1;

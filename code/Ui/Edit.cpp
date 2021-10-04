@@ -232,7 +232,7 @@ void Edit::setText(const std::wstring& text)
 	deselect();
 }
 
-Size Edit::getPreferedSize() const
+Size Edit::getPreferredSize(const Size& hint) const
 {
 	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
 	return Size(dpi96(100), height);
@@ -240,8 +240,8 @@ Size Edit::getPreferedSize() const
 
 Size Edit::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
-	return Size(65535, preferredSize.cy);
+	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
+	return Size(65535, height);
 }
 
 void Edit::eventFocus(FocusEvent* event)

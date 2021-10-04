@@ -312,7 +312,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-Size ScrollBar::getPreferedSize() const
+Size ScrollBar::getPreferredSize(const Size& hint) const
 {
 	return Size(
 		dpi96(16),
@@ -322,11 +322,10 @@ Size ScrollBar::getPreferedSize() const
 
 Size ScrollBar::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
 	if (m_vertical)
-		return Size(preferredSize.cx, 65535);
+		return Size(dpi96(16), 65535);
 	else
-		return Size(65535, preferredSize.cy);
+		return Size(65535, dpi96(16));
 }
 
 	}

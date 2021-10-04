@@ -93,7 +93,7 @@ public:
 
 	virtual Size getMinimumSize() const override;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	IBitmap* getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 

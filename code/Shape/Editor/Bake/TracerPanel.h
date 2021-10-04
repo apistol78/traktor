@@ -37,6 +37,7 @@ private:
 	Ref< ui::CheckBox > m_checkEnable;
 	Ref< ui::ProgressBar > m_progressBar;
 	Ref< ui::Button > m_buttonAbort;
+	bool m_idle;
 };
 
 	}

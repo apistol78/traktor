@@ -52,15 +52,14 @@ int32_t ProgressBar::getProgress() const
 	return m_progress;
 }
 
-Size ProgressBar::getPreferedSize() const
+Size ProgressBar::getPreferredSize(const Size& hint) const
 {
 	return Size(dpi96(256), dpi96(16));
 }
 
 Size ProgressBar::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
-	return Size(65535, preferredSize.cy);
+	return Size(65535, dpi96(16));
 }
 
 void ProgressBar::eventPaint(PaintEvent* event)

@@ -104,9 +104,9 @@ void SearchControl::show()
 	ui::Container::show();
 }
 
-ui::Size SearchControl::getPreferedSize() const
+ui::Size SearchControl::getPreferredSize(const Size& hint) const
 {
-	ui::Size preferedSize = ui::Container::getPreferedSize();
+	ui::Size preferedSize = ui::Container::getPreferredSize(hint);
 	return ui::Size(ui::dpi96(250), preferedSize.cy);
 }
 

@@ -15,7 +15,7 @@ CenterLayout::CenterLayout(uint32_t centerAxis)
 
 bool CenterLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
-	result = widget->getPreferedSize();
+	result = widget->getPreferredSize(bounds);
 	return true;
 }
 
@@ -25,7 +25,7 @@ void CenterLayout::update(Widget* widget)
 	if (child)
 	{
 		Rect rc = widget->getInnerRect();
-		Size sz = child->getPreferedSize();
+		Size sz = child->getPreferredSize(rc.getSize());
 
 		float ratio = float(sz.cx) / sz.cy;
 

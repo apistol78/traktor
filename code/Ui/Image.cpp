@@ -36,7 +36,7 @@ Size Image::getMinimumSize() const
 		return Size(0, 0);
 }
 
-Size Image::getPreferedSize() const
+Size Image::getPreferredSize(const Size& hint) const
 {
 	if (!m_image)
 		return Size(0, 0);
@@ -74,7 +74,8 @@ bool Image::setImage(IBitmap* image, bool transparent)
 	m_image = image;
 	m_transparent = transparent;
 
-	setRect(Rect(getRect().getTopLeft(), getPreferedSize()));
+	const Rect rc = getRect();
+	setRect(Rect(rc.getTopLeft(), getPreferredSize(rc.getSize())));
 	update();
 
 	return true;

@@ -32,7 +32,7 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 	return true;
 }
 
-Size ColorGradientControl::getPreferedSize() const
+Size ColorGradientControl::getPreferredSize(const Size& hint) const
 {
 	const int32_t size = dpi96(256);
 	return Size(size, size);

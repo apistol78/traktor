@@ -19,7 +19,7 @@ bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	if (!child)
 		return false;
 
-	Size sz = child->getPreferedSize();
+	Size sz = child->getPreferredSize(bounds);
 	float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 	int32_t width = bounds.cx;
@@ -38,12 +38,12 @@ bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 void AspectLayout::update(Widget* widget)
 {
 	Widget* child = widget->getFirstChild();
-	if (child != 0)
+	if (child != nullptr)
 	{
-		Size sz = child->getPreferedSize();
-		float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
-
 		Rect rc = widget->getInnerRect();
+
+		Size sz = child->getPreferredSize(rc.getSize());
+		float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 		int32_t width = rc.getWidth();
 		int32_t height = (int32_t)(width / ratio);

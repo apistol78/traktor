@@ -38,7 +38,7 @@ public:
 
 	Color4ub getColor() const;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 private:
 	Color4ub m_color;

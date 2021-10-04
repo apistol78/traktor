@@ -60,7 +60,7 @@ void CheckBox::setText(const std::wstring& text)
 	);
 }
 
-Size CheckBox::getPreferedSize() const
+Size CheckBox::getPreferredSize(const Size& hint) const
 {
 	return m_preferedSize;
 }

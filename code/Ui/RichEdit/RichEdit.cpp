@@ -696,9 +696,10 @@ bool RichEdit::replaceAll()
 Rect RichEdit::getEditRect() const
 {
 	Rect rc = getInnerRect();
-	rc.right -= m_scrollBarV->getPreferedSize().cx;
+	Size sz = rc.getSize();
+	rc.right -= m_scrollBarV->getPreferredSize(sz).cx;
 	if (m_scrollBarH->isVisible(false))
-		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+		rc.bottom -= m_scrollBarH->getPreferredSize(sz).cy;
 	return rc;
 }
 
@@ -1515,9 +1516,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRc);
 
-	innerRc.right -= m_scrollBarV->getPreferedSize().cx;
+	Size sz = innerRc.getSize();
+	innerRc.right -= m_scrollBarV->getPreferredSize(sz).cx;
 	if (m_scrollBarH->isVisible(false))
-		innerRc.bottom -= m_scrollBarH->getPreferedSize().cy;
+		innerRc.bottom -= m_scrollBarH->getPreferredSize(sz).cy;
 
 	uint32_t lineCount = uint32_t(m_lines.size());
 	uint32_t lineOffset = m_scrollBarV->getPosition();
@@ -1658,10 +1660,9 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 void RichEdit::eventSize(SizeEvent* event)
 {
-	int32_t width = m_scrollBarV->getPreferedSize().cx;
-	int32_t height = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPreferedSize().cy : 0;
-
-	Rect inner = getInnerRect();
+	const Rect inner = getInnerRect();
+	int32_t width = m_scrollBarV->getPreferredSize(inner.getSize()).cx;
+	int32_t height = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPreferredSize(inner.getSize()).cy : 0;
 
 	updateScrollBars();
 
@@ -1671,7 +1672,7 @@ void RichEdit::eventSize(SizeEvent* event)
 	Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
 	m_scrollBarH->setRect(rcH);
 
-	ui::Size searchControlSize = m_searchControl->getPreferedSize();
+	ui::Size searchControlSize = m_searchControl->getPreferredSize(inner.getSize());
 	m_searchControl->setRect(ui::Rect(
 		ui::Point(getEditRect().getWidth() - searchControlSize.cx, 0),
 		searchControlSize

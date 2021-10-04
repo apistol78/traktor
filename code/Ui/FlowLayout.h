@@ -38,7 +38,7 @@ private:
 	Size m_margin;
 	Size m_pad;
 
-	bool calculateRects(Widget* widget, std::vector< WidgetRect >& outRects) const;
+	bool calculateRects(Widget* widget, const Size& bounds, std::vector< WidgetRect >& outRects) const;
 };
 
 	}

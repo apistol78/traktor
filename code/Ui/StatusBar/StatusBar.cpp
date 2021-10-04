@@ -54,7 +54,7 @@ void StatusBar::setText(int32_t column, const std::wstring& text)
 	}
 }
 
-Size StatusBar::getPreferedSize() const
+Size StatusBar::getPreferredSize(const Size& hint) const
 {
 	Size preferedSize(0, dpi96(c_preferedHeight));
 	if (getParent())
@@ -68,7 +68,7 @@ void StatusBar::eventSize(SizeEvent* event)
 	if (child)
 	{
 		Rect rc = getInnerRect();
-		Size preferedSize = child->getPreferedSize();
+		Size preferedSize = child->getPreferredSize(rc.getSize());
 
 		rc.top += dpi96(3);
 		rc.bottom -= dpi96(3);

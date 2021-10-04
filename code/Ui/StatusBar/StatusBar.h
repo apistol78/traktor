@@ -31,7 +31,7 @@ public:
 
 	void setText(int32_t column, const std::wstring& text);
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 private:
 	struct Column

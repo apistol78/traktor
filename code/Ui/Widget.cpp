@@ -322,10 +322,10 @@ Size Widget::getMinimumSize() const
 	return m_widget->getMinimumSize();
 }
 
-Size Widget::getPreferedSize() const
+Size Widget::getPreferredSize(const Size& hint) const
 {
 	T_ASSERT(m_widget);
-	return m_widget->getPreferedSize();
+	return m_widget->getPreferredSize(hint);
 }
 
 Size Widget::getMaximumSize() const
