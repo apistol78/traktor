@@ -284,7 +284,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 						continue;
 
 					// Offset position.
-					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.02f);
+					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.001f);
 				}
 
 				elm.position = position;
