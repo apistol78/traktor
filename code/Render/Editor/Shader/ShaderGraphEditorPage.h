@@ -94,8 +94,10 @@ private:
 	Ref< ui::SyntaxRichEdit > m_scriptEditor;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
-	Ref< ui::Container > m_variablesContainer;
+	Ref< ui::Container > m_dataContainer;
 	Ref< ui::GridView > m_variablesGrid;
+	Ref< ui::GridView > m_uniformsGrid;
+	Ref< ui::GridView > m_portsGrid;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
@@ -134,6 +136,8 @@ private:
 	void eventVariableEdit(ui::GridItemContentChangeEvent* event);
 
 	void eventVariableDoubleClick(ui::GridRowDoubleClickEvent* event);
+
+	void eventUniformOrPortDoubleClick(ui::GridRowDoubleClickEvent* event);
 };
 
 	}

@@ -16,12 +16,13 @@
 #include "Editor/IBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
-#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/INodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
@@ -54,7 +55,9 @@
 #include "Ui/MessageBox.h"
 #include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Node.h"
@@ -89,7 +92,7 @@ namespace traktor
 		namespace
 		{
 
-const wchar_t* c_typeNames[] =
+const wchar_t* c_pinTypeNames[] =
 {
 	L"",
 	L"Scalar",
@@ -102,6 +105,17 @@ const wchar_t* c_typeNames[] =
 	L"Texture Cube",
 	L"Struct Buffer",
 	L"State"
+};
+
+const wchar_t* c_parameterTypeNames[] =
+{
+	L"Scalar",
+	L"Vector",
+	L"Matrix",
+	L"Texture 2D",
+	L"Texture 3D",
+	L"Texture Cube",
+	L"Struct Buffer"
 };
 
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
@@ -236,14 +250,21 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
 	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
 
-	// Create variable grid.
-	m_variablesContainer = new ui::Container();
-	m_variablesContainer->create(parent, ui::WsNone, new ui::FloodLayout());
-	m_variablesContainer->setText(i18n::Text(L"SHADERGRAPH_VARIABLES"));
-	m_site->createAdditionalPanel(m_variablesContainer, ui::dpi96(400), false);
+	// Create "data" view.
+	m_dataContainer = new ui::Container();
+	m_dataContainer->create(parent, ui::WsNone, new ui::FloodLayout());
+	m_dataContainer->setText(i18n::Text(L"SHADERGRAPH_DATA"));
+	m_site->createAdditionalPanel(m_dataContainer, ui::dpi96(400), false);
+
+	Ref< ui::Tab > tab = new ui::Tab();
+	tab->create(m_dataContainer, ui::Tab::WsBottom);
+
+	// Variables tab page.
+	Ref< ui::TabPage > tabPageVariables = new ui::TabPage();
+	tabPageVariables->create(tab, i18n::Text(L"SHADERGRAPH_VARIABLES"), new ui::FloodLayout());
 
 	m_variablesGrid = new ui::GridView();
-	m_variablesGrid->create(m_variablesContainer, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_variablesGrid->create(tabPageVariables, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140), true));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80), false));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80), false));
@@ -251,12 +272,42 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
 	m_variablesGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventVariableDoubleClick);
 
+	tab->addPage(tabPageVariables);
+
+	// Uniforms
+	Ref< ui::TabPage > tabPageUniforms = new ui::TabPage();
+	tabPageUniforms->create(tab, i18n::Text(L"SHADERGRAPH_UNIFORMS"), new ui::FloodLayout());
+
+	m_uniformsGrid = new ui::GridView();
+	m_uniformsGrid->create(tabPageUniforms, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_uniformsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), ui::dpi96(140), false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_TYPE"), ui::dpi96(80), false));
+	m_uniformsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
+
+	tab->addPage(tabPageUniforms);
+
+	// Ports
+	Ref< ui::TabPage > tabPagePorts = new ui::TabPage();
+	tabPagePorts->create(tab, i18n::Text(L"SHADERGRAPH_PORTS"), new ui::FloodLayout());
+
+	m_portsGrid = new ui::GridView();
+	m_portsGrid->create(tabPagePorts, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_portsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
+	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_NAME"), ui::dpi96(140), false));
+	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_DIRECTION"), ui::dpi96(80), false));
+	m_portsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
+
+	tab->addPage(tabPagePorts);
+
+	tab->setActivePage(tabPageVariables);
+
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
 
 	std::map< std::wstring, Ref< ui::MenuItem > > categories;
-	for (size_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
+	for (uint32_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
 		if (categories.find(c_nodeCategories[i].category) == categories.end())
 		{
@@ -312,7 +363,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	updateGraph();
 
-	m_site->setPropertyObject(0);
+	m_site->setPropertyObject(nullptr);
 	return true;
 }
 
@@ -332,14 +383,14 @@ void ShaderGraphEditorPage::destroy()
 		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
 
-	if (m_variablesContainer)
-		m_site->destroyAdditionalPanel(m_variablesContainer);
+	if (m_dataContainer)
+		m_site->destroyAdditionalPanel(m_dataContainer);
 
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
 	safeDestroy(m_dependencyPane);
-	safeDestroy(m_variablesContainer);
+	safeDestroy(m_dataContainer);
 	safeDestroy(m_menuQuick);
 }
 
@@ -867,7 +918,7 @@ void ShaderGraphEditorPage::createEditorGraph()
 
 	updateGraph();
 
-	m_site->setPropertyObject(0);
+	m_site->setPropertyObject(nullptr);
 }
 
 void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges)
@@ -1064,8 +1115,54 @@ void ShaderGraphEditorPage::updateGraph()
 			row->setBackground(Color4ub(255, 0, 0, 255));
 
 		row->add(new ui::GridItem(toString(variable.second.readCount)));
-		row->add(new ui::GridItem(c_typeNames[(int32_t)variable.second.type]));
+		row->add(new ui::GridItem(c_pinTypeNames[(int32_t)variable.second.type]));
 		m_variablesGrid->addRow(row);
+	}
+
+	// Update uniforms grid.
+	m_uniformsGrid->removeAllRows();
+
+	for (auto node : m_shaderGraph->getNodes())
+	{
+		if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", uniformNode);
+			row->add(new ui::GridItem(uniformNode->getParameterName()));
+			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]));
+			m_uniformsGrid->addRow(row);
+		}
+		else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", indexedUniformNode);
+			row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
+			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
+			m_uniformsGrid->addRow(row);
+		}
+	}
+
+	// Update ports grid.
+	m_portsGrid->removeAllRows();
+
+	for (auto node : m_shaderGraph->getNodes())
+	{
+		if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", inputPortNode);
+			row->add(new ui::GridItem(inputPortNode->getName()));
+			row->add(new ui::GridItem(L"Input"));
+			m_portsGrid->addRow(row);
+		}
+		else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->setData(L"SHADERNODE", outputPortNode);
+			row->add(new ui::GridItem(outputPortNode->getName()));
+			row->add(new ui::GridItem(L"Output"));
+			m_portsGrid->addRow(row);
+		}
 	}
 
 	// Validate shader graph.
@@ -1544,6 +1641,29 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 
 	m_editorGraph->center(true);
 	m_editorGraph->update();
+
+	m_site->setPropertyObject(variable);
+
+	event->consume();
+}
+
+void ShaderGraphEditorPage::eventUniformOrPortDoubleClick(ui::GridRowDoubleClickEvent* event)
+{
+	Node* node = event->getRow()->getData< Node >(L"SHADERNODE");
+	if (!node)
+		return;
+
+	m_editorGraph->deselectAllNodes();
+	for (auto editorNode : m_editorGraph->getNodes())
+	{
+		if (editorNode->getData< Node >(L"SHADERNODE") == node)
+			editorNode->setSelected(true);
+	}
+
+	m_editorGraph->center(true);
+	m_editorGraph->update();
+
+	m_site->setPropertyObject(node);
 
 	event->consume();
 }
