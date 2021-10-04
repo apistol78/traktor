@@ -169,6 +169,12 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 				uv[i].set(0.0f, 0.0f);			
 		}
 
+		// Discard too large triangles, to prevent broken meshes to halt editor.
+		float bw = std::max< float >({ sp[0].x, sp[1].x, sp[2].x }) - std::min< float >({ sp[0].x, sp[1].x, sp[2].x });
+		float bh = std::max< float >({ sp[0].y, sp[1].y, sp[2].y }) - std::min< float >({ sp[0].y, sp[1].y, sp[2].y });
+		if (bw > hw || bh > hh)
+			continue;
+
 		const auto& polygonMaterial = materials[polygon.getMaterial()];
 		
 		triangle(sp[0], sp[1], sp[2], [&](int32_t x, int32_t y, float alpha, float beta, float gamma) {
