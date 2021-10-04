@@ -29,7 +29,7 @@ public:
 
 	virtual std::wstring getText() const override;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	void set(int32_t keyState, VirtualKey virtualKey);
 

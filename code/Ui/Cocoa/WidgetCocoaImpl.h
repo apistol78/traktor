@@ -298,7 +298,7 @@ public:
 		return Size(0, 0);
 	}
 
-	virtual Size getPreferedSize() const override
+	virtual Size getPreferredSize(const Size& hint) const override
 	{
 		NSSize idealSize = [[m_control cell] cellSize];
 		return Size(idealSize.width, idealSize.height);

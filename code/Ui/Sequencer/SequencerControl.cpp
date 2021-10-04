@@ -205,8 +205,8 @@ void SequencerControl::eventSize(SizeEvent* event)
 
 	Rect rc = getInnerRect();
 
-	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
-	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+	int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
 	m_scrollBarV->setRect(Rect(
 		rc.right - scrollWidth,
@@ -240,8 +240,8 @@ void SequencerControl::updateScrollBars()
 
 	Rect rc = getInnerRect();
 
-	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
-	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+	int scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	int scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
 	int overflowV = std::max< int >(0, sequences.cy - rc.getHeight() + scrollHeight);
 	m_scrollBarV->setRange(overflowV);
@@ -306,7 +306,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		auto it = sequenceItems.begin();
 		std::advance(it, sequenceId);
 
-		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + sequenceHeight * sequenceId);
+		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferredSize(rc.getSize()).cx, sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + sequenceHeight * sequenceId);
 		m_mouseTrackItem.item = *it;
 		m_mouseTrackItem.item->mouseDown(
 			this,
@@ -504,8 +504,8 @@ void SequencerControl::eventPaint(PaintEvent* event)
 
 	// Get component sizes.
 	Rect rc = getInnerRect();
-	int32_t scrollWidth = m_scrollBarV->getPreferedSize().cx;
-	int32_t scrollHeight = m_scrollBarH->getPreferedSize().cy;
+	int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
 	// Get scroll offsets.
 	int32_t scrollOffsetX = m_scrollBarH->getPosition();

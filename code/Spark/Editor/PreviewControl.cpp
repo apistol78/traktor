@@ -220,7 +220,7 @@ bool PreviewControl::playing() const
 	return m_playing;
 }
 
-ui::Size PreviewControl::getPreferedSize() const
+ui::Size PreviewControl::getPreferredSize(const ui::Size& hint) const
 {
 	if (!m_movie)
 		return ui::Size(400, 300);

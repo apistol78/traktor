@@ -312,7 +312,7 @@ Size DialogCocoa::getMinimumSize() const
 	return Size(0, 0);
 }
 
-Size DialogCocoa::getPreferedSize() const
+Size DialogCocoa::getPreferredSize(const Size& hint) const
 {
 	return Size(0, 0);
 }

@@ -95,7 +95,7 @@ public:
 
 	virtual Size getMinimumSize() const override;
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 

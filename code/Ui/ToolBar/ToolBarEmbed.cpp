@@ -22,7 +22,7 @@ bool ToolBarEmbed::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarEmbed::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	Size preferedSize = m_widget->getPreferedSize();
+	Size preferedSize = m_widget->getPreferredSize(Size(m_width, imageHeight));
 	return Size(
 		max(preferedSize.cx, m_width),
 		max(preferedSize.cy, imageHeight)

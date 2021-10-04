@@ -60,7 +60,7 @@ void calculate(
 			{
 				int32_t i = c + r * nc;
 				if (i < (int32_t)children.size())
-					w[c] = std::max< int32_t >(w[c], children[i]->getPreferedSize().cx);
+					w[c] = std::max< int32_t >(w[c], children[i]->getPreferredSize(avail).cx);
 			}
 		}
 		else
@@ -100,7 +100,7 @@ void calculate(
 			{
 				int32_t i = c + r * nc;
 				if (i < (int32_t)children.size())
-					h[r] = std::max< int32_t >(h[r], children[i]->getPreferedSize().cy);
+					h[r] = std::max< int32_t >(h[r], children[i]->getPreferredSize(avail).cy);
 			}
 		}
 		else
@@ -169,7 +169,7 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
 
-		Size pf = children[i]->getPreferedSize();
+		Size pf = children[i]->getPreferredSize(bounds);
 		Size sz(
 			std::min< int32_t >(w[c], pf.cx),
 			std::min< int32_t >(h[r], pf.cy)
@@ -224,7 +224,7 @@ void TableLayout::update(Widget* widget)
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
 
-		Size pf = children[i]->getPreferedSize();
+		Size pf = children[i]->getPreferredSize(avail);
 		Size mx = children[i]->getMaximumSize();
 
 		Size sz(

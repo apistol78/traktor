@@ -245,7 +245,7 @@ Size Tab::getMinimumSize() const
 	return Size(256, 256);
 }
 
-Size Tab::getPreferedSize() const
+Size Tab::getPreferredSize(const Size& hint) const
 {
 	return Size(256, 256);
 }

@@ -48,7 +48,7 @@ public:
 
 	bool getViewIndex(const ui::Point& position, uint32_t& outIndex) const;
 
-	virtual ui::Size getPreferedSize() const override final;
+	virtual ui::Size getPreferredSize(const ui::Size& hint) const override final;
 
 private:
 	enum SplitType

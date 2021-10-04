@@ -34,7 +34,7 @@ public:
 
 	int32_t getValue() const;
 
-	virtual Size getPreferedSize() const override final;
+	virtual Size getPreferredSize(const Size& hint) const override final;
 
 	virtual Size getMaximumSize() const override final;
 

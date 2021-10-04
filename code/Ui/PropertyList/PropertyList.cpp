@@ -374,7 +374,7 @@ Size PropertyList::getMinimumSize() const
 	return Size(256, 256);
 }
 
-Size PropertyList::getPreferedSize() const
+Size PropertyList::getPreferredSize(const Size& hint) const
 {
 	return Size(256, 256);
 }
@@ -413,8 +413,10 @@ void PropertyList::updateScrollBar()
 
 void PropertyList::placeItems()
 {
+	Rect rcInner = getInnerRect();
+
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
-	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
+	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
 	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	RefArray< PropertyItem > propertyItems;
@@ -423,7 +425,6 @@ void PropertyList::placeItems()
 	std::vector< WidgetRect > childRects;
 
 	// Issue resize of in-place controls on expanded items.
-	Rect rcInner = getInnerRect();
 	Rect rcItem(
 		rcInner.left, -scrollBarOffset + top,
 		rcInner.right - scrollBarWidth, -scrollBarOffset + top + dpi96(c_propertyItemHeight) - 1
@@ -605,7 +606,7 @@ void PropertyList::eventSize(SizeEvent* event)
 {
 	Rect rc = getInnerRect();
 
-	int32_t scrollWidth = m_scrollBar->getPreferedSize().cx;
+	int32_t scrollWidth = m_scrollBar->getPreferredSize(rc.getSize()).cx;
 	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	m_scrollBar->setRect(Rect(
@@ -628,7 +629,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
-	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
+	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
 	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	// Clear widget background.

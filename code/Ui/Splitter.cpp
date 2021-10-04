@@ -97,7 +97,7 @@ Size Splitter::getMinimumSize() const
 	return size;
 }
 
-Size Splitter::getPreferedSize() const
+Size Splitter::getPreferredSize(const Size& hint) const
 {
 	Size size(0, 0);
 	if (m_vertical == true)
@@ -107,15 +107,15 @@ Size Splitter::getPreferedSize() const
 		Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx += left->getPreferedSize().cx;
-			size.cy = std::max< int >(size.cy, left->getPreferedSize().cy);
+			size.cx += left->getPreferredSize(hint).cx;
+			size.cy = std::max< int >(size.cy, left->getPreferredSize(hint).cy);
 		}
 
 		Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx += right->getPreferedSize().cx;
-			size.cy = std::max< int >(size.cy, right->getPreferedSize().cy);
+			size.cx += right->getPreferredSize(hint).cx;
+			size.cy = std::max< int >(size.cy, right->getPreferredSize(hint).cy);
 		}
 	}
 	else
@@ -125,15 +125,15 @@ Size Splitter::getPreferedSize() const
 		Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, left->getPreferedSize().cx);
-			size.cy += left->getPreferedSize().cy;
+			size.cx = std::max< int >(size.cx, left->getPreferredSize(hint).cx);
+			size.cy += left->getPreferredSize(hint).cy;
 		}
 
 		Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, right->getPreferedSize().cx);
-			size.cy += right->getPreferedSize().cy;
+			size.cx = std::max< int >(size.cx, right->getPreferredSize(hint).cx);
+			size.cy += right->getPreferredSize(hint).cy;
 		}
 	}
 	return size;

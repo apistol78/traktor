@@ -330,7 +330,7 @@ bool ScenePreviewControl::getViewIndex(const ui::Point& position, uint32_t& outI
 	return false;
 }
 
-ui::Size ScenePreviewControl::getPreferedSize() const
+ui::Size ScenePreviewControl::getPreferredSize(const ui::Size& hint) const
 {
 	return ui::Size(256, 256);
 }

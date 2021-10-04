@@ -361,7 +361,7 @@ public:
 		return Size(0, 0);
 	}
 
-	virtual Size getPreferedSize() const override
+	virtual Size getPreferredSize(const Size& hint) const override
 	{
 		return Size(128, 64);
 	}

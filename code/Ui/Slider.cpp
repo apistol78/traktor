@@ -54,15 +54,14 @@ int32_t Slider::getValue() const
 	return m_value;
 }
 
-Size Slider::getPreferedSize() const
+Size Slider::getPreferredSize(const Size& hint) const
 {
 	return Size(dpi96(200), dpi96(20));
 }
 
 Size Slider::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
-	return Size(65535, preferredSize.cy);
+	return Size(65535, dpi96(20));
 }
 
 void Slider::eventButtonDown(MouseButtonDownEvent* event)

@@ -79,7 +79,7 @@ public:
 		return dynamic_type_cast< T* >(getSelectedData());
 	}
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 

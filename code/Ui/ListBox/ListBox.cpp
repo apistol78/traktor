@@ -41,7 +41,7 @@ bool ListBox::create(Widget* parent, int32_t style)
 	return true;
 }
 
-Size ListBox::getPreferedSize() const
+Size ListBox::getPreferredSize(const Size& hint) const
 {
 	return Size(100, 100);
 }

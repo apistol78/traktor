@@ -39,7 +39,7 @@ Size MultiSplitter::getMinimumSize() const
 	return Size(0, 0);
 }
 
-Size MultiSplitter::getPreferedSize() const
+Size MultiSplitter::getPreferredSize(const Size& hint) const
 {
 	return Size(0, 0);
 }

@@ -155,7 +155,7 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 	return nullptr;
 }
 
-Size ToolBar::getPreferedSize() const
+Size ToolBar::getPreferredSize(const Size& hint) const
 {
 	int32_t width = 0;
 	int32_t height = 0;
@@ -172,7 +172,7 @@ Size ToolBar::getPreferedSize() const
 
 Size ToolBar::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
+	Size preferredSize = getPreferredSize(Size(0, 0));
 	return Size(65535, preferredSize.cy);
 }
 
@@ -181,11 +181,11 @@ void ToolBar::clampOffset()
 	if (m_offsetX > 0)
 		m_offsetX = 0;
 
-	int32_t clientWidth = getInnerRect().getSize().cx;
-	int32_t preferedWidth = getPreferedSize().cx;
-	if (preferedWidth > clientWidth)
+	Size clientSize = getInnerRect().getSize();
+	int32_t preferedWidth = getPreferredSize(clientSize).cx;
+	if (preferedWidth > clientSize.cx)
 	{
-		int32_t over = preferedWidth - clientWidth;
+		int32_t over = preferedWidth - clientSize.cx;
 		m_offsetX = std::max(m_offsetX, -over);
 	}
 	else

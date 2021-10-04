@@ -132,7 +132,7 @@ public:
 
 	virtual Size getMinimumSize() const;
 
-	virtual Size getPreferedSize() const;
+	virtual Size getPreferredSize(const Size& hint) const;
 
 	virtual Size getMaximumSize() const;
 

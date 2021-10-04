@@ -46,7 +46,7 @@ public:
 
 	Ref< ToolBarItem > getItem(const Point& at);
 
-	virtual Size getPreferedSize() const override;
+	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 

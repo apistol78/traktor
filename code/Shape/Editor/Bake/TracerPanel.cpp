@@ -22,6 +22,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerPanel", TracerPanel, ui::Container)
 
 TracerPanel::TracerPanel(editor::IEditor* editor)
 :	m_editor(editor)
+,	m_idle(true)
 {
 }
 
@@ -70,19 +71,22 @@ bool TracerPanel::create(ui::Widget* parent)
 				m_progressBar->setProgress((status.current * 100) / status.total);
 				m_buttonAbort->setEnable(true);
 				m_buttonAbort->update();
+				m_idle = false;
+				update();
 			}
-			else
+			else if (!m_idle)
 			{
 				m_progressBar->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
 				m_progressBar->setProgress(0);
 				m_buttonAbort->setEnable(false);
 				m_buttonAbort->update();
+				m_idle = true;
+				update();
 			}
-			update();
 		}
 	});
 
-	startTimer(200);
+	startTimer(300);
 	update();
 
 	return true;

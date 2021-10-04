@@ -163,15 +163,14 @@ Object* DropDown::getSelectedData() const
 		return nullptr;
 }
 
-Size DropDown::getPreferedSize() const
+Size DropDown::getPreferredSize(const Size& hint) const
 {
 	return m_preferedSize;
 }
 
 Size DropDown::getMaximumSize() const
 {
-	Size preferredSize = getPreferedSize();
-	return Size(65535, preferredSize.cy);
+	return Size(65535, m_preferedSize.cy);
 }
 
 void DropDown::updatePreferedSize()

@@ -37,14 +37,14 @@ void Static::setText(const std::wstring& text)
 	m_preferedSize = extent + Size(dpi96(1), dpi96(1));
 }
 
-Size Static::getPreferedSize() const
+Size Static::getPreferredSize(const Size& hint) const
 {
 	return m_preferedSize;
 }
 
 Size Static::getMaximumSize() const
 {
-	return getPreferedSize();
+	return m_preferedSize;
 }
 
 void Static::eventPaint(PaintEvent* event)

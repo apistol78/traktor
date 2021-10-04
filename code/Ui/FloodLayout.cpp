@@ -25,7 +25,7 @@ bool FloodLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	if (!child)
 		return false;
 
-	result = child->getPreferedSize() + m_margin + m_margin;
+	result = child->getPreferredSize(bounds) + m_margin + m_margin;
 	return true;
 }
 

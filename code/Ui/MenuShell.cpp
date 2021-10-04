@@ -73,7 +73,7 @@ MenuItem* MenuShell::getItem(const Point& at) const
 
 	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
 	{
-		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemWidth -= m_scrollBar->getPreferredSize(rcInner.getSize()).cx;
 		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
 	}
 
@@ -97,7 +97,7 @@ bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 
 	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
 	{
-		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemWidth -= m_scrollBar->getPreferredSize(rcInner.getSize()).cx;
 		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
 	}
 
@@ -117,6 +117,8 @@ bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 
 Size MenuShell::getMinimumSize() const
 {
+	Rect rcInner = getInnerRect();
+
 	Size minimumSize(0, 0);
 	for (auto item : m_items)
 	{
@@ -130,13 +132,13 @@ Size MenuShell::getMinimumSize() const
 	{
 		minimumSize.cy = m_items.front()->getSize(this).cy * m_maxItems;
 		if (m_scrollBar->isVisible(false))
-			minimumSize.cx += m_scrollBar->getPreferedSize().cx;
+			minimumSize.cx += m_scrollBar->getPreferredSize(rcInner.getSize()).cx;
 	}
 
 	return minimumSize + Size(2, 2);
 }
 
-Size MenuShell::getPreferedSize() const
+Size MenuShell::getPreferredSize(const Size& hint) const
 {
 	return getMinimumSize();
 }
@@ -247,7 +249,7 @@ void MenuShell::eventPaint(PaintEvent* e)
 
 	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
 	{
-		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemWidth -= m_scrollBar->getPreferredSize(rcInner.getSize()).cx;
 		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
 	}
 
@@ -272,7 +274,7 @@ void MenuShell::eventSize(SizeEvent* e)
 	if (m_scrollBar != nullptr)
 	{
 		Rect rcInner = getInnerRect();
-		Size szPreferred = m_scrollBar->getPreferedSize();
+		Size szPreferred = m_scrollBar->getPreferredSize(rcInner.getSize());
 
 		m_scrollBar->setRect(Rect(
 			rcInner.right - szPreferred.cx - 1, rcInner.top + 1,
