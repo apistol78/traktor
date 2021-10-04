@@ -193,7 +193,7 @@ Ref< net::SocketStream > Client::establish(uint8_t command)
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(m_serverAddress))
 	{
-		log::error << L"Unable to connect to server." << Endl;
+		log::error << L"Unable to connect to server at " << m_serverAddress.getHostName() << L":" << m_serverAddress.getPort() << L"." << Endl;
 		return nullptr;
 	}
 
