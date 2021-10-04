@@ -236,6 +236,19 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
 	}
+	else if (command == L"Scene.Editor.TogglePlay")
+	{
+		if (!m_context->isPlaying())
+		{
+			m_context->setPlaying(true);
+			m_context->setPhysicsEnable(true);
+		}
+		else 
+		{
+			m_context->setPlaying(false);
+			m_context->setPhysicsEnable(false);
+		}
+	}
 	else if (command == L"Scene.Editor.SingleView")
 	{
 		m_splitCount = StSingle;
