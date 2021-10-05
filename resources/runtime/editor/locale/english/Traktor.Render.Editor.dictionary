@@ -710,6 +710,34 @@
 			<second>Type</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_DATA</first>
+			<second>Data</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_UNIFORMS</first>
+			<second>Uniforms</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_UNIFORMS_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_UNIFORMS_TYPE</first>
+			<second>Type</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_PORTS</first>
+			<second>Ports</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_PORTS_NAME</first>
+			<second>Name</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_PORTS_DIRECTION</first>
+			<second>Direction</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_EVALUATE_CONNECTED</first>
 			<second>Evaluate connected</second>
 		</item>
