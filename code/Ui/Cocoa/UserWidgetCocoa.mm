@@ -61,6 +61,14 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 	PaintEvent paintEvent(m_owner, canvas, rc);
 	m_owner->raiseEvent(&paintEvent);
 
+#if defined(_DEBUG)
+	if (hasFocus())
+	{
+		canvas.setBackground(Color4ub(255, 0, 0, 128));
+		canvas.fillRect(rc);
+	}
+#endif
+
 	return paintEvent.consumed();
 }
 
@@ -80,6 +88,7 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 	else if (button == 2)
 		button = MbtRight;
 
+	bool consumed = false;
 	if ([theEvent clickCount] <= 1)
 	{
 		if (!m_owner->hasEventHandler< MouseButtonDownEvent >())
@@ -91,6 +100,7 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 			fromNSPoint(mousePosition)
 		);
 		m_owner->raiseEvent(&mouseEvent);
+		consumed = mouseEvent.consumed();
 	}
 	else
 	{
@@ -103,7 +113,11 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 			fromNSPoint(mousePosition)
 		);
 		m_owner->raiseEvent(&mouseEvent);
+		consumed = mouseEvent.consumed();
 	}
+
+	if (!consumed)
+		setFocus();
 
 	return true;
 }
@@ -141,9 +155,6 @@ bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPoint: mousePosition fromView: nil];
 
-	//mousePosition = [m_control convertPointFromBacking: mousePosition];
-	//mousePosition.y = height + mousePosition.y;
-
 	if (button == 1)
 		button = MbtLeft;
 	else if (button == 2)
@@ -177,6 +188,17 @@ bool UserWidgetCocoa::event_keyDown(NSEvent* theEvent)
 	);
 	m_owner->raiseEvent(&keyEvent);
 
+	if (keyChar != 0 && m_owner != nullptr)
+	{
+		KeyEvent keyEvent(
+			m_owner,
+			translateKeyCode(keyCode),
+			keyCode,
+			keyChar
+		);
+		m_owner->raiseEvent(&keyEvent);	
+	}
+
 	return true;
 }
 
@@ -203,24 +225,6 @@ bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
 
 bool UserWidgetCocoa::event_performKeyEquivalent(NSEvent* theEvent)
 {
-	if (!m_owner->hasEventHandler< KeyEvent >())
-		return false;
-
-	NSString* chs = [theEvent characters];
-	if (!chs || [chs length] <= 0)
-		return false;
-
-	uint32_t keyCode = [theEvent keyCode];
-	wchar_t keyChar = (wchar_t)[chs characterAtIndex: 0];
-
-	KeyEvent keyEvent(
-		m_owner,
-		translateKeyCode(keyCode),
-		keyCode,
-		keyChar
-	);
-	m_owner->raiseEvent(&keyEvent);
-
 	return true;
 }
 

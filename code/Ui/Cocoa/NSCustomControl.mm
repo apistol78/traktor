@@ -40,6 +40,21 @@
 	return m_font;
 }
 
+- (BOOL) acceptsFirstResponder
+{
+	return YES;
+}
+
+- (BOOL) acceptsFirstMouse;
+{
+	return YES;
+}
+
+- (BOOL) canBecomeKeyView
+{
+	return YES;
+}
+
 - (BOOL) isFlipped
 {
 	return YES;
