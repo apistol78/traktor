@@ -243,7 +243,7 @@ bool WorldRendererForward::create(
 	}
 
 	// Create screen reflections processing.
-	if (m_reflectionsQuality >= Quality::High)
+	if (m_reflectionsQuality >= Quality::Disabled)
 	{
 		if (!resourceManager->bind(c_screenReflections, m_screenReflections))
 		{
@@ -443,14 +443,14 @@ void WorldRendererForward::setup(
 		gbufferTargetSetId
 	);
 
-	//auto reflectionsTargetSetId = setupReflectionsPass(
-	//	worldRenderView,
-	//	rootEntity,
-	//	renderGraph,
-	//	outputTargetSetId,
-	//	gbufferTargetSetId,
-	//	visualReadTargetSetId
-	//);
+	auto reflectionsTargetSetId = setupReflectionsPass(
+		worldRenderView,
+		rootEntity,
+		renderGraph,
+		outputTargetSetId,
+		gbufferTargetSetId,
+		visualReadTargetSetId
+	);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -468,7 +468,7 @@ void WorldRendererForward::setup(
 		visualWriteTargetSetId,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
-		0/*reflectionsTargetSetId*/,
+		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId
 	);
 
@@ -902,24 +902,26 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	{
 	default:
 	case Quality::Low:
-		rgtd.referenceWidthDenom = 2;
+		rgtd.referenceWidthDenom = 2;	// 50%
 		rgtd.referenceHeightDenom = 2;
 		break;
 
 	case Quality::Medium:
-		rgtd.referenceWidthMul = 2;
+		rgtd.referenceWidthMul = 2;		// 67%
 		rgtd.referenceWidthDenom = 3;
 		rgtd.referenceHeightMul = 2;
 		rgtd.referenceHeightDenom = 3;
 		break;
 
 	case Quality::High:
-		rgtd.referenceWidthDenom = 1;
-		rgtd.referenceHeightDenom = 1;
+		rgtd.referenceWidthMul = 4;		// 80%
+		rgtd.referenceWidthDenom = 5;
+		rgtd.referenceHeightMul = 4;
+		rgtd.referenceHeightDenom = 5;
 		break;
 
 	case Quality::Ultra:
-		rgtd.referenceWidthDenom = 1;
+		rgtd.referenceWidthDenom = 1;	// 100%
 		rgtd.referenceHeightDenom = 1;
 		break;
 	}
@@ -930,79 +932,32 @@ render::handle_t WorldRendererForward::setupReflectionsPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
 	rp->addInput(gbufferTargetSetId);
-
-	if (m_reflectionsQuality >= Quality::Ultra)
-		rp->addInput(visualReadTargetSetId);
+	rp->addInput(visualReadTargetSetId);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	rp->setOutput(reflectionsTargetSetId, clear, render::TfNone, render::TfColor);
 	
-	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-		{
-			WorldBuildContext wc(
-				m_entityRenderers,
-				rootEntity,
-				renderContext
-			);
-
-			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-
-			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->endParameters(renderContext);
-
-			WorldRenderPassForward reflectionsPass(
-				s_techniqueReflectionWrite,
-				sharedParams,
-				worldRenderView,
-				IWorldRenderPass::PfNone
-			);
-
-			T_ASSERT(!renderContext->havePendingDraws());
-
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, reflectionsPass, gathered.renderable);
-	
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, reflectionsPass);
-
-			renderContext->merge(render::RpAll);
-		}
-	);
-
 	 // Render screenspace reflections.
-	 if (m_reflectionsQuality >= Quality::Ultra)
-	 {
-	 	render::ImageGraphView view;
+	render::ImageGraphView view;
+	view.viewFrustum = worldRenderView.getViewFrustum();
+	view.view = worldRenderView.getView();
+	view.projection = worldRenderView.getProjection();
+	view.deltaTime = worldRenderView.getDeltaTime();
 
-	 	view.viewFrustum = worldRenderView.getViewFrustum();
-	 	view.view = worldRenderView.getView();
-	 	view.projection = worldRenderView.getProjection();
-	 	view.deltaTime = worldRenderView.getDeltaTime();
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
 
-	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	 	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
-
-	 	m_screenReflections->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			*m_imageGraphContext,
-			view
-		);
-	 }
+	m_screenReflections->addPasses(
+		m_screenRenderer,
+		renderGraph,
+		rp,
+		*m_imageGraphContext,
+		view
+	);
 
 	renderGraph.addPass(rp);
 	return reflectionsTargetSetId;

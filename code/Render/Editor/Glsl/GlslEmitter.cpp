@@ -863,7 +863,8 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (int " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"int " << N->getName() << L";" << Endl;
+	f << L"for (" << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -998,7 +999,8 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 	// Write outer for-loop statement.
 	StringOutputStream ss;
-	ss << L"for (int " << N->getName() << L" = ";
+	ss << L"int " << N->getName() << L";" << Endl;
+	ss << L"for (" << N->getName() << L" = ";
 	if (Scalar* scalarFrom = dynamic_type_cast< Scalar* >(cx.getInputNode(node, L"From")))
 		ss << (int32_t)scalarFrom->get();
 	else
@@ -2328,7 +2330,8 @@ bool emitSum(GlslContext& cx, Sum* node)
 	assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (int " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"int " << N->getName() << L";" << Endl;
+	f << L"for (" << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -3045,7 +3048,8 @@ struct EmitterCast : public Emitter
 	virtual bool emit(GlslContext& c, Node* node) override final
 	{
 		T_ASSERT(is_a< NodeType >(node));
-		return (*m_function)(c, static_cast< NodeType* >(node));
+		bool result = (*m_function)(c, static_cast< NodeType* >(node));
+		return result;
 	}
 };
 
