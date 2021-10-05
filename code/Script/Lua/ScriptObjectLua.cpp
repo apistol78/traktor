@@ -30,11 +30,5 @@ Ref< const IRuntimeClass > ScriptObjectLua::getRuntimeClass() const
 	return ScriptClassLua::createFromStack(m_scriptManager, m_scriptContext, m_luaState);
 }
 
-void ScriptObjectLua::push() const
-{
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
-	T_ASSERT(lua_istable(m_luaState, -1));
-}
-
 	}
 }
