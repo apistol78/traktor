@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Core/Class/IRuntimeObject.h"
-
-struct lua_State;
+#include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor
 {
@@ -20,7 +19,11 @@ public:
 
 	virtual Ref< const IRuntimeClass > getRuntimeClass() const override final;
 
-	void push() const;
+	void push() const
+	{
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+		T_ASSERT(lua_istable(m_luaState, -1));
+	}
 
 private:
 	ScriptManagerLua* m_scriptManager;
