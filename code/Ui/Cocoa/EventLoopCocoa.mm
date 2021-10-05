@@ -36,6 +36,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 	if (m_launching)
 	{
 		[NSApp finishLaunching];
+		[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 		m_launching = false;
 	}
 
@@ -98,6 +99,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 	if (m_launching)
 	{
 		[NSApp finishLaunching];
+		[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 		m_launching = false;
 	}
 

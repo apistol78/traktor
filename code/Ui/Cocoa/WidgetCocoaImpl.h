@@ -115,11 +115,8 @@ public:
 		if (!window)
 			return false;
 
-		for (NSResponder* responder = [window firstResponder]; responder; responder = [responder nextResponder])
-		{
-			if (responder == m_control)
-				return true;
-		}
+		if ([window firstResponder] == m_control)
+			return true;
 
 		return false;
 	}

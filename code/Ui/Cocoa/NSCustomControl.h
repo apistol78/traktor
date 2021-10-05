@@ -48,6 +48,12 @@ struct INSControlEventsCallback
 
 - (NSFont*) font;
 
+- (BOOL) acceptsFirstResponder;
+
+- (BOOL) acceptsFirstMouse;
+
+- (BOOL) canBecomeKeyView;
+
 - (BOOL) isFlipped;
 
 - (void) drawRect: (NSRect)rect;
