@@ -2940,7 +2940,6 @@ void EditorForm::eventTabFocus(ui::FocusEvent* event)
 		return;
 
 	// Check which tab group contain active editor, determined by focus.
-	m_tabGroupLastFocus = nullptr;
 	for (auto tabGroup : m_tabGroups)
 	{
 		if (tabGroup->containFocus())
