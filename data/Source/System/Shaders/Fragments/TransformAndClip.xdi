@@ -42,7 +42,7 @@
 				<first>1845</first>
 				<second>653</second>
 			</position>
-			<swizzle>w</swizzle>
+			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{E6144C2E-8935-D846-B6BF-C8595C0D8D1B}</id>
