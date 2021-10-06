@@ -28,13 +28,27 @@ DialogCocoa::DialogCocoa(EventSubject* owner)
 
 bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	uint32_t styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
+	uint32_t styleMask = 0;
 
-	if (style & WsResizable)
+	if ((style & (WsSystemBox | WsCaption)) != 0)
+		styleMask |= NSWindowStyleMaskTitled;
+
+	if ((style & WsMinimizeBox) != 0)
+		styleMask |= NSWindowStyleMaskMiniaturizable;
+
+	if ((style & WsCloseBox) != 0)
+		styleMask |= NSWindowStyleMaskClosable;
+
+	if ((style & WsResizable) != 0)
 		styleMask |= NSWindowStyleMaskResizable;
 
+	NSRect frame = [[NSScreen mainScreen] frame];
+
+	int32_t x = (NSWidth(frame) - width) / 2;
+	int32_t y = (NSHeight(frame) - height) / 2;
+	
 	m_window = [[NSWindow alloc]
-		initWithContentRect: NSMakeRect(50, 50, width, height)
+		initWithContentRect: NSMakeRect(x, y, width, height)
 		styleMask: styleMask
 		backing: NSBackingStoreBuffered
 		defer: TRUE
