@@ -40,7 +40,7 @@ Tag_MetalnessMap
 				<first>686</first>
 				<second>168</second>
 			</position>
-			<swizzle>x</swizzle>
+			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{D83B4A29-82DF-0C4C-B0DA-55BDAC00A853}</id>
