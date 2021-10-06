@@ -3159,6 +3159,11 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 
 void EditorForm::threadAssetMonitor()
 {
+	RefArray< db::Instance > assetInstances;
+	RefArray< const File > modifiedFiles;
+	RefArray< File > files;
+	std::vector< Guid > modifiedAssets;
+
 	while (!m_threadAssetMonitor->stopped())
 	{
 		if (
@@ -3167,19 +3172,18 @@ void EditorForm::threadAssetMonitor()
 			m_lockBuild.wait(0)
 		)
 		{
-			RefArray< db::Instance > assetInstances;
+			assetInstances.resize(0);
 			db::recursiveFindChildInstances(
 				m_sourceDatabase->getRootGroup(),
 				db::FindInstanceByType(type_of< Asset >()),
 				assetInstances
 			);
 
-			std::vector< Guid > modifiedAssets;
-			RefArray< const File > modifiedFiles;
-
 			std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 			// Find all assets which have archive flag set.
+			modifiedFiles.resize(0);
+			modifiedAssets.resize(0);
 			for (auto assetInstance : assetInstances)
 			{
 				Ref< Asset > asset = assetInstance->getObject< Asset >();
@@ -3191,9 +3195,8 @@ void EditorForm::threadAssetMonitor()
 
 				Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
-				RefArray< File > files;
+				files.resize(0);
 				FileSystem::getInstance().find(fileName, files);
-
 				for (auto file : files)
 				{
 					uint32_t flags = file->getFlags();
@@ -3206,23 +3209,20 @@ void EditorForm::threadAssetMonitor()
 				}
 			}
 
+			m_lockBuild.release();
+
 			// In case asset monitor thread has been stopped while scanning resources we
 			// abort early before issuing another build.
 			if (m_threadAssetMonitor->stopped())
-			{
-				m_lockBuild.release();
 				break;
-			}
-
-			// Reset archive flag on all found assets.
-			for (auto modifiedFile : modifiedFiles)
-				FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
-
-			m_lockBuild.release();
 
 			// Build assets.
 			if (!modifiedAssets.empty())
 			{
+				// Reset archive flag on all found assets.
+				for (auto modifiedFile : modifiedFiles)
+					FileSystem::getInstance().modify(modifiedFile->getPath(), modifiedFile->getFlags() & ~File::FfArchive);
+
 				log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
 				buildAssets(modifiedAssets, false);
 
