@@ -87,6 +87,9 @@ void CanvasCocoa::drawLine(int x1, int y1, int x2, int y2)
 	NSPoint p1 = makeNSPoint(Point(x1, y1));
 	NSPoint p2 = makeNSPoint(Point(x2, y2));
 
+	p1.x += 0.5f; p1.y += 0.5f;
+	p2.x += 0.5f; p2.y += 0.5f;
+
 	[m_foregroundColor set];
 	[NSBezierPath
 		strokeLineFromPoint: p1
@@ -139,7 +142,11 @@ void CanvasCocoa::drawSpline(const Point* pnts, int npnts)
 void CanvasCocoa::fillRect(const Rect& rc)
 {
 	NSRect nrc = makeNSRect(rc.getUnified());
-	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
+	nrc.origin.x += 0.5f;
+	nrc.origin.y += 0.5f;
+	nrc.size.width -= 1.0f;
+	nrc.size.height -= 1.0f;
 
 	[m_backgroundColor set];
 	[NSBezierPath fillRect: nrc];
@@ -148,7 +155,11 @@ void CanvasCocoa::fillRect(const Rect& rc)
 void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 {
 	NSRect nrc = makeNSRect(rc.getUnified());
-	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
+	nrc.origin.x += 0.5f;
+	nrc.origin.y += 0.5f;
+	nrc.size.width -= 1.0f;
+	nrc.size.height -= 1.0f;
 
 	NSGradient* gradient = [[NSGradient alloc]
 		initWithColorsAndLocations:
@@ -163,7 +174,11 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 void CanvasCocoa::drawRect(const Rect& rc)
 {
 	NSRect nrc = makeNSRect(rc.getUnified());
-	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
+	nrc.origin.x += 0.5f;
+	nrc.origin.y += 0.5f;
+	nrc.size.width -= 1.0f;
+	nrc.size.height -= 1.0f;
 
 	[m_foregroundColor set];
 	[NSBezierPath strokeRect: nrc];
@@ -172,7 +187,11 @@ void CanvasCocoa::drawRect(const Rect& rc)
 void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 {
 	NSRect nrc = makeNSRect(rc.getUnified());
-	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
+	nrc.origin.x += 0.5f;
+	nrc.origin.y += 0.5f;
+	nrc.size.width -= 1.0f;
+	nrc.size.height -= 1.0f;
 
 	[m_foregroundColor set];
 	[NSBezierPath strokeRect: nrc];
