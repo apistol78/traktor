@@ -16,16 +16,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketSet", SocketSet, Object)
 
 void SocketSet::add(Socket* socket)
 {
-	RefArray< Socket >::iterator i = std::find(m_sockets.begin(), m_sockets.end(), socket);
-	if (i == m_sockets.end())
-		m_sockets.push_back(socket);
+	m_sockets.push_back(socket);
 }
 
 void SocketSet::remove(Socket* socket)
 {
-	RefArray< Socket >::iterator i = std::find(m_sockets.begin(), m_sockets.end(), socket);
-	if (i != m_sockets.end())
-		m_sockets.erase(i);
+	m_sockets.remove(socket);
 }
 
 int32_t SocketSet::count() const
