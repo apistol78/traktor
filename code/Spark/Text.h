@@ -20,7 +20,7 @@ namespace traktor
 
 struct SwfTextRecord;
 
-/*! Flash static text.
+/*! Static text.
  * \ingroup Spark
  */
 class T_DLLCLASS Text : public Character
@@ -46,20 +46,18 @@ public:
 
 	Text();
 
-	Text(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix);
+	explicit Text(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix);
 
 	bool create(const AlignedVector< SwfTextRecord* >& textRecords);
 
 	const AlignedVector< Char >& getCharacters() const;
 
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	const Aabb2& getTextBounds() const;

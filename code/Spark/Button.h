@@ -18,8 +18,6 @@ namespace traktor
 	namespace spark
 	{
 
-class IActionVMImage;
-
 /*! Flash button character.
  * \ingroup Spark
  */
@@ -28,19 +26,6 @@ class T_DLLCLASS Button : public Character
 	T_RTTI_CLASS;
 
 public:
-	enum ConditionMasks
-	{
-		CmIdleToOverDown = 1 << 0,
-		CmOutDownToIdle = 1 << 1,
-		CmOutDownToOverDown = 1 << 2,
-		CmOverDownToOutDown = 1 << 3,
-		CmOverDownToOverUp = 1 << 4,
-		CmOverUpToOverDown = 1 << 5,
-		CmOverUpToIdle = 1 << 6,
-		CmIdleToOverUp = 1 << 7,
-		CmOverDownToIdle = 1 << 8
-	};
-
 	enum StateMasks
 	{
 		SmHitTest = 1 << 0,
@@ -51,40 +36,16 @@ public:
 
 	struct ButtonLayer
 	{
-		uint8_t state;
-		uint16_t characterId;
-		uint16_t placeDepth;
-		Matrix33 placeMatrix;
+		uint8_t state = 0;
+		uint16_t characterId = 0;
+		uint16_t placeDepth = 0;
+		Matrix33 placeMatrix = Matrix33::identity();
 		ColorTransform cxform;
-
-		ButtonLayer()
-		:	state(0)
-		,	characterId(0)
-		,	placeDepth(0)
-		,	placeMatrix(Matrix33::identity())
-		{
-		}
-
-		void serialize(ISerializer& s);
-	};
-
-	struct ButtonCondition
-	{
-		uint8_t key;
-		uint16_t mask;
-		Ref< const IActionVMImage > script;
-
-		ButtonCondition()
-		:	key(0)
-		,	mask(0)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};
 
 	typedef AlignedVector< ButtonLayer > button_layers_t;
-	typedef AlignedVector< ButtonCondition > button_conditions_t;
 
 	Button() = default;
 
@@ -102,33 +63,18 @@ public:
 	 */
 	const button_layers_t& getButtonLayers() const;
 
-	/*! Add button condition script.
-	 *
-	 * \param condition Condition script.
-	 */
-	void addButtonCondition(const ButtonCondition& condition);
-
-	/*! Get button condition scripts.
-	 *
-	 * \return Condition scripts.
-	 */
-	const button_conditions_t& getButtonConditions() const;
-
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	button_layers_t m_layers;
-	button_conditions_t m_conditions;
 };
 
 	}

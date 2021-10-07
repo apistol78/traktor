@@ -21,9 +21,9 @@
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"
 #include "Spark/Frame.h"
+#include "Spark/Key.h"
 #include "Spark/Sprite.h"
 #include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Action/Common/Classes/AsKey.h"
 #include "Spark/Editor/PreviewControl.h"
 #include "Spark/Sound/SoundRenderer.h"
 #include "Spark/Sw/SwDisplayRenderer.h"
@@ -47,23 +47,23 @@ const struct
 }
 c_askeys[] =
 {
-	{ ui::VkBackSpace, AsKey::AkBackspace },
-	{ ui::VkControl, AsKey::AkControl },
-	{ ui::VkDelete, AsKey::AkDeleteKey },
-	{ ui::VkDown, AsKey::AkDown },
-	{ ui::VkEnd, AsKey::AkEnd },
-	{ ui::VkReturn, AsKey::AkEnter },
-	{ ui::VkEscape, AsKey::AkEscape },
-	{ ui::VkHome, AsKey::AkHome },
-	{ ui::VkInsert, AsKey::AkInsert },
-	{ ui::VkLeft, AsKey::AkLeft },
-	{ ui::VkPageDown, AsKey::AkPgDn },
-	{ ui::VkPageUp, AsKey::AkPgUp },
-	{ ui::VkRight, AsKey::AkRight },
-	{ ui::VkShift, AsKey::AkShift },
-	{ ui::VkSpace, AsKey::AkSpace },
-	{ ui::VkTab, AsKey::AkTab },
-	{ ui::VkUp, AsKey::AkUp },
+	{ ui::VkBackSpace, Key::AkBackspace },
+	{ ui::VkControl, Key::AkControl },
+	{ ui::VkDelete, Key::AkDeleteKey },
+	{ ui::VkDown, Key::AkDown },
+	{ ui::VkEnd, Key::AkEnd },
+	{ ui::VkReturn, Key::AkEnter },
+	{ ui::VkEscape, Key::AkEscape },
+	{ ui::VkHome, Key::AkHome },
+	{ ui::VkInsert, Key::AkInsert },
+	{ ui::VkLeft, Key::AkLeft },
+	{ ui::VkPageDown, Key::AkPgDn },
+	{ ui::VkPageUp, Key::AkPgUp },
+	{ ui::VkRight, Key::AkRight },
+	{ ui::VkShift, Key::AkShift },
+	{ ui::VkSpace, Key::AkSpace },
+	{ ui::VkTab, Key::AkTab },
+	{ ui::VkUp, Key::AkUp },
 
 	{ ui::VkK, 75 },
 	{ ui::VkL, 76 }
@@ -305,13 +305,7 @@ void PreviewControl::eventIdle(ui::IdleEvent* event)
 		if (m_playing)
 		{
 			if (m_moviePlayer->progress(deltaTime, m_soundRenderer))
-			{
-				std::string command, args;
-				while (m_moviePlayer->getFsCommand(command, args))
-					log::info << L"FSCommand \"" << mbstows(command) << L"\" \"" << mbstows(args) << L"\"" << Endl;
-
 				update();
-			}
 		}
 
 		event->requestMore();

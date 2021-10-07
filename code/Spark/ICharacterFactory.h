@@ -21,14 +21,12 @@ class Matrix33;
 	namespace spark
 	{
 
-class ActionContext;
-class ActionObject;
 class Character;
 class CharacterInstance;
+class Context;
 class Dictionary;
-class IActionVMImage;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS ICharacterFactory : public Object
@@ -39,13 +37,11 @@ public:
 	virtual Ref< CharacterInstance > createInstance(
 		const Character* character,
 		int32_t depth,
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const = 0;
 
 	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const = 0;

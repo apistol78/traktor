@@ -19,9 +19,7 @@ namespace traktor
 	namespace spark
 	{
 
-class IActionVMImage;
-
-/*! SWF frame actions.
+/*! Frame actions.
  * \ingroup Spark
  *
  * Keep display list actions for a single
@@ -51,33 +49,19 @@ public:
 
 	struct PlaceObject
 	{
-		uint16_t hasFlags;
-		uint16_t depth;
-		uint8_t bitmapCaching;
-		uint8_t visible;
-		uint8_t blendMode;
-		uint8_t filter;
+		uint16_t hasFlags = 0;
+		uint16_t depth = 0;
+		uint8_t bitmapCaching = 0;
+		uint8_t visible = 1;
+		uint8_t blendMode = 0;
+		uint8_t filter = 0;
 		Color4f filterColor;
-		SmallMap< uint32_t, Ref< const IActionVMImage > > events;
-		uint16_t clipDepth;
+		uint16_t clipDepth = 0;
 		std::string name;
-		uint16_t ratio;
+		uint16_t ratio = 0;
 		ColorTransform cxTransform;
 		Matrix33 matrix;
-		uint16_t characterId;
-
-		PlaceObject()
-		:	hasFlags(0)
-		,	depth(0)
-		,	bitmapCaching(0)
-		,	visible(1)
-		,	blendMode(0)
-		,	filter(0)
-		,	clipDepth(0)
-		,	ratio(0)
-		,	characterId(0)
-		{
-		}
+		uint16_t characterId = 0;
 
 		bool has(PlaceFlags placeFlag) const
 		{
@@ -89,15 +73,9 @@ public:
 
 	struct RemoveObject
 	{
-		bool hasCharacterId;
-		uint16_t depth;
-		uint16_t characterId;
-
-		RemoveObject()
-		:	hasCharacterId(false)
-		,	depth(0)
-		{
-		}
+		bool hasCharacterId = false;
+		uint16_t depth = 0;
+		uint16_t characterId = 0;
 
 		void serialize(ISerializer& s);
 	};
@@ -146,12 +124,6 @@ public:
 	 */
 	void removeObject(const RemoveObject& removeObject);
 
-	/*! Add frame action script.
-	 *
-	 * \param actionScript Frame action script.
-	 */
-	void addActionScript(const IActionVMImage* actionScript);
-
 	/*! Start sound.
 	 */
 	void startSound(uint16_t soundId);
@@ -172,13 +144,7 @@ public:
 	 */
 	const AlignedVector< uint16_t >& getStartSounds() const;
 
-	/*! Get action scripts associated with this frame.
-	 *
-	 * \return Action scripts.
-	 */
-	const RefArray< const IActionVMImage >& getActionScripts() const;
-
-	/*! \brief
+	/*!
 	 */
 	virtual void serialize(ISerializer& s) override final;
 
@@ -189,7 +155,6 @@ private:
 	SmallMap< uint16_t, PlaceObject > m_placeObjects;
 	SmallMap< uint16_t, RemoveObject > m_removeObjects;
 	AlignedVector< uint16_t > m_startSounds;
-	RefArray< const IActionVMImage > m_actionScripts;
 };
 
 	}

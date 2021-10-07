@@ -35,7 +35,7 @@ class T_DLLCLASS SwfReader : public Object
 	T_RTTI_CLASS;
 
 public:
-	SwfReader(IStream* stream);
+	explicit SwfReader(IStream* stream);
 
 	/*! Enter allocation scope. */
 	void enterScope();

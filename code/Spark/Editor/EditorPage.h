@@ -47,7 +47,6 @@ class IResourceManager;
 	namespace spark
 	{
 
-class ActionObject;
 class CharacterInstance;
 class PathControl;
 class PreviewControl;
@@ -58,7 +57,7 @@ class T_DLLCLASS EditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	EditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit EditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -83,8 +82,6 @@ private:
 	Ref< CharacterInstance > m_selectedCharacterInstance;
 	ColorTransform m_selectedCharacterInstanceCxForm;
 	uint8_t m_selectedCharacterInstanceBlendMode;
-
-	void updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
 	void updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 

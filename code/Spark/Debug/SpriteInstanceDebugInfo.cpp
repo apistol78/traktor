@@ -7,8 +7,6 @@
 #include "Spark/Frame.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionObject.h"
 #include "Spark/Debug/SpriteInstanceDebugInfo.h"
 
 namespace traktor

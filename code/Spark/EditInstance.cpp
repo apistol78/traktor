@@ -3,13 +3,13 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
 #include "Spark/Font.h"
 #include "Spark/TextFormat.h"
 #include "Spark/TextLayout.h"
-#include "Spark/Action/ActionContext.h"
 #include "Html/Attribute.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
@@ -89,7 +89,7 @@ void traverseHtmlDOM(
 		Ref< const html::Attribute > sourceAttribute = element->getAttribute(L"src");
 		if (sourceAttribute)
 		{
-			ActionContext* context = editInstance->getContext();
+			Context* context = editInstance->getContext();
 			Dictionary* dictionary = editInstance->getDictionary();
 
 			uint16_t id;
@@ -103,9 +103,7 @@ void traverseHtmlDOM(
 					dictionary,
 					editInstance,
 					"",
-					Matrix33::identity(),
-					0,
-					0
+					Matrix33::identity()
 				);
 				if (instance)
 				{
@@ -145,8 +143,8 @@ void traverseHtmlDOM(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.EditInstance", EditInstance, CharacterInstance)
 
-EditInstance::EditInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html)
-:	CharacterInstance(context, "TextField", dictionary, parent)
+EditInstance::EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html)
+:	CharacterInstance(context, dictionary, parent)
 ,	m_edit(edit)
 ,	m_textBounds(edit->getTextBounds())
 ,	m_textColor(edit->getTextColor())
@@ -389,7 +387,8 @@ void EditInstance::eventKey(wchar_t unicode)
 
 	internalParseText(m_text);
 
-	executeScriptEvent(ActionContext::IdOnChanged, ActionValue(getAsObject()));
+	//executeScriptEvent(ActionContext::IdOnChanged, ActionValue(getAsObject()));
+	m_eventChanged.issue();
 }
 
 void EditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
@@ -563,23 +562,6 @@ float EditInstance::getTextWidth() const
 float EditInstance::getTextHeight() const
 {
 	return m_layout->getHeight();
-}
-
-void EditInstance::trace(visitor_t visitor) const
-{
-	if (m_layout)
-	{
-		const RefArray< CharacterInstance >& characters = m_layout->getCharacters();
-		for (RefArray< CharacterInstance >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-			visitor(*i);
-	}
-	CharacterInstance::trace(visitor);
-}
-
-void EditInstance::dereference()
-{
-	m_layout = 0;
-	CharacterInstance::dereference();
 }
 
 bool EditInstance::internalParseText(const std::wstring& text)

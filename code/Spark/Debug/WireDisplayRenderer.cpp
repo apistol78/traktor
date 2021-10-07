@@ -4,7 +4,6 @@
 #include "Spark/Shape.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/TextLayout.h"
-#include "Spark/Action/ActionObject.h"
 #include "Spark/Debug/WireDisplayRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
@@ -99,10 +98,10 @@ void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix
 {
 	bool parentWireEnable = m_wireEnable.top();
 
-	ActionValue wireOutline;
-	if (sprite.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
-		m_wireEnable.push(true);
-	else
+	//ActionValue wireOutline;
+	//if (sprite.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
+	//	m_wireEnable.push(true);
+	//else
 		m_wireEnable.push(false);
 
 	if (parentWireEnable || m_wireEnable.top())
@@ -157,10 +156,10 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 {
 	bool parentWireEnable = m_wireEnable.top();
 
-	ActionValue wireOutline;
-	if (edit.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
-		m_wireEnable.push(true);
-	else
+	//ActionValue wireOutline;
+	//if (edit.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
+	//	m_wireEnable.push(true);
+	//else
 		m_wireEnable.push(false);
 
 	if (parentWireEnable || m_wireEnable.top())

@@ -4,6 +4,7 @@
 #include "Core/Timer/Profiler.h"
 #include "Spark/Bitmap.h"
 #include "Spark/Canvas.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
@@ -14,10 +15,6 @@
 #include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFrame.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -26,15 +23,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
-SpriteInstance::SpriteInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Sprite* sprite)
-:	CharacterInstance(context, "MovieClip", dictionary, parent)
+SpriteInstance::SpriteInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Sprite* sprite)
+:	CharacterInstance(context, dictionary, parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
 ,	m_currentFrame(0)
 ,	m_lastUpdateFrame(~0)
-,	m_lastExecutedFrame(~0)
+//,	m_lastExecutedFrame(~0)
 ,	m_lastSoundFrame(~0)
 ,	m_cacheAsBitmap(false)
 ,	m_initialized(false)
@@ -126,6 +123,40 @@ void SpriteInstance::gotoNext()
 {
 	if (m_currentFrame < m_sprite->getFrameCount() - 1)
 		gotoFrame(m_currentFrame + 1);
+}
+
+void SpriteInstance::gotoAndPlay(uint32_t frame)
+{
+	setPlaying(true, false);
+	gotoFrame(frame);
+}
+
+void SpriteInstance::gotoAndStop(uint32_t frame)
+{
+	setPlaying(false, false);
+	gotoFrame(frame);
+}
+
+bool SpriteInstance::gotoAndPlay(const std::string& frameLabel)
+{
+	int32_t frame = m_sprite->findFrame(frameLabel);
+	if (frame < 0)
+		return false;
+
+	setPlaying(true, false);
+	gotoFrame(frame);
+	return true;
+}
+
+bool SpriteInstance::gotoAndStop(const std::string& frameLabel)
+{
+	int32_t frame = m_sprite->findFrame(frameLabel);
+	if (frame < 0)
+		return false;
+
+	setPlaying(false, false);
+	gotoFrame(frame);
+	return true;
 }
 
 void SpriteInstance::setPlaying(bool playing, bool recursive)
@@ -229,7 +260,7 @@ void SpriteInstance::updateDisplayListAndSounds(ISoundRenderer* soundRenderer)
 
 Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	T_ASSERT(context);
 
 	// Create fake character ID.
@@ -245,9 +276,7 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 		getDictionary(),
 		this,
 		clipName,
-		Matrix33::identity(),
-		nullptr,
-		nullptr
+		Matrix33::identity()
 	));
 	emptyClipInstance->setName(clipName);
 
@@ -258,7 +287,7 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 
 Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName, int32_t depth, float x, float y, float width, float height)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	T_ASSERT(context);
 
 	// Get dictionary.
@@ -299,9 +328,7 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 		dictionary,
 		this,
 		textName,
-		Matrix33::identity(),
-		nullptr,
-		nullptr
+		Matrix33::identity()
 	));
 
 	// Place character at given location.
@@ -323,7 +350,7 @@ void SpriteInstance::removeMovieClip()
 	if (!getParent())
 		return;
 
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (context)
 	{
 		if (context->getFocus() == this)
@@ -342,21 +369,18 @@ void SpriteInstance::removeMovieClip()
 	m_mask = nullptr;
 	m_canvas = nullptr;
 
-	setCacheObject(0);
-	setParent(0);
+	setCacheObject(nullptr);
+	setParent(nullptr);
 }
 
 Ref< SpriteInstance > SpriteInstance::clone() const
 {
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >& events = getEvents();
 	Ref< SpriteInstance > cloneInstance = checked_type_cast< SpriteInstance* >(m_sprite->createInstance(
 		getContext(),
 		getDictionary(),
 		getParent(),
 		"",
-		getTransform(),
-		nullptr,
-		&events
+		getTransform()
 	));
 	return cloneInstance;
 }
@@ -369,16 +393,12 @@ Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& clon
 
 Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& cloneName, int32_t depth, SpriteInstance* intoParent)
 {
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >& events = getEvents();
-
 	Ref< SpriteInstance > cloneInstance = checked_type_cast< SpriteInstance* >(m_sprite->createInstance(
 		getContext(),
 		getDictionary(),
 		intoParent,
 		cloneName,
-		getTransform(),
-		nullptr,
-		&events
+		getTransform()
 	));
 
 	intoParent->getDisplayList().showObject(
@@ -393,7 +413,7 @@ Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& clon
 
 Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 
 	// Get dictionary.
 	Dictionary* dictionary = getDictionary();
@@ -415,7 +435,13 @@ Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 	uint16_t shapeId = dictionary->addCharacter(shape);
 
 	// Create new instance of shape.
-	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0));
+	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(
+		context,
+		dictionary,
+		this,
+		"",
+		Matrix33::identity()
+	));
 	T_ASSERT(attachShapeInstance);
 
 	// Add new instance to display list.
@@ -465,6 +491,18 @@ void SpriteInstance::setMask(SpriteInstance* mask)
 		m_mask->setVisible(false);
 }
 
+CharacterInstance* SpriteInstance::getMember(const std::string& childName) const
+{
+	// Find visible named character in display list.
+	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		if (i->second.instance != nullptr && i->second.instance->getName() == childName)
+			return i->second.instance;
+	}
+	return nullptr;
+}
+
 Canvas* SpriteInstance::createCanvas()
 {
 	clearCacheObject();
@@ -481,103 +519,24 @@ void SpriteInstance::clearCacheObject()
 	});
 }
 
-bool SpriteInstance::enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const
-{
-	// Visible named character in display list.
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		outMemberNames.push_back(i->second.name);
-	return true;
-}
-
-bool SpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
-{
-	// Find visible named character in display list.
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.name == memberName)
-		{
-			outMemberValue = ActionValue(i->second.instance->getAsObject(context));
-			return true;
-		}
-	}
-
-	// No character, propagate to base class.
-	return CharacterInstance::getMember(context, memberName, outMemberValue);
-}
-
-void SpriteInstance::eventInit()
-{
-	ActionContext* context = getContext();
-	if (!context)
-		return;
-
-	Ref< SpriteInstance > current = context->getMovieClip();
-	context->setMovieClip(this);
-
-	ActionObject* self = getAsObject(context);
-	T_ASSERT(self);
-
-	Ref< ActionObject > super = self->getSuper();
-
-	const RefArray< const IActionVMImage >& initActionScripts = m_sprite->getInitActionScripts();
-	for (RefArray< const IActionVMImage >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
-	{
-		ActionFrame callFrame(
-			context,
-			self,
-			4,
-			nullptr,
-			nullptr
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
-
-		(*i)->execute(&callFrame);
-	}
-
-	CharacterInstance::eventInit();
-
-	context->setMovieClip(current);
-}
-
-void SpriteInstance::eventConstruct()
-{
-	ActionContext* context = getContext();
-	if (!context)
-		return;
-
-	Ref< SpriteInstance > current = context->getMovieClip();
-	context->setMovieClip(this);
-
-	CharacterInstance::eventConstruct();
-
-	context->setMovieClip(current);
-}
-
-void SpriteInstance::eventLoad()
-{
-	ActionContext* context = getContext();
-	if (!context)
-		return;
-
-	Ref< SpriteInstance > current = context->getMovieClip();
-	context->setMovieClip(this);
-
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnLoad, ActionValue());
-
-	CharacterInstance::eventLoad();
-
-	context->setMovieClip(current);
-}
+//void SpriteInstance::eventInit()
+//{
+//	CharacterInstance::eventInit();
+//}
+//
+//void SpriteInstance::eventConstruct()
+//{
+//	CharacterInstance::eventConstruct();
+//}
+//
+//void SpriteInstance::eventLoad()
+//{
+//	CharacterInstance::eventLoad();
+//}
 
 void SpriteInstance::eventFrame()
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -585,48 +544,8 @@ void SpriteInstance::eventFrame()
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
-
-	// Execute frame scripts.
-	if (m_lastExecutedFrame != m_currentFrame)
-	{
-		m_lastExecutedFrame = m_currentFrame;
-
-		Frame* frame = m_sprite->getFrame(m_currentFrame);
-		T_ASSERT(frame);
-
-		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
-		if (!scripts.empty())
-		{
-			T_PROFILER_SCOPE(L"Flash frame scripts");
-
-			ActionObject* self = getAsObject(context);
-			T_ASSERT(self);
-
-			Ref< ActionObject > super = self->getSuper();
-			for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
-			{
-				T_ANONYMOUS_VAR(ActionValuePool::Scope)(context->getPool());
-				{
-					ActionFrame callFrame(
-						context,
-						self,
-						4,
-						nullptr,
-						nullptr
-					);
-
-					callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-					callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-					callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
-
-					callFrame.setRegister(0, ActionValue(context->getGlobal()));
-
-					(*i)->execute(&callFrame);
-				}
-			}
-		}
-	}
+	//executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
+	m_eventEnterFrame.issue();
 
 	// Issue events on "visible" characters.
 	m_displayList.forEachVisibleObject([] (CharacterInstance* instance) {
@@ -658,7 +577,7 @@ void SpriteInstance::eventKey(wchar_t unicode)
 
 void SpriteInstance::eventKeyDown(int32_t keyCode)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -672,7 +591,8 @@ void SpriteInstance::eventKeyDown(int32_t keyCode)
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
-		executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
+		m_eventKeyDown.issue();
+	//	executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
 
 	CharacterInstance::eventKeyDown(keyCode);
 
@@ -681,7 +601,7 @@ void SpriteInstance::eventKeyDown(int32_t keyCode)
 
 void SpriteInstance::eventKeyUp(int32_t keyCode)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -695,7 +615,8 @@ void SpriteInstance::eventKeyUp(int32_t keyCode)
 
 	// Issue script assigned event.
 	if (context->getFocus() == this)
-		executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
+		m_eventKeyUp.issue();
+	//	executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
 
 	CharacterInstance::eventKeyUp(keyCode);
 
@@ -704,7 +625,7 @@ void SpriteInstance::eventKeyUp(int32_t keyCode)
 
 void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -726,19 +647,25 @@ void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	});
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
-
+	m_eventMouseDown.issue();
+	//executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
+	
 	// Check if we're inside then issue press events.
 	if (!context->getPressed() && isEnabled())
 	{
 		Aabb2 bounds = getVisibleLocalBounds();
 		if (bounds.inside(xy))
 		{
-			if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
+			if (!m_eventPress.empty() || !m_eventRelease.empty())
 			{
-				executeScriptEvent(ActionContext::IdOnPress, ActionValue());
+				m_eventPress.issue();
 				context->setPressed(this);
 			}
+			//if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
+			//{
+			//	executeScriptEvent(ActionContext::IdOnPress, ActionValue());
+			//	context->setPressed(this);
+			//}
 		}
 	}
 
@@ -750,7 +677,7 @@ void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 
 void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -768,7 +695,8 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	});
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
+	//executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
+	m_eventMouseUp.issue();
 
 	// Check if we're inside then issue press events.
 	if (context->getPressed() == this && isEnabled())
@@ -776,7 +704,8 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 		Aabb2 bounds = getVisibleLocalBounds();
 		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 		if (inside)
-			executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
+			m_eventRelease.issue();
+	//		executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
 	}
 
 	CharacterInstance::eventMouseUp(x, y, button);
@@ -786,12 +715,12 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	// Finally if mouse up has been issued and we're at the bottom
 	// of event chain, we drop reference to pressed character.
 	if (!getParent())
-		context->setPressed(0);
+		context->setPressed(nullptr);
 }
 
 void SpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 {
-	ActionContext* context = getContext();
+	Context* context = getContext();
 	if (!context)
 		return;
 
@@ -809,18 +738,21 @@ void SpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	});
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
+	//executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
+	m_eventMouseMove.issue();
 
 	// Roll over and out event handling.
 	if (!context->getRolledOver())
 	{
-		if (haveScriptEvent(ActionContext::IdOnRollOver) || haveScriptEvent(ActionContext::IdOnRollOut))
+		//if (haveScriptEvent(ActionContext::IdOnRollOver) || haveScriptEvent(ActionContext::IdOnRollOut))
+		if (!m_eventRollOver.empty() || !m_eventRollOut.empty())
 		{
 			Aabb2 bounds = getVisibleLocalBounds();
 			bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 			if (inside)
 			{
-				executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
+				//executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
+				m_eventRollOver.issue();
 				context->setRolledOver(this);
 			}
 		}
@@ -1015,26 +947,6 @@ float SpriteInstance::getYScale() const
 	return S.y * 100.0f;
 }
 
-void SpriteInstance::trace(visitor_t visitor) const
-{
-	visitor(m_mask);
-
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		visitor(i->second.instance);
-
-	CharacterInstance::trace(visitor);
-}
-
-void SpriteInstance::dereference()
-{
-	m_mask = 0;
-	m_canvas = 0;
-	m_displayList.reset();
-
-	CharacterInstance::dereference();
-}
-
 void SpriteInstance::preDispatchEvents()
 {
 	if (m_inDispatch)
@@ -1046,7 +958,7 @@ void SpriteInstance::preDispatchEvents()
 	// Initialize sprite instance.
 	if (!m_initialized)
 	{
-		eventLoad();
+		//eventLoad();
 		m_initialized = true;
 	}
 }

@@ -1,4 +1,5 @@
 #include <stack>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -52,7 +53,7 @@ private:
 	Ref< Frame > m_clippedFrame;
 	Ref< Sprite > m_maskSprite;
 	Ref< Frame > m_maskFrame;
-	std::map< const Shape*, uint32_t > m_usedIds;
+	SmallMap< const Shape*, uint32_t > m_usedIds;
 	int32_t m_nextShapeId;
 	int32_t m_nextDepth;
 	std::stack< int32_t > m_maskDepths;
@@ -170,9 +171,9 @@ void MergeQueue::insertShape(const Shape* shape, const Matrix33& transform, cons
 
 uint16_t MergeQueue::cloneShape(const Shape& shape)
 {
-	std::map< const Shape*, uint32_t >::const_iterator i = m_usedIds.find(&shape);
-	if (i != m_usedIds.end())
-		return i->second;
+	auto it = m_usedIds.find(&shape);
+	if (it != m_usedIds.end())
+		return it->second;
 
 	Ref< Shape > outputShape = new Shape(shape);
 	m_outputMovie->defineCharacter(m_nextShapeId, outputShape);

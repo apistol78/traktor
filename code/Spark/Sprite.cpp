@@ -2,13 +2,11 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/Frame.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -53,16 +51,6 @@ int Sprite::findFrame(const std::string& frameLabel) const
 	return -1;
 }
 
-void Sprite::addInitActionScript(const IActionVMImage* initActionScript)
-{
-	m_initActionScripts.push_back(initActionScript);
-}
-
-const RefArray< const IActionVMImage >& Sprite::getInitActionScripts() const
-{
-	return m_initActionScripts;
-}
-
 void Sprite::setScalingGrid(const Aabb2& scalingGrid)
 {
 	m_scalingGrid = scalingGrid;
@@ -74,13 +62,11 @@ const Aabb2& Sprite::getScalingGrid() const
 }
 
 Ref< CharacterInstance > Sprite::createInstance(
-	ActionContext* context,
+	Context* context,
 	Dictionary* dictionary,
 	CharacterInstance* parent,
 	const std::string& name,
-	const Matrix33& transform,
-	const ActionObject* initObject,
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	const Matrix33& transform
 ) const
 {
 	Ref< SpriteInstance > spriteInstance = new SpriteInstance(context, dictionary, parent, this);
@@ -88,66 +74,10 @@ Ref< CharacterInstance > Sprite::createInstance(
 	if (!name.empty())
 		spriteInstance->setName(name);
 
-	if (events)
-		spriteInstance->setEvents(*events);
-
 	spriteInstance->setTransform(transform);
-
-	if (initObject)
-	{
-		ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-		T_ASSERT(spriteInstanceAO);
-
-		const ActionObject::member_map_t& members = initObject->getLocalMembers();
-		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
-		{
-			// \fixme Same as enum2; need a visible member enumerator.
-			if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
-				spriteInstanceAO->setMember(i->first, i->second);
-		}
-	}
-
-	std::string spriteClassName;
-	if (dictionary->getExportName(getId(), spriteClassName))
-	{
-		ActionValue spriteClassValue;
-		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
-		{
-			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-			T_ASSERT(spriteInstanceAO);
-
-			ActionValue prototype;
-			spriteClassValue.getObjectAlways(context)->getMember(ActionContext::IdPrototype, prototype);
-			spriteInstanceAO->setMember(ActionContext::Id__proto__, prototype);
-			spriteInstanceAO->setMember(ActionContext::Id__ctor__, spriteClassValue);
-		}
-	}
-
-	spriteInstance->eventConstruct();
-	spriteInstance->eventInit();
-
+	//spriteInstance->eventConstruct();
+	//spriteInstance->eventInit();
 	spriteInstance->updateDisplayList();
-
-	if (dictionary->getExportName(getId(), spriteClassName))
-	{
-		ActionValue spriteClassValue;
-		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
-		{
-			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-			T_ASSERT(spriteInstanceAO);
-
-			ActionFunction* classConstructor = spriteClassValue.getObject< ActionFunction >();
-			if (classConstructor)
-			{
-				Ref< SpriteInstance > current = context->getMovieClip();
-				context->setMovieClip(spriteInstance);
-
-				classConstructor->call(spriteInstanceAO);
-
-				context->setMovieClip(current);
-			}
-		}
-	}
 
 	return spriteInstance;
 }
@@ -158,7 +88,6 @@ void Sprite::serialize(ISerializer& s)
 
 	s >> Member< uint16_t >(L"frameRate", m_frameRate);
 	s >> MemberRefArray< Frame >(L"frames", m_frames);
-	s >> MemberRefArray< const IActionVMImage >(L"initActionScripts", m_initActionScripts);
 	s >> MemberAabb2(L"scalingGrid", m_scalingGrid);
 }
 

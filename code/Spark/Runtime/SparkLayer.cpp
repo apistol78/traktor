@@ -17,9 +17,9 @@
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/Stage.h"
-#include "Spark/Cast.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Font.h"
+#include "Spark/Key.h"
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/MovieRenderer.h"
@@ -27,7 +27,6 @@
 #include "Spark/SpriteInstance.h"
 #include "Spark/ISoundRenderer.h"
 #include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Action/Common/Classes/AsKey.h"
 #include "Spark/Debug/MovieDebugger.h"
 #include "Spark/Runtime/SparkLayer.h"
 #include "Spark/Sound/SoundRenderer.h"
@@ -47,22 +46,22 @@ const struct InputKeyCode
 }
 c_inputKeyCodes[] =
 {
-	{ input::DtKeyLeftControl, AsKey::AkControl },
-	{ input::DtKeyRightControl, AsKey::AkControl },
-	{ input::DtKeyDelete, AsKey::AkDeleteKey },
-	{ input::DtKeyDown, AsKey::AkDown },
-	{ input::DtKeyEnd, AsKey::AkEnd },
-	{ input::DtKeyReturn, AsKey::AkEnter },
-	{ input::DtKeyEscape, AsKey::AkEscape },
-	{ input::DtKeyHome, AsKey::AkHome },
-	{ input::DtKeyInsert, AsKey::AkInsert },
-	{ input::DtKeyLeft, AsKey::AkLeft },
-	{ input::DtKeyRight, AsKey::AkRight },
-	{ input::DtKeyLeftShift, AsKey::AkShift },
-	{ input::DtKeyRightShift, AsKey::AkShift },
-	{ input::DtKeySpace, AsKey::AkSpace },
-	{ input::DtKeyTab, AsKey::AkTab },
-	{ input::DtKeyUp, AsKey::AkUp }
+	{ input::DtKeyLeftControl, Key::AkControl },
+	{ input::DtKeyRightControl, Key::AkControl },
+	{ input::DtKeyDelete, Key::AkDeleteKey },
+	{ input::DtKeyDown, Key::AkDown },
+	{ input::DtKeyEnd, Key::AkEnd },
+	{ input::DtKeyReturn, Key::AkEnter },
+	{ input::DtKeyEscape, Key::AkEscape },
+	{ input::DtKeyHome, Key::AkHome },
+	{ input::DtKeyInsert, Key::AkInsert },
+	{ input::DtKeyLeft, Key::AkLeft },
+	{ input::DtKeyRight, Key::AkRight },
+	{ input::DtKeyLeftShift, Key::AkShift },
+	{ input::DtKeyRightShift, Key::AkShift },
+	{ input::DtKeySpace, Key::AkSpace },
+	{ input::DtKeyTab, Key::AkTab },
+	{ input::DtKeyUp, Key::AkUp }
 };
 
 bool isWhiteSpace(wchar_t ch)
@@ -182,7 +181,6 @@ void SparkLayer::transition(Layer* fromLayer)
 		{
 			m_movie.consume();
 			m_moviePlayer = fromSparkLayer->m_moviePlayer;
-			m_moviePlayer->setExternalCall(this);
 			fromSparkLayer->m_moviePlayer = nullptr;
 		}
 
@@ -273,9 +271,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 				if (upValue != m_lastUpValue)
 				{
 					if (upValue)
-						m_moviePlayer->postKeyDown(AsKey::AkUp);
+						m_moviePlayer->postKeyDown(Key::AkUp);
 					else
-						m_moviePlayer->postKeyUp(AsKey::AkUp);
+						m_moviePlayer->postKeyUp(Key::AkUp);
 				}
 				m_lastUpValue = upValue;
 			}
@@ -286,9 +284,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 				if (downValue != m_lastDownValue)
 				{
 					if (downValue)
-						m_moviePlayer->postKeyDown(AsKey::AkDown);
+						m_moviePlayer->postKeyDown(Key::AkDown);
 					else
-						m_moviePlayer->postKeyUp(AsKey::AkDown);
+						m_moviePlayer->postKeyUp(Key::AkDown);
 				}
 				m_lastDownValue = downValue;
 			}
@@ -303,9 +301,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 				if (confirmValue != m_lastConfirmValue)
 				{
 					if (confirmValue)
-						m_moviePlayer->postKeyDown(AsKey::AkEnter);
+						m_moviePlayer->postKeyDown(Key::AkEnter);
 					else
-						m_moviePlayer->postKeyUp(AsKey::AkEnter);
+						m_moviePlayer->postKeyUp(Key::AkEnter);
 				}
 				m_lastConfirmValue = confirmValue;
 			}
@@ -316,9 +314,9 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 				if (escapeValue != m_lastEscapeValue)
 				{
 					if (escapeValue)
-						m_moviePlayer->postKeyDown(AsKey::AkEscape);
+						m_moviePlayer->postKeyDown(Key::AkEscape);
 					else
-						m_moviePlayer->postKeyUp(AsKey::AkEscape);
+						m_moviePlayer->postKeyUp(Key::AkEscape);
 				}
 				m_lastEscapeValue = escapeValue;
 			}
@@ -410,16 +408,6 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 	// Update movie player.
 	m_moviePlayer->progress(info.getSimulationDeltaTime(), m_soundRenderer);
-
-	// Dispatch "fscommand"s to script.
-	while (m_moviePlayer->getFsCommand(command, args))
-	{
-		Any argv[] =
-		{
-			Any::fromString(args)
-		};
-		getStage()->invokeScript(command, sizeof_array(argv), argv);
-	}
 }
 
 void SparkLayer::preSetup(const runtime::UpdateInfo& info)
@@ -469,7 +457,7 @@ MoviePlayer* SparkLayer::getMoviePlayer()
 	return m_moviePlayer;
 }
 
-ActionContext* SparkLayer::getContext()
+Context* SparkLayer::getContext()
 {
 	if (!m_moviePlayer)
 	{
@@ -493,24 +481,6 @@ Movie* SparkLayer::getExternal(const std::wstring& id) const
 {
 	auto it = m_externalMovies.find(id);
 	return it != m_externalMovies.end() ? it->second.getResource() : nullptr;
-}
-
-Any SparkLayer::externalCall(const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	if (!m_moviePlayer)
-		return Any();
-
-	T_PROFILER_SCOPE(L"SparkLayer externCall");
-
-	ActionValue av[16];
-	T_ASSERT(argc < sizeof_array(av));
-
-	for (uint32_t i = 0; i < argc; ++i)
-		av[i] = CastAny< ActionValue >::get(argv[i]);
-
-	ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
-
-	return CastAny< ActionValue >::set(ret);
 }
 
 std::wstring SparkLayer::getPrintableString(const std::wstring& text, const std::wstring& empty) const
@@ -626,32 +596,12 @@ void SparkLayer::createMoviePlayer()
 			return;
 		}
 
-		// Set ourself as external call hook.
-		moviePlayer->setExternalCall(this);
-
 		// Execute first frame, do not provide sound renderer so we don't trigger alot of sounds initially.
 		while (!moviePlayer->progress(1.0f / 60.0f, 0));
 
 		// All success, replace instances.
 		m_moviePlayer = moviePlayer;
 	}
-}
-
-ActionValue SparkLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const ActionValue* argv)
-{
-	Any av[16];
-	T_ASSERT(argc < sizeof_array(av));
-
-	for (int32_t i = 0; i < argc; ++i)
-		av[i] = CastAny< ActionValue >::set(argv[i]);
-
-	Any ret = getStage()->invokeScript(
-		methodName,
-		argc,
-		av
-	);
-
-	return CastAny< ActionValue >::get(ret);
 }
 
 void SparkLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)

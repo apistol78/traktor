@@ -1,39 +1,46 @@
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAabb2.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
 #include "Core/Class/Boxes/BoxedMatrix33.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/BitmapImage.h"
 #include "Spark/BitmapResource.h"
 #include "Spark/BitmapTexture.h"
+#include "Spark/Button.h"
+#include "Spark/ButtonInstance.h"
 #include "Spark/Canvas.h"
-#include "Spark/Cast.h"
 #include "Spark/Character.h"
 #include "Spark/ClassFactory.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
+#include "Spark/Event.h"
 #include "Spark/Font.h"
 #include "Spark/Frame.h"
+#include "Spark/Key.h"
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/MoviePlayer.h"
+#include "Spark/MorphShape.h"
+#include "Spark/MorphShapeInstance.h"
+#include "Spark/Mouse.h"
 #include "Spark/Optimizer.h"
 #include "Spark/Shape.h"
 #include "Spark/ShapeInstance.h"
 #include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
+#include "Spark/Stage.h"
+#include "Spark/Text.h"
 #include "Spark/TextFormat.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/ActionValue.h"
-#include "Spark/Action/Common/BitmapData.h"
+#include "Spark/TextInstance.h"
 #include "Spark/Swf/SwfMovieFactory.h"
 #include "Spark/Swf/SwfReader.h"
 #include "Render/ISimpleTexture.h"
@@ -44,132 +51,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-Any ActionObject_getMember(ActionObject* self, const std::string& memberName)
-{
-	ActionValue memberValue;
-	if (self->getMember(memberName, memberValue))
-		return CastAny< ActionValue >::set(memberValue);
-	else
-		return Any();
-}
-
-Any ActionObject_getMemberByQName(ActionObject* self, const std::string& memberName)
-{
-	ActionValue memberValue;
-	if (self->getMemberByQName(memberName, memberValue))
-		return CastAny< ActionValue >::set(memberValue);
-	else
-		return Any();
-}
-
-void ActionObject_setMember(ActionObject* self, const std::string& memberName, const Any& value)
-{
-	ActionValue memberValue = CastAny< ActionValue >::get(value);
-	self->setMember(memberName, memberValue);
-}
-
-Any ActionObject_getProperty(ActionObject* self, const std::string& propertyName)
-{
-	Ref< ActionFunction > propertyGetFn;
-	if (self->getPropertyGet(propertyName, propertyGetFn))
-	{
-		ActionValue propertyValue = propertyGetFn->call(self);
-		return CastAny< ActionValue >::set(propertyValue);
-	}
-	else
-		return Any();
-}
-
-void ActionObject_setProperty(ActionObject* self, const std::string& propertyName, const Any& value)
-{
-	Ref< ActionFunction > propertySetFn;
-	if (self->getPropertySet(propertyName, propertySetFn))
-	{
-		ActionValueArray callArgv(self->getContext()->getPool(), 1);
-		callArgv[0] = CastAny< ActionValue >::get(value);
-		propertySetFn->call(self, callArgv);
-	}
-}
-
-Any ActionObject_invoke(ActionObject* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	ActionValue memberValue;
-	if (self->getMember(methodName, memberValue))
-	{
-		ActionFunction* fn = memberValue.getObject< ActionFunction >();
-		if (fn)
-		{
-			ActionValueArray callArgv(self->getContext()->getPool(), argc);
-			for (uint32_t i = 0; i < argc; ++i)
-				callArgv[i] = CastAny< ActionValue >::get(argv[i]);
-			ActionValue ret = fn->call(self, callArgv);
-			return CastAny< ActionValue >::set(ret);
-		}
-	}
-	return Any();
-}
-
-Any ActionObjectRelay_invoke(ActionObjectRelay* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	ActionObject* actionObject = self->getAsObject();
-	if (actionObject)
-	{
-		if (methodName == "getMember")
-		{
-			ActionValue memberValue;
-			if (actionObject->getMember(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		else if (methodName == "getMemberByQName")
-		{
-			ActionValue memberValue;
-			if (actionObject->getMemberByQName(argv[0].getString(), memberValue))
-				return CastAny< ActionValue >::set(memberValue);
-		}
-		else if (methodName == "setMember")
-		{
-			ActionValue memberValue = CastAny< ActionValue >::get(argv[1]);
-			actionObject->setMember(argv[0].getString(), memberValue);
-		}
-		else if (methodName == "getProperty")
-		{
-			Ref< ActionFunction > propertyGetFn;
-			if (actionObject->getPropertyGet(argv[0].getString(), propertyGetFn))
-			{
-				ActionValue propertyValue = propertyGetFn->call(actionObject);
-				return CastAny< ActionValue >::set(propertyValue);
-			}
-		}
-		else if (methodName == "setProperty")
-		{
-			Ref< ActionFunction > propertySetFn;
-			if (actionObject->getPropertySet(argv[0].getString(), propertySetFn))
-			{
-				ActionValueArray callArgv(actionObject->getContext()->getPool(), 1);
-				callArgv[0] = CastAny< ActionValue >::get(argv[1]);
-				propertySetFn->call(actionObject, callArgv);
-			}
-		}
-		else
-		{
-			ActionValue memberValue;
-			if (actionObject->getMember(methodName, memberValue))
-			{
-				ActionFunction* fn = memberValue.getObject< ActionFunction >();
-				if (fn)
-				{
-					ActionValueArray callArgv(actionObject->getContext()->getPool(), argc);
-					for (uint32_t i = 0; i < argc; ++i)
-						callArgv[i] = CastAny< ActionValue >::get(argv[i]);
-					ActionValue ret = fn->call(actionObject, callArgv);
-					return CastAny< ActionValue >::set(ret);
-				}
-			}
-		}
-	}
-	return Any();
-}
 
 void ColorTransform_setMul(ColorTransform* self, const Color4f& mul)
 {
@@ -223,16 +104,6 @@ void CharacterInstance_setColorTransform(CharacterInstance* self, const Color4f&
 	self->setColorTransform(ColorTransform(mul, add));
 }
 
-Any CharacterInstance_invoke(CharacterInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	return ActionObjectRelay_invoke(self, methodName, argc, argv);
-}
-
-Any ShapeInstance_invoke(ShapeInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	return ActionObjectRelay_invoke(self, methodName, argc, argv);
-}
-
 Ref< SpriteInstance > SpriteInstance_duplicateMovieClip_1(SpriteInstance* self, const std::string& cloneName, int32_t depth)
 {
 	return self->duplicateMovieClip(cloneName, depth);
@@ -241,16 +112,6 @@ Ref< SpriteInstance > SpriteInstance_duplicateMovieClip_1(SpriteInstance* self, 
 Ref< SpriteInstance > SpriteInstance_duplicateMovieClip_2(SpriteInstance* self, const std::string& cloneName, int32_t depth, SpriteInstance* intoParent)
 {
 	return self->duplicateMovieClip(cloneName, depth, intoParent);
-}
-
-Any SpriteInstance_invoke(SpriteInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	return ActionObjectRelay_invoke(self, methodName, argc, argv);
-}
-
-Any EditInstance_invoke(EditInstance* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	return ActionObjectRelay_invoke(self, methodName, argc, argv);
 }
 
 uint32_t Shape_getPathCount(Shape* self)
@@ -308,202 +169,13 @@ Ref< TextFormat > EditInstance_getTextFormat_2(EditInstance* self, int32_t begin
 	return self->getTextFormat(beginIndex, endIndex);
 }
 
-Ref< ActionObject > ActionContext_createObject_0(ActionContext* self)
-{
-	return new ActionObject(self);
-}
-
-Ref< ActionObject > ActionContext_createObject_N(ActionContext* self, const std::string& prototype, ActionValueArray& args)
-{
-	ActionValue classFunctionValue;
-	self->getGlobal()->getMemberByQName(prototype, classFunctionValue);
-
-	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
-	if (!classFunction)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	ActionValue classPrototypeValue;
-	classFunction->getLocalMember(ActionContext::IdPrototype, classPrototypeValue);
-
-	Ref< ActionObject > classPrototype = classPrototypeValue.getObject();
-	if (!classPrototype)
-	{
-		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
-		return 0;
-	}
-
-	Ref< ActionObject > obj = new ActionObject(self, classPrototype);
-	obj->setMember(ActionContext::Id__ctor__, classFunctionValue);
-
-	classFunction->call(obj, args);
-	return obj;
-}
-
-Ref< ActionObject > ActionContext_createObject_1(ActionContext* self, const std::string& prototype)
-{
-	ActionValueArray args(self->getPool(), 0);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_2(ActionContext* self, const std::string& prototype, const Any& arg1)
-{
-	ActionValueArray args(self->getPool(), 1);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_3(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2)
-{
-	ActionValueArray args(self->getPool(), 2);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_4(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3)
-{
-	ActionValueArray args(self->getPool(), 3);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	args[2] = CastAny< ActionValue >::get(arg3);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_5(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4)
-{
-	ActionValueArray args(self->getPool(), 4);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	args[2] = CastAny< ActionValue >::get(arg3);
-	args[3] = CastAny< ActionValue >::get(arg3);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_6(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5)
-{
-	ActionValueArray args(self->getPool(), 5);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	args[2] = CastAny< ActionValue >::get(arg3);
-	args[3] = CastAny< ActionValue >::get(arg4);
-	args[4] = CastAny< ActionValue >::get(arg5);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_7(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5, const Any& arg6)
-{
-	ActionValueArray args(self->getPool(), 6);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	args[2] = CastAny< ActionValue >::get(arg3);
-	args[3] = CastAny< ActionValue >::get(arg4);
-	args[4] = CastAny< ActionValue >::get(arg5);
-	args[5] = CastAny< ActionValue >::get(arg6);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createObject_8(ActionContext* self, const std::string& prototype, const Any& arg1, const Any& arg2, const Any& arg3, const Any& arg4, const Any& arg5, const Any& arg6, const Any& arg7)
-{
-	ActionValueArray args(self->getPool(), 7);
-	args[0] = CastAny< ActionValue >::get(arg1);
-	args[1] = CastAny< ActionValue >::get(arg2);
-	args[2] = CastAny< ActionValue >::get(arg3);
-	args[3] = CastAny< ActionValue >::get(arg4);
-	args[4] = CastAny< ActionValue >::get(arg5);
-	args[5] = CastAny< ActionValue >::get(arg6);
-	args[6] = CastAny< ActionValue >::get(arg7);
-	return ActionContext_createObject_N(self, prototype, args);
-}
-
-Ref< ActionObject > ActionContext_createBitmap(ActionContext* self, drawing::Image* image)
-{
-	Ref< BitmapData > bitmap = new BitmapData(image);
-	return bitmap->getAsObject(self);
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ClassFactory", 0, ClassFactory, IRuntimeClassFactory)
 
 void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classActionObject = new AutoRuntimeClass< ActionObject >();
-	classActionObject->addMethod("getMember", &ActionObject_getMember);
-	classActionObject->addMethod("getMemberByQName", &ActionObject_getMemberByQName);
-	classActionObject->addMethod("setMember", &ActionObject_setMember);
-	classActionObject->addMethod("getProperty", &ActionObject_getProperty);
-	classActionObject->addMethod("setProperty", &ActionObject_setProperty);
-	classActionObject->setUnknownHandler(&ActionObject_invoke);
-	registrar->registerClass(classActionObject);
-
-	auto classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
-	classActionObjectRelay->setUnknownHandler(&ActionObjectRelay_invoke);
-	registrar->registerClass(classActionObjectRelay);
-
-	auto classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
-	registrar->registerClass(classICharacterFactory);
-
-	auto classDefaultCharacterFactory = new AutoRuntimeClass< DefaultCharacterFactory >();
-	classDefaultCharacterFactory->addConstructor();
-	registrar->registerClass(classDefaultCharacterFactory);
-
-	auto classIMovieLoader = new AutoRuntimeClass< IMovieLoader >();
-	classIMovieLoader->addMethod("loadAsync", &IMovieLoader::loadAsync);
-	classIMovieLoader->addMethod("load", &IMovieLoader::load);
-	registrar->registerClass(classIMovieLoader);
-
-	Ref< AutoRuntimeClass< IMovieLoader::IHandle > > classIMovieLoader_IHandle = new AutoRuntimeClass< IMovieLoader::IHandle >();
-	classIMovieLoader_IHandle->addProperty("ready", &IMovieLoader::IHandle::ready);
-	classIMovieLoader_IHandle->addProperty("succeeded", &IMovieLoader::IHandle::succeeded);
-	classIMovieLoader_IHandle->addProperty("failed", &IMovieLoader::IHandle::failed);
-	classIMovieLoader_IHandle->addMethod("wait", &IMovieLoader::IHandle::wait);
-	classIMovieLoader_IHandle->addMethod("get", &IMovieLoader::IHandle::get);
-	registrar->registerClass(classIMovieLoader_IHandle);
-
-	auto classMovieLoader = new AutoRuntimeClass< MovieLoader >();
-	classMovieLoader->addConstructor();
-	classMovieLoader->addMethod("setCacheDirectory", &MovieLoader::setCacheDirectory);
-	classMovieLoader->addMethod("setMerge", &MovieLoader::setMerge);
-	classMovieLoader->addMethod("setTriangulate", &MovieLoader::setTriangulate);
-	classMovieLoader->addMethod("setIncludeAS", &MovieLoader::setIncludeAS);
-	registrar->registerClass(classMovieLoader);
-
-	auto classSwfMovieFactory = new AutoRuntimeClass< SwfMovieFactory >();
-	classSwfMovieFactory->addConstructor< bool >();
-	classSwfMovieFactory->addMethod("createMovie", &SwfMovieFactory::createMovie);
-	classSwfMovieFactory->addMethod("createMovieFromImage", &SwfMovieFactory::createMovieFromImage);
-	registrar->registerClass(classSwfMovieFactory);
-
-	auto classMoviePlayer = new AutoRuntimeClass< MoviePlayer >();
-	classMoviePlayer->addProperty("frameCount", &MoviePlayer::getFrameCount);
-	classMoviePlayer->addProperty("movieInstance", &MoviePlayer::getMovieInstance);
-	classMoviePlayer->addMethod< void, uint32_t >("gotoAndPlay", &MoviePlayer::gotoAndPlay);
-	classMoviePlayer->addMethod< void, uint32_t >("gotoAndStop", &MoviePlayer::gotoAndStop);
-	classMoviePlayer->addMethod< bool, const std::string& >("gotoAndPlay", &MoviePlayer::gotoAndPlay);
-	classMoviePlayer->addMethod< bool, const std::string& >("gotoAndStop", &MoviePlayer::gotoAndStop);
-	classMoviePlayer->addMethod("postKeyDown", &MoviePlayer::postKeyDown);
-	classMoviePlayer->addMethod("postKeyUp", &MoviePlayer::postKeyUp);
-	classMoviePlayer->addMethod("postMouseDown", &MoviePlayer::postMouseDown);
-	classMoviePlayer->addMethod("postMouseUp", &MoviePlayer::postMouseUp);
-	classMoviePlayer->addMethod("postMouseMove", &MoviePlayer::postMouseMove);
-	classMoviePlayer->addMethod("setGlobal", &MoviePlayer::setGlobal);
-	classMoviePlayer->addMethod("getGlobal", &MoviePlayer::getGlobal);
-	registrar->registerClass(classMoviePlayer);
-
-	auto classSwfReader = new AutoRuntimeClass< SwfReader >();
-	classSwfReader->addConstructor< IStream* >();
-	registrar->registerClass(classSwfReader);
-
-	auto classColorTransform = new AutoRuntimeClass< ColorTransform >();
-	classColorTransform->addConstructor();
-	classColorTransform->addConstructor< const Color4f&, const Color4f& >();
-	classColorTransform->addProperty("mul", &ColorTransform_setMul, &ColorTransform_getMul);
-	classColorTransform->addProperty("add", &ColorTransform_setAdd, &ColorTransform_getAdd);
-	registrar->registerClass(classColorTransform);
-
+	// Bitmap
 	auto classBitmap = new AutoRuntimeClass< Bitmap >();
 	classBitmap->addProperty("X", &Bitmap::getX);
 	classBitmap->addProperty("Y", &Bitmap::getY);
@@ -511,53 +183,56 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitmap->addProperty("height", &Bitmap::getHeight);
 	registrar->registerClass(classBitmap);
 
+	// BitmapImage
 	auto classBitmapImage = new AutoRuntimeClass< BitmapImage >();
 	classBitmapImage->addConstructor< const drawing::Image* >();
 	classBitmapImage->addProperty("image", &BitmapImage::getImage);
 	registrar->registerClass(classBitmapImage);
 
+	// BitmapResource
 	auto classBitmapResource = new AutoRuntimeClass< BitmapResource >();
 	classBitmapResource->addProperty("atlasWidth", &BitmapResource::getAtlasWidth);
 	classBitmapResource->addProperty("atlasHeight", &BitmapResource::getAtlasHeight);
 	classBitmapResource->addProperty("resourceId", &BitmapResource::getResourceId);
 	registrar->registerClass(classBitmapResource);
 
+	// BitmapTexture
 	auto classBitmapTexture = new AutoRuntimeClass< BitmapTexture >();
 	classBitmapTexture->addConstructor< render::ISimpleTexture* >();
 	classBitmapTexture->addProperty("texture", &BitmapTexture::getTexture);
 	registrar->registerClass(classBitmapTexture);
 
-	auto classFont = new AutoRuntimeClass< Font >();
-	classFont->addProperty("fontName", &Font::getFontName);
-	classFont->addProperty("italic", &Font::isItalic);
-	classFont->addProperty("bold", &Font::isBold);
-	classFont->addProperty("ascent", &Font::getAscent);
-	classFont->addProperty("descent", &Font::getDescent);
-	classFont->addProperty("leading", &Font::getLeading);
-	classFont->addProperty("maxDimension", &Font::getMaxDimension);
-	classFont->addMethod("getAdvance", &Font::getAdvance);
-	classFont->addMethod("getBounds", &Font_getBounds);
-	classFont->addMethod("lookupKerning", &Font::lookupKerning);
-	classFont->addMethod("lookupIndex", &Font::lookupIndex);
-	registrar->registerClass(classFont);
+	// Button
+	auto classButton = new AutoRuntimeClass< Button >();
+	registrar->registerClass(classButton);
 
-	auto classDictionary = new AutoRuntimeClass< Dictionary >();
-	classDictionary->addMethod("addFont", &Dictionary::addFont);
-	classDictionary->addMethod("addBitmap", &Dictionary::addBitmap);
-	classDictionary->addMethod("addSound", &Dictionary::addSound);
-	classDictionary->addMethod("addCharacter", &Dictionary::addCharacter);
-	classDictionary->addMethod("getFont", &Dictionary::getFont);
-	classDictionary->addMethod("getBitmap", &Dictionary::getBitmap);
-	classDictionary->addMethod("getSound", &Dictionary::getSound);
-	classDictionary->addMethod("getCharacter", &Dictionary::getCharacter);
-	classDictionary->addMethod("getExportId", &Dictionary_getExportId);
-	classDictionary->addMethod("getExportName", &Dictionary_getExportName);
-	registrar->registerClass(classDictionary);
+	// ButtonInstance
+	auto classButtonInstance = new AutoRuntimeClass< ButtonInstance >();
+	classButtonInstance->addProperty("eventPress", &ButtonInstance::getEventPress);
+	classButtonInstance->addProperty("eventRelease", &ButtonInstance::getEventRelease);
+	classButtonInstance->addProperty("eventReleaseOutside", &ButtonInstance::getEventReleaseOutside);
+	classButtonInstance->addProperty("eventRollOver", &ButtonInstance::getEventRollOver);
+	classButtonInstance->addProperty("eventRollOut", &ButtonInstance::getEventRollOut);
+	registrar->registerClass(classButtonInstance);
 
+	// Canvas
+	auto classCanvas = new AutoRuntimeClass< Canvas >();
+	classCanvas->addProperty("bounds", &Canvas::getBounds);
+	classCanvas->addMethod("clear", &Canvas::clear);
+	classCanvas->addMethod("beginFill", &Canvas::beginFill);
+	classCanvas->addMethod("beginBitmapFill", &Canvas::beginBitmapFill);
+	classCanvas->addMethod("endFill", &Canvas::endFill);
+	classCanvas->addMethod("moveTo", &Canvas::moveTo);
+	classCanvas->addMethod("lineTo", &Canvas::lineTo);
+	classCanvas->addMethod("curveTo", &Canvas::curveTo);
+	registrar->registerClass(classCanvas);
+
+	// Character
 	auto classCharacter = new AutoRuntimeClass< Character >();
 	classCharacter->addProperty("id", &Character::getId);
 	registrar->registerClass(classCharacter);
 
+	// CharacterInstance
 	auto classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
 	classCharacterInstance->addConstant("SbmDefault", Any::fromInt32(SbmDefault));
 	classCharacterInstance->addConstant("SbmNormal", Any::fromInt32(SbmNormal));
@@ -591,24 +266,57 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addProperty("enabled", &CharacterInstance::setEnabled, &CharacterInstance::isEnabled);
 	classCharacterInstance->addProperty("focus", &CharacterInstance::haveFocus);
 	classCharacterInstance->addProperty("bounds", &CharacterInstance::getBounds);
+	classCharacterInstance->addProperty("eventSetFocus", &CharacterInstance::getEventSetFocus);
+	classCharacterInstance->addProperty("eventKillFocus", &CharacterInstance::getEventKillFocus);
 	classCharacterInstance->addStaticMethod("getInstanceCount", &CharacterInstance::getInstanceCount);
 	classCharacterInstance->addMethod("destroy", &CharacterInstance::destroy);
 	classCharacterInstance->addMethod("setColorTransform", &CharacterInstance::setColorTransform);
 	classCharacterInstance->addMethod("setColorTransform", &CharacterInstance_setColorTransform);
 	classCharacterInstance->addMethod("transformInto", &CharacterInstance::transformInto);
 	classCharacterInstance->addMethod("setFocus", &CharacterInstance::setFocus);
-	classCharacterInstance->setUnknownHandler(&CharacterInstance_invoke);
 	registrar->registerClass(classCharacterInstance);
 
-	auto classShape = new AutoRuntimeClass< Shape >();
-	classShape->addProperty("pathCount", &Shape_getPathCount);
-	registrar->registerClass(classShape);
+	// ColorTransform
+	auto classColorTransform = new AutoRuntimeClass< ColorTransform >();
+	classColorTransform->addConstructor();
+	classColorTransform->addConstructor< const Color4f&, const Color4f& >();
+	classColorTransform->addProperty("mul", &ColorTransform_setMul, &ColorTransform_getMul);
+	classColorTransform->addProperty("add", &ColorTransform_setAdd, &ColorTransform_getAdd);
+	registrar->registerClass(classColorTransform);
 
-	auto classShapeInstance = new AutoRuntimeClass< ShapeInstance >();
-	classShapeInstance->addProperty("shape", &ShapeInstance::getShape);
-	classShapeInstance->setUnknownHandler(&ShapeInstance_invoke);
-	registrar->registerClass(classShapeInstance);
+	// Context
+	auto classContext = new AutoRuntimeClass< Context >();
+	classContext->addProperty("movie", &Context::getMovie);
+	classContext->addProperty("key", &Context::getKey);
+	classContext->addProperty("mouse", &Context::getMouse);
+	classContext->addProperty("sound", &Context::getSound);
+	classContext->addProperty("stage", &Context::getStage);
+	classContext->addProperty("movieClip", &Context::getMovieClip);
+	classContext->addProperty("focus", &Context::getFocus);
+	classContext->addProperty("pressed", &Context::getPressed);
+	classContext->addProperty("rolledOver", &Context::getRolledOver);
+	registrar->registerClass(classContext);
 
+	// DefaultCharacterFactory
+	auto classDefaultCharacterFactory = new AutoRuntimeClass< DefaultCharacterFactory >();
+	classDefaultCharacterFactory->addConstructor();
+	registrar->registerClass(classDefaultCharacterFactory);
+
+	// Dictionary
+	auto classDictionary = new AutoRuntimeClass< Dictionary >();
+	classDictionary->addMethod("addFont", &Dictionary::addFont);
+	classDictionary->addMethod("addBitmap", &Dictionary::addBitmap);
+	classDictionary->addMethod("addSound", &Dictionary::addSound);
+	classDictionary->addMethod("addCharacter", &Dictionary::addCharacter);
+	classDictionary->addMethod("getFont", &Dictionary::getFont);
+	classDictionary->addMethod("getBitmap", &Dictionary::getBitmap);
+	classDictionary->addMethod("getSound", &Dictionary::getSound);
+	classDictionary->addMethod("getCharacter", &Dictionary::getCharacter);
+	classDictionary->addMethod("getExportId", &Dictionary_getExportId);
+	classDictionary->addMethod("getExportName", &Dictionary_getExportName);
+	registrar->registerClass(classDictionary);
+
+	// DisplayList
 	auto classDisplayList = new AutoRuntimeClass< DisplayList >();
 	classDisplayList->addProperty("nextHighestDepth", &DisplayList::getNextHighestDepth);
 	classDisplayList->addProperty("objects", &DisplayList_getObjects);
@@ -620,58 +328,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDisplayList->addMethod("swap", &DisplayList::swap);
 	registrar->registerClass(classDisplayList);
 
-	auto classSprite = new AutoRuntimeClass< Sprite >();
-	classSprite->addProperty("frameRate", &Sprite::getFrameRate);
-	classSprite->addProperty("frameCount", &Sprite::getFrameCount);
-	classSprite->addMethod("addFrame", &Sprite::addFrame);
-	classSprite->addMethod("getFrame", &Sprite::getFrame);
-	classSprite->addMethod("findFrame", &Sprite::findFrame);
-	registrar->registerClass(classSprite);
-
-	auto classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
-	classSpriteInstance->addProperty("sprite", &SpriteInstance::getSprite);
-	classSpriteInstance->addProperty("cacheAsBitmap", &SpriteInstance::setCacheAsBitmap, &SpriteInstance::getCacheAsBitmap);
-	classSpriteInstance->addProperty("currentFrame", &SpriteInstance::getCurrentFrame);
-	classSpriteInstance->addProperty("playing", &SpriteInstance::getPlaying);
-	classSpriteInstance->addProperty("displayList", &SpriteInstance_getDisplayList);
-	classSpriteInstance->addProperty("localBounds", &SpriteInstance::getLocalBounds);
-	classSpriteInstance->addProperty("visibleLocalBounds", &SpriteInstance::getVisibleLocalBounds);
-	classSpriteInstance->addProperty("mask", &SpriteInstance::setMask, &SpriteInstance::getMask);
-	classSpriteInstance->addProperty("canvas", &SpriteInstance::getCanvas);
-	classSpriteInstance->addProperty("mouseX", &SpriteInstance::getMouseX);
-	classSpriteInstance->addProperty("mouseY", &SpriteInstance::getMouseY);
-	classSpriteInstance->addProperty("position", &SpriteInstance::setPosition, &SpriteInstance::getPosition);
-	classSpriteInstance->addProperty("X", &SpriteInstance::setX, &SpriteInstance::getX);
-	classSpriteInstance->addProperty("Y", &SpriteInstance::setY, &SpriteInstance::getY);
-	classSpriteInstance->addProperty("size", &SpriteInstance::setSize, &SpriteInstance::getSize);
-	classSpriteInstance->addProperty("width", &SpriteInstance::setWidth, &SpriteInstance::getWidth);
-	classSpriteInstance->addProperty("height", &SpriteInstance::setHeight, &SpriteInstance::getHeight);
-	classSpriteInstance->addProperty("rotation", &SpriteInstance::setRotation, &SpriteInstance::getRotation);
-	classSpriteInstance->addProperty("scale", &SpriteInstance::setScale, &SpriteInstance::getScale);
-	classSpriteInstance->addProperty("xScale", &SpriteInstance::setXScale, &SpriteInstance::getXScale);
-	classSpriteInstance->addProperty("yScale", &SpriteInstance::setYScale, &SpriteInstance::getYScale);
-	classSpriteInstance->addMethod("gotoFrame", &SpriteInstance::gotoFrame);
-	classSpriteInstance->addMethod("gotoPrevious", &SpriteInstance::gotoPrevious);
-	classSpriteInstance->addMethod("gotoNext", &SpriteInstance::gotoNext);
-	classSpriteInstance->addMethod("setPlaying", &SpriteInstance::setPlaying);
-	classSpriteInstance->addMethod("createEmptyMovieClip", &SpriteInstance::createEmptyMovieClip);
-	classSpriteInstance->addMethod("createTextField", &SpriteInstance::createTextField);
-	classSpriteInstance->addMethod("removeMovieClip", &SpriteInstance::removeMovieClip);
-	classSpriteInstance->addMethod("clone", &SpriteInstance::clone);
-	classSpriteInstance->addMethod("duplicateMovieClip", &SpriteInstance_duplicateMovieClip_1);
-	classSpriteInstance->addMethod("duplicateMovieClip", &SpriteInstance_duplicateMovieClip_2);
-	classSpriteInstance->addMethod("attachBitmap", &SpriteInstance::attachBitmap);
-	classSpriteInstance->addMethod("createCanvas", &SpriteInstance::createCanvas);
-	classSpriteInstance->setUnknownHandler(&SpriteInstance_invoke);
-	registrar->registerClass(classSpriteInstance);
-
-	auto classTextFormat = new AutoRuntimeClass< TextFormat >();
-	//classTextFormat->addConstructor< float, int32_t, float >();
-	classTextFormat->addProperty("letterSpacing", &TextFormat::setLetterSpacing, &TextFormat::getLetterSpacing);
-	//classTextFormat->addProperty("align", &TextFormat::setAlign, &TextFormat::getAlign);
-	classTextFormat->addProperty("size", &TextFormat::setSize, &TextFormat::getSize);
-	registrar->registerClass(classTextFormat);
-
+	// Edit
 	auto classEdit = new AutoRuntimeClass< Edit >();
 	classEdit->addProperty("fontId", &Edit::getFontId);
 	classEdit->addProperty("fontHeight", &Edit::getFontHeight);
@@ -690,6 +347,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEdit->addProperty("renderHtml", &Edit::renderHtml);
 	registrar->registerClass(classEdit);
 
+	// EditInstance
 	auto classEditInstance = new AutoRuntimeClass< EditInstance >();
 	classEditInstance->addProperty("edit", &EditInstance::getEdit);
 	classEditInstance->addProperty("textBounds", &EditInstance::setTextBounds, &EditInstance::getTextBounds);
@@ -717,6 +375,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEditInstance->addProperty("textSize", &EditInstance::getTextSize);
 	classEditInstance->addProperty("textWidth", &EditInstance::getTextWidth);
 	classEditInstance->addProperty("textHeight", &EditInstance::getTextHeight);
+	classEditInstance->addProperty("eventChanged", &EditInstance::getEventChanged);
 	classEditInstance->addMethod("parseText", &EditInstance::parseText);
 	classEditInstance->addMethod("parseHtml", &EditInstance::parseHtml);
 	classEditInstance->addMethod("measureText", &EditInstance_measureText_1);
@@ -725,9 +384,99 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEditInstance->addMethod("getTextFormat", &EditInstance_getTextFormat_0);
 	classEditInstance->addMethod("setTextFormat", &EditInstance_setTextFormat_3);
 	classEditInstance->addMethod("getTextFormat", &EditInstance_getTextFormat_2);
-	classEditInstance->setUnknownHandler(&EditInstance_invoke);
 	registrar->registerClass(classEditInstance);
 
+	// Event
+	auto classEvent = new AutoRuntimeClass< Event >();
+	classEvent->addMethod("add", &Event::add);
+	classEvent->addMethod("remove", &Event::remove);
+	classEvent->addMethod("removeAll", &Event::removeAll);
+	registrar->registerClass(classEvent);
+
+	// FillStyle
+
+	// Font
+	auto classFont = new AutoRuntimeClass< Font >();
+	classFont->addProperty("fontName", &Font::getFontName);
+	classFont->addProperty("italic", &Font::isItalic);
+	classFont->addProperty("bold", &Font::isBold);
+	classFont->addProperty("ascent", &Font::getAscent);
+	classFont->addProperty("descent", &Font::getDescent);
+	classFont->addProperty("leading", &Font::getLeading);
+	classFont->addProperty("maxDimension", &Font::getMaxDimension);
+	classFont->addMethod("getAdvance", &Font::getAdvance);
+	classFont->addMethod("getBounds", &Font_getBounds);
+	classFont->addMethod("lookupKerning", &Font::lookupKerning);
+	classFont->addMethod("lookupIndex", &Font::lookupIndex);
+	registrar->registerClass(classFont);
+
+	// ICharacterFactory
+	auto classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
+	registrar->registerClass(classICharacterFactory);
+
+	// IMovieLoader
+	auto classIMovieLoader = new AutoRuntimeClass< IMovieLoader >();
+	classIMovieLoader->addMethod("loadAsync", &IMovieLoader::loadAsync);
+	classIMovieLoader->addMethod("load", &IMovieLoader::load);
+	registrar->registerClass(classIMovieLoader);
+
+	// IMovieLoader::IHandle
+	Ref< AutoRuntimeClass< IMovieLoader::IHandle > > classIMovieLoader_IHandle = new AutoRuntimeClass< IMovieLoader::IHandle >();
+	classIMovieLoader_IHandle->addProperty("ready", &IMovieLoader::IHandle::ready);
+	classIMovieLoader_IHandle->addProperty("succeeded", &IMovieLoader::IHandle::succeeded);
+	classIMovieLoader_IHandle->addProperty("failed", &IMovieLoader::IHandle::failed);
+	classIMovieLoader_IHandle->addMethod("wait", &IMovieLoader::IHandle::wait);
+	classIMovieLoader_IHandle->addMethod("get", &IMovieLoader::IHandle::get);
+	registrar->registerClass(classIMovieLoader_IHandle);
+
+	// Key
+	auto classKey = new AutoRuntimeClass< Key >();
+	classKey->addConstant("AkBackspace", Any::fromInt32(Key::AkBackspace));
+	classKey->addConstant("AkCapsLock", Any::fromInt32(Key::AkCapsLock));
+	classKey->addConstant("AkControl", Any::fromInt32(Key::AkControl));
+	classKey->addConstant("AkDeleteKey", Any::fromInt32(Key::AkDeleteKey));
+	classKey->addConstant("AkDown", Any::fromInt32(Key::AkDown));
+	classKey->addConstant("AkEnd", Any::fromInt32(Key::AkEnd));
+	classKey->addConstant("AkEnter", Any::fromInt32(Key::AkEnter));
+	classKey->addConstant("AkEscape", Any::fromInt32(Key::AkEscape));
+	classKey->addConstant("AkHome", Any::fromInt32(Key::AkHome));
+	classKey->addConstant("AkInsert", Any::fromInt32(Key::AkInsert));
+	classKey->addConstant("AkLeft", Any::fromInt32(Key::AkLeft));
+	classKey->addConstant("AkPgDn", Any::fromInt32(Key::AkPgDn));
+	classKey->addConstant("AkPgUp", Any::fromInt32(Key::AkPgUp));
+	classKey->addConstant("AkRight", Any::fromInt32(Key::AkRight));
+	classKey->addConstant("AkShift", Any::fromInt32(Key::AkShift));
+	classKey->addConstant("AkSpace", Any::fromInt32(Key::AkSpace));
+	classKey->addConstant("AkTab", Any::fromInt32(Key::AkTab));
+	classKey->addConstant("AkUp", Any::fromInt32(Key::AkUp));
+	classKey->addProperty("ascii", &Key::getAscii);
+	classKey->addProperty("code", &Key::getCode);
+	classKey->addProperty("eventKeyDown", &Key::getEventKeyDown);
+	classKey->addProperty("eventKeyUp", &Key::getEventKeyUp);
+	classKey->addMethod("isDown", &Key::isDown);
+	registrar->registerClass(classKey);
+
+	// LineStyle
+
+	// MorphShape
+	auto classMorphShape = new AutoRuntimeClass< MorphShape >();
+	classMorphShape->addProperty("shapeBounds", &MorphShape::getShapeBounds);
+	registrar->registerClass(classMorphShape);
+
+	// MorphShapeInstance
+	auto classMorphShapeInstance = new AutoRuntimeClass< MorphShapeInstance >();
+	classMorphShapeInstance->addProperty("shape", &MorphShapeInstance::getShape);
+	registrar->registerClass(classMorphShapeInstance);
+
+	// Mouse
+	auto classMouse = new AutoRuntimeClass< Mouse >();
+	classMouse->addProperty("eventButtonDown", &Mouse::getEventButtonDown);
+	classMouse->addProperty("eventButtonUp", &Mouse::getEventButtonUp);
+	classMouse->addProperty("eventMouseMove", &Mouse::getEventMouseMove);
+	classMouse->addProperty("eventMouseWheel", &Mouse::getEventMouseWheel);
+	registrar->registerClass(classMouse);
+
+	// Movie
 	auto classMovie = new AutoRuntimeClass< Movie >();
 	classMovie->addProperty("frameBounds", &Movie::getFrameBounds);
 	classMovie->addProperty("movieClip", &Movie::getMovieClip);
@@ -741,30 +490,153 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMovie->addMethod("createExternalSpriteInstance", &Movie::createExternalSpriteInstance);
 	registrar->registerClass(classMovie);
 
-	auto classActionContext = new AutoRuntimeClass< ActionContext >();
-	classActionContext->addProperty("movie", &ActionContext::getMovie);
-	classActionContext->addProperty("global", &ActionContext::getGlobal);
-	classActionContext->addProperty("movieClip", &ActionContext::getMovieClip);
-	classActionContext->addProperty("focus", &ActionContext::getFocus);
-	classActionContext->addProperty("pressed", &ActionContext::getPressed);
-	classActionContext->addMethod("lookupClass", &ActionContext::lookupClass);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_0);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_1);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_2);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_3);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_4);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_5);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_6);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_7);
-	classActionContext->addMethod("createObject", &ActionContext_createObject_8);
-	classActionContext->addMethod("createBitmap", &ActionContext_createBitmap);
-	registrar->registerClass(classActionContext);
+	// MovieLoader
+	auto classMovieLoader = new AutoRuntimeClass< MovieLoader >();
+	classMovieLoader->addConstructor();
+	classMovieLoader->addMethod("setCacheDirectory", &MovieLoader::setCacheDirectory);
+	classMovieLoader->addMethod("setMerge", &MovieLoader::setMerge);
+	classMovieLoader->addMethod("setTriangulate", &MovieLoader::setTriangulate);
+	registrar->registerClass(classMovieLoader);
 
+	// MoviePlayer
+	auto classMoviePlayer = new AutoRuntimeClass< MoviePlayer >();
+	classMoviePlayer->addProperty("frameCount", &MoviePlayer::getFrameCount);
+	classMoviePlayer->addProperty("movieInstance", &MoviePlayer::getMovieInstance);
+	classMoviePlayer->addMethod< void, uint32_t >("gotoAndPlay", &MoviePlayer::gotoAndPlay);
+	classMoviePlayer->addMethod< void, uint32_t >("gotoAndStop", &MoviePlayer::gotoAndStop);
+	classMoviePlayer->addMethod< bool, const std::string& >("gotoAndPlay", &MoviePlayer::gotoAndPlay);
+	classMoviePlayer->addMethod< bool, const std::string& >("gotoAndStop", &MoviePlayer::gotoAndStop);
+	classMoviePlayer->addMethod("postKeyDown", &MoviePlayer::postKeyDown);
+	classMoviePlayer->addMethod("postKeyUp", &MoviePlayer::postKeyUp);
+	classMoviePlayer->addMethod("postMouseDown", &MoviePlayer::postMouseDown);
+	classMoviePlayer->addMethod("postMouseUp", &MoviePlayer::postMouseUp);
+	classMoviePlayer->addMethod("postMouseMove", &MoviePlayer::postMouseMove);
+	registrar->registerClass(classMoviePlayer);
+
+	// Optimizer
 	auto classOptimizer = new AutoRuntimeClass< Optimizer >();
 	classOptimizer->addConstructor();
 	classOptimizer->addMethod("merge", &Optimizer::merge);
 	classOptimizer->addMethod("triangulate", &Optimizer::triangulate);
 	registrar->registerClass(classOptimizer);
+
+	// Shape
+	auto classShape = new AutoRuntimeClass< Shape >();
+	classShape->addProperty("pathCount", &Shape_getPathCount);
+	registrar->registerClass(classShape);
+
+	// ShapeInstance
+	auto classShapeInstance = new AutoRuntimeClass< ShapeInstance >();
+	classShapeInstance->addProperty("shape", &ShapeInstance::getShape);
+	registrar->registerClass(classShapeInstance);
+
+	// Sound
+	auto classSound = new AutoRuntimeClass< Sound >();
+	classSound->addProperty("channels", &Sound::getChannels);
+	classSound->addProperty("sampleRate", &Sound::getSampleRate);
+	classSound->addProperty("sampleCount", &Sound::getSampleCount);
+	registrar->registerClass(classSound);
+
+	// Sprite
+	auto classSprite = new AutoRuntimeClass< Sprite >();
+	classSprite->addProperty("frameRate", &Sprite::getFrameRate);
+	classSprite->addProperty("frameCount", &Sprite::getFrameCount);
+	classSprite->addMethod("addFrame", &Sprite::addFrame);
+	classSprite->addMethod("getFrame", &Sprite::getFrame);
+	classSprite->addMethod("findFrame", &Sprite::findFrame);
+	registrar->registerClass(classSprite);
+
+	// SpriteInstance
+	auto classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
+	classSpriteInstance->addProperty("sprite", &SpriteInstance::getSprite);
+	classSpriteInstance->addProperty("cacheAsBitmap", &SpriteInstance::setCacheAsBitmap, &SpriteInstance::getCacheAsBitmap);
+	classSpriteInstance->addProperty("currentFrame", &SpriteInstance::getCurrentFrame);
+	classSpriteInstance->addProperty("playing", &SpriteInstance::getPlaying);
+	classSpriteInstance->addProperty("displayList", &SpriteInstance_getDisplayList);
+	classSpriteInstance->addProperty("localBounds", &SpriteInstance::getLocalBounds);
+	classSpriteInstance->addProperty("visibleLocalBounds", &SpriteInstance::getVisibleLocalBounds);
+	classSpriteInstance->addProperty("mask", &SpriteInstance::setMask, &SpriteInstance::getMask);
+	classSpriteInstance->addProperty("canvas", &SpriteInstance::getCanvas);
+	classSpriteInstance->addProperty("mouseX", &SpriteInstance::getMouseX);
+	classSpriteInstance->addProperty("mouseY", &SpriteInstance::getMouseY);
+	classSpriteInstance->addProperty("position", &SpriteInstance::setPosition, &SpriteInstance::getPosition);
+	classSpriteInstance->addProperty("X", &SpriteInstance::setX, &SpriteInstance::getX);
+	classSpriteInstance->addProperty("Y", &SpriteInstance::setY, &SpriteInstance::getY);
+	classSpriteInstance->addProperty("size", &SpriteInstance::setSize, &SpriteInstance::getSize);
+	classSpriteInstance->addProperty("width", &SpriteInstance::setWidth, &SpriteInstance::getWidth);
+	classSpriteInstance->addProperty("height", &SpriteInstance::setHeight, &SpriteInstance::getHeight);
+	classSpriteInstance->addProperty("rotation", &SpriteInstance::setRotation, &SpriteInstance::getRotation);
+	classSpriteInstance->addProperty("scale", &SpriteInstance::setScale, &SpriteInstance::getScale);
+	classSpriteInstance->addProperty("xScale", &SpriteInstance::setXScale, &SpriteInstance::getXScale);
+	classSpriteInstance->addProperty("yScale", &SpriteInstance::setYScale, &SpriteInstance::getYScale);
+	classSpriteInstance->addProperty("eventEnterFrame", &SpriteInstance::getEventEnterFrame);
+	classSpriteInstance->addProperty("eventKeyDown", &SpriteInstance::getEventKeyDown);
+	classSpriteInstance->addProperty("eventKeyUp", &SpriteInstance::getEventKeyUp);
+	classSpriteInstance->addProperty("eventMouseDown", &SpriteInstance::getEventMouseDown);
+	classSpriteInstance->addProperty("eventMouseUp", &SpriteInstance::getEventMouseUp);
+	classSpriteInstance->addProperty("eventMouseMove", &SpriteInstance::getEventMouseMove);
+	classSpriteInstance->addProperty("eventPress", &SpriteInstance::getEventPress);
+	classSpriteInstance->addProperty("eventRelease", &SpriteInstance::getEventRelease);
+	classSpriteInstance->addProperty("eventRollOver", &SpriteInstance::getEventRollOver);
+	classSpriteInstance->addProperty("eventRollOut", &SpriteInstance::getEventRollOut);
+	classSpriteInstance->addMethod("gotoFrame", &SpriteInstance::gotoFrame);
+	classSpriteInstance->addMethod("gotoPrevious", &SpriteInstance::gotoPrevious);
+	classSpriteInstance->addMethod("gotoNext", &SpriteInstance::gotoNext);
+	classSpriteInstance->addMethod< void, uint32_t >("gotoAndPlay", &SpriteInstance::gotoAndPlay);
+	classSpriteInstance->addMethod< void, uint32_t >("gotoAndStop", &SpriteInstance::gotoAndStop);
+	classSpriteInstance->addMethod< bool, const std::string& >("gotoAndPlay", &SpriteInstance::gotoAndPlay);
+	classSpriteInstance->addMethod< bool, const std::string& >("gotoAndStop", &SpriteInstance::gotoAndStop);
+	classSpriteInstance->addMethod("setPlaying", &SpriteInstance::setPlaying);
+	classSpriteInstance->addMethod("createEmptyMovieClip", &SpriteInstance::createEmptyMovieClip);
+	classSpriteInstance->addMethod("createTextField", &SpriteInstance::createTextField);
+	classSpriteInstance->addMethod("removeMovieClip", &SpriteInstance::removeMovieClip);
+	classSpriteInstance->addMethod("clone", &SpriteInstance::clone);
+	classSpriteInstance->addMethod("duplicateMovieClip", &SpriteInstance_duplicateMovieClip_1);
+	classSpriteInstance->addMethod("duplicateMovieClip", &SpriteInstance_duplicateMovieClip_2);
+	classSpriteInstance->addMethod("attachBitmap", &SpriteInstance::attachBitmap);
+	classSpriteInstance->addMethod("getMember", &SpriteInstance::getMember);
+	classSpriteInstance->addMethod("createCanvas", &SpriteInstance::createCanvas);
+	registrar->registerClass(classSpriteInstance);
+
+	// Stage
+	auto classStage = new AutoRuntimeClass< Stage >();
+	classStage->addProperty("width", &Stage::getWidth);
+	classStage->addProperty("height", &Stage::getHeight);
+	classStage->addProperty("align", &Stage::setAlign, &Stage::getAlign);
+	classStage->addProperty("scaleMode", &Stage::setScaleMode, &Stage::getScaleMode);
+	classStage->addProperty("eventResize", &Stage::getEventResize);
+	registrar->registerClass(classStage);
+
+	// SwfMovieFactory
+	auto classSwfMovieFactory = new AutoRuntimeClass< SwfMovieFactory >();
+	classSwfMovieFactory->addConstructor();
+	classSwfMovieFactory->addMethod("createMovie", &SwfMovieFactory::createMovie);
+	classSwfMovieFactory->addMethod("createMovieFromImage", &SwfMovieFactory::createMovieFromImage);
+	registrar->registerClass(classSwfMovieFactory);
+
+	// SwfReader
+	auto classSwfReader = new AutoRuntimeClass< SwfReader >();
+	classSwfReader->addConstructor< IStream* >();
+	registrar->registerClass(classSwfReader);
+
+	// Text
+	auto classText = new AutoRuntimeClass< Text >();
+	classText->addProperty("textBounds", &Text::getTextBounds);
+	classText->addProperty("textMatrix", &Text::getTextMatrix);
+	registrar->registerClass(classText);
+
+	// TextFormat
+	auto classTextFormat = new AutoRuntimeClass< TextFormat >();
+	//classTextFormat->addConstructor< float, int32_t, float >();
+	classTextFormat->addProperty("letterSpacing", &TextFormat::setLetterSpacing, &TextFormat::getLetterSpacing);
+	//classTextFormat->addProperty("align", &TextFormat::setAlign, &TextFormat::getAlign);
+	classTextFormat->addProperty("size", &TextFormat::setSize, &TextFormat::getSize);
+	registrar->registerClass(classTextFormat);
+
+	// TextInstance
+	auto classTextInstance = new AutoRuntimeClass< TextInstance >();
+	classTextInstance->addProperty("text", &TextInstance::getText);
+	registrar->registerClass(classTextInstance);
 }
 
 	}

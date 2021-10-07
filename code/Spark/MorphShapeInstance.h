@@ -17,7 +17,7 @@ namespace traktor
 
 class MorphShape;
 
-/*! Flash morph shape instance.
+/*! Morph shape instance.
  * \ingroup Spark
  */
 class T_DLLCLASS MorphShapeInstance : public CharacterInstance
@@ -25,7 +25,7 @@ class T_DLLCLASS MorphShapeInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	MorphShapeInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const MorphShape* shape);
+	explicit MorphShapeInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const MorphShape* shape);
 
 	const MorphShape* getShape() const;
 

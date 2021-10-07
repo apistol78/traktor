@@ -7,7 +7,6 @@
 #include "Spark/LineStyle.h"
 #include "Spark/Path.h"
 #include "Spark/Polygon.h"
-#include "Spark/Action/ActionTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -99,7 +99,7 @@ function Tab:_addChild(child)
 	local n = #self._tab_mc + 1
 
 	local tab_mc = Widget._createResource(self, "MC_Tab")
-	tab_mc:setMember("onPress", function()
+	tab_mc.eventPress:add(function()
 		self._active = n
 		self:_updateState()
 		if self._clickFn ~= nil then
@@ -117,7 +117,7 @@ function Tab:_addChild(child)
 	local caption_tb = tab_mc:getMember("caption_tb")
 	caption_tb.renderClipMask = false
 #if defined(_EDITOR)
-	caption_tb:setMember("__renderWireOutline", true)
+	--caption_tb:setMember("__renderWireOutline", true)
 #endif
 
 	child.setTabCaption = function(childSelf, caption)

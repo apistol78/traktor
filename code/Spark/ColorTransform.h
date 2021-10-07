@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Core/Object.h"
 #include "Core/Math/Color4f.h"
-#include "Spark/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ class ISerializer;
 /*! Color transform wrapper.
  * \ingroup Spark
  */
-class T_DLLCLASS ColorTransform : public ActionObjectRelay
+class T_DLLCLASS ColorTransform : public Object
 {
 	T_RTTI_CLASS;
 

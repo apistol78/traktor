@@ -3,7 +3,6 @@
 #include "Runtime/Engine/Layer.h"
 #include "Core/Class/Any.h"
 #include "Core/Math/Vector2.h"
-#include "Spark/Action/Common/Classes/As_flash_external_ExternalInterface.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Spray/Feedback/IFeedbackListener.h"
@@ -36,7 +35,7 @@ class IRenderTargetSet;
 	{
 
 class AccDisplayRenderer;
-class ActionObject;
+class Context;
 class Movie;
 class MoviePlayer;
 class MovieRenderer;
@@ -48,7 +47,6 @@ class ISoundRenderer;
  */
 class T_DLLCLASS SparkLayer
 :	public runtime::Layer
-,	public IExternalCall
 ,	public spray::IFeedbackListener
 {
 	T_RTTI_CLASS;
@@ -91,11 +89,11 @@ public:
 	 */
 	MoviePlayer* getMoviePlayer();
 
-	/*! Get ActionScript context.
+	/*! Get context.
 	 *
-	 * \return ActionScript context.
+	 * \return Context.
 	 */
-	ActionContext* getContext();
+	Context* getContext();
 
 	/*! Get "_root" sprite.
 	 *
@@ -109,15 +107,6 @@ public:
 	 * \return External movie, null if doesn't exist.
 	 */
 	Movie* getExternal(const std::wstring& id) const;
-
-	/*! Invoke methods registered through Spark ExternalInterface protocol.
-	 *
-	 * \param methodName Name of registered method.
-	 * \param argc Argument count.
-	 * \param argv Arguments.
-	 * \return Return value from call.
-	 */
-	Any externalCall(const std::string& methodName, uint32_t argc, const Any* argv);
 
 	/*! Get "safe" string which only contain glyphs which are valid with loaded fonts.
 	 *
@@ -142,14 +131,8 @@ public:
 private:
 	struct LastMouseState
 	{
-		int32_t button;
-		int32_t wheel;
-
-		LastMouseState()
-		:	button(0)
-		,	wheel(0)
-		{
-		}
+		int32_t button = 0;
+		int32_t wheel = 0;
 	};
 
 	Ref< runtime::IEnvironment > m_environment;
@@ -173,8 +156,6 @@ private:
 	int32_t m_lastMouseY;
 
 	void createMoviePlayer();
-
-	virtual ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const ActionValue* argv) override final;
 
 	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 };

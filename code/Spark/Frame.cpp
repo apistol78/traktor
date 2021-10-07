@@ -3,11 +3,9 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Frame.h"
-#include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -60,11 +58,6 @@ void Frame::removeObject(const RemoveObject& removeObject)
 	m_removeObjects[removeObject.depth] = removeObject;
 }
 
-void Frame::addActionScript(const IActionVMImage* actionScript)
-{
-	m_actionScripts.push_back(actionScript);
-}
-
 void Frame::startSound(uint16_t soundId)
 {
 	m_startSounds.push_back(soundId);
@@ -85,11 +78,6 @@ const AlignedVector< uint16_t >& Frame::getStartSounds() const
 	return m_startSounds;
 }
 
-const RefArray< const IActionVMImage >& Frame::getActionScripts() const
-{
-	return m_actionScripts;
-}
-
 void Frame::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"label", m_label);
@@ -98,7 +86,6 @@ void Frame::serialize(ISerializer& s)
 	s >> MemberSmallMap< uint16_t, PlaceObject, Member< uint16_t >, MemberComposite< PlaceObject > >(L"placeObjects", m_placeObjects);
 	s >> MemberSmallMap< uint16_t, RemoveObject, Member< uint16_t >, MemberComposite< RemoveObject > >(L"removeObjects", m_removeObjects);
 	s >> MemberAlignedVector< uint16_t >(L"startSounds", m_startSounds);
-	s >> MemberRefArray< const IActionVMImage >(L"actionScripts", m_actionScripts);
 }
 
 void Frame::PlaceObject::serialize(ISerializer& s)
@@ -117,14 +104,6 @@ void Frame::PlaceObject::serialize(ISerializer& s)
 		s >> Member< uint8_t >(L"filter", filter);
 		s >> Member< Color4f >(L"filterColor", filterColor);
 	}
-
-	if (hasFlags & PfHasActions)
-		s >> MemberSmallMap<
-			uint32_t,
-			Ref< const IActionVMImage >,
-			Member< uint32_t >,
-			MemberRef< const IActionVMImage >
-		>(L"events", events);
 
 	if (hasFlags & PfHasClipDepth)
 		s >> Member< uint16_t >(L"clipDepth", clipDepth);

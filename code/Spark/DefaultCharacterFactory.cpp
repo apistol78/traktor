@@ -12,13 +12,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DefaultCharacterFactory", DefaultCharacte
 Ref< CharacterInstance > DefaultCharacterFactory::createInstance(
 	const Character* character,
 	int32_t depth,
-	ActionContext* context,
+	Context* context,
 	Dictionary* dictionary,
 	CharacterInstance* parent,
 	const std::string& name,
-	const Matrix33& transform,
-	const ActionObject* initObject,
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	const Matrix33& transform
 ) const
 {
 	return character->createInstance(
@@ -26,9 +24,7 @@ Ref< CharacterInstance > DefaultCharacterFactory::createInstance(
 		parent->getDictionary(),
 		parent,
 		name,
-		transform,
-		initObject,
-		events
+		transform
 	);
 }
 

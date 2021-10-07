@@ -5,34 +5,24 @@
 #include "Core/System/OS.h"
 #include "Core/Timer/Profiler.h"
 #include "Core/Timer/Timer.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
-#include "Spark/GC.h"
 #include "Spark/ISoundRenderer.h"
+#include "Spark/Key.h"
+#include "Spark/Mouse.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"
 #include "Spark/Movie.h"
+#include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFrame.h"
-#include "Spark/Action/ActionFunctionNative.h"
-#include "Spark/Action/Common/Classes/AsKey.h"
-#include "Spark/Action/Common/Classes/AsMouse.h"
-#include "Spark/Action/Common/Classes/AsSound.h"
-#include "Spark/Action/Common/Classes/AsStage.h"
-#include "Spark/Action/Common/Classes/As_flash_external_ExternalInterface.h"
+#include "Spark/Stage.h"
 #include "Spark/Debug/MovieDebugger.h"
 
 namespace traktor
 {
 	namespace spark
 	{
-		namespace
-		{
-
-const int32_t c_framesBetweenCollections = 100;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MoviePlayer", MoviePlayer, Object)
 
@@ -48,8 +38,6 @@ MoviePlayer::MoviePlayer(
 ,	m_timeCurrent(0.0f)
 ,	m_timeNext(0.0f)
 ,	m_timeNextFrame(0.0f)
-,	m_gcEnable(true)
-,	m_framesUntilCollection(c_framesBetweenCollections)
 {
 }
 
@@ -64,31 +52,30 @@ MoviePlayer::~MoviePlayer()
 
 bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height, ISoundRenderer* soundRenderer)
 {
-	ActionValue memberValue;
-
 	m_movie = movie;
 	m_movieInstance = m_movie->createMovieClipInstance(m_characterFactory, m_movieLoader);
 
-	Ref< ActionContext > context = m_movieInstance->getContext();
-	Ref< ActionObject > global = context->getGlobal();
+	Context* context = m_movieInstance->getContext();
+
+	m_key = context->getKey();
+	m_mouse = context->getMouse();
+	m_stage = context->getStage();
 
 	// Override some global methods.
-	setGlobal("getURL", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_getURL)));
-	setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_setInterval)));
-	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_clearInterval)));
+	//setGlobal("getURL", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_getURL)));
+	//setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_setInterval)));
+	//setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_clearInterval)));
 
 	// Create sound prototype.
-	setGlobal("Sound", ActionValue(new AsSound(context, soundRenderer)));
+	//setGlobal("Sound", ActionValue(new AsSound(context, soundRenderer)));
 
 	// Get references to key and mouse singletons.
-	if (global->getMemberByQName("Key", memberValue))
-		m_key = memberValue.getObject< AsKey >();
-	if (global->getMemberByQName("Mouse", memberValue))
-		m_mouse = memberValue.getObject< AsMouse >();
-	if (global->getMemberByQName("Stage", memberValue))
-		m_stage = memberValue.getObject< AsStage >();
-	if (global->getMemberByQName("flash.external.ExternalInterface", memberValue))
-		m_externalInterface = memberValue.getObject< As_flash_external_ExternalInterface >();
+	//if (global->getMemberByQName("Key", memberValue))
+	//	m_key = memberValue.getObject< AsKey >();
+	//if (global->getMemberByQName("Mouse", memberValue))
+	//	m_mouse = memberValue.getObject< AsMouse >();
+	//if (global->getMemberByQName("Stage", memberValue))
+	//	m_stage = memberValue.getObject< AsStage >();
 
 	// Ensure stage are properly initialized.
 	if (m_stage)
@@ -104,66 +91,42 @@ void MoviePlayer::destroy()
 		// Ensure no character have focus; need to do this
 		// as the focus character will trigger "exit focus" event
 		// thus need to have access to context etc.
-		ActionContext* context = m_movieInstance->getContext();
+		Context* context = m_movieInstance->getContext();
 		T_ASSERT(context);
 		context->setFocus(nullptr);
 		context->setPressed(nullptr);
-
-		// Release values in pool.
-		context->getPool().flush();
 
 		// Then destroy root movie instance.
 		safeDestroy(m_movieInstance);
 	}
 
-	m_actionVM = nullptr;
-	m_externalInterface = nullptr;
 	m_stage =  nullptr;
 	m_key = nullptr;
 	m_mouse = nullptr;
 	m_movie = nullptr;
 
 	m_events.clear();
-	m_fsCommands.clear();
-	m_interval.clear();
-
-	GC::getInstance().collectCycles(true);
+	//m_interval.clear();
 }
 
 void MoviePlayer::gotoAndPlay(uint32_t frame)
 {
-	m_movieInstance->setPlaying(true, false);
-	m_movieInstance->gotoFrame(frame);
+	m_movieInstance->gotoAndPlay(frame);
 }
 
 void MoviePlayer::gotoAndStop(uint32_t frame)
 {
-	m_movieInstance->setPlaying(false, false);
-	m_movieInstance->gotoFrame(frame);
+	m_movieInstance->gotoAndStop(frame);
 }
 
 bool MoviePlayer::gotoAndPlay(const std::string& frameLabel)
 {
-	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
-	if (frame < 0)
-		return false;
-
-	m_movieInstance->setPlaying(true, false);
-	m_movieInstance->gotoFrame(frame);
-
-	return true;
+	return m_movieInstance->gotoAndPlay(frameLabel);
 }
 
 bool MoviePlayer::gotoAndStop(const std::string& frameLabel)
 {
-	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
-	if (frame < 0)
-		return false;
-
-	m_movieInstance->setPlaying(false, false);
-	m_movieInstance->gotoFrame(frame);
-
-	return true;
+	return m_movieInstance->gotoAndStop(frameLabel);
 }
 
 uint32_t MoviePlayer::getFrameCount() const
@@ -187,29 +150,29 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 {
 	T_PROFILER_SCOPE(L"MoviePlayer execute");
 
-	ActionContext* context = m_movieInstance->getContext();
+	Context* context = m_movieInstance->getContext();
 	T_ASSERT(context);
 
 	Ref< SpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(m_movieInstance);
 
 	// Collect and issue interval functions.
-	if (!m_interval.empty())
-	{
-		T_PROFILER_SCOPE(L"MoviePlayer interval");
-		AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
-		for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-		{
-			if (i->second.count++ >= i->second.interval)
-			{
-				intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
-				i->second.count = 0;
-			}
-		}
-		ActionValueArray argv;
-		for (const auto& intervalFn : intervalFns)
-			intervalFn.second->call(intervalFn.first, argv);
-	}
+	//if (!m_interval.empty())
+	//{
+	//	T_PROFILER_SCOPE(L"MoviePlayer interval");
+	//	AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
+	//	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
+	//	{
+	//		if (i->second.count++ >= i->second.interval)
+	//		{
+	//			intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
+	//			i->second.count = 0;
+	//		}
+	//	}
+	//	ActionValueArray argv;
+	//	for (const auto& intervalFn : intervalFns)
+	//		intervalFn.second->call(intervalFn.first, argv);
+	//}
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
@@ -277,8 +240,8 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 						if (!inside)
 						{
 							// Cursor has escaped; issue roll out.
-							rolledOverSprite->executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
-							context->setRolledOver(0);
+							//rolledOverSprite->executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+							context->setRolledOver(nullptr);
 						}
 					}
 
@@ -306,31 +269,14 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 		m_movieInstance->eventFrame();
 	}
 
-	{
-		// Notify frame listeners.
-		T_PROFILER_SCOPE(L"Flash frame listeners");
-		context->notifyFrameListeners(float(m_timeCurrent));
-	}
+	//{
+	//	// Notify frame listeners.
+	//	T_PROFILER_SCOPE(L"Flash frame listeners");
+	//	context->notifyFrameListeners(float(m_timeCurrent));
+	//}
 
 	// Pop current movie clip.
 	context->setMovieClip(current);
-
-	{
-		// Flush pool memory; release all lingering object references etc.
-		T_PROFILER_SCOPE(L"Flash flush pool");
-		context->getPool().flush();
-	}
-
-	// Collect reference cycles.
-	if (m_gcEnable)
-	{
-		if (--m_framesUntilCollection <= 0)
-		{
-			T_PROFILER_SCOPE(L"Flash GC");
-			GC::getInstance().collectCycles(false);
-			m_framesUntilCollection = c_framesBetweenCollections;
-		}
-	}
 
 	// Issue debugger if attached.
 	if (m_movieDebugger)
@@ -438,131 +384,56 @@ void MoviePlayer::postViewResize(int32_t width, int32_t height)
 	m_events.push_back(evt);
 }
 
-bool MoviePlayer::getFsCommand(std::string& outCommand, std::string& outArgs)
-{
-	if (m_fsCommands.empty())
-		return false;
-
-	outCommand = m_fsCommands.front().first;
-	outArgs = m_fsCommands.front().second;
-
-	m_fsCommands.pop_front();
-	return true;
-}
-
-void MoviePlayer::setExternalCall(IExternalCall* externalCall)
-{
-	if (m_externalInterface)
-		m_externalInterface->setExternalCall(externalCall);
-}
-
-ActionValue MoviePlayer::dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv)
-{
-	if (m_externalInterface)
-		return m_externalInterface->dispatchCallback(methodName, argc, argv);
-	else
-		return ActionValue();
-}
-
 SpriteInstance* MoviePlayer::getMovieInstance() const
 {
 	return m_movieInstance;
 }
 
-const IActionVM* MoviePlayer::getVM() const
-{
-	return m_actionVM;
-}
-
-void MoviePlayer::setGlobal(const std::string& name, const ActionValue& value)
-{
-	ActionContext* actionContext = m_movieInstance->getContext();
-	T_ASSERT(actionContext);
-
-	ActionObject* global = actionContext->getGlobal();
-	T_ASSERT(global);
-
-	global->setMember(name, value);
-}
-
-ActionValue MoviePlayer::getGlobal(const std::string& name) const
-{
-	ActionContext* actionContext = m_movieInstance->getContext();
-	T_ASSERT(actionContext);
-
-	ActionObject* global = actionContext->getGlobal();
-	T_ASSERT(global);
-
-	ActionValue value;
-	global->getMember(name, value);
-
-	return value;
-}
-
-void MoviePlayer::setGCEnable(bool gcEnable)
-{
-	m_gcEnable = gcEnable;
-}
-
-void MoviePlayer::Global_getURL(CallArgs& ca)
-{
-	std::string url = ca.args[0].getString();
-	if (startsWith(url, "FSCommand:"))
-	{
-		m_fsCommands.push_back(std::make_pair(
-			url.substr(10),
-			ca.args[1].getString()
-		));
-	}
-	else
-		OS::getInstance().openFile(mbstows(url));
-}
-
-void MoviePlayer::Global_setInterval(CallArgs& ca)
-{
-	Ref< ActionObject > target;
-	Ref< ActionFunction > function;
-	ActionValue functionValue;
-	uint32_t interval;
-
-	if (ca.args[1].isString())
-	{
-		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
-		target = ca.args[0].getObjectAlways(ca.context);
-		if (!target->getMember(ca.args[1].getString(), functionValue))
-			return;
-		function = functionValue.getObject< ActionFunction >();
-		interval = uint32_t(ca.args[2].getInteger());
-	}
-	else
-	{
-		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
-		target = ca.self;
-		function = ca.args[0].getObject< ActionFunction >();
-		interval = uint32_t(ca.args[1].getInteger());
-	}
-
-	if (!function)
-		return;
-
-	uint32_t id = m_intervalNextId++;
-
-	Interval& iv = m_interval[id];
-	iv.count = 0;
-	iv.interval = interval / m_movie->getMovieClip()->getFrameRate();
-	iv.target = target;
-	iv.function = function;
-
-	ca.ret = ActionValue(int32_t(id));
-}
-
-void MoviePlayer::Global_clearInterval(CallArgs& ca)
-{
-	uint32_t id = uint32_t(ca.args[0].getInteger());
-	std::map< uint32_t, Interval >::iterator i = m_interval.find(id);
-	if (i != m_interval.end())
-		m_interval.erase(i);
-}
+//void MoviePlayer::Global_setInterval(CallArgs& ca)
+//{
+//	Ref< ActionObject > target;
+//	Ref< ActionFunction > function;
+//	ActionValue functionValue;
+//	uint32_t interval;
+//
+//	if (ca.args[1].isString())
+//	{
+//		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
+//		target = ca.args[0].getObjectAlways(ca.context);
+//		if (!target->getMember(ca.args[1].getString(), functionValue))
+//			return;
+//		function = functionValue.getObject< ActionFunction >();
+//		interval = uint32_t(ca.args[2].getInteger());
+//	}
+//	else
+//	{
+//		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
+//		target = ca.self;
+//		function = ca.args[0].getObject< ActionFunction >();
+//		interval = uint32_t(ca.args[1].getInteger());
+//	}
+//
+//	if (!function)
+//		return;
+//
+//	uint32_t id = m_intervalNextId++;
+//
+//	Interval& iv = m_interval[id];
+//	iv.count = 0;
+//	iv.interval = interval / m_movie->getMovieClip()->getFrameRate();
+//	iv.target = target;
+//	iv.function = function;
+//
+//	ca.ret = ActionValue(int32_t(id));
+//}
+//
+//void MoviePlayer::Global_clearInterval(CallArgs& ca)
+//{
+//	uint32_t id = uint32_t(ca.args[0].getInteger());
+//	std::map< uint32_t, Interval >::iterator i = m_interval.find(id);
+//	if (i != m_interval.end())
+//		m_interval.erase(i);
+//}
 
 	}
 }

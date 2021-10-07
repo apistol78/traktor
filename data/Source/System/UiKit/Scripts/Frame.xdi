@@ -23,20 +23,18 @@ end
 function Frame:remove()
 	local cx = self._mc.context
 
-	self._mc:setMember("onEnterFrame", nil)
-	self._mc:setMember("onMouseDown", nil)
-	self._mc:setMember("onMouseUp", nil)
-	self._mc:setMember("onMouseMove", nil)
+	self._mc.eventEnterFrame:removeAll()
+	self._mc.eventMouseDown:removeAll()
+	self._mc.eventMouseUp:removeAll()
+	self._mc.eventMouseMove:removeAll()
 
 	if self._mouseListener ~= nil then
-		local mouse = cx.global:getMember("Mouse")
-		mouse:removeListener(self._mouseListener)
+		cx.mouse.eventMouseWheel:remove(self._mouseListener)
 		self._mouseListener = nil
 	end
 
 	if self._stageListener ~= nil then
-		local stage = cx.global:getMember("Stage")
-		stage:removeListener(self._stageListener)
+		cx.stage.eventResize:remove(self._stageListener)
 		self._stageListener = nil
 	end
 
@@ -49,10 +47,9 @@ end
 
 function Frame:update()
 	local cx = self._mc.context
-	local stage = cx.global:getMember("Stage")
 
-	local width = stage:getProperty("width")
-	local height = stage:getProperty("height")
+	local width = cx.stage.width
+	local height = cx.stage.height
 	assert (width > 0)
 	assert (height > 0)
 
@@ -74,21 +71,18 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	Container._initialize(self, nil, mc, layout)
 
 	-- Disable stage scale and position, register listener of changes in stage size.
-	local cx = mc.context
-	local stage = cx.global:getMember("Stage")
-	self._stageListener = cx:createObject()
-	self._stageListener:setMember("onResize", function() self:_eventStageResize() end)
-	stage:addListener(self._stageListener)
-	stage:setProperty("scaleMode", "noScale")
-	stage:setProperty("align", "TL")
+	local stage = mc.context.stage
+	self._stageListener = stage.eventResize:add(function() self:_eventStageResize() end)
+	stage.scaleMode = "noScale"
+	stage.align = "TL"
 
 	self._vwidth = vwidth
 	self._vheight = vheight
 
 	-- Calculate first virtual scale factor.
 	-- \\tbd This currently "freezes" output size based on inital size of screen...
-	local width = stage:getProperty("width")
-	local height = stage:getProperty("height")
+	local width = stage.width
+	local height = stage.height
 	local xscale = width / self._vwidth
 	local yscale = height / self._vheight
 	self._vscale = math.min(xscale, yscale)
@@ -97,15 +91,13 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._vscaleDynamic = false
 
 	-- Setup event source listeners.
-	self._mc:setMember("onEnterFrame", function() self:_eventEnterFrame() end)
-	self._mc:setMember("onMouseDown", function() self:_eventMouseDown() end)
-	self._mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
-	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
+	self._mc.eventEnterFrame:add(function() self:_eventEnterFrame() end)
+	self._mc.eventMouseDown:add(function() self:_eventMouseDown() end)
+	self._mc.eventMouseUp:add(function() self:_eventMouseUp() end)
+	self._mc.eventMouseMove:add(function() self:_eventMouseMove() end)
 
-	local mouse = cx.global:getMember("Mouse")
-	self._mouseListener = cx:createObject()
-	self._mouseListener:setMember("onMouseWheel", function(delta) self:_eventMouseWheel(delta) end)
-	mouse:addListener(self._mouseListener)
+	local mouse = mc.context.mouse
+	self._mouseListener = mouse.eventMouseWheel:add(function(delta) self:_eventMouseWheel(delta) end)
 
 #if defined(_DEBUG)
 	if Frame.ShowDebugCursor then

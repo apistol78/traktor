@@ -2,11 +2,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFrame.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/IActionVMImage.h"
 
 namespace traktor
 {
@@ -15,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ButtonInstance", ButtonInstance, CharacterInstance)
 
-ButtonInstance::ButtonInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Button* button)
-:	CharacterInstance(context, "Button", dictionary, parent)
+ButtonInstance::ButtonInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Button* button)
+:	CharacterInstance(context, dictionary, parent)
 ,	m_button(button)
 ,	m_state(Button::SmUp)
 ,	m_inside(false)
@@ -29,7 +26,7 @@ ButtonInstance::ButtonInstance(ActionContext* context, Dictionary* dictionary, C
 		if (!character)
 			continue;
 
-		Ref< CharacterInstance > characterInstance = character->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0);
+		Ref< CharacterInstance > characterInstance = character->createInstance(context, dictionary, this, "", Matrix33::identity());
 		T_ASSERT(characterInstance);
 
 		m_characterInstances[layer.characterId] = characterInstance;
@@ -38,16 +35,16 @@ ButtonInstance::ButtonInstance(ActionContext* context, Dictionary* dictionary, C
 
 ButtonInstance::~ButtonInstance()
 {
-	for (std::map< uint16_t, Ref< CharacterInstance > >::iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
-		safeDestroy(i->second);
+	for (auto& it : m_characterInstances)
+		safeDestroy(it.second);
 
 	m_characterInstances.clear();
 }
 
 void ButtonInstance::destroy()
 {
-	for (std::map< uint16_t, Ref< CharacterInstance > >::iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
-		safeDestroy(i->second);
+	for (auto& it : m_characterInstances)
+		safeDestroy(it.second);
 
 	m_characterInstances.clear();
 
@@ -68,10 +65,9 @@ Aabb2 ButtonInstance::getLocalBounds() const
 {
 	Aabb2 bounds;
 
-	const Button::button_layers_t& layers = m_button->getButtonLayers();
-	for (Button::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& layer : m_button->getButtonLayers())
 	{
-		Ref< CharacterInstance > characterInstance = getCharacterInstance(i->characterId);
+		Ref< CharacterInstance > characterInstance = getCharacterInstance(layer.characterId);
 		if (!characterInstance)
 			continue;
 
@@ -83,16 +79,15 @@ Aabb2 ButtonInstance::getLocalBounds() const
 
 CharacterInstance* ButtonInstance::getCharacterInstance(uint16_t referenceId) const
 {
-	std::map< uint16_t, Ref< CharacterInstance > >::const_iterator i = m_characterInstances.find(referenceId);
-	return i != m_characterInstances.end() ? i->second.ptr() : 0;
+	auto it = m_characterInstances.find(referenceId);
+	return it != m_characterInstances.end() ? it->second.ptr() : nullptr;
 }
 
 void ButtonInstance::eventMouseDown(int x, int y, int button)
 {
 	if (m_inside && !m_pushed)
 	{
-		executeCondition(Button::CmOverUpToOverDown);
-		executeScriptEvent("onPress");
+		m_eventPress.issue();
 		m_state = Button::SmDown;
 		m_pushed = true;
 	}
@@ -102,15 +97,13 @@ void ButtonInstance::eventMouseUp(int x, int y, int button)
 {
 	if (m_inside && m_pushed)
 	{
-		executeCondition(Button::CmOverDownToOverUp);
-		executeScriptEvent("onRelease");
+		m_eventRelease.issue();
 		m_state = Button::SmOver;
 		m_pushed = false;
 	}
 	else if (!m_inside && m_pushed)
 	{
-		executeCondition(Button::CmOutDownToIdle);
-		executeScriptEvent("onReleaseOutside");
+		m_eventReleaseOutside.issue();
 		m_state = Button::SmUp;
 		m_pushed = false;
 	}
@@ -130,29 +123,21 @@ void ButtonInstance::eventMouseMove(int x, int y, int button)
 		{
 			if (button == 0)
 			{
-				executeCondition(Button::CmIdleToOverUp);
-				executeScriptEvent("onRollOver");
+				m_eventRollOver.issue();
 				m_state = Button::SmOver;
 			}
 			else
-			{
-				executeCondition(Button::CmOutDownToOverDown);
 				m_state = Button::SmDown;
-			}
 		}
 		else
 		{
 			if (button == 0)
 			{
-				executeCondition(Button::CmOverUpToIdle);
-				executeScriptEvent("onRollOut");
+				m_eventRollOut.issue();
 				m_state = Button::SmUp;
 			}
 			else
-			{
-				executeCondition(Button::CmOverDownToOutDown);
 				m_state = Button::SmOver;
-			}
 		}
 		m_inside = inside;
 	}
@@ -161,70 +146,6 @@ void ButtonInstance::eventMouseMove(int x, int y, int button)
 Aabb2 ButtonInstance::getBounds() const
 {
 	return getTransform() * getLocalBounds();
-}
-
-void ButtonInstance::trace(visitor_t visitor) const
-{
-	for (std::map< uint16_t, Ref< CharacterInstance > >::const_iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
-		visitor(i->second);
-	CharacterInstance::trace(visitor);
-}
-
-void ButtonInstance::dereference()
-{
-	m_characterInstances.clear();
-	CharacterInstance::dereference();
-}
-
-void ButtonInstance::executeCondition(uint32_t conditionMask)
-{
-	ActionContext* context = getContext();
-	T_ASSERT(context);
-
-	ActionObject* self = getAsObject(context);
-	T_ASSERT(self);
-
-	Ref< ActionObject > super = self->getSuper();
-
-	const Button::button_conditions_t& conditions = m_button->getButtonConditions();
-	for (Button::button_conditions_t::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
-	{
-		if ((i->mask & conditionMask) == 0)
-			continue;
-
-		ActionFrame callFrame(
-			context,
-			self,
-			4,
-			0,
-			0
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
-
-		i->script->execute(&callFrame);
-	}
-}
-
-void ButtonInstance::executeScriptEvent(const std::string& eventName)
-{
-	ActionContext* context = getContext();
-	T_ASSERT(context);
-
-	ActionObject* self = getAsObject(context);
-	T_ASSERT(self);
-
-	ActionValue memberValue;
-	if (!self->getMember(eventName, memberValue))
-		return;
-
-	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
-	if (!eventFunction)
-		return;
-
-	eventFunction->call(self);
 }
 
 	}

@@ -1,9 +1,6 @@
 #include "Spark/CharacterInstance.h"
+#include "Spark/Context.h"
 #include "Spark/Types.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionFrame.h"
-#include "Spark/Action/ActionFunction.h"
-#include "Spark/Action/IActionVMImage.h"
 #include "Spark/Swf/SwfTypes.h"
 
 namespace traktor
@@ -11,18 +8,16 @@ namespace traktor
 	namespace spark
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, ActionObjectRelay)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, Object)
 
 std::atomic< int32_t > CharacterInstance::ms_instanceCount(0);
 
 CharacterInstance::CharacterInstance(
-	ActionContext* context,
-	const char* const prototype,
+	Context* context,
 	Dictionary* dictionary,
 	CharacterInstance* parent
 )
-:	ActionObjectRelay(prototype)
-,	m_context(context)
+:	m_context(context)
 ,	m_dictionary(dictionary)
 ,	m_parent(parent)
 ,	m_filterColor(0.0f, 0.0f, 0.0f, 0.0f)
@@ -49,9 +44,7 @@ CharacterInstance::~CharacterInstance()
 
 	m_context = nullptr;
 	m_parent = nullptr;
-	m_eventScripts.clear();
 
-	ActionObjectRelay::dereference();
 	ms_instanceCount--;
 }
 
@@ -74,9 +67,6 @@ void CharacterInstance::destroy()
 
 	m_context = nullptr;
 	m_parent = nullptr;
-	m_eventScripts.clear();
-
-	ActionObjectRelay::dereference();
 }
 
 void CharacterInstance::setParent(CharacterInstance* parent)
@@ -193,105 +183,8 @@ bool CharacterInstance::haveFocus() const
 	return bool(getContext()->getFocus() == this);
 }
 
-void CharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
-{
-	m_eventScripts = eventScripts;
-}
-
-void CharacterInstance::eventInit()
-{
-	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtInitialize);
-	if (i != m_eventScripts.end())
-	{
-		ActionObject* self = getAsObject(m_context);
-		Ref< ActionObject > super = self->getSuper();
-
-		ActionFrame callFrame(
-			m_context,
-			self,
-			4,
-			0,
-			0
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
-
-		i->second->execute(&callFrame);
-	}
-}
-
-void CharacterInstance::eventConstruct()
-{
-	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtConstruct);
-	if (i != m_eventScripts.end())
-	{
-		ActionObject* self = getAsObject(m_context);
-		Ref< ActionObject > super = self->getSuper();
-
-		ActionFrame callFrame(
-			m_context,
-			self,
-			4,
-			0,
-			0
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
-
-		i->second->execute(&callFrame);
-	}
-}
-
-void CharacterInstance::eventLoad()
-{
-	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtLoad);
-	if (i != m_eventScripts.end())
-	{
-		ActionObject* self = getAsObject(m_context);
-		Ref< ActionObject > super = self->getSuper();
-
-		ActionFrame callFrame(
-			m_context,
-			self,
-			4,
-			0,
-			0
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
-
-		i->second->execute(&callFrame);
-	}
-}
-
 void CharacterInstance::eventFrame()
 {
-	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtEnterFrame);
-	if (i != m_eventScripts.end())
-	{
-		ActionObject* self = getAsObject(m_context);
-		Ref< ActionObject > super = self->getSuper();
-
-		ActionFrame callFrame(
-			m_context,
-			self,
-			4,
-			0,
-			0
-		);
-
-		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
-		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
-		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
-
-		i->second->execute(&callFrame);
-	}
 }
 
 void CharacterInstance::eventKey(wchar_t unicode)
@@ -320,74 +213,12 @@ void CharacterInstance::eventMouseMove(int x, int y, int button)
 
 void CharacterInstance::eventSetFocus()
 {
-	executeScriptEvent(ActionContext::IdOnSetFocus, ActionValue());
+	m_eventSetFocus.issue();
 }
 
 void CharacterInstance::eventKillFocus()
 {
-	executeScriptEvent(ActionContext::IdOnKillFocus, ActionValue());
-}
-
-bool CharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
-{
-	if (m_parent && memberName == ActionContext::IdParent)
-	{
-		outMemberValue = ActionValue(m_parent->getAsObject(context));
-		return true;
-	}
-	else
-		return false;
-}
-
-bool CharacterInstance::haveScriptEvent(uint32_t eventName)
-{
-	if (!m_context)
-		return false;
-
-	ActionObject* self = getAsObject(m_context);
-	T_ASSERT(self);
-
-	ActionValue memberValue;
-	if (!self->getMember(eventName, memberValue))
-		return false;
-
-	return memberValue.getObject< ActionFunction >() != nullptr;
-}
-
-bool CharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
-{
-	if (!m_context)
-		return false;
-
-	ActionObject* self = getAsObject(m_context);
-	T_ASSERT(self);
-
-	ActionValue memberValue;
-	if (!self->getMember(eventName, memberValue))
-		return false;
-
-	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
-	if (!eventFunction)
-		return false;
-
-	ActionValueArray argv(m_context->getPool(), 1);
-	argv[0] = arg;
-
-	eventFunction->call(self, argv);
-	return true;
-}
-
-void CharacterInstance::trace(visitor_t visitor) const
-{
-	visitor(m_context);
-	ActionObjectRelay::trace(visitor);
-}
-
-void CharacterInstance::dereference()
-{
-	m_context = nullptr;
-	m_parent = nullptr;
-	ActionObjectRelay::dereference();
+	m_eventKillFocus.issue();
 }
 
 	}

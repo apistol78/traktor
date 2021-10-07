@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "Core/RefArray.h"
 #include "Spark/Character.h"
 
@@ -17,12 +16,9 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionContext;
 class Frame;
-class IActionVM;
-class IActionVMImage;
 
-/*! Flash sprite.
+/*! Sprite
  * \ingroup Spark
  */
 class T_DLLCLASS Sprite : public Character
@@ -32,7 +28,7 @@ class T_DLLCLASS Sprite : public Character
 public:
 	Sprite() = default;
 
-	Sprite(uint16_t id, uint16_t frameRate);
+	explicit Sprite(uint16_t id, uint16_t frameRate);
 
 	uint16_t getFrameRate() const;
 
@@ -44,22 +40,16 @@ public:
 
 	int findFrame(const std::string& frameLabel) const;
 
-	void addInitActionScript(const IActionVMImage* initActionScript);
-
-	const RefArray< const IActionVMImage >& getInitActionScripts() const;
-
 	void setScalingGrid(const Aabb2& scalingGrid);
 
 	const Aabb2& getScalingGrid() const;
 
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -67,7 +57,6 @@ public:
 private:
 	uint16_t m_frameRate = 0;
 	RefArray< Frame > m_frames;
-	RefArray< const IActionVMImage > m_initActionScripts;
 	Aabb2 m_scalingGrid;
 };
 

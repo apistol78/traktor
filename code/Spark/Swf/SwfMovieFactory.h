@@ -35,14 +35,13 @@ class T_DLLCLASS SwfMovieFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit SwfMovieFactory(bool includeAS);
+	SwfMovieFactory();
 
 	Ref< Movie > createMovie(SwfReader* swf) const;
 
 	Ref< Movie > createMovieFromImage(const drawing::Image* image) const;
 
 private:
-	bool m_includeAS;
 	SmallMap< uint16_t, Ref< Tag > > m_tagReaders;
 };
 

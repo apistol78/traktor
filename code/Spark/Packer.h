@@ -28,7 +28,7 @@ public:
 		int32_t height;
 	};
 
-	Packer(int32_t width, int32_t height);
+	explicit Packer(int32_t width, int32_t height);
 
 	virtual ~Packer();
 

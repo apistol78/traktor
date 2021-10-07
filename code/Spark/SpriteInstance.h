@@ -16,8 +16,8 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionContext;
 class Bitmap;
+class Context;
 class Canvas;
 class Character;
 class EditInstance;
@@ -25,7 +25,7 @@ class ISoundRenderer;
 class ShapeInstance;
 class Sprite;
 
-/*! Flash sprite instance.
+/*! Sprite instance.
  * \ingroup Spark
  */
 class T_DLLCLASS SpriteInstance : public CharacterInstance
@@ -33,7 +33,7 @@ class T_DLLCLASS SpriteInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	SpriteInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Sprite* sprite);
+	explicit SpriteInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Sprite* sprite);
 
 	virtual ~SpriteInstance();
 
@@ -50,6 +50,14 @@ public:
 	void gotoPrevious();
 
 	void gotoNext();
+
+	void gotoAndPlay(uint32_t frame);
+
+	void gotoAndStop(uint32_t frame);
+
+	bool gotoAndPlay(const std::string& frameLabel);
+
+	bool gotoAndStop(const std::string& frameLabel);
 
 	uint32_t getCurrentFrame() const { return m_currentFrame; }
 
@@ -89,6 +97,8 @@ public:
 
 	SpriteInstance* getMask() { return m_mask; }
 
+	CharacterInstance* getMember(const std::string& childName) const;
+
 	Canvas* createCanvas();
 
 	Canvas* getCanvas() { return m_canvas; }
@@ -99,15 +109,11 @@ public:
 
 	virtual void clearCacheObject() override;
 
-	virtual bool enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const override final;
+	//virtual void eventInit() override final;
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override final;
+	//virtual void eventConstruct() override final;
 
-	virtual void eventInit() override final;
-
-	virtual void eventConstruct() override final;
-
-	virtual void eventLoad() override final;
+	//virtual void eventLoad() override final;
 
 	virtual void eventFrame() override final;
 
@@ -170,10 +176,30 @@ public:
 
 	//@}
 
-protected:
-	virtual void trace(visitor_t visitor) const override final;
+	/*! \group Events */
+	//@{
 
-	virtual void dereference() override final;
+	Event* getEventEnterFrame() { return &m_eventEnterFrame; }
+
+	Event* getEventKeyDown() { return &m_eventKeyDown; }
+
+	Event* getEventKeyUp() { return &m_eventKeyUp; }
+
+	Event* getEventMouseDown() { return &m_eventMouseDown; }
+
+	Event* getEventMouseUp() { return &m_eventMouseUp; }
+
+	Event* getEventMouseMove() { return &m_eventMouseMove; }
+
+	Event* getEventPress() { return &m_eventPress; }
+
+	Event* getEventRelease() { return &m_eventRelease; }
+
+	Event* getEventRollOver() { return &m_eventRollOver; }
+
+	Event* getEventRollOut() { return &m_eventRollOut; }
+
+	//@}
 
 private:
 	Ref< const Sprite > m_sprite;
@@ -184,13 +210,24 @@ private:
 	int32_t m_mouseY;
 	uint16_t m_currentFrame;
 	uint16_t m_lastUpdateFrame;
-	uint16_t m_lastExecutedFrame;
+	//uint16_t m_lastExecutedFrame;
 	uint16_t m_lastSoundFrame;
 	bool m_cacheAsBitmap;
 	bool m_initialized;
 	bool m_playing;
 	bool m_inDispatch;
 	bool m_gotoIssued;
+
+	Event m_eventEnterFrame;
+	Event m_eventKeyDown;
+	Event m_eventKeyUp;
+	Event m_eventMouseDown;
+	Event m_eventMouseUp;
+	Event m_eventMouseMove;
+	Event m_eventPress;
+	Event m_eventRelease;
+	Event m_eventRollOver;
+	Event m_eventRollOut;
 
 	void preDispatchEvents();
 };
