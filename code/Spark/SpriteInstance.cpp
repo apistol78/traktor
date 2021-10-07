@@ -267,7 +267,7 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 	uint16_t emptyClipId = depth + 40000;
 
 	// Create empty movie character with a single frame.
-	Ref< Sprite > emptyClip = new Sprite(emptyClipId, 0);
+	Ref< Sprite > emptyClip = new Sprite(0);
 	emptyClip->addFrame(new Frame());
 
 	// Create new instance of movie clip.
@@ -303,7 +303,6 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 
 	// Create edit character.
 	Ref< Edit > edit = new Edit(
-		-1,
 		0,
 		12,
 		bounds,
@@ -337,7 +336,7 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 	// Show edit character instance.
 	getDisplayList().showObject(
 		depth,
-		edit->getId(),
+		0, // edit->getId(),
 		editInstance,
 		true
 	);
@@ -403,7 +402,7 @@ Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& clon
 
 	intoParent->getDisplayList().showObject(
 		depth,
-		cloneInstance->getSprite()->getId(),
+		0, // cloneInstance->getSprite()->getId(),
 		cloneInstance,
 		true
 	);

@@ -28,7 +28,7 @@ class T_DLLCLASS Sprite : public Character
 public:
 	Sprite() = default;
 
-	explicit Sprite(uint16_t id, uint16_t frameRate);
+	explicit Sprite(uint16_t frameRate);
 
 	uint16_t getFrameRate() const;
 

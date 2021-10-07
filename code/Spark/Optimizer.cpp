@@ -75,9 +75,9 @@ void MergeQueue::beginMask()
 {
 	T_FATAL_ASSERT(!m_maskSprite);
 
-	int32_t clippedId = m_nextShapeId++;
+	const int32_t clippedId = m_nextShapeId++;
 	m_clippedFrame = new Frame();
-	m_clippedSprite = new Sprite(clippedId, 1);
+	m_clippedSprite = new Sprite(1);
 	m_clippedSprite->addFrame(m_clippedFrame);
 	m_outputMovie->defineCharacter(clippedId, m_clippedSprite);
 
@@ -90,9 +90,9 @@ void MergeQueue::beginMask()
 
 	m_outputFrame.push_back(m_clippedFrame);
 
-	int32_t maskId = m_nextShapeId++;
+	const int32_t maskId = m_nextShapeId++;
 	m_maskFrame = new Frame();
-	m_maskSprite = new Sprite(maskId, 1);
+	m_maskSprite = new Sprite(1);
 	m_maskSprite->addFrame(m_maskFrame);
 	m_outputMovie->defineCharacter(maskId, m_maskSprite);
 
@@ -153,13 +153,15 @@ void MergeQueue::insertShape(const Shape* shape, const Matrix33& transform, cons
 
 		if (!m_mergeShape)
 		{
-			m_mergeShape = new Shape(m_nextShapeId++);
-			m_outputMovie->defineCharacter(m_mergeShape->getId(), m_mergeShape);
+			const int32_t mergeShapeId = m_nextShapeId++;
+
+			m_mergeShape = new Shape();
+			m_outputMovie->defineCharacter(mergeShapeId, m_mergeShape);
 
 			Frame::PlaceObject place;
 			place.hasFlags = Frame::PfHasCharacterId | Frame::PfHasBlendMode;
 			place.depth = m_nextDepth++;
-			place.characterId = m_mergeShape->getId();
+			place.characterId = mergeShapeId;
 			place.blendMode = blendMode;
 			m_outputFrame.back()->placeObject(place);
 		}
@@ -266,7 +268,7 @@ Ref< Movie > Optimizer::merge(const Movie* movie) const
 
 	Ref< Frame > outputFrame = new Frame();
 
-	Ref< Sprite > outputSprite = new Sprite(1, 1);
+	Ref< Sprite > outputSprite = new Sprite(1);
 	outputSprite->addFrame(outputFrame);
 
 	Ref< Movie > outputMovie = new Movie(movie->getFrameBounds(), outputSprite);

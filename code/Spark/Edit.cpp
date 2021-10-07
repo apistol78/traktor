@@ -31,7 +31,6 @@ Edit::Edit()
 }
 
 Edit::Edit(
-	uint16_t id,
 	uint16_t fontId,
 	uint16_t fontHeight,
 	const Aabb2& textBounds,
@@ -49,8 +48,7 @@ Edit::Edit(
 	bool password,
 	bool renderHtml
 )
-:	Character(id)
-,	m_fontId(fontId)
+:	m_fontId(fontId)
 ,	m_fontHeight(fontHeight)
 ,	m_textBounds(textBounds)
 ,	m_textColor(textColor)

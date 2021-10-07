@@ -94,7 +94,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 6, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 7, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)
@@ -379,7 +379,7 @@ bool Pipeline::buildOutput(
 	{
 		const Color4ub& bc = emptyMovieAsset->getBackgroundColor();
 
-		Ref< Sprite > sprite = new Sprite(0, emptyMovieAsset->getFrameRate());
+		Ref< Sprite > sprite = new Sprite(emptyMovieAsset->getFrameRate());
 
 		Ref< Frame > frame = new Frame();
 		frame->changeBackgroundColor(Color4f(bc.r, bc.g, bc.b, bc.a) / Scalar(255.0f));

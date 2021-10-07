@@ -61,11 +61,6 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Shape", 0, Shape, Character)
 
-Shape::Shape(uint16_t id)
-:	Character(id)
-{
-}
-
 bool Shape::create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles)
 {
 	uint16_t fillStyle0 = 0;

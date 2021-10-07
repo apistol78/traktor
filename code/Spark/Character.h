@@ -32,30 +32,22 @@ class T_DLLCLASS Character : public ISerializable
 public:
 	Character();
 
-	explicit Character(uint16_t id);
-
-	/*! Get character identification.
-	 *
-	 * \return Id
-	 */
-	uint16_t getId() const { return m_id; }
-
 	/*! Get character unique tag.
 	 *
 	 * The tag is guaranteed to be unique during the
 	 * life-time of the running process even
-	 * if multiple Flash players are created
+	 * if multiple players are created
 	 * and destroyed during this time.
 	 */
 	int32_t getCacheTag() const { return m_tag; }
 
 	/*! Create character instance.
 	 *
-	 * \param context ActionScript execution context.
+	 * \param context Execution context.
+	 * \param dictionary Movie dictionary.
 	 * \param parent Parent instance.
 	 * \param name Character name.
 	 * \param transform Character transform.
-	 * \param initObject Initialization object.
 	 * \return Character instance.
 	 */
 	virtual Ref< CharacterInstance > createInstance(
@@ -66,12 +58,11 @@ public:
 		const Matrix33& transform
 	) const = 0;
 
-	/*! \brief
+	/*!
 	 */
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	uint16_t m_id;
 	int32_t m_tag;
 };
 

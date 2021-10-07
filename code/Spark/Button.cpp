@@ -11,11 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Button", 0, Button, Character)
 
-Button::Button(uint16_t id)
-:	Character(id)
-{
-}
-
 void Button::addButtonLayer(const ButtonLayer& layer)
 {
 	m_layers.push_back(layer);

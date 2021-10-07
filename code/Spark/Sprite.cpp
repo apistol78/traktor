@@ -15,9 +15,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Sprite", 1, Sprite, Character)
 
-Sprite::Sprite(uint16_t id, uint16_t frameRate)
-:	Character(id)
-,	m_frameRate(frameRate)
+Sprite::Sprite(uint16_t frameRate)
+:	m_frameRate(frameRate)
 {
 }
 

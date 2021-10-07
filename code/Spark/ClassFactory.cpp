@@ -229,7 +229,6 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	// Character
 	auto classCharacter = new AutoRuntimeClass< Character >();
-	classCharacter->addProperty("id", &Character::getId);
 	registrar->registerClass(classCharacter);
 
 	// CharacterInstance
