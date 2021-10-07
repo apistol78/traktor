@@ -18,37 +18,26 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionObject;
-class ActionFunction;
-class ActionValue;
-class AsKey;
-class AsMouse;
-class AsStage;
-class As_flash_external_ExternalInterface;
-class IActionVM;
 class ICharacterFactory;
 class IMovieLoader;
 class ISoundRenderer;
+class Key;
+class Mouse;
 class Movie;
 class MovieDebugger;
 class MovieRenderer;
 class SpriteInstance;
+class Stage;
 
-struct CallArgs;
-struct IExternalCall;
-
-/*! Flash movie player.
+/*! Spark movie player.
  * \ingroup Spark
- *
- * Flash movie player is the main class used by applications
- * in order to properly play SWF movies.
  */
 class T_DLLCLASS MoviePlayer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	MoviePlayer(
+	explicit MoviePlayer(
 		const ICharacterFactory* characterFactory,
 		const IMovieLoader* movieLoader,
 		const MovieDebugger* movieDebugger
@@ -171,51 +160,11 @@ public:
 	 */
 	void postViewResize(int32_t width, int32_t height);
 
-	/*! Pop FS command from queue.
-	 *
-	 * \param outCommand Output FS command.
-	 * \param outArgs Output FS arguments.
-	 * \return True any command was popped.
-	 */
-	bool getFsCommand(std::string& outCommand, std::string& outArgs);
-
-	/*! Set external call interface.
-	 */
-	void setExternalCall(IExternalCall* externalCall);
-
-	/*! Dispatch callback through ExternalInterface.
-	 */
-	ActionValue dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv);
-
 	/*! Get root movie instance.
 	 *
 	 * \return Root movie instance.
 	 */
 	SpriteInstance* getMovieInstance() const;
-
-	/*! Get action virtual machine.
-	 *
-	 * \return action virtual machine.
-	 */
-	const IActionVM* getVM() const;
-
-	/*! Set global ActionScript value.
-	 *
-	 * \param name Name of global member.
-	 * \param value Value of global member.
-	 */
-	void setGlobal(const std::string& name, const ActionValue& value);
-
-	/*! Get global ActionScript value.
-	 *
-	 * \param name Name of global member.
-	 * \return Value of global member; undefined if no such member.
-	 */
-	ActionValue getGlobal(const std::string& name) const;
-
-	/*! Set GC enable/disable.
-	 */
-	void setGCEnable(bool gcEnable);
 
 private:
 	struct Event
@@ -245,39 +194,34 @@ private:
 		};
 	};
 
-	struct Interval
-	{
-		uint32_t count;
-		uint32_t interval;
-		Ref< ActionObject > target;
-		Ref< ActionFunction > function;
-	};
+	//struct Interval
+	//{
+	//	uint32_t count;
+	//	uint32_t interval;
+	//	Ref< ActionObject > target;
+	//	Ref< ActionFunction > function;
+	//};
 
 	Ref< const ICharacterFactory > m_characterFactory;
 	Ref< const IMovieLoader > m_movieLoader;
 	Ref< const MovieDebugger > m_movieDebugger;
-	Ref< IActionVM > m_actionVM;
-	Ref< AsKey > m_key;
-	Ref< AsMouse > m_mouse;
-	Ref< AsStage > m_stage;
-	Ref< As_flash_external_ExternalInterface > m_externalInterface;
 	Ref< Movie > m_movie;
 	Ref< SpriteInstance > m_movieInstance;
+
+	Ref< Key > m_key;
+	Ref< Mouse > m_mouse;
+	Ref< Stage > m_stage;
+
 	AlignedVector< Event > m_events;
-	std::list< std::pair< std::string, std::string > > m_fsCommands;
-	std::map< uint32_t, Interval > m_interval;
+	//std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
 	float m_timeCurrent;
 	float m_timeNext;
 	float m_timeNextFrame;
-	bool m_gcEnable;
-	int32_t m_framesUntilCollection;
 
-	void Global_getURL(CallArgs& ca);
+	//void Global_setInterval(CallArgs& ca);
 
-	void Global_setInterval(CallArgs& ca);
-
-	void Global_clearInterval(CallArgs& ca);
+	//void Global_clearInterval(CallArgs& ca);
 };
 
 	}

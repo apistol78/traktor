@@ -31,8 +31,6 @@ public:
 
 	void setTriangulate(bool triangulate);
 
-	void setIncludeAS(bool includeAS);
-
 	virtual Ref< IHandle > loadAsync(const std::wstring& url) const override final;
 
 	virtual Ref< Movie > load(const std::wstring& url) const override final;
@@ -41,7 +39,6 @@ private:
 	std::wstring m_cacheDirectory;
 	bool m_merge;
 	bool m_triangulate;
-	bool m_includeAS;
 };
 
 	}

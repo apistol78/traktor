@@ -30,7 +30,7 @@ class T_DLLCLASS Edit : public Character
 public:
 	Edit();
 
-	Edit(
+	explicit Edit(
 		uint16_t id,
 		uint16_t fontId,
 		uint16_t fontHeight,
@@ -51,13 +51,11 @@ public:
 	);
 
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	/*! Get font identifier.

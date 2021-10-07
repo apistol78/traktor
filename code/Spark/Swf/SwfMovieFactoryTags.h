@@ -23,7 +23,6 @@ class ImageFormatJpeg;
 	namespace spark
 	{
 
-class IActionVM;
 class SwfReader;
 class Movie;
 class Sprite;
@@ -38,8 +37,6 @@ public:
 	struct ReadContext
 	{
 		uint8_t version;
-		Ref< IActionVM > avm1;
-		Ref< IActionVM > avm2;
 		Ref< Movie > movie;
 		Ref< Sprite > sprite;
 		Ref< Frame > frame;
@@ -186,11 +183,11 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
-class TagDoAction : public Tag
-{
-public:
-	virtual bool read(SwfReader* swf, ReadContext& context) override final;
-};
+//class TagDoAction : public Tag
+//{
+//public:
+//	virtual bool read(SwfReader* swf, ReadContext& context) override final;
+//};
 
 class TagExportAssets : public Tag
 {
@@ -209,11 +206,11 @@ private:
 	int m_importType;
 };
 
-class TagInitAction : public Tag
-{
-public:
-	virtual bool read(SwfReader* swf, ReadContext& context) override final;
-};
+//class TagInitAction : public Tag
+//{
+//public:
+//	virtual bool read(SwfReader* swf, ReadContext& context) override final;
+//};
 
 class TagProtect : public Tag
 {
@@ -229,11 +226,11 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
-class TagDoABC : public Tag
-{
-public:
-	virtual bool read(SwfReader* swf, ReadContext& context) override final;
-};
+//class TagDoABC : public Tag
+//{
+//public:
+//	virtual bool read(SwfReader* swf, ReadContext& context) override final;
+//};
 
 class TagDefineSound : public Tag
 {

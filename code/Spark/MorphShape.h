@@ -21,7 +21,7 @@ namespace traktor
 struct SwfShape;
 struct SwfStyles;
 
-/*! Flash morph shape.
+/*! Morph shape.
  * \ingroup Spark
  */
 class T_DLLCLASS MorphShape : public Character
@@ -31,18 +31,16 @@ class T_DLLCLASS MorphShape : public Character
 public:
 	MorphShape();
 
-	MorphShape(uint16_t id);
+	explicit MorphShape(uint16_t id);
 
 	bool create(const Aabb2& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles);
 
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	const Aabb2& getShapeBounds() const { return m_shapeBounds; }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Spark/CharacterInstance.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class T_DLLCLASS ButtonInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	ButtonInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Button* button);
+	explicit ButtonInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Button* button);
 
 	virtual ~ButtonInstance();
 
@@ -66,21 +66,33 @@ public:
 
 	virtual Aabb2 getBounds() const override final;
 
-protected:
-	virtual void trace(visitor_t visitor) const override final;
+	/*! \group Events */
+	//@{
 
-	virtual void dereference() override final;
+	Event* getEventPress() { return &m_eventPress; }
+
+	Event* getEventRelease() { return &m_eventRelease; }
+
+	Event* getEventReleaseOutside() { return &m_eventReleaseOutside; }
+
+	Event* getEventRollOver() { return &m_eventRollOver; }
+
+	Event* getEventRollOut() { return &m_eventRollOut; }
+
+	//@}
 
 private:
 	Ref< const Button > m_button;
-	std::map< uint16_t, Ref< CharacterInstance > > m_characterInstances;
+	SmallMap< uint16_t, Ref< CharacterInstance > > m_characterInstances;
 	uint8_t m_state;
 	bool m_inside;
 	bool m_pushed;
 
-	void executeCondition(uint32_t conditionMask);
-
-	void executeScriptEvent(const std::string& eventName);
+	Event m_eventPress;
+	Event m_eventRelease;
+	Event m_eventReleaseOutside;
+	Event m_eventRollOver;
+	Event m_eventRollOut;
 };
 
 	}

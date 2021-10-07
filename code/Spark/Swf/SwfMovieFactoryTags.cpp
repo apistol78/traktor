@@ -1,6 +1,7 @@
 #include <cstring>
 #include <limits>
 #include "Compress/Zip/InflateStreamZip.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -23,7 +24,6 @@
 #include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/Text.h"
-#include "Spark/Action/IActionVM.h"
 #include "Spark/Swf/SwfMovieFactoryTags.h"
 #include "Spark/Swf/SwfReader.h"
 
@@ -507,37 +507,37 @@ bool TagDefineButton::read(SwfReader* swf, ReadContext& context)
 		}
 
 		// Read conditions.
-		if (context.avm1)
-		{
-			bs.alignByte();
-			while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
-			{
-				uint16_t conditionLength = bs.readUInt16();
+		//if (context.avm1)
+		//{
+		//	bs.alignByte();
+		//	while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
+		//	{
+		//		uint16_t conditionLength = bs.readUInt16();
 
-				Button::ButtonCondition condition;
+		//		Button::ButtonCondition condition;
 
-				condition.mask |= bs.readBit() ? Button::CmIdleToOverDown : 0;
-				condition.mask |= bs.readBit() ? Button::CmOutDownToIdle : 0;
-				condition.mask |= bs.readBit() ? Button::CmOutDownToOverDown : 0;
-				condition.mask |= bs.readBit() ? Button::CmOverDownToOutDown : 0;
-				condition.mask |= bs.readBit() ? Button::CmOverDownToOverUp : 0;
-				condition.mask |= bs.readBit() ? Button::CmOverUpToOverDown : 0;
-				condition.mask |= bs.readBit() ? Button::CmOverUpToIdle : 0;
-				condition.mask |= bs.readBit() ? Button::CmIdleToOverUp : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmIdleToOverDown : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOutDownToIdle : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOutDownToOverDown : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOverDownToOutDown : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOverDownToOverUp : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOverUpToOverDown : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOverUpToIdle : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmIdleToOverUp : 0;
 
-				condition.key = bs.readUnsigned(7);
+		//		condition.key = bs.readUnsigned(7);
 
-				condition.mask |= bs.readBit() ? Button::CmOverDownToIdle : 0;
+		//		condition.mask |= bs.readBit() ? Button::CmOverDownToIdle : 0;
 
-				condition.script = context.avm1->load(*swf);
-				bs.alignByte();
+		//		condition.script = context.avm1->load(*swf);
+		//		bs.alignByte();
 
-				button->addButtonCondition(condition);
+		//		button->addButtonCondition(condition);
 
-				if (!conditionLength)
-					break;
-			}
-		}
+		//		if (!conditionLength)
+		//			break;
+		//	}
+		//}
 	}
 
 	context.movie->defineCharacter(buttonId, button);
@@ -809,10 +809,10 @@ bool TagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	Ref< Sprite > sprite = new Sprite(spriteId, frameRate);
 
 	// Setup readers for supported sprite tags.
-	std::map< uint16_t, Ref< Tag > > tagReaders;
+	SmallMap< uint16_t, Ref< Tag > > tagReaders;
 
-	if (context.avm1 || context.avm2)
-		tagReaders[TiDoAction] = new TagDoAction();
+	//if (context.avm1 || context.avm2)
+	//	tagReaders[TiDoAction] = new TagDoAction();
 
 	tagReaders[TiPlaceObject] = new TagPlaceObject(1);
 	tagReaders[TiPlaceObject2] = new TagPlaceObject(2);
@@ -836,8 +836,6 @@ bool TagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	// Decode tags.
 	Tag::ReadContext spriteContext;
 	spriteContext.version = context.version;
-	spriteContext.avm1 = context.avm1;
-	spriteContext.avm2 = context.avm2;
 	spriteContext.movie = context.movie;
 	spriteContext.sprite = sprite;
 	spriteContext.frame = new Frame();
@@ -1005,44 +1003,44 @@ bool TagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				placeObject.visible = bs.readUInt8();
 		}
 
-		if (placeObject.has(Frame::PfHasActions) && context.avm1)
-		{
-			uint16_t reserved = bs.readUInt16();
-			if (reserved)
-				log::warning << L"Reserved field in PlaceObject actions not zero, " << reserved << Endl;
+		//if (placeObject.has(Frame::PfHasActions) && context.avm1)
+		//{
+		//	uint16_t reserved = bs.readUInt16();
+		//	if (reserved)
+		//		log::warning << L"Reserved field in PlaceObject actions not zero, " << reserved << Endl;
 
-			uint32_t allFlags;
-			if (context.version >= 6)
-				allFlags = bs.readUInt32();
-			else
-				allFlags = (bs.readUInt16() << 16);
+		//	uint32_t allFlags;
+		//	if (context.version >= 6)
+		//		allFlags = bs.readUInt32();
+		//	else
+		//		allFlags = (bs.readUInt16() << 16);
 
-			while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
-			{
-				uint32_t eventMask = context.version >= 6 ? bs.readUInt32() : (bs.readUInt16() << 16);
-				if (!eventMask)
-					break;
+		//	while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
+		//	{
+		//		uint32_t eventMask = context.version >= 6 ? bs.readUInt32() : (bs.readUInt16() << 16);
+		//		if (!eventMask)
+		//			break;
 
-				uint32_t eventLength = bs.readUInt32();
-				if (uint32_t(bs.getStream()->tell()) + eventLength >= context.tagEndPosition)
-				{
-					log::error << L"PlaceObject, incorrect number of bytes in event tag" << Endl;
-					break;
-				}
+		//		uint32_t eventLength = bs.readUInt32();
+		//		if (uint32_t(bs.getStream()->tell()) + eventLength >= context.tagEndPosition)
+		//		{
+		//			log::error << L"PlaceObject, incorrect number of bytes in event tag" << Endl;
+		//			break;
+		//		}
 
-				// "Key Press" events.
-				if (eventMask & EvtKeyPress)
-				{
-					/*uint8_t keyCode = */bs.readUInt8();
-					T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
-				}
+		//		// "Key Press" events.
+		//		if (eventMask & EvtKeyPress)
+		//		{
+		//			/*uint8_t keyCode = */bs.readUInt8();
+		//			T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
+		//		}
 
-				Ref< const IActionVMImage > image = context.avm1->load(*swf);
-				bs.alignByte();
+		//		Ref< const IActionVMImage > image = context.avm1->load(*swf);
+		//		bs.alignByte();
 
-				placeObject.events.insert(std::make_pair(eventMask, image));
-			}
-		}
+		//		placeObject.events.insert(std::make_pair(eventMask, image));
+		//	}
+		//}
 
 		context.frame->placeObject(placeObject);
 	}
@@ -1090,13 +1088,13 @@ bool TagShowFrame::read(SwfReader* swf, ReadContext& context)
 // ============================================================================
 // Do action
 
-bool TagDoAction::read(SwfReader* swf, ReadContext& context)
-{
-	Ref< const IActionVMImage > image = context.avm1->load(*swf);
-	if (image)
-		context.frame->addActionScript(image);
-	return true;
-}
+//bool TagDoAction::read(SwfReader* swf, ReadContext& context)
+//{
+//	Ref< const IActionVMImage > image = context.avm1->load(*swf);
+//	if (image)
+//		context.frame->addActionScript(image);
+//	return true;
+//}
 
 // ============================================================================
 // Export assets
@@ -1151,18 +1149,18 @@ bool TagImportAssets::read(SwfReader* swf, ReadContext& context)
 // ============================================================================
 // Init action
 
-bool TagInitAction::read(SwfReader* swf, ReadContext& context)
-{
-	BitReader& bs = swf->getBitReader();
-
-	/*uint16_t spriteId = */bs.readUInt16();
-
-	Ref< const IActionVMImage > image = context.avm1->load(*swf);
-	bs.alignByte();
-
-	context.sprite->addInitActionScript(image);
-	return true;
-}
+//bool TagInitAction::read(SwfReader* swf, ReadContext& context)
+//{
+//	BitReader& bs = swf->getBitReader();
+//
+//	/*uint16_t spriteId = */bs.readUInt16();
+//
+//	Ref< const IActionVMImage > image = context.avm1->load(*swf);
+//	bs.alignByte();
+//
+//	context.sprite->addInitActionScript(image);
+//	return true;
+//}
 
 // ============================================================================
 // Protect
@@ -1193,20 +1191,20 @@ bool TagFrameLabel::read(SwfReader* swf, ReadContext& context)
 // ============================================================================
 // ABC
 
-bool TagDoABC::read(SwfReader* swf, ReadContext& context)
-{
-	BitReader& bs = swf->getBitReader();
-
-	uint32_t flags = bs.readUInt32();
-	std::string name = swf->readString();
-
-	Ref< const IActionVMImage > image = context.avm2->load(*swf);
-	if (!image)
-		return false;
-
-	context.frame->addActionScript(image);
-	return true;
-}
+//bool TagDoABC::read(SwfReader* swf, ReadContext& context)
+//{
+//	BitReader& bs = swf->getBitReader();
+//
+//	uint32_t flags = bs.readUInt32();
+//	std::string name = swf->readString();
+//
+//	Ref< const IActionVMImage > image = context.avm2->load(*swf);
+//	if (!image)
+//		return false;
+//
+//	context.frame->addActionScript(image);
+//	return true;
+//}
 
 // ============================================================================
 // Define sound

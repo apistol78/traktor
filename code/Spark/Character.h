@@ -2,7 +2,6 @@
 
 #include <string>
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -19,11 +18,9 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionContext;
-class ActionObject;
 class CharacterInstance;
+class Context;
 class Dictionary;
-class IActionVMImage;
 
 /*! Character definition.
  * \ingroup Spark
@@ -62,13 +59,11 @@ public:
 	 * \return Character instance.
 	 */
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const = 0;
 
 	/*! \brief

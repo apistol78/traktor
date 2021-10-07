@@ -17,7 +17,7 @@ namespace traktor
 
 class Movie;
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS Optimizer : public Object

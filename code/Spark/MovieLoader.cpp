@@ -29,12 +29,11 @@ namespace traktor
 class MovieLoaderHandle : public IMovieLoader::IHandle
 {
 public:
-	MovieLoaderHandle(const std::wstring& url, const std::wstring& cacheDirectory, bool merge, bool triangulate, bool includeAS)
+	MovieLoaderHandle(const std::wstring& url, const std::wstring& cacheDirectory, bool merge, bool triangulate)
 	:	m_url(url)
 	,	m_cacheDirectory(cacheDirectory)
 	,	m_merge(merge)
 	,	m_triangulate(triangulate)
-	,	m_includeAS(includeAS)
 	{
 		m_job = JobManager::getInstance().add([this](){
 			loader();
@@ -58,7 +57,7 @@ public:
 
 	virtual Ref< Movie > get() override final
 	{
-		return wait() ? m_movie : 0;
+		return wait() ? m_movie : nullptr;
 	}
 
 private:
@@ -66,7 +65,6 @@ private:
 	std::wstring m_cacheDirectory;
 	bool m_merge;
 	bool m_triangulate;
-	bool m_includeAS;
 	Ref< Job > m_job;
 	Ref< Movie > m_movie;
 
@@ -74,15 +72,13 @@ private:
 	{
 		std::wstring cacheFileName = net::Url::encode(m_url);
 
-		if (m_merge || m_triangulate || m_includeAS)
+		if (m_merge || m_triangulate)
 		{
 			cacheFileName += L"_";
 			if (m_merge)
 				cacheFileName += L"m";
 			if (m_triangulate)
 				cacheFileName += L"t";
-			if (m_includeAS)
-				cacheFileName += L"i";
 		}
 
 		if (!m_cacheDirectory.empty())
@@ -112,7 +108,7 @@ private:
 		for (int32_t i = 0; i < 10; ++i)
 		{
 			tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName + L"_" + toString(i);
-			if ((d = FileSystem::getInstance().open(tempFile, File::FmWrite)) != 0)
+			if ((d = FileSystem::getInstance().open(tempFile, File::FmWrite)) != nullptr)
 				break;
 		}
 		if (!d)
@@ -134,11 +130,11 @@ private:
 		// not supported then this fail quickly.
 		Ref< drawing::Image > image = drawing::Image::load(d, ext);
 		if (image)
-			m_movie = SwfMovieFactory(false).createMovieFromImage(image);
+			m_movie = SwfMovieFactory().createMovieFromImage(image);
 		else
 		{
 			SwfReader swfReader(d);
-			m_movie = SwfMovieFactory(m_includeAS).createMovie(&swfReader);
+			m_movie = SwfMovieFactory().createMovie(&swfReader);
 		}
 
 		d->close();
@@ -174,7 +170,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieLoader", MovieLoader, IMovieLoader)
 MovieLoader::MovieLoader()
 :	m_merge(false)
 ,	m_triangulate(false)
-,	m_includeAS(true)
 {
 }
 
@@ -193,20 +188,15 @@ void MovieLoader::setTriangulate(bool triangulate)
 	m_triangulate = triangulate;
 }
 
-void MovieLoader::setIncludeAS(bool includeAS)
-{
-	m_includeAS = includeAS;
-}
-
 Ref< IMovieLoader::IHandle > MovieLoader::loadAsync(const std::wstring& url) const
 {
-	return new MovieLoaderHandle(url, m_cacheDirectory, m_merge, m_triangulate, m_includeAS);
+	return new MovieLoaderHandle(url, m_cacheDirectory, m_merge, m_triangulate);
 }
 
 Ref< Movie > MovieLoader::load(const std::wstring& url) const
 {
 	Ref< IHandle > handle = loadAsync(url);
-	return handle ? handle->get() : 0;
+	return handle ? handle->get() : nullptr;
 }
 
 	}

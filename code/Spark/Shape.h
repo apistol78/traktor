@@ -26,7 +26,7 @@ namespace traktor
 struct SwfShape;
 struct SwfStyles;
 
-/*! Flash shape.
+/*! Shape
  * \ingroup Spark
  */
 class T_DLLCLASS Shape : public Character
@@ -59,13 +59,11 @@ public:
 	uint16_t defineLineStyle(const Color4f& color, uint16_t width);
 
 	virtual Ref< CharacterInstance > createInstance(
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	const Aabb2& getShapeBounds() const { return m_shapeBounds; }

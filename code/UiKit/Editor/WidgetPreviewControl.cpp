@@ -1,5 +1,6 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeDispatch.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -13,13 +14,13 @@
 #include "Resource/ResourceManager.h"
 #include "Spark/DefaultCharacterFactory.h"
 #include "Spark/Frame.h"
+#include "Spark/Key.h"
 #include "Spark/Movie.h"
 #include "Spark/MoviePlayer.h"
 #include "Spark/MovieRenderer.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/Acc/AccDisplayRenderer.h"
-#include "Spark/Action/Common/Classes/AsKey.h"
 #include "Spark/Debug/WireDisplayRenderer.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
@@ -40,23 +41,23 @@ const struct
 }
 c_askeys[] =
 {
-	{ ui::VkBackSpace, spark::AsKey::AkBackspace },
-	{ ui::VkControl, spark::AsKey::AkControl },
-	{ ui::VkDelete, spark::AsKey::AkDeleteKey },
-	{ ui::VkDown, spark::AsKey::AkDown },
-	{ ui::VkEnd, spark::AsKey::AkEnd },
-	{ ui::VkReturn, spark::AsKey::AkEnter },
-	{ ui::VkEscape, spark::AsKey::AkEscape },
-	{ ui::VkHome, spark::AsKey::AkHome },
-	{ ui::VkInsert, spark::AsKey::AkInsert },
-	{ ui::VkLeft, spark::AsKey::AkLeft },
-	{ ui::VkPageDown, spark::AsKey::AkPgDn },
-	{ ui::VkPageUp, spark::AsKey::AkPgUp },
-	{ ui::VkRight, spark::AsKey::AkRight },
-	{ ui::VkShift, spark::AsKey::AkShift },
-	{ ui::VkSpace, spark::AsKey::AkSpace },
-	{ ui::VkTab, spark::AsKey::AkTab },
-	{ ui::VkUp, spark::AsKey::AkUp }
+	{ ui::VkBackSpace, spark::Key::AkBackspace },
+	{ ui::VkControl, spark::Key::AkControl },
+	{ ui::VkDelete, spark::Key::AkDeleteKey },
+	{ ui::VkDown, spark::Key::AkDown },
+	{ ui::VkEnd, spark::Key::AkEnd },
+	{ ui::VkReturn, spark::Key::AkEnter },
+	{ ui::VkEscape, spark::Key::AkEscape },
+	{ ui::VkHome, spark::Key::AkHome },
+	{ ui::VkInsert, spark::Key::AkInsert },
+	{ ui::VkLeft, spark::Key::AkLeft },
+	{ ui::VkPageDown, spark::Key::AkPgDn },
+	{ ui::VkPageUp, spark::Key::AkPgUp },
+	{ ui::VkRight, spark::Key::AkRight },
+	{ ui::VkShift, spark::Key::AkShift },
+	{ ui::VkSpace, spark::Key::AkSpace },
+	{ ui::VkTab, spark::Key::AkTab },
+	{ ui::VkUp, spark::Key::AkUp }
 };
 
 int32_t translateVirtualKey(ui::VirtualKey vk)

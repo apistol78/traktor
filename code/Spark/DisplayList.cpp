@@ -1,11 +1,11 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/DisplayList.h"
 #include "Spark/Character.h"
 #include "Spark/Frame.h"
 #include "Spark/ICharacterFactory.h"
-#include "Spark/Action/ActionContext.h"
 
 namespace traktor
 {
@@ -35,7 +35,7 @@ struct FindCharacter
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
 
-DisplayList::DisplayList(ActionContext* context)
+DisplayList::DisplayList(Context* context)
 :	m_context(context)
 {
 	reset();
@@ -51,8 +51,8 @@ void DisplayList::updateBegin(bool reset)
 {
 	if (reset)
 	{
-		for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			i->second.collect = true;
+		for (auto& layer : m_layers)
+			layer.second.collect = true;
 	}
 }
 
@@ -154,9 +154,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 						ownerInstance->getDictionary(),
 						ownerInstance,
 						placeObject.has(Frame::PfHasName) ? placeObject.name : "",
-						placeObject.has(Frame::PfHasMatrix) ? placeObject.matrix : transform,
-						0,
-						&placeObject.events
+						placeObject.has(Frame::PfHasMatrix) ? placeObject.matrix : transform
 					);
 					T_ASSERT(layer.instance);
 				}
@@ -196,11 +194,6 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
 			}
 
-			if (!layer.instance->getName().empty())
-				layer.name = m_context->getString(layer.instance->getName());
-			else
-				layer.name = ActionContext::IdEmpty;
-
 			layer.immutable = false;
 			layer.collect = false;
 		}
@@ -237,7 +230,7 @@ void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInsta
 	}
 
 	layer.id = characterId;
-	layer.name = m_context->getString(characterInstance->getName());
+	//layer.name = m_context->getString(characterInstance->getName());
 	layer.instance = characterInstance;
 	layer.immutable = immutable;
 }

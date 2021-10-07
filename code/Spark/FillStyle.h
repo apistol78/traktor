@@ -46,9 +46,7 @@ public:
 		float ratio;
 		Color4f color;
 
-		ColorRecord()
-		{
-		}
+		ColorRecord() = default;
 
 		ColorRecord(float ratio_, const Color4f& color_)
 		:	ratio(ratio_)

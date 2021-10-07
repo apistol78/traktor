@@ -22,9 +22,9 @@ function Edit:new(parent, text, hint, validator)
 end
 
 function Edit:remove()
-	self._text_tb:setMember("onSetFocus", nil)
-	self._text_tb:setMember("onKillFocus", nil)
-	self._text_tb:setMember("onChanged", nil)
+	self._text_tb.eventSetFocus:removeAll()
+	self._text_tb.eventKillFocus:removeAll()
+	self._text_tb.eventChanged:removeAll()
 	Widget.remove(self)
 end
 
@@ -90,17 +90,12 @@ end
 
 function Edit:setFocus()
 	Widget.setFocus(self)
-
-	local cx = self._mc.context
-	local selection = cx.global:getMember("Selection")
-	selection:setFocus(self._text_tb)
+	self._text_tb.focus = true
 end
 
 function Edit:killFocus()
 	if Widget.killFocus(self) then
-		local cx = self._mc.context
-		local selection = cx.global:getMember("Selection")
-		selection:setFocus(nil)
+		self._text_tb.focus = false
 	end
 end
 
@@ -122,9 +117,9 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._text_tb = mc:getMember("text_tb")
-	self._text_tb:setMember("onSetFocus", function() self:_onSetFocus() end)
-	self._text_tb:setMember("onKillFocus", function() self:_onKillFocus() end)
-	self._text_tb:setMember("onChanged", function() self:_onChanged() end)
+	self._text_tb.eventSetFocus:add(function() self:_onSetFocus() end)
+	self._text_tb.eventKillFocus:add(function() self:_onKillFocus() end)
+	self._text_tb.eventChanged:add(function() self:_onChanged() end)
 
 	self._preferredSize =
 	{
@@ -170,12 +165,8 @@ function Edit:_onSetFocus()
 
 	-- Register global key up/down events.
 	local cx = self._mc.context
-	local key = cx.global:getMember("Key")
-
-	self._keyListener = cx:createObject()
-	self._keyListener:setMember("onKeyDown", function() self:_onKeyDown() end)
-	self._keyListener:setMember("onKeyUp", function() self:_onKeyUp() end)
-	key:addListener(self._keyListener)
+	self._keyDownListener = cx.key.eventKeyDown:add(function() self:_onKeyDown() end)
+	self._keyUpListener = cx.key.eventKeyUp:add(function() self:_onKeyUp() end)
 
 	self._enterPressed = false
 
@@ -195,12 +186,9 @@ function Edit:_onKillFocus()
 	end
 
 	-- Remove global key up/down events.
-	if self._keyListener ~= nil then
-		local cx = self._mc.context
-		local key = cx.global:getMember("Key")
-		key:removeListener(self._keyListener)
-		self._keyListener = nil
-	end
+	local cx = self._mc.context
+	cx.key.eventKeyDown:remove(self._keyDownListener)
+	cx.key.eventKeyUp:remove(self._keyUpListener)
 
 #if defined(ANDROID)
 	traktor.input.KeyboardDeviceAndroid.hideSoftKeyboard()
@@ -222,10 +210,8 @@ function Edit:_onChanged()
 end
 
 function Edit:_onKeyDown()
-	local cx = self._mc.context
-	local key = cx.global:getMember("Key")
-	local code = key:getCode()
-	if code == key:getMember("ENTER") or code == 220 then
+	local key = self._mc.context.key
+	if key.code == spark.Key.AkEnter or key.code == 220 then
 		self._enterPressed = true
 	end
 end
@@ -234,10 +220,8 @@ function Edit:_onKeyUp()
 	if self._enterPressed then
 		self._enterPressed = false
 
-		local cx = self._mc.context
-		local key = cx.global:getMember("Key")
-		local code = key:getCode()
-		if code == key:getMember("ENTER") or code == 220 then
+		local key = self._mc.context.key
+		if key.code == spark.Key.AkEnter or key.code == 220 then
 			if self._enterFn ~= nil then
 				self._enterFn(self)
 			end

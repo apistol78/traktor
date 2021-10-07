@@ -6,7 +6,7 @@
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
 #include "Spark/ColorTransform.h"
-#include "Spark/Action/ActionObjectRelay.h"
+#include "Spark/Event.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,9 +21,8 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionContext;
+class Context;
 class Dictionary;
-class IActionVMImage;
 
 /*! Character instance.
  * \ingroup Spark
@@ -31,14 +30,13 @@ class IActionVMImage;
 #if defined (_MSC_VER)
 #	pragma warning( disable:4324 )
 #endif
-class T_DLLCLASS CharacterInstance : public ActionObjectRelay
+class T_DLLCLASS CharacterInstance : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	CharacterInstance(
-		ActionContext* context,
-		const char* const prototype,
+	explicit CharacterInstance(
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent
 	);
@@ -51,11 +49,11 @@ public:
 	/*! Destroy instance. */
 	virtual void destroy();
 
-	/*! Get ActionScript execution context.
+	/*! Get context.
 	 *
-	 * \return ActionScript context.
+	 * \return Context.
 	 */
-	ActionContext* getContext() const { return m_context; }
+	Context* getContext() const { return m_context; }
 
 	/*! Get dictionary.
 	 *
@@ -207,26 +205,8 @@ public:
 	 */
 	bool haveFocus() const;
 
-	/*! Set event scripts.
-	 *
-	 * \param eventScripts Event scripts.
-	 */
-	void setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts);
-
-	/*! Get event scripts.
-	 *
-	 * \return Event scripts.
-	 */
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >& getEvents() const { return m_eventScripts; }
-
 	/*! \name Events */
 	//@{
-
-	virtual void eventInit();
-
-	virtual void eventConstruct();
-
-	virtual void eventLoad();
 
 	virtual void eventFrame();
 
@@ -259,20 +239,14 @@ public:
 
 	//@}
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override;
+	/*! \group Events */
+	//@{
 
-	/*! Check if character has associated script event.
-	 */
-	bool haveScriptEvent(uint32_t eventName);
+	Event* getEventSetFocus() { return &m_eventSetFocus; }
 
-	/*! Execute script event associated with character.
-	 */
-	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
+	Event* getEventKillFocus() { return &m_eventKillFocus; }
 
-protected:
-	virtual void trace(visitor_t visitor) const override;
-
-	virtual void dereference() override;
+	//@}
 
 private:
 	static std::atomic< int32_t > ms_instanceCount;
@@ -280,17 +254,19 @@ private:
 	std::string m_name;
 	Matrix33 m_transform;
 	ColorTransform m_cxform;
-	Ref< ActionContext > m_context;
+	Ref< Context > m_context;
 	Ref< Dictionary > m_dictionary;
 	CharacterInstance* m_parent;
 	Ref< IRefCount > m_cacheObject;
 	Ref< IRefCount > m_userObject;
-	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 	Color4f m_filterColor;
 	uint8_t m_filter;
 	uint8_t m_blendMode;
 	bool m_visible;
 	bool m_enabled;
+
+	Event m_eventSetFocus;
+	Event m_eventKillFocus;
 };
 #if defined (_MSC_VER)
 #	pragma warning( default:4324 )

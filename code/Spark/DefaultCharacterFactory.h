@@ -18,7 +18,7 @@ class Matrix33;
 	namespace spark
 	{
 
-/*! \brief
+/*!
  * \ingroup Spark
  */
 class T_DLLCLASS DefaultCharacterFactory : public ICharacterFactory
@@ -29,13 +29,11 @@ public:
 	virtual Ref< CharacterInstance > createInstance(
 		const Character* character,
 		int32_t depth,
-		ActionContext* context,
+		Context* context,
 		Dictionary* dictionary,
 		CharacterInstance* parent,
 		const std::string& name,
-		const Matrix33& transform,
-		const ActionObject* initObject,
-		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+		const Matrix33& transform
 	) const override final;
 
 	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const override final;

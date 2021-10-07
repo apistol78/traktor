@@ -4,14 +4,13 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Spark/Bitmap.h"
+#include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 #include "Spark/Font.h"
 #include "Spark/Movie.h"
 #include "Spark/Sound.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionGlobal.h"
 
 namespace traktor
 {
@@ -60,19 +59,13 @@ Ref< SpriteInstance > Movie::createMovieClipInstance(const ICharacterFactory* ch
 	dictionary->m_characters = m_characters;
 	dictionary->m_exports = m_exports;
 
-	Ref< ActionContext > context = new ActionContext(this, characterFactory, movieLoader);
-
-	Ref< ActionGlobal > global = new ActionGlobal(context);
-	context->setGlobal(global);
+	Ref< Context > context = new Context(this, characterFactory, movieLoader);
 
 	Ref< SpriteInstance > spriteInstance = checked_type_cast< SpriteInstance*, false >(
-		m_movieClip->createInstance(context, dictionary, 0, "", Matrix33::identity(), 0, 0)
+		m_movieClip->createInstance(context, dictionary, 0, "", Matrix33::identity())
 	);
 	if (!spriteInstance)
 		return nullptr;
-
-	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
-	global->setMember("_level0", ActionValue(spriteInstance->getAsObject(context)));
 
 	return spriteInstance;
 }
@@ -96,9 +89,7 @@ Ref< SpriteInstance > Movie::createExternalMovieClipInstance(SpriteInstance* con
 			dictionary,
 			containerInstance,
 			"",
-			Matrix33::identity(),
-			0,
-			0
+			Matrix33::identity()
 		)
 	);
 	if (!spriteInstance)
@@ -151,9 +142,7 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 		dictionary,
 		containerInstance,
 		"",
-		Matrix33::identity(),
-		nullptr,
-		nullptr
+		Matrix33::identity()
 	);
 	if (!movieInstance)
 		return nullptr;
@@ -165,9 +154,7 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 			dictionary,
 			containerInstance,
 			"",
-			Matrix33::identity(),
-			nullptr,
-			nullptr
+			Matrix33::identity()
 		)
 	);
 	if (!spriteInstance)

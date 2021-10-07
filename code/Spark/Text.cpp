@@ -65,13 +65,11 @@ const AlignedVector< Text::Char >& Text::getCharacters() const
 }
 
 Ref< CharacterInstance > Text::createInstance(
-	ActionContext* context,
+	Context* context,
 	Dictionary* dictionary,
 	CharacterInstance* parent,
 	const std::string& name,
-	const Matrix33& transform,
-	const ActionObject* initObject,
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	const Matrix33& transform
 ) const
 {
 	return new TextInstance(context, dictionary, parent, this);

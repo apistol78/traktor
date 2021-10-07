@@ -1,9 +1,10 @@
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Timer/Timer.h"
-#include "Spark/Dictionary.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
+#include "Spark/Context.h"
+#include "Spark/Dictionary.h"
 #include "Spark/EditInstance.h"
 #include "Spark/Font.h"
 #include "Spark/MorphShapeInstance.h"
@@ -15,7 +16,6 @@
 #include "Spark/TextInstance.h"
 #include "Spark/IDisplayRenderer.h"
 #include "Spark/TextLayout.h"
-#include "Spark/Action/ActionContext.h"
 
 namespace traktor
 {
@@ -662,7 +662,7 @@ void MovieRenderer::renderCharacter(
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
 		const RefArray< CharacterInstance >& characters = layout->getCharacters();
 
-		ActionContext* context = editInstance->getContext();
+		Context* context = editInstance->getContext();
 		T_ASSERT(context);
 
 		bool haveFocus = bool(context->getFocus() == editInstance);

@@ -18,7 +18,7 @@ namespace traktor
 	namespace spark
 	{
 
-class ActionContext;
+class Context;
 class Movie;
 class Frame;
 
@@ -32,28 +32,17 @@ class T_DLLCLASS DisplayList : public Object
 public:
 	struct Layer
 	{
-		uint16_t id;
-		uint32_t name;
+		uint16_t id = 0;
 		Ref< CharacterInstance > instance;
-		bool clipEnable;
-		int32_t clipDepth;
-		bool immutable;
-		bool collect;
-
-		Layer()
-		:	id(0)
-		,	name(0)
-		,	clipEnable(false)
-		,	clipDepth(0)
-		,	immutable(false)
-		,	collect(false)
-		{
-		}
+		bool clipEnable = false;
+		int32_t clipDepth = 0;
+		bool immutable = false;
+		bool collect = false;
 	};
 
 	typedef SmallMap< int32_t, Layer > layer_map_t;
 
-	DisplayList(ActionContext* context);
+	explicit DisplayList(Context* context);
 
 	/*! Reset display list. */
 	void reset();
@@ -230,7 +219,7 @@ public:
 	const layer_map_t& getLayers() const { return m_layers; }
 
 private:
-	ActionContext* m_context;
+	Context* m_context;
 	Color4f m_backgroundColor;
 	layer_map_t m_layers;
 	mutable RefArray< CharacterInstance > m_gather;

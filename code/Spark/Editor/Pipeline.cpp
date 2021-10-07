@@ -94,7 +94,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 4, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 6, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)
@@ -177,7 +177,7 @@ bool Pipeline::buildOutput(
 		if (extension == L"swf")
 		{
 			Ref< SwfReader > swf = new SwfReader(sourceStream);
-			movie = SwfMovieFactory(movieAsset->m_includeAS).createMovie(swf);
+			movie = SwfMovieFactory().createMovie(swf);
 			if (!movie)
 			{
 				log::error << L"Failed to import Spark movie; unable to parse SWF." << Endl;

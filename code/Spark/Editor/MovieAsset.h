@@ -28,7 +28,6 @@ private:
 	friend class Pipeline;
 
 	bool m_staticMovie;
-	bool m_includeAS;
 };
 
 	}

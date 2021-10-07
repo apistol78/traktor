@@ -17,7 +17,7 @@ namespace traktor
 
 class Shape;
 
-/*! Flash shape instance.
+/*! Shape instance.
  * \ingroup Spark
  */
 class T_DLLCLASS ShapeInstance : public CharacterInstance
@@ -25,7 +25,7 @@ class T_DLLCLASS ShapeInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	ShapeInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Shape* shape);
+	explicit ShapeInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Shape* shape);
 
 	const Shape* getShape() const;
 

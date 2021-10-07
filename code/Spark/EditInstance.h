@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Spark/CharacterInstance.h"
+#include "Spark/Event.h"
 #include "Spark/Swf/SwfTypes.h"
 
 // import/export mechanism.
@@ -28,7 +29,7 @@ class T_DLLCLASS EditInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	EditInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html);
+	explicit EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html);
 
 	/*! Get edit character. */
 	const Edit* getEdit() const { return m_edit; }
@@ -195,10 +196,12 @@ public:
 
 	//@}
 
-protected:
-	virtual void trace(visitor_t visitor) const override;
+	/*! \group Events */
+	//@{
 
-	virtual void dereference() override;
+	Event* getEventChanged() { return &m_eventChanged; }
+
+	//@}
 
 private:
 	Ref< const Edit > m_edit;
@@ -217,6 +220,7 @@ private:
 	int32_t m_scroll;
 	Ref< TextLayout > m_layout;
 	bool m_renderClipMask;
+	Event m_eventChanged;
 
 	bool internalParseText(const std::wstring& text);
 

@@ -56,16 +56,15 @@ bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudi
 
 	// Have we reached the end?
 	int32_t position = fsbc->m_position;
-	if (position >= int32_t(m_sound->getSamplesCount()))
+	if (position >= int32_t(m_sound->getSampleCount()))
 		return false;
 
 	// Calculate number of samples to convert for this block.
-	int32_t samplesCount = m_sound->getSamplesCount() - position;
-	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
-	samplesCount = alignDown(samplesCount, 4);
-	samplesCount = std::min< uint32_t >(samplesCount, 4096);
-
-	if (samplesCount == 0)
+	int32_t sampleCount = m_sound->getSampleCount() - position;
+	sampleCount = std::min< uint32_t >(sampleCount, outBlock.samplesCount);
+	sampleCount = alignDown(sampleCount, 4);
+	sampleCount = std::min< uint32_t >(sampleCount, 4096);
+	if (sampleCount == 0)
 		return false;
 
 	// Convert samples into fp32 buffer.
@@ -74,7 +73,7 @@ bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudi
 		const int16_t* ss = m_sound->getSamples(ii) + position;
 		float* ds = fsbc->m_samples[ii].ptr();
 
-		for (int32_t i = 0; i < samplesCount; ++i)
+		for (int32_t i = 0; i < sampleCount; ++i)
 			*ds++ = float(*ss++) / 32767.0f;
 
 		outBlock.samples[ii] = fsbc->m_samples[ii].ptr();
@@ -84,11 +83,11 @@ bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudi
 	if (m_sound->getChannels() == 1)
 		outBlock.samples[1] = outBlock.samples[0];
 
-	outBlock.samplesCount = samplesCount;
+	outBlock.samplesCount = sampleCount;
 	outBlock.sampleRate = m_sound->getSampleRate();
 	outBlock.maxChannel = 2;
 
-	fsbc->m_position += samplesCount;
+	fsbc->m_position += sampleCount;
 	return true;
 }
 

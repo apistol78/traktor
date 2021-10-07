@@ -507,13 +507,11 @@ uint16_t Shape::defineLineStyle(const Color4f& color, uint16_t width)
 }
 
 Ref< CharacterInstance > Shape::createInstance(
-	ActionContext* context,
+	Context* context,
 	Dictionary* dictionary,
 	CharacterInstance* parent,
 	const std::string& name,
-	const Matrix33& transform,
-	const ActionObject* initObject,
-	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	const Matrix33& transform
 ) const
 {
 	return new ShapeInstance(context, dictionary, parent, this);

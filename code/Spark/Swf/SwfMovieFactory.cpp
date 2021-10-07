@@ -6,8 +6,6 @@
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/Frame.h"
-#include "Spark/Action/Avm1/ActionVM1.h"
-#include "Spark/Action/Avm2/ActionVM2.h"
 #include "Spark/Swf/SwfMovieFactory.h"
 #include "Spark/Swf/SwfMovieFactoryTags.h"
 #include "Spark/Swf/SwfReader.h"
@@ -21,8 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SwfMovieFactory", SwfMovieFactory, Object)
 
-SwfMovieFactory::SwfMovieFactory(bool includeAS)
-:	m_includeAS(includeAS)
+SwfMovieFactory::SwfMovieFactory()
 {
 	m_tagReaders[TiFileAttributes] = new TagFileAttributes();
 
@@ -56,25 +53,17 @@ SwfMovieFactory::SwfMovieFactory(bool includeAS)
 	m_tagReaders[TiPlaceObject3] = new TagPlaceObject(3);
 	m_tagReaders[TiRemoveObject] = new TagRemoveObject(1);
 	m_tagReaders[TiRemoveObject2] = new TagRemoveObject(2);
-	m_tagReaders[TiDoAction] = new TagDoAction();
+	//m_tagReaders[TiDoAction] = new TagDoAction();
 	m_tagReaders[TiExportAssets] = new TagExportAssets();
 	m_tagReaders[TiImportAssets] = new TagImportAssets(1);
 	m_tagReaders[TiImportAssets2] = new TagImportAssets(2);
 	m_tagReaders[TiSymbolClass] = new TagSymbolClass();
 	m_tagReaders[TiMetadata] = new TagMetaData();
-
-	if (m_includeAS)
-		m_tagReaders[TiInitAction] = new TagInitAction();
-
 	m_tagReaders[TiShowFrame] = new TagShowFrame();
 	m_tagReaders[TiProtect] = new TagProtect(1);
 	m_tagReaders[TiEnableDebugger] = new TagProtect(2);
 	m_tagReaders[TiEnableDebugger2] = new TagProtect(3);
 	m_tagReaders[TiFrameLabel] = new TagFrameLabel();
-
-	if (m_includeAS)
-		m_tagReaders[TiDoABC] = new TagDoABC();
-
 	m_tagReaders[TiDefineSound] = new TagDefineSound();
 	m_tagReaders[TiStartSound] = new TagStartSound(1);
 	m_tagReaders[TiStartSound2] = new TagStartSound(2);
@@ -111,12 +100,6 @@ Ref< Movie > SwfMovieFactory::createMovie(SwfReader* swf) const
 	context.movie = movie;
 	context.sprite = movieClip;
 	context.frame = new Frame();
-
-	if (m_includeAS)
-	{
-		context.avm1 = new ActionVM1();
-		context.avm2 = new ActionVM2();
-	}
 
 	for (bool going = true; going; )
 	{

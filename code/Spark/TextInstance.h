@@ -17,7 +17,7 @@ namespace traktor
 
 class Text;
 
-/*! Flash static text instance.
+/*! Static text instance.
  * \ingroup Spark
  */
 class T_DLLCLASS TextInstance : public CharacterInstance
@@ -25,7 +25,7 @@ class T_DLLCLASS TextInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	TextInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Text* text);
+	explicit TextInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Text* text);
 
 	const Text* getText() const;
 

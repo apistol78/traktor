@@ -89,7 +89,7 @@ public:
 
 	Path();
 
-	Path(const Matrix33& transform, const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
+	explicit Path(const Matrix33& transform, const AlignedVector< Vector2 >& points, const AlignedVector< SubPath >& subPaths);
 
 	/*! Reset path. */
 	void reset();

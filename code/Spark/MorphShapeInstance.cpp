@@ -8,8 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MorphShapeInstance", MorphShapeInstance, CharacterInstance)
 
-MorphShapeInstance::MorphShapeInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const MorphShape* shape)
-:	CharacterInstance(context, "Object", dictionary, parent)
+MorphShapeInstance::MorphShapeInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const MorphShape* shape)
+:	CharacterInstance(context, dictionary, parent)
 ,	m_shape(shape)
 {
 }

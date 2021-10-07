@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Spark/Action/ActionObjectRelay.h"
+#include "Core/Object.h"
 #include "Spark/Swf/SwfTypes.h"
 
 // import/export mechanism.
@@ -16,12 +16,12 @@ namespace traktor
 	namespace spark
 	{
 
-class T_DLLCLASS TextFormat : public ActionObjectRelay
+class T_DLLCLASS TextFormat : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TextFormat(float letterSpacing, SwfTextAlignType align, float size);
+	explicit TextFormat(float letterSpacing, SwfTextAlignType align, float size);
 
 	void setLetterSpacing(float letterSpacing) { m_letterSpacing = letterSpacing; }
 

@@ -8,8 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextInstance", TextInstance, CharacterInstance)
 
-TextInstance::TextInstance(ActionContext* context, Dictionary* dictionary, CharacterInstance* parent, const Text* text)
-:	CharacterInstance(context, "TextField", dictionary, parent)
+TextInstance::TextInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Text* text)
+:	CharacterInstance(context, dictionary, parent)
 ,	m_text(text)
 {
 }

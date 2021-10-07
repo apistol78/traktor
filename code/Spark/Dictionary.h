@@ -15,7 +15,7 @@ class Character;
 class Font;
 class Sound;
 
-/*! Flash character dictionary.
+/*! Character dictionary.
  * \ingroup Spark
  */
 class Dictionary : public Object

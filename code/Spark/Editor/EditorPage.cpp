@@ -13,6 +13,7 @@
 #include "Editor/IEditor.h"
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
+#include "Spark/Context.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
 #include "Spark/MoviePlayer.h"
@@ -22,9 +23,6 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 #include "Spark/Swf/SwfTypes.h"
-#include "Spark/Action/ActionContext.h"
-#include "Spark/Action/ActionObject.h"
-#include "Spark/Action/Common/Array.h"
 #include "Spark/Editor/EditorPage.h"
 #include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/PathControl.h"
@@ -199,82 +197,6 @@ void EditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId
 		m_resourceManager->reload(eventId, false);
 }
 
-void EditorPage::updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
-{
-	if (!asObject)
-		return;
-
-	const ActionObject::member_map_t& asMembers = asObject->getLocalMembers();
-	for (ActionObject::member_map_t::const_iterator i = asMembers.begin(); i != asMembers.end(); ++i)
-	{
-		std::string memberName = asObject->getContext()->getString(i->first);
-
-		StringOutputStream ss;
-		ss << mbstows(memberName) << L" = \"" << i->second.getWideString() << L"\"";
-
-		if (i->second.isObject())
-		{
-			std::map< const void*, uint32_t >::const_iterator j = pointerHash.find(i->second.getObject());
-			if (j != pointerHash.end())
-				ss << L" @" << j->second;
-			else
-			{
-				uint32_t hash = nextPointerHash++;
-				pointerHash.insert(std::make_pair(i->second.getObject(), hash));
-				ss << L" @" << hash;
-			}
-		}
-
-		Ref< ui::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
-		memberItem->setImage(0, 0);
-
-		if (i->second.isObject())
-		{
-			if (objectStack.find(i->second.getObject()) == objectStack.end())
-			{
-				objectStack.insert(i->second.getObject());
-				updateTreeObject(memberItem, i->second.getObject(), objectStack, pointerHash, nextPointerHash);
-			}
-		}
-	}
-
-	const Array* asArray = asObject->getRelay< Array >();
-	if (asArray)
-	{
-		const AlignedVector< ActionValue >& asValues = asArray->getValues();
-		for (uint32_t i = 0; i < asValues.size(); ++i)
-		{
-			StringOutputStream ss;
-			ss << L"[" << i << L"] = \"" << asValues[i].getWideString() << L"\"";
-
-			if (asValues[i].isObject())
-			{
-				std::map< const void*, uint32_t >::const_iterator j = pointerHash.find(asValues[i].getObject());
-				if (j != pointerHash.end())
-					ss << L" @" << j->second;
-				else
-				{
-					uint32_t hash = nextPointerHash++;
-					pointerHash.insert(std::make_pair(asValues[i].getObject(), hash));
-					ss << L" @" << hash;
-				}
-			}
-
-			Ref< ui::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
-			memberItem->setImage(0, 0);
-
-			if (asValues[i].isObject())
-			{
-				if (objectStack.find(asValues[i].getObject()) == objectStack.end())
-				{
-					objectStack.insert(asValues[i].getObject());
-					updateTreeObject(memberItem, asValues[i].getObject(), objectStack, pointerHash, nextPointerHash);
-				}
-			}
-		}
-	}
-}
-
 void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
 {
 	StringOutputStream ss;
@@ -282,20 +204,6 @@ void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInst
 
 	if (!characterInstance->getName().empty())
 		ss << std::wstring(L" \"") << mbstows(characterInstance->getName()) << std::wstring(L"\"");
-
-	const ActionObject* asObject = characterInstance->getAsObject();
-	if (asObject)
-	{
-		std::map< const void*, uint32_t >::const_iterator j = pointerHash.find(asObject);
-		if (j != pointerHash.end())
-			ss << L" @" << j->second;
-		else
-		{
-			uint32_t hash = nextPointerHash++;
-			pointerHash.insert(std::make_pair(asObject, hash));
-			ss << L" @" << hash;
-		}
-	}
 
 	Ref< ui::TreeViewItem > characterItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
 	characterItem->setImage(0, 0);
@@ -475,15 +383,6 @@ void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInst
 			}
 		}
 	}
-
-	if (asObject)
-	{
-		Ref< ui::TreeViewItem > membersItem = m_treeMovie->createItem(characterItem, L"Member(s)", 1);
-		membersItem->setImage(0, 0);
-
-		std::set< const ActionObject* > objectStack;
-		updateTreeObject(membersItem, asObject, objectStack, pointerHash, nextPointerHash);
-	}
 }
 
 void EditorPage::updateTreeMovie()
@@ -505,26 +404,12 @@ void EditorPage::updateTreeMovie()
 
 				updateTreeCharacter(memberItemRoot, movieInstance, pointerHash, nextPointerHash);
 
-				ActionContext* actionContext = movieInstance->getContext();
-				T_ASSERT(actionContext);
-
-				ActionObject* global = actionContext->getGlobal();
-				T_ASSERT(global);
-
-				Ref< ui::TreeViewItem > memberItemGlobal = m_treeMovie->createItem(0, L"_global", 1);
-				memberItemGlobal->setImage(0, 0);
-
-				std::set< const ActionObject* > objectStack;
-				updateTreeObject(memberItemGlobal, global, objectStack, pointerHash, nextPointerHash);
-
 				Ref< ui::TreeViewItem > memberItemExports = m_treeMovie->createItem(0, L"Export(s)", 1);
 				memberItemExports->setImage(0, 0);
 
 				const SmallMap< std::string, uint16_t >& exports = m_movie->getExports();
 				for (SmallMap< std::string, uint16_t >::const_iterator i = exports.begin(); i != exports.end(); ++i)
 					m_treeMovie->createItem(memberItemExports, toString(i->second) + L": \"" + mbstows(i->first) + L"\"", 1);
-
-				log::debug << L"Last object index @" << nextPointerHash << Endl;
 			}
 		}
 	}

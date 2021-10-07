@@ -1,5 +1,4 @@
 #include "Runtime/IEnvironment.h"
-#include "Spark/GC.h"
 #include "Spark/MovieResourceFactory.h"
 #include "Spark/Runtime/RuntimePlugin.h"
 #include "Resource/IResourceManager.h"
@@ -20,7 +19,6 @@ bool RuntimePlugin::create(runtime::IEnvironment* environment)
 
 void RuntimePlugin::destroy(runtime::IEnvironment* environment)
 {
-	GC::getInstance().collectCycles(true);
 }
 
 Ref< runtime::IState > RuntimePlugin::createInitialState(runtime::IEnvironment* environment)
