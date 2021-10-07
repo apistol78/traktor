@@ -30,7 +30,7 @@ bool Font::create(const AlignedVector< SwfShape* >& shapeTable)
 	m_shapes.resize(shapeTable.size());
 	for (uint32_t i = 0; i < shapeTable.size(); ++i)
 	{
-		m_shapes[i] = new Shape(0);
+		m_shapes[i] = new Shape();
 		if (!m_shapes[i]->create(shapeTable[i]))
 			return false;
 

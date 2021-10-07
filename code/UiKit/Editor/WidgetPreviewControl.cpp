@@ -104,7 +104,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
 
 	// Create an empty flash movie.
-	Ref< spark::Sprite > movieClip = new spark::Sprite(0, 60);
+	Ref< spark::Sprite > movieClip = new spark::Sprite(60);
 	Ref< spark::Frame > frame = new spark::Frame();
 	frame->changeBackgroundColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
 	movieClip->addFrame(frame);

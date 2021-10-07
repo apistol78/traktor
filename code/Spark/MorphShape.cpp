@@ -16,11 +16,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.MorphShape", 0, MorphShape, Chara
 
 MorphShape::MorphShape()
 {
-}
-
-MorphShape::MorphShape(uint16_t id)
-:	Character(id)
-{
 	m_shapeBounds.mn.x = m_shapeBounds.mx.x =
 	m_shapeBounds.mn.y = m_shapeBounds.mx.y = 0.0f;
 }

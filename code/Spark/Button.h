@@ -47,10 +47,6 @@ public:
 
 	typedef AlignedVector< ButtonLayer > button_layers_t;
 
-	Button() = default;
-
-	explicit Button(uint16_t id);
-
 	/*! Add button layer.
 	 *
 	 * \param layer Button layer description.

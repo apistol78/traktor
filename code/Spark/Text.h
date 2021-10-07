@@ -46,7 +46,7 @@ public:
 
 	Text();
 
-	explicit Text(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix);
+	explicit Text(const Aabb2& textBounds, const Matrix33& textMatrix);
 
 	bool create(const AlignedVector< SwfTextRecord* >& textRecords);
 

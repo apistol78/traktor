@@ -31,8 +31,6 @@ class T_DLLCLASS MorphShape : public Character
 public:
 	MorphShape();
 
-	explicit MorphShape(uint16_t id);
-
 	bool create(const Aabb2& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles);
 
 	virtual Ref< CharacterInstance > createInstance(

@@ -31,7 +31,6 @@ public:
 	Edit();
 
 	explicit Edit(
-		uint16_t id,
 		uint16_t fontId,
 		uint16_t fontHeight,
 		const Aabb2& textBounds,

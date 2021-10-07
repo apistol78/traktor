@@ -91,7 +91,7 @@ Ref< Movie > SwfMovieFactory::createMovie(SwfReader* swf) const
 	T_DEBUG(L"SWF movie version " << int32_t(header->version));
 
 	// Create new movie.
-	Ref< Sprite > movieClip = new Sprite(0, header->frameRate >> 8);
+	Ref< Sprite > movieClip = new Sprite(header->frameRate >> 8);
 	Ref< Movie > movie = new Movie(header->frameRect, movieClip);
 
 	// Decode tags.

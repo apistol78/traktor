@@ -76,7 +76,7 @@ bool TagDefineShape::read(SwfReader* swf, ReadContext& context)
 	if (!swf->readShapeWithStyle(shape, styles, m_shapeType))
 		return false;
 
-	Ref< Shape > shapeCharacter = new Shape(shapeId);
+	Ref< Shape > shapeCharacter = new Shape();
 	if (!shapeCharacter->create(shapeBounds, shape, styles))
 		return false;
 
@@ -124,7 +124,7 @@ bool TagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 	if (!endShape)
 		return false;
 
-	Ref< MorphShape > shape = new MorphShape(shapeId);
+	Ref< MorphShape > shape = new MorphShape();
 	if (!shape->create(startBounds, startShape, endShape, startStyles, endStyles))
 		return false;
 
@@ -319,7 +319,7 @@ bool TagDefineText::read(SwfReader* swf, ReadContext& context)
 		textRecords.push_back(textRecord);
 	}
 
-	Ref< Text > text = new Text(textId, textBounds, Matrix33(textMatrix.m));
+	Ref< Text > text = new Text(textBounds, Matrix33(textMatrix.m));
 	if (!text->create(textRecords))
 		return false;
 
@@ -407,7 +407,6 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	}
 
 	Ref< Edit > edit = new Edit(
-		textId,
 		fontId,
 		fontHeight,
 		textBounds,
@@ -443,7 +442,7 @@ bool TagDefineButton::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t buttonId = bs.readUInt16();
-	Ref< Button > button = new Button(buttonId);
+	Ref< Button > button = new Button();
 
 	if (m_buttonType == 1)
 	{
@@ -806,13 +805,10 @@ bool TagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	uint16_t spriteId = bs.readUInt16();
 	uint16_t frameRate = bs.readUInt16();
 
-	Ref< Sprite > sprite = new Sprite(spriteId, frameRate);
+	Ref< Sprite > sprite = new Sprite(frameRate);
 
 	// Setup readers for supported sprite tags.
 	SmallMap< uint16_t, Ref< Tag > > tagReaders;
-
-	//if (context.avm1 || context.avm2)
-	//	tagReaders[TiDoAction] = new TagDoAction();
 
 	tagReaders[TiPlaceObject] = new TagPlaceObject(1);
 	tagReaders[TiPlaceObject2] = new TagPlaceObject(2);

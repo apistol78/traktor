@@ -34,10 +34,6 @@ class T_DLLCLASS Shape : public Character
 	T_RTTI_CLASS;
 
 public:
-	Shape() = default;
-
-	explicit Shape(uint16_t id);
-
 	bool create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles);
 
 	bool create(const SwfShape* shape);

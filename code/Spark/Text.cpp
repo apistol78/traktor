@@ -20,9 +20,8 @@ Text::Text()
 {
 }
 
-Text::Text(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix)
-:	Character(id)
-,	m_textBounds(textBounds)
+Text::Text(const Aabb2& textBounds, const Matrix33& textMatrix)
+:	m_textBounds(textBounds)
 ,	m_textMatrix(textMatrix)
 {
 }

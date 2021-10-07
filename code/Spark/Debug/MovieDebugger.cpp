@@ -48,7 +48,7 @@ void collectDebugInfo(const CharacterInstance* instance, bool mask, bool clipped
 	else if (const SpriteInstance* spriteInstance = dynamic_type_cast< const SpriteInstance* >(instance))
 	{
 		std::string className;
-		spriteInstance->getDictionary()->getExportName(spriteInstance->getSprite()->getId(), className);
+		//spriteInstance->getDictionary()->getExportName(spriteInstance->getSprite()->getId(), className);
 
 		RefArray< InstanceDebugInfo > childrenDebugInfo;
 
