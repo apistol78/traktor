@@ -169,6 +169,21 @@ Ref< TextFormat > EditInstance_getTextFormat_2(EditInstance* self, int32_t begin
 	return self->getTextFormat(beginIndex, endIndex);
 }
 
+Ref< TextFormat > TextFormat_ctor(float letterSpacing, int32_t align, float size)
+{
+	return new TextFormat(letterSpacing, (SwfTextAlignType)align, size);
+}
+
+void TextFormat_setAlign(TextFormat* self, int32_t align)
+{
+	self->setAlign((SwfTextAlignType)align);
+}
+
+int32_t TextFormat_getAlign(TextFormat* self)
+{
+	return (int32_t)self->getAlign();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ClassFactory", 0, ClassFactory, IRuntimeClassFactory)
@@ -626,9 +641,13 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	// TextFormat
 	auto classTextFormat = new AutoRuntimeClass< TextFormat >();
-	//classTextFormat->addConstructor< float, int32_t, float >();
+	classTextFormat->addConstant("StaLeft", Any::fromInt32(StaLeft));
+	classTextFormat->addConstant("StaRight", Any::fromInt32(StaRight));
+	classTextFormat->addConstant("StaCenter", Any::fromInt32(StaCenter));
+	classTextFormat->addConstant("StaJustify", Any::fromInt32(StaJustify));
+	classTextFormat->addConstructor< float, int32_t, float >(&TextFormat_ctor);
 	classTextFormat->addProperty("letterSpacing", &TextFormat::setLetterSpacing, &TextFormat::getLetterSpacing);
-	//classTextFormat->addProperty("align", &TextFormat::setAlign, &TextFormat::getAlign);
+	classTextFormat->addProperty("align", &TextFormat_setAlign, &TextFormat_getAlign);
 	classTextFormat->addProperty("size", &TextFormat::setSize, &TextFormat::getSize);
 	registrar->registerClass(classTextFormat);
 
