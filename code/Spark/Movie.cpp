@@ -99,7 +99,6 @@ Ref< SpriteInstance > Movie::createExternalMovieClipInstance(SpriteInstance* con
 	DisplayList& displayList = containerInstance->getDisplayList();
 	displayList.showObject(
 		depth,
-		0,
 		spriteInstance,
 		true
 	);
@@ -164,7 +163,6 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 	DisplayList& displayList = containerInstance->getDisplayList();
 	displayList.showObject(
 		depth,
-		0,
 		spriteInstance,
 		true
 	);

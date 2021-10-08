@@ -217,7 +217,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 	}
 }
 
-void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInstance* characterInstance, bool immutable)
+void DisplayList::showObject(int32_t depth, CharacterInstance* characterInstance, bool immutable)
 {
 	T_ASSERT(characterInstance);
 
@@ -229,7 +229,7 @@ void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInsta
 		layer.instance->clearCacheObject();
 	}
 
-	layer.id = characterId;
+	layer.id = 0;
 	layer.instance = characterInstance;
 	layer.immutable = immutable;
 }

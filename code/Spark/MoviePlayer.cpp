@@ -56,26 +56,9 @@ bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height, ISoundRend
 	m_movieInstance = m_movie->createMovieClipInstance(m_characterFactory, m_movieLoader);
 
 	Context* context = m_movieInstance->getContext();
-
 	m_key = context->getKey();
 	m_mouse = context->getMouse();
 	m_stage = context->getStage();
-
-	// Override some global methods.
-	//setGlobal("getURL", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_getURL)));
-	//setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_setInterval)));
-	//setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_clearInterval)));
-
-	// Create sound prototype.
-	//setGlobal("Sound", ActionValue(new AsSound(context, soundRenderer)));
-
-	// Get references to key and mouse singletons.
-	//if (global->getMemberByQName("Key", memberValue))
-	//	m_key = memberValue.getObject< AsKey >();
-	//if (global->getMemberByQName("Mouse", memberValue))
-	//	m_mouse = memberValue.getObject< AsMouse >();
-	//if (global->getMemberByQName("Stage", memberValue))
-	//	m_stage = memberValue.getObject< AsStage >();
 
 	// Ensure stage are properly initialized.
 	if (m_stage)
@@ -106,7 +89,6 @@ void MoviePlayer::destroy()
 	m_movie = nullptr;
 
 	m_events.clear();
-	//m_interval.clear();
 }
 
 void MoviePlayer::gotoAndPlay(uint32_t frame)
@@ -155,24 +137,6 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 
 	Ref< SpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(m_movieInstance);
-
-	// Collect and issue interval functions.
-	//if (!m_interval.empty())
-	//{
-	//	T_PROFILER_SCOPE(L"MoviePlayer interval");
-	//	AlignedVector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
-	//	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-	//	{
-	//		if (i->second.count++ >= i->second.interval)
-	//		{
-	//			intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
-	//			i->second.count = 0;
-	//		}
-	//	}
-	//	ActionValueArray argv;
-	//	for (const auto& intervalFn : intervalFns)
-	//		intervalFn.second->call(intervalFn.first, argv);
-	//}
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
@@ -265,15 +229,9 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 
 	{
 		// Finally issue the frame event.
-		T_PROFILER_SCOPE(L"Flash eventFrame");
+		T_PROFILER_SCOPE(L"Spark eventFrame");
 		m_movieInstance->eventFrame();
 	}
-
-	//{
-	//	// Notify frame listeners.
-	//	T_PROFILER_SCOPE(L"Flash frame listeners");
-	//	context->notifyFrameListeners(float(m_timeCurrent));
-	//}
 
 	// Pop current movie clip.
 	context->setMovieClip(current);
@@ -388,52 +346,6 @@ SpriteInstance* MoviePlayer::getMovieInstance() const
 {
 	return m_movieInstance;
 }
-
-//void MoviePlayer::Global_setInterval(CallArgs& ca)
-//{
-//	Ref< ActionObject > target;
-//	Ref< ActionFunction > function;
-//	ActionValue functionValue;
-//	uint32_t interval;
-//
-//	if (ca.args[1].isString())
-//	{
-//		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
-//		target = ca.args[0].getObjectAlways(ca.context);
-//		if (!target->getMember(ca.args[1].getString(), functionValue))
-//			return;
-//		function = functionValue.getObject< ActionFunction >();
-//		interval = uint32_t(ca.args[2].getInteger());
-//	}
-//	else
-//	{
-//		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
-//		target = ca.self;
-//		function = ca.args[0].getObject< ActionFunction >();
-//		interval = uint32_t(ca.args[1].getInteger());
-//	}
-//
-//	if (!function)
-//		return;
-//
-//	uint32_t id = m_intervalNextId++;
-//
-//	Interval& iv = m_interval[id];
-//	iv.count = 0;
-//	iv.interval = interval / m_movie->getMovieClip()->getFrameRate();
-//	iv.target = target;
-//	iv.function = function;
-//
-//	ca.ret = ActionValue(int32_t(id));
-//}
-//
-//void MoviePlayer::Global_clearInterval(CallArgs& ca)
-//{
-//	uint32_t id = uint32_t(ca.args[0].getInteger());
-//	std::map< uint32_t, Interval >::iterator i = m_interval.find(id);
-//	if (i != m_interval.end())
-//		m_interval.erase(i);
-//}
 
 	}
 }

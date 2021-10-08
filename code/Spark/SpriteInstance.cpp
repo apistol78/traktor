@@ -259,9 +259,6 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 	Context* context = getContext();
 	T_ASSERT(context);
 
-	// Create fake character ID.
-	uint16_t emptyClipId = depth + 40000;
-
 	// Create empty movie character with a single frame.
 	Ref< Sprite > emptyClip = new Sprite(0);
 	emptyClip->addFrame(new Frame());
@@ -277,7 +274,7 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 	emptyClipInstance->setName(clipName);
 
 	// Add new instance to display list.
-	m_displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
+	m_displayList.showObject(depth, emptyClipInstance, true);
 	return emptyClipInstance;
 }
 
@@ -332,7 +329,6 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 	// Show edit character instance.
 	getDisplayList().showObject(
 		depth,
-		0, // edit->getId(),
 		editInstance,
 		true
 	);
@@ -398,7 +394,6 @@ Ref< SpriteInstance > SpriteInstance::duplicateMovieClip(const std::string& clon
 
 	intoParent->getDisplayList().showObject(
 		depth,
-		0, // cloneInstance->getSprite()->getId(),
 		cloneInstance,
 		true
 	);
@@ -426,9 +421,6 @@ Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 		bm->getHeight() * 20
 	);
 
-	// Define shape character.
-	uint16_t shapeId = dictionary->addCharacter(shape);
-
 	// Create new instance of shape.
 	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(
 		context,
@@ -440,7 +432,7 @@ Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 	T_ASSERT(attachShapeInstance);
 
 	// Add new instance to display list.
-	getDisplayList().showObject(depth, shapeId, attachShapeInstance, true);
+	getDisplayList().showObject(depth, attachShapeInstance, true);
 	return attachShapeInstance;
 }
 

@@ -69,11 +69,10 @@ public:
 	/*! Show character instance at depth.
 	 *
 	 * \param depth Depth to place character instance.
-	 * \param characterId Identifier of character.
 	 * \param characterInstance Character instance.
-	 * \param immutable If object is immutable; ie object manually places through AS which shouldn't be removed.
+	 * \param immutable If object is immutable; ie object manually placed which shouldn't be removed.
 	 */
-	void showObject(int32_t depth, uint16_t characterId, CharacterInstance* characterInstance, bool immutable);
+	void showObject(int32_t depth, CharacterInstance* characterInstance, bool immutable);
 
 	/*! Remove character instance from display list.
 	 *
