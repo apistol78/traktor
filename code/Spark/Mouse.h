@@ -15,15 +15,13 @@ class Mouse : public Object
 	T_RTTI_CLASS;
 
 public:
-	Mouse();
+	void eventMouseDown(int32_t x, int32_t y, int32_t button);
 
-	void eventMouseDown(int x, int y, int button);
+	void eventMouseUp(int32_t x, int32_t y, int32_t button);
 
-	void eventMouseUp(int x, int y, int button);
+	void eventMouseMove(int32_t x, int32_t y, int32_t button);
 
-	void eventMouseMove(int x, int y, int button);
-
-	void eventMouseWheel(int x, int y, int delta);
+	void eventMouseWheel(int32_t x, int32_t y, int32_t delta);
 
 	/*! \group Events */
 	//@{
