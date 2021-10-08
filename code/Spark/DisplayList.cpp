@@ -16,21 +16,6 @@ namespace traktor
 
 const int32_t c_depthOffset = -16384;
 
-struct FindCharacter
-{
-	const CharacterInstance* m_instance;
-
-	FindCharacter(const CharacterInstance* instance)
-	:	m_instance(instance)
-	{
-	}
-
-	bool operator () (const std::pair< int32_t, DisplayList::Layer >& it) const
-	{
-		return it.second.instance == m_instance;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
@@ -238,40 +223,42 @@ bool DisplayList::removeObject(CharacterInstance* characterInstance)
 {
 	T_ASSERT(characterInstance);
 
-	layer_map_t::iterator i = std::find_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
-	if (i == m_layers.end())
+	auto it = std::find_if(m_layers.begin(), m_layers.end(), [=](const std::pair< int32_t, Layer >& p) {
+		return p.second.instance == characterInstance;
+	});
+	if (it == m_layers.end())
 		return false;
 
-	m_context->getCharacterFactory()->removeInstance(characterInstance, i->first);
+	m_context->getCharacterFactory()->removeInstance(characterInstance, it->first);
 	characterInstance->clearCacheObject();
 
-	m_layers.erase(i);
+	m_layers.erase(it);
 	return true;
 }
 
 bool DisplayList::removeObject(int32_t depth)
 {
-	layer_map_t::iterator i = m_layers.find(depth);
-	if (i == m_layers.end())
+	auto it = m_layers.find(depth);
+	if (it == m_layers.end())
 		return false;
 
-	if (i->second.instance)
+	if (it->second.instance)
 	{
-		m_context->getCharacterFactory()->removeInstance(i->second.instance, i->first);
-		i->second.instance->clearCacheObject();
+		m_context->getCharacterFactory()->removeInstance(it->second.instance, it->first);
+		it->second.instance->clearCacheObject();
 	}
 
-	m_layers.erase(i);
+	m_layers.erase(it);
 	return true;
 }
 
 int32_t DisplayList::getObjectDepth(const CharacterInstance* characterInstance) const
 {
 	T_ASSERT(characterInstance);
-	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (const auto& it : m_layers)
 	{
-		if (i->second.instance == characterInstance)
-			return i->first;
+		if (it.second.instance == characterInstance)
+			return it.first;
 	}
 	return 0;
 }
@@ -279,18 +266,18 @@ int32_t DisplayList::getObjectDepth(const CharacterInstance* characterInstance) 
 int32_t DisplayList::getNextHighestDepth() const
 {
 	int32_t depth = 0;
-	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		depth = max(depth, i->first + 1);
+	for (const auto& it : m_layers)
+		depth = max(depth, it.first + 1);
 	return depth;
 }
 
 int32_t DisplayList::getNextHighestDepthInRange(int32_t minDepth, int32_t maxDepth) const
 {
 	int32_t depth = minDepth;
-	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (const auto& it : m_layers)
 	{
-		if (i->first + 1 <= maxDepth)
-			depth = max(depth, i->first + 1);
+		if (it.first + 1 <= maxDepth)
+			depth = max(depth, it.first + 1);
 	}
 	return depth;
 }
@@ -321,10 +308,10 @@ void DisplayList::swap(int32_t depth1, int32_t depth2)
 void DisplayList::getObjects(RefArray< CharacterInstance >& outCharacterInstances) const
 {
 	T_ASSERT(outCharacterInstances.empty());
-	for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (const auto& it : m_layers)
 	{
-		T_ASSERT(i->second.instance);
-		outCharacterInstances.push_back(i->second.instance);
+		T_ASSERT(it.second.instance);
+		outCharacterInstances.push_back(it.second.instance);
 	}
 }
 
