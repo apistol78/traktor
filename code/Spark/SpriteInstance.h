@@ -109,12 +109,6 @@ public:
 
 	virtual void clearCacheObject() override;
 
-	//virtual void eventInit() override final;
-
-	//virtual void eventConstruct() override final;
-
-	//virtual void eventLoad() override final;
-
 	virtual void eventFrame() override final;
 
 	virtual void eventKey(wchar_t unicode) override final;
@@ -210,14 +204,11 @@ private:
 	int32_t m_mouseY;
 	uint16_t m_currentFrame;
 	uint16_t m_lastUpdateFrame;
-	//uint16_t m_lastExecutedFrame;
 	uint16_t m_lastSoundFrame;
 	bool m_cacheAsBitmap;
-	bool m_initialized;
 	bool m_playing;
 	bool m_inDispatch;
 	bool m_gotoIssued;
-
 	Event m_eventEnterFrame;
 	Event m_eventKeyDown;
 	Event m_eventKeyUp;

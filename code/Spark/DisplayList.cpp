@@ -230,7 +230,6 @@ void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInsta
 	}
 
 	layer.id = characterId;
-	//layer.name = m_context->getString(characterInstance->getName());
 	layer.instance = characterInstance;
 	layer.immutable = immutable;
 }

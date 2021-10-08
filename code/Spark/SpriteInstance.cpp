@@ -31,10 +31,8 @@ SpriteInstance::SpriteInstance(Context* context, Dictionary* dictionary, Charact
 ,	m_mouseY(0)
 ,	m_currentFrame(0)
 ,	m_lastUpdateFrame(~0)
-//,	m_lastExecutedFrame(~0)
 ,	m_lastSoundFrame(~0)
 ,	m_cacheAsBitmap(false)
-,	m_initialized(false)
 ,	m_playing(true)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
@@ -49,11 +47,10 @@ SpriteInstance::~SpriteInstance()
 	m_canvas = nullptr;
 	m_playing = false;
 
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& it : m_displayList.getLayers())
 	{
-		if (i->second.instance)
-			i->second.instance->destroy();
+		if (it.second.instance)
+			it.second.instance->destroy();
 	}
 	m_displayList.reset();
 }
@@ -65,11 +62,10 @@ void SpriteInstance::destroy()
 	m_canvas = nullptr;
 	m_playing = false;
 
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& it : m_displayList.getLayers())
 	{
-		if (i->second.instance)
-			i->second.instance->destroy();
+		if (it.second.instance)
+			it.second.instance->destroy();
 	}
 	m_displayList.reset();
 
@@ -455,13 +451,11 @@ Aabb2 SpriteInstance::getLocalBounds() const
 	if (m_canvas)
 		bounds = m_canvas->getBounds();
 
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& it : m_displayList.getLayers())
 	{
-		T_ASSERT(i->second.instance);
-		bounds.contain(i->second.instance->getBounds());
+		T_ASSERT(it.second.instance);
+		bounds.contain(it.second.instance->getBounds());
 	}
-
 	return bounds;
 }
 
@@ -472,14 +466,12 @@ Aabb2 SpriteInstance::getVisibleLocalBounds() const
 	if (m_canvas)
 		bounds = m_canvas->getBounds();
 
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& it : m_displayList.getLayers())
 	{
-		T_ASSERT(i->second.instance);
-		if (i->second.instance->isVisible())
-			bounds.contain(i->second.instance->getBounds());
+		T_ASSERT(it.second.instance);
+		if (it.second.instance->isVisible())
+			bounds.contain(it.second.instance->getBounds());
 	}
-
 	return bounds;
 }
 
@@ -492,12 +484,10 @@ void SpriteInstance::setMask(SpriteInstance* mask)
 
 CharacterInstance* SpriteInstance::getMember(const std::string& childName) const
 {
-	// Find visible named character in display list.
-	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& it : m_displayList.getLayers())
 	{
-		if (i->second.instance != nullptr && i->second.instance->getName() == childName)
-			return i->second.instance;
+		if (it.second.instance != nullptr && it.second.instance->getName() == childName)
+			return it.second.instance;
 	}
 	return nullptr;
 }
@@ -518,21 +508,6 @@ void SpriteInstance::clearCacheObject()
 	});
 }
 
-//void SpriteInstance::eventInit()
-//{
-//	CharacterInstance::eventInit();
-//}
-//
-//void SpriteInstance::eventConstruct()
-//{
-//	CharacterInstance::eventConstruct();
-//}
-//
-//void SpriteInstance::eventLoad()
-//{
-//	CharacterInstance::eventLoad();
-//}
-
 void SpriteInstance::eventFrame()
 {
 	Context* context = getContext();
@@ -543,7 +518,6 @@ void SpriteInstance::eventFrame()
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	//executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
 	m_eventEnterFrame.issue();
 
 	// Issue events on "visible" characters.
@@ -591,7 +565,6 @@ void SpriteInstance::eventKeyDown(int32_t keyCode)
 	// Issue script assigned event.
 	if (context->getFocus() == this)
 		m_eventKeyDown.issue();
-	//	executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
 
 	CharacterInstance::eventKeyDown(keyCode);
 
@@ -615,7 +588,6 @@ void SpriteInstance::eventKeyUp(int32_t keyCode)
 	// Issue script assigned event.
 	if (context->getFocus() == this)
 		m_eventKeyUp.issue();
-	//	executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
 
 	CharacterInstance::eventKeyUp(keyCode);
 
@@ -647,7 +619,6 @@ void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 
 	// Issue script assigned event.
 	m_eventMouseDown.issue();
-	//executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
 	
 	// Check if we're inside then issue press events.
 	if (!context->getPressed() && isEnabled())
@@ -660,11 +631,6 @@ void SpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 				m_eventPress.issue();
 				context->setPressed(this);
 			}
-			//if (haveScriptEvent(ActionContext::IdOnPress) || haveScriptEvent(ActionContext::IdOnRelease))
-			//{
-			//	executeScriptEvent(ActionContext::IdOnPress, ActionValue());
-			//	context->setPressed(this);
-			//}
 		}
 	}
 
@@ -694,7 +660,6 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	});
 
 	// Issue script assigned event.
-	//executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
 	m_eventMouseUp.issue();
 
 	// Check if we're inside then issue press events.
@@ -704,7 +669,6 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 		if (inside)
 			m_eventRelease.issue();
-	//		executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
 	}
 
 	CharacterInstance::eventMouseUp(x, y, button);
@@ -737,20 +701,17 @@ void SpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	});
 
 	// Issue script assigned event.
-	//executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 	m_eventMouseMove.issue();
 
 	// Roll over and out event handling.
 	if (!context->getRolledOver())
 	{
-		//if (haveScriptEvent(ActionContext::IdOnRollOver) || haveScriptEvent(ActionContext::IdOnRollOut))
 		if (!m_eventRollOver.empty() || !m_eventRollOut.empty())
 		{
 			Aabb2 bounds = getVisibleLocalBounds();
 			bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 			if (inside)
 			{
-				//executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
 				m_eventRollOver.issue();
 				context->setRolledOver(this);
 			}
@@ -953,13 +914,6 @@ void SpriteInstance::preDispatchEvents()
 
 	m_inDispatch = true;
 	m_gotoIssued = false;
-
-	// Initialize sprite instance.
-	if (!m_initialized)
-	{
-		//eventLoad();
-		m_initialized = true;
-	}
 }
 
 	}
