@@ -20,7 +20,7 @@
 		</environment>
 	</deployToolOsX>
 	<deployToolLinux>
-		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-linux.run&quot;</executable>
+		<executable>$(DEPLOY_SYSTEM_ROOT)/bin/latest/linux/releaseshared/Traktor.Run.App &quot;$(TRAKTOR_HOME)/scripts/runtime/deploy/deploy-ios.run&quot;</executable>
 		<environment>
 			<item>
 				<first>DEPLOY_HOST_OS</first>
