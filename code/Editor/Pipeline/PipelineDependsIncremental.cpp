@@ -279,7 +279,7 @@ bool PipelineDependsIncremental::waitUntilFinished()
 	return m_result;
 }
 
-Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
+db::Database* PipelineDependsIncremental::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }

@@ -97,7 +97,7 @@ public:
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
 
 	/*! Get reference to output database. */
-	virtual Ref< db::Database > getOutputDatabase() const = 0;
+	virtual db::Database* getOutputDatabase() const = 0;
 
 	/*! Get data access cache. */
 	virtual DataAccessCache* getDataAccessCache() const = 0;

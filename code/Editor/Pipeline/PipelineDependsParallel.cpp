@@ -226,7 +226,7 @@ bool PipelineDependsParallel::waitUntilFinished()
 	return m_result;
 }
 
-Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
+db::Database* PipelineDependsParallel::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
