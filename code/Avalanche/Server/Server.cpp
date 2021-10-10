@@ -132,6 +132,7 @@ bool Server::update()
 			if (!settings)
 				continue;
 
+			// If I'm no master and peer is not a master then we ignore this peer.
 			bool peerMaster = settings->getProperty< bool >(L"Avalanche.Master", false);
 			if (!m_master && !peerMaster)
 				continue;
@@ -162,7 +163,11 @@ bool Server::update()
 					std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
 					std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
 
-					log::info << L"Found peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+					if (peerMaster)
+						log::info << L"Found master peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+					else
+						log::info << L"Found slave peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
+
 					log::info << L"  Name          : " << peerName << Endl;
 					log::info << L"  Identifier    : " << peerIdentifier << Endl;
 					log::info << L"  Computer name : " << peerComputerName << Endl;

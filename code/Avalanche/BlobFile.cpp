@@ -11,15 +11,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.BlobFile", BlobFile, Object)
 
-BlobFile::BlobFile(const Path& path)
+BlobFile::BlobFile(const Path& path, int64_t size)
 :	m_path(path)
+,	m_size(size)
 {
 }
 
 int64_t BlobFile::size() const
 {
-	Ref< File > file = FileSystem::getInstance().get(m_path);
-	return file != nullptr ? file->getSize() : 0;
+	return m_size;
 }
 
 Ref< IStream > BlobFile::append()

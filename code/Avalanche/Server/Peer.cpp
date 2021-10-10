@@ -54,6 +54,8 @@ Peer::Peer(
 						}
 					}
 				}
+				else
+					log::info << L"Skipping " << key.format() << L"; already exists." << Endl;
 			}
 			if (!keys.empty())
 				log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
