@@ -74,9 +74,9 @@ public:
 
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) override final;
 
-	virtual Ref< db::Database > getOutputDatabase() const override final;
+	virtual db::Database* getOutputDatabase() const override final;
 
-	virtual Ref< db::Database > getSourceDatabase() const override final;
+	virtual db::Database* getSourceDatabase() const override final;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 

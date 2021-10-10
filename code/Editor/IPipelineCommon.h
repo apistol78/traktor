@@ -38,7 +38,7 @@ class T_DLLCLASS IPipelineCommon : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< db::Database > getSourceDatabase() const = 0;
+	virtual db::Database* getSourceDatabase() const = 0;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 

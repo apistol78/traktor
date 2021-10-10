@@ -77,7 +77,7 @@ public:
 
 	virtual bool waitUntilFinished() override final;
 
-	virtual Ref< db::Database > getSourceDatabase() const override final;
+	virtual db::Database* getSourceDatabase() const override final;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 

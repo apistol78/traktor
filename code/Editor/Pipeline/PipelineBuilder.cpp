@@ -725,12 +725,12 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	}
 }
 
-Ref< db::Database > PipelineBuilder::getOutputDatabase() const
+db::Database* PipelineBuilder::getOutputDatabase() const
 {
 	return m_outputDatabase;
 }
 
-Ref< db::Database > PipelineBuilder::getSourceDatabase() const
+db::Database* PipelineBuilder::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
