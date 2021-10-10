@@ -27,8 +27,8 @@ bool AvalanchePipelineCache::create(const PropertyGroup* settings)
 	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
 	int32_t port = settings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 40001);
 
-	m_accessRead = settings->getProperty< bool >(L"Pipeline.FileCache.Read", true);
-	m_accessWrite = settings->getProperty< bool >(L"Pipeline.FileCache.Write", true);
+	m_accessRead = settings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", true);
+	m_accessWrite = settings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", true);
 
 	m_client = new avalanche::Client(net::SocketAddressIPv4(host, port));
 	if (!m_client->ping())
