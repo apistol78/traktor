@@ -1,5 +1,5 @@
-#include "Avalanche/Blob.h"
 #include "Avalanche/Dictionary.h"
+#include "Avalanche/IBlob.h"
 #include "Avalanche/Protocol.h"
 #include "Avalanche/Server/Connection.h"
 #include "Core/Io/StreamCopy.h"
@@ -97,7 +97,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< const Blob > blob = m_dictionary->get(key);
+			Ref< const IBlob > blob = m_dictionary->get(key);
 			if (blob)
 			{
 				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -124,7 +124,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< const Blob > blob = m_dictionary->get(key);
+			Ref< const IBlob > blob = m_dictionary->get(key);
 			if (blob)
 			{
 				auto readStream = blob->read();
@@ -179,7 +179,7 @@ bool Connection::process()
 				return true;
 			}
 
-			Ref< Blob > blob = m_dictionary->create();
+			Ref< IBlob > blob = m_dictionary->create();
 			if (blob)
 			{
 				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -194,7 +194,7 @@ bool Connection::process()
 						if (m_clientStream->read(&chunkSize, sizeof(int64_t)) != sizeof(int64_t))
 							return false;
 
-						auto appendStream = blob->append(chunkSize);
+						auto appendStream = blob->append();
 						if (appendStream)
 						{
 							if (StreamCopy(appendStream, m_clientStream).execute(chunkSize))

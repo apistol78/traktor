@@ -27,6 +27,8 @@ public:
 
 	Key(uint32_t k0, uint32_t k1, uint32_t k2, uint32_t k3);
 
+	static Key parse(const std::wstring& kf);
+
 	bool valid() const;
 
 	std::wstring format() const;

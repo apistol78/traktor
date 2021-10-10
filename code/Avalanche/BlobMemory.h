@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/Ref.h"
+#include "Avalanche/IBlob.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,23 +14,22 @@ namespace traktor
 {
 
 class ChunkMemory;
-class IStream;
 
 	namespace avalanche
 	{
 
-class T_DLLCLASS Blob : public Object
+class T_DLLCLASS BlobMemory : public IBlob
 {
 	T_RTTI_CLASS;
 
 public:
-	Blob();
+	BlobMemory();
 
-	int64_t size() const;
+	virtual int64_t size() const override final;
 
-	Ref< IStream > append(int64_t appendSize);
+	virtual Ref< IStream > append() override final;
 
-	Ref< IStream > read() const;
+	virtual Ref< IStream > read() const override final;
 
 private:
 	Ref< ChunkMemory > m_memory;
