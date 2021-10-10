@@ -35,7 +35,7 @@ bool Dictionary::create(const Path& blobsPath)
 			if (!blobKey.valid())
 				continue;
 
-			Ref< BlobFile > blob = new BlobFile(blobFile->getPath());
+			Ref< BlobFile > blob = new BlobFile(blobFile->getPath(), blobFile->getSize());
 			m_blobs[blobKey] = blob;
 			m_stats.blobCount++;
 			m_stats.memoryUsage += blob->size();
@@ -71,7 +71,7 @@ bool Dictionary::put(const Key& key, const IBlob* blob)
 			const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
 
 			// Write blob to physical storage.
-			Ref< BlobFile > bf = new BlobFile(blobPath);
+			Ref< BlobFile > bf = new BlobFile(blobPath, blob->size());
 			if (!StreamCopy(bf->append(), blob->read()).execute())
 				return false;
 			
