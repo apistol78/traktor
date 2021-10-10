@@ -32,14 +32,14 @@ bool ActionSetGuid::execute(Context* context)
 		instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 		if (!instanceMeta)
 		{
-			log::error << L"Unable to read instance meta data" << Endl;
+			log::error << L"Unable to read instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 			return false;
 		}
 
 		m_editMeta = fileStore->edit(instanceMetaPath);
 		if (!m_editMeta)
 		{
-			log::error << L"Unable to edit instance meta" << Endl;
+			log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
 			return false;
 		}
 	}
@@ -50,7 +50,7 @@ bool ActionSetGuid::execute(Context* context)
 
 	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
 	{
-		log::error << L"Unable to write instance meta data" << Endl;
+		log::error << L"Unable to write instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
