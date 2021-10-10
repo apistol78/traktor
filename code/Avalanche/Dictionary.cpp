@@ -1,6 +1,10 @@
 #include <algorithm>
-#include "Avalanche/Blob.h"
+#include "Avalanche/BlobFile.h"
+#include "Avalanche/BlobMemory.h"
 #include "Avalanche/Dictionary.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/StreamCopy.h"
+#include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 
 namespace traktor
@@ -10,12 +14,44 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Dictionary", Dictionary, Object)
 
-Ref< Blob > Dictionary::create() const
+bool Dictionary::create(const Path& blobsPath)
 {
-	return new Blob();
+	if (!blobsPath.empty())
+	{
+		log::info << L"Loading dictionary..." << Endl;
+
+		if (!FileSystem::getInstance().makeAllDirectories(blobsPath))
+			return false;
+
+		RefArray< File > blobFiles;
+		FileSystem::getInstance().find(blobsPath.getPathName() + L"/*.blob", blobFiles);
+
+		log::info << L"Loading " << blobFiles.size() << L" blobs..." << Endl;
+		for (auto blobFile : blobFiles)
+		{
+			std::wstring blobFileName = blobFile->getPath().getFileNameNoExtension();
+
+			Key blobKey = Key::parse(blobFileName);
+			if (!blobKey.valid())
+				continue;
+
+			Ref< BlobFile > blob = new BlobFile(blobFile->getPath());
+			m_blobs[blobKey] = blob;
+			m_stats.blobCount++;
+			m_stats.memoryUsage += blob->size();
+		}
+	}
+
+	m_blobsPath = blobsPath;
+	return true;
 }
 
-Ref< const Blob > Dictionary::get(const Key& key) const
+Ref< IBlob > Dictionary::create() const
+{
+	return new BlobMemory();
+}
+
+Ref< const IBlob > Dictionary::get(const Key& key) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
 	auto it = m_blobs.find(key);
@@ -25,11 +61,25 @@ Ref< const Blob > Dictionary::get(const Key& key) const
 		return nullptr;
 }
 
-bool Dictionary::put(const Key& key, const Blob* blob)
+bool Dictionary::put(const Key& key, const IBlob* blob)
 {
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
-		m_blobs[key] = blob;
+
+		if (!m_blobsPath.empty())
+		{
+			const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
+
+			// Write blob to physical storage.
+			Ref< BlobFile > bf = new BlobFile(blobPath);
+			if (!StreamCopy(bf->append(), blob->read()).execute())
+				return false;
+			
+			m_blobs[key] = bf;
+		}
+		else
+			m_blobs[key] = blob;
+
 		m_stats.blobCount++;
 		m_stats.memoryUsage += blob->size();
 	}

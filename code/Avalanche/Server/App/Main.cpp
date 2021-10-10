@@ -25,6 +25,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Net/Network.h"
 
 using namespace traktor;
@@ -94,6 +95,7 @@ void WINAPI serviceMain(DWORD argc, TCHAR* argv[])
 		Ref< PropertyGroup > settings = new PropertyGroup();
 		settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
 		settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
+		settings->setProperty< PropertyString >(L"Avalanche.Path", cmdLine.getOption('d', L"dictionary-path").getString());
 
 		if (!net::Network::initialize())
 		{
@@ -261,15 +263,16 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('h', L"help") || port <= 0)
 	{
 		log::info << L"Usage: Traktor.Avalanche.Server.App (options)" << Endl;
-		log::info << L"    -m, -master        Master node." << Endl;
-		log::info << L"    -p, -port          Port number (default 40001)." << Endl;
+		log::info << L"    -m, -master           Master node." << Endl;
+		log::info << L"    -p, -port             Port number (default 40001)." << Endl;
+		log::info << L"    -d, -dictionary-path  Path to dictionary blobs." << Endl;
 #if defined(_WIN32)
-		log::info << L"    -install-service   Install as NT service." << Endl;
-		log::info << L"    -uninstall-service Uninstall as NT service." << Endl;
+		log::info << L"    -install-service      Install as NT service." << Endl;
+		log::info << L"    -uninstall-service    Uninstall as NT service." << Endl;
 #elif defined(__LINUX__) || defined(__RPI__)
-		log::info << L"    -daemon            Launch as a daemon." << Endl;
+		log::info << L"    -daemon               Launch as a daemon." << Endl;
 #endif
-		log::info << L"    -h, -help          Help" << Endl;
+		log::info << L"    -h, -help             Help" << Endl;
 		return 0;
 	}
 
@@ -353,6 +356,7 @@ int main(int argc, const char** argv)
 	Ref< PropertyGroup > settings = new PropertyGroup();
 	settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
 	settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
+	settings->setProperty< PropertyString >(L"Avalanche.Path", cmdLine.getOption('d', L"dictionary-path").getString());
 
 	if (!net::Network::initialize())
 	{

@@ -1,5 +1,5 @@
-#include "Avalanche/Blob.h"
 #include "Avalanche/Dictionary.h"
+#include "Avalanche/IBlob.h"
 #include "Avalanche/Client/Client.h"
 #include "Avalanche/Server/Peer.h"
 #include "Core/Io/IStream.h"
@@ -40,7 +40,7 @@ Peer::Peer(
 				}
 				if (!m_client->have(key))
 				{
-					Ref< const Blob > blob = m_dictionary->get(key);
+					Ref< const IBlob > blob = m_dictionary->get(key);
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
@@ -69,7 +69,7 @@ Peer::Peer(
 				for (size_t i = 0; i < queued.size() && !m_thread->stopped(); ++i)
 				{
 					const auto& key = queued[i];	
-					Ref< const Blob > blob = m_dictionary->get(key);
+					Ref< const IBlob > blob = m_dictionary->get(key);
 					if (blob)
 					{
 						Ref< IStream > readStream = blob->read();
@@ -111,7 +111,7 @@ const net::SocketAddressIPv4& Peer::getServerAddress() const
 	return m_client->getServerAddress();
 }
 
-void Peer::dictionaryPut(const Key& key, const Blob* blob)
+void Peer::dictionaryPut(const Key& key, const IBlob* blob)
 {
 	if (!m_client->have(key))
 	{

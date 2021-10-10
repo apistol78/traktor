@@ -45,12 +45,12 @@ bool Server::create(const PropertyGroup* settings)
 	}
 
 	// Get our best external interface.
-    net::SocketAddressIPv4::Interface itf;
-    if (!net::SocketAddressIPv4::getBestInterface(itf))
-    {
-        log::error << L"Unable to get interfaces." << Endl;
-        return false;
-    }
+	net::SocketAddressIPv4::Interface itf;
+	if (!net::SocketAddressIPv4::getBestInterface(itf))
+	{
+		log::error << L"Unable to get interfaces." << Endl;
+		return false;
+	}
 
 	// Broadcast our self on the network.
 	Ref< PropertyGroup > publishSettings = DeepClone(settings).create< PropertyGroup >();
@@ -71,6 +71,14 @@ bool Server::create(const PropertyGroup* settings)
 
 	// Create our dictionary.
 	m_dictionary = new Dictionary();
+	if (!m_dictionary->create(
+		settings->getProperty< std::wstring >(L"Avalanche.Path", L"")
+	))
+	{
+		log::error << L"Unable to create dictionary." << Endl;
+		return false;		
+	}
+
 	m_master = settings->getProperty< bool >(L"Avalanche.Master", false);
 
 	log::info << L"Server started successfully (" << (m_master ? L"Master" : L"Slave") << L")." << Endl;

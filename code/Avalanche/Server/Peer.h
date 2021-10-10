@@ -48,7 +48,7 @@ public:
 
 	// Dictionary::IListener
 
-	virtual void dictionaryPut(const Key& key, const Blob* blob) override final;
+	virtual void dictionaryPut(const Key& key, const IBlob* blob) override final;
 
 private:
 	Ref< Client > m_client;

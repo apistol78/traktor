@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Io/Path.h"
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -20,7 +21,7 @@ namespace traktor
 	namespace avalanche
 	{
 
-class Blob;
+class IBlob;
 
 class T_DLLCLASS Dictionary : public Object
 {
@@ -35,14 +36,16 @@ public:
 
 	struct IListener
 	{
-		virtual void dictionaryPut(const Key& key, const Blob* blob) = 0;
+		virtual void dictionaryPut(const Key& key, const IBlob* blob) = 0;
 	};
 
-	Ref< Blob > create() const;
+	bool create(const Path& blobsPath);
 
-	Ref< const Blob > get(const Key& key) const;
+	Ref< IBlob > create() const;
 
-	bool put(const Key& key, const Blob* blob);
+	Ref< const IBlob > get(const Key& key) const;
+
+	bool put(const Key& key, const IBlob* blob);
 
 	void snapshotKeys(AlignedVector< Key >& outKeys) const;
 
@@ -55,7 +58,8 @@ public:
 private:
 	mutable ReaderWriterLock m_lockBlobs;
 	mutable Semaphore m_lockListeners;
-	SmallMap< Key, Ref< const Blob > > m_blobs;
+	Path m_blobsPath;
+	SmallMap< Key, Ref< const IBlob > > m_blobs;
 	AlignedVector< IListener* > m_listeners;
 	Stats m_stats;
 };
