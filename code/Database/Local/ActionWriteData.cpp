@@ -35,7 +35,7 @@ bool ActionWriteData::execute(Context* context)
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
 	{
-		log::error << L"Unable to read instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
+		log::error << L"Unable to read instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
