@@ -49,7 +49,7 @@ private:
 		Worker();
 	};
 
-	Worker m_workerThreads[32];
+	Worker m_workerThreads[256];
 };
 
 }
