@@ -95,7 +95,11 @@ Ref< IStream > AvalanchePipelineCache::get(uint32_t key)
 		return nullptr;
 
 	avalanche::Key kv(0, 0, 0, key);
-	return m_client->get(kv);
+	Ref< IStream > stream = m_client->get(kv);
+	if (!stream)
+		return nullptr;
+
+	return new compress::InflateStreamLzo(stream);
 }
 
 Ref< IStream > AvalanchePipelineCache::put(uint32_t key)
@@ -104,7 +108,11 @@ Ref< IStream > AvalanchePipelineCache::put(uint32_t key)
 		return nullptr;
 
 	avalanche::Key kv(0, 0, 0, key);
-	return m_client->put(kv);
+	Ref< IStream > stream = m_client->put(kv);
+	if (!stream)
+		return nullptr;
+
+	return new compress::DeflateStreamLzo(stream, 16384);
 }
 
 void AvalanchePipelineCache::getInformation(OutputStream& os)
