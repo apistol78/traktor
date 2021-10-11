@@ -35,24 +35,15 @@ private:
 	Ref< ui::CheckBox > m_checkVerbose;
 	Ref< ui::CheckBox > m_checkDependsThreads;
 	Ref< ui::CheckBox > m_checkBuildThreads;
-
 	Ref< ui::CheckBox > m_checkUseAvalanche;
 	Ref< ui::Edit > m_editAvalancheHost;
 	Ref< ui::Edit > m_editAvalanchePort;
 	Ref< ui::CheckBox > m_checkAvalancheRead;
 	Ref< ui::CheckBox > m_checkAvalancheWrite;
-
-
-	Ref< ui::CheckBox > m_checkUseMemcached;
-	Ref< ui::Edit > m_editMemcachedHost;
-	Ref< ui::Edit > m_editMemcachedPort;
-	Ref< ui::CheckBox > m_checkMemcachedRead;
-	Ref< ui::CheckBox > m_checkMemcachedWrite;
 	Ref< ui::CheckBox > m_checkUseFileCache;
 	Ref< ui::Edit > m_editFileCachePath;
 	Ref< ui::CheckBox > m_checkFileCacheRead;
 	Ref< ui::CheckBox > m_checkFileCacheWrite;
-	Ref< ui::Edit > m_editDataAccessCachePath;
 	Ref< ui::Edit > m_editInstanceCachePath;
 	Ref< ui::Edit > m_editModelCachePath;
 	Ref< ui::Edit > m_editProgramCachePath;

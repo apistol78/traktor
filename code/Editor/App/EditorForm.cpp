@@ -31,7 +31,6 @@
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
-#include "Editor/DataAccessCache.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPlugin.h"
@@ -76,7 +75,6 @@
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
 #include "Editor/Pipeline/File/FilePipelineCache.h"
-#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
@@ -1556,15 +1554,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 			m_pipelineCache = nullptr;
 		}
 	}
-	else if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
-	{
-		m_pipelineCache = new editor::MemcachedPipelineCache();
-		if (!m_pipelineCache->create(m_mergedSettings))
-		{
-			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
-			m_pipelineCache = nullptr;
-		}
-	}
 	else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
 		m_pipelineCache = new editor::FilePipelineCache();
@@ -1644,9 +1633,6 @@ void EditorForm::closeWorkspace()
 	// Close pipeline database and cache.
 	safeClose(m_pipelineDb);
 	safeDestroy(m_pipelineCache);
-
-	// Close data cache.
-	safeDestroy(m_dataAccessCache);
 
 	// Close databases.
 	safeClose(m_outputDatabase);
@@ -1885,7 +1871,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			m_pipelineCache,
 			m_pipelineDb,
 			&instanceCache,
-			m_dataAccessCache,
 			this,
 			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
 			verbose
@@ -2707,15 +2692,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 							m_pipelineCache = nullptr;
 						}
 					}
-					else if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
-					{
-						m_pipelineCache = new editor::MemcachedPipelineCache();
-						if (!m_pipelineCache->create(m_mergedSettings))
-						{
-							traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
-							m_pipelineCache = nullptr;
-						}
-					}
 					else if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
 					{
 						m_pipelineCache = new editor::FilePipelineCache();
@@ -3279,23 +3255,11 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 
 	progress = 800;
 
-	// Create data access cache.
-	std::wstring cachePath = mergedSettings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
-	Ref< DataAccessCache > dataAccessCache = new DataAccessCache();
-	if (!dataAccessCache->create(cachePath))
-	{
-		log::error << L"Unable to create data access cache." << Endl;
-		return;
-	}
-
-	progress = 900;
-
 	// Successfully opened workspace.
 	m_workspaceSettings = workspaceSettings;
 	m_mergedSettings = mergedSettings;
 	m_sourceDatabase = sourceDatabase;
 	m_outputDatabase = outputDatabase;
-	m_dataAccessCache = dataAccessCache;
 
 	progress = 1000;
 }

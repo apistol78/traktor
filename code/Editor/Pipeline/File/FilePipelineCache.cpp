@@ -3,6 +3,7 @@
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -88,6 +89,47 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 		new BufferedStream(fileStream),
 		ss.str()
 	);
+}
+
+Ref< IStream > FilePipelineCache::get(uint32_t key)
+{
+	StringOutputStream ss;
+	ss << m_path << L"/" << str(L"%08x", key) << L".cache";
+	Path p(ss.str());
+
+	// Ensure output path exists.
+	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
+	{
+		log::error << L"File pipeline cache failed; unable to create cache directory for " << p.getPathName() << L"." << Endl;
+		return nullptr;
+	}
+
+	// Open cached file.
+	return FileSystem::getInstance().open(p.getPathName(), File::FmRead);
+}
+
+Ref< IStream > FilePipelineCache::put(uint32_t key)
+{
+	StringOutputStream ss;
+	ss << m_path << L"/" << str(L"%08x", key) << L".cache";
+	Path p(ss.str());
+
+	// Ensure output path exists.
+	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
+	{
+		log::error << L"File pipeline cache failed; unable to create cache directory for " << p.getPathName() << L"." << Endl;
+		return nullptr;
+	}
+
+	// Create cached file, will be renamed when stream has been closed.
+	Ref< IStream > fileStream = FileSystem::getInstance().open(p.getPathName() + L"~", File::FmWrite);
+	if (!fileStream)
+	{
+		log::error << L"File pipeline cache failed; unable to create cache entry " << p.getPathName() << L"." << Endl;
+		return nullptr;
+	}
+
+	return fileStream;
 }
 
 void FilePipelineCache::getInformation(OutputStream& os)

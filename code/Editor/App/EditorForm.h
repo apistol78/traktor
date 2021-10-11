@@ -54,7 +54,6 @@ class Database;
 	namespace editor
 	{
 
-class DataAccessCache;
 class DatabaseView;
 class Document;
 class EditorPageSite;
@@ -208,7 +207,6 @@ private:
 	Ref< LogView > m_logView;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
-	Ref< DataAccessCache > m_dataAccessCache;
 	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
 	Ref< IEditorPage > m_activeEditorPage;

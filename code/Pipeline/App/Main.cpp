@@ -36,7 +36,6 @@
 #include "Database/Events/EvtInstanceRemoved.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
-#include "Editor/DataAccessCache.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
@@ -48,7 +47,6 @@
 #include "Editor/Pipeline/PipelineSettings.h"
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
 #include "Editor/Pipeline/File/FilePipelineCache.h"
-#include "Editor/Pipeline/Memcached/MemcachedPipelineCache.h"
 #include "Pipeline/App/PipelineParameters.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -320,7 +318,7 @@ bool perform(const PipelineParameters& params)
 
 	if (params.getNoCache())
 	{
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
@@ -361,16 +359,6 @@ bool perform(const PipelineParameters& params)
 		return false;
 	}
 
-	// Open data access cache.
-	std::wstring dataAccessCachePath = settings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
-
-	Ref< editor::DataAccessCache > dataAccessCache = new editor::DataAccessCache();
-	if (!dataAccessCache->create(dataAccessCachePath))
-	{
-		log::error << L"Unable to create data access cache." << Endl;
-		return false;
-	}
-
 	// Open pipeline dependency database.
 	std::wstring connectionString = settings->getProperty< std::wstring >(L"Pipeline.Db");
 
@@ -393,17 +381,6 @@ bool perform(const PipelineParameters& params)
 		}
 		else
 			log::info << L"Avalanche pipeline cache created successfully." << Endl;
-	}
-	else if (settings->getProperty< bool >(L"Pipeline.MemcachedCache", false))
-	{
-		pipelineCache = new editor::MemcachedPipelineCache();
-		if (!pipelineCache->create(settings))
-		{
-			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled." << Endl;
-			pipelineCache = nullptr;
-		}
-		else
-			log::info << L"Memcached pipeline cache created successfully." << Endl;
 	}
 	else if (settings->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
@@ -495,7 +472,6 @@ bool perform(const PipelineParameters& params)
 		pipelineCache,
 		pipelineDb,
 		sourceDatabaseAndCache.cache,
-		dataAccessCache,
 		statusListener.ptr(),
 		settings->getProperty< bool >(L"Pipeline.BuildThreads", true),
 		params.getVerbose()
@@ -522,8 +498,6 @@ bool perform(const PipelineParameters& params)
 			bt->wait();
 		}
 	}
-
-	safeDestroy(dataAccessCache);
 
 	ThreadManager::getInstance().destroy(bt);
 

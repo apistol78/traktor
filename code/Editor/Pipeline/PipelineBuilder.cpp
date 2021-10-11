@@ -18,6 +18,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Isolate.h"
+#include "Editor/DataAccessCache.h"
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineCache.h"
 #include "Editor/IPipelineDb.h"
@@ -109,7 +110,6 @@ PipelineBuilder::PipelineBuilder(
 	IPipelineCache* cache,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
-	DataAccessCache* dataAccessCache,
 	IListener* listener,
 	bool threadedBuildEnable,
 	bool verbose
@@ -120,7 +120,6 @@ PipelineBuilder::PipelineBuilder(
 ,	m_cache(cache)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
-,	m_dataAccessCache(dataAccessCache)
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_verbose(verbose)
@@ -135,6 +134,8 @@ PipelineBuilder::PipelineBuilder(
 ,	m_cacheMiss(0)
 ,	m_cacheVoid(0)
 {
+	// Create data access memento cache.
+	m_dataAccessCache = new DataAccessCache(cache);
 }
 
 bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool rebuild)

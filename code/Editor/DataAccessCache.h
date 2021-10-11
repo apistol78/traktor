@@ -3,11 +3,6 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
-#include "Core/Containers/ThreadsafeFifo.h"
-#include "Core/Io/Path.h"
-#include "Core/Thread/Event.h"
-#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,13 +15,12 @@
 namespace traktor
 {
 
-class ChunkMemory;
 class IStream;
-class Object;
-class Thread;
 
 	namespace editor
 	{
+
+class IPipelineCache;
 
 /*! Data access cache.
  *
@@ -38,11 +32,7 @@ class T_DLLCLASS DataAccessCache : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual ~DataAccessCache();
-
-	bool create(const Path& cachePath);
-
-	void destroy();
+	explicit DataAccessCache(IPipelineCache* cache);
 
 	template< typename ObjectType >
 	Ref< ObjectType > read(
@@ -61,31 +51,14 @@ public:
 	}
 
 private:
-	typedef std::function< Ref< Object > (IStream* stream) > fn_readObject_t;
-	typedef std::function< bool (const Object* object, IStream* stream) > fn_writeObject_t;
-	typedef std::function< Ref< Object > () > fn_createObject_t;
-
-	struct WriteEntry
-	{
-		Path fileName;
-		Ref< ChunkMemory > blob;
-	};
-
-	Path m_cachePath;
-	Thread* m_writeThread = nullptr;
-	Event m_eventWrite;
-	SmallMap< uint32_t, Ref< ChunkMemory > > m_objectPool;
-	ThreadsafeFifo< WriteEntry > m_writeQueue;
-	Semaphore m_lock;
+	IPipelineCache* m_cache;
 
 	Ref< Object > readObject(
 		uint32_t key,
-		const fn_readObject_t& read,
-		const fn_writeObject_t& write,
-		const fn_createObject_t& create
+		const std::function< Ref< Object > (IStream* stream) >& read,
+		const std::function< bool (const Object* object, IStream* stream) >& write,
+		const std::function< Ref< Object > () >& create
 	);
-
-	void threadWriter();
 };
 
 	}

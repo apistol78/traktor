@@ -147,31 +147,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		bool avalancheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false);
 		if (avalancheEnable)
 		{
-			std::wstring memcachedHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
-			int32_t memcachedPort = m_globalSettings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 0);
-			bool memcachedRead = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", false);
-			bool memcachedWrite = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", false);
+			std::wstring avalancheHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
+			int32_t avalanchePort = m_globalSettings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 0);
+			bool avalancheRead = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", false);
+			bool avalancheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", false);
 
 			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", true);
-			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", memcachedHost);
-			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", memcachedPort);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", memcachedRead);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", memcachedWrite);
-		}
-
-		bool memcachedEnable = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache", false);
-		if (memcachedEnable)
-		{
-			std::wstring memcachedHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.MemcachedCache.Host", L"");
-			int32_t memcachedPort = m_globalSettings->getProperty< int32_t >(L"Pipeline.MemcachedCache.Port", 0);
-			bool memcachedRead = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache.Read", false);
-			bool memcachedWrite = m_globalSettings->getProperty< bool >(L"Pipeline.MemcachedCache.Write", false);
-
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
-			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", memcachedHost);
-			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", memcachedPort);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", memcachedRead);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", memcachedWrite);
+			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", avalancheHost);
+			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", avalanchePort);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", avalancheRead);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", avalancheWrite);
 		}
 
 		bool fileCacheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache", false);
@@ -218,11 +203,6 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
-
-	// Set data access cache path.
-	Path dataAccessCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path");
-	dataAccessCachePath = FileSystem::getInstance().getAbsolutePath(dataAccessCachePath);
-	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.DataAccessCache.Path", dataAccessCachePath.getPathName());
 
 	// Set asset path.
 	Path assetPath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AssetPath");
