@@ -89,6 +89,24 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 	return new compress::DeflateStreamLzo(stream, 16384);
 }
 
+Ref< IStream > AvalanchePipelineCache::get(uint32_t key)
+{
+	if (!m_accessRead)
+		return nullptr;
+
+	avalanche::Key kv(0, 0, 0, key);
+	return m_client->get(kv);
+}
+
+Ref< IStream > AvalanchePipelineCache::put(uint32_t key)
+{
+	if (!m_accessWrite)
+		return nullptr;
+
+	avalanche::Key kv(0, 0, 0, key);
+	return m_client->put(kv);
+}
+
 void AvalanchePipelineCache::getInformation(OutputStream& os)
 {
 	avalanche::Dictionary::Stats stats;

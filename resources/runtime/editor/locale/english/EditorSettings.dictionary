@@ -170,10 +170,6 @@
 			<second>Use file cache</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
-			<second>Use memcached</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
 			<second>Use dependency cache</second>
 		</item>

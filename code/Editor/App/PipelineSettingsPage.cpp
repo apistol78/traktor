@@ -69,32 +69,6 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkAvalancheWrite->setChecked(settings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", true));
 	m_checkAvalancheWrite->setEnable(avalancheEnable);
 
-	// Memcached
-	bool memcachedEnable = settings->getProperty< bool >(L"Pipeline.MemcachedCache", false);
-
-	m_checkUseMemcached = new ui::CheckBox();
-	m_checkUseMemcached->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED"));
-	m_checkUseMemcached->setChecked(memcachedEnable);
-	m_checkUseMemcached->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
-
-	m_editMemcachedHost = new ui::Edit();
-	m_editMemcachedHost->create(container, settings->getProperty< std::wstring >(L"Pipeline.MemcachedCache.Host"));
-	m_editMemcachedHost->setEnable(memcachedEnable);
-
-	m_editMemcachedPort = new ui::Edit();
-	m_editMemcachedPort->create(container, toString(settings->getProperty< int32_t >(L"Pipeline.MemcachedCache.Port")), ui::WsNone, new ui::NumericEditValidator(false, 0, 65535));
-	m_editMemcachedPort->setEnable(memcachedEnable);
-
-	m_checkMemcachedRead = new ui::CheckBox();
-	m_checkMemcachedRead->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_READ"));
-	m_checkMemcachedRead->setChecked(settings->getProperty< bool >(L"Pipeline.MemcachedCache.Read", true));
-	m_checkMemcachedRead->setEnable(memcachedEnable);
-
-	m_checkMemcachedWrite = new ui::CheckBox();
-	m_checkMemcachedWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
-	m_checkMemcachedWrite->setChecked(settings->getProperty< bool >(L"Pipeline.MemcachedCache.Write", true));
-	m_checkMemcachedWrite->setEnable(memcachedEnable);
-
 	// File cache
 	bool fileCacheEnable = settings->getProperty< bool >(L"Pipeline.FileCache", false);
 
@@ -116,9 +90,6 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkFileCacheWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
 	m_checkFileCacheWrite->setChecked(settings->getProperty< bool >(L"Pipeline.FileCache.Write", true));
 	m_checkFileCacheWrite->setEnable(fileCacheEnable);
-
-	m_editDataAccessCachePath = new ui::Edit();
-	m_editDataAccessCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.DataAccessCache.Path"), ui::WsNone);
 
 	m_editInstanceCachePath = new ui::Edit();
 	m_editInstanceCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path"), ui::WsNone);
@@ -150,18 +121,11 @@ bool PipelineSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", m_checkAvalancheRead->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", m_checkAvalancheWrite->isChecked());
 
-	settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", m_checkUseMemcached->isChecked());
-	settings->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", m_editMemcachedHost->getText());
-	settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", parseString< int32_t >(m_editMemcachedPort->getText()));
-	settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", m_checkMemcachedRead->isChecked());
-	settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", m_checkMemcachedWrite->isChecked());
-
 	settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", m_checkUseFileCache->isChecked());
 	settings->setProperty< PropertyString >(L"Pipeline.FileCache.Path", m_editFileCachePath->getText());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", m_checkFileCacheRead->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", m_checkFileCacheWrite->isChecked());
 
-	settings->setProperty< PropertyString >(L"Pipeline.DataAccessCache.Path", m_editDataAccessCachePath->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.InstanceCache.Path", m_editInstanceCachePath->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.ModelCache.Path", m_editModelCachePath->getText());
 	settings->setProperty< PropertyString >(L"ShaderPipeline.ProgramCache.Path", m_editProgramCachePath->getText());
@@ -176,12 +140,6 @@ void PipelineSettingsPage::eventUseCacheClick(ui::ButtonClickEvent* event)
 	m_editAvalanchePort->setEnable(avalancheEnable);
 	m_checkAvalancheRead->setEnable(avalancheEnable);
 	m_checkAvalancheWrite->setEnable(avalancheEnable);
-
-	bool memCachedEnable = m_checkUseMemcached->isChecked();
-	m_editMemcachedHost->setEnable(memCachedEnable);
-	m_editMemcachedPort->setEnable(memCachedEnable);
-	m_checkMemcachedRead->setEnable(memCachedEnable);
-	m_checkMemcachedWrite->setEnable(memCachedEnable);
 
 	bool fileCacheEnable = m_checkUseFileCache->isChecked();
 	m_editFileCachePath->setEnable(fileCacheEnable);

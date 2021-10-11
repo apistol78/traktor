@@ -54,7 +54,6 @@ public:
 		IPipelineCache* cache,
 		IPipelineDb* db,
 		IPipelineInstanceCache* instanceCache,
-		DataAccessCache* dataAccessCache,
 		IListener* listener,
 		bool threadedBuildEnable,
 		bool verbose

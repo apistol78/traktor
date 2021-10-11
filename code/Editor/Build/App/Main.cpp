@@ -117,8 +117,6 @@ int main(int argc, const char** argv)
 		log::info << L"    -f,-force                      Force build." << Endl;
 		log::info << L"    -avalanche-cache=host:port     Specify pipeline avalanche host." << Endl;
 		log::info << L"    -avalanche-cache-access=r|w|rw Avalanche cache access." << Endl;
-		log::info << L"    -memcached-cache=host:port     Specify pipeline memcached host." << Endl;
-		log::info << L"    -memcached-cache-access=r|w|rw Memcached cache access." << Endl;
 		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
 		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
 		log::info << L"    -sequential-depends            Disable multithreaded pipeline dependency scanner." << Endl;
@@ -154,10 +152,9 @@ int main(int argc, const char** argv)
 	settings->setProperty< PropertyBoolean >(L"Pipeline.TargetEditor.Build", true);
 
 	// If cache has is explicitly set then we first clear property to ensure exclusivly enabled.
-	if (cmdLine.hasOption(L"avalanche-cache") || cmdLine.hasOption(L"memcached-cache") || cmdLine.hasOption(L"file-cache"))
+	if (cmdLine.hasOption(L"avalanche-cache") || cmdLine.hasOption(L"file-cache"))
 	{
 		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", false);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
@@ -195,42 +192,6 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyInteger >(L"Pipeline.AvalancheCache.Port", port);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Read", read);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", write);
-	}
-
-	if (cmdLine.hasOption(L"memcached-cache"))
-	{
-		std::wstring host = cmdLine.getOption(L"memcached-cache").getString();
-		int32_t port = 11211;
-
-		size_t i = host.find(L':');
-		if (i != std::wstring::npos)
-		{
-			port = parseString< int32_t >(host.substr(i + 1));
-			host = host.substr(0, i);
-		}
-
-		bool read = true;
-		bool write = true;
-		if (cmdLine.hasOption(L"memcached-cache-access"))
-		{
-			read =
-			write = false;
-
-			std::wstring access = cmdLine.getOption(L"memcached-cache-access").getString();
-			for (auto ch : access)
-			{
-				if (ch == L'r')
-					read = true;
-				if (ch == L'w')
-					write = true;
-			}
-		}
-
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache", true);
-		settings->setProperty< PropertyString >(L"Pipeline.MemcachedCache.Host", host);
-		settings->setProperty< PropertyInteger >(L"Pipeline.MemcachedCache.Port", port);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Read", read);
-		settings->setProperty< PropertyBoolean >(L"Pipeline.MemcachedCache.Write", write);
 	}
 
 	if (cmdLine.hasOption(L"file-cache"))
