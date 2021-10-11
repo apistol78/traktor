@@ -73,7 +73,7 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 
 #if defined(_WIN32)
 	if (host == L"localhost")
-		ia = INADDR_LOOPBACK;
+		ia = htonl(INADDR_LOOPBACK);
 	else
 #endif
 	{
