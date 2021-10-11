@@ -265,6 +265,23 @@ bool Connection::process()
 		}
 		break;
 
+	case c_commandKeys:
+		{
+			AlignedVector< Key > keys;
+			m_dictionary->snapshotKeys(keys);
+
+			uint64_t nkeys = (uint64_t)keys.size();
+			if (m_clientStream->write(&nkeys, sizeof(uint64_t)) != sizeof(uint64_t))
+				return false;
+
+			for (const auto& key : keys)
+			{
+				if (!key.write(m_clientStream))
+					return false;
+			}
+		}
+		break;
+
 	default:
 		log::error << L"Invalid command from client; terminating connection." << Endl;
 		return false;

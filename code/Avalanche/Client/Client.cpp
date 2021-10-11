@@ -172,6 +172,31 @@ bool Client::stats(Dictionary::Stats& outStats)
 	return true;
 }
 
+bool Client::getKeys(AlignedVector< Key >& outKeys)
+{
+	Ref< net::SocketStream > stream = establish(c_commandKeys);
+	if (!stream)
+		return false;
+
+	uint64_t nkeys;
+	if (stream->read(&nkeys, sizeof(uint64_t)) != sizeof(uint64_t))
+		return false;
+
+	outKeys.resize(nkeys);
+	for (uint64_t i = 0; i < nkeys; ++i)
+	{
+		outKeys[i] = Key::read(stream);
+		if (!outKeys[i].valid())
+			return false;
+	}
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_streams.push_back(stream);
+	}
+	return true;
+}
+
 Ref< net::SocketStream > Client::establish(uint8_t command)
 {
 	for (;;)

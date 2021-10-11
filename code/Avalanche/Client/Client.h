@@ -46,6 +46,8 @@ public:
 
 	bool stats(Dictionary::Stats& outStats);
 
+	bool getKeys(AlignedVector< Key >& outKeys);
+
 	const net::SocketAddressIPv4& getServerAddress() const { return m_serverAddress; }
 
 private:

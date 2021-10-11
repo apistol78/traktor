@@ -15,6 +15,7 @@ constexpr static uint8_t c_commandStat			= 0x02;
 constexpr static uint8_t c_commandGet			= 0x03;
 constexpr static uint8_t c_commandPut			= 0x04;
 constexpr static uint8_t c_commandStats			= 0x05;
+constexpr static uint8_t c_commandKeys			= 0x06;
 
 constexpr static uint8_t c_subCommandPutAppend	= 0x41;
 constexpr static uint8_t c_subCommandPutCommit	= 0x42;
