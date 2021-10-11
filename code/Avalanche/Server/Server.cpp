@@ -115,8 +115,8 @@ bool Server::update()
 		});
 		if (it != m_connections.end())
 		{
+			size_t n = std::distance(it, m_connections.end());
 			m_connections.erase(it, m_connections.end());
-			log::info << L"Connections removed." << Endl;
 		}
 	}
 
@@ -172,7 +172,7 @@ bool Server::update()
 					log::info << L"  Identifier    : " << peerIdentifier << Endl;
 					log::info << L"  Computer name : " << peerComputerName << Endl;
 					log::info << L"  Instance ID   : " << peerInstanceId.format() << Endl;
-					log::info << L"  Version       : " << majorVersion << L"." << minorVersion << Endl;
+					log::info << L"  Protocol      : " << majorVersion << L"." << minorVersion << Endl;
 
 					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
 					peers.push_back(new Peer(peerAddress, peerInstanceId, name, m_dictionary));

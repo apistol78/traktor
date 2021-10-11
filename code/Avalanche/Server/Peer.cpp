@@ -28,10 +28,17 @@ Peer::Peer(
 {
 	ThreadPool::getInstance().spawn([=]()
 		{
-			// Initially replicate all entries of our dictionary to newly found peer.
-			AlignedVector< Key > keys;
-			m_dictionary->snapshotKeys(keys);
-			for (const auto& key : keys)
+			// Get keys registered at peer.
+			AlignedVector< Key > remoteKeys;
+			m_client->getKeys(remoteKeys);
+
+			// Get our registered keys.
+			AlignedVector< Key > localKeys;
+			m_dictionary->snapshotKeys(localKeys);
+
+			// Replicate all local blobs which isn't available at peer.
+			log::info << L"Replicating dictionary to peer; " << localKeys.size() << L" local, " << remoteKeys.size() << L" remote keys." << Endl;
+			for (const auto& localKey : localKeys)
 			{
 				if (m_thread->stopped())
 				{
@@ -39,28 +46,31 @@ Peer::Peer(
 					return;
 				}
 
-				Ref< const IBlob > blob = m_dictionary->get(key);
+				if (std::find(remoteKeys.begin(), remoteKeys.end(), localKey) != remoteKeys.end())
+					continue;
+
+				Ref< const IBlob > blob = m_dictionary->get(localKey);
 				if (!blob)
 					continue;
 
-				Ref< IStream > peerStream = m_client->put(key);
+				Ref< IStream > peerStream = m_client->put(localKey);
 				if (!peerStream)
 				{
-					log::info << L"Skipping " << key.format() << L"; already exists." << Endl;
+					log::error << L"Replication of " << localKey.format() << L" failed; unable to create remote blob." << Endl;
 					continue;
 				}
 
 				Ref< IStream > readStream = blob->read();
 				if (readStream)
 				{
-					log::info << L"Replicating " << key.format() << L" to peer " << name << L"." << Endl;
+					log::info << L"Replicating " << localKey.format() << L" to peer " << name << L"." << Endl;
 					StreamCopy(peerStream, readStream).execute();
 					peerStream->close();
 					readStream->close();
 				}
 			}
-			if (!keys.empty())
-				log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
+
+			log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
 
 			// Process queue of updated blobs.
 			while (!m_thread->stopped())
