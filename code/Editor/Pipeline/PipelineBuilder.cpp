@@ -809,10 +809,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 			m_cacheHit++;
 			m_succeededBuilt++;
 
-			// Restore previous set but also insert built instances from synthesized build;
-			// when caching is enabled then synthesized built instances should be included in parent build as well.
-			if (previousBuiltInstances)
-				previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
 			m_buildInstances.set(previousBuiltInstances);
 			return BrSucceeded;
 		}
@@ -896,10 +892,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
 	}
 
-	// Restore previous set but also insert built instances from synthesized build;
-	// when caching is enabled then synthesized built instances should be included in parent build as well.
-	if (previousBuiltInstances)
-		previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
 	m_buildInstances.set(previousBuiltInstances);
 
 	if (result)
@@ -908,7 +900,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		return BrFailed;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash,	const RefArray< db::Instance >& instances)
 {
 	Ref< IStream > stream = m_cache->put(guid, hash);
 	if (!stream)
