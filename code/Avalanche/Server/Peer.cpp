@@ -38,24 +38,26 @@ Peer::Peer(
 					m_finished = true;
 					return;
 				}
-				if (!m_client->have(key))
+
+				Ref< const IBlob > blob = m_dictionary->get(key);
+				if (!blob)
+					continue;
+
+				Ref< IStream > peerStream = m_client->put(key);
+				if (!peerStream)
 				{
-					Ref< const IBlob > blob = m_dictionary->get(key);
-					if (blob)
-					{
-						Ref< IStream > readStream = blob->read();
-						Ref< IStream > peerStream = m_client->put(key);
-						if (readStream && peerStream)
-						{
-							log::info << L"Replicating " << key.format() << L" to peer " << name << L"." << Endl;
-							StreamCopy(peerStream, readStream).execute();
-							peerStream->close();
-							readStream->close();
-						}
-					}
-				}
-				else
 					log::info << L"Skipping " << key.format() << L"; already exists." << Endl;
+					continue;
+				}
+
+				Ref< IStream > readStream = blob->read();
+				if (readStream)
+				{
+					log::info << L"Replicating " << key.format() << L" to peer " << name << L"." << Endl;
+					StreamCopy(peerStream, readStream).execute();
+					peerStream->close();
+					readStream->close();
+				}
 			}
 			if (!keys.empty())
 				log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
