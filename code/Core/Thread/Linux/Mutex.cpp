@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "Core/Thread/Mutex.h"
+#include "Core/Thread/Linux/Utilities.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
@@ -79,8 +80,19 @@ Mutex::~Mutex()
 bool Mutex::wait(int32_t timeout)
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-	while (pthread_mutex_lock(data->outer) != 0)
-		;
+	if (timeout < 0)
+	{
+		while (pthread_mutex_lock(data->outer) != 0)
+			;
+	}
+	else
+	{
+		timespec ts;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		addMilliSecToTimeSpec(&ts, timeout);
+		if (pthread_mutex_timedlock(data->outer, &ts) != 0)
+			return false;
+	}
 	return true;
 }
 
