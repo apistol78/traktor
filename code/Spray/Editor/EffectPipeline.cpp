@@ -113,6 +113,11 @@ TypeInfoSet EffectPipeline::getAssetTypes() const
 	return makeTypeInfoSet< EffectData >();
 }
 
+bool EffectPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t EffectPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

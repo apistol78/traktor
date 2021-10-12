@@ -193,6 +193,11 @@ TypeInfoSet TextureOutputPipeline::getAssetTypes() const
 	return makeTypeInfoSet< TextureOutput >();
 }
 
+bool TextureOutputPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t TextureOutputPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

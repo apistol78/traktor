@@ -20,6 +20,9 @@ namespace traktor
  *
  * This pipeline is used for every source instance
  * which hasn't a dedicated pipeline.
+ * 
+ * By default this pipeline doesn't request
+ * caching, override shouldCache if caching should be preferred.
  *
  * It copies the source instance to the
  * output database without any modification.
@@ -34,6 +37,8 @@ public:
 	virtual void destroy() override;
 
 	virtual TypeInfoSet getAssetTypes() const override;
+
+	virtual bool shouldCache() const override;
 
 	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const override;
 

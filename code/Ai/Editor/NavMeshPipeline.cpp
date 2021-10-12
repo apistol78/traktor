@@ -112,6 +112,11 @@ TypeInfoSet NavMeshPipeline::getAssetTypes() const
 	return makeTypeInfoSet< NavMeshAsset >();
 }
 
+bool NavMeshPipeline::shouldCache() const
+{
+	return true;
+}
+
 bool NavMeshPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

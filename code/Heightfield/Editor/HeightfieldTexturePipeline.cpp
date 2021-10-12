@@ -65,6 +65,11 @@ TypeInfoSet HeightfieldTexturePipeline::getAssetTypes() const
 	return makeTypeInfoSet< HeightfieldTextureAsset >();
 }
 
+bool HeightfieldTexturePipeline::shouldCache() const
+{
+	return true;
+}
+
 bool HeightfieldTexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

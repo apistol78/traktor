@@ -128,6 +128,11 @@ TypeInfoSet Pipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool Pipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t Pipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

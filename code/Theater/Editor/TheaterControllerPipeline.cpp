@@ -28,6 +28,11 @@ TypeInfoSet TheaterControllerPipeline::getAssetTypes() const
 	return makeTypeInfoSet< TheaterControllerData >();
 }
 
+bool TheaterControllerPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t TheaterControllerPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

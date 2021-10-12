@@ -79,6 +79,11 @@ TypeInfoSet ScenePipeline::getAssetTypes() const
 	return makeTypeInfoSet< SceneAsset >();
 }
 
+bool ScenePipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t ScenePipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

@@ -63,6 +63,11 @@ TypeInfoSet IrradianceGridPipeline::getAssetTypes() const
 	return makeTypeInfoSet< IrradianceGridAsset >();
 }
 
+bool IrradianceGridPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t IrradianceGridPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

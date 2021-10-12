@@ -30,6 +30,11 @@ TypeInfoSet InputMappingPipeline::getAssetTypes() const
 	return makeTypeInfoSet< InputMappingAsset >();
 }
 
+bool InputMappingPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t InputMappingPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

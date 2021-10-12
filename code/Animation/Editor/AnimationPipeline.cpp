@@ -51,6 +51,11 @@ uint32_t AnimationPipeline::hashAsset(const ISerializable* sourceAsset) const
 	return DeepHash(sourceAsset).get();
 }
 
+bool AnimationPipeline::shouldCache() const
+{
+	return true;
+}
+
 bool AnimationPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

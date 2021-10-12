@@ -35,6 +35,11 @@ TypeInfoSet CloudMaskPipeline::getAssetTypes() const
 	return makeTypeInfoSet< CloudMaskAsset >();
 }
 
+bool CloudMaskPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t CloudMaskPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

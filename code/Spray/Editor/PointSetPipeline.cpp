@@ -35,6 +35,11 @@ TypeInfoSet PointSetPipeline::getAssetTypes() const
 	return makeTypeInfoSet< PointSetAsset >();
 }
 
+bool PointSetPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t PointSetPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

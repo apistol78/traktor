@@ -26,6 +26,8 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override;
 
+	virtual bool shouldCache() const override final;
+
 	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const override final;
 	
 	virtual bool buildDependencies(

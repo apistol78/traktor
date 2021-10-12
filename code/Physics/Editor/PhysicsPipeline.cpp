@@ -36,6 +36,11 @@ TypeInfoSet PhysicsPipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool PhysicsPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t PhysicsPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

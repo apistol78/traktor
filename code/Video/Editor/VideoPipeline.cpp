@@ -34,6 +34,11 @@ TypeInfoSet VideoPipeline::getAssetTypes() const
 	return makeTypeInfoSet< VideoAsset >();
 }
 
+bool VideoPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t VideoPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
