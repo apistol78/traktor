@@ -25,8 +25,11 @@ Ref< Object > DataAccessCache::readObject(
 	Ref< IStream > s;
 
 	// Try to read from cache first.
-	if ((s = m_cache->get(key)) != nullptr)
-		return read(s);
+	if (m_cache != nullptr)
+	{
+		if ((s = m_cache->get(key)) != nullptr)
+			return read(s);
+	}
 
 	// No cached entry; need to fabricate object.
 	Ref< Object > object = create();
@@ -34,14 +37,17 @@ Ref< Object > DataAccessCache::readObject(
 		return nullptr;
 
 	// Upload to cache and then return object.
-	if ((s = m_cache->put(key)) != nullptr)
+	if (m_cache != nullptr)
 	{
-		if (write(object, s))
-			s->close();
-		else
-			log::error << L"Unable to upload memento object to cache." << Endl;
+		if ((s = m_cache->put(key)) != nullptr)
+		{
+			if (write(object, s))
+				s->close();
+			else
+				log::error << L"Unable to upload memento object to cache." << Endl;
+		}
 	}
-
+	
 	return object;
 }
 
