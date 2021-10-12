@@ -97,9 +97,6 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_editModelCachePath = new ui::Edit();
 	m_editModelCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path"), ui::WsNone);
 
-	m_editProgramCachePath = new ui::Edit();
-	m_editProgramCachePath->create(container, settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCache.Path"), ui::WsNone);
-
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_PIPELINE"));
 	return true;
 }
@@ -128,7 +125,6 @@ bool PipelineSettingsPage::apply(PropertyGroup* settings)
 
 	settings->setProperty< PropertyString >(L"Pipeline.InstanceCache.Path", m_editInstanceCachePath->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.ModelCache.Path", m_editModelCachePath->getText());
-	settings->setProperty< PropertyString >(L"ShaderPipeline.ProgramCache.Path", m_editProgramCachePath->getText());
 
 	return true;
 }
