@@ -1,38 +1,48 @@
-#include <pthread.h>
+#include <mutex>
 #include "Core/Thread/CriticalSection.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+struct InternalData
+{
+	std::timed_mutex mtx;
+};
+
+	}
 
 CriticalSection::CriticalSection()
 {
-	pthread_mutex_t* mutex = new pthread_mutex_t();
-
-	int rc = pthread_mutex_init(mutex, 0);
-    T_ASSERT (rc == 0); (void)rc;
-
-	m_handle = mutex;
+	InternalData* data = new InternalData();
+	m_handle = data;
 }
 
 CriticalSection::~CriticalSection()
 {
-	delete reinterpret_cast< pthread_mutex_t* >(m_handle);
+	delete reinterpret_cast< InternalData* >(m_handle);
 }
 
 bool CriticalSection::wait(int32_t timeout)
 {
-	pthread_mutex_t* mutex = reinterpret_cast< pthread_mutex_t* >(m_handle);
-	while (pthread_mutex_lock(mutex) != 0)
-		;
+	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
+	if (timeout < 0)
+	{
+		data->mtx.lock();
+	}
+	else
+	{
+		if (!data->mtx.try_lock_for(std::chrono::milliseconds(timeout)))
+			return false;
+	}
 	return true;
 }
 
 void CriticalSection::release()
 {
-	pthread_mutex_t* mutex = reinterpret_cast< pthread_mutex_t* >(m_handle);
-	int rc = pthread_mutex_unlock(mutex);
-    T_ASSERT (rc == 0); (void)rc;
+	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
+	data->mtx.unlock();
 }
 
 }
-
