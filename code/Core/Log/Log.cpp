@@ -35,12 +35,12 @@ public:
 		}
 		else if (level == 1)
 		{
-			fwprintf(stdout, L"%ls\n", str);
+			fwprintf(stdout, L"\x1B[0;33m%ls\x1B[0m\n", str);
 			fflush(stdout);
 		}
 		else
 		{
-			fwprintf(stderr, L"%ls\n", str);
+			fwprintf(stderr, L"\x1B[0;31m%ls\x1B[0m\n", str);
 			fflush(stderr);
 		}
 #if defined(__IOS__)
