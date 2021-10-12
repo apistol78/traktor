@@ -38,6 +38,11 @@ TypeInfoSet SkeletonPipeline::getAssetTypes() const
 	return makeTypeInfoSet< SkeletonAsset >();
 }
 
+bool SkeletonPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t SkeletonPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

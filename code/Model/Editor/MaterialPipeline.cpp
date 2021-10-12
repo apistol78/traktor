@@ -24,6 +24,11 @@ TypeInfoSet MaterialPipeline::getAssetTypes() const
 	return makeTypeInfoSet< Material >();
 }
 
+bool MaterialPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t MaterialPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

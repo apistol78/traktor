@@ -45,6 +45,11 @@ TypeInfoSet ImageGraphPipeline::getAssetTypes() const
 	return makeTypeInfoSet< ImageGraphAsset >();
 }
 
+bool ImageGraphPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t ImageGraphPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

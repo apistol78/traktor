@@ -76,6 +76,11 @@ TypeInfoSet SoundPipeline::getAssetTypes() const
 	return makeTypeInfoSet< SoundAsset >();
 }
 
+bool SoundPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t SoundPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

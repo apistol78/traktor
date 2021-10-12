@@ -57,6 +57,11 @@ TypeInfoSet BfnTexturePipeline::getAssetTypes() const
 	return makeTypeInfoSet< BfnTextureAsset >();
 }
 
+bool BfnTexturePipeline::shouldCache() const
+{
+	return true;
+}
+
 bool BfnTexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

@@ -24,6 +24,8 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override final;
 
+	virtual bool shouldCache() const override final;
+
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,

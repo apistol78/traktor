@@ -63,6 +63,11 @@ TypeInfoSet EntityPipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool EntityPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t EntityPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

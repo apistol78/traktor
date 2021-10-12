@@ -132,6 +132,11 @@ TypeInfoSet ShaderPipeline::getAssetTypes() const
 	return makeTypeInfoSet< ShaderGraph >();
 }
 
+bool ShaderPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	Ref< const ShaderGraph > shaderGraph = mandatory_non_null_type_cast< const ShaderGraph* >(sourceAsset);

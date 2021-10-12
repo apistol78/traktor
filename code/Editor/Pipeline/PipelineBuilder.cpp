@@ -3,6 +3,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -504,6 +505,9 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 	log::info << IncreaseIndent;
 
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT(pipeline);
+
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
 	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
@@ -511,7 +515,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	m_buildInstances.set(&builtInstances);
 
 	// Get output instances from cache.
-	if (m_cache && cacheable)
+	if (m_cache && cacheable && pipeline->shouldCache())
 	{
 		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
@@ -544,9 +548,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	else if (m_cache)
 		m_cacheVoid++;
 
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-	T_ASSERT(pipeline);
-
 	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
@@ -566,7 +567,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		result
 	)
 	{
-		if (m_cache && cacheable)
+		if (m_cache && cacheable && pipeline->shouldCache())
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
@@ -787,6 +788,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	log::info << L"Building \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT(pipeline);
+
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
 	RefArray< db::Instance >* previousBuiltInstances = (RefArray< db::Instance >*)m_buildInstances.get();
@@ -794,7 +798,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	m_buildInstances.set(&builtInstances);
 
 	// Get output instances from cache.
-	if (m_cache)
+	if (m_cache && pipeline->shouldCache())
 	{
 		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
 		{
@@ -829,9 +833,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 	Timer timer;
 
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-	T_ASSERT(pipeline);
-
 	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
@@ -860,7 +861,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		result
 	)
 	{
-		if (m_cache)
+		if (m_cache && pipeline->shouldCache())
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
@@ -903,6 +904,11 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash,	const RefArray< db::Instance >& instances)
 {
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[=]() { m_profiler->begin(type_of(m_cache)); },
+		[=]() { m_profiler->end(type_of(m_cache)); }
+	);
+
 	Ref< IStream > stream = m_cache->put(guid, hash);
 	if (!stream)
 		return false;
@@ -938,6 +944,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDepend
 
 bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
 {
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[=]() { m_profiler->begin(type_of(m_cache)); },
+		[=]() { m_profiler->end(type_of(m_cache)); }
+	);
+
 	struct DirectoryEntry
 	{
 		Guid instanceId;

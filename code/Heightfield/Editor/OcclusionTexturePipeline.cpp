@@ -239,6 +239,11 @@ TypeInfoSet OcclusionTexturePipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool OcclusionTexturePipeline::shouldCache() const
+{
+	return true;
+}
+
 bool OcclusionTexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

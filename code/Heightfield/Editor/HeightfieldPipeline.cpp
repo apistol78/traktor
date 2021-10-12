@@ -36,6 +36,11 @@ TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 	return makeTypeInfoSet< HeightfieldAsset >();
 }
 
+bool HeightfieldPipeline::shouldCache() const
+{
+	return true;
+}
+
 uint32_t HeightfieldPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

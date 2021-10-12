@@ -21,6 +21,11 @@ TypeInfoSet ColorGradingTexturePipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool ColorGradingTexturePipeline::shouldCache() const
+{
+	return true;
+}
+
 bool ColorGradingTexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

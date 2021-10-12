@@ -25,6 +25,11 @@ TypeInfoSet MeshComponentPipeline::getAssetTypes() const
 	return makeTypeInfoSet< MeshComponentData >();
 }
 
+bool MeshComponentPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t MeshComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

@@ -55,6 +55,9 @@ public:
 	/*! Get pipeline asset types. */
 	virtual TypeInfoSet getAssetTypes() const = 0;
 
+	/*! Return true if this pipeline benefit from being cached. */
+	virtual bool shouldCache() const = 0;
+
 	/*! Calculate hash of asset. */
 	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const = 0;
 

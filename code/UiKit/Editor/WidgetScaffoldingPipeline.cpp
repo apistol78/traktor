@@ -24,6 +24,11 @@ TypeInfoSet WidgetScaffoldingPipeline::getAssetTypes() const
 	return makeTypeInfoSet< WidgetScaffolding >();
 }
 
+bool WidgetScaffoldingPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t WidgetScaffoldingPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

@@ -31,6 +31,11 @@ TypeInfoSet ScenePermutationPipeline::getAssetTypes() const
 	return makeTypeInfoSet< ScenePermutationAsset >();
 }
 
+bool ScenePermutationPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t ScenePermutationPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

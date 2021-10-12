@@ -77,6 +77,11 @@ TypeInfoSet ResourceBundlePipeline::getAssetTypes() const
 	return makeTypeInfoSet< ResourceBundleAsset >();
 }
 
+bool ResourceBundlePipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t ResourceBundlePipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();

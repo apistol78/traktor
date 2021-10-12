@@ -31,6 +31,11 @@ TypeInfoSet SequenceTexturePipeline::getAssetTypes() const
 	return typeSet;
 }
 
+bool SequenceTexturePipeline::shouldCache() const
+{
+	return true;
+}
+
 bool SequenceTexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

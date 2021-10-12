@@ -32,6 +32,11 @@ uint32_t AnimatedMeshComponentPipeline::hashAsset(const ISerializable* sourceAss
 	return DeepHash(sourceAsset).get();
 }
 
+bool AnimatedMeshComponentPipeline::shouldCache() const
+{
+	return false;
+}
+
 bool AnimatedMeshComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,

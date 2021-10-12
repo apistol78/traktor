@@ -31,6 +31,11 @@ TypeInfoSet AssetsPipeline::getAssetTypes() const
 	return makeTypeInfoSet< Assets >();
 }
 
+bool AssetsPipeline::shouldCache() const
+{
+	return false;
+}
+
 uint32_t AssetsPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
