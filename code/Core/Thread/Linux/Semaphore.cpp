@@ -1,7 +1,5 @@
-#include <cstring>
-#include <pthread.h>
+#include <mutex>
 #include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Linux/Utilities.h"
 
 namespace traktor
 {
@@ -10,24 +8,15 @@ namespace traktor
 
 struct InternalData
 {
-	pthread_mutex_t outer;
+	std::recursive_timed_mutex mtx;
 };
 
 	}
 
 Semaphore::Semaphore()
-:	m_handle(0)
+:	m_handle(nullptr)
 {
 	InternalData* data = new InternalData();
-	std::memset(data, 0, sizeof(InternalData));
-
-	pthread_mutexattr_t ma;
-	pthread_mutexattr_init(&ma);
-	pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE);
-
-	int rc = pthread_mutex_init(&data->outer, &ma);
-	T_ASSERT (rc == 0);
-
 	m_handle = data;
 }
 
@@ -41,15 +30,11 @@ bool Semaphore::wait(int32_t timeout)
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 	if (timeout < 0)
 	{
-		while (pthread_mutex_lock(&data->outer) != 0)
-			;
+		data->mtx.lock();
 	}
 	else
 	{
-		timespec ts;
-		clock_gettime(CLOCK_REALTIME, &ts);
-		addMilliSecToTimeSpec(&ts, timeout);
-		if (pthread_mutex_timedlock(&data->outer, &ts) != 0)
+		if (!data->mtx.try_lock_for(std::chrono::milliseconds(timeout)))
 			return false;
 	}
 	return true;
@@ -58,9 +43,7 @@ bool Semaphore::wait(int32_t timeout)
 void Semaphore::release()
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-
-	int rc = pthread_mutex_unlock(&data->outer);
-	T_ASSERT(rc == 0);
+	data->mtx.unlock();
 }
 
 }

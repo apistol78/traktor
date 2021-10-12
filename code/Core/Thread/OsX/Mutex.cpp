@@ -80,19 +80,8 @@ Mutex::~Mutex()
 bool Mutex::wait(int32_t timeout)
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-	if (timeout < 0)
-	{
-		while (pthread_mutex_lock(data->outer) != 0)
-			;
-	}
-	else
-	{
-		timespec ts;
-		clock_gettime(CLOCK_REALTIME, &ts);
-		addMilliSecToTimeSpec(&ts, timeout);
-		if (pthread_mutex_timedlock(data->outer, &ts) != 0)
-			return false;
-	}
+	while (pthread_mutex_lock(data->outer) != 0)
+		;
 	return true;
 }
 
