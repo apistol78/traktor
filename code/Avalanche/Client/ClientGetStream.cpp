@@ -34,7 +34,7 @@ void ClientGetStream::close()
 		}
 	}
 	
-		// Return socket to be reused.
+	// Return socket to be reused.
 	if (m_stream)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_client->m_lock);
