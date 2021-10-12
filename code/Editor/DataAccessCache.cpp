@@ -28,7 +28,10 @@ Ref< Object > DataAccessCache::readObject(
 	if (m_cache != nullptr)
 	{
 		if ((s = m_cache->get(key)) != nullptr)
-			return read(s);
+		{
+			Ref< Object > object = read(s); s->close();
+			return object;
+		}
 	}
 
 	// No cached entry; need to fabricate object.

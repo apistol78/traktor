@@ -38,7 +38,7 @@ void ClientPutStream::close()
 		return;
 	}
 
-	if (reply == c_replyOk)
+	if (reply == c_replyOk || reply == c_replyFailure)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_client->m_lock);
 		m_client->m_streams.push_back(m_stream);
