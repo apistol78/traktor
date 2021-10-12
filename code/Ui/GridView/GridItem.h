@@ -27,7 +27,7 @@ class T_DLLCLASS GridItem : public AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	GridItem();
+	GridItem() = default;
 
 	explicit GridItem(const std::wstring& text);
 
@@ -41,6 +41,10 @@ public:
 
 	std::wstring getText() const;
 
+	void setTextColor(const Color4ub& textColor);
+
+	const Color4ub& getTextColor() const;
+
 	bool edit();
 
 	void setFont(Font* font);
@@ -49,7 +53,9 @@ public:
 
 	void setImage(IBitmap* image);
 
-	IBitmap* getImage() const;
+	int32_t addImage(IBitmap* image);
+
+	const RefArray< IBitmap >& getImages() const;
 
 	int32_t getHeight();
 
@@ -58,10 +64,11 @@ public:
 private:
 	friend class GridRow;
 
-	GridRow* m_row;
+	GridRow* m_row = nullptr;
 	std::wstring m_text;
+	Color4ub m_textColor = Color4ub(0, 0, 0, 0);
 	Ref< Font > m_font;
-	Ref< IBitmap > m_image;
+	RefArray< IBitmap > m_images;
 
 	virtual AutoWidgetCell* hitTest(const Point& position) override final;
 

@@ -303,6 +303,18 @@
 			<second>$(Images.Path)/Images/Scene/Types.image</second>
 		</item>
 		<item>
+			<first>Scene.EntityAttributeExternal</first>
+			<second>$(Images.Path)/Images/Scene/EntityAttributeExternal.image</second>
+		</item>
+		<item>
+			<first>Scene.EntityAttributeDynamic</first>
+			<second>$(Images.Path)/Images/Scene/EntityAttributeDynamic.image</second>
+		</item>
+		<item>
+			<first>Scene.EntityAttributePrefab</first>
+			<second>$(Images.Path)/Images/Scene/EntityAttributePrefab.image</second>
+		</item>
+		<item>
 			<first>Script.AddDependency</first>
 			<second>$(Images.Path)/Images/Script/AddDependency.image</second>
 		</item>
