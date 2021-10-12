@@ -10,6 +10,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -384,6 +385,32 @@ bool EntityAdapter::isLocked(bool includingParents) const
 				return true;
 		}
 	}
+
+	return false;
+}
+
+bool EntityAdapter::isDynamic() const
+{
+	auto editorAttributes = m_entityData->getComponent< world::EditorAttributesComponentData >();
+	if (editorAttributes && editorAttributes->dynamic)
+		return true;
+
+	if (m_parent != nullptr)
+		return m_parent->isDynamic();
+
+	return false;
+}
+
+bool EntityAdapter::isPrefab() const
+{
+	for (auto component : m_entityData->getComponents())
+	{
+		if (std::wstring(type_name(component)) == L"traktor.shape.PrefabComponentData")
+			return true;
+	}
+
+	if (m_parent != nullptr)
+		return m_parent->isPrefab();
 
 	return false;
 }

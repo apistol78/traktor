@@ -16,35 +16,26 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridItem", GridItem, AutoWidgetCell)
 
-GridItem::GridItem()
-:	m_row(nullptr)
-{
-}
-
 GridItem::GridItem(const std::wstring& text)
-:	m_row(nullptr)
-,	m_text(text)
+:	m_text(text)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, Font* font)
-:	m_row(nullptr)
-,	m_text(text)
+:	m_text(text)
 ,	m_font(font)
 {
 }
 
 GridItem::GridItem(const std::wstring& text, IBitmap* image)
-:	m_row(nullptr)
-,	m_text(text)
-,	m_image(image)
+:	m_text(text)
 {
+	m_images.push_back(image);
 }
 
 GridItem::GridItem(IBitmap* image)
-:	m_row(nullptr)
-,	m_image(image)
 {
+	m_images.push_back(image);
 }
 
 void GridItem::setText(const std::wstring& text)
@@ -55,6 +46,16 @@ void GridItem::setText(const std::wstring& text)
 std::wstring GridItem::getText() const
 {
 	return m_text;
+}
+
+void GridItem::setTextColor(const Color4ub& textColor)
+{
+	m_textColor = textColor;
+}
+
+const Color4ub& GridItem::getTextColor() const
+{
+	return m_textColor;
 }
 
 bool GridItem::edit()
@@ -75,12 +76,19 @@ Font* GridItem::getFont() const
 
 void GridItem::setImage(IBitmap* image)
 {
-	m_image = image;
+	m_images.resize(1);
+	m_images[0] = image;
 }
 
-IBitmap* GridItem::getImage() const
+int32_t GridItem::addImage(IBitmap* image)
 {
-	return m_image;
+	m_images.push_back(image);
+	return (int32_t)m_images.size() - 1;
+}
+
+const RefArray< IBitmap >& GridItem::getImages() const
+{
+	return m_images;
 }
 
 int32_t GridItem::getHeight()
@@ -95,8 +103,8 @@ int32_t GridItem::getHeight()
 	else if (getWidget< GridView >())
 		height = std::max(height, getWidget< GridView >()->getFontMetric().getHeight());
 
-	if (m_image)
-		height = std::max(height, m_image->getSize().cy + dpi96(4));
+	for (auto image : m_images)
+		height = std::max(height, image->getSize().cy + dpi96(4));
 
 	return height;
 }
@@ -116,25 +124,29 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getWidget< GridView >()->getStyleSheet();
-
 	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
 
-	if (m_image)
+	if (m_text.empty())
 	{
-		Size szImage = m_image->getSize();
+		int32_t w = 0;
+		for (auto image : m_images)
+			w += image->getSize().cx + 2;
+		rcText.left += (rcText.getWidth() - w) / 2;
+	}
 
+	for (auto image : m_images)
+	{
+		Size szImage = image->getSize();
 		Point pntImage(
 			rcText.left,
 			rcText.top + (rcText.getHeight() - szImage.cy) / 2
 		);
-		if (m_text.empty())
-			pntImage.x = rcText.left + (rcText.getWidth() - szImage.cx) / 2;
 
 		canvas.drawBitmap(
 			pntImage,
 			Point(0, 0),
 			szImage,
-			m_image,
+			image,
 			BmAlpha
 		);
 
@@ -146,10 +158,15 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		if (getWidget< GridView >()->isEnable() && getRow())
-			canvas.setForeground(ss->getColor(this, (getRow()->getState() & GridRow::RsSelected) ? L"color-selected" : L"color"));
+		if (m_textColor.a == 0)
+		{
+			if (getWidget< GridView >()->isEnable() && getRow())
+				canvas.setForeground(ss->getColor(this, (getRow()->getState() & GridRow::RsSelected) ? L"color-selected" : L"color"));
+			else
+				canvas.setForeground(ss->getColor(this, L"color-disabled"));
+		}
 		else
-			canvas.setForeground(ss->getColor(this, L"color-disabled"));
+			canvas.setForeground(m_textColor);
 
 		canvas.setClipRect(rcText);
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);

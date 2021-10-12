@@ -209,6 +209,10 @@ public:
 
 	bool isLocked(bool includingParents = true) const;
 
+	bool isDynamic() const;
+
+	bool isPrefab() const;
+
 	//@}
 
 	/*! \name Editor aid. */

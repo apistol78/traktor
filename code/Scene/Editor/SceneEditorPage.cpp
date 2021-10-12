@@ -1074,21 +1074,31 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
 	);
 
+	if (entityAdapter->isLayer())
+		row->setMinimumHeight(ui::dpi96(32));
+
 	std::wstring entityName = entityAdapter->getName();
 	if (entityName.empty())
 		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
 
+	// Create entity name item.
+	Ref< ui::GridItem > item = new ui::GridItem(entityName);
+
 	if (entityAdapter->isExternal())
-		row->add(new ui::GridItem(entityName, m_instanceGridFontBold/*, 1*/));
+		item->setFont(m_instanceGridFontBold);
 	else if (entityAdapter->isLayer())
-	{
-		row->add(new ui::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
-		row->setMinimumHeight(ui::dpi96(32));
-	}
-	else if (entityAdapter->isGroup())
-		row->add(new ui::GridItem(entityName/*, 2, 3*/));
-	else
-		row->add(new ui::GridItem(entityName/*, 0*/));
+		item->setFont(m_instanceGridFontHuge);
+
+	if (entityAdapter->isGroup())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeGroup"));
+	if (entityAdapter->isPrefab())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributePrefab"));
+	if (entityAdapter->isDynamic())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeDynamic"));
+	if (entityAdapter->isExternal())
+		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeExternal"));
+
+	row->add(item);
 
 	// Create "visible" check box.
 	row->add(new ui::GridItem(
