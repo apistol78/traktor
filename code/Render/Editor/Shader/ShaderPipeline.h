@@ -63,10 +63,8 @@ public:
 
 private:
 	std::wstring m_programCompilerTypeName;
-	std::wstring m_programCachePath;
 	mutable Semaphore m_programCompilerLock;
 	mutable Ref< IProgramCompiler > m_programCompiler;
-	mutable Ref< ProgramCache > m_programCache;
 	Ref< IProgramHints > m_programHints;
 	SmallSet< std::wstring > m_includeOnlyTechniques;
 	Ref< const PropertyGroup > m_compilerSettings;
@@ -79,8 +77,6 @@ private:
 	bool m_editor;
 
 	IProgramCompiler* getProgramCompiler() const;
-
-	ProgramCache* getProgramCache() const;
 };
 
 	}
