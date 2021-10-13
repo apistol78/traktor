@@ -547,43 +547,6 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
-#if defined(_DEBUG)
-	// Show resource information.
-	{
-		const auto& techniques = shaderResource->getTechniques();
-		log::info << uint32_t(techniques.size()) << L" technique(s)" << Endl;
-
-		for (size_t i = 0; i < techniques.size(); ++i)
-		{
-			log::info << uint32_t(i) << L": " << techniques[i].name << Endl;
-			log::info << IncreaseIndent;
-
-			const auto& combinations = techniques[i].combinations;
-			log::info << uint32_t(combinations.size()) << L" combination(s)" << Endl;
-
-			for (size_t j = 0; j < combinations.size(); ++j)
-			{
-				log::info << uint32_t(j) << L": " << combinations[j].mask << L"|" << combinations[j].value << Endl;
-				log::info << IncreaseIndent;
-
-				const auto& textures = combinations[j].textures;
-				log::info << uint32_t(textures.size()) << L" texture(s)" << Endl;
-
-				for (size_t k = 0; k < textures.size(); ++k)
-					log::info << uint32_t(k) << L": " << textures[k].format() << Endl;
-
-				log::info << DecreaseIndent;
-			}
-
-			log::info << DecreaseIndent;
-		}
-
-		log::info << L"Estimated costs" << Endl;
-		log::info << L"  VS " << stats.vertexCost << Endl;
-		log::info << L"  PS " << stats.pixelCost << Endl;
-	}
-#endif
-
 	return true;
 }
 

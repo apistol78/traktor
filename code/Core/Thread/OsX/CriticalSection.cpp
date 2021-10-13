@@ -30,13 +30,25 @@ bool CriticalSection::wait(int32_t timeout)
 	if (timeout < 0)
 	{
 		data->mtx.lock();
+		return true;
+	}
+	else if (timeout == 0)
+	{
+		if (data->mtx.try_lock())
+			return true;
 	}
 	else
 	{
-		if (!data->mtx.try_lock_for(std::chrono::milliseconds(timeout)))
-			return false;
+		auto until = std::chrono::steady_clock::now();
+		until += std::chrono::milliseconds(timeout);
+		do
+		{
+			if (data->mtx.try_lock_until(until))
+				return true;
+		}
+		while (until <= std::chrono::steady_clock::now());
 	}
-	return true;
+	return false;
 }
 
 void CriticalSection::release()

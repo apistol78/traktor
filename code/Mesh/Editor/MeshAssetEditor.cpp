@@ -647,7 +647,7 @@ void MeshAssetEditor::createMaterialShader()
 
 	// Generate shader.
 	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generate(
-		m_editor->getSourceDatabase(),
+		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 		*m_model,
 		*it,
 		materialTemplate,

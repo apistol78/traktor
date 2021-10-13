@@ -1,6 +1,5 @@
 #include <functional>
 #include <fbxsdk.h>
-#include "Core/FbxLock.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
@@ -25,6 +24,7 @@ namespace traktor
 		namespace
 		{
 
+Semaphore s_fbxLock;
 FbxManager* s_fbxManager = nullptr;
 FbxIOSettings* s_ioSettings = nullptr;
 FbxScene* s_scene = nullptr;
@@ -190,7 +190,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_fbxLock);
 
 	if (!s_fbxManager)
 	{
