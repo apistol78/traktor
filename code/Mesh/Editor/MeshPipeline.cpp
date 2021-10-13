@@ -500,7 +500,7 @@ bool MeshPipeline::buildOutput(
 			}
 
 			materialShaderGraph = generator.generate(
-				pipelineBuilder->getSourceDatabase(),
+				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 				*models[0],
 				materialPair.second,
 				materialTemplate,

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -12,13 +13,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-
-class Database;
-
-	}
-
 	namespace editor
 	{
 
@@ -50,7 +44,7 @@ class T_DLLCLASS MaterialShaderGenerator : public Object
 
 public:
 	Ref< render::ShaderGraph > generate(
-		db::Database* database,
+		const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 		const model::Model& model,
 		const model::Material& material,
 		const Guid& materialTemplate,

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -67,18 +68,18 @@ const Guid c_implTexCoordSelect1(L"{0269F15C-2543-6D4A-ADC0-4DC584976AAF}");
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(db::Database* database)
-	:	m_database(database)
+	FragmentReaderAdapter(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
+	:	m_resolve(resolve)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		return m_database->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+		return m_resolve(fragmentGuid);
 	}
 
 private:
-	Ref< db::Database > m_database;
+	std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) > m_resolve;
 };
 
 void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* textureNode, bool anisotropic)
@@ -102,7 +103,7 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
-	db::Database* database,
+	const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 	const model::Model& model,
 	const model::Material& material,
 	const Guid& materialTemplate,
@@ -114,7 +115,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	if (templateGuid.isNull() || !templateGuid.isValid())
 		templateGuid = c_materialShader;
 
-	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(templateGuid);
+	Ref< render::ShaderGraph > materialShaderGraph = DeepClone(resolve(templateGuid)).create< render::ShaderGraph >();
 	if (!materialShaderGraph)
 		return nullptr;
 
@@ -327,7 +328,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	}
 
 	// Resolve material shader; load all patched fragments and merge into a complete shader.
-	FragmentReaderAdapter fragmentReader(database);
+	FragmentReaderAdapter fragmentReader(resolve);
 	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, resolveNodes, false);
 	if (!materialShaderGraph)
 		return nullptr;

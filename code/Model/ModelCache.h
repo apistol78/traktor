@@ -3,7 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
-#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +37,7 @@ public:
 	Ref< Model > get(const Path& fileName, const std::wstring& filter);
 
 private:
-	Mutex m_lock;
+	Semaphore m_lock;
 	Path m_cachePath;
 };
 

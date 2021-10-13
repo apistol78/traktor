@@ -6,6 +6,8 @@
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Model/Model.h"
@@ -15,6 +17,12 @@ namespace traktor
 {
 	namespace model
 	{
+		namespace
+		{
+
+Semaphore g_lock;
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBlend", 0, ModelFormatBlend, ModelFormat)
 
@@ -31,7 +39,10 @@ bool ModelFormatBlend::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& filter) const
 {
-	std::wstring threadFolder = str(L"%08x", ThreadManager::getInstance().getCurrentThread()->id());
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_lock);
+
+	const std::wstring threadFolder = str(L"%08x", ThreadManager::getInstance().getCurrentThread()->id());
+	const std::wstring intermediate = L"intermediate.fbx";
 
 	// Determine working path.
 	std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender/" + threadFolder;
@@ -46,7 +57,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	FileOutputStream os(file, new Utf8Encoding());
 	os << L"import bpy" << Endl;
 	os << L"bpy.ops.export_scene.fbx(" << Endl;
-	os << L"	filepath=\"" << scratchPath << L"/__intermediate__.fbx\"," << Endl;
+	os << L"	filepath=\"" << scratchPath << L"/" << intermediate << L"\"," << Endl;
 	os << L"	axis_forward=\"Z\"," << Endl;
 	os << L"	axis_up=\"Y\"," << Endl;
 	os << L"	use_selection=False," << Endl;
@@ -89,7 +100,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		return nullptr;
 
 	// Import intermediate model.
-	return ModelFormat::readAny(scratchPath + L"/__intermediate__.fbx", filter);
+	return ModelFormat::readAny(scratchPath + L"/" + intermediate, filter);
 }
 
 bool ModelFormatBlend::write(const Path& filePath, const Model* model) const

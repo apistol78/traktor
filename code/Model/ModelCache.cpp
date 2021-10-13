@@ -48,7 +48,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
 	{
-		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
 		if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
 			haveCachedFile = true;
@@ -60,14 +60,14 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 		return ModelFormat::readAny(cachedFileName, L"");
 	}
 
-	// No cached file exist; need to read source model and apply all operations.
+	// No cached file exist; need to read source model.
 	Ref< Model > model = ModelFormat::readAny(fileName, filter);
 	if (!model)
 		return nullptr;
 
 	// Write cached copy of post-operation model.
 	{
-		T_ANONYMOUS_VAR(Acquire< Mutex >)(m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
 
 		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))

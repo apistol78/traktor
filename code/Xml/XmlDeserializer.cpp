@@ -479,11 +479,13 @@ bool XmlDeserializer::enterElement(const std::wstring& name)
 		else if (eventType == XmlPullParser::EventType::Invalid)
 		{
 			log::error << L"Invalid response from parser when entering element \"" << name << L"\"" << Endl;
+			m_stack[--m_stackPointer].dups.reset();
 			return false;
 		}
 	}
 
     log::error << L"No matching element \"" << name << L"\" until end of document" << Endl;
+	m_stack[--m_stackPointer].dups.reset();
 	return false;
 }
 
