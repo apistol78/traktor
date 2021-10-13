@@ -3,6 +3,7 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Misc/Key.h"
 #include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
@@ -50,11 +51,11 @@ public:
 
 	/*!
 	 */
-	virtual Ref< IStream > get(uint32_t key) = 0;
+	virtual Ref< IStream > get(const Key& key) = 0;
 
 	/*!
 	 */
-	virtual Ref< IStream > put(uint32_t key) = 0;
+	virtual Ref< IStream > put(const Key& key) = 0;
 
 	/*!
 	 */

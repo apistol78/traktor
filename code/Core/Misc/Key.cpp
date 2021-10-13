@@ -1,11 +1,9 @@
-#include "Avalanche/Key.h"
 #include "Core/Io/IStream.h"
+#include "Core/Misc/Key.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
 {
-	namespace avalanche
-	{
 
 Key::Key()
 :	m_kv(0, 0, 0, 0)
@@ -55,7 +53,7 @@ Key Key::read(IStream* stream)
 
 bool Key::write(IStream* stream) const
 {
-	uint32_t kv[4] = { std::get< 0 >(m_kv), std::get< 1 >(m_kv), std::get< 2 >(m_kv), std::get< 3 >(m_kv) };
+	const uint32_t kv[4] = { std::get< 0 >(m_kv), std::get< 1 >(m_kv), std::get< 2 >(m_kv), std::get< 3 >(m_kv) };
 	return stream->write(kv, sizeof(kv)) == sizeof(kv);
 }
 
@@ -74,5 +72,4 @@ bool Key::operator > (const Key& rh) const
 	return m_kv > rh.m_kv;
 }
 
-	}
 }

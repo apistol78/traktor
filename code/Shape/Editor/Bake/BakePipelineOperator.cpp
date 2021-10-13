@@ -194,7 +194,7 @@ void addSky(
 	uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
 
 	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
-		textureAssetHash,
+		Key(0x00000001, 0x00000000, 0x00000000, textureAssetHash),
 		[&](IStream* stream) -> Ref< IblProbe > {
 			Ref< drawing::Image > radiance = drawing::Image::load(stream, L"tri");
 			if (radiance)
@@ -377,9 +377,6 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	if (!tracerEnable)
 		return true;
 
-	// Create temporary output path for debug info etc.
-	FileSystem::getInstance().makeAllDirectories(L"temp/Bake");
-
 	// Create entity replicators.
 	TypeInfoSet entityReplicatorTypes;
 	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
@@ -515,8 +512,10 @@ bool BakePipelineOperator::build(
 			}
 		}
 
+#if 0
 		// Log pre-"layer entity hierarchy".
 		{
+			FileSystem::getInstance().makeAllDirectories(L"temp/Bake");
 			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (Before).txt", File::FmWrite);
 			if (f)
 			{
@@ -526,6 +525,7 @@ bool BakePipelineOperator::build(
 				f->close();
 			}
 		}
+#endif
 
 		// Collect all entities from layer.
 		RefArray< world::EntityData > flattenEntityData;
@@ -560,8 +560,10 @@ bool BakePipelineOperator::build(
 			return scene::Traverser::VrContinue;
 		});
 
+#if 0
 		// Log flatten-"layer entity hierarchy".
 		{
+			FileSystem::getInstance().makeAllDirectories(L"temp/Bake");
 			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (Flatten).txt", File::FmWrite);
 			if (f)
 			{
@@ -572,6 +574,7 @@ bool BakePipelineOperator::build(
 				f->close();
 			}
 		}
+#endif
 
 		// Traverse and visit all entities in layer.
 		for (auto inoutEntityData : flattenEntityData)
@@ -611,7 +614,7 @@ bool BakePipelineOperator::build(
 				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
 
 				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					componentDataHash,
+					Key(0x00000002, 0x00000000, 0x00000000, componentDataHash),
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
 					},
@@ -767,8 +770,10 @@ bool BakePipelineOperator::build(
 			}
 		}
 
+#if 0
 		// Log post-"layer entity hierarchy".
 		{
+			FileSystem::getInstance().makeAllDirectories(L"temp/Bake");
 			Ref< IStream > f = FileSystem::getInstance().open(L"temp/Bake/" + sourceInstance->getName() + L" " + flattenedLayer->getName() + L" (After).txt", File::FmWrite);
 			if (f)
 			{
@@ -778,6 +783,7 @@ bool BakePipelineOperator::build(
 				f->close();
 			}
 		}
+#endif
 
 		// Replace with modified layer in output scene.
 		layers.push_back(flattenedLayer);

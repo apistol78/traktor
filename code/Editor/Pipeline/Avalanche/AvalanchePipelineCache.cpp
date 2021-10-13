@@ -59,7 +59,7 @@ Ref< IStream > AvalanchePipelineCache::get(const Guid& guid, const PipelineDepen
 	// Combine guid and hash to generate 128-bit storage key.
 	Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
 	const uint32_t* kv = (const uint32_t*)(const uint8_t*)gk;
-	avalanche::Key key(kv[0], kv[1], kv[2], kv[3]);
+	Key key(kv[0], kv[1], kv[2], kv[3]);
 
 	Ref< IStream > stream = m_client->get(key);
 	if (!stream)
@@ -80,7 +80,7 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 	// Combine guid and hash to generate 128-bit storage key.
 	Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
 	const uint32_t* kv = (const uint32_t*)(const uint8_t*)gk;
-	avalanche::Key key(kv[0], kv[1], kv[2], kv[3]);
+	Key key(kv[0], kv[1], kv[2], kv[3]);
 
 	Ref< IStream > stream = m_client->put(key);
 	if (!stream)
@@ -89,26 +89,24 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 	return new compress::DeflateStreamLzo(stream, 16384);
 }
 
-Ref< IStream > AvalanchePipelineCache::get(uint32_t key)
+Ref< IStream > AvalanchePipelineCache::get(const Key& key)
 {
 	if (!m_accessRead)
 		return nullptr;
 
-	avalanche::Key kv(0, 0, 0, key);
-	Ref< IStream > stream = m_client->get(kv);
+	Ref< IStream > stream = m_client->get(key);
 	if (!stream)
 		return nullptr;
 
 	return new compress::InflateStreamLzo(stream);
 }
 
-Ref< IStream > AvalanchePipelineCache::put(uint32_t key)
+Ref< IStream > AvalanchePipelineCache::put(const Key& key)
 {
 	if (!m_accessWrite)
 		return nullptr;
 
-	avalanche::Key kv(0, 0, 0, key);
-	Ref< IStream > stream = m_client->put(kv);
+	Ref< IStream > stream = m_client->put(key);
 	if (!stream)
 		return nullptr;
 

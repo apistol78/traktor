@@ -3,6 +3,7 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Misc/Key.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +37,7 @@ public:
 
 	template< typename ObjectType >
 	Ref< ObjectType > read(
-		uint32_t key,
+		const Key& key,
 		const std::function< Ref< ObjectType > (IStream* stream) >& read,
 		const std::function< bool (const ObjectType* object, IStream* stream) >& write,
 		const std::function< Ref< ObjectType > () >& create
@@ -54,7 +55,7 @@ private:
 	IPipelineCache* m_cache;
 
 	Ref< Object > readObject(
-		uint32_t key,
+		const Key& key,
 		const std::function< Ref< Object > (IStream* stream) >& read,
 		const std::function< bool (const Object* object, IStream* stream) >& write,
 		const std::function< Ref< Object > () >& create
