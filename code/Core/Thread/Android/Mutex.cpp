@@ -78,7 +78,7 @@ bool Mutex::wait(int32_t timeout)
 	}
 	else if (timeout == 0)
 	{
-		if (pthread_mutex_trylock(data->outer) != 0)
+		if (pthread_mutex_trylock(&data->outer) != 0)
 			return false;
 	}
 	else
