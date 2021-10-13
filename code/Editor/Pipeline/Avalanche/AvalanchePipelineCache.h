@@ -39,9 +39,9 @@ public:
 
 	virtual bool commit(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
-	virtual Ref< IStream > get(uint32_t key) override final;
+	virtual Ref< IStream > get(const Key& key) override final;
 
-	virtual Ref< IStream > put(uint32_t key) override final;
+	virtual Ref< IStream > put(const Key& key) override final;
 
 	virtual void getInformation(OutputStream& os) override final;
 

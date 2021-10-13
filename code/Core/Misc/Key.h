@@ -6,7 +6,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_AVALANCHE_EXPORT)
+#if defined(T_CORE_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -17,9 +17,9 @@ namespace traktor
 
 class IStream;
 
-	namespace avalanche
-	{
-
+/*! 128-bit key with formatting, parsing and serialization.
+ * \ingroup Core
+ */
 class T_DLLCLASS Key
 {
 public:
@@ -47,5 +47,4 @@ private:
 	std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > m_kv;
 };
 
-	}
 }

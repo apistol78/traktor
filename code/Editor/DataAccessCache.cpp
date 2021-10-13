@@ -16,7 +16,7 @@ DataAccessCache::DataAccessCache(IPipelineCache* cache)
 }
 
 Ref< Object > DataAccessCache::readObject(
-	uint32_t key,
+	const Key& key,
 	const std::function< Ref< Object > (IStream* stream) >& read,
 	const std::function< bool (const Object* object, IStream* stream) >& write,
 	const std::function< Ref< Object > () >& create

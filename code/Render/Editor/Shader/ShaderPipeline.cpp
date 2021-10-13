@@ -498,7 +498,7 @@ bool ShaderPipeline::buildOutput(
 			// Compile shader program.
 			uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
 			Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
-				hash,
+				Key(0x00000000, 0x00000000, 0x00000000, hash),
 				[&](IStream* stream) {
 					return BinarySerializer(stream).readObject< ProgramResource >();
 				},

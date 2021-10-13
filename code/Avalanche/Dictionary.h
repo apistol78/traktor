@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Avalanche/Key.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
+#include "Core/Misc/Key.h"
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 

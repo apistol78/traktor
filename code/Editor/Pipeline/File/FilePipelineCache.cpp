@@ -91,10 +91,10 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	);
 }
 
-Ref< IStream > FilePipelineCache::get(uint32_t key)
+Ref< IStream > FilePipelineCache::get(const Key& key)
 {
 	StringOutputStream ss;
-	ss << m_path << L"/" << str(L"%08x", key) << L".cache";
+	ss << m_path << L"/" << key.format() << L".cache";
 	Path p(ss.str());
 
 	// Ensure output path exists.
@@ -108,10 +108,10 @@ Ref< IStream > FilePipelineCache::get(uint32_t key)
 	return FileSystem::getInstance().open(p.getPathName(), File::FmRead);
 }
 
-Ref< IStream > FilePipelineCache::put(uint32_t key)
+Ref< IStream > FilePipelineCache::put(const Key& key)
 {
 	StringOutputStream ss;
-	ss << m_path << L"/" << str(L"%08x", key) << L".cache";
+	ss << m_path << L"/" << key.format() << L".cache";
 	Path p(ss.str());
 
 	// Ensure output path exists.
