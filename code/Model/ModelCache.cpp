@@ -40,10 +40,10 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 		return nullptr;
 
 	// Calculate hash of resolved file name.
-	uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
+	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
 	// Generate file name of cached model.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + toString(fileNameHash) + L".tmd";
+	Path cachedFileName = m_cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
