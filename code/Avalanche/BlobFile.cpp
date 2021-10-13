@@ -1,8 +1,8 @@
 #include "Avalanche/BlobFile.h"
-#include "Avalanche/Key.h"
 #include "Core/Guid.h"
 #include "Core/Io/File.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Misc/Key.h"
 
 namespace traktor
 {
