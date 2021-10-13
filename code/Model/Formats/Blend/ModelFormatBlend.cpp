@@ -6,8 +6,8 @@
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Model/Model.h"
 #include "Model/Formats/Blend/ModelFormatBlend.h"
 
@@ -15,16 +15,6 @@ namespace traktor
 {
 	namespace model
 	{
-		namespace
-		{
-
-#if !defined(__APPLE__)
-Mutex s_globalLock(Guid(L"{672E3E2D-14A8-4B07-A18F-27C30FD5B43D}"));
-#else
-Mutex s_globalLock;
-#endif
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBlend", 0, ModelFormatBlend, ModelFormat)
 
@@ -41,10 +31,10 @@ bool ModelFormatBlend::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& filter) const
 {
-	T_ANONYMOUS_VAR(Acquire< Mutex >)(s_globalLock);
+	std::wstring threadFolder = str(L"%08x", ThreadManager::getInstance().getCurrentThread()->id());
 
 	// Determine working path.
-	std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender";
+	std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender/" + threadFolder;
 	if (!FileSystem::getInstance().makeAllDirectories(scratchPath))
 		return nullptr;
 
