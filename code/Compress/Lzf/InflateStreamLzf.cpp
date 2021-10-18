@@ -63,7 +63,7 @@ public:
 
 		// Decompress directly into destination if requested block size is larger than buffer;
 		// and output is large enough to contain a bit of overhead.
-		while (nbytes >= int64_t(m_decompressedBuffer.size()))
+		while (nbytes >= (int64_t)m_decompressedBuffer.size())
 		{
 			uint32_t compressedBlockSize = 0;
 			Reader(m_stream) >> compressedBlockSize;
@@ -78,12 +78,15 @@ public:
 			{
 				if (compressedBlockSize > m_compressedBlock.size())
 				{
-					log::error << L"Compressed block size too large" << Endl;
-					break;
+					log::error << L"Unable to read from LZF stream; compressed block size too large." << Endl;
+					return -1;
 				}
 
 				if (m_stream->read(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
-					break;
+				{
+					log::error << L"Unable to read from LZF stream; not enough data from stream." << Endl;
+					return -1;
+				}
 
 				uint32_t decompressLength = lzf_decompress(
 					&m_compressedBlock[0],
@@ -101,8 +104,17 @@ public:
 			}
 			else
 			{
+				if (compressedBlockSize > nbytes)
+				{
+					log::error << L"Unable to read from LZF stream; compressed block size too large." << Endl;
+					return -1;
+				}
+
 				if (m_stream->read(ptr, compressedBlockSize) != compressedBlockSize)
-					break;
+				{
+					log::error << L"Unable to read from LZF stream; not enough data from stream." << Endl;
+					return -1;
+				}
 
 				T_ASSERT(compressedBlockSize <= m_decompressedBuffer.size());
 
@@ -129,12 +141,15 @@ public:
 			{
 				if (compressedBlockSize > m_compressedBlock.size())
 				{
-					log::error << L"Compressed block size too large" << Endl;
+					log::error << L"Unable to read from LZF stream; compressed block size too large." << Endl;
 					break;
 				}
 
 				if (m_stream->read(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
-					break;
+				{
+					log::error << L"Unable to read from LZF stream; not enough data from stream." << Endl;
+					return -1;
+				}
 
 				m_decompressedBufferSize = lzf_decompress(
 					&m_compressedBlock[0],
@@ -144,14 +159,23 @@ public:
 				);
 				if (!m_decompressedBufferSize)
 				{
-					log::error << L"Unexpected zero size block" << Endl;
+					log::error << L"Unable to read from LZF stream; unexpected zero size block." << Endl;
 					break;
 				}
 			}
 			else
 			{
-				if (m_stream->read(&m_decompressedBuffer[0], compressedBlockSize) != compressedBlockSize)
+				if (compressedBlockSize > m_decompressedBuffer.size())
+				{
+					log::error << L"Unable to read from LZF stream; compressed block size too large." << Endl;
 					break;
+				}
+
+				if (m_stream->read(&m_decompressedBuffer[0], compressedBlockSize) != compressedBlockSize)
+				{
+					log::error << L"Unable to read from LZF stream; not enough data from stream." << Endl;
+					return -1;
+				}
 
 				m_decompressedBufferSize = compressedBlockSize;
 			}
