@@ -145,7 +145,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
 				int64_t nread = readerData.read(data, mipPitch);
-				T_ASSERT(nread == mipPitch);
+				if (nread != mipPitch)
+				{
+					log::error << L"Unable to read texture; not enough data in stream." << Endl;
+					return nullptr;
+				}
 
 				data += mipPitch;
 				T_ASSERT(size_t(data - buffer.ptr()) <= textureDataSize);
@@ -224,7 +228,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				if (i >= skipMips)
 				{
 					int64_t nread = readerData.read(data, mipPitch);
-					T_ASSERT(nread == mipPitch);
+					if (nread != mipPitch)
+					{
+						log::error << L"Unable to read texture; not enough data in stream." << Endl;
+						return nullptr;
+					}
 
 					data += mipPitch;
 					T_ASSERT(size_t(data - buffer.ptr()) <= textureDataSize);
@@ -282,7 +290,11 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[side * mipCount + i].pitch = getTextureRowPitch(desc.format, desc.side, i);
 
 				int64_t nread = readerData.read(data, mipPitch);
-				T_ASSERT(nread == mipPitch);
+				if (nread != mipPitch)
+				{
+					log::error << L"Unable to read texture; not enough data in stream." << Endl;
+					return nullptr;
+				}
 
 				data += mipPitch;
 				T_ASSERT(size_t(data - buffer[side].ptr()) <= textureDataSize);

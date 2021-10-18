@@ -8,6 +8,7 @@ extern "C"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 
 namespace traktor
 {
@@ -27,9 +28,11 @@ public:
 
 	void close()
 	{
-		flush();
-		m_stream->close();
-		m_stream = nullptr;
+		if (m_stream != nullptr)
+		{
+			flush();
+			safeClose(m_stream);
+		}
 	}
 
 	int64_t write(const void* block, int64_t nbytes)
@@ -60,7 +63,11 @@ public:
 
 					// Write content of compressed block.
 					if (m_stream->write(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
-						break;
+					{
+						log::error << L"Failed to write to LZF stream; unable to write compressed block." << Endl;
+						m_stream = nullptr;
+						return -1;
+					}
 				}
 				else	// Unable to compress.
 				{
@@ -69,7 +76,11 @@ public:
 
 					// Write content of uncompressed block.
 					if (m_stream->write(&m_uncompressedBuffer[0], m_uncompressedBufferCount) != m_uncompressedBufferCount)
-						break;
+					{
+						log::error << L"Failed to write to LZF stream; unable to write uncompressed block." << Endl;
+						m_stream = nullptr;
+						return -1;
+					}
 				}
 
 				m_uncompressedBufferCount = 0;
@@ -97,7 +108,7 @@ public:
 
 				// Write content of compressed block.
 				if (m_stream->write(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
-					log::error << L"Failed to flush LZF stream; unable to write compressed block" << Endl;
+					log::error << L"Failed to flush LZF stream; unable to write compressed block." << Endl;
 			}
 			else	// Unable to compress.
 			{
@@ -106,7 +117,7 @@ public:
 
 				// Write content of uncompressed block.
 				if (m_stream->write(&m_uncompressedBuffer[0], m_uncompressedBufferCount) != m_uncompressedBufferCount)
-					log::error << L"Failed to flush LZF stream; unable to write uncompressed block" << Endl;
+					log::error << L"Failed to flush LZF stream; unable to write uncompressed block." << Endl;
 			}
 
 			m_uncompressedBufferCount = 0;
