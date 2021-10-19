@@ -494,6 +494,13 @@ uint16_t Shape::defineFillStyle(const Color4f& color)
 	return (uint16_t)m_fillStyles.size();
 }
 
+uint16_t Shape::defineFillStyle(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix, bool fillBitmapRepeat)
+{
+	auto& fs = m_fillStyles.push_back();
+	fs.create(fillBitmap, fillBitmapMatrix, fillBitmapRepeat);
+	return (uint16_t)m_fillStyles.size();
+}
+
 uint16_t Shape::defineLineStyle(const Color4f& color, uint16_t width)
 {
 	auto& ls = m_lineStyles.push_back();

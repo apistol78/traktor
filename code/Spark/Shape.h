@@ -52,6 +52,8 @@ public:
 
 	uint16_t defineFillStyle(const Color4f& color);
 
+	uint16_t defineFillStyle(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix, bool fillBitmapRepeat);
+
 	uint16_t defineLineStyle(const Color4f& color, uint16_t width);
 
 	virtual Ref< CharacterInstance > createInstance(

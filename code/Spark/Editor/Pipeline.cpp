@@ -37,6 +37,7 @@
 #include "Spark/Swf/SwfMovieFactory.h"
 #include "Spark/Swf/SwfReader.h"
 #include "Svg/Document.h"
+#include "Svg/ImageShape.h"
 #include "Svg/IShapeVisitor.h"
 #include "Svg/Parser.h"
 #include "Svg/PathShape.h"
@@ -262,6 +263,7 @@ bool Pipeline::buildOutput(
 							{
 							case svg::SptLinear:
 								{
+									log::info << L"linear" << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; ++i)
 										path.lineTo((int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f), Path::CmAbsolute);
@@ -274,6 +276,7 @@ bool Pipeline::buildOutput(
 
 							case svg::SptQuadric:
 								{
+									log::info << L"quadric" << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 2)
 										path.quadraticTo(
@@ -290,6 +293,7 @@ bool Pipeline::buildOutput(
 
 							case svg::SptCubic:
 								{
+									log::info << L"cubic " << ln << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 3)
 									{
@@ -306,7 +310,6 @@ bool Pipeline::buildOutput(
 											4,
 											b2s
 										);
-
 										for (const auto& b2 : b2s)
 										{
 											path.quadraticTo(
@@ -327,6 +330,33 @@ bool Pipeline::buildOutput(
 								break;
 							}
 						}
+						outputShape->addPath(path);
+					}
+					else if (const auto is = dynamic_type_cast< const svg::ImageShape* >(svg))
+					{
+						const drawing::Image* image = is->getImage();
+
+						const int32_t width = image->getWidth() * 20;
+						const int32_t height = image->getHeight() * 20;
+
+						const uint16_t fillBitmap = 1;
+
+						movie->defineBitmap(fillBitmap, new BitmapImage(image));
+
+						uint16_t fillStyle = outputShape->defineFillStyle(fillBitmap, Matrix33(
+							20.0f, 0.0f, 0.0f,
+							0.0f, 20.0f, 0.0f,
+							0.0f, 0.0f, 1.0f
+						), true);
+
+						Path path;
+						path.moveTo(0, 0, Path::CmAbsolute);
+						path.lineTo(width, 0, Path::CmAbsolute);
+						path.lineTo(width, height, Path::CmAbsolute);
+						path.lineTo(0, height, Path::CmAbsolute);
+						path.lineTo(0, 0, Path::CmAbsolute);
+						path.end(fillStyle, fillStyle, 0);
+
 						outputShape->addPath(path);
 					}
 				},
