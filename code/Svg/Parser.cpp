@@ -2,11 +2,14 @@
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/Base64.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Drawing/Image.h"
 #include "Svg/Document.h"
 #include "Svg/Gradient.h"
+#include "Svg/ImageShape.h"
 #include "Svg/Parser.h"
 #include "Svg/Path.h"
 #include "Svg/PathShape.h"
@@ -153,6 +156,8 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 		shape = parsePath(elm);
 	else if (name == L"text")
 		shape = parseText(elm);
+	else if (name == L"image")
+		shape = parseImage(elm);
 	else if (name == L"defs")
 		parseDefs(elm);
 	else
@@ -489,6 +494,33 @@ Ref< Shape > Parser::parseText(xml::Element* elm)
 	float x = parseAttr(elm, L"x");
 	float y = parseAttr(elm, L"y");
 	return new TextShape(Vector2(x, y));
+}
+
+Ref< Shape > Parser::parseImage(xml::Element* elm)
+{
+	float x = parseAttr(elm, L"x");
+	float y = parseAttr(elm, L"y");
+	float width = parseAttr(elm, L"width");
+	float height = parseAttr(elm, L"height");
+
+	Ref< drawing::Image > image;
+
+	// Embedded image.
+	xml::Attribute* href = elm->getAttribute(L"xlink:href");
+	if (href)
+	{
+		const std::wstring& value = href->getValue();
+		if (startsWith(value, L"data:image/png;base64,"))
+		{
+			AlignedVector< uint8_t > data = Base64().decode(value.substr(22));
+			image = drawing::Image::load(data.c_ptr(), data.size(), L"png");
+		}
+	}
+
+	if (!image)
+		return nullptr;
+
+	return new ImageShape(Vector2(x, y), Vector2(width, height), image);
 }
 
 void Parser::parseDefs(xml::Element* elm)
