@@ -62,6 +62,8 @@ private:
 
 	Ref< Shape > parseText(xml::Element* elm);
 
+	Ref< Shape > parseImage(xml::Element* elm);
+
 	void parseDefs(xml::Element* elm);
 
 	Ref< Style > parseStyle(xml::Element* elm);
