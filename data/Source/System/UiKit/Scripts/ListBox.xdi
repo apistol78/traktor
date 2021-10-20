@@ -16,9 +16,9 @@ ListBox:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
 ListBox:setStyle("textHover", Color4f(1.0, 1.0, 1.0, 1.0))
 ListBox:setStyle("textSize", 17)
 
-function ListBox:new(parent, skin)
+function ListBox:new(parent, hmargin, vmargin, vpad, skin)
 	local mc = Widget._createEmptyResource(parent)
-	self:_initialize(parent, mc, skin)
+	self:_initialize(parent, mc, hmargin, vmargin, vpad, skin)
 end
 
 function ListBox:getPreferredSize()
@@ -91,13 +91,17 @@ end
 
 -- private
 
-function ListBox:_initialize(parent, mc, skin)
+function ListBox:_initialize(parent, mc, hmargin, vmargin, vpad, skin)
 	Widget._initialize(self, parent, mc)
+
+	hmargin = hmargin or 4
+	vmargin = vmargin or 4
+	vpad = vpad or 4
 
 	self._index = 0
 
 	self._panel = Panel(self, FloodLayout(16, 16), skin)
-	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 4), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
+	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, hmargin, vmargin, 0, vpad), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
 	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(Color4f(0.0, 0.0, 0.0, 0.2))
 
 	self:_loadStyle()

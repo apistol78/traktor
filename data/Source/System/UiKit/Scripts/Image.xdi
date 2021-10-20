@@ -131,7 +131,7 @@ end
 
 function Image:_initialize(parent, mc, image, mode)
 #if defined(_EDITOR)
-	-- mc:setMember("__renderWireOutline", true)
+	mc.wireOutline = true
 #endif
 
 	self._hscale = 1
