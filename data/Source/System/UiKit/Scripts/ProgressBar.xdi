@@ -80,7 +80,7 @@ function ProgressBar:_initialize(parent, mc, reverse)
 	self._reverse = reverse or false
 
 #if defined(_EDITOR)
-	--self._back_mc:setMember("__renderWireOutline", true)
+	self._back_mc.wireOutline = true
 #endif
 
 	self:_loadStyle()

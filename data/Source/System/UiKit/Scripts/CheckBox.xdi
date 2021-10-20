@@ -37,6 +37,7 @@ function CheckBox:setChecked(checked)
 		end
 		self._checked = checked
 	end
+	return self
 end
 
 function CheckBox:isChecked()

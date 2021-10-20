@@ -68,6 +68,15 @@ function DropDown:select(indexOrPredicate)
 			self._selected = 0
 		end
 	end
+
+	local p = self:getPlacement()
+	local sz = self._caption_tb.textSize
+	local mx = p.width - sz.x
+	local my = p.height - sz.y
+	self._caption_tb.X = mx / 2
+	self._caption_tb.Y = my / 2
+
+	return self
 end
 
 function DropDown:getSelectedIndex()
@@ -147,8 +156,11 @@ function DropDown:place(x, y, width, height)
 	self._arrow_mc.X = p.width - self._arrowOffset
 	self._arrow_mc.Y = (p.height - self._arrow_mc.height) / 2
 
-	local mx = self._caption_tb.X
-	self._caption_tb.width = p.width - mx * 2
+	local sz = self._caption_tb.textSize
+	local mx = p.width - sz.x
+	local my = p.height - sz.y
+	self._caption_tb.X = mx / 2
+	self._caption_tb.Y = my / 2
 end
 
 -- private
@@ -180,6 +192,11 @@ function DropDown:_initialize(parent, mc, items)
 	self:_loadStyle()
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
+
+#if defined(_EDITOR)
+	self._background_mc.wireOutline = true
+	self._caption_tb.wireOutline = true
+#endif
 end
 
 function DropDown:_loadStyle()
@@ -224,7 +241,7 @@ function DropDown:_onMousePress()
 
 	local ancestor = self:getAncestor()
 
-	self._list = ListBox(ancestor, self:getStyle().resourceListBox)
+	self._list = ListBox(ancestor, 4, 4, 20, self:getStyle().resourceListBox)
 	self._list.__layout = ILayout.FLOAT
 
 	if self._color ~= nil then self._list:setColor(self._color) end

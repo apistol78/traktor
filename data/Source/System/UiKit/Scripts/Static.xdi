@@ -157,7 +157,7 @@ function Static:_initialize(parent, mc, text, clip)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 
 #if defined(_EDITOR)
-	--self._text_tb:setMember("__renderWireOutline", true)
+	self._text_tb.wireOutline = true
 #endif
 end
 
