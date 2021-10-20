@@ -25,6 +25,7 @@ CharacterInstance::CharacterInstance(
 ,	m_blendMode(0)
 ,	m_visible(true)
 ,	m_enabled(true)
+,	m_wireOutline(false)
 {
 	ms_instanceCount++;
 
@@ -181,6 +182,11 @@ void CharacterInstance::setFocus()
 bool CharacterInstance::haveFocus() const
 {
 	return bool(getContext()->getFocus() == this);
+}
+
+void CharacterInstance::setWireOutline(bool wireOutline)
+{
+	m_wireOutline = wireOutline;
 }
 
 void CharacterInstance::eventFrame()

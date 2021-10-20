@@ -157,53 +157,61 @@ public:
 	 */
 	Vector2 transformInto(const CharacterInstance* other, const Vector2& pnt) const;
 
-	/*! \brief
+	/*!
 	 */
 	void setFilter(uint8_t filter);
 
-	/*! \brief
+	/*!
 	 */
 	uint8_t getFilter() const { return m_filter; }
 
-	/*! \brief
+	/*!
 	 */
 	void setFilterColor(const Color4f& filterColor);
 
-	/*! \brief
+	/*!
 	 */
 	const Color4f& getFilterColor() const { return m_filterColor; }
 
-	/*! \brief
+	/*!
 	 */
 	void setBlendMode(uint8_t blendMode);
 
-	/*! \brief
+	/*!
 	 */
 	uint8_t getBlendMode() const { return m_blendMode; }
 
-	/*! \brief
+	/*!
 	 */
 	void setVisible(bool visible);
 
-	/*! \brief
+	/*!
 	 */
 	bool isVisible() const { return m_visible; }
 
-	/*! \brief
+	/*!
 	 */
 	void setEnabled(bool enabled);
 
-	/*! \brief
+	/*!
 	 */
 	bool isEnabled() const { return m_enabled; }
 
-	/*! \brief
+	/*!
 	 */
 	void setFocus();
 
-	/*! \brief
+	/*!
 	 */
 	bool haveFocus() const;
+
+	/*!
+	 */
+	void setWireOutline(bool wireOutline);
+
+	/*!
+	 */
+	bool getWireOutline() const { return m_wireOutline; }
 
 	/*! \name Events */
 	//@{
@@ -264,7 +272,7 @@ private:
 	uint8_t m_blendMode;
 	bool m_visible;
 	bool m_enabled;
-
+	bool m_wireOutline;
 	Event m_eventSetFocus;
 	Event m_eventKillFocus;
 };

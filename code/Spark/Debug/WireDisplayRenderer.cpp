@@ -97,12 +97,7 @@ void WireDisplayRenderer::begin(
 void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
 	bool parentWireEnable = m_wireEnable.top();
-
-	//ActionValue wireOutline;
-	//if (sprite.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
-	//	m_wireEnable.push(true);
-	//else
-		m_wireEnable.push(false);
+	m_wireEnable.push(sprite.getWireOutline());
 
 	if (parentWireEnable || m_wireEnable.top())
 	{
@@ -155,12 +150,7 @@ void WireDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33
 void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
 	bool parentWireEnable = m_wireEnable.top();
-
-	//ActionValue wireOutline;
-	//if (edit.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
-	//	m_wireEnable.push(true);
-	//else
-		m_wireEnable.push(false);
+	m_wireEnable.push(edit.getWireOutline());
 
 	if (parentWireEnable || m_wireEnable.top())
 	{

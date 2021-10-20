@@ -279,6 +279,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addProperty("visible", &CharacterInstance::setVisible, &CharacterInstance::isVisible);
 	classCharacterInstance->addProperty("enabled", &CharacterInstance::setEnabled, &CharacterInstance::isEnabled);
 	classCharacterInstance->addProperty("focus", &CharacterInstance::haveFocus);
+	classCharacterInstance->addProperty("wireOutline", &CharacterInstance::setWireOutline, &CharacterInstance::getWireOutline);
 	classCharacterInstance->addProperty("bounds", &CharacterInstance::getBounds);
 	classCharacterInstance->addProperty("eventSetFocus", &CharacterInstance::getEventSetFocus);
 	classCharacterInstance->addProperty("eventKillFocus", &CharacterInstance::getEventKillFocus);
