@@ -135,6 +135,58 @@ private:
 	Ref< db::Database > m_db;
 };
 
+class EntryCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
+{
+public:
+	explicit EntryCharacter(Script* script)
+	:	m_script(script)
+	{
+	}
+
+	virtual int32_t measureWidth(const ui::RichEdit* richEdit) const override final
+	{
+		return richEdit->getFontMetric().getExtent(getEntryString()).cx;
+	}
+
+	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const override final
+	{
+		canvas.drawText(rc, getEntryString(), ui::AnCenter, ui::AnCenter);
+	}
+
+	virtual void mouseButtonDown(ui::MouseButtonDownEvent* event) const override final {}
+
+	virtual void mouseButtonUp(ui::MouseButtonUpEvent* event) const override final {}
+
+	virtual void mouseDoubleClick(ui::MouseDoubleClickEvent* event) const override final {}
+
+private:
+	Script* m_script;
+
+	std::wstring getEntryString() const
+	{
+		const int32_t inputPinCount = m_script->getInputPinCount();
+		const int32_t outputPinCount = m_script->getOutputPinCount();
+
+		StringOutputStream ss;
+		ss << L"(";
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			if (i > 0)
+				ss << L", ";
+			ss << L"in " << m_script->getInputPin(i)->getName();
+		}
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			if (i > 0 || inputPinCount > 0)
+				ss << L", ";
+			ss << L"out " << m_script->getOutputPin(i)->getName();
+		}
+		ss << L")";
+
+		return ss.str();
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
@@ -895,13 +947,20 @@ void ShaderGraphEditorPage::editScript(Script* script)
 {
 	if ((m_script = script) != nullptr)
 	{
-		m_scriptEditor->setText(m_script->getScript());
+		wchar_t sc = m_scriptEditor->addSpecialCharacter(new EntryCharacter(m_script));
+
+		std::wstring text = m_script->getScript();
+		text = replaceAll(text, L"ENTRY", std::wstring(1, sc));
+
+		m_scriptEditor->setText(text);
 		m_scriptEditor->show();
 	}
 	else
+	{
+		m_scriptEditor->clear(false, true, true, true);
 		m_scriptEditor->hide();
+	}
 
-	// m_scriptEditor->getParent()->getParent()->update();
 	m_scriptEditor->getParent()->update();
 	m_scriptEditor->update();
 }
@@ -1570,7 +1629,19 @@ void ShaderGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
 	T_FATAL_ASSERT(m_script);
-	m_script->setScript(m_scriptEditor->getText());
+
+	// Transform editor text into "escaped" text.
+	std::wstring text = m_scriptEditor->getText(
+		[&] (wchar_t ch) -> std::wstring {
+			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+		},
+		[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			const EntryCharacter* dc = static_cast< const EntryCharacter* >(sc);
+			return L"ENTRY";
+		}
+	);
+
+	m_script->setScript(text);
 }
 
 void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)

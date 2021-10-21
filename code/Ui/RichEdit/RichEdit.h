@@ -93,7 +93,7 @@ public:
 	wchar_t addSpecialCharacter(const ISpecialCharacter* specialCharacter);
 
 	/*! Clear attributes, images or content of text. */
-	void clear(bool attributes, bool images, bool content);
+	void clear(bool attributes, bool images, bool content, bool specialCharacters);
 
 	/*! Delete selected text. */
 	void deleteSelection();

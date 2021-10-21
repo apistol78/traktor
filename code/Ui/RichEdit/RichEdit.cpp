@@ -316,7 +316,7 @@ wchar_t RichEdit::addSpecialCharacter(const ISpecialCharacter* specialCharacter)
 	return ch;
 }
 
-void RichEdit::clear(bool attributes, bool images, bool content)
+void RichEdit::clear(bool attributes, bool images, bool content, bool specialCharacters)
 {
 	if (attributes)
 	{
@@ -339,6 +339,9 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 			i->image = -1;
 	}
+
+	if (specialCharacters)
+		m_specialCharacters.clear();
 
 	updateCharacterWidths();
 	updateScrollBars();
