@@ -63,15 +63,14 @@
 				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-ndk-r21"}
 			],
 			"externalConsole": false,
-			// "MIMode": "gdb",
-			/*"setupCommands": [
+			"MIMode": "gdb",
+			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",
 					"text": "-enable-pretty-printing",
 					"ignoreFailures": true
 				}
 			],
-			*/
 
 			"windows": {
 				"type": "cppvsdbg",
@@ -134,7 +133,7 @@
 			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Runtime.App",
 			"args": [ "-s" ],
 			"stopAtEntry": false,
-			"cwd": "/home/apistol/private/personal/apistol/minigolf/output/Volley_Golf/Linux",
+			"cwd": "",
 			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -194,7 +193,7 @@
 
 			"type": "cppdbg",
 			"program": "${workspaceRoot}/../bin/latest/linux/releaseshared/Traktor.Ui.Theme.App",
-			"args": [ "./scripts/unittest/UnitTest.run" ],
+			"args": [ ],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}/..",
 			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
@@ -211,7 +210,7 @@
 			"windows": {
 				"type": "cppvsdbg",
 				"program": "${workspaceRoot}/../bin/latest/win64/releaseshared/Traktor.Ui.Theme.App.exe",
-				"args": [ "./scripts/unittest/UnitTest.run" ],
+				"args": [ ],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
 				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],

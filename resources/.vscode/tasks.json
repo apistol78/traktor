@@ -141,6 +141,10 @@
 			"label": "iOS - DebugStatic",
 			"group": "build",
 
+			"linux": {
+				"command": "echo Cannot build iOS on Linux",
+			},
+
 			"osx": {
 				"command": "${workspaceRoot}/../scripts/build-vscode.sh iOS DebugStatic",
 				"problemMatcher": [
@@ -153,6 +157,10 @@
 			"type": "shell",
 			"label": "iOS - ReleaseStatic",
 			"group": "build",
+
+			"linux": {
+				"command": "echo Cannot build iOS on Linux",
+			},
 
 			"osx": {
 				"command": "${workspaceRoot}/../scripts/build-vscode.sh iOS ReleaseStatic",
