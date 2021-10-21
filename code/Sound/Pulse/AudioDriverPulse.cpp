@@ -10,12 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverPulse", 0, AudioDriverPulse, IAudioDriver)
 
-AudioDriverPulse::AudioDriverPulse()
-:	m_pa(0)
-,	m_pendingSize(0)
-{
-}
-
 bool AudioDriverPulse::create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer)
 {
 	int error;
@@ -44,7 +38,7 @@ void AudioDriverPulse::destroy()
 	{
 		pa_simple_drain(m_pa, &error);
 		pa_simple_free(m_pa);
-		m_pa = 0;
+		m_pa = nullptr;
 	}
 	m_pending.release();
 	m_pendingSize = 0;

@@ -25,8 +25,6 @@ class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
 	T_RTTI_CLASS;
 
 public:
-	StreamSoundBuffer();
-
 	virtual ~StreamSoundBuffer();
 
 	bool create(IStreamDecoder* streamDecoder);
@@ -39,7 +37,7 @@ public:
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;
-	mutable uint64_t m_position;
+	mutable uint64_t m_position = 0;
 };
 
 	}

@@ -83,12 +83,16 @@ const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0
 
 		}
 
-AccShape::AccShape(render::IRenderSystem* renderSystem, const AccShapeResources* shapeResources, AccShapeVertexPool* fillVertexPool, AccShapeVertexPool* lineVertexPool)
+AccShape::AccShape(
+	render::IRenderSystem* renderSystem,
+	const AccShapeResources* shapeResources,
+	AccShapeVertexPool* fillVertexPool,
+	AccShapeVertexPool* lineVertexPool
+)
 :	m_renderSystem(renderSystem)
 ,	m_shapeResources(shapeResources)
 ,	m_fillVertexPool(fillVertexPool)
 ,	m_lineVertexPool(lineVertexPool)
-,	m_batchFlags(0)
 {
 }
 
@@ -222,10 +226,10 @@ bool AccShape::createFromTriangles(
 					}
 				}
 
-				AlignedVector< LineCluster >::iterator i = std::remove_if(clusters.begin(), clusters.end(), [](LineCluster& c) {
+				auto itr = std::remove_if(clusters.begin(), clusters.end(), [](LineCluster& c) {
 					return c.lines.empty();
 				});
-				clusters.erase(i, clusters.end());
+				clusters.erase(itr, clusters.end());
 
 				if (nsub <= 0)
 					break;

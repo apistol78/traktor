@@ -13,9 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.EditorPageFactory", 0, EditorPage
 
 const TypeInfoSet EditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MovieAsset >();
-	return typeSet;
+	return makeTypeInfoSet< MovieAsset >();
 }
 
 bool EditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

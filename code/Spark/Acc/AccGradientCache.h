@@ -43,9 +43,9 @@ private:
 	Ref< render::ISimpleTexture > m_gradientsTexture;
 	SmallMap< uint64_t, Ref< AccBitmapRect > > m_cache;
 	AutoArrayPtr< uint8_t > m_gradientsData;
-	uint32_t m_currentGradientColumn;
-	uint32_t m_nextGradient;
-	bool m_dirty;
+	uint32_t m_currentGradientColumn = 0;
+	uint32_t m_nextGradient = 0;
+	bool m_dirty = false;
 };
 
 	}

@@ -55,13 +55,6 @@ const render::Handle s_handleFilterColor(L"Spark_FilterColor");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccGlyph", AccGlyph, Object)
 
-AccGlyph::AccGlyph()
-:	m_vertex(nullptr)
-,	m_offset(0)
-,	m_count(0)
-{
-}
-
 bool AccGlyph::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem

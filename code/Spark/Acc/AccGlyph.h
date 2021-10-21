@@ -33,8 +33,6 @@ class AccGlyph : public Object
 	T_RTTI_CLASS;
 
 public:
-	AccGlyph();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
@@ -68,9 +66,9 @@ private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
-	uint8_t* m_vertex;
-	uint32_t m_offset;
-	uint32_t m_count;
+	uint8_t* m_vertex = nullptr;
+	uint32_t m_offset = 0;
+	uint32_t m_count = 0;
 };
 
 	}

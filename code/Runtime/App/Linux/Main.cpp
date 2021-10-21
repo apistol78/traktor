@@ -202,7 +202,7 @@ int main(int argc, const char** argv)
 		defaultSettings,
 		settings,
 		sysapp,
-		0
+		nullptr
 	))
 	{
 		// Enter main loop.
@@ -244,12 +244,12 @@ int main(int argc, const char** argv)
 #if !defined(_DEBUG)
 	if (logFile)
 	{
-		traktor::log::info   .setGlobalTarget(0);
-		traktor::log::warning.setGlobalTarget(0);
-		traktor::log::error  .setGlobalTarget(0);
+		traktor::log::info   .setGlobalTarget(nullptr);
+		traktor::log::warning.setGlobalTarget(nullptr);
+		traktor::log::error  .setGlobalTarget(nullptr);
 
 		logFile->close();
-		logFile = 0;
+		logFile = nullptr;
 	}
 #endif
 	return 0;
