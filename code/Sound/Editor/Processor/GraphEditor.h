@@ -52,14 +52,13 @@ class ToolBarButtonClickEvent;
 class AudioChannel;
 class AudioSystem;
 class GraphAsset;
-class WaveformControl;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
 {
 	T_RTTI_CLASS;
 
 public:
-	GraphEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit GraphEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -76,7 +75,6 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< GraphAsset > m_graphAsset;
-	Ref< WaveformControl > m_waveform;
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_graph;
 	Ref< ui::Menu > m_menuPopup;
