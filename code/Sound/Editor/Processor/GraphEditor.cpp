@@ -76,6 +76,13 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphEditor.NodeType", NodeType, Object)
 
+std::wstring getLocalizedName(const TypeInfo* nodeType)
+{
+	std::wstring nodeName = nodeType->getName();
+	size_t p = nodeName.find_last_of(L'.');
+	return i18n::Text(L"SOUND_PROCESSOR_NODE_" + toUpper(nodeName.substr(p + 1)));
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphEditor", GraphEditor, editor::IEditorPage)
@@ -106,15 +113,10 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_VERTICALLY"), 4, ui::Command(L"Sound.Processor.Editor.EvenSpaceVertically")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Sound.Processor.Editor.EventSpaceHorizontally")));
-	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
-	m_toolBarGraph->addItem(new ui::ToolBarButton(L"Update waveform", 5, ui::Command(L"Sound.Processor.Editor.UpdateWaveform")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &GraphEditor::eventToolBarGraphClick);
 
-	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, false, -ui::dpi96(100));
-
 	m_graph = new ui::GraphControl();
-	m_graph->create(splitter);
+	m_graph->create(container);
 	m_graph->setText(L"SOUND");
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &GraphEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::SelectEvent >(this, &GraphEditor::eventNodeSelect);
@@ -122,9 +124,6 @@ bool GraphEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::NodeActivateEvent >(this, &GraphEditor::eventNodeActivated);
 	m_graph->addEventHandler< ui::EdgeConnectEvent >(this, &GraphEditor::eventEdgeConnected);
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &GraphEditor::eventEdgeDisconnected);
-
-	m_waveform = new WaveformControl();
-	m_waveform->create(splitter);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -135,11 +134,10 @@ bool GraphEditor::create(ui::Container* parent)
 	type_of< Node >().findAllOf(nodeTypes, false);
 	for (auto nodeType : nodeTypes)
 	{
-		std::wstring i18nId = nodeType->getName();
-		i18nId = replaceAll(i18nId, L'.', L'_');
-		i18nId = toUpper(i18nId);
+		if (!nodeType->isInstantiable())
+			continue;
 
-		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Sound.Processor.Editor.Create"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_CREATE_NODE_" + i18nId));
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Sound.Processor.Editor.Create"), getLocalizedName(nodeType));
 		menuItem->setData(L"TYPE", new NodeType(nodeType));
 		menuItemCreate->add(menuItem);
 	}
@@ -170,13 +168,13 @@ void GraphEditor::destroy()
 	if (m_audioChannel)
 	{
 		m_audioChannel->stop();
-		m_audioChannel = 0;
+		m_audioChannel = nullptr;
 	}
 
 	if (m_resourceManager)
-		m_resourceManager = 0;
+		m_resourceManager = nullptr;
 
-	m_audioSystem = 0;
+	m_audioSystem = nullptr;
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -254,19 +252,6 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 		m_graph->evenSpace(ui::GraphControl::EsHorizontally);
 		m_graph->update();
 	}
-	else if (command == L"Sound.Processor.Editor.UpdateWaveform")
-	{
-		Ref< Graph > graph = DeepClone(m_graphAsset->getGraph()).create< Graph >();
-
-		for (auto node : graph->getNodes())
-		{
-			if (!node->bind(m_resourceManager))
-				return false;
-		}
-
-		Ref< GraphBuffer > graphBuffer = new GraphBuffer(graph);
-		m_waveform->setBuffer(graphBuffer);
-	}
 	else
 		return false;
 
@@ -312,7 +297,7 @@ void GraphEditor::updateView()
 		else
 		{
 			un = m_graph->createNode(
-				type_name(node),
+				getLocalizedName(&type_of(node)),
 				L"",
 				ui::Point(position.first, position.second),
 				new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
