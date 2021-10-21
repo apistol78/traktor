@@ -37,11 +37,6 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
-StreamSoundBuffer::StreamSoundBuffer()
-:	m_position(0)
-{
-}
-
 StreamSoundBuffer::~StreamSoundBuffer()
 {
 	destroy();
@@ -49,7 +44,7 @@ StreamSoundBuffer::~StreamSoundBuffer()
 
 bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 {
-	if ((m_streamDecoder = streamDecoder) != 0)
+	if ((m_streamDecoder = streamDecoder) != nullptr)
 		return true;
 	else
 		return false;

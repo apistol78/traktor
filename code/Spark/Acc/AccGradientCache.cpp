@@ -49,9 +49,6 @@ Color4f interpolateGradient(const AlignedVector< FillStyle::ColorRecord >& color
 
 AccGradientCache::AccGradientCache(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
-,	m_currentGradientColumn(0)
-,	m_nextGradient(0)
-,	m_dirty(false)
 {
 	render::SimpleTextureCreateDesc desc;
 	desc.width = c_gradientsWidth;
@@ -94,12 +91,12 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 	Murmur3 cs;
 	cs.begin();
 	cs.feed(style.getGradientType());
-	for (AlignedVector< FillStyle::ColorRecord >::const_iterator i = colorRecords.begin(); i != colorRecords.end(); ++i)
-		cs.feed(*i);
+	for (const auto& colorRecord : colorRecords)
+		cs.feed(colorRecord);
 	cs.end();
 
 	uint64_t hash = cs.get();
-	SmallMap< uint64_t, Ref< AccBitmapRect > >::iterator it = m_cache.find(hash);
+	auto it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 

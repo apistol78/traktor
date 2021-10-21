@@ -25,8 +25,6 @@ class T_DLLCLASS AudioDriverPulse : public IAudioDriver
 	T_RTTI_CLASS;
 
 public:
-	AudioDriverPulse();
-
 	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -37,9 +35,9 @@ public:
 
 private:
 	pa_sample_spec m_ss;
-	pa_simple* m_pa;
+	pa_simple* m_pa = nullptr;
 	AutoArrayPtr< float > m_pending;
-	uint32_t m_pendingSize;
+	uint32_t m_pendingSize = 0;
 };
 
 	}

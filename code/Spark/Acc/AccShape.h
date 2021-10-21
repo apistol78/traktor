@@ -79,7 +79,12 @@ public:
 		float width;
 	};
 
-	AccShape(render::IRenderSystem* renderSystem, const AccShapeResources* shapeResources, AccShapeVertexPool* fillVertexPool, AccShapeVertexPool* lineVertexPool);
+	explicit AccShape(
+		render::IRenderSystem* renderSystem,
+		const AccShapeResources* shapeResources,
+		AccShapeVertexPool* fillVertexPool,
+		AccShapeVertexPool* lineVertexPool
+	);
 
 	virtual ~AccShape();
 
@@ -139,7 +144,7 @@ private:
 	AlignedVector< FillRenderBatch > m_fillRenderBatches;
 	AlignedVector< LineRenderBatch > m_lineRenderBatches;
 	Aabb2 m_bounds;
-	uint8_t m_batchFlags;
+	uint8_t m_batchFlags = 0;
 };
 
 	}

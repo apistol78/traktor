@@ -38,9 +38,9 @@ public:
 	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
 
 private:
-	int32_t m_sampleRate;
-	int32_t m_samplesCount;
-	int32_t m_channelsCount;
+	int32_t m_sampleRate = 0;
+	int32_t m_samplesCount = 0;
+	int32_t m_channelsCount = 0;
 	AutoArrayPtr< int16_t, AllocFreeAlign > m_samples[SbcMaxChannelCount];
 };
 
