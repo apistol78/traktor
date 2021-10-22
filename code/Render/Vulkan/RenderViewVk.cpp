@@ -1416,6 +1416,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		multiSample,
 #if defined(__IOS__)
 		VK_FORMAT_D16_UNORM_S8_UINT,
+#elif defined(__RPI__)
+		VK_FORMAT_D24_UNORM_S8_UINT,
 #else
 	    VK_FORMAT_D32_SFLOAT_S8_UINT,
 #endif
