@@ -143,7 +143,7 @@ bool Connection::process()
 						return false;
 					}
 					else
-						log::info << L"[GET " << key.format() << L"] Sent " << blob->size() << L" bytes successfully." << Endl;
+						log::info << L"[GET " << key.format() << L"] Sent " << blob->size() << L" bytes." << Endl;
 				}
 				else
 				{
@@ -172,7 +172,7 @@ bool Connection::process()
 
 			if (m_dictionary->get(key) != nullptr)
 			{
-				log::error << L"[PUT " << key.format() << L"] Cannot replace already existing blob." << Endl;
+				log::error << L"[PUT " << key.format() << L"] Cannot replace existing blob." << Endl;
 				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 
@@ -219,7 +219,7 @@ bool Connection::process()
 					{
 						if (m_dictionary->put(key, blob))
 						{
-							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s) to dictionary successfully." << Endl;
+							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s)." << Endl;
 							if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 								return false;
 						}
