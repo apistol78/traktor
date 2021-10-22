@@ -120,7 +120,7 @@ function main(argv)
 			-- if target is running locally.
 			if os.identifier == "windows" then
 				if not fileSystem:move(
-					Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. ".old"),
+					Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
 					Path(binPath),
 					true
 				) then
@@ -129,7 +129,7 @@ function main(argv)
 				end
 			else
 				if not fileSystem:move(
-					Path(Path(binPath).pathOnlyNoVolume .. "/" .. Path(binPath).fileName .. ".old"),
+					Path(Path(binPath).pathOnlyNoVolume .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
 					Path(binPath),
 					true
 				) then
