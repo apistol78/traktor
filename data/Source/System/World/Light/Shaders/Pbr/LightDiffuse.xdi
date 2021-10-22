@@ -398,5 +398,15 @@ Do classic Lambert on Mobile, disregard PBR.
 				<name>Input1</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>RaspberryPI</name>
+			</destination>
+		</item>
 	</edges>
 </object>

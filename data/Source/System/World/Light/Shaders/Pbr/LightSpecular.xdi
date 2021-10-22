@@ -691,5 +691,15 @@ Do classic Phong on Mobile, disregard PBR.
 				<name>Android</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>RaspberryPI</name>
+			</destination>
+		</item>
 	</edges>
 </object>
