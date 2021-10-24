@@ -350,6 +350,10 @@ void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 	}
 }
 
+void ProgramDx11::setImageViewParameter(handle_t handle, ITexture* imageView)
+{
+}
+
 void ProgramDx11::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	auto i = m_parameterMap.find(handle);
