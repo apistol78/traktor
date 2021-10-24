@@ -166,7 +166,7 @@ private:
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[16];
 	uint32_t m_multiSample;
-	handle_t m_nextTargetSetId;
+	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
 
 	bool acquire(int32_t width, int32_t height, Target& outTarget);

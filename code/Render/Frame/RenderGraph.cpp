@@ -24,7 +24,7 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 	{
 		for (int32_t i = 0; i < passes.size(); ++i)
 		{
-			if (passes[i]->getOutput().targetSetId == input.targetSetId)
+			if (passes[i]->getOutput().resourceId == input.resourceId)
 				traverse(passes, depth + 1, i, fn);
 		}
 	}
@@ -44,7 +44,7 @@ RenderGraph::RenderGraph(
 )
 :	m_pool(new RenderGraphTargetSetPool(renderSystem))
 ,	m_multiSample(multiSample)
-,	m_nextTargetSetId(1)
+,	m_nextResourceId(1)
 ,	m_profiler(profiler)
 {
 }
@@ -70,9 +70,9 @@ handle_t RenderGraph::addTransientTargetSet(
 	handle_t sizeReferenceTargetSetId
 )
 {
-	handle_t targetSetId = m_nextTargetSetId++;
+	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[targetSetId];
+	auto& target = m_targets[resourceId];
 	target.name = name;
 	target.persistentHandle = 0;
 	target.targetSetDesc = targetSetDesc;
@@ -82,7 +82,7 @@ handle_t RenderGraph::addTransientTargetSet(
 	target.outputRefCount = 0;
 	target.external = false;
 
-	return targetSetId;
+	return resourceId;
 }
 
 handle_t RenderGraph::addPersistentTargetSet(
@@ -93,9 +93,9 @@ handle_t RenderGraph::addPersistentTargetSet(
 	handle_t sizeReferenceTargetSetId
 )
 {
-	handle_t targetSetId = m_nextTargetSetId++;
+	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[targetSetId];
+	auto& target = m_targets[resourceId];
 	target.name = name;
 	target.persistentHandle = persistentHandle;
 	target.targetSetDesc = targetSetDesc;
@@ -105,7 +105,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	target.outputRefCount = 0;
 	target.external = false;
 
-	return targetSetId;
+	return resourceId;
 }
 
 handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
@@ -114,9 +114,9 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 	T_ASSERT(targetSet->getWidth() > 0);
 	T_ASSERT(targetSet->getHeight() > 0);
 
-	handle_t targetSetId = m_nextTargetSetId++;
+	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[targetSetId];
+	auto& target = m_targets[resourceId];
 	target.name = name;
 	target.persistentHandle = 0;
 	target.rts = targetSet;
@@ -125,7 +125,7 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 	target.outputRefCount = 0;
 	target.external = true;
 
-	return targetSetId;
+	return resourceId;
 }
 
 handle_t RenderGraph::findTargetByName(const wchar_t* const name) const
@@ -163,15 +163,15 @@ bool RenderGraph::validate()
 	{
 		const auto pass = m_passes[i];
 		const auto& output = pass->getOutput();
-		if (output.targetSetId == ~0)
+		if (output.resourceId == ~0)
 			roots.push_back(i);
-		else if (output.targetSetId != ~0 && output.targetSetId != 0)
+		else if (output.resourceId != ~0 && output.resourceId != 0)
 		{
-			auto it = m_targets.find(output.targetSetId);
+			auto it = m_targets.find(output.resourceId);
 			if (it->second.external)
 				roots.push_back(i);
 		}
-		else if (output.targetSetId == 0)
+		else if (output.resourceId == 0)
 			roots.push_back(i);
 	}
 
@@ -199,8 +199,8 @@ bool RenderGraph::validate()
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 	{
 		std::stable_sort(m_order[i].begin(), m_order[i].end(), [&](uint32_t lh, uint32_t rh) {
-			const auto lt = m_passes[lh]->getOutput().targetSetId;
-			const auto rt = m_passes[rh]->getOutput().targetSetId;
+			const auto lt = m_passes[lh]->getOutput().resourceId;
+			const auto rt = m_passes[rh]->getOutput().resourceId;
 			return lt > rt;
 		});
 	}
@@ -213,15 +213,15 @@ bool RenderGraph::validate()
 		{
 			const auto pass = m_passes[index];
 			const auto& output = pass->getOutput();
-			if (output.targetSetId != ~0)
+			if (output.resourceId != ~0)
 			{
-				auto it = m_targets.find(output.targetSetId);
+				auto it = m_targets.find(output.resourceId);
 				if (it != m_targets.end())
 					it->second.outputRefCount++;
 			}
 			for (const auto& input : pass->getInputs())
 			{
-				auto it = m_targets.find(input.targetSetId);
+				auto it = m_targets.find(input.resourceId);
 				if (it != m_targets.end())
 					it->second.inputRefCount++;
 			}	
@@ -292,9 +292,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			// Begin render pass.
 			if (pass->haveOutput())
 			{
-				if (output.targetSetId != 0)
+				if (output.resourceId != 0)
 				{
-					if (currentOutputTargetSetId != output.targetSetId)
+					if (currentOutputTargetSetId != output.resourceId)
 					{
 						if (currentOutputTargetSetId != ~0U)
 						{
@@ -302,7 +302,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							renderContext->enqueue(te);
 						}
 
-						auto it = m_targets.find(output.targetSetId);
+						auto it = m_targets.find(output.resourceId);
 						T_FATAL_ASSERT(it != m_targets.end());
 
 						auto& target = it->second;
@@ -323,7 +323,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						tb->store = output.store;
 						renderContext->enqueue(tb);
 
-						currentOutputTargetSetId = output.targetSetId;
+						currentOutputTargetSetId = output.resourceId;
 					}
 				}
 				else
@@ -384,10 +384,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			// Decrement reference counts on input targets; release if last reference.
 			for (const auto& input : inputs)
 			{
-				if (input.targetSetId == 0)
+				if (input.resourceId == 0)
 					continue;
 
-				auto it = m_targets.find(input.targetSetId);
+				auto it = m_targets.find(input.resourceId);
 				if (it == m_targets.end())
 				{
 					cleanup();
