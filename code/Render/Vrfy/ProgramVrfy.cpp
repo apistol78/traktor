@@ -201,9 +201,15 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 			T_FATAL_ERROR;
 	}
 	else
-		m_program->setTextureParameter(handle, 0);
+		m_program->setTextureParameter(handle, nullptr);
 
 	m_boundTextures[handle] = texture;
+}
+
+void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
+{
+	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
+	m_program->setImageViewParameter(handle, imageView);
 }
 
 void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)

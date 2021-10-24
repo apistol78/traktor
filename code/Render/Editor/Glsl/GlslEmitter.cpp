@@ -225,7 +225,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 
 	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
 	{
-		if (storageUniformNode->getParameterType() != PtTexture2D)
+		if (storageUniformNode->getParameterType() != PtImage2D)
 			return false;
 
 		// Check if image needs to be defined.
@@ -2063,6 +2063,10 @@ bool emitSign(GlslContext& cx, Sign* node)
 
 bool emitScript(GlslContext& cx, Script* node)
 {
+	// If script is a root node then enter appropriate shader stage.
+	if (!node->getTechnique().empty())
+		cx.enterCompute();
+
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Get platform specific script from node.
@@ -2087,6 +2091,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			outputPin->getName(),
 			glsl_from_parameter_type(outputPin->getType())
 		);
+		f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
 	}
 
 	for (int32_t i = 0; i < inputPinCount; ++i)
@@ -2096,74 +2101,74 @@ bool emitScript(GlslContext& cx, Script* node)
 			return false;
 	}
 
-	// Define script instance.
-	if (cx.getShader().defineScript(node->getName()))
+	// Replace all inputs.
+	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		StringOutputStream ss;
-
-		ss << L"void " << node->getName() << L"(";
-
-		int32_t ii = 0;
-		for (int32_t i = 0; i < inputPinCount; ++i)
-		{
-			if (ins[i]->getType() >= GtTexture2D)
-				continue;
-
-			if (ii++ > 0)
-				ss << L", ";
-
-			ss << glsl_type_name(ins[i]->getType()) << L" " << node->getInputPin(i)->getName();
-		}
-
-		if (!ins.empty())
-			ss << L", ";
-
-		for (int32_t i = 0; i < outputPinCount; ++i)
-		{
-			if (i > 0)
-				ss << L", ";
-			ss << L"out " << glsl_type_name(outs[i]->getType()) << L" " << node->getOutputPin(i)->getName();
-		}
-
-		ss << L")";
-
-		std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
-		T_ASSERT(!processedScript.empty());
-
-		auto& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
-		fs << processedScript << Endl;
+		std::wstring variableName = L"$" + node->getInputPin(i)->getName();
+		script = replaceAll(script, variableName, ins[i]->getName());
 	}
+
+	// Replace all outputs.
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		std::wstring variableName = L"$" + node->getOutputPin(i)->getName();
+		script = replaceAll(script, variableName, outs[i]->getName());
+	}
+
+	f << script << Endl;
+
+
+	// // Define script instance.
+	// {
+	// 	StringOutputStream ss;
+
+	// 	ss << L"void " << node->getName() << L"(";
+
+	// 	for (int32_t i = 0; i < inputPinCount; ++i)
+	// 	{
+	// 		if (i > 0)
+	// 			ss << L", ";
+	// 		ss << glsl_type_name(ins[i]->getType()) << L" " << node->getInputPin(i)->getName();
+	// 	}
+
+	// 	for (int32_t i = 0; i < outputPinCount; ++i)
+	// 	{
+	// 		if (inputPinCount == 0 || i > 0)
+	// 			ss << L", ";
+	// 		ss << L"out " << glsl_type_name(outs[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+	// 	}
+
+	// 	ss << L")";
+
+	// 	std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
+	// 	T_ASSERT(!processedScript.empty());
+
+	// 	auto& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
+	// 	fs << processedScript << Endl;
+	// }
 
 	// Emit script invocation.
-	for (int32_t i = 0; i < outputPinCount; ++i)
-		f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
+	// for (int32_t i = 0; i < outputPinCount; ++i)
+	// 	f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
 
-	comment(f, node);
-	f << node->getName() << L"(";
+	// comment(f, node);
+	// f << node->getName() << L"(";
 
-	int32_t ii = 0;
-	for (auto in : ins)
-	{
-		if (in->getType() >= GtTexture2D)
-			continue;
+	// int32_t ii = 0;
+	// for (auto in : ins)
+	// {
+	// 	if (ii++ > 0)
+	// 		f << L", ";
+	// 	f << in->getName();
+	// }
+	// for (auto out : outs)
+	// {
+	// 	if (ii++ > 0)
+	// 		f << L", ";
+	// 	f << out->getName();
+	// }
 
-		if (ii++ > 0)
-			f << L", ";
-
-		f << in->getName();
-	}
-	if (ii > 0)
-		f << L", ";
-
-	ii = 0;
-	for (auto out : outs)
-	{
-		if (ii++)
-			f << L", ";
-		f << out->getName();
-	}
-
-	f << L");" << Endl;
+	// f << L");" << Endl;
 	return true;
 }
 
@@ -2811,7 +2816,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		if (!ub->add(node->getParameterName(), out->getType(), 1))
 			return false;
 	}
-	else
+	else if (out->getType() >= GtTexture2D && out->getType() <= GtTextureCube)
 	{
 		auto existing = cx.getLayout().get(node->getParameterName());
 		if (existing != nullptr)
@@ -2833,6 +2838,28 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		{
 			// Texture do not exist; add new texture resource.
 			cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
+		}
+	}
+	else if (out->getType() >= GtImage2D && out->getType() <= GtImageCube)
+	{
+		auto existing = cx.getLayout().get(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
+			{
+				// Image already exist.
+				existingImage->addStage(getBindStage(cx));
+			}
+			else
+			{
+				// Resource already exist but is not a texture.
+				return false;
+			}
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx)));
 		}
 	}
 

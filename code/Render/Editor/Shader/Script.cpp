@@ -57,6 +57,9 @@ public:
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
 			{ L"PtStructBuffer", PtStructBuffer },
+			{ L"PtImage2D", PtImage2D },
+			{ L"PtImage3D", PtImage3D },
+			{ L"PtImageCube", PtImageCube },
 			{ 0 }
 		};
 
@@ -138,6 +141,9 @@ public:
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
 			{ L"PtStructBuffer", PtStructBuffer },
+			{ L"PtImage2D", PtImage2D },
+			{ L"PtImage3D", PtImage3D },
+			{ L"PtImageCube", PtImageCube },
 			{ 0 }
 		};
 
@@ -300,7 +306,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 2, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 3, Script, Node)
 
 Script::~Script()
 {
@@ -318,6 +324,16 @@ void Script::setName(const std::wstring& name)
 const std::wstring& Script::getName() const
 {
 	return m_name;
+}
+
+void Script::setTechnique(const std::wstring& technique)
+{
+	m_technique = technique;
+}
+
+const std::wstring& Script::getTechnique() const
+{
+	return m_technique;
 }
 
 void Script::setScript(const std::wstring& script)
@@ -384,6 +400,11 @@ ParameterType Script::getOutputPinType(int index) const
 	return m_outputPins[index]->getType();
 }
 
+std::wstring Script::getInformation() const
+{
+	return m_technique;
+}
+
 int Script::getInputPinCount() const
 {
 	return int(m_inputPins.size());
@@ -411,10 +432,14 @@ void Script::serialize(ISerializer& s)
 	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
+
+	if (s.getVersion< Script >() >= 3)
+		s >> Member< std::wstring >(L"technique", m_technique);
+
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", this, m_outputPins);
 
-	if (s.getVersion() < 2)
+	if (s.getVersion< Script >() < 2)
 	{
 		std::map< std::wstring, SamplerState > samplers;
 		s >> MemberStlMap<

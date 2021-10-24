@@ -82,11 +82,11 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 3, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 4, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 3);
+	T_FATAL_ASSERT(s.getVersion() >= 4);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
@@ -95,6 +95,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
 	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
+	s >> MemberAlignedVector< ImageDesc, MemberComposite< ImageDesc > >(L"images", m_images);
 	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"fragmentShaderHash", m_fragmentShaderHash);
@@ -119,6 +120,13 @@ void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 }
 
 void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
+}
+
+void ProgramResourceVk::ImageDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"binding", binding);

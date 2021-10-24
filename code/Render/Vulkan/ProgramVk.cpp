@@ -184,15 +184,20 @@ bool ProgramVk::create(
 		auto& lb = dslb.push_back();
 		lb = {};
 		lb.binding = texture.binding;
-
-		// \fixme need to have another array in resource with m_images.
-		if (stageFlags == VK_SHADER_STAGE_COMPUTE_BIT)
-			lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		else
-			lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		lb.descriptorCount = 1;
 		lb.stageFlags = getShaderStageFlags(texture.stages);
+	}
+
+	// Append image bindings.
+	for (const auto& image : resource->m_images)
+	{
+		auto& lb = dslb.push_back();
+		lb = {};
+		lb.binding = image.binding;
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		lb.descriptorCount = 1;
+		lb.stageFlags = getShaderStageFlags(image.stages);		
 	}
 
 	// Append sbuffer bindings.
@@ -266,6 +271,16 @@ bool ProgramVk::create(
 		m_textures.push_back({ resourceTexture.binding });
 #else
 		m_textures.push_back({ resourceTexture.name + L" (" + getShaderStageNames(resourceTexture.stages) + L")", resourceTexture.binding });
+#endif
+	}
+
+	// Create images.
+	for (const auto& resourceImage : resource->m_images)
+	{
+#if !defined(_DEBUG)
+		m_textures.push_back({ resourceImage.binding });
+#else
+		m_textures.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
 #endif
 	}
 
@@ -451,6 +466,7 @@ void ProgramVk::destroy()
 
 	m_samplers.clear();
 	m_textures.clear();
+	m_images.clear();
 	m_sbuffers.clear();
 }
 
@@ -524,6 +540,13 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textures[i->second.offset].texture = texture;
 }
 
+void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView)
+{
+	auto i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+		m_images[i->second.offset].texture = imageView;
+}
+
 void ProgramVk::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	auto i = m_parameterMap.find(handle);
@@ -558,6 +581,15 @@ bool ProgramVk::validateDescriptorSet()
 		if (!texture.texture)
 			return false;
 		auto resolved = texture.texture->resolve();
+		if (!resolved)
+			return false;
+		key.push_back((intptr_t)resolved);
+	}
+	for (const auto& image : m_images)
+	{
+		if (!image.texture)
+			return false;
+		auto resolved = image.texture->resolve();
 		if (!resolved)
 			return false;
 		key.push_back((intptr_t)resolved);

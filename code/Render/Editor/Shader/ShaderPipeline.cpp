@@ -95,7 +95,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 89, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 90, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -498,7 +498,7 @@ bool ShaderPipeline::buildOutput(
 			// Compile shader program.
 			uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
 			Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
-				Key(0x00000000, 0x00000000, 0x00000000, hash),
+				Key(0x00000000, 0x00000000, type_of(this).getVersion(), hash),
 				[&](IStream* stream) {
 					return BinarySerializer(stream).readObject< ProgramResource >();
 				},

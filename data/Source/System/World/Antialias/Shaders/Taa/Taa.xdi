@@ -545,7 +545,7 @@ Merge
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{7602FB25-8F9D-CB48-AF40-98D40931C352}</id>
 			<comment/>
 			<position>
@@ -553,6 +553,7 @@ Merge
 				<second>658</second>
 			</position>
 			<name>Clip</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{4990718C-4C4E-6C41-A192-06B9DB382674}</id>
@@ -576,12 +577,11 @@ Merge
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	Output.x = Input.x;
-	Output.yz = clamp(Input.yz, Min.xy, Max.xy);
-	Output.w = Input.w;
-}
+$Output.x = $Input.x;
+$Output.yz = clamp($Input.yz, $Min.xy, $Max.xy);
+$Output.w = $Input.w;
+
+
 			]]>
 			</script>
 		</item>

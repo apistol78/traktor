@@ -21,9 +21,13 @@ std::wstring glsl_type_name(GlslType type)
 		L"vec3",
 		L"vec4",
 		L"mat4",
+		L"tex",			// GtTexture2D
 		L"tex",
-		L"tex",
-		L"tex"
+		L"tex",			// GtTextureCube
+		L"",			// GtStructBuffer
+		L"image2D",		// GtImage2D
+		L"image3D",
+		L"imageCube"	// GtImageCube
 	};
 	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];
@@ -47,7 +51,10 @@ int32_t glsl_type_width(GlslType type)
 		0,	// GtTexture2D
 		0,	// GtTexture3D
 		0,	// GtTextureCube
-		0	// GtStructBuffer
+		0,	// GtStructBuffer
+		0,	// GtImage2D
+		0,	// GtImage3D
+		0	// GtImageCube
 	};
 	T_FATAL_ASSERT(type < sizeof_array(w));
 	return w[type];
@@ -71,7 +78,10 @@ GlslType glsl_promote_to_float(GlslType type)
 		GtVoid,		// GtTexture2D
 		GtVoid,		// GtTexture3D
 		GtVoid,		// GtTextureCube
-		GtVoid		// GtStructBuffer
+		GtVoid,		// GtStructBuffer
+		GtVoid,		// GtImage2D
+		GtVoid,		// GtImage3D
+		GtVoid		// GtImageCube
 	};
 	T_FATAL_ASSERT(type < sizeof_array(w));
 	return w[type];
@@ -95,7 +105,10 @@ GlslType glsl_degrade_to_integer(GlslType type)
 		GtVoid,		// GtTexture2D
 		GtVoid,		// GtTexture3D
 		GtVoid,		// GtTextureCube
-		GtVoid		// GtStructBuffer
+		GtVoid,		// GtStructBuffer
+		GtVoid,		// GtImage2D
+		GtVoid,		// GtImage3D
+		GtVoid		// GtImageCube
 	};
 	T_FATAL_ASSERT(type < sizeof_array(w));
 	return w[type];	
@@ -148,7 +161,10 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtTexture2D,
 		GtTexture3D,
 		GtTextureCube,
-		GtStructBuffer
+		GtStructBuffer,
+		GtImage2D,
+		GtImage3D,
+		GtImageCube
 	};
 	T_FATAL_ASSERT(type < sizeof_array(c));
 	return c[type];

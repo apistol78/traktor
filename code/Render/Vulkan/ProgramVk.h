@@ -61,6 +61,8 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
+	virtual void setImageViewParameter(handle_t handle, ITexture* imageView) override final;
+
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
@@ -116,6 +118,15 @@ private:
 		Ref< ITexture > texture;
 	};
 
+	struct Image
+	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
+		uint32_t binding;
+		Ref< ITexture > texture;
+	};
+
 	struct SBuffer
 	{
 #if defined(_DEBUG)
@@ -144,6 +155,7 @@ private:
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
+	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;

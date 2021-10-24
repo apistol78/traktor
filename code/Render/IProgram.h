@@ -47,6 +47,8 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) = 0;
 
+	virtual void setImageViewParameter(handle_t handle, ITexture* imageView) = 0;
+
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) = 0;
 
 	virtual void setStencilReference(uint32_t stencilReference) = 0;

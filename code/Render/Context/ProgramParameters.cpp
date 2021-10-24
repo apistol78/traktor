@@ -101,6 +101,7 @@ enum ParameterTypes
 	PmtMatrix,
 	PmtMatrixArray,
 	PmtTexture,
+	PmtImageView,
 	PmtBufferView,
 	PmtStencilReference,
 	PmtAttachedParameters
@@ -181,6 +182,14 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	write< ITexture* >(m_parameterLast, texture);
 }
 
+void ProgramParameters::setImageViewParameter(handle_t handle, ITexture* imageView)
+{
+	T_ASSERT(m_parameterLast);
+	write< handle_t >(m_parameterLast, handle);
+	write< int8_t >(m_parameterLast, PmtImageView);
+	write< ITexture* >(m_parameterLast, imageView);
+}
+
 void ProgramParameters::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_ASSERT(m_parameterLast);
@@ -252,6 +261,13 @@ void ProgramParameters::fixup(IProgram* program) const
 			{
 				auto texture = read< ITexture* >(parameter);
 				program->setTextureParameter(handle, texture);
+			}
+			break;
+
+		case PmtImageView:
+			{
+				auto imageView = read< ITexture* >(parameter);
+				program->setImageViewParameter(handle, imageView);
 			}
 			break;
 

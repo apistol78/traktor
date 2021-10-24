@@ -119,16 +119,6 @@ void GlslShader::popScope()
 	m_variableScopes.pop_back();
 }
 
-bool GlslShader::defineScript(const std::wstring& signature)
-{
-	std::set< std::wstring >::iterator i = m_scriptSignatures.find(signature);
-	if (i != m_scriptSignatures.end())
-		return false;
-
-	m_scriptSignatures.insert(signature);
-	return true;
-}
-
 StringOutputStream& GlslShader::pushOutputStream(BlockType blockType, const wchar_t* const tag)
 {
 	Ref< StringOutputStream > os = new StringOutputStream();
@@ -158,7 +148,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 {
 	StringOutputStream ss;
 
-	ss << L"#version 450" << Endl;
+	ss << L"#version 460" << Endl;
 
 	if (m_dialect == GlslDialect::OpenGL)
 	{

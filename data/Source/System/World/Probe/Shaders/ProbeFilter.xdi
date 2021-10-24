@@ -332,7 +332,7 @@
 				<second>-955</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
@@ -340,6 +340,7 @@
 				<second>-1279</second>
 			</position>
 			<name>Hammersley</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
@@ -359,25 +360,24 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-float RadicalInverse_VdC(uint bits) 
-{
-    bits = (bits << 16u) | (bits >> 16u);
-    bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-    bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-    bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-    bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-    return float(bits) * 2.3283064365386963e-10; // / 0x100000000
-}
 
-ENTRY
-{
-	Output = vec4(
-		float(I) / float(N),
-		RadicalInverse_VdC(uint(I)),
-		0,
-		0
-	);
-}
+uint bits = uint($I);
+bits = (bits << 16u) | (bits >> 16u);
+bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+
+float v = float(bits) * 2.3283064365386963e-10; // / 0x100000000
+
+$Output = vec4(
+	float($I) / float($N),
+	v,
+	0,
+	0
+);
+
+
 			]]>
 			</script>
 		</item>
@@ -438,7 +438,7 @@ ENTRY
 			<name>L_N</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
@@ -446,6 +446,7 @@ ENTRY
 				<second>-1248</second>
 			</position>
 			<name>ImportanceSampleGGX</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
@@ -471,28 +472,27 @@ ENTRY
 			<![CDATA[
 const float PI = 3.14159265359;
 
-ENTRY
-{
-    float a = Roughness * Roughness;
+float a = $Roughness * $Roughness;
 	
-    float phi = 2.0 * PI * Xi.x;
-    float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
-    float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
+float phi = 2.0 * PI * $Xi.x;
+float cosTheta = sqrt((1.0 - $Xi.y) / (1.0 + (a * a - 1.0) * $Xi.y));
+float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
 	
-    // from spherical coordinates to cartesian coordinates
-    vec3 H;
-    H.x = cos(phi) * sinTheta;
-    H.y = sin(phi) * sinTheta;
-    H.z = cosTheta;
+// from spherical coordinates to cartesian coordinates
+vec3 H;
+H.x = cos(phi) * sinTheta;
+H.y = sin(phi) * sinTheta;
+H.z = cosTheta;
 	
-    // from tangent-space vector to world-space sample vector
-    vec3 up        = abs(N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
-    vec3 tangent   = normalize(cross(up, N));
-    vec3 bitangent = cross(N, tangent);
+// from tangent-space vector to world-space sample vector
+vec3 up        = abs($N.z) < 0.999 ? vec3(0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
+vec3 tangent   = normalize(cross(up, $N));
+vec3 bitangent = cross($N, tangent);
 	
-    vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
-    Output = vec4(normalize(sampleVec), 0);
-}
+vec3 sampleVec = tangent * H.x + bitangent * H.y + $N * H.z;
+$Output = vec4(normalize(sampleVec), 0);
+
+
 			]]>
 			</script>
 		</item>
@@ -760,7 +760,7 @@ V
 			<name>L_SampleCount</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{C40E3CAF-E9D7-AA49-BAA2-E9674921BBED}</id>
 			<comment/>
 			<position>
@@ -768,6 +768,7 @@ V
 				<second>-1506</second>
 			</position>
 			<name>Hammersley</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
@@ -809,7 +810,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{20A0B7BE-ACB5-9C4B-A412-BAF9436B71AA}</id>
 			<comment/>
 			<position>
@@ -817,6 +818,7 @@ ENTRY
 				<second>-1475</second>
 			</position>
 			<name>ImportanceSampleGGX</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>

@@ -41,19 +41,16 @@ enum GlslType
 	GtTexture2D = 11,
 	GtTexture3D = 12,
 	GtTextureCube = 13,
-	GtStructBuffer = 14
+	GtStructBuffer = 14,
+	GtImage2D = 15,
+	GtImage3D = 16,
+	GtImageCube = 17
 };
 
 struct GlslRequirements
 {
-	PrecisionHint vertexPrecisionHint;
-	PrecisionHint fragmentPrecisionHint;
-
-	GlslRequirements()
-	:	vertexPrecisionHint(PhUndefined)
-	,	fragmentPrecisionHint(PhUndefined)
-	{
-	}
+	PrecisionHint vertexPrecisionHint = PhUndefined;
+	PrecisionHint fragmentPrecisionHint = PhUndefined;
 };
 
 std::wstring T_DLLCLASS glsl_type_name(GlslType type);

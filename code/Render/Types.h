@@ -232,7 +232,10 @@ enum ParameterType
 	PtTexture2D	= 3,	//!< 2D texture parameter.
 	PtTexture3D	= 4,	//!< 3D texture parameter.
 	PtTextureCube = 5,	//!< Cube texture parameter.
-	PtStructBuffer = 6	//!< Struct buffer parameter.
+	PtStructBuffer = 6,	//!< Struct buffer parameter.
+	PtImage2D	= 7,
+	PtImage3D	= 8,
+	PtImageCube	= 9
 };
 
 /*! Shader parameter update frequency. */

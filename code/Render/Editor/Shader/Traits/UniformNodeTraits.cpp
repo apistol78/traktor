@@ -67,6 +67,12 @@ PinType UniformNodeTraits::getOutputPinType(
 		return PntTexture3D;
 	case PtTextureCube:
 		return PntTextureCube;
+	case PtImage2D:
+		return PntImage2D;
+	case PtImage3D:
+		return PntImage3D;
+	case PtImageCube:
+		return PntImageCube;
 	case PtStructBuffer:
 		return PntStructBuffer;
 	default:
@@ -102,6 +108,12 @@ PinType UniformNodeTraits::getInputPinType(
 				return PntTexture3D;
 			case PtTextureCube:
 				return PntTextureCube;
+			case PtImage2D:
+				return PntImage2D;
+			case PtImage3D:
+				return PntImage3D;
+			case PtImageCube:
+				return PntImageCube;
 			case PtStructBuffer:
 				return PntStructBuffer;
 			default:

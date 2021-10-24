@@ -2349,6 +2349,9 @@ void Uniform::serialize(ISerializer& s)
 		{ L"PtTexture2D", PtTexture2D },
 		{ L"PtTexture3D", PtTexture3D },
 		{ L"PtTextureCube", PtTextureCube },
+		{ L"PtImage2D", PtImage2D },
+		{ L"PtImage3D", PtImage3D },
+		{ L"PtImageCube", PtImageCube },
 		{ 0 }
 	};
 
