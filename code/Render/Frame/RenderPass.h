@@ -35,13 +35,13 @@ public:
 
 	struct Input
 	{
-		handle_t targetSetId = 0;	//!< Resource name.
+		handle_t resourceId = 0;	//!< Resource name.
 	};
 
 	struct Output
 	{
-		handle_t targetSetId = 0;	//!< Resource name, all set's color attachments are written to by pass.
-		Clear clear;				//!< Target clear value and mask.
+		handle_t resourceId = 0;	//!< Resource name.
+		Clear clear;				//!< Target clear value and mask (only applicable to render target resources).
 		uint32_t load = 0;
 		uint32_t store = 0;
 	};
@@ -54,9 +54,9 @@ public:
 
 	//! \{
 
-	void addInput(handle_t targetSetId);
+	void addInput(handle_t resourceId);
 
-	bool requireInput(handle_t targetSetId) const;
+	bool requireInput(handle_t resourceId) const;
 
 	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
@@ -64,11 +64,13 @@ public:
 
 	//! \{
 
-	void setOutput(handle_t targetSetId, uint32_t load, uint32_t store);
+	void setOutput(handle_t resourceId);
 
-	void setOutput(handle_t targetSetId, const Clear& clear, uint32_t load, uint32_t store);
+	void setOutput(handle_t resourceId, uint32_t load, uint32_t store);
 
-	bool haveOutput() const { return m_output.targetSetId != ~0; }
+	void setOutput(handle_t resourceId, const Clear& clear, uint32_t load, uint32_t store);
+
+	bool haveOutput() const { return m_output.resourceId != ~0; }
 
 	const Output& getOutput() const { return m_output; }
 
