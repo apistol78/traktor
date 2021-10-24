@@ -28,7 +28,7 @@ class T_DLLCLASS ShaderGraphTechniques : public Object
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphTechniques(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphTechniques(const ShaderGraph* shaderGraph);
 
 	std::set< std::wstring > getNames() const;
 

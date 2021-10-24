@@ -491,7 +491,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{25098B3A-6C90-2A4C-93AF-3005EB94261D}</id>
 			<comment/>
 			<position>
@@ -499,6 +499,7 @@
 				<second>1015</second>
 			</position>
 			<name>Fetch</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{9D79F225-1C98-9D48-A68B-A22EC5F7E303}</id>
@@ -518,10 +519,9 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	Output = Input[int(Index)];
-}
+$Output = $Input[int($Index)];
+
+
 			]]>
 			</script>
 		</item>

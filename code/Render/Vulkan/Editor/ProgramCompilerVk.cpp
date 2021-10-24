@@ -31,6 +31,7 @@
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
@@ -155,8 +156,6 @@ TBuiltInResource getDefaultBuiltInResource()
 	return bir;
 }
 
-const uint32_t c_parameterTypeWidths[] = { 1, 4, 16, 0, 0, 0 };
-
 void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& spirv)
 {
 	spv_target_env target_env = SPV_ENV_UNIVERSAL_1_2;
@@ -245,10 +244,22 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
+	RefArray< Script > scriptOutputs;
 
-	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
-	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
+	for (auto node : shaderGraph->getNodes())
+	{
+		if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
+			vertexOutputs.push_back(vertexOutput);
+		else if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+			pixelOutputs.push_back(pixelOutput);
+		else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+			computeOutputs.push_back(computeOutput);
+		else if (auto script = dynamic_type_cast< Script* >(node))
+		{
+			if (!script->getTechnique().empty())
+				scriptOutputs.push_back(script);
+		}
+	}
 
 	GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
 
@@ -304,12 +315,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		program->addShader(vertexShader);
 		program->addShader(fragmentShader);
 	}
-	else if (computeOutputs.size() >= 1)
+	else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
 
 		for (auto computeOutput : computeOutputs)
 			cx.getEmitter().emit(cx, computeOutput);
+		for (auto scriptOutput : scriptOutputs)
+			cx.getEmitter().emit(cx, scriptOutput);
 
 		GlslRequirements computeRequirements = cx.requirements();
 
@@ -416,10 +429,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			auto& pm = parameterMapping[image->getName()];
 			pm.buffer = image->getBinding(GlslDialect::Vulkan);
-			pm.offset = (uint32_t)programResource->m_textures.size();
+			pm.offset = (uint32_t)programResource->m_images.size();
 			pm.length = 0;
 
-			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+			programResource->m_images.push_back(ProgramResourceVk::ImageDesc(
 				image->getName(),
 				image->getBinding(GlslDialect::Vulkan),
 				image->getStages()
@@ -582,15 +595,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		programResource->m_layoutHash = checksum.get();
 	}
 
-	log::debug << L"Vulkan program \"" << name << L"\" compiled successfully:" << Endl;
-	log::debug << IncreaseIndent;
-	log::debug << L"m_vertexShaderHash = " << str(L"0x%08x", programResource->m_vertexShaderHash) << Endl;
-	log::debug << L"m_fragmentShaderHash = " << str(L"0x%08x", programResource->m_fragmentShaderHash) << Endl;
-	log::debug << L"m_computeShaderHash = " << str(L"0x%08x", programResource->m_computeShaderHash) << Endl;
-	log::debug << L"m_shaderHash = " << str(L"0x%08x", programResource->m_shaderHash) << Endl;
-	log::debug << L"m_layoutHash = " << str(L"0x%08x", programResource->m_layoutHash) << Endl;
-	log::debug << DecreaseIndent;
-
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
@@ -616,10 +620,22 @@ bool ProgramCompilerVk::generate(
 		RefArray< VertexOutput > vertexOutputs;
 		RefArray< PixelOutput > pixelOutputs;
 		RefArray< ComputeOutput > computeOutputs;
+		RefArray< Script > scriptOutputs;
 
-		shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
-		shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
-		shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
+		for (auto node : shaderGraph->getNodes())
+		{
+			if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
+				vertexOutputs.push_back(vertexOutput);
+			else if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+				pixelOutputs.push_back(pixelOutput);
+			else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+				computeOutputs.push_back(computeOutput);
+			else if (auto script = dynamic_type_cast< Script* >(node))
+			{
+				if (!script->getTechnique().empty())
+					scriptOutputs.push_back(script);
+			}
+		}
 
 		GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
 
@@ -634,11 +650,13 @@ bool ProgramCompilerVk::generate(
 				return false;
 			}
 		}
-		else if (computeOutputs.size() >= 1)
+		else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
 		{
 			bool result = true;
 			for (auto computeOutput : computeOutputs)
 				result &= cx.getEmitter().emit(cx, computeOutput);
+			for (auto scriptOutput : scriptOutputs)
+				result &= cx.getEmitter().emit(cx, scriptOutput);
 			if (!result)
 			{
 				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;

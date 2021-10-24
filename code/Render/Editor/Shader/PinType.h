@@ -24,7 +24,10 @@ enum PinType
 	PntTexture3D = 7,
 	PntTextureCube = 8,
 	PntStructBuffer = 9,
-	PntState = 10,
+	PntImage2D = 10,
+	PntImage3D = 11,
+	PntImageCube = 12,
+	PntState = 13,
 	PntAny = (PntState)
 };
 

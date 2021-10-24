@@ -32,7 +32,8 @@ TypeInfoSet ScriptNodeTraits::getNodeTypes() const
 
 bool ScriptNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
-	return false;
+	const Script* script = static_cast< const Script* >(node);
+	return !script->getTechnique().empty();
 }
 
 PinType ScriptNodeTraits::getOutputPinType(

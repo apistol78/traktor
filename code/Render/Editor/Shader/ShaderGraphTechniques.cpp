@@ -5,6 +5,7 @@
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
@@ -61,10 +62,15 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 		const RefArray< Node >& nodes = shaderGraphOpt->getNodes();
 		for (const auto node : nodes)
 		{
-			if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+			if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
 				names.insert(pixelOutput->getTechnique());
-			else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+			else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
 				names.insert(computeOutput->getTechnique());
+			else if (auto script = dynamic_type_cast< Script* >(node))
+			{
+				if (!script->getTechnique().empty())
+					names.insert(script->getTechnique());
+			}
 		}
 
 		// Generate each technique.
@@ -77,7 +83,7 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 			// Find named output nodes.
 			for (auto node : nodes)
 			{
-				if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(node))
+				if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
 				{
 					if (vertexOutput->getTechnique() == name)
 					{
@@ -85,15 +91,20 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 						foundNamedVertexOutput = true;
 					}
 				}
-				else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+				else if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
 				{
 					if (pixelOutput->getTechnique() == name)
 						roots.push_back(pixelOutput);
 				}
-				else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+				else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
 				{
 					if (computeOutput->getTechnique() == name)
 						roots.push_back(computeOutput);
+				}
+				else if (auto script = dynamic_type_cast< Script* >(node))
+				{
+					if (script->getTechnique() == name)
+						roots.push_back(script);
 				}
 				else
 				{

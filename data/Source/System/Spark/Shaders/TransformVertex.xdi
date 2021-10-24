@@ -239,7 +239,7 @@
 			</position>
 			<name>Clip</name>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
 			<comment/>
 			<position>
@@ -247,6 +247,7 @@
 				<second>-210</second>
 			</position>
 			<name>ClipBounds_Dx11</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
@@ -291,7 +292,7 @@ ENTRY
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
 			<comment/>
 			<position>
@@ -299,6 +300,7 @@ ENTRY
 				<second>-116</second>
 			</position>
 			<name>ClipBounds_Vulkan</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
@@ -318,11 +320,10 @@ ENTRY
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	vec2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw + 1.0, Position.xy);
-	Inside = s.x * s.y;
-}
+vec2 s = step($Bounds.xy, $Position.xy) - step($Bounds.zw + 1.0, $Position.xy);
+$Inside = s.x * s.y;
+
+
 			]]>
 			</script>
 		</item>

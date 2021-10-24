@@ -71,8 +71,6 @@ public:
 
 	void popScope();
 
-	bool defineScript(const std::wstring& signature);
-
 	/*! \name Output streams */
 	/*! \{ */
 
@@ -108,7 +106,6 @@ private:
 	AlignedVector< OutputPinVariable > m_variables;
 	AlignedVector< uint32_t > m_variableScopes;
 	AlignedVector< OutputPinVariable > m_outerVariables;
-	std::set< std::wstring > m_scriptSignatures;
 	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 };

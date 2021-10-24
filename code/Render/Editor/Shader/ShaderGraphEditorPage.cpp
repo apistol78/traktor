@@ -104,6 +104,9 @@ const wchar_t* c_pinTypeNames[] =
 	L"Texture 3D",
 	L"Texture Cube",
 	L"Struct Buffer",
+	L"Image 2D",
+	L"Image 3D",
+	L"Image Cube",
 	L"State"
 };
 
@@ -115,7 +118,10 @@ const wchar_t* c_parameterTypeNames[] =
 	L"Texture 2D",
 	L"Texture 3D",
 	L"Texture Cube",
-	L"Struct Buffer"
+	L"Struct Buffer",
+	L"Image 2D",
+	L"Image 3D",
+	L"Image Cube"
 };
 
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
@@ -1109,20 +1115,11 @@ void ShaderGraphEditorPage::updateGraph()
 {
 	struct VariableInfo
 	{
-		uint32_t globalCount;
-		uint32_t localCount;
-		uint32_t writeCount;
-		uint32_t readCount;
-		PinType type;
-
-		VariableInfo()
-		:	globalCount(0)
-		,	localCount(0)
-		,	writeCount(0)
-		,	readCount(0)
-		,	type(PntVoid)
-		{
-		}
+		uint32_t globalCount = 0;
+		uint32_t localCount = 0;
+		uint32_t writeCount = 0;
+		uint32_t readCount = 0;
+		PinType type = PntVoid;
 	};
 	std::map< std::wstring, VariableInfo > variables;
 

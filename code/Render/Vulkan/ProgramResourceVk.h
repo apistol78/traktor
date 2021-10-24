@@ -41,7 +41,7 @@ public:
 
 		ParameterDesc() = default;
 
-		ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
+		explicit ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
 		:	name(name_)
 		,	buffer(buffer_)
 		,	offset(offset_)
@@ -60,7 +60,7 @@ public:
 
 		SamplerDesc() = default;
 
-		SamplerDesc(uint32_t binding_, uint8_t stages_, const SamplerState& state_)
+		explicit SamplerDesc(uint32_t binding_, uint8_t stages_, const SamplerState& state_)
 		:	binding(binding_)
 		,	stages(stages_)
 		,	state(state_)
@@ -78,7 +78,25 @@ public:
 
 		TextureDesc() = default;
 
-		TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
+		explicit TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
+		:	name(name_)
+		,	binding(binding_)
+		,	stages(stages_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
+	struct ImageDesc
+	{
+		std::wstring name;
+		uint32_t binding = 0;
+		uint8_t stages = 0;
+
+		ImageDesc() = default;
+
+		explicit ImageDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
 		:	name(name_)
 		,	binding(binding_)
 		,	stages(stages_)
@@ -96,7 +114,7 @@ public:
 
 		SBufferDesc() = default;
 
-		SBufferDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
+		explicit SBufferDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
 		:	name(name_)
 		,	binding(binding_)
 		,	stages(stages_)
@@ -123,6 +141,7 @@ private:
 
 	AlignedVector< SamplerDesc > m_samplers;
 	AlignedVector< TextureDesc > m_textures;
+	AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
 
 	uint32_t m_vertexShaderHash = 0;

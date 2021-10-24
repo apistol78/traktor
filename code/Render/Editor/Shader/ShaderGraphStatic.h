@@ -32,7 +32,7 @@ public:
 		VrtGlobal
 	};
 
-	ShaderGraphStatic(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphStatic(const ShaderGraph* shaderGraph);
 
 	/*! Get permutation of shader graph for given platform. */
 	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;

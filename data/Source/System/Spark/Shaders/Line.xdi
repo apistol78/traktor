@@ -120,7 +120,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -128,6 +128,7 @@
 				<second>-526</second>
 			</position>
 			<name>DistanceToLine</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
@@ -151,24 +152,23 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	float2 d = LineEnd.xy - LineStart.xy;
-	float dln = length(d);
+float2 d = $LineEnd.xy - $LineStart.xy;
+float dln = length(d);
 
-	float2 dp = float2(d.y, -d.x);
-	float2 dpn = dp / dln;
+float2 dp = float2(d.y, -d.x);
+float2 dpn = dp / dln;
 
-	float k1 = dot(dpn, Position.xy - LineStart.xy);
+float k1 = dot(dpn, $Position.xy - $LineStart.xy);
 
-	float2 Pl = Position.xy - dpn * k1;
-	float k2 = dot(Pl - LineStart.xy, d) / (dln * dln);
+float2 Pl = $Position.xy - dpn * k1;
+float k2 = dot(Pl - $LineStart.xy, d) / (dln * dln);
 
-	if (k2 >= 0.0f && k2 <= 1.0f)
-		Distance = abs(k1);
-	else
-		Distance = min(length(Position.xy - LineStart.xy), length(Position.xy - LineEnd.xy));
-}
+if (k2 >= 0.0f && k2 <= 1.0f)
+	$Distance = abs(k1);
+else
+	$Distance = min(length($Position.xy - $LineStart.xy), length($Position.xy - $LineEnd.xy));
+
+
 			]]>
 			</script>
 		</item>

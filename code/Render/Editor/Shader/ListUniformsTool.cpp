@@ -100,7 +100,10 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
         L"texture2d",
         L"texture3d",
         L"textureCube",
-        L"structBuffer"
+        L"structBuffer",
+        L"image2d",
+        L"image3d",
+        L"imageCube"
     };
 
     const wchar_t* updateFrequencyNames[] =

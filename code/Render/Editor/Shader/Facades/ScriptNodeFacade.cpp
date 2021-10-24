@@ -32,12 +32,7 @@ Ref< Node > ScriptNodeFacade::createShaderNode(
 	sc->setName(L"Unnamed");
 	sc->addInputPin(Guid::create(), L"Input");
 	sc->addOutputPin(Guid::create(), L"Output", PtScalar);
-	sc->setScript(
-		L"ENTRY\n"
-		L"{\n"
-		L"\tOutput = Input;\n"
-		L"}\n"
-	);
+	sc->setScript(L"$Output = $Input;\n");
 	return sc;
 }
 
@@ -78,6 +73,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(scriptNode->getComment());
+	editorNode->setInfo(scriptNode->getInformation());
 	return editorNode;
 }
 
@@ -105,6 +101,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 	editorNode->setTitle(scriptNode->getName());
 	editorNode->setComment(scriptNode->getComment());
+	editorNode->setInfo(scriptNode->getInformation());
 }
 
 void ScriptNodeFacade::setValidationIndicator(

@@ -187,7 +187,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{441FB1E2-3D57-8940-A790-0827F2837AED}</id>
 			<comment/>
 			<position>
@@ -195,6 +195,7 @@
 				<second>231</second>
 			</position>
 			<name>InRange</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{D779D338-6192-2E46-A9C2-04815518657B}</id>
@@ -210,13 +211,12 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	vec2 mn = step(Input.xy, vec2(0.995, 0.995));
-	vec2 mx = step(vec2(0.0005, 0.0005), Input.xy);
-	vec2 tm = mn * mx;
-	Output = tm.x * tm.y;
-}
+vec2 mn = step($Input.xy, vec2(0.995, 0.995));
+vec2 mx = step(vec2(0.0005, 0.0005), $Input.xy);
+vec2 tm = mn * mx;
+$Output = tm.x * tm.y;
+
+
 			]]>
 			</script>
 		</item>
@@ -237,7 +237,7 @@ ENTRY
 				<second>177</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
 			<id>{39C6FFB5-F818-1A41-95ED-2F01925FE9AE}</id>
 			<comment/>
 			<position>
@@ -245,6 +245,7 @@ ENTRY
 				<second>152</second>
 			</position>
 			<name>InRange</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{D779D338-6192-2E46-A9C2-04815518657B}</id>
@@ -260,13 +261,12 @@ ENTRY
 			</outputPins>
 			<script>
 			<![CDATA[
-ENTRY
-{
-	float2 mn = step(Input.xy, float2(0.995f, 0.995f));
-	float2 mx = step(float2(0.0005f, 0.0005f), Input.xy);
-	float2 tm = mn * mx;
-	Output = tm.x * tm.y;
-}
+float2 mn = step($Input.xy, float2(0.995f, 0.995f));
+float2 mx = step(float2(0.0005f, 0.0005f), $Input.xy);
+float2 tm = mn * mx;
+$Output = tm.x * tm.y;
+
+
 			]]>
 			</script>
 		</item>
