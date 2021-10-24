@@ -22,6 +22,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Editor/PipelineDependency.h"
 #include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -498,7 +499,7 @@ bool ShaderPipeline::buildOutput(
 			// Compile shader program.
 			uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
 			Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
-				Key(0x00000000, 0x00000000, type_of(this).getVersion(), hash),
+				Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
 				[&](IStream* stream) {
 					return BinarySerializer(stream).readObject< ProgramResource >();
 				},

@@ -551,8 +551,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
-		nullptr,
-		nullptr,
+		&dependencySet,
+		dependency,
 		nullptr,
 		sourceAsset,
 		outputPath,
