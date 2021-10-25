@@ -128,6 +128,11 @@ handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTar
 	return resourceId;
 }
 
+handle_t RenderGraph::addPseudoResource(const wchar_t* const name)
+{
+	return m_nextResourceId++;
+}
+
 handle_t RenderGraph::findTargetByName(const wchar_t* const name) const
 {
 	for (const auto& tm : m_targets)
@@ -155,7 +160,7 @@ void RenderGraph::addPass(const RenderPass* pass)
 bool RenderGraph::validate()
 {
 	// Find root passes, which are either of:
-	// 1) Have no output target.
+	// 1) Have no output resource.
 	// 2) Writing to external targets.
 	// 3) Writing to primary target.
 	StaticVector< uint32_t, 32 > roots;
@@ -302,26 +307,28 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							renderContext->enqueue(te);
 						}
 
+						// Begin pass if resource is a target.
 						auto it = m_targets.find(output.resourceId);
-						T_FATAL_ASSERT(it != m_targets.end());
-
-						auto& target = it->second;
-						if (target.rts == nullptr)
+						if (it != m_targets.end())
 						{
-							T_ASSERT(!target.external);
-							if (!acquire(width, height, target))
+							auto& target = it->second;
+							if (target.rts == nullptr)
 							{
-								cleanup();
-								return false;
-							}
-						}	
+								T_ASSERT(!target.external);
+								if (!acquire(width, height, target))
+								{
+									cleanup();
+									return false;
+								}
+							}	
 
-						auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-						tb->renderTargetSet = target.rts;
-						tb->clear = output.clear;
-						tb->load = output.load;
-						tb->store = output.store;
-						renderContext->enqueue(tb);
+							auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+							tb->renderTargetSet = target.rts;
+							tb->clear = output.clear;
+							tb->load = output.load;
+							tb->store = output.store;
+							renderContext->enqueue(tb);
+						}
 
 						currentOutputTargetSetId = output.resourceId;
 					}
