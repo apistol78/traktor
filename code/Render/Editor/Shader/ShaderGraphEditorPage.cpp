@@ -973,6 +973,13 @@ void ShaderGraphEditorPage::editScript(Script* script)
 
 void ShaderGraphEditorPage::createEditorGraph()
 {
+	Guid scriptId;
+
+	if (m_script)
+		scriptId = m_script->getId();
+
+	editScript(nullptr);
+
 	m_editorGraph->removeAllEdges();
 	m_editorGraph->removeAllNodes();
 
@@ -982,6 +989,15 @@ void ShaderGraphEditorPage::createEditorGraph()
 	);
 
 	updateGraph();
+
+	if (scriptId.isNotNull())
+	{
+		for (auto node : m_shaderGraph->getNodes())
+		{
+			if (node->getId() == scriptId)
+				editScript(dynamic_type_cast< Script* >(node));
+		}
+	}	
 
 	m_site->setPropertyObject(nullptr);
 }
@@ -1639,6 +1655,8 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	);
 
 	m_script->setScript(text);
+
+	m_document->push();
 }
 
 void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)
