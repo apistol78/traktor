@@ -33,7 +33,6 @@ public:
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		bool irradianceEnable,
-		bool fogEnable,
 		bool shadowEnable,
 		bool reflectionsEnable
 	);
@@ -61,7 +60,6 @@ private:
 	const WorldRenderView& m_worldRenderView;
 	uint32_t m_passFlags = 0;
 	bool m_irradianceEnable = false;
-	bool m_fogEnable = false;
 	bool m_shadowEnable = false;
 	bool m_reflectionsEnable = false;
 

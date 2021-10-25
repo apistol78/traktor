@@ -1435,7 +1435,6 @@ void WorldRendererForward::setupVisualPass(
 				worldRenderView,
 				IWorldRenderPass::PfLast,
 				(bool)(m_irradianceGrid != nullptr),
-				m_settings.fog,
 				(bool)(shadowAtlasTargetSet != nullptr),
 				(bool)(probe != nullptr) // (bool)(reflectionsTargetSet != nullptr)
 			);

@@ -24,7 +24,6 @@ const render::Handle s_handleExposure(L"World_Exposure");
 const render::Handle s_handleExtent(L"World_Extent");
 const render::Handle s_handleFogColor(L"World_FogColor");
 const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
-const render::Handle s_handleFogEnable(L"World_FogEnable");
 const render::Handle s_handleGamma(L"World_Gamma");
 const render::Handle s_handleGammaInverse(L"World_GammaInverse");
 const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");

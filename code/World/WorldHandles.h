@@ -26,7 +26,6 @@ extern const render::Handle s_handleExposure;
 extern const render::Handle s_handleExtent;
 extern const render::Handle s_handleFogColor;
 extern const render::Handle s_handleFogDistanceAndDensity;
-extern const render::Handle s_handleFogEnable;
 extern const render::Handle s_handleGamma;
 extern const render::Handle s_handleGammaInverse;
 extern const render::Handle s_handleIrradianceEnable;
