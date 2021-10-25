@@ -75,7 +75,6 @@ public:
 	ExposureMode exposureMode = EmFixed;
 	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];
-	bool fog = false;
 	float fogDistance = 90.0f;
 	float fogDensity = 0.0f;
 	Color4f fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);

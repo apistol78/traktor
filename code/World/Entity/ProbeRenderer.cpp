@@ -224,7 +224,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wrs.viewFarZ = 10000.0f;
 		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
 		wrs.exposure = 0.0f;
-		wrs.fog = false;
 
 		world::WorldCreateDesc wcd;
 		wcd.worldRenderSettings = &wrs;
