@@ -46,7 +46,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 35, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 36, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -127,11 +127,19 @@ void WorldRenderSettings::serialize(ISerializer& s)
 			s >> Member< bool >(L"motionBlur", motionBlur);
 			s >> Member< float >(L"motionBlurAmount", motionBlurAmount);
 		}
-		s >> Member< bool >(L"fog", fog);
+		if (s.getVersion() < 36)
+		{
+			bool fog;
+			s >> Member< bool >(L"fog", fog);
+		}
 	}
 	else
 	{
-		s >> Member< bool >(L"fogEnabled", fog);
+		if (s.getVersion() < 36)
+		{
+			bool fog;
+			s >> Member< bool >(L"fogEnabled", fog);
+		}
 	}
 
 	if (s.getVersion() >= 21)

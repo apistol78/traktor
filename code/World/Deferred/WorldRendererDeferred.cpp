@@ -202,18 +202,8 @@ bool WorldRendererDeferred::create(
 	m_sharedDepthStencil = desc.sharedDepthStencil;
 
 	// Pack fog parameters.
-	if (m_settings.fog)
-	{
-		m_fogDistanceAndDensity = Vector4(
-			m_settings.fogDistance,
-			m_settings.fogDensity,
-			0.0f,
-			0.0f
-		);
-		m_fogColor = m_settings.fogColor;
-	}
-	else
-		m_fogDistanceAndDensity = Vector4::zero();
+	m_fogDistanceAndDensity = Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f);
+	m_fogColor = m_settings.fogColor;
 
 	// Create light, reflection and fog shaders.
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
