@@ -77,7 +77,7 @@ public:
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
-	 * \return Opaque handle of transient target set.
+	 * \return Opaque resource handle of transient target set.
 	 */
 	handle_t addTransientTargetSet(
 		const wchar_t* const name,
@@ -100,7 +100,7 @@ public:
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
-	 * \return Opaque handle of transient target set.
+	 * \return Opaque resource handle of transient target set.
 	 */
 	handle_t addPersistentTargetSet(
 		const wchar_t* const name,
@@ -114,9 +114,16 @@ public:
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \param targetSet Render target set.
-	 * \return Opaque handle of target set.
+	 * \return Opaque resource handle of target set.
 	 */
 	handle_t addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
+
+	/*! Add pseudo resource.
+	 *
+	 * \param name Name of pseudo resource, used for debugging only.
+	 * \return Opaque resource handle.
+	 */
+	handle_t addPseudoResource(const wchar_t* const name);
 
 	/*! Find target ID by name.
 	 *
