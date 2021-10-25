@@ -23,6 +23,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 #include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -507,7 +508,10 @@ bool ShaderPipeline::buildOutput(
 					return BinarySerializer(stream).writeObject(object);
 				},
 				[&]() {
-					return programCompiler->compile(programGraph, m_compilerSettings, path, nullptr);
+					pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
+					Ref< ProgramResource > programResource =  programCompiler->compile(programGraph, m_compilerSettings, path, nullptr);
+					pipelineBuilder->getProfiler()->end(type_of(programCompiler));
+					return programResource;
 				}
 			);
 			if (!programResource)
