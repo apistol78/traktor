@@ -5,8 +5,8 @@
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
-				<first>4156</first>
-				<second>894</second>
+				<first>3838</first>
+				<second>988</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -1108,8 +1108,8 @@ Eye direction
 			<id>{9A706E51-B954-6C42-9CDC-FD27CCA085F2}</id>
 			<comment/>
 			<position>
-				<first>3910</first>
-				<second>906</second>
+				<first>3592</first>
+				<second>1000</second>
 			</position>
 			<name>L_Enable</name>
 			<global>false</global>
@@ -1322,8 +1322,8 @@ Eye direction
 			<id>{0EBC4690-DCF0-450E-BF96-8AB97BF09A8B}</id>
 			<comment/>
 			<position>
-				<first>2876</first>
-				<second>1001</second>
+				<first>2871</first>
+				<second>1127</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -1354,27 +1354,18 @@ Eye direction
 			<id>{CAC18849-EBED-488C-ABE3-92646976BF8D}</id>
 			<comment/>
 			<position>
-				<first>2627</first>
-				<second>1050</second>
+				<first>2622</first>
+				<second>1176</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Branch" version="traktor.render.Node:1">
-			<id>{5FA4DED2-63F5-40E6-9807-6846880AF4AE}</id>
-			<comment/>
-			<position>
-				<first>3187</first>
-				<second>1035</second>
-			</position>
-			<parameterName>World_FogEnable</parameterName>
 		</item>
 		<item type="traktor.render.Discard" version="traktor.render.Node:1">
 			<id>{780EAAFE-CB16-0545-B3D9-713C4C5E6EE5}</id>
 			<comment/>
 			<position>
-				<first>3683</first>
-				<second>964</second>
+				<first>3365</first>
+				<second>1058</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
@@ -1382,8 +1373,8 @@ Eye direction
 			<id>{096C945C-B68B-FE4C-A862-262560A58A47}</id>
 			<comment/>
 			<position>
-				<first>3445</first>
-				<second>991</second>
+				<first>3127</first>
+				<second>1085</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -1391,8 +1382,8 @@ Eye direction
 			<id>{DA5E1C63-BE33-9348-8D0D-229C383A91C6}</id>
 			<comment/>
 			<position>
-				<first>3473</first>
-				<second>930</second>
+				<first>3155</first>
+				<second>1024</second>
 			</position>
 			<name>L_Alpha</name>
 			<global>false</global>
@@ -2579,26 +2570,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[121]"/>
-				<name>False</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[119]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[121]"/>
-				<name>True</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[70]"/>
 				<name>Output</name>
 			</source>
@@ -2619,37 +2590,27 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[123]"/>
+				<node ref="/object/nodes/item[122]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[122]"/>
+				<node ref="/object/nodes/item[121]"/>
 				<name>Reference</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[124]"/>
+				<node ref="/object/nodes/item[123]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[122]"/>
+				<node ref="/object/nodes/item[121]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[121]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[122]"/>
-				<name>Pass</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[122]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2663,13 +2624,13 @@ Eye direction
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[125]"/>
+				<node ref="/object/nodes/item[124]"/>
 				<name>Other</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[125]"/>
+				<node ref="/object/nodes/item[124]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2679,21 +2640,21 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[126]"/>
+				<node ref="/object/nodes/item[125]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[125]"/>
+				<node ref="/object/nodes/item[124]"/>
 				<name>Android</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[126]"/>
+				<node ref="/object/nodes/item[125]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[125]"/>
+				<node ref="/object/nodes/item[124]"/>
 				<name>iOS</name>
 			</destination>
 		</item>
@@ -2703,13 +2664,13 @@ Eye direction
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2719,41 +2680,41 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[128]"/>
+				<node ref="/object/nodes/item[127]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[129]"/>
+				<node ref="/object/nodes/item[128]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[133]"/>
+				<node ref="/object/nodes/item[132]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[131]"/>
+				<node ref="/object/nodes/item[130]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[136]"/>
+				<node ref="/object/nodes/item[135]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[129]"/>
 				<name>Roughness</name>
 			</destination>
 		</item>
@@ -2769,7 +2730,7 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[129]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2779,62 +2740,72 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[135]"/>
+				<node ref="/object/nodes/item[134]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[132]"/>
+				<node ref="/object/nodes/item[131]"/>
 				<name>Direction</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[134]"/>
+				<node ref="/object/nodes/item[133]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[132]"/>
+				<node ref="/object/nodes/item[131]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[131]"/>
+				<node ref="/object/nodes/item[130]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[129]"/>
 				<name>Direction</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[132]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[137]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[137]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[138]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[131]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[136]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[136]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[137]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[137]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[130]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[138]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2843,8 +2814,8 @@ Eye direction
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Normal</name>
+				<node ref="/object/nodes/item[140]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -2859,22 +2830,22 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[141]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[142]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[47]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[119]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[121]"/>
+				<name>Pass</name>
 			</destination>
 		</item>
 	</edges>

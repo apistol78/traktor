@@ -17,7 +17,6 @@ WorldRenderPassForward::WorldRenderPassForward(
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
 	bool irradianceEnable,
-	bool fogEnable,
 	bool shadowEnable,
 	bool reflectionsEnable
 )
@@ -26,7 +25,6 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
 ,	m_irradianceEnable(irradianceEnable)
-,	m_fogEnable(fogEnable)
 ,	m_shadowEnable(shadowEnable)
 ,	m_reflectionsEnable(reflectionsEnable)
 {
@@ -58,7 +56,6 @@ uint32_t WorldRenderPassForward::getPassFlags() const
 render::Shader::Permutation WorldRenderPassForward::getPermutation(const render::Shader* shader) const
 {
 	render::Shader::Permutation perm(m_technique);
-	shader->setCombination(s_handleFogEnable, m_fogEnable, perm);
 	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
 	shader->setCombination(s_handleShadowEnable, m_shadowEnable, perm);
 	shader->setCombination(s_handleReflectionsEnable, m_reflectionsEnable, perm);

@@ -32,7 +32,6 @@ public:
 		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
-		bool fogEnabled,
 		bool irradianceEnable
 	);
 
@@ -51,7 +50,6 @@ private:
 	render::ProgramParameters* m_sharedParams;
 	const WorldRenderView& m_worldRenderView;
 	uint32_t m_passFlags;
-	bool m_fogEnabled;
 	bool m_depthEnable;
 	bool m_irradianceEnable;
 

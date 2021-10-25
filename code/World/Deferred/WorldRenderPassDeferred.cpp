@@ -16,14 +16,12 @@ WorldRenderPassDeferred::WorldRenderPassDeferred(
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
-	bool fogEnabled,
 	bool irradianceEnable
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
-,	m_fogEnabled(fogEnabled)
 ,	m_irradianceEnable(irradianceEnable)
 {
 }
@@ -41,15 +39,7 @@ uint32_t WorldRenderPassDeferred::getPassFlags() const
 render::Shader::Permutation WorldRenderPassDeferred::getPermutation(const render::Shader* shader) const
 {
 	render::Shader::Permutation perm(m_technique);
-
-	if (m_technique == s_techniqueDeferredColor)
-	{
-		shader->setCombination(s_handleFogEnable, m_fogEnabled, perm);
-		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
-	}
-	else
-		shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
-
+	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
 	return perm;
 }
 
