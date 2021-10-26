@@ -350,19 +350,19 @@ bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent)
 
 	if ([windowData->window toggledSinceLast] == YES)
 	{
-		outEvent.type = ReToggleFullScreen;
+		outEvent.type = RenderEventType::ToggleFullScreen;
 		return true;
 	}
 
 	if ([windowData->window closedSinceLast] == YES)
 	{
-		outEvent.type = ReClose;
+		outEvent.type = RenderEventType::Close;
 		return true;
 	}
 
 	if ([windowData->delegate resizedSinceLast] == YES)
 	{
-		outEvent.type = ReResize;
+		outEvent.type = RenderEventType::Resize;
 		getWindowSize(windowData->window, outEvent.resize.width, outEvent.resize.height);
 		return true;
 	}
