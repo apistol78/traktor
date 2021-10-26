@@ -28,9 +28,9 @@ class T_DLLCLASS Event : public Object
 	T_RTTI_CLASS;
 
 public:
-	IRuntimeDelegate* add(IRuntimeDelegate* rd);
+	int32_t add(IRuntimeDelegate* rd);
 
-	void remove(IRuntimeDelegate* rd);
+	void remove(int32_t index);
 
 	void removeAll();
 

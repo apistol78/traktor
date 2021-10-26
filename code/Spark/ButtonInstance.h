@@ -87,7 +87,6 @@ private:
 	uint8_t m_state;
 	bool m_inside;
 	bool m_pushed;
-
 	Event m_eventPress;
 	Event m_eventRelease;
 	Event m_eventReleaseOutside;

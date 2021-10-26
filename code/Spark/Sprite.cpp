@@ -74,8 +74,6 @@ Ref< CharacterInstance > Sprite::createInstance(
 		spriteInstance->setName(name);
 
 	spriteInstance->setTransform(transform);
-	//spriteInstance->eventConstruct();
-	//spriteInstance->eventInit();
 	spriteInstance->updateDisplayList();
 
 	return spriteInstance;

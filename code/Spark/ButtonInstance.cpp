@@ -35,10 +35,7 @@ ButtonInstance::ButtonInstance(Context* context, Dictionary* dictionary, Charact
 
 ButtonInstance::~ButtonInstance()
 {
-	for (auto& it : m_characterInstances)
-		safeDestroy(it.second);
-
-	m_characterInstances.clear();
+	destroy();
 }
 
 void ButtonInstance::destroy()
@@ -47,6 +44,12 @@ void ButtonInstance::destroy()
 		safeDestroy(it.second);
 
 	m_characterInstances.clear();
+
+	m_eventPress.removeAll();
+	m_eventRelease.removeAll();
+	m_eventReleaseOutside.removeAll();
+	m_eventRollOver.removeAll();
+	m_eventRollOut.removeAll();
 
 	CharacterInstance::destroy();
 }
