@@ -166,6 +166,18 @@ EditInstance::EditInstance(Context* context, Dictionary* dictionary, CharacterIn
 		parseText(html);
 }
 
+EditInstance::~EditInstance()
+{
+	destroy();
+}
+
+void EditInstance::destroy()
+{
+	m_eventChanged.removeAll();
+
+	CharacterInstance::destroy();
+}
+
 bool EditInstance::parseText(const std::wstring& text)
 {
 	if (!internalParseText(text))

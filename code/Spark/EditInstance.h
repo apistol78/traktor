@@ -31,6 +31,10 @@ class T_DLLCLASS EditInstance : public CharacterInstance
 public:
 	explicit EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html);
 
+	virtual ~EditInstance();
+
+	virtual void destroy() override;
+
 	/*! Get edit character. */
 	const Edit* getEdit() const { return m_edit; }
 

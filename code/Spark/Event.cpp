@@ -9,15 +9,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Event", Event, Object)
 
-IRuntimeDelegate* Event::add(IRuntimeDelegate* rd)
+int32_t Event::add(IRuntimeDelegate* rd)
 {
 	m_rds.push_back(rd);
-	return rd;
+	return (int32_t)(m_rds.size() - 1);
 }
 
-void Event::remove(IRuntimeDelegate* rd)
+void Event::remove(int32_t index)
 {
-	m_rds.remove(rd);
+	T_ASSERT(index >= 0);
+	T_ASSERT(index < (int32_t)m_rds.size());
+	m_rds.erase(m_rds.begin() + index);
 }
 
 void Event::removeAll()

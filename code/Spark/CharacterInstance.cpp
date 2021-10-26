@@ -37,15 +37,7 @@ CharacterInstance::CharacterInstance(
 
 CharacterInstance::~CharacterInstance()
 {
-	if (m_context)
-	{
-		if (m_context->getFocus() == this)
-			m_context->setFocus(nullptr);
-	}
-
-	m_context = nullptr;
-	m_parent = nullptr;
-
+	destroy();
 	ms_instanceCount--;
 }
 
@@ -68,6 +60,9 @@ void CharacterInstance::destroy()
 
 	m_context = nullptr;
 	m_parent = nullptr;
+
+	m_eventSetFocus.removeAll();
+	m_eventKillFocus.removeAll();
 }
 
 void CharacterInstance::setParent(CharacterInstance* parent)

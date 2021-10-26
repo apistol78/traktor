@@ -27,6 +27,7 @@ SpriteInstance::SpriteInstance(Context* context, Dictionary* dictionary, Charact
 :	CharacterInstance(context, dictionary, parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
+,	m_mask(nullptr)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
 ,	m_currentFrame(0)
@@ -42,21 +43,14 @@ SpriteInstance::SpriteInstance(Context* context, Dictionary* dictionary, Charact
 
 SpriteInstance::~SpriteInstance()
 {
-	m_sprite = nullptr;
-	m_mask = nullptr;
-	m_canvas = nullptr;
-	m_playing = false;
-
-	for (const auto& it : m_displayList.getLayers())
-	{
-		if (it.second.instance)
-			it.second.instance->destroy();
-	}
-	m_displayList.reset();
+	destroy();
 }
 
 void SpriteInstance::destroy()
 {
+	if (getContext() != nullptr && getContext()->getMovieClip() == this)
+		getContext()->setMovieClip(nullptr);
+
 	m_sprite = nullptr;
 	m_mask = nullptr;
 	m_canvas = nullptr;
@@ -68,6 +62,20 @@ void SpriteInstance::destroy()
 			it.second.instance->destroy();
 	}
 	m_displayList.reset();
+
+	setCacheObject(nullptr);
+	setParent(nullptr);
+
+	m_eventEnterFrame.removeAll();
+	m_eventKeyDown.removeAll();
+	m_eventKeyUp.removeAll();
+	m_eventMouseDown.removeAll();
+	m_eventMouseUp.removeAll();
+	m_eventMouseMove.removeAll();
+	m_eventPress.removeAll();
+	m_eventRelease.removeAll();
+	m_eventRollOver.removeAll();
+	m_eventRollOut.removeAll();
 
 	CharacterInstance::destroy();
 }
@@ -341,13 +349,6 @@ void SpriteInstance::removeMovieClip()
 	if (!getParent())
 		return;
 
-	Context* context = getContext();
-	if (context)
-	{
-		if (context->getFocus() == this)
-			context->setFocus(0);
-	}
-
 	Ref< SpriteInstance > parentClipInstance = checked_type_cast< SpriteInstance*, false >(getParent());
 
 	DisplayList& parentDisplayList = parentClipInstance->getDisplayList();
@@ -356,12 +357,7 @@ void SpriteInstance::removeMovieClip()
 	if (parentClipInstance->m_mask == this)
 		parentClipInstance->m_mask = nullptr;
 
-	m_displayList.reset();
-	m_mask = nullptr;
-	m_canvas = nullptr;
-
-	setCacheObject(nullptr);
-	setParent(nullptr);
+	destroy();
 }
 
 Ref< SpriteInstance > SpriteInstance::clone() const

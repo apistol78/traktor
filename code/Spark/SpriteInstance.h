@@ -198,7 +198,7 @@ public:
 private:
 	Ref< const Sprite > m_sprite;
 	DisplayList m_displayList;
-	Ref< SpriteInstance > m_mask;
+	SpriteInstance* m_mask;
 	Ref< Canvas > m_canvas;
 	int32_t m_mouseX;
 	int32_t m_mouseY;
