@@ -49,8 +49,8 @@ enum GlslType
 
 struct GlslRequirements
 {
-	PrecisionHint vertexPrecisionHint = PhUndefined;
-	PrecisionHint fragmentPrecisionHint = PhUndefined;
+	PrecisionHint vertexPrecisionHint = PrecisionHint::Undefined;
+	PrecisionHint fragmentPrecisionHint = PrecisionHint::Undefined;
 };
 
 std::wstring T_DLLCLASS glsl_type_name(GlslType type);

@@ -303,7 +303,7 @@ bool AccShape::createFromTriangles(
 			m_lineRenderBatches.push_back();
 			m_lineRenderBatches.back().vertexRange = vertexRange;
 			m_lineRenderBatches.back().lineTexture = lineTexture;
-			m_lineRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, 0, clusters.size() * 2);
+			m_lineRenderBatches.back().primitives.setNonIndexed(render::PrimitiveType::Triangles, 0, clusters.size() * 2);
 			m_lineRenderBatches.back().color = lineStyle.getLineColor();
 			m_lineRenderBatches.back().width = width;
 
@@ -413,7 +413,7 @@ bool AccShape::createFromTriangles(
 			if (m_fillRenderBatches.empty() || m_fillRenderBatches.back().texture != texture || m_fillRenderBatches.back().textureClamp != textureClamp)
 			{
 				m_fillRenderBatches.push_back(FillRenderBatch());
-				m_fillRenderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+				m_fillRenderBatches.back().primitives.setNonIndexed(render::PrimitiveType::Triangles, vertexOffset, 0);
 				m_fillRenderBatches.back().texture = texture;
 				m_fillRenderBatches.back().textureClamp = textureClamp;
 			}

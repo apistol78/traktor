@@ -13,7 +13,6 @@
 #include "Core/Settings/PropertyString.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/IVRCompositor.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/AliasTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -175,14 +174,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 			return false;
 
 		std::swap(captureRenderSystem, renderSystem);
-	}
-
-	Ref< render::IVRCompositor > vrCompositor;
-	if (!vrCompositorType.empty())
-	{
-		vrCompositor = dynamic_type_cast< render::IVRCompositor* >(TypeInfo::createInstance(vrCompositorType.c_str()));
-		if (!vrCompositor)
-			return false;
 	}
 
 	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);

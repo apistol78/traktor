@@ -484,7 +484,7 @@ bool ShaderPipeline::buildOutput(
 				Ref< Uniform > textureUniform = new Uniform(
 					getParameterNameFromTextureReferenceIndex(textureIndex),
 					textureNode->getParameterType(),
-					UfOnce
+					UpdateFrequency::Once
 				);
 
 				const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);

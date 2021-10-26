@@ -425,7 +425,7 @@ void TerrainComponent::build(
 		rb->program = program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
 		rb->indexBuffer = m_indexBuffer->getBufferView();
-		rb->indexType = render::ItUInt32;
+		rb->indexType = render::IndexType::UInt32;
 		rb->vertexBuffer = m_vertexBuffer->getBufferView();
 		rb->vertexLayout = m_vertexLayout;
 		rb->primitives = m_primitives[patch.lastPatchLod];
@@ -820,7 +820,7 @@ bool TerrainComponent::createPatches()
 		T_ASSERT(maxIndex < patchVertexCount);
 
 		m_primitives[lod].setIndexed(
-			render::PtTriangles,
+			render::PrimitiveType::Triangles,
 			(uint32_t)indexOffset,
 			(uint32_t)(indexEndOffset - indexOffset) / 3,
 			minIndex,
@@ -934,7 +934,7 @@ bool TerrainComponent::createPatches()
 		T_FATAL_ASSERT ((indexEndOffset - indexOffset) % 3 == 0);
 
 		m_primitives[lod].setIndexed(
-			render::PtTriangles,
+			render::PrimitiveType::Triangles,
 			indexOffset,
 			(indexEndOffset - indexOffset) / 3,
 			minIndex,

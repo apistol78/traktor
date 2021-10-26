@@ -251,7 +251,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			storageUniformNode->getParameterName(),
 			PtTexture2D,
 			1,
-			UfDraw
+			UpdateFrequency::Draw
 		);
 	}
 	else if (const Struct* storageStructNode = dynamic_type_cast< const Struct* >(storage))
@@ -281,7 +281,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 				storageStructNode->getParameterName(),
 				PtStructBuffer,
 				1,
-				UfDraw
+				UpdateFrequency::Draw
 			);
 		}
 	}
@@ -660,7 +660,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	// Add uniform to layout.
 	if (out->getType() < GtTexture2D)
 	{
-		auto ub = cx.getLayout().get< GlslUniformBuffer >(node->getFrequency());
+		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)node->getFrequency());
 		ub->addStage(getBindStage(cx));
 		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
@@ -2259,7 +2259,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		node->getParameterName(),
 		PtStructBuffer,
 		1,
-		UfDraw
+		UpdateFrequency::Draw
 	);
 
 	return true;
@@ -2623,7 +2623,7 @@ bool emitTargetSizeOpenGL(GlslContext& cx, TargetSize* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
 
-	auto ub = cx.getLayout().get< GlslUniformBuffer >(UfOnce);
+	auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Once);
 	ub->addStage(getBindStage(cx));
 	if (!ub->add(
 		L"_gl_targetSize",
@@ -2632,7 +2632,7 @@ bool emitTargetSizeOpenGL(GlslContext& cx, TargetSize* node)
 	))
 		return false;
 
-	cx.addParameter(L"_gl_targetSize", PtVector, 1, UfOnce);
+	cx.addParameter(L"_gl_targetSize", PtVector, 1, UpdateFrequency::Once);
 
 	comment(f, node);
 	assign(f, out) << L"_gl_targetSize.xy;" << Endl;
@@ -2645,7 +2645,7 @@ bool emitTargetSizeVulkan(GlslContext& cx, TargetSize* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
 
-	auto ub = cx.getLayout().get< GlslUniformBuffer >(UfOnce);
+	auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Once);
 	ub->addStage(getBindStage(cx));
 	if (!ub->add(
 		L"_vk_targetSize",
@@ -2654,7 +2654,7 @@ bool emitTargetSizeVulkan(GlslContext& cx, TargetSize* node)
 	))
 		return false;
 
-	cx.addParameter(L"_vk_targetSize", PtVector, 1, UfOnce);
+	cx.addParameter(L"_vk_targetSize", PtVector, 1, UpdateFrequency::Once);
 
 	comment(f, node);
 	assign(f, out) << L"_vk_targetSize.xy;" << Endl;
@@ -2811,7 +2811,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	// Add uniform to layout.
 	if (out->getType() < GtTexture2D)
 	{
-		auto ub = cx.getLayout().get< GlslUniformBuffer >(node->getFrequency());
+		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)node->getFrequency());
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), out->getType(), 1))
 			return false;

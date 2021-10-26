@@ -69,7 +69,7 @@ bool BlendMeshConverter::convert(
 	Ref< render::Mesh > baseMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt16,
+		render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -152,7 +152,7 @@ bool BlendMeshConverter::convert(
 		render::Mesh::Part meshPart;
 		meshPart.name = material.getName();
 		meshPart.primitives.setIndexed(
-			render::PtTriangles,
+			render::PrimitiveType::Triangles,
 			offset,
 			triangleCount,
 			minIndex,
@@ -174,7 +174,7 @@ bool BlendMeshConverter::convert(
 		Ref< render::Mesh > targetMesh = render::SystemMeshFactory().createMesh(
 			vertexElements,
 			vertexBufferSize,
-			render::ItUInt16,
+			render::IndexType::UInt16,
 			0
 		);
 

@@ -69,7 +69,7 @@ bool StreamMeshConverter::convert(
 		Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 			vertexElements,
 			vertexBufferSize,
-			render::ItUInt16,
+			render::IndexType::UInt16,
 			indexBufferSize
 		);
 
@@ -141,7 +141,7 @@ bool StreamMeshConverter::convert(
 			meshParts.push_back(render::Mesh::Part());
 			meshParts.back().name = material.getName();
 			meshParts.back().primitives.setIndexed(
-				render::PtTriangles,
+				render::PrimitiveType::Triangles,
 				offset,
 				triangleCount,
 				minIndex,

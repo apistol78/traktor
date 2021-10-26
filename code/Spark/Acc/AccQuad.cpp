@@ -144,7 +144,7 @@ void AccQuad::render(
 		renderBlock->program = program;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
-		renderBlock->primitive = render::PtTriangleStrip;
+		renderBlock->primitive = render::PrimitiveType::TriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
 
@@ -182,7 +182,7 @@ void AccQuad::blit(
 		renderBlock->program = m_shaderBlit->getProgram().program;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
-		renderBlock->primitive = render::PtTriangleStrip;
+		renderBlock->primitive = render::PrimitiveType::TriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
 

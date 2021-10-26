@@ -34,7 +34,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 
 	writer << vertexBufferSize;
 
-	IndexType indexType = ItUInt16;
+	IndexType indexType = IndexType::UInt16;
 	uint32_t indexBufferSize = 0;
 	if (mesh->getIndexBuffer())
 	{
@@ -92,6 +92,9 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 				case DtHalf4:
 					writer.write(&vertex[i + vertexElement.getOffset()], 4, sizeof(half_t));
 					break;
+
+				default:
+					break;
 				}
 			}
 			i += getVertexSize(vertexElements);
@@ -105,12 +108,15 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 
 		switch (indexType)
 		{
-		case ItUInt16:
+		case IndexType::UInt16:
 			writer.write(index, indexBufferSize / sizeof(uint16_t), sizeof(uint16_t));
 			break;
 
-		case ItUInt32:
+		case IndexType::UInt32:
 			writer.write(index, indexBufferSize / sizeof(uint32_t), sizeof(uint32_t));
+			break;
+
+		default:
 			break;
 		}
 
@@ -125,7 +131,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	for (unsigned int i = 0; i < partCount; ++i)
 	{
 		writer << parts[i].name;
-		writer << int32_t(parts[i].primitives.type);
+		writer << (int32_t)parts[i].primitives.type;
 		writer << parts[i].primitives.indexed;
 		writer << parts[i].primitives.offset;
 		writer << parts[i].primitives.count;

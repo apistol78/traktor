@@ -570,7 +570,7 @@ bool IndoorMeshConverter::convert(
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt16,
+		render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -642,7 +642,7 @@ bool IndoorMeshConverter::convert(
 				IndoorMeshResource::Part part;
 				part.shaderTechnique = j->shaderTechnique;
 				//part.primitives.setIndexed(
-				//	render::PtTriangles,
+				//	render::PrimitiveType::Triangles,
 				//	int(indexOffset),
 				//	int(indexCount / 3),
 				//	int(minIndex),

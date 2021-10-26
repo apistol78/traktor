@@ -119,7 +119,7 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
         log::info << IncreaseIndent;
 
         for (const auto& ui : it.second)
-            log::info << ui.instance.format() << L", " << parameterTypeNames[ui.type] << L"[" << ui.length << L"], (" << updateFrequencyNames[ui.frequency] << L")" << Endl;
+            log::info << ui.instance.format() << L", " << parameterTypeNames[ui.type] << L"[" << ui.length << L"], (" << updateFrequencyNames[(int32_t)ui.frequency] << L")" << Endl;
 
         log::info << DecreaseIndent;
     }

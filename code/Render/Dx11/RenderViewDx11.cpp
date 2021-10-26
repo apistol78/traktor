@@ -797,9 +797,9 @@ void RenderViewDx11::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	if (m_currentIndexBuffer)
 	{
 		T_ASSERT(indexType != ItVoid);
-		if (indexType == ItUInt16)
+		if (indexType == IndexType::UInt16)
 			m_stateCache.setIndexBuffer(m_currentIndexBuffer->getD3D11Buffer(), DXGI_FORMAT_R16_UINT);
-		else if (indexType == ItUInt32)
+		else if (indexType == IndexType::UInt32)
 			m_stateCache.setIndexBuffer(m_currentIndexBuffer->getD3D11Buffer(), DXGI_FORMAT_R32_UINT);
 		else
 			return;
@@ -817,29 +817,29 @@ void RenderViewDx11::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 		return;
 
 	// Draw primitives.
-	T_ASSERT(c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
-	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
+	T_ASSERT(c_d3dTopology[(int32_t)primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
+	m_stateCache.setTopology(c_d3dTopology[(int32_t)primitives.type]);
 
 	UINT vertexCount = 0;
 	switch (primitives.type)
 	{
-	case PtPoints:
+	case PrimitiveType::Points:
 		vertexCount = primitives.count;
 		break;
 
-	case PtLineStrip:
+	case PrimitiveType::LineStrip:
 		T_ASSERT(0);
 		break;
 
-	case PtLines:
+	case PrimitiveType::Lines:
 		vertexCount = primitives.count * 2;
 		break;
 
-	case PtTriangleStrip:
+	case PrimitiveType::TriangleStrip:
 		vertexCount = primitives.count + 2;
 		break;
 
-	case PtTriangles:
+	case PrimitiveType::Triangles:
 		vertexCount = primitives.count * 3;
 		break;
 	}

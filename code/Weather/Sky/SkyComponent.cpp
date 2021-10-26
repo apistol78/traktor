@@ -90,7 +90,7 @@ void SkyComponent::build(
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-	renderBlock->indexType = render::ItUInt16;
+	renderBlock->indexType = render::IndexType::UInt16;
 	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitives = m_primitives;

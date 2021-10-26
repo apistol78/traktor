@@ -360,7 +360,7 @@ public:
 	IndexedUniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = PtScalar,
-		UpdateFrequency frequency = UfFrame,
+		UpdateFrequency frequency = UpdateFrequency::Frame,
 		int32_t length = 0
 	);
 
@@ -1143,7 +1143,7 @@ public:
 	Uniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = PtScalar,
-		UpdateFrequency frequency = UfFrame
+		UpdateFrequency frequency = UpdateFrequency::Frame
 	);
 
 	void setParameterName(const std::wstring& parameterName);

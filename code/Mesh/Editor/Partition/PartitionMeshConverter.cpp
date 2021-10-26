@@ -327,7 +327,7 @@ Ref< OctreeNodeData > createOctreeParts(
 			{
 				render::Mesh::Part renderPart;
 				renderPart.primitives.setIndexed(
-					render::PtTriangles,
+					render::PrimitiveType::Triangles,
 					ir.offsetFirst,
 					(ir.offsetLast - ir.offsetFirst) / 3,
 					ir.minIndex,
@@ -430,7 +430,7 @@ bool PartitionMeshConverter::convert(
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
+		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize
 	);
 

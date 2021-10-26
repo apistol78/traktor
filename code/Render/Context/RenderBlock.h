@@ -74,7 +74,7 @@ class T_DLLCLASS SimpleRenderBlock : public DrawableRenderBlock
 {
 public:
 	const IBufferView* indexBuffer = nullptr;
-	IndexType indexType = ItVoid;
+	IndexType indexType = IndexType::Void;
 	const IBufferView* vertexBuffer = nullptr;
 	const IVertexLayout* vertexLayout = nullptr;
 	Primitives primitives;
@@ -89,7 +89,7 @@ class T_DLLCLASS InstancingRenderBlock : public DrawableRenderBlock
 {
 public:
 	const IBufferView* indexBuffer = nullptr;
-	IndexType indexType = ItVoid;
+	IndexType indexType = IndexType::Void;
 	const IBufferView* vertexBuffer = nullptr;
 	const IVertexLayout* vertexLayout = nullptr;
 	Primitives primitives;
@@ -105,10 +105,10 @@ class T_DLLCLASS IndexedInstancingRenderBlock : public DrawableRenderBlock
 {
 public:
 	const IBufferView* indexBuffer = nullptr;
-	IndexType indexType = ItVoid;
+	IndexType indexType = IndexType::Void;
 	const IBufferView* vertexBuffer = nullptr;
 	const IVertexLayout* vertexLayout = nullptr;
-	PrimitiveType primitive = PtPoints;
+	PrimitiveType primitive = PrimitiveType::Points;
 	uint32_t offset = 0;
 	uint32_t count = 0;
 	uint32_t minIndex = 0;
@@ -126,7 +126,7 @@ class T_DLLCLASS NonIndexedRenderBlock : public DrawableRenderBlock
 public:
 	const IBufferView* vertexBuffer = nullptr;
 	const IVertexLayout* vertexLayout = nullptr;
-	PrimitiveType primitive = PtPoints;
+	PrimitiveType primitive = PrimitiveType::Points;
 	uint32_t offset = 0;
 	uint32_t count = 0;
 
@@ -140,10 +140,10 @@ class T_DLLCLASS IndexedRenderBlock : public DrawableRenderBlock
 {
 public:
 	const IBufferView* indexBuffer = nullptr;
-	IndexType indexType = ItVoid;
+	IndexType indexType = IndexType::Void;
 	const IBufferView* vertexBuffer = nullptr;
 	const IVertexLayout* vertexLayout = nullptr;
-	PrimitiveType primitive = PtPoints;
+	PrimitiveType primitive = PrimitiveType::Points;
 	uint32_t offset = 0;
 	uint32_t count = 0;
 	uint32_t minIndex = 0;

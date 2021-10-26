@@ -950,8 +950,8 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	const RenderState& rs = node->getRenderState();
 	RenderStateGCM& rsgcm = cx.getRenderState();
 
-	rsgcm.cullFaceEnable = rs.cullMode == CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
-	rsgcm.cullFace = gcmCullFace[rs.cullMode];
+	rsgcm.cullFaceEnable = (rs.cullMode == CullMode::Never) ? CELL_GCM_FALSE : CELL_GCM_TRUE;
+	rsgcm.cullFace = gcmCullFace[(int32_t)rs.cullMode];
 	rsgcm.blendEnable = rs.blendEnable ? CELL_GCM_TRUE : CELL_GCM_FALSE;
 	rsgcm.blendEquation = gcmBlendEquation[rs.blendColorOperation];
 	rsgcm.blendFuncSrc = gcmBlendFunction[rs.blendColorSource];

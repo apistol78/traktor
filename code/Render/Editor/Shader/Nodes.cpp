@@ -32,11 +32,19 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
+		const MemberEnum< CullMode >::Key kCullModeOld[] =
+		{
+			{ L"CmNever", CullMode::Never },
+			{ L"CmClockWise", CullMode::ClockWise },
+			{ L"CmCounterClockWise", CullMode::CounterClockWise },
+			{ 0 }
+		};
+
 		const MemberEnum< CullMode >::Key kCullMode[] =
 		{
-			{ L"CmNever", CmNever },
-			{ L"CmClockWise", CmClockWise },
-			{ L"CmCounterClockWise", CmCounterClockWise },
+			{ L"Never", CullMode::Never },
+			{ L"ClockWise", CullMode::ClockWise },
+			{ L"CounterClockWise", CullMode::CounterClockWise },
 			{ 0 }
 		};
 
@@ -100,7 +108,11 @@ public:
 			{ 0 }
 		};
 
-		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
+		if (m_version >= 9)
+			s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
+		else
+			s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullModeOld);
+
 		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
 
 		if (m_version >= 7)
@@ -743,7 +755,7 @@ FrontFace::FrontFace()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 1, IndexedUniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 2, IndexedUniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { { L"Output" }, { 0 } };
@@ -821,19 +833,34 @@ void IndexedUniform::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
-	{
-		{ L"UfOnce", UfOnce },
-		{ L"UfFrame", UfFrame },
-		{ L"UfDraw", UfDraw },
-		{ 0 }
-	};
-
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 
 	if (s.getVersion() >= 1)
-		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+	{
+		if (s.getVersion() >= 2)
+		{
+			const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+			{
+				{ L"Once", UpdateFrequency::Once },
+				{ L"Frame", UpdateFrequency::Frame },
+				{ L"Draw", UpdateFrequency::Draw },
+				{ 0 }
+			};
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+		}
+		else
+		{
+			const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+			{
+				{ L"UfOnce", UpdateFrequency::Once },
+				{ L"UfFrame", UpdateFrequency::Frame },
+				{ L"UfDraw", UpdateFrequency::Draw },
+				{ 0 }
+			};
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+		}
+	}
 
 	s >> Member< int32_t >(L"length", m_length);
 }
@@ -1368,7 +1395,7 @@ Platform::Platform()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 7, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 9, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Enable", true }, { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
 
@@ -1377,7 +1404,7 @@ PixelOutput::PixelOutput()
 ,	m_technique(L"Default")
 ,	m_priority(0)
 ,	m_registerCount(0)
-,	m_precisionHint(PhUndefined)
+,	m_precisionHint(PrecisionHint::Undefined)
 {
 }
 
@@ -1464,15 +1491,30 @@ void PixelOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 6)
 	{
-		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+		if (s.getVersion() >= 8)
 		{
-			{ L"PhUndefined", PhUndefined },
-			{ L"PhLow", PhLow },
-			{ L"PhMedium", PhMedium },
-			{ L"PhHigh", PhHigh },
-			{ 0 }
-		};
-		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"Undefined", PrecisionHint::Undefined },
+				{ L"Low", PrecisionHint::Low },
+				{ L"Medium", PrecisionHint::Medium },
+				{ L"High", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
+		else
+		{
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"PhUndefined", PrecisionHint::Undefined },
+				{ L"PhLow", PrecisionHint::Low },
+				{ L"PhMedium", PrecisionHint::Medium },
+				{ L"PhHigh", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
 	}
 }
 
@@ -1762,14 +1804,14 @@ Sqrt::Sqrt()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 8, State, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 9, State, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
 
 State::State()
 :	ImmutableNode(nullptr, c_State_o)
 ,	m_priority(0)
-,	m_precisionHint(PhUndefined)
+,	m_precisionHint(PrecisionHint::Undefined)
 {
 }
 
@@ -1826,15 +1868,30 @@ void State::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 8)
 	{
-		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+		if (s.getVersion() >= 9)
 		{
-			{ L"PhUndefined", PhUndefined },
-			{ L"PhLow", PhLow },
-			{ L"PhMedium", PhMedium },
-			{ L"PhHigh", PhHigh },
-			{ 0 }
-		};
-		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"Undefined", PrecisionHint::Undefined },
+				{ L"Low", PrecisionHint::Low },
+				{ L"Medium", PrecisionHint::Medium },
+				{ L"High", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
+		else
+		{
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"PhUndefined", PrecisionHint::Undefined },
+				{ L"PhLow", PrecisionHint::Low },
+				{ L"PhMedium", PrecisionHint::Medium },
+				{ L"PhHigh", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
 	}
 }
 
@@ -2285,7 +2342,7 @@ Type::Type()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 2, Uniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
@@ -2355,19 +2412,34 @@ void Uniform::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
-	{
-		{ L"UfOnce", UfOnce },
-		{ L"UfFrame", UfFrame },
-		{ L"UfDraw", UfDraw },
-		{ 0 }
-	};
-
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
 
 	if (s.getVersion() >= 1)
-		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+	{
+		if (s.getVersion() >= 2)
+		{
+			const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+			{
+				{ L"Once", UpdateFrequency::Once },
+				{ L"Frame", UpdateFrequency::Frame },
+				{ L"Draw", UpdateFrequency::Draw },
+				{ 0 }
+			};
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+		}
+		else
+		{
+			const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+			{
+				{ L"UfOnce", UpdateFrequency::Once },
+				{ L"UfFrame", UpdateFrequency::Frame },
+				{ L"UfDraw", UpdateFrequency::Draw },
+				{ 0 }
+			};
+			s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+		}
+	}
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2552,14 +2624,14 @@ void VertexInput::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 2, VertexOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 3, VertexOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, { 0 } };
 
 VertexOutput::VertexOutput()
 :	ImmutableNode(c_VertexOutput_i, 0)
 ,	m_technique(L"Default")
-,	m_precisionHint(PhUndefined)
+,	m_precisionHint(PrecisionHint::Undefined)
 {
 }
 
@@ -2597,15 +2669,30 @@ void VertexOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 	{
-		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+		if (s.getVersion() >= 3)
 		{
-			{ L"PhUndefined", PhUndefined },
-			{ L"PhLow", PhLow },
-			{ L"PhMedium", PhMedium },
-			{ L"PhHigh", PhHigh },
-			{ 0 }
-		};
-		s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"Undefined", PrecisionHint::Undefined },
+				{ L"Low", PrecisionHint::Low },
+				{ L"Medium", PrecisionHint::Medium },
+				{ L"High", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
+		else
+		{
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"PhUndefined", PrecisionHint::Undefined },
+				{ L"PhLow", PrecisionHint::Low },
+				{ L"PhMedium", PrecisionHint::Medium },
+				{ L"PhHigh", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
 	}
 }
 

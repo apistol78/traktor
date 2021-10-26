@@ -110,7 +110,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	indexBuffer->unlock();
 
 	render::Primitives primitives(
-		render::PtTriangles,
+		render::PrimitiveType::Triangles,
 		0,
 		c_triangleCount,
 		0,
