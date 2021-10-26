@@ -237,9 +237,9 @@ RenderServer::UpdateResult RenderServerEmbedded::update(PropertyGroup* settings)
 	render::RenderEvent evt;
 	while (m_renderView->nextEvent(evt))
 	{
-		if (evt.type == render::ReClose)
+		if (evt.type == render::RenderEventType::Close)
 			return UrTerminate;
-		else if (evt.type == render::ReResize)
+		else if (evt.type == render::RenderEventType::Resize)
 			return UrReconfigure;
 	}
 

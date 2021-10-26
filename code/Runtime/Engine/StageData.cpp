@@ -48,7 +48,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 			render::RenderSystemInformation rsi;
 			renderSystem->getInformation(rsi);
 			if (
-				(rsi.vendor == render::AvtNVidia || rsi.vendor == render::AvtAMD) &&
+				(rsi.vendor == render::AdapterVendorType::NVidia || rsi.vendor == render::AdapterVendorType::AMD) &&
 				rsi.dedicatedMemoryTotal >= preloadLimit
 			)
 			{

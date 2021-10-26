@@ -540,7 +540,7 @@ bool RenderViewVk::beginFrame()
 		{
 			// Issue an event in order to reset view.
 			RenderEvent evt;
-			evt.type = ReLost;
+			evt.type = RenderEventType::Lost;
 			m_eventQueue.push_back(evt);
 			m_lost = true;
 			return false;
@@ -626,7 +626,7 @@ void RenderViewVk::present()
 
 		// Issue an event in order to reset view.
 		RenderEvent evt;
-		evt.type = ReLost;
+		evt.type = RenderEventType::Lost;
 		m_eventQueue.push_back(evt);
 		m_lost = true;
 		return;
@@ -1744,14 +1744,14 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	if (message == WM_CLOSE)
 	{
 		RenderEvent evt;
-		evt.type = ReClose;
+		evt.type = RenderEventType::Close;
 		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_SIZE)
 	{
 		// Remove all pending resize events.
 		m_eventQueue.remove_if([](const RenderEvent& evt) {
-			return evt.type == ReResize;
+			return evt.type == RenderEventType::Resize;
 		});
 
 		// Push new resize event if not matching current size.
@@ -1764,7 +1764,7 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		if (width != getWidth() || height != getHeight())
 		{
 			RenderEvent evt;
-			evt.type = ReResize;
+			evt.type = RenderEventType::Resize;
 			evt.resize.width = width;
 			evt.resize.height = height;
 			m_eventQueue.push_back(evt);
@@ -1799,7 +1799,7 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
 		{
 			RenderEvent evt;
-			evt.type = ReToggleFullScreen;
+			evt.type = RenderEventType::ToggleFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}
@@ -1808,7 +1808,7 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
 		{
 			RenderEvent evt;
-			evt.type = ReToggleFullScreen;
+			evt.type = RenderEventType::ToggleFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}

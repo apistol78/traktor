@@ -165,14 +165,14 @@ struct SamplerState
 };
 
 /*! Render view event types. */
-enum RenderEventType
+enum class RenderEventType
 {
-	ReClose = 1,
-	ReResize = 2,
-	ReToggleFullScreen = 3,
-	ReSetWindowed = 4,
-	ReSetFullScreen = 5,
-	ReLost = 6
+	Close = 1,
+	Resize = 2,
+	ToggleFullScreen = 3,
+	SetWindowed = 4,
+	SetFullScreen = 5,
+	Lost = 6
 };
 
 /*! Buffer usage flags. */
@@ -397,32 +397,23 @@ struct DisplayMode
 };
 
 /*! Vendor type. */
-enum AdapterVendorType
+enum class AdapterVendorType
 {
-	AvtUnknown = 0,
-	AvtNVidia = 1,
-	AvtAMD = 2,
-	AvtIntel = 3,
-	AvtPowerVR = 4
+	Unknown = 0,
+	NVidia = 1,
+	AMD = 2,
+	Intel = 3,
+	PowerVR = 4
 };
 
 /*! Render system information. */
 struct RenderSystemInformation
 {
-	AdapterVendorType vendor = AvtUnknown;
+	AdapterVendorType vendor = AdapterVendorType::Unknown;
 	uint32_t dedicatedMemoryTotal = 0;
 	uint32_t sharedMemoryTotal = 0;
 	uint32_t dedicatedMemoryAvailable = 0;
 	uint32_t sharedMemoryAvailable = 0;
-
-	RenderSystemInformation()
-	:	vendor(AvtUnknown)
-	,	dedicatedMemoryTotal(0)
-	,	sharedMemoryTotal(0)
-	,	dedicatedMemoryAvailable(0)
-	,	sharedMemoryAvailable(0)
-	{
-	}
 };
 
 /*! Descriptor for render system. */

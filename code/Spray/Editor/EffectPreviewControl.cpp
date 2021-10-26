@@ -456,7 +456,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	bool lost = false;
 	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
 	{
-		if (re.type == render::ReLost)
+		if (re.type == render::RenderEventType::Lost)
 			lost = true;
 	}
 
