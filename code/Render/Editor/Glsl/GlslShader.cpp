@@ -249,7 +249,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 					for (auto uniform : uniformBuffer->get())
 					{
 						// Force high precision on uniform blocks since they share signature.
-						if (uniform.type >= GtFloat && uniform.type <= GtFloat4x4)
+						if (uniform.type >= GlslType::Float && uniform.type <= GlslType::Float4x4)
 							ss << L"highp ";
 						if (uniform.length <= 1)
 							ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
@@ -284,15 +284,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 					{
 						switch (texture->getUniformType())
 						{
-						case GtTexture2D:
+						case GlslType::Texture2D:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler2D " << sampler->getName() << L";" << Endl;
 							break;
 
-						case GtTexture3D:
+						case GlslType::Texture3D:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler3D " << sampler->getName() << L";" << Endl;
 							break;
 
-						case GtTextureCube:
+						case GlslType::TextureCube:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCube " << sampler->getName() << L";" << Endl;
 							break;
 
@@ -304,15 +304,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 					{
 						switch (texture->getUniformType())
 						{
-						case GtTexture2D:
+						case GlslType::Texture2D:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler2DShadow " << sampler->getName() << L";" << Endl;
 							break;
 
-						case GtTexture3D:
+						case GlslType::Texture3D:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler3DShadow " << sampler->getName() << L";" << Endl;
 							break;
 
-						case GtTextureCube:
+						case GlslType::TextureCube:
 							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCubeShadow " << sampler->getName() << L";" << Endl;
 							break;
 
@@ -336,15 +336,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				{
 					switch (texture->getUniformType())
 					{
-					case GtTexture2D:
+					case GlslType::Texture2D:
 						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform texture2D " << texture->getName() << L";" << Endl;
 						break;
 
-					case GtTexture3D:
+					case GlslType::Texture3D:
 						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform texture3D " << texture->getName() << L";" << Endl;
 						break;
 
-					case GtTextureCube:
+					case GlslType::TextureCube:
 						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform textureCube " << texture->getName() << L";" << Endl;
 						break;
 

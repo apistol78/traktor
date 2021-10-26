@@ -25,26 +25,26 @@ enum class GlslDialect
 	Vulkan
 };
 
-enum GlslType
+enum class GlslType
 {
-	GtVoid = 0,
-	GtBoolean = 1,
-	GtInteger = 2,
-	GtInteger2 = 3,
-	GtInteger3 = 4,
-	GtInteger4 = 5,
-	GtFloat = 6,
-	GtFloat2 = 7,
-	GtFloat3 = 8,
-	GtFloat4 = 9,
-	GtFloat4x4 = 10,
-	GtTexture2D = 11,
-	GtTexture3D = 12,
-	GtTextureCube = 13,
-	GtStructBuffer = 14,
-	GtImage2D = 15,
-	GtImage3D = 16,
-	GtImageCube = 17
+	Void = 0,
+	Boolean = 1,
+	Integer = 2,
+	Integer2 = 3,
+	Integer3 = 4,
+	Integer4 = 5,
+	Float = 6,
+	Float2 = 7,
+	Float3 = 8,
+	Float4 = 9,
+	Float4x4 = 10,
+	Texture2D = 11,
+	Texture3D = 12,
+	TextureCube = 13,
+	StructBuffer = 14,
+	Image2D = 15,
+	Image3D = 16,
+	ImageCube = 17
 };
 
 struct GlslRequirements

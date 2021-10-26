@@ -44,7 +44,7 @@ public:
 private:
 	const Node* m_node = nullptr;
 	std::wstring m_name;
-	GlslType m_type = GtVoid;
+	GlslType m_type = GlslType::Void;
 };
 
 	}

@@ -33,10 +33,11 @@ GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType 
 
 std::wstring GlslVariable::cast(GlslType to) const
 {
-	if (m_type == GtVoid || m_type == GtBoolean || m_type >= GtFloat4x4 || to >= GtFloat4x4)
+	if (m_type == GlslType::Void || m_type == GlslType::Boolean || m_type >= GlslType::Float4x4 || to >= GlslType::Float4x4)
 		return m_name;
 
-	const wchar_t* f = c_castFormat[m_type - GtInteger][to - GtInteger];
+	const int32_t base = (int32_t)GlslType::Integer;
+	const wchar_t* f = c_castFormat[(int32_t)m_type - base][(int32_t)to - base];
 	return f ? replaceAll(f, L"%", m_name) : m_name;
 }
 
