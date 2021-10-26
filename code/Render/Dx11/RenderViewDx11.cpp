@@ -29,21 +29,6 @@ const D3D11_PRIMITIVE_TOPOLOGY c_d3dTopology[] =
 	D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 };
 
-struct RenderEventTypePred
-{
-	RenderEventType m_type;
-
-	RenderEventTypePred(RenderEventType type)
-	:	m_type(type)
-	{
-	}
-
-	bool operator () (const RenderEvent& evt) const
-	{
-		return evt.type == m_type;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDx11", RenderViewDx11, IRenderView)
@@ -499,7 +484,7 @@ void RenderViewDx11::present()
 
 			// Issue an event in order to reset view back into either fullscreen or windowed mode.
 			RenderEvent evt;
-			evt.type = fullScreen ? ReSetWindowed: ReSetFullScreen;
+			evt.type = fullScreen ? RenderEventType::SetWindowed: RenderEventType::SetFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}
@@ -974,13 +959,15 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 	if (message == WM_CLOSE)
 	{
 		RenderEvent evt;
-		evt.type = ReClose;
+		evt.type = RenderEventType::Close;
 		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_SIZE)
 	{
 		// Remove all pending resize events.
-		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+		m_eventQueue.remove_if([](const RenderEvent& evt) {
+			return evt.type == RenderEventType::Resize;
+		});
 
 		// Push new resize event if not matching current size.
 		int32_t width = LOWORD(lParam);
@@ -998,7 +985,7 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		if (m_dxgiSwapChain == nullptr || width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
 		{
 			RenderEvent evt;
-			evt.type = ReResize;
+			evt.type = RenderEventType::Resize;
 			evt.resize.width = width;
 			evt.resize.height = height;
 			m_eventQueue.push_back(evt);
@@ -1033,7 +1020,7 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
 		{
 			RenderEvent evt;
-			evt.type = ReToggleFullScreen;
+			evt.type = RenderEventType::ToggleFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}
@@ -1042,7 +1029,7 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
 		{
 			RenderEvent evt;
-			evt.type = ReToggleFullScreen;
+			evt.type = RenderEventType::ToggleFullScreen;
 			m_eventQueue.push_back(evt);
 		}
 	}

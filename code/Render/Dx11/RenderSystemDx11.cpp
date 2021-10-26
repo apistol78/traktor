@@ -341,11 +341,11 @@ void RenderSystemDx11::getInformation(RenderSystemInformation& outInfo) const
 	}
 
 	if (desc.VendorId == 4098)			// AMD/ATI
-		outInfo.vendor = AvtAMD;
+		outInfo.vendor = AdapterVendorType::AMD;
 	else if (desc.VendorId == 4318)		// NVidia
-		outInfo.vendor = AvtNVidia;
+		outInfo.vendor = AdapterVendorType::NVidia;
 	else if (desc.VendorId == 32902)	// Intel
-		outInfo.vendor = AvtIntel;
+		outInfo.vendor = AdapterVendorType::Intel;
 	else
 		log::warning << L"Unknown vendor ID " << desc.VendorId << Endl;
 

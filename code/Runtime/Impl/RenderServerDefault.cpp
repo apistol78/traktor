@@ -474,24 +474,24 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 	render::RenderEvent evt;
 	while (m_renderView->nextEvent(evt))
 	{
-		if (evt.type == render::ReClose)
+		if (evt.type == render::RenderEventType::Close)
 			return UrTerminate;
-		else if (evt.type == render::ReToggleFullScreen)
+		else if (evt.type == render::RenderEventType::ToggleFullScreen)
 		{
 			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
 			return UrReconfigure;
 		}
-		else if (evt.type == render::ReSetWindowed)
+		else if (evt.type == render::RenderEventType::SetWindowed)
 		{
 			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", false);
 			return UrReconfigure;
 		}
-		else if (evt.type == render::ReSetFullScreen)
+		else if (evt.type == render::RenderEventType::SetFullScreen)
 		{
 			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", true);
 			return UrReconfigure;
 		}
-		else if (evt.type == render::ReResize)
+		else if (evt.type == render::RenderEventType::Resize)
 		{
 			if (!m_renderViewDesc.fullscreen)
 			{
@@ -500,7 +500,7 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 				return UrReconfigure;
 			}
 		}
-		else if (evt.type == render::ReLost)
+		else if (evt.type == render::RenderEventType::Lost)
 		{
 			m_renderViewDesc.displayMode.width = 0;
 			m_renderViewDesc.displayMode.height = 0;

@@ -221,7 +221,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	render::RenderEvent re;
 	while (m_renderView->nextEvent(re))
 	{
-		if (re.type == render::ReLost)
+		if (re.type == render::RenderEventType::Lost)
 			m_renderView->reset(sz.cx, sz.cy);
 	}
 
