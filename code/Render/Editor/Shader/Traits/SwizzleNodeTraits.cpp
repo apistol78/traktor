@@ -33,15 +33,15 @@ PinType SwizzleNodeTraits::getOutputPinType(
 	switch (pattern.length())
 	{
 	case 1:
-		return PntScalar1;
+		return PinType::Scalar1;
 	case 2:
-		return PntScalar2;
+		return PinType::Scalar2;
 	case 3:
-		return PntScalar3;
+		return PinType::Scalar3;
 	case 4:
-		return PntScalar4;
+		return PinType::Scalar4;
 	default:
-		return PntVoid;
+		return PinType::Void;
 	}
 }
 
@@ -55,22 +55,22 @@ PinType SwizzleNodeTraits::getInputPinType(
 {
 	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
 
-	PinType inputPinType = PntVoid;
+	PinType inputPinType = PinType::Void;
 	for (size_t i = 0; i < pattern.length(); ++i)
 	{
 		switch (std::tolower(pattern[i]))
 		{
 		case L'x':
-			inputPinType = std::max< PinType >(inputPinType, PntScalar1);
+			inputPinType = std::max< PinType >(inputPinType, PinType::Scalar1);
 			break;
 		case L'y':
-			inputPinType = std::max< PinType >(inputPinType, PntScalar2);
+			inputPinType = std::max< PinType >(inputPinType, PinType::Scalar2);
 			break;
 		case L'z':
-			inputPinType = std::max< PinType >(inputPinType, PntScalar3);
+			inputPinType = std::max< PinType >(inputPinType, PinType::Scalar3);
 			break;
 		case L'w':
-			inputPinType = std::max< PinType >(inputPinType, PntScalar4);
+			inputPinType = std::max< PinType >(inputPinType, PinType::Scalar4);
 			break;
 		}
 	}

@@ -27,7 +27,7 @@ PinType DotNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar1;
+	return PinType::Scalar1;
 }
 
 PinType DotNodeTraits::getInputPinType(
@@ -38,7 +38,7 @@ PinType DotNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	return PinType::Scalar4;
 }
 
 int32_t DotNodeTraits::getInputPinGroup(

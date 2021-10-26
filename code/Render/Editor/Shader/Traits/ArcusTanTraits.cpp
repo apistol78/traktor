@@ -27,7 +27,7 @@ PinType ArcusTanTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar1;
+	return PinType::Scalar1;
 }
 
 PinType ArcusTanTraits::getInputPinType(
@@ -38,7 +38,7 @@ PinType ArcusTanTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar2;
+	return PinType::Scalar2;
 }
 
 int32_t ArcusTanTraits::getInputPinGroup(

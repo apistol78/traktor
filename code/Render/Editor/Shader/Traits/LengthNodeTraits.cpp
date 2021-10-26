@@ -27,7 +27,7 @@ PinType LengthNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar1;
+	return PinType::Scalar1;
 }
 
 PinType LengthNodeTraits::getInputPinType(
@@ -38,7 +38,7 @@ PinType LengthNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	return PinType::Scalar4;
 }
 
 int32_t LengthNodeTraits::getInputPinGroup(

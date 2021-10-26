@@ -50,19 +50,19 @@ PinType ScriptNodeTraits::getOutputPinType(
 	switch (typedOutputPin->getType())
 	{
 	case ParameterType::Scalar:
-		return PntScalar1;
+		return PinType::Scalar1;
 	case ParameterType::Vector:
-		return PntScalar4;
+		return PinType::Scalar4;
 	case ParameterType::Matrix:
-		return PntMatrix;
+		return PinType::Matrix;
 	case ParameterType::Texture2D:
-		return PntTexture2D;
+		return PinType::Texture2D;
 	case ParameterType::Texture3D:
-		return PntTexture3D;
+		return PinType::Texture3D;
 	case ParameterType::TextureCube:
-		return PntTextureCube;
+		return PinType::TextureCube;
 	default:
-		return PntVoid;
+		return PinType::Void;
 	}
 }
 
@@ -79,7 +79,7 @@ PinType ScriptNodeTraits::getInputPinType(
 		if (node->getInputPin(i) == inputPin)
 			return inputPinTypes[i];
 	}
-	return PntVoid;
+	return PinType::Void;
 }
 
 int32_t ScriptNodeTraits::getInputPinGroup(

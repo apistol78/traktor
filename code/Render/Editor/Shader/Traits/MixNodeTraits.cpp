@@ -47,19 +47,19 @@ PinType MixNodeTraits::getOutputPinType(
 {
 	if (is_a< MixIn >(node))
 	{
-		if (inputPinTypes[1] == PntVoid && inputPinTypes[2] == PntVoid && inputPinTypes[3] == PntVoid)
-			return PntScalar1;
-		else if (inputPinTypes[2] == PntVoid && inputPinTypes[3] == PntVoid)
-			return PntScalar2;
-		else if (inputPinTypes[3] == PntVoid)
-			return PntScalar3;
+		if (inputPinTypes[1] == PinType::Void && inputPinTypes[2] == PinType::Void && inputPinTypes[3] == PinType::Void)
+			return PinType::Scalar1;
+		else if (inputPinTypes[2] == PinType::Void && inputPinTypes[3] == PinType::Void)
+			return PinType::Scalar2;
+		else if (inputPinTypes[3] == PinType::Void)
+			return PinType::Scalar3;
 		else
-			return PntScalar4;
+			return PinType::Scalar4;
 	}
 	else if (is_a< MixOut >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType MixNodeTraits::getInputPinType(
@@ -71,25 +71,25 @@ PinType MixNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< MixIn >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (const MixOut* mixOutNode = dynamic_type_cast< const MixOut* >(node))
 	{
 		if (shaderGraph->getDestinationCount(node->getOutputPin(3)) > 0)
-			return PntScalar4;
+			return PinType::Scalar4;
 
 		if (shaderGraph->getDestinationCount(node->getOutputPin(2)) > 0)
-			return PntScalar3;
+			return PinType::Scalar3;
 
 		if (shaderGraph->getDestinationCount(node->getOutputPin(1)) > 0)
-			return PntScalar2;
+			return PinType::Scalar2;
 
 		if (shaderGraph->getDestinationCount(node->getOutputPin(0)) > 0)
-			return PntScalar1;
+			return PinType::Scalar1;
 
-		return PntVoid;
+		return PinType::Void;
 	}
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 int32_t MixNodeTraits::getInputPinGroup(

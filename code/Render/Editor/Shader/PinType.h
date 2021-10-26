@@ -12,23 +12,23 @@ namespace traktor
  *
  * \note Ordered in predecence; higher number is higher predecence.
  */
-enum PinType
+enum class PinType
 {
-	PntVoid = 0,
-	PntScalar1 = 1,
-	PntScalar2 = 2,
-	PntScalar3 = 3,
-	PntScalar4 = 4,
-	PntMatrix = 5,
-	PntTexture2D = 6,
-	PntTexture3D = 7,
-	PntTextureCube = 8,
-	PntStructBuffer = 9,
-	PntImage2D = 10,
-	PntImage3D = 11,
-	PntImageCube = 12,
-	PntState = 13,
-	PntAny = (PntState)
+	Void = 0,
+	Scalar1 = 1,
+	Scalar2 = 2,
+	Scalar3 = 3,
+	Scalar4 = 4,
+	Matrix = 5,
+	Texture2D = 6,
+	Texture3D = 7,
+	TextureCube = 8,
+	StructBuffer = 9,
+	Image2D = 10,
+	Image3D = 11,
+	ImageCube = 12,
+	State = 13,
+	Any = (State)
 };
 
 /*! Return true if type is a scalar.
@@ -36,7 +36,7 @@ enum PinType
  */
 inline bool isPinTypeScalar(PinType pinType)
 {
-	return pinType >= PntScalar1 && pinType <= PntScalar4;
+	return pinType >= PinType::Scalar1 && pinType <= PinType::Scalar4;
 }
 
 /*! Return true if type is a texture.
@@ -44,7 +44,7 @@ inline bool isPinTypeScalar(PinType pinType)
  */
 inline bool isPinTypeTexture(PinType pinType)
 {
-	return pinType >= PntTexture2D && pinType <= PntTextureCube;
+	return pinType >= PinType::Texture2D && pinType <= PinType::TextureCube;
 }
 
 /*! Return true if type is a struct buffer.
@@ -52,7 +52,7 @@ inline bool isPinTypeTexture(PinType pinType)
  */
 inline bool isPinTypeStructBuffer(PinType pinType)
 {
-	return pinType == PntStructBuffer;
+	return pinType == PinType::StructBuffer;
 }
 
 /*! Return true if type is a state.
@@ -60,7 +60,7 @@ inline bool isPinTypeStructBuffer(PinType pinType)
  */
 inline bool isPinTypeState(PinType pinType)
 {
-	return pinType == PntState;
+	return pinType == PinType::State;
 }
 
 /*! Get width of scalar type.

@@ -59,7 +59,7 @@ PinType ConditionalNodeTraits::getOutputPinType(
 			inputPinTypes[1]		// Y
 		);
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType ConditionalNodeTraits::getInputPinType(
@@ -73,7 +73,7 @@ PinType ConditionalNodeTraits::getInputPinType(
 	if (is_a< Conditional >(node) || is_a< Discard >(node))
 	{
 		if (inputPin->getName() == L"Input" || inputPin->getName() == L"Reference")
-			return PntScalar1;
+			return PinType::Scalar1;
 	}
 	return outputPinTypes[0];
 }

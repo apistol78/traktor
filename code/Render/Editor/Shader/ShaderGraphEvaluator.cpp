@@ -40,7 +40,7 @@ struct EvaluateVisitor
 			}
 			else
 			{
-				inputPinTypes[i] = PntVoid;
+				inputPinTypes[i] = PinType::Void;
 				inputConstants[i] = Constant();
 			}
 		}

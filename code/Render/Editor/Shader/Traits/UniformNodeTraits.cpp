@@ -51,32 +51,32 @@ PinType UniformNodeTraits::getOutputPinType(
 	else if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(node))
 		parameterType = uniformNode->getParameterType();
 	else
-		return PntVoid;
+		return PinType::Void;
 
 	switch (parameterType)
 	{
 	case ParameterType::Scalar:
-		return PntScalar1;
+		return PinType::Scalar1;
 	case ParameterType::Vector:
-		return PntScalar4;
+		return PinType::Scalar4;
 	case ParameterType::Matrix:
-		return PntMatrix;
+		return PinType::Matrix;
 	case ParameterType::Texture2D:
-		return PntTexture2D;
+		return PinType::Texture2D;
 	case ParameterType::Texture3D:
-		return PntTexture3D;
+		return PinType::Texture3D;
 	case ParameterType::TextureCube:
-		return PntTextureCube;
+		return PinType::TextureCube;
 	case ParameterType::Image2D:
-		return PntImage2D;
+		return PinType::Image2D;
 	case ParameterType::Image3D:
-		return PntImage3D;
+		return PinType::Image3D;
 	case ParameterType::ImageCube:
-		return PntImageCube;
+		return PinType::ImageCube;
 	case ParameterType::StructBuffer:
-		return PntStructBuffer;
+		return PinType::StructBuffer;
 	default:
-		return PntVoid;
+		return PinType::Void;
 	}
 }
 
@@ -89,7 +89,7 @@ PinType UniformNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< IndexedUniform >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(node))
 	{
 		if (inputPin->getName() == L"Initial")
@@ -97,34 +97,34 @@ PinType UniformNodeTraits::getInputPinType(
 			switch (uniformNode->getParameterType())
 			{
 			case ParameterType::Scalar:
-				return PntScalar1;
+				return PinType::Scalar1;
 			case ParameterType::Vector:
-				return PntScalar4;
+				return PinType::Scalar4;
 			case ParameterType::Matrix:
-				return PntMatrix;
+				return PinType::Matrix;
 			case ParameterType::Texture2D:
-				return PntTexture2D;
+				return PinType::Texture2D;
 			case ParameterType::Texture3D:
-				return PntTexture3D;
+				return PinType::Texture3D;
 			case ParameterType::TextureCube:
-				return PntTextureCube;
+				return PinType::TextureCube;
 			case ParameterType::Image2D:
-				return PntImage2D;
+				return PinType::Image2D;
 			case ParameterType::Image3D:
-				return PntImage3D;
+				return PinType::Image3D;
 			case ParameterType::ImageCube:
-				return PntImageCube;
+				return PinType::ImageCube;
 			case ParameterType::StructBuffer:
-				return PntStructBuffer;
+				return PinType::StructBuffer;
 			default:
-				return PntVoid;
+				return PinType::Void;
 			}
 		}
 		else
-			return PntVoid;
+			return PinType::Void;
 	}
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 int32_t UniformNodeTraits::getInputPinGroup(

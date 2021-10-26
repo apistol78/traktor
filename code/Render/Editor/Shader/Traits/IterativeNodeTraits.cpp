@@ -53,7 +53,7 @@ PinType IterativeNodeTraits::getOutputPinType(
 		outputPin->getName() == L"X" ||
 		outputPin->getName() == L"Y"
 	)
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (
 		is_a< Iterate >(node) ||
 		is_a< Iterate2d >(node) ||
@@ -96,7 +96,7 @@ PinType IterativeNodeTraits::getOutputPinType(
 			);
 		}
 		else
-			return PntVoid;
+			return PinType::Void;
 	}
 	else
 		return inputPinTypes[0];
@@ -111,12 +111,12 @@ PinType IterativeNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"Condition")
-		return PntScalar1;
+		return PinType::Scalar1;
 	
 	if (is_a< Iterate2 >(node))
 	{
 		if (inputPin->getName() == L"From" || inputPin->getName() == L"To")
-			return PntScalar1;
+			return PinType::Scalar1;
 		else if (inputPin->getName() == L"Input0")
 			return outputPinTypes[1];	// Output0
 		else if (inputPin->getName() == L"Input1")
@@ -126,7 +126,7 @@ PinType IterativeNodeTraits::getInputPinType(
 		else if (inputPin->getName() == L"Input3")
 			return outputPinTypes[4];	// Output3
 		else
-			return PntVoid;		
+			return PinType::Void;		
 	}
 
 	if (is_a< Iterate2d >(node))
@@ -141,7 +141,7 @@ PinType IterativeNodeTraits::getInputPinType(
 	if (is_a< Sum >(node))
 		return outputPinTypes[1];	// Output
 
-	return PntVoid;
+	return PinType::Void;
 }
 
 int32_t IterativeNodeTraits::getInputPinGroup(

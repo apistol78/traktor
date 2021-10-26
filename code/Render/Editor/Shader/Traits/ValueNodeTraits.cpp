@@ -30,13 +30,13 @@ PinType ValueNodeTraits::getOutputPinType(
 ) const
 {
 	if (is_a< DispatchIndex >(node))
-		return PntScalar3;
+		return PinType::Scalar3;
 	else if (is_a< FragmentPosition >(node))
-		return PntScalar2;
+		return PinType::Scalar2;
 	else if (is_a< FrontFace >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType ValueNodeTraits::getInputPinType(
@@ -47,7 +47,7 @@ PinType ValueNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntVoid;
+	return PinType::Void;
 }
 
 int32_t ValueNodeTraits::getInputPinGroup(

@@ -30,11 +30,11 @@ PinType StructNodeTraits::getOutputPinType(
 
 	const OutputPin* strctOutputPin = shaderGraph->findSourcePin(readStruct->findInputPin(L"Struct"));
 	if (!strctOutputPin)
-		return PntVoid;
+		return PinType::Void;
 
 	const Struct* strct = dynamic_type_cast< const Struct* >(strctOutputPin->getNode());
 	if (!strct)
-		return PntVoid;
+		return PinType::Void;
 
 	auto elementName = readStruct->getName();
 	auto elementType = strct->getElementType(elementName);
@@ -43,18 +43,18 @@ PinType StructNodeTraits::getOutputPinType(
 	{
 	case DtFloat1:
 	case DtInteger1:
-		return PntScalar1;
+		return PinType::Scalar1;
 
 	case DtFloat2:
 	case DtShort2:
 	case DtShort2N:
 	case DtHalf2:
 	case DtInteger2:
-		return PntScalar2;
+		return PinType::Scalar2;
 
 	case DtFloat3:
 	case DtInteger3:
-		return PntScalar3;
+		return PinType::Scalar3;
 
 	case DtFloat4:
 	case DtByte4:
@@ -63,10 +63,10 @@ PinType StructNodeTraits::getOutputPinType(
 	case DtShort4N:
 	case DtHalf4:
 	case DtInteger4:
-		return PntScalar4;
+		return PinType::Scalar4;
 	}
 
-	return PntVoid;
+	return PinType::Void;
 }
 
 PinType StructNodeTraits::getInputPinType(
@@ -78,11 +78,11 @@ PinType StructNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"Buffer")
-		return PntStructBuffer;
+		return PinType::StructBuffer;
 	else if (inputPin->getName() == L"Index")
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 int32_t StructNodeTraits::getInputPinGroup(

@@ -46,7 +46,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 					if (!inputPin->isOptional())
 						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L") not connected." << Endl;
 
-					inputPinTypes[i] = PntVoid;
+					inputPinTypes[i] = PinType::Void;
 					continue;
 				}
 
@@ -104,7 +104,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				{
 					if (!inputPin->isOptional() && inputPin->getNode() != nullptr)
 						log::debug << L"No type for mandatory input pin \"" << inputPin->getName() << L"\" of node " << type_name(inputPin->getNode()) << L" " << inputPin->getNode()->getId().format() << L"." << Endl;
-					currentInputPinTypes[i] = PntVoid;
+					currentInputPinTypes[i] = PinType::Void;
 				}
 			}
 
@@ -116,7 +116,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				if (it != m_outputPinTypes.end())
 					outputPinTypes[i] = it->second;
 				else
-					outputPinTypes[i] = PntVoid;
+					outputPinTypes[i] = PinType::Void;
 			}
 
 			// Evaluate possible new input type from type sets.
@@ -126,7 +126,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				T_ASSERT(inputPin);
 
 				PinType inputPinType = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, currentInputPinTypes, outputPinTypes);
-				if (inputPinType == PntVoid)
+				if (inputPinType == PinType::Void)
 					inputPinType = currentInputPinTypes[i];
 
 				if (m_inputPinTypes[inputPin] != inputPinType)
@@ -160,7 +160,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				if (destinationInputPins.empty())
 					continue;
 
-				PinType outputPinType = PntVoid;
+				PinType outputPinType = PinType::Void;
 				for (const auto destinationInputPin : destinationInputPins)
 				{
 					T_ASSERT(m_inputPinTypes.find(destinationInputPin) != m_inputPinTypes.end());
@@ -204,24 +204,24 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
 {
 	auto i = m_inputPinTypes.find(inputPin);
-	return i != m_inputPinTypes.end() ? i->second : PntVoid;
+	return i != m_inputPinTypes.end() ? i->second : PinType::Void;
 }
 
 PinType ShaderGraphTypePropagation::evaluate(const OutputPin* outputPin) const
 {
 	auto i = m_outputPinTypes.find(outputPin);
-	return i != m_outputPinTypes.end() ? i->second : PntVoid;
+	return i != m_outputPinTypes.end() ? i->second : PinType::Void;
 }
 
 void ShaderGraphTypePropagation::set(const InputPin* inputPin, PinType inputPinType)
 {
-	T_ASSERT(inputPinType != PntVoid);
+	T_ASSERT(inputPinType != PinType::Void);
 	m_inputPinTypes[inputPin] = inputPinType;
 }
 
 void ShaderGraphTypePropagation::set(const OutputPin* outputPin, PinType outputPinType)
 {
-	T_ASSERT(outputPinType != PntVoid);
+	T_ASSERT(outputPinType != PinType::Void);
 	m_outputPinTypes[outputPin] = outputPinType;
 }
 

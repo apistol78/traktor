@@ -65,7 +65,7 @@ PinType MetaNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	PinType outputPinType = PntVoid;
+	PinType outputPinType = PinType::Void;
 	if (is_a< Branch >(node) || is_a< Connected >(node) || is_a< Platform >(node) || is_a< Renderer >(node))
 	{
 		uint32_t inputPinCount = node->getInputPinCount();
@@ -80,33 +80,33 @@ PinType MetaNodeTraits::getOutputPinType(
 		switch (inputPinTypes[0])
 		{
 		default:
-		case PntVoid:
+		case PinType::Void:
 			break;
 
-		case PntScalar1:
+		case PinType::Scalar1:
 			outputPinType = inputPinTypes[1];
 			break;
 
-		case PntScalar2:
-		case PntScalar3:
-		case PntScalar4:
+		case PinType::Scalar2:
+		case PinType::Scalar3:
+		case PinType::Scalar4:
 			outputPinType = inputPinTypes[2];
 			break;
 
-		case PntMatrix:
+		case PinType::Matrix:
 			outputPinType = inputPinTypes[3];
 			break;
 
-		case PntTexture2D:
-		case PntTexture3D:
-		case PntTextureCube:
+		case PinType::Texture2D:
+		case PinType::Texture3D:
+		case PinType::TextureCube:
 			outputPinType = inputPinTypes[4];
 			break;
 
-		case PntStructBuffer:
+		case PinType::StructBuffer:
 			break;
 
-		case PntState:
+		case PinType::State:
 			outputPinType = inputPinTypes[5];
 			break;
 		}
@@ -123,7 +123,7 @@ PinType MetaNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< OutputPort >(node))
-		return PntVoid;
+		return PinType::Void;
 	else
 		return outputPinTypes[0];
 }
