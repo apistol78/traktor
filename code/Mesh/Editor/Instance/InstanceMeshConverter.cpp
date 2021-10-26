@@ -70,7 +70,7 @@ bool InstanceMeshConverter::convert(
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt16,
+		render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -175,7 +175,7 @@ bool InstanceMeshConverter::convert(
 			{
 				render::Mesh::Part meshPart;
 				meshPart.primitives.setIndexed(
-					render::PtTriangles,
+					render::PrimitiveType::Triangles,
 					j->offsetFirst,
 					(j->offsetLast - j->offsetFirst) / 3,
 					j->minIndex,

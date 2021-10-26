@@ -251,23 +251,23 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	uint32_t vertexCount = 0;
 	switch (primitives.type)
 	{
-	case PtPoints:
+	case PrimitiveType::Points:
 		vertexCount = primitives.count;
 		break;
 
-	case PtLineStrip:
+	case PrimitiveType::LineStrip:
 		T_ASSERT(0);
 		break;
 
-	case PtLines:
+	case PrimitiveType::Lines:
 		vertexCount = primitives.count * 2;
 		break;
 
-	case PtTriangleStrip:
+	case PrimitiveType::TriangleStrip:
 		vertexCount = primitives.count + 2;
 		break;
 
-	case PtTriangles:
+	case PrimitiveType::Triangles:
 		vertexCount = primitives.count * 3;
 		break;
 	}

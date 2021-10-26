@@ -45,7 +45,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/IVRCompositor.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "World/EntityEventManager.h"

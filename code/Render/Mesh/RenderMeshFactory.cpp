@@ -42,7 +42,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 
 	if (indexBufferSize > 0)
 	{
-		const uint32_t indexSize = (indexType == ItUInt16) ? 2 : 4;
+		const uint32_t indexSize = (indexType == IndexType::UInt16) ? 2 : 4;
 		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize / indexSize, indexSize, false);
 		if (!indexBuffer)
 			return nullptr;

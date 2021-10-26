@@ -201,7 +201,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 
 				auto& batch = m_batches.push_back();
 				batch.primitives.setIndexed(
-					render::PtTriangles,
+					render::PrimitiveType::Triangles,
 					offset,
 					count,
 					0,
@@ -242,7 +242,7 @@ void SplineEntity::build(
 		renderBlock->distance = std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-		renderBlock->indexType = render::ItUInt16;
+		renderBlock->indexType = render::IndexType::UInt16;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitives = batch.primitives;

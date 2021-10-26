@@ -24,18 +24,6 @@ namespace traktor
 {
 	namespace mesh
 	{
-		namespace
-		{
-
-struct InfluencePredicate
-{
-	bool operator () (const std::pair< int, float >& lh, const std::pair< int, float >& rh) const
-	{
-		return lh.second > rh.second;
-	}
-};
-
-		}
 
 Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
@@ -79,7 +67,7 @@ bool SkinnedMeshConverter::convert(
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
+		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -114,7 +102,9 @@ bool SkinnedMeshConverter::convert(
 				jointInfluences.push_back(std::make_pair(i, w));
 		}
 
-		std::sort(jointInfluences.begin(), jointInfluences.end(), InfluencePredicate());
+		std::sort(jointInfluences.begin(), jointInfluences.end(), [](const std::pair< int, float >& lh, const std::pair< int, float >& rh) {
+			return lh.second > rh.second;
+		});
 
 		jointCount = (uint32_t)jointInfluences.size();
 		jointCount = std::min< uint32_t >(4, jointCount);
@@ -239,7 +229,7 @@ bool SkinnedMeshConverter::convert(
 			{
 				render::Mesh::Part meshPart;
 				meshPart.primitives.setIndexed(
-					render::PtTriangles,
+					render::PrimitiveType::Triangles,
 					j->offsetFirst,
 					(j->offsetLast - j->offsetFirst) / 3,
 					j->minIndex,

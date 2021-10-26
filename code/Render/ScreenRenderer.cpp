@@ -53,7 +53,7 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 
 	m_vertexBuffer->unlock();
 
-	m_primitives.setNonIndexed(PtTriangles, 0, 2);
+	m_primitives.setNonIndexed(PrimitiveType::Triangles, 0, 2);
 	return true;
 }
 
@@ -65,7 +65,7 @@ void ScreenRenderer::destroy()
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
 	if (program)
-		renderView->draw(m_vertexBuffer->getBufferView(), m_vertexLayout, nullptr, ItVoid, program, m_primitives, 1);
+		renderView->draw(m_vertexBuffer->getBufferView(), m_vertexLayout, nullptr, IndexType::Void, program, m_primitives, 1);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader)

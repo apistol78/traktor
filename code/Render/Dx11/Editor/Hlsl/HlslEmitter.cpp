@@ -503,7 +503,7 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
 		const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
-		auto& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+		auto& fu = cx.getShader().getOutputStream(c_blockType[(int32_t)node->getFrequency()]);
 		fu << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
 		cx.getShader().addUniform(node->getParameterName());
 	}
@@ -1355,7 +1355,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	}
 
 	cx.getD3DRasterizerDesc().FillMode = rs.wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[rs.cullMode];
+	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[(int32_t)rs.cullMode];
 
 	cx.getD3DDepthStencilDesc().DepthEnable = rs.depthEnable ? TRUE : FALSE;
 	cx.getD3DDepthStencilDesc().DepthWriteMask = rs.depthWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -2607,7 +2607,7 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 		if (out->getType() < HtTexture2D)
 		{
 			const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
-			auto& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+			auto& fu = cx.getShader().getOutputStream(c_blockType[(int32_t)node->getFrequency()]);
 			fu << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
 		}
 		else

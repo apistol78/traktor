@@ -173,7 +173,7 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 			batch.vertexBuffer->getBufferView(),
 			m_vertexLayout,
 			nullptr,
-			ItVoid,
+			IndexType::Void,
 			program,
 			batch.primitives,
 			1
@@ -245,7 +245,7 @@ void PrimitiveRenderer::drawLine(
 	const Color4ub& color
 )
 {
-	Vertex* v = allocBatch(PtLines, 1, nullptr);
+	Vertex* v = allocBatch(PrimitiveType::Lines, 1, nullptr);
 	if (!v)
 		return;
 
@@ -319,7 +319,7 @@ void PrimitiveRenderer::drawLine(
 	Scalar dx2 = dx * cs2.w();
 	Scalar dy2 = dy * cs2.w();
 
-	Vertex* v = allocBatch(PtTriangles, 2, nullptr);
+	Vertex* v = allocBatch(PrimitiveType::Triangles, 2, nullptr);
 	if (!v)
 		return;
 
@@ -768,7 +768,7 @@ void PrimitiveRenderer::drawSolidTriangle(
 	Vector4 v2 = m_worldView * vert2.xyz1();
 	Vector4 v3 = m_worldView * vert3.xyz1();
 
-	Vertex* v = allocBatch(PtTriangles, 1, nullptr);
+	Vertex* v = allocBatch(PrimitiveType::Triangles, 1, nullptr);
 	if (!v)
 		return;
 
@@ -849,7 +849,7 @@ void PrimitiveRenderer::drawTextureTriangle(
 	Vector4 v2 = m_worldView * vert2.xyz1();
 	Vector4 v3 = m_worldView * vert3.xyz1();
 
-	Vertex* v = allocBatch(PtTriangles, 1, texture);
+	Vertex* v = allocBatch(PrimitiveType::Triangles, 1, texture);
 	if (!v)
 		return;
 
@@ -1106,7 +1106,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 0, 3 };
 
-	uint32_t vertexCount = primitiveCount * c_primitiveMul[primitiveType];
+	uint32_t vertexCount = primitiveCount * c_primitiveMul[(int32_t)primitiveType];
 	if (!vertexCount)
 		return nullptr;
 

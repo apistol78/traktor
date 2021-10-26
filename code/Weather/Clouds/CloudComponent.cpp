@@ -495,10 +495,10 @@ void CloudComponent::buildCluster(
 					particleRenderBlock->program = sp.program;
 					particleRenderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 					particleRenderBlock->indexBuffer = m_indexBuffer->getBufferView();
-					particleRenderBlock->indexType = render::ItUInt16;
+					particleRenderBlock->indexType = render::IndexType::UInt16;
 					particleRenderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 					particleRenderBlock->vertexLayout = m_vertexLayout;
-					particleRenderBlock->primitive = render::PtTriangles;
+					particleRenderBlock->primitive = render::PrimitiveType::Triangles;
 					particleRenderBlock->offset = 0;
 					particleRenderBlock->count = instanceCount * 2;
 					particleRenderBlock->minIndex = 0;
@@ -553,7 +553,7 @@ void CloudComponent::buildCluster(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
-		renderBlock->primitive = render::PtTriangleStrip;
+		renderBlock->primitive = render::PrimitiveType::TriangleStrip;
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
 

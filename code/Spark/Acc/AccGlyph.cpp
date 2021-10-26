@@ -208,10 +208,10 @@ void AccGlyph::render(
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
 		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-		renderBlock->indexType = render::ItUInt16;
+		renderBlock->indexType = render::IndexType::UInt16;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
-		renderBlock->primitive = render::PtTriangles;
+		renderBlock->primitive = render::PrimitiveType::Triangles;
 		renderBlock->offset = offset * 6;
 		renderBlock->count = count * 2;
 		renderBlock->minIndex = 0;

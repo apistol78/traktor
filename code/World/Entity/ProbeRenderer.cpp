@@ -539,10 +539,10 @@ void ProbeRenderer::build(
 	rb->program = program;
 	rb->programParams = renderContext->alloc< render::ProgramParameters >();
 	rb->indexBuffer = m_indexBuffer->getBufferView();
-	rb->indexType = render::ItUInt16;
+	rb->indexType = render::IndexType::UInt16;
 	rb->vertexBuffer = m_vertexBuffer->getBufferView();
 	rb->vertexLayout = m_vertexLayout;
-	rb->primitive = render::PtTriangles;
+	rb->primitive = render::PrimitiveType::Triangles;
 		
 	if (!probeComponent->getLocal())
 	{

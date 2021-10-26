@@ -187,7 +187,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 
 	ss << Endl;
 
-	PrecisionHint precisionHint = PhUndefined;
+	PrecisionHint precisionHint = PrecisionHint::Undefined;
 	const bool ignorePrecisionHint = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.IgnorePrecisionHint", false) : false);
 	if (!ignorePrecisionHint)
 	{
@@ -199,17 +199,17 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	
 	switch (precisionHint)
 	{
-	case PhLow:
+	case PrecisionHint::Low:
 		ss << L"precision lowp float;" << Endl;
 		ss << Endl;
 		break;
 
-	case PhMedium:
+	case PrecisionHint::Medium:
 		ss << L"precision mediump float;" << Endl;
 		ss << Endl;
 		break;
 
-	case PhHigh:
+	case PrecisionHint::High:
 		ss << L"precision highp float;" << Endl;
 		ss << Endl;
 		break;

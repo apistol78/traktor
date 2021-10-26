@@ -959,7 +959,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
 	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
-	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type] + c_primitiveAdd[primitives.type];
+	uint32_t vertexCount = primitives.count * c_primitiveMul[(int32_t)primitives.type] + c_primitiveAdd[(int32_t)primitives.type];
 
 	if (frame.boundVertexBuffer != *vbv)
 	{
@@ -980,7 +980,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 				*frame.graphicsCommandBuffer,
 				buffer,
 				offset,
-				(indexType == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
+				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 			);
 			frame.boundIndexBuffer = *ibv;
 		}
@@ -1538,7 +1538,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		rsci.depthClampEnable = VK_FALSE;
 		rsci.rasterizerDiscardEnable = VK_FALSE;
 		rsci.polygonMode = rs.wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
-		rsci.cullMode = c_cullMode[rs.cullMode];
+		rsci.cullMode = c_cullMode[(int32_t)rs.cullMode];
 		rsci.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		rsci.depthBiasEnable = VK_FALSE;
 		rsci.depthBiasConstantFactor = 0;
@@ -1614,7 +1614,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 
 		VkPipelineInputAssemblyStateCreateInfo iasci = {};
 		iasci.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		iasci.topology = c_primitiveTopology[pt];
+		iasci.topology = c_primitiveTopology[(int32_t)pt];
 		iasci.primitiveRestartEnable = VK_FALSE;
 
 		VkGraphicsPipelineCreateInfo gpci = {};

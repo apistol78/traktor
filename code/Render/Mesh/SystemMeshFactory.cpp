@@ -52,7 +52,7 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 
 	if (indexBufferSize > 0)
 	{
-		const uint32_t indexSize = (indexType == ItUInt16) ? 2 : 4;
+		const uint32_t indexSize = (indexType == IndexType::UInt16) ? 2 : 4;
 		indexBuffer = new InternalBuffer(indexBufferSize / indexSize, indexSize);
 	}
 

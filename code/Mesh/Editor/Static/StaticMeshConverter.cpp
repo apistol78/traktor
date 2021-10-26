@@ -67,7 +67,7 @@ bool StaticMeshConverter::convert(
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
+		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -194,7 +194,7 @@ bool StaticMeshConverter::convert(
 			{
 				render::Mesh::Part meshPart;
 				meshPart.primitives.setIndexed(
-					render::PtTriangles,
+					render::PrimitiveType::Triangles,
 					j->offsetFirst,
 					(j->offsetLast - j->offsetFirst) / 3,
 					j->minIndex,

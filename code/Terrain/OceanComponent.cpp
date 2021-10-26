@@ -141,7 +141,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_indexBuffer->unlock();
 
-	m_primitives.setIndexed(render::PtTriangles, 0, c_gridCells * 2, 0, c_gridSize * c_gridSize - 1);
+	m_primitives.setIndexed(render::PrimitiveType::Triangles, 0, c_gridCells * 2, 0, c_gridSize * c_gridSize - 1);
 
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
@@ -237,7 +237,7 @@ void OceanComponent::build(
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = sp.program;
 	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-	renderBlock->indexType = render::ItUInt32;
+	renderBlock->indexType = render::IndexType::UInt32;
 	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 	renderBlock->vertexLayout = m_vertexLayout;
 	renderBlock->primitives = m_primitives;

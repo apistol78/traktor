@@ -100,7 +100,7 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 		vertexBuffer,
 		vertexLayout,
 		nullptr,
-		ItVoid,
+		IndexType::Void,
 		program,
 		p,
 		1

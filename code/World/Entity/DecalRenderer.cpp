@@ -170,10 +170,10 @@ void DecalRenderer::build(
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-		renderBlock->indexType = render::ItUInt16;
+		renderBlock->indexType = render::IndexType::UInt16;
 		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
-		renderBlock->primitive = render::PtTriangles;
+		renderBlock->primitive = render::PrimitiveType::Triangles;
 		renderBlock->offset = 0;
 		renderBlock->count = 12;
 		renderBlock->minIndex = 0;

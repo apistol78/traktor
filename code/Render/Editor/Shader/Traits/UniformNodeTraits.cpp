@@ -174,7 +174,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 			if (
 				frequentAsLinear &&
 				indexedUniform->getParameterType() < PtTexture2D &&
-				indexedUniform->getFrequency() >= UfDraw
+				indexedUniform->getFrequency() >= UpdateFrequency::Draw
 			)
 				return PotLinear;
 			else
@@ -188,7 +188,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 		if (
 			frequentAsLinear &&
 			uniform->getParameterType() < PtTexture2D &&
-			uniform->getFrequency() >= UfDraw
+			uniform->getFrequency() >= UpdateFrequency::Draw
 		)
 			return PotLinear;
 		else

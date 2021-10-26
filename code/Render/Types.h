@@ -24,12 +24,12 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
-enum PrecisionHint
+enum class PrecisionHint
 {
-	PhUndefined = 0,
-	PhLow = 1,
-	PhMedium = 2,
-	PhHigh = 3
+	Undefined = 0,
+	Low = 1,
+	Medium = 2,
+	High = 3
 };
 
 enum RenderPriority
@@ -43,11 +43,11 @@ enum RenderPriority
 	RpAll = (RpSetup | RpOpaque | RpPostOpaque | RpAlphaBlend | RpPostAlphaBlend | RpOverlay)
 };
 
-enum CullMode
+enum class CullMode
 {
-	CmNever = 0,
-	CmClockWise = 1,
-	CmCounterClockWise = 2
+	Never = 0,
+	ClockWise = 1,
+	CounterClockWise = 2
 };
 
 enum BlendOperation
@@ -123,7 +123,7 @@ enum Address
 /*! Render state. */
 struct RenderState
 {
-	CullMode cullMode = CmCounterClockWise;
+	CullMode cullMode = CullMode::CounterClockWise;
 	bool blendEnable = false;
 	BlendOperation blendColorOperation = BoAdd;
 	BlendFactor blendColorSource = BfOne;
@@ -239,19 +239,19 @@ enum ParameterType
 };
 
 /*! Shader parameter update frequency. */
-enum UpdateFrequency
+enum class UpdateFrequency
 {
-	UfOnce		= 0,	//!< Once per life time.
-	UfFrame		= 1,	//!< Once per frame.
-	UfDraw		= 2		//!< Per draw call.
+	Once		= 0,	//!< Once per life time.
+	Frame		= 1,	//!< Once per frame.
+	Draw		= 2		//!< Per draw call.
 };
 
 /*! Index type. */
-enum IndexType
+enum class IndexType
 {
-	ItVoid		= 0,	//!< No type.
-	ItUInt16	= 1,	//!< Unsigned 16 bit indices.
-	ItUInt32	= 2		//!< Unsigned 32 bit indices.
+	Void	= 0,	//!< No type.
+	UInt16	= 1,	//!< Unsigned 16 bit indices.
+	UInt32	= 2		//!< Unsigned 32 bit indices.
 };
 
 /*! Texture type. */
@@ -313,21 +313,13 @@ enum TextureFormat
 };
 
 /*! Primitive topology type. */
-enum PrimitiveType
+enum class PrimitiveType
 {
-	PtPoints = 0,
-	PtLineStrip = 1,
-	PtLines = 2,
-	PtTriangleStrip = 3,
-	PtTriangles = 4
-};
-
-/*! Eye in stereoscopic rendering */
-enum EyeType
-{
-	EtCyclop = 0,	//< Not using stereoscopic rendering.
-	EtLeft = 1,
-	EtRight = 2
+	Points = 0,
+	LineStrip = 1,
+	Lines = 2,
+	TriangleStrip = 3,
+	Triangles = 4
 };
 
 /*! Render view event. */
