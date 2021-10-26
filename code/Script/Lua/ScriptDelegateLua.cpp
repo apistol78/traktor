@@ -9,12 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IRuntimeDelegate)
 
-ScriptDelegateLua::ScriptDelegateLua(ScriptContextLua* context, lua_State*& luaState)
+ScriptDelegateLua::ScriptDelegateLua(ScriptContextLua* context, lua_State*& luaState, int32_t functionRef)
 :	m_context(context)
 ,	m_luaState(luaState)
-,	m_functionRef(0)
+,	m_functionRef(functionRef)
 {
-	m_functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 }
 
 ScriptDelegateLua::~ScriptDelegateLua()

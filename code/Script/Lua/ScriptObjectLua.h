@@ -13,7 +13,7 @@ class ScriptObjectLua : public IRuntimeObject
 	T_RTTI_CLASS;
 
 public:
-	ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t tableRef);
+	explicit ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t tableRef);
 
 	virtual ~ScriptObjectLua();
 
