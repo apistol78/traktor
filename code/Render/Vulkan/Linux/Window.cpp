@@ -239,7 +239,7 @@ bool Window::update(RenderEvent& outEvent)
 	{
 		if ((Atom)evt.xclient.data.l[0] == m_atomWmDeleteWindow)
 		{
-			outEvent.type = ReClose;
+			outEvent.type = RenderEventType::Close;
 			receivedEvent = true;
 		}
 	}
@@ -257,7 +257,7 @@ bool Window::update(RenderEvent& outEvent)
 		{
 			if (!m_fullScreen)
 			{
-				outEvent.type = ReResize;
+				outEvent.type = RenderEventType::Resize;
 				outEvent.resize.width = evt.xconfigure.width;
 				outEvent.resize.height = evt.xconfigure.height;
 				receivedEvent = true;
