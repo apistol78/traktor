@@ -10,7 +10,7 @@
 			</position>
 			<name>T_Irradiance</name>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{70DF6E64-8BE6-F145-B17D-0EBF1F4D7180}</id>
 			<comment>
 			<![CDATA[
@@ -22,7 +22,7 @@ Tag_LightMapDiffuse
 				<second>188</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{07B24EC9-BE22-A449-9491-F342DD9D7D5A}</id>
@@ -145,7 +145,7 @@ Tag_LightMapDiffuse
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{2A63E171-3B4E-5C45-AC7B-402BC331C1C7}</id>
 			<comment>
 			<![CDATA[
@@ -157,7 +157,7 @@ Tag_LightMapDirectional
 				<second>420</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{5CBE2C53-3312-7747-9F53-BF17DD0E8357}</id>
@@ -198,7 +198,7 @@ Basis Z
 			</position>
 			<value>-0.408248, -0.707107, 0.577, 0</value>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{08600A6A-CE48-9240-B7A3-608D2F0458D6}</id>
 			<comment>
 			<![CDATA[
@@ -210,7 +210,7 @@ Tag_NormalMap
 				<second>752</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Dot" version="traktor.render.Node:1">
 			<id>{D0AA1349-C1F4-214C-A7F5-F5F7322301FE}</id>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{025C0B71-FB11-A94D-ADA3-493E6AF52488}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{E4C1AC88-0C97-B048-881E-92BCC81DFF35}</id>
@@ -67,7 +67,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6368F71D-A87D-7F4A-B1EA-15301863F7E7}</id>
 			<comment/>
 			<position>
@@ -75,8 +75,8 @@
 				<second>-99</second>
 			</position>
 			<parameterName>Texture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4574E67C-5360-2647-8AF5-A9117F80E326}</id>
@@ -143,7 +143,7 @@
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{272F821B-C92D-614C-89D6-6C77A656FF2E}</id>
 			<comment/>
 			<position>
@@ -151,7 +151,7 @@
 				<second>-238</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{7C899297-FE28-2C4F-9E8D-61E512D63D1A}</id>
@@ -187,7 +187,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{ED55A80C-D831-1940-BA1A-09F36493139A}</id>
 			<comment/>
 			<position>
@@ -195,8 +195,8 @@
 				<second>-252</second>
 			</position>
 			<parameterName>Bounds</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{A750A827-7B57-C347-AFF2-24D77FA6E14F}</id>

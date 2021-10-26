@@ -190,7 +190,7 @@
 			<name>V_Center</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E84F0D9D-6B10-C045-90E6-6353D71FB7C0}</id>
 			<comment/>
 			<position>
@@ -198,8 +198,8 @@
 				<second>-514</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
 			<id>{F6B10B04-04A4-1442-A792-7C7FF74A55A7}</id>
@@ -254,7 +254,7 @@
 				<second>-562</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{44B1BEEC-9F81-1343-8A38-FD6634799785}</id>
 			<comment/>
 			<position>
@@ -270,7 +270,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -300,7 +300,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{3A29D1F7-B1C9-4345-8717-AECC02BCD1AD}</id>
@@ -323,7 +323,7 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B877D9DB-763C-6D43-A34C-B4F66917B495}</id>
 			<comment/>
 			<position>
@@ -331,10 +331,10 @@
 				<second>196</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{685B9403-5C61-C947-87EF-3FF643466011}</id>
 			<comment/>
 			<position>
@@ -342,10 +342,10 @@
 				<second>170</second>
 			</position>
 			<parameterName>World_WorldView</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{33E11E04-2B30-4545-9D24-5123944203CA}</id>
 			<comment/>
 			<position>
@@ -353,10 +353,10 @@
 				<second>258</second>
 			</position>
 			<parameterName>World_ProbeVolumeCenter</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{208FACB5-9485-C940-942D-1E8CCA111F4B}</id>
 			<comment/>
 			<position>
@@ -364,8 +364,8 @@
 				<second>170</second>
 			</position>
 			<parameterName>World_ProbeVolumeExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{65A292FF-8D8B-A74E-B7FA-76AA8D424162}</id>
@@ -421,7 +421,7 @@
 			</position>
 			<parameterName>World_ProbeLocal</parameterName>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{644DEA6F-42B0-C04B-9F21-13B52054E94F}</id>
 			<comment/>
 			<position>
@@ -429,7 +429,7 @@
 				<second>189</second>
 			</position>
 			<technique/>
-			<precisionHint>PhMedium</precisionHint>
+			<precisionHint>Medium</precisionHint>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{7DC47032-A1BB-1843-AE28-86AE5978FDF2}</id>
@@ -590,7 +590,7 @@
 			<name>V_ViewPosition</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{3894B87F-898C-ED46-9481-C72037290E31}</id>
 			<comment/>
 			<position>
@@ -598,8 +598,8 @@
 				<second>-142</second>
 			</position>
 			<parameterName>World_WorldViewInv</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5701096B-E099-DA4E-908F-7724E04207D3}</id>

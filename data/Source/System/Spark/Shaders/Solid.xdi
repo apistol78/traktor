@@ -9,7 +9,7 @@
 				<second>212</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{1248B307-C85D-8648-B001-25EEB0EA9498}</id>
 			<comment/>
 			<position>
@@ -17,10 +17,10 @@
 				<second>240</second>
 			</position>
 			<parameterName>Spark_CxFormMul</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{96C994FF-BB26-3748-8F06-39A895F777D9}</id>
 			<comment/>
 			<position>
@@ -28,8 +28,8 @@
 				<second>394</second>
 			</position>
 			<parameterName>Spark_CxFormAdd</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{92F1019A-BBC5-E240-96B2-CA2ADC377460}</id>
@@ -56,7 +56,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{4A0DA636-4718-A34B-9A20-979C348D2728}</id>
 			<comment/>
 			<position>
@@ -64,7 +64,7 @@
 				<second>-58</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2DBCEC5B-BBC4-684C-8947-9771B8CD57F1}</id>

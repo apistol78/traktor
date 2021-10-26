@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{9DD0D9E3-A2C0-4328-A34F-96E299ABEF5E}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{E161E52E-26CB-5847-ABC7-6D64E0F07159}</id>
@@ -253,7 +253,7 @@ Eye direction
 				<second>-434</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{AFEDF1CB-2D27-BA41-9E3E-915922334156}</id>
 			<comment/>
 			<position>
@@ -261,8 +261,8 @@ Eye direction
 				<second>-376</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{4ED325A8-FA3F-144E-86E6-A7DC6242E124}</id>
@@ -272,7 +272,7 @@ Eye direction
 				<second>-269</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6F0C57FE-DDFB-764B-9E3E-058418DDC166}</id>
 			<comment/>
 			<position>
@@ -280,8 +280,8 @@ Eye direction
 				<second>-218</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B5134B8C-DBE7-1642-9513-298C2E3A8438}</id>

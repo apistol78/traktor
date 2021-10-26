@@ -61,7 +61,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{000FD1AB-7DE6-0B44-A8E8-E7A1F300D7CF}</id>
 			<comment>
 			<![CDATA[
@@ -73,7 +73,7 @@ Tag_NormalMap
 				<second>142</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{51E6ACEE-7868-C84E-9910-8DBD9BC0B921}</id>

@@ -22,7 +22,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{29515A38-DF07-6542-91E1-0039116262E8}</id>
 			<comment/>
 			<position>
@@ -38,7 +38,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -68,7 +68,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2674AD51-CDFE-FD44-B9B2-A765F90531C5}</id>
@@ -177,7 +177,7 @@
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{D77F3ECF-9C1E-284A-80A9-0A2243AC3322}</id>
 			<comment/>
 			<position>
@@ -185,10 +185,10 @@
 				<second>134</second>
 			</position>
 			<parameterName>Edges</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{A66A8EC2-4411-DE4C-9C3B-9B345B6A97B8}</id>
 			<comment/>
 			<position>
@@ -196,9 +196,9 @@
 				<second>-35</second>
 			</position>
 			<external>{BC7EC8FB-C6DE-AA44-AB31-F4FF1375E447}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{54124C47-3A52-6E46-B331-5D007B412AE4}</id>
 			<comment/>
 			<position>
@@ -206,7 +206,7 @@
 				<second>-35</second>
 			</position>
 			<external>{B4D72C4D-D517-254B-8163-18F3E64B55B8}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 	</nodes>
 	<edges>

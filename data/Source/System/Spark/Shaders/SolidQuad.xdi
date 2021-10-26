@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{970C329C-999B-C44B-986B-F9D55220FECB}</id>
 			<comment/>
 			<position>
@@ -9,9 +9,9 @@
 				<second>-184</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{B94BDB9B-4D07-A04F-9C3B-9AE783310416}</id>
 			<comment/>
 			<position>
@@ -27,7 +27,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -57,7 +57,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DDFB3A63-B05F-C540-8543-05A7830FD0A2}</id>
@@ -80,7 +80,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{0A7C3BC7-1B35-3747-9B7D-78D119572586}</id>
 			<comment/>
 			<position>
@@ -88,8 +88,8 @@
 				<second>-38</second>
 			</position>
 			<parameterName>Spark_CxFormAdd</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{0098B9DE-4558-9C4C-ABC0-5DD1A4077CEA}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>241</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{E4938C3E-4DDF-384E-B150-B1EA44EE74AA}</id>
@@ -39,7 +39,7 @@
 				<second>211</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{9A26FBFD-BD51-224F-9B0A-DC82DE755AF6}</id>
 			<comment/>
 			<position>
@@ -47,10 +47,10 @@
 				<second>270</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DAD121F9-4820-6945-ADA2-8B6056F74BA0}</id>
 			<comment/>
 			<position>
@@ -58,8 +58,8 @@
 				<second>245</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{7B4674B5-514D-6A48-BC3B-62CA2F37F012}</id>
@@ -166,7 +166,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{7DA54669-19CF-C54D-8A75-F8C699E8CDAC}</id>
 			<comment/>
 			<position>
@@ -174,8 +174,8 @@
 				<second>618</second>
 			</position>
 			<parameterName>SliceDistance</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{4DE24128-0B44-B449-B0C9-C1625831B759}</id>
@@ -211,7 +211,7 @@
 				<second>404</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E039C4D8-E49B-C34D-98C1-8D71DBBC6948}</id>
 			<comment/>
 			<position>
@@ -219,8 +219,8 @@
 				<second>339</second>
 			</position>
 			<parameterName>ImpostorTarget</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B4E54CFE-2D58-4EC0-B244-950A209B3930}</id>

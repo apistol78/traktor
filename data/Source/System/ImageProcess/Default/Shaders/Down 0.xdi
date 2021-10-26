@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{A654265B-84CF-8248-A8E5-84D8C4F0FD3F}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Max" version="traktor.render.Node:1">
 			<id>{B7B66C54-8EEA-A14D-819D-8FF0F8D2025B}</id>
@@ -75,7 +75,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{0AD91931-DD0B-B541-BB1E-75F7257E1C7A}</id>
 			<comment/>
 			<position>
@@ -83,8 +83,8 @@
 				<second>337</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{FC2E00BB-2F96-D343-963C-DED769403677}</id>
@@ -223,7 +223,7 @@
 			<name>XY</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{04AC3513-39F1-41E6-A0B1-21B98A48DC5A}</id>
 			<comment/>
 			<position>
@@ -231,8 +231,8 @@
 				<second>584</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{60341504-D027-E347-B4D6-A8201F7DE002}</id>

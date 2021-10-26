@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{D0BD95AB-4501-0E42-BAA6-CF93AC0535D3}</id>
 			<comment>
 			<![CDATA[
@@ -13,7 +13,7 @@ Tag_MetalnessMap
 				<second>94</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{2095AE10-D608-9548-9860-8D508BCB51D0}</id>

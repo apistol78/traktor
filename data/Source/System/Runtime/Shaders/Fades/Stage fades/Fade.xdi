@@ -22,7 +22,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{B072D143-FBC2-6344-A290-3F3929F5D931}</id>
 			<comment/>
 			<position>
@@ -38,7 +38,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -68,9 +68,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E99607C9-EB3B-9D49-A6F6-F683549CB97B}</id>
 			<comment/>
 			<position>
@@ -78,8 +78,8 @@
 				<second>181</second>
 			</position>
 			<parameterName>Fade</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0A8D4BFC-D632-6945-8A76-CC0696F886E6}</id>

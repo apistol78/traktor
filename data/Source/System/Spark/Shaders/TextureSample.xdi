@@ -49,7 +49,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{12E368C8-BCDF-414B-B6AA-EF8A627A58A0}</id>
 			<comment/>
 			<position>
@@ -57,8 +57,8 @@
 				<second>627</second>
 			</position>
 			<parameterName>Spark_Texture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{448C7D48-0BE3-7746-AD63-8AB9BBAB1F93}</id>

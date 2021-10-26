@@ -49,7 +49,7 @@
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{50FE20A0-BE0E-4741-824B-EA99D18F86F8}</id>
 			<comment/>
 			<position>
@@ -57,11 +57,11 @@
 				<second>215</second>
 			</position>
 			<parameterName>InstanceData1</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{257B859E-B158-C946-8BA5-F3FAAC171246}</id>
 			<comment/>
 			<position>
@@ -69,8 +69,8 @@
 				<second>285</second>
 			</position>
 			<parameterName>InstanceData2</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>16</length>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">

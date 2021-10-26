@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{B7BE7376-E701-9E43-BC4C-ED535EA4415C}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>390</second>
 			</position>
 			<parameterName>Undergrowth_Instances2</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>180</length>
 		</item>
 		<item type="traktor.render.Instance" version="traktor.render.Node:1">
@@ -21,7 +21,7 @@
 				<second>366</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{3427060A-027F-B444-A247-1419DCD6AB8A}</id>
 			<comment/>
 			<position>
@@ -29,8 +29,8 @@
 				<second>288</second>
 			</position>
 			<parameterName>Undergrowth_Instances1</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>180</length>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -119,7 +119,7 @@
 				<second>357</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{B28E876C-4A3D-9948-B0D7-0FF5E2ED8605}</id>
 			<comment/>
 			<position>
@@ -127,11 +127,11 @@
 				<second>23</second>
 			</position>
 			<parameterName>Undergrowth_Instances1</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>20</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{169F24E0-9E4A-F34D-B208-5CE85F9FA166}</id>
 			<comment/>
 			<position>
@@ -139,8 +139,8 @@
 				<second>125</second>
 			</position>
 			<parameterName>Undergrowth_Instances2</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>20</length>
 		</item>
 	</nodes>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{777B613C-19C5-0146-808C-FD1924B77DF4}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>399</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{219360A2-8780-2246-BD45-2658C9AEF59C}</id>
@@ -51,7 +51,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{B8246A10-C4CA-4841-864A-56F7A1F7206E}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -97,7 +97,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Pow" version="traktor.render.Node:1">
 			<id>{D8BB8894-3A23-E348-AC2E-0DF123F8874B}</id>
@@ -116,7 +116,7 @@
 			</position>
 			<swizzle>xxx1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{69ACCBEC-ADFD-354B-9DA3-2F14EAD11F25}</id>
 			<comment/>
 			<position>
@@ -124,8 +124,8 @@
 				<second>292</second>
 			</position>
 			<parameterName>World_GammaInverse</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E4D9ECEE-9D98-4C42-ABD6-03206C05DAD5}</id>
@@ -155,7 +155,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6359961F-0D8D-E84C-8FAB-A35139B3BD91}</id>
 			<comment/>
 			<position>
@@ -163,8 +163,8 @@
 				<second>548</second>
 			</position>
 			<parameterName>LUT</parameterName>
-			<type>PtTexture3D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture3D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{56F22CE1-1F5A-2145-890A-4D6B9154F01D}</id>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{2B9A9470-607A-5342-A8B5-DD5D153D5C84}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>944</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{09D8CE50-5B0F-5941-BAB5-93EEC1A1B78C}</id>
@@ -37,7 +37,7 @@
 			<name>L_WorldPosition</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{15BD27BD-B183-AA49-AE52-925EBAD65409}</id>
 			<comment/>
 			<position>
@@ -45,10 +45,10 @@
 				<second>1086</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{3D2E3E3F-5E43-3E4F-9B35-40CB8042E6A5}</id>
 			<comment/>
 			<position>
@@ -56,8 +56,8 @@
 				<second>1017</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{D4413A9E-C91F-304F-81FC-602C714FDD7D}</id>
@@ -325,7 +325,7 @@
 			<name>L_V</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{53462AD0-79DE-504D-B6B0-A28A5680FA91}</id>
 			<comment/>
 			<position>
@@ -333,8 +333,8 @@
 				<second>2421</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{9208A76D-6089-1146-A474-CEF44EA94F3E}</id>
@@ -458,7 +458,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6437C761-900A-BD46-8C5C-3F56FCE72945}</id>
 			<comment/>
 			<position>
@@ -466,8 +466,8 @@
 				<second>893</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FCB719F3-5A94-5B42-BAF6-652EDBA67BE5}</id>
@@ -570,7 +570,7 @@
 				<second>325</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{07D6BB42-410F-9A49-BB93-08EA4C13AC05}</id>
 			<comment/>
 			<position>
@@ -578,8 +578,8 @@
 				<second>403</second>
 			</position>
 			<parameterName>Undergrowth_Eye</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{63C26743-7AFE-0145-AC8E-E80C57682AAE}</id>
@@ -1024,7 +1024,7 @@
 				<second>436</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2F41B13B-F23C-7641-9BB8-1C75CA4BAA2A}</id>
 			<comment/>
 			<position>
@@ -1032,8 +1032,8 @@
 				<second>414</second>
 			</position>
 			<parameterName>Undergrowth_MaxDistance</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{5DE37C58-2AF1-F34D-9140-927387072D05}</id>

@@ -13,7 +13,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{83C59D0C-0735-4143-B79B-6F8D987B2833}</id>
 			<comment/>
 			<position>
@@ -21,7 +21,7 @@
 				<second>142</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>

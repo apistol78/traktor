@@ -57,7 +57,7 @@
 				<second>695</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{56AB5FB1-017D-234B-BEAA-5DB4630DA8E9}</id>
 			<comment/>
 			<position>
@@ -65,8 +65,8 @@
 				<second>717</second>
 			</position>
 			<parameterName>World_FogColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{D6BAF0E3-8EA2-D44F-8D3B-ACC83434B82E}</id>
@@ -144,7 +144,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{92950B65-CB57-9F47-81D7-21F765CCFCF5}</id>
 			<comment/>
 			<position>
@@ -152,8 +152,8 @@
 				<second>761</second>
 			</position>
 			<parameterName>World_FogDistanceAndDensity</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1D4A25A7-62B0-9F46-8EB9-49C6D93685E3}</id>

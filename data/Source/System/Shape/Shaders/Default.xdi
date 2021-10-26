@@ -80,7 +80,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{48732833-7403-4681-910A-39C97A972E6F}</id>
 			<comment/>
 			<position>
@@ -88,7 +88,7 @@
 				<second>44</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{08B7E934-2728-485C-9F02-6A3C05C2577C}</id>
@@ -203,7 +203,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{19A2CC14-3E5E-4BB1-A4BF-43DD8B448F6F}</id>
 			<comment/>
 			<position>
@@ -211,7 +211,7 @@
 				<second>263</second>
 			</position>
 			<external>{D9663E74-01FF-E04A-9C69-C78C4A5C7A1B}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{54543BF6-520B-4A26-872C-A1BDBD511ABA}</id>

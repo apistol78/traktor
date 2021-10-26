@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{D970EF31-2680-8942-A96C-C26B7E311178}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>-257</second>
 			</position>
 			<parameterName>Spark_LineData</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{E93673E9-6B6D-574E-BB61-D367C9A6FF95}</id>
@@ -56,7 +56,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{5405C490-382C-D543-B15D-B13A6B75402E}</id>
 			<comment/>
 			<position>
@@ -64,6 +64,7 @@
 				<second>-192</second>
 			</position>
 			<name>SampleData_DX11</name>
+			<technique/>
 			<inputPins>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
@@ -82,22 +83,22 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Start</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>End</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Width</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Color</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>

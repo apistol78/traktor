@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5B135798-A1B9-F143-995A-F73EC405B1A9}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>347</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{692CF05E-1B26-0C4E-97F1-695F0A7D2927}</id>
@@ -20,7 +20,7 @@
 				<second>300</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{7C246850-B16F-B042-B5A2-48E759B3E905}</id>
 			<comment/>
 			<position>
@@ -28,7 +28,7 @@
 				<second>286</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{78C00170-E620-DB4F-B351-EF022F10350B}</id>
@@ -39,7 +39,7 @@
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C84BB086-06F3-E64A-971A-2EA96226C27C}</id>
 			<comment/>
 			<position>
@@ -47,8 +47,8 @@
 				<second>427</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{93B6A734-4A45-604F-ACE6-9B214832557D}</id>
@@ -154,7 +154,7 @@
 			</position>
 			<name>TimeStamp</name>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{75796DF5-3F2B-5643-8005-EA038749E501}</id>
 			<comment/>
 			<position>
@@ -162,8 +162,8 @@
 				<second>751</second>
 			</position>
 			<parameterName>TimeAndAge</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4CDC4F31-3297-A349-89F6-41AFE54CD6C6}</id>

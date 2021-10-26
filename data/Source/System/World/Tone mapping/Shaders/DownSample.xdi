@@ -34,7 +34,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4F0323CA-8BBF-4D93-B697-07F0A8F8B79B}</id>
 			<comment/>
 			<position>
@@ -42,8 +42,8 @@
 				<second>400</second>
 			</position>
 			<parameterName>SourceTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9B0166B8-03BA-4870-B8A2-085C4F354358}</id>
@@ -113,7 +113,7 @@
 			<fromY>-1</fromY>
 			<toY>1</toY>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{AFD133CA-1E24-4CA4-9C11-96B25CCBD60F}</id>
 			<comment/>
 			<position>
@@ -129,7 +129,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -159,7 +159,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{D0FECBCA-23C3-4F73-8B05-A4D1B52CD606}</id>

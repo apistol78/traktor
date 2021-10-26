@@ -53,7 +53,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{123011D0-3CA3-AC44-941D-BF8C93D7D790}</id>
 			<comment/>
 			<position>
@@ -61,10 +61,10 @@
 				<second>134</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{735AA0BE-9977-4446-8C58-6147815C761E}</id>
 			<comment/>
 			<position>
@@ -80,7 +80,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -110,7 +110,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{15796A28-1FED-2F4B-969E-0388AA9D9698}</id>

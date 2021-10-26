@@ -25,7 +25,7 @@ Calculate direction
 				<second>68</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{80A87CE0-09F1-CB45-8C6F-778965A5F49A}</id>
 			<comment/>
 			<position>
@@ -41,7 +41,7 @@ Calculate direction
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -71,7 +71,7 @@ Calculate direction
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{B225369D-A4AC-2944-A63C-ABE5A0F3282C}</id>
@@ -354,7 +354,7 @@ zw
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C8415AD4-EF55-5C48-9753-5E2C3A0B29E4}</id>
 			<comment/>
 			<position>
@@ -362,8 +362,8 @@ zw
 				<second>328</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B60F65A3-D756-9D40-8267-EFDCCEDE06BB}</id>
@@ -734,7 +734,7 @@ Span max
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{7A997669-BE72-3C4A-9131-EEA872969748}</id>
 			<comment/>
 			<position>
@@ -742,8 +742,8 @@ Span max
 				<second>-20</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{3CA044F0-9426-0943-998F-6E01D1A97DD0}</id>

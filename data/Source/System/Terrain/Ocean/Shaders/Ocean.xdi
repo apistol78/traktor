@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2864DA67-F2FE-3941-946B-10A420BECFE6}</id>
 			<comment/>
 			<position>
@@ -9,10 +9,10 @@
 				<second>515</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{28DF02C7-A4C6-FE49-A2AF-1C3067BDCC63}</id>
 			<comment/>
 			<position>
@@ -20,8 +20,8 @@
 				<second>382</second>
 			</position>
 			<parameterName>Ocean_Eye</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{5EB1A808-AB18-EE45-9E22-B94DF9FE5976}</id>
@@ -32,7 +32,7 @@
 			</position>
 			<swizzle>x0z</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{8AA18707-44AC-2644-8B41-ED4A2140AB74}</id>
 			<comment/>
 			<position>
@@ -40,8 +40,8 @@
 				<second>294</second>
 			</position>
 			<parameterName>World_World</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MatrixOut" version="traktor.render.Node:1">
 			<id>{C8A35F03-174D-CD40-B5D7-753769D81BF5}</id>
@@ -142,7 +142,7 @@
 				<second>461</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{08E83B13-597B-3643-97D7-C3ACF2ED31F4}</id>
 			<comment/>
 			<position>
@@ -150,9 +150,9 @@
 				<second>491</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A0F26B53-3964-584F-905E-75CDA320B52E}</id>
 			<comment/>
 			<position>
@@ -160,8 +160,8 @@
 				<second>461</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5F6DE751-DC9F-BA4D-8A3F-B4CBE65A783D}</id>
@@ -220,7 +220,7 @@
 				<second>701</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{845C693C-AA65-594D-AED4-A418A670C913}</id>
 			<comment/>
 			<position>
@@ -228,8 +228,8 @@
 				<second>765</second>
 			</position>
 			<parameterName>World_World</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CFCBD799-9122-2E40-8B43-E07978BC0B6C}</id>
@@ -251,7 +251,7 @@
 			<name>L_WorldPosition</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DC3CEE50-9A81-AC49-98C1-68FFC40D67BA}</id>
 			<comment/>
 			<position>
@@ -259,8 +259,8 @@
 				<second>943</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{C064C355-A337-E245-BFE2-95A5A0ABB6C8}</id>
@@ -570,7 +570,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{E5FC24B3-259B-7B49-86F2-B7A1155FBF50}</id>
 			<comment/>
 			<position>
@@ -586,7 +586,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -616,9 +616,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{8E8C9C48-0B75-8C45-B247-32DEA92F5629}</id>
 			<comment/>
 			<position>
@@ -634,7 +634,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -664,9 +664,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{6C9ACDC8-EC57-7A41-B3F6-1665741F1B85}</id>
 			<comment/>
 			<position>
@@ -682,7 +682,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -712,9 +712,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="8,traktor.render.Node:1">
+		<item type="traktor.render.State" version="9,traktor.render.Node:1">
 			<id>{A5912FA8-B47E-694A-88E7-1333B1B27DED}</id>
 			<comment/>
 			<position>
@@ -729,7 +729,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -758,9 +758,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{0C84C13A-9512-5A42-9342-217DBE7F0D77}</id>
 			<comment/>
 			<position>
@@ -768,8 +768,8 @@
 				<second>1353</second>
 			</position>
 			<parameterName>Ocean_ReflectionTexture</parameterName>
-			<type>PtTextureCube</type>
-			<frequency>UfOnce</frequency>
+			<type>TextureCube</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{634D4DCC-3156-094E-AF89-9B2A8611FEA9}</id>
@@ -825,7 +825,7 @@
 				<second>1441</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E5912120-CD6C-CC43-A980-0136B82B788F}</id>
 			<comment/>
 			<position>
@@ -833,8 +833,8 @@
 				<second>1489</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{EDF3FD15-67EA-3649-BD9C-D91E83117E85}</id>

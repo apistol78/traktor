@@ -104,7 +104,7 @@
 				<second>362</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2C7CAE9B-4737-8B43-AB46-7E88BE2F6193}</id>
 			<comment/>
 			<position>
@@ -112,8 +112,8 @@
 				<second>410</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{46BF79FB-95FE-554F-ADD6-B0A54BCA6D4F}</id>

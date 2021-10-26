@@ -13,7 +13,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{321A3525-1384-374A-BE1E-3C72B162B8D9}</id>
 			<comment/>
 			<position>
@@ -21,8 +21,8 @@
 				<second>288</second>
 			</position>
 			<parameterName>Spark_FrameBounds</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{6B4F7C17-930F-9540-AC5D-DEA83C79D608}</id>
@@ -66,7 +66,7 @@
 				<second>145</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C0845EBF-6D7D-6842-9A2B-23C4ECE37A63}</id>
 			<comment/>
 			<position>
@@ -74,8 +74,8 @@
 				<second>176</second>
 			</position>
 			<parameterName>Spark_Transform</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F3F5BC6C-7FD1-A14B-82C2-8D249287CAA2}</id>
@@ -182,7 +182,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E9CE0B79-04C5-A04B-912F-683E6351E53F}</id>
 			<comment/>
 			<position>
@@ -190,8 +190,8 @@
 				<second>364</second>
 			</position>
 			<parameterName>Spark_FrameTransform</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{84AB0CEB-7107-B148-BFB3-A82F48731B57}</id>
@@ -219,7 +219,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{1323FC13-3948-6D4B-8D8A-605A8972B286}</id>
 			<comment/>
 			<position>
@@ -227,8 +227,8 @@
 				<second>-292</second>
 			</position>
 			<parameterName>Spark_ClipBounds</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{1B62804B-E968-A048-AE44-69BB3DA16BBD}</id>
@@ -239,7 +239,7 @@
 			</position>
 			<name>Clip</name>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
 			<comment/>
 			<position>
@@ -262,7 +262,7 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Inside</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
@@ -292,7 +292,7 @@ ENTRY
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
 			<comment/>
 			<position>
@@ -315,15 +315,13 @@ ENTRY
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Inside</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
 			<![CDATA[
 vec2 s = step($Bounds.xy, $Position.xy) - step($Bounds.zw + 1.0, $Position.xy);
 $Inside = s.x * s.y;
-
-
 			]]>
 			</script>
 		</item>

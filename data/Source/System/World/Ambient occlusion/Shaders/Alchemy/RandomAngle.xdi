@@ -10,7 +10,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{C6BADCE6-CFC4-594C-B6AD-C4DE071C26AC}</id>
 			<comment/>
 			<position>
@@ -24,7 +24,7 @@
 				<item>
 					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
 					<name>Output</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
@@ -32,8 +32,6 @@
 uint x = uint(gl_FragCoord.x);
 uint y = uint(gl_FragCoord.y);
 $Output = (30u * x ^ y + 10u * x * y);
-
-
 			]]>
 			</script>
 		</item>

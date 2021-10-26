@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{9FCC49C0-7007-074B-8483-BF1EA9B2BCDD}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>247</second>
 			</position>
 			<parameterName>World_DecalParams</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{F653B2CB-0CCF-1C4F-A25B-75AD2075078A}</id>

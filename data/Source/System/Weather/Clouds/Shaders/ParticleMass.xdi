@@ -17,7 +17,7 @@
 				<second>253</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{113CF33E-F2B4-7D4F-8391-2717E9221194}</id>
 			<comment/>
 			<position>
@@ -25,8 +25,8 @@
 				<second>326</second>
 			</position>
 			<parameterName>ParticleDensity</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3DBFDFF4-5488-9A41-885A-87D72C5EA1B6}</id>

@@ -23,7 +23,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{1A9C31FE-41EF-4049-BD9F-3B4AB20C1E0E}</id>
 			<comment/>
 			<position>
@@ -31,8 +31,8 @@
 				<second>24</second>
 			</position>
 			<parameterName>World_ColorMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{238B5865-FEA6-7E4A-8867-F3644F29993C}</id>

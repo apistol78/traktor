@@ -23,7 +23,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{0A0D8292-8894-1049-B1B8-AF6CBF678F70}</id>
 			<comment/>
 			<position>
@@ -31,7 +31,7 @@
 				<second>7</second>
 			</position>
 			<external>{DE17AA8C-526F-5D4A-BB05-BBD50D564FFA}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{8F23D4F3-2202-1C4F-83DC-E2367E365855}</id>
@@ -100,7 +100,7 @@
 			</position>
 			<value>0.01</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B83FF5C4-2476-494D-9A25-A6AEA677B5F9}</id>
 			<comment/>
 			<position>
@@ -108,8 +108,8 @@
 				<second>344</second>
 			</position>
 			<parameterName>World_Time</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{DEF78661-03AB-9E49-B96E-78326941F936}</id>
@@ -145,7 +145,7 @@
 			</position>
 			<value>0, 2.3, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{FACF7919-6081-724F-ACA3-60BE73698825}</id>
 			<comment/>
 			<position>
@@ -153,8 +153,8 @@
 				<second>430</second>
 			</position>
 			<parameterName>World_Time</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{03A72AA0-D115-0340-BE3E-6F5D6E9609FD}</id>
@@ -272,7 +272,7 @@
 			</position>
 			<swizzle>yzx</swizzle>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{4ABA944F-3BB8-BD46-926B-380D22A59A6B}</id>
 			<comment/>
 			<position>
@@ -280,7 +280,7 @@
 				<second>-35</second>
 			</position>
 			<external>{512E0C34-E249-3E4D-A63F-AC81E4287561}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{2D780B61-4C12-1D46-ACD4-7D0E14D13289}</id>

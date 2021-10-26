@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{3D2016CE-BC47-CE4E-B291-5EBD0806981F}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>-2685</second>
 			</position>
 			<parameterName>Spark_Color</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{023311BC-DA5C-F64C-AB8F-6B61C432A93F}</id>
@@ -181,7 +181,7 @@
 			</position>
 			<swizzle>111x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{7539B5AA-9878-AB42-872B-9A902A5AAB59}</id>
 			<comment/>
 			<position>
@@ -189,8 +189,8 @@
 				<second>-2598</second>
 			</position>
 			<parameterName>Spark_FilterColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{E1737C08-EF81-0D41-AD38-D1B8831C729E}</id>
@@ -208,7 +208,7 @@
 				<second>-2424</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{C17503FE-18B0-B945-9075-7E1D5EE26785}</id>
 			<comment/>
 			<position>
@@ -224,7 +224,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -254,7 +254,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>48</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{7CC81FC6-D979-DA4A-99D6-C93C9B9D548E}</id>
@@ -319,7 +319,7 @@
 			</position>
 			<swizzle>111x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DA81629A-9B4A-284C-8EAD-B46F2F571248}</id>
 			<comment/>
 			<position>
@@ -327,8 +327,8 @@
 				<second>-1715</second>
 			</position>
 			<parameterName>Spark_FilterColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{E81E9C5E-00E3-BB46-A63E-2E37BCFB9144}</id>
@@ -346,7 +346,7 @@
 				<second>-1770</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{F5B81426-A54A-984D-85F5-98A33704AE67}</id>
 			<comment/>
 			<position>
@@ -362,7 +362,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -392,7 +392,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>48</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AB9FDD0E-0569-7A45-86CC-D9752BF0C0EF}</id>
@@ -411,7 +411,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{6392BF13-6586-5342-9F26-22DDBC9378AC}</id>
 			<comment/>
 			<position>
@@ -419,7 +419,7 @@
 				<second>-2828</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D156D6CB-CD42-914B-BAD4-941F1984E878}</id>
@@ -466,7 +466,7 @@
 				<second>-2643</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{F3BF786E-E9F0-0144-9446-E835A61DF282}</id>
 			<comment/>
 			<position>
@@ -482,7 +482,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -512,7 +512,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>48</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 	</nodes>
 	<edges>

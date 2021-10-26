@@ -147,7 +147,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C924C98A-6AD3-9F45-8D2E-C15A2CD6453B}</id>
 			<comment/>
 			<position>
@@ -155,8 +155,8 @@
 				<second>192</second>
 			</position>
 			<parameterName>ParticleTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>

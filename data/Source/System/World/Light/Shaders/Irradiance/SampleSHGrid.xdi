@@ -9,7 +9,7 @@
 				<second>-165</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A9134122-D67E-4E77-B622-4D221E301D4B}</id>
 			<comment/>
 			<position>
@@ -17,10 +17,10 @@
 				<second>-164</second>
 			</position>
 			<parameterName>World_IrradianceGridBoundsMax</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E6A0C7D9-85AB-4254-B437-E45F8E6FE084}</id>
 			<comment/>
 			<position>
@@ -28,10 +28,10 @@
 				<second>-116</second>
 			</position>
 			<parameterName>World_IrradianceGridBoundsMin</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DB52C509-4D28-4E92-A3F5-226435DE40A7}</id>
 			<comment/>
 			<position>
@@ -39,8 +39,8 @@
 				<second>-116</second>
 			</position>
 			<parameterName>World_IrradianceGridSize</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{63106FA2-554F-4E42-9920-401326AF7E60}</id>
@@ -823,7 +823,7 @@ YZ, Z, 1
 				<second>1016</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B62D5A94-A41B-47BA-A23C-03FC763A2045}</id>
 			<comment/>
 			<position>
@@ -831,8 +831,8 @@ YZ, Z, 1
 				<second>1092</second>
 			</position>
 			<parameterName>World_IrradianceGridSize</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B46F3584-FDF8-4653-9BC1-976DA101C738}</id>
@@ -1648,7 +1648,7 @@ YZ, Z, 1
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C487A252-9B1F-4FB2-8643-96F7D30CFDBE}</id>
 			<comment/>
 			<position>
@@ -1656,8 +1656,8 @@ YZ, Z, 1
 				<second>1598</second>
 			</position>
 			<parameterName>World_IrradianceGridSize</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{FDE929AB-630E-4684-BB53-40EAAF69E4C9}</id>
@@ -1702,7 +1702,7 @@ YZ, Z, 1
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B4675FC2-22F4-489E-B96D-81058480458B}</id>
 			<comment/>
 			<position>
@@ -1710,8 +1710,8 @@ YZ, Z, 1
 				<second>2264</second>
 			</position>
 			<parameterName>World_IrradianceGridSize</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{AD3791DA-117E-4907-8A74-6AB798BBB1F0}</id>

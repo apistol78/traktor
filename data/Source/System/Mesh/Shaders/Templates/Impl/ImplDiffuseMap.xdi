@@ -10,7 +10,7 @@
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{828A4495-8B2E-5740-9232-8A380BC8FCA7}</id>
 			<comment>
 			<![CDATA[
@@ -22,7 +22,7 @@ Tag_DiffuseMap
 				<second>149</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{094F4DB0-E74C-CA41-A06C-5CD0C094304C}</id>
@@ -76,7 +76,7 @@ Tag_DiffuseMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{011BBA32-3102-6A4D-9084-79107C12B18F}</id>
 			<comment/>
 			<position>
@@ -84,8 +84,8 @@ Tag_DiffuseMap
 				<second>300</second>
 			</position>
 			<parameterName>Mesh_DiffuseColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{F52B2FE5-339F-2444-B18D-F712CC49918B}</id>

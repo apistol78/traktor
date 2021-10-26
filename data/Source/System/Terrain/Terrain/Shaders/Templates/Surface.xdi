@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{3E90F329-FCAD-BB43-951D-04B20FD2A776}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{450A501F-CEDF-FE44-947A-8FF5363475F4}</id>
@@ -127,7 +127,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B78E267A-B884-1548-9322-61DD01D2069E}</id>
 			<comment/>
 			<position>
@@ -135,8 +135,8 @@
 				<second>519</second>
 			</position>
 			<parameterName>Terrain_Heightfield</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7793C1D2-1DC7-634D-8652-9C53F1953C8C}</id>
@@ -178,7 +178,7 @@
 			</position>
 			<swizzle>x0y0</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{16B11429-167E-9A44-9F0C-660D5A16DF90}</id>
 			<comment/>
 			<position>
@@ -186,10 +186,10 @@
 				<second>501</second>
 			</position>
 			<parameterName>Terrain_PatchExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5EDF7F5F-F675-3F40-ADF3-825E51CBEC82}</id>
 			<comment/>
 			<position>
@@ -197,8 +197,8 @@
 				<second>543</second>
 			</position>
 			<parameterName>Terrain_PatchOrigin</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A142ECBF-26EE-764E-91CA-2F9E6F3A1D38}</id>

@@ -208,7 +208,7 @@
 				<second>-120</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E6D1D883-4E03-AE4A-867E-99E94D664243}</id>
 			<comment/>
 			<position>
@@ -216,8 +216,8 @@
 				<second>-123</second>
 			</position>
 			<parameterName>World_Time</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D9BFA967-7A39-8F4A-BB6B-D136E17CB020}</id>
@@ -287,7 +287,7 @@ Center
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{0CA6843F-2B6C-1A45-8877-1774746FD402}</id>
 			<comment/>
 			<position>
@@ -295,8 +295,8 @@ Center
 				<second>-224</second>
 			</position>
 			<parameterName>Ocean_WavesA</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
@@ -345,7 +345,7 @@ Amplitude
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{F9C3D1CC-7AE8-F54D-A3B6-F0D11A5C6EA5}</id>
 			<comment/>
 			<position>
@@ -353,8 +353,8 @@ Amplitude
 				<second>-65</second>
 			</position>
 			<parameterName>Ocean_WavesB</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">

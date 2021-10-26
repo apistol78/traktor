@@ -18,7 +18,7 @@
 				<second>412</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E15455A9-C985-BA4D-8560-B4D10312157C}</id>
 			<comment/>
 			<position>
@@ -26,8 +26,8 @@
 				<second>471</second>
 			</position>
 			<parameterName>Terrain_WorldExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{1A91F6A6-D41E-F948-9E0A-94D5190DFAF7}</id>
@@ -37,7 +37,7 @@
 				<second>387</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5D8FB29B-3812-5041-B96E-0B23EF11D62F}</id>
 			<comment/>
 			<position>
@@ -45,8 +45,8 @@
 				<second>436</second>
 			</position>
 			<parameterName>Terrain_WorldOrigin</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>

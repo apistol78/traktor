@@ -9,7 +9,7 @@
 				<second>-596</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B9F76AF3-4713-FB4E-AF1D-C6C1266E8F8F}</id>
 			<comment/>
 			<position>
@@ -17,10 +17,10 @@
 				<second>-576</second>
 			</position>
 			<parameterName>Spark_CxFormMul</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{9D45952E-4E8E-B843-BE7A-BA36603D5FAB}</id>
 			<comment/>
 			<position>
@@ -28,8 +28,8 @@
 				<second>-476</second>
 			</position>
 			<parameterName>Spark_CxFormAdd</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3FFA1598-C757-3A4A-9797-2D4F8FF0A1AE}</id>
@@ -52,7 +52,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{262E7F3E-FEEF-4F49-A849-5F0FB23F410C}</id>
 			<comment/>
 			<position>
@@ -60,7 +60,7 @@
 				<second>-58</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C4C3BACB-A683-B14B-B7FF-8F98A921F3E0}</id>
@@ -120,7 +120,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -147,7 +147,7 @@
 				<item>
 					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Distance</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
@@ -167,8 +167,6 @@ if (k2 >= 0.0f && k2 <= 1.0f)
 	$Distance = abs(k1);
 else
 	$Distance = min(length($Position.xy - $LineStart.xy), length($Position.xy - $LineEnd.xy));
-
-
 			]]>
 			</script>
 		</item>
@@ -327,7 +325,7 @@ else
 				<second>-131</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E7D1EE5E-B0E6-B34F-8298-A51FBC33EAB4}</id>
 			<comment/>
 			<position>
@@ -335,10 +333,10 @@ else
 				<second>-671</second>
 			</position>
 			<parameterName>Spark_LineWidth</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{3D60FAFE-087B-B547-80CA-5F65ED5C4379}</id>
 			<comment/>
 			<position>
@@ -346,8 +344,8 @@ else
 				<second>-690</second>
 			</position>
 			<parameterName>Spark_LineColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
 			<id>{25696E52-B9C7-E244-B30D-95A1BFBDF24B}</id>

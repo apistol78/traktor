@@ -13,7 +13,7 @@
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{0A10C107-DBBC-9142-BB08-50B1F82BA74B}</id>
 			<comment/>
 			<position>
@@ -21,10 +21,10 @@
 				<second>478</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E8274B01-D96F-AC4A-8101-9BD4ACC668E3}</id>
 			<comment/>
 			<position>
@@ -32,8 +32,8 @@
 				<second>456</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{816FBA80-387F-EA46-B8C4-4FCC48F65CC0}</id>
@@ -51,7 +51,7 @@
 				<second>406</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{B3B35EA0-F0FD-A943-B8CF-727BDC59A17E}</id>
 			<comment/>
 			<position>
@@ -59,7 +59,7 @@
 				<second>408</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{F159BA89-7831-4746-A16A-F96787D57DAD}</id>
@@ -498,7 +498,7 @@ Velocity
 				<second>698</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{532039E8-C426-CB43-916F-9B4737FD8B2E}</id>
 			<comment/>
 			<position>
@@ -506,8 +506,8 @@ Velocity
 				<second>686</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transpose" version="traktor.render.Node:1">
 			<id>{EEBB2E99-D04E-4B44-951D-8F8EF21B555A}</id>

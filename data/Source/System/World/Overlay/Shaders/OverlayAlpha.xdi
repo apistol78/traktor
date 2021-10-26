@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C182FDFF-24B2-49B1-A851-8368714C6AD8}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>408</second>
 			</position>
 			<parameterName>Scene_DebugAlpha</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A1EA8B45-C9B8-4526-8A44-DC60FFB1C0B0}</id>

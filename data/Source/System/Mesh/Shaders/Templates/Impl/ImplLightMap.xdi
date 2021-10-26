@@ -23,7 +23,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{1CC4ED5D-DB80-2148-BA01-34F073E174D3}</id>
 			<comment>
 			<![CDATA[
@@ -35,7 +35,7 @@ Tag_LightMapDiffuse
 				<second>188</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BA94814B-BB35-CD44-9EC4-AD493052CB0F}</id>

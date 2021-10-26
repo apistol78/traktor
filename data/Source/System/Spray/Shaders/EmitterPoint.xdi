@@ -13,7 +13,7 @@
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{174C9A67-2BB4-3C42-BACB-0D3D126F2A52}</id>
 			<comment/>
 			<position>
@@ -21,10 +21,10 @@
 				<second>542</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{8E0A928A-690D-E64B-8FFB-9F920DE4D351}</id>
 			<comment/>
 			<position>
@@ -32,8 +32,8 @@
 				<second>-73</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{21C570B2-FE38-2844-8A1C-BD5974E10518}</id>
@@ -63,7 +63,7 @@ View position
 				<second>-124</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{75490209-4072-1447-8F84-BE01A5B2B95E}</id>
 			<comment/>
 			<position>
@@ -71,7 +71,7 @@ View position
 				<second>-121</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{97042820-55D7-4D4C-A446-3E19B6D3D63D}</id>
@@ -404,7 +404,7 @@ Position
 				<second>728</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6C69ED50-FC8F-4C22-938B-D0D7EC9B8E32}</id>
 			<comment/>
 			<position>
@@ -412,8 +412,8 @@ Position
 				<second>-188</second>
 			</position>
 			<parameterName>Spray_PointsOffset</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<type>Scalar</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Struct" version="traktor.render.Node:1">
 			<id>{432DC52D-FC31-4AFD-BE77-3AA35BDB6D53}</id>

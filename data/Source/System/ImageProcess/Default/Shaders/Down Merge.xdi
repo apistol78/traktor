@@ -22,7 +22,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B7533633-0945-714E-ACDF-5D9FE6C15B3B}</id>
 			<comment/>
 			<position>
@@ -30,8 +30,8 @@
 				<second>242</second>
 			</position>
 			<parameterName>Input1</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{25ADF222-0495-E044-ADDA-D0CC14AD6E42}</id>
@@ -51,7 +51,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{07BD9C2C-1315-BF42-B6DD-04BCE38DDD0A}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -97,7 +97,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{4A2ABB24-7689-314B-A04F-7BB2C4BB5A35}</id>
@@ -117,7 +117,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{EF6A14E4-EFE3-CC43-8CED-4297BD343975}</id>
 			<comment/>
 			<position>
@@ -125,8 +125,8 @@
 				<second>369</second>
 			</position>
 			<parameterName>Input2</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{2EDB2607-2C70-6540-8B68-2AB35CCA064A}</id>
@@ -146,7 +146,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{33DDA2BD-9738-8347-8F6D-841209C2852B}</id>
 			<comment/>
 			<position>
@@ -154,8 +154,8 @@
 				<second>497</second>
 			</position>
 			<parameterName>Input3</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{BF9A9AA6-1203-A74D-8E5C-526421BC75B9}</id>
@@ -175,7 +175,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{26A348CD-25E9-3E44-948C-395C5B6EBCDC}</id>
 			<comment/>
 			<position>
@@ -183,8 +183,8 @@
 				<second>624</second>
 			</position>
 			<parameterName>Input4</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{1D7F8763-8EDA-D440-83FA-6F09E4AB63C7}</id>
@@ -210,7 +210,7 @@
 				<second>491</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A6D878C3-ECF4-5042-9F4D-4AA4A8378747}</id>
 			<comment/>
 			<position>
@@ -218,8 +218,8 @@
 				<second>457</second>
 			</position>
 			<parameterName>Input4</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{A564B590-1A61-C748-B077-62DB8843B344}</id>
