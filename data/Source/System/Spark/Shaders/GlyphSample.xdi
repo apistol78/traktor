@@ -13,7 +13,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{64410BF1-4B5D-3944-B269-274EFAE12049}</id>
 			<comment/>
 			<position>
@@ -21,8 +21,8 @@
 				<second>474</second>
 			</position>
 			<parameterName>Spark_Texture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{C6E0009D-09A5-BD4F-913D-141A64A9A7B5}</id>
@@ -187,7 +187,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{441FB1E2-3D57-8940-A790-0827F2837AED}</id>
 			<comment/>
 			<position>
@@ -206,7 +206,7 @@
 				<item>
 					<id>{2AD71BC4-9458-D544-9189-C709E84AD887}</id>
 					<name>Output</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
@@ -215,8 +215,6 @@ vec2 mn = step($Input.xy, vec2(0.995, 0.995));
 vec2 mx = step(vec2(0.0005, 0.0005), $Input.xy);
 vec2 tm = mn * mx;
 $Output = tm.x * tm.y;
-
-
 			]]>
 			</script>
 		</item>
@@ -237,7 +235,7 @@ $Output = tm.x * tm.y;
 				<second>177</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{39C6FFB5-F818-1A41-95ED-2F01925FE9AE}</id>
 			<comment/>
 			<position>
@@ -256,7 +254,7 @@ $Output = tm.x * tm.y;
 				<item>
 					<id>{2AD71BC4-9458-D544-9189-C709E84AD887}</id>
 					<name>Output</name>
-					<type>PtScalar</type>
+					<type>Scalar</type>
 				</item>
 			</outputPins>
 			<script>
@@ -265,8 +263,6 @@ float2 mn = step($Input.xy, float2(0.995f, 0.995f));
 float2 mx = step(float2(0.0005f, 0.0005f), $Input.xy);
 float2 tm = mn * mx;
 $Output = tm.x * tm.y;
-
-
 			]]>
 			</script>
 		</item>

@@ -36,7 +36,7 @@ Tag_Roughness
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A3854773-894F-B94F-8BC2-74AF668BAAEC}</id>
 			<comment/>
 			<position>
@@ -44,8 +44,8 @@ Tag_Roughness
 				<second>376</second>
 			</position>
 			<parameterName>Mesh_Roughness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{B0983166-B8A9-4D4B-A259-62AC817BEDB7}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>-49</second>
 			</position>
 			<technique>Default</technique>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{78F92054-50DE-5842-B646-D42492F635DB}</id>
@@ -32,7 +32,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{D49C4B75-056C-B841-9E63-B887F095181A}</id>
 			<comment/>
 			<position>
@@ -48,7 +48,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -78,9 +78,9 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhLow</precisionHint>
+			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B66E31CD-D8FE-CD43-8DE4-2711AED837AD}</id>
 			<comment/>
 			<position>
@@ -88,8 +88,8 @@
 				<second>277</second>
 			</position>
 			<parameterName>Spark_CxFormMul</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{A209D468-C8BA-8B4E-A76F-1AA1099F2A9A}</id>
@@ -99,7 +99,7 @@
 				<second>233</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2A6C1CC2-EE72-D34F-A227-E060ABD6B8E6}</id>
 			<comment/>
 			<position>
@@ -107,8 +107,8 @@
 				<second>352</second>
 			</position>
 			<parameterName>Spark_CxFormAdd</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{D8E7EEC7-C720-4548-89C1-BC517A912C61}</id>
@@ -157,7 +157,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{56BE5D45-05DF-8546-BEBB-9BBF6A7C89B6}</id>
 			<comment/>
 			<position>
@@ -165,8 +165,8 @@
 				<second>292</second>
 			</position>
 			<parameterName>Spark_TextureOffset</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{68EEBD2B-7BFC-0849-B4C2-9F7C52387234}</id>
@@ -194,7 +194,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{888FD7A5-71E8-B947-8124-53B7B6D2A347}</id>
 			<comment/>
 			<position>
@@ -202,8 +202,8 @@
 				<second>103</second>
 			</position>
 			<parameterName>Spark_Texture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{75D1245A-5FDA-734C-AC70-DBC04E79CD02}</id>

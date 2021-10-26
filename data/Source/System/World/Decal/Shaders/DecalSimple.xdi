@@ -86,7 +86,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{CB75457C-6AD3-1A4B-9EBB-11A828090E9B}</id>
 			<comment/>
 			<position>
@@ -94,8 +94,8 @@
 				<second>-181</second>
 			</position>
 			<parameterName>World_WorldViewInv</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{0C1F1177-6869-FC4E-A35B-1B113F1D5EAC}</id>
@@ -133,7 +133,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{3EF8C6CC-A3A8-D64F-97A6-ABCFEDD56793}</id>
 			<comment/>
 			<position>
@@ -141,7 +141,7 @@
 				<second>388</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{3F761ECF-7C76-A540-BE39-7B63FE70E531}</id>
@@ -188,7 +188,7 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{103BC2B1-1447-7645-AC1A-0708703A96A3}</id>
 			<comment/>
 			<position>
@@ -196,10 +196,10 @@
 				<second>429</second>
 			</position>
 			<parameterName>World_WorldView</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{0A1FBA2C-2F43-F641-BB34-58B488AF1467}</id>
 			<comment/>
 			<position>
@@ -207,8 +207,8 @@
 				<second>452</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{2ADCC346-DCCE-DB48-BB73-B90A1AD49550}</id>
@@ -405,7 +405,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.State" version="8,traktor.render.Node:1">
+		<item type="traktor.render.State" version="9,traktor.render.Node:1">
 			<id>{6018927C-9761-3040-8B04-491B778E2A24}</id>
 			<comment/>
 			<position>
@@ -420,7 +420,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>ClockWise</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -449,7 +449,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 	</nodes>
 	<edges>

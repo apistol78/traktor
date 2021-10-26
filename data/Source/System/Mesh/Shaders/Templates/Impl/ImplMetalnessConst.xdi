@@ -36,7 +36,7 @@ Tag_Metalness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{ECACFDAE-84D3-BB4C-B2FC-BF5CA9BCEEDB}</id>
 			<comment/>
 			<position>
@@ -44,8 +44,8 @@ Tag_Metalness
 				<second>444</second>
 			</position>
 			<parameterName>Mesh_Metalness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
 	</nodes>
 	<edges>

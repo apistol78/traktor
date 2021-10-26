@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{D0C9E36A-0D51-AE40-91E4-6DAE6A84F8B4}</id>
@@ -67,7 +67,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4788F4B4-9A36-B944-974F-CFBC98E7AC4F}</id>
 			<comment/>
 			<position>
@@ -75,8 +75,8 @@
 				<second>366</second>
 			</position>
 			<parameterName>Current</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CCA3BBF6-51D2-BB4B-AE3B-1FF6F4F599BA}</id>
@@ -125,7 +125,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{83CC3732-1805-2842-A54E-CED51ABF0829}</id>
 			<comment/>
 			<position>
@@ -133,8 +133,8 @@
 				<second>556</second>
 			</position>
 			<parameterName>Last</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{7DCE08CC-0DB0-4A44-A346-C353A5B40218}</id>
@@ -170,7 +170,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5E32616E-CA9E-9A49-90E8-F89D78A641C2}</id>
 			<comment/>
 			<position>
@@ -178,8 +178,8 @@
 				<second>787</second>
 			</position>
 			<parameterName>Velocity</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{45D4C386-83A8-9444-940D-F9CC9DB1B566}</id>
@@ -265,7 +265,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{22EEADFC-D014-074F-8414-D448C86E47A0}</id>
 			<comment/>
 			<position>
@@ -273,8 +273,8 @@
 				<second>-482</second>
 			</position>
 			<parameterName>Current</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{6DDE4ECC-1B78-6549-9561-340AA2D8ADC3}</id>
@@ -319,7 +319,7 @@
 				<second>-401</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{D059DFE7-5001-204A-8032-A9EFD12F561A}</id>
 			<comment/>
 			<position>
@@ -327,8 +327,8 @@
 				<second>-358</second>
 			</position>
 			<parameterName>Current</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{E5E80BCA-3538-B245-A242-DD3A8DBFEBAF}</id>
@@ -367,7 +367,7 @@
 			<name>L_ValidRange</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{F788386E-FADF-EF4D-B607-4C09AE633508}</id>
 			<comment/>
 			<position>
@@ -375,8 +375,8 @@
 				<second>171</second>
 			</position>
 			<parameterName>World_Jitter</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{5F6BC049-0760-8D45-8627-654D57D96218}</id>
@@ -545,7 +545,7 @@ Merge
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{7602FB25-8F9D-CB48-AF40-98D40931C352}</id>
 			<comment/>
 			<position>
@@ -572,7 +572,7 @@ Merge
 				<item>
 					<id>{EF352FEC-AE3E-0346-905B-4BBADD44DDAE}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -580,8 +580,6 @@ Merge
 $Output.x = $Input.x;
 $Output.yz = clamp($Input.yz, $Min.xy, $Max.xy);
 $Output.w = $Input.w;
-
-
 			]]>
 			</script>
 		</item>

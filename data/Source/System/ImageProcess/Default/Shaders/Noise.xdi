@@ -9,7 +9,7 @@
 				<second>244</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{65D07688-2EE2-4C4D-B01A-761E4E9557AF}</id>
 			<comment/>
 			<position>
@@ -17,8 +17,8 @@
 				<second>207</second>
 			</position>
 			<parameterName>NoiseOffset</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{C63439B7-5700-CD47-8FB7-D7D933B52607}</id>
@@ -102,7 +102,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{8D4EFA1B-3291-374A-AC40-015DAB261A5D}</id>
 			<comment/>
 			<position>
@@ -110,7 +110,7 @@
 				<second>157</second>
 			</position>
 			<external>{CF03FA63-A111-E343-B73D-54D0ECD18BBE}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 	</nodes>
 	<edges>

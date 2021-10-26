@@ -23,7 +23,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{880BE04D-3BC5-2240-9487-0172694A8A3F}</id>
 			<comment/>
 			<position>
@@ -42,7 +42,7 @@
 				<item>
 					<id>{5831C208-971E-4141-AF3D-ABEAEEF2124A}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -53,12 +53,10 @@ float t = clamp(-n.z, 0.0, 1.0);
 vec2 tt = vec2(t, t);
 n.xy += mix(tt, -tt, greaterThanEqual(n.xy, vec2(0.0, 0.0)));
 $Output = vec4(normalize(n), 0.0);
-
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{6F506D66-9BDF-4A4E-BCBC-A5072E00DF98}</id>
 			<comment/>
 			<position>
@@ -77,7 +75,7 @@ $Output = vec4(normalize(n), 0.0);
 				<item>
 					<id>{5831C208-971E-4141-AF3D-ABEAEEF2124A}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -88,8 +86,6 @@ float t = saturate(-n.z);
 float2 tt = float2(t, t);
 n.xy += (n.xy >= float2(0.0f, 0.0f)) ? tt : -tt;
 $Output = float4(normalize(n), 0.0f);
-
-
 			]]>
 			</script>
 		</item>

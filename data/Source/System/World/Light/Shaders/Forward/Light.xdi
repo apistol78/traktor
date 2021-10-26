@@ -573,7 +573,7 @@ Point
 			<name>L_ViewToLight</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E19F39E1-425F-7C40-A51F-85AB0FEAC6C0}</id>
 			<comment/>
 			<position>
@@ -581,8 +581,8 @@ Point
 				<second>872</second>
 			</position>
 			<parameterName>World_ShadowMapAtlas</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A41A83F2-37E2-B942-80C3-8D00692E794F}</id>
@@ -1237,7 +1237,7 @@ Spot
 				<second>2746</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{43DBC7D4-B2F3-534E-B7F0-CDE501066DA7}</id>
 			<comment/>
 			<position>
@@ -1245,8 +1245,8 @@ Spot
 				<second>3242</second>
 			</position>
 			<parameterName>World_ShadowMapAtlas</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{43B7D2FF-2C58-F04B-A7F3-D41366051F35}</id>

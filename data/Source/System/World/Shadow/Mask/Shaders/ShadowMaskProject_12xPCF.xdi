@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{BE63F2F4-3280-224C-AEE2-D6A9D8EB511C}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{9A1B3B22-9354-4F4B-837B-5F41E8131520}</id>
@@ -127,7 +127,7 @@ Light space position
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{610695F9-698C-F641-A01E-707A2C962097}</id>
 			<comment>
 			<![CDATA[
@@ -139,8 +139,8 @@ View to light space transform
 				<second>460</second>
 			</position>
 			<parameterName>ViewToLight</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
+			<type>Matrix</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{0ABB66F1-548B-944E-9BEF-2D835F9E33B4}</id>
@@ -225,7 +225,7 @@ Shadow map texcoord
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5641D076-BDAE-3A49-84A9-43D1A9B07F04}</id>
 			<comment/>
 			<position>
@@ -233,8 +233,8 @@ Shadow map texcoord
 				<second>649</second>
 			</position>
 			<parameterName>ShadowMapSizeAndBias</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{8204F58B-B18E-7547-8C80-C908311DCA24}</id>
@@ -331,7 +331,7 @@ Shadow map texcoord
 			<from>0</from>
 			<to>5</to>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{D3886080-C121-564D-89EA-E1C5C897F5A5}</id>
 			<comment/>
 			<position>
@@ -339,8 +339,8 @@ Shadow map texcoord
 				<second>-184</second>
 			</position>
 			<parameterName>ShadowMapPoissonTaps</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 			<length>6</length>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -452,7 +452,7 @@ Shadow map texcoord
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{9BA84318-1A99-9543-9AB5-26D6A07B42B8}</id>
 			<comment/>
 			<position>
@@ -460,8 +460,8 @@ Shadow map texcoord
 				<second>-576</second>
 			</position>
 			<parameterName>ShadowMapDiscRotation</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{2CCE3B1D-3710-8B47-81EE-26E3295C628B}</id>

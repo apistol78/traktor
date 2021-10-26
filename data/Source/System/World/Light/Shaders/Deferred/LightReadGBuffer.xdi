@@ -91,7 +91,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{03A15DE8-AEDC-6445-A1F2-59AABB88642B}</id>
 			<comment/>
 			<position>
@@ -99,8 +99,8 @@
 				<second>836</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{E3D6A751-BDB0-E34C-AB54-5225232C0C08}</id>

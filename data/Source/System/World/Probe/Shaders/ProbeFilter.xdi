@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4788F4B4-9A36-B944-974F-CFBC98E7AC4F}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>-680</second>
 			</position>
 			<parameterName>World_ProbeTexture</parameterName>
-			<type>PtTextureCube</type>
-			<frequency>UfFrame</frequency>
+			<type>TextureCube</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{D0C9E36A-0D51-AE40-91E4-6DAE6A84F8B4}</id>
@@ -30,7 +30,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -76,7 +76,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CCA3BBF6-51D2-BB4B-AE3B-1FF6F4F599BA}</id>
@@ -108,7 +108,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{D21A6ED5-7C91-43E1-B140-C923E4FED61B}</id>
 			<comment/>
 			<position>
@@ -116,8 +116,8 @@
 				<second>-2119</second>
 			</position>
 			<parameterName>World_ProbeFilterCorners</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
@@ -128,7 +128,7 @@
 				<second>-2057</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{7F06A51A-3804-44CE-BE9F-7B897C13DA7D}</id>
 			<comment/>
 			<position>
@@ -136,8 +136,8 @@
 				<second>-2032</second>
 			</position>
 			<parameterName>World_ProbeFilterCorners</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -158,7 +158,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{EE01FA95-7F2E-4D87-9471-BE145C41CF75}</id>
 			<comment/>
 			<position>
@@ -166,11 +166,11 @@
 				<second>-1947</second>
 			</position>
 			<parameterName>World_ProbeFilterCorners</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{134B470F-2386-4A31-A651-C1DD322F47E1}</id>
 			<comment/>
 			<position>
@@ -178,8 +178,8 @@
 				<second>-1861</second>
 			</position>
 			<parameterName>World_ProbeFilterCorners</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 			<length>4</length>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -332,7 +332,7 @@
 				<second>-955</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
@@ -355,12 +355,11 @@
 				<item>
 					<id>{3368C175-F2D7-864D-AD50-44CBB83A3EE8}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
 			<![CDATA[
-
 uint bits = uint($I);
 bits = (bits << 16u) | (bits >> 16u);
 bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -376,8 +375,6 @@ $Output = vec4(
 	0,
 	0
 );
-
-
 			]]>
 			</script>
 		</item>
@@ -438,7 +435,7 @@ $Output = vec4(
 			<name>L_N</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
@@ -465,7 +462,7 @@ $Output = vec4(
 				<item>
 					<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -491,8 +488,6 @@ vec3 bitangent = cross($N, tangent);
 	
 vec3 sampleVec = tangent * H.x + bitangent * H.y + $N * H.z;
 $Output = vec4(normalize(sampleVec), 0);
-
-
 			]]>
 			</script>
 		</item>
@@ -506,7 +501,7 @@ $Output = vec4(normalize(sampleVec), 0);
 			<name>L_Normal</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A0043244-66C5-BB47-87A6-6771E27A124B}</id>
 			<comment/>
 			<position>
@@ -514,8 +509,8 @@ $Output = vec4(normalize(sampleVec), 0);
 				<second>-1154</second>
 			</position>
 			<parameterName>World_ProbeRoughness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4A7D80EE-54C1-C847-9091-3ABE1C016E9E}</id>
@@ -719,7 +714,7 @@ V
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{241491A1-9749-184F-8D9E-9E6B4B0A69BF}</id>
 			<comment/>
 			<position>
@@ -727,8 +722,8 @@ V
 				<second>-1381</second>
 			</position>
 			<parameterName>World_ProbeRoughness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{A95CC8E9-8919-DF4B-91B4-88F41E6C96BF}</id>
@@ -760,7 +755,7 @@ V
 			<name>L_SampleCount</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{C40E3CAF-E9D7-AA49-BAA2-E9674921BBED}</id>
 			<comment/>
 			<position>
@@ -783,7 +778,7 @@ V
 				<item>
 					<id>{3368C175-F2D7-864D-AD50-44CBB83A3EE8}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -810,7 +805,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{20A0B7BE-ACB5-9C4B-A412-BAF9436B71AA}</id>
 			<comment/>
 			<position>
@@ -837,7 +832,7 @@ ENTRY
 				<item>
 					<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>

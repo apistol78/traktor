@@ -62,7 +62,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{635BB9F2-AC29-4742-8D29-237ECC2A82F8}</id>
 			<comment/>
 			<position>
@@ -70,8 +70,8 @@
 				<second>251</second>
 			</position>
 			<parameterName>World_DepthMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>

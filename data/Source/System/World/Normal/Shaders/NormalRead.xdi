@@ -25,7 +25,7 @@
 				<second>261</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4687186A-46A8-A041-8DB3-082EDA2CFE02}</id>
 			<comment/>
 			<position>
@@ -33,8 +33,8 @@
 				<second>150</second>
 			</position>
 			<parameterName>World_NormalMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2ACFE5DA-A393-0246-8120-8FFF1E359F30}</id>

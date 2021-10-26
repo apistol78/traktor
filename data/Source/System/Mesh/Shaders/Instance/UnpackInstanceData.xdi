@@ -33,7 +33,7 @@ rotation
 				<second>257</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{DC86CDCE-56A5-CF41-86FE-8D6760640B6F}</id>
 			<comment>
 			<![CDATA[
@@ -45,11 +45,11 @@ rotation
 				<second>588</second>
 			</position>
 			<parameterName>InstanceWorld</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>120</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{2A94C3EC-1065-744A-88F4-5EB24707AD6C}</id>
 			<comment>
 			<![CDATA[
@@ -61,11 +61,11 @@ translation
 				<second>681</second>
 			</position>
 			<parameterName>InstanceWorld</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>120</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{0A2FEE3E-DE27-4F44-9C98-54D3B5980921}</id>
 			<comment>
 			<![CDATA[
@@ -77,11 +77,11 @@ rotation
 				<second>327</second>
 			</position>
 			<parameterName>InstanceWorld</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>40</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{003B5685-53F0-0B4A-AE7E-C022AE580E96}</id>
 			<comment>
 			<![CDATA[
@@ -93,8 +93,8 @@ translation
 				<second>420</second>
 			</position>
 			<parameterName>InstanceWorld</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>40</length>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -221,7 +221,7 @@ translation
 			</position>
 			<name>RotationLast</name>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{6DD93542-9C8D-C244-AD7D-D4E463648F85}</id>
 			<comment>
 			<![CDATA[
@@ -233,11 +233,11 @@ translation
 				<second>1033</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>40</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{8865ECE8-66B5-584B-9994-405B04991C59}</id>
 			<comment>
 			<![CDATA[
@@ -249,11 +249,11 @@ rotation
 				<second>940</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>40</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{BC627F0B-65F5-0544-8144-A7C4AA319B56}</id>
 			<comment>
 			<![CDATA[
@@ -265,11 +265,11 @@ translation
 				<second>1294</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>120</length>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{E1854626-2EF1-D348-9D52-9685C57B84AB}</id>
 			<comment>
 			<![CDATA[
@@ -281,8 +281,8 @@ rotation
 				<second>1201</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 			<length>120</length>
 		</item>
 		<item type="traktor.render.Renderer" version="traktor.render.Node:1">

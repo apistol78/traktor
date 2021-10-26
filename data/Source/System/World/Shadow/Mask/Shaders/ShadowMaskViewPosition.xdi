@@ -37,7 +37,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4351C80B-091F-6844-A958-7BD6B7059A40}</id>
 			<comment/>
 			<position>
@@ -45,8 +45,8 @@
 				<second>125</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9528F8A0-C9E5-0948-942B-76FEF31DBB26}</id>
@@ -138,7 +138,7 @@
 				<second>229</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6EAF7F92-116F-D344-9F13-0E8A172DCF58}</id>
 			<comment/>
 			<position>
@@ -146,8 +146,8 @@
 				<second>47</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C3C2A80C-0CDD-304D-8040-BC11C88FB027}</id>

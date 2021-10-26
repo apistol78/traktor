@@ -13,7 +13,7 @@
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{D7754E48-B5E7-714F-873F-B8D902FA0659}</id>
 			<comment/>
 			<position>
@@ -21,10 +21,10 @@
 				<second>358</second>
 			</position>
 			<parameterName>World_View</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{F6E9BCE8-FF53-F745-B418-7771AF5C3963}</id>
 			<comment/>
 			<position>
@@ -32,8 +32,8 @@
 				<second>454</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{61A2DE01-85B7-C14B-8354-724850C45265}</id>
@@ -59,7 +59,7 @@
 				<second>426</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{882696C4-A0B6-FA49-A814-A450551321DD}</id>
 			<comment/>
 			<position>
@@ -67,7 +67,7 @@
 				<second>414</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{0A6AEF16-A6ED-7749-BF20-436AD191D85A}</id>

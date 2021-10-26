@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexOutput" version="2,traktor.render.Node:1">
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{C76E8339-C134-C546-B7B0-5A5CF7C2725E}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>98</second>
 			</position>
 			<technique/>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{3B3BE56A-74AE-2646-8B94-06C44D40F575}</id>
@@ -40,7 +40,7 @@
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{64F76742-54BD-614F-99DA-9FAC29D840D7}</id>
 			<comment/>
 			<position>
@@ -48,10 +48,10 @@
 				<second>254</second>
 			</position>
 			<parameterName>Terrain_PatchExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2A363D96-BCEE-3145-8591-7AF2334E8748}</id>
 			<comment/>
 			<position>
@@ -59,8 +59,8 @@
 				<second>302</second>
 			</position>
 			<parameterName>Terrain_PatchOrigin</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{BE2BEBFF-224C-3B48-891A-D174FBFCCD81}</id>
@@ -71,7 +71,7 @@
 			</position>
 			<parameterName>Terrain_VisualizeLods</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{BBB731B7-E117-944B-A571-888C401DC98E}</id>
 			<comment/>
 			<position>
@@ -79,8 +79,8 @@
 				<second>-130</second>
 			</position>
 			<parameterName>Terrain_DebugPatchColor</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{75F6931F-6062-4C40-AEB3-DEDD34B51329}</id>
@@ -104,7 +104,7 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{23C7A27A-2F37-2D48-8A54-DAA42407CBC6}</id>
 			<comment/>
 			<position>
@@ -112,8 +112,8 @@ Generated texture from surface cache.
 				<second>-93</second>
 			</position>
 			<parameterName>Terrain_SurfaceAlbedo</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{8EF41429-1657-BF46-942C-D1C829495F3E}</id>
@@ -149,7 +149,7 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{7CFC7BF9-88DD-AD40-88C9-00B05D4C9F57}</id>
 			<comment/>
 			<position>
@@ -157,8 +157,8 @@ Generated texture from surface cache.
 				<second>-17</second>
 			</position>
 			<parameterName>Terrain_SurfaceOffset</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{7FFF3E01-B06A-5B40-9852-C1D16FBC2844}</id>
@@ -232,7 +232,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>CutEnable</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{23FE9303-F7E1-1446-BC82-E5E457C4C78F}</id>
 			<comment/>
 			<position>
@@ -240,8 +240,8 @@ Generated texture from surface cache.
 				<second>-405</second>
 			</position>
 			<parameterName>Terrain_CutMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{B28F30AA-0E8C-AB4E-8C24-BAA217C78818}</id>
@@ -306,7 +306,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>Terrain_VisualizeMap</parameterName>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{60CA7A57-EA7E-5743-A608-B524F26E1A82}</id>
 			<comment/>
 			<position>
@@ -314,8 +314,8 @@ Generated texture from surface cache.
 				<second>-538</second>
 			</position>
 			<parameterName>Terrain_DebugMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{8029AC5A-F22F-394B-B04E-A6DB816B81EE}</id>

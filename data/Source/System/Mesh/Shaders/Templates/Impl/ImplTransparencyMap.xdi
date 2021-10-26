@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{FA0B2A22-A1D1-114B-A179-CED497DA546A}</id>
 			<comment>
 			<![CDATA[
@@ -13,7 +13,7 @@ Tag_TransparencyMap
 				<second>140</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{04B5023C-6E60-F947-BC70-36D77C0E5AA8}</id>

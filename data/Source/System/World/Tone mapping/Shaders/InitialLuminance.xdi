@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{833E469C-13DC-FC48-A22B-E1BA820E0079}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>157</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A6733B69-CA8C-4B46-85BD-4C554507719C}</id>
@@ -101,7 +101,7 @@
 				<second>232</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{7366C988-637B-4448-88F4-ADB19E0B26E6}</id>
 			<comment/>
 			<position>
@@ -117,7 +117,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -147,7 +147,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{DCFECE6F-04AD-F94C-899C-848E99121DDE}</id>
@@ -210,7 +210,7 @@
 				<second>51</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DB5CA95A-A592-4DEB-B01B-D2D584F4CB4B}</id>
 			<comment/>
 			<position>
@@ -218,8 +218,8 @@
 				<second>-21</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{D12EC994-65A7-4666-8723-8DA570F5FDB0}</id>

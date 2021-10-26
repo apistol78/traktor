@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{CB827020-C9E9-8341-A2DA-59F6C191FC3B}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9FDE1CCE-1ECF-A74A-B563-D0FBFFC394CD}</id>
@@ -106,7 +106,7 @@ Sample shadow
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{BD130BC4-C204-8549-9DCD-70D5F31B1226}</id>
 			<comment/>
 			<position>
@@ -114,8 +114,8 @@ Sample shadow
 				<second>582</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{7AEDAAE8-3F1A-6843-B2EA-E240903E9FEB}</id>
@@ -134,7 +134,7 @@ Sample shadow
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
 			<id>{EAC1DFC8-9722-2C46-B12B-1CC4B554B641}</id>
 			<comment/>
 			<position>
@@ -142,8 +142,8 @@ Sample shadow
 				<second>825</second>
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 			<length>24</length>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
@@ -154,7 +154,7 @@ Sample shadow
 				<second>803</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{909005C3-BE16-C640-86B0-CB5C531E4E8E}</id>
 			<comment/>
 			<position>
@@ -162,8 +162,8 @@ Sample shadow
 				<second>804</second>
 			</position>
 			<parameterName>Direction</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<type>Vector</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.TextureSize" version="traktor.render.Node:1">
 			<id>{E0C609D2-A9DA-E043-BBF5-33E23BFF7F9D}</id>
@@ -216,7 +216,7 @@ Shadow; adjusted for msaa.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C1C516CA-37E9-1540-BFB6-A04EFEC094D9}</id>
 			<comment/>
 			<position>
@@ -224,8 +224,8 @@ Shadow; adjusted for msaa.
 				<second>669</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{701E5D4E-158E-B64A-ACF5-AD3355CF88D9}</id>
@@ -289,7 +289,7 @@ Shadow; adjusted for msaa.
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{156DFF5C-6EDC-B147-9201-EFE7E142A193}</id>
 			<comment/>
 			<position>
@@ -297,8 +297,8 @@ Shadow; adjusted for msaa.
 				<second>319</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{ABC1AF51-E44B-284E-A89A-07FBD8D4D75E}</id>

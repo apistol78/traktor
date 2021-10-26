@@ -78,7 +78,7 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2FB54AE6-EBB7-E241-9028-7C943106196A}</id>
 			<comment/>
 			<position>
@@ -86,8 +86,8 @@
 				<second>440</second>
 			</position>
 			<parameterName>Terrain_WorldExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{367013F6-22A3-F945-8AE6-24BAF910F425}</id>
@@ -122,7 +122,7 @@
 			</position>
 			<value>-0.5</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{EDA54323-45F7-BD48-968E-265D74B49654}</id>
 			<comment/>
 			<position>
@@ -130,8 +130,8 @@
 				<second>253</second>
 			</position>
 			<parameterName>Terrain_Heightfield</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{FD7C89A8-91D0-5940-8266-184D08773550}</id>
@@ -258,7 +258,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{D0C9FA1E-59C2-1641-823B-7C3197E6FA69}</id>
 			<comment/>
 			<position>
@@ -266,8 +266,8 @@
 				<second>136</second>
 			</position>
 			<parameterName>Terrain_SurfaceAlbedo</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3FB9D546-6F49-9548-86F2-45E9B9C8F50A}</id>

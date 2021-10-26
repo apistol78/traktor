@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{A1B0BF4E-3685-9D43-80C3-B22E5110D8B9}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AC7B207D-E2EA-B849-BF43-7A4B9FB71AD5}</id>
@@ -116,7 +116,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A82A3983-A547-3A41-9941-E8FF0089C8BB}</id>
 			<comment/>
 			<position>
@@ -124,8 +124,8 @@
 				<second>619</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{F80CF0D7-4D2E-DD42-AE45-1F30E5AE59A6}</id>
@@ -145,7 +145,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A4328CB5-7FD6-424D-A37B-94412F422263}</id>
 			<comment/>
 			<position>
@@ -153,8 +153,8 @@
 				<second>381</second>
 			</position>
 			<parameterName>CurrentIllumTexture</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5C1ACEAB-A501-314F-8A24-21A5587ED7D7}</id>
@@ -261,7 +261,7 @@ W
 			</position>
 			<value>0.15</value>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{21525D23-DCF0-B641-9A54-9E392F1BAAE5}</id>
 			<comment/>
 			<position>
@@ -269,8 +269,8 @@ W
 				<second>436</second>
 			</position>
 			<parameterName>World_Exposure</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{06D1793E-E321-2F47-876F-F0E2F5DB880A}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>587</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{4F723850-8FAF-0A43-8BC4-9299A8C4610F}</id>
@@ -54,7 +54,7 @@
 				<second>547</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{43A65A76-AB9F-E147-B7BC-EF0F69D8DAE7}</id>
 			<comment/>
 			<position>
@@ -62,8 +62,8 @@
 				<second>335</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{D34CB138-A5AE-FF4B-A07A-A6A3827DE1B1}</id>
 			<comment/>
 			<position>
@@ -17,7 +17,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhHigh</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{416DDB61-AE53-B046-824D-D493BFAB423E}</id>
@@ -120,7 +120,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{70512556-E241-D14A-90F9-398EE55D08A4}</id>
 			<comment/>
 			<position>
@@ -128,8 +128,8 @@
 				<second>143</second>
 			</position>
 			<parameterName>Color</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{BBA1A6B5-183F-5A44-A6EB-1326AE815565}</id>
@@ -187,7 +187,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{323B4A2A-23C6-774F-958C-9FF9F7B7406A}</id>
 			<comment/>
 			<position>
@@ -195,8 +195,8 @@
 				<second>-195</second>
 			</position>
 			<parameterName>InputRoughness</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{D4EB81D2-1609-C64A-BBD3-7FE58AE34800}</id>
@@ -265,7 +265,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{4565FB42-3DC5-3444-95AB-C14A8DCBB7F7}</id>
 			<comment/>
 			<position>
@@ -273,8 +273,8 @@
 				<second>-392</second>
 			</position>
 			<parameterName>InputNormal</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{BB778728-7ACA-BB4A-A941-7A0B045C4234}</id>
@@ -340,7 +340,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{5080F126-566C-A64A-B20F-AF8B6F1A8767}</id>
 			<comment/>
 			<position>
@@ -348,8 +348,8 @@
 				<second>-681</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{F9903DC8-4247-0748-93DD-31150BBD3941}</id>
@@ -384,7 +384,7 @@
 				<second>-596</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{EF191D18-ADC0-1140-B4FB-043B0371611C}</id>
 			<comment/>
 			<position>
@@ -392,8 +392,8 @@
 				<second>-533</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{854137BC-FE73-0445-8A77-D0A9CAB8B0AD}</id>
@@ -523,7 +523,7 @@
 			<name>L_ViewStepPosition</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{1DDE4897-35E6-2D45-95BB-23A005AC7BE8}</id>
 			<comment/>
 			<position>
@@ -531,8 +531,8 @@
 				<second>321</second>
 			</position>
 			<parameterName>Projection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{50FDD690-23EB-D348-BC95-9756AA8D6704}</id>
@@ -624,7 +624,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{B045B29B-77B0-DD4B-8D54-82B1F8739FA5}</id>
 			<comment/>
 			<position>
@@ -632,8 +632,8 @@
 				<second>619</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfDraw</frequency>
+			<type>Texture2D</type>
+			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{DCC3501C-C8D7-434E-B0B1-A299D6171945}</id>

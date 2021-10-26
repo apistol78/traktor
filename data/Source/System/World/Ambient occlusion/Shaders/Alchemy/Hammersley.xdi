@@ -36,7 +36,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="3,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{C6BADCE6-CFC4-594C-B6AD-C4DE071C26AC}</id>
 			<comment/>
 			<position>
@@ -59,7 +59,7 @@
 				<item>
 					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
 					<name>Output</name>
-					<type>PtVector</type>
+					<type>Vector</type>
 				</item>
 			</outputPins>
 			<script>
@@ -75,8 +75,6 @@ b = ((b & 0x00FF00FFu) << 8u) | ((b & 0xFF00FF00u) >> 8u);
 float radicalInverseVDC = float(b) * 2.3283064365386963e-10;
     
 $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
-
-
 			]]>
 			</script>
 		</item>

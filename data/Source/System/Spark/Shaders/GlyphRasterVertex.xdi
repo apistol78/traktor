@@ -81,7 +81,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A71CA53F-2D8E-6B4E-85C9-E306964682BA}</id>
 			<comment/>
 			<position>
@@ -89,8 +89,8 @@
 				<second>459</second>
 			</position>
 			<parameterName>Spark_FrameBounds</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{8D32C31A-96DD-DB45-94BE-A665C6260DDB}</id>
@@ -118,7 +118,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{DCF809E8-4857-424F-A8BC-9FEBD71FFA92}</id>
 			<comment/>
 			<position>
@@ -126,8 +126,8 @@
 				<second>586</second>
 			</position>
 			<parameterName>Spark_FrameTransform</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{08A88758-44F0-5544-A120-0BBFFBD49D54}</id>

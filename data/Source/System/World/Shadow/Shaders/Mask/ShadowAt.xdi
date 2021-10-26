@@ -55,7 +55,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A6A7BB17-447F-4244-9700-45B9278A7919}</id>
 			<comment/>
 			<position>
@@ -63,8 +63,8 @@
 				<second>717</second>
 			</position>
 			<parameterName>World_ShadowMask</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{CE082FF6-37F0-5F4B-8338-58B7AF63CEDF}</id>

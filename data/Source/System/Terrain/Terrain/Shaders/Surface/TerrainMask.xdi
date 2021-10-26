@@ -67,7 +67,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A4403F3E-47D6-A446-8C48-E827911CB9D7}</id>
 			<comment/>
 			<position>
@@ -75,8 +75,8 @@
 				<second>1688</second>
 			</position>
 			<parameterName>Terrain_SplatMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{93E8F1BA-512F-7E46-AA96-26B54316E8EB}</id>

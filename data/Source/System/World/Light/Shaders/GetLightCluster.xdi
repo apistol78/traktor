@@ -9,7 +9,7 @@
 				<second>60</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{430BDB9F-6997-7C40-AE84-DEDF79B6DE43}</id>
 			<comment/>
 			<position>
@@ -17,8 +17,8 @@
 				<second>49</second>
 			</position>
 			<parameterName>World_ViewDistance</parameterName>
-			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Truncate" version="traktor.render.Node:1">
 			<id>{B7222D2F-DF03-B549-B2C0-D1584EB088D3}</id>

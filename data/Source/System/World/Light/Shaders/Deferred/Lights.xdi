@@ -46,7 +46,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{41E87F6F-D99A-B34D-9B53-3940EDA30A76}</id>
 			<comment/>
 			<position>
@@ -62,7 +62,7 @@
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
-			<cullMode>CmNever</cullMode>
+			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
@@ -92,7 +92,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>PhUndefined</precisionHint>
+			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{94DD5FDC-A4A2-674D-BB3E-D6A9254AE063}</id>
@@ -653,7 +653,7 @@
 			<name>L_ViewToLight</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{62C3E795-63BE-6E49-AFCA-506CD8B7CC58}</id>
 			<comment/>
 			<position>
@@ -661,8 +661,8 @@
 				<second>1228</second>
 			</position>
 			<parameterName>World_ShadowMapAtlas</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfOnce</frequency>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{C3E787C1-E7DD-2E4C-8CD7-EE3F83530803}</id>
@@ -1521,7 +1521,7 @@ Directional
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Texture" version="traktor.render.Node:1">
+		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{C5385C41-3ED5-D644-AC29-CED3A8D38B8C}</id>
 			<comment/>
 			<position>
@@ -1529,7 +1529,7 @@ Directional
 				<second>380</second>
 			</position>
 			<external>{934F1D92-C961-485A-A5B8-6703A51266D8}</external>
-			<type>PtTexture2D</type>
+			<type>Texture2D</type>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{99F8F0A7-3B85-7C49-981D-B01075D1585E}</id>
@@ -1952,7 +1952,7 @@ Directional
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2F962D12-917E-E34A-9693-70683A88B6D2}</id>
 			<comment/>
 			<position>
@@ -1960,8 +1960,8 @@ Directional
 				<second>1827</second>
 			</position>
 			<parameterName>World_ReflectionMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{BC1582DC-5A5D-F347-8685-1ED14D2FF1B4}</id>
@@ -2018,7 +2018,7 @@ Directional
 				<second>1862</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{671C5EF1-2A13-6C4F-ABC6-AB927F28A76B}</id>
 			<comment/>
 			<position>
@@ -2026,8 +2026,8 @@ Directional
 				<second>2314</second>
 			</position>
 			<parameterName>World_OcclusionMap</parameterName>
-			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{01F6DEB8-F291-D849-93B2-047E4866B066}</id>
@@ -2209,7 +2209,7 @@ Directional
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6DD733DB-D562-41F8-AA5F-DEEB50B8055E}</id>
 			<comment/>
 			<position>
@@ -2217,8 +2217,8 @@ Directional
 				<second>2393</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{D9C1BF01-1437-403D-97FB-BE2BB07792BC}</id>
@@ -2228,7 +2228,7 @@ Directional
 				<second>2342</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C17496FE-1E41-4FCA-84D1-19ED294839CC}</id>
 			<comment/>
 			<position>
@@ -2236,8 +2236,8 @@ Directional
 				<second>2235</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{686C6883-5053-4947-AE74-F87869B06AD2}</id>

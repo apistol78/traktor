@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{BED25F68-B80B-DE4C-A9A2-495D9A6B8D97}</id>
 			<comment/>
 			<position>
@@ -9,8 +9,8 @@
 				<second>330</second>
 			</position>
 			<parameterName>World_ProbeIntensity</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{8F853E62-489E-F843-9A00-EB8DABC66082}</id>
@@ -30,7 +30,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{E772BE57-EF0E-A242-A774-7D123276148A}</id>
 			<comment/>
 			<position>
@@ -38,8 +38,8 @@
 				<second>405</second>
 			</position>
 			<parameterName>World_ProbeTexture</parameterName>
-			<type>PtTextureCube</type>
-			<frequency>UfFrame</frequency>
+			<type>TextureCube</type>
+			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{50E06897-C251-0D43-9A87-3EBAF324E59F}</id>
@@ -49,7 +49,7 @@
 				<second>511</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{752A1211-6446-3C42-8A95-A1BE2F01AA39}</id>
 			<comment/>
 			<position>
@@ -57,8 +57,8 @@
 				<second>571</second>
 			</position>
 			<parameterName>World_ProbeTextureMips</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{56243AF1-337F-E344-A348-E7A3B0667AED}</id>
