@@ -36,41 +36,41 @@ PinType ConstantNodeTraits::getOutputPinType(
 ) const
 {
 	if (is_a< Color >(node) || is_a< Vector >(node))
-		return PntScalar4;
+		return PinType::Scalar4;
 	else if (is_a< Scalar >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (is_a< TargetSize >(node))
-		return PntScalar2;
+		return PinType::Scalar2;
 	else if (is_a< Instance >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (is_a< State >(node))
-		return PntState;
+		return PinType::State;
 	else if (is_a< Struct >(node))
-		return PntStructBuffer;
+		return PinType::StructBuffer;
 	else if (is_a< Texture >(node))
 	{
 		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);
 		switch (textureNode->getParameterType())
 		{
 		case ParameterType::Texture2D:
-			return PntTexture2D;
+			return PinType::Texture2D;
 		case ParameterType::Texture3D:
-			return PntTexture3D;
+			return PinType::Texture3D;
 		case ParameterType::TextureCube:
-			return PntTextureCube;
+			return PinType::TextureCube;
 		default:
-			return PntVoid;
+			return PinType::Void;
 		}
 	}
 	else if (is_a< TextureSize >(node))
 	{
-		if (inputPinTypes[0] == PntTexture2D)
-			return PntScalar2;
+		if (inputPinTypes[0] == PinType::Texture2D)
+			return PinType::Scalar2;
 		else
-			return PntScalar3;
+			return PinType::Scalar3;
 	}
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType ConstantNodeTraits::getInputPinType(
@@ -81,7 +81,7 @@ PinType ConstantNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntVoid;
+	return PinType::Void;
 }
 
 int32_t ConstantNodeTraits::getInputPinGroup(

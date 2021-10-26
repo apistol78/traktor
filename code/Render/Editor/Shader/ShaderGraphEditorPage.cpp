@@ -1135,7 +1135,7 @@ void ShaderGraphEditorPage::updateGraph()
 		uint32_t localCount = 0;
 		uint32_t writeCount = 0;
 		uint32_t readCount = 0;
-		PinType type = PntVoid;
+		PinType type = PinType::Void;
 	};
 	std::map< std::wstring, VariableInfo > variables;
 
@@ -1275,13 +1275,13 @@ void ShaderGraphEditorPage::updateGraph()
 			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
 			switch (value.getType())
 			{
-			case PntVoid:
+			case PinType::Void:
 				break;
 
-			case PntScalar1:
-			case PntScalar2:
-			case PntScalar3:
-			case PntScalar4:
+			case PinType::Scalar1:
+			case PinType::Scalar2:
+			case PinType::Scalar3:
+			case PinType::Scalar4:
 				for (int32_t i = 0; i < value.getWidth(); ++i)
 				{
 					if (i > 0)
@@ -1294,31 +1294,31 @@ void ShaderGraphEditorPage::updateGraph()
 				}
 				break;
 
-			case PntMatrix:
+			case PinType::Matrix:
 				ss << L"Matrix";
 				break;
 
-			case PntTexture2D:
+			case PinType::Texture2D:
 				ss << L"Texture2d";
 				editorEdge->setThickness(4);
 				break;
 
-			case PntTexture3D:
+			case PinType::Texture3D:
 				ss << L"Texture3d";
 				editorEdge->setThickness(4);
 				break;
 
-			case PntTextureCube:
+			case PinType::TextureCube:
 				ss << L"TextureCube";
 				editorEdge->setThickness(4);
 				break;
 
-			case PntStructBuffer:
+			case PinType::StructBuffer:
 				ss << L"StructBuffer";
 				editorEdge->setThickness(4);
 				break;
 
-			case PntState:
+			case PinType::State:
 				ss << L"State";
 				editorEdge->setThickness(4);
 				break;

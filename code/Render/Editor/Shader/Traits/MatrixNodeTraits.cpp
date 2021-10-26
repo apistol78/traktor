@@ -45,11 +45,11 @@ PinType MatrixNodeTraits::getOutputPinType(
 ) const
 {
 	if (is_a< MatrixIn >(node))
-		return PntMatrix;
+		return PinType::Matrix;
 	else if (is_a< MatrixOut >(node))
-		return PntScalar4;
+		return PinType::Scalar4;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType MatrixNodeTraits::getInputPinType(
@@ -61,11 +61,11 @@ PinType MatrixNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< MatrixIn >(node))
-		return PntScalar4;
+		return PinType::Scalar4;
 	else if (is_a< MatrixOut >(node))
-		return PntMatrix;
+		return PinType::Matrix;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 int32_t MatrixNodeTraits::getInputPinGroup(

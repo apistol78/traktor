@@ -42,7 +42,7 @@ PinType PixelNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntVoid;
+	return PinType::Void;
 }
 
 PinType PixelNodeTraits::getInputPinType(
@@ -67,18 +67,18 @@ PinType PixelNodeTraits::getInputPinType(
 	if (!rs.blendEnable && !rs.alphaTestEnable)
 	{
 		if (rs.colorWriteMask & CwAlpha)
-			return PntScalar4;
+			return PinType::Scalar4;
 		else if (rs.colorWriteMask & CwBlue)
-			return PntScalar3;
+			return PinType::Scalar3;
 		else if (rs.colorWriteMask & CwGreen)
-			return PntScalar2;
+			return PinType::Scalar2;
 		else if (rs.colorWriteMask & CwRed)
-			return PntScalar1;
+			return PinType::Scalar1;
 		else
-			return PntVoid;
+			return PinType::Void;
 	}
 	else
-		return PntScalar4;
+		return PinType::Scalar4;
 }
 
 int32_t PixelNodeTraits::getInputPinGroup(

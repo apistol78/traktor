@@ -43,7 +43,7 @@ PinType PolynomialNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar1;
+	return PinType::Scalar1;
 }
 
 PinType PolynomialNodeTraits::getInputPinType(
@@ -55,9 +55,9 @@ PinType PolynomialNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"X")
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
-		return PntScalar4;
+		return PinType::Scalar4;
 }
 
 int32_t PolynomialNodeTraits::getInputPinGroup(

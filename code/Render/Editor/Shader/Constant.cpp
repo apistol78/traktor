@@ -9,7 +9,7 @@ namespace traktor
 	{
 
 Constant::Constant()
-:	m_type(PntVoid)
+:	m_type(PinType::Void)
 {
 	for (int32_t i = 0; i < 4; ++i)
 	{
@@ -29,7 +29,7 @@ Constant::Constant(PinType type)
 }
 
 Constant::Constant(float x)
-:	m_type(PntScalar1)
+:	m_type(PinType::Scalar1)
 {
 	m_const[0] = true;
 	m_value[0] = x;
@@ -42,7 +42,7 @@ Constant::Constant(float x)
 }
 
 Constant::Constant(float x, float y, float z, float w)
-:	m_type(PntScalar4)
+:	m_type(PinType::Scalar4)
 {
 	m_const[0] = true;
 	m_value[0] = x;
@@ -57,7 +57,7 @@ Constant::Constant(float x, float y, float z, float w)
 Constant Constant::cast(PinType type) const
 {
 	Constant out(type);
-	if (m_type == PntScalar1)
+	if (m_type == PinType::Scalar1)
 	{
 		// Widen target type from single scalar.
 		for (int32_t i = 0; i < getPinTypeWidth(type); ++i)

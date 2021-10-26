@@ -35,18 +35,18 @@ PinType VertexNodeTraits::getOutputPinType(
 		{
 		case DtFloat1:
 		case DtInteger1:
-			return PntScalar1;
+			return PinType::Scalar1;
 
 		case DtFloat2:
 		case DtShort2:
 		case DtShort2N:
 		case DtHalf2:
 		case DtInteger2:
-			return PntScalar2;
+			return PinType::Scalar2;
 
 		case DtFloat3:
 		case DtInteger3:
-			return PntScalar3;
+			return PinType::Scalar3;
 
 		case DtFloat4:
 		case DtByte4:
@@ -55,10 +55,10 @@ PinType VertexNodeTraits::getOutputPinType(
 		case DtShort4N:
 		case DtHalf4:
 		case DtInteger4:
-			return PntScalar4;
+			return PinType::Scalar4;
 		}
 	}
-	return PntVoid;
+	return PinType::Void;
 }
 
 PinType VertexNodeTraits::getInputPinType(
@@ -70,9 +70,9 @@ PinType VertexNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< VertexOutput >(node))
-		return PntScalar4;
+		return PinType::Scalar4;
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 int32_t VertexNodeTraits::getInputPinGroup(

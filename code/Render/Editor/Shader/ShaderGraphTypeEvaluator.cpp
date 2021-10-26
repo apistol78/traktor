@@ -22,7 +22,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const InputPin* inputPin) const
 	if (outputPin)
 		return evaluate(outputPin);
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType ShaderGraphTypeEvaluator::evaluate(const Node* node, const std::wstring& inputPinName) const
@@ -31,7 +31,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const Node* node, const std::wstring&
 	if (inputPin)
 		return evaluate(inputPin);
 	else
-		return PntVoid;
+		return PinType::Void;
 }
 
 PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
@@ -40,8 +40,8 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	if (i != m_cache.end())
 		return i->second;
 
-	PinType outputPinType = PntVoid;
-	m_cache[outputPin] = PntVoid;
+	PinType outputPinType = PinType::Void;
+	m_cache[outputPin] = PinType::Void;
 
 	const Node* node = outputPin->getNode();
 	T_ASSERT(node);
@@ -58,7 +58,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 			else
 				inputPin = node->findInputPin(L"Vector");
 		}
-		else if (inputType == PntMatrix)
+		else if (inputType == PinType::Matrix)
 		{
 			inputPin = node->findInputPin(L"Matrix");
 		}
@@ -67,7 +67,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 			inputPin = node->findInputPin(L"Texture");
 		}
 		if (!inputPin)
-			return PntVoid;
+			return PinType::Void;
 
 		outputPinType = evaluate(inputPin);
 	}

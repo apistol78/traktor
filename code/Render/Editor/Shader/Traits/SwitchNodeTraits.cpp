@@ -54,7 +54,7 @@ PinType SwitchNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	PinType outputType = PntVoid;
+	PinType outputType = PinType::Void;
 
 	uint32_t inputPinCount = node->getInputPinCount();
 	for (uint32_t i = 1; i < inputPinCount; ++i)
@@ -79,7 +79,7 @@ PinType SwitchNodeTraits::getInputPinType(
 	if (index <= 0)
 	{
 		// Select
-		return PntScalar1;
+		return PinType::Scalar1;
 	}
 	else
 	{

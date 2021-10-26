@@ -59,7 +59,7 @@ PinType LerpNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"Blend")
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
 		return outputPinTypes[0];
 }

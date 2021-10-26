@@ -27,7 +27,7 @@ PinType TransposeNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntMatrix;
+	return PinType::Matrix;
 }
 
 PinType TransposeNodeTraits::getInputPinType(
@@ -38,7 +38,7 @@ PinType TransposeNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntMatrix;
+	return PinType::Matrix;
 }
 
 int32_t TransposeNodeTraits::getInputPinGroup(

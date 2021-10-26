@@ -54,11 +54,11 @@ struct ConstantFoldingVisitor
 
 			switch (it->second.getType())
 			{
-			case PntScalar1:
+			case PinType::Scalar1:
 				node = new Scalar(it->second.x());
 				break;
 
-			case PntScalar2:
+			case PinType::Scalar2:
 				{
 					Ref< Vector > value = new Vector(Vector4(it->second.x(), it->second.y(), 0.0f, 0.0f));
 					Ref< Swizzle > swizzle = new Swizzle(L"xy");
@@ -73,7 +73,7 @@ struct ConstantFoldingVisitor
 				}
 				break;
 
-			case PntScalar3:
+			case PinType::Scalar3:
 				{
 					Ref< Vector > value = new Vector(Vector4(it->second.x(), it->second.y(), it->second.z(), 0.0f));
 					Ref< Swizzle > swizzle = new Swizzle(L"xyz");
@@ -88,7 +88,7 @@ struct ConstantFoldingVisitor
 				}
 				break;
 
-			case PntScalar4:
+			case PinType::Scalar4:
 				node = new Vector(Vector4(it->second.x(), it->second.y(), it->second.z(), it->second.w()));
 				break;
 
@@ -312,7 +312,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 			else
 				inputPin = node->findInputPin(L"Vector");
 		}
-		else if (inputType == PntMatrix)
+		else if (inputType == PinType::Matrix)
 		{
 			inputPin = node->findInputPin(L"Matrix");
 		}
@@ -324,7 +324,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		{
 			inputPin = node->findInputPin(L"State");
 		}
-		else if (inputType == PntVoid)
+		else if (inputType == PinType::Void)
 		{
 			inputPin = node->findInputPin(L"Default");
 		}
@@ -524,22 +524,22 @@ restart_iteration:
 							// It is possible "folded output pin"'s type is wider than "output pin" type due to
 							// hard constraints on type propagation (ex. VertexInput cannot change type).
 
-							if (foldOutputPinType == PntScalar1)
+							if (foldOutputPinType == PinType::Scalar1)
 							{
 								const wchar_t* c_scalarSwizzles[] = { L"", L"xx", L"xxx", L"xxxx" };
 								swizzleNode = new Swizzle(c_scalarSwizzles[getPinTypeWidth(outputPinType) - 1]);
 							}
-							else if (foldOutputPinType == PntScalar2)
+							else if (foldOutputPinType == PinType::Scalar2)
 							{
 								const wchar_t* c_tupleSwizzles[] = { L"x", L"", L"xy0", L"xy00" };
 								swizzleNode = new Swizzle(c_tupleSwizzles[getPinTypeWidth(outputPinType) - 1]);
 							}
-							else if (foldOutputPinType == PntScalar3)
+							else if (foldOutputPinType == PinType::Scalar3)
 							{
 								const wchar_t* c_tripleSwizzles[] = { L"x", L"xy", L"", L"xyz0" };
 								swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);
 							}
-							else if (foldOutputPinType == PntScalar4)
+							else if (foldOutputPinType == PinType::Scalar4)
 							{
 								const wchar_t* c_tripleSwizzles[] = { L"x", L"xy", L"xyz", L"" };
 								swizzleNode = new Swizzle(c_tripleSwizzles[getPinTypeWidth(outputPinType) - 1]);

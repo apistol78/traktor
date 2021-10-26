@@ -43,7 +43,7 @@ PinType TransformNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar4;
+	return PinType::Scalar4;
 }
 
 PinType TransformNodeTraits::getInputPinType(
@@ -55,9 +55,9 @@ PinType TransformNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"Input")
-		return PntScalar4;
+		return PinType::Scalar4;
 	else
-		return PntMatrix;
+		return PinType::Matrix;
 }
 
 int32_t TransformNodeTraits::getInputPinGroup(

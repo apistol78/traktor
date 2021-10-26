@@ -27,7 +27,7 @@ PinType ComputeNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntVoid;
+	return PinType::Void;
 }
 
 PinType ComputeNodeTraits::getInputPinType(
@@ -39,13 +39,13 @@ PinType ComputeNodeTraits::getInputPinType(
 ) const
 {
 	if (inputPin->getName() == L"Enable")
-		return PntScalar1;
+		return PinType::Scalar1;
 	else if (inputPin->getName() == L"Storage")
-		return PntTexture2D;
+		return PinType::Texture2D;
 	else if (inputPin->getName() == L"Offset")
-		return PntScalar2;
+		return PinType::Scalar2;
 	else
-		return PntScalar4;
+		return PinType::Scalar4;
 }
 
 int32_t ComputeNodeTraits::getInputPinGroup(

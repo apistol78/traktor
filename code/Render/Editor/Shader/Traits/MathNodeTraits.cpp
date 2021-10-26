@@ -72,9 +72,9 @@ PinType MathNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	PinType outputPinType = PntVoid;
+	PinType outputPinType = PinType::Void;
 	if (is_a< ArcusCos >(node) || is_a< Cos >(node) || is_a< Sin >(node) || is_a< Tan >(node))
-		outputPinType = PntScalar1;
+		outputPinType = PinType::Scalar1;
 	else
 	{
 		// Conservativly use max pin type, even if any input pin is "void" since
@@ -100,7 +100,7 @@ PinType MathNodeTraits::getInputPinType(
 ) const
 {
 	if (is_a< ArcusCos >(node) || is_a< Cos >(node) || is_a< Sin >(node) || is_a< Tan >(node))
-		return PntScalar1;
+		return PinType::Scalar1;
 	else
 		return outputPinTypes[0];
 }
