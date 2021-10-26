@@ -46,7 +46,7 @@ void ProgramVrfy::setFloatParameter(handle_t handle, float param)
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtScalar, L"Incorrect parameter type, not scalar.");
+	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
 	// 	it->second.undefined = false;
 	// }
 }
@@ -67,7 +67,7 @@ void ProgramVrfy::setFloatArrayParameter(handle_t handle, const float* param, in
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == PtScalar, L"Incorrect parameter type, not scalar.");
+	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() >= length, L"Trying to set too many elements of indexed uniform.");
 	// 	it->second.undefined = false;
 	// }
@@ -87,7 +87,7 @@ void ProgramVrfy::setVectorParameter(handle_t handle, const Vector4& param)
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtVector, L"Incorrect parameter type, not vector.");
+	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Vector, L"Incorrect parameter type, not vector.");
 	// 	it->second.undefined = false;
 	// }
 }
@@ -108,7 +108,7 @@ void ProgramVrfy::setVectorArrayParameter(handle_t handle, const Vector4* param,
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == PtVector, L"Incorrect parameter type, not scalar.");
+	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Vector, L"Incorrect parameter type, not scalar.");
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() >= length, L"Trying to set too many elements of indexed uniform.");
 	// 	it->second.undefined = false;
 	// }
@@ -128,7 +128,7 @@ void ProgramVrfy::setMatrixParameter(handle_t handle, const Matrix44& param)
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtMatrix, L"Incorrect parameter type, not matrix.");
+	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
 	// 	it->second.undefined = false;
 	// }
 }
@@ -149,7 +149,7 @@ void ProgramVrfy::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 	// if (it != m_shadow.end())
 	// {
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == PtMatrix, L"Incorrect parameter type, not matrix.");
+	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
 	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() <= length, L"Trying to set too many elements of indexed uniform.");
 	// 	it->second.undefined = false;
 	// }
@@ -171,7 +171,7 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 			// if (it != m_shadow.end())
 			// {
 			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtTextureCube, L"Incorrect parameter type, not texture CUBE.");
+			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::TextureCube, L"Incorrect parameter type, not texture CUBE.");
 			// 	it->second.undefined = false;
 			// }
 		}
@@ -182,7 +182,7 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 			// if (it != m_shadow.end())
 			// {
 			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtTexture2D, L"Incorrect parameter type, not texture 2D.");
+			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Texture2D, L"Incorrect parameter type, not texture 2D.");
 			// 	it->second.undefined = false;
 			// }
 		}
@@ -193,7 +193,7 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 			// if (it != m_shadow.end())
 			// {
 			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == PtTexture3D, L"Incorrect parameter type, not texture 3D.");
+			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Texture3D, L"Incorrect parameter type, not texture 3D.");
 			// 	it->second.undefined = false;
 			// }
 		}

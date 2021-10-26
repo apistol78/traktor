@@ -224,18 +224,18 @@ enum DataType
 };
 
 /*! Shader parameter type. */
-enum ParameterType
+enum class ParameterType
 {
-	PtScalar	= 0,	//!< Scalar parameter.
-	PtVector	= 1,	//!< Vector parameter.
-	PtMatrix	= 2,	//!< Matrix parameter.
-	PtTexture2D	= 3,	//!< 2D texture parameter.
-	PtTexture3D	= 4,	//!< 3D texture parameter.
-	PtTextureCube = 5,	//!< Cube texture parameter.
-	PtStructBuffer = 6,	//!< Struct buffer parameter.
-	PtImage2D	= 7,
-	PtImage3D	= 8,
-	PtImageCube	= 9
+	Scalar       = 0,	//!< Scalar parameter.
+	Vector       = 1,	//!< Vector parameter.
+	Matrix       = 2,	//!< Matrix parameter.
+	Texture2D    = 3,	//!< 2D texture parameter.
+	Texture3D    = 4,	//!< 3D texture parameter.
+	TextureCube  = 5,	//!< Cube texture parameter.
+	StructBuffer = 6,	//!< Struct buffer parameter.
+	Image2D      = 7,
+	Image3D      = 8,
+	ImageCube    = 9
 };
 
 /*! Shader parameter update frequency. */

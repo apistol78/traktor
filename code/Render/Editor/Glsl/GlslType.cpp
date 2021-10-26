@@ -166,8 +166,8 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtImage3D,
 		GtImageCube
 	};
-	T_FATAL_ASSERT(type < sizeof_array(c));
-	return c[type];
+	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
+	return c[(int32_t)type];
 }
 
 std::wstring glsl_storage_type(DataType type)

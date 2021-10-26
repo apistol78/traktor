@@ -472,7 +472,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	for (auto p : cx.getParameters())
 	{
-		if (p.type <= PtMatrix)
+		if (p.type <= ParameterType::Matrix)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
@@ -487,7 +487,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.length
 			));
 		}
-		else if (p.type >= PtTexture2D && p.type <= PtTextureCube)
+		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
@@ -502,7 +502,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.length
 			));
 		}
-		else if (p.type >= PtStructBuffer)
+		else if (p.type >= ParameterType::StructBuffer)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())

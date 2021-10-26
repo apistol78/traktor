@@ -225,7 +225,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 
 	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
 	{
-		if (storageUniformNode->getParameterType() != PtImage2D)
+		if (storageUniformNode->getParameterType() != ParameterType::Image2D)
 			return false;
 
 		// Check if image needs to be defined.
@@ -249,7 +249,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		// Define parameter in context.
 		cx.addParameter(
 			storageUniformNode->getParameterName(),
-			PtTexture2D,
+			ParameterType::Texture2D,
 			1,
 			UpdateFrequency::Draw
 		);
@@ -279,7 +279,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			// Define parameter in context.
 			cx.addParameter(
 				storageStructNode->getParameterName(),
-				PtStructBuffer,
+				ParameterType::StructBuffer,
 				1,
 				UpdateFrequency::Draw
 			);
@@ -2257,7 +2257,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 	// Define parameter in context.
 	cx.addParameter(
 		node->getParameterName(),
-		PtStructBuffer,
+		ParameterType::StructBuffer,
 		1,
 		UpdateFrequency::Draw
 	);
@@ -2632,7 +2632,7 @@ bool emitTargetSizeOpenGL(GlslContext& cx, TargetSize* node)
 	))
 		return false;
 
-	cx.addParameter(L"_gl_targetSize", PtVector, 1, UpdateFrequency::Once);
+	cx.addParameter(L"_gl_targetSize", ParameterType::Vector, 1, UpdateFrequency::Once);
 
 	comment(f, node);
 	assign(f, out) << L"_gl_targetSize.xy;" << Endl;
@@ -2654,7 +2654,7 @@ bool emitTargetSizeVulkan(GlslContext& cx, TargetSize* node)
 	))
 		return false;
 
-	cx.addParameter(L"_vk_targetSize", PtVector, 1, UpdateFrequency::Once);
+	cx.addParameter(L"_vk_targetSize", ParameterType::Vector, 1, UpdateFrequency::Once);
 
 	comment(f, node);
 	assign(f, out) << L"_vk_targetSize.xy;" << Endl;

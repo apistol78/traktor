@@ -31,7 +31,7 @@ Ref< Node > ScriptNodeFacade::createShaderNode(
 	Ref< Script > sc = new Script();
 	sc->setName(L"Unnamed");
 	sc->addInputPin(Guid::create(), L"Input");
-	sc->addOutputPin(Guid::create(), L"Output", PtScalar);
+	sc->addOutputPin(Guid::create(), L"Output", ParameterType::Scalar);
 	sc->setScript(L"$Output = $Input;\n");
 	return sc;
 }

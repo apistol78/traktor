@@ -58,15 +58,15 @@ bool collectScalarParameters(
 			parameterCount = 1;
 			switch (uniformNode->getParameterType())
 			{
-			case PtScalar:
+			case ParameterType::Scalar:
 				parameterSize = 1;
 				break;
 
-			case PtVector:
+			case ParameterType::Vector:
 				parameterSize = 4;
 				break;
 
-			case PtMatrix:
+			case ParameterType::Matrix:
 				parameterSize = 16;
 				break;
 			}
@@ -77,15 +77,15 @@ bool collectScalarParameters(
 			parameterCount = indexedUniformNode->getLength();
 			switch (indexedUniformNode->getParameterType())
 			{
-			case PtScalar:
+			case ParameterType::Scalar:
 				parameterSize = 1;
 				break;
 
-			case PtVector:
+			case ParameterType::Vector:
 				parameterSize = 4;
 				break;
 
-			case PtMatrix:
+			case ParameterType::Matrix:
 				parameterSize = 16;
 				break;
 			}

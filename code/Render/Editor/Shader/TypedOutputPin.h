@@ -30,7 +30,7 @@ public:
 	ParameterType getType() const;
 
 private:
-	ParameterType m_type = PtScalar;
+	ParameterType m_type = ParameterType::Scalar;
 };
 
 	}
