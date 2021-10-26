@@ -49,17 +49,17 @@ PinType ScriptNodeTraits::getOutputPinType(
 	const TypedOutputPin* typedOutputPin = static_cast< const TypedOutputPin* >(outputPin);
 	switch (typedOutputPin->getType())
 	{
-	case PtScalar:
+	case ParameterType::Scalar:
 		return PntScalar1;
-	case PtVector:
+	case ParameterType::Vector:
 		return PntScalar4;
-	case PtMatrix:
+	case ParameterType::Matrix:
 		return PntMatrix;
-	case PtTexture2D:
+	case ParameterType::Texture2D:
 		return PntTexture2D;
-	case PtTexture3D:
+	case ParameterType::Texture3D:
 		return PntTexture3D;
-	case PtTextureCube:
+	case ParameterType::TextureCube:
 		return PntTextureCube;
 	default:
 		return PntVoid;

@@ -52,11 +52,11 @@ PinType ConstantNodeTraits::getOutputPinType(
 		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);
 		switch (textureNode->getParameterType())
 		{
-		case PtTexture2D:
+		case ParameterType::Texture2D:
 			return PntTexture2D;
-		case PtTexture3D:
+		case ParameterType::Texture3D:
 			return PntTexture3D;
-		case PtTextureCube:
+		case ParameterType::TextureCube:
 			return PntTextureCube;
 		default:
 			return PntVoid;

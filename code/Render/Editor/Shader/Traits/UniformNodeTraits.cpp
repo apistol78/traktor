@@ -55,25 +55,25 @@ PinType UniformNodeTraits::getOutputPinType(
 
 	switch (parameterType)
 	{
-	case PtScalar:
+	case ParameterType::Scalar:
 		return PntScalar1;
-	case PtVector:
+	case ParameterType::Vector:
 		return PntScalar4;
-	case PtMatrix:
+	case ParameterType::Matrix:
 		return PntMatrix;
-	case PtTexture2D:
+	case ParameterType::Texture2D:
 		return PntTexture2D;
-	case PtTexture3D:
+	case ParameterType::Texture3D:
 		return PntTexture3D;
-	case PtTextureCube:
+	case ParameterType::TextureCube:
 		return PntTextureCube;
-	case PtImage2D:
+	case ParameterType::Image2D:
 		return PntImage2D;
-	case PtImage3D:
+	case ParameterType::Image3D:
 		return PntImage3D;
-	case PtImageCube:
+	case ParameterType::ImageCube:
 		return PntImageCube;
-	case PtStructBuffer:
+	case ParameterType::StructBuffer:
 		return PntStructBuffer;
 	default:
 		return PntVoid;
@@ -96,25 +96,25 @@ PinType UniformNodeTraits::getInputPinType(
 		{
 			switch (uniformNode->getParameterType())
 			{
-			case PtScalar:
+			case ParameterType::Scalar:
 				return PntScalar1;
-			case PtVector:
+			case ParameterType::Vector:
 				return PntScalar4;
-			case PtMatrix:
+			case ParameterType::Matrix:
 				return PntMatrix;
-			case PtTexture2D:
+			case ParameterType::Texture2D:
 				return PntTexture2D;
-			case PtTexture3D:
+			case ParameterType::Texture3D:
 				return PntTexture3D;
-			case PtTextureCube:
+			case ParameterType::TextureCube:
 				return PntTextureCube;
-			case PtImage2D:
+			case ParameterType::Image2D:
 				return PntImage2D;
-			case PtImage3D:
+			case ParameterType::Image3D:
 				return PntImage3D;
-			case PtImageCube:
+			case ParameterType::ImageCube:
 				return PntImageCube;
-			case PtStructBuffer:
+			case ParameterType::StructBuffer:
 				return PntStructBuffer;
 			default:
 				return PntVoid;
@@ -173,7 +173,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 		{
 			if (
 				frequentAsLinear &&
-				indexedUniform->getParameterType() < PtTexture2D &&
+				indexedUniform->getParameterType() < ParameterType::Texture2D &&
 				indexedUniform->getFrequency() >= UpdateFrequency::Draw
 			)
 				return PotLinear;
@@ -187,7 +187,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 	{
 		if (
 			frequentAsLinear &&
-			uniform->getParameterType() < PtTexture2D &&
+			uniform->getParameterType() < ParameterType::Texture2D &&
 			uniform->getFrequency() >= UpdateFrequency::Draw
 		)
 			return PotLinear;

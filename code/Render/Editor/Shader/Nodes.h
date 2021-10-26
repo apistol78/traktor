@@ -359,7 +359,7 @@ class T_DLLCLASS IndexedUniform : public ImmutableNode
 public:
 	IndexedUniform(
 		const std::wstring& parameterName = L"",
-		ParameterType type = PtScalar,
+		ParameterType type = ParameterType::Scalar,
 		UpdateFrequency frequency = UpdateFrequency::Frame,
 		int32_t length = 0
 	);
@@ -1071,7 +1071,7 @@ class T_DLLCLASS Texture : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Texture(const Guid& external = Guid(), ParameterType type = PtTexture2D);
+	Texture(const Guid& external = Guid(), ParameterType type = ParameterType::Texture2D);
 
 	void setExternal(const Guid& external);
 
@@ -1142,7 +1142,7 @@ class T_DLLCLASS Uniform : public ImmutableNode
 public:
 	Uniform(
 		const std::wstring& parameterName = L"",
-		ParameterType type = PtScalar,
+		ParameterType type = ParameterType::Scalar,
 		UpdateFrequency frequency = UpdateFrequency::Frame
 	);
 

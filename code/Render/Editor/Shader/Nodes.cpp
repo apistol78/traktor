@@ -755,7 +755,7 @@ FrontFace::FrontFace()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 2, IndexedUniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 3, IndexedUniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { { L"Output" }, { 0 } };
@@ -825,16 +825,30 @@ void IndexedUniform::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
-	{
-		{ L"PtScalar", PtScalar },
-		{ L"PtVector", PtVector },
-		{ L"PtMatrix", PtMatrix },
-		{ 0 }
-	};
-
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+
+	if (s.getVersion() >= 3)
+	{
+		const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
+		{
+			{ L"Scalar", ParameterType::Scalar },
+			{ L"Vector", ParameterType::Vector },
+			{ L"Matrix", ParameterType::Matrix },
+			{ 0 }
+		};
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	}
+	else
+	{
+		const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
+		{
+			{ L"PtScalar", ParameterType::Scalar },
+			{ L"PtVector", ParameterType::Vector },
+			{ L"PtMatrix", ParameterType::Matrix },
+			{ 0 }
+		};
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	}
 
 	if (s.getVersion() >= 1)
 	{
@@ -2232,7 +2246,7 @@ TargetSize::TargetSize()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 0, Texture, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 1, Texture, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Texture_i[] = { { 0 } };
 const ImmutableNode::OutputPinDesc c_Texture_o[] = { { L"Output" }, { 0 } };
@@ -2268,16 +2282,30 @@ void Texture::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
-	{
-		{ L"PtTexture2D", PtTexture2D },
-		{ L"PtTexture3D", PtTexture3D },
-		{ L"PtTextureCube", PtTextureCube },
-		{ 0 }
-	};
-
 	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< ITexture >()));
-	s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
+
+	if (s.getVersion() >= 1)
+	{
+		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
+		{
+			{ L"Texture2D", ParameterType::Texture2D },
+			{ L"Texture3D", ParameterType::Texture3D },
+			{ L"TextureCube", ParameterType::TextureCube },
+			{ 0 }
+		};		
+		s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
+	}
+	else
+	{
+		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
+		{
+			{ L"PtTexture2D", ParameterType::Texture2D },
+			{ L"PtTexture3D", ParameterType::Texture3D },
+			{ L"PtTextureCube", ParameterType::TextureCube },
+			{ 0 }
+		};
+		s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
+	}
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2342,7 +2370,7 @@ Type::Type()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 2, Uniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 3, Uniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
@@ -2398,22 +2426,42 @@ void Uniform::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
-	{
-		{ L"PtScalar", PtScalar },
-		{ L"PtVector", PtVector },
-		{ L"PtMatrix", PtMatrix },
-		{ L"PtTexture2D", PtTexture2D },
-		{ L"PtTexture3D", PtTexture3D },
-		{ L"PtTextureCube", PtTextureCube },
-		{ L"PtImage2D", PtImage2D },
-		{ L"PtImage3D", PtImage3D },
-		{ L"PtImageCube", PtImageCube },
-		{ 0 }
-	};
-
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+
+	if (s.getVersion() >= 3)
+	{
+		const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
+		{
+			{ L"Scalar", ParameterType::Scalar },
+			{ L"Vector", ParameterType::Vector },
+			{ L"Matrix", ParameterType::Matrix },
+			{ L"Texture2D", ParameterType::Texture2D },
+			{ L"Texture3D", ParameterType::Texture3D },
+			{ L"TextureCube", ParameterType::TextureCube },
+			{ L"Image2D", ParameterType::Image2D },
+			{ L"Image3D", ParameterType::Image3D },
+			{ L"ImageCube", ParameterType::ImageCube },
+			{ 0 }
+		};
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	}
+	else
+	{
+		const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
+		{
+			{ L"PtScalar", ParameterType::Scalar },
+			{ L"PtVector", ParameterType::Vector },
+			{ L"PtMatrix", ParameterType::Matrix },
+			{ L"PtTexture2D", ParameterType::Texture2D },
+			{ L"PtTexture3D", ParameterType::Texture3D },
+			{ L"PtTextureCube", ParameterType::TextureCube },
+			{ L"PtImage2D", ParameterType::Image2D },
+			{ L"PtImage3D", ParameterType::Image3D },
+			{ L"PtImageCube", ParameterType::ImageCube },
+			{ 0 }
+		};
+		s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	}
 
 	if (s.getVersion() >= 1)
 	{

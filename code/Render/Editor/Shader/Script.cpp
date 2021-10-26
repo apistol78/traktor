@@ -48,21 +48,6 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
-		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
-		{
-			{ L"PtScalar", PtScalar },
-			{ L"PtVector", PtVector },
-			{ L"PtMatrix", PtMatrix },
-			{ L"PtTexture2D", PtTexture2D },
-			{ L"PtTexture3D", PtTexture3D },
-			{ L"PtTextureCube", PtTextureCube },
-			{ L"PtStructBuffer", PtStructBuffer },
-			{ L"PtImage2D", PtImage2D },
-			{ L"PtImage3D", PtImage3D },
-			{ L"PtImageCube", PtImageCube },
-			{ 0 }
-		};
-
 		if (s.getDirection() == ISerializer::Direction::Write)
 		{
 			Guid id = m_pin->getId();
@@ -87,6 +72,21 @@ public:
 			{
 				ParameterType type;
 				std::wstring samplerId = L"";
+
+				const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
+				{
+					{ L"PtScalar", ParameterType::Scalar },
+					{ L"PtVector", ParameterType::Vector },
+					{ L"PtMatrix", ParameterType::Matrix },
+					{ L"PtTexture2D", ParameterType::Texture2D },
+					{ L"PtTexture3D", ParameterType::Texture3D },
+					{ L"PtTextureCube", ParameterType::TextureCube },
+					{ L"PtStructBuffer", ParameterType::StructBuffer },
+					{ L"PtImage2D", ParameterType::Image2D },
+					{ L"PtImage3D", ParameterType::Image3D },
+					{ L"PtImageCube", ParameterType::ImageCube },
+					{ 0 }
+				};
 
 				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 				s >> Member< std::wstring >(L"samplerId", samplerId);
@@ -132,18 +132,32 @@ public:
 
 	virtual void serialize(ISerializer& s) const override final
 	{
+		const MemberEnum< ParameterType >::Key c_ParameterType_KeysOld[] =
+		{
+			{ L"PtScalar", ParameterType::Scalar },
+			{ L"PtVector", ParameterType::Vector },
+			{ L"PtMatrix", ParameterType::Matrix },
+			{ L"PtTexture2D", ParameterType::Texture2D },
+			{ L"PtTexture3D", ParameterType::Texture3D },
+			{ L"PtTextureCube", ParameterType::TextureCube },
+			{ L"PtStructBuffer", ParameterType::StructBuffer },
+			{ L"PtImage2D", ParameterType::Image2D },
+			{ L"PtImage3D", ParameterType::Image3D },
+			{ L"PtImageCube", ParameterType::ImageCube },
+			{ 0 }
+		};
 		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 		{
-			{ L"PtScalar", PtScalar },
-			{ L"PtVector", PtVector },
-			{ L"PtMatrix", PtMatrix },
-			{ L"PtTexture2D", PtTexture2D },
-			{ L"PtTexture3D", PtTexture3D },
-			{ L"PtTextureCube", PtTextureCube },
-			{ L"PtStructBuffer", PtStructBuffer },
-			{ L"PtImage2D", PtImage2D },
-			{ L"PtImage3D", PtImage3D },
-			{ L"PtImageCube", PtImageCube },
+			{ L"Scalar", ParameterType::Scalar },
+			{ L"Vector", ParameterType::Vector },
+			{ L"Matrix", ParameterType::Matrix },
+			{ L"Texture2D", ParameterType::Texture2D },
+			{ L"Texture3D", ParameterType::Texture3D },
+			{ L"TextureCube", ParameterType::TextureCube },
+			{ L"StructBuffer", ParameterType::StructBuffer },
+			{ L"Image2D", ParameterType::Image2D },
+			{ L"Image3D", ParameterType::Image3D },
+			{ L"ImageCube", ParameterType::ImageCube },
 			{ 0 }
 		};
 
@@ -157,7 +171,11 @@ public:
 				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
-			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+
+			if (s.getVersion() >= 4)
+				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+			else
+				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_KeysOld);
 		}
 		else	// Direction::Read
 		{
@@ -169,7 +187,11 @@ public:
 				s >> Member< Guid >(L"id", id, AttributePrivate());
 
 			s >> Member< std::wstring >(L"name", name);
-			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+
+			if (s.getVersion() >= 4)
+				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
+			else
+				s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_KeysOld);
 
 			if (m_pin)
 			{
@@ -306,7 +328,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 3, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 4, Script, Node)
 
 Script::~Script()
 {
