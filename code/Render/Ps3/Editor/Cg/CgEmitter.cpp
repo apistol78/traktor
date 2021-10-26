@@ -362,7 +362,7 @@ bool emitIndexedUniform(CgContext& cx, IndexedUniform* node)
 
 	CgVariable* out = cx.getShader().createTemporaryVariable(
 		node->findOutputPin(L"Output"),
-		c_parameterType[node->getParameterType()]
+		c_parameterType[(int32_t)node->getParameterType()]
 	);
 
 	StringOutputStream& fb = cx.getShader().getOutputStream(CgShader::BtBody);

@@ -105,7 +105,7 @@ CgType cg_from_parameter_type(ParameterType type)
 		CtTextureCube
 	};
 	T_ASSERT(type < sizeof_array(c));
-	return c[type];
+	return c[(int32_t)type];
 
 }
 

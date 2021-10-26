@@ -166,8 +166,8 @@ HlslType hlsl_from_parameter_type(ParameterType type)
 		HtTextureCube,
 		HtStructBuffer
 	};
-	T_ASSERT(type < sizeof_array(c));
-	return c[type];
+	T_ASSERT((int32_t)type < sizeof_array(c));
+	return c[(int32_t)type];
 }
 
 std::wstring hlsl_storage_type(DataType type)

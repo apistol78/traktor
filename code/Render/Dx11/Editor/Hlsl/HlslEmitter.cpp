@@ -2615,15 +2615,15 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 			auto& fu = cx.getShader().getOutputStream(HlslShader::BtTextures);
 			switch (node->getParameterType())
 			{
-			case PtTexture2D:
+			case ParameterType::Texture2D:
 				fu << L"Texture2D " << node->getParameterName() << L";" << Endl;
 				break;
 
-			case PtTexture3D:
+			case ParameterType::Texture3D:
 				fu << L"Texture3D " << node->getParameterName() << L";" << Endl;
 				break;
 
-			case PtTextureCube:
+			case ParameterType::TextureCube:
 				fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
 				break;
 			}
