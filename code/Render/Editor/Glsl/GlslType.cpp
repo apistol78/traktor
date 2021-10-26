@@ -29,8 +29,8 @@ std::wstring glsl_type_name(GlslType type)
 		L"image3D",
 		L"imageCube"	// GtImageCube
 	};
-	T_FATAL_ASSERT(type < sizeof_array(c));
-	return c[type];
+	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
+	return c[(int32_t)type];
 }
 
 int32_t glsl_type_width(GlslType type)
@@ -56,68 +56,68 @@ int32_t glsl_type_width(GlslType type)
 		0,	// GtImage3D
 		0	// GtImageCube
 	};
-	T_FATAL_ASSERT(type < sizeof_array(w));
-	return w[type];
+	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
+	return w[(int32_t)type];
 }
 
 GlslType glsl_promote_to_float(GlslType type)
 {
 	const GlslType w[] =
 	{
-		GtVoid,		// GtVoid
-		GtFloat,	// GtBoolean
-		GtFloat,	// GtInteger
-		GtFloat2,	// GtInteger2
-		GtFloat3,	// GtInteger3
-		GtFloat4,	// GtInteger4
-		GtFloat,	// GtFloat
-		GtFloat2,	// GtFloat2
-		GtFloat3,	// GtFloat3
-		GtFloat4,	// GtFloat4
-		GtFloat4x4,	// GtFloat4x4
-		GtVoid,		// GtTexture2D
-		GtVoid,		// GtTexture3D
-		GtVoid,		// GtTextureCube
-		GtVoid,		// GtStructBuffer
-		GtVoid,		// GtImage2D
-		GtVoid,		// GtImage3D
-		GtVoid		// GtImageCube
+		GlslType::Void,		// Void
+		GlslType::Float,	// Boolean
+		GlslType::Float,	// Integer
+		GlslType::Float2,	// Integer2
+		GlslType::Float3,	// Integer3
+		GlslType::Float4,	// Integer4
+		GlslType::Float,	// Float
+		GlslType::Float2,	// Float2
+		GlslType::Float3,	// Float3
+		GlslType::Float4,	// Float4
+		GlslType::Float4x4,	// Float4x4
+		GlslType::Void,		// Texture2D
+		GlslType::Void,		// Texture3D
+		GlslType::Void,		// TextureCube
+		GlslType::Void,		// StructBuffer
+		GlslType::Void,		// Image2D
+		GlslType::Void,		// Image3D
+		GlslType::Void		// ImageCube
 	};
-	T_FATAL_ASSERT(type < sizeof_array(w));
-	return w[type];
+	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
+	return w[(int32_t)type];
 }
 
 GlslType glsl_degrade_to_integer(GlslType type)
 {
 	const GlslType w[] =
 	{
-		GtVoid,		// GtVoid
-		GtInteger,	// GtBoolean
-		GtInteger,	// GtInteger
-		GtInteger2,	// GtInteger2
-		GtInteger3,	// GtInteger3
-		GtInteger4,	// GtInteger4
-		GtInteger,	// GtFloat
-		GtInteger2,	// GtFloat2
-		GtInteger3,	// GtFloat3
-		GtInteger4,	// GtFloat4
-		GtVoid,		// GtFloat4x4
-		GtVoid,		// GtTexture2D
-		GtVoid,		// GtTexture3D
-		GtVoid,		// GtTextureCube
-		GtVoid,		// GtStructBuffer
-		GtVoid,		// GtImage2D
-		GtVoid,		// GtImage3D
-		GtVoid		// GtImageCube
+		GlslType::Void,		// Void
+		GlslType::Integer,	// Boolean
+		GlslType::Integer,	// Integer
+		GlslType::Integer2,	// Integer2
+		GlslType::Integer3,	// Integer3
+		GlslType::Integer4,	// Integer4
+		GlslType::Integer,	// Float
+		GlslType::Integer2,	// Float2
+		GlslType::Integer3,	// Float3
+		GlslType::Integer4,	// Float4
+		GlslType::Void,		// Float4x4
+		GlslType::Void,		// Texture2D
+		GlslType::Void,		// Texture3D
+		GlslType::Void,		// TextureCube
+		GlslType::Void,		// StructBuffer
+		GlslType::Void,		// Image2D
+		GlslType::Void,		// Image3D
+		GlslType::Void		// ImageCube
 	};
-	T_FATAL_ASSERT(type < sizeof_array(w));
-	return w[type];	
+	T_FATAL_ASSERT((int32_t)type < sizeof_array(w));
+	return w[(int32_t)type];	
 }
 
 GlslType glsl_precedence(GlslType typeA, GlslType typeB)
 {
-	bool intA = (typeA >= GtBoolean && typeA <= GtInteger4);
-	bool intB = (typeB >= GtBoolean && typeB <= GtInteger4);
+	bool intA = (typeA >= GlslType::Boolean && typeA <= GlslType::Integer4);
+	bool intB = (typeB >= GlslType::Boolean && typeB <= GlslType::Integer4);
 
 	if (intA && !intB)
 		typeA = glsl_promote_to_float(typeA);
@@ -131,22 +131,22 @@ GlslType glsl_from_data_type(DataType type)
 {
 	const GlslType c[] =
 	{
-		GtFloat,	// DtFloat1
-		GtFloat2,	// DtFloat2
-		GtFloat3,	// DtFloat3
-		GtFloat4,	// DtFloat4
-		GtInteger4,	// DtByte4
-		GtFloat4,	// DtByte4N
-		GtInteger2,	// DtShort2
-		GtInteger4,	// DtShort4
-		GtFloat2,	// DtShort2N
-		GtFloat4,	// DtShort4N
-		GtFloat2,	// DtHalf2
-		GtFloat4,	// DtHalf4,
-		GtInteger,	// DtInteger1
-		GtInteger2,	// DtInteger2
-		GtInteger3,	// DtInteger3
-		GtInteger4	// DtInteger4
+		GlslType::Float,	// DtFloat1
+		GlslType::Float2,	// DtFloat2
+		GlslType::Float3,	// DtFloat3
+		GlslType::Float4,	// DtFloat4
+		GlslType::Integer4,	// DtByte4
+		GlslType::Float4,	// DtByte4N
+		GlslType::Integer2,	// DtShort2
+		GlslType::Integer4,	// DtShort4
+		GlslType::Float2,	// DtShort2N
+		GlslType::Float4,	// DtShort4N
+		GlslType::Float2,	// DtHalf2
+		GlslType::Float4,	// DtHalf4,
+		GlslType::Integer,	// DtInteger1
+		GlslType::Integer2,	// DtInteger2
+		GlslType::Integer3,	// DtInteger3
+		GlslType::Integer4	// DtInteger4
 	};
 	return c[type];
 }
@@ -155,16 +155,16 @@ GlslType glsl_from_parameter_type(ParameterType type)
 {
 	const GlslType c[] =
 	{
-		GtFloat,
-		GtFloat4,
-		GtFloat4x4,
-		GtTexture2D,
-		GtTexture3D,
-		GtTextureCube,
-		GtStructBuffer,
-		GtImage2D,
-		GtImage3D,
-		GtImageCube
+		GlslType::Float,
+		GlslType::Float4,
+		GlslType::Float4x4,
+		GlslType::Texture2D,
+		GlslType::Texture3D,
+		GlslType::TextureCube,
+		GlslType::StructBuffer,
+		GlslType::Image2D,
+		GlslType::Image3D,
+		GlslType::ImageCube
 	};
 	T_FATAL_ASSERT((int32_t)type < sizeof_array(c));
 	return c[(int32_t)type];
