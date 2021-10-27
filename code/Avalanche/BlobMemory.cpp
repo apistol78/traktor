@@ -31,5 +31,10 @@ Ref< IStream > BlobMemory::read() const
 	return new ChunkMemoryStream(m_memory, true, false);
 }
 
+bool BlobMemory::remove()
+{
+	return true;
+}
+
 	}
 }

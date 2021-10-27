@@ -32,5 +32,10 @@ Ref< IStream > BlobFile::read() const
 	return FileSystem::getInstance().open(m_path, File::FmRead);
 }
 
+bool BlobFile::remove()
+{
+	return FileSystem::getInstance().remove(m_path);
+}
+
 	}
 }

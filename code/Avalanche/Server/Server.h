@@ -38,7 +38,7 @@ class T_DLLCLASS Server : public Object
     T_RTTI_CLASS;
 
 public:
-    constexpr static int32_t c_majorVersion = 3;
+    constexpr static int32_t c_majorVersion = 4;
     constexpr static int32_t c_minorVersion = 0;
 
     bool create(const PropertyGroup* settings);

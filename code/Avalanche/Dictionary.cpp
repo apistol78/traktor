@@ -53,15 +53,23 @@ Ref< IBlob > Dictionary::create() const
 
 Ref< const IBlob > Dictionary::get(const Key& key) const
 {
-	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
-	auto it = m_blobs.find(key);
-	if (it != m_blobs.end())
-		return it->second;
-	else
-		return nullptr;
+	Ref< const IBlob > blob;
+	{
+		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
+		auto it = m_blobs.find(key);
+		if (it == m_blobs.end())
+			return nullptr;
+		blob = it->second;
+	}
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
+		for (auto listener : m_listeners)
+			listener->dictionaryGet(key);
+	}
+	return blob;
 }
 
-bool Dictionary::put(const Key& key, const IBlob* blob)
+bool Dictionary::put(const Key& key, IBlob* blob)
 {
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
@@ -83,13 +91,33 @@ bool Dictionary::put(const Key& key, const IBlob* blob)
 		m_stats.blobCount++;
 		m_stats.memoryUsage += blob->size();
 	}
-
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)
 			listener->dictionaryPut(key, blob);
 	}
+	return true;
+}
 
+bool Dictionary::remove(const Key& key)
+{
+	{
+		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
+
+		auto it = m_blobs.find(key);
+		if (it == m_blobs.end())
+			return false;
+
+		if (!it->second->remove())
+			return false;
+
+		m_blobs.erase(it);
+	}
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
+		for (auto listener : m_listeners)
+			listener->dictionaryRemove(key);
+	}
 	return true;
 }
 

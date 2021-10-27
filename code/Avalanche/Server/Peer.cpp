@@ -18,11 +18,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 Peer::Peer(
 	const net::SocketAddressIPv4& serverAddress,
 	const Guid& instanceId,
+	const bool peerMaster,
 	const std::wstring& name,
 	Dictionary* dictionary
 )
 :	m_client(new Client(serverAddress))
 ,	m_instanceId(instanceId)
+,	m_master(peerMaster)
 ,	m_dictionary(dictionary)
 ,	m_finished(false)
 {
@@ -36,8 +38,9 @@ Peer::Peer(
 			AlignedVector< Key > localKeys;
 			m_dictionary->snapshotKeys(localKeys);
 
-			// Replicate all local blobs which isn't available at peer.
 			log::info << L"Replicating dictionary to peer; " << localKeys.size() << L" local, " << remoteKeys.size() << L" remote keys." << Endl;
+
+			// Synchronize blobs.
 			for (const auto& localKey : localKeys)
 			{
 				if (m_thread->stopped())
@@ -49,24 +52,34 @@ Peer::Peer(
 				if (std::find(remoteKeys.begin(), remoteKeys.end(), localKey) != remoteKeys.end())
 					continue;
 
-				Ref< const IBlob > blob = m_dictionary->get(localKey);
-				if (!blob)
-					continue;
-
-				Ref< IStream > peerStream = m_client->put(localKey);
-				if (!peerStream)
+				if (!m_master)
 				{
-					log::error << L"Replication of " << localKey.format() << L" failed; unable to create remote blob." << Endl;
-					continue;
+					// Peer is no master then we send our blob to it.
+					Ref< const IBlob > blob = m_dictionary->get(localKey);
+					if (!blob)
+						continue;
+
+					Ref< IStream > peerStream = m_client->put(localKey);
+					if (!peerStream)
+					{
+						log::error << L"Replication of " << localKey.format() << L" failed; unable to create remote blob." << Endl;
+						continue;
+					}
+
+					Ref< IStream > readStream = blob->read();
+					if (readStream)
+					{
+						log::info << L"Replicating " << localKey.format() << L" to peer " << name << L"." << Endl;
+						StreamCopy(peerStream, readStream).execute();
+						peerStream->close();
+						readStream->close();
+					}
 				}
-
-				Ref< IStream > readStream = blob->read();
-				if (readStream)
+				else
 				{
-					log::info << L"Replicating " << localKey.format() << L" to peer " << name << L"." << Endl;
-					StreamCopy(peerStream, readStream).execute();
-					peerStream->close();
-					readStream->close();
+					// Peer is a master so we need to remove local blob.
+					log::info << L"Removing " << localKey.format() << L"..." << Endl;
+					m_dictionary->remove(localKey);
 				}
 			}
 
@@ -125,14 +138,28 @@ const net::SocketAddressIPv4& Peer::getServerAddress() const
 	return m_client->getServerAddress();
 }
 
+void Peer::dictionaryGet(const Key& key)
+{
+}
+
 void Peer::dictionaryPut(const Key& key, const IBlob* blob)
 {
-	if (!m_client->have(key))
+	if (m_client->have(key))
+		return;
+
+	// Add to event queue.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 		m_queue.push_back(key);
-		m_eventQueued.broadcast();
 	}
+
+	m_eventQueued.broadcast();
+}
+
+void Peer::dictionaryRemove(const Key& key)
+{
+	if (!m_master)
+		m_client->evict(key);
 }
 
 	}

@@ -36,7 +36,11 @@ public:
 
 	struct IListener
 	{
+		virtual void dictionaryGet(const Key& key) = 0;
+
 		virtual void dictionaryPut(const Key& key, const IBlob* blob) = 0;
+
+		virtual void dictionaryRemove(const Key& key) = 0;
 	};
 
 	bool create(const Path& blobsPath);
@@ -45,7 +49,9 @@ public:
 
 	Ref< const IBlob > get(const Key& key) const;
 
-	bool put(const Key& key, const IBlob* blob);
+	bool put(const Key& key, IBlob* blob);
+
+	bool remove(const Key& key);
 
 	void snapshotKeys(AlignedVector< Key >& outKeys) const;
 
@@ -59,7 +65,7 @@ private:
 	mutable ReaderWriterLock m_lockBlobs;
 	mutable Semaphore m_lockListeners;
 	Path m_blobsPath;
-	SmallMap< Key, Ref< const IBlob > > m_blobs;
+	SmallMap< Key, Ref< IBlob > > m_blobs;
 	AlignedVector< IListener* > m_listeners;
 	Stats m_stats;
 };

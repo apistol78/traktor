@@ -40,6 +40,10 @@ public:
 
 	bool have(const Key& key);
 
+	bool touch(const Key& key);
+
+	bool evict(const Key& key);
+
 	Ref< IStream > get(const Key& key);
 
 	Ref< IStream > put(const Key& key);

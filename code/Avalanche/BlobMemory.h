@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< IStream > read() const override final;
 
+	virtual bool remove() override final;
+
 private:
 	Ref< ChunkMemory > m_memory;
 };
