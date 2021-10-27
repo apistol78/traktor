@@ -288,6 +288,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 
 		// Build collision shape mesh.
 		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+		outputShapeMeshAsset->setCalculateConvexHull(false);
 		outputShapeMeshAsset->setMaterials(materialPhysics);
 		pipelineBuilder->buildAdHocOutput(
 			outputShapeMeshAsset,

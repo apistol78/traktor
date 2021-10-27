@@ -15,6 +15,7 @@
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
+#include "Shape/Editor/Bake/Embree/SplitModel.h"
 
 namespace traktor
 {
@@ -134,8 +135,12 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
+
 	if (m_irradianceCache)
 		delete m_irradianceCache;
+
+	for (auto buffer : m_buffers)
+		delete[] buffer;
 }
 
 void RayTracerEmbree::addEnvironment(const IblProbe* environment)
@@ -150,67 +155,81 @@ void RayTracerEmbree::addLight(const Light& light)
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
-	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
-	rtcSetGeometryVertexAttributeCount(mesh, 1);
+	float* positions = new float [3 * model->getVertices().size()];
+	float* texCoords = new float [2 * model->getVertices().size()];
 
-	float* positions = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getVertices().size());
-	float* texCoords = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT2, 2 * sizeof(float), model->getVertices().size());
-
+	float* pp = positions;
+	float* pt = texCoords;
 	for (uint32_t i = 0; i < model->getVertexCount(); ++i)
 	{
 		const auto& vertex = model->getVertex(i);
 
 		Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
-		*positions++ = p.x();
-		*positions++ = p.y();
-		*positions++ = p.z();
+		*pp++ = p.x();
+		*pp++ = p.y();
+		*pp++ = p.z();
 
 		Vector2 uv(0.0f, 0.0f);
 		if (vertex.getTexCoord(0) != model::c_InvalidIndex)
 			uv = model->getTexCoord(vertex.getTexCoord(0));
-		*texCoords++ = uv.x;
-		*texCoords++ = uv.y;
+		*pt++ = uv.x;
+		*pt++ = uv.y;
 
 		m_boundingBox.contain(p);
 	}
 
-	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
-	for (const auto& polygon : model->getPolygons())
-	{
-		*triangles++ = polygon.getVertex(2);
-		*triangles++ = polygon.getVertex(1);
-		*triangles++ = polygon.getVertex(0);
-	}
+	m_buffers.push_back(positions);
+	m_buffers.push_back(texCoords);
 
-	// Add filter functions if model contain alpha-test material.
-	for (const auto& material : model->getMaterials())
+	RefArray< model::Model > splits;
+	splitModel(model, splits);
+
+	for (auto split : splits)
 	{
-		if (
-			material.getBlendOperator() == model::Material::BoAlphaTest &&
-			material.getDiffuseMap().image != nullptr
-		)
+		RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+		rtcSetGeometryVertexAttributeCount(mesh, 1);
+
+		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), model->getVertices().size());
+		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
+
+		uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), split->getPolygons().size());
+		for (const auto& polygon : split->getPolygons())
 		{
-			rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
-			rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+			*triangles++ = polygon.getVertex(2);
+			*triangles++ = polygon.getVertex(1);
+			*triangles++ = polygon.getVertex(0);
+		}
+
+		// Add filter functions if model contain alpha-test material.
+		for (const auto& material : split->getMaterials())
+		{
+			if (
+				material.getBlendOperator() == model::Material::BoAlphaTest &&
+				material.getDiffuseMap().image != nullptr
+			)
+			{
+				rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+				rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+			}
+		}
+
+		// Attach this class as user data to geometry.
+		rtcSetGeometryUserData(mesh, this);
+
+		rtcCommitGeometry(mesh);
+		rtcAttachGeometry(m_scene, mesh);
+		rtcReleaseGeometry(mesh);
+
+		// Create a flatten list of materials to reduce number of indirections while tracing.
+		m_materialOffset.push_back((uint32_t)m_materials.size());
+		for (const auto& polygon : split->getPolygons())
+		{
+			const auto& material = model->getMaterial(polygon.getMaterial());
+			m_materials.push_back(&material);
 		}
 	}
 
-	// Attach this class as user data to geometry.
-	rtcSetGeometryUserData(mesh, this);
-
-	rtcCommitGeometry(mesh);
-	rtcAttachGeometry(m_scene, mesh);
-	rtcReleaseGeometry(mesh);
-
 	m_models.push_back(model);
-
-	// Create a flatten list of materials to reduce number of indirections while tracing.
-	m_materialOffset.push_back((uint32_t)m_materials.size());
-	for (const auto& polygon : model->getPolygons())
-	{
-		const auto& material = model->getMaterial(polygon.getMaterial());
-		m_materials.push_back(&material);
-	}
 }
 
 void RayTracerEmbree::commit()
@@ -401,10 +420,7 @@ Color4f RayTracerEmbree::tracePath0(
 			const auto& rh = rhv[j];
 			const auto& direction = directions[j];
 
-			if (
-				rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
-				rh.hit.geomID >= m_models.size()
-			)
+			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 			{
 				// Nothing hit, sample sky if available else it's all black.
 				if (m_environment)
@@ -523,10 +539,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	rtcInitIntersectContext(&context);
 	rtcIntersect1(m_scene, &context, &rh);
 
-	if (
-		rh.hit.geomID == RTC_INVALID_GEOMETRY_ID ||
-		rh.hit.geomID >= m_models.size()
-	)
+	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 	{
 		// Nothing hit, sample sky if available else it's all black.
 		if (m_environment)
