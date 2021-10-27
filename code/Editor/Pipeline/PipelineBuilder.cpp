@@ -487,21 +487,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	if (cacheable)
 		currentDependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
 
-	// Check database if this build already exist in output.
-	if (!m_rebuild && cacheable)
-	{
-		PipelineDependencyHash previousDependencyHash;
-		if (m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
-		{
-			if (currentDependencyHash == previousDependencyHash)
-				return true;
-		}
-	}
-
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
 	if (m_verbose)
-		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(sourceAsset) << L")..." << Endl;
+		log::info << L"Building \"" << dependency->outputPath << L"\"..." << Endl;
 
 	log::info << IncreaseIndent;
 
@@ -521,8 +510,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		{
 			if (m_verbose)
 				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
-
-			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
 			m_cacheHit++;
 			m_succeededBuilt++;
@@ -586,8 +573,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			log::info << DecreaseIndent;
 		}
 #endif
-
-		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 	}
 
 	log::info << DecreaseIndent;
