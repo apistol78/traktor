@@ -29,6 +29,8 @@ public:
 	virtual Ref< IStream > append() = 0;
 
 	virtual Ref< IStream > read() const = 0;
+
+	virtual bool remove() = 0;
 };
 
 	}

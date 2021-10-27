@@ -157,7 +157,10 @@ bool Server::update()
 			{
 				int32_t majorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Major", 0);
 				int32_t minorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Minor", 0);
-				if (majorVersion >= c_majorVersion)
+				if (
+					majorVersion == c_majorVersion &&
+					minorVersion >= c_minorVersion
+				)
 				{
 					std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
 					std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
@@ -175,7 +178,7 @@ bool Server::update()
 					log::info << L"  Protocol      : " << majorVersion << L"." << minorVersion << Endl;
 
 					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
-					peers.push_back(new Peer(peerAddress, peerInstanceId, name, m_dictionary));
+					peers.push_back(new Peer(peerAddress, peerInstanceId, peerMaster, name, m_dictionary));
 				}
 			}
 		}

@@ -36,6 +36,7 @@ public:
 	explicit Peer(
 		const net::SocketAddressIPv4& serverAddress,
 		const Guid& instanceId,
+		const bool master,
 		const std::wstring& name,
 		Dictionary* dictionary
 	);
@@ -48,11 +49,16 @@ public:
 
 	// Dictionary::IListener
 
+	virtual void dictionaryGet(const Key& key) override final;
+
 	virtual void dictionaryPut(const Key& key, const IBlob* blob) override final;
+
+	virtual void dictionaryRemove(const Key& key) override final;
 
 private:
 	Ref< Client > m_client;
 	Guid m_instanceId;
+	bool m_master;
 	Dictionary* m_dictionary = nullptr;
 	Thread* m_thread = nullptr;
 	std::atomic< bool > m_finished;

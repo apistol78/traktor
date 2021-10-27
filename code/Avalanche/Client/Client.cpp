@@ -83,6 +83,62 @@ bool Client::have(const Key& key)
 	return reply == c_replyOk;
 }
 
+bool Client::touch(const Key& key)
+{
+	Ref< net::SocketStream > stream  = establish(c_commandTouch);
+	if (!stream)
+		return false;
+
+	if (!key.write(stream))
+	{
+		log::error << L"Unable to write key to server (touch)." << Endl;
+		return false;
+	}
+
+	uint8_t reply = 0;
+	if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+	{
+		log::error << L"Unable to read reply from server (touch)." << Endl;
+		return false;
+	}
+
+	if (reply == c_replyOk || reply == c_replyFailure)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_streams.push_back(stream);
+	}
+
+	return reply == c_replyOk;
+}
+
+bool Client::evict(const Key& key)
+{
+	Ref< net::SocketStream > stream  = establish(c_commandEvict);
+	if (!stream)
+		return false;
+
+	if (!key.write(stream))
+	{
+		log::error << L"Unable to write key to server (evict)." << Endl;
+		return false;
+	}
+
+	uint8_t reply = 0;
+	if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+	{
+		log::error << L"Unable to read reply from server (evict)." << Endl;
+		return false;
+	}
+
+	if (reply == c_replyOk || reply == c_replyFailure)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_streams.push_back(stream);
+	}
+
+	return reply == c_replyOk;
+}
+
 Ref< IStream > Client::get(const Key& key)
 {
 	Ref< net::SocketStream > stream = establish(c_commandGet);

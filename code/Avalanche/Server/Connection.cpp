@@ -282,6 +282,45 @@ bool Connection::process()
 		}
 		break;
 
+	case c_commandTouch:
+		{
+			Key key = Key::read(m_clientStream);
+			if (!key.valid())
+			{
+				log::warning << L"Failed to read key; terminating connection." << Endl;
+				return false;
+			}
+
+			log::info << L"[TOUCH " << key.format() << L"]" << Endl;
+			if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
+				return false;
+		}
+		break;
+
+	case c_commandEvict:
+		{
+			Key key = Key::read(m_clientStream);
+			if (!key.valid())
+			{
+				log::warning << L"Failed to read key; terminating connection." << Endl;
+				return false;
+			}
+
+			if (m_dictionary->remove(key))
+			{
+				log::info << L"[EVICT " << key.format() << L"] Blob removed." << Endl;
+				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
+					return false;
+			}
+			else
+			{
+				log::info << L"[EVICT " << key.format() << L"] No such blob." << Endl;
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
+					return false;				
+			}
+		}
+		break;
+
 	default:
 		log::error << L"Invalid command from client; terminating connection." << Endl;
 		return false;

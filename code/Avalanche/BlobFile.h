@@ -29,6 +29,8 @@ public:
 
 	virtual Ref< IStream > read() const override final;
 
+	virtual bool remove() override final;
+
 private:
     Path m_path;
 	int32_t m_size;
