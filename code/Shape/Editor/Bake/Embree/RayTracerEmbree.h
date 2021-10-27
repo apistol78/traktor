@@ -64,6 +64,7 @@ private:
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device = nullptr;
 	RTCScene m_scene = nullptr;
+	AlignedVector< float* > m_buffers;
 	RefArray< const model::Model > m_models;
 	AlignedVector< uint32_t > m_materialOffset;
 	AlignedVector< const model::Material* > m_materials;
