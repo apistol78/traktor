@@ -32,7 +32,7 @@ Ref< File > NativeVolume::get(const Path& path)
 
 	std::wstring systemPath = getSystemPath(path);
 	if (stat(wstombs(systemPath).c_str(), &st) != 0)
-		return 0;
+		return nullptr;
 
 	DateTime adt(uint64_t(st.st_atime));
 	DateTime mdt(uint64_t(st.st_mtime));
@@ -101,6 +101,11 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
+{
+	return false;
+}
+
+bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
 {
 	return false;
 }

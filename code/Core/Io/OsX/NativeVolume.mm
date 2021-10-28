@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
+#include <utime.h>
 #include <Foundation/Foundation.h>
 #include "Core/Date/DateTime.h"
 #include "Core/Io/File.h"
@@ -129,6 +130,33 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 {
 	return false;
+}
+
+bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	std::string systemPath = wstombs(getSystemPath(fileName));
+
+	utimbuf utb = {};
+
+	if (lastAccessTime == nullptr || lastWriteTime == nullptr)
+	{
+		struct stat st = {};
+		if (stat(systemPath.c_str(), &st) != 0)
+			return false;
+
+		utb.actime = st.st_atime;
+		utb.modtime = st.st_mtime;
+	}
+
+	if (lastAccessTime != nullptr)
+		utb.actime = lastAccessTime->getSecondsSinceEpoch();
+	if (lastWriteTime != nullptr)
+		utb.modtime = lastWriteTime->getSecondsSinceEpoch();
+
+	if (utime(systemPath.c_str(), &utb) != 0)
+		return false;
+
+	return true;
 }
 
 Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)

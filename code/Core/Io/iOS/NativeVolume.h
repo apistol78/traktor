@@ -21,35 +21,37 @@ class T_DLLCLASS NativeVolume : public IVolume
 	T_RTTI_CLASS;
 
 public:
-	NativeVolume(const Path& currentDirectory);
+	explicit NativeVolume(const Path& currentDirectory);
 
-	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getDescription() const override final;
 
-	virtual Ref< File > get(const Path& path) T_OVERRIDE T_FINAL;
+	virtual Ref< File > get(const Path& path) override final;
 
-	virtual int find(const Path& mask, RefArray< File >& out) T_OVERRIDE T_FINAL;
+	virtual int find(const Path& mask, RefArray< File >& out) override final;
 
-	virtual bool modify(const Path& fileName, uint32_t flags) T_OVERRIDE T_FINAL;
+	virtual bool modify(const Path& fileName, uint32_t flags) override final;
 
-	virtual Ref< IStream > open(const Path& filename, uint32_t mode) T_OVERRIDE T_FINAL;
+	virtual bool modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime) override final;
 
-	virtual bool exist(const Path& filename) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > open(const Path& filename, uint32_t mode) override final;
 
-	virtual bool remove(const Path& filename) T_OVERRIDE T_FINAL;
+	virtual bool exist(const Path& filename) override final;
 
-	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite) T_OVERRIDE T_FINAL;
+	virtual bool remove(const Path& filename) override final;
 
-	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite) T_OVERRIDE T_FINAL;
+	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite) override final;
 
-	virtual bool makeDirectory(const Path& directory) T_OVERRIDE T_FINAL;
+	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite) override final;
 
-	virtual bool removeDirectory(const Path& directory) T_OVERRIDE T_FINAL;
+	virtual bool makeDirectory(const Path& directory) override final;
 
-	virtual bool renameDirectory(const Path& directory, const std::wstring& newName) T_OVERRIDE T_FINAL;
+	virtual bool removeDirectory(const Path& directory) override final;
 
-	virtual bool setCurrentDirectory(const Path& directory) T_OVERRIDE T_FINAL;
+	virtual bool renameDirectory(const Path& directory, const std::wstring& newName) override final;
 
-	virtual Path getCurrentDirectory() const T_OVERRIDE T_FINAL;
+	virtual bool setCurrentDirectory(const Path& directory) override final;
+
+	virtual Path getCurrentDirectory() const override final;
 
 	static void mountVolumes(FileSystem& fileSystem);
 
