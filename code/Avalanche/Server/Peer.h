@@ -58,11 +58,11 @@ public:
 private:
 	Ref< Client > m_client;
 	Guid m_instanceId;
-	bool m_master;
+	bool m_peerMaster;
 	Dictionary* m_dictionary = nullptr;
 	Thread* m_thread = nullptr;
 	std::atomic< bool > m_finished;
-	AlignedVector< Key > m_queue;
+	AlignedVector< std::pair< Key, uint8_t > > m_queue;
 	Semaphore m_queueLock;
 	Event m_eventQueued;
 };

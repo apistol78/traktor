@@ -96,6 +96,7 @@ void WINAPI serviceMain(DWORD argc, TCHAR* argv[])
 		settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
 		settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
 		settings->setProperty< PropertyString >(L"Avalanche.Path", cmdLine.getOption('d', L"dictionary-path").getString());
+		settings->setProperty< PropertyInteger >(L"Avalanche.MemoryBudget", cmdLine.getOption('b', L"memory-budget").getInteger());
 
 		if (!net::Network::initialize())
 		{
@@ -266,6 +267,7 @@ int main(int argc, const char** argv)
 		log::info << L"    -m, -master           Master node." << Endl;
 		log::info << L"    -p, -port             Port number (default 40001)." << Endl;
 		log::info << L"    -d, -dictionary-path  Path to dictionary blobs." << Endl;
+		log::info << L"    -b, -memory-budget    Memory budget in GiB (default 8)." << Endl;
 #if defined(_WIN32)
 		log::info << L"    -install-service      Install as NT service." << Endl;
 		log::info << L"    -uninstall-service    Uninstall as NT service." << Endl;
@@ -357,7 +359,7 @@ int main(int argc, const char** argv)
 	settings->setProperty< PropertyInteger >(L"Avalanche.Port", port);
 	settings->setProperty< PropertyBoolean >(L"Avalanche.Master", cmdLine.hasOption('m', L"master"));
 	settings->setProperty< PropertyString >(L"Avalanche.Path", cmdLine.getOption('d', L"dictionary-path").getString());
-
+	settings->setProperty< PropertyInteger >(L"Avalanche.MemoryBudget", cmdLine.getOption('b', L"memory-budget").getInteger());
 	if (!net::Network::initialize())
 	{
 		log::error << L"Unable to initialize networking." << Endl;

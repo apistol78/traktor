@@ -35,6 +35,8 @@ public:
 
     virtual bool modify(const Path& fileName, uint32_t flags) override final;
 
+    virtual bool modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime) override final;
+
     virtual Ref< IStream > open(const Path& fileName, uint32_t mode) override final;
 
     virtual bool exist(const Path& fileName) override final;

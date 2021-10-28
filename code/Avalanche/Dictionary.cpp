@@ -51,9 +51,9 @@ Ref< IBlob > Dictionary::create() const
 	return new BlobMemory();
 }
 
-Ref< const IBlob > Dictionary::get(const Key& key) const
+Ref< IBlob > Dictionary::get(const Key& key) const
 {
-	Ref< const IBlob > blob;
+	Ref< IBlob > blob;
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lockBlobs);
 		auto it = m_blobs.find(key);
@@ -108,8 +108,13 @@ bool Dictionary::remove(const Key& key)
 		if (it == m_blobs.end())
 			return false;
 
+		uint64_t size = it->second->size();
+
 		if (!it->second->remove())
 			return false;
+
+		m_stats.blobCount--;
+		m_stats.memoryUsage -= size;
 
 		m_blobs.erase(it);
 	}

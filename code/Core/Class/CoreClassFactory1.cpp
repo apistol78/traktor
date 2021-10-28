@@ -341,7 +341,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIVolume->addProperty("description", &IVolume::getDescription);
 	classIVolume->addMethod("get", &IVolume::get);
 	classIVolume->addMethod("find", &IVolume_find);
-	classIVolume->addMethod("modify", &IVolume::modify);
+	//classIVolume->addMethod("modify", &IVolume::modify);
 	classIVolume->addMethod("open", &IVolume::open);
 	classIVolume->addMethod("exist", &IVolume::exist);
 	classIVolume->addMethod("remove", &IVolume::remove);
@@ -426,7 +426,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFileSystem->addMethod("getVolumeId", &FileSystem::getVolumeId);
 	classFileSystem->addMethod("get", &FileSystem::get);
 	classFileSystem->addMethod("find", &FileSystem_find);
-	classFileSystem->addMethod("modify", &FileSystem::modify);
+	//classFileSystem->addMethod("modify", &FileSystem::modify);
 	classFileSystem->addMethod("open", &FileSystem::open);
 	classFileSystem->addMethod("exist", &FileSystem::exist);
 	classFileSystem->addMethod("remove", &FileSystem::remove);

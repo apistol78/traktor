@@ -19,16 +19,39 @@ namespace traktor
 
 DateTime createDateTime(const FILETIME& ft)
 {
-	SYSTEMTIME st;
+	SYSTEMTIME st = {};
 	FileTimeToSystemTime(&ft, &st);
+
+	SYSTEMTIME lt = {};
+	SystemTimeToTzSpecificLocalTime(NULL, &st, &lt);
+
 	return DateTime(
-		st.wYear,
-		uint8_t(st.wMonth),
-		st.wDay,
-		uint8_t(st.wHour),
-		uint8_t(st.wMinute),
-		uint8_t(st.wSecond)
+		lt.wYear,
+		uint8_t(lt.wMonth),
+		lt.wDay,
+		uint8_t(lt.wHour),
+		uint8_t(lt.wMinute),
+		uint8_t(lt.wSecond)
 	);
+}
+
+FILETIME createFileTime(const DateTime& dt)
+{
+	SYSTEMTIME lt = {};
+	lt.wYear = dt.getYear();
+	lt.wMonth = dt.getMonth();
+	lt.wDayOfWeek = dt.getWeekDay();
+	lt.wDay = dt.getDay();
+	lt.wHour = dt.getHour();
+	lt.wMinute = dt.getMinute();
+	lt.wSecond = dt.getSecond();
+
+	SYSTEMTIME st = {};
+	TzSpecificLocalTimeToSystemTime(NULL, &lt, &st);
+
+	FILETIME ft;
+	SystemTimeToFileTime(&st, &ft);
+	return ft;
 }
 
 	}
@@ -153,7 +176,42 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 		dwAttr
 	);
 
-	return bool(result != FALSE);
+	return (bool)(result != FALSE);
+}
+
+bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	std::wstring systemPath = getSystemPath(fileName);
+
+	HANDLE hFile = CreateFile(
+		wstots(systemPath).c_str(),
+		GENERIC_WRITE,
+		FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL
+	);
+	if (hFile == INVALID_HANDLE_VALUE)
+		return false;
+
+	FILETIME ct, at, wt;
+	if (creationTime)
+		ct = createFileTime(*creationTime);
+	if (lastAccessTime)
+		at = createFileTime(*lastAccessTime);
+	if (lastWriteTime)
+		wt = createFileTime(*lastWriteTime);
+
+	BOOL result = SetFileTime(
+		hFile,
+		creationTime != nullptr ? &ct : nullptr,
+		lastAccessTime != nullptr ? &at : nullptr,
+		lastWriteTime != nullptr ? &wt : nullptr
+	);
+
+	CloseHandle(hFile);
+	return (bool)(result != FALSE);
 }
 
 Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)

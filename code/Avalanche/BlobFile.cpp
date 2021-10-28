@@ -37,5 +37,20 @@ bool BlobFile::remove()
 	return FileSystem::getInstance().remove(m_path);
 }
 
+bool BlobFile::touch()
+{
+	DateTime accessTime = DateTime::now();
+	return FileSystem::getInstance().modify(m_path, nullptr, &accessTime, nullptr);
+}
+
+DateTime BlobFile::lastAccessed() const
+{
+	Ref< File > file = FileSystem::getInstance().get(m_path);
+	if (file)
+		return file->getLastAccessTime();
+	else
+		return DateTime();
+}
+
 	}
 }

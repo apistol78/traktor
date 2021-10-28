@@ -132,6 +132,12 @@ bool FileSystem::modify(const Path& fileName, uint32_t flags)
 	return volume ? volume->modify(fileName, flags) : false;
 }
 
+bool FileSystem::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	Ref< IVolume > volume = getVolume(fileName);
+	return volume ? volume->modify(fileName, creationTime, lastAccessTime, lastWriteTime) : false;
+}
+
 Ref< IStream > FileSystem::open(const Path& fileName, uint32_t mode)
 {
 	Ref< IVolume > volume = getVolume(fileName);

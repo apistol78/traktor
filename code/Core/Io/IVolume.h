@@ -63,6 +63,16 @@ public:
 	 */
 	virtual bool modify(const Path& fileName, uint32_t flags) = 0;
 
+	/*! Modify file's time stamps.
+	 *
+	 * \param fileName Path to file to modify.
+	 * \param creationTime New creation time stamp, optional.
+	 * \param lastAccessTime New last access time stamp, optional.
+	 * \param lastWriteTime New last write time stamp, optional.
+	 * \return True if file time stamps was successfully modified.
+	 */
+	virtual bool modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime) = 0;
+
 	/*! Open stream into named resource.
 	 *
 	 * \param fileNname Name of file or directory.
