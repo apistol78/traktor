@@ -31,6 +31,10 @@ public:
 
 	virtual bool remove() override final;
 
+	virtual bool touch() override final;
+
+	virtual DateTime lastAccessed() const override final;
+
 private:
     Path m_path;
 	int32_t m_size;

@@ -291,6 +291,25 @@ bool Connection::process()
 				return false;
 			}
 
+			Ref< IBlob > blob = m_dictionary->get(key);
+			if (blob == nullptr)
+			{
+				log::error << L"[TOUCH " << key.format() << L"] No such blob." << Endl;
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
+					return false;
+
+				return true;
+			}
+
+			if (!blob->touch())
+			{
+				log::error << L"[TOUCH " << key.format() << L"] Unable to touch blob." << Endl;
+				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
+					return false;
+
+				return true;
+			}
+
 			log::info << L"[TOUCH " << key.format() << L"]" << Endl;
 			if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 				return false;

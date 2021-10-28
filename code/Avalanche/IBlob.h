@@ -2,6 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Date/DateTime.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +32,10 @@ public:
 	virtual Ref< IStream > read() const = 0;
 
 	virtual bool remove() = 0;
+
+	virtual bool touch() = 0;
+
+	virtual DateTime lastAccessed() const = 0;
 };
 
 	}

@@ -57,6 +57,7 @@ private:
     Ref< Dictionary > m_dictionary;
     Guid m_instanceId;
     bool m_master = false;
+    int32_t m_memoryBudget = 8;
 };
 
     }

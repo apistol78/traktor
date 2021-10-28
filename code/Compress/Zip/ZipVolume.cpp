@@ -256,6 +256,11 @@ bool ZipVolume::modify(const Path& fileName, uint32_t flags)
 	return false;
 }
 
+bool ZipVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	return false;
+}
+
 Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 {
 	char fileNameTmp[4096];

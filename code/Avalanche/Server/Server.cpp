@@ -1,4 +1,5 @@
 #include "Avalanche/Dictionary.h"
+#include "Avalanche/IBlob.h"
 #include "Avalanche/Server/Connection.h"
 #include "Avalanche/Server/Server.h"
 #include "Avalanche/Server/Peer.h"
@@ -80,6 +81,7 @@ bool Server::create(const PropertyGroup* settings)
 	}
 
 	m_master = settings->getProperty< bool >(L"Avalanche.Master", false);
+	m_memoryBudget = settings->getProperty< int32_t >(L"Avalanche.MemoryBudget", 8);
 
 	log::info << L"Server started successfully (" << (m_master ? L"Master" : L"Slave") << L")." << Endl;
 	return true;
@@ -192,6 +194,54 @@ bool Server::update()
 		}
 	}
 	m_peers = peers;
+
+	// Execute eviction policy.
+	if (m_master)
+	{
+		const uint64_t maxMemoryUsage = (uint64_t)m_memoryBudget * 1024UL * 1024UL * 1024UL;
+
+		Dictionary::Stats stats;
+		if (m_dictionary->getStats(stats))
+		{
+			if (stats.memoryUsage >= maxMemoryUsage)
+			{
+				AlignedVector< std::pair< Key, DateTime > > queue;
+
+				// Get snapshot of keys and last access time stamps.
+				AlignedVector< Key > keys;
+				m_dictionary->snapshotKeys(keys);
+				for (const auto& key : keys)
+				{
+					Ref< IBlob > blob = m_dictionary->get(key);
+					if (!blob)
+						continue;
+					queue.push_back({
+						key,
+						blob->lastAccessed()
+					});
+				}
+
+				// Sort eviction candidates on longest since access first.
+				std::sort(queue.begin(), queue.end(), [](const std::pair< Key, DateTime >& lh, const std::pair< Key, DateTime >& rh) {
+					return lh.second < rh.second;
+				});
+
+				// Evict blobs until memory budget is meet.
+				auto it = queue.begin();
+				while (it != queue.end() && stats.memoryUsage >= maxMemoryUsage)
+				{
+					Ref< IBlob > blob = m_dictionary->get(it->first);
+					if (!blob)
+						continue;
+
+					stats.memoryUsage -= blob->size();
+					m_dictionary->remove(it->first);
+
+					++it;
+				}
+			}
+		}
+	}
 
 	return true;
 }

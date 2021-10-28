@@ -47,7 +47,7 @@ public:
 
 	Ref< IBlob > create() const;
 
-	Ref< const IBlob > get(const Key& key) const;
+	Ref< IBlob > get(const Key& key) const;
 
 	bool put(const Key& key, IBlob* blob);
 

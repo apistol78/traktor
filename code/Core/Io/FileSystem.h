@@ -118,6 +118,16 @@ public:
 	 */
 	bool modify(const Path& fileName, uint32_t flags);
 
+	/*! Modify file's time stamps.
+	 *
+	 * \param fileName Path to file to modify.
+	 * \param creationTime New creation time stamp, optional.
+	 * \param lastAccessTime New last access time stamp, optional.
+	 * \param lastWriteTime New last write time stamp, optional.
+	 * \return True if file time stamps was successfully modified.
+	 */
+	bool modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime);
+
 	/*! Open file for reading or writing.
 	 *
 	 * \param fileName Path to file to open.

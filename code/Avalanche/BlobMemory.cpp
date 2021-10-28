@@ -11,6 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.BlobMemory", BlobMemory, Object)
 
 BlobMemory::BlobMemory()
 :	m_memory(new ChunkMemory())
+,	m_lastAccessed(DateTime::now())
 {
 }
 
@@ -28,12 +29,24 @@ Ref< IStream > BlobMemory::append()
 
 Ref< IStream > BlobMemory::read() const
 {
+	m_lastAccessed = DateTime::now();
 	return new ChunkMemoryStream(m_memory, true, false);
 }
 
 bool BlobMemory::remove()
 {
 	return true;
+}
+
+bool BlobMemory::touch()
+{
+	m_lastAccessed = DateTime::now();
+	return true;
+}
+
+DateTime BlobMemory::lastAccessed() const
+{
+	return m_lastAccessed;
 }
 
 	}
