@@ -242,7 +242,7 @@ int main(int argc, const char** argv)
 	else
 	{
 		log::error << L"Unable to write pipeline configuration." << Endl;
-		return false;
+		return 1;
 	}
 
 	StringOutputStream ss;
@@ -269,7 +269,7 @@ int main(int argc, const char** argv)
 	if (!process)
 	{
 		log::error << L"Failed to launch pipeline process." << Endl;
-		return false;
+		return 1;
 	}
 
 	PipeReader stdOutReader(
