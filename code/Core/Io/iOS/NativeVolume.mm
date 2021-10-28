@@ -54,7 +54,7 @@ Ref< File > NativeVolume::get(const Path& path)
 {
 	struct stat sb;
 	if (stat(wstombs(getSystemPath(path)).c_str(), &sb) != 0)
-		return 0;
+		return nullptr;
 
 	uint32_t flags = 0;
 	/*
@@ -125,6 +125,11 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
+{
+	return false;
+}
+
+bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
 {
 	return false;
 }

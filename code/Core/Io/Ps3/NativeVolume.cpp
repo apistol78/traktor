@@ -24,7 +24,7 @@ std::wstring NativeVolume::getDescription() const
 
 Ref< File > NativeVolume::get(const Path& path)
 {
-	return 0;
+	return nullptr;
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
@@ -78,6 +78,11 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
+{
+	return false;
+}
+
+bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
 {
 	return false;
 }
