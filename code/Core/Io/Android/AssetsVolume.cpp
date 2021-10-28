@@ -25,7 +25,7 @@ std::wstring AssetsVolume::getDescription() const
 
 Ref< File > AssetsVolume::get(const Path& path)
 {
-	return 0;
+	return nullptr;
 }
 
 int AssetsVolume::find(const Path& mask, RefArray< File >& out)
@@ -35,7 +35,12 @@ int AssetsVolume::find(const Path& mask, RefArray< File >& out)
 
 bool AssetsVolume::modify(const Path& fileName, uint32_t flags)
 {
-	return 0;
+	return false;
+}
+
+bool AssetsVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	return false;
 }
 
 Ref< IStream > AssetsVolume::open(const Path& filename, uint32_t mode)
@@ -52,7 +57,7 @@ Ref< IStream > AssetsVolume::open(const Path& filename, uint32_t mode)
 	if (!assetFile)
 	{
 		log::error << L"Unable to open asset \"" << filename.getPathNameNoVolume() << L"\"; AAssetManager_open return null." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< IStream > is = new AssetsStream(assetFile);
@@ -64,7 +69,7 @@ Ref< IStream > AssetsVolume::open(const Path& filename, uint32_t mode)
 	if (!ret)
 	{
 		log::error << L"Unable to open cached asset \"" << cpath.getPathNameNoVolume() << L"\"; NativeVolume return null." << Endl;
-		ret = 0;
+		ret = nullptr;
 	}
 
 	return ret;
