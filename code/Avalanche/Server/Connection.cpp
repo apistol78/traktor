@@ -97,7 +97,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< const IBlob > blob = m_dictionary->get(key);
+			Ref< const IBlob > blob = m_dictionary->get(key, false);
 			if (blob)
 			{
 				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -124,7 +124,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< const IBlob > blob = m_dictionary->get(key);
+			Ref< const IBlob > blob = m_dictionary->get(key, false);
 			if (blob)
 			{
 				auto readStream = blob->read();
@@ -170,7 +170,7 @@ bool Connection::process()
 				return false;
 			}
 
-			if (m_dictionary->get(key) != nullptr)
+			if (m_dictionary->get(key, false) != nullptr)
 			{
 				log::error << L"[PUT " << key.format() << L"] Cannot replace existing blob." << Endl;
 				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -217,7 +217,7 @@ bool Connection::process()
 					}
 					else if (subcmd == c_subCommandPutCommit)
 					{
-						if (m_dictionary->put(key, blob))
+						if (m_dictionary->put(key, blob, false))
 						{
 							log::info << L"[PUT " << key.format() << L"] Committed " << blob->size() << L" byte(s)." << Endl;
 							if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -291,7 +291,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< IBlob > blob = m_dictionary->get(key);
+			Ref< IBlob > blob = m_dictionary->get(key, false);
 			if (blob == nullptr)
 			{
 				log::error << L"[TOUCH " << key.format() << L"] No such blob." << Endl;

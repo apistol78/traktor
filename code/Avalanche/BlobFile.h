@@ -21,7 +21,9 @@ class T_DLLCLASS BlobFile : public IBlob
 	T_RTTI_CLASS;
 
 public:
-	explicit BlobFile(const Path& path, int64_t size);
+	explicit BlobFile(const Path& path, int64_t size, const DateTime& lastAccessed);
+
+	virtual ~BlobFile();
 
 	virtual int64_t size() const override final;
 
@@ -37,7 +39,8 @@ public:
 
 private:
     Path m_path;
-	int32_t m_size;
+	int64_t m_size;
+	mutable DateTime m_lastAccessed;
 };
 
 	}
