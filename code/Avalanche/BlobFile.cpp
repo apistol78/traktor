@@ -11,10 +11,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.BlobFile", BlobFile, Object)
 
-BlobFile::BlobFile(const Path& path, int64_t size)
+BlobFile::BlobFile(const Path& path, int64_t size, const DateTime& lastAccessed)
 :	m_path(path)
 ,	m_size(size)
+,	m_lastAccessed(lastAccessed)
 {
+}
+
+BlobFile::~BlobFile()
+{
+	FileSystem::getInstance().modify(m_path, nullptr, &m_lastAccessed, nullptr);
 }
 
 int64_t BlobFile::size() const
@@ -24,11 +30,13 @@ int64_t BlobFile::size() const
 
 Ref< IStream > BlobFile::append()
 {
+	m_lastAccessed = DateTime::now();
 	return FileSystem::getInstance().open(m_path, File::FmWrite);
 }
 
 Ref< IStream > BlobFile::read() const
 {
+	m_lastAccessed = DateTime::now();
 	return FileSystem::getInstance().open(m_path, File::FmRead);
 }
 
@@ -39,17 +47,13 @@ bool BlobFile::remove()
 
 bool BlobFile::touch()
 {
-	DateTime accessTime = DateTime::now();
-	return FileSystem::getInstance().modify(m_path, nullptr, &accessTime, nullptr);
+	m_lastAccessed = DateTime::now();
+	return true;
 }
 
 DateTime BlobFile::lastAccessed() const
 {
-	Ref< File > file = FileSystem::getInstance().get(m_path);
-	if (file)
-		return file->getLastAccessTime();
-	else
-		return DateTime();
+	return m_lastAccessed;
 }
 
 	}

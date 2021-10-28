@@ -49,7 +49,7 @@ Peer::Peer(
 				AlignedVector< Key > localKeys;
 				m_dictionary->snapshotKeys(localKeys);
 
-				log::info << L"Synchronize dictionary to peer; " << localKeys.size() << L" local, " << remoteKeys.size() << L" remote keys." << Endl;
+				log::info << L"[PEER " << name << L"] Synchronize dictionary to peer; " << localKeys.size() << L" local, " << remoteKeys.size() << L" remote keys." << Endl;
 
 				// Remove blobs from peer which no longer exist in our dictionary.
 				for (const auto& remoteKey : remoteKeys)
@@ -63,7 +63,7 @@ Peer::Peer(
 					if (std::find(localKeys.begin(), localKeys.end(), remoteKey) != localKeys.end())
 						continue;
 
-					log::info << L"Evicting " << remoteKey.format() << L" from peer " << name << L"." << Endl;
+					log::info << L"[PEER " << name << L"] Evicting " << remoteKey.format() << L"." << Endl;
 					m_client->evict(remoteKey);
 				}
 				
@@ -79,28 +79,28 @@ Peer::Peer(
 					if (std::find(remoteKeys.begin(), remoteKeys.end(), localKey) != remoteKeys.end())
 						continue;
 
-					Ref< const IBlob > blob = m_dictionary->get(localKey);
+					Ref< const IBlob > blob = m_dictionary->get(localKey, true);
 					if (!blob)
 						continue;
 
 					Ref< IStream > peerStream = m_client->put(localKey);
 					if (!peerStream)
 					{
-						log::error << L"Send of " << localKey.format() << L" failed; unable to create remote blob." << Endl;
+						log::error << L"[PEER " << name << L"] Synchronization of " << localKey.format() << L" failed; unable to create remote blob." << Endl;
 						continue;
 					}
 
 					Ref< IStream > readStream = blob->read();
 					if (readStream)
 					{
-						log::info << L"Sending " << localKey.format() << L" to peer " << name << L"." << Endl;
+						log::info << L"[PEER " << name << L"] Uploading " << localKey.format() << L"." << Endl;
 						StreamCopy(peerStream, readStream).execute();
 						peerStream->close();
 						readStream->close();
 					}
 				}
 
-				log::info << L"Peer " << name << L" up-to-date with our dictionary." << Endl;
+				log::info << L"[PEER " << name << L"] Up-to-date with our dictionary." << Endl;
 			}
 
 			// Process queue of updated blobs.
@@ -116,19 +116,19 @@ Peer::Peer(
 					const auto& q = queued[i];
 					if (q.second == c_queueEventGet)
 					{
-						log::info << L"Touch " << q.first.format() << L" at peer " << name << L"." << Endl;
+						log::info << L"[PEER " << name << L"] Touch " << q.first.format() << L"." << Endl;
 						m_client->touch(q.first);
 					}
 					else if (q.second == c_queueEventPut)
 					{
-						Ref< const IBlob > blob = m_dictionary->get(q.first);
+						Ref< const IBlob > blob = m_dictionary->get(q.first, true);
 						if (blob)
 						{
 							Ref< IStream > readStream = blob->read();
 							Ref< IStream > peerStream = m_client->put(q.first);
 							if (readStream && peerStream)
 							{
-								log::info << L"Sending " << q.first.format() << L" to peer " << name << L"." << Endl;
+								log::info << L"[PEER " << name << L"] Uploading " << q.first.format() << L"." << Endl;
 								StreamCopy(peerStream, readStream).execute();
 								peerStream->close();
 								readStream->close();
@@ -137,7 +137,7 @@ Peer::Peer(
 					}
 					else if (q.second == c_queueEventRemove)
 					{
-						log::info << L"Evicting " << q.first.format() << L" from peer " << name << L"." << Endl;
+						log::info << L"[PEER " << name << L"] Evicting " << q.first.format() << L"." << Endl;
 						m_client->evict(q.first);
 					}
 				}

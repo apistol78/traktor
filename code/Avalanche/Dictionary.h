@@ -47,9 +47,9 @@ public:
 
 	Ref< IBlob > create() const;
 
-	Ref< IBlob > get(const Key& key) const;
+	Ref< IBlob > get(const Key& key, bool raw) const;
 
-	bool put(const Key& key, IBlob* blob);
+	bool put(const Key& key, IBlob* blob, bool raw);
 
 	bool remove(const Key& key);
 

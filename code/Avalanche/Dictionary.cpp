@@ -35,7 +35,7 @@ bool Dictionary::create(const Path& blobsPath)
 			if (!blobKey.valid())
 				continue;
 
-			Ref< BlobFile > blob = new BlobFile(blobFile->getPath(), blobFile->getSize());
+			Ref< BlobFile > blob = new BlobFile(blobFile->getPath(), blobFile->getSize(), blobFile->getLastAccessTime());
 			m_blobs[blobKey] = blob;
 			m_stats.blobCount++;
 			m_stats.memoryUsage += blob->size();
@@ -51,7 +51,7 @@ Ref< IBlob > Dictionary::create() const
 	return new BlobMemory();
 }
 
-Ref< IBlob > Dictionary::get(const Key& key) const
+Ref< IBlob > Dictionary::get(const Key& key, bool raw) const
 {
 	Ref< IBlob > blob;
 	{
@@ -61,6 +61,7 @@ Ref< IBlob > Dictionary::get(const Key& key) const
 			return nullptr;
 		blob = it->second;
 	}
+	if (!raw)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)
@@ -69,7 +70,7 @@ Ref< IBlob > Dictionary::get(const Key& key) const
 	return blob;
 }
 
-bool Dictionary::put(const Key& key, IBlob* blob)
+bool Dictionary::put(const Key& key, IBlob* blob, bool raw)
 {
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
@@ -79,7 +80,7 @@ bool Dictionary::put(const Key& key, IBlob* blob)
 			const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
 
 			// Write blob to physical storage.
-			Ref< BlobFile > bf = new BlobFile(blobPath, blob->size());
+			Ref< BlobFile > bf = new BlobFile(blobPath, blob->size(), DateTime::now());
 			if (!StreamCopy(bf->append(), blob->read()).execute())
 				return false;
 			
@@ -91,6 +92,7 @@ bool Dictionary::put(const Key& key, IBlob* blob)
 		m_stats.blobCount++;
 		m_stats.memoryUsage += blob->size();
 	}
+	if (!raw)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)

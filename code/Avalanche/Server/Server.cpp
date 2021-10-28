@@ -212,7 +212,7 @@ bool Server::update()
 				m_dictionary->snapshotKeys(keys);
 				for (const auto& key : keys)
 				{
-					Ref< IBlob > blob = m_dictionary->get(key);
+					Ref< IBlob > blob = m_dictionary->get(key, true);
 					if (!blob)
 						continue;
 					queue.push_back({
@@ -230,7 +230,7 @@ bool Server::update()
 				auto it = queue.begin();
 				while (it != queue.end() && stats.memoryUsage >= maxMemoryUsage)
 				{
-					Ref< IBlob > blob = m_dictionary->get(it->first);
+					Ref< IBlob > blob = m_dictionary->get(it->first, true);
 					if (!blob)
 						continue;
 
