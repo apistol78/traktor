@@ -81,7 +81,22 @@ bool GlslContext::emit(Node* node)
 	if (outputPinCount > 0 && allOutputsEmitted)
 		return true;
 
-	return m_emitter.emit(*this, node);
+	bool result = m_emitter.emit(*this, node);
+	if (!result)
+	{
+		// Only log first failure point; all recursions will also fail.
+		if (m_error.empty())
+		{
+			// Format chain to properly indicate source of error.
+			StringOutputStream ss;
+			for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
+				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
+			ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
+			m_error = ss.str();
+		}
+	}
+
+	return result;
 }
 
 GlslVariable* GlslContext::emitInput(const InputPin* inputPin)

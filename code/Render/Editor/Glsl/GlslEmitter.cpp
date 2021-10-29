@@ -558,11 +558,42 @@ bool emitDot(GlslContext& cx, Dot* node)
 	if (!in1 || !in2)
 		return false;
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	if (type >= GlslType::Float && type <= GlslType::Float4)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
+		comment(f, node);
+		assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	}
+	else if (type >= GlslType::Integer && type <= GlslType::Integer4)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer);
+		comment(f, node);
+		f << L"int " << out->getName() << L";" << Endl;
+		f << L"{" << Endl;
+		f << L"\t" << glsl_type_name(type) << L" tmp = " << in1->cast(type) << L" * " << in2->cast(type) << L";" << Endl;
+		switch (type)
+		{
+		case GlslType::Integer:
+			f << L"\t" << out->getName() << L" = tmp;" << Endl;
+			break;
 
-	comment(f, node);
-	assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+		case GlslType::Integer2:
+			f << L"\t" << out->getName() << L" = tmp.x + tmp.y;" << Endl;
+			break;
+
+		case GlslType::Integer3:
+			f << L"\t" << out->getName() << L" = tmp.x + tmp.y + tmp.z;" << Endl;
+			break;
+
+		case GlslType::Integer4:
+			f << L"\t" << out->getName() << L" = tmp.x + tmp.y + tmp.z + tmp.w;" << Endl;
+			break;
+		}
+		f << L"}" << Endl;
+	}
+	else
+		return false;
 
 	return true;
 }
@@ -1302,31 +1333,77 @@ bool emitMixIn(GlslContext& cx, MixIn* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > x = cx.emitInput(node, L"X");
-	Ref< GlslVariable > y = cx.emitInput(node, L"Y");
-	Ref< GlslVariable > z = cx.emitInput(node, L"Z");
-	Ref< GlslVariable > w = cx.emitInput(node, L"W");
+	Ref< GlslVariable > in[4] =
+	{
+		cx.emitInput(node, L"X"),
+		cx.emitInput(node, L"Y"),
+		cx.emitInput(node, L"Z"),
+		cx.emitInput(node, L"W")
+	};
 
 	comment(f, node);
-	if (!y && !z && !w)
+
+	bool integer = true;
+	int32_t width = 0;
+
+	for (int32_t i = 0; i < 4; ++i)
 	{
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
-		assign(f, out) << L"(" << (x ? x->getName() : L"0.0") << L");" << Endl;
+		if (!in[i])
+			continue;
+		if (in[i]->getType() == GlslType::Float)
+			integer = false;
+		else if (in[i]->getType() != GlslType::Integer)
+			return false;
+		width = i + 1;
 	}
-	else if (!z && !w)
+
+	switch (width)
 	{
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float2);
-		assign(f, out) << L"vec2(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L");" << Endl;
-	}
-	else if (!w)
-	{
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		assign(f, out) << L"vec3(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L");" << Endl;
-	}
-	else
-	{
-		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float4);
-		assign(f, out) << L"vec4(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L", " << (w ? w->getName() : L"0.0") << L");" << Endl;
+	case 0:
+		return false;
+
+	case 1:
+		{
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", integer ? GlslType::Integer : GlslType::Float);
+			assign(f, out) << in[0]->getName() << L";" << Endl;
+		}
+		break;
+
+	case 2:
+		{
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", integer ? GlslType::Integer2 : GlslType::Float2);
+			assign(f, out);
+			f << (integer ? L"ivec2" : L"vec2") << L"(";
+			f << ((in[0] != nullptr) ? in[0]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[1] != nullptr) ? in[1]->getName() : (integer ? L"0" : L"0.0"));
+			f << L");" << Endl;
+		}
+		break;
+
+	case 3:
+		{
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", integer ? GlslType::Integer3 : GlslType::Float3);
+			assign(f, out);
+			f << (integer ? L"ivec3" : L"vec3") << L"(";
+			f << ((in[0] != nullptr) ? in[0]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[1] != nullptr) ? in[1]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[2] != nullptr) ? in[2]->getName() : (integer ? L"0" : L"0.0"));
+			f << L");" << Endl;
+		}
+		break;
+
+	case 4:
+		{
+			Ref< GlslVariable > out = cx.emitOutput(node, L"Output", integer ? GlslType::Integer4 : GlslType::Float4);
+			assign(f, out);
+			f << (integer ? L"ivec4" : L"vec4") << L"(";
+			f << ((in[0] != nullptr) ? in[0]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[1] != nullptr) ? in[1]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[2] != nullptr) ? in[2]->getName() : (integer ? L"0" : L"0.0")) << L", ";
+			f << ((in[3] != nullptr) ? in[3]->getName() : (integer ? L"0" : L"0.0"));
+			f << L");" << Endl;
+		}
+		break;
 	}
 
 	return true;
@@ -1343,39 +1420,47 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	comment(f, node);
 	switch (in->getType())
 	{
+	case GlslType::Integer:
 	case GlslType::Float:
 		{
-			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GlslType::Float);
+			GlslType outputType = (in->getType() == GlslType::Integer) ? GlslType::Integer : GlslType::Float;
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
 			assign(f, x) << in->getName() << L";" << Endl;
 		}
 		break;
 
+	case GlslType::Integer2:
 	case GlslType::Float2:
 		{
-			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GlslType::Float);
-			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GlslType::Float);
+			GlslType outputType = (in->getType() == GlslType::Integer2) ? GlslType::Integer : GlslType::Float;
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 		}
 		break;
 
+	case GlslType::Integer3:
 	case GlslType::Float3:
 		{
-			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GlslType::Float);
-			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GlslType::Float);
-			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", GlslType::Float);
+			GlslType outputType = (in->getType() == GlslType::Integer3) ? GlslType::Integer : GlslType::Float;
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
+			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", outputType);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 			assign(f, z) << in->getName() << L".z;" << Endl;
 		}
 		break;
 
+	case GlslType::Integer4:
 	case GlslType::Float4:
 		{
-			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GlslType::Float);
-			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GlslType::Float);
-			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", GlslType::Float);
-			Ref< GlslVariable > w = cx.emitOutput(node, L"W", GlslType::Float);
+			GlslType outputType = (in->getType() == GlslType::Integer4) ? GlslType::Integer : GlslType::Float;
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", outputType);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", outputType);
+			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", outputType);
+			Ref< GlslVariable > w = cx.emitOutput(node, L"W", outputType);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 			assign(f, z) << in->getName() << L".z;" << Endl;
@@ -2877,11 +2962,28 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 bool emitVector(GlslContext& cx, Vector* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float4);
-
 	comment(f, node);
-	f << L"const vec4 " << out->getName() << L" = vec4(" << formatFloat(node->get().x()) << L", " << formatFloat(node->get().y()) << L", " << formatFloat(node->get().z()) << L", " << formatFloat(node->get().w()) << L");" << Endl;
+
+	float T_MATH_ALIGN16 e[4];
+	node->get().storeAligned(e);
+
+	bool integer = true;
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		if ((e[i] - std::floor(e[i])) >= FUZZY_EPSILON)
+			integer = false;
+	}
+
+	if (integer)
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer4);
+		f << L"const ivec4 " << out->getName() << L" = ivec4(" << (int32_t)e[0] << L", " << (int32_t)e[1] << L", " << (int32_t)e[2] << L", " << (int32_t)e[3] << L");" << Endl;
+	}
+	else
+	{
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float4);
+		f << L"const vec4 " << out->getName() << L" = vec4(" << formatFloat(e[0]) << L", " << formatFloat(e[1]) << L", " << formatFloat(e[2]) << L", " << formatFloat(e[3]) << L");" << Endl;
+	}
 
 	return true;
 }
