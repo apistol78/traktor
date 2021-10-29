@@ -53,6 +53,19 @@ bool Server::create(const PropertyGroup* settings)
 		return false;
 	}
 
+	// Create our dictionary.
+	m_dictionary = new Dictionary();
+	if (!m_dictionary->create(
+		settings->getProperty< std::wstring >(L"Avalanche.Path", L"")
+	))
+	{
+		log::error << L"Unable to create dictionary." << Endl;
+		return false;		
+	}
+
+	m_master = settings->getProperty< bool >(L"Avalanche.Master", false);
+	m_memoryBudget = settings->getProperty< int32_t >(L"Avalanche.MemoryBudget", 8);
+
 	// Broadcast our self on the network.
 	Ref< PropertyGroup > publishSettings = DeepClone(settings).create< PropertyGroup >();
 	publishSettings->setProperty< PropertyInteger >(L"Avalanche.Version.Major", c_majorVersion);
@@ -69,19 +82,6 @@ bool Server::create(const PropertyGroup* settings)
 		L"Traktor.Avalanche",
 		publishSettings
 	));
-
-	// Create our dictionary.
-	m_dictionary = new Dictionary();
-	if (!m_dictionary->create(
-		settings->getProperty< std::wstring >(L"Avalanche.Path", L"")
-	))
-	{
-		log::error << L"Unable to create dictionary." << Endl;
-		return false;		
-	}
-
-	m_master = settings->getProperty< bool >(L"Avalanche.Master", false);
-	m_memoryBudget = settings->getProperty< int32_t >(L"Avalanche.MemoryBudget", 8);
 
 	log::info << L"Server started successfully (" << (m_master ? L"Master" : L"Slave") << L")." << Endl;
 	return true;
