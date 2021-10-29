@@ -97,7 +97,7 @@ bool Connection::process()
 				return false;
 			}
 
-			Ref< const IBlob > blob = m_dictionary->get(key, false);
+			Ref< const IBlob > blob = m_dictionary->get(key, true);
 			if (blob)
 			{
 				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
@@ -170,7 +170,7 @@ bool Connection::process()
 				return false;
 			}
 
-			if (m_dictionary->get(key, false) != nullptr)
+			if (m_dictionary->get(key, true) != nullptr)
 			{
 				log::error << L"[PUT " << key.format() << L"] Cannot replace existing blob." << Endl;
 				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
