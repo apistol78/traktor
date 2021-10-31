@@ -7,12 +7,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.File", 0, File, ISerializable)
 
-File::File()
-:	m_size(0)
-,	m_flags(FfInvalid)
-{
-}
-
 File::File(
 	const Path& path,
 	uint64_t size,
@@ -79,6 +73,11 @@ bool File::isArchive() const
 bool File::isDirectory() const
 {
 	return bool((m_flags & FfDirectory) == FfDirectory);
+}
+
+bool File::isExecutable() const
+{
+	return bool((m_flags & FfExecutable) == FfExecutable);
 }
 
 const DateTime& File::getCreationTime() const

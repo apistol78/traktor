@@ -33,7 +33,8 @@ public:
 		FfReadOnly = 2,
 		FfHidden = 4,
 		FfArchive = 8,
-		FfDirectory	= 16
+		FfDirectory	= 16,
+		FfExecutable = 32
 	};
 
 	/*! File open modes. */
@@ -45,9 +46,9 @@ public:
 		FmMapped = 8
 	};
 
-	File();
+	File() = default;
 
-	File(
+	explicit File(
 		const Path& path,
 		uint64_t size,
 		uint32_t flags,
@@ -56,7 +57,7 @@ public:
 		const DateTime& lastWriteTime
 	);
 
-	File(
+	explicit File(
 		const Path& path,
 		uint64_t size,
 		uint32_t flags
@@ -78,6 +79,8 @@ public:
 
 	bool isDirectory() const;
 
+	bool isExecutable() const;
+
 	const DateTime& getCreationTime() const;
 
 	const DateTime& getLastAccessTime() const;
@@ -88,8 +91,8 @@ public:
 
 protected:
 	Path m_path;
-	uint64_t m_size;
-	uint32_t m_flags;
+	uint64_t m_size = 0;
+	uint32_t m_flags = FfInvalid;
 	DateTime m_creationTime;
 	DateTime m_lastAccessTime;
 	DateTime m_lastWriteTime;
