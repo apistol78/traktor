@@ -181,8 +181,9 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	m_buffers.push_back(positions);
 	m_buffers.push_back(texCoords);
 
-	RefArray< model::Model > splits;
-	splitModel(model, splits);
+	RefArray< const model::Model > splits;
+	// splitModel(model, splits);
+	splits.push_back(model);
 
 	for (auto split : splits)
 	{
