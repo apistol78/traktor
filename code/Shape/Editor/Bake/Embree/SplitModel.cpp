@@ -58,8 +58,9 @@ void split(const model::Model* model, int32_t depth, const AlignedVector< model:
 	const Vector4 center = boundingBox.getCenter();
 	const Vector4 size = boundingBox.mx - boundingBox.mn;
 
-	const bool smallBounds = (size.x() <= 1.0_simd && size.y() <= 1.0_simd && size.z() <= 1.0_simd);
-	if (depth >= 2 || smallBounds)
+	const static Scalar c_smallLimit = 2.0_simd;
+	const bool smallBounds = (size.x() <= c_smallLimit && size.y() <= c_smallLimit && size.z() <= c_smallLimit);
+	if (depth >= 3 || smallBounds)
 	{
 		Ref< model::Model > part = new model::Model();
 		part->setPolygons(polygons);
@@ -67,28 +68,26 @@ void split(const model::Model* model, int32_t depth, const AlignedVector< model:
 		return;
 	}
 
-	AlignedVector< model::Polygon > backPolygons[3], frontPolygons[3];
-	AlignedVector< model::Polygon > octPolygons[8];
+	const int32_t m = majorAxis3(size);
 
-	splitPolygons(model, 0, center.x(), polygons, backPolygons[0], frontPolygons[0]);
+	AlignedVector< model::Polygon > backPolygons, frontPolygons;
+	splitPolygons(model, m, center[m], polygons, backPolygons, frontPolygons);
 
-	splitPolygons(model, 1, center.y(), backPolygons[0], backPolygons[1], frontPolygons[1]);
-	splitPolygons(model, 1, center.y(), frontPolygons[0], backPolygons[2], frontPolygons[2]);
-
-	splitPolygons(model, 2, center.z(), backPolygons[1], octPolygons[0], octPolygons[4]);
-	splitPolygons(model, 2, center.z(), frontPolygons[1], octPolygons[2], octPolygons[6]);
-	splitPolygons(model, 2, center.z(), backPolygons[2], octPolygons[1], octPolygons[5]);
-	splitPolygons(model, 2, center.z(), frontPolygons[2], octPolygons[3], octPolygons[7]);
-
-	for (int32_t i = 0; i < 8; ++i)
+	if (!backPolygons.empty())
 	{
-		if (octPolygons[i].empty())
-			continue;
-
 		split(
 			model,
 			depth + 1,
-			octPolygons[i],
+			backPolygons,
+			outModels
+		);
+	}
+	if (!frontPolygons.empty())
+	{
+		split(
+			model,
+			depth + 1,
+			frontPolygons,
 			outModels
 		);
 	}
