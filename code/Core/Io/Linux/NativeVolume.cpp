@@ -110,7 +110,31 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 {
-	return false;
+	std::string systemPath = wstombs(getSystemPath(fileName));
+
+	struct stat st = {};
+	if (stat(systemPath.c_str(), &st) != 0)
+		return false;
+
+	mode_t m = st.st_mode;
+
+	if ((flags & File::FfReadOnly) != 0)
+		m &= ~S_IWUSR;
+	else
+		m |= S_IWUSR;
+
+	if ((flags & File::FfExecutable) != 0)
+		m |= S_IXUSR;
+	else
+		m &= ~S_IXUSR;
+	
+	if (m != st.st_mode)
+	{
+		if (chmod(systemPath.c_str(), m) != 0)
+			return false;
+	}
+
+	return true;
 }
 
 bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
