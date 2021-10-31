@@ -515,7 +515,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		const uint32_t channel = renderModel->getTexCoordChannel(L"Lightmap");
 
 		// Update status.
-		m_status.description = str(L"%s (%d)...", tracerOutput->getLightmapDiffuseInstance()->getName().c_str(), width);
+		m_status.description = str(L"%d/%d (gbuffer)...", i + 1, (int32_t)tracerOutputs.size(), width);
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
@@ -540,6 +540,9 @@ bool TracerProcessor::process(const TracerTask* task)
 			lightmapDirectional->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 		}
 
+		// Update status.
+		m_status.description = str(L"%d/%d (tracing)...", i + 1, (int32_t)tracerOutputs.size(), width);
+
 		RefArray< Job > jobs;
 		for (int32_t ty = 0; !m_cancelled && ty < height; ty += 16)
 		{
@@ -562,14 +565,16 @@ bool TracerProcessor::process(const TracerTask* task)
 		if (m_cancelled)
 			break;
 
+		// Update status.
+		m_status.description = str(L"%d/%d (filter)...", i + 1, (int32_t)tracerOutputs.size(), width);
+
 		// Create final output instance.
 		if (lightmapDiffuse)
 		{
-
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 
-			seamFilter(renderModel, channel, lightmapDiffuse);
+			//seamFilter(renderModel, channel, lightmapDiffuse);
 
 			lightmapDiffuse->clearAlpha(1.0f);
 
@@ -666,9 +671,14 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		while (!jobs.empty())
 		{
-			jobs.back()->wait();
-			jobs.pop_back();
-			m_status.current++;
+			m_queue->waitCurrent();
+
+			auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {
+				return job->wait(0);
+			});
+			jobs.erase(it, jobs.end());
+
+			m_status.current = m_status.total - (int32_t)jobs.size();
 		}
 
 		if (m_cancelled)
