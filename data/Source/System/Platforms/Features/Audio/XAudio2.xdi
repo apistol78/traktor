@@ -230,42 +230,23 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Runtime.Modules</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>Traktor.Sound.XAudio2</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Audio.MasterVolume</first>
 				<second type="traktor.PropertyFloat">
 					<value>1</value>
 				</second>
 			</item>
 			<item>
-				<first>Audio.Surround</first>
-				<second type="traktor.PropertyGroup">
-					<value>
-						<item>
-							<first>InnerRadius</first>
-							<second type="traktor.PropertyFloat">
-								<value>2</value>
-							</second>
-						</item>
-						<item>
-							<first>MaxDistance</first>
-							<second type="traktor.PropertyFloat">
-								<value>4</value>
-							</second>
-						</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Audio.Type</first>
 				<second type="traktor.PropertyString">
 					<value>traktor.sound.AudioDriverXAudio2</value>
+				</second>
+			</item>
+			<item>
+				<first>Runtime.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Sound.XAudio2</item>
+					</value>
 				</second>
 			</item>
 		</value>
