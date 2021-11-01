@@ -124,9 +124,9 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 		m |= S_IWUSR;
 
 	if ((flags & File::FfExecutable) != 0)
-		m |= S_IXUSR;
+		m |= S_IXUSR | S_IXGRP | S_IXOTH;
 	else
-		m &= ~S_IXUSR;
+		m &= ~(S_IXUSR | S_IXGRP | S_IXOTH);
 	
 	if (m != st.st_mode)
 	{
