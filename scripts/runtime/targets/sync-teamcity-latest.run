@@ -27,6 +27,13 @@ local function traverse(binPath, path)
 
 			tf:close()
 			sf:close()
+
+			-- Set appropriate executable flag on unpacked file.
+			if os.identifier ~= "windows" then
+				if f.executable then
+					fileSystem:modify(target, f.flags | File.FfExecutable)
+				end
+			end
 		else
 			if not traverse(binPath, f.path.pathName) then
 				return false
@@ -111,33 +118,35 @@ function main(argv)
 				return 1
 			end
 
-			stdout:printLn("Downloading...")
+			stdout:printLn("Downloading " .. tmpFile.pathName .. "...")
 			local tf = fileSystem:open(tmpFile, File.FmWrite)
 			StreamCopy(tf, sf):execute()
 			tf:close()
 
 			-- Move existing target folder, this allows us to replace Windows binaries even
 			-- if target is running locally.
-			if os.identifier == "windows" then
-				if not fileSystem:move(
-					Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
-					Path(binPath),
-					true
-				) then
-					stderr:printLn("Unable to move old build.")
-					return 1
-				end
-			else
-				if not fileSystem:move(
-					Path(Path(binPath).pathOnlyNoVolume .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
-					Path(binPath),
-					true
-				) then
-					stderr:printLn("Unable to move old build.")
-					return 1
+			if currentBuildId > 0 then
+				if os.identifier == "windows" then
+					if not fileSystem:move(
+						Path(Path(binPath).pathOnly .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
+						Path(binPath),
+						true
+					) then
+						stderr:printLn("Unable to move old build.")
+						return 1
+					end
+				else
+					if not fileSystem:move(
+						Path(Path(binPath).pathOnlyNoVolume .. "/" .. Path(binPath).fileName .. "." .. currentBuildId),
+						Path(binPath),
+						true
+					) then
+						stderr:printLn("Unable to move old build.")
+						return 1
+					end
 				end
 			end
-			
+
 			-- Extract artifact.
 			stdout:printLn("Extracting...")
 			local zf = fileSystem:open(tmpFile, File.FmRead)
