@@ -50,6 +50,16 @@ RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 	return files;
 }
 
+bool IVolume_modify_1(IVolume* self, const Path& fileName, uint32_t flags)
+{
+	return self->modify(fileName, flags);
+}
+
+bool IVolume_modify_2(IVolume* self, const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	return self->modify(fileName, creationTime, lastAccessTime, lastWriteTime);
+}
+
 uint32_t File_getSize(File* self)
 {
 	return uint32_t(self->getSize());
@@ -85,6 +95,16 @@ RefArray< File > FileSystem_find(FileSystem* self, const std::wstring& mask)
 	RefArray< File > files;
 	self->find(mask, files);
 	return files;
+}
+
+bool FileSystem_modify_1(FileSystem* self, const Path& fileName, uint32_t flags)
+{
+	return self->modify(fileName, flags);
+}
+
+bool FileSystem_modify_2(FileSystem* self, const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime)
+{
+	return self->modify(fileName, creationTime, lastAccessTime, lastWriteTime);
 }
 
 Path FileSystem_getAbsolutePath_1(FileSystem* self, const Path& relativePath)
@@ -318,6 +338,12 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPath);
 
 	auto classFile = new AutoRuntimeClass< File >();
+	classFile->addConstant("FfNormal", Any::fromInt32(File::FfNormal));
+	classFile->addConstant("FfReadOnly", Any::fromInt32(File::FfReadOnly));
+	classFile->addConstant("FfHidden", Any::fromInt32(File::FfHidden));
+	classFile->addConstant("FfArchive", Any::fromInt32(File::FfArchive));
+	classFile->addConstant("FfDirectory", Any::fromInt32(File::FfDirectory));
+	classFile->addConstant("FfExecutable", Any::fromInt32(File::FfExecutable));
 	classFile->addConstant("FmRead", Any::fromInt32(File::FmRead));
 	classFile->addConstant("FmWrite", Any::fromInt32(File::FmWrite));
 	classFile->addConstant("FmAppend", Any::fromInt32(File::FmAppend));
@@ -332,6 +358,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFile->addProperty("hidden", &File::isHidden);
 	classFile->addProperty("archive", &File::isArchive);
 	classFile->addProperty("directory", &File::isDirectory);
+	classFile->addProperty("executable", &File::isExecutable);
 	classFile->addProperty("creationTime", &File::getCreationTime);
 	classFile->addProperty("lastAccessTime", &File::getLastAccessTime);
 	classFile->addProperty("lastWriteTime", &File::getLastWriteTime);
@@ -341,7 +368,8 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIVolume->addProperty("description", &IVolume::getDescription);
 	classIVolume->addMethod("get", &IVolume::get);
 	classIVolume->addMethod("find", &IVolume_find);
-	//classIVolume->addMethod("modify", &IVolume::modify);
+	classIVolume->addMethod("modify", &IVolume_modify_1);
+	classIVolume->addMethod("modify", &IVolume_modify_2);
 	classIVolume->addMethod("open", &IVolume::open);
 	classIVolume->addMethod("exist", &IVolume::exist);
 	classIVolume->addMethod("remove", &IVolume::remove);
@@ -383,6 +411,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classBitReader = new AutoRuntimeClass< BitReader >();
 	classBitReader->addConstructor< IStream* >();
+	classBitReader->addProperty("stream", &BitReader::getStream);
 	classBitReader->addMethod("readBit", &BitReader::readBit);
 	classBitReader->addMethod("readUnsigned", &BitReader::readUnsigned);
 	classBitReader->addMethod("readSigned", &BitReader::readSigned);
@@ -395,11 +424,11 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitReader->addMethod("alignByte", &BitReader::alignByte);
 	classBitReader->addMethod("tell", &BitReader::tell);
 	classBitReader->addMethod("skip", &BitReader::skip);
-	classBitReader->addMethod("getStream", &BitReader::getStream);
 	registrar->registerClass(classBitReader);
 
 	auto classBitWriter = new AutoRuntimeClass< BitWriter >();
 	classBitWriter->addConstructor< IStream* >();
+	classBitWriter->addProperty("stream", &BitWriter::getStream);
 	classBitWriter->addMethod("writeBit", &BitWriter::writeBit);
 	classBitWriter->addMethod("writeUnsigned", &BitWriter::writeUnsigned);
 	classBitWriter->addMethod("writeSigned", &BitWriter::writeSigned);
@@ -412,7 +441,6 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitWriter->addMethod("writeFloat", &BitWriter::writeFloat);
 	classBitWriter->addMethod("flush", &BitWriter::flush);
 	classBitWriter->addMethod("tell", &BitWriter::tell);
-	classBitWriter->addMethod("getStream", &BitWriter::getStream);
 	registrar->registerClass(classBitWriter);
 
 	auto classFileSystem = new AutoRuntimeClass< FileSystem >();
@@ -426,7 +454,8 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFileSystem->addMethod("getVolumeId", &FileSystem::getVolumeId);
 	classFileSystem->addMethod("get", &FileSystem::get);
 	classFileSystem->addMethod("find", &FileSystem_find);
-	//classFileSystem->addMethod("modify", &FileSystem::modify);
+	classFileSystem->addMethod("modify", &FileSystem_modify_1);
+	classFileSystem->addMethod("modify", &FileSystem_modify_2);
 	classFileSystem->addMethod("open", &FileSystem::open);
 	classFileSystem->addMethod("exist", &FileSystem::exist);
 	classFileSystem->addMethod("remove", &FileSystem::remove);

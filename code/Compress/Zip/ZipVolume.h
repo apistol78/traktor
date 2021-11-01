@@ -66,6 +66,7 @@ private:
         uint64_t offset = 0;
         uint64_t compressedSize = 0;
         uint64_t uncompressedSize = 0;
+        uint16_t attributes = 0;
 
         bool isDirectory() const { return (bool)(compressedSize == 0); }
     };

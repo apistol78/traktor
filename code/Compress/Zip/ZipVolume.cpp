@@ -141,8 +141,8 @@ ZipVolume::ZipVolume(IStream* zipFile)
 
 		if (
 			cdfh.fileNameLength >= sizeof_array(fileName) ||
-			cdfh.extraFieldLength >= sizeof_array(fileName) ||
-			cdfh.commentLength >= sizeof_array(fileName)
+			cdfh.extraFieldLength >= sizeof_array(extra) ||
+			cdfh.commentLength >= sizeof_array(comment)
 		)
 		{
 			log::error << L"Corrupt ZIP file; too long strings in header." << Endl;
@@ -153,10 +153,7 @@ ZipVolume::ZipVolume(IStream* zipFile)
 		fileName[cdfh.fileNameLength] = '\0';
 
 		m_zipFile->read(extra, cdfh.extraFieldLength);
-		extra[cdfh.extraFieldLength] = '\0';
-
 		m_zipFile->read(comment, cdfh.commentLength);
-		comment[cdfh.commentLength] = '\0';
 
 		int32_t directory = 0;
 
@@ -194,13 +191,12 @@ ZipVolume::ZipVolume(IStream* zipFile)
 				fi.offset = cdfh.lfhOffset;
 				fi.compressedSize = cdfh.compressedSize;
 				fi.uncompressedSize = cdfh.uncompressedSize;
+				fi.attributes = ((cdfh.version >> 8) == 3) ? (cdfh.externalAttributes >> 16) : 0;
 
 				m_fileInfo[directory].children.push_back(index);
 			}
 		}
 	}
-
-	//dump(0);
 }
 
 std::wstring ZipVolume::getDescription() const
@@ -234,7 +230,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 				out.push_back(new File(
 					L"zip:" + getPathName(child),
 					fi.uncompressedSize,
-					File::FfNormal
+					File::FfNormal | ( ((fi.attributes & 0111) != 0000) ? File::FfExecutable : 0 )
 				));
 			}
 			else
@@ -302,7 +298,6 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 	fileNameTmp[lfh.fileNameLength] = '\0';
 
 	m_zipFile->read(extra, lfh.extraFieldLength);
-	extra[lfh.extraFieldLength] = '\0';
 
 	return new StreamStream(
 		new InflateStreamZip(m_zipFile, 4096, true),
