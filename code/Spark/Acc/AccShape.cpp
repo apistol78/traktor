@@ -269,11 +269,11 @@ bool AccShape::createFromTriangles(
 			}
 
 			// Generate line batches from clusters.
-			AccShapeVertexPool::Range vertexRange;
-			if (!m_lineVertexPool->acquireRange(clusters.size() * 2 * 3, vertexRange))
+			Ref< render::Buffer > vertexRange;
+			if (!m_lineVertexPool->acquire(clusters.size() * 2 * 3, vertexRange))
 				return false;
 
-			LineVertex* vertex = static_cast< LineVertex* >(vertexRange.vertexBuffer->lock());
+			LineVertex* vertex = static_cast< LineVertex* >(vertexRange->lock());
 			if (!vertex)
 				return false;
 
@@ -340,7 +340,7 @@ bool AccShape::createFromTriangles(
 			T_ASSERT(lineDataOffset == lineDataSize);
 
 			lineTexture->unlock(0);
-			vertexRange.vertexBuffer->unlock();
+			vertexRange->unlock();
 		}
 
 		m_batchFlags |= BfHaveLines;
@@ -355,10 +355,10 @@ bool AccShape::createFromTriangles(
 		Ref< AccBitmapRect > texture;
 		bool textureClamp = false;
 
-		if (!m_fillVertexPool->acquireRange(triangles.size() * 3, m_fillVertexRange))
+		if (!m_fillVertexPool->acquire(triangles.size() * 3, m_fillVertexRange))
 			return false;
 
-		FillVertex* vertex = static_cast< FillVertex* >(m_fillVertexRange.vertexBuffer->lock());
+		FillVertex* vertex = static_cast< FillVertex* >(m_fillVertexRange->lock());
 		if (!vertex)
 			return false;
 
@@ -468,7 +468,7 @@ bool AccShape::createFromTriangles(
 			vertexOffset += 3;
 		}
 
-		m_fillVertexRange.vertexBuffer->unlock();
+		m_fillVertexRange->unlock();
 	}
 
 	// Some shapes doesn't expose styles, such as glyphs, but are
@@ -577,7 +577,7 @@ void AccShape::destroy()
 
 	if (m_fillVertexPool)
 	{
-		m_fillVertexPool->releaseRange(m_fillVertexRange);
+		m_fillVertexPool->release(m_fillVertexRange);
 		m_fillVertexPool = nullptr;
 	}
 
@@ -700,7 +700,7 @@ void AccShape::render(
 				{
 					auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 					renderBlock->program = programSolid;
-					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer->getBufferView();
+					renderBlock->vertexBuffer = m_fillVertexRange->getBufferView();
 					renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 					renderBlock->primitive = batch.primitives.type;
 					renderBlock->offset = batch.primitives.offset;
@@ -714,7 +714,7 @@ void AccShape::render(
 				{
 					auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
 					renderBlock->program = programTextured;
-					renderBlock->vertexBuffer = m_fillVertexRange.vertexBuffer->getBufferView();
+					renderBlock->vertexBuffer = m_fillVertexRange->getBufferView();
 					renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 					renderBlock->primitive = batch.primitives.type;
 					renderBlock->offset = batch.primitives.offset;
@@ -735,7 +735,7 @@ void AccShape::render(
 			{
 				auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 				renderBlock->program = programLine;
-				renderBlock->vertexBuffer = batch.vertexRange.vertexBuffer->getBufferView();
+				renderBlock->vertexBuffer = batch.vertexRange->getBufferView();
 				renderBlock->vertexLayout = m_fillVertexPool->getVertexLayout();
 				renderBlock->primitive = batch.primitives.type;
 				renderBlock->offset = batch.primitives.offset;
