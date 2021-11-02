@@ -260,7 +260,7 @@ void RotateModifier::apply(
 
 		Quaternion Q = Quaternion::fromEulerAngles(head, pitch, bank);
 
-		Transform T = m_entityAdapters.front()->getTransform();
+		Transform T = m_baseTransforms.front();
 		Transform Tn(T.translation(), Q);
 
 		m_entityAdapters.front()->setTransform(Tn);
