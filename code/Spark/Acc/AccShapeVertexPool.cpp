@@ -12,10 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccShapeVertexPool", AccShapeVertexPool, Object)
 
-AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount)
+AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
-	m_garbageRanges.resize(frameCount);
 }
 
 bool AccShapeVertexPool::create(const AlignedVector< render::VertexElement >& vertexElements)
@@ -27,30 +26,22 @@ bool AccShapeVertexPool::create(const AlignedVector< render::VertexElement >& ve
 
 void AccShapeVertexPool::destroy()
 {
-	for (uint32_t i = 0; i < (uint32_t)m_garbageRanges.size(); ++i)
-		cycleGarbage();
+	for (auto freeBuffer : m_freeBuffers)
+		safeDestroy(freeBuffer);
 
-	for (auto& freeRange : m_freeRanges)
-		safeDestroy(freeRange.vertexBuffer);
-
-	for (auto& usedRange : m_usedRanges)
-		safeDestroy(usedRange.vertexBuffer);
-
-	m_freeRanges.clear();
-	m_usedRanges.clear();
-
+	m_freeBuffers.clear();
 	m_renderSystem = nullptr;
 }
 
-bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
+bool AccShapeVertexPool::acquire(int32_t vertexCount, Ref< render::Buffer >& outVertexBuffer)
 {
-	for (auto i = m_freeRanges.begin(); i != m_freeRanges.end(); ++i)
+	for (auto i = m_freeBuffers.begin(); i != m_freeBuffers.end(); ++i)
 	{
-		if (i->vertexCount >= vertexCount)
+		const uint32_t bufferVertexCount = i->getBufferSize() / m_vertexSize;
+		if (bufferVertexCount >= vertexCount)
 		{
-			outRange.vertexBuffer = i->vertexBuffer;
-			m_usedRanges.push_back(*i);
-			m_freeRanges.erase(i);
+			outVertexBuffer = *i;
+			m_freeBuffers.erase(i);
 			return true;
 		}
 	}
@@ -64,38 +55,14 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	if (!vertexBuffer)
 		return false;
 
-	VertexRange range;
-	range.vertexBuffer = vertexBuffer;
-	range.vertexCount = vertexCount;
-	m_usedRanges.push_back(range);
-
-	outRange.vertexBuffer = vertexBuffer;
+	outVertexBuffer = vertexBuffer;
 	return true;
 }
 
-void AccShapeVertexPool::releaseRange(const Range& range)
+void AccShapeVertexPool::release(render::Buffer* vertexBuffer)
 {
-	if (!range.vertexBuffer)
-		return;
-
-	for (auto i = m_usedRanges.begin(); i != m_usedRanges.end(); ++i)
-	{
-		if (i->vertexBuffer == range.vertexBuffer)
-		{
-			m_garbageRanges[m_frame].push_back(*i);
-			m_usedRanges.erase(i);
-			return;
-		}
-	}
-
-	T_FATAL_ERROR;
-}
-
-void AccShapeVertexPool::cycleGarbage()
-{
-	m_frame = (m_frame + 1) % (uint32_t)m_garbageRanges.size();
-	m_freeRanges.insert(m_freeRanges.end(), m_garbageRanges[m_frame].begin(), m_garbageRanges[m_frame].end());
-	m_garbageRanges[m_frame].clear();
+	if (vertexBuffer)
+		m_freeBuffers.push_back(vertexBuffer);
 }
 
 	}

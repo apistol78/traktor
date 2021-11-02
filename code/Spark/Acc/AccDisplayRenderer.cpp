@@ -120,7 +120,7 @@ bool AccDisplayRenderer::create(
 	fillVertexElements[4] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(AccShape::FillVertex, color), 0);
 	T_FATAL_ASSERT (render::getVertexSize(fillVertexElements) == sizeof(AccShape::FillVertex));
 
-	m_fillVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
+	m_fillVertexPool = new AccShapeVertexPool(renderSystem);
 	if (!m_fillVertexPool->create(fillVertexElements))
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (fill)." << Endl;
@@ -132,7 +132,7 @@ bool AccDisplayRenderer::create(
 	lineVertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(AccShape::LineVertex, lineOffset), 0);
 	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
 
-	m_lineVertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
+	m_lineVertexPool = new AccShapeVertexPool(renderSystem);
 	if (!m_lineVertexPool->create(lineVertexElements))
 	{
 		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool (line)." << Endl;
@@ -437,10 +437,10 @@ void AccDisplayRenderer::renderGlyph(
 	if (!glyph)
 		return;
 
-	float coordScale = font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-	float fontScale = coordScale * fontHeight;
-	Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
-	Color4f glyphColor = color * cxform.mul + cxform.add;
+	const float coordScale = font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	const float fontScale = coordScale * fontHeight;
+	const Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
+	const Color4f glyphColor = color * cxform.mul + cxform.add;
 
 	// Check if shape is within frame bounds.
 	if (!rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
@@ -666,8 +666,6 @@ void AccDisplayRenderer::end()
 	}
 
 	m_gradientCache->synchronize();
-	m_fillVertexPool->cycleGarbage();
-	m_lineVertexPool->cycleGarbage();
 }
 
 void AccDisplayRenderer::renderEnqueuedGlyphs()
