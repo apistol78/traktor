@@ -26,8 +26,11 @@ bool AccShapeVertexPool::create(const AlignedVector< render::VertexElement >& ve
 
 void AccShapeVertexPool::destroy()
 {
-	for (auto freeBuffer : m_freeBuffers)
-		safeDestroy(freeBuffer);
+	for (auto i = m_freeBuffers.begin(); i != m_freeBuffers.end(); ++i)
+	{
+		if (*i)
+			i->destroy();
+	}
 
 	m_freeBuffers.clear();
 	m_renderSystem = nullptr;
