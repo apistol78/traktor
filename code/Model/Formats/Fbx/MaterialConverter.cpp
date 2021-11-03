@@ -34,6 +34,12 @@ void scanCustomProperties(const FbxObject* node, Material& outMaterial)
 				if (propMode.IsValid())
 					outMaterial.setBlendOperator((Material::BlendOperator)propMode.Get());
 			}
+			else if (propName == L"Transparency")
+			{
+				FbxPropertyT< FbxFloat > propTransparency = prop;
+				if (propTransparency.IsValid())
+					outMaterial.setTransparency(propTransparency.Get());
+			}
 			else if (propName == L"Emissive")
 				outMaterial.setEmissive(1.0f);
 			else
