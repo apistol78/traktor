@@ -170,9 +170,6 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
 	{
-		if (i >= m_items.size())
-			break;
-
 		int32_t width = columns[i]->getWidth();
 		if (columns.size() == 1)
 			width = rect.getWidth();
@@ -190,7 +187,8 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 		rcCell.left = rcCell.right;
 	}
 
-	AutoWidgetCell::placeCells(widget, rect);
+	Rect rcRow(rect.left, rect.top, std::max(rcCell.right, rect.right), rect.bottom);
+	AutoWidgetCell::placeCells(widget, rcRow);
 }
 
 void GridRow::interval()
@@ -283,20 +281,20 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 
 	const RefArray< GridColumn >& columns = view->getColumns();
-	Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
+	// Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
 
 	// Paint custom background.
 	if (m_background.a > 0)
 	{
 		canvas.setBackground(m_background);
-		canvas.fillRect(rowRect);
+		canvas.fillRect(rect);
 	}
 
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
 		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
-		canvas.fillRect(rowRect);
+		canvas.fillRect(rect);
 	}
 	else if (view->getHoverCell() == this)
 	{

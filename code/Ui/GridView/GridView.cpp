@@ -354,7 +354,7 @@ void GridView::beginEdit(GridItem* item)
 {
 	releaseCapturedCell();
 
-	m_itemEditor->setRect(getCellClientRect(item));
+	m_itemEditor->setRect(item->getClientRect());
 	m_itemEditor->setText(item->getText());
 	m_itemEditor->selectAll();
 	m_itemEditor->show();

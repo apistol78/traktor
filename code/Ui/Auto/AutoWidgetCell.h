@@ -36,6 +36,10 @@ class T_DLLCLASS AutoWidgetCell
 public:
 	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
+	virtual Rect getRect() const;
+
+	virtual Rect getClientRect() const;
+
 	virtual AutoWidgetCell* hitTest(const Point& position);
 
 	virtual bool beginCapture();
@@ -78,6 +82,7 @@ protected:
 
 private:
 	AutoWidget* m_widget = nullptr;
+	Rect m_rect;
 };
 
 	}
