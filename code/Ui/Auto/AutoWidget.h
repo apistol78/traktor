@@ -42,6 +42,10 @@ public:
 
 	AutoWidgetCell* getHoverCell() const;
 
+	AutoWidgetCell* getHeaderCell() const;
+
+	AutoWidgetCell* getFooterCell() const;
+
 	void requestUpdate();
 
 	void requestInterval(AutoWidgetCell* cell, int32_t duration);
@@ -51,10 +55,6 @@ public:
 	void placeHeaderCell(AutoWidgetCell* cell, int32_t height);
 
 	void placeFooterCell(AutoWidgetCell* cell, int32_t height);
-
-	Rect getCellRect(const AutoWidgetCell* cell) const;
-
-	Rect getCellClientRect(const AutoWidgetCell* cell) const;
 
 	bool setCapturedCell(AutoWidgetCell* cell);
 
@@ -71,21 +71,15 @@ public:
 	void updateLayout();
 
 private:
-	struct CellInstance
-	{
-		Ref< AutoWidgetCell > cell;
-		Rect rc;
-	};
-
 	struct CellInterval
 	{
 		Ref< AutoWidgetCell > cell;
 		int32_t duration;
 	};
 
-	std::vector< CellInstance > m_cells;
-	CellInstance m_headerCell;
-	CellInstance m_footerCell;
+	RefArray< AutoWidgetCell > m_cells;
+	Ref< AutoWidgetCell > m_headerCell;
+	Ref< AutoWidgetCell > m_footerCell;
 	std::list< CellInterval > m_intervals;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;

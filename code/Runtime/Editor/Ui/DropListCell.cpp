@@ -37,7 +37,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 		}
 	}
 
-	ui::Rect rcInner = getWidget< ui::AutoWidget >()->getCellClientRect(this);
+	ui::Rect rcInner = getClientRect();
 	const ui::MenuItem* selectedItem = menu.showModal(getWidget< ui::AutoWidget >(), rcInner.getBottomLeft(), rcInner.getWidth(), 8);
 	if (selectedItem)
 		m_instance->setDeployHostId(selectedItem->getCommand().getId());

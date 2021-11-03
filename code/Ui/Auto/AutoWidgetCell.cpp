@@ -11,6 +11,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidgetCell", AutoWidgetCell, ui::EventSu
 void AutoWidgetCell::placeCells(AutoWidget* widget, const Rect& rect)
 {
 	m_widget = widget;
+	m_rect = rect;
+}
+
+Rect AutoWidgetCell::getRect() const
+{
+	return m_rect;
+}
+
+Rect AutoWidgetCell::getClientRect() const
+{
+	bool footerOrHeader = (bool)(this == m_widget->getFooterCell() || this == m_widget->getHeaderCell());
+	if (!footerOrHeader)
+		return m_rect.offset(m_widget->getScrollOffset());
+	else
+		return m_rect;
 }
 
 AutoWidgetCell* AutoWidgetCell::hitTest(const Point& position)

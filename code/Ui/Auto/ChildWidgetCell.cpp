@@ -1,5 +1,4 @@
 #include "Core/Misc/SafeDestroy.h"
-#include "Ui/Auto/AutoWidget.h"
 #include "Ui/Auto/ChildWidgetCell.h"
 
 namespace traktor
@@ -22,7 +21,7 @@ ChildWidgetCell::~ChildWidgetCell()
 void ChildWidgetCell::placeCells(AutoWidget* widget, const Rect& rect)
 {
 	AutoWidgetCell::placeCells(widget, rect);
-	m_child->setRect(widget->getCellClientRect(this));
+	m_child->setRect(getClientRect());
 }
 
 Widget* ChildWidgetCell::getChild() const

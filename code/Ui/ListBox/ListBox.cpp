@@ -186,7 +186,7 @@ int32_t ListBox::getItemHeight()
 Rect ListBox::getItemRect(int32_t index) const
 {
 	if (index >= 0 && index < (int32_t)m_items.size())
-		return getCellRect(m_items[index]);
+		return m_items[index]->getRect();
 	else
 		return Rect();
 }

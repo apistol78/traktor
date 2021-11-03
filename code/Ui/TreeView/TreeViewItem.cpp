@@ -183,7 +183,7 @@ void TreeViewItem::show()
 	m_view->updateLayout();
 
 	// Scroll view to this item.
-	Rect rc = m_view->getCellRect(this);
+	Rect rc = getRect();
 	m_view->scrollTo({ 0, rc.getCenter().y });
 }
 
@@ -340,7 +340,7 @@ Rect TreeViewItem::calculateExpandRect() const
 	int32_t d = m_view->m_imageState->getSize().cy;
 	int32_t depth = calculateDepth();
 
-	Rect rcItem = m_view->getCellClientRect(this);
+	Rect rcItem = getClientRect();
 	rcItem.left += dpi96(4 + depth * 20);
 	rcItem.right = rcItem.left + d;
 
@@ -357,7 +357,7 @@ Rect TreeViewItem::calculateImageRect() const
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
-	Rect rcItem = m_view->getCellClientRect(this);
+	Rect rcItem = getClientRect();
 	rcItem.left += dpi96(4 + depth * 20) + d;
 	rcItem.right = rcItem.left + imageCount * d;
 
@@ -376,7 +376,7 @@ Rect TreeViewItem::calculateLabelRect() const
 
 	Size extent = m_view->getFontMetric().getExtent(m_text);
 
-	Rect rcItem = m_view->getCellClientRect(this);
+	Rect rcItem = getClientRect();
 	rcItem.left += dpi96(4 + depth * 20) + d + imageCount * d + (imageCount > 0 ? dpi96(4) : 0);
 	rcItem.right = rcItem.left + extent.cx + d;
 

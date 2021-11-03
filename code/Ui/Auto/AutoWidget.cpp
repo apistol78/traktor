@@ -56,25 +56,26 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 {
 	AutoWidgetCell* hit = nullptr;
 
-	if (m_headerCell.cell)
+	if (m_headerCell)
 	{
-		if (m_headerCell.rc.inside(position))
-			return m_headerCell.cell;
+		if (m_headerCell->getRect().inside(position))
+			return m_headerCell;
 	}
 
-	if (m_footerCell.cell)
+	if (m_footerCell)
 	{
-		if (m_footerCell.rc.inside(position))
-			return m_footerCell.cell;
+		if (m_footerCell->getRect().inside(position))
+			return m_footerCell;
 	}
 
 	Point clientPosition = position - m_scrollOffset;
-	for (auto i = m_cells.rbegin(); i != m_cells.rend(); ++i)
+	for (int32_t i = (int32_t)m_cells.size() - 1; i >= 0; --i)
 	{
-		if (!i->rc.inside(clientPosition))
+		AutoWidgetCell* cell = m_cells[i];
+		if (!cell->getRect().inside(clientPosition))
 			continue;
 
-		if ((hit = i->cell->hitTest(clientPosition)) != nullptr)
+		if ((hit = cell->hitTest(clientPosition)) != nullptr)
 			break;
 	}
 
@@ -84,6 +85,16 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 AutoWidgetCell* AutoWidget::getHoverCell() const
 {
 	return m_hoverCell;
+}
+
+AutoWidgetCell* AutoWidget::getHeaderCell() const
+{
+	return m_headerCell;
+}
+
+AutoWidgetCell* AutoWidget::getFooterCell() const
+{
+	return m_footerCell;
 }
 
 void AutoWidget::requestUpdate()
@@ -115,8 +126,7 @@ void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 	T_ASSERT(cell);
 
 	// Add this cell instance.
-	CellInstance instance = { cell, rect };
-	m_cells.push_back(instance);
+	m_cells.push_back(cell);
 
 	// Notify cell to place sub-cells.
 	cell->placeCells(this, rect);
@@ -129,8 +139,7 @@ void AutoWidget::placeHeaderCell(AutoWidgetCell* cell, int32_t height)
 	ui::Rect inner = getInnerRect();
 	inner.bottom = inner.top + height;
 
-	m_headerCell.cell = cell;
-	m_headerCell.rc = inner;
+	m_headerCell = cell;
 
 	cell->placeCells(this, inner);
 }
@@ -142,48 +151,9 @@ void AutoWidget::placeFooterCell(AutoWidgetCell* cell, int32_t height)
 	ui::Rect inner = getInnerRect();
 	inner.bottom = inner.top + height;
 
-	m_footerCell.cell = cell;
-	m_footerCell.rc = inner;
+	m_footerCell = cell;
 
 	cell->placeCells(this, inner);
-}
-
-Rect AutoWidget::getCellRect(const AutoWidgetCell* cell) const
-{
-	if (cell)
-	{
-		if (m_headerCell.cell == cell)
-			return m_headerCell.rc;
-
-		if (m_footerCell.cell == cell)
-			return m_footerCell.rc;
-
-		for (const auto& instance : m_cells)
-		{
-			if (instance.cell == cell)
-				return instance.rc;
-		}
-	}
-	return Rect();
-}
-
-Rect AutoWidget::getCellClientRect(const AutoWidgetCell* cell) const
-{
-	if (cell)
-	{
-		if (m_headerCell.cell == cell)
-			return m_headerCell.rc;
-
-		if (m_footerCell.cell == cell)
-			return m_footerCell.rc;
-
-		for (const auto& instance : m_cells)
-		{
-			if (instance.cell == cell)
-				return instance.rc.offset(m_scrollOffset);
-		}
-	}
-	return Rect();
 }
 
 bool AutoWidget::setCapturedCell(AutoWidgetCell* cell)
@@ -241,8 +211,8 @@ Point AutoWidget::getClientPosition(const Point& innerPosition) const
 void AutoWidget::updateLayout()
 {
 	// Remove references to previously layed out cells.
-	m_headerCell.cell = nullptr;
-	m_footerCell.cell = nullptr;
+	m_headerCell = nullptr;
+	m_footerCell = nullptr;
 	m_cells.resize(0);
 
 	Rect innerRect = getInnerRect();
@@ -268,10 +238,11 @@ void AutoWidget::updateLayout()
 
 	for (const auto& instance : m_cells)
 	{
-		m_bounds.left = std::min(m_bounds.left, instance.rc.left);
-		m_bounds.right = std::max(m_bounds.right, instance.rc.right);
-		m_bounds.top = std::min(m_bounds.top, instance.rc.top);
-		m_bounds.bottom = std::max(m_bounds.bottom, instance.rc.bottom);
+		Rect rc = instance->getRect();
+		m_bounds.left = std::min(m_bounds.left, rc.left);
+		m_bounds.right = std::max(m_bounds.right, rc.right);
+		m_bounds.top = std::min(m_bounds.top, rc.top);
+		m_bounds.bottom = std::max(m_bounds.bottom, rc.bottom);
 	}
 
 	// Update scrollbar ranges.
@@ -305,8 +276,8 @@ void AutoWidget::updateLayout()
 		if (m_scrollBarV->isVisible(false))
 			innerRect.right -= m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
 
-		m_headerCell.cell = nullptr;
-		m_footerCell.cell = nullptr;
+		m_headerCell = nullptr;
+		m_footerCell = nullptr;
 		m_cells.resize(0);
 
 		layoutCells(innerRect);
@@ -335,10 +306,16 @@ void AutoWidget::placeScrollBars()
 	int32_t width = m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
 	int32_t height = m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
 
-	if (m_headerCell.cell)
-		innerRect.top = m_headerCell.rc.bottom + 1;
-	if (m_footerCell.cell)
-		innerRect.bottom = m_footerCell.rc.top - 1;
+	if (m_headerCell)
+	{
+		Rect rc = m_headerCell->getRect();
+		innerRect.top = rc.bottom + 1;
+	}
+	if (m_footerCell)
+	{
+		Rect rc = m_footerCell->getRect();
+		innerRect.bottom = rc.top - 1;
+	}
 
 	int32_t widthH = innerRect.getWidth();
 	if (m_scrollBarV->isVisible(false))
@@ -472,21 +449,21 @@ void AutoWidget::eventPaint(PaintEvent* event)
 
 	for (const auto& instance : m_cells)
 	{
-		Rect rc = instance.rc.offset(m_scrollOffset);
+		Rect rc = instance->getRect().offset(m_scrollOffset);
 		if (rc.intersect(innerRect))
-			instance.cell->paint(canvas, rc);
+			instance->paint(canvas, rc);
 	}
 
-	if (m_headerCell.cell)
+	if (m_headerCell)
 	{
-		Rect rc = m_headerCell.rc.offset(m_scrollOffset.cx, 0);
-		m_headerCell.cell->paint(canvas, rc);
+		Rect rc = m_headerCell->getRect().offset(m_scrollOffset.cx, 0);
+		m_headerCell->paint(canvas, rc);
 	}
 
-	if (m_footerCell.cell)
+	if (m_footerCell)
 	{
-		Rect rc = m_footerCell.rc.offset(m_scrollOffset.cx, 0);
-		m_footerCell.cell->paint(canvas, rc);
+		Rect rc = m_footerCell->getRect().offset(m_scrollOffset.cx, 0);
+		m_footerCell->paint(canvas, rc);
 	}
 
 	event->consume();
