@@ -466,10 +466,7 @@ void AccDisplayRenderer::renderGlyph(
 			dictionary,
 			*glyph
 		))
-		{
-			T_DEBUG(L"Glyph tesselation failed");
 			return;
-		}
 
 		m_glyphCache[tag].shape = accShape;
 		m_glyphCache[tag].index = -1;
@@ -478,7 +475,7 @@ void AccDisplayRenderer::renderGlyph(
 		T_ASSERT(it1 != m_glyphCache.end());
 	}
 
-	Ref< AccShape > accShape = it1->second.shape;
+	AccShape* accShape = it1->second.shape;
 	T_ASSERT(accShape);
 
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;

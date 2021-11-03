@@ -96,7 +96,7 @@ void AccQuad::render(
 	bool maskWrite,
 	bool maskIncrement,
 	uint8_t maskReference
-)
+) const
 {
 	Matrix44 m1(
 		transform.e11, transform.e12, transform.e13, 0.0f,
@@ -174,7 +174,7 @@ void AccQuad::render(
 void AccQuad::blit(
 	render::RenderPass* renderPass,
 	render::ITexture* texture
-)
+) const
 {
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 

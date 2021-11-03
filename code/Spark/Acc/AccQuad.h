@@ -56,12 +56,12 @@ public:
 		bool maskWrite,
 		bool maskIncrement,
 		uint8_t maskReference
-	);
+	) const;
 
 	void blit(
 		render::RenderPass* renderPass,
 		render::ITexture* texture
-	);
+	) const;
 
 private:
 	resource::Proxy< render::Shader > m_shaderSolid;

@@ -148,7 +148,8 @@ void RenderContext::merge(uint32_t priorities)
 
 void RenderContext::render(IRenderView* renderView) const
 {
-	for (size_t i = 0; i < m_renderQueue.size(); ++i)
+	const size_t size = m_renderQueue.size();
+	for (size_t i = 0; i < size; ++i)
 		m_renderQueue[i]->render(renderView);
 }
 

@@ -131,7 +131,7 @@ public:
 		bool maskIncrement,
 		uint8_t maskReference,
 		uint8_t blendMode
-	);
+	) const;
 
 	const Aabb2& getBounds() const { return m_bounds; }
 
