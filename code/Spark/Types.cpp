@@ -1,4 +1,4 @@
-#include "Core/Thread/Atomic.h"
+#include <atomic>
 #include "Spark/Types.h"
 
 namespace traktor
@@ -8,13 +8,13 @@ namespace traktor
 		namespace
 		{
 
-int32_t s_tag = 0;
+std::atomic< int32_t > s_tag(0);
 
 		}
 
 int32_t allocateCacheTag()
 {
-	return Atomic::increment(s_tag);
+	return ++s_tag;
 }
 
 	}
