@@ -3,7 +3,7 @@
 #include "Core/Class/AutoVerify.h"
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeDispatch.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Meta/MethodSignature.h"
 
 namespace traktor
@@ -28,13 +28,11 @@ public:
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final 
+	virtual void signature(OutputStream& os) const override final 
 	{
-		StringOutputStream ss;
-		ss << CastAny< ReturnType >::typeName();
-		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = { ( ss << L"," << CastAny< ArgumentTypes >::typeName(), 0) ... };
+		os << CastAny< ReturnType >::typeName();
+		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = { (os << L"," << CastAny< ArgumentTypes >::typeName(), 0) ... };
         (void)__dummy__;
-		return ss.str();
 	}
 #endif
 
@@ -71,12 +69,10 @@ public:
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final 
+	virtual void signature(OutputStream& os) const override final 
 	{
-		StringOutputStream ss;
-		ss << L"void";
-		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = { ( ss << L"," << CastAny< ArgumentTypes >::typeName(), 0) ... };
-		return ss.str();
+		os << L"void";
+		int __dummy__[(sizeof ... (ArgumentTypes)) + 1] = { (os << L"," << CastAny< ArgumentTypes >::typeName(), 0) ... };
 	}
 #endif
 

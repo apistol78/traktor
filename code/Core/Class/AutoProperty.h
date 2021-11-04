@@ -32,9 +32,9 @@ struct PropertySet final : public IRuntimeDispatch
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final
+	virtual void signature(OutputStream& os) const override final
 	{
-		return CastAny< ValueType >::typeName();
+		os << CastAny< ValueType >::typeName();
 	}
 #endif
 
@@ -66,9 +66,9 @@ struct PropertyGet final : public IRuntimeDispatch
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final
+	virtual void signature(OutputStream& os) const override final
 	{
-		return CastAny< ValueType >::typeName();
+		os << CastAny< ValueType >::typeName();
 	}
 #endif
 
@@ -97,9 +97,9 @@ struct FnPropertySet final : public IRuntimeDispatch
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final
+	virtual void signature(OutputStream& os) const override final
 	{
-		return CastAny< ValueType >::typeName();
+		os << CastAny< ValueType >::typeName();
 	}
 #endif
 
@@ -131,9 +131,9 @@ struct FnPropertyGet final : public IRuntimeDispatch
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final
+	virtual void signature(OutputStream& os) const override final
 	{
-		return CastAny< ValueType >::typeName();
+		os << CastAny< ValueType >::typeName();
 	}
 #endif
 

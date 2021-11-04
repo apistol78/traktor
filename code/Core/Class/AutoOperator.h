@@ -33,10 +33,7 @@ struct Operator final : public IRuntimeDispatch
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const override final
-	{
-		return L"";
-	}
+	virtual void signature(OutputStream& os) const override final {}
 #endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
