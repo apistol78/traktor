@@ -16,8 +16,9 @@ namespace traktor
 {
 
 class Any;
+class OutputStream;
 
-/*! \brief
+/*! Runtime dispatch interface.
  * \ingroup Core
  */
 class T_DLLCLASS IRuntimeDispatch : public Object
@@ -26,7 +27,7 @@ class T_DLLCLASS IRuntimeDispatch : public Object
 
 public:
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-	virtual std::wstring signature() const = 0;
+	virtual void signature(OutputStream& os) const = 0;
 #endif
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const = 0;

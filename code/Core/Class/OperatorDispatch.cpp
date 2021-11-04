@@ -12,10 +12,7 @@ void OperatorDispatch::add(const IRuntimeDispatch* dispatch)
 }
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-std::wstring OperatorDispatch::signature() const
-{
-	return L"";
-}
+void OperatorDispatch::signature(OutputStream& os) const {}
 #endif
 
 Any OperatorDispatch::invoke(ITypedObject* self, uint32_t argc, const Any* argv) const

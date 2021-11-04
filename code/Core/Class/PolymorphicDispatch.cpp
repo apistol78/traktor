@@ -1,5 +1,6 @@
 #include "Core/Class/Any.h"
 #include "Core/Class/PolymorphicDispatch.h"
+#include "Core/Io/OutputStream.h"
 
 namespace traktor
 {
@@ -14,19 +15,19 @@ void PolymorphicDispatch::set(uint32_t argc, const IRuntimeDispatch* dispatch)
 }
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
-std::wstring PolymorphicDispatch::signature() const
+void PolymorphicDispatch::signature(OutputStream& os) const
 {
-	std::wstring s;
+	bool first = true;
 	for (auto dispatch : m_dispatches)
 	{
 		if (dispatch)
 		{
-			if (!s.empty())
-				s += L";";
-			s += dispatch->signature();
+			if (first)
+				os << L";";
+			dispatch->signature(os);
+			first = false;
 		}
 	}
-	return s;
 }
 #endif
 
