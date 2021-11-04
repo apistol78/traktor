@@ -1,12 +1,11 @@
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_EXR)
 
-#include <ImfIO.h>
-#include <ImfInputFile.h>
-#include <ImfOutputFile.h>
-#include <ImfChannelList.h>
-#include <ImfFrameBuffer.h>
-#include <half.h>
+#include <cstring>
+#include <tinyexr.h>
+
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Drawing/Formats/ImageFormatExr.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -15,155 +14,41 @@ namespace traktor
 {
 	namespace drawing
 	{
-		namespace
-		{
-
-class IStreamWrapper : public Imf::IStream
-{
-public:
-	IStreamWrapper(traktor::IStream* stream)
-	:	Imf::IStream("n/a")
-	,	m_stream(stream)
-	{
-	}
-
-	virtual bool read(char c[], int n)
-	{
-		return bool(m_stream->read(c, n) == n);
-	}
-
-	virtual Imf::Int64 tellg()
-	{
-		return Imf::Int64(m_stream->tell());
-	}
-
-	virtual void seekg(Imf::Int64 pos)
-	{
-		m_stream->seek(traktor::IStream::SeekSet, int64_t(pos));
-	}
-
-private:
-	Ref< traktor::IStream > m_stream;
-};
-
-class OStreamWrapper : public Imf::OStream
-{
-public:
-	OStreamWrapper(traktor::IStream* stream)
-	:	Imf::OStream("n/a")
-	,	m_stream(stream)
-	{
-	}
-
-	virtual void write(const char c[], int n)
-	{
-		m_stream->write(c, n);
-	}
-
-	virtual Imf::Int64 tellp()
-	{
-		return Imf::Int64(m_stream->tell());
-	}
-
-	virtual void seekp(Imf::Int64 pos)
-	{
-		m_stream->seek(traktor::IStream::SeekSet, int64_t(pos));
-	}
-
-private:
-	Ref< traktor::IStream > m_stream;
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatExr", ImageFormatExr, IImageFormat)
 
 Ref< Image > ImageFormatExr::read(IStream* stream)
 {
-	IStreamWrapper is(stream);
-	Imf::InputFile file(is);
+	AlignedVector< uint8_t > memory;
 
-	Imath::Box2i dw = file.header().dataWindow();
-	int32_t sizex = dw.max.x - dw.min.x + 1;
-	int32_t sizey = dw.max.y - dw.min.y + 1;
+	// Load entire file into memory.
+	DynamicMemoryStream ms(memory, false, true);
+	if (!StreamCopy(&ms, stream).execute())
+		return nullptr;
 
-	AlignedVector< half > rgb(4 * sizex * sizey);
+	// Parse image data.
+	float* rgba = nullptr;
+	int width = 0;
+	int height = 0;
+	if (LoadEXRFromMemory(&rgba, &width, &height, memory.c_ptr(), memory.size(), nullptr) < 0)
+		return nullptr;
 
-	Imf::FrameBuffer frameBuffer;
-	frameBuffer.insert("R", Imf::Slice(Imf::HALF, (char *)&rgb[0], 4 * sizeof(half), sizex * 4 * sizeof(half), 1, 1, 0.0f));
-	frameBuffer.insert("G", Imf::Slice(Imf::HALF, (char *)&rgb[1], 4 * sizeof(half), sizex * 4 * sizeof(half), 1, 1, 0.0f));
-	frameBuffer.insert("B", Imf::Slice(Imf::HALF, (char *)&rgb[2], 4 * sizeof(half), sizex * 4 * sizeof(half), 1, 1, 0.0f));
-	frameBuffer.insert("A", Imf::Slice(Imf::HALF, (char *)&rgb[3], 4 * sizeof(half), sizex * 4 * sizeof(half), 1, 1, 0.0f));
-	file.setFrameBuffer(frameBuffer);
-	file.readPixels(dw.min.y, dw.max.y);
+	memory.clear();
 
+	// Create image.
 	Ref< drawing::Image > image = new drawing::Image(
 		PixelFormat::getRGBAF32(),
-		sizex,
-		sizey
+		width,
+		height
 	);
-
-	const half* s = &rgb[0];
-	float* d = static_cast< float* >(image->getData());
-
-	for (int32_t y = 0; y < sizey; ++y)
-	{
-		for (int32_t x = 0; x < sizex; ++x)
-		{
-			*d++ = *s++;
-			*d++ = *s++;
-			*d++ = *s++;
-			*d++ = *s++;
-		}
-	}
-
+	std::memcpy(image->getData(), rgba, width * height * (4 * sizeof(float)));
+	std::free(rgba);
 	return image;
 }
 
 bool ImageFormatExr::write(IStream* stream, const Image* image)
 {
-	OStreamWrapper os(stream);
-
-	Ref< Image > clone = image->clone();
-	if (!clone)
-		return false;
-
-	clone->convert(PixelFormat::getRGBAF32());
-
-	Imf::Header header(clone->getWidth(), clone->getHeight());
-	header.channels().insert("R", Imf::Channel(Imf::HALF));
-	header.channels().insert("G", Imf::Channel(Imf::HALF));
-	header.channels().insert("B", Imf::Channel(Imf::HALF));
-	header.channels().insert("A", Imf::Channel(Imf::HALF));
-	header.compression() = Imf::Compression();
-
-	AlignedVector< half > rgb(4 * clone->getWidth() * clone->getHeight());
-
-	const float* s = static_cast< const float* >(image->getData());
-	half* d = &rgb[0];
-
-	for (int32_t y = 0; y < clone->getHeight(); ++y)
-	{
-		for (int32_t x = 0; x < clone->getWidth(); ++x)
-		{
-			*d++ = *s++;
-			*d++ = *s++;
-			*d++ = *s++;
-			*d++ = *s++;
-		}
-	}
-
-	Imf::FrameBuffer frameBuffer;
-	frameBuffer.insert("R", Imf::Slice(Imf::HALF, (char *)&rgb[0], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
-	frameBuffer.insert("G", Imf::Slice(Imf::HALF, (char *)&rgb[1], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
-	frameBuffer.insert("B", Imf::Slice(Imf::HALF, (char *)&rgb[2], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
-	frameBuffer.insert("A", Imf::Slice(Imf::HALF, (char *)&rgb[3], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
-
-	Imf::OutputFile file(os, header);
-	file.setFrameBuffer(frameBuffer);
-	file.writePixels(clone->getHeight());
-
-	return true;
+	return false;
 }
 
 	}

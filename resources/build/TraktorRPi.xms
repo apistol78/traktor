@@ -3129,7 +3129,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternRPi.xms</solutionFileName>
-														<projectName>Extern.OpenEXR</projectName>
+														<projectName>Extern.tinyexr</projectName>
 													</item>
 												</dependencies>
 											</project>

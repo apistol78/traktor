@@ -1,7 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/IStream.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"

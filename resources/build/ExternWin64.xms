@@ -5331,7 +5331,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.OpenEXR</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0</sourcePath>
 			<configurations>
@@ -5476,7 +5476,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project type="Project" version="1">
-						<enable>true</enable>
+						<enable>false</enable>
 						<name>Extern.ilmbase</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</sourcePath>
 						<configurations>
@@ -6415,7 +6415,16 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
@@ -6444,7 +6453,16 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
@@ -6534,8 +6552,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.oidn.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.oidn.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -6561,8 +6588,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.oidn.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.oidn.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items/>
@@ -6639,8 +6675,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.VulkanMemoryAllocator.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.VulkanMemoryAllocator.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -6662,8 +6707,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.VulkanMemoryAllocator.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.VulkanMemoryAllocator.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items/>
@@ -6749,8 +6803,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.spirvtools.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.spirvtools.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -6775,8 +6838,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.spirvtools.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.spirvtools.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -6925,8 +6997,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.MikkTSpace.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.MikkTSpace.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -6949,8 +7030,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.MikkTSpace.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.MikkTSpace.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -7032,8 +7122,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.SPIRV-Cross.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.SPIRV-Cross.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -7055,8 +7154,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.SPIRV-Cross.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.SPIRV-Cross.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -7158,8 +7266,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.astcenc.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.astcenc.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -7185,8 +7302,17 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.astcenc.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.astcenc.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -7200,6 +7326,156 @@
 						<item type="File">
 							<fileName>Source/*.h</fileName>
 							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.tinyexr</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104/deps/miniz</item>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104/deps/miniz</item>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104/deps/miniz</item>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.tinyexr.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.tinyexr.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104/deps/miniz</item>
+						<item>$(TRAKTOR_HOME)/3rdp/tinyexr-master-211104</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.tinyexr.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.tinyexr.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>tinyexr.cc</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>tinyexr.h</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>deps</name>
+					<items>
+						<item type="Filter">
+							<name>miniz</name>
+							<items>
+								<item type="File">
+									<fileName>deps/miniz/*.c</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>deps/miniz/*.h</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>

@@ -326,6 +326,10 @@
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
 						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -420,6 +424,10 @@
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
 						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -513,6 +521,10 @@
 						<item>
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
+						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
@@ -716,6 +728,10 @@
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
 						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -834,6 +850,10 @@
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
 						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -951,6 +971,10 @@
 						<item>
 							<name>ModuleDefinitionFile</name>
 							<value>%(MODULE_DEFINITION_FILE)</value>
+						</item>
+						<item>
+							<name>EnableCOMDATFolding</name>
+							<value>true</value>
 						</item>
 					</options>
 				</item>
