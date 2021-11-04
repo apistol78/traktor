@@ -3149,6 +3149,12 @@
 														<solutionFileName>ExternOSX.xms</solutionFileName>
 														<projectName>Extern.agg</projectName>
 													</item>
+													<item type="ExternalDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<solutionFileName>ExternOSX.xms</solutionFileName>
+														<projectName>Extern.tinyexr</projectName>
+													</item>
 												</dependencies>
 											</project>
 										</item>
