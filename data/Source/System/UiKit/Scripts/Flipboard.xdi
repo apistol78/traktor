@@ -35,9 +35,16 @@ function Flipboard:showPage(id, arg)
 		if f then
 			-- Fade in new child.
 			if child._mc ~= nil then
-				Tween(0, 1, r, function(value, last)
+				local p = child:getPlacement()
+				Tween(0, 1.5, r, function(value, last)
 					if child._mc ~= nil then
-						child._mc.alpha = value
+						local f = value / 1.5
+						local s = 100 + (1 - f) * 100
+						local x = p.x - p.width / 2 * (1 - f)
+						local y = p.y - p.height / 2 * (1 - f)
+						child._mc.position = Vector2(x, y)
+						child._mc.scale = Vector2(s, s)
+						child._mc.alpha = f
 					end
 				end)
 			end
