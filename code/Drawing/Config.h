@@ -16,7 +16,9 @@
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	define DRAWING_INCLUDE_EXR
+#	if !defined(__IOS__)
+#	    define DRAWING_INCLUDE_EXR
+#   endif
 #elif defined(__GNUC__)
 #	define DRAWING_INCLUDE_PNG
 #	define DRAWING_INCLUDE_ICO
