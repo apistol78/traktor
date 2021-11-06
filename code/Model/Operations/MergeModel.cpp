@@ -8,24 +8,6 @@ namespace traktor
 {
 	namespace model
 	{
-		namespace
-		{
-
-const Scalar c_snapDistance(0.02f);
-const Scalar c_snapDistanceSqr(c_snapDistance * c_snapDistance);
-
-int32_t predicateAxis(float a, float b)
-{
-	float dab = a - b;
-	if (dab < -FUZZY_EPSILON)
-		return -1;
-	else if (dab > FUZZY_EPSILON)
-		return 1;
-	else
-		return 0;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeModel", MergeModel, IModelOperation)
 
@@ -43,12 +25,15 @@ bool MergeModel::apply(Model& model) const
 
 	// Merge texture channels.
 	for (uint32_t i = 0; i < m_sourceModel.getTexCoordChannels().size(); ++i)
-		model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
+	{
+		uint32_t channel = model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
+		channelMap[i] = channel;
+	}
 
 	// Merge materials.
 	for (uint32_t i = 0; i < m_sourceModel.getMaterialCount(); ++i)
 	{
-		Material material = m_sourceModel.getMaterial(i);
+		const Material& material = m_sourceModel.getMaterial(i);
 		materialMap[i] = model.addUniqueMaterial(material);
 	}
 
@@ -114,9 +99,6 @@ bool MergeModel::apply(Model& model) const
 		vertexMap[i] = model.addUniqueVertex(v);
 	}
 
-	AlignedVector< Polygon >& mergedPolygons = model.getPolygons();
-	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
-
 	AlignedVector< Polygon > outputPolygons;
 	outputPolygons.reserve(sourcePolygons.size());
 
@@ -125,41 +107,6 @@ bool MergeModel::apply(Model& model) const
 		const Polygon& sourcePolygon = sourcePolygons[i];
 		const auto& sourceVertices = sourcePolygon.getVertices();
 
-		// Remap vertices.
-		Polygon::vertices_t outputVertices(sourceVertices.size());
-		for (size_t j = 0; j < sourceVertices.size(); ++j)
-			outputVertices[j] = vertexMap[sourceVertices[j]];
-
-		// Rotate vertices; keep vertex with lowest geometrical position first.
-		uint32_t minPositionIndex = ~0U;
-		Vector4 minPosition = Vector4(
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max()
-		);
-
-		for (size_t j = 0; j < outputVertices.size(); ++j)
-		{
-			const Vector4& position = model.getVertexPosition(outputVertices[j]);
-
-			int32_t cx = predicateAxis(position.x(), minPosition.x());
-			int32_t cy = predicateAxis(position.y(), minPosition.y());
-			int32_t cz = predicateAxis(position.z(), minPosition.z());
-
-			if (
-				cx < 0 ||
-				(cx == 0 && cy < 0) ||
-				(cx == 0 && cy == 0 && cz < 0)
-			)
-			{
-				minPositionIndex = j;
-				minPosition = position;
-			}
-		}
-
-		std::rotate(outputVertices.begin(), outputVertices.begin() + (size_t)minPositionIndex, outputVertices.end());
-
-		// Create polygon.
 		Polygon outputPolygon;
 		outputPolygon.setMaterial(materialMap[sourcePolygon.getMaterial()]);
 
@@ -169,80 +116,14 @@ bool MergeModel::apply(Model& model) const
 			outputPolygon.setNormal(normal);
 		}
 
-		outputPolygon.setVertices(outputVertices);
+		for (size_t j = 0; j < sourceVertices.size(); ++j)
+			outputPolygon.addVertex(vertexMap[sourceVertices[j]]);
 
-		//// Check if polygon is duplicated or canceling through opposite winding.
-		//bool duplicate = false;
-
-		//for (size_t j = 0; j < mergedPolygons.size(); ++j)
-		//{
-		//	const Polygon& mergedPolygon = mergedPolygons[j];
-
-		//	if (mergedPolygon.getVertexCount() != outputPolygon.getVertexCount())
-		//		continue;
-
-		//	uint32_t outputVertex = outputPolygon.getVertex(0);
-		//	uint32_t mergedVertex = mergedPolygon.getVertex(0);
-
-		//	const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-		//	const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
-
-		//	Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-		//	if (distance > c_snapDistanceSqr)
-		//		continue;
-
-		//	uint32_t vertexCount = outputPolygon.getVertexCount();
-
-		//	duplicate = true;
-
-		//	for (uint32_t k = 1; k < vertexCount; ++k)
-		//	{
-		//		uint32_t outputVertex = outputPolygon.getVertex(k);
-		//		uint32_t mergedVertex = mergedPolygon.getVertex(k);
-
-		//		const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-		//		const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
-
-		//		Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-		//		if (distance > c_snapDistanceSqr)
-		//		{
-		//			duplicate = false;
-		//			break;
-		//		}
-		//	}
-
-		//	if (duplicate)
-		//		break;
-
-		//	duplicate = true;
-
-		//	for (uint32_t k = 1; k < vertexCount; ++k)
-		//	{
-		//		uint32_t outputVertex = outputPolygon.getVertex(k);
-		//		uint32_t mergedVertex = mergedPolygon.getVertex(vertexCount - k);
-
-		//		const Vector4& outputPosition = model.getVertexPosition(outputVertex);
-		//		const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
-
-		//		Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-		//		if (distance > c_snapDistanceSqr)
-		//		{
-		//			duplicate = false;
-		//			break;
-		//		}
-		//	}
-
-		//	if (duplicate)
-		//	{
-		//		mergedPolygons.erase(mergedPolygons.begin() + j);
-		//		break;
-		//	}
-		//}
-
-		//if (!duplicate)
-			outputPolygons.push_back(outputPolygon);
+		outputPolygons.push_back(outputPolygon);
 	}
 
+	AlignedVector< Polygon >& mergedPolygons = model.getPolygons();
+	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
 	mergedPolygons.insert(mergedPolygons.end(), outputPolygons.begin(), outputPolygons.end());
 	return true;
 }

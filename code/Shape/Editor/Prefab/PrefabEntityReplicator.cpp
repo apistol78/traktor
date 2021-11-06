@@ -35,7 +35,7 @@ const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 0, PrefabEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, PrefabEntityReplicator, scene::IEntityReplicator)
 
 bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -197,7 +197,8 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 					log::error << L"Prefab failed; unable to read texture set \"" << textureSetId.format() << L"\"." << Endl;
 					return scene::Traverser::VrFailed;
 				}
-				materialTextures = textureSet->get();
+				for (auto mt : textureSet->get())
+					materialTextures[mt.first] = mt.second;
 			}
 
 			// Then let explicit material textures override those from a texture set.

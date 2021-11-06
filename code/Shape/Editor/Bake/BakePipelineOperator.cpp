@@ -448,7 +448,10 @@ bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 			{
 				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (entityReplicator)
+				{
+					pipelineDepends->addDependency(type_of(entityReplicator));
 					entityReplicator->addDependencies(pipelineDepends, entityData, componentData);
+				}
 			}
 
 			return scene::Traverser::VrContinue;
@@ -614,7 +617,7 @@ bool BakePipelineOperator::build(
 				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
 
 				Ref< model::Model > model = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					Key(0x00000002, 0x00000000, 0x00000000, componentDataHash),
+					Key(0x00000002, 0x00000000, type_of(entityReplicator).getVersion(), componentDataHash),
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
 					},
