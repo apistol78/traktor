@@ -31,7 +31,7 @@ public:
 		TmPingPong
 	};
 
-	PathComponent(
+	explicit PathComponent(
 		const TransformPath& path,
 		TimeMode timeMode,
 		float timeOffset
@@ -56,9 +56,7 @@ private:
 	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;
-	float m_timeScale;
-	float m_timeDeltaSign;
-	float m_time;
+	float m_timeOffset;
 };
 
 	}

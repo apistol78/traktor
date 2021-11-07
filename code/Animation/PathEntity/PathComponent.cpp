@@ -1,4 +1,5 @@
 #include "Animation/PathEntity/PathComponent.h"
+#include "Core/Math/Const.h"
 #include "World/Entity.h"
 
 namespace traktor
@@ -17,9 +18,7 @@ PathComponent::PathComponent(
 ,	m_transform(Transform::identity())
 ,	m_path(path)
 ,	m_timeMode(timeMode)
-,	m_timeScale(1.0f)
-,	m_timeDeltaSign(1.0f)
-,	m_time(timeOffset)
+,	m_timeOffset(timeOffset)
 {
 }
 
@@ -49,49 +48,33 @@ void PathComponent::update(const world::UpdateParams& update)
 	if (!m_owner)
 		return;
 
+	if (update.deltaTime <= FUZZY_EPSILON)
+	{
+		m_owner->setTransform(m_transform);
+		return;
+	}
+
+	float time = m_timeOffset;
 	if (m_timeMode != TmManual)
 	{
-		m_time += update.deltaTime * m_timeDeltaSign;
-
+		time = update.totalTime + m_timeOffset;
 		switch (m_timeMode)
 		{
 		case TmOnce:
-			if (m_time > m_path.getEndTime())
-			{
-				//if (m_listener && abs(m_timeDeltaSign) > 0.0f)
-				//	m_listener->notifyPathFinished(this);
-
-				m_time = m_path.getEndTime();
-				m_timeDeltaSign = 0.0f;
-			}
+			if (time > m_path.getEndTime())
+				time = m_path.getEndTime();
 			break;
 
 		case TmLoop:
-			if (m_time > m_path.getEndTime())
-			{
-				//if (m_listener)
-				//	m_listener->notifyPathFinished(this);
-
-				m_time = 0.0f;
-			}
+			time = std::fmod(time, m_path.getEndTime());
 			break;
 
 		case TmPingPong:
-			if (m_time > m_path.getEndTime())
 			{
-				//if (m_listener)
-				//	m_listener->notifyPathFinished(this);
-
-				m_time = m_path.getEndTime();
-				m_timeDeltaSign = -1.0f;
-			}
-			else if (m_time < 0.0f)
-			{
-				//if (m_listener)
-				//	m_listener->notifyPathFinished(this);
-
-				m_time = 0.0f;
-				m_timeDeltaSign = 1.0f;
+				int32_t n = (int32_t)(time / m_path.getEndTime());
+				time = std::fmod(time, m_path.getEndTime());
+				if ((n & 1) == 1)
+					time = m_path.getEndTime() - time;
 			}
 			break;
 
@@ -100,7 +83,7 @@ void PathComponent::update(const world::UpdateParams& update)
 		}
 	}
 
-	Transform transform = m_path.evaluate(m_time, m_timeMode == TmLoop).transform();
+	Transform transform = m_path.evaluate(time, m_timeMode == TmLoop).transform();
 	m_owner->setTransform(m_transform * transform);
 }
 
