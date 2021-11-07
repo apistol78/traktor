@@ -77,6 +77,12 @@ void WobbleComponent::update(const world::UpdateParams& update)
 	if (!m_owner)
 		return;
 
+	if (update.deltaTime <= FUZZY_EPSILON)
+	{
+		m_owner->setTransform(m_transform);
+		return;
+	}
+	
 	if (m_magnitude > FUZZY_EPSILON && m_rate > FUZZY_EPSILON)
 	{
 		float dx = convolve(update.totalTime * m_rate, c_wobbleX, sizeof_array(c_wobbleX)) * m_magnitude;

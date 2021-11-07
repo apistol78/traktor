@@ -1,4 +1,5 @@
 #include "Animation/Rotator/RotatorComponent.h"
+#include "Core/Math/Const.h"
 #include "World/Entity.h"
 
 namespace traktor
@@ -39,6 +40,12 @@ void RotatorComponent::update(const world::UpdateParams& update)
 {
 	if (!m_owner)
 		return;
+
+	if (update.deltaTime <= FUZZY_EPSILON)
+	{
+		m_owner->setTransform(m_transform);
+		return;
+	}
 
 	float angle = m_rate * update.totalTime;
 
