@@ -990,7 +990,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	if (!object)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-		log::error << L"Unable to call method \"" <<mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
+		log::error << L"Unable to call method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\"; null object." << Endl;
 		return 0;
 	}
 

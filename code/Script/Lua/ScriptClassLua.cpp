@@ -88,7 +88,8 @@ public:
 
 	virtual ~ScriptClassMethodDispatch()
 	{
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_ref);
+		if (m_luaState != nullptr)
+			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_ref);
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
@@ -129,7 +130,7 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 	lua_pushnil(luaState);
 	while (lua_next(luaState, -2))
 	{
-		if (lua_isfunction(luaState, -1))
+		if (lua_isfunction(luaState, -1) && !lua_iscfunction(luaState, -1))
 		{
 			std::string functionName = lua_tostring(luaState, -2);
 
