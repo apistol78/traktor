@@ -34,7 +34,7 @@ public:
 
 private:
 	TransformPath m_path;
-	PathComponent::TimeMode m_timeMode = PathComponent::TmManual;
+	PathComponent::TimeMode m_timeMode = PathComponent::TimeMode::Manual;
 	float m_timeOffset = 0.0f;
 };
 

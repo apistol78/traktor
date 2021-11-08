@@ -30,7 +30,7 @@ public:
 		Z
 	};
 
-	RotatorComponent(Axis axis, float rate);
+	explicit RotatorComponent(Axis axis, float rate);
 
 	virtual void destroy() override final;
 

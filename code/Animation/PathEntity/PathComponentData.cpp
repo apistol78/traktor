@@ -9,11 +9,11 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathComponentData", 0, PathComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathComponentData", 1, PathComponentData, world::IEntityComponentData)
 
 Ref< PathComponent > PathComponentData::createComponent() const
 {
-	return new PathComponent(m_path, m_timeMode, m_timeOffset);
+	return new PathComponent(m_path, m_timeMode);
 }
 
 void PathComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
@@ -22,18 +22,38 @@ void PathComponentData::setTransform(const world::EntityData* owner, const Trans
 
 void PathComponentData::serialize(ISerializer& s)
 {
-	const MemberEnum< PathComponent::TimeMode >::Key c_TimeMode_Keys[] =
-	{
-		{ L"TmManual", PathComponent::TmManual },
-		{ L"TmOnce", PathComponent::TmOnce },
-		{ L"TmLoop", PathComponent::TmLoop },
-		{ L"TmPingPong", PathComponent::TmPingPong },
-		{ 0 }
-	};
-
 	s >> MemberComposite< TransformPath >(L"path", m_path);
-	s >> MemberEnum< PathComponent::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
-	s >> Member< float >(L"timeOffset", m_timeOffset, AttributeUnit(UnitType::Seconds));
+
+	if (s.getVersion() >= 1)
+	{
+		const MemberEnum< PathComponent::TimeMode >::Key c_TimeMode_Keys[] =
+		{
+			{ L"Manual", PathComponent::TimeMode::Manual },
+			{ L"Once", PathComponent::TimeMode::Once },
+			{ L"Loop", PathComponent::TimeMode::Loop },
+			{ L"PingPong", PathComponent::TimeMode::PingPong },
+			{ 0 }
+		};
+		s >> MemberEnum< PathComponent::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
+	}
+	else
+	{
+		const MemberEnum< PathComponent::TimeMode >::Key c_TimeMode_Keys[] =
+		{
+			{ L"TmManual", PathComponent::TimeMode::Manual },
+			{ L"TmOnce", PathComponent::TimeMode::Once },
+			{ L"TmLoop", PathComponent::TimeMode::Loop },
+			{ L"TmPingPong", PathComponent::TimeMode::PingPong },
+			{ 0 }
+		};
+		s >> MemberEnum< PathComponent::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
+	}
+
+	if (s.getVersion() < 1)
+	{
+		float timeOffset;
+		s >> Member< float >(L"timeOffset", timeOffset, AttributeUnit(UnitType::Seconds));
+	}
 }
 
 	}
