@@ -28,7 +28,7 @@ class T_DLLCLASS ScriptComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz);
+	explicit ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz);
 
 	virtual void destroy() override final;
 
@@ -41,6 +41,8 @@ public:
 	virtual void update(const UpdateParams& update) override final;
 
 	void execute(const char* method);
+
+	Entity* getOwner() const { return m_owner; }
 
 private:
 	Entity* m_owner;

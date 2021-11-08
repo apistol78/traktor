@@ -92,7 +92,7 @@ bool ScriptComponent::validate()
 {
 	if (m_class.changed() || m_object == nullptr)
 	{
-		m_object = createRuntimeClassInstance(m_class, m_owner, 0, nullptr);
+		m_object = createRuntimeClassInstance(m_class, this, 0, nullptr);
 		m_methodSetTransform = findRuntimeClassMethod(m_class, "setTransform");
 		m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 		m_class.consume();
