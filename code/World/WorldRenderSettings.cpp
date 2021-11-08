@@ -52,8 +52,8 @@ void WorldRenderSettings::serialize(ISerializer& s)
 {
 	T_ASSERT(s.getVersion() >= 17);
 
-	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 
 	if (s.getVersion() < 35)
 	{
@@ -73,7 +73,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 			};
 
 			s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
-			s >> Member< float >(L"exposure", exposure, AttributeUnit(AuEV));
+			s >> Member< float >(L"exposure", exposure, AttributeUnit(UnitType::EV));
 		}
 		else
 		{
@@ -146,16 +146,16 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	{
 		if (s.getVersion() >= 34)
 		{
-			s >> Member< float >(L"fogDistance", fogDistance, AttributeUnit(AuMetres));
-			s >> Member< float >(L"fogDensity", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+			s >> Member< float >(L"fogDistance", fogDistance, AttributeUnit(UnitType::Metres));
+			s >> Member< float >(L"fogDensity", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 		}
 		else
 		{
 			float fogDistanceY, fogDensityY;
-			s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(AuMetres));
-			s >> Member< float >(L"fogDistanceZ", fogDistance, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-			s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
-			s >> Member< float >(L"fogDensityZ", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuMetres));
+			s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(UnitType::Metres));
+			s >> Member< float >(L"fogDistanceZ", fogDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+			s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
+			s >> Member< float >(L"fogDensityZ", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
 		}
 	}
 
@@ -195,7 +195,7 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	if (s.getVersion() >= 18)
 		s >> MemberEnum< ShadowProjection >(L"projection", projection, c_ShadowProjection_Keys);
 
-	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< int32_t >(L"resolution", resolution, AttributeRange(1));
 	s >> Member< float >(L"bias", bias, AttributeRange(0.0f, 8.0f));
 	s >> Member< float >(L"biasCoeff", biasCoeff, AttributeRange(0.0f, 8.0f));

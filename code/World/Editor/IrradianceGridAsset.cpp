@@ -20,7 +20,7 @@ void IrradianceGridAsset::serialize(ISerializer& s)
 	editor::Asset::serialize(s);
 
 	if (s.getVersion< IrradianceGridAsset >() >= 1)
-		s >> Member< float >(L"intensity", m_intensity, AttributeUnit(AuPercent));
+		s >> Member< float >(L"intensity", m_intensity, AttributeUnit(UnitType::Percent));
 }
 
 	}

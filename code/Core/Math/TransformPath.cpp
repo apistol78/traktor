@@ -523,7 +523,7 @@ void TransformPath::Key::serialize(ISerializer& s)
 	s >> Member< float >(L"T", T, AttributeRange(0.0f));
 	s >> Member< Vector4 >(L"tcb", tcb);
 	s >> Member< Vector4 >(L"position", position, AttributePoint());
-	s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(AuRadians));
+	s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(UnitType::Radians));
 	s >> MemberStaticArray< float, 4 >(L"values", values);
 }
 

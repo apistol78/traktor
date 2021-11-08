@@ -77,11 +77,11 @@ void CloudComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::ITexture >(L"particleTexture", m_particleTexture);
 	s >> resource::Member< render::Shader >(L"impostorShader", m_impostorShader);
 	s >> resource::Member< CloudMask >(L"mask", m_mask);
-	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution, AttributeUnit(AuPixels));
+	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution, AttributeUnit(UnitType::Pixels));
 	s >> Member< uint32_t >(L"impostorSliceCount", m_impostorSliceCount);
-	s >> Member< uint32_t >(L"updateFrequency", m_updateFrequency, AttributeUnit(AuHertz));
-	s >> Member< float >(L"updatePositionThreshold", m_updatePositionThreshold, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-	s >> Member< float >(L"updateDirectionThreshold", m_updateDirectionThreshold, AttributeRange(0.0f, 180.0f) | AttributeUnit(AuMetres));
+	s >> Member< uint32_t >(L"updateFrequency", m_updateFrequency, AttributeUnit(UnitType::Hertz));
+	s >> Member< float >(L"updatePositionThreshold", m_updatePositionThreshold, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"updateDirectionThreshold", m_updateDirectionThreshold, AttributeRange(0.0f, 180.0f) | AttributeUnit(UnitType::Metres));
 	s >> MemberComposite< CloudParticleData >(L"particleData", m_particleData);
 }
 

@@ -108,11 +108,11 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 		s >> Member< bool >(L"fixateJoints", fixateJoints);
 	}
 
-	s >> Member< float >(L"limbMass", m_limbMass, AttributeUnit(AuKilograms) | AttributeRange(0.0f));
-	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeUnit(AuMetres, true) | AttributeRange(0.0f));
-	s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeUnit(AuMetres, true) | AttributeRange(0.0f));
+	s >> Member< float >(L"limbMass", m_limbMass, AttributeUnit(UnitType::Kilograms) | AttributeRange(0.0f));
+	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeUnit(UnitType::Percent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeUnit(UnitType::Percent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeUnit(UnitType::Metres, true) | AttributeRange(0.0f));
+	s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeUnit(UnitType::Metres, true) | AttributeRange(0.0f));
 
 	if (s.getVersion< RagDollPoseControllerData >() >= 6)
 	{
@@ -128,9 +128,9 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 	}
 
 	s >> MemberRef< const IPoseControllerData >(L"trackPoseController", m_trackPoseController);
-	s >> Member< float >(L"trackLinearTension", m_trackLinearTension, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"trackAngularTension", m_trackAngularTension, AttributeUnit(AuPercent) | AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(AuSeconds) | AttributeRange(0.0f));
+	s >> Member< float >(L"trackLinearTension", m_trackLinearTension, AttributeUnit(UnitType::Percent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"trackAngularTension", m_trackAngularTension, AttributeUnit(UnitType::Percent) | AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(UnitType::Seconds) | AttributeRange(0.0f));
 }
 
 	}

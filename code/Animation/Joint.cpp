@@ -26,7 +26,7 @@ void Joint::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"parent", m_parent);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Transform >(L"transform", m_transform);
-	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
 	}

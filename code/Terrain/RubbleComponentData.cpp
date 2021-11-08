@@ -52,8 +52,8 @@ void RubbleComponentData::RubbleMesh::serialize(ISerializer& s)
 
 	if (s.getVersion< RubbleComponentData >() >= 3)
 	{
-		s >> Member< float >(L"randomTilt", randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(AuRadians));
-		s >> Member< float >(L"upness", upness, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+		s >> Member< float >(L"randomTilt", randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(UnitType::Radians));
+		s >> Member< float >(L"upness", upness, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	}
 }
 

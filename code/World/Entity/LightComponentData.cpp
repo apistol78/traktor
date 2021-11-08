@@ -64,7 +64,7 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion< LightComponentData >() >= 7)
-		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(AuLumens));
+		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Lumens));
 
 	if (s.getVersion< LightComponentData >() >= 1 && s.getVersion< LightComponentData >() < 8)
 	{
@@ -92,10 +92,10 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 
 	s >> Member< bool >(L"castShadow", m_castShadow);
-	s >> Member< float >(L"range", m_range, AttributeUnit(AuMetres));
-	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuRadians));
-	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
-	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+	s >> Member< float >(L"range", m_range, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"radius", m_radius, AttributeUnit(UnitType::Radians));
+	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 
 	if (s.getVersion< LightComponentData >() >= 8 && s.getVersion< LightComponentData >() < 9)
 	{

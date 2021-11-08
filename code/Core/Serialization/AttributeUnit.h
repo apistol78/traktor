@@ -16,21 +16,21 @@ namespace traktor
 /*! Units.
  * \ingroup Core
  */
-enum UnitType
+enum class UnitType
 {
-	AuUndefined,
-	AuSeconds,
-	AuMetres,
-	AuRadians,
-	AuDegrees,
-	AuLumens,
-	AuDecibel,
-	AuNewton,
-	AuKilograms,
-	AuPercent,
-	AuPixels,
-	AuHertz,
-	AuEV
+	Undefined,
+	Seconds,
+	Metres,
+	Radians,
+	Degrees,
+	Lumens,
+	Decibel,
+	Newton,
+	Kilograms,
+	Percent,
+	Pixels,
+	Hertz,
+	EV
 };
 
 /*! Member unit attribute.

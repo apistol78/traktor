@@ -77,10 +77,10 @@ void VehicleComponentData::serialize(ISerializer& s)
 	s >> MemberRefArray< const WheelData >(L"wheels", m_wheels);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
 	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
-	s >> Member< float >(L"steerAngleVelocity", m_steerAngleVelocity, AttributeUnit(AuRadians, true));
-	s >> Member< float >(L"fudgeDistance", m_fudgeDistance, AttributeUnit(AuMetres));
+	s >> Member< float >(L"steerAngleVelocity", m_steerAngleVelocity, AttributeUnit(UnitType::Radians, true));
+	s >> Member< float >(L"fudgeDistance", m_fudgeDistance, AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"swayBarForce", m_swayBarForce);
-	s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeUnit(AuMetres, true));
+	s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeUnit(UnitType::Metres, true));
 	s >> Member< float >(L"engineForce", m_engineForce);
 		if (s.getVersion< VehicleComponentData >() >= 1)
 		s >> Member< float >(L"breakingForce", m_breakingForce);

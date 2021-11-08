@@ -33,8 +33,8 @@ float Material::getRestitution() const
 
 void Material::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
-	s >> Member< float >(L"restitution", m_restitution, AttributeRange(0.0f, 1.0f) | AttributeUnit(AuPercent));
+	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	s >> Member< float >(L"restitution", m_restitution, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }
 
 	}

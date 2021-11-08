@@ -73,7 +73,7 @@ void CameraComponentData::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< Projection >(L"projection", m_projection, kProjection);
-	s >> Member< float >(L"fov", m_fov, AttributeUnit(AuRadians));
+	s >> Member< float >(L"fov", m_fov, AttributeUnit(UnitType::Radians));
 	s >> Member< float >(L"width", m_width);
 	s >> Member< float >(L"height", m_height);
 }

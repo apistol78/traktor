@@ -1,4 +1,5 @@
 #include "Animation/PathEntity/PathComponentData.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -9,12 +10,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathComponentData", 0, PathComponentData, world::IEntityComponentData)
-
-PathComponentData::PathComponentData()
-:	m_timeMode(PathComponent::TmManual)
-,	m_timeOffset(0.0f)
-{
-}
 
 Ref< PathComponent > PathComponentData::createComponent() const
 {
@@ -38,7 +33,7 @@ void PathComponentData::serialize(ISerializer& s)
 
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> MemberEnum< PathComponent::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
-	s >> Member< float >(L"timeOffset", m_timeOffset);
+	s >> Member< float >(L"timeOffset", m_timeOffset, AttributeUnit(UnitType::Seconds));
 }
 
 	}
