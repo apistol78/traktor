@@ -23,7 +23,7 @@ void ControlPointComponentData::setTransform(const world::EntityData* owner, con
 void ControlPointComponentData::serialize(ISerializer& s)
 {
 	if (s.getVersion< ControlPointComponentData >() >= 1)
-		s >> Member< float >(L"scale", m_scale, AttributeUnit(AuPercent));
+		s >> Member< float >(L"scale", m_scale, AttributeUnit(UnitType::Percent));
 }
 
 	}

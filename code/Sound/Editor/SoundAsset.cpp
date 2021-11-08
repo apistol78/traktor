@@ -43,7 +43,7 @@ void SoundAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 	{
 		if (s.getVersion() >= 6)
-			s >> Member< float >(L"gain", m_gain, AttributeUnit(AuDecibel));
+			s >> Member< float >(L"gain", m_gain, AttributeUnit(UnitType::Decibel));
 		else
 		{
 			float volumeLin = 1.0f;

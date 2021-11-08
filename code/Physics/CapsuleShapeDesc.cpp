@@ -41,8 +41,8 @@ void CapsuleShapeDesc::serialize(ISerializer& s)
 {
 	ShapeDesc::serialize(s);
 
-	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-	s >> Member< float >(L"length", m_length, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"length", m_length, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
 	}

@@ -60,9 +60,9 @@ void EffectData::addLayer(EffectLayerData* layer)
 
 void EffectData::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"duration", m_duration, AttributeUnit(AuSeconds));
-	s >> Member< float >(L"loopStart", m_loopStart, AttributeUnit(AuSeconds));
-	s >> Member< float >(L"loopEnd", m_loopEnd, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"duration", m_duration, AttributeUnit(UnitType::Seconds));
+	s >> Member< float >(L"loopStart", m_loopStart, AttributeUnit(UnitType::Seconds));
+	s >> Member< float >(L"loopEnd", m_loopEnd, AttributeUnit(UnitType::Seconds));
 	s >> MemberRefArray< EffectLayerData >(L"layers", m_layers, AttributePrivate());
 }
 

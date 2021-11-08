@@ -128,8 +128,8 @@ void Cylinder::createAnchors(AlignedVector< Vector4 >& outAnchors) const
 
 void Cylinder::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"length", m_length, AttributeRange(0.0f) | AttributeUnit(AuMetres));
-    s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+	s >> Member< float >(L"length", m_length, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+    s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
     s >> Member< int32_t >(L"faces", m_faces, AttributeRange(3));
 	if (s.getVersion() >= 1 && s.getVersion() < 2)
 	{

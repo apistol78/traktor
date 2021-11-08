@@ -473,16 +473,19 @@ void SceneEditorPage::destroy()
 {
 	// Save cameras.
 	auto settings = m_editor->checkoutGlobalSettings();
-	for (int32_t i = 0; i < 4; ++i)
+	if (settings)
 	{
-		auto p = m_context->getCamera(i)->getPosition();
-		auto o = m_context->getCamera(i)->getOrientation();
-		settings->setProperty< PropertyString >(
-			L"SceneEditor.LastCameras/" + m_context->getDocument()->getInstance(0)->getGuid().format() + L"/" + toString(i),
-			str(L"%f, %f, %f, %f, %f, %f, %f", (float)p.x(), (float)p.y(), (float)p.z(), (float)o.e.x(), (float)o.e.y(), (float)o.e.z(), (float)o.e.w())
-		);
+		for (int32_t i = 0; i < 4; ++i)
+		{
+			auto p = m_context->getCamera(i)->getPosition();
+			auto o = m_context->getCamera(i)->getOrientation();
+			settings->setProperty< PropertyString >(
+				L"SceneEditor.LastCameras/" + m_context->getDocument()->getInstance(0)->getGuid().format() + L"/" + toString(i),
+				str(L"%f, %f, %f, %f, %f, %f, %f", (float)p.x(), (float)p.y(), (float)p.z(), (float)o.e.x(), (float)o.e.y(), (float)o.e.z(), (float)o.e.w())
+			);
+		}
+		m_editor->commitGlobalSettings();
 	}
-	m_editor->commitGlobalSettings();
 
 	// Destroy controller editor.
 	if (m_context->getControllerEditor())

@@ -88,19 +88,19 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 	const AttributeUnit* unit = findAttribute< AttributeUnit >(m);
 	if (unit)
 	{
-		if (unit->getUnit() == AuMetres)
+		if (unit->getUnit() == UnitType::Metres)
 			return unit->getPerSecond() ? NumericPropertyItem::RpMetresPerSecond : NumericPropertyItem::RpMetres;
-		else if (unit->getUnit() == AuRadians)
+		else if (unit->getUnit() == UnitType::Radians)
 			return unit->getPerSecond() ? NumericPropertyItem::RpAnglesPerSecond : NumericPropertyItem::RpAngle;
-		else if (unit->getUnit() == AuDecibel)
+		else if (unit->getUnit() == UnitType::Decibel)
 			return NumericPropertyItem::RpDecibel;
-		else if (unit->getUnit() == AuKilograms)
+		else if (unit->getUnit() == UnitType::Kilograms)
 			return NumericPropertyItem::RpKilograms;
-		else if (unit->getUnit() == AuPercent)
+		else if (unit->getUnit() == UnitType::Percent)
 			return NumericPropertyItem::RpPercent;
-		else if (unit->getUnit() == AuHertz)
+		else if (unit->getUnit() == UnitType::Hertz)
 			return NumericPropertyItem::RpHerz;
-		else if (unit->getUnit() == AuEV)
+		else if (unit->getUnit() == UnitType::EV)
 			return NumericPropertyItem::RpEV;
 	}
 	return NumericPropertyItem::RpNormal;
@@ -556,7 +556,7 @@ void InspectReflector::operator >> (const Member< Vector4 >& m)
 	}
 
 	const AttributeUnit* unit = findAttribute< AttributeUnit >(m);
-	if (unit != nullptr && unit->getUnit() == AuDegrees)
+	if (unit != nullptr && unit->getUnit() == UnitType::Degrees)
 	{
 		addPropertyItem(
 			new AnglesPropertyItem(stylizeMemberName(m.getName()), *m),

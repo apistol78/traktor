@@ -26,8 +26,6 @@ class T_DLLCLASS PathComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	PathComponentData();
-
 	Ref< PathComponent > createComponent() const;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
@@ -36,8 +34,8 @@ public:
 
 private:
 	TransformPath m_path;
-	PathComponent::TimeMode m_timeMode;
-	float m_timeOffset;
+	PathComponent::TimeMode m_timeMode = PathComponent::TmManual;
+	float m_timeOffset = 0.0f;
 };
 
 	}

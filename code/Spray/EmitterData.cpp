@@ -77,12 +77,12 @@ void EmitterData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
 	s >> MemberRef< EffectData >(L"effect", m_effect);
-	s >> Member< float >(L"middleAge", m_middleAge, AttributeUnit(AuSeconds));
-	s >> Member< float >(L"cullNearDistance", m_cullNearDistance, AttributeUnit(AuMetres));
-	s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance, AttributeUnit(AuMetres));
-	s >> Member< float >(L"fadeNearRange", m_fadeNearRange, AttributeUnit(AuMetres));
-	s >> Member< float >(L"viewOffset", m_viewOffset, AttributeUnit(AuMetres));
-	s >> Member< float >(L"warmUp", m_warmUp, AttributeUnit(AuSeconds));
+	s >> Member< float >(L"middleAge", m_middleAge, AttributeUnit(UnitType::Seconds));
+	s >> Member< float >(L"cullNearDistance", m_cullNearDistance, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"cullMeshDistance", m_cullMeshDistance, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"fadeNearRange", m_fadeNearRange, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"viewOffset", m_viewOffset, AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"warmUp", m_warmUp, AttributeUnit(UnitType::Seconds));
 	s >> Member< bool >(L"sort", m_sort);
 	s >> Member< bool >(L"worldSpace", m_worldSpace);
 	s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);

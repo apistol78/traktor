@@ -56,8 +56,8 @@ void ConeSourceData::serialize(ISerializer& s)
 
 	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> Member< Vector4 >(L"normal", m_normal, AttributeDirection());
-	s >> Member< float >(L"angle1", m_angle1, AttributeUnit(AuRadians) | AttributeRange(0.0f, HALF_PI));
-	s >> Member< float >(L"angle2", m_angle2, AttributeUnit(AuRadians) | AttributeRange(0.0f, HALF_PI));
+	s >> Member< float >(L"angle1", m_angle1, AttributeUnit(UnitType::Radians) | AttributeRange(0.0f, HALF_PI));
+	s >> Member< float >(L"angle2", m_angle2, AttributeUnit(UnitType::Radians) | AttributeRange(0.0f, HALF_PI));
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 
 	if (s.getVersion() >= 1)

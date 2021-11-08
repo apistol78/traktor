@@ -37,12 +37,12 @@ void WheelData::serialize(ISerializer& s)
 	s >> Member< bool >(L"drive", m_drive);
 
 	if (s.getVersion< WheelData >() >= 2)
-		s >> Member< float >(L"breakFactor", m_breakFactor, AttributeUnit(AuPercent) | AttributeRange(0.0f));
+		s >> Member< float >(L"breakFactor", m_breakFactor, AttributeUnit(UnitType::Percent) | AttributeRange(0.0f));
 
-	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuMetres));
+	s >> Member< float >(L"radius", m_radius, AttributeUnit(UnitType::Metres));
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
-	s >> MemberComposite< Range< float > >(L"suspensionLength", m_suspensionLength, AttributeUnit(AuMetres));
+	s >> MemberComposite< Range< float > >(L"suspensionLength", m_suspensionLength, AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"suspensionSpring", m_suspensionSpring);
 	s >> Member< float >(L"suspensionDamping", m_suspensionDamping);
 	s >> Member< float >(L"rollingFriction", m_rollingFriction);
@@ -56,7 +56,7 @@ void WheelData::serialize(ISerializer& s)
 	s >> Member< float >(L"slipCornerForce", m_slipCornerForce);
 
 	if (s.getVersion< WheelData >() >= 1)
-		s >> Member< float >(L"peakSlipAngle", m_peakSlipAngle, AttributeUnit(AuRadians) | AttributeRange(0.0f));
+		s >> Member< float >(L"peakSlipAngle", m_peakSlipAngle, AttributeUnit(UnitType::Radians) | AttributeRange(0.0f));
 }
 
 	}

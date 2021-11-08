@@ -43,7 +43,7 @@ void BoxShapeDesc::serialize(ISerializer& s)
 	ShapeDesc::serialize(s);
 	s >> Member< Vector4 >(L"extent", m_extent, AttributeDirection());
 	if (s.getVersion() >= 6)
-		s >> Member< float >(L"margin", m_margin, AttributeRange(0.0f) | AttributeUnit(AuMetres));
+		s >> Member< float >(L"margin", m_margin, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
 	}

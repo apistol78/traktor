@@ -31,7 +31,7 @@ void RotatorComponentData::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< RotatorComponent::Axis >(L"axis", m_axis, c_Axis_keys);
-	s >> Member< float >(L"rate", m_rate, AttributeUnit(AuDegrees, true));
+	s >> Member< float >(L"rate", m_rate, AttributeUnit(UnitType::Degrees, true));
 }
 
 	}

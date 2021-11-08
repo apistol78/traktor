@@ -30,7 +30,7 @@ void SoundCategory::serialize(ISerializer& s)
 		s >> Member< std::wstring >(L"configurationId", m_configurationId);
 
 	if (s.getVersion() >= 5)
-		s >> Member< float >(L"gain", m_gain, AttributeUnit(AuDecibel));
+		s >> Member< float >(L"gain", m_gain, AttributeUnit(UnitType::Decibel));
 	else
 	{
 		float volumeLin = 1.0f;
