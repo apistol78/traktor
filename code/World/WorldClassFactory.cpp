@@ -260,6 +260,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classScriptComponentData);
 
 	auto classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	classScriptComponent->addProperty("owner", &ScriptComponent::getOwner);
 	registrar->registerClass(classScriptComponent);
 
 	auto classVolumeComponentData = new AutoRuntimeClass< VolumeComponentData >();
