@@ -23,18 +23,17 @@ class T_DLLCLASS PathComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	enum TimeMode
+	enum class TimeMode
 	{
-		TmManual,
-		TmOnce,
-		TmLoop,
-		TmPingPong
+		Manual,
+		Once,
+		Loop,
+		PingPong
 	};
 
 	explicit PathComponent(
 		const TransformPath& path,
-		TimeMode timeMode,
-		float timeOffset
+		TimeMode timeMode
 	);
 
 	virtual void destroy() override final;
@@ -47,6 +46,8 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void continueTo(float time);
+
 	const TransformPath& getPath() const { return m_path; }
 
 	TimeMode getTimeMode() const { return m_timeMode; }
@@ -56,7 +57,8 @@ private:
 	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;
-	float m_timeOffset;
+	float m_time;
+	float m_timeTarget;
 };
 
 	}

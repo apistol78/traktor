@@ -51,7 +51,7 @@ void PathComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			}
 
 			// Draw evaluated curve.
-			bool loop = (pathComponent->getTimeMode() == PathComponent::TmLoop);
+			bool loop = (pathComponent->getTimeMode() == PathComponent::TimeMode::Loop);
 			float st = keys.front().T;
 			float et = keys.back().T;
 			for (uint32_t i = 0; i < 40; ++i)

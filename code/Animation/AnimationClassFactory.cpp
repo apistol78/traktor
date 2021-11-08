@@ -107,6 +107,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classClothComponent);
 
 	auto classPathComponent = new AutoRuntimeClass< PathComponent >();
+	classPathComponent->addMethod("continueTo", &PathComponent::continueTo);
 	registrar->registerClass(classPathComponent);
 
 	auto classPathComponentData = new AutoRuntimeClass< PathComponentData >();
