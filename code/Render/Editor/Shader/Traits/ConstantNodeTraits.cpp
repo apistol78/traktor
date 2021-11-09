@@ -13,8 +13,8 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< Color >();
 	typeSet.insert< Instance >();
+	typeSet.insert< PixelState >();
 	typeSet.insert< Scalar >();
-	typeSet.insert< State >();
 	typeSet.insert< Struct >();
 	typeSet.insert< TargetSize >();
 	typeSet.insert< Texture >();
@@ -43,7 +43,7 @@ PinType ConstantNodeTraits::getOutputPinType(
 		return PinType::Scalar2;
 	else if (is_a< Instance >(node))
 		return PinType::Scalar1;
-	else if (is_a< State >(node))
+	else if (is_a< PixelState >(node))
 		return PinType::State;
 	else if (is_a< Struct >(node))
 		return PinType::StructBuffer;

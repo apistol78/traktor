@@ -714,7 +714,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{A5912FA8-B47E-694A-88E7-1333B1B27DED}</id>
 			<comment/>
 			<position>

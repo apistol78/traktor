@@ -405,7 +405,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{6018927C-9761-3040-8B04-491B778E2A24}</id>
 			<comment/>
 			<position>

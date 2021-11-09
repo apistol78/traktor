@@ -470,8 +470,8 @@
 			<second>Sqrt</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_NODE_STATE</first>
-			<second>State</second>
+			<first>SHADERGRAPH_NODE_PIXELSTATE</first>
+			<second>Pixel state</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_STEP</first>

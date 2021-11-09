@@ -743,6 +743,43 @@ private:
 	PrecisionHint m_precisionHint;
 };
 
+/*! Pixel output state. */
+class T_DLLCLASS PixelState : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	PixelState();
+
+	void setPriority(uint32_t priority);
+
+	uint32_t getPriority() const;
+
+	void setRenderState(const RenderState& renderState);
+
+	const RenderState& getRenderState() const;
+
+	void setPrecisionHint(PrecisionHint precisionHint);
+
+	PrecisionHint getPrecisionHint() const;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	uint32_t m_priority;
+	RenderState m_renderState;
+	PrecisionHint m_precisionHint;
+};
+
+/*! Step function. */
+class T_DLLCLASS Step : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Step();
+};
+
 /*! Read [indexed] element from struct buffer. */
 class T_DLLCLASS ReadStruct : public ImmutableNode
 {
@@ -873,43 +910,6 @@ class T_DLLCLASS Sqrt : public ImmutableNode
 
 public:
 	Sqrt();
-};
-
-/*! Output states. */
-class T_DLLCLASS State : public ImmutableNode
-{
-	T_RTTI_CLASS;
-
-public:
-	State();
-
-	void setPriority(uint32_t priority);
-
-	uint32_t getPriority() const;
-
-	void setRenderState(const RenderState& renderState);
-
-	const RenderState& getRenderState() const;
-
-	void setPrecisionHint(PrecisionHint precisionHint);
-
-	PrecisionHint getPrecisionHint() const;
-
-	virtual void serialize(ISerializer& s) override final;
-
-private:
-	uint32_t m_priority;
-	RenderState m_renderState;
-	PrecisionHint m_precisionHint;
-};
-
-/*! Step function. */
-class T_DLLCLASS Step : public ImmutableNode
-{
-	T_RTTI_CLASS;
-
-public:
-	Step();
 };
 
 /*! Define struct. */
