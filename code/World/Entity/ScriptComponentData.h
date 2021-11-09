@@ -15,6 +15,7 @@ namespace traktor
 {
 
 class IRuntimeClass;
+class PropertyGroup;
 
 	namespace resource
 	{
@@ -52,6 +53,7 @@ public:
 
 private:
 	resource::Id< IRuntimeClass > m_class;
+	Ref< const PropertyGroup > m_properties;
 	bool m_editorSupport = false;
 };
 

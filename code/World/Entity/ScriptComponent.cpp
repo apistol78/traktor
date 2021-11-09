@@ -11,9 +11,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntityComponent)
 
-ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz)
+ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz, const PropertyGroup* properties)
 :	m_owner(nullptr)
 ,	m_class(clazz)
+,	m_properties(properties)
 {
 }
 
