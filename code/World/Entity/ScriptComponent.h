@@ -16,6 +16,7 @@ namespace traktor
 
 class IRuntimeClass;
 class IRuntimeDispatch;
+class PropertyGroup;
 
 	namespace world
 	{
@@ -28,7 +29,7 @@ class T_DLLCLASS ScriptComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz);
+	explicit ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz, const PropertyGroup* properties);
 
 	virtual void destroy() override final;
 
@@ -44,9 +45,12 @@ public:
 
 	Entity* getOwner() const { return m_owner; }
 
+	const PropertyGroup* getProperties() const { return m_properties; }
+
 private:
 	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
+	Ref< const PropertyGroup > m_properties;
 	Ref< ITypedObject > m_object;
 	Ref< const IRuntimeDispatch > m_methodSetTransform;
 	Ref< const IRuntimeDispatch > m_methodUpdate;

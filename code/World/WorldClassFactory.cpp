@@ -4,6 +4,7 @@
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "World/EntityBuilder.h"
 #include "World/IEntityEvent.h"
@@ -261,6 +262,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
 	classScriptComponent->addProperty("owner", &ScriptComponent::getOwner);
+	classScriptComponent->addProperty("properties", &ScriptComponent::getProperties);
 	registrar->registerClass(classScriptComponent);
 
 	auto classVolumeComponentData = new AutoRuntimeClass< VolumeComponentData >();
