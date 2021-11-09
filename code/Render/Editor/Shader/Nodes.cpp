@@ -1534,6 +1534,99 @@ void PixelOutput::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelState", 9, PixelState, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_PixelState_o[] = { { L"Output" }, { 0 } };
+
+PixelState::PixelState()
+	: ImmutableNode(nullptr, c_PixelState_o)
+	, m_priority(0)
+	, m_precisionHint(PrecisionHint::Undefined)
+{
+}
+
+void PixelState::setPriority(uint32_t priority)
+{
+	m_priority = priority;
+}
+
+uint32_t PixelState::getPriority() const
+{
+	return m_priority;
+}
+
+void PixelState::setRenderState(const RenderState& renderState)
+{
+	m_renderState = renderState;
+}
+
+const RenderState& PixelState::getRenderState() const
+{
+	return m_renderState;
+}
+
+void PixelState::setPrecisionHint(PrecisionHint precisionHint)
+{
+	m_precisionHint = precisionHint;
+}
+
+PrecisionHint PixelState::getPrecisionHint() const
+{
+	return m_precisionHint;
+}
+
+void PixelState::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	if (s.getVersion() >= 5)
+	{
+		const MemberBitMask::Bit c_RenderPriorityBits[] =
+		{
+			{ L"setup", RpSetup },
+			{ L"opaque", RpOpaque },
+			{ L"postOpaque", RpPostOpaque },
+			{ L"alphaBlend", RpAlphaBlend },
+			{ L"postAlphaBlend", RpPostAlphaBlend },
+			{ L"overlay", RpOverlay },
+			{ 0 }
+		};
+		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
+	}
+
+	s >> MemberRenderState(m_renderState, s.getVersion());
+
+	if (s.getVersion() >= 8)
+	{
+		if (s.getVersion() >= 9)
+		{
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"Undefined", PrecisionHint::Undefined },
+				{ L"Low", PrecisionHint::Low },
+				{ L"Medium", PrecisionHint::Medium },
+				{ L"High", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
+		else
+		{
+			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
+			{
+				{ L"PhUndefined", PrecisionHint::Undefined },
+				{ L"PhLow", PrecisionHint::Low },
+				{ L"PhMedium", PrecisionHint::Medium },
+				{ L"PhHigh", PrecisionHint::High },
+				{ 0 }
+			};
+			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
+		}
+	}
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
@@ -1813,100 +1906,6 @@ const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { { L"Output" }, { 0 } };
 Sqrt::Sqrt()
 :	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
 {
-}
-
-
-/*---------------------------------------------------------------------------*/
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 9, State, ImmutableNode)
-
-const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
-
-State::State()
-:	ImmutableNode(nullptr, c_State_o)
-,	m_priority(0)
-,	m_precisionHint(PrecisionHint::Undefined)
-{
-}
-
-void State::setPriority(uint32_t priority)
-{
-	m_priority = priority;
-}
-
-uint32_t State::getPriority() const
-{
-	return m_priority;
-}
-
-void State::setRenderState(const RenderState& renderState)
-{
-	m_renderState = renderState;
-}
-
-const RenderState& State::getRenderState() const
-{
-	return m_renderState;
-}
-
-void State::setPrecisionHint(PrecisionHint precisionHint)
-{
-	m_precisionHint = precisionHint;
-}
-
-PrecisionHint State::getPrecisionHint() const
-{
-	return m_precisionHint;
-}
-
-void State::serialize(ISerializer& s)
-{
-	ImmutableNode::serialize(s);
-
-	if (s.getVersion() >= 5)
-	{
-		const MemberBitMask::Bit c_RenderPriorityBits[] =
-		{
-			{ L"setup", RpSetup },
-			{ L"opaque", RpOpaque },
-			{ L"postOpaque", RpPostOpaque },
-			{ L"alphaBlend", RpAlphaBlend },
-			{ L"postAlphaBlend", RpPostAlphaBlend },
-			{ L"overlay", RpOverlay },
-			{ 0 }
-		};
-		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
-	}
-
-	s >> MemberRenderState(m_renderState, s.getVersion());
-
-	if (s.getVersion() >= 8)
-	{
-		if (s.getVersion() >= 9)
-		{
-			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
-			{
-				{ L"Undefined", PrecisionHint::Undefined },
-				{ L"Low", PrecisionHint::Low },
-				{ L"Medium", PrecisionHint::Medium },
-				{ L"High", PrecisionHint::High },
-				{ 0 }
-			};
-			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
-		}
-		else
-		{
-			const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
-			{
-				{ L"PhUndefined", PrecisionHint::Undefined },
-				{ L"PhLow", PrecisionHint::Low },
-				{ L"PhMedium", PrecisionHint::Medium },
-				{ L"PhHigh", PrecisionHint::High },
-				{ 0 }
-			};
-			s >> MemberEnum< PrecisionHint >(L"precisionHint", m_precisionHint, c_PrecisionHintKeys);
-		}
-	}
 }
 
 /*---------------------------------------------------------------------------*/

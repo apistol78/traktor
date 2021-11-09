@@ -155,7 +155,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{E55C75D8-FBD9-4443-B76E-A916C5F8CB43}</id>
 			<comment/>
 			<position>
@@ -201,7 +201,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{FB92494C-8708-904A-BD91-4B05A8AC0DF8}</id>
 			<comment/>
 			<position>
@@ -274,7 +274,7 @@
 			</position>
 			<parameterName>DepthTest</parameterName>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{B42D7E26-F9E8-AF43-8595-C9AE27EE070C}</id>
 			<comment/>
 			<position>
@@ -320,7 +320,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{F7C5B831-AD17-BD4E-81DE-650EB465D2E0}</id>
 			<comment/>
 			<position>
@@ -429,7 +429,7 @@
 			</position>
 			<parameterName>Depth</parameterName>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{E0A606B7-4B4F-D54B-849A-31BFCFD9BF29}</id>
 			<comment/>
 			<position>

@@ -280,7 +280,7 @@
 				<second>298</second>
 			</position>
 		</item>
-		<item type="traktor.render.State" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{FA371FDA-5996-4181-98D2-92B88A67D250}</id>
 			<comment/>
 			<position>

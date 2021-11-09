@@ -715,7 +715,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 		if (!edge)
 			continue;
 
-		Ref< State > state = dynamic_type_cast< State* >(edge->getSource()->getNode());
+		Ref< PixelState > state = dynamic_type_cast< PixelState* >(edge->getSource()->getNode());
 		if (!state)
 			continue;
 
