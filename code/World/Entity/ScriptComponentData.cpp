@@ -1,4 +1,5 @@
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Resource/IResourceManager.h"
