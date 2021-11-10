@@ -143,23 +143,23 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+		<item type="traktor.render.Derivative" version="1,traktor.render.Node:1">
 			<id>{EDACF496-A84C-FD40-A582-DC0C709D6E43}</id>
 			<comment/>
 			<position>
 				<first>-256</first>
 				<second>88</second>
 			</position>
-			<axis>DaX</axis>
+			<axis>X</axis>
 		</item>
-		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+		<item type="traktor.render.Derivative" version="1,traktor.render.Node:1">
 			<id>{384B0FD7-65E0-F042-829D-E86CC7446D9C}</id>
 			<comment/>
 			<position>
 				<first>-256</first>
 				<second>240</second>
 			</position>
-			<axis>DaY</axis>
+			<axis>Y</axis>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{F48E35FE-E033-1E4E-A7D1-FBD118AE992E}</id>

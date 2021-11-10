@@ -582,14 +582,14 @@ Cross::Cross()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Derivative", 0, Derivative, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Derivative", 1, Derivative, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Derivative_o[] = { { L"Output" }, { 0 } };
 
 Derivative::Derivative()
 :	ImmutableNode(c_Derivative_i, c_Derivative_o)
-,	m_axis(DaX)
+,	m_axis(Axis::X)
 {
 }
 
@@ -602,9 +602,9 @@ std::wstring Derivative::getInformation() const
 {
 	switch (m_axis)
 	{
-	case DaX:
+	case Axis::X:
 		return L"f'(x)";
-	case DaY:
+	case Axis::Y:
 		return L"f'(y)";
 	}
 	return L"";
@@ -614,14 +614,26 @@ void Derivative::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	const MemberEnum< Axis >::Key kAxis[] =
+	if (s.getVersion< Derivative >() >= 1)
 	{
-		{ L"DaX", DaX },
-		{ L"DaY", DaY },
-		{ 0 }
-	};
-
-	s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
+		const MemberEnum< Axis >::Key kAxis[] =
+		{
+			{ L"X", Axis::X },
+			{ L"Y", Axis::Y },
+			{ 0 }
+		};
+		s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
+	}
+	else
+	{
+		const MemberEnum< Axis >::Key kAxis[] =
+		{
+			{ L"DaX", Axis::X },
+			{ L"DaY", Axis::Y },
+			{ 0 }
+		};
+		s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

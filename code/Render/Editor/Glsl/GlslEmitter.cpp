@@ -452,11 +452,11 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 	comment(f, node);
 	switch (node->getAxis())
 	{
-	case Derivative::DaX:
+	case Derivative::Axis::X:
 		assign(f, out) << L"dFdx(" << input->getName() << L");" << Endl;
 		break;
 
-	case Derivative::DaY:
+	case Derivative::Axis::Y:
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 
@@ -1276,19 +1276,19 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 
 	Ref< GlslVariable > xaxis = cx.emitOutput(node, L"XAxis", GlslType::Float4);
 	if (xaxis)
-		assign(f, xaxis) << in->getName() << L"[0]" << Endl;
+		assign(f, xaxis) << in->getName() << L"[0];" << Endl;
 
 	Ref< GlslVariable > yaxis = cx.emitOutput(node, L"YAxis", GlslType::Float4);
 	if (yaxis)
-		assign(f, yaxis) << in->getName() << L"[1]" << Endl;
+		assign(f, yaxis) << in->getName() << L"[1];" << Endl;
 
 	Ref< GlslVariable > zaxis = cx.emitOutput(node, L"ZAxis", GlslType::Float4);
 	if (zaxis)
-		assign(f, zaxis) << in->getName() << L"[2]" << Endl;
+		assign(f, zaxis) << in->getName() << L"[2];" << Endl;
 
 	Ref< GlslVariable > translate = cx.emitOutput(node, L"Translate", GlslType::Float4);
 	if (translate)
-		assign(f, translate) << in->getName() << L"[3]" << Endl;
+		assign(f, translate) << in->getName() << L"[3];" << Endl;
 
 	return true;
 }

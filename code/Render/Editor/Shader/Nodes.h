@@ -240,10 +240,10 @@ class T_DLLCLASS Derivative : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	enum Axis
+	enum class Axis
 	{
-		DaX,
-		DaY
+		X,
+		Y
 	};
 
 	Derivative();
