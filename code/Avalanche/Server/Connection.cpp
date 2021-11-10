@@ -194,15 +194,10 @@ bool Connection::process()
 						if (m_clientStream->read(&chunkSize, sizeof(int64_t)) != sizeof(int64_t))
 							return false;
 
-						auto appendStream = blob->append();
+						Ref< IStream > appendStream = blob->append();
 						if (appendStream)
 						{
-							if (StreamCopy(appendStream, m_clientStream).execute(chunkSize))
-							{
-								if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
-									return false;
-							}
-							else
+							if (!StreamCopy(appendStream, m_clientStream).execute(chunkSize))
 							{
 								log::error << L"[PUT " << key.format() << L"] Unable to receive " << chunkSize << L" byte(s) from client; terminating connection." << Endl;
 								return false;
@@ -211,8 +206,7 @@ bool Connection::process()
 						else
 						{
 							log::error << L"[PUT " << key.format() << L"] Failed to append data to blob." << Endl;
-							if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
-								return false;
+							return false;
 						}
 					}
 					else if (subcmd == c_subCommandPutCommit)
