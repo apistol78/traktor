@@ -303,11 +303,11 @@ bool emitDerivative(HlslContext& cx, Derivative* node)
 	comment(f, node);
 	switch (node->getAxis())
 	{
-	case Derivative::DaX:
+	case Derivative::Axis::X:
 		assign(f, out) << L"ddx(" << input->getName() << L");" << Endl;
 		break;
 
-	case Derivative::DaY:
+	case Derivative::Axis::Y:
 		assign(f, out) << L"ddy(" << input->getName() << L");" << Endl;
 		break;
 

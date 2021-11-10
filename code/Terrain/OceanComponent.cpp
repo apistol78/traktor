@@ -146,7 +146,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
-	if (data.m_reflectionTexture.isValid())
+	if (data.m_reflectionTexture)
 	{
 		if (!resourceManager->bind(data.m_reflectionTexture, m_reflectionTexture))
 			return false;

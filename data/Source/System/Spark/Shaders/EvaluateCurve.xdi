@@ -141,14 +141,14 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+		<item type="traktor.render.Derivative" version="1,traktor.render.Node:1">
 			<id>{E77EE918-EB0B-3448-BF6F-2C49032A731D}</id>
 			<comment/>
 			<position>
 				<first>60</first>
 				<second>-19</second>
 			</position>
-			<axis>DaX</axis>
+			<axis>X</axis>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{14FBDEF8-02E3-E649-9F37-27A6E9779572}</id>
@@ -201,14 +201,14 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Derivative" version="traktor.render.Node:1">
+		<item type="traktor.render.Derivative" version="1,traktor.render.Node:1">
 			<id>{DB365A2E-ADCA-0640-B8FC-F808CFD6E963}</id>
 			<comment/>
 			<position>
 				<first>60</first>
 				<second>164</second>
 			</position>
-			<axis>DaY</axis>
+			<axis>Y</axis>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{030A3A1E-ABDF-C845-86E5-BAB53B141BE0}</id>

@@ -148,7 +148,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 {
 	StringOutputStream ss;
 
-	ss << L"#version 460" << Endl;
+	ss << L"#version 450" << Endl;
 
 	if (m_dialect == GlslDialect::OpenGL)
 	{

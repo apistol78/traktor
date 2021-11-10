@@ -229,10 +229,10 @@ bool emitDerivative(CgContext& cx, Derivative* node)
 	CgVariable* out = cx.emitOutput(node, L"Output", input->getType());
 	switch (node->getAxis())
 	{
-	case Derivative::DaX:
+	case Derivative::Axis::X:
 		assign(f, out) << L"ddx(" << input->getName() << L");" << Endl;
 		break;
-	case Derivative::DaY:
+	case Derivative::Axis::Y:
 		assign(f, out) << L"ddy(" << input->getName() << L");" << Endl;
 		break;
 	default:
