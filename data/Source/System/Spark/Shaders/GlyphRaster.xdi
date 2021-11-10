@@ -13,8 +13,8 @@
 			<id>{3F41DE16-ED47-0847-9516-A10AA8A41698}</id>
 			<comment/>
 			<position>
-				<first>1206</first>
-				<second>376</second>
+				<first>1401</first>
+				<second>361</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -57,7 +57,7 @@
 				<first>-491</first>
 				<second>584</second>
 			</position>
-			<value>0.3</value>
+			<value>0.25</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{B44A33F6-E87D-B448-A5BF-0D2B6E835C85}</id>
@@ -127,6 +127,23 @@
 			</position>
 			<name>L_XY</name>
 			<global>false</global>
+		</item>
+		<item type="traktor.render.Pow" version="traktor.render.Node:1">
+			<id>{B6452895-22EC-E744-B663-47EDCAC36099}</id>
+			<comment/>
+			<position>
+				<first>1167</first>
+				<second>247</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{12DE42A5-AF48-AF43-B9E3-1A16717AC58B}</id>
+			<comment/>
+			<position>
+				<first>948</first>
+				<second>212</second>
+			</position>
+			<value>0.5</value>
 		</item>
 	</nodes>
 	<edges>
@@ -256,8 +273,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Exponent</name>
 			</destination>
 		</item>
 	</edges>

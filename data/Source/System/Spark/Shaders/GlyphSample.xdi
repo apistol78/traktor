@@ -211,10 +211,13 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-vec2 mn = step($Input.xy, vec2(0.995, 0.995));
-vec2 mx = step(vec2(0.0005, 0.0005), $Input.xy);
+const float F = 0.0035;
+const float iF = 1.0 - F;
+vec2 mn = step($Input.xy, vec2(iF, iF));
+vec2 mx = step(vec2(F, F), $Input.xy);
 vec2 tm = mn * mx;
 $Output = tm.x * tm.y;
+
 			]]>
 			</script>
 		</item>
@@ -469,16 +472,6 @@ $Output = tm.x * tm.y;
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -495,16 +488,6 @@ $Output = tm.x * tm.y;
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -545,6 +528,26 @@ $Output = tm.x * tm.y;
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
