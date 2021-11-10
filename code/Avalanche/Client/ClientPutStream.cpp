@@ -107,13 +107,6 @@ int64_t ClientPutStream::write(const void* block, int64_t nbytes)
 		return -1;
 	}
 
-	uint8_t reply = 0;
-	if (m_stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
-	{
-		m_stream = nullptr;
-		return -1;
-	}
-
 	return nbytes;
 }
 
