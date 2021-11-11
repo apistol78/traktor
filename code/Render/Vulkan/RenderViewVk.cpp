@@ -951,11 +951,11 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 
 	auto& frame = m_frames[m_currentImageIndex];
 
+	validateGraphicsPipeline(vlv, p, primitives.type);
+
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
 	if (!p->validateGraphics(frame.graphicsCommandBuffer, targetSize))
 		return;
-
-	validateGraphicsPipeline(vlv, p, primitives.type);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
 	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
