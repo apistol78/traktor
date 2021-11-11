@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Project", 1, Project, ISerializable)
 
-Project::Project()
-:	m_enable(true)
-{
-}
-
 void Project::setEnable(bool enable)
 {
 	m_enable = enable;
