@@ -18,6 +18,8 @@ public:
 	:   m_pid(pid)
 	,	m_pipe(pipe)
 	{
+		int flags = fcntl(m_pipe, F_GETFL, 0);
+		fcntl(m_pipe, F_SETFL, flags | O_NONBLOCK);
 	}
 
 	virtual void close()

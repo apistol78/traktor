@@ -187,7 +187,7 @@ Ref< IProcess > OS::execute(
 ) const
 {
 	posix_spawn_file_actions_t* fileActions = nullptr;
-	char cwd[512];
+	char cwd[4096];
 	AlignedVector< char* > envv;
 	AlignedVector< char* > argv;
 	int envc = 0;
@@ -258,18 +258,20 @@ Ref< IProcess > OS::execute(
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
 	{
-		pipe2(childStdOut, O_NONBLOCK);
-		pipe2(childStdErr, O_NONBLOCK);
+		pipe(childStdOut);
+		pipe(childStdErr);
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
 #if !defined(__RPI__)
 		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
-		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
 		posix_spawn_file_actions_addclose(fileActions, childStdOut[0]);
-		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
 		posix_spawn_file_actions_addclose(fileActions, childStdErr[0]);
+		posix_spawn_file_actions_adddup2(fileActions, childStdOut[1], STDOUT_FILENO);
+		posix_spawn_file_actions_adddup2(fileActions, childStdErr[1], STDERR_FILENO);
+		posix_spawn_file_actions_addclose(fileActions, childStdOut[1]);
+		posix_spawn_file_actions_addclose(fileActions, childStdErr[1]);
 
 		// Spawn process.
 		err = posix_spawn(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
