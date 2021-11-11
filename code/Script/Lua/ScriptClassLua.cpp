@@ -38,6 +38,8 @@ public:
 
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
+		m_scriptManager->lock(m_scriptContext);
+
 		// Allocate table for script side object.
 		if (self)
 			m_scriptManager->pushObject(self);
@@ -50,6 +52,8 @@ public:
 
 		// Create instance table.
 		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+		m_scriptManager->unlock();
 
 		// Create C++ script object.
 		Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_scriptManager, m_scriptContext, m_luaState, tableRef);

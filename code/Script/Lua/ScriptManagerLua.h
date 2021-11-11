@@ -69,16 +69,29 @@ public:
 
 	void toAny(int32_t base, int32_t count, Any* outAnys);
 
+	void lock(ScriptContextLua* context)
+	{
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+		m_lock.wait();
+#endif
+		m_lockContext = context;
+	}
+
+	void unlock()
+	{
+#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+		m_lock.release();
+#endif
+	}
+
 private:
-	friend class ScriptClassLua;
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;
-	friend class ScriptDelegateLua;
 	friend class ScriptProfilerLua;
 
 	struct RegisteredClass
 	{
-		Ref< IRuntimeClass > runtimeClass;
+		Ref< const IRuntimeClass > runtimeClass;
 		int32_t classTableRef;
 	};
 
@@ -100,21 +113,6 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
-
-	void lock(ScriptContextLua* context)
-	{
-#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
-		m_lock.wait();
-#endif
-		m_lockContext = context;
-	}
-
-	void unlock()
-	{
-#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
-		m_lock.release();
-#endif
-	}
 
 	void destroyContext(ScriptContextLua* context);
 
