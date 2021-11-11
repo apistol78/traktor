@@ -4,12 +4,14 @@
 #include "Runtime/Engine/StageData.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -33,44 +35,22 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	resource::Proxy< IRuntimeClass > clazz;
 	resource::Proxy< render::Shader > shaderFade;
 
-#if !defined(_DEBUG)
-	// Load resource bundle.
-	if (m_resourceBundle.isNotNull())
+	bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
+	if (!skipPreload)
 	{
-        render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
-
-        bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
-		if (!skipPreload)
+		// Load explicit resources.
+		if (m_resourceBundle.isNotNull())
 		{
-            uint32_t preloadLimit = environment->getSettings()->getProperty< int32_t >(L"Runtime.SkipPreloadLimit", 768) * 1024 * 1024;
-
-			// Get amount of dedicated video memory; we cannot preload if too little amount of memory available or unknown vendor.
-			render::RenderSystemInformation rsi;
-			renderSystem->getInformation(rsi);
-			if (
-				(rsi.vendor == render::AdapterVendorType::NVidia || rsi.vendor == render::AdapterVendorType::AMD) &&
-				rsi.dedicatedMemoryTotal >= preloadLimit
-			)
+			Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
+			if (resourceBundle)
 			{
-				Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
-				if (resourceBundle)
-				{
-					log::info << L"Preloading bundle \"" << m_resourceBundle.format() << L"\"..." << Endl;
-					resourceManager->load(resourceBundle);
-				}
-			}
-			else
-			{
-				if (rsi.dedicatedMemoryTotal < preloadLimit)
-					log::warning << L"Pre-loading of resources skipped due to limited graphics adapter (" << (rsi.dedicatedMemoryTotal / 1024) << L" < " << (preloadLimit / 1024) << L" KiB)." << Endl;
-				else
-					log::warning << L"Pre-loading of resources skipped due to unknown graphics adapter, only permitted for NVidia or AMD adapters." << Endl;
+				log::info << L"Preloading bundle \"" << m_resourceBundle.format() << L"\"..." << Endl;
+				resourceManager->load(resourceBundle);
 			}
 		}
-		else
-			log::warning << L"Pre-loading of resources ignored." << Endl;
 	}
-#endif
+	else
+		log::warning << L"Pre-loading of resources ignored." << Endl;
 
 	// Bind proxies to resource manager.
 	if (m_class && !resourceManager->bind(m_class, clazz))
@@ -106,7 +86,7 @@ void StageData::serialize(ISerializer& s)
 		s >> Member< bool >(L"fadeOutUpdate", m_fadeOutUpdate);
 
 	s >> Member< float >(L"fadeRate", m_fadeRate, AttributeRange(0.1f));
-	s >> MemberStlMap< std::wstring, Guid >(L"transitions", m_transitions);
+	s >> MemberSmallMap< std::wstring, Guid >(L"transitions", m_transitions);
 	s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
 	s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
 }

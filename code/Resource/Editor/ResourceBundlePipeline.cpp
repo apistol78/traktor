@@ -1,4 +1,3 @@
-#include <set>
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Database/Database.h"
@@ -19,26 +18,14 @@ namespace traktor
 		namespace
 		{
 
-void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::PipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources, std::set< Guid >& inoutHistory)
+void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::PipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, AlignedVector< std::pair< const TypeInfo*, Guid > >& outResources, SmallSet< Guid >& inoutHistory)
 {
 	if (inoutHistory.find(dependency->outputGuid) != inoutHistory.end())
 		return;
 
 	inoutHistory.insert(dependency->outputGuid);
 
-	if ((dependency->flags & editor::PdfResource) == 0)
-	{
-		// Recurse until a resource is found; isn't necessary to recurse further as
-		// resource loading will need to load any other dependent resource anyway.
-		for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-		{
-			const editor::PipelineDependency* childDependency = dependencySet->get(*i);
-			T_ASSERT(childDependency);
-
-			collectResources(pipelineBuilder, dependencySet, childDependency, outResources, inoutHistory);
-		}
-	}
-	else
+	if ((dependency->flags & editor::PdfResource) != 0)
 	{
 		Ref< db::Instance > assetInstance = pipelineBuilder->getOutputDatabase()->getInstance(dependency->outputGuid);
 		if (assetInstance)
@@ -49,19 +36,19 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::P
 			));
 		}
 	}
-}
 
-struct ResourceTypePred
-{
-	bool operator () (const std::pair< const TypeInfo*, Guid >& lh, const std::pair< const TypeInfo*, Guid >& rh) const
+	for (auto child : dependency->children)
 	{
-		return lh.first < rh.first;
+		const editor::PipelineDependency* childDependency = dependencySet->get(child);
+		T_ASSERT(childDependency);
+
+		collectResources(pipelineBuilder, dependencySet, childDependency, outResources, inoutHistory);
 	}
-};
+}
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 4, ResourceBundlePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 6, ResourceBundlePipeline, editor::IPipeline)
 
 bool ResourceBundlePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -96,9 +83,8 @@ bool ResourceBundlePipeline::buildDependencies(
 ) const
 {
 	const ResourceBundleAsset* bundleAsset = checked_type_cast< const ResourceBundleAsset* >(sourceAsset);
-	const std::vector< Guid >& resources = bundleAsset->get();
-	for (std::vector< Guid >::const_iterator i = resources.begin(); i != resources.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
+	for (const auto& resource : bundleAsset->get())
+		pipelineDepends->addDependency(resource, editor::PdfBuild);
 	return true;
 }
 
@@ -115,8 +101,8 @@ bool ResourceBundlePipeline::buildOutput(
 ) const
 {
 	const ResourceBundleAsset* bundleAsset = checked_type_cast< const ResourceBundleAsset* >(sourceAsset);
-	std::vector< std::pair< const TypeInfo*, Guid > > resources;
-	std::set< Guid > history;
+	AlignedVector< std::pair< const TypeInfo*, Guid > > resources;
+	SmallSet< Guid > history;
 
 	// Collect resources, should be in depth-first to reduce
 	// change of inter-dependencies.
@@ -124,26 +110,26 @@ bool ResourceBundlePipeline::buildOutput(
 	log::info << int32_t(resources.size()) << L" resource(s) in bundle found." << Endl;
 
 	// Sort bundle resources on type.
-	std::sort(resources.begin(), resources.end(), ResourceTypePred());
+	std::sort(resources.begin(), resources.end(), [](const std::pair< const TypeInfo*, Guid >& lh, const std::pair< const TypeInfo*, Guid >& rh) {
+		return lh.first < rh.first;
+	});
 
-#if defined(_DEBUG)
 	log::info << L"Resource bundle; preload resources:" << Endl;
 	log::info << IncreaseIndent;
 
-	for (std::vector< std::pair< const TypeInfo*, Guid > >::const_iterator i = resources.begin(); i != resources.end(); ++i)
+	for (const auto& resource : resources)
 	{
-		Ref< db::Instance > instance = pipelineBuilder->getOutputDatabase()->getInstance(i->second);
+		Ref< db::Instance > instance = pipelineBuilder->getOutputDatabase()->getInstance(resource.second);
 		if (instance)
 		{
-			if (i->first && i->first->getName())
-				log::info << L"\"" << instance->getPath() << L"\" as " << i->first->getName() << Endl;
+			if (resource.first && resource.first->getName())
+				log::info << L"\"" << instance->getPath() << L"\" as " << resource.first->getName() << Endl;
 			else
 				log::info << L"\"" << instance->getPath() << L"\"" << Endl;
 		}
 	}
 
 	log::info << DecreaseIndent;
-#endif
 
 	Ref< ResourceBundle > bundle = new ResourceBundle(resources, bundleAsset->persistent());
 

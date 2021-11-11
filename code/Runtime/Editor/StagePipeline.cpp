@@ -1,15 +1,15 @@
+#include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Runtime/Editor/StagePipeline.h"
 #include "Runtime/Engine/AudioLayerData.h"
 #include "Runtime/Engine/ScreenLayerData.h"
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/VideoLayerData.h"
 #include "Runtime/Engine/WorldLayerData.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Settings/PropertyGroup.h"
-#include "Core/Log/Log.h"
-#include "Database/Instance.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -55,7 +55,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		}
 
 		// Merge transitions.
-		std::map< std::wstring, Guid > transitions = downStageDataFlatten->getTransitions();
+		SmallMap< std::wstring, Guid > transitions = downStageDataFlatten->getTransitions();
 		transitions.insert(stageDataOut->getTransitions().begin(), stageDataOut->getTransitions().end());
 		stageDataOut->setTransitions(transitions);
 
@@ -77,7 +77,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.StagePipeline", 7, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.StagePipeline", 10, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
@@ -101,7 +101,7 @@ bool StagePipeline::buildDependencies(
 		pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
 		pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
-		for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
+		for (auto i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
 			pipelineDepends->addDependency(i->second, editor::PdfBuild);
 
 		for (const auto layerData : stageData->m_layers)

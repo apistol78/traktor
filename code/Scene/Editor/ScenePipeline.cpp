@@ -131,7 +131,7 @@ bool ScenePipeline::buildDependencies(
 		if (!m_suppressShadows)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
-				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
+				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild);
 		}
 
 		pipelineDepends->addDependency(wrs->irradianceGrid, editor::PdfBuild | editor::PdfResource);
@@ -139,7 +139,7 @@ bool ScenePipeline::buildDependencies(
 		if (!m_suppressImageProcess)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
-				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild | editor::PdfResource);
+				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild);
 		}
 	}
 

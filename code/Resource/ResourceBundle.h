@@ -24,19 +24,19 @@ class T_DLLCLASS ResourceBundle : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ResourceBundle();
+	ResourceBundle() = default;
 
-	ResourceBundle(const std::vector< std::pair< const TypeInfo*, Guid > >& resources, bool persistent);
+	ResourceBundle(const AlignedVector< std::pair< const TypeInfo*, Guid > >& resources, bool persistent);
 
-	const std::vector< std::pair< const TypeInfo*, Guid > >& get() const;
+	const AlignedVector< std::pair< const TypeInfo*, Guid > >& get() const;
 
 	bool persistent() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::vector< std::pair< const TypeInfo*, Guid > > m_resources;
-	bool m_persistent;
+	AlignedVector< std::pair< const TypeInfo*, Guid > > m_resources;
+	bool m_persistent = false;
 };
 
 	}
