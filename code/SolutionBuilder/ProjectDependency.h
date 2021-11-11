@@ -22,7 +22,9 @@ class T_DLLCLASS ProjectDependency : public Dependency
 	T_RTTI_CLASS;
 
 public:
-	ProjectDependency(Project* project = 0);
+	ProjectDependency() = default;
+
+	explicit ProjectDependency(Project* project);
 
 	void setProject(Project* project);
 

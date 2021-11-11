@@ -13,13 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 5, Configuration, ISerializable)
 
-Configuration::Configuration()
-:	m_targetFormat(TfStaticLibrary)
-,	m_targetProfile(TpDebug)
-,	m_warningLevel(WlCompilerDefault)
-{
-}
-
 void Configuration::setName(const std::wstring& name)
 {
 	m_name = name;

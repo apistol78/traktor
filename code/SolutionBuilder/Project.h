@@ -35,8 +35,6 @@ class T_DLLCLASS Project : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Project();
-
 	void setEnable(bool enable);
 
 	bool getEnable() const;
@@ -89,7 +87,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_enable;
+	bool m_enable = true;
 	std::wstring m_name;
 	std::wstring m_sourcePath;
 	RefArray< Configuration > m_configurations;

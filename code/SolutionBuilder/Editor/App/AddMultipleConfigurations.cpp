@@ -1,11 +1,11 @@
 #include <sstream>
-#include <Core/Config.h>
-#include <Core/Misc/Split.h>
-#include <Core/Misc/String.h>
-#include "AddMultipleConfigurations.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Project.h"
+#include "Core/Config.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "SolutionBuilder/Configuration.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Editor/App/AddMultipleConfigurations.h"
 
 namespace traktor
 {

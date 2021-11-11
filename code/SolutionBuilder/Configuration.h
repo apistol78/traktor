@@ -55,8 +55,6 @@ public:
 		WlAllWarnings
 	};
 
-	Configuration();
-
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -154,14 +152,14 @@ public:
 
 private:
 	std::wstring m_name;
-	TargetFormat m_targetFormat;
-	TargetProfile m_targetProfile;
+	TargetFormat m_targetFormat = TfStaticLibrary;
+	TargetProfile m_targetProfile = TpDebug;
 	std::wstring m_precompiledHeader;
 	std::vector< std::wstring > m_includePaths;
 	std::vector< std::wstring > m_definitions;
 	std::vector< std::wstring > m_libraryPaths;
 	std::vector< std::wstring > m_libraries;
-	WarningLevel m_warningLevel;
+	WarningLevel m_warningLevel = WlCompilerDefault;
 	std::wstring m_additionalCompilerOptions;
 	std::wstring m_additionalLinkerOptions;
 	std::wstring m_debugExecutable;

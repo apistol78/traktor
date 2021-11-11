@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core/RefArray.h>
-#include "Dependency.h"
+#include "Core/RefArray.h"
+#include "SolutionBuilder/Dependency.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,9 @@ class T_DLLCLASS ExternalDependency : public Dependency
 	T_RTTI_CLASS;
 
 public:
-	ExternalDependency(const std::wstring& solutionFileName = L"", const std::wstring& projectName = L"");
+	ExternalDependency() = default;
+
+	explicit ExternalDependency(const std::wstring& solutionFileName, const std::wstring& projectName);
 
 	void setSolutionFileName(const std::wstring& solutionFileName);
 
