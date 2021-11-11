@@ -24,10 +24,10 @@ bool SparkLayerPipeline::buildDependencies(
 {
 	const SparkLayerData* layerData = mandatory_non_null_type_cast< const SparkLayerData* >(sourceAsset);
 
-	pipelineDepends->addDependency(layerData->m_movie, editor::PdfBuild);
+	pipelineDepends->addDependency(layerData->m_movie, editor::PdfBuild | editor::PdfResource);
 
 	for (const auto& externalMovie : layerData->m_externalMovies)
-		pipelineDepends->addDependency(externalMovie.second, editor::PdfBuild);
+		pipelineDepends->addDependency(externalMovie.second, editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }

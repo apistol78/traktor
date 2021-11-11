@@ -16,7 +16,7 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief
+/*!
  * \ingroup Resource
  */
 class T_DLLCLASS ResourceBundleAsset : public ISerializable
@@ -24,17 +24,19 @@ class T_DLLCLASS ResourceBundleAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ResourceBundleAsset();
+	void add(const Guid& resource);
 
-	const std::vector< Guid >& get() const;
+	const AlignedVector< Guid >& get() const;
+
+	void setPersistent(bool persistent);
 
 	bool persistent() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::vector< Guid > m_resources;
-	bool m_persistent;
+	AlignedVector< Guid > m_resources;
+	bool m_persistent = false;
 };
 
 	}

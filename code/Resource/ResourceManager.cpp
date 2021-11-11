@@ -110,15 +110,19 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 			continue;
 		}
 
-		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[resource.second];
+		Ref< ResidentResourceHandle > residentHandle = m_residentHandles[resource.second];
 		if (residentHandle == nullptr || residentHandle->get() == nullptr)
 		{
 			const TypeInfo& productType = *(*productTypes.begin());
 
 			if (!residentHandle)
+			{
 				residentHandle = new ResidentResourceHandle(productType, bundle->persistent());
+				m_residentHandles[resource.second] = residentHandle;
+			}
 
 			load(instance, factory, productType, residentHandle);
+
 			if (!residentHandle->get())
 			{
 				log::error << L"Unable to preload resource " << resource.second.format() << L"; skipped." << Endl;

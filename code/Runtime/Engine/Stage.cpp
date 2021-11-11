@@ -40,7 +40,7 @@ Stage::Stage(
 	const resource::Proxy< render::Shader >& shaderFade,
 	bool fadeOutUpdate,
 	float fadeRate,
-	const std::map< std::wstring, Guid >& transitions,
+	const SmallMap< std::wstring, Guid >& transitions,
 	const Object* params
 )
 :	m_name(name)

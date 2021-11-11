@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Class/Any.h"
@@ -58,7 +57,7 @@ public:
 		const resource::Proxy< render::Shader >& shaderFade,
 		bool fadeOutUpdate,
 		float fadeRate,
-		const std::map< std::wstring, Guid >& transitions,
+		const SmallMap< std::wstring, Guid >& transitions,
 		const Object* params
 	);
 
@@ -172,7 +171,7 @@ private:
 	bool m_fadeOutUpdate;
 	float m_fadeRate;
 	RefArray< Layer > m_layers;
-	std::map< std::wstring, Guid > m_transitions;
+	SmallMap< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;
 	Ref< Stage > m_pendingStage;
 	Ref< Stage > m_transitionStage;

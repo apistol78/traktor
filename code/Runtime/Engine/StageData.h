@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -40,7 +40,7 @@ class Shader;
 class LayerData;
 class Stage;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS StageData : public ISerializable
@@ -76,9 +76,9 @@ public:
 
 	float getFadeRate() const { return m_fadeRate; }
 
-	void setTransitions(const std::map< std::wstring, Guid >& transitions) { m_transitions = transitions; }
+	void setTransitions(const SmallMap< std::wstring, Guid >& transitions) { m_transitions = transitions; }
 
-	const std::map< std::wstring, Guid >& getTransitions() const { return m_transitions; }
+	const SmallMap< std::wstring, Guid >& getTransitions() const { return m_transitions; }
 
 	void setResourceBundle(const Guid& resourceBundle) { m_resourceBundle = resourceBundle; }
 
@@ -98,7 +98,7 @@ private:
 	resource::Id< render::Shader > m_shaderFade;
 	bool m_fadeOutUpdate = false;
 	float m_fadeRate = 1.0f;
-	std::map< std::wstring, Guid > m_transitions;
+	SmallMap< std::wstring, Guid > m_transitions;
 	Guid m_resourceBundle;
 	Ref< const PropertyGroup > m_properties;
 };
