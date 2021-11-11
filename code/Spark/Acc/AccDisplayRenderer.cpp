@@ -227,7 +227,7 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 	{
 		render::Clear cl;
 		cl.mask = render::CfColor;
-		cl.colors[0] = Color4f(1.0f, 0.0f, 0.0f, 1.0);
+		cl.colors[0] = Color4f(0.5f, 0.5f, 0.5f, 1.0);
 		m_renderPassGlyph->setOutput(glyphsTargetSetId, cl, render::TfNone, render::TfColor);
 	}
 
@@ -481,9 +481,11 @@ void AccDisplayRenderer::renderGlyph(
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
 
-	// Always use maximum glyph bounds.
+	// Calculate square bounds of glyph.
 	Aabb2 bounds = accShape->getBounds();
-	//bounds.mx = bounds.mn + font->getMaxDimension();
+	const Vector2 sz = bounds.getSize();
+	const float m = std::max(sz.x, sz.y);
+	bounds.mx = bounds.mn + Vector2(m, m);
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)
