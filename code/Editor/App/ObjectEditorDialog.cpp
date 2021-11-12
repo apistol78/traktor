@@ -40,8 +40,15 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	ui::Size preferredSize = m_objectEditor->getPreferredSize();
 
 	// Get instance's editor dimensions from settings.
+	int32_t x = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/X", -1);
+	int32_t y = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Y", -1);
 	int32_t width = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
 	int32_t height = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
+
+	// In case we don't have an explicit position then center on top of parent.
+	int32_t style = ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton;
+	if (x < 0 || y < 0)
+		style |= ui::ConfigDialog::WsCenterParent;
 
 	StringOutputStream ss;
 	ss << L"Edit \"" << instance->getName() << L"\" (" << type_name(object) << L")";
@@ -51,7 +58,7 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 		ss.str(),
 		width,
 		height,
-		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton,
+		style,
 		new ui::FloodLayout()
 	))
 		return false;
@@ -61,6 +68,15 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	addEventHandler< ui::ButtonClickEvent >(this, &ObjectEditorDialog::eventClick);
 	addEventHandler< ui::CloseEvent >(this, &ObjectEditorDialog::eventClose);
 	addEventHandler< ui::TimerEvent >(this, &ObjectEditorDialog::eventTimer);
+
+	// Move dialog to same location as last time if position is given.
+	if (x >= 0 && y >= 0)
+	{
+		setRect(ui::Rect(
+			ui::Point(x, y),
+			ui::Size(width, height)
+		));
+	}
 
 	m_instance = instance;
 	m_instanceGuid = instance->getGuid();
@@ -81,6 +97,8 @@ void ObjectEditorDialog::destroy()
 	if (m_settings)
 	{
 		ui::Rect rc = getRect();
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/X", rc.left);
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Y", rc.top);
 		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", rc.getWidth());
 		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", rc.getHeight());
 	}

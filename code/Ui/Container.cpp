@@ -88,15 +88,6 @@ Size Container::getPreferredSize(const Size& hint) const
 {
 	if (m_layout)
 	{
-		//// Calculate hint size, use largest child's preferred size as hint.
-		//Size inner = getInnerRect().getSize();
-		//for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
-		//{
-		//	Size childSize = child->getPreferredSize(const Size& hint);
-		//	inner.cx = std::max< int >(inner.cx, childSize.cx);
-		//	inner.cy = std::max< int >(inner.cy, childSize.cy);
-		//}
-
 		// Use layout to fit hinted size.
 		Size bounds;
 		if (m_layout->fit(const_cast< Container* >(this), hint, bounds))

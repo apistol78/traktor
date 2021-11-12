@@ -28,10 +28,10 @@ class T_DLLCLASS Dialog : public Container
 public:
 	enum StyleFlags
 	{
-		WsCenterParent = 0,
-		WsCenterDesktop = WsUser,
-		WsDefaultFixed = WsCenterParent | WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption,
-		WsDefaultResizable = WsCenterParent | WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
+		WsCenterParent = WsUser,
+		WsCenterDesktop = (WsUser << 1),
+		WsDefaultFixed = WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption,
+		WsDefaultResizable = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
 	};
 
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefaultResizable, Layout* layout = 0);

@@ -17,7 +17,7 @@ DialogWin32::DialogWin32(EventSubject* owner)
 :	WidgetWin32Impl< IDialog >(owner)
 ,	m_modal(false)
 ,	m_minSize(0, 0)
-,	m_centerDesktop(false)
+,	m_centerStyle(0)
 ,	m_keepCentered(false)
 ,	m_result(0)
 {
@@ -41,12 +41,9 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	if (style & WsCaption)
 		nativeStyle |= WS_CAPTION;
 
-	if (style & Dialog::WsCenterDesktop)
-		m_centerDesktop = true;
-	else
-		m_centerDesktop = false;
+	m_centerStyle = (style & (Dialog::WsCenterDesktop | Dialog::WsCenterParent));
 
-	if (!m_centerDesktop && (style & (WsResizable | WsCaption | WsSystemBox | WsMinimizeBox | WsMaximizeBox)) == 0)
+	if ((m_centerStyle & Dialog::WsCenterParent) != 0 && (style & (WsResizable | WsCaption | WsSystemBox | WsMinimizeBox | WsMaximizeBox)) == 0)
 		m_keepCentered = true;
 	else
 		m_keepCentered = false;
@@ -123,19 +120,24 @@ int DialogWin32::showModal()
 		}, NULL);
 	}
 
-	HWND hCenterWnd = m_centerDesktop ? GetDesktopWindow() : hParentWnd;
-	if (!hCenterWnd)
-		hCenterWnd = GetDesktopWindow();
-
 	// Place dialog window centered above parent window.
-	RECT rcParent;
-	GetWindowRect(hCenterWnd, &rcParent);
-	POINT pntPos =
+	HWND hCenterWnd = 0;
+	if ((m_centerStyle & Dialog::WsCenterDesktop) != 0)
+		hCenterWnd = GetDesktopWindow();
+	if ((m_centerStyle & Dialog::WsCenterParent) != 0)
+		hCenterWnd = hParentWnd;
+
+	if (hCenterWnd != 0)
 	{
-		rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
-		rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
-	};
-	SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+		RECT rcParent;
+		GetWindowRect(hCenterWnd, &rcParent);
+		POINT pntPos =
+		{
+			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
+			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
+		};
+		SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+	}
 
 	// Handle events from the dialog.
 	m_result = DrCancel;
@@ -204,21 +206,35 @@ void DialogWin32::setVisible(bool visible)
 				hParentWnd = GetParent(hParentWnd);
 		}
 
-		HWND hCenterWnd = m_centerDesktop ? GetDesktopWindow() : hParentWnd;
-		if (!hCenterWnd)
+		HWND hCenterWnd = 0;
+		if ((m_centerStyle & Dialog::WsCenterDesktop) != 0)
 			hCenterWnd = GetDesktopWindow();
+		if ((m_centerStyle & Dialog::WsCenterParent) != 0)
+			hCenterWnd = hParentWnd;
 
-		RECT rcParent;
-		GetWindowRect(hCenterWnd, &rcParent);
-		POINT pntPos =
+		if (hCenterWnd != 0)
 		{
-			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
-			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
-		};
-		SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+			RECT rcParent;
+			GetWindowRect(hCenterWnd, &rcParent);
+			POINT pntPos =
+			{
+				rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
+				rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
+			};
+			SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+		}
+		else
+			ShowWindow(m_hWnd, SW_SHOW);
 	}
 	else
 		ShowWindow(m_hWnd, SW_HIDE);
+}
+
+Rect DialogWin32::getRect() const
+{
+	RECT rc;
+	GetWindowRect(m_hWnd, &rc);
+	return Rect(rc.left, rc.top, rc.right, rc.bottom);
 }
 
 LRESULT DialogWin32::eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
