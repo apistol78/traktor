@@ -37,7 +37,7 @@ bool BatchDialog::create(ui::Widget* parent)
 		i18n::Text(L"FLASH_BATCH_DIALOG_TITLE"),
 		ui::dpi96(900),
 		ui::dpi96(500),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;

@@ -266,7 +266,14 @@ bool SearchToolDialog::create(ui::Widget* parent)
 {
 	const int32_t f = ui::dpi96(4);
 
-	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), ui::dpi96(1100), ui::dpi96(600), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::Dialog::create(
+		parent,
+		i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"),
+		ui::dpi96(1100),
+		ui::dpi96(600),
+		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+		new ui::FloodLayout()
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

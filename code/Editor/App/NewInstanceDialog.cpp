@@ -64,7 +64,7 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 		i18n::Text(L"NEW_INSTANCE_TITLE"),
 		ui::dpi96(640),
 		ui::dpi96(500),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;

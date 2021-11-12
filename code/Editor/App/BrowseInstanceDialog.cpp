@@ -79,7 +79,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		i18n::Text(L"BROWSE_INSTANCE_TITLE"),
 		ui::dpi96(640),
 		ui::dpi96(500),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;

@@ -52,7 +52,14 @@ ProfilerDialog::ProfilerDialog(TargetConnection* connection)
 
 bool ProfilerDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Profiler", ui::dpi96(900), ui::dpi96(700), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(
+		parent,
+		L"Profiler",
+		ui::dpi96(900),
+		ui::dpi96(700),
+		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
+	))
 		return false;
 
 	m_toolBar = new ui::ToolBar();

@@ -39,7 +39,7 @@ bool BrowseGroupDialog::create(ui::Widget* parent, db::Database* database)
 		i18n::Text(L"BROWSE_GROUP_TITLE"),
 		ui::dpi96(400),
 		ui::dpi96(500),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%", 4, 4)
 	))
 		return false;

@@ -123,7 +123,14 @@ ModelToolDialog::ModelToolDialog(
 
 bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, float scale)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"MODEL_TOOL_TITLE"), ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(
+		parent,
+		i18n::Text(L"MODEL_TOOL_TITLE"),
+		ui::dpi96(1000),
+		ui::dpi96(800),
+		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

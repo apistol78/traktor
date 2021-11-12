@@ -68,7 +68,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 		i18n::Text(L"BROWSE_TYPE_TITLE"),
 		ui::dpi96(640),
 		ui::dpi96(500),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;

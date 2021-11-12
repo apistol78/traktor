@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Heightfield/Editor/NewHeightfieldDialog.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/NumericEditValidator.h"
@@ -19,7 +20,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.NewHeightfieldDialog", NewHeightfieldDialog,
 
 bool NewHeightfieldDialog::create(ui::Widget* parent)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"NEW_HEIGHTFIELD_TITLE"), 600, 200, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(
+		parent,
+		i18n::Text(L"NEW_HEIGHTFIELD_TITLE"),
+		ui::dpi96(600),
+		ui::dpi96(200),
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+		new ui::FloodLayout()
+	))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();

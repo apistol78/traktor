@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ErrorDialog", ErrorDialog, ui::Dialog)
 bool ErrorDialog::create()
 {
 	if (!ui::Dialog::create(
-		0,
+		nullptr,
 		L"Error",
 		ui::dpi96(700),
 		ui::dpi96(450),
