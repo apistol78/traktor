@@ -8,30 +8,32 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class DialogWin32 : public WidgetWin32Impl< IDialog >
 {
 public:
-	DialogWin32(EventSubject* owner);
+	explicit DialogWin32(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override;
 
-	virtual void setIcon(ISystemBitmap* icon);
+	virtual void setIcon(ISystemBitmap* icon) override;
 
-	virtual int showModal();
+	virtual int showModal() override;
 
-	virtual void endModal(int result);
+	virtual void endModal(int result) override;
 
-	virtual void setMinSize(const Size& minSize);
+	virtual void setMinSize(const Size& minSize) override;
 
-	virtual void setVisible(bool visible);
+	virtual void setVisible(bool visible) override;
+
+	virtual Rect getRect() const override;
 
 private:
 	bool m_modal;
 	Size m_minSize;
-	bool m_centerDesktop;
+	int32_t m_centerStyle;
 	bool m_keepCentered;
 	int32_t m_result;
 
