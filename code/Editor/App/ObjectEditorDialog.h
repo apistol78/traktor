@@ -6,7 +6,6 @@ namespace traktor
 {
 
 class ISerializable;
-class PropertyGroup;
 
 	namespace db
 	{
@@ -14,7 +13,6 @@ class PropertyGroup;
 class Instance;
 
 	}
-
 
 	namespace editor
 	{
@@ -29,7 +27,7 @@ class ObjectEditorDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	ObjectEditorDialog(PropertyGroup* settings, const IObjectEditorFactory* objectEditorFactory);
+	explicit ObjectEditorDialog(const IObjectEditorFactory* objectEditorFactory);
 
 	bool create(IEditor* editor, ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
@@ -44,7 +42,6 @@ public:
 	void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 
 private:
-	Ref< PropertyGroup > m_settings;
 	Ref< const IObjectEditorFactory > m_objectEditorFactory;
 	Ref< IObjectEditor > m_objectEditor;
 	Ref< ObjectEditor > m_editor;
