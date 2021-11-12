@@ -69,6 +69,8 @@ public:
 
 	void setScaffolding(const WidgetScaffolding* scaffolding);
 
+	void invalidateScaffolding();
+
 	void setDebugWires(bool debugWires);
 
 	bool getDebugWires() const { return m_debugWires; }

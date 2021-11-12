@@ -120,10 +120,10 @@ bool WidgetPreviewEditor::handleCommand(const ui::Command& command)
 
 void WidgetPreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	if (database == m_editor->getOutputDatabase())
+	if (m_resourceManager && database == m_editor->getOutputDatabase())
 	{
-		if (m_resourceManager)
-			m_resourceManager->reload(eventId, false);
+		if (m_resourceManager->reload(eventId, false))
+			m_previewControl->invalidateScaffolding();
 	}
 }
 

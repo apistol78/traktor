@@ -187,6 +187,12 @@ void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
+void WidgetPreviewControl::invalidateScaffolding()
+{
+	if (m_scaffoldingClass)
+		m_resourceManager->bind(m_scaffolding->getScaffoldingClass(), m_scaffoldingClass);
+}
+
 void WidgetPreviewControl::setDebugWires(bool debugWires)
 {
 	m_debugWires = debugWires;

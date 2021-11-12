@@ -215,34 +215,39 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	return handle;
 }
 
-void ResourceManager::reload(const Guid& guid, bool flushedOnly)
+bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (guid.isNull() || !guid.isValid())
-		return;
+		return false;
 
 	// Get resource instance from database.
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
-		return;
+		return false;
 
 	// Get type of resource.
 	const TypeInfo* resourceType = instance->getPrimaryType();
 	if (!resourceType)
-		return;
+		return false;
 
 	// Find factory which can create products from resource.
 	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
-		return;
+		return false;
+
+	bool loaded = false;
 
 	auto i1 = m_residentHandles.find(guid);
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& productType = i1->second->getProductType();
 		if (!flushedOnly || i1->second->get() == nullptr)
+		{
 			load(instance, factory, productType, i1->second);
+			loaded = true;
+		}
 	}
 
 	auto i0 = m_exclusiveHandles.find(guid);
@@ -252,9 +257,14 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 		{
 			const TypeInfo& productType = handle->getProductType();
 			if (!flushedOnly || handle->get() == nullptr)
+			{
 				load(instance, factory, productType, handle);
+				loaded = true;
+			}
 		}
 	}
+
+	return loaded;
 }
 
 void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)

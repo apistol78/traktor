@@ -39,7 +39,7 @@ class T_DLLCLASS ResourceManager : public IResourceManager
 	T_RTTI_CLASS;
 
 public:
-	ResourceManager(db::Database* database, bool verbose);
+	explicit ResourceManager(db::Database* database, bool verbose);
 
 	virtual ~ResourceManager();
 
@@ -55,7 +55,7 @@ public:
 
 	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) override final;
 
-	virtual void reload(const Guid& guid, bool flushedOnly) override final;
+	virtual bool reload(const Guid& guid, bool flushedOnly) override final;
 
 	virtual void reload(const TypeInfo& productType, bool flushedOnly) override final;
 
