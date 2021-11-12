@@ -25,7 +25,7 @@ bool PublishWizardDialog::create(ui::Widget* parent, const std::wstring& instanc
         L"Publish package",
         ui::dpi96(600),
         ui::dpi96(600),
-		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
+        ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
         new ui::TableLayout(L"100%", L"100%", 0, 0)
     ))
         return false;

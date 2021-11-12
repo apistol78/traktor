@@ -14,7 +14,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.TextEditorDialog", TextEditorDialog, ui:
 
 bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialText)
 {
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"TEXT_EDIT"), ui::dpi96(500), ui::dpi96(400), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(
+		parent,
+		i18n::Text(L"TEXT_EDIT"),
+		ui::dpi96(500),
+		ui::dpi96(400),
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+		new ui::FloodLayout()
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

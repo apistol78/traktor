@@ -58,7 +58,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 		i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
 		ui::dpi96(700),
 		ui::dpi96(400),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8))
 	))
 		return false;

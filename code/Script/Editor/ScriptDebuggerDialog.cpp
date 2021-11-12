@@ -32,7 +32,14 @@ void ScriptDebuggerDialog::destroy()
 
 bool ScriptDebuggerDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"SCRIPT_DEBUGGER_TOOL"), ui::dpi96(1024), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::Dialog::create(
+		parent,
+		i18n::Text(L"SCRIPT_DEBUGGER_TOOL"),
+		ui::dpi96(1024),
+		ui::dpi96(800),
+		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+		new ui::FloodLayout()
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Script.Icon.Debugger"));

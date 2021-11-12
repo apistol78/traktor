@@ -43,7 +43,14 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 {
 	Ref< ui::Container > container;
 
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), ui::dpi96(700), ui::dpi96(600), ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(
+		parent,
+		i18n::Text(L"EDITOR_SETTINGS_TITLE"),
+		ui::dpi96(700),
+		ui::dpi96(600),
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
+		new ui::FloodLayout()
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

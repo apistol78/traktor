@@ -44,7 +44,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 		L"Browse assets",
 		ui::dpi96(1024),
 		ui::dpi96(600),
-		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))
 		return false;

@@ -30,7 +30,14 @@ QuickOpenDialog::QuickOpenDialog(IEditor* editor)
 
 bool QuickOpenDialog::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"), ui::dpi96(600), ui::dpi96(250), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(
+		parent,
+		i18n::Text(L"EDITOR_QUICK_OPEN_TITLE"),
+		ui::dpi96(600),
+		ui::dpi96(250),
+		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
+		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
+	))
 		return false;
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));

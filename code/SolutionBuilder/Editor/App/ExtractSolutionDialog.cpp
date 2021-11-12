@@ -37,7 +37,7 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 		L"Extract project(s) into solution",
 		ui::dpi96(1000),
 		ui::dpi96(600),
-		ui::ConfigDialog::WsDefaultResizable,
+		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
