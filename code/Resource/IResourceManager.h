@@ -82,8 +82,9 @@ public:
 	 *
 	 * \param guid Resource identifier.
 	 * \param flushedOnly Reload flushed resources only.
+	 * \retunr True if resource was found and reloaded.
 	 */
-	virtual void reload(const Guid& guid, bool flushedOnly) = 0;
+	virtual bool reload(const Guid& guid, bool flushedOnly) = 0;
 
 	/*! Reload all resources of given type.
 	 *
