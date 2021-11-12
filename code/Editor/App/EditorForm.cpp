@@ -1247,7 +1247,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 
 		// Create object editor dialog.
-		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
+		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(objectEditorFactory);
 		if (!objectEditorDialog->create(this, this, instance, object))
 		{
 			log::error << L"Failed to create editor" << Endl;
@@ -1296,7 +1296,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	T_ASSERT(objectEditorFactory);
 
 	// Open editor dialog.
-	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
+	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(objectEditorFactory);
 	if (!objectEditorDialog->create(this, this, instance, object))
 	{
 		log::error << L"Failed to create editor" << Endl;

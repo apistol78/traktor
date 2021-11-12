@@ -19,9 +19,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog, ui::ConfigDialog)
 
-ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, const IObjectEditorFactory* objectEditorFactory)
-:	m_settings(settings)
-,	m_objectEditorFactory(objectEditorFactory)
+ObjectEditorDialog::ObjectEditorDialog(const IObjectEditorFactory* objectEditorFactory)
+:	m_objectEditorFactory(objectEditorFactory)
 ,	m_objectHash(0)
 ,	m_modified(false)
 {
@@ -40,10 +39,11 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	ui::Size preferredSize = m_objectEditor->getPreferredSize();
 
 	// Get instance's editor dimensions from settings.
-	int32_t x = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/X", -1);
-	int32_t y = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Y", -1);
-	int32_t width = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
-	int32_t height = m_settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
+	auto settings = editor->getSettings();
+	int32_t x = settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/X", -1);
+	int32_t y = settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Y", -1);
+	int32_t width = settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
+	int32_t height = settings->getProperty< int32_t >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
 
 	// In case we don't have an explicit position then center on top of parent.
 	int32_t style = ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton;
@@ -94,13 +94,15 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 void ObjectEditorDialog::destroy()
 {
 	// Remember instance's editor dimensions in settings.
-	if (m_settings)
+	auto settings = m_editor->checkoutGlobalSettings();
+	if (settings)
 	{
 		ui::Rect rc = getRect();
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/X", rc.left);
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Y", rc.top);
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", rc.getWidth());
-		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", rc.getHeight());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/X", rc.left);
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Y", rc.top);
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", rc.getWidth());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", rc.getHeight());
+		m_editor->commitGlobalSettings();
 	}
 
 	if (m_objectEditor)
