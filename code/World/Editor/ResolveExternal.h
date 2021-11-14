@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
@@ -17,18 +18,16 @@ namespace traktor
 
 class ISerializable;
 
-	namespace editor
-	{
-
-class IPipelineCommmon;
-
-	}
-
 	namespace world
 	{
 
 /*! Resolve external entities, ie flatten scene without external references. */
-Ref< ISerializable > T_DLLCLASS resolveExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed, AlignedVector< Guid >* outExternalEntities);
+Ref< ISerializable > T_DLLCLASS resolveExternal(
+	const std::function< Ref< const ISerializable >(const Guid& objectId) >& getObjectFn,
+	const ISerializable* object,
+	const Guid& seed,
+	AlignedVector< Guid >* outExternalEntities
+);
 
 	}
 }

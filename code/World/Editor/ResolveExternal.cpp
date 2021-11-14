@@ -2,7 +2,6 @@
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Editor/IPipelineCommon.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -11,7 +10,12 @@ namespace traktor
 	namespace world
 	{
 
-Ref< ISerializable > resolveExternal(editor::IPipelineCommon* pipeline, const ISerializable* object, const Guid& seed, AlignedVector< Guid >* outExternalEntities)
+Ref< ISerializable > resolveExternal(
+	const std::function< Ref< const ISerializable >(const Guid& objectId) >& getObjectFn,
+	const ISerializable* object,
+	const Guid& seed,
+	AlignedVector< Guid >* outExternalEntities
+)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 	if (!reflection)
@@ -25,7 +29,7 @@ Ref< ISerializable > resolveExternal(editor::IPipelineCommon* pipeline, const IS
 		RfmObject* objectMember = mandatory_non_null_type_cast< RfmObject* >(member.ptr());
 		if (auto externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
 		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
+			Ref< const ISerializable > externalEntityData = getObjectFn(externalEntityDataRef->getEntityData());
 			if (!externalEntityData)
 				return nullptr;
 
@@ -34,7 +38,7 @@ Ref< ISerializable > resolveExternal(editor::IPipelineCommon* pipeline, const IS
 
 			Guid entityDataId = externalEntityDataRef->getId().permutation(seed);
 
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(pipeline, externalEntityData, entityDataId, outExternalEntities));
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(getObjectFn, externalEntityData, entityDataId, outExternalEntities));
 			if (!resolvedEntityData)
 				return nullptr;
 
@@ -51,7 +55,7 @@ Ref< ISerializable > resolveExternal(editor::IPipelineCommon* pipeline, const IS
 		{
 			Guid entityDataId = entityDataRef->getId().permutation(seed);
 
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(pipeline, entityDataRef, entityDataId, outExternalEntities));
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(getObjectFn, entityDataRef, entityDataId, outExternalEntities));
 			if (!resolvedEntityData)
 				return nullptr;
 
@@ -60,7 +64,7 @@ Ref< ISerializable > resolveExternal(editor::IPipelineCommon* pipeline, const IS
 		}
 		else if (objectMember->get())
 		{
-			objectMember->set(resolveExternal(pipeline, objectMember->get(), seed, outExternalEntities));
+			objectMember->set(resolveExternal(getObjectFn, objectMember->get(), seed, outExternalEntities));
 		}
 	}
 

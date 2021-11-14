@@ -161,7 +161,14 @@ bool NavMeshPipeline::buildOutput(
 		return false;
 	}
 
-	sourceData = world::resolveExternal(pipelineBuilder, sourceData, Guid::null, nullptr);
+	sourceData = world::resolveExternal(
+		[&](const Guid& objectId) -> Ref< const ISerializable > {
+			return pipelineBuilder->getObjectReadOnly(objectId);
+		},
+		sourceData,
+		Guid::null,
+		nullptr
+	);
 
 	AlignedVector< NavMeshSourceModel > navModels;
 	float oceanHeight = -std::numeric_limits< float >::max();
@@ -182,7 +189,7 @@ bool NavMeshPipeline::buildOutput(
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createModel(pipelineBuilder, m_assetPath, entityData, componentData)) != nullptr)
+				if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData)) != nullptr)
 					break;
 			}
 		}

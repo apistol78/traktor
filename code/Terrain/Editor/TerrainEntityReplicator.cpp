@@ -43,7 +43,6 @@ bool TerrainEntityReplicator::addDependencies(
 
 Ref< model::Model > TerrainEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -80,12 +79,11 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 }
 
 Ref< Object > TerrainEntityReplicator::modifyOutput(
-    editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
-    const world::EntityData* entityData,
+    editor::IPipelineBuilder* /*pipelineBuilder*/,
+    const world::EntityData* /*entityData*/,
     const world::IEntityComponentData* componentData,
-    const model::Model* model,
-    const Guid& outputGuid
+    const model::Model* /*model*/,
+    const Guid& /*outputGuid*/
 ) const
 {
     return const_cast< world::IEntityComponentData* >(componentData);

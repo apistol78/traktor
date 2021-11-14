@@ -32,14 +32,12 @@ public:
 
     virtual Ref< model::Model > createModel(
         editor::IPipelineBuilder* pipelineBuilder,
-        const std::wstring& assetPath,
         const world::EntityData* entityData,
         const world::IEntityComponentData* componentData
     ) const override final;
 
     virtual Ref< Object > modifyOutput(
         editor::IPipelineBuilder* pipelineBuilder,
-        const std::wstring& assetPath,
         const world::EntityData* entityData,
         const world::IEntityComponentData* componentData,
         const model::Model* model,
@@ -47,6 +45,7 @@ public:
     ) const override final;
 
 private:
+    std::wstring m_assetPath;
     std::wstring m_modelCachePath;
 };
 

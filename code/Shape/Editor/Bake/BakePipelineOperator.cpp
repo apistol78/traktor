@@ -424,7 +424,14 @@ bool BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDep
 	{
 		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(pipelineDepends, layer, Guid::null, &externalEntityIds));
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
+			[&](const Guid& objectId) -> Ref< const ISerializable > {
+				return pipelineDepends->getObjectReadOnly(objectId);
+			},
+			layer,
+			Guid::null,
+			&externalEntityIds
+		));
 		if (!flattenedLayer)
 			return false;
 
@@ -501,7 +508,14 @@ bool BakePipelineOperator::build(
 	{
 		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(pipelineBuilder, layer, Guid::null, nullptr));
+		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
+			[&](const Guid& objectId) -> Ref< const ISerializable > {
+				return pipelineBuilder->getObjectReadOnly(objectId);
+			},
+			layer,
+			Guid::null,
+			nullptr
+		));
 		if (!flattenedLayer)
 			return false;
 
@@ -626,7 +640,7 @@ bool BakePipelineOperator::build(
 					},
 					[&]() -> Ref< model::Model > {
 						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, m_assetPath, inoutEntityData, componentData);
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData);
 						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
 						if (!model)
 							return nullptr;
@@ -751,7 +765,6 @@ bool BakePipelineOperator::build(
 					pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 					Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
 						pipelineBuilder,
-						m_assetPath,
 						inoutEntityData,
 						componentData,
 						model,
