@@ -42,6 +42,8 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
+	virtual bool paste() override;
+
 private:
 	const TypeInfo* m_elementType;
 	bool m_readOnly;
