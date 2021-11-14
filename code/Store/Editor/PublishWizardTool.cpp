@@ -44,7 +44,7 @@ bool isSystemInstance(db::Instance* instance)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.ScriptClassWizardTool", 0, PublishWizardTool, editor::IWizardTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.PublishWizardTool", 0, PublishWizardTool, editor::IWizardTool)
 
 std::wstring PublishWizardTool::getDescription() const
 {
