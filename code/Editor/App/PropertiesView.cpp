@@ -216,17 +216,19 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		{
 			if (arrayItem->getElementType())
 			{
-				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()), false, true);
-				if (objectType)
+				Ref< ITypedObject > object = cmd.getData();
+				if (!object)
 				{
-					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-					if (object)
-					{
-						m_propertyList->addObject(arrayItem, object);
-						m_propertyList->apply();
-						m_propertyList->refresh();
-						m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
-					}
+					const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()), false, true);
+					if (objectType)
+						object = objectType->createInstance();
+				}
+				if (object)
+				{
+					m_propertyList->addObject(arrayItem, mandatory_non_null_type_cast< ISerializable* >(object));
+					m_propertyList->apply();
+					m_propertyList->refresh();
+					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 				}
 			}
 			else	// Non-complex array; just apply and refresh.

@@ -1,5 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/MiniButton.h"
 #include "Ui/PropertyList/ArrayPropertyItem.h"
@@ -83,6 +86,25 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	ss << L"{ " << elementCount << L" element(s) }";
 
 	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
+}
+
+bool ArrayPropertyItem::paste()
+{
+	if (!m_elementType)
+		return false;
+
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	Ref< ISerializable > object = clipboard->getObject();
+	if (object && is_type_of(*m_elementType, type_of(object)))
+	{
+		notifyCommand(Command(L"Property.Add", object));
+		return true;
+	}
+
+	return false;
 }
 
 void ArrayPropertyItem::eventClick(ButtonClickEvent* event)
