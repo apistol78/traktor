@@ -39,6 +39,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, Prefa
 
 bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
@@ -72,7 +73,6 @@ bool PrefabEntityReplicator::addDependencies(
 
 Ref< model::Model > PrefabEntityReplicator::createModel(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -102,7 +102,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 				return scene::Traverser::VrFailed;
 			}
 
-			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 
 			Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 			if (!model)
@@ -136,7 +136,6 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 
 Ref< Object > PrefabEntityReplicator::modifyOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
 	const model::Model* model,
@@ -227,7 +226,7 @@ Ref< Object > PrefabEntityReplicator::modifyOutput(
 					return scene::Traverser::VrFailed;
 				}
 
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 
 				Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, L"");
 				if (!shapeModel)

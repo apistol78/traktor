@@ -22,6 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEnti
 
 bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
 	return true;
 }
@@ -44,7 +45,6 @@ bool MeshEntityReplicator::addDependencies(
 
 Ref< model::Model > MeshEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -57,7 +57,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 		return nullptr;
 
 	// Read source model.
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 	Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 	if (!model)
 		return nullptr;
@@ -102,8 +102,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 
 Ref< Object > MeshEntityReplicator::modifyOutput(
     editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
-    const world::EntityData* entityData,
+    const world::EntityData* /*entityData*/,
     const world::IEntityComponentData* componentData,
     const model::Model* model,
 	const Guid& outputGuid

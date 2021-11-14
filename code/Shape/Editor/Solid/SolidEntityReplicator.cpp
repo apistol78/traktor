@@ -74,7 +74,6 @@ bool SolidEntityReplicator::addDependencies(
 
 Ref< model::Model > SolidEntityReplicator::createModel(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
@@ -181,9 +180,8 @@ Ref< model::Model > SolidEntityReplicator::createModel(
 
 Ref< Object > SolidEntityReplicator::modifyOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const std::wstring& assetPath,
     const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData,
+    const world::IEntityComponentData* /*componentData*/,
 	const model::Model* model,
 	const Guid& outputGuid
 ) const

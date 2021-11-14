@@ -37,7 +37,6 @@ bool SplineEntityReplicator::addDependencies(
 
 Ref< model::Model > SplineEntityReplicator::createModel(
     editor::IPipelineBuilder* pipelineBuilder,
-    const std::wstring& assetPath,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
@@ -110,12 +109,11 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 }
 
 Ref< Object > SplineEntityReplicator::modifyOutput(
-    editor::IPipelineBuilder* pipelineBuilder,
-    const std::wstring& assetPath,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData,
-    const model::Model* model,
-	const Guid& outputGuid
+    editor::IPipelineBuilder* /*pipelineBuilder*/,
+    const world::EntityData* /*entityData*/,
+    const world::IEntityComponentData* /*componentData*/,
+    const model::Model* /*model*/,
+	const Guid& /*outputGuid*/
 ) const
 {
     return nullptr;

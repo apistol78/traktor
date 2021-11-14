@@ -319,7 +319,14 @@ bool OcclusionTexturePipeline::buildOutput(
 		if (!occluderData)
 			return false;
 
-		occluderData = world::resolveExternal(pipelineBuilder, occluderData, Guid::null, nullptr);
+		occluderData = world::resolveExternal(
+			[&](const Guid& objectId) -> Ref< const ISerializable > {
+				return pipelineBuilder->getObjectReadOnly(objectId);
+			},
+			occluderData,
+			Guid::null,
+			nullptr
+		);
 
 		AlignedVector< MeshAndTransform > meshes;
 		collectMeshes(occluderData, meshes);
