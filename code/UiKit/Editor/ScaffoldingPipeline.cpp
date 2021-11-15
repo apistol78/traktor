@@ -1,40 +1,40 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineDepends.h"
-#include "UiKit/Editor/WidgetScaffolding.h"
-#include "UiKit/Editor/WidgetScaffoldingPipeline.h"
+#include "UiKit/Editor/Scaffolding.h"
+#include "UiKit/Editor/ScaffoldingPipeline.h"
 
 namespace traktor
 {
 	namespace uikit
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.WidgetScaffoldingPipeline", 0, WidgetScaffoldingPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.ScaffoldingPipeline", 0, ScaffoldingPipeline, editor::IPipeline)
 
-bool WidgetScaffoldingPipeline::create(const editor::IPipelineSettings* settings)
+bool ScaffoldingPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }
 
-void WidgetScaffoldingPipeline::destroy()
+void ScaffoldingPipeline::destroy()
 {
 }
 
-TypeInfoSet WidgetScaffoldingPipeline::getAssetTypes() const
+TypeInfoSet ScaffoldingPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< WidgetScaffolding >();
+	return makeTypeInfoSet< Scaffolding >();
 }
 
-bool WidgetScaffoldingPipeline::shouldCache() const
+bool ScaffoldingPipeline::shouldCache() const
 {
 	return false;
 }
 
-uint32_t WidgetScaffoldingPipeline::hashAsset(const ISerializable* sourceAsset) const
+uint32_t ScaffoldingPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
 }
 
-bool WidgetScaffoldingPipeline::buildDependencies(
+bool ScaffoldingPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -42,12 +42,12 @@ bool WidgetScaffoldingPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const WidgetScaffolding* ws = mandatory_non_null_type_cast< const WidgetScaffolding* >(sourceAsset);
+	const Scaffolding* ws = mandatory_non_null_type_cast< const Scaffolding* >(sourceAsset);
 	pipelineDepends->addDependency(ws->getScaffoldingClass(), editor::PdfBuild);
 	return true;
 }
 
-bool WidgetScaffoldingPipeline::buildOutput(
+bool ScaffoldingPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -62,7 +62,7 @@ bool WidgetScaffoldingPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > WidgetScaffoldingPipeline::buildOutput(
+Ref< ISerializable > ScaffoldingPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

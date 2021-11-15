@@ -38,14 +38,14 @@ class StatusBar;
 	namespace uikit
 	{
 
-class WidgetPreviewControl;
+class PreviewControl;
 
-class WidgetPreviewEditor : public editor::IObjectEditor
+class PreviewEditor : public editor::IObjectEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	WidgetPreviewEditor(editor::IEditor* editor);
+	explicit PreviewEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -63,7 +63,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< script::IScriptContext > m_scriptContext;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< WidgetPreviewControl > m_previewControl;
+	Ref< PreviewControl > m_previewControl;
 	Ref< ui::Container > m_container;
 	Ref< ui::StatusBar > m_statusBar;
 

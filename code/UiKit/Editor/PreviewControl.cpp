@@ -24,8 +24,8 @@
 #include "Spark/Debug/WireDisplayRenderer.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
-#include "UiKit/Editor/WidgetPreviewControl.h"
-#include "UiKit/Editor/WidgetScaffolding.h"
+#include "UiKit/Editor/PreviewControl.h"
+#include "UiKit/Editor/Scaffolding.h"
 
 namespace traktor
 {
@@ -72,9 +72,9 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.WidgetPreviewControl", WidgetPreviewControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewControl", PreviewControl, ui::Widget)
 
-WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PreviewControl::PreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_editor(editor)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
@@ -82,7 +82,7 @@ WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor, resource::IR
 {
 }
 
-bool WidgetPreviewControl::create(ui::Widget* parent)
+bool PreviewControl::create(ui::Widget* parent)
 {
 	if (!ui::Widget::create(parent, ui::WsNoCanvas))
 		return false;
@@ -150,24 +150,24 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	while (!m_moviePlayer->progress(1.0f / 60.0f, nullptr));
 
 	// Add widget event handler.
-	addEventHandler< ui::SizeEvent >(this, &WidgetPreviewControl::eventSize);
-	addEventHandler< ui::PaintEvent >(this, &WidgetPreviewControl::eventPaint);
-	addEventHandler< ui::KeyEvent >(this, &WidgetPreviewControl::eventKey);
-	addEventHandler< ui::KeyDownEvent >(this, &WidgetPreviewControl::eventKeyDown);
-	addEventHandler< ui::KeyUpEvent >(this, &WidgetPreviewControl::eventKeyUp);
-	addEventHandler< ui::MouseButtonDownEvent >(this, &WidgetPreviewControl::eventButtonDown);
-	addEventHandler< ui::MouseButtonUpEvent >(this, &WidgetPreviewControl::eventButtonUp);
-	addEventHandler< ui::MouseMoveEvent >(this, &WidgetPreviewControl::eventMouseMove);
-	addEventHandler< ui::MouseWheelEvent >(this, &WidgetPreviewControl::eventMouseWheel);
+	addEventHandler< ui::SizeEvent >(this, &PreviewControl::eventSize);
+	addEventHandler< ui::PaintEvent >(this, &PreviewControl::eventPaint);
+	addEventHandler< ui::KeyEvent >(this, &PreviewControl::eventKey);
+	addEventHandler< ui::KeyDownEvent >(this, &PreviewControl::eventKeyDown);
+	addEventHandler< ui::KeyUpEvent >(this, &PreviewControl::eventKeyUp);
+	addEventHandler< ui::MouseButtonDownEvent >(this, &PreviewControl::eventButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &PreviewControl::eventButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &PreviewControl::eventMouseMove);
+	addEventHandler< ui::MouseWheelEvent >(this, &PreviewControl::eventMouseWheel);
 
 	// Register our idle event handler.
-	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &WidgetPreviewControl::eventIdle);
+	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &PreviewControl::eventIdle);
 	
 	m_timer.reset();
 	return true;
 }
 
-void WidgetPreviewControl::destroy()
+void PreviewControl::destroy()
 {
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
@@ -178,7 +178,7 @@ void WidgetPreviewControl::destroy()
 	ui::Widget::destroy();
 }
 
-void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
+void PreviewControl::setScaffolding(const Scaffolding* scaffolding)
 {
 	m_scaffoldingObject = nullptr;
 	if ((m_scaffolding = scaffolding) != nullptr)
@@ -187,18 +187,18 @@ void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
-void WidgetPreviewControl::invalidateScaffolding()
+void PreviewControl::invalidateScaffolding()
 {
 	if (m_scaffoldingClass)
 		m_resourceManager->bind(m_scaffolding->getScaffoldingClass(), m_scaffoldingClass);
 }
 
-void WidgetPreviewControl::setDebugWires(bool debugWires)
+void PreviewControl::setDebugWires(bool debugWires)
 {
 	m_debugWires = debugWires;
 }
 
-void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
+void PreviewControl::eventSize(ui::SizeEvent* event)
 {
 	ui::Size sz = getInnerRect().getSize();
 
@@ -216,7 +216,7 @@ void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 	}
 }
 
-void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
+void PreviewControl::eventPaint(ui::PaintEvent* event)
 {
 	if (!m_renderView || !m_moviePlayer)
 		return;
@@ -312,7 +312,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-void WidgetPreviewControl::eventIdle(ui::IdleEvent* event)
+void PreviewControl::eventIdle(ui::IdleEvent* event)
 {
 	if (!m_moviePlayer)
 		return;
@@ -328,13 +328,13 @@ void WidgetPreviewControl::eventIdle(ui::IdleEvent* event)
 	}
 }
 
-void WidgetPreviewControl::eventKey(ui::KeyEvent* event)
+void PreviewControl::eventKey(ui::KeyEvent* event)
 {
 	if (event->getCharacter() != '\r' && m_moviePlayer)
 		m_moviePlayer->postKey(event->getCharacter());
 }
 
-void WidgetPreviewControl::eventKeyDown(ui::KeyDownEvent* event)
+void PreviewControl::eventKeyDown(ui::KeyDownEvent* event)
 {
 	if (m_moviePlayer)
 	{
@@ -344,7 +344,7 @@ void WidgetPreviewControl::eventKeyDown(ui::KeyDownEvent* event)
 	}
 }
 
-void WidgetPreviewControl::eventKeyUp(ui::KeyUpEvent* event)
+void PreviewControl::eventKeyUp(ui::KeyUpEvent* event)
 {
 	if (m_moviePlayer)
 	{
@@ -354,7 +354,7 @@ void WidgetPreviewControl::eventKeyUp(ui::KeyUpEvent* event)
 	}
 }
 
-void WidgetPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
+void PreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (m_moviePlayer)
 	{
@@ -365,7 +365,7 @@ void WidgetPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 	setFocus();
 }
 
-void WidgetPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
+void PreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	if (m_moviePlayer)
 	{
@@ -375,7 +375,7 @@ void WidgetPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 	releaseCapture();
 }
 
-void WidgetPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
+void PreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	if (m_moviePlayer)
 	{
@@ -384,7 +384,7 @@ void WidgetPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	}
 }
 
-void WidgetPreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
+void PreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
 	if (m_moviePlayer)
 	{

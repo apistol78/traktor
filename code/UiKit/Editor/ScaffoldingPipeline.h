@@ -15,7 +15,7 @@ namespace traktor
 	namespace uikit
 	{
 
-class T_DLLCLASS WidgetScaffoldingPipeline : public editor::IPipeline
+class T_DLLCLASS ScaffoldingPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
 

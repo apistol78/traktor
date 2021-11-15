@@ -15,7 +15,7 @@ namespace traktor
 	namespace uikit
 	{
 
-class T_DLLCLASS WidgetPreviewEditorFactory : public editor::IObjectEditorFactory
+class T_DLLCLASS PreviewEditorFactory : public editor::IObjectEditorFactory
 {
 	T_RTTI_CLASS;
 
