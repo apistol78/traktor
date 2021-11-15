@@ -54,20 +54,20 @@ class IResourceManager;
 	namespace uikit
 	{
 
-class WidgetScaffolding;
+class Scaffolding;
 
-class WidgetPreviewControl : public ui::Widget
+class PreviewControl : public ui::Widget
 {
 	T_RTTI_CLASS;
 
 public:
-	WidgetPreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	explicit PreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	bool create(ui::Widget* parent);
 
 	virtual void destroy() override final;
 
-	void setScaffolding(const WidgetScaffolding* scaffolding);
+	void setScaffolding(const Scaffolding* scaffolding);
 
 	void invalidateScaffolding();
 
@@ -77,7 +77,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< const WidgetScaffolding > m_scaffolding;
+	Ref< const Scaffolding > m_scaffolding;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;

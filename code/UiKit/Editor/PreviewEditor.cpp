@@ -20,9 +20,9 @@
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "UiKit/Editor/WidgetPreviewControl.h"
-#include "UiKit/Editor/WidgetPreviewEditor.h"
-#include "UiKit/Editor/WidgetScaffolding.h"
+#include "UiKit/Editor/PreviewControl.h"
+#include "UiKit/Editor/PreviewEditor.h"
+#include "UiKit/Editor/Scaffolding.h"
 #include "Video/VideoFactory.h"
 
 namespace traktor
@@ -30,16 +30,16 @@ namespace traktor
 	namespace uikit
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.WidgetPreviewEditor", WidgetPreviewEditor, editor::IObjectEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewEditor", PreviewEditor, editor::IObjectEditor)
 
-WidgetPreviewEditor::WidgetPreviewEditor(editor::IEditor* editor)
+PreviewEditor::PreviewEditor(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }
 
-bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
+bool PreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	Ref< WidgetScaffolding > ws = mandatory_non_null_type_cast< WidgetScaffolding* >(object);
+	Ref< Scaffolding > ws = mandatory_non_null_type_cast< Scaffolding* >(object);
 
 	// Get systems and managers.
 	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
@@ -87,10 +87,10 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	});
 
 	// Create preview control.
-	m_previewControl = new WidgetPreviewControl(m_editor, m_resourceManager, renderSystem);
+	m_previewControl = new PreviewControl(m_editor, m_resourceManager, renderSystem);
 	if (!m_previewControl->create(m_container))
 		return false;
-	m_previewControl->addEventHandler< ui::SizeEvent >(this, &WidgetPreviewEditor::eventPreviewSize);
+	m_previewControl->addEventHandler< ui::SizeEvent >(this, &PreviewEditor::eventPreviewSize);
 
 	// Create status bar.
 	m_statusBar = new ui::StatusBar();
@@ -102,23 +102,23 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	return true;
 }
 
-void WidgetPreviewEditor::destroy()
+void PreviewEditor::destroy()
 {
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_scriptContext);
 }
 
-void WidgetPreviewEditor::apply()
+void PreviewEditor::apply()
 {
 }
 
-bool WidgetPreviewEditor::handleCommand(const ui::Command& command)
+bool PreviewEditor::handleCommand(const ui::Command& command)
 {
 	return false;
 }
 
-void WidgetPreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+void PreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager && database == m_editor->getOutputDatabase())
 	{
@@ -127,7 +127,7 @@ void WidgetPreviewEditor::handleDatabaseEvent(db::Database* database, const Guid
 	}
 }
 
-ui::Size WidgetPreviewEditor::getPreferredSize() const
+ui::Size PreviewEditor::getPreferredSize() const
 {
 	return ui::Size(
 		ui::dpi96(1280),
@@ -135,7 +135,7 @@ ui::Size WidgetPreviewEditor::getPreferredSize() const
 	);
 }
 
-void WidgetPreviewEditor::eventPreviewSize(ui::SizeEvent* event)
+void PreviewEditor::eventPreviewSize(ui::SizeEvent* event)
 {
 	ui::Size innerSize = m_previewControl->getInnerRect().getSize();
 

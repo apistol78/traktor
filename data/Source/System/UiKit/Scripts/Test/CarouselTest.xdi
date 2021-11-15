@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.uikit.WidgetScaffolding">
+<object type="traktor.uikit.Scaffolding">
 	<scaffoldingClass>{A783CC52-3010-6F40-8341-B06ADBAC9224}</scaffoldingClass>
 </object>

@@ -19,7 +19,7 @@ class IRuntimeClass;
 	namespace uikit
 	{
 
-class T_DLLCLASS WidgetScaffolding : public ISerializable
+class T_DLLCLASS Scaffolding : public ISerializable
 {
 	T_RTTI_CLASS;
 
