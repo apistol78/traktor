@@ -18,10 +18,7 @@ public:
 	virtual ~BoxedAllocator()
 	{
 		for (auto allocator : m_allocators)
-		{
-			Alloc::freeAlign(allocator->top());
-			delete allocator;
-		}
+			Alloc::freeAlign(allocator.top());
 	}
 
 	void* alloc()
@@ -30,21 +27,32 @@ public:
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 #endif
 		void* ptr = nullptr;
-		for (auto allocator : m_allocators)
+
+		// First try last successful allocator.
+		if (m_allocator)
 		{
-			if ((ptr = allocator->alloc()) != nullptr)
+			if ((ptr = m_allocator->alloc()) != nullptr)
 				return ptr;
+		}
+
+		// Try all allocators, remember one which was successful.
+		for (auto& allocator : m_allocators)
+		{
+			if ((ptr = allocator.alloc()) != nullptr)
+			{
+				m_allocator = &allocator;
+				return ptr;
+			}
 		}
 
 		// No more space in block allocators; create a new block allocator.
 		void* top = Alloc::acquireAlign(BoxesPerBlock * sizeof(BoxedType), alignOf< BoxedType >(), T_FILE_LINE);
 		T_FATAL_ASSERT_M (top, L"Out of memory");
+		
+		m_allocators.push_back(BlockAllocator(top, BoxesPerBlock, sizeof(BoxedType)));
+		m_allocator = &m_allocators.back();
 
-		BlockAllocator* allocator = new BlockAllocator(top, BoxesPerBlock, sizeof(BoxedType));
-		T_FATAL_ASSERT_M (allocator, L"Out of memory");
-
-		m_allocators.push_back(allocator);
-		return allocator->alloc();
+		return m_allocator->alloc();
 	}
 
 	void free(void* ptr)
@@ -52,9 +60,9 @@ public:
 #if defined(T_BOXES_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 #endif
-		for (auto allocator : m_allocators)
+		for (auto& allocator : m_allocators)
 		{
-			if (allocator->free(ptr))
+			if (allocator.free(ptr))
 				return;
 		}
 		T_FATAL_ERROR;
@@ -64,7 +72,8 @@ private:
 #if defined(T_BOXES_USE_MT_LOCK)
 	SpinLock m_lock;
 #endif
-	AlignedVector< BlockAllocator* > m_allocators;
+	AlignedVector< BlockAllocator > m_allocators;
+	BlockAllocator* m_allocator = nullptr;
 };
 
 }
