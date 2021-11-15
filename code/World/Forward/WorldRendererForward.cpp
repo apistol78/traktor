@@ -322,9 +322,6 @@ bool WorldRendererForward::create(
 
 void WorldRendererForward::destroy()
 {
-	if (m_lightSBufferData != nullptr)
-		m_lightSBuffer->unlock();
-
 	safeDestroy(m_lightSBuffer);
 	safeDestroy(m_lightIndexSBuffer);
 	safeDestroy(m_tileSBuffer);
@@ -978,10 +975,9 @@ void WorldRendererForward::setupLightPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	const auto& lights = m_lights;
 
-	if ((m_lightSBufferData = m_lightSBuffer->lock()) == nullptr)
+	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBuffer->lock();
+	if (!lightShaderData)
 		return;
-
-	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBufferData;
 
 	// Reset this frame's atlas packer.
 	auto shadowAtlasPacker = m_shadowAtlasPacker;
@@ -1301,7 +1297,6 @@ void WorldRendererForward::setupLightPass(
 	}
 
 	m_lightSBuffer->unlock();
-	m_lightSBufferData = nullptr;
 }
 
 void WorldRendererForward::setupVisualPass(

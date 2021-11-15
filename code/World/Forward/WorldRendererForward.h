@@ -131,7 +131,6 @@ private:
 #if defined(T_WORLD_FORWARD_USE_TILE_JOB)
 	Ref< Job > m_tileJob;
 #endif
-	void* m_lightSBufferData = nullptr;
 
 	float m_slicePositions[MaxSliceCount + 1];
 	int32_t m_count = 0;
