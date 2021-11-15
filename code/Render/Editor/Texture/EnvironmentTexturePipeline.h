@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Editor/IPipeline.h"
+#include "Editor/DefaultPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,21 +15,17 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS TextureOutputPipeline : public editor::IPipeline
+class T_DLLCLASS EnvironmentTexturePipeline : public editor::DefaultPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) override final;
-
-	virtual void destroy() override final;
+    virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
-
+	
 	virtual bool shouldCache() const override final;
 
-	virtual uint32_t hashAsset(const ISerializable* sourceAsset) const override final;
-	
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
@@ -50,13 +46,6 @@ public:
 		uint32_t reason
 	) const override final;
 
-	virtual Ref< ISerializable > buildOutput(
-		editor::IPipelineBuilder* pipelineBuilder,
-		const db::Instance* sourceInstance,
-		const ISerializable* sourceAsset,
-		const Object* buildParams
-	) const override final;
-
 private:
 	enum class CompressionMethod
 	{
@@ -67,16 +56,10 @@ private:
 		ASTC
 	};
 
-	bool m_generateMipsThread = false;
-	int32_t m_skipMips = 0;
-	int32_t m_clampSize = 0;
+    std::wstring m_assetPath;
 	CompressionMethod m_compressionMethod = CompressionMethod::DXTn;
-	int32_t m_compressionQuality = 1;
-	float m_gamma = 2.2f;
-	bool m_sRGB = false;
-	bool m_compressedData = true;
+    int32_t m_compressionQuality = 1;
 };
 
 	}
 }
-
