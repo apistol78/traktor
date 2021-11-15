@@ -42,9 +42,9 @@ class T_DLLCLASS EffectData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	EffectData();
+	EffectData() = default;
 
-	EffectData(
+	explicit EffectData(
 		float duration,
 		float loopStart,
 		float loopEnd,
@@ -68,9 +68,9 @@ public:
 	const RefArray< EffectLayerData >& getLayers() const { return m_layers; }
 
 private:
-	float m_duration;
-	float m_loopStart;
-	float m_loopEnd;
+	float m_duration = 0.0f;
+	float m_loopStart = 0.0f;
+	float m_loopEnd = 0.0f;
 	RefArray< EffectLayerData > m_layers;
 };
 

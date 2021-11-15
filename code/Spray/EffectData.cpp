@@ -13,13 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectData", 0, EffectData, ISerializable)
 
-EffectData::EffectData()
-:	m_duration(0.0f)
-,	m_loopStart(0.0f)
-,	m_loopEnd(0.0f)
-{
-}
-
 EffectData::EffectData(
 	float duration,
 	float loopStart,

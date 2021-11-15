@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="9">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="35">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="36">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>EmFixed</exposureMode>
@@ -20,11 +20,11 @@
 			</disabled>
 			<low>
 				<projection>SpUniform</projection>
-				<farZ>20</farZ>
+				<farZ>10</farZ>
 				<resolution>1024</resolution>
 				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>2</cascadingSlices>
+				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.55</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
@@ -32,11 +32,11 @@
 			</low>
 			<medium>
 				<projection>SpUniform</projection>
-				<farZ>20</farZ>
-				<resolution>4096</resolution>
+				<farZ>10</farZ>
+				<resolution>2048</resolution>
 				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>2</cascadingSlices>
+				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
@@ -44,11 +44,11 @@
 			</medium>
 			<high>
 				<projection>SpUniform</projection>
-				<farZ>20</farZ>
-				<resolution>2048</resolution>
+				<farZ>10</farZ>
+				<resolution>4096</resolution>
 				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>3</cascadingSlices>
+				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
@@ -56,18 +56,17 @@
 			</high>
 			<ultra>
 				<projection>SpUniform</projection>
-				<farZ>20</farZ>
+				<farZ>10</farZ>
 				<resolution>4096</resolution>
 				<bias>0.05</bias>
 				<biasCoeff>0</biasCoeff>
-				<cascadingSlices>3</cascadingSlices>
+				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>3</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</ultra>
 		</shadowSettings>
-		<fog>false</fog>
 		<fogDistance>90</fogDistance>
 		<fogDensity>0</fogDensity>
 		<fogColor>1, 1, 1, 1</fogColor>
@@ -100,8 +99,8 @@
 							</transform>
 							<components>
 								<item type="traktor.weather.SkyComponentData" version="3">
-									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-									<texture>{25A95985-F006-4D43-AD9E-BDAA4E56C8DD}</texture>
+									<shader>{72EA4A13-256E-B64E-8BEC-879AA076144D}</shader>
+									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
 								</item>
 							</components>
 						</item>
@@ -135,51 +134,13 @@
 							</transform>
 							<components>
 								<item type="traktor.world.ProbeComponentData">
-									<texture>{00000000-0000-0000-0000-000000000000}</texture>
+									<texture>{428137E6-E0BB-1645-BFFE-2B0E8A89F9CB}</texture>
 									<intensity>1</intensity>
 									<local>false</local>
 									<volume>
 										<mn>0, 0, 0, 1</mn>
 										<mx>0, 0, 0, 1</mx>
 									</volume>
-								</item>
-							</components>
-						</item>
-						<item type="traktor.world.EntityData" version="1">
-							<id>{2C61D65D-EEF1-9340-956A-9BD39C29B522}</id>
-							<name>Ground</name>
-							<transform>
-								<translation>0, 0, 0, 0</translation>
-								<rotation>0, 0, 0, 1</rotation>
-							</transform>
-							<components>
-								<item type="traktor.mesh.MeshComponentData">
-									<mesh>{61BC1ACE-C134-F24F-AAE5-086829108C90}</mesh>
-									<screenSpaceCulling>false</screenSpaceCulling>
-								</item>
-								<item type="traktor.physics.RigidBodyComponentData">
-									<bodyDesc type="traktor.physics.StaticBodyDesc" version="5">
-										<shape type="traktor.physics.BoxShapeDesc" version="6">
-											<localTransform>
-												<translation>0, -10, 0, 0</translation>
-												<rotation>0, 0, 0, 1</rotation>
-											</localTransform>
-											<collisionGroup>
-												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
-											</collisionGroup>
-											<collisionMask>
-												<item>{09CB1141-1924-3349-934A-CEB9728D7A61}</item>
-												<item>{F9805131-50C2-504C-9421-13C99E44616C}</item>
-											</collisionMask>
-											<material>0</material>
-											<extent>100, 10, 100, 0</extent>
-											<margin>0</margin>
-										</shape>
-										<friction>0.75</friction>
-										<restitution>0</restitution>
-										<kinematic>false</kinematic>
-									</bodyDesc>
-									<eventCollide/>
 								</item>
 							</components>
 						</item>

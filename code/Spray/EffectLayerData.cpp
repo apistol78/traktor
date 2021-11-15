@@ -16,12 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 4, EffectLayerData, ISerializable)
 
-EffectLayerData::EffectLayerData()
-:	m_time(0.0f)
-,	m_duration(0.0f)
-{
-}
-
 Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	Ref< Emitter > emitter;

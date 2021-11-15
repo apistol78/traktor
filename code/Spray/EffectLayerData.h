@@ -43,8 +43,6 @@ class T_DLLCLASS EffectLayerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	EffectLayerData();
-
 	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -73,8 +71,8 @@ public:
 
 private:
 	std::wstring m_name;
-	float m_time;
-	float m_duration;
+	float m_time = 0.0f;
+	float m_duration = 0.0f;
 	Ref< EmitterData > m_emitter;
 	Ref< TrailData > m_trail;
 	Ref< SequenceData > m_sequence;
