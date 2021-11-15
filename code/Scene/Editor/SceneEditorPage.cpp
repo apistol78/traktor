@@ -466,6 +466,18 @@ bool SceneEditorPage::create(ui::Container* parent)
 	createControllerEditor();
 	updatePropertyObject();
 	updateStatusBar();
+
+	// Frame entity in view.
+	if (auto entityData = dynamic_type_cast< world::EntityData* >(m_context->getDocument()->getObject(0)))
+	{
+		RefArray< EntityAdapter > entityAdapters;
+		m_context->getEntities(entityAdapters);
+		for (auto entityAdapter : entityAdapters)
+		{
+			if (entityAdapter->getEntityData() == entityData)
+				m_context->moveToEntityAdapter(entityAdapter);
+		}
+	}
 	return true;
 }
 
