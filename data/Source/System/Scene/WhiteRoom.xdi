@@ -134,7 +134,7 @@
 							</transform>
 							<components>
 								<item type="traktor.world.ProbeComponentData">
-									<texture>{428137E6-E0BB-1645-BFFE-2B0E8A89F9CB}</texture>
+									<texture>{81D91B72-DACB-4B8D-93BA-581D4B5F12A3}</texture>
 									<intensity>1</intensity>
 									<local>false</local>
 									<volume>

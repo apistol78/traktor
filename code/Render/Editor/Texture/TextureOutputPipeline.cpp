@@ -142,18 +142,6 @@ struct ScaleTextureTask : public Object
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 35, TextureOutputPipeline, editor::IPipeline)
 
-TextureOutputPipeline::TextureOutputPipeline()
-:	m_generateMipsThread(false)
-,	m_skipMips(0)
-,	m_clampSize(0)
-,	m_compressionMethod(CmDXTn)
-,	m_compressionQuality(1)
-,	m_gamma(2.2f)
-,	m_sRGB(false)
-,	m_compressedData(true)
-{
-}
-
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_generateMipsThread = settings->getPropertyExcludeHash< bool >(L"TexturePipeline.GenerateMipsThread", true);
@@ -166,15 +154,15 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 
 	std::wstring compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase(compressionMethod, L"None") == 0)
-		m_compressionMethod = CmNone;
+		m_compressionMethod = CompressionMethod::None;
 	else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
-		m_compressionMethod = CmDXTn;
+		m_compressionMethod = CompressionMethod::DXTn;
 	else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
-		m_compressionMethod = CmPVRTC;
+		m_compressionMethod = CompressionMethod::PVRTC;
 	else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
-		m_compressionMethod = CmETC1;
+		m_compressionMethod = CompressionMethod::ETC1;
 	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
-		m_compressionMethod = CmASTC;
+		m_compressionMethod = CompressionMethod::ASTC;
 	else
 	{
 		log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
@@ -344,7 +332,7 @@ bool TextureOutputPipeline::buildOutput(
 	}
 	else
 	{
-		log::info << L"Using automatic texture format" << Endl;
+		log::info << L"Using automatic texture format." << Endl;
 
 		// Determine pixel and texture format from source image (and hints).
 		needAlpha =
@@ -369,7 +357,7 @@ bool TextureOutputPipeline::buildOutput(
 			(textureOutput->m_enableCompression || textureOutput->m_enableNormalMapCompression)
 		)
 		{
-			if (m_compressionMethod == CmDXTn)
+			if (m_compressionMethod == CompressionMethod::DXTn)
 			{
 				if (textureOutput->m_enableNormalMapCompression || textureOutput->m_encodeAsRGBM)
 				{
@@ -390,7 +378,7 @@ bool TextureOutputPipeline::buildOutput(
 					}
 				}
 			}
-			else if (m_compressionMethod == CmPVRTC)
+			else if (m_compressionMethod == CompressionMethod::PVRTC)
 			{
 				if (
 					width == height &&
@@ -411,7 +399,7 @@ bool TextureOutputPipeline::buildOutput(
 				else
 					log::info << L"Using no compression." << Endl;
 			}
-			else if (m_compressionMethod == CmETC1)
+			else if (m_compressionMethod == CompressionMethod::ETC1)
 			{
 				if (!needAlpha)
 				{
@@ -421,7 +409,7 @@ bool TextureOutputPipeline::buildOutput(
 				else
 					log::info << L"Using no compression." << Endl;
 			}
-			else if (m_compressionMethod == CmASTC)
+			else if (m_compressionMethod == CompressionMethod::ASTC)
 			{
 				log::info << L"Using ASTC (4*4) compression." << Endl;
 				textureFormat = TfASTC4x4;
@@ -808,7 +796,7 @@ bool TextureOutputPipeline::buildOutput(
 		}
 #else
 		if (
-			(m_compressionMethod == CmDXTn || m_compressionMethod == CmETC1) &&
+			(m_compressionMethod == CompressionMethod::DXTn || m_compressionMethod == CompressionMethod::ETC1) &&
 			textureOutput->m_enableNormalMapCompression
 		)
 			isNormalMap = true;
@@ -851,7 +839,7 @@ bool TextureOutputPipeline::buildOutput(
 				mipImage->apply(&normalizeFilter);
 
 				if (
-					m_compressionMethod == CmDXTn &&
+					m_compressionMethod == CompressionMethod::DXTn &&
 					textureOutput->m_enableNormalMapCompression
 				)
 				{
