@@ -4,6 +4,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -30,7 +32,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.EnvironmentTexturePipeline", 4, EnvironmentTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.EnvironmentTexturePipeline", 6, EnvironmentTexturePipeline, editor::DefaultPipeline)
 
 bool EnvironmentTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -125,7 +127,7 @@ bool EnvironmentTexturePipeline::buildOutput(
 	const int32_t mipCount = log2(sideSize) + 1;
 	T_ASSERT(mipCount >= 1);
 
-	log::info << L"Building environment texture, " << sideSize << L"..." << Endl;
+	log::info << L"Building environment texture..." << Endl;
 
 	// Create output instance.
 	Ref< TextureResource > outputResource = new TextureResource();
@@ -167,12 +169,21 @@ bool EnvironmentTexturePipeline::buildOutput(
 	Ref< IStream > streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
 	Writer writerData(streamData);
 
+	const int32_t sampleCounts[] = { 1, 200, 400, 600, 800, 1000 };
 	for (int32_t side = 0; side < 6; ++side)
 	{
 		RefArray< drawing::Image > mipImages(mipCount);
-		for (int32_t i = 0; i < mipCount; ++i)
+		
+		mipImages[0] = cubeMap->getSide(side)->clone();
+		mipImages[0]->convert(pixelFormat);
+
+		for (int32_t i = 1; i < mipCount; ++i)
 		{
-			int32_t mipSize = sideSize >> i;
+			const int32_t mipSize = sideSize >> i;
+			const float roughness = float(i) / (mipCount - 1);
+			const int32_t samples = sampleCounts[std::min< int32_t >(i, sizeof_array(sampleCounts) - 1)];
+
+			log::info << L"Generating side " << side << L", mip " << i << L", size " << mipSize << L", roughness " << roughness << L", samples " << samples << L"..." << Endl;
 
 			mipImages[i] = new drawing::Image(
 				pixelFormat,
@@ -185,11 +196,38 @@ bool EnvironmentTexturePipeline::buildOutput(
 				for (int32_t x = 0; x < mipSize; ++x)
 				{
 					Vector4 direction = cubeMap->getDirection(side, x << i, y << i);
-					Color4f c = cubeMap->get(direction);
 					
-					// \fixme Implement roughness filtering.
+					Vector4 u, v;
+					orthogonalFrame(direction, u, v);
+					Matrix44 M(u, v, direction, Vector4::zero());
 
-					mipImages[i]->setPixelUnsafe(x, y, c);
+					Color4f color(0.0f, 0.0f, 0.0f);
+					Scalar weight(0.0f);
+
+					for (int32_t i = 0; i < samples; ++i)
+					{
+						Vector2 rnd = Quasirandom::hammersley(i, samples);
+
+						float a = roughness * roughness;
+						float phi = TWO_PI * rnd.x;
+						float cosTheta = std::sqrt((1.0f - rnd.y) / (1.0f + (a * a - 1.0f) * rnd.y));
+						float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
+
+						Vector4 H(
+							std::cos(phi) * sinTheta,
+							std::sin(phi) * sinTheta,
+							cosTheta
+						);
+
+						Vector4 Hw = (M * H).normalized();
+						Vector4 L = Hw * (2.0_simd * dot3(direction, Hw)) - direction;
+
+						color += min(cubeMap->get(L.normalized()), Color4f(10.0f, 10.0f, 10.0f, 0.0f));
+						weight += max(dot3(direction, L), 0.0_simd);
+					}
+
+					color /= weight;
+					mipImages[i]->setPixelUnsafe(x, y, color.rgb1());
 				}
 			}
 		}
