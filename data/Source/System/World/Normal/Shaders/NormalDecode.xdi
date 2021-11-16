@@ -5,8 +5,8 @@
 			<id>{055A9009-9EDC-1949-B3DF-B2D8D2C9694D}</id>
 			<comment/>
 			<position>
-				<first>143</first>
-				<second>442</second>
+				<first>103</first>
+				<second>698</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{7F540E6D-CEED-F940-9F6E-D583628E89C4}</id>
 			<comment/>
 			<position>
-				<first>-711</first>
-				<second>438</second>
+				<first>-539</first>
+				<second>665</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -23,90 +23,71 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{880BE04D-3BC5-2240-9487-0172694A8A3F}</id>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{13B6DF5C-AB6B-4342-A2A5-44FC03E26E10}</id>
 			<comment/>
 			<position>
-				<first>-402</first>
-				<second>472</second>
+				<first>-509</first>
+				<second>716</second>
 			</position>
-			<name>Decode_GLSL</name>
-			<technique/>
-			<inputPins>
-				<item>
-					<id>{DA9ACBD6-F7FA-A94E-8899-6FA792C62441}</id>
-					<name>Input</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{5831C208-971E-4141-AF3D-ABEAEEF2124A}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-vec2 f = $Input.xy * 2.0 - 1.0;
-vec3 n = vec3(f.x, f.y, 1.0 - abs(f.x) - abs(f.y));
-float t = clamp(-n.z, 0.0, 1.0);
-vec2 tt = vec2(t, t);
-n.xy += mix(tt, -tt, greaterThanEqual(n.xy, vec2(0.0, 0.0)));
-$Output = vec4(normalize(n), 0.0);
-			]]>
-			</script>
+			<value>2</value>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{6F506D66-9BDF-4A4E-BCBC-A5072E00DF98}</id>
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{AD19A95D-63B2-7341-9071-AA809AC9FB30}</id>
 			<comment/>
 			<position>
-				<first>-402</first>
-				<second>353</second>
+				<first>-279</first>
+				<second>694</second>
 			</position>
-			<name>Decode_HLSL</name>
-			<technique/>
-			<inputPins>
-				<item>
-					<id>{DA9ACBD6-F7FA-A94E-8899-6FA792C62441}</id>
-					<name>Input</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{5831C208-971E-4141-AF3D-ABEAEEF2124A}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-float2 f = $Input.xy * 2.0f - 1.0f;
-float3 n = float3(f.x, f.y, 1.0f - abs(f.x) - abs(f.y));
-float t = saturate(-n.z);
-float2 tt = float2(t, t);
-n.xy += (n.xy >= float2(0.0f, 0.0f)) ? tt : -tt;
-$Output = float4(normalize(n), 0.0f);
-			]]>
-			</script>
 		</item>
-		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
-			<id>{09517386-F68B-5042-B243-3BBAF5AF9D9E}</id>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{99E01E00-F5B8-A643-AB8C-96D2DCB0792B}</id>
 			<comment/>
 			<position>
-				<first>-176</first>
-				<second>361</second>
+				<first>-512</first>
+				<second>765</second>
 			</position>
+			<value>-1</value>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E2E0D88C-98AB-8043-A163-C1B13A2CFF5F}</id>
+			<comment/>
+			<position>
+				<first>-56</first>
+				<second>704</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -115,37 +96,17 @@ $Output = float4(normalize(n), 0.0f);
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>DX11</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
