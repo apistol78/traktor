@@ -112,9 +112,6 @@ public:
 	/*! Open tool. */
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) = 0;
 
-	/*! Open browser to given resource. */
-	virtual bool openBrowser(const net::Url& url) = 0;
-
 	/*! Get active editor. */
 	virtual IEditorPage* getActiveEditorPage() = 0;
 

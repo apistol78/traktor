@@ -66,8 +66,6 @@ public:
 
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
-	virtual bool openBrowser(const net::Url& url) override final;
-
 	virtual IEditorPage* getActiveEditorPage() override final;
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage) override final;
