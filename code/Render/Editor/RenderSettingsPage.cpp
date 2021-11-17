@@ -87,10 +87,7 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkBoxRenderDoc->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RENDERDOC"), false);
 
 	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
-
-	TypeInfoSet renderSystemTypes;
-	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes, false);
-	for (const auto& type : renderSystemTypes)
+	for (auto type : type_of< render::IRenderSystem >().findAllOf(false))
 	{
 		std::wstring name = type->getName();
 		int32_t index = m_dropRenderSystem->add(name);
@@ -99,13 +96,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	}
 
 	std::wstring compilerType = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-
-	TypeInfoSet compilerTypes;
-	type_of< render::IProgramCompiler >().findAllOf(compilerTypes, false);
-
-	for (TypeInfoSet::const_iterator i = compilerTypes.begin(); i != compilerTypes.end(); ++i)
+	for (auto type : type_of< render::IProgramCompiler >().findAllOf(false))
 	{
-		std::wstring name = (*i)->getName();
+		std::wstring name = type->getName();
 		int32_t index = m_dropCompiler->add(name);
 		if (name == compilerType)
 			m_dropCompiler->select(index);

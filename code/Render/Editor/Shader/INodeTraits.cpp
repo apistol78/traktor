@@ -28,12 +28,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 	// First thread should create s_traits.
 	if (s_lock++ == 0)
 	{
-		// Find all concrete INodeTraits classes.
-		TypeInfoSet traitsTypes;
-		type_of< INodeTraits >().findAllOf(traitsTypes, false);
-
-		// Instantiate traits.
-		for (const auto& traitsType : traitsTypes)
+		for (auto traitsType : type_of< INodeTraits >().findAllOf(false))
 		{
 			Ref< INodeTraits > tr = checked_type_cast< INodeTraits*, false >(traitsType->createInstance());
 			T_ASSERT(tr);

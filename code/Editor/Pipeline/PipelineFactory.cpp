@@ -19,8 +19,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
 	const bool verbose = settings->getProperty< bool >(L"Pipeline.Verbose", false);
 
-	TypeInfoSet pipelineTypes;
-	type_of< IPipeline >().findAllOf(pipelineTypes, false);
+	TypeInfoSet pipelineTypes = type_of< IPipeline >().findAllOf(false);
 
 	AlignedVector< const TypeInfo* > sortedPipelineTypes;
 	sortedPipelineTypes.insert(sortedPipelineTypes.begin(), pipelineTypes.begin(), pipelineTypes.end());
@@ -59,9 +58,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 		for (auto assetType : pipeline->getAssetTypes())
 		{
-			TypeInfoSet buildableTypes;
-			assetType->findAllOf(buildableTypes);
-			for (auto buildableType : buildableTypes)
+			for (auto buildableType : assetType->findAllOf())
 			{
 				auto it = m_pipelineMap.find(buildableType);
 				if (it != m_pipelineMap.end())

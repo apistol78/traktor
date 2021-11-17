@@ -212,9 +212,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
 	m_toolDebugOverlay->add(L"None");
 	
-	TypeInfoSet overlayTypes;
-	type_of< world::IDebugOverlay >().findAllOf(overlayTypes, false);
-	for (const auto& overlayType : overlayTypes)
+	for (const auto overlayType : type_of< world::IDebugOverlay >().findAllOf(false))
 		m_toolDebugOverlay->add(getOverlayText(overlayType));
 
 	m_toolDebugOverlay->select(0);
@@ -567,8 +565,7 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		int32_t index = m_toolDebugOverlay->getSelected();
 		if (index > 0)
 		{
-			TypeInfoSet overlayTypes;
-			type_of< world::IDebugOverlay >().findAllOf(overlayTypes, false);
+			TypeInfoSet overlayTypes = type_of< world::IDebugOverlay >().findAllOf(false);
 			auto overlayType = overlayTypes[index - 1];
 
 			Ref< world::IDebugOverlay > overlay = mandatory_non_null_type_cast< world::IDebugOverlay* >(overlayType->createInstance());

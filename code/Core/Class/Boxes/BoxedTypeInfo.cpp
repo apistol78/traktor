@@ -51,13 +51,9 @@ Ref< BoxedTypeInfo > BoxedTypeInfo::find(const std::wstring& name)
 
 Ref< BoxedRefArray > BoxedTypeInfo::findAllOf(const BoxedTypeInfo* typeInfo, bool inclusive)
 {
-	TypeInfoSet types;
-	typeInfo->unbox().findAllOf(types, inclusive);
-
 	Ref< BoxedRefArray > boxedTypes = new BoxedRefArray();
-	for (const auto type : types)
+	for (const auto type : typeInfo->unbox().findAllOf(inclusive))
 		boxedTypes->push_back(new BoxedTypeInfo(*type));
-
 	return boxedTypes;
 }
 

@@ -129,10 +129,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SOUND_PROCESSOR_EDITOR_CREATE_NODE"));
-
-	TypeInfoSet nodeTypes;
-	type_of< Node >().findAllOf(nodeTypes, false);
-	for (auto nodeType : nodeTypes)
+	for (auto nodeType : type_of< Node >().findAllOf(false))
 	{
 		if (!nodeType->isInstantiable())
 			continue;

@@ -479,8 +479,7 @@ void DatabaseView::setDatabase(db::Database* db)
 	m_menuInstanceWizards->removeAll();
 	m_wizardTools.clear();
 
-	TypeInfoSet wizardToolTypes;
-	type_of< IWizardTool >().findAllOf(wizardToolTypes);
+	TypeInfoSet wizardToolTypes = type_of< IWizardTool >().findAllOf();
 	if (!wizardToolTypes.empty())
 	{
 		// Create instances of all found wizards.

@@ -170,10 +170,7 @@ bool ScriptClassesView::create(ui::Widget* parent)
 	m_treeClasses->create(this, ui::WsDoubleBuffer);
 	
 	CollectClassRegistrar registrar(m_treeClasses);
-
-	TypeInfoSet runtimeClassFactoryTypes;
-	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
-	for (const auto runtimeClassFactoryType : runtimeClassFactoryTypes)
+	for (const auto runtimeClassFactoryType : type_of< IRuntimeClassFactory >().findAllOf(false))
 	{
 		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >(runtimeClassFactoryType->createInstance());
 		if (runtimeClassFactory)

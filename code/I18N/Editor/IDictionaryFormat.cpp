@@ -20,13 +20,9 @@ Ref< Dictionary > IDictionaryFormat::readAny(const Path& filePath, int32_t keyCo
 Ref< Dictionary > IDictionaryFormat::readAny(IStream* stream, const std::wstring& extension, int32_t keyColumn, int32_t textColumn)
 {
 	Ref< Dictionary > dictionary;
-
-	TypeInfoSet formatTypes;
-	type_of< IDictionaryFormat >().findAllOf(formatTypes, false);
-
-	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (auto formatType : type_of< IDictionaryFormat >().findAllOf(false))
 	{
-		Ref< IDictionaryFormat > dictionaryFormat = dynamic_type_cast< IDictionaryFormat* >((*i)->createInstance());
+		Ref< IDictionaryFormat > dictionaryFormat = dynamic_type_cast< IDictionaryFormat* >(formatType->createInstance());
 		if (!dictionaryFormat)
 			continue;
 
@@ -37,7 +33,6 @@ Ref< Dictionary > IDictionaryFormat::readAny(IStream* stream, const std::wstring
 		if (dictionary)
 			break;
 	}
-
 	return dictionary;
 }
 
@@ -52,12 +47,9 @@ bool IDictionaryFormat::writeAny(const Path& filePath, const Dictionary* diction
 
 bool IDictionaryFormat::writeAny(IStream* stream, const std::wstring& extension, const Dictionary* dictionary)
 {
-	TypeInfoSet formatTypes;
-	type_of< IDictionaryFormat >().findAllOf(formatTypes);
-
-	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (auto formatType : type_of< IDictionaryFormat >().findAllOf())
 	{
-		Ref< IDictionaryFormat > dictionaryFormat = dynamic_type_cast< IDictionaryFormat* >((*i)->createInstance());
+		Ref< IDictionaryFormat > dictionaryFormat = dynamic_type_cast< IDictionaryFormat* >(formatType->createInstance());
 		if (!dictionaryFormat)
 			continue;
 
@@ -66,7 +58,6 @@ bool IDictionaryFormat::writeAny(IStream* stream, const std::wstring& extension,
 
 		return dictionaryFormat->write(stream, dictionary);
 	}
-
 	return false;
 }
 

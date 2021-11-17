@@ -235,9 +235,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	);
 
 	// Create profiles, plugins, resource factories, entity editors and guide ids.
-	TypeInfoSet profileTypes;
-	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (auto profileType : profileTypes)
+	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
 	{
 		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
 		if (!profile)
