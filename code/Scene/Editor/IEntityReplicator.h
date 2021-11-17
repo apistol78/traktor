@@ -21,7 +21,6 @@ class Guid;
 	{
 
 class IPipelineBuilder;
-class IPipelineDepends;
 class IPipelineSettings;
 
 	}
@@ -58,41 +57,30 @@ public:
 	/*! */
 	virtual TypeInfoSet getSupportedTypes() const = 0;
 
-	/*! Add dependencies used by synthesizing entity. */
-	virtual bool addDependencies(
-		editor::IPipelineDepends* pipelineDepends,
-		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const = 0;
-
-	/*! Create model replica from entity or component data.
+	/*! Create visual model replica from entity or component data.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
 	 * \return Model replica of entity or component.
 	 */
-	virtual Ref< model::Model > createModel(
+	virtual Ref< model::Model > createVisualModel(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
 	) const = 0;
 
-	/*! Modify entity or component to use attributes from model.
+	/*! Create collision model replica from entity or component data.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
-	 * \param model Modified model, based of created from createModel method.
-	 * \param outputGuid Guid to use for synthesized builds required when modifing output.
-	 * \return Replacement entity/component data if necessary, will be replaced in output scene.
+	 * \return Model replica of entity or component.
 	 */
-	virtual Ref< Object > modifyOutput(
+	virtual Ref< model::Model > createCollisionModel(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData,
-		const model::Model* model,
-		const Guid& outputGuid
+		const world::IEntityComponentData* componentData
 	) const = 0;
 };
 

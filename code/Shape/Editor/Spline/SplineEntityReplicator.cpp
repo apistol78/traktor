@@ -26,16 +26,16 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< SplineEntityData >();
 }
 
-bool SplineEntityReplicator::addDependencies(
-    editor::IPipelineDepends* pipelineDepends,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
-) const
-{
-	return true;
-}
+// bool SplineEntityReplicator::addDependencies(
+//     editor::IPipelineDepends* pipelineDepends,
+//     const world::EntityData* entityData,
+//     const world::IEntityComponentData* componentData
+// ) const
+// {
+// 	return true;
+// }
 
-Ref< model::Model > SplineEntityReplicator::createModel(
+Ref< model::Model > SplineEntityReplicator::createVisualModel(
     editor::IPipelineBuilder* pipelineBuilder,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
@@ -108,16 +108,25 @@ Ref< model::Model > SplineEntityReplicator::createModel(
     return outputModel;
 }
 
-Ref< Object > SplineEntityReplicator::modifyOutput(
-    editor::IPipelineBuilder* /*pipelineBuilder*/,
-    const world::EntityData* /*entityData*/,
-    const world::IEntityComponentData* /*componentData*/,
-    const model::Model* /*model*/,
-	const Guid& /*outputGuid*/
+Ref< model::Model > SplineEntityReplicator::createCollisionModel(
+    editor::IPipelineBuilder* pipelineBuilder,
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
 ) const
 {
-    return nullptr;
+	return nullptr;
 }
+
+// Ref< Object > SplineEntityReplicator::modifyOutput(
+//     editor::IPipelineBuilder* /*pipelineBuilder*/,
+//     const world::EntityData* /*entityData*/,
+//     const world::IEntityComponentData* /*componentData*/,
+//     const model::Model* /*model*/,
+// 	const Guid& /*outputGuid*/
+// ) const
+// {
+//     return nullptr;
+// }
 
     }
 }

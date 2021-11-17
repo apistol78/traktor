@@ -12,41 +12,47 @@
 
 namespace traktor
 {
-    namespace shape
-    {
+	namespace shape
+	{
 
 /*!
  * \ingroup Shape
  */
 class T_DLLCLASS SolidEntityReplicator : public scene::IEntityReplicator
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
-    virtual TypeInfoSet getSupportedTypes() const override final;
+	virtual TypeInfoSet getSupportedTypes() const override final;
 
-    virtual bool addDependencies(
-        editor::IPipelineDepends* pipelineDepends,
-        const world::EntityData* entityData,
-        const world::IEntityComponentData* componentData
-    ) const override final;
+	// virtual bool addDependencies(
+	//     editor::IPipelineDepends* pipelineDepends,
+	//     const world::EntityData* entityData,
+	//     const world::IEntityComponentData* componentData
+	// ) const override final;
 
-    virtual Ref< model::Model > createModel(
-        editor::IPipelineBuilder* pipelineBuilder,
-        const world::EntityData* entityData,
-        const world::IEntityComponentData* componentData
-    ) const override final;
+	virtual Ref< model::Model > createVisualModel(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const world::EntityData* entityData,
+		const world::IEntityComponentData* componentData
+	) const override final;
 
-    virtual Ref< Object > modifyOutput(
-        editor::IPipelineBuilder* pipelineBuilder,
-        const world::EntityData* entityData,
-        const world::IEntityComponentData* componentData,
-        const model::Model* model,
-        const Guid& outputGuid
-    ) const override final;
+	virtual Ref< model::Model > createCollisionModel(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const world::EntityData* entityData,
+		const world::IEntityComponentData* componentData
+	) const override final;
+	
+	// virtual Ref< Object > modifyOutput(
+	//     editor::IPipelineBuilder* pipelineBuilder,
+	//     const world::EntityData* entityData,
+	//     const world::IEntityComponentData* componentData,
+	//     const model::Model* model,
+	//     const Guid& outputGuid
+	// ) const override final;
 };
 
-    }
+	}
 }

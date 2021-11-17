@@ -30,18 +30,18 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< TerrainComponentData >();
 }
 
-bool TerrainEntityReplicator::addDependencies(
-    editor::IPipelineDepends* pipelineDepends,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
-) const
-{
-	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
-    pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfUse);
-	return true;
-}
+// bool TerrainEntityReplicator::addDependencies(
+//     editor::IPipelineDepends* pipelineDepends,
+//     const world::EntityData* entityData,
+//     const world::IEntityComponentData* componentData
+// ) const
+// {
+// 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
+//     pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfUse);
+// 	return true;
+// }
 
-Ref< model::Model > TerrainEntityReplicator::createModel(
+Ref< model::Model > TerrainEntityReplicator::createVisualModel(
     editor::IPipelineBuilder* pipelineBuilder,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
@@ -78,16 +78,25 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
     return hf::ConvertHeightfield().convert(heightfield, 64, heightfieldAsset->getVistaDistance());
 }
 
-Ref< Object > TerrainEntityReplicator::modifyOutput(
-    editor::IPipelineBuilder* /*pipelineBuilder*/,
-    const world::EntityData* /*entityData*/,
-    const world::IEntityComponentData* componentData,
-    const model::Model* /*model*/,
-    const Guid& /*outputGuid*/
+Ref< model::Model > TerrainEntityReplicator::createCollisionModel(
+    editor::IPipelineBuilder* pipelineBuilder,
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
 ) const
 {
-    return const_cast< world::IEntityComponentData* >(componentData);
+    return nullptr;
 }
+
+// Ref< Object > TerrainEntityReplicator::modifyOutput(
+//     editor::IPipelineBuilder* /*pipelineBuilder*/,
+//     const world::EntityData* /*entityData*/,
+//     const world::IEntityComponentData* componentData,
+//     const model::Model* /*model*/,
+//     const Guid& /*outputGuid*/
+// ) const
+// {
+//     return const_cast< world::IEntityComponentData* >(componentData);
+// }
 
     }
 }

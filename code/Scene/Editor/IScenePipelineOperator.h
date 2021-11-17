@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +27,7 @@ class Instance;
 	{
 
 class IPipelineBuilder;
-class IPipelineDepends;
+class IPipelineCommon;
 class IPipelineSettings;
 
 	}
@@ -50,8 +51,14 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const = 0;
 
-	virtual bool addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const = 0;
+	/*! Transform scene asset. */
+	virtual bool transform(
+		editor::IPipelineCommon* pipelineCommon,
+		const ISerializable* operatorData,
+		SceneAsset* inoutSceneAsset
+	) const = 0;
 
+	/*! */
 	virtual bool build(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* operatorData,

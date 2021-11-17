@@ -95,8 +95,10 @@ bool ScenePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
+	Ref< const SceneAsset > sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
+	// Transform, or filter, scene asset through operators.
+	Ref< SceneAsset > mutableSceneAsset = DeepClone(sceneAsset).create< SceneAsset >();
 	for (const auto op : sceneAsset->getOperationData())
 	{
 		Ref< const ISerializable > operationData = op;
@@ -114,16 +116,18 @@ bool ScenePipeline::buildDependencies(
 		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
 			return false;
-		if (!spo->addDependencies(pipelineDepends, operationData, sceneAsset))
+
+		if (!spo->transform(pipelineDepends, operationData, mutableSceneAsset))
 			return false;
 	}
 
-	for (const auto& layer : sceneAsset->getLayers())
+	// Add dependencies from scene asset.
+	for (const auto& layer : mutableSceneAsset->getLayers())
 		pipelineDepends->addDependency(layer);
 
-	pipelineDepends->addDependency(sceneAsset->getControllerData());
+	pipelineDepends->addDependency(mutableSceneAsset->getControllerData());
 
-	const world::WorldRenderSettings* wrs = sceneAsset->getWorldRenderSettings();
+	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
 	if (wrs)
 	{
 		if (!m_suppressShadows)

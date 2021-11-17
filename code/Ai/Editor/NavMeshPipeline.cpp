@@ -187,7 +187,7 @@ bool NavMeshPipeline::buildOutput(
 			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData)) != nullptr)
+				if ((model = entityReplicator->createCollisionModel(pipelineBuilder, entityData, componentData)) != nullptr)
 					break;
 			}
 		}
