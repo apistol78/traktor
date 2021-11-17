@@ -8,8 +8,8 @@ const TypeInfo ITypedObject::ms_typeInfo(
 	sizeof(ITypedObject),
 	0,
 	false,
-	0,
-	0
+	nullptr,
+	nullptr
 );
 
 const TypeInfo& ITypedObject::getClassTypeInfo()
