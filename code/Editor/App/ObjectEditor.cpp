@@ -134,11 +134,6 @@ bool ObjectEditor::openTool(const std::wstring& toolType, const PropertyGroup* p
 	return m_editor->openTool(toolType, param);
 }
 
-bool ObjectEditor::openBrowser(const net::Url& url)
-{
-	return m_editor->openBrowser(url);
-}
-
 IEditorPage* ObjectEditor::getActiveEditorPage()
 {
 	return m_editor->getActiveEditorPage();
