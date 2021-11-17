@@ -32,18 +32,18 @@ TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< MeshComponentData >();
 }
 
-bool MeshEntityReplicator::addDependencies(
-    editor::IPipelineDepends* pipelineDepends,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
-) const
-{
-	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
-	pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
-	return true;
-}
+// bool MeshEntityReplicator::addDependencies(
+//     editor::IPipelineDepends* pipelineDepends,
+//     const world::EntityData* entityData,
+//     const world::IEntityComponentData* componentData
+// ) const
+// {
+// 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
+// 	pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
+// 	return true;
+// }
 
-Ref< model::Model > MeshEntityReplicator::createModel(
+Ref< model::Model > MeshEntityReplicator::createVisualModel(
     editor::IPipelineBuilder* pipelineBuilder,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
@@ -100,38 +100,47 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	return model;
 }
 
-Ref< Object > MeshEntityReplicator::modifyOutput(
-    editor::IPipelineBuilder* pipelineBuilder,
-    const world::EntityData* /*entityData*/,
-    const world::IEntityComponentData* componentData,
-    const model::Model* model,
-	const Guid& outputGuid
+Ref< model::Model > MeshEntityReplicator::createCollisionModel(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
 ) const
 {
-	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
-
-	// Read original mesh asset from source.
-	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
-	if (!meshAsset)
-		return nullptr;
-
-	// Create a new mesh asset referencing the modified model.
-    Ref< MeshAsset > outputMeshAsset = new MeshAsset();
-    outputMeshAsset->setMeshType(MeshAsset::MtStatic);
-	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
-	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
-	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
-	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
-
-	// Build output mesh from modified model.
-    pipelineBuilder->buildAdHocOutput(
-        outputMeshAsset,
-        outputGuid,
-        model
-    );
-
-	return new MeshComponentData(resource::Id< IMesh >(outputGuid));
+	return nullptr;
 }
+
+// Ref< Object > MeshEntityReplicator::modifyOutput(
+//     editor::IPipelineBuilder* pipelineBuilder,
+//     const world::EntityData* /*entityData*/,
+//     const world::IEntityComponentData* componentData,
+//     const model::Model* model,
+// 	const Guid& outputGuid
+// ) const
+// {
+// 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
+
+// 	// Read original mesh asset from source.
+// 	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
+// 	if (!meshAsset)
+// 		return nullptr;
+
+// 	// Create a new mesh asset referencing the modified model.
+//     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
+//     outputMeshAsset->setMeshType(MeshAsset::MtStatic);
+// 	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+// 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
+// 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+// 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
+
+// 	// Build output mesh from modified model.
+//     pipelineBuilder->buildAdHocOutput(
+//         outputMeshAsset,
+//         outputGuid,
+//         model
+//     );
+
+// 	return new MeshComponentData(resource::Id< IMesh >(outputGuid));
+// }
 
     }
 }

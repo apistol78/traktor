@@ -24,25 +24,31 @@ public:
 
 	virtual TypeInfoSet getSupportedTypes() const override final;
 
-	virtual bool addDependencies(
-		editor::IPipelineDepends* pipelineDepends,
-		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const override final;
+    // virtual bool addDependencies(
+    //     editor::IPipelineDepends* pipelineDepends,
+    //     const world::EntityData* entityData,
+    //     const world::IEntityComponentData* componentData
+    // ) const override final;
 
-	virtual Ref< model::Model > createModel(
+    virtual Ref< model::Model > createVisualModel(
+        editor::IPipelineBuilder* pipelineBuilder,
+	    const world::EntityData* entityData,
+	    const world::IEntityComponentData* componentData
+    ) const override final;
+
+	virtual Ref< model::Model > createCollisionModel(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
 	) const override final;
-
-	virtual Ref< Object > modifyOutput(
-		editor::IPipelineBuilder* pipelineBuilder,
-		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData,
-		const model::Model* model,
-		const Guid& outputGuid
-	) const override final;
+    
+    // virtual Ref< Object > modifyOutput(
+    //     editor::IPipelineBuilder* pipelineBuilder,
+    //     const world::EntityData* entityData,
+    //     const world::IEntityComponentData* componentData,
+    //     const model::Model* model,
+    //     const Guid& outputGuid
+    // ) const override final;
 };
 
 	}

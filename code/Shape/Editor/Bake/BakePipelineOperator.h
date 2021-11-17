@@ -41,8 +41,12 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const override final;
 
-	virtual bool addDependencies(editor::IPipelineDepends* pipelineDepends, const ISerializable* operatorData, const scene::SceneAsset* sceneAsset) const override final;
-
+	virtual bool transform(
+		editor::IPipelineCommon* pipelineCommon,
+		const ISerializable* operatorData,
+		scene::SceneAsset* inoutSceneAsset
+	) const override final;
+	
 	virtual bool build(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* operatorData,
