@@ -16,6 +16,7 @@ namespace traktor
 {
 
 class ITypedObject;
+class TypeInfo;
 
 /*! Instance factory.
  * \ingroup Core
@@ -44,13 +45,31 @@ public:
 	}
 };
 
+/*! Set of type information.
+ * \ingroup Core
+ */
+class T_DLLCLASS TypeInfoSet : public SmallSet< const TypeInfo* >
+{
+public:
+	template < typename Type >
+	bool insert()
+	{
+		typedef typename IsPointer< typename IsReference< Type >::base_t >::base_t tt;
+		return insert(&(tt::getClassTypeInfo()));
+	}
+
+	bool insert(const TypeInfo* typeInfo) { return SmallSet< const TypeInfo* >::insert(typeInfo); }
+
+	uint32_t insert(const const_iterator& from, const const_iterator& to) { return SmallSet< const TypeInfo* >::insert(from, to); }
+};
+
 /*! Type information.
  * \ingroup Core
  */
 class T_DLLCLASS TypeInfo
 {
 public:
-	TypeInfo(
+	explicit TypeInfo(
 		const wchar_t* name,
 		uint32_t size,
 		int32_t version,
@@ -112,10 +131,10 @@ public:
 
 	/*! Find all types derived from this type.
 	 *
-	 * \param outTypes Found types.
 	 * \param inclusive If this type should be included in result.
+	 * \return Found types.
 	 */
-	void findAllOf(class TypeInfoSet& outTypes, bool inclusive = true) const;
+	TypeInfoSet findAllOf(bool inclusive = true) const;
 
 	/*! Create instance from type name.
 	 *
@@ -142,22 +161,6 @@ private:
 	const TypeInfo* m_super;
 	const IInstanceFactory* m_factory;
 	mutable uint32_t m_tag;
-};
-
-/*! Set of type information.
- * \ingroup Core
- */
-class T_DLLCLASS TypeInfoSet : public SmallSet< const TypeInfo* >
-{
-public:
-	template < typename Type >
-	bool insert()
-	{
-		typedef typename IsPointer< typename IsReference< Type >::base_t >::base_t tt;
-		return insert(&(tt::getClassTypeInfo()));
-	}
-
-	bool insert(const TypeInfo* typeInfo) { return SmallSet< const TypeInfo* >::insert(typeInfo); }
 };
 
 /*! Create type info set from single type.

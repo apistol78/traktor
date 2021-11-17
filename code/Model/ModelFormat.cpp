@@ -13,11 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filter)
 {
 	Ref< Model > md;
-
-	TypeInfoSet formatTypes;
-	type_of< ModelFormat >().findAllOf(formatTypes, false);
-
-	for (const auto formatType : formatTypes)
+	for (const auto formatType : type_of< ModelFormat >().findAllOf(false))
 	{
 		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >(formatType->createInstance());
 		if (!modelFormat || !modelFormat->supportFormat(filePath.getExtension()))
@@ -27,18 +23,13 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, const std::wstring& filt
 		if (md)
 			break;
 	}
-
 	return md;
 }
 
 bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 {
 	std::wstring extension = filePath.getExtension();
-
-	TypeInfoSet formatTypes;
-	type_of< ModelFormat >().findAllOf(formatTypes);
-
-	for (const auto formatType : formatTypes)
+	for (const auto formatType : type_of< ModelFormat >().findAllOf())
 	{
 		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >(formatType->createInstance());
 		if (!modelFormat)
@@ -54,7 +45,6 @@ bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 				return modelFormat->write(filePath, model);
 		}
 	}
-
 	return false;
 }
 

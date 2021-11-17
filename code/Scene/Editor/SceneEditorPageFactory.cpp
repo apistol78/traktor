@@ -120,9 +120,7 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.RenameAllEntityIds"));
 
 	// Add profile commands.
-	TypeInfoSet profileTypes;
-	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (auto profileType : profileTypes)
+	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
 	{
 		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
 		if (profile)

@@ -62,11 +62,8 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 	tab->create(this, ui::WsTabStop);
 
 	// Create setting pages.
-	TypeInfoSet settingPageTypes;
-	type_of< ISettingsPage >().findAllOf(settingPageTypes, false);
-
 	std::vector< const TypeInfo* > types;
-	for (const auto settingPageType : settingPageTypes)
+	for (const auto settingPageType : type_of< ISettingsPage >().findAllOf(false))
 		types.push_back(settingPageType);
 	std::sort(types.begin(), types.end(), SettingsPagePredicate());
 

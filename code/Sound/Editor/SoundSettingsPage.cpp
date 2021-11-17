@@ -82,13 +82,9 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	m_editMixerFrames->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 1, 16));
 
 	std::wstring soundDriverType = settings->getProperty< std::wstring >(L"Editor.AudioDriver");
-
-	TypeInfoSet soundDriverTypes;
-	type_of< sound::IAudioDriver >().findAllOf(soundDriverTypes, false);
-
-	for (TypeInfoSet::const_iterator i = soundDriverTypes.begin(); i != soundDriverTypes.end(); ++i)
+	for (const auto type : type_of< sound::IAudioDriver >().findAllOf(false))
 	{
-		std::wstring name = (*i)->getName();
+		std::wstring name = type->getName();
 		int32_t index = m_dropAudioDriver->add(name);
 		if (name == soundDriverType)
 			m_dropAudioDriver->select(index);

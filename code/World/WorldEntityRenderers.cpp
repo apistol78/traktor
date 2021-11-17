@@ -12,9 +12,7 @@ namespace traktor
 /*! Find only direct child types. */
 void findAllChildTypes(const TypeInfo* type, TypeInfoSet& outChildTypes)
 {
-	TypeInfoSet types;
-	type->findAllOf(types, false);
-	for (const auto descendantType : types)
+	for (const auto descendantType : type->findAllOf(false))
 	{
 		if (descendantType->getSuper() == type)
 			outChildTypes.insert(descendantType);

@@ -43,10 +43,7 @@ bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const Pr
 	Thread* checkThread = ThreadManager::getInstance().create(
 		[]() {
 			AutoArrayPtr< uint8_t, AllocFreeAlign > memory((uint8_t*)Alloc::acquireAlign(1024 * 1024, 16, T_FILE_LINE));
-
-			TypeInfoSet types;
-			type_of< ISerializable >().findAllOf(types, false);
-			for (auto type : types)
+			for (auto type : type_of< ISerializable >().findAllOf(false))
 			{
 				if (!type->isInstantiable())
 					continue;

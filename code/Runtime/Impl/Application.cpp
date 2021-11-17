@@ -312,10 +312,7 @@ bool Application::create(
 
 	// Initial, startup, state.
 	T_DEBUG(L"Creating plugins...");
-
-	TypeInfoSet pluginTypes;
-	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
-	for (const auto& pluginType : pluginTypes)
+	for (const auto pluginType : type_of< IRuntimePlugin >().findAllOf(false))
 	{
 		Ref< IRuntimePlugin > plugin = dynamic_type_cast<IRuntimePlugin*>(pluginType->createInstance());
 		if (!plugin)

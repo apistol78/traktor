@@ -54,8 +54,7 @@ NewInstanceDialog::NewInstanceDialog(PropertyGroup* settings)
 
 bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGroup)
 {
-	TypeInfoSet types;
-	type_of< ISerializable >().findAllOf(types);
+	TypeInfoSet types = type_of< ISerializable >().findAllOf();
 	if (types.empty())
 		return false;
 

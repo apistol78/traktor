@@ -54,11 +54,14 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	TypeInfoSet types;
 	if (base)
 	{
-		for (TypeInfoSet::const_iterator i = base->begin(); i != base->end(); ++i)
-			(*i)->findAllOf(types);
+		for (auto baseType : *base)
+		{
+			auto derivedTypes = baseType->findAllOf();
+			types.insert(derivedTypes.begin(), derivedTypes.end());
+		}
 	}
 	else
-		type_of< Object >().findAllOf(types, false);
+		types = type_of< Object >().findAllOf(false);
 
 	if (types.empty())
 		return false;

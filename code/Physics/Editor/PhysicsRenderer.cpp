@@ -13,17 +13,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsRenderer", PhysicsRenderer, Obje
 
 PhysicsRenderer::PhysicsRenderer()
 {
-	TypeInfoSet jointRendererTypes;
-	type_of< IPhysicsJointRenderer >().findAllOf(jointRendererTypes, false);
-	for (auto jointRendererType : jointRendererTypes)
+	for (auto jointRendererType : type_of< IPhysicsJointRenderer >().findAllOf(false))
 	{
 		Ref< IPhysicsJointRenderer > jointRenderer = mandatory_non_null_type_cast< IPhysicsJointRenderer* >(jointRendererType->createInstance());
 		m_jointRenderers.insert(std::make_pair(&jointRenderer->getDescType(), jointRenderer));
 	}
-
-	TypeInfoSet shapeRendererTypes;
-	type_of< IPhysicsShapeRenderer >().findAllOf(shapeRendererTypes, false);
-	for (auto shapeRendererType : shapeRendererTypes)
+	for (auto shapeRendererType : type_of< IPhysicsShapeRenderer >().findAllOf(false))
 	{
 		Ref< IPhysicsShapeRenderer > shapeRenderer = mandatory_non_null_type_cast< IPhysicsShapeRenderer* >(shapeRendererType->createInstance());
 		m_shapeRenderers.insert(std::make_pair(&shapeRenderer->getDescType(), shapeRenderer));

@@ -681,42 +681,27 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	setStoreObject(L"DiscoveryManager", m_discoveryManager);
 
 	// Create editor page factories.
-	TypeInfoSet editorPageFactoryTypes;
-	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
-	if (!editorPageFactoryTypes.empty())
+	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
 	{
-		for (const auto& editorPageFactoryType : editorPageFactoryTypes)
-		{
-			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >(editorPageFactoryType->createInstance());
-			if (editorPageFactory)
-				m_editorPageFactories.push_back(editorPageFactory);
-		}
+		Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >(editorPageFactoryType->createInstance());
+		if (editorPageFactory)
+			m_editorPageFactories.push_back(editorPageFactory);
 	}
 
 	// Create object editor factories.
-	TypeInfoSet objectEditorFactoryTypes;
-	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes, false);
-	if (!objectEditorFactoryTypes.empty())
+	for (const auto& objectEditorFactoryType : type_of< IObjectEditorFactory >().findAllOf(false))
 	{
-		for (const auto& objectEditorFactoryType : objectEditorFactoryTypes)
-		{
-			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
-			if (objectEditorFactory)
-				m_objectEditorFactories.push_back(objectEditorFactory);
-		}
+		Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
+		if (objectEditorFactory)
+			m_objectEditorFactories.push_back(objectEditorFactory);
 	}
 
 	// Create editor plugin factories.
-	TypeInfoSet editorPluginFactoryTypes;
-	type_of< IEditorPluginFactory >().findAllOf(editorPluginFactoryTypes, false);
-	if (!editorPluginFactoryTypes.empty())
+	for (const auto& editorPluginFactoryType : type_of< IEditorPluginFactory >().findAllOf(false))
 	{
-		for (const auto& editorPluginFactoryType : editorPluginFactoryTypes)
-		{
-			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >(editorPluginFactoryType->createInstance());
-			if (editorPluginFactory)
-				m_editorPluginFactories.push_back(editorPluginFactory);
-		}
+		Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >(editorPluginFactoryType->createInstance());
+		if (editorPluginFactory)
+			m_editorPluginFactories.push_back(editorPluginFactory);
 	}
 
 	// Create editor plugins.
@@ -732,8 +717,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Load tools and populate tool menu.
-	TypeInfoSet toolTypes;
-	type_of< IEditorTool >().findAllOf(toolTypes, false);
+	TypeInfoSet toolTypes = type_of< IEditorTool >().findAllOf(false);
 	if (!toolTypes.empty())
 	{
 		m_menuTools = new ui::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");

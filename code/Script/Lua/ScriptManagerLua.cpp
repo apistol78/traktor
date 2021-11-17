@@ -183,9 +183,7 @@ void ScriptManagerLua::destroy()
 	// Discard all tags from C++ rtti types.
 	for (auto& rc : m_classRegistry)
 	{
-		TypeInfoSet derivedTypes;
-		rc.runtimeClass->getExportType().findAllOf(derivedTypes);
-		for (auto& derivedType : derivedTypes)
+		for (auto& derivedType : rc.runtimeClass->getExportType().findAllOf())
 			derivedType->setTag(0);
 	}
 
@@ -410,9 +408,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	// to accelerate lookup of C++ class when constructing new instance from script.
 	// Need to propagate index into derived types as well in order to
 	// be able to skip traversing class hierarchy while constructing.
-	TypeInfoSet derivedTypes;
-	exportType.findAllOf(derivedTypes);
-	for (auto derivedType : derivedTypes)
+	for (auto derivedType : exportType.findAllOf())
 	{
 		if (derivedType->getTag() != 0)
 		{

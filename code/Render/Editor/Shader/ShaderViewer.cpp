@@ -151,12 +151,9 @@ bool ShaderViewer::create(ui::Widget* parent)
 	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 1, ui::Command(L"Shader.Editor.Preview.Copy")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderViewer::eventToolBarClick);
 
-	TypeInfoSet programCompilerTypes;
-	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
-
 	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	int32_t compilerIndex = 0;
-	for (const auto programCompilerType : programCompilerTypes)
+	for (const auto programCompilerType : type_of< IProgramCompiler >().findAllOf(false))
 	{
 		Ref< IProgramCompiler > compiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
 		if (!compiler)

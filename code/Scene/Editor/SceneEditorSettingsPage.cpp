@@ -93,10 +93,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
 	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	TypeInfoSet worldRendererTypes;
-	type_of< world::IWorldRenderer >().findAllOf(worldRendererTypes, false);
-	for (auto worldRendererType : worldRendererTypes)
+	for (auto worldRendererType : type_of< world::IWorldRenderer >().findAllOf(false))
 	{
 		std::wstring name = worldRendererType->getName();
 		int32_t index = m_dropWorldRenderer->add(name);

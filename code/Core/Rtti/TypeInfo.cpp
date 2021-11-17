@@ -179,16 +179,18 @@ const TypeInfo* TypeInfo::find(const wchar_t* name)
 	return 0;
 }
 
-void TypeInfo::findAllOf(TypeInfoSet& outTypes, bool inclusive) const
+TypeInfoSet TypeInfo::findAllOf(bool inclusive) const
 {
+	TypeInfoSet typeInfoSet;
 	for (uint32_t i = 0; i < s_typeInfoCount; ++i)
 	{
 		if (is_type_of(*this, *s_typeInfoRegistry[i]))
 		{
 			if (inclusive || s_typeInfoRegistry[i] != this)
-				outTypes.insert(s_typeInfoRegistry[i]);
+				typeInfoSet.insert(s_typeInfoRegistry[i]);
 		}
 	}
+	return typeInfoSet;
 }
 
 ITypedObject* TypeInfo::createInstance(const wchar_t* name, void* memory)

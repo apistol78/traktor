@@ -91,9 +91,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_terrainStepSize = settings->getPropertyIncludeHash< int32_t >(L"NavMeshPipeline.TerrainStepSize", 16);
 
 	// Create entity replicators.
-	TypeInfoSet entityReplicatorTypes;
-	type_of< scene::IEntityReplicator >().findAllOf(entityReplicatorTypes, false);
-	for (const auto& entityReplicatorType : entityReplicatorTypes)
+	for (const auto& entityReplicatorType : type_of< scene::IEntityReplicator >().findAllOf(false))
 	{
 		Ref< scene::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
 		if (!entityReplicator->create(settings))

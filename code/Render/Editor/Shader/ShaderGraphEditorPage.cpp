@@ -394,11 +394,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_menuQuick->create(m_editorGraph);
 
 	// Setup node facades.
-	TypeInfoSet nodeTypes;
-	type_of< Node >().findAllOf(nodeTypes);
-
-	for (TypeInfoSet::const_iterator i = nodeTypes.begin(); i != nodeTypes.end(); ++i)
-		m_nodeFacades[*i] = new DefaultNodeFacade();
+	for (auto nodeType : type_of< Node >().findAllOf())
+		m_nodeFacades[nodeType] = new DefaultNodeFacade();
 
 	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade();
 	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade();

@@ -560,9 +560,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 
 	// Register all runtime classes, first collect all classes
 	// and then register them in class dependency order.
-	TypeInfoSet runtimeClassFactoryTypes;
-	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
-	for (const auto runtimeClassFactoryType : runtimeClassFactoryTypes)
+	for (const auto runtimeClassFactoryType : type_of< IRuntimeClassFactory >().findAllOf(false))
 	{
 		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >(runtimeClassFactoryType->createInstance());
 		if (runtimeClassFactory)

@@ -46,9 +46,7 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_shadowMapMaxSlices = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 
 	// Instantiate scene pipeline operators.
-	TypeInfoSet operatorTypes;
-	type_of< IScenePipelineOperator >().findAllOf(operatorTypes, false);
-	for (auto operatorType : operatorTypes)
+	for (auto operatorType : type_of< IScenePipelineOperator >().findAllOf(false))
 	{
 		Ref< IScenePipelineOperator > spo = dynamic_type_cast< IScenePipelineOperator* >(operatorType->createInstance());
 		if (!spo)
