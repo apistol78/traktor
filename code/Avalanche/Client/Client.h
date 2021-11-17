@@ -40,9 +40,9 @@ public:
 
 	bool have(const Key& key);
 
-	bool touch(const Key& key);
+	bool touch(const AlignedVector< Key >& keys);
 
-	bool evict(const Key& key);
+	bool evict(const AlignedVector< Key >& keys);
 
 	Ref< IStream > get(const Key& key);
 

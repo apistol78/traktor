@@ -278,33 +278,37 @@ bool Connection::process()
 
 	case c_commandTouch:
 		{
-			Key key = Key::read(m_clientStream);
-			if (!key.valid())
-			{
-				log::warning << L"Failed to read key; terminating connection." << Endl;
+			uint32_t nkeys;
+			if (m_clientStream->read(&nkeys, sizeof(uint32_t)) != sizeof(uint32_t))
 				return false;
-			}
 
-			Ref< IBlob > blob = m_dictionary->get(key, false);
-			if (blob == nullptr)
+			uint32_t ntouched = 0;
+			for (uint32_t i = 0; i < nkeys; ++i)
 			{
-				log::error << L"[TOUCH " << key.format() << L"] No such blob." << Endl;
-				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
+				Key key = Key::read(m_clientStream);
+				if (!key.valid())
+				{
+					log::warning << L"Failed to read key; terminating connection." << Endl;
 					return false;
+				}
 
-				return true;
+				Ref< IBlob > blob = m_dictionary->get(key, false);
+				if (blob == nullptr)
+				{
+					log::error << L"[TOUCH " << key.format() << L"] No such blob." << Endl;
+					continue;
+				}
+
+				if (!blob->touch())
+				{
+					log::error << L"[TOUCH " << key.format() << L"] Unable to touch blob." << Endl;
+					continue;
+				}
+
+				++ntouched;
 			}
 
-			if (!blob->touch())
-			{
-				log::error << L"[TOUCH " << key.format() << L"] Unable to touch blob." << Endl;
-				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
-					return false;
-
-				return true;
-			}
-
-			log::info << L"[TOUCH " << key.format() << L"]" << Endl;
+			log::info << L"[TOUCH] Touched " << ntouched << L" blobs." << Endl;
 			if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 				return false;
 		}
@@ -312,25 +316,32 @@ bool Connection::process()
 
 	case c_commandEvict:
 		{
-			Key key = Key::read(m_clientStream);
-			if (!key.valid())
-			{
-				log::warning << L"Failed to read key; terminating connection." << Endl;
+			uint32_t nkeys;
+			if (m_clientStream->read(&nkeys, sizeof(uint32_t)) != sizeof(uint32_t))
 				return false;
+
+			uint32_t nremoved = 0;
+			for (uint32_t i = 0; i < nkeys; ++i)
+			{
+				Key key = Key::read(m_clientStream);
+				if (!key.valid())
+				{
+					log::warning << L"Failed to read key; terminating connection." << Endl;
+					return false;
+				}
+
+				if (!m_dictionary->remove(key))
+				{
+					log::info << L"[EVICT " << key.format() << L"] No such blob." << Endl;
+					continue;
+				}
+
+				++nremoved;
 			}
 
-			if (m_dictionary->remove(key))
-			{
-				log::info << L"[EVICT " << key.format() << L"] Blob removed." << Endl;
-				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
-					return false;
-			}
-			else
-			{
-				log::info << L"[EVICT " << key.format() << L"] No such blob." << Endl;
-				if (m_clientStream->write(&c_replyFailure, sizeof(uint8_t)) != sizeof(uint8_t))
-					return false;				
-			}
+			log::info << L"[EVICT] Removed " << nremoved << L" blobs." << Endl;
+			if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
+				return false;
 		}
 		break;
 

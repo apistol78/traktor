@@ -83,16 +83,23 @@ bool Client::have(const Key& key)
 	return reply == c_replyOk;
 }
 
-bool Client::touch(const Key& key)
+bool Client::touch(const AlignedVector< Key >& keys)
 {
 	Ref< net::SocketStream > stream  = establish(c_commandTouch);
 	if (!stream)
 		return false;
 
-	if (!key.write(stream))
-	{
-		log::error << L"Unable to write key to server (touch)." << Endl;
+	const uint32_t nkeys = (uint32_t)keys.size();
+	if (stream->write(&nkeys, sizeof(uint32_t)) != sizeof(uint32_t))
 		return false;
+
+	for (uint32_t i = 0; i < nkeys; ++i)
+	{
+		if (!keys[i].write(stream))
+		{
+			log::error << L"Unable to write key to server (touch)." << Endl;
+			return false;
+		}
 	}
 
 	uint8_t reply = 0;
@@ -111,16 +118,23 @@ bool Client::touch(const Key& key)
 	return reply == c_replyOk;
 }
 
-bool Client::evict(const Key& key)
+bool Client::evict(const AlignedVector< Key >& keys)
 {
 	Ref< net::SocketStream > stream  = establish(c_commandEvict);
 	if (!stream)
 		return false;
 
-	if (!key.write(stream))
-	{
-		log::error << L"Unable to write key to server (evict)." << Endl;
+	const uint32_t nkeys = (uint32_t)keys.size();
+	if (stream->write(&nkeys, sizeof(uint32_t)) != sizeof(uint32_t))
 		return false;
+
+	for (uint32_t i = 0; i < nkeys; ++i)
+	{
+		if (!keys[i].write(stream))
+		{
+			log::error << L"Unable to write key to server (evict)." << Endl;
+			return false;
+		}
 	}
 
 	uint8_t reply = 0;

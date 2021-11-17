@@ -38,6 +38,9 @@ Peer::Peer(
 {
 	ThreadPool::getInstance().spawn([=]()
 		{
+			AlignedVector< Key > touch;
+			AlignedVector< Key > evict;
+
 			// Only replicate dictionary from master -> slave.
 			if (!m_peerMaster)
 			{
@@ -63,8 +66,7 @@ Peer::Peer(
 					if (std::find(localKeys.begin(), localKeys.end(), remoteKey) != localKeys.end())
 						continue;
 
-					log::info << L"[PEER " << name << L"] Evicting " << remoteKey.format() << L"." << Endl;
-					m_client->evict(remoteKey);
+					evict.push_back(remoteKey);
 				}
 				
 				// Update blobs to peer which only exist in our dictionary.
@@ -111,14 +113,12 @@ Peer::Peer(
 					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 					m_queue.swap(queued);
 				}
+
 				for (size_t i = 0; i < queued.size() && !m_thread->stopped(); ++i)
 				{
 					const auto& q = queued[i];
 					if (q.second == c_queueEventGet)
-					{
-						log::info << L"[PEER " << name << L"] Touch " << q.first.format() << L"." << Endl;
-						m_client->touch(q.first);
-					}
+						touch.push_back(q.first);
 					else if (q.second == c_queueEventPut)
 					{
 						Ref< const IBlob > blob = m_dictionary->get(q.first, true);
@@ -136,11 +136,23 @@ Peer::Peer(
 						}
 					}
 					else if (q.second == c_queueEventRemove)
-					{
-						log::info << L"[PEER " << name << L"] Evicting " << q.first.format() << L"." << Endl;
-						m_client->evict(q.first);
-					}
+						evict.push_back(q.first);
 				}
+
+				if (!touch.empty())
+				{
+					log::info << L"[PEER " << name << L"] Touch " << (uint32_t)touch.size() << L" blobs." << Endl;
+					m_client->touch(touch);
+					touch.resize(0);
+				}
+
+				if (!evict.empty())
+				{
+					log::info << L"[PEER " << name << L"] Evicting " << (uint32_t)evict.size() << L" blobs." << Endl;
+					m_client->evict(evict);
+					evict.resize(0);
+				}
+
 				if (m_queue.empty())
 					m_eventQueued.wait(100);
 			}
