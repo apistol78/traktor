@@ -72,31 +72,34 @@ Ref< IBlob > Dictionary::get(const Key& key, bool raw) const
 
 bool Dictionary::put(const Key& key, IBlob* blob, bool raw)
 {
+	Ref< IBlob > dictionaryBlob;
+
+	// Create dictionary blob.
+	if (!m_blobsPath.empty())
+	{
+		const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
+		Ref< BlobFile > bf = new BlobFile(blobPath, blob->size(), DateTime::now());
+		if (!StreamCopy(bf->append(), blob->read()).execute())
+			return false;
+		dictionaryBlob = bf;
+	}
+	else
+		dictionaryBlob = blob;
+
+	// Store blob into dictionary.
 	{
 		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lockBlobs);
-
-		if (!m_blobsPath.empty())
-		{
-			const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
-
-			// Write blob to physical storage.
-			Ref< BlobFile > bf = new BlobFile(blobPath, blob->size(), DateTime::now());
-			if (!StreamCopy(bf->append(), blob->read()).execute())
-				return false;
-			
-			m_blobs[key] = bf;
-		}
-		else
-			m_blobs[key] = blob;
-
+		m_blobs[key] = dictionaryBlob;
 		m_stats.blobCount++;
-		m_stats.memoryUsage += blob->size();
+		m_stats.memoryUsage += dictionaryBlob->size();
 	}
+
+	// Invoke listeners.
 	if (!raw)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockListeners);
 		for (auto listener : m_listeners)
-			listener->dictionaryPut(key, blob);
+			listener->dictionaryPut(key, dictionaryBlob);
 	}
 	return true;
 }
