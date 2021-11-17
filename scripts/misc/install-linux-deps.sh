@@ -18,6 +18,7 @@ PACKAGES="
     opencl-dev
     clang
     lld
+    gdb
 "
 
 apt-get install $PACKAGES
