@@ -15,7 +15,8 @@ enum PipelineDependencyFlags
 	PdfBuild = 1,		//!< Build output from dependency.
 	PdfUse = 2,			//!< Used by parent dependency; parent needs to be built if this dependency is modified.
 	PdfResource = 4,	//!< Dependent as a external resource during runtime.
-	PdfFailed = 8		//!< Failed dependency.
+	PdfFailed = 8,		//!< Failed dependency.
+	PdfForceAdd = 16	//!< Force add even if in exclusive set; used to add ad-hoc root.
 };
 
 /*! Pipeline build reasons.

@@ -82,10 +82,19 @@ public:
 	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
 
 	/*! Build ad-hoc output instance from source asset. */
-	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
+	virtual bool buildAdHocOutput(
+		const ISerializable* sourceAsset,
+		const Guid& outputGuid,
+		const Object* buildParams = nullptr
+	) = 0;
 
 	/*! Build ad-hoc output instance from source asset. */
-	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
+	virtual bool buildAdHocOutput(
+		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
+		const Object* buildParams = nullptr
+	) = 0;
 
 	/*! Calculate hash of source asset including it's dependencies. */
 	virtual uint32_t calculateInclusiveHash(const ISerializable* sourceAsset) const = 0;

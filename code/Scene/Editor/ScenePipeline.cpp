@@ -14,7 +14,9 @@
 #include "Scene/Editor/IScenePipelineOperator.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
+#include "Scene/Editor/Traverser.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
@@ -24,7 +26,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 17, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 18, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
@@ -95,7 +97,7 @@ bool ScenePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const SceneAsset > sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
+	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
 	// Transform, or filter, scene asset through operators.
 	Ref< SceneAsset > mutableSceneAsset = DeepClone(sceneAsset).create< SceneAsset >();
@@ -108,17 +110,28 @@ bool ScenePipeline::buildDependencies(
 		{
 			operationData = pipelineDepends->getObjectReadOnly(externalOperationData->getExternalDataId());
 			if (!operationData)
+			{
+				log::error << L"Scene pipeline failed; unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;
 				return false;
+			}
 
 			pipelineDepends->addDependency(externalOperationData->getExternalDataId(), editor::PdfUse);
 		}
 
 		const IScenePipelineOperator* spo = findOperator(type_of(operationData));
 		if (!spo)
+		{
+			log::error << L"Scene pipeline failed; no operator found supporting data type " << type_name(operationData) << L"." << Endl;
 			return false;
+		}
+
+		spo->addDependencies(pipelineDepends);
 
 		if (!spo->transform(pipelineDepends, operationData, mutableSceneAsset))
+		{
+			log::error << L"Scene pipeline failed; operator transform failed." << Endl;
 			return false;
+		}
 	}
 
 	// Add dependencies from scene asset.
@@ -126,6 +139,15 @@ bool ScenePipeline::buildDependencies(
 		pipelineDepends->addDependency(layer);
 
 	pipelineDepends->addDependency(mutableSceneAsset->getControllerData());
+
+	// In case we're building for the editor we also need to add dependencies to the unmodified scene.
+	if (m_targetEditor)
+	{
+		for (const auto& layer : sceneAsset->getLayers())
+			pipelineDepends->addDependency(layer);
+
+		pipelineDepends->addDependency(sceneAsset->getControllerData());
+	}
 
 	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
 	if (wrs)
@@ -164,8 +186,11 @@ bool ScenePipeline::buildOutput(
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
 	T_FATAL_ASSERT (sceneAsset != nullptr);
 
+	const bool rebuild = (bool)((reason & editor::PbrForced) != 0);
+
 	// Execute operations on scene.
-	bool rebuild = (bool)((reason & editor::PbrForced) != 0);
+	log::info << L"Executing scene operations..." << Endl;
+	log::info << IncreaseIndent;
 	for (const auto op : sceneAsset->getOperationData())
 	{
 		Ref< const ISerializable > operationData = op;
@@ -189,6 +214,7 @@ bool ScenePipeline::buildOutput(
 		if (!result)
 			return false;
 	}
+	log::info << DecreaseIndent;
 
 	// Build each layer of entity data; merge into a single output group.
 	Ref< world::GroupComponentData > groupComponentData = new world::GroupComponentData();
@@ -201,16 +227,22 @@ bool ScenePipeline::buildOutput(
 		if (editorAttributes == nullptr || editorAttributes->include || m_targetEditor)
 		{
 			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
+			log::info << IncreaseIndent;
+
 			auto layerGroupData = layer->getComponent< world::GroupComponentData >();
 			if (layerGroupData != nullptr)
 			{
 				for (const auto& assetEntityData : layerGroupData->getEntityData())
 				{
-					Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(sourceInstance, assetEntityData));
+					Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(
+						pipelineBuilder->buildOutput(sourceInstance, assetEntityData)
+					);
 					if (outputEntityData)
 						groupComponentData->addEntityData(outputEntityData);
 				}
 			}
+
+			log::info << DecreaseIndent;
 		}
 		else
 			log::info << L"Layer \"" << layer->getName() << L"\" skipped." << Endl;

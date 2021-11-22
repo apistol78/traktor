@@ -34,7 +34,6 @@ public:
 private:
 	Ref< ui::CheckBox > m_checkVerbose;
 	Ref< ui::CheckBox > m_checkDependsThreads;
-	Ref< ui::CheckBox > m_checkBuildThreads;
 	Ref< ui::CheckBox > m_checkUseAvalanche;
 	Ref< ui::Edit > m_editAvalancheHost;
 	Ref< ui::Edit > m_editAvalanchePort;

@@ -43,6 +43,8 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
+#include "Core/Thread/JobManager.h"
+
 namespace traktor
 {
 	namespace render
@@ -342,188 +344,208 @@ bool ShaderPipeline::buildOutput(
 
 		// Optimize and compile all combination programs.
 		const std::wstring path = outputPath + L" - " + techniqueName;
+		AlignedVector< Job::task_t > jobs;
+		bool status = true;
+
+		shaderResourceTechnique.combinations.resize(combinationCount);
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
-			const auto& parameterBits = shaderResource->getParameterBits();
+			jobs.push_back([&, combination](){
+				const auto& parameterBits = shaderResource->getParameterBits();
 
-			// Remap parameter mask and value for this combination as shader consist of multiple techniques.
-			uint32_t mask = combinations->getCombinationMask(combination);
-			uint32_t value = combinations->getCombinationValue(combination);
+				// Remap parameter mask and value for this combination as shader consist of multiple techniques.
+				uint32_t mask = combinations->getCombinationMask(combination);
+				uint32_t value = combinations->getCombinationValue(combination);
 
-			auto maskNames = combinations->getParameterNames(mask);
-			auto valueNames = combinations->getParameterNames(value);
+				auto maskNames = combinations->getParameterNames(mask);
+				auto valueNames = combinations->getParameterNames(value);
 
-			ShaderResource::Combination shaderCombination;
-			for (const auto& maskName : maskNames)
-				shaderCombination.mask |= parameterBits.find(maskName)->second;
-			for (const auto& valueName : valueNames)
-				shaderCombination.value |= parameterBits.find(valueName)->second;
+				ShaderResource::Combination& shaderCombination = shaderResourceTechnique.combinations[combination];
+				for (const auto& maskName : maskNames)
+					shaderCombination.mask |= parameterBits.find(maskName)->second;
+				for (const auto& valueName : valueNames)
+					shaderCombination.value |= parameterBits.find(valueName)->second;
 
-			// Generate combination shader graph.
-			Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
-			T_ASSERT(combinationGraph);
+				// Generate combination shader graph.
+				Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
+				T_ASSERT(combinationGraph);
 
-			// Freeze type permutation.
-			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Constant propagation; calculate constant branches.
-			programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Get output state resolved.
-			programGraph = ShaderGraphStatic(programGraph).getStateResolved();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Merge identical branches.
-			programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to merge branches of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Insert interpolation nodes at optimal locations.
-			programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(m_frequentUniformsAsLinear);
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Create swizzle nodes in order to improve compiler optimizing.
-			programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Remove redundant swizzle patterns.
-			programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Remove unused branches.
-			programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches();
-			if (!programGraph)
-			{
-				log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"." << Endl;
-				return false;
-			}
-
-			// Extract uniform initial values and add to initialization block in shader resource.
-			RefArray< Uniform > uniformNodes;
-			programGraph->findNodesOf< Uniform >(uniformNodes);
-			for (const auto uniformNode : uniformNodes)
-			{
-				const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
-				if (!outputPin)
-					continue;
-
-				const Node* outputNode = outputPin->getNode();
-				T_ASSERT(outputNode);
-
-				if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
+				// Freeze type permutation.
+				Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
+				if (!programGraph)
 				{
-					shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), scalarNode->get()));
-				}
-				else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
-				{
-					shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), vectorNode->get()));
-				}
-				else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
-				{
-					shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), colorNode->getColor()));
-				}
-				else
-				{
-					log::error << L"ShaderPipeline failed; initial value of uniform must be constant." << Endl;
-					return false;
-				}
-			}
-
-			// Replace texture nodes with uniforms; keep list of texture references in shader resource.
-			RefArray< Texture > textureNodes;
-			programGraph->findNodesOf< Texture >(textureNodes);
-			for (const auto textureNode : textureNodes)
-			{
-				const Guid& textureGuid = textureNode->getExternal();
-				int32_t textureIndex;
-
-				if (!textureGuid.isNotNull())
-				{
-					log::error << L"ShaderPipeline failed; non valid texture reference in node " << textureNode->getId().format() << L"." << Endl;
-					return false;
+					log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
 				}
 
-				auto it = std::find(shaderCombination.textures.begin(), shaderCombination.textures.end(), textureGuid);
-				if (it != shaderCombination.textures.end())
-					textureIndex = (int32_t)std::distance(shaderCombination.textures.begin(), it);
-				else
+				// Constant propagation; calculate constant branches.
+				programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
+				if (!programGraph)
 				{
-					textureIndex = (int32_t)shaderCombination.textures.size();
-					shaderCombination.textures.push_back(textureGuid);
+					log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
 				}
 
-				Ref< Uniform > textureUniform = new Uniform(
-					getParameterNameFromTextureReferenceIndex(textureIndex),
-					textureNode->getParameterType(),
-					UpdateFrequency::Once
+				// Get output state resolved.
+				programGraph = ShaderGraphStatic(programGraph).getStateResolved();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Merge identical branches.
+				programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to merge branches of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Insert interpolation nodes at optimal locations.
+				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(m_frequentUniformsAsLinear);
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Create swizzle nodes in order to improve compiler optimizing.
+				programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Remove redundant swizzle patterns.
+				programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Remove unused branches.
+				programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
+				// Extract uniform initial values and add to initialization block in shader resource.
+				RefArray< Uniform > uniformNodes;
+				programGraph->findNodesOf< Uniform >(uniformNodes);
+				for (const auto uniformNode : uniformNodes)
+				{
+					const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
+					if (!outputPin)
+						continue;
+
+					const Node* outputNode = outputPin->getNode();
+					T_ASSERT(outputNode);
+
+					if (const Scalar* scalarNode = dynamic_type_cast<const Scalar*>(outputNode))
+					{
+						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), scalarNode->get()));
+					}
+					else if (const Vector* vectorNode = dynamic_type_cast<const Vector*>(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), vectorNode->get()));
+					}
+					else if (const Color* colorNode = dynamic_type_cast<const Color*>(outputNode))
+					{
+						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), colorNode->getColor()));
+					}
+					else
+					{
+						log::error << L"ShaderPipeline failed; initial value of uniform must be constant." << Endl;
+						status = false;
+						return;
+					}
+				}
+
+				// Replace texture nodes with uniforms; keep list of texture references in shader resource.
+				RefArray< Texture > textureNodes;
+				programGraph->findNodesOf< Texture >(textureNodes);
+				for (const auto textureNode : textureNodes)
+				{
+					const Guid& textureGuid = textureNode->getExternal();
+					int32_t textureIndex;
+
+					if (!textureGuid.isNotNull())
+					{
+						log::error << L"ShaderPipeline failed; non valid texture reference in node " << textureNode->getId().format() << L"." << Endl;
+						status = false;
+						return;
+					}
+
+					auto it = std::find(shaderCombination.textures.begin(), shaderCombination.textures.end(), textureGuid);
+					if (it != shaderCombination.textures.end())
+						textureIndex = (int32_t)std::distance(shaderCombination.textures.begin(), it);
+					else
+					{
+						textureIndex = (int32_t)shaderCombination.textures.size();
+						shaderCombination.textures.push_back(textureGuid);
+					}
+
+					Ref< Uniform > textureUniform = new Uniform(
+						getParameterNameFromTextureReferenceIndex(textureIndex),
+						textureNode->getParameterType(),
+						UpdateFrequency::Once
+					);
+
+					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
+					T_ASSERT(textureUniformOutput);
+
+					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
+					T_ASSERT(textureNodeOutput);
+
+					programGraph->rewire(textureNodeOutput, textureUniformOutput);
+					programGraph->addNode(textureUniform);
+				}
+
+				// Compile shader program.
+				uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
+				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
+					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
+					[&](IStream* stream) {
+						return BinarySerializer(stream).readObject< ProgramResource >();
+					},
+					[&](const ProgramResource* object, IStream* stream) {
+						return BinarySerializer(stream).writeObject(object);
+					},
+					[&]() {
+						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
+						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path, nullptr);
+						pipelineBuilder->getProfiler()->end(type_of(programCompiler));
+						return programResource;
+					}
 				);
-
-				const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
-				T_ASSERT(textureUniformOutput);
-
-				const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
-				T_ASSERT(textureNodeOutput);
-
-				programGraph->rewire(textureNodeOutput, textureUniformOutput);
-				programGraph->addNode(textureUniform);
-			}
-
-			// Compile shader program.
-			uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
-			Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
-				Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
-				[&](IStream* stream) {
-					return BinarySerializer(stream).readObject< ProgramResource >();
-				},
-				[&](const ProgramResource* object, IStream* stream) {
-					return BinarySerializer(stream).writeObject(object);
-				},
-				[&]() {
-					pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
-					Ref< ProgramResource > programResource =  programCompiler->compile(programGraph, m_compilerSettings, path, nullptr);
-					pipelineBuilder->getProfiler()->end(type_of(programCompiler));
-					return programResource;
+				if (!programResource)
+				{
+					log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
+					status = false;
+					return;
 				}
-			);
-			if (!programResource)
-			{
-				log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"." << Endl;
-				return false;
-			}
 
-			shaderCombination.priority = getPriority(programGraph);
-			shaderCombination.program = programResource;
-			shaderResourceTechnique.combinations.push_back(shaderCombination);
+				shaderCombination.priority = getPriority(programGraph);
+				shaderCombination.program = programResource;
+			});
 		}
+
+		JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
+		if (!status)
+			return false;
 
 		shaderResource->m_techniques.push_back(shaderResourceTechnique);
 

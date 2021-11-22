@@ -31,7 +31,7 @@ class T_DLLCLASS ChunkMemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	ChunkMemoryStream(ChunkMemory* memory, bool readAllowed = true, bool writeAllowed = true);
+	explicit ChunkMemoryStream(ChunkMemory* memory, bool readAllowed = true, bool writeAllowed = true);
 
 	virtual ~ChunkMemoryStream();
 

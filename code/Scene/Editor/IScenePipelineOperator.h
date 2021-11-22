@@ -28,6 +28,7 @@ class Instance;
 
 class IPipelineBuilder;
 class IPipelineCommon;
+class IPipelineDepends;
 class IPipelineSettings;
 
 	}
@@ -50,6 +51,9 @@ public:
 	virtual void destroy() = 0;
 
 	virtual TypeInfoSet getOperatorTypes() const = 0;
+
+	/*! Add dependencies which might get used by operator. */
+	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const = 0;
 
 	/*! Transform scene asset. */
 	virtual bool transform(

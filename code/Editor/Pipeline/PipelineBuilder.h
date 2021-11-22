@@ -3,10 +3,6 @@
 #include <list>
 #include <map>
 #include "Core/Io/Path.h"
-#include "Core/Thread/Event.h"
-#include "Core/Thread/ReaderWriterLock.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/PipelineTypes.h"
 
@@ -47,7 +43,7 @@ class T_DLLCLASS PipelineBuilder : public IPipelineBuilder
 	T_RTTI_CLASS;
 
 public:
-	PipelineBuilder(
+	explicit PipelineBuilder(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
@@ -55,7 +51,6 @@ public:
 		IPipelineDb* db,
 		IPipelineInstanceCache* instanceCache,
 		IListener* listener,
-		bool threadedBuildEnable,
 		bool verbose
 	);
 
@@ -84,13 +79,6 @@ public:
 	virtual PipelineProfiler* getProfiler() const override final;
 
 private:
-	struct WorkEntry
-	{
-		Ref< const PipelineDependency > dependency;
-		Ref< const Object > buildParams;
-		uint32_t reason;
-	};
-
 	struct BuiltCacheEntry
 	{
 		const ISerializable* sourceAsset;
@@ -103,42 +91,35 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
+	Ref< IPipelineCache > m_cacheAdHoc;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	Ref< DataAccessCache > m_dataAccessCache;
 	IListener* m_listener;
-	bool m_threadedBuildEnable;
 	bool m_verbose;
 	bool m_rebuild;
-	Semaphore m_createOutputLock;
-	ReaderWriterLock m_readCacheLock;
-	Semaphore m_builtCacheLock;
-	Semaphore m_workSetLock;
 	Ref< PipelineProfiler > m_profiler;
-	AlignedVector< WorkEntry > m_workSet;
+	const PipelineDependencySet* m_dependencySet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
-	ThreadLocal m_buildInstances;
+	RefArray< db::Instance >* m_buildInstances;
 	int32_t m_progressEnd;
-	std::atomic< int32_t > m_progress;
-	std::atomic< int32_t > m_succeeded;
-	std::atomic< int32_t > m_succeededBuilt;
-	std::atomic< int32_t > m_failed;
-	std::atomic< int32_t > m_cacheHit;
-	std::atomic< int32_t > m_cacheMiss;
-	std::atomic< int32_t > m_cacheVoid;
+	int32_t m_progress;
+	int32_t m_succeeded;
+	int32_t m_succeededBuilt;
+	int32_t m_failed;
+	int32_t m_cacheHit;
+	int32_t m_cacheMiss;
+	int32_t m_cacheVoid;
 
 	/*! Perform build. */
 	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! Isolate instance in cache. */
-	bool putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(IPipelineCache* cache, const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
 
 	/*! Get isolated instance from cache. */
-	bool getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances);
-
-	/*! Build thread method. */
-	void buildThread(const PipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);
+	bool getInstancesFromCache(IPipelineCache* cache, const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances);
 };
 
 	}

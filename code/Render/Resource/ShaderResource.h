@@ -32,14 +32,11 @@ public:
 	struct InitializeUniformScalar
 	{
 		std::wstring name;
-		float value;
+		float value = 0.0f;
 
-		InitializeUniformScalar()
-		:	value(0.0f)
-		{
-		}
+		InitializeUniformScalar() = default;
 
-		InitializeUniformScalar(const std::wstring& name_, float value_)
+		explicit InitializeUniformScalar(const std::wstring& name_, float value_)
 		:	name(name_)
 		,	value(value_)
 		{
@@ -51,14 +48,11 @@ public:
 	struct InitializeUniformVector
 	{
 		std::wstring name;
-		Vector4 value;
+		Vector4 value = Vector4::zero();
 
-		InitializeUniformVector()
-		:	value(Vector4::zero())
-		{
-		}
+		InitializeUniformVector() = default;
 
-		InitializeUniformVector(const std::wstring& name_, const Vector4& value_)
+		explicit InitializeUniformVector(const std::wstring& name_, const Vector4& value_)
 		:	name(name_)
 		,	value(value_)
 		{
@@ -69,20 +63,13 @@ public:
 
 	struct Combination
 	{
-		uint32_t mask;
-		uint32_t value;
-		uint32_t priority;
+		uint32_t mask = 0;
+		uint32_t value = 0;
+		uint32_t priority = 0;
 		Ref< ISerializable > program;
 		AlignedVector< Guid > textures;
 		AlignedVector< InitializeUniformScalar > initializeUniformScalar;
 		AlignedVector< InitializeUniformVector > initializeUniformVector;
-
-		Combination()
-		:	mask(0)
-		,	value(0)
-		,	priority(0)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};
@@ -90,13 +77,8 @@ public:
 	struct Technique
 	{
 		std::wstring name;
-		uint32_t mask;
+		uint32_t mask = 0;
 		AlignedVector< Combination > combinations;
-
-		Technique()
-		:	mask(0)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};

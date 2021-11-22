@@ -25,15 +25,21 @@ public:
 	virtual TypeInfoSet getSupportedTypes() const override final;
 
 	virtual Ref< model::Model > createVisualModel(
-		editor::IPipelineBuilder* pipelineBuilder,
+		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
 	) const override final;
 
 	virtual Ref< model::Model > createCollisionModel(
-		editor::IPipelineBuilder* pipelineBuilder,
+		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
+	) const override final;
+
+	void transform(
+		world::EntityData* entityData,
+		world::IEntityComponentData* componentData,
+		world::GroupComponentData* outputGroup
 	) const override final;
 
 private:

@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/TransformPath.h"
-#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineCommon.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
@@ -26,17 +26,8 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< SplineEntityData >();
 }
 
-// bool SplineEntityReplicator::addDependencies(
-//     editor::IPipelineDepends* pipelineDepends,
-//     const world::EntityData* entityData,
-//     const world::IEntityComponentData* componentData
-// ) const
-// {
-// 	return true;
-// }
-
 Ref< model::Model > SplineEntityReplicator::createVisualModel(
-    editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
@@ -109,7 +100,7 @@ Ref< model::Model > SplineEntityReplicator::createVisualModel(
 }
 
 Ref< model::Model > SplineEntityReplicator::createCollisionModel(
-    editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
@@ -117,16 +108,13 @@ Ref< model::Model > SplineEntityReplicator::createCollisionModel(
 	return nullptr;
 }
 
-// Ref< Object > SplineEntityReplicator::modifyOutput(
-//     editor::IPipelineBuilder* /*pipelineBuilder*/,
-//     const world::EntityData* /*entityData*/,
-//     const world::IEntityComponentData* /*componentData*/,
-//     const model::Model* /*model*/,
-// 	const Guid& /*outputGuid*/
-// ) const
-// {
-//     return nullptr;
-// }
+void SplineEntityReplicator::transform(
+	world::EntityData* entityData,
+	world::IEntityComponentData* componentData,
+	world::GroupComponentData* outputGroup
+) const
+{
+}
 
     }
 }

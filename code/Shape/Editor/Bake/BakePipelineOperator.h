@@ -41,6 +41,8 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const override final;
 
+	virtual void addDependencies(editor::IPipelineDepends* pipelineDepends) const override final;
+
 	virtual bool transform(
 		editor::IPipelineCommon* pipelineCommon,
 		const ISerializable* operatorData,

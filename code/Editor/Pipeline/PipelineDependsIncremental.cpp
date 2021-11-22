@@ -30,6 +30,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
+	const PipelineDependencySet* excludeDependencySet,
 	uint32_t recursionDepth
 )
 :	m_pipelineFactory(pipelineFactory)
@@ -38,6 +39,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
+,	m_excludeDependencySet(excludeDependencySet)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
 ,	m_result(true)
@@ -81,6 +83,10 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
+	// Check if dependency should be excluded.
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(outputGuid) != PipelineDependencySet::DiInvalid)
+		return;
+
 	// Don't add dependency multiple times.
 	uint32_t dependencyIndex = m_dependencySet->get(outputGuid);
 	if (dependencyIndex != PipelineDependencySet::DiInvalid)
@@ -111,6 +117,10 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 
 	// Don't add dependency if thread is about to be stopped.
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
+		return;
+
+	// Check if dependency should be excluded.
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(sourceAssetInstance->getGuid()) != PipelineDependencySet::DiInvalid)
 		return;
 
 	// Don't add dependency multiple times.
@@ -152,6 +162,10 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 
 	// Don't add dependency if thread is about to be stopped.
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
+		return;
+
+	// Check if dependency should be excluded.
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(sourceAssetGuid) != PipelineDependencySet::DiInvalid)
 		return;
 
 	// Don't add dependency multiple times.
@@ -259,23 +273,6 @@ void PipelineDependsIncremental::addDependency(
 
 bool PipelineDependsIncremental::waitUntilFinished()
 {
-#if defined(_DEBUG)
-	if (m_result)
-	{
-		log::debug << L"Pipeline performance" << Endl;
-		log::debug << IncreaseIndent;
-
-		double totalTime = 0.0;
-		for (std::map< const TypeInfo*, std::pair< int32_t, double > >::const_iterator i = m_buildDepTimes.begin(); i != m_buildDepTimes.end(); ++i)
-		{
-			log::debug << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s)" << Endl;
-			totalTime += i->second.second;
-		}
-
-		log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
-		log::debug << DecreaseIndent;
-	}
-#endif
 	return m_result;
 }
 
@@ -345,13 +342,6 @@ void PipelineDependsIncremental::addUniqueDependency(
 		T_ANONYMOUS_VAR(Save< uint32_t >)(m_currentRecursionDepth, m_currentRecursionDepth + 1);
 		T_ANONYMOUS_VAR(Save< Ref< PipelineDependency > >)(m_currentDependency, dependency);
 
-#if defined(_DEBUG)
-		if (m_buildDepTimeStack.empty())
-			m_timer.reset();
-
-		m_buildDepTimeStack.push_back(m_timer.getElapsedTime());
-#endif
-
 		result = pipeline->buildDependencies(
 			this,
 			sourceInstance,
@@ -359,17 +349,6 @@ void PipelineDependsIncremental::addUniqueDependency(
 			outputPath,
 			outputGuid
 		);
-
-#if defined(_DEBUG)
-		double duration = m_timer.getElapsedTime() - m_buildDepTimeStack.back();
-		m_buildDepTimes[dependency->pipelineType].first++;
-		m_buildDepTimes[dependency->pipelineType].second += duration;
-		m_buildDepTimeStack.pop_back();
-
-		// Remove duration from parent build steps; not inclusive times.
-		for (auto& times : m_buildDepTimeStack)
-			times += duration;
-#endif
 	}
 
 	if (result)

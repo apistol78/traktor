@@ -2559,6 +2559,15 @@
 											</item>
 										</items>
 									</item>
+									<item type="Filter">
+										<name>Memory</name>
+										<items>
+											<item type="File">
+												<fileName>Pipeline/Memory/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 						</items>

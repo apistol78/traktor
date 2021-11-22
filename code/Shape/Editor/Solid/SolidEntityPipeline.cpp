@@ -167,5 +167,13 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		);
 }
 
+void SolidEntityReplicator::transform(
+	world::EntityData* entityData,
+	world::IEntityComponentData* componentData,
+	world::GroupComponentData* outputGroup
+) const
+{
+}
+
 	}
 }

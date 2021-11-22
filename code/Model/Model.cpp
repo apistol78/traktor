@@ -73,7 +73,7 @@ bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 0, Model, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 1, Model, PropertyGroup)
 
 Model::Model()
 :	m_positions(0.5f)
@@ -395,6 +395,9 @@ const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t
 
 void Model::serialize(ISerializer& s)
 {
+	if (s.getVersion< Model >() >= 1)
+		PropertyGroup::serialize(s);
+
 	s >> MemberAlignedVector< Material, MemberComposite< Material > >(L"materials", m_materials);
 
 	if (s.getDirection() == ISerializer::Direction::Read)

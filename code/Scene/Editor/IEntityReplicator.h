@@ -20,7 +20,7 @@ class Guid;
 	namespace editor
 	{
 
-class IPipelineBuilder;
+class IPipelineCommon;
 class IPipelineSettings;
 
 	}
@@ -36,6 +36,7 @@ class Model;
 	{
 
 class EntityData;
+class GroupComponentData;
 class IEntityComponentData;
 
 	}
@@ -51,6 +52,11 @@ class T_DLLCLASS IEntityReplicator : public Object
 	T_RTTI_CLASS;
 
 public:
+	static constexpr wchar_t* VisualMesh = L"Visual.Mesh";
+	static constexpr wchar_t* CollisionMesh = L"Collision.Mesh";
+	static constexpr wchar_t* CollisionShape = L"Collision.Shape";
+	static constexpr wchar_t* CollisionBody = L"Collision.Body";
+
 	/*! */
 	virtual bool create(const editor::IPipelineSettings* settings) = 0;
 
@@ -59,28 +65,35 @@ public:
 
 	/*! Create visual model replica from entity or component data.
 	 *
-	 * \param pipelineBuilder Pipeline builder.
+	 * \param pipelineCommon Pipeline common implementation.
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
 	 * \return Model replica of entity or component.
 	 */
 	virtual Ref< model::Model > createVisualModel(
-		editor::IPipelineBuilder* pipelineBuilder,
+		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
 	) const = 0;
 
 	/*! Create collision model replica from entity or component data.
 	 *
-	 * \param pipelineBuilder Pipeline builder.
+	 * \param pipelineCommon Pipeline common implementation.
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
 	 * \return Model replica of entity or component.
 	 */
 	virtual Ref< model::Model > createCollisionModel(
-		editor::IPipelineBuilder* pipelineBuilder,
+		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData
+	) const = 0;
+
+	/*! Transform entity and component data. */
+	virtual void transform(
+		world::EntityData* entityData,
+		world::IEntityComponentData* componentData,
+		world::GroupComponentData* outputGroup
 	) const = 0;
 };
 
