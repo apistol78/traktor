@@ -8,6 +8,7 @@ namespace traktor
 	{
 
 constexpr static uint8_t c_replyOk				= 0x01;
+constexpr static uint8_t c_replyContinue		= 0x02;
 constexpr static uint8_t c_replyFailure			= 0x80;
 
 constexpr static uint8_t c_commandPing			= 0x01;

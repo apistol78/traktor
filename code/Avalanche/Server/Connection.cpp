@@ -305,7 +305,13 @@ bool Connection::process()
 					continue;
 				}
 
-				++ntouched;
+				// Reply after N removed that we're still working, to
+				// prevent timeout on client in case we're touching a large set.
+				if (++ntouched >= 100)
+				{
+					if (m_clientStream->write(&c_replyContinue, sizeof(uint8_t)) != sizeof(uint8_t))
+						return false;
+				}
 			}
 
 			log::info << L"[TOUCH] Touched " << ntouched << L" blobs." << Endl;
@@ -336,7 +342,13 @@ bool Connection::process()
 					continue;
 				}
 
-				++nremoved;
+				// Reply after N removed that we're still working, to
+				// prevent timeout on client in case we're evicting a large set.
+				if (++nremoved >= 100)
+				{
+					if (m_clientStream->write(&c_replyContinue, sizeof(uint8_t)) != sizeof(uint8_t))
+						return false;
+				}
 			}
 
 			log::info << L"[EVICT] Removed " << nremoved << L" blobs." << Endl;
