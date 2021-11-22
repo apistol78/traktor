@@ -103,11 +103,15 @@ bool Client::touch(const AlignedVector< Key >& keys)
 	}
 
 	uint8_t reply = 0;
-	if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+	do
 	{
-		log::error << L"Unable to read reply from server (touch)." << Endl;
-		return false;
+		if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+		{
+			log::error << L"Unable to read reply from server (touch)." << Endl;
+			return false;
+		}
 	}
+	while (reply == c_replyContinue);
 
 	if (reply == c_replyOk || reply == c_replyFailure)
 	{
@@ -138,11 +142,15 @@ bool Client::evict(const AlignedVector< Key >& keys)
 	}
 
 	uint8_t reply = 0;
-	if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+	do
 	{
-		log::error << L"Unable to read reply from server (evict)." << Endl;
-		return false;
+		if (stream->read(&reply, sizeof(uint8_t)) != sizeof(uint8_t))
+		{
+			log::error << L"Unable to read reply from server (evict)." << Endl;
+			return false;
+		}
 	}
+	while (reply == c_replyContinue);
 
 	if (reply == c_replyOk || reply == c_replyFailure)
 	{
