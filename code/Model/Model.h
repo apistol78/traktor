@@ -3,7 +3,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Model/Animation.h"
 #include "Model/Types.h"
 #include "Model/Grid2.h"
@@ -30,7 +30,7 @@ namespace traktor
 /*! Intermediate 3D model.
  * \ingroup Model
  */
-class T_DLLCLASS Model : public ISerializable
+class T_DLLCLASS Model : public PropertyGroup
 {
 	T_RTTI_CLASS;
 

@@ -2,8 +2,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineCommon.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
@@ -30,19 +29,8 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< TerrainComponentData >();
 }
 
-// bool TerrainEntityReplicator::addDependencies(
-//     editor::IPipelineDepends* pipelineDepends,
-//     const world::EntityData* entityData,
-//     const world::IEntityComponentData* componentData
-// ) const
-// {
-// 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
-//     pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfUse);
-// 	return true;
-// }
-
 Ref< model::Model > TerrainEntityReplicator::createVisualModel(
-    editor::IPipelineBuilder* pipelineBuilder,
+    editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -50,11 +38,11 @@ Ref< model::Model > TerrainEntityReplicator::createVisualModel(
 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
     const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
 
-    Ref< const terrain::TerrainAsset > terrainAsset = pipelineBuilder->getObjectReadOnly< terrain::TerrainAsset >(terrain);
+    Ref< const terrain::TerrainAsset > terrainAsset = pipelineCommon->getObjectReadOnly< terrain::TerrainAsset >(terrain);
     if (!terrain)
         return nullptr;
 
-    Ref< db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+    Ref< db::Instance > heightfieldAssetInstance = pipelineCommon->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
     if (!heightfieldAssetInstance)
         return nullptr;
 
@@ -79,7 +67,7 @@ Ref< model::Model > TerrainEntityReplicator::createVisualModel(
 }
 
 Ref< model::Model > TerrainEntityReplicator::createCollisionModel(
-    editor::IPipelineBuilder* pipelineBuilder,
+    editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -87,16 +75,13 @@ Ref< model::Model > TerrainEntityReplicator::createCollisionModel(
     return nullptr;
 }
 
-// Ref< Object > TerrainEntityReplicator::modifyOutput(
-//     editor::IPipelineBuilder* /*pipelineBuilder*/,
-//     const world::EntityData* /*entityData*/,
-//     const world::IEntityComponentData* componentData,
-//     const model::Model* /*model*/,
-//     const Guid& /*outputGuid*/
-// ) const
-// {
-//     return const_cast< world::IEntityComponentData* >(componentData);
-// }
+void TerrainEntityReplicator::transform(
+    world::EntityData* entityData,
+    world::IEntityComponentData* componentData,
+    world::GroupComponentData* outputGroup
+) const
+{
+}
 
     }
 }

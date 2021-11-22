@@ -1,5 +1,5 @@
 #include "Database/Database.h"
-#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineCommon.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -63,17 +63,8 @@ TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< SolidEntityData >();
 }
 
-// bool SolidEntityReplicator::addDependencies(
-//     editor::IPipelineDepends* pipelineDepends,
-//     const world::EntityData* entityData,
-//     const world::IEntityComponentData* componentData
-// ) const
-// {
-// 	return true;
-// }
-
 Ref< model::Model > SolidEntityReplicator::createVisualModel(
-	editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
@@ -179,66 +170,13 @@ Ref< model::Model > SolidEntityReplicator::createVisualModel(
 }
 
 Ref< model::Model > SolidEntityReplicator::createCollisionModel(
-	editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
     const world::IEntityComponentData* componentData
 ) const
 {
 	return nullptr;
 }
-
-// Ref< Object > SolidEntityReplicator::modifyOutput(
-// 	editor::IPipelineBuilder* pipelineBuilder,
-//     const world::EntityData* entityData,
-//     const world::IEntityComponentData* /*componentData*/,
-// 	const model::Model* model,
-// 	const Guid& outputGuid
-// ) const
-// {
-// 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(entityData);
-
-// 	Guid outputRenderMeshGuid = outputGuid.permutation(1);
-// 	Guid outputCollisionShapeGuid = outputGuid.permutation(2);
-
-// 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
-// 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
-
-// 	// Build visual mesh.
-// 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-// 	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-// 	pipelineBuilder->buildAdHocOutput(
-// 		outputMeshAsset,
-// 		outputRenderMeshPath,
-// 		outputRenderMeshGuid,
-// 		model
-// 	);
-
-// 	// Build collision mesh.
-// 	Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
-// 	physicsMeshAsset->setMargin(0.0f);
-// 	physicsMeshAsset->setCalculateConvexHull(false);
-// 	pipelineBuilder->buildAdHocOutput(
-// 		physicsMeshAsset,
-// 		outputCollisionShapePath,
-// 		outputCollisionShapeGuid,
-// 		model
-// 	);
-
-// 	// Replace mesh component referencing our merged physics mesh.
-// 	Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
-// 	outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
-// 	outputShapeDesc->setCollisionGroup(solidEntityData->getCollisionGroup());
-// 	outputShapeDesc->setCollisionMask(solidEntityData->getCollisionMask());
-
-// 	// Create our output entity which will replace the solid entity.
-// 	Ref< world::EntityData > outputEntityData = new world::EntityData();
-// 	outputEntityData->setId(solidEntityData->getId());
-// 	outputEntityData->setName(solidEntityData->getName());
-// 	outputEntityData->setTransform(solidEntityData->getTransform());
-// 	outputEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputRenderMeshGuid)));
-// 	outputEntityData->setComponent(new physics::RigidBodyComponentData(new physics::StaticBodyDesc(outputShapeDesc)));
-// 	return outputEntityData;
-// }
 
 	}
 }

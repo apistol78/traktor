@@ -21,6 +21,7 @@ namespace traktor
 
 class ISerializable;
 class IStream;
+class Thread;
 
 	namespace db
 	{
@@ -121,8 +122,9 @@ private:
 	Guid m_transactionGuid;
 	std::wstring m_transactionName;
 	uint32_t m_transactionFlags;
+	Thread* m_transactionThread;
 
-	Instance(IInstanceEventListener* eventListener);
+	explicit Instance(IInstanceEventListener* eventListener);
 
 	bool internalCreateExisting(IProviderInstance* providerInstance, Group* parent);
 

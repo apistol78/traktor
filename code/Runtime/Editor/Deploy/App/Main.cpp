@@ -70,7 +70,6 @@ int main(int argc, const char** argv)
 		log::info << L"    -avalanche-cache=host:port Specify pipeline avalanche host." << Endl;
 		log::info << L"    -file-cache                Specify pipeline file cache directory." << Endl;
 		log::info << L"    -sequential-depends        Disable multithreaded pipeline dependency scanner." << Endl;
-		log::info << L"    -sequential-build          Disable multithreaded pipeline build." << Endl;
 		return 1;
 	}
 
@@ -143,8 +142,6 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption(L"sequential-depends"))
 		settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", false);
-	if (cmdLine.hasOption(L"sequential-build"))
-		settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
 	if (cmdLine.hasOption(L'v', L"verbose"))
 		settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", true);
 

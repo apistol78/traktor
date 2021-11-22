@@ -1826,7 +1826,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			m_pipelineDb,
 			&instanceCache,
 			this,
-			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
 			verbose
 		);
 
@@ -1964,6 +1963,7 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 		dependencySet,
 		m_pipelineDb,
 		instanceCache,
+		nullptr,
 		recursionDepth
 	);
 }

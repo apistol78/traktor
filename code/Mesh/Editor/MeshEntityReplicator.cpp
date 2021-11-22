@@ -1,8 +1,9 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Drawing/Image.h"
-#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
@@ -12,6 +13,7 @@
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/Texture/TextureSet.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -32,19 +34,8 @@ TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< MeshComponentData >();
 }
 
-// bool MeshEntityReplicator::addDependencies(
-//     editor::IPipelineDepends* pipelineDepends,
-//     const world::EntityData* entityData,
-//     const world::IEntityComponentData* componentData
-// ) const
-// {
-// 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
-// 	pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfUse);
-// 	return true;
-// }
-
 Ref< model::Model > MeshEntityReplicator::createVisualModel(
-    editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -52,7 +43,7 @@ Ref< model::Model > MeshEntityReplicator::createVisualModel(
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
 
 	// Get referenced mesh asset.
-	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
+	Ref< const MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
 	if (!meshAsset)
 		return nullptr;
 
@@ -74,7 +65,7 @@ Ref< model::Model > MeshEntityReplicator::createVisualModel(
 	const auto& textureSetId = meshAsset->getTextureSet();
 	if (textureSetId.isNotNull())
 	{
-		Ref< const render::TextureSet > textureSet = pipelineBuilder->getObjectReadOnly< render::TextureSet >(textureSetId);
+		Ref< const render::TextureSet > textureSet = pipelineCommon->getObjectReadOnly< render::TextureSet >(textureSetId);
 		if (!textureSet)
 			return nullptr;
 
@@ -97,11 +88,17 @@ Ref< model::Model > MeshEntityReplicator::createVisualModel(
 		}
 	}
 
+	// Create a mesh asset; used by bake pipeline to set appropriate materials.
+	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	outputMeshAsset->setMaterialTextures(materialTextures);
+	model->setProperty< PropertyObject >(scene::IEntityReplicator::VisualMesh, outputMeshAsset);
+
 	return model;
 }
 
 Ref< model::Model > MeshEntityReplicator::createCollisionModel(
-	editor::IPipelineBuilder* pipelineBuilder,
+	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData
 ) const
@@ -109,38 +106,14 @@ Ref< model::Model > MeshEntityReplicator::createCollisionModel(
 	return nullptr;
 }
 
-// Ref< Object > MeshEntityReplicator::modifyOutput(
-//     editor::IPipelineBuilder* pipelineBuilder,
-//     const world::EntityData* /*entityData*/,
-//     const world::IEntityComponentData* componentData,
-//     const model::Model* model,
-// 	const Guid& outputGuid
-// ) const
-// {
-// 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
-
-// 	// Read original mesh asset from source.
-// 	Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshComponentData->getMesh());
-// 	if (!meshAsset)
-// 		return nullptr;
-
-// 	// Create a new mesh asset referencing the modified model.
-//     Ref< MeshAsset > outputMeshAsset = new MeshAsset();
-//     outputMeshAsset->setMeshType(MeshAsset::MtStatic);
-// 	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
-// 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
-// 	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
-// 	outputMeshAsset->setTextureSet(meshAsset->getTextureSet());
-
-// 	// Build output mesh from modified model.
-//     pipelineBuilder->buildAdHocOutput(
-//         outputMeshAsset,
-//         outputGuid,
-//         model
-//     );
-
-// 	return new MeshComponentData(resource::Id< IMesh >(outputGuid));
-// }
+void MeshEntityReplicator::transform(
+	world::EntityData* entityData,
+	world::IEntityComponentData* componentData,
+	world::GroupComponentData* outputGroup
+) const
+{
+	entityData->removeComponent(componentData);
+}
 
     }
 }

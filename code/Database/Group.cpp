@@ -112,20 +112,19 @@ Ref< Instance > Group::getInstance(const std::wstring& instanceName, const TypeI
 Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT(m_providerGroup);
-	Ref< Instance > instance;
 
 	// Create instance guid, use given if available.
 	Guid instanceGuid = guid ? *guid : Guid::create();
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
-		log::error << L"Not allowed to create instance with invalid guid" << Endl;
+		log::error << L"Not allowed to create instance with invalid guid." << Endl;
 		return nullptr;
 	}
 
 	// Remove existing instance if we're about to replace it.
 	if (flags & CifReplaceExisting)
 	{
-		instance = getInstance(instanceName);
+		Ref< Instance > instance = getInstance(instanceName);
 		if (instance)
 		{
 			if (!instance->checkout())
@@ -150,9 +149,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 		return nullptr;
 
 	// Create instance object.
-	if (!instance)
-		instance = new Instance(this);
-
+	Ref< Instance > instance = new Instance(this);
 	if (!instance->internalCreateNew(providerInstance, this))
 		return nullptr;
 

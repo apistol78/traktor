@@ -3,6 +3,7 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Group.h"
 #include "Database/IInstanceEventListener.h"
 #include "Database/Instance.h"
@@ -166,57 +167,58 @@ bool Instance::checkout()
 	if (!m_providerInstance->openTransaction())
 		return false;
 
+	T_FATAL_ASSERT(m_transactionThread == nullptr);
+
 	m_transactionGuid = getGuid();
 	m_transactionName = getName();
 	m_transactionFlags = 0;
+	m_transactionThread = ThreadManager::getInstance().getCurrentThread();
 
 	return true;
 }
 
 bool Instance::commit(uint32_t flags)
 {
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
+	T_ASSERT(m_providerInstance);
+
+	if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		T_ASSERT(m_providerInstance);
+		log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;
+		return false;
+	}
 
-		if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
+	if (!m_providerInstance->commitTransaction())
+	{
+		log::error << L"Instance commit failed; commitTransaction failed." << Endl;
+		return false;
+	}
+
+	if ((flags & CfKeepCheckedOut) == 0)
+	{
+		if (!m_providerInstance->closeTransaction())
 		{
-			log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;
+			log::error << L"Instance commit failed; closeTransaction failed." << Endl;
 			return false;
 		}
+	}
 
-		if (!m_providerInstance->commitTransaction())
-		{
-			log::error << L"Instance commit failed; commitTransaction failed." << Endl;
-			return false;
-		}
+	if ((m_transactionFlags & TfGuidChanged) != 0)
+	{
+		m_guid = m_providerInstance->getGuid();
+		m_cachedFlags |= IchGuid;
+	}
 
-		if ((flags & CfKeepCheckedOut) == 0)
-		{
-			if (!m_providerInstance->closeTransaction())
-			{
-				log::error << L"Instance commit failed; closeTransaction failed." << Endl;
-				return false;
-			}
-		}
+	if ((m_transactionFlags & TfObjectChanged) != 0)
+	{
+		m_type = m_providerInstance->getPrimaryTypeName();
+		m_cachedFlags |= IchPrimaryType;
+	}
 
-		if ((m_transactionFlags & TfGuidChanged) != 0)
-		{
-			m_guid = m_providerInstance->getGuid();
-			m_cachedFlags |= IchGuid;
-		}
-
-		if ((m_transactionFlags & TfObjectChanged) != 0)
-		{
-			m_type = m_providerInstance->getPrimaryTypeName();
-			m_cachedFlags |= IchPrimaryType;
-		}
-
-		if ((m_transactionFlags & TfNameChanged) != 0)
-		{
-			m_name = m_providerInstance->getName();
-			m_cachedFlags |= IchName;
-		}
+	if ((m_transactionFlags & TfNameChanged) != 0)
+	{
+		m_name = m_providerInstance->getName();
+		m_cachedFlags |= IchName;
 	}
 
 	if (m_eventListener)
@@ -240,24 +242,28 @@ bool Instance::commit(uint32_t flags)
 		internalDestroy();
 
 	m_transactionFlags = 0;
+	if ((flags & CfKeepCheckedOut) == 0)
+		m_transactionThread = nullptr;
+
 	return true;
 }
 
 bool Instance::revert()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->closeTransaction())
 		return false;
 
 	m_transactionFlags = 0;
+	m_transactionThread = nullptr;
 	return true;
 }
 
 bool Instance::remove()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->remove())
@@ -269,7 +275,7 @@ bool Instance::remove()
 
 bool Instance::setName(const std::wstring& name)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if ((m_cachedFlags & IchName) != 0)
@@ -287,7 +293,7 @@ bool Instance::setName(const std::wstring& name)
 
 bool Instance::setGuid(const Guid& guid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if ((m_cachedFlags & IchGuid) != 0)
@@ -305,7 +311,7 @@ bool Instance::setGuid(const Guid& guid)
 
 bool Instance::setObject(const ISerializable* object)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if (!object)
@@ -341,7 +347,7 @@ bool Instance::setObject(const ISerializable* object)
 
 bool Instance::removeAllData()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->removeAllData())
@@ -353,7 +359,7 @@ bool Instance::removeAllData()
 
 Ref< IStream > Instance::writeData(const std::wstring& dataName)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
 	Ref< IStream > stream = m_providerInstance->writeData(dataName);
@@ -369,6 +375,7 @@ Instance::Instance(IInstanceEventListener* eventListener)
 ,	m_parent(nullptr)
 ,	m_cachedFlags(0)
 ,	m_transactionFlags(0)
+,	m_transactionThread(nullptr)
 {
 }
 
@@ -387,6 +394,7 @@ bool Instance::internalCreateNew(IProviderInstance* providerInstance, Group* par
 	m_parent = parent;
 	m_cachedFlags = 0;
 	m_transactionFlags = TfCreated;
+	m_transactionThread = ThreadManager::getInstance().getCurrentThread();
 	return true;
 }
 
@@ -396,6 +404,7 @@ void Instance::internalDestroy()
 	m_parent = nullptr;
 	m_cachedFlags = 0;
 	m_transactionFlags = 0;
+	m_transactionThread = nullptr;
 }
 
 void Instance::internalFlush()

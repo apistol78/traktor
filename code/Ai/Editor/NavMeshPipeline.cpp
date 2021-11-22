@@ -54,9 +54,7 @@ struct NavMeshSourceModel
 	Ref< const model::Model > model;
 	Transform transform;
 
-	NavMeshSourceModel()
-	{
-	}
+	NavMeshSourceModel() = default;
 
 	NavMeshSourceModel(const model::Model* model_, const Transform& transform_)
 	:	model(model_)

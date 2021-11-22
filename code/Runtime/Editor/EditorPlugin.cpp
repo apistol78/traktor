@@ -247,10 +247,6 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 		if (!autoBuild)
 			return false;
 
-		// Do not use threaded builds when auto-building for targets.
-		Ref< PropertyGroup > globalSettings = DeepClone(m_editor->getSettings()).create< PropertyGroup >();
-		globalSettings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
-
 		for (auto targetInstance : m_targetInstances)
 		{
 			// Only build for those who have any running applications.
@@ -286,7 +282,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 				action.action = new BuildTargetAction(
 					m_editor->getSourceDatabase(),
-					globalSettings,
+					m_editor->getSettings(),
 					pipelineSettings,
 					targetInstance->getTarget(),
 					targetInstance->getTargetConfiguration(),

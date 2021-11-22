@@ -294,6 +294,9 @@ bool writeTexture(
 		needAlpha = true;
 	}
 
+	if (!outputInstance->checkout())
+		return false;
+
 	Ref< render::TextureResource > outputResource = new render::TextureResource();
 	outputInstance->setObject(outputResource);
 
@@ -686,6 +689,8 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create output instance.
 		Ref< db::Instance > outputInstance = tracerIrradiance->getIrradianceInstance();
+		if (!outputInstance->checkout())
+			return false;
 
 		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
 		outputInstance->setObject(outputResource);

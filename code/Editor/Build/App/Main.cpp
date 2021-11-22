@@ -120,7 +120,6 @@ int main(int argc, const char** argv)
 		log::info << L"    -file-cache=path               Specify pipeline file cache directory." << Endl;
 		log::info << L"    -file-cache-access=r|w|rw      File cache access." << Endl;
 		log::info << L"    -sequential-depends            Disable multithreaded pipeline dependency scanner." << Endl;
-		log::info << L"    -sequential-build              Disable multithreaded pipeline build." << Endl;
 		return 1;
 	}
 
@@ -221,8 +220,6 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption(L"sequential-depends"))
 		settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", false);
-	if (cmdLine.hasOption(L"sequential-build"))
-		settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
 
 	// Remove filestore option from source database.
 	db::ConnectionString sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");

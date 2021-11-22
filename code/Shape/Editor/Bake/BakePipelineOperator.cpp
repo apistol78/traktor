@@ -16,6 +16,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
@@ -35,6 +36,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Mesh/MeshComponentData.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
@@ -43,6 +45,10 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/World/RigidBodyComponentData.h"
 #include "Render/Types.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
@@ -68,6 +74,7 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/GroupComponentData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
@@ -83,6 +90,7 @@ const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
 const Guid c_lightmapDirectionalIdSeed(L"{BBCB9EFD-F519-49BE-A47A-66B7F1F0F5D1}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
+const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
 /*! Log entity hierarchy. */
 void describeEntity(OutputStream& os, const world::EntityData* entityData)
@@ -238,10 +246,10 @@ void addSky(
 
 			Ref< drawing::CubeMap > radianceCube = new drawing::CubeMap(128, drawing::PixelFormat::getRGBAF32());
 
-			RefArray< Job > jobs;
+			AlignedVector< Job::task_t > jobs;
 			for (int32_t side = 0; side < 6; ++side)
 			{
-				Ref< Job > job = JobManager::getInstance().add([=, &sourceRadianceCube, &radianceCube]() {
+				jobs.push_back([=, &sourceRadianceCube, &radianceCube]() {
 					Random random;
 					for (int32_t y = 0; y < 128; ++y)
 					{
@@ -265,13 +273,8 @@ void addSky(
 						}
 					}
 				});
-				jobs.push_back(job);
 			}
-			while (!jobs.empty())
-			{
-				jobs.back()->wait();
-				jobs.pop_back();
-			}
+			JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
 
 			// Convert cube map to equirectangular image.
 			Ref< drawing::Image > radiance = radianceCube->createEquirectangular();
@@ -410,6 +413,11 @@ TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 	return makeTypeInfoSet< BakeConfiguration >();
 }
 
+void BakePipelineOperator::addDependencies(editor::IPipelineDepends* pipelineDepends) const
+{
+	pipelineDepends->addDependency(c_lightmapProxyId, editor::PdfBuild);
+}
+
 bool BakePipelineOperator::transform(
 	editor::IPipelineCommon* pipelineCommon,
 	const ISerializable* operatorData,
@@ -449,7 +457,6 @@ bool BakePipelineOperator::transform(
 		}
 
 		// Collect all entities from layer which do not get baked.
-		RefArray< world::EntityData > flattenEntityData;
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
 			// Check editor attributes component if we should include entity.
@@ -459,28 +466,34 @@ bool BakePipelineOperator::transform(
 					return scene::Traverser::VrSkip;
 
 				if (editorAttributes->dynamic)
-				{
-					flattenEntityData.push_back(inoutEntityData);
 					return scene::Traverser::VrContinue;
-				}
 			}
 
 			// "Unnamed" entities do not bake.
 			if (inoutEntityData->getId().isNull())
-			{
-				flattenEntityData.push_back(inoutEntityData);
 				return scene::Traverser::VrContinue;
-			}
 
-			// Non-replicatable entities do not bake.
-			bool haveReplicator = false;
-			for (auto componentData : inoutEntityData->getComponents())
+			// Transform and keep entities which isn't included in bake.
+			auto componentDatas = inoutEntityData->getComponents();
+			for (auto componentData : componentDatas)
 			{
 				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
-				haveReplicator |= (bool)(entityReplicator != nullptr);
+				if (!entityReplicator)
+					continue;
+
+				Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
+				entityReplicator->transform(inoutEntityData, componentData, outputGroup);
+
+				// Transfer entities from existing group, need to merge with our output group.
+				Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
+				if (existingGroup)
+				{
+					for (auto childEntity : existingGroup->getEntityData())
+						outputGroup->addEntityData(childEntity);
+				}
+
+				inoutEntityData->setComponent(outputGroup);
 			}
-			if (!haveReplicator)
-				flattenEntityData.push_back(inoutEntityData);
 
 			return scene::Traverser::VrContinue;
 		});
@@ -536,12 +549,10 @@ bool BakePipelineOperator::build(
 		if (!flattenedLayer)
 			return false;
 
-		// Do not add dynamic layers to bake.
+		// Dynamic layers do not get baked.
 		if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
 		{
-			if (!editorAttributes->include)
-				continue;
-			if (editorAttributes->dynamic)
+			if (!editorAttributes->include || editorAttributes->dynamic)
 			{
 				layers.push_back(flattenedLayer);
 				continue;
@@ -563,15 +574,26 @@ bool BakePipelineOperator::build(
 			if (inoutEntityData->getId().isNull())
 				return scene::Traverser::VrContinue;
 
-			// Include in bake.
-			bakeEntityData.push_back(inoutEntityData);
-
-			// Stop traversing deeper if this entity has an replicator, ie will be baked.
-			for (auto componentData : inoutEntityData->getComponents())
+			// Light and sky must be included.
+			if (
+				inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
+				inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
+				inoutEntityData->getName() == L"Irradiance"
+			)
 			{
-				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
-				if (entityReplicator)
+				bakeEntityData.push_back(inoutEntityData);
+				return scene::Traverser::VrContinue;
+			}
+
+			// Include in bake.
+			auto componentDatas = inoutEntityData->getComponents();
+			for (auto componentData : componentDatas)
+			{
+				if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
+				{
+					bakeEntityData.push_back(inoutEntityData);
 					return scene::Traverser::VrSkip;
+				}
 			}
 
 			return scene::Traverser::VrContinue;
@@ -605,14 +627,14 @@ bool BakePipelineOperator::build(
 			Guid outputId = entityId.permutation(c_outputIdSeed);
 
 			// Find model synthesizer which can generate from components.
-			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
+			auto componentDatas = inoutEntityData->getComponents();
 			for (auto componentData : componentDatas)
 			{
 				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
 
-				uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
+				const uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
 
 				Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 					Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), componentDataHash),
@@ -669,6 +691,8 @@ bool BakePipelineOperator::build(
 				// Add visual model to tracer task.
 				if (visualModel)
 				{
+					log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
+
 					// Calculate size of lightmap from geometry.
 					int32_t lightmapSize = calculateLightmapSize(
 						visualModel,
@@ -732,7 +756,7 @@ bool BakePipelineOperator::build(
 						lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
 							resource::Id< render::ITexture >(c_lightmapProxyId)
 						));
-						lightmapDiffuseInstance->commit(db::CfKeepCheckedOut);
+						lightmapDiffuseInstance->commit();
 					}
 
 					Ref< db::Instance > lightmapDirectionalInstance;
@@ -744,7 +768,7 @@ bool BakePipelineOperator::build(
 						lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
 							resource::Id< render::ITexture >(c_lightmapProxyId)
 						));
-						lightmapDirectionalInstance->commit(db::CfKeepCheckedOut);
+						lightmapDirectionalInstance->commit();
 					}
 
 					tracerTask->addTracerModel(new TracerModel(
@@ -764,22 +788,87 @@ bool BakePipelineOperator::build(
 				// Modify entity.
 				if (visualModel || collisionModel)
 				{
-					// pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-					// Ref< world::IEntityComponentData > replaceComponentData = checked_type_cast< world::IEntityComponentData* >(entityReplicator->modifyOutput(
-					// 	pipelineBuilder,
-					// 	inoutEntityData,
-					// 	componentData,
-					// 	model,
-					// 	outputId
-					// ));
-					// pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
-					// if (replaceComponentData == nullptr)
-					// 	inoutEntityData->removeComponent(componentData);
-					// else if (replaceComponentData != componentData)
-					// {
-					// 	inoutEntityData->removeComponent(componentData);
-					// 	inoutEntityData->setComponent(replaceComponentData);
-					// }
+					Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
+					entityReplicator->transform(inoutEntityData, componentData, outputGroup);
+
+					if (visualModel)
+					{
+						Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(scene::IEntityReplicator::VisualMesh));
+
+						// Create and build a new mesh asset referencing the modified model.
+						Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+						outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+						if (meshAsset)
+						{
+							outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+							outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+						}
+
+						Ref< world::EntityData > outputMeshEntity = new world::EntityData();
+						outputMeshEntity->setId(Guid::create());
+						outputMeshEntity->setName(inoutEntityData->getName());
+						outputMeshEntity->setTransform(inoutEntityData->getTransform());
+						outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputId)));
+						outputGroup->addEntityData(outputMeshEntity);
+
+						// Ensure visual mesh is build.
+						pipelineBuilder->buildAdHocOutput(
+							outputMeshAsset,
+							outputId,
+							visualModel
+						);
+					}
+
+					if (collisionModel)
+					{
+						const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
+
+						Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionMesh));
+						Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionShape));
+						Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionBody));
+
+						// Build collision shape mesh.
+						Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
+						outputMeshAsset->setCalculateConvexHull(false);
+						if (meshAsset)
+							outputMeshAsset->setMaterials(meshAsset->getMaterials());
+
+						Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
+						if (shapeDesc)
+						{
+							outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
+							outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
+						}
+
+						Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
+						if (bodyDesc)
+						{
+							outputBodyDesc->setFriction(bodyDesc->getFriction());
+							outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+						}
+
+						Ref< world::EntityData > outputShapeEntity = new world::EntityData();
+						outputShapeEntity->setId(Guid::create());
+						outputShapeEntity->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
+						outputGroup->addEntityData(outputShapeEntity);
+
+						// Ensure collision shape is built.
+						pipelineBuilder->buildAdHocOutput(
+							outputMeshAsset,
+							outputShapeId,
+							collisionModel
+						);
+					}
+
+					// Transfer entities from existing group, need to merge with our output group.
+					Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
+					if (existingGroup)
+					{
+						for (auto childEntity : existingGroup->getEntityData())
+							outputGroup->addEntityData(childEntity);
+					}
+
+					inoutEntityData->setComponent(outputGroup);
 				}
 
 				lightmapDiffuseId.permutate();
@@ -810,47 +899,43 @@ bool BakePipelineOperator::build(
 			return false;
 		}
 
-		// Commit a black irradiance grid first until async tracer has finished.
-		if (m_asynchronous)
+		Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
+		outputInstance->setObject(outputResource);
+
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
 		{
-			Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
-			outputInstance->setObject(outputResource);
+			log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
 
-			// Create output data stream.
-			Ref< IStream > stream = outputInstance->writeData(L"Data");
-			if (!stream)
-			{
-				log::error << L"BakePipelineOperator failed; unable to create irradiance data stream." << Endl;
-				outputInstance->revert();
-				return false;
-			}
+		Writer writer(stream);
+		writer << uint32_t(2);
+		writer << (uint32_t)1;	// width
+		writer << (uint32_t)1;	// height
+		writer << (uint32_t)1;	// depth
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer << -10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
+		writer <<  10000.0f;
 
-			Writer writer(stream);
-			writer << uint32_t(2);
-			writer << (uint32_t)1;	// width
-			writer << (uint32_t)1;	// height
-			writer << (uint32_t)1;	// depth
-			writer << -10000.0f;
-			writer << -10000.0f;
-			writer << -10000.0f;
-			writer <<  10000.0f;
-			writer <<  10000.0f;
-			writer <<  10000.0f;
+		for (int32_t i = 0; i < 9; ++i)
+		{
+			writer << 0.0f;
+			writer << 0.0f;
+			writer << 0.0f;
+		}
 
-			for (int32_t i = 0; i < 9; ++i)
-			{
-				writer << 0.0f;
-				writer << 0.0f;
-				writer << 0.0f;
-			}
+		stream->close();
 
-			stream->close();
-
-			if (!outputInstance->commit(db::CfKeepCheckedOut))
-			{
-				log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
-				return false;
-			}
+		if (!outputInstance->commit())
+		{
+			log::error << L"BakePipelineOperator failed; unable to commit output instance." << Endl;
+			return false;
 		}
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(

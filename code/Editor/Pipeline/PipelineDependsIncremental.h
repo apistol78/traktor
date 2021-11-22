@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "Core/Timer/Timer.h"
 #include "Editor/IPipelineDepends.h"
 
@@ -30,13 +29,14 @@ class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 	T_RTTI_CLASS;
 
 public:
-	PipelineDependsIncremental(
+	explicit PipelineDependsIncremental(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		PipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache,
+		const PipelineDependencySet* excludeDependencySet = nullptr,
 		uint32_t recursionDepth = ~0U
 	);
 
@@ -83,16 +83,11 @@ private:
 	Ref< PipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
+	Ref< const PipelineDependencySet > m_excludeDependencySet;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
 	Ref< PipelineDependency > m_currentDependency;
 	bool m_result;
-
-#if defined(_DEBUG)
-	Timer m_timer;
-	std::vector< double > m_buildDepTimeStack;
-	std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildDepTimes;
-#endif
 
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,

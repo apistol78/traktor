@@ -94,7 +94,7 @@ public:
 	 * \param primaryType Optional primary type; if instance isn't of type then null is returned.
 	 * \return Instance.
 	 */
-	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const TypeInfo* primaryType = 0);
+	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const TypeInfo* primaryType = nullptr);
 
 	/*! Create new instance.
 	 *
@@ -103,7 +103,7 @@ public:
 	 * \param guid Instance guid; null then guid is automatically created.
 	 * \return New instance.
 	 */
-	virtual Ref< Instance > createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = 0);
+	virtual Ref< Instance > createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = nullptr);
 
 	/*! Get instance object by guid.
 	 *

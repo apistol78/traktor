@@ -10,10 +10,8 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/System/OS.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -21,7 +19,6 @@
 #include "Database/Isolate.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipeline.h"
-#include "Editor/IPipelineCache.h"
 #include "Editor/IPipelineDb.h"
 #include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
@@ -31,6 +28,7 @@
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
+#include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
 
 namespace traktor
 {
@@ -112,7 +110,6 @@ PipelineBuilder::PipelineBuilder(
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
 	IListener* listener,
-	bool threadedBuildEnable,
 	bool verbose
 )
 :	m_pipelineFactory(pipelineFactory)
@@ -122,12 +119,13 @@ PipelineBuilder::PipelineBuilder(
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
 ,	m_listener(listener)
-,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_verbose(verbose)
 ,	m_rebuild(false)
 ,	m_profiler(new PipelineProfiler())
-,	m_progress(0)
+,	m_dependencySet(nullptr)
+,	m_buildInstances(nullptr)
 ,	m_progressEnd(0)
+,	m_progress(0)
 ,	m_succeeded(0)
 ,	m_succeededBuilt(0)
 ,	m_failed(0)
@@ -137,6 +135,7 @@ PipelineBuilder::PipelineBuilder(
 {
 	// Create data access memento cache.
 	m_dataAccessCache = new DataAccessCache(cache);
+	m_cacheAdHoc = new MemoryPipelineCache();
 }
 
 bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool rebuild)
@@ -146,9 +145,16 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	T_ANONYMOUS_VAR(ScopeIndent)(log::error);
 	T_ANONYMOUS_VAR(ScopeIndent)(log::debug);
 
+	struct Work
+	{
+		Ref< const PipelineDependency > dependency;
+		Ref< const Object > buildParams;
+		uint32_t reason;
+	};
+	AlignedVector< Work > workSet;
 	Timer timer;
 
-	uint32_t dependencyCount = dependencySet->size();
+	const uint32_t dependencyCount = dependencySet->size();
 	uint32_t modifiedCount = 0;
 
 	if (m_verbose && !rebuild)
@@ -250,6 +256,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			reasons[i] |= PbrForced;
 	}
 
+	// Collect work set.
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
@@ -288,60 +295,52 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 		}
 
 		if (reasons[i] != 0)
-		{
-			auto& we = m_workSet.push_back();
-			we.dependency = dependency;
-			we.buildParams = nullptr;
-			we.reason = reasons[i];
-		}
+			workSet.push_back({ dependency, nullptr, reasons[i] });
 	}
 
-	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
+	T_DEBUG(L"Pipeline build; analyzed build reasons in " << formatDuration(timer.getDeltaTime()) << L".");
 
-	if (m_verbose && !m_workSet.empty())
-		log::info << L"Dispatching " << (int32_t)m_workSet.size() << L" build(s)..." << Endl;
+	if (m_verbose && !workSet.empty())
+		log::info << L"Dispatching " << (int32_t)workSet.size() << L" build(s)..." << Endl;
 
 	m_rebuild = rebuild;
 	m_progress = 0;
-	m_progressEnd = (int32_t)m_workSet.size();
+	m_progressEnd = (int32_t)workSet.size();
 	m_succeeded = dependencyCount - m_progressEnd;
 	m_succeededBuilt = 0;
 	m_failed = 0;
 	m_cacheHit = 0;
 	m_cacheMiss = 0;
 	m_cacheVoid = 0;	// No hash on source asset will result in a void.
+	m_dependencySet = dependencySet;
 
-	if (!m_workSet.empty())
+	for (const auto& w : workSet)
 	{
-		int32_t cpuCores = OS::getInstance().getCPUCoreCount();
-		if (m_threadedBuildEnable)
-		{
-			std::vector< Thread* > threads(cpuCores, (Thread*)0);
-			for (int32_t i = 0; i < cpuCores; ++i)
-			{
-				ThreadPool::getInstance().spawn(
-					[&, i]() { buildThread(dependencySet, ThreadManager::getInstance().getCurrentThread(), i); },
-					threads[i]
-				);
-			}
+		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			break;
 
-			for (int32_t i = 0; i < cpuCores; ++i)
-			{
-				if (threads[i])
-				{
-					ThreadPool::getInstance().join(threads[i]);
-					threads[i] = nullptr;
-				}
-			}
-		}
-		else
-		{
-			buildThread(
-				dependencySet,
-				ThreadManager::getInstance().getCurrentThread(),
-				0
+		if (m_listener)
+			m_listener->beginBuild(
+				m_progress,
+				m_progressEnd,
+				w.dependency
 			);
-		}
+
+		BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
+		if (result == BrSucceeded || result == BrSucceededWithWarnings)
+			m_succeeded++;
+		else
+			m_failed++;
+
+		if (m_listener)
+			m_listener->endBuild(
+				m_progress,
+				m_progressEnd,
+				w.dependency,
+				result
+			);
+
+		m_progress++;
 	}
 
 	// Log cache performance.
@@ -376,23 +375,19 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInst
 	if (!sourceAsset)
 		return nullptr;
 
-	uint32_t sourceHash = DeepHash(sourceAsset).get();
+	const uint32_t sourceHash = DeepHash(sourceAsset).get();
 
+	auto it = m_builtCache.find(sourceHash);
+	if (it != m_builtCache.end())
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+		built_cache_list_t& bcl = it->second;
+		T_ASSERT(!bcl.empty());
 
-		std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
-		if (i != m_builtCache.end())
+		// Return same instance as before if pointer and hash match.
+		for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
 		{
-			built_cache_list_t& bcl = i->second;
-			T_ASSERT(!bcl.empty());
-
-			// Return same instance as before if pointer and hash match.
-			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
-			{
-				if (j->sourceAsset == sourceAsset)
-					return j->product;
-			}
+			if (j->sourceAsset == sourceAsset)
+				return j->product;
 		}
 	}
 
@@ -411,15 +406,10 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInst
 	if (!product)
 		return nullptr;
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
-
-		BuiltCacheEntry bce;
-		bce.sourceAsset = sourceAsset;
-		bce.product = product;
-		m_builtCache[sourceHash].push_back(bce);
-	}
-
+	BuiltCacheEntry bce;
+	bce.sourceAsset = sourceAsset;
+	bce.product = product;
+	m_builtCache[sourceHash].push_back(bce);
 	return product;
 }
 
@@ -431,172 +421,119 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const G
 
 bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
-	const bool cacheable = (bool)(buildParams == nullptr || is_a< ISerializable >(buildParams));
-
-	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
-	if (m_threadedBuildEnable)
-	{
-		PipelineDependsParallel pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
-		pipelineDepends.addDependency(
-			sourceAsset,
-			outputPath,
-			outputGuid,
-			PdfBuild
-		);
-		pipelineDepends.waitUntilFinished();
-	}
-	else
-	{
-		PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
-		pipelineDepends.addDependency(
-			sourceAsset,
-			outputPath,
-			outputGuid,
-			PdfBuild
-		);
-		pipelineDepends.waitUntilFinished();
-	}
 
-	uint32_t index = dependencySet.get(outputGuid);
-	if (index == PipelineDependencySet::DiInvalid)
-		return false;
-
-	const PipelineDependency* dependency = dependencySet.get(index);
-	T_ASSERT(dependency != nullptr);
-
-	if (m_listener)
-		m_listener->beginBuild(
-			m_progress,
-			m_progressEnd,
-			dependency
-		);
-
-	// Calculate hash entry.
-	PipelineDependencyHash currentDependencyHash;
-	calculateGlobalHash(
+	// Scan dependencies of source asset; exclude dependencies already in work set.
+	m_profiler->begin(type_of< PipelineDependsIncremental >());
+	PipelineDependsIncremental pipelineDepends(
+		m_pipelineFactory,
+		m_sourceDatabase,
+		m_outputDatabase,
 		&dependencySet,
-		dependency,
-		currentDependencyHash.pipelineHash,
-		currentDependencyHash.sourceAssetHash,
-		currentDependencyHash.sourceDataHash,
-		currentDependencyHash.filesHash
+		m_pipelineDb,
+		m_instanceCache,
+		m_dependencySet
 	);
-
-	// Add hash of build params to source data hash.
-	if (cacheable)
-		currentDependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
-
-	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-
-	if (m_verbose)
-		log::info << L"Building \"" << dependency->outputPath << L"\"..." << Endl;
-
-	log::info << IncreaseIndent;
-
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-	T_ASSERT(pipeline);
-
-	// Build output instances; keep an array of written instances as we
-	// need them to update the cache.
-	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
-	RefArray< db::Instance > builtInstances;
-	m_buildInstances.set(&builtInstances);
-
-	// Get output instances from cache.
-	if (m_cache && cacheable && pipeline->shouldCache())
-	{
-		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
-		{
-			if (m_verbose)
-				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s)." << Endl;
-
-			m_cacheHit++;
-			m_succeededBuilt++;
-
-			if (m_listener)
-				m_listener->endBuild(
-					m_progress,
-					m_progressEnd,
-					dependency,
-					BrSucceeded
-				);
-
-			// Restore previous set but also insert built instances from synthesized build;
-			// when caching is enabled then synthesized built instances should be included in parent build as well.
-			if (previousBuiltInstances)
-				previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
-			m_buildInstances.set(previousBuiltInstances);
-			return true;
-		}
-		else
-			m_cacheMiss++;
-	}
-	else if (m_cache)
-		m_cacheVoid++;
-
-	m_profiler->begin(*dependency->pipelineType);
-	bool result = pipeline->buildOutput(
-		this,
-		&dependencySet,
-		dependency,
-		nullptr,
+	pipelineDepends.addDependency(
 		sourceAsset,
 		outputPath,
 		outputGuid,
-		buildParams,
-		PbrSourceModified
+		PdfBuild | PdfForceAdd
 	);
-	m_profiler->end(*dependency->pipelineType);
+	pipelineDepends.waitUntilFinished();
+	m_profiler->end(type_of< PipelineDependsIncremental >());
 
-	if (
-		!ThreadManager::getInstance().getCurrentThread()->stopped() &&
-		result
-	)
+	// Get ad-hoc asset dependency.
+	const uint32_t index = dependencySet.get(outputGuid);
+	if (index == PipelineDependencySet::DiInvalid)
+		return false;
+
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+
+	bool result = true;
+	for (uint32_t i = 0; i < dependencySet.size() && result; ++i)
 	{
-		if (m_cache && cacheable && pipeline->shouldCache())
+		const PipelineDependency* dependency = dependencySet.get(i);
+		if ((dependency->flags & PdfBuild) == 0)
+			continue;
+
+		// Use in-memory cache for all child dependencies.
+		IPipelineCache* cache = (index == i) ? m_cache : m_cacheAdHoc;
+
+		// Calculate hash entry.
+		PipelineDependencyHash dependencyHash;
+		calculateGlobalHash(
+			&dependencySet,
+			dependency,
+			dependencyHash.pipelineHash,
+			dependencyHash.sourceAssetHash,
+			dependencyHash.sourceDataHash,
+			dependencyHash.filesHash
+		);
+
+		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+		T_ASSERT(pipeline);
+
+		// Add hash of build params to source data hash.
+		if (index == i && buildParams != nullptr && is_a< ISerializable >(buildParams))
+			dependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
+
+		// Get output instances from memory cache.
+		if (cache && pipeline->shouldCache())
+		{
+			if (getInstancesFromCache(cache, dependency, dependencyHash, *m_buildInstances))
+				continue;
+		}
+
+		if (m_verbose)
+			log::info << L"Building \"" << dependency->outputPath << L"\"..." << Endl;
+
+		log::info << IncreaseIndent;
+
+		// Build output instances; keep an array of written instances as we
+		// need them to update the cache for this specific build.
+		RefArray< db::Instance >* previousBuiltInstances = m_buildInstances;
+		RefArray< db::Instance > builtInstances;
+		m_buildInstances = &builtInstances;
+
+		m_profiler->begin(*dependency->pipelineType);
+		result &= pipeline->buildOutput(
+			this,
+			&dependencySet,
+			dependency,
+			dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : nullptr,
+			dependency->sourceAsset,
+			dependency->outputPath,
+			dependency->outputGuid,
+			(index == i) ? buildParams : nullptr,
+			PbrSourceModified
+		);
+		m_profiler->end(*dependency->pipelineType);
+
+		log::info << DecreaseIndent;
+
+		if (!result && m_verbose)
+		{
+			if (result)
+				log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
+			else
+				log::info << L"Build \"" << dependency->outputPath << L"\" (" << type_name(pipeline) << L") failed." << Endl;
+		}
+
+		if (result && cache && pipeline->shouldCache())
 			putInstancesInCache(
+				cache,
 				dependency->outputGuid,
-				currentDependencyHash,
+				dependencyHash,
 				builtInstances
 			);
 
-#if defined(_DEBUG)
-		if (m_verbose && !builtInstances.empty())
-		{
-			log::info << L"Instance(s) built:" << Endl;
-			log::info << IncreaseIndent;
-
-			for (auto builtInstance : builtInstances)
-				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
-
-			log::info << DecreaseIndent;
-		}
-#endif
+		// Restore previous set but also insert built instances from synthesized build;
+		// when caching is enabled then synthesized built instances should be included in parent build as well.
+		if (result && previousBuiltInstances)
+			previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+		m_buildInstances = previousBuiltInstances;
 	}
-
-	log::info << DecreaseIndent;
-	if (m_verbose)
-	{
-		if (result)
-			log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
-		else
-			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
-	}
-
-	if (m_listener)
-		m_listener->endBuild(
-			m_progress,
-			m_progressEnd,
-			dependency,
-			result ? BrSucceeded : BrFailed
-		);
-
-	// Restore previous set but also insert built instances from synthesized build;
-	// when caching is enabled then synthesized built instances should be included in parent build as well.
-	if (previousBuiltInstances)
-		previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
-	m_buildInstances.set(previousBuiltInstances);
 
 	return result;
 }
@@ -605,18 +542,9 @@ uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsse
 {
 	// Scan dependencies of source asset.
 	PipelineDependencySet dependencySet;
-	if (m_threadedBuildEnable)
-	{
-		PipelineDependsParallel pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
-		pipelineDepends.addDependency(sourceAsset);
-		pipelineDepends.waitUntilFinished();
-	}
-	else
-	{
-		PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
-		pipelineDepends.addDependency(sourceAsset);
-		pipelineDepends.waitUntilFinished();
-	}
+	PipelineDependsIncremental pipelineDepends(m_pipelineFactory, m_sourceDatabase, m_outputDatabase, &dependencySet, m_pipelineDb, m_instanceCache);
+	pipelineDepends.addDependency(sourceAsset);
+	pipelineDepends.waitUntilFinished();
 
 	// Calculate hash of source.
 	uint32_t hash = DeepHash(sourceAsset).get();
@@ -641,32 +569,22 @@ Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourc
 	if (!sourceAsset)
 		return nullptr;
 
-	uint32_t sourceHash = DeepHash(sourceAsset).get();
+	const uint32_t sourceHash = DeepHash(sourceAsset).get();
 
+	const auto it = m_builtCache.find(sourceHash);
+	if (it == m_builtCache.end())
+		return nullptr;
+
+	for (const auto& e : it->second)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
-
-		std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
-		if (i != m_builtCache.end())
-		{
-			built_cache_list_t& bcl = i->second;
-			T_ASSERT(!bcl.empty());
-
-			// Return same instance as before if pointer and hash match.
-			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
-			{
-				if (j->sourceAsset == sourceAsset)
-					return j->product;
-			}
-		}
+		if (e.sourceAsset == sourceAsset)
+			return e.product;
 	}
-
 	return nullptr;
 }
 
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
 	Ref< db::Instance > instance;
 
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
@@ -700,9 +618,8 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	);
 	if (instance)
 	{
-		RefArray< db::Instance >* builtInstances = (RefArray< db::Instance >*)m_buildInstances.get();
-		if (builtInstances)
-			builtInstances->push_back(instance);
+		if (m_buildInstances)
+			m_buildInstances->push_back(instance);
 		return instance;
 	}
 	else
@@ -778,14 +695,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
-	RefArray< db::Instance >* previousBuiltInstances = (RefArray< db::Instance >*)m_buildInstances.get();
+	RefArray< db::Instance >* previousBuiltInstances = m_buildInstances;
 	RefArray< db::Instance > builtInstances;
-	m_buildInstances.set(&builtInstances);
+	m_buildInstances = &builtInstances;
 
 	// Get output instances from cache.
 	if (m_cache && pipeline->shouldCache())
 	{
-		if (getInstancesFromCache(dependency, currentDependencyHash, builtInstances))
+		if (getInstancesFromCache(m_cache, dependency, currentDependencyHash, builtInstances))
 		{
 			if (m_verbose)
 			{
@@ -799,7 +716,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 			m_cacheHit++;
 			m_succeededBuilt++;
 
-			m_buildInstances.set(previousBuiltInstances);
+			m_buildInstances = previousBuiltInstances;
 			return BrSucceeded;
 		}
 		else
@@ -848,23 +765,11 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	{
 		if (m_cache && pipeline->shouldCache())
 			putInstancesInCache(
+				m_cache,
 				dependency->outputGuid,
 				currentDependencyHash,
 				builtInstances
 			);
-
-#if defined(_DEBUG)
-		if (m_verbose && !builtInstances.empty())
-		{
-			log::info << L"Instance(s) built:" << Endl;
-			log::info << IncreaseIndent;
-
-			for (auto builtInstance : builtInstances)
-				log::info << L"\t\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
-
-			log::info << DecreaseIndent;
-		}
-#endif
 
 		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 	}
@@ -876,10 +781,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		if (result)
 			log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
 		else
-			log::info << L"Build \"" << dependency->outputPath << L"\" failed." << Endl;
+			log::info << L"Build \"" << dependency->outputPath << L"\" failed (" << type_name(pipeline) << L")." << Endl;
 	}
 
-	m_buildInstances.set(previousBuiltInstances);
+	m_buildInstances = previousBuiltInstances;
 
 	if (result)
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
@@ -887,14 +792,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		return BrFailed;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDependencyHash& hash,	const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(IPipelineCache* cache, const Guid& guid, const PipelineDependencyHash& hash,	const RefArray< db::Instance >& instances)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=]() { m_profiler->begin(type_of(m_cache)); },
-		[=]() { m_profiler->end(type_of(m_cache)); }
+		[=]() { m_profiler->begin(type_of(cache)); },
+		[=]() { m_profiler->end(type_of(cache)); }
 	);
 
-	Ref< IStream > stream = m_cache->put(guid, hash);
+	Ref< IStream > stream = cache->put(guid, hash);
 	if (!stream)
 		return false;
 
@@ -921,17 +826,17 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, const PipelineDepend
 	stream->close();
 	
 	// Commit cached item.
-	if (!m_cache->commit(guid, hash))
+	if (!cache->commit(guid, hash))
 		return false;
 
 	return true;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
+bool PipelineBuilder::getInstancesFromCache(IPipelineCache* cache, const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=]() { m_profiler->begin(type_of(m_cache)); },
-		[=]() { m_profiler->end(type_of(m_cache)); }
+		[=]() { m_profiler->begin(type_of(cache)); },
+		[=]() { m_profiler->end(type_of(cache)); }
 	);
 
 	struct DirectoryEntry
@@ -944,7 +849,7 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 	bool result = true;
 
 	// Open stream to cached blob.
-	Ref< IStream > stream = m_cache->get(dependency->outputGuid, hash);
+	Ref< IStream > stream = cache->get(dependency->outputGuid, hash);
 	if (!stream)
 		return false;
 
@@ -1024,50 +929,47 @@ bool PipelineBuilder::getInstancesFromCache(const PipelineDependency* dependency
 	return result;
 }
 
-void PipelineBuilder::buildThread(
-	const PipelineDependencySet* dependencySet,
-	Thread* controlThread,
-	int32_t cpuCore
-)
-{
-	while (!controlThread->stopped())
-	{
-		WorkEntry we;
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
-			if (!m_workSet.empty())
-			{
-				we = m_workSet.back();
-				m_workSet.pop_back();
-			}
-			else
-				break;
-		}
-
-		if (m_listener)
-			m_listener->beginBuild(
-				m_progress,
-				m_progressEnd,
-				we.dependency
-			);
-
-		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
-		if (result == BrSucceeded || result == BrSucceededWithWarnings)
-			m_succeeded++;
-		else
-			m_failed++;
-
-		if (m_listener)
-			m_listener->endBuild(
-				m_progress,
-				m_progressEnd,
-				we.dependency,
-				result
-			);
-
-		m_progress++;
-	}
-}
+//void PipelineBuilder::buildThread(
+//	const PipelineDependencySet* dependencySet,
+//	Thread* controlThread,
+//	int32_t cpuCore
+//)
+//{
+//	while (!controlThread->stopped())
+//	{
+//		WorkEntry we;
+//		{
+//			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
+//			if (m_workSetIndex >= m_workSet.size())
+//				break;
+//			we = m_workSet[m_workSetIndex];
+//			m_workSetIndex++;
+//		}
+//
+//		if (m_listener)
+//			m_listener->beginBuild(
+//				m_progress,
+//				m_progressEnd,
+//				we.dependency
+//			);
+//
+//		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
+//		if (result == BrSucceeded || result == BrSucceededWithWarnings)
+//			m_succeeded++;
+//		else
+//			m_failed++;
+//
+//		if (m_listener)
+//			m_listener->endBuild(
+//				m_progress,
+//				m_progressEnd,
+//				we.dependency,
+//				result
+//			);
+//
+//		m_progress++;
+//	}
+//}
 
 	}
 }
