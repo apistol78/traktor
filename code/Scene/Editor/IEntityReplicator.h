@@ -52,10 +52,10 @@ class T_DLLCLASS IEntityReplicator : public Object
 	T_RTTI_CLASS;
 
 public:
-	static constexpr wchar_t* VisualMesh = L"Visual.Mesh";
-	static constexpr wchar_t* CollisionMesh = L"Collision.Mesh";
-	static constexpr wchar_t* CollisionShape = L"Collision.Shape";
-	static constexpr wchar_t* CollisionBody = L"Collision.Body";
+	static constexpr wchar_t VisualMesh[] = L"Visual.Mesh";
+	static constexpr wchar_t CollisionMesh[] = L"Collision.Mesh";
+	static constexpr wchar_t CollisionShape[] = L"Collision.Shape";
+	static constexpr wchar_t CollisionBody[] = L"Collision.Body";
 
 	/*! */
 	virtual bool create(const editor::IPipelineSettings* settings) = 0;
