@@ -484,15 +484,18 @@ bool BakePipelineOperator::transform(
 				Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
 				entityReplicator->transform(inoutEntityData, componentData, outputGroup);
 
-				// Transfer entities from existing group, need to merge with our output group.
+				// Transfer entities from existing group.
 				Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
 				if (existingGroup)
 				{
-					for (auto childEntity : existingGroup->getEntityData())
-						outputGroup->addEntityData(childEntity);
+					Ref< world::EntityData > mergeEntity = new world::EntityData();
+					mergeEntity->setId(Guid::create());
+					mergeEntity->setComponent(existingGroup);
+					outputGroup->addEntityData(mergeEntity);
 				}
 
 				inoutEntityData->setComponent(outputGroup);
+				return scene::Traverser::VrSkip;
 			}
 
 			return scene::Traverser::VrContinue;
