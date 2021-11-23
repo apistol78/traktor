@@ -47,6 +47,8 @@ void PipelineDependency::dump(OutputStream& os) const
 		os << L" PdfResource";
 	if (flags & PdfFailed)
 		os << L" PdfFailed";
+	if (flags & PdfForceAdd)
+		os << L" PdfForceAdd";
 	os << Endl;
 
 	for (i = 0; i < uint32_t(children.size()); ++i)

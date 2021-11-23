@@ -124,6 +124,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_profiler(new PipelineProfiler())
 ,	m_dependencySet(nullptr)
 ,	m_buildInstances(nullptr)
+,	m_adHocDepth(0)
 ,	m_progressEnd(0)
 ,	m_progress(0)
 ,	m_succeeded(0)
@@ -370,7 +371,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	return m_failed == 0;
 }
 
-Ref< ISerializable > PipelineBuilder::buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams)
+Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams)
 {
 	if (!sourceAsset)
 		return nullptr;
@@ -450,15 +451,19 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
+	// Use persistent cache on first level of ad-hoc builds,
+	// if no cache enabled then always use ad-hoc cache.
+	IPipelineCache* cache = m_cacheAdHoc;
+	if (m_adHocDepth <= 0 && m_cache)
+		cache = m_cache;
+
+	// Build dependencies.
 	bool result = true;
 	for (uint32_t i = 0; i < dependencySet.size() && result; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet.get(i);
 		if ((dependency->flags & PdfBuild) == 0)
 			continue;
-
-		// Use in-memory cache for all child dependencies.
-		IPipelineCache* cache = (index == i) ? m_cache : m_cacheAdHoc;
 
 		// Calculate hash entry.
 		PipelineDependencyHash dependencyHash;
@@ -482,7 +487,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		if (cache && pipeline->shouldCache())
 		{
 			if (getInstancesFromCache(cache, dependency, dependencyHash, *m_buildInstances))
+			{
+				m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
 				continue;
+			}
 		}
 
 		if (m_verbose)
@@ -495,6 +503,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		RefArray< db::Instance >* previousBuiltInstances = m_buildInstances;
 		RefArray< db::Instance > builtInstances;
 		m_buildInstances = &builtInstances;
+		m_adHocDepth++;
 
 		m_profiler->begin(*dependency->pipelineType);
 		result &= pipeline->buildOutput(
@@ -528,11 +537,17 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				builtInstances
 			);
 
+		// Store dependency hash in database so getInstancesFromCache only touches
+		// instances when being called multiple times, each ad-hoc might reference same child dependencies.
+		if (result)
+			m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
+
 		// Restore previous set but also insert built instances from synthesized build;
 		// when caching is enabled then synthesized built instances should be included in parent build as well.
 		if (result && previousBuiltInstances)
 			previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
 		m_buildInstances = previousBuiltInstances;
+		m_adHocDepth--;
 	}
 
 	return result;
@@ -928,48 +943,6 @@ bool PipelineBuilder::getInstancesFromCache(IPipelineCache* cache, const Pipelin
 	stream->close();
 	return result;
 }
-
-//void PipelineBuilder::buildThread(
-//	const PipelineDependencySet* dependencySet,
-//	Thread* controlThread,
-//	int32_t cpuCore
-//)
-//{
-//	while (!controlThread->stopped())
-//	{
-//		WorkEntry we;
-//		{
-//			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
-//			if (m_workSetIndex >= m_workSet.size())
-//				break;
-//			we = m_workSet[m_workSetIndex];
-//			m_workSetIndex++;
-//		}
-//
-//		if (m_listener)
-//			m_listener->beginBuild(
-//				m_progress,
-//				m_progressEnd,
-//				we.dependency
-//			);
-//
-//		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
-//		if (result == BrSucceeded || result == BrSucceededWithWarnings)
-//			m_succeeded++;
-//		else
-//			m_failed++;
-//
-//		if (m_listener)
-//			m_listener->endBuild(
-//				m_progress,
-//				m_progressEnd,
-//				we.dependency,
-//				result
-//			);
-//
-//		m_progress++;
-//	}
-//}
 
 	}
 }

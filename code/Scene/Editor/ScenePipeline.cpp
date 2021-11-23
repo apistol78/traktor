@@ -235,7 +235,7 @@ bool ScenePipeline::buildOutput(
 				for (const auto& assetEntityData : layerGroupData->getEntityData())
 				{
 					Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(
-						pipelineBuilder->buildOutput(sourceInstance, assetEntityData)
+						pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
 					);
 					if (outputEntityData)
 						groupComponentData->addEntityData(outputEntityData);
@@ -252,7 +252,9 @@ bool ScenePipeline::buildOutput(
 	groupEntityData->setComponent(groupComponentData);
 
 	// Build controller data.
-	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sourceInstance, sceneAsset->getControllerData()));
+	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(
+		pipelineBuilder->buildProduct(sourceInstance, sceneAsset->getControllerData())
+	);
 
 	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();

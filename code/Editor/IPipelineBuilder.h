@@ -79,7 +79,7 @@ public:
 	 * \param buildParams Optional build parameters.
 	 * \return Output instance.
 	 */
-	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
+	virtual Ref< ISerializable > buildProduct(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
 
 	/*! Build ad-hoc output instance from source asset. */
 	virtual bool buildAdHocOutput(

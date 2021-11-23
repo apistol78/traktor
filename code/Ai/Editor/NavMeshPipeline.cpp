@@ -146,14 +146,14 @@ bool NavMeshPipeline::buildOutput(
 	Ref< const ISerializable > sourceData = pipelineBuilder->getObjectReadOnly(asset->m_source);
 	if (!sourceData)
 	{
-		log::error << L"NavMesh pipeline failed; unable to read source data" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to read source data." << Endl;
 		return false;
 	}
 
-	sourceData = pipelineBuilder->buildOutput(sourceInstance, sourceData);
+	sourceData = pipelineBuilder->buildProduct(sourceInstance, sourceData);
 	if (!sourceData)
 	{
-		log::error << L"NavMesh pipeline failed; unable to pipeline source data" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to pipeline source data." << Endl;
 		return false;
 	}
 
@@ -222,7 +222,7 @@ bool NavMeshPipeline::buildOutput(
 		navModelsTriangleCount += navModel->getPolygonCount();
 	}
 
-	log::info << L"\t" << navModelsTriangleCount << L" triangle(s) loaded" << Endl;
+	log::info << L"\t" << navModelsTriangleCount << L" triangle(s) loaded." << Endl;
 	log::info << L"Generating navigation mesh..." << Endl;
 
 	BuildContext ctx;
@@ -248,18 +248,18 @@ bool NavMeshPipeline::buildOutput(
 
 	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
-	log::info << L"NavMesh heightfield size " << cfg.width << L" * " << cfg.height << Endl;
+	log::info << L"NavMesh heightfield size " << cfg.width << L" * " << cfg.height << L"." << Endl;
 
 	rcHeightfield* solid = rcAllocHeightfield();
 	if (!solid)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast heightfield" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate Recast heightfield." << Endl;
 		return false;
 	}
 
 	if (!rcCreateHeightfield(&ctx, *solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
 	{
-		log::error << L"NavMesh pipeline failed; unable to create Recast heightfield" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to create Recast heightfield." << Endl;
 		return false;
 	}
 
@@ -269,7 +269,7 @@ bool NavMeshPipeline::buildOutput(
 	AutoArrayPtr< uint8_t > triAreas(new uint8_t [navModelsTriangleCount]);
 	if (!triAreas.c_ptr())
 	{
-		log::error << L"NavMesh pipeline failed; unable to memory" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate memory." << Endl;
 		return false;
 	}
 
@@ -349,13 +349,13 @@ bool NavMeshPipeline::buildOutput(
 	rcCompactHeightfield* chf = rcAllocCompactHeightfield();
 	if (!chf)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast compact heightfield" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate Recast compact heightfield." << Endl;
 		return false;
 	}
 
 	if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid, *chf))
 	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast compact heightfield" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to build Recast compact heightfield." << Endl;
 		return false;
 	}
 
@@ -365,7 +365,7 @@ bool NavMeshPipeline::buildOutput(
 	// Erode the walkable area by agent radius.
 	if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf))
 	{
-		log::error << L"NavMesh pipeline failed; unable to erode Recast walkable area" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to erode Recast walkable area." << Endl;
 		return false;
 	}
 
@@ -381,7 +381,7 @@ bool NavMeshPipeline::buildOutput(
 		// Monotone partitioning does not need distance field.
 		if (!rcBuildRegionsMonotone(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
 		{
-			log::error << L"NavMesh pipeline failed; unable to build region monotones" << Endl;
+			log::error << L"NavMesh pipeline failed; unable to build region monotones." << Endl;
 			return false;
 		}
 	}
@@ -390,14 +390,14 @@ bool NavMeshPipeline::buildOutput(
 		// Prepare for region partitioning, by calculating distance field along the walkable surface.
 		if (!rcBuildDistanceField(&ctx, *chf))
 		{
-			log::error << L"NavMesh pipeline failed; unable to build distance field" << Endl;
+			log::error << L"NavMesh pipeline failed; unable to build distance field." << Endl;
 			return false;
 		}
 
 		// Partition the walkable surface into simple regions without holes.
 		if (!rcBuildRegions(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
 		{
-			log::error << L"NavMesh pipeline failed; unable to build regions" << Endl;
+			log::error << L"NavMesh pipeline failed; unable to build regions." << Endl;
 			return false;
 		}
 	}
@@ -410,13 +410,13 @@ bool NavMeshPipeline::buildOutput(
 	rcContourSet* cset = rcAllocContourSet();
 	if (!cset)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast contour set" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate Recast contour set." << Endl;
 		return false;
 	}
 
 	if (!rcBuildContours(&ctx, *chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *cset))
 	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast contours" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to build Recast contours." << Endl;
 		return false;
 	}
 
@@ -428,13 +428,13 @@ bool NavMeshPipeline::buildOutput(
 	rcPolyMesh* pmesh = rcAllocPolyMesh();
 	if (!pmesh)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon mesh" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon mesh." << Endl;
 		return false;
 	}
 
 	if (!rcBuildPolyMesh(&ctx, *cset, cfg.maxVertsPerPoly, *pmesh))
 	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast polygon mesh" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to build Recast polygon mesh." << Endl;
 		return false;
 	}
 
@@ -445,13 +445,13 @@ bool NavMeshPipeline::buildOutput(
 	rcPolyMeshDetail* dmesh = rcAllocPolyMeshDetail();
 	if (!dmesh)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon detail mesh" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon detail mesh." << Endl;
 		return false;
 	}
 
 	if (!rcBuildPolyMeshDetail(&ctx, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh))
 	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast polygon detail mesh" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to build Recast polygon detail mesh." << Endl;
 		return false;
 	}
 
@@ -499,7 +499,7 @@ bool NavMeshPipeline::buildOutput(
 	int32_t navDataSize = 0;
 	if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 	{
-		log::error << L"NavMesh pipeline failed; unable to create Detour navigation mesh data" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to create Detour navigation mesh data." << Endl;
 		return false;
 	}
 
@@ -512,7 +512,7 @@ bool NavMeshPipeline::buildOutput(
 	);
 	if (!outputInstance)
 	{
-		log::error << L"NavMesh pipeline failed; unable to create output instance" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to create output instance." << Endl;
 		return false;
 	}
 
@@ -521,7 +521,7 @@ bool NavMeshPipeline::buildOutput(
 	Ref< IStream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"NavMesh pipeline failed; unable to create data stream" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to create data stream." << Endl;
 		outputInstance->revert();
 		return false;
 	}
@@ -533,7 +533,7 @@ bool NavMeshPipeline::buildOutput(
 
 	if (stream->write(navData, navDataSize) != navDataSize)
 	{
-		log::error << L"NavMesh pipeline failed; unable to write to data stream" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to write to data stream." << Endl;
 		outputInstance->revert();
 		return false;
 	}
@@ -574,7 +574,7 @@ bool NavMeshPipeline::buildOutput(
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"NavMesh pipeline failed; unable to commit output instance" << Endl;
+		log::error << L"NavMesh pipeline failed; unable to commit output instance." << Endl;
 		return false;
 	}
 

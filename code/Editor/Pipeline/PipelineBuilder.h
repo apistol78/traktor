@@ -56,7 +56,7 @@ public:
 
 	virtual bool build(const PipelineDependencySet* dependencySet, bool rebuild) override final;
 
-	virtual Ref< ISerializable > buildOutput(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams) override final;
+	virtual Ref< ISerializable > buildProduct(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams) override final;
 
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams) override final;
 
@@ -103,6 +103,7 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	RefArray< db::Instance >* m_buildInstances;
+	int32_t m_adHocDepth;
 	int32_t m_progressEnd;
 	int32_t m_progress;
 	int32_t m_succeeded;
