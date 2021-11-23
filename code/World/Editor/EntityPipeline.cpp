@@ -129,7 +129,7 @@ bool EntityPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< ISerializable > outputAsset = pipelineBuilder->buildOutput(sourceInstance, sourceAsset, buildParams);
+	Ref< ISerializable > outputAsset = pipelineBuilder->buildProduct(sourceInstance, sourceAsset, buildParams);
 	if (!outputAsset)
 		return false;
 
@@ -193,17 +193,17 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 		if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
 			// Build entity trough pipeline; replace entity with product.
-			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityData));
+			objectMember->set(pipelineBuilder->buildProduct(sourceInstance, entityData));
 		}
 		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
 			// Build component trough pipeline; replace component with product.
-			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityComponentData, ownerEntityData));
+			objectMember->set(pipelineBuilder->buildProduct(sourceInstance, entityComponentData, ownerEntityData));
 		}
 		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
 			// Build event trough pipeline; replace event with product.
-			objectMember->set(pipelineBuilder->buildOutput(sourceInstance, entityEventData, ownerEntityData));
+			objectMember->set(pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData));
 		}
 		else if (objectMember->get())
 		{
