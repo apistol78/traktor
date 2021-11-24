@@ -23,7 +23,9 @@ class T_DLLCLASS EvtInstanceCreated : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceCreated(const std::wstring& groupPath = L"", const Guid& instanceGuid = Guid());
+	EvtInstanceCreated() = default;
+
+	explicit EvtInstanceCreated(const std::wstring& groupPath, const Guid& instanceGuid);
 
 	/*! Path to group which contain new instance.
 	 *

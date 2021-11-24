@@ -23,7 +23,7 @@ class T_DLLCLASS Text : public Node
 	T_RTTI_CLASS;
 
 public:
-	Text(const std::wstring& text);
+	explicit Text(const std::wstring& text);
 
 	virtual std::wstring getName() const override final;
 

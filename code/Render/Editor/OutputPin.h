@@ -26,7 +26,7 @@ class T_DLLCLASS OutputPin
 public:
 	OutputPin() = default;
 
-	OutputPin(Node* node, const Guid& id, const std::wstring& name);
+	explicit OutputPin(Node* node, const Guid& id, const std::wstring& name);
 
 	Node* getNode() const;
 

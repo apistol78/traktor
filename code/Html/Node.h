@@ -28,8 +28,6 @@ class T_DLLCLASS Node : public Object
 	T_RTTI_CLASS;
 
 public:
-	Node();
-
 	virtual std::wstring getName() const;
 
 	virtual std::wstring getValue() const;
@@ -53,8 +51,8 @@ public:
 	virtual void toString(OutputStream& os) const;
 
 private:
-	Node* m_parent;
-	Node* m_previousSibling;
+	Node* m_parent = nullptr;
+	Node* m_previousSibling = nullptr;
 	Ref< Node > m_nextSibling;
 	Ref< Node > m_firstChild;
 	Ref< Node > m_lastChild;

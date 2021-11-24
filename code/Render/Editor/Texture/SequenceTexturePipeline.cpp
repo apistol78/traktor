@@ -26,9 +26,7 @@ bool SequenceTexturePipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet SequenceTexturePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SequenceTextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< SequenceTextureAsset >();
 }
 
 bool SequenceTexturePipeline::shouldCache() const
@@ -44,7 +42,7 @@ bool SequenceTexturePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const SequenceTextureAsset* asset = checked_type_cast< const SequenceTextureAsset* >(sourceAsset);
+	const SequenceTextureAsset* asset = mandatory_non_null_type_cast< const SequenceTextureAsset* >(sourceAsset);
 
 	for (const auto& p : asset->m_fileNames)
 		pipelineDepends->addDependency(Path(m_assetPath), p.getOriginal());
@@ -67,7 +65,7 @@ bool SequenceTexturePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const SequenceTextureAsset* asset = checked_type_cast< const SequenceTextureAsset* >(sourceAsset);
+	const SequenceTextureAsset* asset = mandatory_non_null_type_cast< const SequenceTextureAsset* >(sourceAsset);
 
 	Ref< SequenceTextureResource > resource = new SequenceTextureResource();
 	resource->m_rate = asset->m_rate;

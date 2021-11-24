@@ -7,6 +7,9 @@ namespace traktor
 	namespace render
 	{
 
+/*! PVRTC texture compressor.
+ * \ingroup Render
+ */
 class PvrtcCompressor : public ICompressor
 {
 	T_RTTI_CLASS;

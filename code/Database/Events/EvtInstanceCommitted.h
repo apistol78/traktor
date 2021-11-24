@@ -23,7 +23,9 @@ class T_DLLCLASS EvtInstanceCommitted : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceCommitted(const Guid& instanceGuid = Guid());
+	EvtInstanceCommitted() = default;
+
+	explicit EvtInstanceCommitted(const Guid& instanceGuid);
 };
 
 	}

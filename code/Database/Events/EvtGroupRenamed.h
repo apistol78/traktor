@@ -23,9 +23,9 @@ class T_DLLCLASS EvtGroupRenamed : public IEvent
 	T_RTTI_CLASS;
 
 public:
-	EvtGroupRenamed();
+	EvtGroupRenamed() = default;
 
-	EvtGroupRenamed(const std::wstring& name, const std::wstring& previousPath);
+	explicit EvtGroupRenamed(const std::wstring& name, const std::wstring& previousPath);
 
 	/*! New group name.
 	 *

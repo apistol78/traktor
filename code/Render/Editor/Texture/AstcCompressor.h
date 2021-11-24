@@ -15,6 +15,9 @@ namespace traktor
 	namespace render
 	{
 
+/*! ASTC texture compressor.
+ * \ingroup Render
+ */
 class T_DLLCLASS AstcCompressor : public ICompressor
 {
 	T_RTTI_CLASS;

@@ -23,7 +23,7 @@ class T_DLLCLASS Comment : public Node
 	T_RTTI_CLASS;
 
 public:
-	Comment(const std::wstring& text);
+	explicit Comment(const std::wstring& text);
 
 	virtual std::wstring getName() const override final;
 

@@ -15,6 +15,9 @@ namespace traktor
 	namespace render
 	{
 
+/*! Raw texture compressor.
+ * \ingroup Render
+ */
 class T_DLLCLASS UnCompressor : public ICompressor
 {
 	T_RTTI_CLASS;

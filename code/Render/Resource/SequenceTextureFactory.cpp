@@ -30,18 +30,18 @@ Ref< Object > SequenceTextureFactory::create(resource::IResourceManager* resourc
 {
 	Ref< SequenceTextureResource > resource = instance->getObject< SequenceTextureResource >();
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< SequenceTexture > sequenceTexture = new SequenceTexture();
 	sequenceTexture->m_rate = resource->m_rate;
 
-	for (std::list< resource::Id< ITexture > >::const_iterator i = resource->m_textures.begin(); i != resource->m_textures.end(); ++i)
+	for (const auto& rt : resource->m_textures)
 	{
 		resource::Proxy< ITexture > texture;
-		if (resourceManager->bind(*i, texture))
+		if (resourceManager->bind(rt, texture))
 			sequenceTexture->m_textures.push_back(texture);
 		else
-			return 0;
+			return nullptr;
 	}
 
 	return sequenceTexture;

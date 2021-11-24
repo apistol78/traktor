@@ -27,15 +27,13 @@ class T_DLLCLASS SequenceTextureResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	SequenceTextureResource();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class SequenceTexturePipeline;
 	friend class SequenceTextureFactory;
 
-	float m_rate;
+	float m_rate = 0.0f;
 	std::list< resource::Id< ITexture > > m_textures;
 };
 
