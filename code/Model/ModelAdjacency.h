@@ -27,18 +27,18 @@ class T_DLLCLASS ModelAdjacency : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum Mode
+	enum class Mode
 	{
-		MdByVertex,
-		MdByPosition,
-		MdByTexCoord
+		ByVertex,
+		ByPosition,
+		ByTexCoord
 	};
 
 	typedef StaticVector< uint32_t, 8 > share_vector_t;
 
-	ModelAdjacency(const Model* model, Mode mode, uint32_t channel = 0);
+	explicit ModelAdjacency(const Model* model, Mode mode, uint32_t channel = 0);
 
-	ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode, uint32_t channel = 0);
+	explicit ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode, uint32_t channel = 0);
 
 	/*! Insert a new polygon into adjacency structure. */
 	void add(uint32_t polygon);

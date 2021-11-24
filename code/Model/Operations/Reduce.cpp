@@ -272,7 +272,7 @@ bool Reduce::apply(Model& model) const
 	// Model must be triangulated.
 	Triangulate().apply(model);
 
-	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
+	ModelAdjacency adjacency(&model, ModelAdjacency::Mode::ByPosition);
 	AlignedVector< Polygon >& polygons = model.getPolygons();
 
 	// Calculate triangle errors.

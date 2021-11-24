@@ -43,7 +43,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	}
 
 	// Build model adjacency information.
-	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
+	ModelAdjacency adjacency(&model, ModelAdjacency::Mode::ByPosition);
 	ModelAdjacency::share_vector_t sharedEdges;
 	AlignedVector< uint32_t > removeIndices;
 

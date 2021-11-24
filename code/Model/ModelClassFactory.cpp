@@ -280,9 +280,9 @@ void ModelClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
     registrar->registerClass(classModel);
 
     auto classModelAdjacency = new AutoRuntimeClass< ModelAdjacency >();
-    classModelAdjacency->addConstant("MdByVertex", Any::fromInt32(ModelAdjacency::MdByVertex));
-	classModelAdjacency->addConstant("MdByPosition", Any::fromInt32(ModelAdjacency::MdByPosition));
-	classModelAdjacency->addConstant("MdByTexCoord", Any::fromInt32(ModelAdjacency::MdByTexCoord));
+    classModelAdjacency->addConstant("ByVertex", Any::fromInt32((int32_t)ModelAdjacency::Mode::ByVertex));
+	classModelAdjacency->addConstant("ByPosition", Any::fromInt32((int32_t)ModelAdjacency::Mode::ByPosition));
+	classModelAdjacency->addConstant("ByTexCoord", Any::fromInt32((int32_t)ModelAdjacency::Mode::ByTexCoord));
     classModelAdjacency->addConstructor< const Model*, int32_t >(&ModelAdjacency_ctor_2);
     classModelAdjacency->addConstructor< const Model*, int32_t, uint32_t >(&ModelAdjacency_ctor_3);
     classModelAdjacency->addProperty("edgeCount", &ModelAdjacency::getEdgeCount);

@@ -36,12 +36,12 @@ void ModelAdjacency::add(uint32_t polygon)
 		e.index = i;
 		m_edges.push_back(e);
 
-		uint32_t edge = uint32_t(m_edges.size()) - 1;
+		const uint32_t edge = uint32_t(m_edges.size()) - 1;
 
 		uint32_t leftIndex0, leftIndex1;
 		getEdgeIndices(edge, leftIndex0, leftIndex1);
 
-		for (uint32_t j = 0; j < uint32_t(m_edges.size()); ++j)
+		for (uint32_t j = 0; j < (uint32_t)m_edges.size(); ++j)
 		{
 			if (edge == j)
 				continue;
@@ -107,9 +107,9 @@ uint32_t ModelAdjacency::getEdge(uint32_t polygon, uint32_t polygonEdge) const
 
 void ModelAdjacency::getEnteringEdges(uint32_t vertexId, share_vector_t& outEnteringEdges) const
 {
-	if (m_mode == MdByPosition)
+	if (m_mode == Mode::ByPosition)
 		vertexId = m_model->getVertex(vertexId).getPosition();
-	else if (m_mode == MdByTexCoord)
+	else if (m_mode == Mode::ByTexCoord)
 		vertexId = m_model->getVertex(vertexId).getTexCoord(m_channel);
 
 	outEnteringEdges.resize(0);
@@ -118,22 +118,22 @@ void ModelAdjacency::getEnteringEdges(uint32_t vertexId, share_vector_t& outEnte
 		const Edge& edge = m_edges[i];
 
 		const Polygon& polygon = m_model->getPolygon(edge.polygon);
-		uint32_t vertexId1 = polygon.getVertex((edge.index + 1) % polygon.getVertexCount());
+		const uint32_t vertexId1 = polygon.getVertex((edge.index + 1) % polygon.getVertexCount());
 
-		if (m_mode == MdByVertex)
+		if (m_mode == Mode::ByVertex)
 		{
 			if (vertexId1 == vertexId)
 				outEnteringEdges.push_back(i);
 		}
-		else if (m_mode == MdByPosition)
+		else if (m_mode == Mode::ByPosition)
 		{
-			uint32_t positionId1 = m_model->getVertex(vertexId1).getPosition();
+			const uint32_t positionId1 = m_model->getVertex(vertexId1).getPosition();
 			if (positionId1 == vertexId)
 				outEnteringEdges.push_back(i);
 		}
-		else if (m_mode == MdByTexCoord)
+		else if (m_mode == Mode::ByTexCoord)
 		{
-			uint32_t texCoordId1 = m_model->getVertex(vertexId1).getTexCoord(m_channel);
+			const uint32_t texCoordId1 = m_model->getVertex(vertexId1).getTexCoord(m_channel);
 			if (texCoordId1 == vertexId)
 				outEnteringEdges.push_back(i);
 		}
@@ -142,9 +142,9 @@ void ModelAdjacency::getEnteringEdges(uint32_t vertexId, share_vector_t& outEnte
 
 void ModelAdjacency::getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavingEdges) const
 {
-	if (m_mode == MdByPosition)
+	if (m_mode == Mode::ByPosition)
 		vertexId = m_model->getVertex(vertexId).getPosition();
-	else if (m_mode == MdByTexCoord)
+	else if (m_mode == Mode::ByTexCoord)
 		vertexId = m_model->getVertex(vertexId).getTexCoord(m_channel);
 
 	outLeavingEdges.resize(0);
@@ -155,18 +155,18 @@ void ModelAdjacency::getLeavingEdges(uint32_t vertexId, share_vector_t& outLeavi
 		const Polygon& polygon = m_model->getPolygon(edge.polygon);
 		uint32_t vertexId0 = polygon.getVertex(edge.index);
 
-		if (m_mode == MdByVertex)
+		if (m_mode == Mode::ByVertex)
 		{
 			if (vertexId0 == vertexId)
 				outLeavingEdges.push_back(i);
 		}
-		else if (m_mode == MdByPosition)
+		else if (m_mode == Mode::ByPosition)
 		{
 			uint32_t positionId0 = m_model->getVertex(vertexId0).getPosition();
 			if (positionId0 == vertexId)
 				outLeavingEdges.push_back(i);
 		}
-		else if (m_mode == MdByTexCoord)
+		else if (m_mode == Mode::ByTexCoord)
 		{
 			uint32_t texCoordId0 = m_model->getVertex(vertexId0).getTexCoord(m_channel);
 			if (texCoordId0 == vertexId)
@@ -241,14 +241,14 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 	switch (m_mode)
 	{
 	default:
-	case MdByVertex:
+	case Mode::ByVertex:
 		{
 			outIndex0 = vertexId0;
 			outIndex1 = vertexId1;
 		}
 		break;
 
-	case MdByPosition:
+	case Mode::ByPosition:
 		{
 			const Vertex& vertex0 = m_model->getVertex(vertexId0);
 			const Vertex& vertex1 = m_model->getVertex(vertexId1);
@@ -257,7 +257,7 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 		}
 		break;
 
-	case MdByTexCoord:
+	case Mode::ByTexCoord:
 		{
 			const Vertex& vertex0 = m_model->getVertex(vertexId0);
 			const Vertex& vertex1 = m_model->getVertex(vertexId1);
