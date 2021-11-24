@@ -70,7 +70,7 @@ bool MaterialPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > MaterialPipeline::buildOutput(
+Ref< ISerializable > MaterialPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

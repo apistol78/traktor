@@ -73,7 +73,7 @@ bool AssetsPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > AssetsPipeline::buildOutput(
+Ref< ISerializable > AssetsPipeline::buildProduct(
 	IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

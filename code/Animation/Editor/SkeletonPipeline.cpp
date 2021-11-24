@@ -126,7 +126,7 @@ bool SkeletonPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > SkeletonPipeline::buildOutput(
+Ref< ISerializable > SkeletonPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

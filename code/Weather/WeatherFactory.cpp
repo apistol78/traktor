@@ -31,11 +31,11 @@ const TypeInfoSet WeatherFactory::getEntityEventTypes() const
 
 const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< CloudComponentData >();
-	typeSet.insert< PrecipitationComponentData >();
-	typeSet.insert< SkyComponentData >();
-	return typeSet;
+	return makeTypeInfoSet<
+		CloudComponentData,
+		PrecipitationComponentData,
+		SkyComponentData
+	>();
 }
 
 Ref< world::Entity > WeatherFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const

@@ -299,7 +299,7 @@ bool ScenePipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ScenePipeline::buildOutput(
+Ref< ISerializable > ScenePipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

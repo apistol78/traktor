@@ -145,7 +145,7 @@ bool EntityPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > EntityPipeline::buildOutput(
+Ref< ISerializable > EntityPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

@@ -198,7 +198,7 @@ bool IrradianceGridPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > IrradianceGridPipeline::buildOutput(
+Ref< ISerializable > IrradianceGridPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

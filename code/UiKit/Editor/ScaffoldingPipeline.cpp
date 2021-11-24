@@ -62,7 +62,7 @@ bool ScaffoldingPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ScaffoldingPipeline::buildOutput(
+Ref< ISerializable > ScaffoldingPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

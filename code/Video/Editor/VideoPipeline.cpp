@@ -121,7 +121,7 @@ bool VideoPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > VideoPipeline::buildOutput(
+Ref< ISerializable > VideoPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

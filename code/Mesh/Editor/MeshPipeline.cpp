@@ -781,7 +781,7 @@ bool MeshPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > MeshPipeline::buildOutput(
+Ref< ISerializable > MeshPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

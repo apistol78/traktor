@@ -159,7 +159,7 @@ bool PointSetPipeline::buildOutput(
 	return instance->commit();
 }
 
-Ref< ISerializable > PointSetPipeline::buildOutput(
+Ref< ISerializable > PointSetPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

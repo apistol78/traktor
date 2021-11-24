@@ -50,7 +50,7 @@ public:
 		uint32_t reason
 	) const override;
 
-	virtual Ref< ISerializable > buildOutput(
+	virtual Ref< ISerializable > buildProduct(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

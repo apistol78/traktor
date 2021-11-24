@@ -739,7 +739,7 @@ bool Pipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > Pipeline::buildOutput(
+Ref< ISerializable > Pipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

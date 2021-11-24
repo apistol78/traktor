@@ -97,7 +97,7 @@ bool DefaultPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > DefaultPipeline::buildOutput(
+Ref< ISerializable > DefaultPipeline::buildProduct(
 	IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
