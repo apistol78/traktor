@@ -4,6 +4,13 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Widget;
+
+	}
+
 	namespace sb
 	{
 

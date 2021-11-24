@@ -1,8 +1,7 @@
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/IStream.h>
-#include <Core/Misc/String.h>
-#include <Core/Serialization/DeepClone.h>
-#include <Xml/XmlSerializer.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/ExternalDependency.h"
@@ -11,6 +10,7 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Editor/App/ExtractSolutionDialog.h"
 #include "SolutionBuilder/Editor/App/ExtractSolutionTool.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {

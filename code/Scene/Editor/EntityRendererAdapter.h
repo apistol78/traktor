@@ -1,8 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <Core/Ref.h>
-#include <World/IEntityRenderer.h>
+#include "Core/Ref.h"
+#include "World/IEntityRenderer.h"
 
 namespace traktor
 {

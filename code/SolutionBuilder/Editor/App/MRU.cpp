@@ -1,8 +1,8 @@
-#include <Core/Io/FileSystem.h>
-#include <Core/Serialization/ISerializer.h>
-#include <Core/Serialization/MemberAggregate.h>
-#include <Core/Serialization/MemberStl.h>
-#include <Core/Misc/String.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAggregate.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Core/Misc/String.h"
 #include "SolutionBuilder/Editor/App/MRU.h"
 
 namespace traktor

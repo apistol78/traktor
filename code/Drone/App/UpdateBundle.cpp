@@ -1,7 +1,7 @@
-#include <Core/Serialization/ISerializer.h>
-#include <Core/Serialization/Member.h>
-#include <Core/Serialization/MemberStl.h>
-#include <Core/Serialization/MemberComposite.h>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Drone/App/UpdateBundle.h"
 
 namespace traktor

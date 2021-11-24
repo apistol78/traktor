@@ -1,17 +1,17 @@
-#include <Ui/MenuItem.h>
-#include <Ui/MessageBox.h>
-#include <Ui/BackgroundWorkerDialog.h>
-#include <Ui/BackgroundWorkerStatus.h>
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/BufferedStream.h>
-#include <Core/Thread/Thread.h>
-#include <Core/Thread/ThreadManager.h>
-#include <Core/Misc/Split.h>
-#include <Net/Network.h>
-#include <Net/UrlConnection.h>
-#include <Xml/XmlDeserializer.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/BufferedStream.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Misc/Split.h"
 #include "Drone/App/DroneToolUpdate.h"
 #include "Drone/App/UpdateBundle.h"
+#include "Net/Network.h"
+#include "Net/UrlConnection.h"
+#include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
+#include "Ui/BackgroundWorkerDialog.h"
+#include "Ui/BackgroundWorkerStatus.h"
+#include "Xml/XmlDeserializer.h"
 
 #undef MessageBox
 

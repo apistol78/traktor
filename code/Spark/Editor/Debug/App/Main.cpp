@@ -2,22 +2,22 @@
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #endif
-#include <Core/Io/FileSystem.h>
-#include <Core/Misc/CommandLine.h>
-#include <Net/Network.h>
-#include <Ui/Application.h>
-#include <Ui/StyleSheet.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Misc/CommandLine.h"
+#include "Net/Network.h"
+#include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #if defined(_WIN32)
-#	include <Ui/Win32/EventLoopWin32.h>
-#	include <Ui/Win32/WidgetFactoryWin32.h>
+#	include "Ui/Win32/EventLoopWin32.h"
+#	include "Ui/Win32/WidgetFactoryWin32.h"
 #elif defined(__APPLE__)
-#	include <Ui/Cocoa/EventLoopCocoa.h>
-#	include <Ui/Cocoa/WidgetFactoryCocoa.h>
+#	include "Ui/Cocoa/EventLoopCocoa.h"
+#	include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #else
-#	include <Ui/Wx/EventLoopWx.h>
-#	include <Ui/Wx/WidgetFactoryWx.h>
+#	include "Ui/Wx/EventLoopWx.h"
+#	include "Ui/Wx/WidgetFactoryWx.h"
 #endif
-#include <Xml/XmlDeserializer.h>
+#include "Xml/XmlDeserializer.h"
 #include "../MainForm.h"
 
 using namespace traktor;
