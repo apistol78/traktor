@@ -30,8 +30,8 @@ class AvlTree
 		ItemType item;
 
 		Node(const KeyType& key, const ItemType& item)
-		:	left(0)
-		,	right(0)
+		:	left(nullptr)
+		,	right(nullptr)
 		,	key(key)
 		,	item(item)
 		{
@@ -46,7 +46,7 @@ class AvlTree
 	};
 
 public:
-	struct Iterator
+	struct iterator
 	{
 		Node* node;
 
@@ -65,19 +65,19 @@ public:
 			return &node->item;
 		}
 
-		bool operator == (const Iterator& i) const
+		bool operator == (const iterator& i) const
 		{
 			return bool(node == i.node);
 		}
 
-		bool operator != (const Iterator& i) const
+		bool operator != (const iterator& i) const
 		{
 			return bool(node != i.node);
 		}
 	};
 
-	AvlTree() :
-		m_root(0)
+	AvlTree()
+	:	m_root(nullptr)
 	{
 	}
 
@@ -86,24 +86,24 @@ public:
 		m_root = m_root ? _insert(m_root, key, item) : new Node(key, item);
 	}
 
-	Iterator find(const KeyType& key)
+	iterator find(const KeyType& key)
 	{
-		return Iterator(_find(m_root, key));
+		return iterator(_find(m_root, key));
 	}
 
-	void erase(Iterator& iter)
+	void erase(iterator& iter)
 	{
 	}
 
-	Iterator end()
+	iterator end()
 	{
-		return Iterator(0);
+		return iterator(nullptr);
 	}
 
 private:
 	Node* m_root;
 
-	Node* _insert(Node* node, const KeyType& key, const ItemType& item)
+	Node* _insert(Node* node, const KeyType& key, const ItemType& item) const
 	{
 		int cmp = KeyCompare::compare(key, node->key);
 		if (cmp < 0)
@@ -133,7 +133,7 @@ private:
 		return node;
 	}
 
-	Node* _balance(Node* node)
+	Node* _balance(Node* node) const
 	{
 		int ld = node->left ? node->left->depth() : 0;
 		int rd = node->right ? node->right->depth() : 0;
@@ -195,7 +195,7 @@ private:
 		return node;
 	}
 
-	Node* _find(Node* node, const KeyType& key)
+	Node* _find(Node* node, const KeyType& key) const
 	{
 		if (node)
 		{

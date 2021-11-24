@@ -29,6 +29,9 @@ class IRenderSystem;
 	namespace weather
 	{
 
+/*! Weather entity factory.
+ * \ingroup Weather
+ */
 class T_DLLCLASS WeatherFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;

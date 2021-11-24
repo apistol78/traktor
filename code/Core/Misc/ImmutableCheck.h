@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/ISerializable.h"
+#if 0
+#	include "Core/Serialization/DeepHash.h"
+#	include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -26,12 +27,9 @@ private:
 	uint32_t m_hash;
 };
 
-#if 0
-#	define T_IMMUTABLE_CHECK(imm) \
-		T_ANONYMOUS_VAR(ImmutableCheck)(imm);
+}
+
+#	define T_IMMUTABLE_CHECK(imm) T_ANONYMOUS_VAR(ImmutableCheck)(imm);
 #else
 #	define T_IMMUTABLE_CHECK(imm)
 #endif
-
-}
-

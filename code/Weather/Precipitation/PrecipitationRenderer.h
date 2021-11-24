@@ -15,6 +15,9 @@ namespace traktor
 	namespace weather
 	{
 
+/*! Precipitation renderer.
+ * \ingroup Weather
+ */
 class T_DLLCLASS PrecipitationRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
