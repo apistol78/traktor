@@ -35,6 +35,9 @@ class IVertexLayout;
 	namespace weather
 	{
 
+/*! Sky background component.
+ * \ingroup Weather
+ */
 class T_DLLCLASS SkyComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;

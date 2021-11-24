@@ -19,10 +19,10 @@ void MemberType::serialize(ISerializer& s) const
 		if (!name.empty())
 		{
 			m_type = TypeInfo::find(name.c_str());
-			s.ensure(m_type != 0);
+			s.ensure(m_type != nullptr);
 		}
 		else
-			m_type = 0;
+			m_type = nullptr;
 	}
 	else	// Direction::Write
 	{

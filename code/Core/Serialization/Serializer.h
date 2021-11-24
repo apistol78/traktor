@@ -26,8 +26,6 @@ class T_DLLCLASS Serializer : public ISerializer
 public:
 	typedef StaticMap< const TypeInfo*, int32_t, 16 > dataVersionMap_t;
 
-	Serializer();
-
 	Ref< ISerializable > readObject();
 
 	bool writeObject(const ISerializable* o);
@@ -55,18 +53,13 @@ protected:
 private:
 	struct Version
 	{
-		int32_t v;
+		int32_t v = 0;
 		dataVersionMap_t dvm;
-
-		Version()
-		:	v(0)
-		{
-		}
 	};
 
 	AlignedVector< Version > m_versions;
-	uint32_t m_versionPointer;
-	bool m_failure;
+	uint32_t m_versionPointer = 0;
+	bool m_failure = false;
 };
 
 }

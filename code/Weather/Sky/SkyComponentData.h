@@ -34,6 +34,9 @@ class Shader;
 
 class SkyComponent;
 
+/*! Sky background component data.
+ * \ingroup Weather
+ */
 class T_DLLCLASS SkyComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;

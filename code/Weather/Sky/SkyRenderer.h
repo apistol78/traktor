@@ -15,6 +15,9 @@ namespace traktor
 	namespace weather
 	{
 
+/*! Sky background renderer.
+ * \ingroup Weather
+ */
 class T_DLLCLASS SkyRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;

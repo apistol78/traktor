@@ -5,12 +5,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, ISerializer);
 
-Serializer::Serializer()
-:	m_versionPointer(0)
-,	m_failure(false)
-{
-}
-
 Ref< ISerializable > Serializer::readObject()
 {
 	if (getDirection() != Direction::Read)

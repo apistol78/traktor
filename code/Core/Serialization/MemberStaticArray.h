@@ -12,7 +12,7 @@ template < typename ValueType, int ArraySize, typename ValueMember = Member< Val
 class MemberStaticArray : public MemberArray
 {
 public:
-	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const wchar_t** elementNames = 0)
+	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const wchar_t** elementNames = nullptr)
 	:	MemberArray(name, nullptr)
 	,	m_arr(arr)
 	,	m_elementNames(elementNames)
