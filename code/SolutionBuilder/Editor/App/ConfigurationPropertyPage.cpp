@@ -1,11 +1,11 @@
-#include <Core/Log/Log.h>
-#include <Ui/Application.h>
-#include <Ui/Static.h>
-#include <Ui/Tab.h>
-#include <Ui/TabPage.h>
-#include <Ui/TableLayout.h>
+#include "Core/Log/Log.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Editor/App/ConfigurationPropertyPage.h"
+#include "Ui/Application.h"
+#include "Ui/Static.h"
+#include "Ui/Tab.h"
+#include "Ui/TabPage.h"
+#include "Ui/TableLayout.h"
 
 namespace traktor
 {

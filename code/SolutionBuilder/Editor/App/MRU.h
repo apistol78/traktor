@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <Core/Serialization/ISerializable.h>
-#include <Core/Io/Path.h>
+#include "Core/Io/Path.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {

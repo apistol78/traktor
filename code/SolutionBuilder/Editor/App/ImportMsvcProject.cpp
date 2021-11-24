@@ -1,18 +1,18 @@
-#include <Ui/MessageBox.h>
-#include <Ui/FileDialog.h>
-#include <Xml/Document.h>
-#include <Xml/Element.h>
-#include <Xml/Attribute.h>
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/File.h>
-#include <Core/Misc/Split.h>
-#include <Core/Misc/String.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/File.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "ImportMsvcProject.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Filter.h"
 #include "SolutionBuilder/File.h"
+#include "Ui/MessageBox.h"
+#include "Ui/FileDialog.h"
+#include "Xml/Document.h"
+#include "Xml/Element.h"
+#include "Xml/Attribute.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Core/Serialization/ISerializable.h>
-#include <Net/Url.h>
+#include "Core/Serialization/ISerializable.h"
+#include "Net/Url.h"
 
 namespace traktor
 {

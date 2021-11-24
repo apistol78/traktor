@@ -1,17 +1,17 @@
 #pragma once
 
-#include <Core/Misc/CommandLine.h>
-#include <Core/Io/Path.h>
-#include <Ui/Form.h>
-#include <Ui/ShortcutTable.h>
-#include <Ui/Menu.h>
-#include <Ui/MenuItem.h>
-#include <Ui/ToolBar/ToolBar.h>
-#include <Ui/ToolBar/ToolBarButtonClickEvent.h>
-#include <Ui/TreeView/TreeView.h>
-#include <Ui/TreeView/TreeViewContentChangeEvent.h>
-#include <Ui/TreeView/TreeViewEditEvent.h>
-#include <Ui/TreeView/TreeViewItem.h>
+#include "Core/Misc/CommandLine.h"
+#include "Core/Io/Path.h"
+#include "Ui/Form.h"
+#include "Ui/ShortcutTable.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewContentChangeEvent.h"
+#include "Ui/TreeView/TreeViewEditEvent.h"
+#include "Ui/TreeView/TreeViewItem.h"
 
 namespace traktor
 {

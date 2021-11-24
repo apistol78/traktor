@@ -1,7 +1,7 @@
-#include <Core/Config.h>
-#include <Core/Misc/Split.h>
-#include <Core/Misc/String.h>
-#include <Core/Log/Log.h>
+#include "Core/Config.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
+#include "Core/Log/Log.h"
 #include "EditConfigurations.h"
 #include "ConfigurationsDialog.h"
 #include "SolutionBuilder/Solution.h"

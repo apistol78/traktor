@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/Object.h>
+#include "Core/Object.h"
 
 namespace traktor
 {
@@ -14,4 +14,3 @@ class CustomTool : public Object
 
 	}
 }
-

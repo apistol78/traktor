@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/Serialization/ISerializable.h>
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

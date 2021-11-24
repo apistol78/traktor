@@ -1,4 +1,4 @@
-#include <Core/Misc/String.h>
+#include "Core/Misc/String.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Project.h"

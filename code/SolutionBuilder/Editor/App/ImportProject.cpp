@@ -1,14 +1,14 @@
-#include <Ui/MessageBox.h>
-#include <Ui/FileDialog.h>
-#include <Xml/XmlDeserializer.h>
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/IStream.h>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "ImportProject.h"
 #include "ImportProjectDialog.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ExternalDependency.h"
+#include "Ui/MessageBox.h"
+#include "Ui/FileDialog.h"
+#include "Xml/XmlDeserializer.h"
 
 namespace traktor
 {
