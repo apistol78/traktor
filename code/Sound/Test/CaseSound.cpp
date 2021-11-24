@@ -5,12 +5,16 @@
 #include "Sound/ISoundBuffer.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Sound.h"
-#include "UnitTest/CaseSound.h"
+#include "Sound/Test/CaseSound.h"
 
 namespace traktor
 {
-	namespace
+	namespace sound
 	{
+		namespace test
+		{
+			namespace
+			{
 
 class TestAudioDriver : public RefCountImpl< sound::IAudioDriver >
 {
@@ -81,7 +85,9 @@ public:
 	}
 };
 
-	}
+			}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.test.CaseSound", CaseSound, traktor::test::Case)
 
 void CaseSound::run()
 {
@@ -102,8 +108,8 @@ void CaseSound::run()
 
 	TestSoundBuffer soundBuffer;
 
-	timer.start();
-	audioSystem.getChannel(0)->play(&soundBuffer, 0, 1.0f, 0.0f, 0.0f, false, 0);
+	timer.reset();
+	audioSystem.getChannel(0)->play(&soundBuffer, 0, 1.0f, false, 0);
 
 	signal.wait();
 
@@ -113,4 +119,6 @@ void CaseSound::run()
 	audioSystem.destroy();
 }
 
+		}
+	}
 }
