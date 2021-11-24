@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,6 +20,9 @@ namespace traktor
 class Node;
 class Edge;
 
+/*! ShaderGraph clipboard data container.
+ * \ingroup Render
+ */
 class T_DLLCLASS ShaderGraphEditorClipboardData : public ISerializable
 {
 	T_RTTI_CLASS;
