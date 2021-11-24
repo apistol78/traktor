@@ -5,9 +5,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_NET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -15,6 +15,9 @@ namespace traktor
 	namespace net
 	{
 
+/*! Local file connection.
+ * \ingroup Net
+ */
 class T_DLLCLASS FileConnection : public UrlConnection
 {
 	T_RTTI_CLASS;

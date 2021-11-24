@@ -8,7 +8,7 @@
 #if defined(T_RUNTIME_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
-	#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

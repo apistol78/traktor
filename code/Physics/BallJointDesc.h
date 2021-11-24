@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Physics/JointDesc.h"
 #include "Core/Math/Vector4.h"
+#include "Physics/JointDesc.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

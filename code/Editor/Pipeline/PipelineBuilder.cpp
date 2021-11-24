@@ -750,6 +750,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 	Timer timer;
 
+	// Build asset through pipeline, this might call back buildAdHoc or buildProduct.
+	// So it's safe to assume this is the outmost build thus we can utilize cache
+	// differently where each ad-hoc output is cached individually and referenced from
+	// this output cache.
 	m_profiler->begin(*dependency->pipelineType);
 	bool result = pipeline->buildOutput(
 		this,
