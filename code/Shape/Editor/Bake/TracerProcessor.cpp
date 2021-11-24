@@ -149,7 +149,7 @@ void seamFilter(const model::Model* model, uint32_t channel, drawing::Image* lig
 	const float edgeLimit = std::cos(deg2rad(45.0f));
 	const Vector2 imageSize(lightmap->getWidth() - 1, lightmap->getHeight() - 1);
 
-	model::ModelAdjacency adjacency(model, model::ModelAdjacency::MdByPosition);
+	model::ModelAdjacency adjacency(model, model::ModelAdjacency::Mode::ByPosition);
 	for (uint32_t i = 0; i < adjacency.getEdgeCount(); ++i)
 	{
 		// Get shared edges of this polygon's edge.

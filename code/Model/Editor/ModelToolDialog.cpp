@@ -1074,7 +1074,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			{
 				// Lazy create adjacency information as it's pretty costly.
 				if (!m_modelAdjacency)
-					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByPosition);
+					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::Mode::ByPosition);
 
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (uint32_t i = 0; i < (uint32_t)polygons.size(); ++i)
