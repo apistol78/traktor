@@ -106,7 +106,7 @@ void ColorSliderControl::eventMouseMove(MouseMoveEvent* event)
 void ColorSliderControl::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	Rect innerRect = getInnerRect();
+	const Rect innerRect = getInnerRect();
 
 	canvas.drawBitmap(
 		Point(0, 0),
@@ -115,7 +115,7 @@ void ColorSliderControl::eventPaint(PaintEvent* event)
 		m_gradientBitmap
 	);
 
-	int32_t y = dpi96(m_marker);
+	const int32_t y = dpi96(m_marker);
 
 	canvas.setBackground(Color4ub(0, 0, 0, 255));
 	canvas.fillRect(Rect(

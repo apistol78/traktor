@@ -65,15 +65,6 @@
 #	define T_UNALIGNED
 #endif
 
-// C++11 final support.
-#if defined(T_CXX11)
-#	define T_FINAL final
-#	define T_OVERRIDE override
-#else
-#	define T_FINAL
-#	define T_OVERRIDE
-#endif
-
 // C++11 delete method support.
 #if defined(T_CXX11)
 #	define T_NO_COPY_CLASS(NAME)				\

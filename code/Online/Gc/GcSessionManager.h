@@ -29,53 +29,53 @@ class T_DLLCLASS GcSessionManager : public ISessionManagerProvider
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const IGameConfiguration* configuration) T_OVERRIDE T_FINAL;
+	virtual bool create(const IGameConfiguration* configuration) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool update() T_OVERRIDE T_FINAL;
+	virtual bool update() override final;
 
-	virtual std::wstring getLanguageCode() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getLanguageCode() const override final;
 
-	virtual bool isConnected() const T_OVERRIDE T_FINAL;
+	virtual bool isConnected() const override final;
 
-	virtual bool requireFullScreen() const T_OVERRIDE T_FINAL;
+	virtual bool requireFullScreen() const override final;
 
-	virtual bool requireUserAttention() const T_OVERRIDE T_FINAL;
+	virtual bool requireUserAttention() const override final;
 
-	virtual bool haveDLC(const std::wstring& id) const T_OVERRIDE T_FINAL;
+	virtual bool haveDLC(const std::wstring& id) const override final;
 
-	virtual bool buyDLC(const std::wstring& id) const T_OVERRIDE T_FINAL;
+	virtual bool buyDLC(const std::wstring& id) const override final;
 
-	virtual bool navigateUrl(const net::Url& url) const T_OVERRIDE T_FINAL;
+	virtual bool navigateUrl(const net::Url& url) const override final;
 
-	virtual uint64_t getCurrentUserHandle() const T_OVERRIDE T_FINAL;
+	virtual uint64_t getCurrentUserHandle() const override final;
 
-	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const T_OVERRIDE T_FINAL;
+	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const override final;
 
-	virtual bool findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const T_OVERRIDE T_FINAL;
+	virtual bool findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const override final;
 
-	virtual bool haveP2PData() const T_OVERRIDE T_FINAL;
+	virtual bool haveP2PData() const override final;
 
-	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const T_OVERRIDE T_FINAL;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const override final;
 
-	virtual uint32_t getCurrentGameCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getCurrentGameCount() const override final;
 
-	virtual IAchievementsProvider* getAchievements() const T_OVERRIDE T_FINAL;
+	virtual IAchievementsProvider* getAchievements() const override final;
 
-	virtual ILeaderboardsProvider* getLeaderboards() const T_OVERRIDE T_FINAL;
+	virtual ILeaderboardsProvider* getLeaderboards() const override final;
 
-	virtual IMatchMakingProvider* getMatchMaking() const T_OVERRIDE T_FINAL;
+	virtual IMatchMakingProvider* getMatchMaking() const override final;
 
-	virtual ISaveDataProvider* getSaveData() const T_OVERRIDE T_FINAL;
+	virtual ISaveDataProvider* getSaveData() const override final;
 
-	virtual IStatisticsProvider* getStatistics() const T_OVERRIDE T_FINAL;
+	virtual IStatisticsProvider* getStatistics() const override final;
 
-	virtual IUserProvider* getUser() const T_OVERRIDE T_FINAL;
+	virtual IUserProvider* getUser() const override final;
 
-	virtual IVideoSharingProvider* getVideoSharing() const T_OVERRIDE T_FINAL;
+	virtual IVideoSharingProvider* getVideoSharing() const override final;
 
-	virtual IVoiceChatProvider* getVoiceChat() const T_OVERRIDE T_FINAL;
+	virtual IVoiceChatProvider* getVoiceChat() const override final;
 
 private:
 	Ref< GcAchievements > m_achievements;

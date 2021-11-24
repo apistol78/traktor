@@ -41,7 +41,7 @@ public:
 
 	int32_t getNote() const { return m_note; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	resource::Id< Sound > m_sound;

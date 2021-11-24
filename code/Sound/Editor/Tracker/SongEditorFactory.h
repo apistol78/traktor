@@ -20,13 +20,13 @@ class T_DLLCLASS SongEditorFactory : public editor::IEditorPageFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEditableTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getEditableTypes() const override final;
 
-	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const T_OVERRIDE T_FINAL;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const override final;
 
-	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const T_OVERRIDE T_FINAL;
+	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const override final;
 
-	virtual void getCommands(std::list< ui::Command >& outCommands) const T_OVERRIDE T_FINAL;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };

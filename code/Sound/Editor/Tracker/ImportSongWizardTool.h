@@ -20,11 +20,11 @@ class T_DLLCLASS ImportSongWizardTool : public editor::IWizardTool
 	T_RTTI_CLASS;
 
 public:
-	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getDescription() const override final;
 
-	virtual uint32_t getFlags() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getFlags() const override final;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) T_OVERRIDE T_FINAL;
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) override final;
 };
 
 	}

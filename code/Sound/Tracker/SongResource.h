@@ -33,9 +33,9 @@ public:
 		int32_t bpm
 	);
 
-	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const T_OVERRIDE T_FINAL;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< const PatternData > m_patterns;

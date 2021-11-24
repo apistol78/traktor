@@ -14,7 +14,7 @@ class UserWidgetX11 : public WidgetX11Impl< IUserWidget >
 public:
 	UserWidgetX11(Context* context, EventSubject* owner);
 
-	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
+	virtual bool create(IWidget* parent, int style) override final;
 };
 
 	}

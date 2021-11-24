@@ -13,15 +13,15 @@ class BitmapX11 : public ISystemBitmap
 public:
 	BitmapX11();
 
-	virtual bool create(uint32_t width, uint32_t height) T_OVERRIDE T_FINAL;
+	virtual bool create(uint32_t width, uint32_t height) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) T_OVERRIDE T_FINAL;
+	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) override final;
 
-	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
+	virtual Ref< drawing::Image > getImage() const override final;
 
-	virtual Size getSize() const T_OVERRIDE T_FINAL;
+	virtual Size getSize() const override final;
 
 	cairo_surface_t* getSurface() const { return m_surface; }
 

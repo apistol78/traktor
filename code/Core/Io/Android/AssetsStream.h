@@ -16,25 +16,25 @@ public:
 
 	virtual ~AssetsStream();
 
-	virtual void close() T_OVERRIDE T_FINAL;
+	virtual void close() override final;
 
-	virtual bool canRead() const T_OVERRIDE T_FINAL;
+	virtual bool canRead() const override final;
 
-	virtual bool canWrite() const T_OVERRIDE T_FINAL;
+	virtual bool canWrite() const override final;
 
-	virtual bool canSeek() const T_OVERRIDE T_FINAL;
+	virtual bool canSeek() const override final;
 
-	virtual int64_t tell() const T_OVERRIDE T_FINAL;
+	virtual int64_t tell() const override final;
 
-	virtual int64_t available() const T_OVERRIDE T_FINAL;
+	virtual int64_t available() const override final;
 
-	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE T_FINAL;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) override final;
 
-	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t read(void* block, int64_t nbytes) override final;
 
-	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE T_FINAL;
+	virtual int64_t write(const void* block, int64_t nbytes) override final;
 
-	virtual void flush() T_OVERRIDE T_FINAL;
+	virtual void flush() override final;
 
 private:
 	AAsset* m_assetFile;
