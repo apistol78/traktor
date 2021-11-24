@@ -142,7 +142,7 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 		m_gradientBitmap
 	);
 
-	Color4ub color = getColor();
+	const Color4ub color = getColor();
 
 	int average = (color.r + color.g + color.b) / 3;
 	if (average < 128)

@@ -25,9 +25,9 @@ class T_DLLCLASS SongBuffer : public ISoundBuffer
 public:
 	SongBuffer(const RefArray< Pattern >& patterns, int32_t bpm);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
 
 	int32_t getCurrentPattern(const ISoundBufferCursor* cursor) const;
 

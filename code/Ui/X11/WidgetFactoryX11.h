@@ -26,33 +26,33 @@ public:
 
 	virtual ~WidgetFactoryX11();
 
-	virtual IEventLoop* createEventLoop(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IEventLoop* createEventLoop(EventSubject* owner) override final;
 
-	virtual IContainer* createContainer(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IContainer* createContainer(EventSubject* owner) override final;
 
-	virtual IDialog* createDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IDialog* createDialog(EventSubject* owner) override final;
 
-	virtual IForm* createForm(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IForm* createForm(EventSubject* owner) override final;
 
-	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) override final;
 
-	virtual IPathDialog* createPathDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IPathDialog* createPathDialog(EventSubject* owner) override final;
 
-	virtual IToolForm* createToolForm(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IToolForm* createToolForm(EventSubject* owner) override final;
 
-	virtual IUserWidget* createUserWidget(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IUserWidget* createUserWidget(EventSubject* owner) override final;
 
-	virtual IWebBrowser* createWebBrowser(EventSubject* owner) T_OVERRIDE T_FINAL;
+	virtual IWebBrowser* createWebBrowser(EventSubject* owner) override final;
 
-	virtual ISystemBitmap* createBitmap() T_OVERRIDE T_FINAL;
+	virtual ISystemBitmap* createBitmap() override final;
 
-	virtual IClipboard* createClipboard() T_OVERRIDE T_FINAL;
+	virtual IClipboard* createClipboard() override final;
 
-	virtual int32_t getSystemDPI() const T_OVERRIDE T_FINAL;
+	virtual int32_t getSystemDPI() const override final;
 
-	virtual void getSystemFonts(std::list< std::wstring >& outFonts) T_OVERRIDE T_FINAL;
+	virtual void getSystemFonts(std::list< std::wstring >& outFonts) override final;
 
-	virtual void getDesktopRects(std::list< Rect >& outRects) const T_OVERRIDE T_FINAL;
+	virtual void getDesktopRects(std::list< Rect >& outRects) const override final;
 
 private:
 	Ref< Context > m_context;

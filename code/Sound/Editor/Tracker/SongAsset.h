@@ -34,7 +34,7 @@ public:
 
 	const RefArray< const PatternData >& getPatterns() const { return m_patterns; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class SongPipeline;

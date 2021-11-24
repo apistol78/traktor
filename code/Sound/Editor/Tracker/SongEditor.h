@@ -54,15 +54,15 @@ class T_DLLCLASS SongEditor : public editor::IEditorPage
 public:
 	SongEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Container* parent) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) T_OVERRIDE T_FINAL;
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) override final;
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command) override final;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
 private:
 	editor::IEditor* m_editor;

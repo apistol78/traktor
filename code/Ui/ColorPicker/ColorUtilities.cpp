@@ -9,10 +9,10 @@ namespace traktor
 
 void RGBtoHSV(const Color4f& rgb, float outHsv[3])
 {
-	float c[4] = { 0.0f };
-	rgb.storeUnaligned(c);
+	float T_MATH_ALIGN16 c[4];
+	rgb.storeAligned(c);
 
-	int mn = 0;
+	int32_t mn = 0;
 	if (c[0] < c[1])
 	{
 		if (c[0] < c[2])
@@ -28,7 +28,7 @@ void RGBtoHSV(const Color4f& rgb, float outHsv[3])
 			mn = 2;
 	}
 
-	int mx = 0;
+	int32_t mx = 0;
 	if (c[0] > c[1])
 	{
 		if (c[0] > c[2])
@@ -68,7 +68,7 @@ void RGBtoHSV(const Color4f& rgb, float outHsv[3])
 
 void HSVtoRGB(float hsv[3], Color4f& outRgb)
 {
-	int hi = int(hsv[0] / 60.0f) % 6;
+	int32_t hi = int(hsv[0] / 60.0f) % 6;
 	float f = hsv[0] / 60.0f - int(hsv[0] / 60.0f);
 	float p = hsv[2] * (1.0f - hsv[1]);
 	float q = hsv[2] * (1.0f - f * hsv[1]);

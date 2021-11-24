@@ -14,25 +14,25 @@ class FormX11 : public WidgetX11Impl< IForm >
 public:
 	FormX11(Context* context, EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
+	virtual void setText(const std::wstring& text) override final;
 
-	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE T_FINAL;
+	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual void maximize() T_OVERRIDE T_FINAL;
+	virtual void maximize() override final;
 
-	virtual void minimize() T_OVERRIDE T_FINAL;
+	virtual void minimize() override final;
 
-	virtual void restore() T_OVERRIDE T_FINAL;
+	virtual void restore() override final;
 
-	virtual bool isMaximized() const T_OVERRIDE T_FINAL;
+	virtual bool isMaximized() const override final;
 
-	virtual bool isMinimized() const T_OVERRIDE T_FINAL;
+	virtual bool isMinimized() const override final;
 
-	virtual void hideProgress() T_OVERRIDE T_FINAL;
+	virtual void hideProgress() override final;
 
-	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE T_FINAL;
+	virtual void showProgress(int32_t current, int32_t total) override final;
 
 private:
 	Atom m_atomWmDeleteWindow;

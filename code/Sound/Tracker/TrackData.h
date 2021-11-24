@@ -53,7 +53,7 @@ public:
 
 	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< Key > m_keys;

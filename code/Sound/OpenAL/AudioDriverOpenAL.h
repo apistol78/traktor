@@ -33,13 +33,13 @@ class T_DLLCLASS AudioDriverOpenAL : public IAudioDriver
 public:
 	AudioDriverOpenAL();
 
-	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void wait() T_OVERRIDE T_FINAL;
+	virtual void wait() override final;
 
-	virtual void submit(const SoundBlock& soundBlock) T_OVERRIDE T_FINAL;
+	virtual void submit(const SoundBlock& soundBlock) override final;
 
 private:
 	ALCdevice* m_device;

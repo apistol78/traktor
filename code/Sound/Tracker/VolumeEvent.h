@@ -22,7 +22,7 @@ class T_DLLCLASS VolumeEvent : public IEvent
 public:
 	VolumeEvent(float volume);
 
-	virtual bool execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const T_OVERRIDE T_FINAL;
+	virtual bool execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const override final;
 
 private:
 	float m_volume;

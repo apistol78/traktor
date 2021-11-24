@@ -84,9 +84,9 @@ public:
 
 	void resumeApplication();
 
-	virtual struct android_app* getApplication() T_OVERRIDE T_FINAL;
+	virtual struct android_app* getApplication() override final;
 
-	virtual struct ANativeActivity* getActivity() T_OVERRIDE T_FINAL;
+	virtual struct ANativeActivity* getActivity() override final;
 
 	virtual void handleCommand(int32_t cmd) T_OVERRIDE T_FINAL;
 
