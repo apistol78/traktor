@@ -25,9 +25,7 @@ class T_DLLCLASS SequenceTextureAsset : public ISerializable
 public:
 	std::list< Path > m_fileNames;
 	TextureOutput m_output;
-	float m_rate;
-
-	SequenceTextureAsset();
+	float m_rate = 10.0f;
 
 	virtual void serialize(ISerializer& s) override final;
 };

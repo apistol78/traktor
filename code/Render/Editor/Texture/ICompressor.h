@@ -27,6 +27,9 @@ class Image;
 	namespace render
 	{
 
+/*! Texture compressor interface.
+ * \ingroup Render
+ */
 class T_DLLCLASS ICompressor : public Object
 {
 	T_RTTI_CLASS;

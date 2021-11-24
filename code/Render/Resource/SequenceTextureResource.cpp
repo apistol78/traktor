@@ -12,11 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SequenceTextureResource", 0, SequenceTextureResource, ISerializable)
 
-SequenceTextureResource::SequenceTextureResource()
-:	m_rate(0.0f)
-{
-}
-
 void SequenceTextureResource::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"rate", m_rate);

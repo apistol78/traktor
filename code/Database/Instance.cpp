@@ -182,6 +182,8 @@ bool Instance::commit(uint32_t flags)
 	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 	{
 		log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;

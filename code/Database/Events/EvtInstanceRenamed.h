@@ -23,9 +23,9 @@ class T_DLLCLASS EvtInstanceRenamed : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceRenamed();
+	EvtInstanceRenamed() = default;
 
-	EvtInstanceRenamed(const Guid& instanceGuid, const std::wstring& previousName);
+	explicit EvtInstanceRenamed(const Guid& instanceGuid, const std::wstring& previousName);
 
 	/*! Instance's previous name.
 	 *

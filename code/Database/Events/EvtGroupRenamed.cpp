@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EvtGroupRenamed", 0, EvtGroupRenamed, IEvent)
 
-EvtGroupRenamed::EvtGroupRenamed()
-{
-}
-
 EvtGroupRenamed::EvtGroupRenamed(const std::wstring& name, const std::wstring& previousPath)
 :	m_name(name)
 ,	m_previousPath(previousPath)

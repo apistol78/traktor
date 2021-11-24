@@ -31,7 +31,9 @@ class T_DLLCLASS Document : public Object
 	T_RTTI_CLASS;
 
 public:
-	Document(bool parseComments = true);
+	Document() = default;
+
+	explicit Document(bool parseComments);
 
 	bool loadFromFile(const std::wstring& filename, const IEncoding* encoding);
 
@@ -50,7 +52,7 @@ public:
 	void toString(OutputStream& os) const;
 
 private:
-	bool m_parseComments;
+	bool m_parseComments = false;
 	Ref< Element > m_docElement;
 };
 

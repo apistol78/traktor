@@ -15,6 +15,9 @@ namespace traktor
 	namespace html
 	{
 
+/*! HTML runtime class factory.
+ * \ingroup HTML
+ */
 class T_DLLCLASS HtmlClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;

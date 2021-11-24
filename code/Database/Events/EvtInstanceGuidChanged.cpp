@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EvtInstanceGuidChanged", 0, EvtInstanceGuidChanged, EvtInstance)
 
-EvtInstanceGuidChanged::EvtInstanceGuidChanged()
-:	EvtInstance(Guid())
-{
-}
-
 EvtInstanceGuidChanged::EvtInstanceGuidChanged(const Guid& instanceGuid, const Guid& instancePreviousGuid)
 :	EvtInstance(instanceGuid)
 ,	m_instancePreviousGuid(instancePreviousGuid)

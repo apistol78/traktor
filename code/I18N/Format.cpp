@@ -18,7 +18,7 @@ wchar_t* refStringCreate(const wchar_t* s)
 
 	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), 4, T_FILE_LINE);
 	if (!ptr)
-		return 0;
+		return nullptr;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
 	*base = 1;
@@ -44,7 +44,7 @@ wchar_t* refStringDec(wchar_t* s)
 	if (--*base == 0)
 	{
 		getAllocator()->free(base);
-		return 0;
+		return nullptr;
 	}
 	return s;
 }

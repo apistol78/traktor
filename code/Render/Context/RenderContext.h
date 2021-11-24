@@ -81,6 +81,7 @@ public:
 	/*! Check if any draws is pending for merge. */
 	bool havePendingDraws() const;
 
+	/*! Return how much of the heap has been allocated. */
 	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.c_ptr()); }
 
 private:

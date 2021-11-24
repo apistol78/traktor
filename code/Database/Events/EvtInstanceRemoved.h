@@ -23,7 +23,9 @@ class T_DLLCLASS EvtInstanceRemoved : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceRemoved(const Guid& instanceGuid = Guid());
+	EvtInstanceRemoved() = default;
+
+	explicit EvtInstanceRemoved(const Guid& instanceGuid);
 };
 
 	}

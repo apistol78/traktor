@@ -25,7 +25,7 @@ class T_DLLCLASS Element : public Node
 	T_RTTI_CLASS;
 
 public:
-	Element(const std::wstring& name);
+	explicit Element(const std::wstring& name);
 
 	virtual std::wstring getName() const override final;
 

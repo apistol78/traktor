@@ -25,7 +25,7 @@ class T_DLLCLASS Attribute : public Object
 	T_RTTI_CLASS;
 
 public:
-	Attribute(const std::wstring& name, const std::wstring& value = L"");
+	explicit Attribute(const std::wstring& name, const std::wstring& value = L"");
 
 	const std::wstring& getName() const;
 

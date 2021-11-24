@@ -29,13 +29,13 @@ namespace traktor
 class GraphTraverse
 {
 public:
-	GraphTraverse(const Graph* graph, Node* root)
+	explicit GraphTraverse(const Graph* graph, Node* root)
 	:	m_graph(graph)
 	{
 		m_roots.push_back(root);
 	}
 
-	GraphTraverse(const Graph* graph, const RefArray< Node >& roots)
+	explicit GraphTraverse(const Graph* graph, const RefArray< Node >& roots)
 	:	m_graph(graph)
 	,	m_roots(roots)
 	{
@@ -45,16 +45,16 @@ public:
 	void preorder(VisitorType& visitor)
 	{
 		SmallSet< Node* > visited;
-		for (RefArray< Node >::const_iterator i = m_roots.begin(); i != m_roots.end(); ++i)
-			preorderImpl(*i, visitor, visited);
+		for (auto root : m_roots)
+			preorderImpl(root, visitor, visited);
 	}
 
 	template < typename VisitorType >
 	void postorder(VisitorType& visitor)
 	{
 		SmallSet< Node* > visited;
-		for (RefArray< Node >::const_iterator i = m_roots.begin(); i != m_roots.end(); ++i)
-			postorderImpl(*i, visitor, visited);
+		for (auto root : m_roots)
+			postorderImpl(root, visitor, visited);
 	}
 
 	void preorder(const std::function< bool(const Node*) >& fn)
@@ -162,19 +162,19 @@ private:
 	void breadthFirstImpl(const RefArray< Node >& nodes, VisitorType& visitor, SmallSet< Node* >& visited)
 	{
 		RefArray< Node > children;
-		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (auto node : nodes)
 		{
-			if (visited.find(*i) != visited.end())
+			if (visited.find(node) != visited.end())
 				continue;
-			visited.insert(*i);
+			visited.insert(node);
 
-			if (!visitor(*i))
+			if (!visitor(node))
 				continue;
 
-			uint32_t inputPinCount = (*i)->getInputPinCount();
+			uint32_t inputPinCount = node->getInputPinCount();
 			for (uint32_t j = 0; j < inputPinCount; ++j)
 			{
-				const InputPin* inputPin = (*i)->getInputPin(j);
+				const InputPin* inputPin = node->getInputPin(j);
 				T_ASSERT(inputPin);
 
 				Ref< Edge > edge = m_graph->findEdge(inputPin);
@@ -195,14 +195,8 @@ private:
 
 struct FindInputPin
 {
-	const InputPin* inputPin;
-	bool found;
-
-	FindInputPin()
-	:	inputPin(0)
-	,	found(false)
-	{
-	}
+	const InputPin* inputPin = nullptr;
+	bool found = false;
 
 	bool operator () (Node* node)
 	{
@@ -218,16 +212,9 @@ struct FindInputPin
 
 struct PinsConnected
 {
-	const InputPin* inputPin;
-	const OutputPin* outputPin;
-	bool connected;
-
-	PinsConnected()
-	:	inputPin(0)
-	,	outputPin(0)
-	,	connected(false)
-	{
-	}
+	const InputPin* inputPin = nullptr;
+	const OutputPin* outputPin = nullptr;
+	bool connected = false;
 
 	bool operator () (Node* node)
 	{
@@ -250,13 +237,8 @@ struct PinsConnected
 
 struct CollectOutputs
 {
-	const InputPin* inputPin;
+	const InputPin* inputPin = nullptr;
 	AlignedVector< const OutputPin* > outputPins;
-
-	CollectOutputs()
-	:	inputPin(0)
-	{
-	}
 
 	bool operator () (Node* node)
 	{

@@ -24,7 +24,9 @@ class T_DLLCLASS EvtInstance : public IEvent
 	T_RTTI_CLASS;
 
 public:
-	EvtInstance(const Guid& instanceGuid);
+	EvtInstance() = default;
+
+	explicit EvtInstance(const Guid& instanceGuid);
 
 	/*! Instance's guid.
 	 *

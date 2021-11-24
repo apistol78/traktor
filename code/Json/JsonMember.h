@@ -26,7 +26,7 @@ class T_DLLCLASS JsonMember : public JsonNode
 public:
 	JsonMember() = default;
 
-	JsonMember(const std::wstring& name, const Any& value);
+	explicit JsonMember(const std::wstring& name, const Any& value);
 
 	/*! Get name of member.
 	 *

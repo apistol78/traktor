@@ -23,9 +23,9 @@ class T_DLLCLASS EvtInstanceGuidChanged : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceGuidChanged();
+	EvtInstanceGuidChanged() = default;
 
-	EvtInstanceGuidChanged(const Guid& instanceGuid, const Guid& instancePreviousGuid);
+	explicit EvtInstanceGuidChanged(const Guid& instanceGuid, const Guid& instancePreviousGuid);
 
 	/*! Instance's previous guid.
 	 *

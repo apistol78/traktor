@@ -7,12 +7,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Node", Node, Object)
 
-Node::Node()
-:	m_parent(0)
-,	m_previousSibling(0)
-{
-}
-
 std::wstring Node::getName() const
 {
 	return L"";
