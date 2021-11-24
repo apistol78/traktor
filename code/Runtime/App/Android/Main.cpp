@@ -88,7 +88,7 @@ public:
 
 	virtual struct ANativeActivity* getActivity() override final;
 
-	virtual void handleCommand(int32_t cmd) T_OVERRIDE T_FINAL;
+	virtual void handleCommand(int32_t cmd) override final;
 
 private:
 	struct android_app* m_app;
