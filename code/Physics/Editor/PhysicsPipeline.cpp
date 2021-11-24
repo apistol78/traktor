@@ -107,7 +107,7 @@ bool PhysicsPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > PhysicsPipeline::buildOutput(
+Ref< ISerializable > PhysicsPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

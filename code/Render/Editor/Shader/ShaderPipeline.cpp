@@ -577,7 +577,7 @@ bool ShaderPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ShaderPipeline::buildOutput(
+Ref< ISerializable > ShaderPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

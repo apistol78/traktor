@@ -73,7 +73,7 @@ bool AnimatedMeshComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > AnimatedMeshComponentPipeline::buildOutput(
+Ref< ISerializable > AnimatedMeshComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

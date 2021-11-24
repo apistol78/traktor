@@ -88,7 +88,7 @@ bool SplineEntityPipeline::buildDependencies(
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
 
-Ref< ISerializable > SplineEntityPipeline::buildOutput(
+Ref< ISerializable > SplineEntityPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -99,7 +99,7 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 	{
 		// In editor we generate spline geometry dynamically thus
 		// not necessary to explicitly build mesh when building for editor.
-		return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
+		return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 	}
 
 	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
@@ -170,7 +170,7 @@ Ref< ISerializable > SplineEntityPipeline::buildOutput(
 		return outputEntityData;
 	}
 	else
-		return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
+		return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 
 	}

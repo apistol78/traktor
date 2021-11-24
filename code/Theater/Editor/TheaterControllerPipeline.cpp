@@ -64,7 +64,7 @@ bool TheaterControllerPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > TheaterControllerPipeline::buildOutput(
+Ref< ISerializable > TheaterControllerPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

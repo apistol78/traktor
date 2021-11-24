@@ -103,9 +103,13 @@ public:
 		uint32_t reason
 	) const = 0;
 
-	/*! Build output instance.
+	/*! Build output product.
 	 *
-	 * Build output instance from source asset.
+	 * Build output product from source asset.
+	 *
+	 * \note
+	 * Implementations of this method should not generate any
+	 * output instances, only return a product object.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param sourceInstance Source asset database instance; null if asset doesn't originate from database.
@@ -113,7 +117,7 @@ public:
 	 * \param buildParams Optional parameters which is passed from another pipeline during build.
 	 * \return Output instance.
 	 */
-	virtual Ref< ISerializable > buildOutput(
+	virtual Ref< ISerializable > buildProduct(
 		IPipelineBuilder* pipelineBuilder,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

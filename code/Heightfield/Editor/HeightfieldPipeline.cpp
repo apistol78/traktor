@@ -129,7 +129,7 @@ bool HeightfieldPipeline::buildOutput(
 	return instance->commit();
 }
 
-Ref< ISerializable > HeightfieldPipeline::buildOutput(
+Ref< ISerializable > HeightfieldPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

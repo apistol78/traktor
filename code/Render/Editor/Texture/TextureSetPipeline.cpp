@@ -43,7 +43,7 @@ bool TextureSetPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > TextureSetPipeline::buildOutput(
+Ref< ISerializable > TextureSetPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

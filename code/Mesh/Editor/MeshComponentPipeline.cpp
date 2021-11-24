@@ -64,7 +64,7 @@ bool MeshComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > MeshComponentPipeline::buildOutput(
+Ref< ISerializable > MeshComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

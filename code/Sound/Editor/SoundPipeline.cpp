@@ -369,7 +369,7 @@ bool SoundPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > SoundPipeline::buildOutput(
+Ref< ISerializable > SoundPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

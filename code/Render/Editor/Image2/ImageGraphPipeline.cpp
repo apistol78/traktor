@@ -240,7 +240,7 @@ bool ImageGraphPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ImageGraphPipeline::buildOutput(
+Ref< ISerializable > ImageGraphPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

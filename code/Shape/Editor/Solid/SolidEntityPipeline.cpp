@@ -88,7 +88,7 @@ bool SolidEntityPipeline::buildDependencies(
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
 
-Ref< ISerializable > SolidEntityPipeline::buildOutput(
+Ref< ISerializable > SolidEntityPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -159,7 +159,7 @@ Ref< ISerializable > SolidEntityPipeline::buildOutput(
 		return outputEntityData;
 	}
 	else
-		return world::EntityPipeline::buildOutput(
+		return world::EntityPipeline::buildProduct(
 			pipelineBuilder,
 			sourceInstance,
 			sourceAsset,

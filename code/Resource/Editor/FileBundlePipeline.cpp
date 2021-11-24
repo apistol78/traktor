@@ -190,7 +190,7 @@ bool FileBundlePipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > FileBundlePipeline::buildOutput(
+Ref< ISerializable > FileBundlePipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

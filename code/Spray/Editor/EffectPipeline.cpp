@@ -174,7 +174,7 @@ bool EffectPipeline::buildOutput(
 	return instance->commit();
 }
 
-Ref< ISerializable > EffectPipeline::buildOutput(
+Ref< ISerializable > EffectPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

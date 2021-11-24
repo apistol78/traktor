@@ -402,7 +402,7 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	T_ASSERT(pipeline);
 
 	m_profiler->begin(*pipelineType);
-	Ref< ISerializable > product = pipeline->buildOutput(this, sourceInstance, sourceAsset, buildParams);
+	Ref< ISerializable > product = pipeline->buildProduct(this, sourceInstance, sourceAsset, buildParams);
 	m_profiler->end(*pipelineType);
 	if (!product)
 		return nullptr;

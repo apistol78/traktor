@@ -347,7 +347,7 @@ bool AnimationPipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > AnimationPipeline::buildOutput(
+Ref< ISerializable > AnimationPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

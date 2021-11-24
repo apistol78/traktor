@@ -140,7 +140,7 @@ bool CloudMaskPipeline::buildOutput(
 	return instance->commit();
 }
 
-Ref< ISerializable > CloudMaskPipeline::buildOutput(
+Ref< ISerializable > CloudMaskPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

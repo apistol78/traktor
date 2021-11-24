@@ -24,7 +24,7 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const override final;
 
-	virtual Ref< ISerializable > buildOutput(
+	virtual Ref< ISerializable > buildProduct(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

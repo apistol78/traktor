@@ -25,7 +25,7 @@ TypeInfoSet PrefabComponentPipeline::getAssetTypes() const
 	return makeTypeInfoSet< PrefabComponentData >();
 }
 
-Ref< ISerializable > PrefabComponentPipeline::buildOutput(
+Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -36,7 +36,7 @@ Ref< ISerializable > PrefabComponentPipeline::buildOutput(
 	// strictly necessary for editing purposes.
 	if (m_editor)
 	{
-		return world::EntityPipeline::buildOutput(
+		return world::EntityPipeline::buildProduct(
 			pipelineBuilder,
 			sourceInstance,
 			sourceAsset,
@@ -46,7 +46,7 @@ Ref< ISerializable > PrefabComponentPipeline::buildOutput(
 
 	// Transform component into a plain group component.
 	const PrefabComponentData* prefabComponent = mandatory_non_null_type_cast< const PrefabComponentData* >(sourceAsset);
-	return world::EntityPipeline::buildOutput(
+	return world::EntityPipeline::buildProduct(
 		pipelineBuilder,
 		sourceInstance,
 		new world::GroupComponentData(prefabComponent->getEntityData()),

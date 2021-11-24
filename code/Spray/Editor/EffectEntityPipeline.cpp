@@ -38,7 +38,7 @@ bool EffectEntityPipeline::buildDependencies(
 	return true;
 }
 
-Ref< ISerializable > EffectEntityPipeline::buildOutput(
+Ref< ISerializable > EffectEntityPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -56,7 +56,7 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 			return nullptr;
 	}
 
-	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
+	return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 
 	}

@@ -151,7 +151,7 @@ bool ResourceBundlePipeline::buildOutput(
 	return true;
 }
 
-Ref< ISerializable > ResourceBundlePipeline::buildOutput(
+Ref< ISerializable > ResourceBundlePipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
