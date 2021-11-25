@@ -11,10 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.Variable", 0, Variable, ISerializable)
 
-Variable::Variable()
-{
-}
-
 Variable::Variable(const std::wstring& name, const std::wstring& typeName, const IValue* value)
 :	m_name(name)
 ,	m_typeName(typeName)

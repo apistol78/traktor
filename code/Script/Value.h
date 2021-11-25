@@ -15,7 +15,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS Value : public IValue
@@ -23,7 +23,7 @@ class T_DLLCLASS Value : public IValue
 	T_RTTI_CLASS;
 
 public:
-	Value();
+	Value() = default;
 
 	Value(const std::wstring& literal);
 
