@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateNode", StateNode, ISerializable)
 
-StateNode::StateNode()
-:	m_position(0, 0)
-{
-}
-
 StateNode::StateNode(const std::wstring& name)
 :	m_name(name)
 ,	m_position(0, 0)

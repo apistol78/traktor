@@ -27,13 +27,8 @@ class T_DLLCLASS Animation : public ISerializable
 public:
 	struct T_DLLCLASS KeyPose
 	{
-		float at;
+		float at = 0.0f;
 		Pose pose;
-
-		KeyPose()
-		:	at(0.0f)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};

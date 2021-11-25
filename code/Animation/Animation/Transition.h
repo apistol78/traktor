@@ -35,7 +35,7 @@ public:
 
 	Transition() = default;
 
-	Transition(StateNode* from, StateNode* to);
+	explicit Transition(StateNode* from, StateNode* to);
 
 	StateNode* from() const;
 

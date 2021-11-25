@@ -34,9 +34,9 @@ class T_DLLCLASS StateNode : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	StateNode();
+	StateNode() = default;
 
-	StateNode(const std::wstring& name);
+	explicit StateNode(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
@@ -54,7 +54,7 @@ public:
 
 private:
 	std::wstring m_name;
-	std::pair< int, int > m_position;
+	std::pair< int, int > m_position = { 0, 0 };
 };
 
 	}
