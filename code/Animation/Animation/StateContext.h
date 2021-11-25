@@ -23,8 +23,6 @@ class T_DLLCLASS StateContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	StateContext() = default;
-
 	void setTime(float time) { m_time = time; }
 
 	float getTime() const { return m_time; }

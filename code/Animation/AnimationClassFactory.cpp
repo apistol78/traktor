@@ -7,6 +7,8 @@
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
+#include "Animation/Rotator/RotatorComponent.h"
+#include "Animation/Rotator/WobbleComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
@@ -68,12 +70,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, An
 void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();
+	classAnimatedMeshComponent->addProperty("poseController", &AnimatedMeshComponent::setPoseController, &AnimatedMeshComponent::getPoseController);
 	classAnimatedMeshComponent->addMethod("getJointTransform", &AnimatedMeshComponent_getJointTransform);
 	classAnimatedMeshComponent->addMethod("getPoseTransform", &AnimatedMeshComponent_getPoseTransform);
 	classAnimatedMeshComponent->addMethod("getSkinTransform", &AnimatedMeshComponent_getSkinTransform);
 	classAnimatedMeshComponent->addMethod("setPoseTransform", &AnimatedMeshComponent_setPoseTransform);
-	classAnimatedMeshComponent->addMethod("setPoseController", &AnimatedMeshComponent::setPoseController);
-	classAnimatedMeshComponent->addMethod("getPoseController", &AnimatedMeshComponent::getPoseController);
 	registrar->registerClass(classAnimatedMeshComponent);
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();
@@ -90,12 +91,10 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classRagDollPoseController);
 
 	auto classStatePoseController = new AutoRuntimeClass< StatePoseController >();
+	classStatePoseController->addProperty("time", &StatePoseController::setTime, &StatePoseController::getTime);
+	classStatePoseController->addProperty("timeFactor", &StatePoseController::setTimeFactor, &StatePoseController::getTimeFactor);
 	classStatePoseController->addMethod("setState", &StatePoseController::setState);
 	classStatePoseController->addMethod("setCondition", &StatePoseController::setCondition);
-	classStatePoseController->addMethod("setTime", &StatePoseController::setTime);
-	classStatePoseController->addMethod("getTime", &StatePoseController::getTime);
-	classStatePoseController->addMethod("setTimeFactor", &StatePoseController::setTimeFactor);
-	classStatePoseController->addMethod("getTimeFactor", &StatePoseController::getTimeFactor);
 	registrar->registerClass(classStatePoseController);
 
 	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
@@ -112,6 +111,12 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 
 	auto classPathComponentData = new AutoRuntimeClass< PathComponentData >();
 	registrar->registerClass(classPathComponentData);
+
+	auto classRotatorComponent = new AutoRuntimeClass< RotatorComponent >();
+	registrar->registerClass(classRotatorComponent);
+
+	auto classWobbleComponent = new AutoRuntimeClass< WobbleComponent >();
+	registrar->registerClass(classWobbleComponent);
 }
 
 	}

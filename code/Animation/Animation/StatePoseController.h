@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Pose.h"
 #include "Animation/Animation/StateContext.h"
@@ -72,7 +72,7 @@ private:
 	Pose m_evaluatePose;
 	float m_blendState;
 	float m_blendDuration;
-	std::map< std::wstring, std::pair< bool, bool > > m_conditions;
+	SmallMap< std::wstring, std::pair< bool, bool > > m_conditions;
 	float m_timeFactor;
 };
 

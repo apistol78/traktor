@@ -34,7 +34,7 @@ class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 public:
 	RagDollPoseControllerData();
 
-	RagDollPoseControllerData(
+	explicit RagDollPoseControllerData(
 		const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup,
 		const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask
 	);
