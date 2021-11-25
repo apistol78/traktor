@@ -73,8 +73,8 @@ OceanComponent::~OceanComponent()
 bool OceanComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data)
 {
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(OceanVertex, pos)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(OceanVertex, edge)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(OceanVertex, edge)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, c_gridSize * c_gridSize, sizeof(OceanVertex), false);

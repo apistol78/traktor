@@ -2581,7 +2581,7 @@ void Vector::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", 0, VertexInput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", 1, VertexInput, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { { L"Output" }, { 0 } };
 
@@ -2643,17 +2643,6 @@ void VertexInput::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	const MemberEnum< DataUsage >::Key kDataUsage[] =
-	{
-		{ L"DuPosition", DuPosition },
-		{ L"DuNormal", DuNormal },
-		{ L"DuTangent", DuTangent },
-		{ L"DuBinormal", DuBinormal },
-		{ L"DuColor", DuColor },
-		{ L"DuCustom", DuCustom },
-		{ 0 }
-	};
-
 	const MemberEnum< DataType >::Key kDataType[] =
 	{
 		{ L"DtFloat1", DtFloat1 },
@@ -2676,7 +2665,36 @@ void VertexInput::serialize(ISerializer& s)
 	};
 
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberEnum< DataUsage >(L"usage", m_usage, kDataUsage);
+	
+	if (s.getVersion< VertexInput >() >= 1)
+	{
+		const MemberEnum< DataUsage >::Key kDataUsage[] =
+		{
+			{ L"Position", DataUsage::Position },
+			{ L"Normal", DataUsage::Normal },
+			{ L"Tangent", DataUsage::Tangent },
+			{ L"Binormal", DataUsage::Binormal },
+			{ L"Color", DataUsage::Color },
+			{ L"Custom", DataUsage::Custom },
+			{ 0 }
+		};
+		s >> MemberEnum< DataUsage >(L"usage", m_usage, kDataUsage);
+	}
+	else
+	{
+		const MemberEnum< DataUsage >::Key kDataUsage[] =
+		{
+			{ L"DuPosition", DataUsage::Position },
+			{ L"DuNormal", DataUsage::Normal },
+			{ L"DuTangent", DataUsage::Tangent },
+			{ L"DuBinormal", DataUsage::Binormal },
+			{ L"DuColor", DataUsage::Color },
+			{ L"DuCustom", DataUsage::Custom },
+			{ 0 }
+		};
+		s >> MemberEnum< DataUsage >(L"usage", m_usage, kDataUsage);
+	}
+
 	s >> MemberEnum< DataType >(L"type", m_type, kDataType);
 	s >> Member< int32_t >(L"index", m_index);
 }

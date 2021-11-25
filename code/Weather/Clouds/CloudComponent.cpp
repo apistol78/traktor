@@ -218,8 +218,8 @@ bool CloudComponent::create(
 )
 {
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(Vertex, index)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(Vertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(Vertex, index)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 * c_instanceCount, sizeof(Vertex), false);

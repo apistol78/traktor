@@ -35,9 +35,9 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 	s_handleTimeAndAge = render::getParameterHandle(L"TimeAndAge");
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(TrailVertex, position), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(TrailVertex, position), 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(TrailVertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 

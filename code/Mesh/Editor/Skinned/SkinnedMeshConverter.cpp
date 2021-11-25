@@ -78,19 +78,19 @@ bool SkinnedMeshConverter::convert(
 	AlignedVector< std::pair< uint32_t, float > > jointInfluences;
 	for (const auto& v : model->getVertices())
 	{
-		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model->getPosition(v.getPosition()));
+		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, model->getPosition(v.getPosition()));
 		if (v.getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model->getNormal(v.getNormal()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, model->getNormal(v.getNormal()));
 		if (v.getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model->getNormal(v.getTangent()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Tangent, 0, model->getNormal(v.getTangent()));
 		if (v.getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model->getNormal(v.getBinormal()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Binormal, 0, model->getNormal(v.getBinormal()));
 		if (v.getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuColor, 0, model->getColor(v.getColor()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model->getColor(v.getColor()));
 		if (v.getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 2, model->getTexCoord(v.getTexCoord(0)));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 2, model->getTexCoord(v.getTexCoord(0)));
 		if (v.getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 3, model->getTexCoord(v.getTexCoord(1)));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 3, model->getTexCoord(v.getTexCoord(1)));
 
 		uint32_t jointCount = model->getJointCount();
 
@@ -141,8 +141,8 @@ bool SkinnedMeshConverter::convert(
 			}
 		}
 
-		writeVertexData(vertexElements, vertex, render::DuCustom, 0, blendIndices);
-		writeVertexData(vertexElements, vertex, render::DuCustom, 1, blendWeights);
+		writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, blendIndices);
+		writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, blendWeights);
 
 		vertex += vertexSize;
 	}

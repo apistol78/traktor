@@ -19,7 +19,7 @@ std::wstring VertexAttributes::getName(DataUsage usage, int32_t index)
 		L""
 	};
 	StringOutputStream ss;
-	ss << L"in_" << s[usage] << index;
+	ss << L"in_" << s[(int)usage] << index;
 	return ss.str();
 }
 

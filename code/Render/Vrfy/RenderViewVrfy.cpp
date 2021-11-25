@@ -302,7 +302,7 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 {
 	T_CAPTURE_TRACE(L"compute");
-	T_CAPTURE_ASSERT(m_insidePass, L"Cannot compute outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot compute outside of beginFrame/endFrame.");
 	T_CAPTURE_ASSERT(workSize != nullptr, L"Incorrect argument; workSize null.");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 

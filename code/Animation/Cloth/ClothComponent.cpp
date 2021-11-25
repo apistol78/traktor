@@ -111,9 +111,9 @@ bool ClothComponent::create(
 	m_solverIterations = solverIterations;
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(ClothVertex, position)));
-	vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat4, offsetof(ClothVertex, normal)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(ClothVertex, position)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat4, offsetof(ClothVertex, normal)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, /*2 * */resolutionX * resolutionY, sizeof(ClothVertex), true);

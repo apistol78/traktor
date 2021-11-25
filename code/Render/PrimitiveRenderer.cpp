@@ -89,9 +89,9 @@ bool PrimitiveRenderer::create(
 	m_depthState.push_back(DepthState(true, false, false));
 
 	AlignedVector< VertexElement > vertexElements;
-	vertexElements.push_back(VertexElement(DuPosition, DtFloat4, offsetof(Vertex, pos), 0));
-	vertexElements.push_back(VertexElement(DuCustom, DtHalf2, offsetof(Vertex, texCoord), 0));
-	vertexElements.push_back(VertexElement(DuColor, DtByte4N, offsetof(Vertex, rgb), 0));
+	vertexElements.push_back(VertexElement(DataUsage::Position, DtFloat4, offsetof(Vertex, pos), 0));
+	vertexElements.push_back(VertexElement(DataUsage::Custom, DtHalf2, offsetof(Vertex, texCoord), 0));
+	vertexElements.push_back(VertexElement(DataUsage::Color, DtByte4N, offsetof(Vertex, rgb), 0));
 	T_ASSERT(getVertexSize(vertexElements) == sizeof(Vertex));
 	if ((m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements)) == nullptr)
 		return false;

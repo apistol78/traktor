@@ -30,7 +30,7 @@ class T_DLLCLASS VertexElement
 public:
 	VertexElement() = default;
 
-	VertexElement(DataUsage usage, DataType type, uint32_t offset, uint32_t index = 0);
+	explicit VertexElement(DataUsage usage, DataType type, uint32_t offset, uint32_t index = 0);
 
 	uint32_t getSize() const;
 
@@ -43,7 +43,7 @@ public:
 	uint32_t getIndex() const { return m_index; }
 
 private:
-	DataUsage m_usage = DuPosition;
+	DataUsage m_usage = DataUsage::Position;
 	DataType m_type = DtFloat4;
 	uint32_t m_offset = 0;
 	uint32_t m_index = 0;

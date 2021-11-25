@@ -18,7 +18,7 @@ std::wstring hlsl_semantic(DataUsage usage, int index)
 		L"TEXCOORD",
 		L""
 	};
-	return str(L"%ls%d", s[usage], index);
+	return str(L"%ls%d", s[(int)usage], index);
 }
 
 std::wstring hlsl_type_name(HlslType type)

@@ -192,14 +192,14 @@ enum ClearFlag
 };
 
 /*! Vertex element data usage. */
-enum DataUsage
+enum class DataUsage
 {
-	DuPosition	= 0,	//!< Positions
-	DuNormal	= 1,	//!< Normals
-	DuTangent	= 2,	//!< Tangents
-	DuBinormal	= 3,	//!< Bi-normals
-	DuColor		= 4,	//!< Colors
-	DuCustom	= 5		//!< Custom, ex. texture coordinates etc.
+	Position	= 0,	//!< Positions
+	Normal		= 1,	//!< Normals
+	Tangent		= 2,	//!< Tangents
+	Binormal	= 3,	//!< Bi-normals
+	Color		= 4,	//!< Colors
+	Custom		= 5		//!< Custom, ex. texture coordinates etc.
 };
 
 /*! Vertex element data type. */

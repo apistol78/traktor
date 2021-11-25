@@ -1771,7 +1771,7 @@ bool emitVertexInput(CgContext& cx, VertexInput* node)
 	}
 
 	// Read value from input.
-	if (node->getDataUsage() == DuPosition)
+	if (node->getDataUsage() == DataUsage::Position)
 	{
 		CgVariable* out = shader.createTemporaryVariable(
 			node->findOutputPin(L"Output"),
@@ -1797,7 +1797,7 @@ bool emitVertexInput(CgContext& cx, VertexInput* node)
 			break;
 		}
 	}
-	else if (node->getDataUsage() == DuNormal)
+	else if (node->getDataUsage() == DataUsage::Normal)
 	{
 		CgVariable* out = shader.createTemporaryVariable(
 			node->findOutputPin(L"Output"),

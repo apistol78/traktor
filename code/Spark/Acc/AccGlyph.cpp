@@ -64,9 +64,9 @@ bool AccGlyph::create(
 		return false;
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(Vertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(Vertex, texCoord)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 

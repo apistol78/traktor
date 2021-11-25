@@ -34,7 +34,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalRenderer", DecalRenderer, IEntityRen
 DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 {
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
