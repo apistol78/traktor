@@ -51,34 +51,34 @@ uint16_t Dictionary::addCharacter(Character* character)
 
 const Font* Dictionary::getFont(uint16_t fontId) const
 {
-	SmallMap< uint16_t, Ref< Font > >::const_iterator i = m_fonts.find(fontId);
-	return i != m_fonts.end() ? i->second.ptr() : 0;
+	auto it = m_fonts.find(fontId);
+	return it != m_fonts.end() ? it->second.ptr() : nullptr;
 }
 
 const Bitmap* Dictionary::getBitmap(uint16_t bitmapId) const
 {
-	SmallMap< uint16_t, Ref< Bitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
-	return i != m_bitmaps.end() ? i->second.ptr() : 0;
+	auto it = m_bitmaps.find(bitmapId);
+	return it != m_bitmaps.end() ? it->second.ptr() : nullptr;
 }
 
 const Sound* Dictionary::getSound(uint16_t soundId) const
 {
-	SmallMap< uint16_t, Ref< Sound > >::const_iterator i = m_sounds.find(soundId);
-	return i != m_sounds.end() ? i->second.ptr() : 0;
+	auto it = m_sounds.find(soundId);
+	return it != m_sounds.end() ? it->second.ptr() : nullptr;
 }
 
 const Character* Dictionary::getCharacter(uint16_t characterId) const
 {
-	SmallMap< uint16_t, Ref< Character > >::const_iterator i = m_characters.find(characterId);
-	return i != m_characters.end() ? i->second.ptr() : 0;
+	auto it = m_characters.find(characterId);
+	return it != m_characters.end() ? it->second.ptr() : nullptr;
 }
 
 bool Dictionary::getExportId(const std::string& name, uint16_t& outExportId) const
 {
-	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(name);
-	if (i != m_exports.end())
+	auto it = m_exports.find(name);
+	if (it != m_exports.end())
 	{
-		outExportId = i->second;
+		outExportId = it->second;
 		return true;
 	}
 	return false;
@@ -86,11 +86,11 @@ bool Dictionary::getExportId(const std::string& name, uint16_t& outExportId) con
 
 bool Dictionary::getExportName(uint16_t exportId, std::string& outName) const
 {
-	for (SmallMap< std::string, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
+	for (const auto& exp : m_exports)
 	{
-		if (i->second == exportId)
+		if (exp.second == exportId)
 		{
-			outName = i->first;
+			outName = exp.first;
 			return true;
 		}
 	}

@@ -122,10 +122,10 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 	outTriangles.resize(0);
 	outLines.resize(0);
 
-	for (AlignedVector< Path >::const_iterator i = m_paths.begin(); i != m_paths.end(); ++i)
+	for (const auto& path : m_paths)
 	{
-		const AlignedVector< Vector2 >& points = i->getPoints();
-		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
+		const AlignedVector< Vector2 >& points = path.getPoints();
+		const AlignedVector< SubPath >& subPaths = path.getSubPaths();
 
 		SmallSet< uint16_t > fillStyles;
 		for (const auto& sp : subPaths)
@@ -180,19 +180,19 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 
 			if (!segments.empty())
 			{
-				uint32_t from = (uint32_t)outTriangles.size();
+				const uint32_t from = (uint32_t)outTriangles.size();
 
 				triangulator.triangulate(segments, fillStyle, oddEven, outTriangles);
 				segments.resize(0);
 
-				uint32_t to = (uint32_t)outTriangles.size();
+				const uint32_t to = (uint32_t)outTriangles.size();
 
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)
 				{
-					outTriangles[ti].v[0] = i->getTransform() * outTriangles[ti].v[0];
-					outTriangles[ti].v[1] = i->getTransform() * outTriangles[ti].v[1];
-					outTriangles[ti].v[2] = i->getTransform() * outTriangles[ti].v[2];
+					outTriangles[ti].v[0] = path.getTransform() * outTriangles[ti].v[0];
+					outTriangles[ti].v[1] = path.getTransform() * outTriangles[ti].v[1];
+					outTriangles[ti].v[2] = path.getTransform() * outTriangles[ti].v[2];
 				}
 			}
 		}
