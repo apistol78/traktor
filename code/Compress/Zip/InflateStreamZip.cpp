@@ -4,6 +4,7 @@
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/SafeDestroy.h"
 
 namespace traktor
 {
@@ -50,7 +51,7 @@ public:
 	void close()
 	{
 		inflateEnd(&m_zstream);
-		m_stream = 0;
+		m_stream = nullptr;
 	}
 
 	int64_t read(void* block, int64_t nbytes)
@@ -134,11 +135,7 @@ InflateStreamZip::~InflateStreamZip()
 
 void InflateStreamZip::close()
 {
-	if (m_impl)
-	{
-		m_impl->close();
-		m_impl = 0;
-	}
+	safeClose(m_impl);
 }
 
 bool InflateStreamZip::canRead() const

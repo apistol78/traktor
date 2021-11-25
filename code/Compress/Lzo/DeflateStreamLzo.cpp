@@ -5,6 +5,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 
 namespace traktor
 {
@@ -26,8 +27,7 @@ public:
 	void close()
 	{
 		flush();
-		m_stream->close();
-		m_stream = nullptr;
+		safeClose(m_stream);
 	}
 
 	int64_t write(const void* block, int64_t nbytes)
@@ -115,11 +115,7 @@ DeflateStreamLzo::~DeflateStreamLzo()
 
 void DeflateStreamLzo::close()
 {
-	if (m_impl)
-	{
-		m_impl->close();
-		m_impl = nullptr;
-	}
+	safeClose(m_impl);
 }
 
 bool DeflateStreamLzo::canRead() const
