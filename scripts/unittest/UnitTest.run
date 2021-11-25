@@ -1,10 +1,53 @@
 import(traktor)
 
+local function escape(s)
+	s = gsub(s, "&", "&amp;")
+	s = gsub(s, "<", "&lt;")
+	s = gsub(s, ">", "&gt;")
+	s = gsub(s, "'", "&apos;")
+	s = gsub(s, '"', "&quot;")
+	return s
+end
+
+local function exportJUnit(report)
+	local testCount = 0
+	local testFailures = 0
+	for _, r in ipairs(report) do
+		testCount = testCount + 1
+		if not r.result then
+			testFailures = testFailures + 1
+		end
+	end
+
+	stdout:printLn("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")
+	stdout:printLn("<testsuites id=\"1\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\">")
+	stdout:printLn("\t<testsuite id=\"2\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\">")
+
+	for i, r in ipairs(report) do
+		stdout:printLn("\t\t<testcase id=\"" .. i .. "\" name=\"" .. r.name .. "\" time=\"" .. string.format("%.2f", r.duration) .. "\">")
+		for _, m in ipairs(r.messages) do
+			local xm = escape(m)
+			stdout:printLn("\t\t\t<failure message=\"" .. xm .. "\" type=\"WARNING\">")
+			stdout:printLn(xm)
+			stdout:printLn("\t\t\t</failure>")
+		end
+		stdout:printLn("\t\t</testcase>")
+	end
+
+	stdout:printLn("\t</testsuite>")
+	stdout:printLn("</testsuites>")
+end
+
 function main(args)
 	-- Ensure we have unittest support built in.
 	if traktor.test.Case == nil then
 		stderr:printLn("Traktor.Core not compiled with tests; unable to execute any tests.")
 		return 1
+	end
+
+	-- Load extra modules.
+	for _, module in pairs(args) do
+		run:loadModule(module)
 	end
 
 	local timer = Timer()
@@ -15,6 +58,7 @@ function main(args)
 		local include = true
 
 		-- Check filter if case should be included in suite.
+		--[[
 		if not args.empty then
 			include = false
 			for _, filter in pairs(args) do
@@ -23,6 +67,7 @@ function main(args)
 				end
 			end
 		end
+		]]
 
 		if include then
 			local case = caseType:createInstance()
@@ -50,36 +95,6 @@ function main(args)
 		end
 	end
 
-
-
-	-- JUnit
-
-	local testCount = 0
-	local testFailures = 0
-	for _, r in ipairs(report) do
-		testCount = testCount + 1
-		if not r.result then
-			testFailures = testFailures + 1
-		end
-	end
-
-	stdout:printLn("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>")
-	stdout:printLn("<testsuites id=\"1\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\">")
-	stdout:printLn("\t<testsuite id=\"2\" name=\"Traktor\" tests=\"" .. testCount .. "\" failures=\"" .. testFailures .. "\">")
-
-	for i, r in ipairs(report) do
-		stdout:printLn("\t\t<testcase id=\"" .. i .. "\" name=\"" .. r.name .. "\" time=\"" .. string.format("%.2f", r.duration) .. "\">")
-		for _, m in ipairs(r.messages) do
-			stdout:printLn("\t\t\t<failure message=\"" .. m .. "\" type=\"WARNING\">")
-			stdout:printLn(m)
-			stdout:printLn("\t\t\t</failure>")
-		end
-		stdout:printLn("\t\t</testcase>")
-	end
-
-	stdout:printLn("\t</testsuite>")
-	stdout:printLn("</testsuites>")
-
-
+	exportJUnit(report)
 	return 0
 end
