@@ -79,6 +79,12 @@ public:
 	virtual PipelineProfiler* getProfiler() const override final;
 
 private:
+	struct CacheKey
+	{
+		Guid guid;
+		PipelineDependencyHash hash;
+	};
+
 	struct BuiltCacheEntry
 	{
 		const ISerializable* sourceAsset;
@@ -102,7 +108,8 @@ private:
 	const PipelineDependencySet* m_dependencySet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
-	RefArray< db::Instance >* m_buildInstances;
+	RefArray< db::Instance > m_builtInstances;
+	AlignedVector< CacheKey > m_builtAdHocKeys;
 	int32_t m_adHocDepth;
 	int32_t m_progressEnd;
 	int32_t m_progress;
@@ -117,12 +124,20 @@ private:
 	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! Isolate instance in cache. */
-	bool putInstancesInCache(IPipelineCache* cache, const Guid& guid, const PipelineDependencyHash& hash, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(
+		IPipelineCache* cache,
+		const CacheKey& key,
+		const RefArray< db::Instance >& instances,
+		const AlignedVector< CacheKey >& children
+	) const;
 
 	/*! Get isolated instance from cache. */
-	bool getInstancesFromCache(IPipelineCache* cache, const PipelineDependency* dependency, const PipelineDependencyHash& hash, RefArray< db::Instance >& outInstances);
+	bool getInstancesFromCache(
+		IPipelineCache* cache,
+		const CacheKey& key,
+		RefArray< db::Instance >& outInstances
+	) const;
 };
 
 	}
 }
-
