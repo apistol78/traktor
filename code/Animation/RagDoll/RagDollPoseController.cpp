@@ -166,12 +166,9 @@ bool RagDollPoseController::create(
 
 		const Vector4 anchor = jointTransforms[i].translation().xyz1();
 
-		AlignedVector< uint32_t > children;
-		skeleton->findChildren(i, children);
-		for (uint32_t child : children)
-		{
+		skeleton->findChildren(i, [&](uint32_t child) {
 			if (m_deltaLimbs[child] == m_deltaLimbs[i])
-				continue;
+				return;
 
 			Ref< physics::Joint > limbJoint;
 			if (data->m_constraintAxises == 0)
@@ -207,7 +204,7 @@ bool RagDollPoseController::create(
 				else if (data->m_constraintAxises == 4)
 					jointDesc->setAxis(jointTransforms[i].axisZ());
 				else
-					return false;
+					return;
 
 				limbJoint = physicsManager->createJoint(
 					jointDesc,
@@ -218,10 +215,10 @@ bool RagDollPoseController::create(
 			}
 
 			if (!limbJoint)
-				return false;
+				return;
 
 			m_joints.push_back(limbJoint);
-		}
+		});
 	}
 
 	m_worldTransform = worldTransform;

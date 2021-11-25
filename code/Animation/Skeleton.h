@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
@@ -34,9 +35,9 @@ public:
 
 	bool findJoint(render::handle_t name, uint32_t& outIndex) const;
 
-	void findChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const;
+	void findChildren(uint32_t index, const std::function< void(uint32_t) >& fn) const;
 
-	void findAllChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const;
+	void findAllChildren(uint32_t index, const std::function< void(uint32_t) >& fn) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
