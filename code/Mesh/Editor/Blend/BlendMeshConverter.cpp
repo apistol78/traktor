@@ -80,19 +80,19 @@ bool BlendMeshConverter::convert(
 	{
 		std::memset(vertex, 0, vertexSize);
 
-		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model.getPosition(i->getPosition()));
+		writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, model.getPosition(i->getPosition()));
 		if (i->getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model.getNormal(i->getNormal()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, model.getNormal(i->getNormal()));
 		if (i->getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(i->getTangent()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Tangent, 0, model.getNormal(i->getTangent()));
 		if (i->getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Binormal, 0, model.getNormal(i->getBinormal()));
 		if (i->getColor() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Color, 0, model.getColor(i->getColor()));
 		if (i->getTexCoord(0) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord(0)));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, model.getTexCoord(i->getTexCoord(0)));
 		if (i->getTexCoord(1) != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 1, model.getTexCoord(i->getTexCoord(1)));
+			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, model.getTexCoord(i->getTexCoord(1)));
 
 		vertex += vertexSize;
 	}
@@ -189,18 +189,18 @@ bool BlendMeshConverter::convert(
 			Vector4 targetPosition = model.getBlendTargetPosition(i - 1, j->getPosition());
 			Vector4 deltaPosition = targetPosition - basePosition;
 
-			writeVertexData(vertexElements, vertex, render::DuPosition, 0, deltaPosition);
+			writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, deltaPosition);
 
 			if (j->getNormal() != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DuNormal, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 			if (j->getTangent() != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DuTangent, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Tangent, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 			if (j->getBinormal() != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DuBinormal, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Binormal, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 			if (j->getTexCoord(0) != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DuCustom, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 			if (j->getTexCoord(1) != model::c_InvalidIndex)
-				writeVertexData(vertexElements, vertex, render::DuCustom, 1, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 1, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 			vertex += vertexSize;
 		}

@@ -89,8 +89,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	}
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, 4 * sizeof(float)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, 4 * sizeof(float)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(

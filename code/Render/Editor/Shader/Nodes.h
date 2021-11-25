@@ -1217,7 +1217,7 @@ class T_DLLCLASS VertexInput : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	VertexInput(const std::wstring& name = L"", DataUsage usage = DuPosition, DataType type = DtFloat4, int index = 0);
+	VertexInput(const std::wstring& name = L"", DataUsage usage = DataUsage::Position, DataType type = DtFloat4, int index = 0);
 
 	void setName(const std::wstring& name);
 

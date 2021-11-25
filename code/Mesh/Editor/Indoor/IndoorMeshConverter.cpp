@@ -584,9 +584,9 @@ bool IndoorMeshConverter::convert(
 		{
 			std::memset(vertex, 0, vertexSize);
 
-			writeVertexData(vertexElements, vertex, render::DuPosition, 0, j->position);
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, j->normal);
-			writeVertexData(vertexElements, vertex, render::DuCustom, 0, j->texCoord);
+			writeVertexData(vertexElements, vertex, render::DataUsage::Position, 0, j->position);
+			writeVertexData(vertexElements, vertex, render::DataUsage::Normal, 0, j->normal);
+			writeVertexData(vertexElements, vertex, render::DataUsage::Custom, 0, j->texCoord);
 
 			vertex += vertexSize;
 		}

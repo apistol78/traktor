@@ -30,8 +30,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScreenRenderer", ScreenRenderer, Object)
 bool ScreenRenderer::create(IRenderSystem* renderSystem)
 {
 	AlignedVector< VertexElement > vertexElements;
-	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(ScreenVertex, pos)));
-	vertexElements.push_back(VertexElement(DuCustom, DtFloat2, offsetof(ScreenVertex, texCoord)));
+	vertexElements.push_back(VertexElement(DataUsage::Position, DtFloat2, offsetof(ScreenVertex, pos)));
+	vertexElements.push_back(VertexElement(DataUsage::Custom, DtFloat2, offsetof(ScreenVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 	if (!m_vertexLayout)
 		return false;

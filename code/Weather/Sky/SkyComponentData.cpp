@@ -51,7 +51,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	}
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, 0));
 	Ref< const render::IVertexLayout > vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	Ref< render::Buffer > vertexBuffer = renderSystem->createBuffer(

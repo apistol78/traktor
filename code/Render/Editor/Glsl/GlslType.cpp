@@ -206,7 +206,7 @@ std::wstring glsl_vertex_attribute_name(DataUsage usage, int32_t index)
 		L"Custom",
 		L""
 	};
-	return str(L"in_%ls_%d", s[usage], index);
+	return str(L"in_%ls_%d", s[(int)usage], index);
 }
 
 int32_t glsl_vertex_attribute_location(DataUsage usage, int32_t index)

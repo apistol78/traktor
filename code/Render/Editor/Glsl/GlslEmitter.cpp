@@ -2160,12 +2160,10 @@ bool emitScript(GlslContext& cx, Script* node)
 		return false;
 
 	// Emit input and outputs.
-	int32_t inputPinCount = node->getInputPinCount();
-	int32_t outputPinCount = node->getOutputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
+	const int32_t outputPinCount = node->getOutputPinCount();
 
-	RefArray< GlslVariable > ins(inputPinCount);
 	RefArray< GlslVariable > outs(outputPinCount);
-
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
@@ -2179,6 +2177,7 @@ bool emitScript(GlslContext& cx, Script* node)
 		f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
 	}
 
+	RefArray< GlslVariable > ins(inputPinCount);
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		ins[i] = cx.emitInput(node->getInputPin(i));
@@ -2201,59 +2200,6 @@ bool emitScript(GlslContext& cx, Script* node)
 	}
 
 	f << script << Endl;
-
-
-	// // Define script instance.
-	// {
-	// 	StringOutputStream ss;
-
-	// 	ss << L"void " << node->getName() << L"(";
-
-	// 	for (int32_t i = 0; i < inputPinCount; ++i)
-	// 	{
-	// 		if (i > 0)
-	// 			ss << L", ";
-	// 		ss << glsl_type_name(ins[i]->getType()) << L" " << node->getInputPin(i)->getName();
-	// 	}
-
-	// 	for (int32_t i = 0; i < outputPinCount; ++i)
-	// 	{
-	// 		if (inputPinCount == 0 || i > 0)
-	// 			ss << L", ";
-	// 		ss << L"out " << glsl_type_name(outs[i]->getType()) << L" " << node->getOutputPin(i)->getName();
-	// 	}
-
-	// 	ss << L")";
-
-	// 	std::wstring processedScript = replaceAll(script, L"ENTRY", ss.str());
-	// 	T_ASSERT(!processedScript.empty());
-
-	// 	auto& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
-	// 	fs << processedScript << Endl;
-	// }
-
-	// Emit script invocation.
-	// for (int32_t i = 0; i < outputPinCount; ++i)
-	// 	f << glsl_type_name(outs[i]->getType()) << L" " << outs[i]->getName() << L";" << Endl;
-
-	// comment(f, node);
-	// f << node->getName() << L"(";
-
-	// int32_t ii = 0;
-	// for (auto in : ins)
-	// {
-	// 	if (ii++ > 0)
-	// 		f << L", ";
-	// 	f << in->getName();
-	// }
-	// for (auto out : outs)
-	// {
-	// 	if (ii++ > 0)
-	// 		f << L", ";
-	// 	f << out->getName();
-	// }
-
-	// f << L");" << Endl;
 	return true;
 }
 
@@ -3002,7 +2948,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		auto& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
 		fi << L"layout (location = " << glsl_vertex_attribute_location(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
-		if (node->getDataUsage() == DuPosition && type != GlslType::Float4)
+		if (node->getDataUsage() == DataUsage::Position && type != GlslType::Float4)
 		{
 			out = cx.getShader().createTemporaryVariable(
 				node->findOutputPin(L"Output"),
@@ -3030,7 +2976,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				break;
 			}
 		}
-		else if (node->getDataUsage() == DuNormal && type != GlslType::Float4)
+		else if (node->getDataUsage() == DataUsage::Normal && type != GlslType::Float4)
 		{
 			out = cx.getShader().createTemporaryVariable(
 				node->findOutputPin(L"Output"),
@@ -3058,7 +3004,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				break;
 			}
 		}
-		else if (node->getDataUsage() == DuColor)
+		else if (node->getDataUsage() == DataUsage::Color)
 		{
 			out = cx.getShader().createTemporaryVariable(
 				node->findOutputPin(L"Output"),

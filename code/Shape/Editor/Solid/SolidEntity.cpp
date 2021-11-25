@@ -153,9 +153,9 @@ void SolidEntity::update(const world::UpdateParams& update)
 				safeDestroy(m_vertexBuffer);
 
 				AlignedVector< render::VertexElement > vertexElements;
-				vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position)));
-				vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat3, offsetof(Vertex, normal)));
-				vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+				vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position)));
+				vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat3, offsetof(Vertex, normal)));
+				vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(Vertex, texCoord)));
 				m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 
 				m_vertexBuffer = m_renderSystem->createBuffer(

@@ -46,7 +46,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 ,	m_pointOffset(0)
 {
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, extent), 0));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(EmitterVertex, extent), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 

@@ -58,7 +58,7 @@ bool AccQuad::create(
 		return false;
 
 	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(Vertex, pos)));
 	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 

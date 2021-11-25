@@ -2669,7 +2669,7 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 	}
 
 	// Read value from input.
-	if (node->getDataUsage() == DuPosition)
+	if (node->getDataUsage() == DataUsage::Position)
 	{
 		Ref< HlslVariable > out = shader.createTemporaryVariable(
 			node->findOutputPin(L"Output"),
@@ -2695,7 +2695,7 @@ bool emitVertexInput(HlslContext& cx, VertexInput* node)
 			break;
 		}
 	}
-	else if (node->getDataUsage() == DuNormal)
+	else if (node->getDataUsage() == DataUsage::Normal)
 	{
 		Ref< HlslVariable > out = shader.createTemporaryVariable(
 			node->findOutputPin(L"Output"),
