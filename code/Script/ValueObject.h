@@ -17,7 +17,7 @@ namespace traktor
 
 class Variable;
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS ValueObject : public IValue
@@ -25,7 +25,7 @@ class T_DLLCLASS ValueObject : public IValue
 	T_RTTI_CLASS;
 
 public:
-	ValueObject();
+	ValueObject() = default;
 
 	explicit ValueObject(uint32_t objectRef);
 
@@ -42,7 +42,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_objectRef;
+	uint32_t m_objectRef = 0;
 	std::wstring m_valueOf;
 };
 

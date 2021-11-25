@@ -25,9 +25,9 @@ class T_DLLCLASS Variable : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Variable();
+	Variable() = default;
 
-	Variable(const std::wstring& name, const std::wstring& typeName, const IValue* value);
+	explicit Variable(const std::wstring& name, const std::wstring& typeName, const IValue* value);
 
 	void setName(const std::wstring& name);
 

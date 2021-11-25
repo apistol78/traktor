@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.Value", 0, Value, IValue)
 
-Value::Value()
-{
-}
-
 Value::Value(const std::wstring& literal)
 :	m_literal(literal)
 {
