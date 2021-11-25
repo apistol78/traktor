@@ -47,23 +47,23 @@ bool Skeleton::findJoint(render::handle_t name, uint32_t& outIndex) const
 	return true;
 }
 
-void Skeleton::findChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const
+void Skeleton::findChildren(uint32_t index, const std::function< void(uint32_t) >& fn) const
 {
 	for (uint32_t i = 0; i < (uint32_t)m_joints.size(); ++i)
 	{
 		if (m_joints[i]->getParent() == index)
-			outChildren.push_back(i);
+			fn(i);
 	}
 }
 
-void Skeleton::findAllChildren(uint32_t index, AlignedVector< uint32_t >& outChildren) const
+void Skeleton::findAllChildren(uint32_t index, const std::function< void(uint32_t) >& fn) const
 {
 	for (uint32_t i = 0; i < (uint32_t)m_joints.size(); ++i)
 	{
 		if (m_joints[i]->getParent() == index)
 		{
-			outChildren.push_back(i);
-			findChildren(i, outChildren);
+			fn(i);
+			findChildren(i, fn);
 		}
 	}
 }
