@@ -37,8 +37,8 @@ namespace traktor
 		sizeof(CLASS),							\
 		0,										\
 		false,									\
-		0,										\
-		0										\
+		nullptr,								\
+		nullptr									\
 	);											\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -49,7 +49,7 @@ namespace traktor
 		0,											\
 		false,										\
 		&traktor::type_of< SUPER >(),				\
-		0											\
+		nullptr										\
 	);												\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -60,7 +60,7 @@ namespace traktor
 		VERSION,													\
 		false,														\
 		&traktor::type_of< SUPER >(),								\
-		0															\
+		nullptr														\
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -70,7 +70,7 @@ namespace traktor
 		sizeof(CLASS),												\
 		VERSION,													\
 		false,														\
-		0,															\
+		nullptr,													\
 		new traktor::InstanceFactory< CLASS >()						\
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
@@ -92,7 +92,7 @@ namespace traktor
 		sizeof(CLASS),											\
 		VERSION,												\
 		true,													\
-		0,														\
+		nullptr,												\
 		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
@@ -240,7 +240,7 @@ bool is_a(const ITypedObject* obj)
 template < typename T, typename T0 >
 T dynamic_type_cast(T0* obj)
 {
-	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
+	return is_a< T >(obj) ? static_cast< T >(obj) : nullptr;
 }
 
 /*! Dynamic cast object.
@@ -252,7 +252,7 @@ T dynamic_type_cast(T0* obj)
 template < typename T, typename T0 >
 T dynamic_type_cast(const T0* obj)
 {
-	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
+	return is_a< T >(obj) ? static_cast< T >(obj) : nullptr;
 }
 
 /*! Safe cast object.

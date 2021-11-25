@@ -202,7 +202,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			adler.end();
 
 			fileStream->close();
-			fileStream = 0;
+			fileStream = nullptr;
 
 			if (adler.get() == hash)
 			{

@@ -45,15 +45,13 @@ public:
 
 	virtual void submit(const sound::SoundBlock& soundBlock) override final
 	{
-		if (m_signal.wait(0))
-			return;
-
 		for (uint32_t i = 0; i < soundBlock.samplesCount; ++i)
 		{
 			if (soundBlock.samples[0][i] > 1.0f)
 			{
 				m_signalAt = m_timer.getElapsedTime();
 				m_signal.set();
+				break;
 			}
 		}
 	}
@@ -72,7 +70,7 @@ public:
 
 	virtual Ref< sound::ISoundBufferCursor > createCursor() const override final
 	{
-		return 0;
+		return nullptr;
 	}
 
 	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const override final
@@ -87,7 +85,7 @@ public:
 
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.test.CaseSound", CaseSound, traktor::test::Case)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.test.CaseSound", 0, CaseSound, traktor::test::Case)
 
 void CaseSound::run()
 {
@@ -104,7 +102,10 @@ void CaseSound::run()
 	desc.driverDesc.hwChannels = 1;
 	desc.driverDesc.frameSamples = 1500;
 
-	audioSystem.create(desc);
+	bool result = audioSystem.create(desc);
+	CASE_ASSERT(result);
+	if (!result)
+		return;
 
 	TestSoundBuffer soundBuffer;
 
