@@ -4,6 +4,7 @@
 #include "Compress/Lzo/InflateStreamLzo.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Reader.h"
+#include "Core/Misc/SafeDestroy.h"
 
 namespace traktor
 {
@@ -25,8 +26,7 @@ public:
 
 	void close()
 	{
-		m_stream->close();
-		m_stream = nullptr;
+		safeClose(m_stream);
 	}
 
 	int64_t read(void* block, int64_t nbytes)
@@ -171,11 +171,7 @@ InflateStreamLzo::InflateStreamLzo(IStream* stream, uint32_t blockSize)
 
 void InflateStreamLzo::close()
 {
-	if (m_impl)
-	{
-		m_impl->close();
-		m_impl = nullptr;
-	}
+	safeClose(m_impl);
 }
 
 bool InflateStreamLzo::canRead() const
