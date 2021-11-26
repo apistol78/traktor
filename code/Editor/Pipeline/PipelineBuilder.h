@@ -97,7 +97,6 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
-	Ref< IPipelineCache > m_cacheAdHoc;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	Ref< DataAccessCache > m_dataAccessCache;
@@ -135,7 +134,8 @@ private:
 	bool getInstancesFromCache(
 		IPipelineCache* cache,
 		const CacheKey& key,
-		RefArray< db::Instance >& outInstances
+		RefArray< db::Instance >* outInstances,
+		AlignedVector< CacheKey >* outChildren
 	) const;
 };
 
