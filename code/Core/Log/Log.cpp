@@ -31,7 +31,6 @@ public:
 		if (level == 0)
 		{
 			fwprintf(stdout, L"%ls\n", str);
-			fflush(stdout);
 		}
 		else if (level == 1)
 		{
@@ -40,6 +39,7 @@ public:
 		}
 		else
 		{
+			fflush(stdout);
 			fwprintf(stderr, L"\x1B[0;31m%ls\x1B[0m\n", str);
 			fflush(stderr);
 		}
@@ -151,16 +151,14 @@ public:
 
 	virtual int32_t overflow(const wchar_t* buffer, int32_t count) override final
 	{
+		const uint32_t threadId = m_localTarget ? ThreadManager::getInstance().getCurrentThread()->id() : 0;
 		for (int32_t i = 0; i < count; ++i)
 		{
 			wchar_t c = buffer[i];
 			if (c == L'\n')
 			{
 				if (m_localTarget)
-				{
-					uint32_t threadId = ThreadManager::getInstance().getCurrentThread()->id();
 					m_localTarget->log(threadId, m_level, m_buffer.c_str());
-				}
 				m_buffer.reset();
 			}
 			else if (c != L'\r')
@@ -263,27 +261,27 @@ LogStream::~LogStream()
 
 ILogTarget* LogStream::getGlobalTarget()
 {
-	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
+	auto globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	return globalBuffer->getTarget();
 }
 
 void LogStream::setGlobalTarget(ILogTarget* target)
 {
-	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
+	auto globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	globalBuffer->setTarget(target);
 }
 
 ILogTarget* LogStream::getLocalTarget()
 {
-	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
-	LogStreamLocalBuffer* localBuffer = globalBuffer->getThreadLocalBuffer();
+	auto globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
+	auto localBuffer = globalBuffer->getThreadLocalBuffer();
 	return localBuffer->getTarget();
 }
 
 void LogStream::setLocalTarget(ILogTarget* target)
 {
-	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
-	LogStreamLocalBuffer* localBuffer = globalBuffer->getThreadLocalBuffer();
+	auto globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
+	auto localBuffer = globalBuffer->getThreadLocalBuffer();
 	localBuffer->setTarget(target);
 }
 
