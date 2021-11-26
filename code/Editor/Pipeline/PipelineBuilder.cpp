@@ -125,7 +125,6 @@ PipelineBuilder::PipelineBuilder(
 ,	m_rebuild(false)
 ,	m_profiler(new PipelineProfiler())
 ,	m_dependencySet(nullptr)
-,	m_buildInstances(nullptr)
 ,	m_adHocDepth(0)
 ,	m_progressEnd(0)
 ,	m_progress(0)
@@ -138,7 +137,10 @@ PipelineBuilder::PipelineBuilder(
 {
 	// Create data access memento cache.
 	m_dataAccessCache = new DataAccessCache(cache);
-	m_cacheAdHoc = new MemoryPipelineCache();
+
+	// If no cache is provided then use a non-persistent, in-memory, cache.
+	if (!m_cache)
+		m_cache = new MemoryPipelineCache();
 }
 
 bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool rebuild)
@@ -453,12 +455,6 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-	// Use persistent cache on first level of ad-hoc builds,
-	// if no cache enabled then always use ad-hoc cache.
-	// IPipelineCache* cache = m_cacheAdHoc;
-	// if (m_adHocDepth <= 0 && m_cache)
-	// 	cache = m_cache;
-
 	// Build dependencies.
 	bool result = true;
 	for (uint32_t i = 0; i < dependencySet.size() && result; ++i)
@@ -485,31 +481,54 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		if (index == i && buildParams != nullptr && is_a< ISerializable >(buildParams))
 			dependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
 
-		// Get output instances from memory cache.
-		if (m_cache && pipeline->shouldCache())
-		{
-			if (getInstancesFromCache(
-				m_cache,
-				{ dependency->outputGuid, dependencyHash },
-				m_builtInstances,
-				m_builtAdHocKeys
-			))
-			{
-				m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
-				continue;
-			}
-		}
-
-		if (m_verbose)
-			log::info << L"Building \"" << dependency->outputPath << L"\"..." << Endl;
-		log::info << IncreaseIndent;
-
 		// Build output instances; keep an array of written instances as we
 		// need them to update the cache for this specific build.
 		RefArray< db::Instance > previousBuiltInstances;
 		m_builtInstances.swap(previousBuiltInstances);
 		AlignedVector< CacheKey > previousBuiltAdHocKeys;
 		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+
+		// Get output instances from memory cache.
+		if (m_cache && pipeline->shouldCache())
+		{
+			if (getInstancesFromCache(
+				m_cache,
+				{ dependency->outputGuid, dependencyHash },
+				&m_builtInstances,
+				&m_builtAdHocKeys
+			))
+			{
+				for (const auto& child : m_builtAdHocKeys)
+				{
+					if (!getInstancesFromCache(
+						m_cache,
+						child,
+						nullptr,
+						nullptr
+					))
+						return false;
+				}
+
+				m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
+
+				previousBuiltAdHocKeys.push_back({ dependency->outputGuid, dependencyHash });
+				previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), m_builtAdHocKeys.begin(), m_builtAdHocKeys.end());
+
+				m_builtInstances.swap(previousBuiltInstances);
+				m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+
+				m_cacheHit++;
+				continue;
+			}
+			else
+				m_cacheMiss++;
+		}
+		else
+			m_cacheVoid++;
+
+		if (m_verbose)
+			log::info << L"Building \"" << dependency->outputPath << L"\" (ad-hoc " << m_adHocDepth << L")..." << Endl;
+		log::info << IncreaseIndent;
 
 		m_adHocDepth++;
 		m_profiler->begin(*dependency->pipelineType);
@@ -535,6 +554,9 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				m_builtInstances,
 				m_builtAdHocKeys
 			);
+			
+			previousBuiltAdHocKeys.push_back({ dependency->outputGuid, dependencyHash });
+			previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), m_builtAdHocKeys.begin(), m_builtAdHocKeys.end());
 		}
 
 		// Store dependency hash in database so getInstancesFromCache only touches
@@ -548,12 +570,12 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
 		log::info << DecreaseIndent;
-		if (!result && m_verbose)
+		if (m_verbose)
 		{
 			if (result)
-				log::info << L"Build \"" << dependency->outputPath << L"\" successful." << Endl;
+				log::info << L"Build \"" << dependency->outputPath << L"\" (ad-hoc) successful." << Endl;
 			else
-				log::info << L"Build \"" << dependency->outputPath << L"\" (" << type_name(pipeline) << L") failed." << Endl;
+				log::info << L"Build \"" << dependency->outputPath << L"\" (ad-hoc, " << type_name(pipeline) << L") failed." << Endl;
 		}
 	}
 
@@ -714,10 +736,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
-	// Build output instances; keep an array of written instances as we
-	// need them to update the cache.
-	T_FATAL_ASSERT(m_builtInstances.empty());
-	T_FATAL_ASSERT(m_builtAdHocKeys.empty());
+	m_builtInstances.resize(0);
+	m_builtAdHocKeys.resize(0);
 
 	// Get output instances from cache.
 	if (m_cache && pipeline->shouldCache())
@@ -725,23 +745,25 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		if (getInstancesFromCache(
 			m_cache,
 			{ dependency->outputGuid, currentDependencyHash },
-			m_builtInstances
+			&m_builtInstances,
+			&m_builtAdHocKeys
 		))
 		{
-			if (m_verbose)
+			for (const auto& child : m_builtAdHocKeys)
 			{
-				log::info << L"Cached output used for \"" << dependency->outputPath << L"\"; " << (uint32_t)builtInstances.size() << L" instance(s):" << Endl;
-				for (auto builtInstance : builtInstances)
-					log::info << L"\t\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
+				if (!getInstancesFromCache(
+					m_cache,
+					child,
+					nullptr,
+					nullptr
+				))
+					return BrFailed;
 			}
 
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
 			m_cacheHit++;
 			m_succeededBuilt++;
-
-			m_builtInstances.resize(0);
-			m_builtAdHocKeys.resize(0);
 			return BrSucceeded;
 		}
 		else
@@ -787,21 +809,18 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	log::warning.setLocalTarget(warningTarget.getTarget());
 	log::error.setLocalTarget(errorTarget.getTarget());
 
-	if (
-		!ThreadManager::getInstance().getCurrentThread()->stopped() &&
-		result
-	)
+	if (result && m_cache && pipeline->shouldCache())
 	{
-		if (m_cache && pipeline->shouldCache())
-			putInstancesInCache(
-				m_cache,
-				{ dependency->outputGuid, currentDependencyHash },
-				m_builtInstances,
-				m_builtAdHocKeys
-			);
-
-		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+		putInstancesInCache(
+			m_cache,
+			{ dependency->outputGuid, currentDependencyHash },
+			m_builtInstances,
+			m_builtAdHocKeys
+		);
 	}
+
+	if (result)
+		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
 	log::info << DecreaseIndent;
 
@@ -885,7 +904,8 @@ bool PipelineBuilder::putInstancesInCache(
 bool PipelineBuilder::getInstancesFromCache(
 	IPipelineCache* cache,
 	const CacheKey& key,
-	RefArray< db::Instance >& outInstances
+	RefArray< db::Instance >* outInstances,
+	AlignedVector< CacheKey >* outChildren
 ) const
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
@@ -943,32 +963,43 @@ bool PipelineBuilder::getInstancesFromCache(
 	AlignedVector< DirectoryEntry > directory(instanceCount);
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
+		auto& dirent = directory[i];
+
 		uint8_t instanceId[16];
 		if (reader.read(instanceId, 16) != 16)
 			return false;
-		if (!(directory[i].instanceId = Guid(instanceId)).isNotNull())
+		if (!(dirent.instanceId = Guid(instanceId)).isNotNull())
 			return false;
-		reader >> directory[i].instancePath;
-		if (directory[i].instancePath.empty())
+
+		reader >> dirent.instancePath;
+		if (dirent.instancePath.empty())
 			return false;
 	}
 
 	AlignedVector< CacheKey > children(childCount);
 	for (uint32_t i = 0; i < childCount; ++i)
 	{
+		auto& child = children[i];
+
 		uint8_t dependencyId[16];
 		if (reader.read(dependencyId, 16) != 16)
 			return false;
-		if (!(children[i].guid = Guid(dependencyId)).isNotNull())
+		if (!(child.guid = Guid(dependencyId)).isNotNull())
 			return false;
 
-		reader >> children[i].hash.pipelineHash;
-		reader >> children[i].hash.sourceAssetHash;
-		reader >> children[i].hash.sourceDataHash;
-		reader >> children[i].hash.filesHash;
+		reader >> child.hash.pipelineHash;
+		reader >> child.hash.sourceAssetHash;
+		reader >> child.hash.sourceDataHash;
+		reader >> child.hash.filesHash;
 	}
 
 	// Fetch or create instances.
+	if (outInstances)
+	{
+		outInstances->resize(0);
+		outInstances->reserve(instanceCount);
+	}
+
 	if (create)
 	{
 		for (uint32_t i = 0; i < instanceCount; ++i)
@@ -984,7 +1015,10 @@ bool PipelineBuilder::getInstancesFromCache(
 
 			Ref< db::Instance > instance = db::Isolate::createInstanceFromIsolation(group, stream);
 			if (instance)
-				outInstances.push_back(instance);
+			{
+				if (outInstances)
+					outInstances->push_back(instance);
+			}
 			else
 			{
 				result = false;
@@ -998,7 +1032,10 @@ bool PipelineBuilder::getInstancesFromCache(
 		{
 			Ref< db::Instance > instance = m_outputDatabase->getInstance(directory[i].instanceId);
 			if (instance)
-				outInstances.push_back(instance);
+			{
+				if (outInstances)
+					outInstances->push_back(instance);
+			}
 			else
 			{
 				result = false;
@@ -1012,12 +1049,8 @@ bool PipelineBuilder::getInstancesFromCache(
 	if (!result)
 		return false;
 
-	// Recursive get child dependencies.
-	for (const auto& child : children)
-	{
-		if (!getInstancesFromCache(cache, child, outInstances))
-			return false;
-	}
+	if (outChildren)
+		*outChildren = children;
 
 	return true;
 }
