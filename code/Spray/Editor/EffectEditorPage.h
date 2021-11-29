@@ -25,6 +25,7 @@ class IDocument;
 	namespace ui
 	{
 
+class Container;
 class CursorMoveEvent;
 class KeyMoveEvent;
 class Menu;
@@ -83,6 +84,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::ToolBarButton > m_toolToggleMove;
 	Ref< EffectPreviewControl > m_previewControl;
+	Ref< ui::Container > m_containerSequencer;
 	Ref< ui::ToolBar > m_toolBarLayers;
 	Ref< ui::SequencerControl > m_sequencer;
 	Ref< ui::Menu > m_popupMenu;

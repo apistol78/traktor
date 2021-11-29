@@ -31,11 +31,7 @@ class T_DLLCLASS Sequence : public SequenceItem
 	T_RTTI_CLASS;
 
 public:
-	Sequence(const std::wstring& name);
-
-	void setDescription(const std::wstring& description);
-
-	const std::wstring& getDescription() const;
+	explicit Sequence(const std::wstring& name);
 
 	int32_t addButton(IBitmap* imageUp, IBitmap* imageDown, const Command& command, bool toggle = false);
 
@@ -78,7 +74,6 @@ private:
 		Rect rc;
 	};
 
-	std::wstring m_description;
 	RefArray< Key > m_keys;
 	std::vector< Button > m_buttons;
 	Ref< Key > m_selectedKey;

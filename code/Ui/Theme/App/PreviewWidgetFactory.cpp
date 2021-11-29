@@ -15,6 +15,7 @@
 #include "Ui/ShortcutEdit.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/Graph/DefaultNodeShape.h"
@@ -363,12 +364,18 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		typeName == L"traktor.ui.Track"
 	)
 	{
+		Ref< ui::IBitmap > layerDelete = new ui::StyleBitmap(L"Spray.LayerDelete");
+		Ref< ui::IBitmap > layerVisible = new ui::StyleBitmap(L"Spray.LayerVisible");
+		Ref< ui::IBitmap > layerHidden = new ui::StyleBitmap(L"Spray.LayerHidden");
+
 		Ref< SequencerControl > sequencerControl = new SequencerControl();
 		sequencerControl->setStyleSheet(styleSheet);
 		sequencerControl->create(parent);
 		sequencerControl->addSequenceItem(new Sequence(L"First"));
 
 		Ref< Sequence > sequence = new Sequence(L"Second");
+		sequence->addButton(layerDelete, layerDelete, ui::Command(L"Effect.Editor.DeleteLayer"));
+		sequence->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"), true);
 		sequence->addKey(new Tick(100, true));
 		sequence->addKey(new Range(200, 500, true));
 		sequence->addKey(new Track(600, 900, true));

@@ -2,6 +2,10 @@
 <object type="traktor.i18n.Dictionary">
 	<map>
 		<item>
+			<first>EFFECT_EDITOR_ADD_LAYER</first>
+			<second>Add layer</second>
+		</item>
+		<item>
 			<first>EFFECT_EDITOR_BROWSE_BACKGROUND</first>
 			<second>Browse background...</second>
 		</item>
@@ -34,8 +38,8 @@
 			<second>Stop</second>
 		</item>
 		<item>
-			<first>EFFECT_EDITOR_TOGGLE_GROUND_CLIP</first>
-			<second>Ground clip</second>
+			<first>EFFECT_EDITOR_TIMELINE</first>
+			<second>Timeline</second>
 		</item>
 		<item>
 			<first>EFFECT_EDITOR_TOGGLE_GUIDE</first>

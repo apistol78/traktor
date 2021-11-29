@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{8F9B4095-195B-7045-8C37-9E02F4675D07}</guid>
+	<primaryType>traktor.spray.EffectData</primaryType>
+	<blobs/>
+</object>

@@ -348,7 +348,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > entityRenderers = new world::WorldEntityRenderers();
 	entityRenderers->add(new mesh::MeshComponentRenderer());
-	entityRenderers->add(new EffectRenderer(m_renderSystem, 0.0f, 1000.0f));
+	entityRenderers->add(new EffectRenderer(m_renderSystem, 10000.0f, 10000.0f));
 	entityRenderers->add(new weather::CloudRenderer());
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());
@@ -555,6 +555,31 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		{
 			Transform transform = m_effectEntity->getTransform();
 			m_primitiveRenderer->drawWireFrame(transform.toMatrix44(), 1.0f);
+
+			auto effectComponent = m_effectEntity->getComponent< EffectComponent >();
+			T_ASSERT(effectComponent != nullptr);
+
+			auto effectInstance = effectComponent->getEffectInstance();
+			if (effectInstance)
+			{
+				for (auto layerInstance : effectInstance->getLayerInstances())
+				{
+					auto emitterInstance = layerInstance->getEmitterInstance();
+					if (emitterInstance)
+					{
+						for (const auto& pnt : emitterInstance->getPoints())
+						{
+							if (pnt.velocity.length() > FUZZY_EPSILON)
+							{
+								Vector4 tail = pnt.position + pnt.velocity;
+								m_primitiveRenderer->drawLine(pnt.position, tail, Color4ub(255, 255, 255, 255));
+								m_primitiveRenderer->drawArrowHead(tail, tail + pnt.velocity.normalized() * 0.2_simd, 0.8f, Color4ub(255, 255, 255, 255));
+							}
+							m_primitiveRenderer->drawSolidPoint(pnt.position, 6.0f, Color4ub(255, 255, 255, 255));
+						}
+					}
+				}
+			}
 		}
 
 		if (m_effectData && m_guideVisible)

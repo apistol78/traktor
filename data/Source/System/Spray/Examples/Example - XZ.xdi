@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.spray.EffectData">
+	<duration>4</duration>
+	<loopStart>0</loopStart>
+	<loopEnd>4</loopEnd>
+	<layers>
+		<item type="traktor.spray.EffectLayerData" version="4">
+			<name>Example</name>
+			<time>0</time>
+			<duration>4</duration>
+			<emitter type="traktor.spray.EmitterData" version="7">
+				<source type="traktor.spray.PointSourceData">
+					<constantRate>5</constantRate>
+					<velocityRate>0</velocityRate>
+					<position>0, 0, 0, 1</position>
+					<velocity>
+						<min>0.8</min>
+						<max>1.45</max>
+					</velocity>
+					<orientation>
+						<min>0</min>
+						<max>6.283185</max>
+					</orientation>
+					<angularVelocity>
+						<min>-4.300001</min>
+						<max>4.35</max>
+					</angularVelocity>
+					<age>
+						<min>2.65</min>
+						<max>3.7</max>
+					</age>
+					<mass>
+						<min>0.17</min>
+						<max>0.38</max>
+					</mass>
+					<size>
+						<min>0.525</min>
+						<max>0.9</max>
+					</size>
+				</source>
+				<modifiers>
+					<item type="traktor.spray.IntegrateModifierData" version="1">
+						<timeScale>1</timeScale>
+						<linear>true</linear>
+						<angular>true</angular>
+					</item>
+					<item type="traktor.spray.GravityModifierData">
+						<gravity>0, -0.1, 0, 0</gravity>
+						<world>true</world>
+					</item>
+				</modifiers>
+				<shader>{7F1F0D58-6C2F-FE4D-85C5-DB50E1E27A25}</shader>
+				<mesh>{00000000-0000-0000-0000-000000000000}</mesh>
+				<effect/>
+				<middleAge>0.1</middleAge>
+				<cullNearDistance>0.001</cullNearDistance>
+				<cullMeshDistance>100</cullMeshDistance>
+				<fadeNearRange>0.01</fadeNearRange>
+				<viewOffset>0</viewOffset>
+				<warmUp>0</warmUp>
+				<sort>false</sort>
+				<worldSpace>true</worldSpace>
+				<meshOrientationFromVelocity>true</meshOrientationFromVelocity>
+			</emitter>
+			<trail/>
+			<sequence/>
+			<triggerEnable/>
+			<triggerDisable/>
+		</item>
+	</layers>
+</object>

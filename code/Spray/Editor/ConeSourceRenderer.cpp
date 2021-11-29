@@ -12,22 +12,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSourceRenderer", ConeSourceRenderer, 
 void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const
 {
 	const ConeSourceData* coneSource = checked_type_cast< const ConeSourceData* >(sourceData);
-
-	float angle1 = coneSource->m_angle1;
-	float angle2 = coneSource->m_angle2;
-
-	for (int i = 0; i < 20; ++i)
-	{
-		primitiveRenderer->drawCone(
-			translate(coneSource->m_position) * Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), coneSource->m_normal).toMatrix44(),
-			angle2,
-			angle1,
-			1.0f,
-			Color4ub(255, 255, 0, 16),
-			Color4ub(255, 255, 255, 32)
-		);
-	}
-
+	primitiveRenderer->drawCone(
+		translate(coneSource->m_position) * Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), coneSource->m_normal).toMatrix44(),
+		coneSource->m_angle2,
+		coneSource->m_angle1,
+		1.0f,
+		Color4ub(255, 255, 0, 20),
+		Color4ub(255, 255, 128, 30)
+	);
 	primitiveRenderer->drawLine(coneSource->m_position, coneSource->m_position + coneSource->m_normal, Color4ub(255, 255, 0));
 }
 

@@ -42,27 +42,38 @@ void Tick::move(int offset)
 
 void Tick::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
-	int32_t x = sequence->clientFromTime(m_time);
-	outRect.left = x - 3;
-	outRect.top = rcClient.top + 2;
-	outRect.right = x + 4;
-	outRect.bottom = rcClient.top + sequenceHeight - 3;
+	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t x = sequence->clientFromTime(m_time);
+	const int32_t hw = dpi96(3);
+	const int32_t hh = dpi96(2);
+
+	outRect.left = x - hw;
+	outRect.top = rcClient.top + hh;
+	outRect.right = x + hw + 1;
+	outRect.bottom = rcClient.top + sequenceHeight - hh - 1;
 }
 
 void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
 	const StyleSheet* ss = sequencer->getStyleSheet();
 
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
-	int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
-	Rect rc(rcClient.left + x - 3, rcClient.top + 2, rcClient.left + x + 4, rcClient.top + sequenceHeight - 3);
-	bool selected = (sequence->getSelectedKey() == this);
+	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
+	const int32_t hw = dpi96(3);
+	const int32_t hh = dpi96(2);
+
+	Rect rc(
+		rcClient.left + x - hw,
+		rcClient.top + hh,
+		rcClient.left + x + hw + 1,
+		rcClient.top + sequenceHeight - hh - 1
+	);
+
+	const bool selected = (sequence->getSelectedKey() == this);
 
 	canvas.setBackground(ss->getColor(this, selected ? L"background-color-selected" : L"background-color"));
-	canvas.fillRect(rc);
-
 	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.fillRect(rc);
 	canvas.drawRect(rc);
 }
 
