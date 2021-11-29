@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdlib>
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Event.h"
 #include "Ui/StyleBitmap.h"
@@ -278,15 +279,19 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
 	GridView* view = getWidget< GridView >();
 	const StyleSheet* ss = view->getStyleSheet();
-	auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
-
 	const RefArray< GridColumn >& columns = view->getColumns();
-	// Rect rowRect(0, rect.top, rect.getWidth(), rect.bottom);
+	const int32_t depth = getDepth();
 
 	// Paint custom background.
 	if (m_background.a > 0)
 	{
 		canvas.setBackground(m_background);
+		canvas.fillRect(rect);
+	}
+	// No custom background, use different background colors per depth.
+	else if (depth > 0)
+	{
+		canvas.setBackground(ss->getColor(this, str(L"background-color-%d", std::min(depth, 4))));
 		canvas.fillRect(rect);
 	}
 
@@ -304,7 +309,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 
 	if (!m_children.empty())
 	{
-		int32_t depth = getDepth();
+		auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
 		int32_t size = expand->getSize().cy;
 		canvas.drawBitmap(
 			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
