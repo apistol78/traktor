@@ -32,6 +32,7 @@ void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 	primitiveRenderer->drawLine(corners[1], corners[3], Color4ub(255, 255, 0));
 
 	primitiveRenderer->drawLine(center, center + normal, Color4ub(255, 255, 0));
+	primitiveRenderer->drawArrowHead(center + normal, center + normal * 1.2_simd, 0.8f, Color4ub(255, 255, 0));
 }
 
 	}

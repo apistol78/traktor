@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/IBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/SequenceButtonClickEvent.h"
@@ -26,16 +27,6 @@ Sequence::Sequence(const std::wstring& name)
 ,	m_previousPosition(0)
 ,	m_timeScale(8)
 {
-}
-
-void Sequence::setDescription(const std::wstring& description)
-{
-	m_description = description;
-}
-
-const std::wstring& Sequence::getDescription() const
-{
-	return m_description;
 }
 
 int32_t Sequence::addButton(IBitmap* imageUp, IBitmap* imageDown, const Command& command, bool toggle)
@@ -199,48 +190,46 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	// Draw sequence text.
-	Size ext = canvas.getFontMetric().getExtent(getName());
+	const Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(
 		Point(
-			rc.left + 32 + getDepth() * 16,
+			rc.left + ui::dpi96(32 + getDepth() * 16),
 			rc.top + (rc.getHeight() - ext.cy) / 2
 		),
 		getName()
 	);
 
-	if (!m_description.empty())
-	{
-		canvas.drawText(
-			Point(
-				rc.left + 48 + getDepth() * 16,
-				rc.top + rc.getHeight() / 2
-			),
-			m_description
-		);
-	}
-
 	// Draw sequence buttons.
-	int32_t buttonSize = dpi96(c_buttonSize);
+	const int32_t buttonSize = rc.getHeight();
 
 	Rect rcButton;
-	rcButton.left = rc.left + separator - buttonSize - 4 - int32_t(m_buttons.size()) * (buttonSize + 2);
-	rcButton.top = rc.top + (rc.getHeight() - buttonSize) / 2;
+	rcButton.left = rc.left + separator - (int32_t)m_buttons.size() * buttonSize;
+	rcButton.top = rc.top;
 	rcButton.right = rcButton.left + buttonSize;
-	rcButton.bottom = rcButton.top + buttonSize;
+	rcButton.bottom = rc.bottom;
 
-	for (int32_t i = 0; i < int32_t(m_buttons.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)m_buttons.size(); ++i)
 	{
 		m_buttons[i].rc = rcButton;
 
-		canvas.drawBitmap(
-			rcButton.getTopLeft(),
-			Point(0, 0),
-			Size(16, 16),
-			m_buttons[i].state ? m_buttons[i].imageDown.ptr() : m_buttons[i].imageUp.ptr()
-		);
+		auto image = m_buttons[i].state ? m_buttons[i].imageDown.ptr() : m_buttons[i].imageUp.ptr();
+		if (image)
+		{
+			const Size size = image->getSize();
+			const Size offset(
+				(buttonSize - size.cx) / 2,
+				(buttonSize - size.cy) / 2
+			);
+			canvas.drawBitmap(
+				rcButton.getTopLeft() + offset,
+				Point(0, 0),
+				size,
+				image
+			);
+		}
 
-		rcButton = rcButton.offset(-buttonSize - 2, 0);
+		rcButton = rcButton.offset(buttonSize, 0);
 	}
 
 	// Draw sequence keys.

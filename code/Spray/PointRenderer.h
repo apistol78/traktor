@@ -48,7 +48,7 @@ class T_DLLCLASS PointRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
+	explicit PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
 
 	virtual ~PointRenderer();
 

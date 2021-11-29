@@ -743,14 +743,6 @@
 			<second>$(Images.Path)/Images/UI/SequenceExpand.image</second>
 		</item>
 		<item>
-			<first>UI.SequenceHidden</first>
-			<second>$(Images.Path)/Images/UI/SequenceHidden.image</second>
-		</item>
-		<item>
-			<first>UI.SequenceVisible</first>
-			<second>$(Images.Path)/Images/UI/SequenceVisible.image</second>
-		</item>
-		<item>
 			<first>UI.SmallCross</first>
 			<second>$(Images.Path)/Images/UI/SmallCross.image</second>
 		</item>

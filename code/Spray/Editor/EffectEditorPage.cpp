@@ -11,10 +11,8 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
-
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
-
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -23,9 +21,7 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
-
 #include "Scene/SceneFactory.h"
-
 #include "Sound/AudioSystem.h"
 #include "Sound/SoundFactory.h"
 #include "Spray/Effect.h"
@@ -61,9 +57,7 @@
 #include "Ui/Sequencer/Range.h"
 #include "Ui/Sequencer/Tick.h"
 #include "Ui/Splitter.h"
-
 #include "Weather/WeatherFactory.h"
-
 #include "World/EntityBuilder.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -192,19 +186,18 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
 
-	Ref< ui::Container > containerSequencer = new ui::Container();
-	containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_containerSequencer = new ui::Container();
+	m_containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_containerSequencer->setText(i18n::Text(L"EFFECT_EDITOR_TIMELINE"));
 
 	m_toolBarLayers = new ui::ToolBar();
-	m_toolBarLayers->create(containerSequencer);
+	m_toolBarLayers->create(m_containerSequencer);
 	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerAdd"), 1);
-	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerDelete"), 1);
 	m_toolBarLayers->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_ADD_LAYER"), 0, ui::Command(L"Effect.Editor.AddLayer")));
-	m_toolBarLayers->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REMOVE_LAYER"), 1, ui::Command(L"Effect.Editor.RemoveLayer")));
 	m_toolBarLayers->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarLayersClick);
 
 	m_sequencer = new ui::SequencerControl();
-	m_sequencer->create(containerSequencer, ui::WsDoubleBuffer);
+	m_sequencer->create(m_containerSequencer, ui::WsDoubleBuffer);
 	m_sequencer->setText(i18n::Text(L"EFFECT_EDITOR_SEQUENCER"));
 	m_sequencer->addEventHandler< ui::SelectionChangeEvent >(this, &EffectEditorPage::eventSequencerLayerSelect);
 	m_sequencer->addEventHandler< ui::CursorMoveEvent >(this, &EffectEditorPage::eventSequencerTimeCursorMove);
@@ -213,7 +206,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(containerSequencer, ui::dpi96(140), true);
+	m_site->createAdditionalPanel(m_containerSequencer, ui::dpi96(140), true);
 
 	m_popupMenu = new ui::Menu();
 	m_popupMenu->add(new ui::MenuItem(ui::Command(L"Effect.Editor.ReplaceEmitterSource"), i18n::Text(L"EFFECT_EDITOR_REPLACE_EMITTER_SOURCE")));
@@ -238,10 +231,11 @@ void EffectEditorPage::destroy()
 	m_audioSystem = nullptr;
 
 	// Destroy panels.
-	m_site->destroyAdditionalPanel(m_sequencer);
+	if (m_containerSequencer)
+		m_site->destroyAdditionalPanel(m_containerSequencer);
 
 	// Destroy widgets.
-	safeDestroy(m_sequencer);
+	safeDestroy(m_containerSequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
 }
@@ -266,9 +260,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_effectData->addLayer(new EffectLayerData());
 		updateSequencer();
 		updateEffectPreview();
-	}
-	else if (command == L"Effect.Editor.RemoveLayer")
-	{
 	}
 	else if (command == L"Effect.Editor.Reset")
 	{
@@ -440,12 +431,12 @@ void EffectEditorPage::updateEffectPreview()
 		for (auto sequencerLayer : sequencerLayers)
 		{
 			ui::Sequence* layerItem = checked_type_cast< ui::Sequence*, false >(sequencerLayer);
-			if (!layerItem->getButtonState(0))
+			if (!layerItem->getButtonState(1))
 			{
 				EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
 				T_ASSERT(effectLayerData);
 
-				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(m_resourceManager, 0);
+				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(m_resourceManager, nullptr);
 				if (effectLayer)
 					effectLayers.push_back(effectLayer);
 
@@ -470,7 +461,7 @@ void EffectEditorPage::updateEffectPreview()
 		m_previewControl->syncEffect();
 	}
 	else
-		m_previewControl->setEffect(0, 0);
+		m_previewControl->setEffect(nullptr, nullptr);
 }
 
 void EffectEditorPage::updateSequencer()
@@ -560,21 +551,21 @@ void EffectEditorPage::updateSequencer()
 
 void EffectEditorPage::updateProfile()
 {
-	RefArray< ui::SequenceItem > items;
-	m_sequencer->getSequenceItems(items, ui::SequencerControl::GfDefault);
+	//RefArray< ui::SequenceItem > items;
+	//m_sequencer->getSequenceItems(items, ui::SequencerControl::GfDefault);
 
-	for (RefArray< ui::SequenceItem >::const_iterator i = items.begin(); i != items.end(); ++i)
-	{
-		ui::Sequence* sequence = checked_type_cast< ui::Sequence*, false >(*i);
-		Ref< EffectLayer > layer = sequence->getData< EffectLayer >(L"LAYER");
-		if (layer)
-		{
-			uint32_t npoints = m_previewControl->getEffectLayerPoints(layer);
-			sequence->setDescription(toString(npoints));
-		}
-		else
-			sequence->setDescription(L"");
-	}
+	//for (RefArray< ui::SequenceItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	//{
+	//	ui::Sequence* sequence = checked_type_cast< ui::Sequence*, false >(*i);
+	//	Ref< EffectLayer > layer = sequence->getData< EffectLayer >(L"LAYER");
+	//	if (layer)
+	//	{
+	//		uint32_t npoints = m_previewControl->getEffectLayerPoints(layer);
+	//		sequence->setDescription(toString(npoints));
+	//	}
+	//	else
+	//		sequence->setDescription(L"");
+	//}
 
 	m_sequencer->update();
 }

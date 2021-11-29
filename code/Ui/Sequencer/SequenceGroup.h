@@ -35,10 +35,6 @@ public:
 
 	bool isCollapsed() const;
 
-	void setVisible(bool visible);
-
-	bool isVisible() const;
-
 	void setRange(int32_t start, int32_t end);
 
 	int32_t getStart() const;
@@ -56,10 +52,7 @@ public:
 private:
 	Ref< IBitmap > m_imageExpand;
 	Ref< IBitmap > m_imageCollapse;
-	Ref< IBitmap > m_imageVisible;
-	Ref< IBitmap > m_imageHidden;
 	bool m_expanded;
-	bool m_visible;
 	int32_t m_start;
 	int32_t m_end;
 };

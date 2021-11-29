@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
+			<id>{EF5676D7-0085-274C-A1C2-7650AD60C6BE}</id>
+			<comment/>
+			<position>
+				<first>376</first>
+				<second>524</second>
+			</position>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>true</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>Never</cullMode>
+			<blendEnable>true</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOne</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>false</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<precisionHint>Undefined</precisionHint>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{3847A8E3-E7FB-8C4A-97BD-997BBD44A920}</id>
+			<comment/>
+			<position>
+				<first>563</first>
+				<second>457</second>
+			</position>
+			<fragmentGuid>{B5FCD4C3-8052-8140-A2B8-6EC35D4A1C00}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{DE77F819-3F20-CB4D-999F-B81EF7508A0B}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{6432D95E-81C2-EB49-95F4-D99E3AB23174}</id>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{B5701662-83D6-7440-B037-5612131978F9}</id>
+			<comment/>
+			<position>
+				<first>-105</first>
+				<second>436</second>
+			</position>
+			<fragmentGuid>{B973ACD6-9F20-024A-97E4-89242B52CA91}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{F3286F8A-88BA-6D4C-A3CF-53C836F78FBC}</id>
+					<name>DepthFade</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{5E10CE68-05B7-5049-A610-F7284188F81B}</id>
+					<name>Size Add</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{534C7910-8089-E24C-8078-AFB008DB088C}</id>
+					<name>Size Multiply</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{56AD2EC7-F199-8B41-9344-FFA6DD29EFB1}</id>
+					<name>View Offset</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{F748575D-5DA4-1949-80AF-73A153DE1191}</id>
+					<name>Age</name>
+				</item>
+				<item>
+					<id>{E1EB522D-D1A2-BF48-8008-505ED5C42AB2}</id>
+					<name>Alpha</name>
+				</item>
+				<item>
+					<id>{45D99DA9-94A3-2D4D-9606-962DAE3E9393}</id>
+					<name>Color</name>
+				</item>
+				<item>
+					<id>{0718D78A-0A9B-264A-A468-E65D5527F7EA}</id>
+					<name>Orientation</name>
+				</item>
+				<item>
+					<id>{D42F173D-21CA-1544-9ECB-E42DAFFB2E40}</id>
+					<name>Random</name>
+				</item>
+				<item>
+					<id>{F23AA1C7-06A2-8848-8FEC-182D406AA537}</id>
+					<name>TexCoord</name>
+				</item>
+				<item>
+					<id>{EC408B4F-B9D4-3743-A634-653017C31765}</id>
+					<name>ViewPosition</name>
+				</item>
+			</outputPins>
+			<values>
+				<item>
+					<first>DepthFade</first>
+					<second>0.1</second>
+				</item>
+				<item>
+					<first>Size Add</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Size Multiply</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>View Offset</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{0F8545D6-1ECB-0149-9685-F5053D49E11C}</id>
+			<comment/>
+			<position>
+				<first>259</first>
+				<second>463</second>
+			</position>
+			<color>1, 1, 1, 1</color>
+			<linear>false</linear>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>
