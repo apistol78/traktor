@@ -21,7 +21,7 @@ namespace traktor
 #if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_pointCount = 1000;
 #else
-const uint32_t c_pointCount = 8000;
+const uint32_t c_pointCount = 12000;
 #endif
 
 const static float c_extents[4][2] =
