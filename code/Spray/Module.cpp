@@ -2,6 +2,7 @@
 
 #if defined(T_STATIC)
 #	include "Spray/SprayClassFactory.h"
+#	include "Spray/Modifiers/BrownianModifierData.h"
 #	include "Spray/Modifiers/DragModifierData.h"
 #	include "Spray/Modifiers/GravityModifierData.h"
 #	include "Spray/Modifiers/IntegrateModifierData.h"
@@ -27,6 +28,7 @@ namespace traktor
 extern "C" void __module__Traktor_Spray()
 {
 	T_FORCE_LINK_REF(SprayClassFactory);
+	T_FORCE_LINK_REF(BrownianModifierData);
 	T_FORCE_LINK_REF(DragModifierData);
 	T_FORCE_LINK_REF(GravityModifierData);
 	T_FORCE_LINK_REF(IntegrateModifierData);
