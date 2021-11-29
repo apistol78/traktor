@@ -564,8 +564,8 @@ local dpis =
 -- -j -i Dark
 local function export(input, x, y, width, height, dpi, output)
 	--local inkscape = "/snap/bin/inkscape"
-	local inkscape = "/usr/bin/flatpak run org.inkscape.Inkscape"
-	--local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
+	--local inkscape = "/usr/bin/flatpak run org.inkscape.Inkscape"
+	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
 	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
 	--stdout:printLn(cmd)
 	local result = run:execute(cmd, nil)
