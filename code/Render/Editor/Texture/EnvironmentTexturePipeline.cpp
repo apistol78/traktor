@@ -4,6 +4,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Misc/String.h"
