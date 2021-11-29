@@ -149,6 +149,20 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		row2->add(new GridItem(L"A2"));
 		row2->add(new GridItem(L"B2"));
 		row2->add(new GridItem(L"C2"));
+
+		Ref< GridRow > cr1 = new GridRow();
+		cr1->add(new GridItem(L"Child"));
+		Ref< GridRow > cr2 = new GridRow();
+		cr2->add(new GridItem(L"Child"));
+		cr1->addChild(cr2);
+		Ref< GridRow > cr3 = new GridRow();
+		cr3->add(new GridItem(L"Child"));
+		cr2->addChild(cr3);
+		Ref< GridRow > cr4 = new GridRow();
+		cr4->add(new GridItem(L"Child"));
+		cr3->addChild(cr4);
+		row2->addChild(cr1);
+
 		gridView->addRow(row2);
 
 		return gridView;
