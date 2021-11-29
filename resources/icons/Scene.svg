@@ -4,7 +4,7 @@
    inkscape:export-xdpi="90"
    inkscape:export-filename="C:\private\traktor\res\icons-new\g4486.png"
    sodipodi:docname="Scene.svg"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    version="1.1"
    id="svg2"
    viewBox="0 0 32 32.000001"
@@ -26,19 +26,19 @@
      showborder="true"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-maximized="1"
-     inkscape:window-y="27"
-     inkscape:window-x="53"
-     inkscape:window-height="836"
-     inkscape:window-width="1387"
+     inkscape:window-maximized="0"
+     inkscape:window-y="330"
+     inkscape:window-x="2701"
+     inkscape:window-height="1003"
+     inkscape:window-width="1275"
      inkscape:snap-to-guides="false"
      inkscape:snap-grids="true"
      inkscape:snap-global="true"
      showgrid="true"
-     inkscape:current-layer="g1612-3"
+     inkscape:current-layer="g5948"
      inkscape:document-units="px"
      inkscape:cy="1.2374369"
-     inkscape:cx="100.58594"
+     inkscape:cx="100.76272"
      inkscape:zoom="2.828427"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
@@ -970,7 +970,7 @@
     </rdf:RDF>
   </metadata>
   <g
-     style="display:none"
+     style="display:inline"
      inkscape:label="Light"
      id="layer27"
      inkscape:groupmode="layer">
@@ -1393,7 +1393,7 @@
      inkscape:groupmode="layer"
      id="g5948"
      inkscape:label="Dark"
-     style="display:inline;opacity:1">
+     style="display:none;opacity:1">
     <g
        id="g6155"
        transform="translate(66.750343,319.69033)"
