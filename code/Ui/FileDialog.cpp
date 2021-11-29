@@ -36,7 +36,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		title,
 		dpi96(700),
 		dpi96(500),
-		ConfigDialog::WsDefaultResizable,
+		ConfigDialog::WsCenterParent | ConfigDialog::WsDefaultResizable,
 		new TableLayout(L"100%", save ? L"*,100%,*" : L"*,100%", 0, 0)
 	))
 		return false;
