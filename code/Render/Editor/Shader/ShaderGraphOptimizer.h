@@ -37,9 +37,10 @@ public:
 
 	/*! Remove unused branches.
 	 *
+	 * \param keepExternalAlways Keep unconnected external fragments regardless.
 	 * \return Shader graph with removed unused branches.
 	 */
-	Ref< ShaderGraph > removeUnusedBranches() const;
+	Ref< ShaderGraph > removeUnusedBranches(bool keepExternalAlways) const;
 
 	/*! Merge duplicated branches.
 	 *

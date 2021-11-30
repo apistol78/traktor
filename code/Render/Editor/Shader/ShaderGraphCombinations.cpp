@@ -64,7 +64,7 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 		));
 	}
 
-	shaderGraphResult = ShaderGraphOptimizer(shaderGraphResult).removeUnusedBranches();
+	shaderGraphResult = ShaderGraphOptimizer(shaderGraphResult).removeUnusedBranches(true);
 	if (!shaderGraphResult)
 		return nullptr;
 
@@ -137,7 +137,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCom
 
 ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 {
-	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 
 	RefArray< Branch > branchNodes;
 	m_shaderGraph->findNodesOf< Branch >(branchNodes);
