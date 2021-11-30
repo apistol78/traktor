@@ -25,6 +25,21 @@ void NullRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void ComputeRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	if (programParams)
+		programParams->fixup(program);
+
+	renderView->compute(
+		program,
+		workSize
+	);
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void SimpleRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
