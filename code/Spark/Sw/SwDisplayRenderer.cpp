@@ -176,7 +176,7 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 				{
 					switch (style.getGradientType())
 					{
-					case FillStyle::GtLinear:
+					case FillStyle::GradientType::Linear:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -191,7 +191,7 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 						}
 						break;
 
-					case FillStyle::GtRadial:
+					case FillStyle::GradientType::Radial:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -406,7 +406,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 				{
 					switch (style.getGradientType())
 					{
-					case FillStyle::GtLinear:
+					case FillStyle::GradientType::Linear:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -421,7 +421,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 						}
 						break;
 
-					case FillStyle::GtRadial:
+					case FillStyle::GradientType::Radial:
 						{
 							AlignedVector< std::pair< Color4f, float > > colors;
 							for (uint32_t j = 0; j < colorRecords.size(); ++j)

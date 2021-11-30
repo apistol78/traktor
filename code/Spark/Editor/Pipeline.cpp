@@ -95,7 +95,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 7, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 8, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)

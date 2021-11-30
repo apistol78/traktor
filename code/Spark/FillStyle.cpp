@@ -14,7 +14,7 @@ namespace traktor
 	{
 
 FillStyle::FillStyle()
-:	m_gradientType(GtInvalid)
+:	m_gradientType(GradientType::Invalid)
 ,	m_gradientMatrix(Matrix33::identity())
 ,	m_fillBitmap(0)
 ,	m_fillBitmapMatrix(Matrix33::identity())
@@ -46,9 +46,9 @@ bool FillStyle::create(const SwfFillStyle* fillStyle)
 		}
 
 		if (fillStyle->type == FstLinearGradient)
-			m_gradientType = GtLinear;
+			m_gradientType = GradientType::Linear;
 		else
-			m_gradientType = GtRadial;
+			m_gradientType = GradientType::Radial;
 
 		m_gradientMatrix = Matrix33(fillStyle->gradient.gradientMatrix.m);
 	}
@@ -100,7 +100,7 @@ void FillStyle::transform(const Matrix33& transform, const ColorTransform& cxfor
 	for (AlignedVector< ColorRecord >::iterator i = m_colorRecords.begin(); i != m_colorRecords.end(); ++i)
 		i->color = i->color * cxform.mul + cxform.add;
 
-	if (m_gradientType != GtInvalid)
+	if (m_gradientType != GradientType::Invalid)
 		m_gradientMatrix = transform * m_gradientMatrix;
 
 	if (m_fillBitmap != 0)
@@ -109,16 +109,8 @@ void FillStyle::transform(const Matrix33& transform, const ColorTransform& cxfor
 
 void FillStyle::serialize(ISerializer& s)
 {
-	const MemberEnum< GradientType >::Key kGradientType[] =
-	{
-		{ L"GtInvalid", GtInvalid },
-		{ L"GtLinear", GtLinear },
-		{ L"GtRadial", GtRadial },
-		{ 0 }
-	};
-
 	s >> MemberAlignedVector< ColorRecord, MemberComposite< ColorRecord > >(L"colorRecords", m_colorRecords);
-	s >> MemberEnum< GradientType >(L"gradientType", m_gradientType, kGradientType);
+	s >> MemberEnumByValue< GradientType >(L"gradientType", m_gradientType);
 	s >> Member< Matrix33 >(L"gradientMatrix", m_gradientMatrix);
 	s >> Member< uint16_t >(L"m_fillBitmap", m_fillBitmap);
 	s >> Member< Matrix33 >(L"fillBitmapMatrix", m_fillBitmapMatrix);

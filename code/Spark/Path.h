@@ -41,14 +41,14 @@ enum SubPathSegmentType
  */
 struct SubPathSegment
 {
-	SubPathSegmentType type;
-	uint32_t pointsOffset;
-	uint32_t pointsCount;
+	SubPathSegmentType type = SpgtUndefined;
+	uint32_t pointsOffset = 0;
+	uint32_t pointsCount = 0;
 
-	SubPathSegment(SubPathSegmentType type_ = SpgtUndefined)
+	SubPathSegment() = default;
+
+	explicit SubPathSegment(SubPathSegmentType type_)
 	:	type(type_)
-	,	pointsOffset(0)
-	,	pointsCount(0)
 	{
 	}
 
@@ -60,17 +60,10 @@ struct SubPathSegment
  */
 struct SubPath
 {
-	uint16_t fillStyle0;
-	uint16_t fillStyle1;
-	uint16_t lineStyle;
+	uint16_t fillStyle0 = 0;
+	uint16_t fillStyle1 = 0;
+	uint16_t lineStyle = 0;
 	AlignedVector< SubPathSegment > segments;
-
-	SubPath()
-	:	fillStyle0(0)
-	,	fillStyle1(0)
-	,	lineStyle(0)
-	{
-	}
 
 	void serialize(ISerializer& s);
 };

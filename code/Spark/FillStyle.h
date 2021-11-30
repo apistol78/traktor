@@ -34,11 +34,11 @@ struct SwfFillStyle;
 class T_DLLCLASS FillStyle
 {
 public:
-	enum GradientType
+	enum class GradientType
 	{
-		GtInvalid,
-		GtLinear,
-		GtRadial
+		Invalid = 0,
+		Linear = 1,
+		Radial = 2
 	};
 
 	struct ColorRecord

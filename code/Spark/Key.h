@@ -38,7 +38,7 @@ public:
 		AkUp = 38
 	};
 
-	explicit Key();
+	Key();
 
 	int32_t getAscii() const;
 
