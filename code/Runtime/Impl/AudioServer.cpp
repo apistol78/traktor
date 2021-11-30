@@ -25,13 +25,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.AudioServer", AudioServer, IAudioServer)
 
-AudioServer::AudioServer()
-:	m_autoMute(true)
-,	m_soundMuted(false)
-,	m_soundMutedVolume(1.0f)
-{
-}
-
 bool AudioServer::create(const PropertyGroup* settings, const SystemApplication& sysapp)
 {
 	m_audioType = settings->getProperty< std::wstring >(L"Audio.Type");

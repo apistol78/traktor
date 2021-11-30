@@ -15,8 +15,6 @@ class RenderServerEmbedded : public RenderServer
 	T_RTTI_CLASS;
 
 public:
-	RenderServerEmbedded();
-
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin);
 
 	virtual void destroy() override final;
@@ -46,7 +44,7 @@ public:
 private:
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewEmbeddedDesc m_renderViewDesc;
-	float m_screenAspectRatio;
+	float m_screenAspectRatio = 1.0f;
 };
 
 	}

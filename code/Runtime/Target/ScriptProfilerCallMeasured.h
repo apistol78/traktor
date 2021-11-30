@@ -24,9 +24,9 @@ class T_DLLCLASS ScriptProfilerCallMeasured : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ScriptProfilerCallMeasured();
+	ScriptProfilerCallMeasured() = default;
 
-	ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
+	explicit ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration);
 
 	const Guid& getScriptId() const { return m_scriptId; }
 
@@ -43,9 +43,9 @@ public:
 private:
 	Guid m_scriptId;
 	std::wstring m_function;
-	uint32_t m_callCount;
-	double m_inclusiveDuration;
-	double m_exclusiveDuration;
+	uint32_t m_callCount = 0;
+	double m_inclusiveDuration = 0.0;
+	double m_exclusiveDuration = 0.0;
 };
 
 	}

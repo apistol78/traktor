@@ -33,7 +33,7 @@ class T_DLLCLASS ScriptDebuggerStackFrame : public ISerializable
 public:
 	ScriptDebuggerStackFrame() = default;
 
-	ScriptDebuggerStackFrame(script::StackFrame* frame);
+	explicit ScriptDebuggerStackFrame(script::StackFrame* frame);
 
 	script::StackFrame* getFrame() const { return m_frame; }
 

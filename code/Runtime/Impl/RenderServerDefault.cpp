@@ -151,11 +151,6 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerDefault", RenderServerDefault, RenderServer)
 
-RenderServerDefault::RenderServerDefault()
-:	m_screenAspectRatio(1.0f)
-{
-}
-
 bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp)
 {
 	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");

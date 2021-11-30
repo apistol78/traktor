@@ -15,8 +15,6 @@ class RenderServerDefault : public RenderServer
 	T_RTTI_CLASS;
 
 public:
-	RenderServerDefault();
-
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp);
 
 	virtual void destroy() override final;
@@ -46,7 +44,7 @@ public:
 private:
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewDefaultDesc m_renderViewDesc;
-	float m_screenAspectRatio;
+	float m_screenAspectRatio = 1.0f;
 };
 
 	}

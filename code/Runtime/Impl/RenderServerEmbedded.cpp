@@ -82,11 +82,6 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerEmbedded", RenderServerEmbedded, RenderServer)
 
-RenderServerEmbedded::RenderServerEmbedded()
-:	m_screenAspectRatio(1.0f)
-{
-}
-
 bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin)
 {
 	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");

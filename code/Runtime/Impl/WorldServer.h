@@ -38,8 +38,6 @@ class WorldServer : public IWorldServer
 	T_RTTI_CLASS;
 
 public:
-	WorldServer();
-
 	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
 
 	void destroy();
@@ -79,17 +77,17 @@ private:
 	Ref< spray::EffectRenderer > m_effectEntityRenderer;
 	Ref< spray::FeedbackManager > m_feedbackManager;
 	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
-	const TypeInfo* m_worldType;
-	world::Quality m_motionBlurQuality;
-	world::Quality m_shadowQuality;
-	world::Quality m_reflectionsQuality;
-	world::Quality m_ambientOcclusionQuality;
-	world::Quality m_antiAliasQuality;
-	world::Quality m_imageProcessQuality;
-	world::Quality m_particleQuality;
-	world::Quality m_terrainQuality;
-	world::Quality m_oceanQuality;
-	float m_gamma;
+	const TypeInfo* m_worldType = nullptr;
+	world::Quality m_motionBlurQuality = world::Quality::Medium;
+	world::Quality m_shadowQuality = world::Quality::Medium;
+	world::Quality m_reflectionsQuality = world::Quality::Medium;
+	world::Quality m_ambientOcclusionQuality = world::Quality::Medium;
+	world::Quality m_antiAliasQuality = world::Quality::Medium;
+	world::Quality m_imageProcessQuality = world::Quality::Medium;
+	world::Quality m_particleQuality = world::Quality::Medium;
+	world::Quality m_terrainQuality = world::Quality::Medium;
+	world::Quality m_oceanQuality = world::Quality::Medium;
+	float m_gamma = 2.2f;
 };
 
 	}

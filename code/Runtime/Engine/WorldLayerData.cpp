@@ -22,7 +22,7 @@ Ref< Layer > WorldLayerData::createInstance(Stage* stage, IEnvironment* environm
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_scene, scene))
-		return 0;
+		return nullptr;
 
 	// Create layer instance.
 	return new WorldLayer(

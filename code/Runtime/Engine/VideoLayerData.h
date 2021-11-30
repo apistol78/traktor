@@ -31,7 +31,7 @@ class Video;
 	namespace runtime
 	{
 
-/*! \brief
+/*! Video playback layer.
  * \ingroup Runtime
  */
 class T_DLLCLASS VideoLayerData : public LayerData
@@ -39,8 +39,6 @@ class T_DLLCLASS VideoLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
-	VideoLayerData();
-
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -50,10 +48,10 @@ private:
 
 	resource::Id< video::Video > m_video;
 	resource::Id< render::Shader > m_shader;
-	Aabb2 m_screenBounds;
-	bool m_visible;
-	bool m_autoPlay;
-	bool m_repeat;
+	Aabb2 m_screenBounds = { Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f) };
+	bool m_visible = true;
+	bool m_autoPlay = true;
+	bool m_repeat = true;
 };
 
 	}

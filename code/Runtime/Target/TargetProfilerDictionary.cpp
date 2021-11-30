@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetProfilerDictionary", 0, TargetProfilerDictionary, ISerializable)
 
-TargetProfilerDictionary::TargetProfilerDictionary()
-{
-}
-
 TargetProfilerDictionary::TargetProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary)
 :	m_dictionary(dictionary)
 {

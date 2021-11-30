@@ -9,12 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetLog", 0, TargetLog, ISerializable)
 
-TargetLog::TargetLog()
-:	m_threadId(0)
-,	m_level(0)
-{
-}
-
 TargetLog::TargetLog(uint32_t threadId, int32_t level, const std::wstring& text)
 :	m_threadId(threadId)
 ,	m_level(level)

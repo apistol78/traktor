@@ -9,13 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptProfilerCallMeasured", 0, ScriptProfilerCallMeasured, ISerializable)
 
-ScriptProfilerCallMeasured::ScriptProfilerCallMeasured()
-:	m_callCount(0)
-,	m_inclusiveDuration(0.0)
-,	m_exclusiveDuration(0.0)
-{
-}
-
 ScriptProfilerCallMeasured::ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 :	m_scriptId(scriptId)
 ,	m_function(function)

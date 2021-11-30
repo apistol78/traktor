@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetID", 0, TargetID, ISerializable)
 
-TargetID::TargetID()
-{
-}
-
 TargetID::TargetID(const Guid& id, const std::wstring& name)
 :	m_id(id)
 ,	m_name(name)

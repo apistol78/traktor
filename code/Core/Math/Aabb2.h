@@ -30,7 +30,7 @@ public:
 
 	Aabb2(const Aabb2& aabb);
 
-	explicit Aabb2(const Vector2& mn_, const Vector2& mx_);
+	Aabb2(const Vector2& mn_, const Vector2& mx_);
 
 	/*! Get bounding box corners.
 	 *
