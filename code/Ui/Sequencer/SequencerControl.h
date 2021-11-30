@@ -72,7 +72,7 @@ public:
 
 	void removeAllSequenceItems();
 
-	int getSequenceItems(RefArray< SequenceItem >& sequenceItems, int flags);
+	RefArray< SequenceItem > getSequenceItems(int32_t flags) const;
 
 private:
 	struct MouseTrackItem
