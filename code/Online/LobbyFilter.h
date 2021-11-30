@@ -22,44 +22,44 @@ class T_DLLCLASS LobbyFilter : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum ComparisonType
+	enum class Comparison
 	{
-		CtEqual,
-		CtNotEqual,
-		CtLess,
-		CtLessEqual,
-		CtGreater,
-		CtGreaterEqual
+		Equal,
+		NotEqual,
+		Less,
+		LessEqual,
+		Greater,
+		GreaterEqual
 	};
 
-	enum DistanceType
+	enum class Distance
 	{
-		DtUnspecified,
-		DtLocal,
-		DtNear,
-		DtFar,
-		DtInfinity
+		Unspecified,
+		Local,
+		Near,
+		Far,
+		Infinity
 	};
 
 	struct StringComparison
 	{
 		std::wstring key;
 		std::wstring value;
-		ComparisonType comparison;
+		Comparison comparison;
 	};
 
 	struct NumberComparison
 	{
 		std::wstring key;
 		int32_t value;
-		ComparisonType comparison;
+		Comparison comparison;
 	};
 
-	void addComparison(const std::wstring& key, const std::wstring& value, ComparisonType comparison);
+	void addComparison(const std::wstring& key, const std::wstring& value, Comparison comparison);
 
-	void addComparison(const std::wstring& key, int32_t value, ComparisonType comparison);
+	void addComparison(const std::wstring& key, int32_t value, Comparison comparison);
 
-	void setDistance(DistanceType distance);
+	void setDistance(Distance distance);
 
 	void setSlots(int32_t slots);
 
@@ -69,7 +69,7 @@ public:
 
 	const AlignedVector< NumberComparison >& getNumberComparisons() const { return m_numberComparisons; }
 
-	DistanceType getDistance() const { return m_distance; }
+	Distance getDistance() const { return m_distance; }
 
 	int32_t getSlots() const { return m_slots; }
 
@@ -78,7 +78,7 @@ public:
 private:
 	AlignedVector< StringComparison > m_stringComparisons;
 	AlignedVector< NumberComparison > m_numberComparisons;
-	DistanceType m_distance = DtInfinity;
+	Distance m_distance = Distance::Infinity;
 	int32_t m_slots = 0;
 	int32_t m_count = -1;
 };

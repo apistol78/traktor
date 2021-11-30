@@ -24,8 +24,8 @@ bool SteamLocalSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	RefArray< File > saveFiles;
 	FileSystem::getInstance().find(savePath + L"/*.save", saveFiles);
 
-	for (RefArray< File >::const_iterator i = saveFiles.begin(); i != saveFiles.end(); ++i)
-		outSaveDataIds.insert((*i)->getPath().getFileNameNoExtension());
+	for (auto saveFile : saveFiles)
+		outSaveDataIds.insert(saveFile->getPath().getFileNameNoExtension());
 
 	return true;
 }

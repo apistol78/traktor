@@ -31,60 +31,19 @@ namespace traktor
 		namespace
 		{
 
-bool translateComparison(const std::wstring& comparison, LobbyFilter::ComparisonType& outComparison)
+void LobbyFilter_addComparison(LobbyFilter* self, const std::wstring& key, const Any& value, int32_t comparison)
 {
-	const struct { const wchar_t* id; LobbyFilter::ComparisonType value; } c_comparisons[] =
-	{
-		{ L"Equal", LobbyFilter::CtEqual },
-		{ L"NotEqual", LobbyFilter::CtNotEqual },
-		{ L"Less", LobbyFilter::CtLess },
-		{ L"LessEqual", LobbyFilter::CtLessEqual },
-		{ L"Greater", LobbyFilter::CtGreater },
-		{ L"GreaterEqual", LobbyFilter::CtGreaterEqual }
-	};
-
-	for (uint32_t i = 0; i < sizeof_array(c_comparisons); ++i)
-	{
-		if (compareIgnoreCase(comparison, c_comparisons[i].id) == 0)
-		{
-			outComparison = c_comparisons[i].value;
-			return true;
-		}
-	}
-
-	return false;
+	self->addComparison(key, value.getInt32Unsafe(), (LobbyFilter::Comparison)comparison);
 }
 
-bool LobbyFilter_addComparison(LobbyFilter* self, const std::wstring& key, const Any& value, int32_t comparison)
+void LobbyFilter_setDistance(LobbyFilter* self, int32_t distance)
 {
-	if (value.isInt32())
-	{
-		self->addComparison(key, value.getInt32Unsafe(), (LobbyFilter::ComparisonType)comparison);
-		return true;
-	}
-	else if (value.isString())
-	{
-		self->addComparison(key, value.getWideString(), (LobbyFilter::ComparisonType)comparison);
-		return true;
-	}
-	else
-		return false;
+	self->setDistance((LobbyFilter::Distance)distance);
 }
 
-bool LobbyFilter_setDistance(LobbyFilter* self, const std::wstring& distance)
+int32_t LobbyFilter_getDistance(LobbyFilter* self)
 {
-	if (compareIgnoreCase(distance, L"Local"))
-		self->setDistance(LobbyFilter::DtLocal);
-	else if (compareIgnoreCase(distance, L"Near"))
-		self->setDistance(LobbyFilter::DtNear);
-	else if (compareIgnoreCase(distance, L"Far"))
-		self->setDistance(LobbyFilter::DtFar);
-	else if (compareIgnoreCase(distance, L"Infinity"))
-		self->setDistance(LobbyFilter::DtInfinity);
-	else
-		return false;
-
-	return true;
+	return (int32_t)self->getDistance();
 }
 
 std::vector< std::wstring > IAchievements_enumerate(IAchievements* self)
@@ -295,17 +254,22 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classUserArrayResult);
 
 	auto classLobbyFilter = new AutoRuntimeClass< LobbyFilter >();
-	classLobbyFilter->addConstant("CtEqual", Any::fromInt32(LobbyFilter::CtEqual));
-	classLobbyFilter->addConstant("CtNotEqual", Any::fromInt32(LobbyFilter::CtNotEqual));
-	classLobbyFilter->addConstant("CtLess", Any::fromInt32(LobbyFilter::CtLess));
-	classLobbyFilter->addConstant("CtLessEqual", Any::fromInt32(LobbyFilter::CtLessEqual));
-	classLobbyFilter->addConstant("CtGreater", Any::fromInt32(LobbyFilter::CtGreater));
-	classLobbyFilter->addConstant("CtGreaterEqual", Any::fromInt32(LobbyFilter::CtGreaterEqual));
+	classLobbyFilter->addConstant("Equal", Any::fromInt32((int32_t)LobbyFilter::Comparison::Equal));
+	classLobbyFilter->addConstant("NotEqual", Any::fromInt32((int32_t)LobbyFilter::Comparison::NotEqual));
+	classLobbyFilter->addConstant("Less", Any::fromInt32((int32_t)LobbyFilter::Comparison::Less));
+	classLobbyFilter->addConstant("LessEqual", Any::fromInt32((int32_t)LobbyFilter::Comparison::LessEqual));
+	classLobbyFilter->addConstant("Greater", Any::fromInt32((int32_t)LobbyFilter::Comparison::Greater));
+	classLobbyFilter->addConstant("GreaterEqual", Any::fromInt32((int32_t)LobbyFilter::Comparison::GreaterEqual));
+	classLobbyFilter->addConstant("Unspecified", Any::fromInt32((int32_t)LobbyFilter::Distance::Unspecified));
+	classLobbyFilter->addConstant("Local", Any::fromInt32((int32_t)LobbyFilter::Distance::Local));
+	classLobbyFilter->addConstant("Near", Any::fromInt32((int32_t)LobbyFilter::Distance::Near));
+	classLobbyFilter->addConstant("Far", Any::fromInt32((int32_t)LobbyFilter::Distance::Far));
+	classLobbyFilter->addConstant("Infinity", Any::fromInt32((int32_t)LobbyFilter::Distance::Infinity));
+	classLobbyFilter->addProperty("distance", &LobbyFilter_setDistance, &LobbyFilter_getDistance);
+	classLobbyFilter->addProperty("slots", &LobbyFilter::setSlots, &LobbyFilter::getSlots);
+	classLobbyFilter->addProperty("count", &LobbyFilter::setCount, &LobbyFilter::getCount);
 	classLobbyFilter->addConstructor();
 	classLobbyFilter->addMethod("addComparison", &LobbyFilter_addComparison);
-	classLobbyFilter->addMethod("setDistance", &LobbyFilter_setDistance);
-	classLobbyFilter->addMethod("setSlots", &LobbyFilter::setSlots);
-	classLobbyFilter->addMethod("setCount", &LobbyFilter::setCount);
 	registrar->registerClass(classLobbyFilter);
 
 	auto classIAchievements = new AutoRuntimeClass< IAchievements >();

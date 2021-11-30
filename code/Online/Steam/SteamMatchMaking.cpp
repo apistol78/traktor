@@ -38,22 +38,22 @@ bool performCall(SteamSessionManager* sessionManager, CallType& call)
 	return true;
 }
 
-ELobbyComparison translateComparison(LobbyFilter::ComparisonType comparison)
+ELobbyComparison translateComparison(LobbyFilter::Comparison comparison)
 {
 	switch (comparison)
 	{
 	default:
-	case LobbyFilter::CtEqual:
+	case LobbyFilter::Comparison::Equal:
 		return k_ELobbyComparisonEqual;
-	case LobbyFilter::CtNotEqual:
+	case LobbyFilter::Comparison::NotEqual:
 		return k_ELobbyComparisonNotEqual;
-	case LobbyFilter::CtLess:
+	case LobbyFilter::Comparison::Less:
 		return k_ELobbyComparisonLessThan;
-	case LobbyFilter::CtLessEqual:
+	case LobbyFilter::Comparison::LessEqual:
 		return k_ELobbyComparisonEqualToOrLessThan;
-	case LobbyFilter::CtGreater:
+	case LobbyFilter::Comparison::Greater:
 		return k_ELobbyComparisonGreaterThan;
-	case LobbyFilter::CtGreaterEqual:
+	case LobbyFilter::Comparison::GreaterEqual:
 		return k_ELobbyComparisonEqualToOrGreaterThan;
 	}
 }
@@ -102,7 +102,7 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 
 	m_outLobbies = &outLobbyHandles;
 
-	for (int32_t distance = LobbyFilter::DtUnspecified; distance <= filter->getDistance(); ++distance)
+	for (int32_t distance = (int32_t)LobbyFilter::Distance::Unspecified; distance <= (int32_t)filter->getDistance(); ++distance)
 	{
 		for (const auto& sc : filter->getStringComparisons())
 		{
@@ -121,18 +121,18 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 			);
 		}
 
-		switch (distance)
+		switch ((LobbyFilter::Distance)distance)
 		{
-		case LobbyFilter::DtLocal:
+		case LobbyFilter::Distance::Local:
 			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterClose);
 			break;
-		case LobbyFilter::DtNear:
+		case LobbyFilter::Distance::Near:
 			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterDefault);
 			break;
-		case LobbyFilter::DtFar:
+		case LobbyFilter::Distance::Far:
 			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterFar);
 			break;
-		case LobbyFilter::DtInfinity:
+		case LobbyFilter::Distance::Infinity:
 			SteamMatchmaking()->AddRequestLobbyListDistanceFilter(k_ELobbyDistanceFilterWorldwide);
 			break;
 		default:

@@ -20,19 +20,19 @@ SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const 
 bool SteamAchievements::enumerate(std::map< std::wstring, bool >& outAchievements)
 {
 	bool haveStats = m_sessionManager->waitForStats();
-	for (std::set< std::wstring >::const_iterator i = m_achievementIds.begin(); i != m_achievementIds.end(); ++i)
+	for (const auto& id : m_achievementIds)
 	{
 		bool achieved = false;
 		if (haveStats)
 		{
-			if (!SteamUserStats()->GetAchievement(wstombs(*i).c_str(), &achieved))
+			if (!SteamUserStats()->GetAchievement(wstombs(id).c_str(), &achieved))
 			{
-				log::error << L"Unable to enumerate achievements; Achievement \"" << *i << L"\" not available" << Endl;
+				log::error << L"Unable to enumerate achievements; Achievement \"" << id << L"\" not available" << Endl;
 				continue;
 			}
 		}
 		outAchievements.insert(std::make_pair(
-			*i,
+			id,
 			achieved
 		));
 	}

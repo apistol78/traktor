@@ -7,17 +7,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LobbyFilter", LobbyFilter, Object)
 
-void LobbyFilter::addComparison(const std::wstring& key, const std::wstring& value, ComparisonType comparison)
+void LobbyFilter::addComparison(const std::wstring& key, const std::wstring& value, Comparison comparison)
 {
 	m_stringComparisons.push_back({ key, value, comparison });
 }
 
-void LobbyFilter::addComparison(const std::wstring& key, int32_t value, ComparisonType comparison)
+void LobbyFilter::addComparison(const std::wstring& key, int32_t value, Comparison comparison)
 {
 	m_numberComparisons.push_back({ key, value, comparison });
 }
 
-void LobbyFilter::setDistance(DistanceType distance)
+void LobbyFilter::setDistance(Distance distance)
 {
 	m_distance = distance;
 }
