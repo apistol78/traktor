@@ -256,8 +256,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	TheaterControllerData* controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	ActData* act = controllerData->getActs().at(selected);
 
-	RefArray< ui::SequenceItem > items;
-	m_trackSequencer->getSequenceItems(items, ui::SequencerControl::GfSelectedOnly);
+	RefArray< ui::SequenceItem > items = m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
 
 	int32_t cursorTick = m_trackSequencer->getCursor();
 	float cursorTime = float(cursorTick / 1000.0f);
@@ -471,9 +470,7 @@ void TheaterControllerEditor::captureEntities()
 
 void TheaterControllerEditor::deleteSelectedKey()
 {
-	RefArray< ui::SequenceItem > sequenceItems;
-	m_trackSequencer->getSequenceItems(sequenceItems, ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants);
-	for (auto sequenceItem : sequenceItems)
+	for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		ui::Tick* selectedTick = checked_type_cast< ui::Tick*, true >(selectedSequence->getSelectedKey());
@@ -498,7 +495,6 @@ void TheaterControllerEditor::deleteSelectedKey()
 			}
 		}
 	}
-
 	m_context->buildController();
 }
 
@@ -507,15 +503,12 @@ void TheaterControllerEditor::setLookAtEntity()
 	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
 	TheaterControllerData* controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
-	RefArray< ui::SequenceItem > sequenceItems;
-	m_trackSequencer->getSequenceItems(sequenceItems, ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants);
-
 	RefArray< scene::EntityAdapter > selectedEntities;
 	m_context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
 	if (selectedEntities.size() > 1)
 		return;
 
-	for (auto sequenceItem : sequenceItems)
+	for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");
@@ -535,9 +528,7 @@ void TheaterControllerEditor::easeVelocity()
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
-	RefArray< ui::SequenceItem > sequenceItems;
-	m_trackSequencer->getSequenceItems(sequenceItems, ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants);
-	for (auto sequenceItem : sequenceItems)
+	for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
 		TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");

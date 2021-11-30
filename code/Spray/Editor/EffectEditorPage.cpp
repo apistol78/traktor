@@ -303,42 +303,38 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		const TypeInfo* sourceType = m_editor->browseType(makeTypeInfoSet< SourceData >(), false, true);
 		if (sourceType)
 		{
-			RefArray< ui::SequenceItem > selectedItems;
-			if (m_sequencer->getSequenceItems(selectedItems, ui::SequencerControl::GfSelectedOnly) > 0)
+			for (auto selectedItem : m_sequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly))
 			{
-				for (auto selectedItem : selectedItems)
+				Ref< EffectLayerData > layer = selectedItem->getData< EffectLayerData >(L"LAYERDATA");
+
+				EmitterData* emitter = layer->getEmitter();
+				if (!emitter)
+					continue;
+
+				Ref< SourceData > source = mandatory_non_null_type_cast< SourceData* >(sourceType->createInstance());
+
+				const SourceData* oldSource = emitter->getSource();
+				if (oldSource)
 				{
-					Ref< EffectLayerData > layer = selectedItem->getData< EffectLayerData >(L"LAYERDATA");
+					// Extract parameters from old source and insert into new source.
+					Ref< Reflection > sourceReflection = Reflection::create(source);
+					T_ASSERT(sourceReflection);
 
-					EmitterData* emitter = layer->getEmitter();
-					if (!emitter)
-						continue;
+					Ref< Reflection > oldSourceReflection = Reflection::create(oldSource);
+					T_ASSERT(oldSourceReflection);
 
-					Ref< SourceData > source = mandatory_non_null_type_cast< SourceData* >(sourceType->createInstance());
-
-					const SourceData* oldSource = emitter->getSource();
-					if (oldSource)
+					for (uint32_t i = 0; i < sourceReflection->getMemberCount(); ++i)
 					{
-						// Extract parameters from old source and insert into new source.
-						Ref< Reflection > sourceReflection = Reflection::create(source);
-						T_ASSERT(sourceReflection);
-
-						Ref< Reflection > oldSourceReflection = Reflection::create(oldSource);
-						T_ASSERT(oldSourceReflection);
-
-						for (uint32_t i = 0; i < sourceReflection->getMemberCount(); ++i)
-						{
-							ReflectionMember* sourceMember = sourceReflection->getMember(i);
-							ReflectionMember* oldSourceMember = oldSourceReflection->findMember(RfpMemberName(sourceMember->getName()));
-							if (oldSourceMember)
-								sourceMember->replace(oldSourceMember);
-						}
-
-						sourceReflection->apply(source);
+						ReflectionMember* sourceMember = sourceReflection->getMember(i);
+						ReflectionMember* oldSourceMember = oldSourceReflection->findMember(RfpMemberName(sourceMember->getName()));
+						if (oldSourceMember)
+							sourceMember->replace(oldSourceMember);
 					}
 
-					emitter->setSource(source);
+					sourceReflection->apply(source);
 				}
+
+				emitter->setSource(source);
 			}
 
 			updateEffectPreview();
@@ -355,8 +351,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Copy")
 	{
-		RefArray< ui::SequenceItem > selectedItems;
-		if (m_sequencer->getSequenceItems(selectedItems, ui::SequencerControl::GfSelectedOnly) > 0)
+		RefArray< ui::SequenceItem > selectedItems = m_sequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
+		if (!selectedItems.empty())
 		{
 			Ref< ClipboardData > clipboardData = new ClipboardData();
 			for (auto selectedItem : selectedItems)
@@ -426,9 +422,7 @@ void EffectEditorPage::updateEffectPreview()
 		RefArray< EffectLayer > effectLayers;
 
 		// Create effect layers.
-		RefArray< ui::SequenceItem > sequencerLayers;
-		m_sequencer->getSequenceItems(sequencerLayers, ui::SequencerControl::GfDefault);
-		for (auto sequencerLayer : sequencerLayers)
+		for (auto sequencerLayer : m_sequencer->getSequenceItems(ui::SequencerControl::GfDefault))
 		{
 			ui::Sequence* layerItem = checked_type_cast< ui::Sequence*, false >(sequencerLayer);
 			if (!layerItem->getButtonState(1))
@@ -468,17 +462,14 @@ void EffectEditorPage::updateSequencer()
 {
 	// Get map of layer visibility.
 	std::map< const EffectLayerData*, bool > visibleStates;
-
-	RefArray< ui::SequenceItem > sequencerLayers;
-	m_sequencer->getSequenceItems(sequencerLayers, ui::SequencerControl::GfDefault);
-	for (auto sequencerLayer : sequencerLayers)
+	for (auto sequencerLayer : m_sequencer->getSequenceItems(ui::SequencerControl::GfDefault))
 	{
 		ui::Sequence* layerItem = checked_type_cast< ui::Sequence*, false >(sequencerLayer);
 
 		EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT(effectLayerData);
 
-		visibleStates[effectLayerData] = layerItem->getButtonState(0);
+		visibleStates[effectLayerData] = layerItem->getButtonState(1);
 	}
 
 	// Remember scroll offset.
@@ -584,8 +575,8 @@ void EffectEditorPage::eventToolBarLayersClick(ui::ToolBarButtonClickEvent* even
 
 void EffectEditorPage::eventSequencerLayerSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::SequenceItem > selectedItems;
-	if (m_sequencer->getSequenceItems(selectedItems, ui::SequencerControl::GfSelectedOnly) == 1)
+	RefArray< ui::SequenceItem > selectedItems = m_sequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
+	if (selectedItems.size() == 1)
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(selectedItems.front());
 
