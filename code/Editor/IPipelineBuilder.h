@@ -36,11 +36,11 @@ class T_DLLCLASS IPipelineBuilder : public IPipelineCommon
 	T_RTTI_CLASS;
 
 public:
-	enum BuildResult
+	enum class BuildResult
 	{
-		BrSucceeded = 0,
-		BrSucceededWithWarnings = 1,
-		BrFailed = 2
+		Succeeded = 0,
+		SucceededWithWarnings = 1,
+		Failed = 2
 	};
 
 	struct IListener

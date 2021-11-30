@@ -332,7 +332,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			);
 
 		BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
-		if (result == BrSucceeded || result == BrSucceededWithWarnings)
+		if (result == BuildResult::Succeeded || result == BuildResult::SucceededWithWarnings)
 			m_succeeded++;
 		else
 			m_failed++;
@@ -708,7 +708,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 )
 {
 	if (!dependency->pipelineType)
-		return BrFailed;
+		return BuildResult::Failed;
 
 	// Calculate recursive hash entry.
 	PipelineDependencyHash currentDependencyHash;
@@ -725,7 +725,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	if ((dependency->flags & PdfBuild) == 0)
 	{
 		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
-		return BrSucceeded;
+		return BuildResult::Succeeded;
 	}
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
@@ -757,14 +757,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 					nullptr,
 					nullptr
 				))
-					return BrFailed;
+					return BuildResult::Failed;
 			}
 
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 
 			m_cacheHit++;
 			m_succeededBuilt++;
-			return BrSucceeded;
+			return BuildResult::Succeeded;
 		}
 		else
 			m_cacheMiss++;
@@ -836,9 +836,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	m_builtAdHocKeys.resize(0);
 
 	if (result)
-		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
+		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BuildResult::SucceededWithWarnings : BuildResult::Succeeded;
 	else
-		return BrFailed;
+		return BuildResult::Failed;
 }
 
 bool PipelineBuilder::putInstancesInCache(
