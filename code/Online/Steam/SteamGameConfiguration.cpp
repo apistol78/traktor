@@ -10,15 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.SteamGameConfiguration", 3, SteamGameConfiguration, IGameConfiguration)
 
-SteamGameConfiguration::SteamGameConfiguration()
-:	m_appId(0)
-,	m_requestAttempts(10)
-,	m_drmEnabled(false)
-,	m_cloudEnabled(false)
-,	m_allowP2PRelay(true)
-{
-}
-
 void SteamGameConfiguration::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 2)

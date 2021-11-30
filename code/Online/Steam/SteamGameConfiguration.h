@@ -15,18 +15,16 @@ class SteamGameConfiguration : public IGameConfiguration
 	T_RTTI_CLASS;
 
 public:
-	SteamGameConfiguration();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class SteamSessionManager;
 
-	uint32_t m_appId;
-	uint32_t m_requestAttempts;
-	bool m_drmEnabled;
-	bool m_cloudEnabled;
-	bool m_allowP2PRelay;
+	uint32_t m_appId = 0;
+	uint32_t m_requestAttempts = 10;
+	bool m_drmEnabled = false;
+	bool m_cloudEnabled = false;
+	bool m_allowP2PRelay = true;
 	std::list< std::wstring > m_achievementIds;
 	std::list< std::wstring > m_leaderboardIds;
 	std::list< std::wstring > m_statsIds;

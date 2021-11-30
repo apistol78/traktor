@@ -16,12 +16,6 @@ namespace traktor
 class FindLeaderboardCall : public Object
 {
 public:
-	FindLeaderboardCall()
-	:	m_finished(false)
-	,	m_leaderboardData(0)
-	{
-	}
-
 	static Ref< FindLeaderboardCall > create(const std::wstring& leaderboardId, ILeaderboardsProvider::LeaderboardData& outLeaderboardData)
 	{
 		SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
@@ -30,7 +24,7 @@ public:
 			k_ELeaderboardDisplayTypeNumeric
 		);
 		if (call == 0)
-			return 0;
+			return nullptr;
 
 		Ref< FindLeaderboardCall > f = new FindLeaderboardCall();
 		f->m_leaderboardData = &outLeaderboardData;
@@ -44,8 +38,8 @@ public:
 	bool successful() const { return m_leaderboardData != 0; }
 
 private:
-	bool m_finished;
-	ILeaderboardsProvider::LeaderboardData* m_leaderboardData;
+	bool m_finished = false;
+	ILeaderboardsProvider::LeaderboardData* m_leaderboardData = nullptr;
 	CCallResult< FindLeaderboardCall, LeaderboardFindResult_t > m_callbackFindLeaderboard;
 	CCallResult< FindLeaderboardCall, LeaderboardScoresDownloaded_t > m_callbackDownloadLeaderboard;
 
@@ -56,7 +50,7 @@ private:
 		// Ensure we've received a valid leaderboard handle.
 		if (pCallback->m_hSteamLeaderboard == 0)
 		{
-			m_leaderboardData = 0;
+			m_leaderboardData = nullptr;
 			m_finished = true;
 			return;
 		}
@@ -65,7 +59,7 @@ private:
 		SteamAPICall_t call = SteamUserStats()->DownloadLeaderboardEntries(pCallback->m_hSteamLeaderboard, k_ELeaderboardDataRequestGlobalAroundUser, 0, 0);
 		if (call == 0)
 		{
-			m_leaderboardData = 0;
+			m_leaderboardData = nullptr;
 			m_finished = true;
 			return;
 		}
@@ -80,7 +74,7 @@ private:
 		const char* leaderboardId = SteamUserStats()->GetLeaderboardName(pCallback->m_hSteamLeaderboard);
 		if (!leaderboardId)
 		{
-			m_leaderboardData = 0;
+			m_leaderboardData = nullptr;
 			m_finished = true;
 			return;
 		}
@@ -110,7 +104,7 @@ SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const 
 ,	m_uploadedScoreSucceeded(false)
 ,	m_downloadedScore(false)
 ,	m_downloadedScoreSucceeded(false)
-,	m_outScores(0)
+,	m_outScores(nullptr)
 {
 	m_leaderboardIds.insert(leaderboardIds.begin(), leaderboardIds.end());
 }
@@ -120,13 +114,13 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	bool haveStats = m_sessionManager->waitForStats();
 
 	// Create empty entries for each leaderboard.
-	for (std::set< std::wstring >::const_iterator i = m_leaderboardIds.begin(); i != m_leaderboardIds.end(); ++i)
+	for (const auto& id : m_leaderboardIds)
 	{
 		LeaderboardData data;
 		data.handle = 0;
 		data.score = 0;
 		data.rank = 0;
-		outLeaderboards[*i] = data;
+		outLeaderboards[id] = data;
 	}
 
 	if (!haveStats || m_leaderboardIds.empty())
@@ -135,12 +129,12 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	RefArray< FindLeaderboardCall > calls;
 
 	// Setup a call for every registered leaderboard.
-	for (std::set< std::wstring >::const_iterator i = m_leaderboardIds.begin(); i != m_leaderboardIds.end(); ++i)
+	for (const auto& id : m_leaderboardIds)
 	{
-		Ref< FindLeaderboardCall > call = FindLeaderboardCall::create(*i, outLeaderboards[*i]);
+		Ref< FindLeaderboardCall > call = FindLeaderboardCall::create(id, outLeaderboards[id]);
 		if (!call)
 		{
-			log::error << L"Unable to enumerate leaderboards; Leaderboard \"" << *i << L"\" not available" << Endl;
+			log::error << L"Unable to enumerate leaderboards; Leaderboard \"" << id << L"\" not available." << Endl;
 			continue;
 		}
 		calls.push_back(call);
@@ -156,12 +150,12 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 			currentThread->sleep(100);
 
 		bool allFinished = true;
-		for (RefArray< FindLeaderboardCall >::const_iterator i = calls.begin(); i != calls.end(); ++i)
+		for (auto call : calls)
 		{
-			if (!(*i)->finished())
+			if (!call->finished())
 			{
 				allFinished = false;
-				allSuccessful &= (*i)->successful();
+				allSuccessful &= call->successful();
 				break;
 			}
 		}
