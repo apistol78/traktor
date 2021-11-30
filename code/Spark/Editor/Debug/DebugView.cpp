@@ -186,7 +186,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 					{
 						switch (style.getGradientType())
 						{
-						case FillStyle::GtLinear:
+						case FillStyle::GradientType::Linear:
 							{
 								AlignedVector< std::pair< Color4f, float > > colors;
 								for (uint32_t j = 0; j < colorRecords.size(); ++j)
@@ -201,7 +201,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 							}
 							break;
 
-						case FillStyle::GtRadial:
+						case FillStyle::GradientType::Radial:
 							{
 								AlignedVector< std::pair< Color4f, float > > colors;
 								for (uint32_t j = 0; j < colorRecords.size(); ++j)
