@@ -41,6 +41,34 @@ public:
 	virtual void render(IRenderView* renderView) const = 0;
 };
 
+/*! Null render block.
+ * \ingroup Render
+ *
+ * Doesn't render anything; just set
+ * program's parameters.
+ */
+class T_DLLCLASS NullRenderBlock : public RenderBlock
+{
+public:
+	IProgram* program = nullptr;
+	ProgramParameters* programParams = nullptr;
+	
+	virtual void render(IRenderView* renderView) const override final;
+};
+
+/*! Compute render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS ComputeRenderBlock : public RenderBlock
+{
+public:
+	IProgram* program = nullptr;
+	ProgramParameters* programParams = nullptr;
+	int32_t workSize[3] = { 1, 1, 1 };
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Drawable render block base class.
  * \ingroup Render
  *
@@ -53,18 +81,6 @@ public:
 	float distance = 0.0f;
 	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
-};
-
-/*! Null render block.
- * \ingroup Render
- *
- * Doesn't render anything; just update
- * shader parameters if available.
- */
-class T_DLLCLASS NullRenderBlock : public DrawableRenderBlock
-{
-public:
-	virtual void render(IRenderView* renderView) const override final;
 };
 
 /*! Simple render block.
