@@ -4,6 +4,7 @@
 #include "Core/Misc/ImmutableCheck.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
+#include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
@@ -91,7 +92,7 @@ ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 {
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
+Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches(bool keepExternalAlways) const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
@@ -100,6 +101,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		if (nodeTraits && nodeTraits->isRoot(m_shaderGraph, node))
+			roots.push_back(node);
+		else if (keepExternalAlways && is_a< External >(node))
 			roots.push_back(node);
 	}
 

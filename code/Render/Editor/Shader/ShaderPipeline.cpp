@@ -191,7 +191,7 @@ bool ShaderPipeline::buildDependencies(
 	}
 
 	// Remove unused branches; don't want to add dependencies to lingering textures et al.
-	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 	T_ASSERT(shaderGraph);
 
 	// Add fragment and texture dependencies.
@@ -287,7 +287,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Remove unused branches from shader graph.
-	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to remove unused branches." << Endl;
@@ -434,7 +434,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Remove unused branches.
-				programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches();
+				programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches(false);
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"." << Endl;

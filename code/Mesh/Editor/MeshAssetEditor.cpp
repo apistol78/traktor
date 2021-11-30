@@ -658,7 +658,7 @@ void MeshAssetEditor::createMaterialShader()
 		materialShader = render::ShaderGraphStatic(materialShader).propagateConstantExternalValues();
 		T_ASSERT(materialShader != nullptr);
 
-		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches();
+		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches(true);
 		T_ASSERT(materialShader != nullptr);
 
 		Ref< db::Instance > materialShaderInstance = m_instance->getParent()->createInstance(outputName);

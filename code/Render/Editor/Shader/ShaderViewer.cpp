@@ -426,7 +426,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Remove unused branches from shader graph.
-	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
 	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
