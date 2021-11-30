@@ -35,17 +35,17 @@ bool BatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Gr
 	RefArray< MovieAsset > movieAssets;
 	if (movieDialog.showModal(movieAssets))
 	{
-		for (RefArray< MovieAsset >::iterator i = movieAssets.begin(); i != movieAssets.end(); ++i)
+		for (auto movieAsset : movieAssets)
 		{
-			std::wstring instanceName = Path((*i)->getFileName()).getFileNameNoExtension();
+			std::wstring instanceName = Path(movieAsset->getFileName()).getFileNameNoExtension();
 			Ref< db::Instance > movieAssetInstance = group->createInstance(instanceName);
 			if (movieAssetInstance)
 			{
-				movieAssetInstance->setObject(*i);
+				movieAssetInstance->setObject(movieAsset);
 				movieAssetInstance->commit();
 			}
 			else
-				log::error << L"Unable to create instance \"" << instanceName << L"\"; asset not imported" << Endl;
+				log::error << L"Unable to create instance \"" << instanceName << L"\"; asset not imported." << Endl;
 		}
 	}
 

@@ -100,7 +100,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 	if (it != m_cache.end())
 		return it->second;
 
-	if (style.getGradientType() == FillStyle::GtLinear)
+	if (style.getGradientType() == FillStyle::GradientType::Linear)
 	{
 		if (m_nextGradient + 1 > c_gradientsHeight)
 		{
@@ -151,7 +151,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 
 		return m_cache[hash];
 	}
-	else if (style.getGradientType() == FillStyle::GtRadial)
+	else if (style.getGradientType() == FillStyle::GradientType::Radial)
 	{
 		if (m_nextGradient + c_gradientsSize > c_gradientsHeight)
 		{
