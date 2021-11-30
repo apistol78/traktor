@@ -23,6 +23,16 @@ const render::Handle c_handleDebugMagicCoeffs(L"Scene_DebugMagicCoeffs");
 const render::Handle c_handleDebugTileBuffer(L"World_TileSBuffer");
 const render::Handle c_handleDebugViewDistance(L"World_ViewDistance");
 
+render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+{
+	for (const auto& tm : renderGraph.getTargets())
+	{
+		if (wcscmp(tm.second.name, name) == 0)
+			return tm.first;
+	}
+	return 0;
+}
+
         }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.TilesOverlay", 0, TilesOverlay, IDebugOverlay)
@@ -41,7 +51,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 	if (!worldRendererForward)
 		return;
 
-	render::handle_t gbufferId = renderGraph.findTargetByName(L"GBuffer");
+	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
 		return;
 

@@ -18,6 +18,16 @@ const render::Handle c_handleDebugTechnique(L"Default");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
+render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+{
+	for (const auto& tm : renderGraph.getTargets())
+	{
+		if (wcscmp(tm.second.name, name) == 0)
+			return tm.first;
+	}
+	return 0;
+}
+
         }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ShadowMaskOverlay", 0, ShadowMaskOverlay, IDebugOverlay)
@@ -32,7 +42,7 @@ bool ShadowMaskOverlay::create(resource::IResourceManager* resourceManager)
 
 void ShadowMaskOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	render::handle_t shadowMaskId = renderGraph.findTargetByName(L"Shadow mask");
+	render::handle_t shadowMaskId = findTargetByName(renderGraph, L"Shadow mask");
 	if (!shadowMaskId)
 		return;
 

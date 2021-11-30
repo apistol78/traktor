@@ -20,6 +20,16 @@ const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 const render::Handle c_handleViewDistance(L"Scene_ViewDistance");
 
+render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+{
+	for (const auto& tm : renderGraph.getTargets())
+	{
+		if (wcscmp(tm.second.name, name) == 0)
+			return tm.first;
+	}
+	return 0;
+}
+
         }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferDepthOverlay", 0, GBufferDepthOverlay, IDebugOverlay)
@@ -34,7 +44,7 @@ bool GBufferDepthOverlay::create(resource::IResourceManager* resourceManager)
 
 void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	render::handle_t gbufferId = renderGraph.findTargetByName(L"GBuffer");
+	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
 		return;
 

@@ -168,7 +168,7 @@ void TerrainSurfaceCache::setupBaseColor(
 {
 	if (!m_haveBase)
 	{
-		auto baseTargetSetId = renderGraph.addExternalTargetSet(L"Terrain base", m_base);
+		auto baseTargetSetId = renderGraph.addTargetSet(L"Terrain base", m_base);
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Terrain surface base");
 	
