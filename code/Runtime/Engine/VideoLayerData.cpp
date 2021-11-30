@@ -16,14 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.VideoLayerData", 0, VideoLayerData, LayerData)
 
-VideoLayerData::VideoLayerData()
-:	m_screenBounds(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f))
-,	m_visible(true)
-,	m_autoPlay(true)
-,	m_repeat(true)
-{
-}
-
 Ref< Layer > VideoLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
@@ -35,7 +27,7 @@ Ref< Layer > VideoLayerData::createInstance(Stage* stage, IEnvironment* environm
 		!resourceManager->bind(m_video, video) ||
 		!resourceManager->bind(m_shader, shader)
 	)
-		return 0;
+		return nullptr;
 
 	// Create layer instance.
 	return new VideoLayer(

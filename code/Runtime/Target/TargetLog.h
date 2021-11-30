@@ -24,9 +24,9 @@ class T_DLLCLASS TargetLog : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TargetLog();
+	TargetLog() = default;
 
-	TargetLog(uint32_t threadId, int32_t level, const std::wstring& text);
+	explicit TargetLog(uint32_t threadId, int32_t level, const std::wstring& text);
 
 	uint32_t getThreadId() const { return m_threadId; }
 
@@ -37,8 +37,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_threadId;
-	int32_t m_level;
+	uint32_t m_threadId = 0;
+	int32_t m_level = 0;
 	std::wstring m_text;
 };
 

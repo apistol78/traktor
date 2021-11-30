@@ -27,9 +27,9 @@ class T_DLLCLASS CommandEvent : public IRemoteEvent
 	T_RTTI_CLASS;
 
 public:
-	CommandEvent();
+	CommandEvent() = default;
 
-	CommandEvent(const std::wstring& function);
+	explicit CommandEvent(const std::wstring& function);
 
 	const std::wstring& getFunction() const;
 

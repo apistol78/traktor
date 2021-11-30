@@ -34,7 +34,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ScriptServer", ScriptServer, IScriptSer
 
 ScriptServer::ScriptServer()
 :	m_callSamplesIndex(0)
-,	m_scriptDebuggerThread(0)
 {
 }
 

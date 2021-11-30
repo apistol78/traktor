@@ -31,8 +31,6 @@ class T_DLLCLASS AudioLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
-	AudioLayerData();
-
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -41,8 +39,8 @@ private:
 	friend class StagePipeline;
 
 	resource::Id< sound::Sound > m_sound;
-	bool m_autoPlay;
-	bool m_repeat;
+	bool m_autoPlay = true;
+	bool m_repeat = true;
 };
 
 	}

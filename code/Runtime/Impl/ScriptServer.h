@@ -68,16 +68,9 @@ public:
 private:
 	struct CallSample
 	{
-		uint32_t callCount;
-		double inclusiveDuration;
-		double exclusiveDuration;
-
-		CallSample()
-		:	callCount(0)
-		,	inclusiveDuration(0.0)
-		,	exclusiveDuration(0.0)
-		{
-		}
+		uint32_t callCount = 0;
+		double inclusiveDuration = 0.0;
+		double exclusiveDuration = 0.0;
 	};
 
 	Ref< script::IScriptManager > m_scriptManager;
@@ -88,7 +81,7 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	std::atomic< int32_t > m_callSamplesIndex;
-	Thread* m_scriptDebuggerThread;
+	Thread* m_scriptDebuggerThread = nullptr;
 
 	void threadDebugger();
 

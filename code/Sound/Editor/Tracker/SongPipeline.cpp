@@ -20,9 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongPipeline", 0, SongPipeline, e
 
 TypeInfoSet SongPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SongAsset >();
-	return typeSet;
+	return makeTypeInfoSet< SongAsset >();
 }
 
 bool SongPipeline::buildDependencies(
@@ -77,7 +75,7 @@ bool SongPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const SongAsset* songAsset = checked_type_cast< const SongAsset*, false >(sourceAsset);
+	const SongAsset* songAsset = mandatory_non_null_type_cast< const SongAsset* >(sourceAsset);
 
 	bool categorized = false;
 	std::wstring configurationId;

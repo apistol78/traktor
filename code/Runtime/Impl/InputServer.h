@@ -37,8 +37,6 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
-	InputServer();
-
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemApplication& sysapp, const SystemWindow& syswin);
 
 	void destroy();
@@ -80,14 +78,14 @@ private:
 	Ref< const input::InputMappingSourceData > m_inputMappingDefaultSourceData;
 	Ref< input::InputMappingSourceData > m_inputMappingSourceData;
 	Ref< const input::InputMappingStateData > m_inputMappingStateData;
-	uint32_t m_inputConstantsHash;
+	uint32_t m_inputConstantsHash = 0;
 	Ref< input::InputSourceFabricator > m_inputSourceFabricator;
 	std::wstring m_inputSourceFabricatorId;
 	Ref< input::IInputDevice > m_inputFabricatorAbortDevice;
-	int32_t m_inputFabricatorAbortControl;
-	bool m_inputFabricatorAbortUnbind;
-	bool m_inputFabricatorAborted;
-	bool m_inputActive;
+	int32_t m_inputFabricatorAbortControl = 0;
+	bool m_inputFabricatorAbortUnbind = false;
+	bool m_inputFabricatorAborted = false;
+	bool m_inputActive = false;
 	Ref< input::RumbleEffectPlayer > m_rumbleEffectPlayer;
 };
 

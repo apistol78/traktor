@@ -30,8 +30,6 @@ class AudioServer : public IAudioServer
 	T_RTTI_CLASS;
 
 public:
-	AudioServer();
-
 	bool create(const PropertyGroup* settings, const SystemApplication& sysapp);
 
 	void destroy();
@@ -55,9 +53,9 @@ private:
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< sound::SurroundEnvironment > m_surroundEnvironment;
 	std::wstring m_audioType;
-	bool m_autoMute;
-	bool m_soundMuted;
-	float m_soundMutedVolume;
+	bool m_autoMute = true;
+	bool m_soundMuted = false;
+	float m_soundMutedVolume = 1.0f;
 };
 
 	}

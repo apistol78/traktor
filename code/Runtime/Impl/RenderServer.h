@@ -34,8 +34,6 @@ public:
 		UrReconfigure = 2
 	};
 
-	RenderServer();
-
 	virtual void destroy() = 0;
 
 	virtual void createResourceFactories(IEnvironment* environment) = 0;
@@ -56,7 +54,7 @@ protected:
 	Ref< render::TextureFactory > m_textureFactory;
 
 private:
-	int32_t m_frameRate;
+	int32_t m_frameRate = 0;
 };
 
 	}

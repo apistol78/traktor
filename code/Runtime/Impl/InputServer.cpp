@@ -60,15 +60,6 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.InputServer", InputServer, IInputServer)
 
-InputServer::InputServer()
-:	m_inputConstantsHash(0)
-,	m_inputFabricatorAbortControl(0)
-,	m_inputFabricatorAbortUnbind(false)
-,	m_inputFabricatorAborted(false)
-,	m_inputActive(false)
-{
-}
-
 bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemApplication& sysapp, const SystemWindow& syswin)
 {
 	m_settings = settings;

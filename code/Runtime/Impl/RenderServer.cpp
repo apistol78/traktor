@@ -8,11 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServer", RenderServer, IRenderServer)
 
-RenderServer::RenderServer()
-:	m_frameRate(0)
-{
-}
-
 RenderServer::UpdateResult RenderServer::update(PropertyGroup* settings)
 {
 	return UrSuccess;

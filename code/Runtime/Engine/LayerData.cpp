@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.LayerData", LayerData, ISerializable)
 
-LayerData::LayerData()
-:	m_permitTransition(true)
-{
-}
-
 void LayerData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);

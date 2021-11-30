@@ -26,7 +26,7 @@ class T_DLLCLASS ScriptDebuggerBreakpoint : public ISerializable
 public:
 	ScriptDebuggerBreakpoint() = default;
 
-	ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber);
+	explicit ScriptDebuggerBreakpoint(bool add, const Guid& scriptId, uint32_t lineNumber);
 
 	bool shouldAdd() const { return m_add; }
 

@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.CommandEvent", 0, CommandEvent, IRemoteEvent)
 
-CommandEvent::CommandEvent()
-{
-}
-
 CommandEvent::CommandEvent(const std::wstring& function)
 :	m_function(function)
 {

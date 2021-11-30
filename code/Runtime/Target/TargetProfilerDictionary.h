@@ -25,9 +25,9 @@ class T_DLLCLASS TargetProfilerDictionary : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TargetProfilerDictionary();
+	TargetProfilerDictionary() = default;
 
-	TargetProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary);
+	explicit TargetProfilerDictionary(const SmallMap< uint16_t, std::wstring >& dictionary);
 
 	const SmallMap< uint16_t, std::wstring >& getDictionary() const { return m_dictionary; }
 

@@ -81,21 +81,6 @@ const uint32_t c_terrainSurfaceCacheSizes[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldServer", WorldServer, IWorldServer)
 
-WorldServer::WorldServer()
-:	m_worldType(0)
-,	m_motionBlurQuality(world::Quality::Medium)
-,	m_shadowQuality(world::Quality::Medium)
-,	m_reflectionsQuality(world::Quality::Medium)
-,	m_ambientOcclusionQuality(world::Quality::Medium)
-,	m_antiAliasQuality(world::Quality::Medium)
-,	m_imageProcessQuality(world::Quality::Medium)
-,	m_particleQuality(world::Quality::Medium)
-,	m_terrainQuality(world::Quality::Medium)
-,	m_oceanQuality(world::Quality::Medium)
-,	m_gamma(2.2f)
-{
-}
-
 bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
 	std::wstring worldType = defaultSettings->getProperty< std::wstring >(L"World.Type");

@@ -35,8 +35,6 @@ class T_DLLCLASS LayerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	LayerData();
-
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const = 0;
 
 	virtual void serialize(ISerializer& s) override;
@@ -45,7 +43,7 @@ protected:
 	friend class StagePipeline;
 
 	std::wstring m_name;
-	bool m_permitTransition;
+	bool m_permitTransition = true;
 };
 
 	}

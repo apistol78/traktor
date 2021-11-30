@@ -24,9 +24,9 @@ class T_DLLCLASS TargetID : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TargetID();
+	TargetID() = default;
 
-	TargetID(const Guid& id, const std::wstring& name);
+	explicit TargetID(const Guid& id, const std::wstring& name);
 
 	const Guid& getId() const;
 

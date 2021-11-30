@@ -30,8 +30,6 @@ class T_DLLCLASS UpdateControl : public Object
 	T_RTTI_CLASS;
 
 public:
-	UpdateControl();
-
 	void setPause(bool pause) { m_pause = pause; }
 
 	bool getPause() const { return m_pause; }
@@ -47,9 +45,9 @@ public:
 private:
 	friend class Application;
 
-	bool m_pause;
-	float m_timeScale;
-	float m_simulationFrequency;
+	bool m_pause = false;
+	float m_timeScale = 1.0f;
+	float m_simulationFrequency = 60.0f;
 };
 
 	}

@@ -12,12 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.AudioLayerData", 0, AudioLayerData, LayerData)
 
-AudioLayerData::AudioLayerData()
-:	m_autoPlay(true)
-,	m_repeat(true)
-{
-}
-
 Ref< Layer > AudioLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
