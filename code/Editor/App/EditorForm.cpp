@@ -1339,16 +1339,18 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 				if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 				{
 					tab->setActivePage(page);
-
 					m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
 					m_activeDocument = page->getData< Document >(L"DOCUMENT");
+					m_tabGroupLastFocus = tab;
 					break;
 				}
 			}
 		}
 
-		if (m_activeEditorPageSite)
-			m_activeEditorPageSite->show();
+		T_FATAL_ASSERT(m_activeEditorPageSite != nullptr);
+		T_FATAL_ASSERT(m_activeDocument != nullptr);
+
+		m_activeEditorPageSite->show();
 	}
 
 	updateAdditionalPanelMenu();
@@ -1359,7 +1361,8 @@ ui::TabPage* EditorForm::getActiveTabPage() const
 {
 	for (auto tabGroup : m_tabGroups)
 	{
-		for (int32_t i = 0; i < tabGroup->getPageCount(); ++i)
+		const int32_t pageCount = tabGroup->getPageCount();
+		for (int32_t i = 0; i < pageCount; ++i)
 		{
 			ui::TabPage* tabPage = tabGroup->getPage(i);
 			if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
@@ -2340,13 +2343,9 @@ void EditorForm::closeAllEditors()
 	RefArray< ui::TabPage > closePages;
 	for (auto tab : m_tabGroups)
 	{
-		// Get all other pages to close; ignore home.
 		for (int32_t i = 0; i < tab->getPageCount(); ++i)
 		{
 			Ref< ui::TabPage > tabPage = tab->getPage(i);
-			if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
-				continue;
-
 			closePages.push_back(tabPage);
 		}
 	}
