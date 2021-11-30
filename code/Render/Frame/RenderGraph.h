@@ -23,6 +23,7 @@ namespace traktor
 	namespace render
 	{
 
+class Buffer;
 class IRenderSystem;
 class RenderContext;
 class RenderGraphTargetSetPool;
@@ -45,7 +46,7 @@ class T_DLLCLASS RenderGraph : public Object
 public:
 	typedef std::function< void(int32_t, int32_t, const std::wstring&, double, double) > fn_profiler_t;
 
-	struct Target
+	struct TargetResource
 	{
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
@@ -56,6 +57,12 @@ public:
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
 		bool external = false;
+	};
+
+	struct BufferResource
+	{
+		const wchar_t* name = nullptr;
+		Ref< Buffer > buffer;
 	};
 
 	/*! */
@@ -71,13 +78,21 @@ public:
 	/*! */
 	void destroy();
 
-	/*! Add transient target set.
+	/*! Add target set resource.
+	 *
+	 * \param name Name of target set, used for debugging only.
+	 * \param targetSet Render target set.
+	 * \return Opaque resource handle.
+	 */
+	handle_t addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
+
+	/*! Add transient target set resource.
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
-	 * \return Opaque resource handle of transient target set.
+	 * \return Opaque resource handle.
 	 */
 	handle_t addTransientTargetSet(
 		const wchar_t* const name,
@@ -86,7 +101,7 @@ public:
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
-	/*! Add persistent target set.
+	/*! Add persistent target set resource.
 	 *
 	 * A persistent target set is a target set which is reused
 	 * for multiple frames, such as last frame etc.
@@ -100,7 +115,7 @@ public:
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
-	 * \return Opaque resource handle of transient target set.
+	 * \return Opaque resource handle.
 	 */
 	handle_t addPersistentTargetSet(
 		const wchar_t* const name,
@@ -110,34 +125,34 @@ public:
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
-	/*! Add external target set.
+	/*! Add buffer resource.
 	 *
-	 * \param name Name of target set, used for debugging only.
-	 * \param targetSet Render target set.
-	 * \return Opaque resource handle of target set.
-	 */
-	handle_t addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
-
-	/*! Add pseudo resource.
-	 *
-	 * \param name Name of pseudo resource, used for debugging only.
+	 * \param name Name of buffer, used for debugging only.
+	 * \param buffer Buffer resource.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addPseudoResource(const wchar_t* const name);
+	handle_t addBuffer(const wchar_t* const name, Buffer* buffer);
 
 	/*! Find target ID by name.
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \return ID of target set.
 	 */
-	handle_t findTargetByName(const wchar_t* const name) const;
+	// handle_t findTargetByName(const wchar_t* const name) const;
 
-	/*! Get transient target set from target identifier.
+	/*! Get target set from resource handle.
 	 *
-	 * \param targetSetId Unique identifier of target.
+	 * \param resource Opaque resource handle.
 	 * \return Render target set.
 	 */
-	IRenderTargetSet* getTargetSet(handle_t targetSetId) const;
+	IRenderTargetSet* getTargetSet(handle_t resource) const;
+
+	/*! Get buffer from resource handle.
+	 *
+	 * \param resource Opaque resource handle.
+	 * \return Buffer
+	 */
+	Buffer* getBuffer(handle_t resource) const;
 
 	/*! Add render pass to graph.
 	 *
@@ -162,21 +177,25 @@ public:
 	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
 	/*! */
-	const SmallMap< handle_t, Target >& getTargets() const { return m_targets; }
+	const SmallMap< handle_t, TargetResource >& getTargets() const { return m_targets; }
+
+	/*! */
+	const SmallMap< handle_t, BufferResource >& getBuffers() const { return m_buffers; }
 
 	/*! */
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
 
 private:
 	Ref< RenderGraphTargetSetPool > m_pool;
-	SmallMap< handle_t, Target > m_targets;
+	SmallMap< handle_t, TargetResource > m_targets;
+	SmallMap< handle_t, BufferResource > m_buffers;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[16];
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
 
-	bool acquire(int32_t width, int32_t height, Target& outTarget);
+	bool acquire(int32_t width, int32_t height, TargetResource& inoutTarget);
 
 	void cleanup();
 };

@@ -18,6 +18,16 @@ const render::Handle c_handleDebugTechnique(L"Metalness");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
+render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
+{
+	for (const auto& tm : renderGraph.getTargets())
+	{
+		if (wcscmp(tm.second.name, name) == 0)
+			return tm.first;
+	}
+	return 0;
+}
+
         }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferMetalnessOverlay", 0, GBufferMetalnessOverlay, IDebugOverlay)
@@ -32,7 +42,7 @@ bool GBufferMetalnessOverlay::create(resource::IResourceManager* resourceManager
 
 void GBufferMetalnessOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	render::handle_t gbufferId = renderGraph.findTargetByName(L"GBuffer");
+	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
 	if (!gbufferId)
 		return;
 

@@ -57,10 +57,27 @@ RenderGraph::~RenderGraph()
 void RenderGraph::destroy()
 {
 	m_targets.clear();
+	m_buffers.clear();
 	m_passes.clear();
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].clear();
 	safeDestroy(m_pool);
+}
+
+handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
+{
+	handle_t resourceId = m_nextResourceId++;
+
+	auto& tr = m_targets[resourceId];
+	tr.name = name;
+	tr.persistentHandle = 0;
+	tr.rts = targetSet;
+	tr.sizeReferenceTargetSetId = 0;
+	tr.inputRefCount = 0;
+	tr.outputRefCount = 0;
+	tr.external = true;
+
+	return resourceId;
 }
 
 handle_t RenderGraph::addTransientTargetSet(
@@ -72,15 +89,15 @@ handle_t RenderGraph::addTransientTargetSet(
 {
 	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[resourceId];
-	target.name = name;
-	target.persistentHandle = 0;
-	target.targetSetDesc = targetSetDesc;
-	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
-	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
-	target.inputRefCount = 0;
-	target.outputRefCount = 0;
-	target.external = false;
+	auto& tr = m_targets[resourceId];
+	tr.name = name;
+	tr.persistentHandle = 0;
+	tr.targetSetDesc = targetSetDesc;
+	tr.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
+	tr.inputRefCount = 0;
+	tr.outputRefCount = 0;
+	tr.external = false;
 
 	return resourceId;
 }
@@ -95,61 +112,40 @@ handle_t RenderGraph::addPersistentTargetSet(
 {
 	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[resourceId];
-	target.name = name;
-	target.persistentHandle = persistentHandle;
-	target.targetSetDesc = targetSetDesc;
-	target.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
-	target.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
-	target.inputRefCount = 0;
-	target.outputRefCount = 0;
-	target.external = false;
+	auto& tr = m_targets[resourceId];
+	tr.name = name;
+	tr.persistentHandle = persistentHandle;
+	tr.targetSetDesc = targetSetDesc;
+	tr.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
+	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
+	tr.inputRefCount = 0;
+	tr.outputRefCount = 0;
+	tr.external = false;
 
 	return resourceId;
 }
 
-handle_t RenderGraph::addExternalTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
+handle_t RenderGraph::addBuffer(const wchar_t* const name, Buffer* buffer)
 {
-	T_FATAL_ASSERT(targetSet != nullptr);
-	T_ASSERT(targetSet->getWidth() > 0);
-	T_ASSERT(targetSet->getHeight() > 0);
-
 	handle_t resourceId = m_nextResourceId++;
 
-	auto& target = m_targets[resourceId];
-	target.name = name;
-	target.persistentHandle = 0;
-	target.rts = targetSet;
-	target.sizeReferenceTargetSetId = 0;
-	target.inputRefCount = 0;
-	target.outputRefCount = 0;
-	target.external = true;
+	auto& br = m_buffers[resourceId];
+	br.name = name;
+	br.buffer = buffer;
 
 	return resourceId;
 }
 
-handle_t RenderGraph::addPseudoResource(const wchar_t* const name)
+IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
-	return m_nextResourceId++;
+	auto it = m_targets.find(resource);
+	return (it != m_targets.end()) ? it->second.rts : nullptr;
 }
 
-handle_t RenderGraph::findTargetByName(const wchar_t* const name) const
+Buffer* RenderGraph::getBuffer(handle_t resource) const
 {
-	for (const auto& tm : m_targets)
-	{
-		if (wcscmp(tm.second.name, name) == 0)
-			return tm.first;
-	}
-	return 0;
-}
-
-IRenderTargetSet* RenderGraph::getTargetSet(handle_t targetSetId) const
-{
-	auto it = m_targets.find(targetSetId);
-	if (it != m_targets.end())
-		return it->second.rts;
-	else
-		return nullptr;
+	auto it = m_buffers.find(resource);
+	return (it != m_buffers.end()) ? it->second.buffer : nullptr;
 }
 
 void RenderGraph::addPass(const RenderPass* pass)
@@ -200,7 +196,7 @@ bool RenderGraph::validate()
 			m_order[depths[i]].push_back(i);
 	}
 
-	// Sort each depth based on output target.
+	// Sort each depth based on output resource.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 	{
 		std::stable_sort(m_order[i].begin(), m_order[i].end(), [&](uint32_t lh, uint32_t rh) {
@@ -396,10 +392,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 				auto it = m_targets.find(input.resourceId);
 				if (it == m_targets.end())
-				{
-					cleanup();
-					return false;
-				}
+					continue;
 
 				auto& target = it->second;
 				if (--target.inputRefCount <= 0)
@@ -451,7 +444,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 #endif
 
-	// Ensure all persistent targets are released, since we're
+	// Ensure all persistent targets are returned to pool, since we're
 	// manually acquiring all at the beginning.
 	for (auto& it : m_targets)
 	{
@@ -473,12 +466,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	return true;
 }
 
-bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
+bool RenderGraph::acquire(int32_t width, int32_t height, TargetResource& inoutTarget)
 {
 	// Use size of reference target.
-	if (outTarget.sizeReferenceTargetSetId != 0)
+	if (inoutTarget.sizeReferenceTargetSetId != 0)
 	{
-		auto it = m_targets.find(outTarget.sizeReferenceTargetSetId);
+		auto it = m_targets.find(inoutTarget.sizeReferenceTargetSetId);
 		if (it == m_targets.end())
 			return false;
 
@@ -487,22 +480,22 @@ bool RenderGraph::acquire(int32_t width, int32_t height, Target& outTarget)
 	}
 
 	// Use size of shared depth/stencil target since they must match.
-	if (outTarget.sharedDepthStencilTargetSet != nullptr)
+	if (inoutTarget.sharedDepthStencilTargetSet != nullptr)
 	{
-		width = outTarget.sharedDepthStencilTargetSet->getWidth();
-		height = outTarget.sharedDepthStencilTargetSet->getHeight();
+		width = inoutTarget.sharedDepthStencilTargetSet->getWidth();
+		height = inoutTarget.sharedDepthStencilTargetSet->getHeight();
 	}
 
-	outTarget.rts = m_pool->acquire(
-		outTarget.name,
-		outTarget.targetSetDesc,
-		outTarget.sharedDepthStencilTargetSet,
+	inoutTarget.rts = m_pool->acquire(
+		inoutTarget.name,
+		inoutTarget.targetSetDesc,
+		inoutTarget.sharedDepthStencilTargetSet,
 		width,
 		height,
 		m_multiSample,
-		outTarget.persistentHandle
+		inoutTarget.persistentHandle
 	);
-	if (!outTarget.rts)
+	if (!inoutTarget.rts)
 		return false;
 
 	return true;
@@ -512,6 +505,7 @@ void RenderGraph::cleanup()
 {
 	m_passes.resize(0);
 	m_targets.reset();
+	m_buffers.reset();
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].resize(0);
 }

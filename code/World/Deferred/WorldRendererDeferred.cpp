@@ -857,7 +857,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add cascading shadow map target.
-	auto shadowMapCascadeTargetSetId = renderGraph.addExternalTargetSet(L"Shadow map cascade", m_shadowMapCascadeTargetSet);
+	auto shadowMapCascadeTargetSetId = renderGraph.addTargetSet(L"Shadow map cascade", m_shadowMapCascadeTargetSet);
 
 	// Add cascading shadow map render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow cascade");
@@ -989,7 +989,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 	// Add atlas shadow map target.
-	auto shadowMapAtlasTargetSetId = renderGraph.addExternalTargetSet(L"Shadow map atlas", m_shadowMapAtlasTargetSet);
+	auto shadowMapAtlasTargetSetId = renderGraph.addTargetSet(L"Shadow map atlas", m_shadowMapAtlasTargetSet);
 
 	// Add atlas shadow map render pass.
 	int32_t atlasIndex = 0;
