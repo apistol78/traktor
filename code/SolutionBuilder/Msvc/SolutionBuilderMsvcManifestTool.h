@@ -16,8 +16,6 @@ class SolutionBuilderMsvcManifestTool : public SolutionBuilderMsvcTool
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderMsvcManifestTool();
-
 	virtual bool generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, OutputStream& os) const override final;
 
 	virtual void serialize(ISerializer& s) override final;

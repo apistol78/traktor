@@ -20,13 +20,11 @@ namespace traktor
 void collectActiveProjects(const Project* project, std::set< const Project* >& outProjects)
 {
 	outProjects.insert(project);
-
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+	for (auto dependency : project->getDependencies())
 	{
-		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			collectActiveProjects(projectDependency->getProject(), outProjects);
-		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			collectActiveProjects(externalDependency->getProject(), outProjects);
 	}
 }
@@ -59,26 +57,22 @@ bool SolutionBuilderGraphViz::generate(Solution* solution)
 	os << L"node [shape=box];" << Endl;
 
 	std::set< const Project* > activeProjects;
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		const Project* project = *i;
 		if (project->getEnable())
 			collectActiveProjects(project, activeProjects);
 	}
 
-	for (std::set< const Project* >::const_iterator i = activeProjects.begin(); i != activeProjects.end(); ++i)
+	for (auto project : activeProjects)
 	{
-		const Project* project = *i;
-		const RefArray< Dependency >& dependencies = project->getDependencies();
-		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		for (auto dependency : project->getDependencies())
 		{
-			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+			if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			{
 				if (!m_skipLeafs || !projectDependency->getProject()->getDependencies().empty())
 					os << L"\"" << project->getName() << L"\" -> \"" << projectDependency->getName() << L"\";" << Endl;
 			}
-			else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+			else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			{
 				if (!m_skipLeafs || !externalDependency->getProject()->getDependencies().empty())
 					os << L"\"" << project->getName() << L"\" -> \"" << externalDependency->getName() << L"\";" << Endl;

@@ -56,21 +56,17 @@ bool collectExternalSolutions(
 	RefSet< Solution >& outExternalSolutions
 )
 {
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+	for (auto dependency : project->getDependencies())
 	{
-		const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j);
+		const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency);
 		if (!externalDependency)
 			continue;
 
 		Solution* externalSolution = externalDependency->getSolution();
 		T_ASSERT(externalSolution);
 
-		const RefArray< Project >& externalProjects = externalSolution->getProjects();
-		for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+		for (auto externalProject : externalSolution->getProjects())
 		{
-			Project* externalProject = *j;
-
 			if (!externalProject->getEnable())
 				continue;
 			if (outProjectGuids.find(externalProject) != outProjectGuids.end())
@@ -195,11 +191,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	std::map< const Project*, std::wstring > projectGuids;
 	RefSet< Solution > externalSolutions;
 
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		Ref< Project > project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;
@@ -245,10 +238,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
 
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		Ref< Project > project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;
@@ -275,9 +266,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 			os << IncreaseIndent;
 			os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
 
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (auto dependency : dependencies)
 			{
-				if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+				if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 				{
 					Ref< const Project > dependentProject = projectDependency->getProject();
 					if (!dependentProject->getEnable())
@@ -292,7 +283,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 				}
 				else if (m_includeExternal)
 				{
-					if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+					if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 					{
 						Ref< const Project > dependentProject = externalDependency->getProject();
 						if (!dependentProject->getEnable())
@@ -318,9 +309,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	// Create solution folder with all external solutions.
 	if (m_includeExternal && !externalSolutions.empty())
 	{
-		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		for (auto externalSolution : externalSolutions)
 		{
-			Solution* externalSolution = *i;
 			std::wstring externalSolutionId = context.generateGUID(externalSolution->getName());
 
 			os << L"Project(\"{2150E333-8FDC-42A3-9474-1A3956D46DE8}\") = \"" << externalSolution->getName() << L"\", \"" << externalSolution->getName() << L"\", \"" << externalSolutionId << L"\"" << Endl;
@@ -328,11 +318,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 			RefArray< Project > externalProjects = externalSolution->getProjects();
 			externalProjects.sort(ProjectNamePredicate());
-
-			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			for (auto externalProject : externalProjects)
 			{
-				Project* externalProject = *j;
-
 				if (!externalProject->getEnable())
 					continue;
 
@@ -360,9 +347,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 					os << IncreaseIndent;
 					os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
 
-					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					for (auto dependency : dependencies)
 					{
-						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+						if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 						{
 							Ref< const Project > dependentProject = projectDependency->getProject();
 							if (!dependentProject->getEnable())
@@ -375,7 +362,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 							os << projectGuids[dependentProject] << L" = " << projectGuids[dependentProject] << Endl;
 							os << DecreaseIndent;
 						}
-						else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+						else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 						{
 							Ref< const Project > dependentProject = externalDependency->getProject();
 							if (!dependentProject)
@@ -408,20 +395,14 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	std::wstring platform = m_settings->getProject()->getPlatform();
 
 	std::set< std::wstring > availableConfigurations;
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		Ref< Project > project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;
 
-		const RefArray< Configuration >& configurations = project->getConfigurations();
-		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
-		{
-			Ref< const Configuration > configuration = *j;
+		for (auto configuration : project->getConfigurations())
 			availableConfigurations.insert(configuration->getName());
-		}
 	}
 
 	os << L"GlobalSection(SolutionConfigurationPlatforms) = preSolution" << Endl;
@@ -434,18 +415,14 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	os << L"GlobalSection(ProjectConfigurationPlatforms) = postSolution" << Endl;
 	os << IncreaseIndent;
 
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		Project* project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;
 
-		const RefArray< Configuration >& configurations = project->getConfigurations();
-		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		for (auto configuration : project->getConfigurations())
 		{
-			const Configuration* configuration = *j;
 			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
 			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
 		}
@@ -453,25 +430,18 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	if (m_includeExternal)
 	{
-		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		for (auto solution : externalSolutions)
 		{
-			Solution* solution = *i;
-
 			RefArray< Project > externalProjects = solution->getProjects();
 			externalProjects.sort(ProjectNamePredicate());
-
-			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			for (auto project : externalProjects)
 			{
-				Project* project = *j;
-
 				// Skip disabled projects.
 				if (!project->getEnable())
 					continue;
 
-				const RefArray< Configuration >& configurations = project->getConfigurations();
-				for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+				for (auto configuration : project->getConfigurations())
 				{
-					const Configuration* configuration = *j;
 					os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
 					os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
 				}
@@ -496,18 +466,14 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		os << L"GlobalSection(NestedProjects) = preSolution" << Endl;
 		os << IncreaseIndent;
 
-		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		for (auto externalSolution : externalSolutions)
 		{
-			Solution* externalSolution = *i;
 			std::wstring externalSolutionId = context.generateGUID(externalSolution->getName());
 
 			RefArray< Project > externalProjects = externalSolution->getProjects();
 			externalProjects.sort(ProjectNamePredicate());
-
-			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			for (auto project : externalProjects)
 			{
-				Project* project = *j;
-
 				// Skip disabled projects.
 				if (!project->getEnable())
 					continue;
