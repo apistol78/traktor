@@ -25,11 +25,11 @@ class T_DLLCLASS BoxedVector4 : public Boxed
 public:
 	BoxedVector4() = default;
 
-	explicit BoxedVector4(const Vector4& value);
+	explicit BoxedVector4(const Vector4& value) : m_value(value) {}
 
-	explicit BoxedVector4(float x, float y, float z);
+	explicit BoxedVector4(float x, float y, float z) : m_value(x, y, z, 0.0f) {}
 
-	explicit BoxedVector4(float x, float y, float z, float w);
+	explicit BoxedVector4(float x, float y, float z, float w) : m_value(x, y, z, w) {}
 
 	inline void set_x(float v) { m_value.set(0, Scalar(v)); }
 

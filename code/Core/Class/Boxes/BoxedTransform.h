@@ -30,7 +30,7 @@ class T_DLLCLASS BoxedTransform : public Boxed
 public:
 	BoxedTransform() = default;
 
-	explicit BoxedTransform(const Transform& value);
+	explicit BoxedTransform(const Transform& value) : m_value(value) {}
 
 	explicit BoxedTransform(const BoxedVector4* translation, const BoxedQuaternion* rotation);
 
