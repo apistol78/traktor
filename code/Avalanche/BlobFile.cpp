@@ -2,6 +2,8 @@
 #include "Core/Guid.h"
 #include "Core/Io/File.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Misc/Key.h"
 
 namespace traktor
@@ -21,6 +23,31 @@ BlobFile::BlobFile(const Path& path, int64_t size, const DateTime& lastAccessed)
 BlobFile::~BlobFile()
 {
 	FileSystem::getInstance().modify(m_path, nullptr, &m_lastAccessed, nullptr);
+}
+
+bool BlobFile::create(IStream* source)
+{
+	const Path tmpPath = m_path.getPathName() + L".tmp";
+
+	// Create a temporary file and copy source stream.
+	Ref< IStream > tmp = FileSystem::getInstance().open(tmpPath, File::FmWrite);
+	if (!tmp)
+		return false;
+
+	bool result = StreamCopy(tmp, source).execute();
+
+	tmp->close();
+	tmp = nullptr;
+
+	// If copy succeeded then move into place.
+	if (result)
+		result = FileSystem::getInstance().move(m_path, tmpPath, true);
+	
+	// Cleanup temporary file if something failed.
+	if (!result)
+		FileSystem::getInstance().remove(tmpPath);
+
+	return result;
 }
 
 int64_t BlobFile::size() const
