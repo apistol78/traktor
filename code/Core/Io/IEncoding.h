@@ -30,7 +30,7 @@ public:
 	 * \param out Encoded characters, should be at least count * MaxEncodingSize bytes to ensure enough space.
 	 * \return Number of bytes used in out array, -1 if encoding failed.
 	 */
-	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const = 0;
+	virtual int32_t translate(const wchar_t* chars, int32_t count, uint8_t* out) const = 0;
 
 	/*! Translate from special encoding to Unicode.
 	 *
@@ -39,7 +39,7 @@ public:
 	 * \param out Output unicode character.
 	 * \return -1 if decoding failed, otherwise number of bytes "consumed" from input buffer.
 	 */
-	virtual int translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const = 0;
+	virtual int32_t translate(const uint8_t in[MaxEncodingSize], int32_t count, wchar_t& out) const = 0;
 };
 
 }

@@ -5,10 +5,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Utf8Encoding", Utf8Encoding, IEncoding);
 
-int Utf8Encoding::translate(const wchar_t* chars, int count, uint8_t* out) const
+int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) const
 {
-	int j = 0;
-	for (int i = 0; i < count; ++i)
+	int32_t j = 0;
+	for (int32_t i = 0; i < count; ++i)
 	{
 		wchar_t ch = chars[i];
 
@@ -76,7 +76,7 @@ int Utf8Encoding::translate(const wchar_t* chars, int count, uint8_t* out) const
 	return j;
 }
 
-int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const
+int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int32_t count, wchar_t& out) const
 {
 	out = 0;
 
