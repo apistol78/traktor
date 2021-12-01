@@ -21,11 +21,11 @@ class T_DLLCLASS Utf8Encoding : public IEncoding
 	T_RTTI_CLASS;
 
 public:
-	Utf8Encoding() {}
+	Utf8Encoding() = default;
 
-	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const override final;
+	virtual int translate(const wchar_t* chars, int32_t count, uint8_t* out) const override final;
 
-	virtual int translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const override final;
+	virtual int translate(const uint8_t in[MaxEncodingSize], int32_t count, wchar_t& out) const override final;
 };
 
 }
