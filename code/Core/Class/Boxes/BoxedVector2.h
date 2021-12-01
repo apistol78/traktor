@@ -25,9 +25,9 @@ class T_DLLCLASS BoxedVector2 : public Boxed
 public:
 	BoxedVector2() = default;
 
-	explicit BoxedVector2(const Vector2& value);
+	explicit BoxedVector2(const Vector2& value) : m_value(value) {}
 
-	explicit BoxedVector2(float x, float y);
+	explicit BoxedVector2(float x, float y) : m_value(x, y) {}
 
 	void set(float x, float y) { m_value.set(x, y); }
 

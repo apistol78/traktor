@@ -14,11 +14,6 @@ BoxedAllocator< BoxedTransform, 8192 > s_allocBoxedTransform;
 	}
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Boxed)
 
-BoxedTransform::BoxedTransform(const Transform& value)
-:	m_value(value)
-{
-}
-
 BoxedTransform::BoxedTransform(const BoxedVector4* translation, const BoxedQuaternion* rotation)
 :	m_value(translation->unbox(), rotation->unbox())
 {
