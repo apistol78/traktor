@@ -49,11 +49,8 @@ bool SolutionBuilderEclipse::generate(Solution* solution)
 		return false;
 	}
 
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		const Project* project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;

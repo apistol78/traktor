@@ -19,10 +19,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcManifestTool", 0, SolutionBuilderMsvcManifestTool, SolutionBuilderMsvcTool)
 
-SolutionBuilderMsvcManifestTool::SolutionBuilderMsvcManifestTool()
-{
-}
-
 bool SolutionBuilderMsvcManifestTool::generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, OutputStream& os) const
 {
 	context.set(L"MANIFEST_FILE", m_manifest);
