@@ -25,6 +25,8 @@ public:
 
 	virtual ~BlobFile();
 
+	bool create(IStream* source);
+
 	virtual int64_t size() const override final;
 
 	virtual Ref< IStream > append() override final;

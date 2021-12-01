@@ -3,7 +3,6 @@
 #include "Avalanche/BlobMemory.h"
 #include "Avalanche/Dictionary.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 
@@ -79,7 +78,7 @@ bool Dictionary::put(const Key& key, IBlob* blob, bool raw)
 	{
 		const Path blobPath = m_blobsPath.getPathName() + L"/" + key.format() + L".blob";
 		Ref< BlobFile > bf = new BlobFile(blobPath, blob->size(), DateTime::now());
-		if (!StreamCopy(bf->append(), blob->read()).execute())
+		if (!bf->create(blob->read()))
 			return false;
 		dictionaryBlob = bf;
 	}
