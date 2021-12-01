@@ -37,7 +37,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleComponent", RubbleComponent, Terr
 
 RubbleComponent::RubbleComponent()
 :	m_owner(nullptr)
-//,	m_spreadDistance(0.0f)
 ,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
 {
@@ -49,8 +48,6 @@ bool RubbleComponent::create(
 	const RubbleComponentData& data
 )
 {
-	//m_spreadDistance = data.m_spreadDistance;
-
 	m_rubble.resize(data.m_rubble.size());
 	for (size_t i = 0; i < m_rubble.size(); ++i)
 	{
