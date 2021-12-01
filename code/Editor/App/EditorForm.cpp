@@ -487,7 +487,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		ui::dpi96(1280),
 		ui::dpi96(900),
 		ui::Form::WsDefault | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,*,100%,*", 0, 0)
+		new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)
 	))
 		return false;
 
@@ -547,31 +547,31 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
 
-	// Create toolbar.
-	m_toolBar = new ui::ToolBar();
-	m_toolBar->create(this, ui::WsNone);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"), 1);
+	// // Create toolbar.
+	// m_toolBar = new ui::ToolBar();
+	// m_toolBar->create(this, ui::WsNone);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"), 1);
+	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"), 1);
 
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
-	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
-	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
-	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
-	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
+	// m_toolBar->addItem(new ui::ToolBarSeparator());
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
+	// m_toolBar->addItem(new ui::ToolBarSeparator());
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
+	// m_toolBar->addItem(new ui::ToolBarSeparator());
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
+	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
+	// m_toolBar->addItem(new ui::ToolBarSeparator());
+	// m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
 	updateMRU();
@@ -612,6 +612,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_tabOutput = new ui::Tab();
 	m_tabOutput->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
 	m_tabOutput->setText(i18n::Text(L"TITLE_OUTPUT"));
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.LogVisible"))
+		m_tabOutput->hide();
 
 	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
 	tabPageLog->create(m_tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
@@ -619,8 +621,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_logView = new LogView(this);
 	m_logView->create(tabPageLog);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
-	if (!m_mergedSettings->getProperty< bool >(L"Editor.LogVisible"))
-		m_logView->hide();
 
 	// Replay logs into log view.
 	infoLog->replay(m_logView->getLogTarget());
@@ -740,12 +740,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
 
-			Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
-			if (toolIcon)
-			{
-				int32_t iconIndex = m_toolBar->addImage(toolIcon, 1);
-				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
-			}
+			// Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
+			// if (toolIcon)
+			// {
+			// 	int32_t iconIndex = m_toolBar->addImage(toolIcon, 1);
+			// 	m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
+			// }
 		}
 
 		if (!m_editorTools.empty())
@@ -876,7 +876,7 @@ void EditorForm::destroy()
 	// Destroy widgets.
 	safeDestroy(m_dock);
 	safeDestroy(m_statusBar);
-	safeDestroy(m_toolBar);
+	// safeDestroy(m_toolBar);
 	safeDestroy(m_menuBar);
 
 	Form::destroy();
@@ -2931,7 +2931,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.PropertiesVisible", m_propertiesView->isVisible(false));
-	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_logView->isVisible(false));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_tabOutput->isVisible(false));
 
 	// Save form placement.
 	ui::Rect rc = getNormalRect();

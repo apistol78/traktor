@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Editor/IObjectEditorFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS TextureAssetEditorFactory : public editor::IObjectEditorFactory
+class T_DLLCLASS TextureAssetEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS;
 
@@ -24,7 +24,7 @@ public:
 
 	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const override final;
 
-	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const override final;
+	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const override final;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
