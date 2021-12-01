@@ -86,6 +86,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.GBuffer", GBuffer, Object)
 
 bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel)
 {
+	AlignedVector< Vector4 > positions;
+	AlignedVector< Vector4 > normals;
+	AlignedVector< Vector4 > tangents;
+	Winding2 texCoords;
+
 	m_width = width;
 	m_height = height;
 	m_data.resize(width * height);
@@ -107,10 +112,10 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		const auto& polygon = model.getPolygon(i);
 
 		// Extract data for polygon.
-		AlignedVector< Vector4 > positions;
-		AlignedVector< Vector4 > normals;
-		AlignedVector< Vector4 > tangents;
-		Winding2 texCoords;
+		positions.resize(0);
+		normals.resize(0);
+		tangents.resize(0);
+		texCoords.resize(0);
 		Aabb2 texBounds;
 
 		for (const auto index : polygon.getVertices())
@@ -137,32 +142,25 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 		// Triangulate winding so we can easily traverse lightmap fragments.
 		Triangulator().freeze(texCoords.get(), Triangulator::TfSorted, [&](size_t i0, size_t i1, size_t i2) {
-			Barycentric bary(
+			const Barycentric bary(
 				texCoords[i0],
 				texCoords[i1],
 				texCoords[i2]
 			);
 
-			// Interpolate for verification of barycentrics... \tbd
-			Interpolants< Vector2 > ipolTexCoords(
-				texCoords[i0],
-				texCoords[i1],
-				texCoords[i2]
-			);
-
-			Interpolants< Vector4 > ipolPositions(
+			const Interpolants< Vector4 > ipolPositions(
 				positions[i0],
 				positions[i1],
 				positions[i2]
 			);
 
-			Interpolants< Vector4 > ipolNormals(
+			const Interpolants< Vector4 > ipolNormals(
 				normals[i0],
 				normals[i1],
 				normals[i2]
 			);
 
-			Interpolants< Vector4 > ipolTangents(
+			const Interpolants< Vector4 > ipolTangents(
 				tangents[i0],
 				tangents[i1],
 				tangents[i2]
