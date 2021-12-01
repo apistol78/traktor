@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +40,7 @@ public:
 	void destroy();
 
 private:
-	AlignedVector< ISingleton* > m_singletons;
+	StaticVector< ISingleton*, 64 > m_singletons;
 
 	virtual ~SingletonManager();
 };
