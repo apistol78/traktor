@@ -88,11 +88,9 @@ private:
 
 	world::Entity* m_owner;
 	RubbleComponentData m_data;
-
 	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
-	//float m_spreadDistance;
 	float m_clusterSize;
 	Vector4 m_eye;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
