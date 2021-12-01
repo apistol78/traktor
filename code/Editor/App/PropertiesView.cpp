@@ -13,7 +13,6 @@
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/ColorPicker/ColorDialog.h"
@@ -30,25 +29,6 @@ namespace traktor
 {
 	namespace editor
 	{
-		namespace
-		{
-
-std::wstring lookupDocumentation(const std::wstring& id)
-{
-	std::wstring id_;
-
-	id_ = toUpper(id);
-	id_ = replaceAll(id_, L'.', L'_');
-	id_ = replaceAll(id_, L' ', L'_');
-
-	std::wstring documentation = i18n::I18N::getInstance().get(id_);
-	if (documentation.empty())
-		log::debug << L"No documentation \"" << id_ << L"\"" << Endl;
-
-	return documentation;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertiesView", PropertiesView, ui::Container)
 
@@ -59,7 +39,7 @@ PropertiesView::PropertiesView(IEditor* editor)
 
 bool PropertiesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,75", 0, 4)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 4)))
 		return false;
 
 	m_propertyList = new ui::AutoPropertyList();
@@ -67,12 +47,6 @@ bool PropertiesView::create(ui::Widget* parent)
 	m_propertyList->setSeparator(ui::dpi96(150));
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &PropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
-	m_propertyList->addEventHandler< ui::SelectionChangeEvent >(this, &PropertiesView::eventPropertySelect);
-
-	m_staticHelp = new ui::Static();
-	m_staticHelp->create(this, L"");
-
-	updateHelp();
 	return true;
 }
 
@@ -101,8 +75,6 @@ void PropertiesView::setPropertyObject(ISerializable* object)
 
 	m_propertyList->update();
 	m_propertyObject = object;
-
-	updateHelp();
 }
 
 Ref< ISerializable > PropertiesView::getPropertyObject()
@@ -125,11 +97,6 @@ bool PropertiesView::handleCommand(const ui::Command& command)
 		else
 			return false;
 	}
-	else if (command == L"Editor.SettingsChanged")
-	{
-		updateHelp();
-		return false;
-	}
 	else
 		return false;
 }
@@ -142,68 +109,6 @@ bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolve
 
 	resolved = instance->getName();
 	return true;
-}
-
-void PropertiesView::updateHelp()
-{
-	bool visible = m_editor->getSettings()->getProperty< bool >(L"Editor.PropertyHelpVisible", false);
-	if (visible != m_staticHelp->isVisible(false))
-	{
-		m_staticHelp->setVisible(visible);
-		setLayout(new ui::TableLayout(L"100%", visible ? L"100%,75" : L"100%,0", 0, 4));
-		update();
-	}
-
-	if (visible)
-	{
-		const TypeInfo* helpType = m_propertyObject ? &type_of(m_propertyObject) : 0;
-		std::wstring help;
-
-		RefArray< ui::PropertyItem > selectedItems;
-		if (m_propertyList->getPropertyItems(selectedItems, ui::PropertyList::GfSelectedOnly | ui::PropertyList::GfDescendants) == 1)
-		{
-			std::wstring helpPropId;
-
-			ui::PropertyItem* parent = selectedItems[0]->getParentItem();
-			while (parent)
-			{
-				ui::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::ObjectPropertyItem* >(parent);
-				if (objectItem)
-				{
-					helpType = objectItem->getObject() ? &type_of(objectItem->getObject()) : objectItem->getObjectType();
-					break;
-				}
-				helpPropId = L"_" + parent->getText() + helpPropId;
-				parent = parent->getParentItem();
-			}
-
-			while (helpType)
-			{
-				help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()) + helpPropId + L"_" + selectedItems[0]->getText());
-				if (!help.empty())
-					break;
-
-				helpType = helpType->getSuper();
-			}
-
-			if (help.empty())
-				help = lookupDocumentation(L"HELP" + helpPropId + L"_" + selectedItems[0]->getText());
-		}
-		else if (helpType)
-		{
-			while (helpType)
-			{
-				help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()));
-				if (!help.empty())
-					break;
-
-				helpType = helpType->getSuper();
-			}
-		}
-
-		m_staticHelp->setText(help);
-		m_staticHelp->update();
-	}
 }
 
 void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
@@ -402,11 +307,6 @@ void PropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* event)
 
 	if (activeEditorPage)
 		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
-}
-
-void PropertiesView::eventPropertySelect(ui::SelectionChangeEvent* event)
-{
-	updateHelp();
 }
 
 	}

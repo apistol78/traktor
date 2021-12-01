@@ -16,7 +16,6 @@ class ISerializable;
 class HierarchicalState;
 class PropertyCommandEvent;
 class PropertyContentChangeEvent;
-class Static;
 
 	}
 
@@ -49,17 +48,12 @@ public:
 private:
 	IEditor* m_editor;
 	Ref< ui::AutoPropertyList > m_propertyList;
-	Ref< ui::Static > m_staticHelp;
 	Ref< ISerializable > m_propertyObject;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
-
-	void updateHelp();
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
 	void eventPropertyChange(ui::PropertyContentChangeEvent* event);
-
-	void eventPropertySelect(ui::SelectionChangeEvent* event);
 };
 
 	}

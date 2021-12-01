@@ -45,10 +45,6 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
 #include "Ui/Panel.h"
-#include "Ui/ToolBar/ToolBar.h"
-#include "Ui/ToolBar/ToolBarButton.h"
-#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/StatusBar/StatusBar.h"
@@ -164,25 +160,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
-
-	if (m_script)
-	{
-		if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
-			return false;
-
-		Ref< ui::ToolBar > toolBarEdit = new ui::ToolBar();
-		toolBarEdit->create(containerEdit);
-		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.RemoveBreakpoints"), 1);
-		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.ToggleComments"), 1);
-		toolBarEdit->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
-		toolBarEdit->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
-		toolBarEdit->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
-	}
-	else if (m_scriptAsset)
-	{
-		if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
-			return false;
-	}
+	if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
+		return false;
 
 	m_edit = new ui::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer | ui::SyntaxRichEdit::WsNoClipboard))
@@ -630,55 +609,6 @@ void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 	{
 		m_edit->showLine(line);
 		m_edit->placeCaret(m_edit->getLineOffset(line));
-	}
-}
-
-void ScriptEditorPage::eventToolBarEditClick(ui::ToolBarButtonClickEvent* event)
-{
-	const ui::Command& command = event->getCommand();
-	if (command == L"Script.Editor.ToggleComments")
-	{
-		//int32_t startOffset = m_edit->getSelectionStartOffset();
-		//int32_t stopOffset = m_edit->getSelectionStopOffset();
-
-		//if (startOffset < 0)
-		//{
-		//	int32_t caret = m_edit->getCaretOffset();
-		//	int32_t caretLine = m_edit->getLineFromOffset(caret);
-		//	startOffset = m_edit->getLineOffset(caretLine);
-		//	stopOffset = startOffset + m_edit->getLineLength(caretLine);
-		//}
-
-		//if (startOffset >= 0 && stopOffset >= 0)
-		//{
-		//	std::wstring lineComment = m_edit->getLanguage()->lineComment();
-		//	T_ASSERT(!lineComment.empty());
-
-		//	int32_t startLine = m_edit->getLineFromOffset(startOffset);
-		//	int32_t stopLine = m_edit->getLineFromOffset(stopOffset);
-
-		//	for (int32_t i = startLine; i <= stopLine; ++i)
-		//	{
-		//		std::wstring line = m_edit->getLine(i);
-		//		if (startsWith(line, lineComment))
-		//			line = line.substr(2);
-		//		else
-		//			line = lineComment + line;
-		//		m_edit->setLine(i, line);
-		//	}
-
-		//	m_script->setText(m_edit->getText());
-
-		//	m_edit->updateLanguage(startLine, stopLine);
-		//	m_edit->update();
-		//}
-	}
-	else if (command == L"Script.Editor.RemoveAllBreakpoints")
-	{
-		int32_t lineCount = m_edit->getLineCount();
-		for (int32_t i = 0; i < lineCount; ++i)
-			m_edit->setLineData(i, 0);
-		updateBreakpoints();
 	}
 }
 

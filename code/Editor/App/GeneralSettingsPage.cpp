@@ -117,10 +117,6 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	m_checkBuildAfterBrowseInstance->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_AFTER_BROWSE_INSTANCE"));
 	m_checkBuildAfterBrowseInstance->setChecked(settings->getProperty< bool >(L"Editor.BuildAfterBrowseInstance"));
 
-	m_checkPropertyHelpVisible = new ui::CheckBox();
-	m_checkPropertyHelpVisible->create(container, i18n::Text(L"EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE"));
-	m_checkPropertyHelpVisible->setChecked(settings->getProperty< bool >(L"Editor.PropertyHelpVisible"));
-
 	m_checkShowNewLogTargets = new ui::CheckBox();
 	m_checkShowNewLogTargets->create(container, i18n::Text(L"EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS"));
 	m_checkShowNewLogTargets->setChecked(settings->getProperty< bool >(L"Editor.ShowNewLogTargets"));
@@ -148,7 +144,6 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance", m_checkBuildAfterBrowseInstance->isChecked());
-	settings->setProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", m_checkPropertyHelpVisible->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.ShowNewLogTargets", m_checkShowNewLogTargets->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Resource.Verbose", m_checkVerboseResourceLoading->isChecked());
 	return true;
