@@ -1,11 +1,17 @@
 #include <cstring>
-#include "UnitTest/CaseZip.h"
+#include "Compress/Test/CaseZip.h"
 #include "Compress/Zip/DeflateStreamZip.h"
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Io/MemoryStream.h"
 
 namespace traktor
 {
+	namespace compress
+	{
+		namespace test
+		{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.compress.test.CaseZip", 0, CaseZip, traktor::test::Case)
 
 void CaseZip::run()
 {
@@ -24,13 +30,13 @@ void CaseZip::run()
 	for (size_t i = 0; i < sizeof_array(source); i += 256)
 	{
 		int64_t nwritten = deflateStream.write(&source[i], 256);
-		CASE_ASSERT_EQUAL (nwritten, 256);
+		CASE_ASSERT_EQUAL(nwritten, 256);
 	}
 	deflateStream.flush();
 
 	// Get size of compressed data.
 	compressedSize = deflateDestinationStream.tell();
-	CASE_ASSERT (compressedSize > 0);
+	CASE_ASSERT(compressedSize > 0);
 
 	// Uncompress data by InflateStream.
 	MemoryStream inflateSourceStream(compressed, compressedSize, true, false);
@@ -49,7 +55,9 @@ void CaseZip::run()
 	inflateStream.flush();
 
 	// Ensure data integrity.
-	CASE_ASSERT (std::memcmp(source, destination, sizeof_array(source)) == 0);
+	CASE_ASSERT(std::memcmp(source, destination, sizeof_array(source)) == 0);
 }
 
+		}
+	}
 }
