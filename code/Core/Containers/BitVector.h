@@ -9,10 +9,7 @@ namespace traktor
 class BitVector
 {
 public:
-	BitVector()
-	:	m_size(0)
-	{
-	}
+	BitVector() = default;
 
 	BitVector(uint32_t size, bool initial)
 	:	m_data(new uint32_t [(size + 31) / 32])
@@ -27,6 +24,7 @@ public:
 		m_data.reset(new uint32_t[bv.m_size]);
 		for (uint32_t i = 0; i < bv.m_size; ++i)
 			m_data[i] = bv.m_data[i];
+		m_size = bv.m_size;
 	}
 
 #if defined(T_CXX11)
@@ -107,7 +105,7 @@ public:
 
 private:
 	AutoArrayPtr< uint32_t > m_data;
-	uint32_t m_size;
+	uint32_t m_size = 0;
 };
 
 }

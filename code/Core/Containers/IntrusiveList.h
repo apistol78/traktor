@@ -182,30 +182,24 @@ public:
 		}
 	};
 
-	IntrusiveList()
-	:	m_front(0)
-	,	m_back(0)
-	{
-	}
-
 	bool empty() const
 	{
-		return m_front == 0;
+		return m_front == nullptr;
 	}
 
 	void push_front(ItemType* item)
 	{
-		T_ASSERT(L(item).prev() == 0);
-		T_ASSERT(L(item).next() == 0);
+		T_ASSERT(L(item).prev() == nullptr);
+		T_ASSERT(L(item).next() == nullptr);
 
 		if (m_front)
 		{
 			T_ASSERT(item != m_front);
 
-			L(item).prev() = 0;
+			L(item).prev() = nullptr;
 			L(item).next() = m_front;
 
-			T_ASSERT(L(m_front).prev() == 0);
+			T_ASSERT(L(m_front).prev() == nullptr);
 			L(m_front).prev() = item;
 		}
 		else
@@ -215,22 +209,22 @@ public:
 		}
 		m_front = item;
 
-		T_ASSERT(L(m_front).prev() == 0);
+		T_ASSERT(L(m_front).prev() == nullptr);
 	}
 
 	void push_back(ItemType* item)
 	{
-		T_ASSERT(L(item).prev() == 0);
-		T_ASSERT(L(item).next() == 0);
+		T_ASSERT(L(item).prev() == nullptr);
+		T_ASSERT(L(item).next() == nullptr);
 
 		if (m_back)
 		{
 			T_ASSERT(item != m_back);
 
 			L(item).prev() = m_back;
-			L(item).next() = 0;
+			L(item).next() = nullptr;
 
-			T_ASSERT(L(m_back).next() == 0);
+			T_ASSERT(L(m_back).next() == nullptr);
 			L(m_back).next() = item;
 		}
 		else
@@ -240,7 +234,7 @@ public:
 		}
 		m_back = item;
 
-		T_ASSERT(L(m_back).next() == 0);
+		T_ASSERT(L(m_back).next() == nullptr);
 	}
 
 	void pop_front()
@@ -249,13 +243,13 @@ public:
 
 		ItemType* front = L(m_front).next();
 		if (front)
-			L(front).prev() = 0;
+			L(front).prev() = nullptr;
 
 		L(m_front).prev() =
-		L(m_front).next() = 0;
+		L(m_front).next() = nullptr;
 
-		if ((m_front = front) == 0)
-			m_back = 0;
+		if ((m_front = front) == nullptr)
+			m_back = nullptr;
 	}
 
 	ItemType* front()
@@ -275,7 +269,7 @@ public:
 
 	iterator end()
 	{
-		return iterator(this, 0);
+		return iterator(this, nullptr);
 	}
 
 	const_iterator begin() const
@@ -285,7 +279,7 @@ public:
 
 	const_iterator end() const
 	{
-		return const_iterator(this, 0);
+		return const_iterator(this, nullptr);
 	}
 
 	iterator erase(const iterator& it)
@@ -311,7 +305,7 @@ public:
 			T_ASSERT(item == m_front);
 			m_front = next;
 			if (m_front)
-				L(m_front).prev() = 0;
+				L(m_front).prev() = nullptr;
 		}
 
 		if (next)
@@ -321,16 +315,16 @@ public:
 			T_ASSERT(item == m_back);
 			m_back = prev;
 			if (m_back)
-				L(m_back).next() = 0;
+				L(m_back).next() = nullptr;
 		}
 
 		L(item).prev() =
-		L(item).next() = 0;
+		L(item).next() = nullptr;
 	}
 
 private:
-	ItemType* m_front;
-	ItemType* m_back;
+	ItemType* m_front = nullptr;
+	ItemType* m_back = nullptr;
 };
 
 }
