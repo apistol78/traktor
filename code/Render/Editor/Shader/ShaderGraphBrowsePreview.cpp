@@ -57,7 +57,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	raster.lineTo(w - m, h - m);
 	raster.lineTo(w - m, m);
 	raster.lineTo(m, m);
-	raster.fill(clearStyle, clearStyle, drawing::Raster::FrNonZero);
+	raster.fill(clearStyle, clearStyle, drawing::Raster::FillRule::NonZero);
 
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	const RefArray< Edge >& edges = shaderGraph->getEdges();
@@ -101,7 +101,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		raster.clear();
 		raster.moveTo(x1, y1);
 		raster.lineTo(x2, y2);
-		raster.stroke(edgeStyle, sw, drawing::Raster::ScRound);
+		raster.stroke(edgeStyle, sw, drawing::Raster::StrokeCap::Round);
 	}
 
 	for (auto node : nodes)
@@ -117,7 +117,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		raster.lineTo(x + ns, y + ns);
 		raster.lineTo(x - ns, y + ns);
 		raster.lineTo(x - ns, y - ns);
-		raster.fill(nodeStyle, nodeStyle, drawing::Raster::FrNonZero);
+		raster.fill(nodeStyle, nodeStyle, drawing::Raster::FillRule::NonZero);
 	}
 
 	raster.submit();

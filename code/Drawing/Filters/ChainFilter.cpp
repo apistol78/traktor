@@ -15,8 +15,8 @@ void ChainFilter::add(IImageFilter* filter)
 
 void ChainFilter::apply(Image* image) const
 {
-	for (RefArray< IImageFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
-		image->apply(*i);
+	for (auto filter : m_filters)
+		image->apply(filter);
 }
 
 	}
