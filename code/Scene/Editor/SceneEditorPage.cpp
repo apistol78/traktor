@@ -372,6 +372,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->create(parent, ui::Tab::WsLine);
 	m_tabMisc->setText(i18n::Text(L"SCENE_EDITOR_MISC"));
 
+	// Create properties page.
+	Ref< ui::TabPage > tabPageProperties = new ui::TabPage();
+	tabPageProperties->create(m_tabMisc, i18n::Text(L"EDITOR_PROPERTIES"), new ui::FloodLayout());
+
+	m_propertiesView = m_site->createPropertiesView(tabPageProperties);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &SceneEditorPage::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventPropertiesChanged);
+
 	// Create dependency panel.
 	Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
 	tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
@@ -412,10 +420,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), ui::dpi96(90)));
 
 	// Add pages.
+	m_tabMisc->addPage(tabPageProperties);
 	m_tabMisc->addPage(tabPageDependencies);
 	m_tabMisc->addPage(tabPageGuides);
 	m_tabMisc->addPage(tabPageMeasurements);
-	m_tabMisc->setActivePage(tabPageDependencies);
+	m_tabMisc->setActivePage(tabPageProperties);
 
 	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
 
@@ -425,11 +434,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
 	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
-
-	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
-	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {
@@ -511,10 +515,8 @@ void SceneEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_entityPanel);
 	m_site->destroyAdditionalPanel(m_tabMisc);
 	m_site->destroyAdditionalPanel(m_controllerPanel);
-	m_site->destroyAdditionalPanel(m_propertiesView);
 
 	// Destroy widgets.
-	safeDestroy(m_propertiesView);
 	safeDestroy(m_editPanel);
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
