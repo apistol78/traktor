@@ -41,6 +41,7 @@ bool DefaultPropertiesView::create(ui::Widget* parent)
 {
 	if (!ui::Widget::create(parent, ui::WsNone))
 		return false;
+	addEventHandler< ui::SizeEvent >(this, &DefaultPropertiesView::eventSize);
 
 	setText(i18n::Text(L"TITLE_PROPERTIES"));
 
@@ -50,6 +51,16 @@ bool DefaultPropertiesView::create(ui::Widget* parent)
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultPropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &DefaultPropertiesView::eventPropertyChange);
 	return true;
+}
+
+void DefaultPropertiesView::update(const ui::Rect* rc, bool immediate)
+{
+	if (m_propertyList)
+	{
+		const ui::Rect rcInner = getInnerRect();
+		m_propertyList->setRect(rcInner);
+	}
+	Widget::update(rc, immediate);
 }
 
 void DefaultPropertiesView::setPropertyObject(ISerializable* object)
@@ -103,6 +114,11 @@ bool DefaultPropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& 
 
 	resolved = instance->getName();
 	return true;
+}
+
+void DefaultPropertiesView::eventSize(ui::SizeEvent* event)
+{
+	update(nullptr, false);
 }
 
 void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
