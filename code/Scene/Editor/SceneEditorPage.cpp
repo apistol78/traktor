@@ -23,6 +23,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
@@ -425,6 +426,11 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {
 		createSceneAsset();
@@ -505,8 +511,10 @@ void SceneEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_entityPanel);
 	m_site->destroyAdditionalPanel(m_tabMisc);
 	m_site->destroyAdditionalPanel(m_controllerPanel);
+	m_site->destroyAdditionalPanel(m_propertiesView);
 
 	// Destroy widgets.
+	safeDestroy(m_propertiesView);
 	safeDestroy(m_editPanel);
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
@@ -614,26 +622,12 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 bool SceneEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
 	bool result = true;
 
-	if (command == L"Editor.PropertiesChanging")
-		m_context->getDocument()->push();
-	if (command == L"Editor.PropertiesChanged")
-	{
-		updateScene();
-		createInstanceGrid();
-
-		// Notify controller editor as well.
-		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor)
-			controllerEditor->propertiesChanged();
-
-		m_context->raiseSelect();
-
-		// Propagate to editor controls.
-		m_editControl->handleCommand(command);
-	}
-	else if (command == L"Editor.Undo")
+	if (command == L"Editor.Undo")
 	{
 		if (!m_context->getDocument()->undo())
 			return false;
@@ -1183,10 +1177,10 @@ void SceneEditorPage::updatePropertyObject()
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
 		T_ASSERT(entityAdapter);
 
-		m_site->setPropertyObject(entityAdapter->getEntityData());
+		m_propertiesView->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
-		m_site->setPropertyObject(m_context->getDocument()->getObject(0));
+		m_propertiesView->setPropertyObject(m_context->getDocument()->getObject(0));
 }
 
 void SceneEditorPage::updateStatusBar()
@@ -1561,6 +1555,27 @@ void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
 	updateStatusBar();
 
 	event->consume();
+}
+
+void SceneEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_context->getDocument()->push();
+}
+
+void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	updateScene();
+	createInstanceGrid();
+
+	// Notify controller editor as well.
+	Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+	if (controllerEditor)
+		controllerEditor->propertiesChanged();
+
+	m_context->raiseSelect();
+
+	// Propagate to editor controls.
+	m_editControl->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 }
 
 void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)

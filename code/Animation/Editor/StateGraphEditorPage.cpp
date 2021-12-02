@@ -12,6 +12,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Ui/Application.h"
@@ -92,6 +93,11 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &StateGraphEditorPage::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	// Create preview panel.
 	m_containerPreview = new ui::Container();
 	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
@@ -129,7 +135,10 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 void StateGraphEditorPage::destroy()
 {
+	m_site->destroyAdditionalPanel(m_propertiesView);
 	m_site->destroyAdditionalPanel(m_containerPreview);
+
+	safeDestroy(m_propertiesView);
 	safeDestroy(m_containerPreview);
 	safeDestroy(m_editorGraph);
 }
@@ -168,28 +177,13 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
 	if (command == L"Editor.SettingsChanged")
 	{
 		m_previewControl->updateSettings();
 		m_previewControl->update();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		// Refresh editor nodes.
-		for (auto node : m_editorGraph->getNodes())
-		{
-			StateNode* state = node->getData< StateNode >(L"STATE");
-			node->setTitle(state->getName());
-
-			const auto& position = state->getPosition();
-			node->setPosition(ui::Point(
-				position.first,
-				position.second
-			));
-		}
-
-		updateGraph();
-		updatePreviewConditions();
 	}
 	//if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	//{
@@ -610,7 +604,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT(state);
 
-		m_site->setPropertyObject(state);
+		m_propertiesView->setPropertyObject(state);
 		m_previewControl->setPoseController(new StateNodeController(state));
 	}
 	else if (m_editorGraph->getSelectedEdges(edges) == 1)
@@ -618,12 +612,12 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		Transition* transition = edges[0]->getData< Transition >(L"TRANSITION");
 		T_ASSERT(transition);
 
-		m_site->setPropertyObject(transition);
+		m_propertiesView->setPropertyObject(transition);
 		m_previewControl->setPoseController(m_statePreviewController);
 	}
 	else
 	{
-		m_site->setPropertyObject(0);
+		m_propertiesView->setPropertyObject(0);
 		m_previewControl->setPoseController(m_statePreviewController);
 	}
 }
@@ -648,7 +642,7 @@ void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 
 	// Update properties.
 	if (node->isSelected())
-		m_site->setPropertyObject(state);
+		m_propertiesView->setPropertyObject(state);
 }
 
 void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
@@ -684,6 +678,25 @@ void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 	m_stateGraph->removeTransition(transition);
 
 	updateGraph();
+}
+
+void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	// Refresh editor nodes.
+	for (auto node : m_editorGraph->getNodes())
+	{
+		StateNode* state = node->getData< StateNode >(L"STATE");
+		node->setTitle(state->getName());
+
+		const auto& position = state->getPosition();
+		node->setPosition(ui::Point(
+			position.first,
+			position.second
+		));
+	}
+
+	updateGraph();
+	updatePreviewConditions();
 }
 
 void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* event)

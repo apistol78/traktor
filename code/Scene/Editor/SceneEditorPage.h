@@ -21,6 +21,7 @@ class ISerializable;
 
 class IDocument;
 class IEditorPageSite;
+class PropertiesView;
 
 	}
 
@@ -28,6 +29,8 @@ class IEditorPageSite;
 	{
 
 class Container;
+class ContentChangeEvent;
+class ContentChangingEvent;
 class Font;
 class IBitmap;
 class Menu;
@@ -100,6 +103,7 @@ private:
 	Ref< ui::Menu > m_entityMenuGroup;
 	Ref< ui::Menu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
 	Ref< ui::IBitmap > m_imageHidden;
@@ -156,6 +160,10 @@ private:
 	void eventInstanceClick(ui::GridColumnClickEvent* event);
 
 	void eventInstanceRename(ui::GridItemContentChangeEvent* event);
+
+	void eventPropertiesChanging(ui::ContentChangingEvent* event);
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
 	void eventContextPostBuild(PostBuildEvent* event);
 

@@ -4,6 +4,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Input/Binding/IInputNode.h"
 #include "Input/Binding/IInputSourceData.h"
@@ -44,6 +45,7 @@
 #include "Input/Editor/InRemapAxisTraits.h"
 #include "Input/Editor/InThresholdTraits.h"
 #include "Input/Editor/InTriggerTraits.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
@@ -219,6 +221,12 @@ bool InputMappingEditor::create(ui::Container* parent)
 			m_listValueSources->add(it.first, it.second);
 	}
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 
@@ -247,6 +255,9 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 void InputMappingEditor::destroy()
 {
+	m_site->destroyAdditionalPanel(m_propertiesView);
+
+	safeDestroy(m_propertiesView);
 }
 
 bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -256,15 +267,10 @@ bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& p
 
 bool InputMappingEditor::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.PropertiesChanging")
-	{
-		m_document->push();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		updateGraphView();
-	}
-	else if (command == L"Editor.Undo")
+	if (m_propertiesView->handleCommand(command))
+		return true;
+
+	if (command == L"Editor.Undo")
 	{
 		if (m_document->undo())
 		{
@@ -273,7 +279,7 @@ bool InputMappingEditor::handleCommand(const ui::Command& command)
 
 			updateGraphView();
 
-			m_site->setPropertyObject(0);
+			m_propertiesView->setPropertyObject(nullptr);
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -285,7 +291,7 @@ bool InputMappingEditor::handleCommand(const ui::Command& command)
 
 			updateGraphView();
 
-			m_site->setPropertyObject(0);
+			m_propertiesView->setPropertyObject(nullptr);
 		}
 	}
 	else if (command == L"Input.Editor.AlignLeft")
@@ -495,14 +501,14 @@ void InputMappingEditor::eventListValueSourceSelect(ui::SelectionChangeEvent* ev
 {
 	Ref< IInputSourceData > sourceData = m_listValueSources->getSelectedData< IInputSourceData >();
 	if (sourceData)
-		m_site->setPropertyObject(sourceData);
+		m_propertiesView->setPropertyObject(sourceData);
 }
 
 void InputMappingEditor::eventNodeSelect(ui::SelectEvent* event)
 {
 	const RefArray< ui::Node >& nodes = event->getNodes();
 	if (nodes.size() == 1)
-		m_site->setPropertyObject(nodes[0]->getData(L"DATA"));
+		m_propertiesView->setPropertyObject(nodes[0]->getData< ISerializable >(L"DATA"));
 }
 
 void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
@@ -658,6 +664,16 @@ void InputMappingEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 		destinationStateData->setSource(0);
 	}
 
+	updateGraphView();
+}
+
+void InputMappingEditor::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
+void InputMappingEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
 	updateGraphView();
 }
 

@@ -28,6 +28,7 @@
 
 // Controls
 #include "Ui/Events/ContentChangeEvent.h"
+#include "Ui/Events/ContentChangingEvent.h"
 #include "Ui/Events/ScrollEvent.h"
 #include "Ui/Events/SelectionChangeEvent.h"
 

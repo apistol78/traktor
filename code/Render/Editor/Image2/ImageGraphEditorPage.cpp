@@ -7,6 +7,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Image2/IImgStep.h"
@@ -88,6 +89,12 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &ImageGraphEditorPage::eventEdgeConnect);
 	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &ImageGraphEditorPage::eventEdgeDisconnect);
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ImageGraphEditorPage::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ImageGraphEditorPage::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"IMAGEGRAPH_CREATE"));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddInput"), i18n::Text(L"IMAGEGRAPH_CREATE_INPUT")));
@@ -104,6 +111,9 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 
 void ImageGraphEditorPage::destroy()
 {
+	m_site->destroyAdditionalPanel(m_propertiesView);
+
+	safeDestroy(m_propertiesView);	
 	safeDestroy(m_editorGraph);
 }
 
@@ -114,46 +124,10 @@ bool ImageGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.PropertiesChanging")
-	{
-		m_document->push();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		RefArray< ui::Node > nodes;
-		if (
-			m_editorGraph->getSelectedNodes(nodes) == 1 &&
-			m_propertiesNode != nullptr
-		)
-		{
-			Node* node = nodes.front()->getData< Node >(L"IMGNODE");
-			T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));
-
-			// Keep position; user might have moved node while being selected.
-			m_propertiesNode->setPosition(node->getPosition());
-
-			m_imageGraph->replace(
-				node,
-				m_propertiesNode
-			);
-
-			createEditorGraph();
-
-			// Find and select re-created node.
-			for (auto n : m_editorGraph->getNodes())
-			{
-				if (n->getData< Node >(L"IMGNODE") == m_propertiesNode)
-					n->setSelected(true);
-			}
-
-			// Re-create a clone of the selected node as we cannot
-			// allow in-place editing of a node as graph contain
-			// pointers to pins within each node.
-			m_propertiesNode = DeepClone(m_propertiesNode).create< Node >();
-			m_site->setPropertyObject(m_propertiesNode);
-		}
-	}
-	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
+	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
 		 RefArray< ui::Node > selectedNodes;
 		 if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
@@ -582,14 +556,14 @@ void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 			// allow in-place editing of a node as graph contain
 			// pointers to pins within each node.
 			m_propertiesNode = DeepClone(node).create< Node >();
-			m_site->setPropertyObject(m_propertiesNode);
+			m_propertiesView->setPropertyObject(m_propertiesNode);
 			return;
 		}
 	}
 
 	// Multiple nodes or no node selected; do not show
 	// any properties in any case.
-	m_site->setPropertyObject(nullptr);
+	m_propertiesView->setPropertyObject(nullptr);
 	m_propertiesNode = nullptr;
 }
 
@@ -669,6 +643,47 @@ void ImageGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 
 	m_document->push();
 	m_imageGraph->removeEdge(edge);
+}
+
+void ImageGraphEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
+void ImageGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	RefArray< ui::Node > nodes;
+	if (
+		m_editorGraph->getSelectedNodes(nodes) == 1 &&
+		m_propertiesNode != nullptr
+	)
+	{
+		Node* node = nodes.front()->getData< Node >(L"IMGNODE");
+		T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));
+
+		// Keep position; user might have moved node while being selected.
+		m_propertiesNode->setPosition(node->getPosition());
+
+		m_imageGraph->replace(
+			node,
+			m_propertiesNode
+		);
+
+		createEditorGraph();
+
+		// Find and select re-created node.
+		for (auto n : m_editorGraph->getNodes())
+		{
+			if (n->getData< Node >(L"IMGNODE") == m_propertiesNode)
+				n->setSelected(true);
+		}
+
+		// Re-create a clone of the selected node as we cannot
+		// allow in-place editing of a node as graph contain
+		// pointers to pins within each node.
+		m_propertiesNode = DeepClone(m_propertiesNode).create< Node >();
+		m_propertiesView->setPropertyObject(m_propertiesNode);
+	}
 }
 
 	}

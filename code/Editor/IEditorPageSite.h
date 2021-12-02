@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +23,9 @@ class Widget;
 	namespace editor
 	{
 
-/*! \brief
+class PropertiesView;
+
+/*!
  * \ingroup Editor
  */
 class T_DLLCLASS IEditorPageSite : public Object
@@ -30,8 +33,8 @@ class T_DLLCLASS IEditorPageSite : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Attach object to property list. */
-	virtual void setPropertyObject(Object* properties) = 0;
+	/*! Create properties view widget. */
+	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) = 0;
 
 	/*! Create additional docking panel. */
 	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) = 0;

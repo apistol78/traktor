@@ -57,7 +57,6 @@
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/App/NewWorkspaceDialog.h"
 #include "Editor/App/ObjectEditorDialog.h"
-#include "Editor/App/PropertiesView.h"
 #include "Editor/App/QuickOpenDialog.h"
 #include "Editor/App/SaveAsDialog.h"
 #include "Editor/App/SettingsDialog.h"
@@ -424,7 +423,6 @@ EditorForm::EditorForm()
 :	m_threadAssetMonitor(nullptr)
 ,	m_threadBuild(nullptr)
 ,	m_buildStep(0)
-,	m_propertiesHash(0)
 {
 }
 
@@ -547,32 +545,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
 
-	// // Create toolbar.
-	// m_toolBar = new ui::ToolBar();
-	// m_toolBar->create(this, ui::WsNone);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"), 1);
-	// m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"), 1);
-
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
-	// m_toolBar->addItem(new ui::ToolBarSeparator());
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
-	// m_toolBar->addItem(new ui::ToolBarSeparator());
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
-	// m_toolBar->addItem(new ui::ToolBarSeparator());
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
-	// m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
-	// m_toolBar->addItem(new ui::ToolBarSeparator());
-	// m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
-
 	updateTitle();
 	updateMRU();
 
@@ -599,14 +571,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		m_dataBaseView->hide();
 
 	m_paneWest->dock(m_dataBaseView, true);
-
-	m_propertiesView = new PropertiesView(this);
-	m_propertiesView->create(m_dock);
-	m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-	if (!m_mergedSettings->getProperty< bool >(L"Editor.PropertiesVisible"))
-		m_propertiesView->hide();
-
-	m_paneEast->dock(m_propertiesView, true, ui::DockPane::DrSouth, ui::dpi96(we));
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -1322,8 +1286,6 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	if (m_activeEditorPageSite)
 		m_activeEditorPageSite->hide();
 
-	setPropertyObject(nullptr);
-
 	m_activeEditorPage = editorPage;
 	m_activeEditorPageSite = nullptr;
 	m_activeDocument = nullptr;
@@ -1602,32 +1564,6 @@ void EditorForm::closeWorkspace()
 
 	// Update UI views.
 	m_dataBaseView->setDatabase(nullptr);
-}
-
-void EditorForm::setPropertyObject(Object* properties)
-{
-	m_propertiesView->setPropertyObject(
-		dynamic_type_cast< ISerializable* >(properties)
-	);
-
-	uint32_t hash = DeepHash(dynamic_type_cast< ISerializable* >(properties)).get();
-	if (hash != m_propertiesHash)
-	{
-		m_dock->update();
-		m_propertiesHash = hash;
-	}
-
-#if defined(_DEBUG)
-	std::wstring previousTitle = m_propertiesView->getText();
-	if (properties)
-	{
-		StringOutputStream ss;
-		ss << i18n::Text(L"TITLE_PROPERTIES").str() << L" - " << type_name(properties);
-		m_propertiesView->setText(ss.str());
-	}
-	else
-		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-#endif
 }
 
 void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
@@ -2311,8 +2247,6 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 		safeDestroy(tabPage);
 	}
 
-	setPropertyObject(nullptr);
-
 	if (m_activeEditorPage == nullptr)
 	{
 		tabPage = tab->getActivePage();
@@ -2674,8 +2608,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					// Notify editor plugins about settings changed.
 					for (auto editorPluginSite : m_editorPluginSites)
 						editorPluginSite->handleCommand(ui::Command(L"Editor.SettingsChanged"), result);
-
-					result |= m_propertiesView->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 				}
 
 				update();
@@ -2687,11 +2619,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.ViewDatabase")
 	{
 		m_dataBaseView->show();
-		m_dock->update();
-	}
-	else if (command == L"Editor.ViewProperties")
-	{
-		m_propertiesView->show();
 		m_dock->update();
 	}
 	else if (command == L"Editor.ViewLog")
@@ -2748,13 +2675,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		{
 			if (m_dataBaseView->containFocus())
 				result = m_dataBaseView->handleCommand(command);
-		}
-
-		// Propagate command to properties view; if it contains focus.
-		if (!result)
-		{
-			if (m_propertiesView->containFocus())
-				result = m_propertiesView->handleCommand(command);
 		}
 
 		// Propagate comment to focus dialog.
@@ -2930,7 +2850,6 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
-	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.PropertiesVisible", m_propertiesView->isVisible(false));
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_tabOutput->isVisible(false));
 
 	// Save form placement.

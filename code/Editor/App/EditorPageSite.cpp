@@ -1,3 +1,4 @@
+#include "Editor/App/DefaultPropertiesView.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorForm.h"
 
@@ -19,8 +20,6 @@ void EditorPageSite::show()
 	if (m_active)
 		return;
 
-	m_editor->setPropertyObject(m_properties);
-
 	for (auto i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
 	{
 		if (i->second)
@@ -35,8 +34,6 @@ void EditorPageSite::hide()
 	if (!m_active)
 		return;
 
-	m_editor->setPropertyObject(0);
-
 	for (auto i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
 	{
 		i->second = i->first->isVisible(false);
@@ -46,11 +43,13 @@ void EditorPageSite::hide()
 	m_active = false;
 }
 
-void EditorPageSite::setPropertyObject(Object* properties)
+Ref< PropertiesView > EditorPageSite::createPropertiesView(ui::Widget* parent)
 {
-	if (m_active)
-		m_editor->setPropertyObject(properties);
-	m_properties = properties;
+	Ref< DefaultPropertiesView > propertiesView = new DefaultPropertiesView(m_editor);
+	if (propertiesView->create(parent))
+		return propertiesView;
+	else
+		return nullptr;
 }
 
 void EditorPageSite::createAdditionalPanel(ui::Widget* widget, int size, bool south)
