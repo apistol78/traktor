@@ -255,17 +255,17 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 			if (fs0 >= 0 || fs1 >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->fill(fs0, fs1, drawing::Raster::FrNonZero);
+					m_raster->fill(fs0, fs1, drawing::Raster::FillRule::NonZero);
 				else
-					m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+					m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FillRule::NonZero);
 			}
 
 			if (ls >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::ScSquare);
+					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
 				else
-					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::ScSquare);
+					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeCap::Square);
 			}
 		}
 
@@ -337,7 +337,7 @@ void SwDisplayRenderer::renderGlyph(
 			}
 
 			if (fs0 >= 0 || fs1 >= 0)
-				m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+				m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FillRule::NonZero);
 		}
 
 		m_raster->submit();
@@ -488,17 +488,17 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 			if (fs0 >= 0 || fs1 >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->fill(fs0, fs1, drawing::Raster::FrNonZero);
+					m_raster->fill(fs0, fs1, drawing::Raster::FillRule::NonZero);
 				else
-					m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FrNonZero);
+					m_raster->fill(fs0 >= 0 ? 0 : -1, fs1 >= 0 ? 0 : -1, drawing::Raster::FillRule::NonZero);
 			}
 
 			if (ls >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::ScSquare);
+					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
 				else
-					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::ScSquare);
+					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeCap::Square);
 			}
 		}
 

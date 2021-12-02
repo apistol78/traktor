@@ -31,22 +31,22 @@ class T_DLLCLASS Raster : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum StrokeCapType
+	enum class StrokeCap
 	{
-		ScButt,
-		ScSquare,
-		ScRound
+		Butt,
+		Square,
+		Round
 	};
 
-	enum FillRuleType
+	enum class FillRule
 	{
-		FrOddEven,
-		FrNonZero
+		OddEven,
+		NonZero
 	};
 
-	Raster();
+	Raster() = default;
 
-	Raster(Image* image);
+	explicit Raster(Image* image);
 
 	bool valid() const;
 
@@ -96,9 +96,9 @@ public:
 
 	void circle(float x, float y, float radius);
 
-	void fill(int32_t style0, int32_t style1, FillRuleType fillRule);
+	void fill(int32_t style0, int32_t style1, FillRule fillRule);
 
-	void stroke(int32_t style, float width, StrokeCapType cap);
+	void stroke(int32_t style, float width, StrokeCap cap);
 
 	void submit();
 

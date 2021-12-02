@@ -246,12 +246,12 @@ void Raster_cubicTo_4(Raster* self, const Vector2& p2, const Vector2& c)
 
 void Raster_fill(Raster* self, int32_t style0, int32_t style1, int32_t fillRule)
 {
-	self->fill(style0, style1, (Raster::FillRuleType)fillRule);
+	self->fill(style0, style1, (Raster::FillRule)fillRule);
 }
 
 void Raster_stroke(Raster* self, int32_t style, float width, int32_t cap)
 {
-	self->stroke(style, width, (Raster::StrokeCapType)cap);
+	self->stroke(style, width, (Raster::StrokeCap)cap);
 }
 
 		}
@@ -435,11 +435,11 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBlendFunction);
 
 	auto classRaster = new AutoRuntimeClass< Raster >();
-	classRaster->addConstant("ScButt", Any::fromInt32(Raster::ScButt));
-	classRaster->addConstant("ScSquare", Any::fromInt32(Raster::ScSquare));
-	classRaster->addConstant("ScRound", Any::fromInt32(Raster::ScRound));
-	classRaster->addConstant("FrOddEven", Any::fromInt32(Raster::FrOddEven));
-	classRaster->addConstant("FrNonZero", Any::fromInt32(Raster::FrNonZero));
+	classRaster->addConstant("Butt", Any::fromInt32((int32_t)Raster::StrokeCap::Butt));
+	classRaster->addConstant("Square", Any::fromInt32((int32_t)Raster::StrokeCap::Square));
+	classRaster->addConstant("Round", Any::fromInt32((int32_t)Raster::StrokeCap::Round));
+	classRaster->addConstant("OddEven", Any::fromInt32((int32_t)Raster::FillRule::OddEven));
+	classRaster->addConstant("NonZero", Any::fromInt32((int32_t)Raster::FillRule::NonZero));
 	classRaster->addConstructor();
 	classRaster->addConstructor< drawing::Image* >();
 	classRaster->addMethod("valid", &Raster::valid);

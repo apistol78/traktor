@@ -65,9 +65,9 @@ public:
 
 	virtual void circle(float x, float y, float radius) = 0;
 
-	virtual void fill(int32_t style0, int32_t style1, Raster::FillRuleType fillRule) = 0;
+	virtual void fill(int32_t style0, int32_t style1, Raster::FillRule fillRule) = 0;
 
-	virtual void stroke(int32_t style, float width, Raster::StrokeCapType cap) = 0;
+	virtual void stroke(int32_t style, float width, Raster::StrokeCap cap) = 0;
 
 	virtual void submit() = 0;
 };
@@ -508,35 +508,35 @@ public:
 	{
 	}
 
-	virtual void fill(int32_t style0, int32_t style1, Raster::FillRuleType fillRule) override final
+	virtual void fill(int32_t style0, int32_t style1, Raster::FillRule fillRule) override final
 	{
 		agg::conv_curve< agg::path_storage > curve(m_path);
 
-		if (fillRule == Raster::FrNonZero)
+		if (fillRule == Raster::FillRule::NonZero)
 			m_rasterizer.filling_rule(agg::fill_non_zero);
-		else // Raster::FrOddEven
+		else // Raster::FillRule::OddEven
 			m_rasterizer.filling_rule(agg::fill_even_odd);
 
 		m_rasterizer.styles(style0, style1);
 		m_rasterizer.add_path(curve);
 	}
 
-	virtual void stroke(int32_t style, float width, Raster::StrokeCapType cap) override final
+	virtual void stroke(int32_t style, float width, Raster::StrokeCap cap) override final
 	{
 		agg::conv_stroke< agg::path_storage > outline(m_path);
 		outline.width(width);
 
 		switch (cap)
 		{
-		case Raster::ScButt:
+		case Raster::StrokeCap::Butt:
 			outline.line_cap(agg::butt_cap);
 			break;
 
-		case Raster::ScSquare:
+		case Raster::StrokeCap::Square:
 			outline.line_cap(agg::square_cap);
 			break;
 
-		case Raster::ScRound:
+		case Raster::StrokeCap::Round:
 			outline.line_cap(agg::round_cap);
 			break;
 
@@ -579,10 +579,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Raster", Raster, Object)
 
-Raster::Raster()
-{
-}
-
 Raster::Raster(Image* image)
 {
 	setImage(image);
@@ -590,12 +586,12 @@ Raster::Raster(Image* image)
 
 bool Raster::valid() const
 {
-	return m_impl != 0;
+	return m_impl != nullptr;
 }
 
 bool Raster::setImage(Image* image)
 {
-	m_impl = 0;
+	m_impl = nullptr;
 
 	if (image->getPixelFormat() == PixelFormat::getA8B8G8R8())
 		m_impl = new RasterImpl< agg::pixfmt_rgba32, agg::rgba8 >(image);
@@ -691,12 +687,12 @@ void Raster::circle(float x, float y, float radius)
 	m_impl->circle(x, y, radius);
 }
 
-void Raster::fill(int32_t style0, int32_t style1, FillRuleType fillRule)
+void Raster::fill(int32_t style0, int32_t style1, FillRule fillRule)
 {
 	m_impl->fill(style0, style1, fillRule);
 }
 
-void Raster::stroke(int32_t style, float width, StrokeCapType cap)
+void Raster::stroke(int32_t style, float width, StrokeCap cap)
 {
 	m_impl->stroke(style, width, cap);
 }
