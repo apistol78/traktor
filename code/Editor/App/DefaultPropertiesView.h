@@ -2,14 +2,11 @@
 
 #include <map>
 #include "Core/Ref.h"
-#include "Ui/Container.h"
+#include "Editor/PropertiesView.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
-
-class ISerializable;
-
 	namespace ui
 	{
 
@@ -24,24 +21,22 @@ class PropertyContentChangeEvent;
 
 class IEditor;
 
-class PropertiesView
-:	public ui::Container
+class DefaultPropertiesView
+:	public PropertiesView
 ,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
 public:
-	PropertiesView(IEditor* editor);
+	explicit DefaultPropertiesView(IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() override final;
+	virtual void setPropertyObject(ISerializable* object) override final;
 
-	void setPropertyObject(ISerializable* object);
+	virtual bool handleCommand(const ui::Command& command) override final;
 
-	Ref< ISerializable > getPropertyObject();
-
-	bool handleCommand(const ui::Command& command);
+	// ui::PropertyList::IPropertyGuidResolver
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 

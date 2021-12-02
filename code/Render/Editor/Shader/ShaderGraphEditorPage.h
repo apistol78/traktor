@@ -21,6 +21,7 @@ namespace traktor
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 	}
 
@@ -92,6 +93,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolTechniques;
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ui::SyntaxRichEdit > m_scriptEditor;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::Container > m_dataContainer;
@@ -132,6 +134,10 @@ private:
 	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
+
+	void eventPropertiesChanging(ui::ContentChangingEvent* event);
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
 	void eventVariableEdit(ui::GridItemContentChangeEvent* event);
 

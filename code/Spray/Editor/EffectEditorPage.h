@@ -19,6 +19,7 @@ namespace traktor
 class IEditor;
 class IEditorPageSite;
 class IDocument;
+class PropertiesView;
 
 	}
 
@@ -26,6 +27,8 @@ class IDocument;
 	{
 
 class Container;
+class ContentChangeEvent;
+class ContentChangingEvent;
 class CursorMoveEvent;
 class KeyMoveEvent;
 class Menu;
@@ -87,6 +90,7 @@ private:
 	Ref< ui::Container > m_containerSequencer;
 	Ref< ui::ToolBar > m_toolBarLayers;
 	Ref< ui::SequencerControl > m_sequencer;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::AudioSystem > m_audioSystem;
@@ -115,6 +119,10 @@ private:
 	void eventSequencerLayerClick(ui::SequenceButtonClickEvent* event);
 
 	void eventSequencerButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventPropertiesChanging(ui::ContentChangingEvent* event);
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
 	}

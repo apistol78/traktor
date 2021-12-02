@@ -11,6 +11,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetEditorPage.h"
@@ -62,7 +63,10 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	m_imageTexture = new ui::Image();
 	m_imageTexture->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 
-	m_site->setPropertyObject(m_asset);
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->setPropertyObject(m_asset);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
 
 	updatePreview();
 	return true;
@@ -70,6 +74,11 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 
 void TextureAssetEditorPage::destroy()
 {
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
+
+	safeDestroy(m_propertiesView);
+
 	m_asset = nullptr;
 }
 
@@ -80,6 +89,9 @@ bool TextureAssetEditorPage::dropInstance(db::Instance* instance, const ui::Poin
 
 bool TextureAssetEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
 	return false;
 }
 

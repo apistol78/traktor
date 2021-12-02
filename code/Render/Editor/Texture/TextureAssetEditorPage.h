@@ -18,6 +18,7 @@ class Instance;
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 	}
 
@@ -60,6 +61,7 @@ private:
 
 	Ref< TextureAsset > m_asset;
 	Ref< ui::Image > m_imageTexture;
+	Ref< editor::PropertiesView > m_propertiesView;
 	//Ref< ui::Static > m_imageInfo;
 
 	void updatePreview();

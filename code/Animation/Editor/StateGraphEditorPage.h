@@ -20,6 +20,7 @@ namespace traktor
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 	}
 
@@ -28,6 +29,7 @@ class IEditorPageSite;
 
 class ButtonClickEvent;
 class Container;
+class ContentChangeEvent;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
@@ -80,6 +82,7 @@ private:
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ui::Menu > m_menuPopup;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Container > m_containerPreview;
 	Ref< ui::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
@@ -110,6 +113,8 @@ private:
 	void eventEdgeConnect(ui::EdgeConnectEvent* event);
 
 	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
 	void eventPreviewConditionClick(ui::ButtonClickEvent* event);
 };

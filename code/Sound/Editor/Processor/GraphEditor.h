@@ -19,6 +19,7 @@ namespace traktor
 class IDocument;
 class IEditor;
 class IEditorPageSite;
+class PropertiesView;
 
 	}
 
@@ -32,6 +33,8 @@ class IResourceManager;
 	namespace ui
 	{
 
+class ContentChangeEvent;
+class ContentChangingEvent;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
@@ -77,6 +80,7 @@ private:
 	Ref< GraphAsset > m_graphAsset;
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_graph;
+	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< AudioSystem > m_audioSystem;
@@ -97,6 +101,10 @@ private:
 	void eventEdgeConnected(ui::EdgeConnectEvent* event);
 
 	void eventEdgeDisconnected(ui::EdgeDisconnectEvent* event);
+
+	void eventPropertiesChanging(ui::ContentChangingEvent* event);
+
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
 	}

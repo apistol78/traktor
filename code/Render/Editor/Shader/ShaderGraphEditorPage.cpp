@@ -10,10 +10,11 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Editor/IBrowseFilter.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/IBrowseFilter.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
@@ -296,6 +297,12 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_scriptEditor->setFont(ui::Font(font, fontSize));
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	// Create shader graph referee view.
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
 	m_dependencyPane->create(parent);
@@ -417,8 +424,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->center();
 
 	updateGraph();
-
-	m_site->setPropertyObject(nullptr);
 	return true;
 }
 
@@ -438,14 +443,15 @@ void ShaderGraphEditorPage::destroy()
 		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
 
-	if (m_dataContainer)
-		m_site->destroyAdditionalPanel(m_dataContainer);
+	m_site->destroyAdditionalPanel(m_dataContainer);
+	m_site->destroyAdditionalPanel(m_propertiesView);
 
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
 	safeDestroy(m_dependencyPane);
 	safeDestroy(m_dataContainer);
+	safeDestroy(m_propertiesView);
 	safeDestroy(m_menuQuick);
 }
 
@@ -503,16 +509,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	if (m_shaderViewer->handleCommand(command))
 		return true;
 
-	if (command == L"Editor.PropertiesChanging")
-	{
-		m_document->push();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		refreshGraph();
-		updateGraph();
-	}
-	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
+	if (m_propertiesView->handleCommand(command))
+		return true;
+
+	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
 		RefArray< ui::Node > selectedNodes;
 		if (m_editorGraph->containFocus() && m_editorGraph->getSelectedNodes(selectedNodes) > 0)
@@ -996,7 +996,7 @@ void ShaderGraphEditorPage::createEditorGraph()
 		}
 	}	
 
-	m_site->setPropertyObject(nullptr);
+	m_propertiesView->setPropertyObject(nullptr);
 }
 
 void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges)
@@ -1521,10 +1521,10 @@ void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 		Ref< Node > shaderNode = nodes[0]->getData< Node >(L"SHADERNODE");
 		T_ASSERT(shaderNode);
 
-		m_site->setPropertyObject(shaderNode);
+		m_propertiesView->setPropertyObject(shaderNode);
 	}
 	else
-		m_site->setPropertyObject(nullptr);
+		m_propertiesView->setPropertyObject(nullptr);
 }
 
 void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
@@ -1553,7 +1553,7 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 
 	// Update properties.
 	if (editorNode->isSelected())
-		m_site->setPropertyObject(shaderNode);
+		m_propertiesView->setPropertyObject(shaderNode);
 }
 
 void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)
@@ -1563,7 +1563,7 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)
 	T_ASSERT(shaderNode);
 
 	// Update properties.
-	m_site->setPropertyObject(shaderNode);
+	m_propertiesView->setPropertyObject(shaderNode);
 
 	// Edit node.
 	m_nodeFacades[&type_of(shaderNode)]->editShaderNode(
@@ -1575,7 +1575,7 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)
 	);
 
 	// Update properties.
-	m_site->setPropertyObject(shaderNode);
+	m_propertiesView->setPropertyObject(shaderNode);
 
 	// Refresh graph; information might have changed.
 	refreshGraph();
@@ -1656,6 +1656,17 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	m_document->push();
 }
 
+void ShaderGraphEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
+void ShaderGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	refreshGraph();
+	updateGraph();
+}
+
 void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)
 {
 	RefArray< Variable > variableNodes;
@@ -1725,7 +1736,7 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 	m_editorGraph->center(true);
 	m_editorGraph->update();
 
-	m_site->setPropertyObject(variable);
+	m_propertiesView->setPropertyObject(variable);
 
 	event->consume();
 }
@@ -1746,7 +1757,7 @@ void ShaderGraphEditorPage::eventUniformOrPortDoubleClick(ui::GridRowDoubleClick
 	m_editorGraph->center(true);
 	m_editorGraph->update();
 
-	m_site->setPropertyObject(node);
+	m_propertiesView->setPropertyObject(node);
 
 	event->consume();
 }

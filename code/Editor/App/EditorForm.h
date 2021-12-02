@@ -68,7 +68,6 @@ class IPipelineCache;
 class IPipelineDb;
 class LogView;
 class MRU;
-class PropertiesView;
 
 /*! Main editor form.
  *
@@ -190,7 +189,6 @@ private:
 	Ref< ui::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemRecent;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
-	// Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::StatusBar > m_statusBar;
 	Ref< ui::ProgressBar > m_buildProgress;
 	Ref< ui::MultiSplitter > m_tabGroupContainer;
@@ -199,7 +197,6 @@ private:
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
-	Ref< PropertiesView > m_propertiesView;
 	Ref< ui::Tab > m_tabOutput;
 	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	Ref< LogView > m_logView;
@@ -220,7 +217,6 @@ private:
 	int32_t m_buildStep;
 	std::wstring m_buildStepMessage;
 	Semaphore m_buildStepMessageLock;
-	uint32_t m_propertiesHash;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
 
 	ui::TabPage* getActiveTabPage() const;
@@ -234,8 +230,6 @@ private:
 	bool openWorkspace(const Path& workspacePath);
 
 	void closeWorkspace();
-
-	void setPropertyObject(Object* properties);
 
 	void createAdditionalPanel(ui::Widget* widget, int size, int32_t direction);
 

@@ -8,7 +8,7 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/App/PropertiesView.h"
+#include "Editor/App/DefaultPropertiesView.h"
 #include "Editor/App/TextEditorDialog.h"
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
@@ -30,33 +30,29 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertiesView", PropertiesView, ui::Container)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultPropertiesView", DefaultPropertiesView, PropertiesView)
 
-PropertiesView::PropertiesView(IEditor* editor)
+DefaultPropertiesView::DefaultPropertiesView(IEditor* editor)
 :	m_editor(editor)
 {
 }
 
-bool PropertiesView::create(ui::Widget* parent)
+bool DefaultPropertiesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 4)))
+	if (!ui::Widget::create(parent, ui::WsNone))
 		return false;
+
+	setText(i18n::Text(L"TITLE_PROPERTIES"));
 
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(this, ui::WsAccelerated | ui::WsTabStop, this);
-	m_propertyList->setSeparator(ui::dpi96(150));
-	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &PropertiesView::eventPropertyCommand);
-	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &PropertiesView::eventPropertyChange);
+	m_propertyList->setSeparator(ui::dpi96(180));
+	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultPropertiesView::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &DefaultPropertiesView::eventPropertyChange);
 	return true;
 }
 
-void PropertiesView::destroy()
-{
-	safeDestroy(m_propertyList);
-	ui::Container::destroy();
-}
-
-void PropertiesView::setPropertyObject(ISerializable* object)
+void DefaultPropertiesView::setPropertyObject(ISerializable* object)
 {
 	// Capture state of current property object.
 	if (m_propertyObject)
@@ -68,22 +64,20 @@ void PropertiesView::setPropertyObject(ISerializable* object)
 	// Restore state of last property object of same type.
 	if (object)
 	{
-		std::map< const TypeInfo*, Ref< ui::HierarchicalState > >::iterator i = m_states.find(&type_of(object));
-		if (i != m_states.end())
-			m_propertyList->applyState(i->second);
+		auto it = m_states.find(&type_of(object));
+		if (it != m_states.end())
+			m_propertyList->applyState(it->second);
 	}
 
 	m_propertyList->update();
 	m_propertyObject = object;
 }
 
-Ref< ISerializable > PropertiesView::getPropertyObject()
+bool DefaultPropertiesView::handleCommand(const ui::Command& command)
 {
-	return m_propertyObject;
-}
+	if (!m_propertyList->containFocus())
+		return false;
 
-bool PropertiesView::handleCommand(const ui::Command& command)
-{
 	if (command == L"Editor.Copy")
 		return m_propertyList->copy();
 	else if (command == L"Editor.Paste")
@@ -91,17 +85,17 @@ bool PropertiesView::handleCommand(const ui::Command& command)
 		if (m_propertyList->paste())
 		{
 			m_propertyList->apply();
-			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+			ui::ContentChangeEvent event(this);
+			raiseEvent(&event);
 			return true;
 		}
-		else
-			return false;
 	}
-	else
-		return false;
+
+	return false;
 }
 
-bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
+bool DefaultPropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
 	if (!instance)
@@ -111,7 +105,7 @@ bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolve
 	return true;
 }
 
-void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
+void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Property.Add")
@@ -133,14 +127,18 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 					m_propertyList->addObject(arrayItem, mandatory_non_null_type_cast< ISerializable* >(object));
 					m_propertyList->apply();
 					m_propertyList->refresh();
-					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+					ui::ContentChangeEvent event(this);
+					raiseEvent(&event);
 				}
 			}
 			else	// Non-complex array; just apply and refresh.
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
-				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
 			}
 		}
 	}
@@ -152,7 +150,9 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		{
 			m_propertyList->removePropertyItem(parentItem, removeItem);
 			m_propertyList->apply();
-			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+			ui::ContentChangeEvent event(this);
+			raiseEvent(&event);
 		}
 	}
 	else if (cmd == L"Property.Browse")
@@ -177,14 +177,18 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 				{
 					browseItem->setValue(instance->getGuid());
 					m_propertyList->apply();
-					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+					ui::ContentChangeEvent event(this);
+					raiseEvent(&event);
 				}
 			}
 			else
 			{
 				browseItem->setValue(Guid());
 				m_propertyList->apply();
-				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
 			}
 		}
 
@@ -225,7 +229,8 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 						m_propertyList->refresh(objectItem, object);
 						m_propertyList->apply();
 
-						m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+						ui::ContentChangeEvent event(this);
+						raiseEvent(&event);
 					}
 				}
 			}
@@ -239,7 +244,8 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 				m_propertyList->refresh(objectItem, 0);
 				m_propertyList->apply();
 
-				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
 			}
 		}
 	}
@@ -267,9 +273,10 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			if (textEditorDialog.showModal() == ui::DrOk)
 			{
 				textItem->setValue(textEditorDialog.getText());
-
 				m_propertyList->apply();
-				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
 			}
 			textEditorDialog.destroy();
 		}
@@ -287,9 +294,10 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			if (colorDialog.showModal() == ui::DrOk)
 			{
 				colorItem->setValue(colorDialog.getColor());
-
 				m_propertyList->apply();
-				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
 			}
 			colorDialog.destroy();
 		}
@@ -297,16 +305,15 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 	m_propertyList->update();
 }
 
-void PropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* event)
+void DefaultPropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* event)
 {
-	IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
-	if (activeEditorPage)
-		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanging"));
+	ui::ContentChangingEvent changingEvent(this);
+	raiseEvent(&changingEvent);
 
 	m_propertyList->apply();
 
-	if (activeEditorPage)
-		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+	ui::ContentChangeEvent changeEvent(this);
+	raiseEvent(&changeEvent);	
 }
 
 	}

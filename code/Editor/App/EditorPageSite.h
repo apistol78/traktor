@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include "Core/Ref.h"
 #include "Editor/IEditorPageSite.h"
 
 namespace traktor
@@ -27,13 +26,13 @@ class EditorPageSite : public IEditorPageSite
 	T_RTTI_CLASS;
 
 public:
-	EditorPageSite(EditorForm* editor, bool active);
+	explicit EditorPageSite(EditorForm* editor, bool active);
 
 	void show();
 
 	void hide();
 
-	virtual void setPropertyObject(Object* properties) override final;
+	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) override final;
 
 	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) override final;
 
@@ -47,7 +46,6 @@ public:
 
 private:
 	EditorForm* m_editor;
-	Ref< Object > m_properties;
 	std::map< ui::Widget*, bool > m_panelWidgets;
 	bool m_active;
 };

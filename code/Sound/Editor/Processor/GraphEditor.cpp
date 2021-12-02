@@ -8,6 +8,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/AudioChannel.h"
@@ -125,6 +126,12 @@ bool GraphEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::EdgeConnectEvent >(this, &GraphEditor::eventEdgeConnected);
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &GraphEditor::eventEdgeDisconnected);
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &GraphEditor::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &GraphEditor::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 
@@ -172,6 +179,10 @@ void GraphEditor::destroy()
 		m_resourceManager = nullptr;
 
 	m_audioSystem = nullptr;
+
+	m_site->destroyAdditionalPanel(m_propertiesView);
+
+	safeDestroy(m_propertiesView);
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -181,15 +192,10 @@ bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position
 
 bool GraphEditor::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.PropertiesChanging")
-	{
-		m_document->push();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		updateView();
-	}
-	else if (command == L"Editor.Undo")
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
+	if (command == L"Editor.Undo")
 	{
 		if (m_document->undo())
 		{
@@ -198,7 +204,7 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 
 			updateView();
 
-			m_site->setPropertyObject(nullptr);
+			m_propertiesView->setPropertyObject(nullptr);
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -210,7 +216,7 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 
 			updateView();
 
-			m_site->setPropertyObject(nullptr);
+			m_propertiesView->setPropertyObject(nullptr);
 		}
 	}
 	else if (command == L"Sound.Processor.Editor.AlignLeft")
@@ -414,9 +420,9 @@ void GraphEditor::eventNodeSelect(ui::SelectEvent* event)
 {
 	const RefArray< ui::Node >& nodes = event->getNodes();
 	if (nodes.size() == 1)
-		m_site->setPropertyObject(nodes[0]->getData(L"NODE"));
+		m_propertiesView->setPropertyObject(nodes[0]->getData< ISerializable >(L"NODE"));
 	else
-		m_site->setPropertyObject(nullptr);
+		m_propertiesView->setPropertyObject(nullptr);
 }
 
 void GraphEditor::eventNodeMoved(ui::NodeMovedEvent* event)
@@ -478,6 +484,16 @@ void GraphEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 	// Accept removed edge by removing from control.
 	m_graph->removeEdge(ue);
 	m_graph->update();
+}
+
+void GraphEditor::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
+void GraphEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	updateView();
 }
 
 	}

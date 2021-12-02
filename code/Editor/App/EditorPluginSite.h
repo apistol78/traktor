@@ -26,7 +26,7 @@ class EditorPluginSite : public IEditorPageSite
 	T_RTTI_CLASS;
 
 public:
-	EditorPluginSite(EditorForm* editor, IEditorPlugin* editorPlugin);
+	explicit EditorPluginSite(EditorForm* editor, IEditorPlugin* editorPlugin);
 
 	bool create(ui::Widget* parent);
 
@@ -40,7 +40,7 @@ public:
 
 	void handleWorkspaceClosed();
 
-	virtual void setPropertyObject(Object* properties) override final;
+	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) override final;
 
 	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) override final;
 

@@ -10,6 +10,7 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
@@ -208,10 +209,16 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_containerSequencer, ui::dpi96(140), true);
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &EffectEditorPage::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPropertiesChanged);
+	m_propertiesView->setPropertyObject(m_effectData);
+	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+
+	// Create popup menu.
 	m_popupMenu = new ui::Menu();
 	m_popupMenu->add(new ui::MenuItem(ui::Command(L"Effect.Editor.ReplaceEmitterSource"), i18n::Text(L"EFFECT_EDITOR_REPLACE_EMITTER_SOURCE")));
-
-	m_site->setPropertyObject(m_effectData);
 
 	updateSequencer();
 	updateEffectPreview();
@@ -231,10 +238,11 @@ void EffectEditorPage::destroy()
 	m_audioSystem = nullptr;
 
 	// Destroy panels.
-	if (m_containerSequencer)
-		m_site->destroyAdditionalPanel(m_containerSequencer);
+	m_site->destroyAdditionalPanel(m_containerSequencer);
+	m_site->destroyAdditionalPanel(m_propertiesView);
 
 	// Destroy widgets.
+	safeDestroy(m_propertiesView);
 	safeDestroy(m_containerSequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
@@ -247,6 +255,9 @@ bool EffectEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 
 bool EffectEditorPage::handleCommand(const ui::Command& command)
 {
+	if (m_propertiesView->handleCommand(command))
+		return true;
+	
 	if (!m_previewControl)
 		return false;
 
@@ -340,15 +351,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			updateEffectPreview();
 		}
 	}
-	else if (command == L"Editor.PropertiesChanging")
-	{
-		m_document->push();
-	}
-	else if (command == L"Editor.PropertiesChanged")
-	{
-		updateSequencer();
-		updateEffectPreview();
-	}
 	else if (command == L"Editor.Copy")
 	{
 		RefArray< ui::SequenceItem > selectedItems = m_sequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
@@ -386,7 +388,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			m_effectData = m_document->getObject< EffectData >(0);
 			T_ASSERT(m_effectData);
 
-			m_site->setPropertyObject(m_effectData);
+			m_propertiesView->setPropertyObject(m_effectData);
 
 			updateSequencer();
 			updateEffectPreview();
@@ -399,7 +401,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			m_effectData = m_document->getObject< EffectData >(0);
 			T_ASSERT(m_effectData);
 
-			m_site->setPropertyObject(m_effectData);
+			m_propertiesView->setPropertyObject(m_effectData);
 
 			updateSequencer();
 			updateEffectPreview();
@@ -587,15 +589,15 @@ void EffectEditorPage::eventSequencerLayerSelect(ui::SelectionChangeEvent* event
 		if (selectedMarker)
 		{
 			// FIXME
-			m_site->setPropertyObject(layer);
+			m_propertiesView->setPropertyObject(layer);
 		}
 		else
 		{
-			m_site->setPropertyObject(layer);
+			m_propertiesView->setPropertyObject(layer);
 		}
 	}
 	else
-		m_site->setPropertyObject(m_effectData);
+		m_propertiesView->setPropertyObject(m_effectData);
 }
 
 void EffectEditorPage::eventSequencerTimeCursorMove(ui::CursorMoveEvent* event)
@@ -634,7 +636,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 		m_document->push();
 		layer->setTime(start);
 		layer->setDuration(end - start);
-		m_site->setPropertyObject(layer);
+		m_propertiesView->setPropertyObject(layer);
 	}
 
 	ui::Tick* movedTick = dynamic_type_cast< ui::Tick* >(event->getKey());
@@ -646,7 +648,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 		float start = movedTick->getTime() / 1000.0f;
 		m_document->push();
 		layer->setTime(start);
-		m_site->setPropertyObject(layer);
+		m_propertiesView->setPropertyObject(layer);
 	}
 
 	ui::Marker* movedMarker = dynamic_type_cast< ui::Marker* >(event->getKey());
@@ -666,7 +668,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 		auto& keys = sequenceData->getKeys();
 		keys[sequenceDataKey->getKeyIndex()].T = float(movedMarker->getTime() / 1000.0f);
 
-		m_site->setPropertyObject(layer);
+		m_propertiesView->setPropertyObject(layer);
 	}
 
 	updateEffectPreview();
@@ -695,6 +697,17 @@ void EffectEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* event)
 		if (selectedItem != nullptr)
 			handleCommand(selectedItem->getCommand());
 	}
+}
+
+void EffectEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
+{
+	m_document->push();
+}
+
+void EffectEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
+{
+	updateSequencer();
+	updateEffectPreview();
 }
 
 	}

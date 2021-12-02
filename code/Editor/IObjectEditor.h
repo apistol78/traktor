@@ -66,9 +66,6 @@ public:
 	 * Editor issue following commands in respect to
 	 * various events:
 	 *
-	 * "Editor.PropertiesChanged"
-	 *  Issued when user has modified values in the property view.
-	 *
 	 * "Editor.SettingsChanged"
 	 *  Issued when Editor settings has changed.
 	 *
