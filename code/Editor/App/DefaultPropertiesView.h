@@ -32,6 +32,8 @@ public:
 
 	bool create(ui::Widget* parent);
 
+	virtual void update(const ui::Rect* rc, bool immediate) override final;
+
 	virtual void setPropertyObject(ISerializable* object) override final;
 
 	virtual bool handleCommand(const ui::Command& command) override final;
@@ -45,6 +47,8 @@ private:
 	Ref< ui::AutoPropertyList > m_propertyList;
 	Ref< ISerializable > m_propertyObject;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
+
+	void eventSize(ui::SizeEvent* event);
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
