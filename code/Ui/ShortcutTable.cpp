@@ -37,7 +37,7 @@ void ShortcutTable::addCommand(int keyState, VirtualKey keyCode, const Command& 
 
 void ShortcutTable::removeCommand(int keyState, VirtualKey keyCode, const Command& command)
 {
-	std::map< uint32_t, std::list< Command > >::iterator it = m_commands.find(buildMapKey(keyState, keyCode));
+	auto it = m_commands.find(buildMapKey(keyState, keyCode));
 	if (it != m_commands.end())
 	{
 		it->second.remove(command);
@@ -67,10 +67,10 @@ void ShortcutTable::eventKeyDown(KeyDownEvent* event)
 	if (it == m_commands.end())
 		return;
 
-	for (std::list< Command >::iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (const auto& command : it->second)
 	{
 		// Raise command event to all listeners.
-		ShortcutEvent shortcutEvent(this, *i);
+		ShortcutEvent shortcutEvent(this, command);
 		raiseEvent(&shortcutEvent);
 
 		// If event was consumed we also consume the key event.

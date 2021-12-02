@@ -1,5 +1,3 @@
-#include "Core/Log/Log.h"
-#include "Ui/Application.h"
 #include "Ui/RadioButton.h"
 
 namespace traktor

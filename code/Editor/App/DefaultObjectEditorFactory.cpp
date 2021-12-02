@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultObjectEditorFactory", 0, 
 
 const TypeInfoSet DefaultObjectEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ISerializable >();
-	return typeSet;
+	return makeTypeInfoSet< ISerializable >();
 }
 
 bool DefaultObjectEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
