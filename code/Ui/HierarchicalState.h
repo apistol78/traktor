@@ -24,8 +24,6 @@ class T_DLLCLASS HierarchicalState : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	HierarchicalState();
-
 	void setScrollPosition(int32_t scrollPosition);
 
 	int32_t getScrollPosition() const;
@@ -50,7 +48,7 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	int32_t m_scrollPosition;
+	int32_t m_scrollPosition = 0;
 	std::map< std::wstring, std::pair< bool, bool > > m_states;
 };
 

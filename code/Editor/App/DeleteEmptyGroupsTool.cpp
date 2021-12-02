@@ -24,13 +24,12 @@ void deleteEmptyGroups(db::Group* group)
 	{
 		log::info << L"Deleting empty group \"" << group->getPath() << L"\"..." << Endl;
 		if (!group->remove())
-			log::error << L"Unable to delete group" << Endl;
-		group = 0;
+			log::error << L"Unable to delete group." << Endl;
 	}
 	else
 	{
-		for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-			deleteEmptyGroups(*i);
+		for (auto childGroup : childGroups)
+			deleteEmptyGroups(childGroup);
 	}
 }
 

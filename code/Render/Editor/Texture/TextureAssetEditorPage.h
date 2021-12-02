@@ -25,10 +25,8 @@ class PropertiesView;
 	namespace ui
 	{
 
+class ContentChangeEvent;
 class Image;
-class PropertyCommandEvent;
-class PropertyContentChangeEvent;
-class Static;
 
 	}
 
@@ -58,17 +56,13 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-
 	Ref< TextureAsset > m_asset;
 	Ref< ui::Image > m_imageTexture;
 	Ref< editor::PropertiesView > m_propertiesView;
-	//Ref< ui::Static > m_imageInfo;
 
 	void updatePreview();
 
-	// void eventPropertyCommand(ui::PropertyCommandEvent* event);
-
-	// void eventPropertyContentChangeEvent(ui::PropertyContentChangeEvent* event);
+	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
 	}

@@ -24,15 +24,15 @@ class T_DLLCLASS GridLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
-	GridLayout(int columns, int rows);
+	explicit GridLayout(int32_t columns, int32_t rows);
 
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 
 	virtual void update(Widget* widget) override;
 
 private:
-	int m_columns;
-	int m_rows;
+	int32_t m_columns;
+	int32_t m_rows;
 };
 
 	}

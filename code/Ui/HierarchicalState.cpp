@@ -9,11 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 0, HierarchicalState, ISerializable)
 
-HierarchicalState::HierarchicalState()
-:	m_scrollPosition(0)
-{
-}
-
 void HierarchicalState::setScrollPosition(int32_t scrollPosition)
 {
 	m_scrollPosition = scrollPosition;
@@ -30,32 +25,31 @@ void HierarchicalState::addState(const std::wstring& path, bool expanded, bool s
 		m_states[path] = std::make_pair(expanded, selected);
 	else
 	{
-		std::map< std::wstring, std::pair< bool, bool > >::iterator i = m_states.find(path);
-		if (i != m_states.end())
-			m_states.erase(i);
+		auto it = m_states.find(path);
+		if (it != m_states.end())
+			m_states.erase(it);
 	}
 }
 
 bool HierarchicalState::getExpanded(const std::wstring& path) const
 {
-	std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = m_states.find(path);
-	return i != m_states.end() ? i->second.first : false;
+	auto it = m_states.find(path);
+	return it != m_states.end() ? it->second.first : false;
 }
 
 bool HierarchicalState::getSelected(const std::wstring& path) const
 {
-	std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = m_states.find(path);
-	return i != m_states.end() ? i->second.second : false;
+	auto it = m_states.find(path);
+	return it != m_states.end() ? it->second.second : false;
 }
 
 Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state) const
 {
 	Ref< HierarchicalState > merged = new HierarchicalState();
-
 	merged->m_states = m_states;
 
-	for (std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = state->m_states.begin(); i != state->m_states.end(); ++i)
-		merged->addState(i->first, i->second.first, i->second.second);
+	for (const auto& it : state->m_states)
+		merged->addState(it.first, it.second.first, it.second.second);
 
 	return merged;
 }
