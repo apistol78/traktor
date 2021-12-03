@@ -94,10 +94,11 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
+	Ref< const ISerializable > sourceAssetRef = sourceAsset;
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
 	Ref< Job > job = JobManager::getInstance().add([=](){
-		jobAddDependency(parentDependency, sourceAsset, outputPath, outputGuid, flags);
+		jobAddDependency(parentDependency, sourceAssetRef, outputPath, outputGuid, flags);
 	});
 	if (job)
 	{
@@ -116,10 +117,11 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
+	Ref< db::Instance > sourceAssetInstanceRef = sourceAssetInstance;
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
 	Ref< Job > job = JobManager::getInstance().add([=](){
-		jobAddDependency(parentDependency, sourceAssetInstance, flags);
+		jobAddDependency(parentDependency, sourceAssetInstanceRef, flags);
 	});
 	if (job)
 	{
