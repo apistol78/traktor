@@ -29,7 +29,7 @@ const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_TextureOffset(L"Terrain_TextureOffset");
 
-const uint32_t c_maxUpdatePerFrame = 8;
+const uint32_t c_maxUpdatePerFrame = 1;
 const int32_t c_margin = 2;
 
 Vector4 offsetFromTile(const TerrainSurfaceAlloc& alloc, const TerrainSurfaceAlloc::Tile& tile)
