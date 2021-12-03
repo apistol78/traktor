@@ -92,7 +92,6 @@ function ProgressBar:_loadStyle()
 	self:setBackColor(style.background)
 	self:setFrontColor(style.foreground)
 end
-
 	]]>
 	</text>
 </object>

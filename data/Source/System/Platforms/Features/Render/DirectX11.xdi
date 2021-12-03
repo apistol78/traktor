@@ -243,15 +243,6 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Runtime.Modules</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>Traktor.Render</item>
-						<item>Traktor.Render.Dx11</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Render.Adapter</first>
 				<second type="traktor.PropertyInteger">
 					<value>-1</value>
@@ -297,6 +288,15 @@
 				<first>Render.WaitVBlanks</first>
 				<second type="traktor.PropertyInteger">
 					<value>1</value>
+				</second>
+			</item>
+			<item>
+				<first>Runtime.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Render</item>
+						<item>Traktor.Render.Dx11</item>
+					</value>
 				</second>
 			</item>
 		</value>

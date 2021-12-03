@@ -114,7 +114,6 @@ function ListBox:_loadStyle()
 	self:setTextHoverColor(style.textHover)
 	self:setTextSize(style.textSize)
 end
-
 	]]>
 	</text>
 </object>

@@ -96,19 +96,19 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
+				<first>Input.DriverTypes</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>traktor.input.InputDriverAndroid</item>
+					</value>
+				</second>
+			</item>
+			<item>
 				<first>Runtime.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Input</item>
 						<item>Traktor.Input.Android</item>
-					</value>
-				</second>
-			</item>
-			<item>
-				<first>Input.DriverTypes</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>traktor.input.InputDriverAndroid</item>
 					</value>
 				</second>
 			</item>

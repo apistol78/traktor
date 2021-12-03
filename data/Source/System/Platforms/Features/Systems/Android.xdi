@@ -100,19 +100,13 @@
 				<second type="traktor.PropertyGroup">
 					<value>
 						<item>
-							<first>Glsl.Vulkan.ControlFlowAttributes</first>
-							<second type="traktor.PropertyBoolean">
-								<value>false</value>
-							</second>
-						</item>
-						<item>
 							<first>Glsl.Vulkan.Ballot</first>
 							<second type="traktor.PropertyBoolean">
 								<value>false</value>
 							</second>
 						</item>
 						<item>
-							<first>Glsl.Vulkan.StorageTypes</first>
+							<first>Glsl.Vulkan.ControlFlowAttributes</first>
 							<second type="traktor.PropertyBoolean">
 								<value>false</value>
 							</second>
@@ -127,6 +121,12 @@
 							<first>Glsl.Vulkan.IgnorePrecisionHint</first>
 							<second type="traktor.PropertyBoolean">
 								<value>true</value>
+							</second>
+						</item>
+						<item>
+							<first>Glsl.Vulkan.StorageTypes</first>
+							<second type="traktor.PropertyBoolean">
+								<value>false</value>
 							</second>
 						</item>
 					</value>

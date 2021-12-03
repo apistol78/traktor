@@ -179,7 +179,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{09C24B05-A6F9-2449-B232-FED60B6AA2E3}</id>
 			<comment/>
 			<position>
@@ -187,7 +187,7 @@
 				<second>244</second>
 			</position>
 			<name>TexCoord</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat2</type>
 			<index>1</index>
 		</item>

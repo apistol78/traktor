@@ -11,7 +11,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{6B54EDE8-000D-0442-8AB2-C4BA6175CDFC}</id>
 			<comment/>
 			<position>
@@ -19,7 +19,7 @@
 				<second>107</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -220,7 +220,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{DE737504-258C-044F-9131-059D2D9E219A}</id>
 			<comment/>
 			<position>
@@ -228,7 +228,7 @@
 				<second>171</second>
 			</position>
 			<name>Normal</name>
-			<usage>DuNormal</usage>
+			<usage>Normal</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>

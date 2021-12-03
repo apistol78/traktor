@@ -46,10 +46,10 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>CoreHaptics.framework</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Input.a</item>
 								<item>libTraktor.Input.iOS.a</item>
-								<item>CoreHaptics.framework</item>
 							</value>
 						</second>
 					</item>
@@ -101,19 +101,19 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
+				<first>Input.DriverTypes</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>traktor.input.InputDriveriOS</item>
+					</value>
+				</second>
+			</item>
+			<item>
 				<first>Runtime.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Input</item>
 						<item>Traktor.Input.iOS</item>
-					</value>
-				</second>
-			</item>
-			<item>
-				<first>Input.DriverTypes</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>traktor.input.InputDriveriOS</item>
 					</value>
 				</second>
 			</item>

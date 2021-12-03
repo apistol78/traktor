@@ -49,7 +49,6 @@ function Scaffolding:remove()
 		self._frame = nil
 	end
 end
-
 	]]>
 	</text>
 </object>

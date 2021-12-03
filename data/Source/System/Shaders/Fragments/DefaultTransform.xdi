@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{8C92C64B-0D44-2444-AA20-E0C9C0F17773}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>117</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -24,7 +24,7 @@
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{7B7C895A-4078-EF45-B067-2FFC65D857A5}</id>
 			<comment/>
 			<position>
@@ -32,11 +32,11 @@
 				<second>160</second>
 			</position>
 			<name>Normal</name>
-			<usage>DuNormal</usage>
+			<usage>Normal</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{3B1864C3-9088-FE4C-A13B-344F71B3B650}</id>
 			<comment/>
 			<position>
@@ -44,7 +44,7 @@
 				<second>202</second>
 			</position>
 			<name>Tangent</name>
-			<usage>DuTangent</usage>
+			<usage>Tangent</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>

@@ -98,7 +98,6 @@ end
 function Dialog:_getInnerClip()
 	return self._inner_mc
 end
-
 	]]>
 	</text>
 </object>

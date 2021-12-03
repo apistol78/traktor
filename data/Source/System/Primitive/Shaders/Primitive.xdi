@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{13F1C627-2083-9B4E-BD57-F0DB3290DFB6}</id>
 			<comment/>
 			<position>
@@ -9,11 +9,11 @@
 				<second>-452</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{2DEDB987-BDE1-3743-86B0-ACDAB5E7B61A}</id>
 			<comment/>
 			<position>
@@ -21,7 +21,7 @@
 				<second>88</second>
 			</position>
 			<name>Color</name>
-			<usage>DuColor</usage>
+			<usage>Color</usage>
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
@@ -83,7 +83,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{71D0B4B2-1CB2-7F4D-9566-86D8048BAED9}</id>
 			<comment/>
 			<position>
@@ -91,7 +91,7 @@
 				<second>-62</second>
 			</position>
 			<name>TexCoord</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf2</type>
 			<index>0</index>
 		</item>

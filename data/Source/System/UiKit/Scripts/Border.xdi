@@ -48,7 +48,6 @@ function Border:_loadStyle()
 	local style = self:getStyle()
 	self:setColor(style.background)
 end
-
 	]]>
 	</text>
 </object>

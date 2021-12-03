@@ -141,7 +141,6 @@ function Frame:_eventMouseWheel(delta)
 	local pt = self:getMousePosition()
 	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
-
 	]]>
 	</text>
 </object>

@@ -11,7 +11,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{E4938C3E-4DDF-384E-B150-B1EA44EE74AA}</id>
 			<comment/>
 			<position>
@@ -19,7 +19,7 @@
 				<second>169</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>

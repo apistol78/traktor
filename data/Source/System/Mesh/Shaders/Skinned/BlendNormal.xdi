@@ -60,7 +60,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{3D54914B-405D-EC46-A1B5-2A1D94DB7F60}</id>
 			<comment/>
 			<position>
@@ -68,7 +68,7 @@
 				<second>407</second>
 			</position>
 			<name>BlendWeights</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf4</type>
 			<index>1</index>
 		</item>
@@ -199,7 +199,7 @@
 				<second>17</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{26EA9587-2E97-614C-80DA-EDB867115FD4}</id>
 			<comment/>
 			<position>
@@ -207,7 +207,7 @@
 				<second>-5</second>
 			</position>
 			<name>BlendIndices</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>

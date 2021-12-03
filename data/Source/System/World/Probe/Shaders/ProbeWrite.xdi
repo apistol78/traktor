@@ -302,7 +302,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{3A29D1F7-B1C9-4345-8717-AECC02BCD1AD}</id>
 			<comment/>
 			<position>
@@ -310,7 +310,7 @@
 				<second>252</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -367,7 +367,7 @@
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{65A292FF-8D8B-A74E-B7FA-76AA8D424162}</id>
 			<comment/>
 			<position>
@@ -375,7 +375,7 @@
 				<second>94</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>

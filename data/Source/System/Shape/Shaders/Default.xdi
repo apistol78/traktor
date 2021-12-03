@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{75BF7920-CD17-474C-8CE1-C7C657D72EBD}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>42</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -90,7 +90,7 @@
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{08B7E934-2728-485C-9F02-6A3C05C2577C}</id>
 			<comment/>
 			<position>
@@ -98,7 +98,7 @@
 				<second>102</second>
 			</position>
 			<name>Normal</name>
-			<usage>DuNormal</usage>
+			<usage>Normal</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -213,7 +213,7 @@
 			<external>{D9663E74-01FF-E04A-9C69-C78C4A5C7A1B}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{54543BF6-520B-4A26-872C-A1BDBD511ABA}</id>
 			<comment/>
 			<position>
@@ -221,7 +221,7 @@
 				<second>390</second>
 			</position>
 			<name>TexCoord</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>

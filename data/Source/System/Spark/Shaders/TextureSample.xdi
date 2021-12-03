@@ -127,7 +127,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{59D3E8D5-0981-4A4D-BA22-FD6DE5BFC111}</id>
 			<comment/>
 			<position>
@@ -135,7 +135,7 @@
 				<second>538</second>
 			</position>
 			<name>TextureRect</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat4</type>
 			<index>2</index>
 		</item>
