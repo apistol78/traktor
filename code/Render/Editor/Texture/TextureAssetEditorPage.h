@@ -26,7 +26,6 @@ class PropertiesView;
 	{
 
 class ContentChangeEvent;
-class Image;
 
 	}
 
@@ -34,6 +33,7 @@ class Image;
 	{
 
 class TextureAsset;
+class TextureControl;
 
 class TextureAssetEditorPage : public editor::IEditorPage
 {
@@ -57,7 +57,7 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< TextureAsset > m_asset;
-	Ref< ui::Image > m_imageTexture;
+	Ref< TextureControl > m_textureControl;
 	Ref< editor::PropertiesView > m_propertiesView;
 
 	void updatePreview();

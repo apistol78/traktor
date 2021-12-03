@@ -15,11 +15,10 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetEditorPage.h"
+#include "Render/Editor/Texture/TextureControl.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
-#include "Ui/Image.h"
-#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -57,8 +56,8 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	Ref< ui::Container > imageContainer = new ui::Container();
 	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
 
-	m_imageTexture = new ui::Image();
-	m_imageTexture->create(imageContainer, 0, ui::Image::WsTransparent | ui::WsDoubleBuffer);
+	m_textureControl = new TextureControl();
+	m_textureControl->create(imageContainer);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
@@ -142,10 +141,10 @@ void TextureAssetEditorPage::updatePreview()
 	if (image)
 	{
 		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(image);
-		m_imageTexture->setImage(textureBitmap, false);
+		m_textureControl->setImage(textureBitmap);
 	}
 	else
-		m_imageTexture->setImage(nullptr, false);
+		m_textureControl->setImage(nullptr);
 
 	// textureThumb = thumbnailGenerator->get(
 	// 	fileName,
