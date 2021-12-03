@@ -260,10 +260,10 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 						}
 
 						if (fs0 >= 0 || fs1 >= 0)
-							raster->fill(fs0, fs1, drawing::Raster::FrNonZero);
+							raster->fill(fs0, fs1, drawing::Raster::FillRule::NonZero);
 
 						if (ls >= 0)
-							raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::ScSquare);
+							raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
 					}
 
 					raster->submit();
