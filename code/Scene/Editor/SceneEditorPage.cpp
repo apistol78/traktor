@@ -366,7 +366,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontHuge->setSize(12);
 
-	m_site->createAdditionalPanel(m_entityPanel, ui::dpi96(300), false);
+	m_site->createAdditionalPanel(m_entityPanel, ui::dpi96(400), false);
 
 	m_tabMisc = new ui::Tab();
 	m_tabMisc->create(parent, ui::Tab::WsLine);
@@ -374,7 +374,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create properties page.
 	Ref< ui::TabPage > tabPageProperties = new ui::TabPage();
-	tabPageProperties->create(m_tabMisc, i18n::Text(L"EDITOR_PROPERTIES"), new ui::FloodLayout());
+	tabPageProperties->create(m_tabMisc, i18n::Text(L"TITLE_PROPERTIES"), new ui::FloodLayout());
 
 	m_propertiesView = m_site->createPropertiesView(tabPageProperties);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &SceneEditorPage::eventPropertiesChanging);
@@ -426,14 +426,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->addPage(tabPageMeasurements);
 	m_tabMisc->setActivePage(tabPageProperties);
 
-	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(300), false);
+	m_site->createAdditionalPanel(m_tabMisc, ui::dpi96(400), false);
 
 	// Create controller panel.
 	m_controllerPanel = new ui::Container();
 	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(120), true);
+	m_site->createAdditionalPanel(m_controllerPanel, ui::dpi96(280), true);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {
