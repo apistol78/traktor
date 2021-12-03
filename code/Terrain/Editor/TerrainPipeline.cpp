@@ -100,10 +100,6 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 13, TerrainPipeline, editor::DefaultPipeline)
 
-TerrainPipeline::TerrainPipeline()
-{
-}
-
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");

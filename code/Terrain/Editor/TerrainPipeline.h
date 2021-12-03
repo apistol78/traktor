@@ -20,8 +20,6 @@ class T_DLLCLASS TerrainPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
-	TerrainPipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
