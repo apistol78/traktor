@@ -556,7 +556,6 @@ function Widget:_playSound(soundId)
 	soundPlayer:play(sound:get(), 0)
 #endif
 end
-
 	]]>
 	</text>
 </object>

@@ -74,7 +74,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{2C245BF5-4324-C441-B2E1-E2FEF6A39CE5}</id>
 			<comment/>
 			<position>
@@ -82,7 +82,7 @@
 				<second>414</second>
 			</position>
 			<name>BlendWeights</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf4</type>
 			<index>1</index>
 		</item>

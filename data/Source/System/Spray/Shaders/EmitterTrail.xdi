@@ -58,7 +58,7 @@
 				<second>367</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{68B0A9A0-B560-6C44-9BB9-4F07D4D16CEC}</id>
 			<comment/>
 			<position>
@@ -66,11 +66,11 @@
 				<second>244</second>
 			</position>
 			<name>UV</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat4</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{42265377-74FF-6742-B456-A5845F40821B}</id>
 			<comment/>
 			<position>
@@ -78,7 +78,7 @@
 				<second>388</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>
@@ -260,7 +260,7 @@
 				<second>248</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{392CC9AC-CB74-D148-9302-947E0D989EAE}</id>
 			<comment/>
 			<position>
@@ -268,7 +268,7 @@
 				<second>477</second>
 			</position>
 			<name>Direction</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat4</type>
 			<index>0</index>
 		</item>

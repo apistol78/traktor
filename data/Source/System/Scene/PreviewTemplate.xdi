@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="8">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="35">
+<object type="traktor.scene.SceneAsset" version="9">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="36">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>EmFixed</exposureMode>
@@ -67,7 +67,6 @@
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</ultra>
 		</shadowSettings>
-		<fog>false</fog>
 		<fogDistance>90</fogDistance>
 		<fogDensity>0</fogDensity>
 		<fogColor>1, 1, 1, 1</fogColor>
@@ -80,7 +79,6 @@
 			<ultra>{00000000-0000-0000-0000-000000000000}</ultra>
 		</imageProcess>
 	</worldRenderSettings>
-	<imageProcessParams/>
 	<layers>
 		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
 			<id>{804B1EEA-DB34-2D4A-A981-FD5B0066A7AC}</id>
@@ -100,10 +98,9 @@
 								<rotation>0, 0, 0, 1</rotation>
 							</transform>
 							<components>
-								<item type="traktor.weather.SkyComponentData" version="2">
+								<item type="traktor.weather.SkyComponentData" version="3">
 									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
 									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
-									<offset>0</offset>
 								</item>
 							</components>
 						</item>

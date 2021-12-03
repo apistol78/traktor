@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{38FC9165-68D5-5547-A24A-37298C3DD7E3}</id>
 			<comment/>
 			<position>
@@ -9,7 +9,7 @@
 				<second>186</second>
 			</position>
 			<name>TexCoord</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
@@ -45,7 +45,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{188A17E2-1BEE-CB4A-BB86-08463153BA97}</id>
 			<comment/>
 			<position>
@@ -53,7 +53,7 @@
 				<second>649</second>
 			</position>
 			<name>TexOffsetAndScale</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat4</type>
 			<index>1</index>
 		</item>
@@ -217,7 +217,6 @@ vec2 mn = step($Input.xy, vec2(iF, iF));
 vec2 mx = step(vec2(F, F), $Input.xy);
 vec2 tm = mn * mx;
 $Output = tm.x * tm.y;
-
 			]]>
 			</script>
 		</item>

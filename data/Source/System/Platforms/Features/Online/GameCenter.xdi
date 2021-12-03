@@ -136,18 +136,18 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
+				<first>Online.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.online.GcSessionManager</value>
+				</second>
+			</item>
+			<item>
 				<first>Runtime.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Online</item>
 						<item>Traktor.Online.Gc</item>
 					</value>
-				</second>
-			</item>
-			<item>
-				<first>Online.Type</first>
-				<second type="traktor.PropertyString">
-					<value>traktor.online.GcSessionManager</value>
 				</second>
 			</item>
 		</value>

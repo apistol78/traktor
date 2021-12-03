@@ -191,18 +191,18 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
+				<first>Physics.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.physics.PhysicsManagerPhysX</value>
+				</second>
+			</item>
+			<item>
 				<first>Runtime.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Physics</item>
 						<item>Traktor.Physics.PhysX</item>
 					</value>
-				</second>
-			</item>
-			<item>
-				<first>Physics.Type</first>
-				<second type="traktor.PropertyString">
-					<value>traktor.physics.PhysicsManagerPhysX</value>
 				</second>
 			</item>
 		</value>

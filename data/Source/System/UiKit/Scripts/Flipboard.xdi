@@ -85,7 +85,6 @@ function Flipboard:_addChild(child)
 	child.__entered = false
 	child:setVisible(false)
 end
-
 	]]>
 	</text>
 </object>

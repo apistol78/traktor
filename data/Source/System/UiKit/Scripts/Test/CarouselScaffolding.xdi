@@ -25,7 +25,6 @@ function CarouselScaffolding:setup(frame)
 		:setOnClick(function() cr:showNext() end)
 
 end
-
 	]]>
 	</text>
 </object>

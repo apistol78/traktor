@@ -108,7 +108,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{3C542468-35E0-4340-84C9-AABD3E221A60}</id>
 			<comment/>
 			<position>
@@ -116,7 +116,7 @@
 				<second>-432</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
@@ -281,7 +281,7 @@ else
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{1AA14ABF-9D48-B74C-BDF6-3804F49B9660}</id>
 			<comment/>
 			<position>
@@ -289,7 +289,7 @@ else
 				<second>-816</second>
 			</position>
 			<name>Offset</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>

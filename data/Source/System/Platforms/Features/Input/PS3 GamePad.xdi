@@ -100,15 +100,6 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Runtime.Modules</first>
-				<second type="traktor.PropertyStringSet">
-					<value>
-						<item>Traktor.Input</item>
-						<item>Traktor.Input.Ps3</item>
-					</value>
-				</second>
-			</item>
-			<item>
 				<first>Input.DriverTypes</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
@@ -120,6 +111,15 @@
 				<first>Input.Rumble</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>Runtime.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Input</item>
+						<item>Traktor.Input.Ps3</item>
+					</value>
 				</second>
 			</item>
 		</value>

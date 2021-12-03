@@ -247,7 +247,7 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{21FF9A81-7A25-4A4A-93D4-3BCD5108BB60}</id>
 			<comment/>
 			<position>
@@ -255,7 +255,7 @@
 				<second>244</second>
 			</position>
 			<name>ControlPoints</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtByte4N</type>
 			<index>0</index>
 		</item>

@@ -19,7 +19,6 @@ function StaticScaffolding:setup(frame)
 		:setWordWrap(true)
 
 end
-
 	]]>
 	</text>
 </object>

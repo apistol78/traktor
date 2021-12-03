@@ -157,7 +157,6 @@ function Image:_onMouseRelease(event)
 	self:releaseExclusive()
 	return true
 end
-
 	]]>
 	</text>
 </object>

@@ -60,7 +60,7 @@
 			</position>
 			<swizzle>0y0</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{6A94DF8D-E1C7-2844-A9D1-46F399E6258E}</id>
 			<comment/>
 			<position>
@@ -68,11 +68,11 @@
 				<second>187</second>
 			</position>
 			<name>Edge</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{9172DF46-5E10-BA42-8DA5-7576BFD7DE9A}</id>
 			<comment/>
 			<position>
@@ -80,7 +80,7 @@
 				<second>141</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>

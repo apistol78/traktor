@@ -52,7 +52,7 @@
 			</position>
 			<swizzle>x0y1</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{FF0635CA-EAAC-0049-BF52-A29E5284D3E7}</id>
 			<comment/>
 			<position>
@@ -60,7 +60,7 @@
 				<second>28</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>

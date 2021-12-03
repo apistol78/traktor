@@ -45,7 +45,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{895DB2F4-0E1C-F84E-9781-F2FE80C874FB}</id>
 			<comment/>
 			<position>
@@ -53,7 +53,7 @@
 				<second>185</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
@@ -234,7 +234,7 @@
 				<second>1106</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{BBC7ECB7-E494-4447-A174-83102D944CC2}</id>
 			<comment/>
 			<position>
@@ -242,7 +242,7 @@
 				<second>1098</second>
 			</position>
 			<name>TexCoord0</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf2</type>
 			<index>0</index>
 		</item>

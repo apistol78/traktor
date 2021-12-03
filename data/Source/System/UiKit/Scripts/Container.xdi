@@ -83,7 +83,6 @@ function Container:_removeChild(child)
 	Widget._removeChild(self, child)
 	self._cachedEstimate = nil
 end
-
 	]]>
 	</text>
 </object>

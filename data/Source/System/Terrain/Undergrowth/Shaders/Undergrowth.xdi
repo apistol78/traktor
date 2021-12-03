@@ -669,7 +669,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{D0A711B5-3240-4044-87D1-A6E4517E58AF}</id>
 			<comment/>
 			<position>
@@ -677,7 +677,7 @@
 				<second>492</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
@@ -833,7 +833,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.3</defaultValue>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{F39446BF-C4A1-3342-878E-42EB0E809AE6}</id>
 			<comment/>
 			<position>
@@ -841,7 +841,7 @@
 				<second>854</second>
 			</position>
 			<name>TexCoord</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf2</type>
 			<index>0</index>
 		</item>

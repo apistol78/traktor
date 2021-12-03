@@ -18,7 +18,6 @@ function Stage:new(params, environment)
 		end
 	end
 end
-
 	]]>
 	</text>
 </object>

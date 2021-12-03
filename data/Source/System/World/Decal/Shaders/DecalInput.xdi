@@ -73,7 +73,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{327EF8F0-0A44-6044-89CA-433F3B5132FA}</id>
 			<comment/>
 			<position>
@@ -81,7 +81,7 @@
 				<second>366</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>

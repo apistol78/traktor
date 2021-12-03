@@ -228,7 +228,6 @@ function Edit:_onKeyUp()
 		end
 	end
 end
-
 	]]>
 	</text>
 </object>

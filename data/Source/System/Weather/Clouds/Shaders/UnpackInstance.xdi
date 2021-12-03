@@ -37,7 +37,7 @@
 			</position>
 			<name>ParticleUV</name>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{6B2614DF-4920-374D-8838-8D6EFC5D5F34}</id>
 			<comment/>
 			<position>
@@ -45,7 +45,7 @@
 				<second>148</second>
 			</position>
 			<name>Index</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtFloat1</type>
 			<index>0</index>
 		</item>

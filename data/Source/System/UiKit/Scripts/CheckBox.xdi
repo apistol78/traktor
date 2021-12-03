@@ -88,7 +88,6 @@ function CheckBox:_onMouseRelease(event)
 	end
 	return true
 end
-
 	]]>
 	</text>
 </object>

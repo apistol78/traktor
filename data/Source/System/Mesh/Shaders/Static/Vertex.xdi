@@ -73,7 +73,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{DDD6B2A7-3CDD-F844-9487-62A4DE410B7B}</id>
 			<comment/>
 			<position>
@@ -81,11 +81,11 @@
 				<second>912</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat3</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{5F091539-E06E-C048-B413-B7F72A8D4C76}</id>
 			<comment/>
 			<position>
@@ -93,11 +93,11 @@
 				<second>950</second>
 			</position>
 			<name>Binormal</name>
-			<usage>DuBinormal</usage>
+			<usage>Binormal</usage>
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{1C016BD1-FDE8-4844-97DB-9DD4672BD7C5}</id>
 			<comment/>
 			<position>
@@ -105,11 +105,11 @@
 				<second>990</second>
 			</position>
 			<name>Normal</name>
-			<usage>DuNormal</usage>
+			<usage>Normal</usage>
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{A994BA85-7B34-2D4C-BD09-1129461A21DA}</id>
 			<comment/>
 			<position>
@@ -117,7 +117,7 @@
 				<second>1028</second>
 			</position>
 			<name>Tangent</name>
-			<usage>DuTangent</usage>
+			<usage>Tangent</usage>
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
@@ -189,7 +189,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{D6489C3F-9073-6845-ABF5-226E27C9D4BE}</id>
 			<comment/>
 			<position>
@@ -197,7 +197,7 @@
 				<second>1314</second>
 			</position>
 			<name>Color</name>
-			<usage>DuColor</usage>
+			<usage>Color</usage>
 			<type>DtByte4N</type>
 			<index>0</index>
 		</item>
@@ -219,7 +219,7 @@
 			</position>
 			<name>TexCoord1</name>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{9B40ABF5-ABEE-1147-B13A-346ACA3ECD52}</id>
 			<comment/>
 			<position>
@@ -227,7 +227,7 @@
 				<second>1238</second>
 			</position>
 			<name>TexCoord1</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf2</type>
 			<index>1</index>
 		</item>
@@ -240,7 +240,7 @@
 			</position>
 			<name>TexCoord0</name>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{D539A931-AFDC-3748-A369-9B8A704B3D64}</id>
 			<comment/>
 			<position>
@@ -248,7 +248,7 @@
 				<second>1202</second>
 			</position>
 			<name>TexCoord0</name>
-			<usage>DuCustom</usage>
+			<usage>Custom</usage>
 			<type>DtHalf2</type>
 			<index>0</index>
 		</item>

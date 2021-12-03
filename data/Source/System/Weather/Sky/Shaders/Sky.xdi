@@ -118,7 +118,7 @@
 				<second>-76</second>
 			</position>
 		</item>
-		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
 			<id>{89B4F7F2-1434-419F-876D-0AD17A8D25F2}</id>
 			<comment/>
 			<position>
@@ -126,7 +126,7 @@
 				<second>0</second>
 			</position>
 			<name>Position</name>
-			<usage>DuPosition</usage>
+			<usage>Position</usage>
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
