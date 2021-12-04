@@ -39,6 +39,7 @@ RubbleComponent::RubbleComponent()
 :	m_owner(nullptr)
 ,	m_clusterSize(0.0f)
 ,	m_eye(Vector4::zero())
+,	m_fwd(Vector4::zero())
 {
 }
 
@@ -113,16 +114,20 @@ void RubbleComponent::build(
 
 	Matrix44 view = worldRenderView.getView();
 	Vector4 eye = view.inverse().translation();
+	Vector4 fwd = view.axisZ();
 
 	if (updateClusters)
 	{
 		Frustum viewFrustum = worldRenderView.getViewFrustum();
 		viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
 
-		// Only perform "replanting" when moved more than one unit.
-		if ((eye - m_eye).length() >= m_clusterSize / 2.0f)
+		if (
+			(eye - m_eye).length() >= m_clusterSize / 2.0f ||
+			dot3(fwd, m_fwd) < cos(deg2rad(10.0f))
+		)
 		{
 			m_eye = eye;
+			m_fwd = fwd;
 			for (auto& cluster : m_clusters)
 			{
 				cluster.distance = (cluster.center - eye).length();
