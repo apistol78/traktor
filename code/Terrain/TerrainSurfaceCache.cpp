@@ -95,7 +95,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		desc.width = size;
 		desc.height = size;
 		desc.mipCount = mipCount;
-		desc.format = render::TfR8G8B8A8;
+		desc.format = render::TfR11G11B10F;
 		desc.sRGB = false;
 		desc.immutable = false;
 		m_virtualNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
@@ -294,8 +294,8 @@ void TerrainSurfaceCache::setupPatch(
 		rgtsd.height = std::max< int32_t >(tile.dim >> mip, 1);
 		rgtsd.createDepthStencil = false;
 		rgtsd.usingPrimaryDepthStencil = false;
-		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;	// Albedo
-		rgtsd.targets[1].colorFormat = render::TfR8G8B8A8;	// Normals
+		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;		// Albedo
+		rgtsd.targets[1].colorFormat = render::TfR11G11B10F;	// Normals
 		auto updateTargetSetId = renderGraph.addTransientTargetSet(L"Terrain surface intermediate", rgtsd);
 
 		// Render patch surface.
