@@ -40,7 +40,6 @@ const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
 const Guid c_guidTerrainShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
-const Guid c_guidTerrainShaderTemplate(L"{E18056AF-BC95-4349-A98F-17DCF37607D3}");
 const Guid c_guidTerrainShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
@@ -124,7 +123,6 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
-	pipelineDepends->addDependency(c_guidTerrainShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidTerrainShaderTemplate_VFetch, editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);

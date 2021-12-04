@@ -254,10 +254,8 @@ void TerrainComponent::setup(
 		return lh.distance < rh.distance;
 	});
 
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	for (uint32_t i = 0; i < LodCount; ++i)
 		m_patchLodInstances[i].resize(0);
-#endif
 
 	// Update all patch surfaces.
 	for (const auto& visiblePatch : m_visiblePatches)
@@ -311,9 +309,7 @@ void TerrainComponent::setup(
 		}
 
 		// Queue patch instance.
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 		m_patchLodInstances[patchLod].push_back(&visiblePatch);
-#endif
 	}
 
 	// Update base color texture.
@@ -414,7 +410,6 @@ void TerrainComponent::build(
 	renderContext->enqueue(rb);
 
 	// Render each visible patch.
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	for (const auto& visiblePatch : m_visiblePatches)
 	{
 		const Patch& patch = m_patches[visiblePatch.patchId];
@@ -456,48 +451,6 @@ void TerrainComponent::build(
 
 		renderContext->draw(render::RpOpaque, rb);
 	}
-#else
-	for (const auto& visiblePatch : m_visiblePatches)
-	{
-		const Patch& patch = m_patches[visiblePatch.patchId];
-		const Vector4& patchOrigin = visiblePatch.patchOrigin;
-
-		auto rb = renderContext->alloc< render::SimpleRenderBlock >(L"Terrain patch");
-
-		rb->distance = visiblePatch.distance;
-		rb->program = program;
-		rb->programParams = renderContext->alloc< render::ProgramParameters >();
-		rb->indexBuffer = m_indexBuffer;
-		rb->vertexBuffer = patch.vertexBuffer;
-		rb->primitives = m_primitives[patch.lastPatchLod];
-
-		rb->programParams->beginParameters(renderContext);
-
-		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
-		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
-
-		if (!snapshot)
-			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, patch.surfaceOffset);
-		else
-		{
-			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, Vector4(
-				patchOrigin.x() / worldExtent.x() + 0.5f,
-				patchOrigin.z() / worldExtent.z() + 0.5f,
-				patchExtent.x() / worldExtent.x(),
-				patchExtent.z() / worldExtent.z()
-			));
-		}		
-
-		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastSurfaceLod]);
-		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchColor, c_lodColor[patch.lastPatchLod]);
-
-		rb->programParams->endParameters(renderContext);
-
-		renderContext->draw(render::RpOpaque, rb);
-	}
-#endif
 }
 
 void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
@@ -585,35 +538,8 @@ void TerrainComponent::updatePatches(const uint32_t* region)
 
 			const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
 			Patch& patch = m_patches[patchId];
-
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			float* vertex = static_cast< float* >(patch.vertexBuffer->lock());
-			T_ASSERT(vertex);
-
-			for (uint32_t z = 0; z < patchDim; ++z)
-			{
-				for (uint32_t x = 0; x < patchDim; ++x)
-				{
-					float fx = float(x) / (patchDim - 1);
-					float fz = float(z) / (patchDim - 1);
-
-					int32_t ix = int32_t(fx * (pmaxX - pminX)) + pminX;
-					int32_t iz = int32_t(fz * (pmaxZ - pminZ)) + pminZ;
-
-					float height = m_heightfield->getGridHeightNearest(ix, iz);
-
-					*vertex++ = fx;
-					*vertex++ = height;
-					*vertex++ = fz;
-				}
-			}
-
-			patch.vertexBuffer->unlock();
-#endif
-
 			patch.minHeight = patchData.height[0];
 			patch.maxHeight = patchData.height[1];
-
 			patch.error[0] = 0.0f;
 			patch.error[1] = patchData.error[0];
 			patch.error[2] = patchData.error[1];
@@ -633,9 +559,7 @@ bool TerrainComponent::createPatches()
 	m_patches.clear();
 	m_patchCount = 0;
 	safeDestroy(m_indexBuffer);
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	safeDestroy(m_vertexBuffer);
-#endif
 
 	uint32_t heightfieldSize = m_heightfield->getSize();
 	T_ASSERT(heightfieldSize > 0);
@@ -646,7 +570,6 @@ bool TerrainComponent::createPatches()
 	uint32_t patchVertexCount = patchDim * patchDim;
 	m_patchCount = heightfieldSize / (patchDim * detailSkip);
 
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, 0));
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -673,11 +596,6 @@ bool TerrainComponent::createPatches()
 	}
 
 	m_vertexBuffer->unlock();
-#else
-	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, 0));
-	uint32_t vertexSize = render::getVertexSize(vertexElements);
-#endif
 
 	m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 
@@ -686,21 +604,8 @@ bool TerrainComponent::createPatches()
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(
-				render::BuVertex,
-				patchVertexCount * vertexSize,
-				false
-			);
-			if (!vertexBuffer)
-				return false;
-
-			TerrainComponent::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
-			m_patches.push_back(patch);
-#else
 			TerrainComponent::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
-#endif
 		}
 	}
 
@@ -711,8 +616,6 @@ bool TerrainComponent::createPatches()
 	{
 		size_t indexOffset = indices.size();
 		uint32_t lodSkip = 1 << lod;
-
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 
 		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
 		{
@@ -826,122 +729,6 @@ bool TerrainComponent::createPatches()
 			minIndex,
 			maxIndex
 		);
-#else
-
-		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
-		{
-			uint32_t offset = y * patchDim;
-			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
-			{
-				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
-				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
-
-					if (x == 0)
-					{
-						indices.push_back(mid);
-						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * patchDim);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							indices.push_back(mid);
-							indices.push_back(offset + i * patchDim + patchDim);
-							indices.push_back(offset + i * patchDim);
-						}
-					}
-					else if (x == patchDim - 1 - lodSkip)
-					{
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
-						indices.push_back(x + offset);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i * patchDim + lodSkip);
-							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
-						}
-					}
-					else
-					{
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
-						indices.push_back(x + offset);
-
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
-					}
-
-					if (y == 0)
-					{
-						indices.push_back(mid);
-						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * patchDim + offset);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i);
-							indices.push_back(x + offset + i + 1);
-						}
-					}
-					else if (y == patchDim - 1 - lodSkip)
-					{
-						indices.push_back(mid);
-						indices.push_back(x + offset);
-						indices.push_back(x + offset + lodSkip);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * patchDim);
-						}
-					}
-					else
-					{
-						indices.push_back(mid);
-						indices.push_back(x + offset);
-						indices.push_back(x + offset + lodSkip);
-
-						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * patchDim);
-					}
-				}
-				else
-				{
-					indices.push_back(x + offset);
-					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
-
-					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
-				}
-			}
-		}
-
-		uint32_t indexEndOffset = uint32_t(indices.size());
-
-		uint32_t minIndex = *std::min_element(indices.c_ptr() + indexOffset, indices.c_ptr() + indexEndOffset);
-		uint32_t maxIndex = *std::max_element(indices.c_ptr() + indexOffset, indices.c_ptr() + indexEndOffset);
-
-		T_FATAL_ASSERT (minIndex < patchVertexCount);
-		T_FATAL_ASSERT (maxIndex < patchVertexCount);
-		T_FATAL_ASSERT ((indexEndOffset - indexOffset) % 3 == 0);
-
-		m_primitives[lod].setIndexed(
-			render::PrimitiveType::Triangles,
-			indexOffset,
-			(indexEndOffset - indexOffset) / 3,
-			minIndex,
-			maxIndex
-		);
-
-#endif
 	}
 
 	m_indexBuffer = m_renderSystem->createBuffer(

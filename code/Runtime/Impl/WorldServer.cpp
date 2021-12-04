@@ -74,7 +74,7 @@ const uint32_t c_terrainSurfaceCacheSizes[] =
 	2048,
 	4096,
 	8192,
-	16384
+	8192
 };
 
 		}
