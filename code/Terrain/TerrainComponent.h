@@ -58,8 +58,6 @@ class WorldSetupContext;
 
 class TerrainSurfaceCache;
 
-#define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
-
 /*! Terrain entity.
  * \ingroup Terrain
  */
@@ -91,9 +89,6 @@ public:
 		float minHeight;
 		float maxHeight;
 		float error[LodCount];
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-		Ref< render::Buffer > vertexBuffer;
-#endif
 		int32_t lastPatchLod;
 		int32_t lastSurfaceLod;
 		Vector4 surfaceOffset;
@@ -162,9 +157,7 @@ private:
 	uint32_t m_cacheSize;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::Buffer > m_vertexBuffer;
-#endif
 	render::Primitives m_primitives[LodCount];
 	float m_patchLodDistance;
 	float m_patchLodBias;
@@ -174,9 +167,7 @@ private:
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
 	AlignedVector< CullPatch > m_visiblePatches;
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	 AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
-#endif
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
