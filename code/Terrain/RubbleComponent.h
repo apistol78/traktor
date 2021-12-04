@@ -93,6 +93,7 @@ private:
 	AlignedVector< Cluster > m_clusters;
 	float m_clusterSize;
 	Vector4 m_eye;
+	Vector4 m_fwd;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 
