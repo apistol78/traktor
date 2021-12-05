@@ -37,7 +37,10 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	if (it != m_readCache.end())
 	{
 		T_FATAL_ASSERT (it->second.object);
-		T_ASSERT(DeepHash(it->second.object).get() == it->second.hash);
+#if defined(_DEBUG)
+		if (DeepHash(it->second.object).get() != it->second.hash)
+			log::warning << L"Instance " << instanceGuid.format() << L" has been modified; expected to be immutable." << Endl;
+#endif
 		return it->second.object;
 	}
 
