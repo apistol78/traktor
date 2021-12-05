@@ -60,25 +60,12 @@ public:
 
 	Image* getImage() const { return m_image; }
 
-	//VkImage getVkImage() const { return m_image; }
-
-	//VkImageView getVkImageView() const { return m_imageView; }
-
-	//VkImageLayout getVkImageLayout() const { return m_imageLayout; }
-
 private:
 	friend class RenderTargetSetVk;
 	
 	Context* m_context = nullptr;
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
-
 	Ref< Image > m_image;
-
-	//VkImage m_image = 0;
-	//VmaAllocation m_allocation = 0;
-	//VkImageView m_imageView = 0;
-	//VkImageLayout m_imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
 	bool m_haveStencil = false;
 	int32_t m_width = 0;
 	int32_t m_height = 0;
