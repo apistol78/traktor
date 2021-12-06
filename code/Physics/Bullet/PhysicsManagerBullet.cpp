@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
+#include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
@@ -277,6 +278,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	,	m_queryTypes(queryTypes)
 	,	m_triangleIndex(-1)
 	{
+		m_flags |= btTriangleRaycastCallback::kF_DisableHeightfieldAccelerator;
 	}
 
 	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
@@ -337,6 +339,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	,	m_queryFilter(queryFilter)
 	,	m_triangleIndex(-1)
 	{
+		m_flags |= btTriangleRaycastCallback::kF_DisableHeightfieldAccelerator;
 	}
 
 	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
