@@ -19,8 +19,6 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int32_t getMips() const override final;
-
 private:
 	resource::Proxy< ITexture > m_texture;
 };

@@ -150,14 +150,14 @@ ITexture* CubeTextureVk::resolve()
 	return this;
 }
 
-int32_t CubeTextureVk::getMips() const
-{
-	return m_desc.mipCount;
-}
-
 int32_t CubeTextureVk::getSide() const
 {
 	return m_desc.side;
+}
+
+int32_t CubeTextureVk::getMips() const
+{
+	return m_desc.mipCount;
 }
 
 bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)

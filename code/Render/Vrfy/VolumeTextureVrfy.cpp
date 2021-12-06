@@ -34,12 +34,6 @@ ITexture* VolumeTextureVrfy::resolve()
 	return this;
 }
 
-int32_t VolumeTextureVrfy::getMips() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
-	return m_texture ? m_texture->getMips() : 0;
-}
-
 int32_t VolumeTextureVrfy::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
@@ -56,6 +50,12 @@ int32_t VolumeTextureVrfy::getDepth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getDepth() : 0;
+}
+
+int32_t VolumeTextureVrfy::getMips() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
+	return m_texture ? m_texture->getMips() : 0;
 }
 
 	}

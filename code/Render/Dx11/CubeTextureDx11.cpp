@@ -110,14 +110,14 @@ ITexture* CubeTextureDx11::resolve()
 	return this;
 }
 
-int32_t CubeTextureDx11::getMips() const
-{
-	return m_mipCount;
-}
-
 int32_t CubeTextureDx11::getSide() const
 {
 	return m_side;
+}
+
+int32_t CubeTextureDx11::getMips() const
+{
+	return m_mipCount;
 }
 
 bool CubeTextureDx11::lock(int32_t side, int32_t level, Lock& lock)

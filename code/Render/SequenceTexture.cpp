@@ -18,11 +18,5 @@ ITexture* SequenceTexture::resolve()
 	return m_textures[index];
 }
 
-int32_t SequenceTexture::getMips() const
-{
-	int32_t index = int32_t(m_rate * m_time.getElapsedTime()) % int32_t(m_textures.size());
-	return m_textures[index]->getMips();
-}
-
 	}
 }

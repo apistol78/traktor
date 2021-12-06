@@ -42,7 +42,7 @@ void StaticMesh::build(
 		permutation.technique = part.shaderTechnique;
 		auto sp = m_shader->getProgram(permutation);
 		if (!sp)
-			continue;		
+			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"StaticMesh");
 		renderBlock->distance = distance;

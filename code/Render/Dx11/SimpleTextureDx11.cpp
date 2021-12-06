@@ -102,11 +102,6 @@ ITexture* SimpleTextureDx11::resolve()
 	return this;
 }
 
-int32_t SimpleTextureDx11::getMips() const
-{
-	return m_mips;
-}
-
 int32_t SimpleTextureDx11::getWidth() const
 {
 	return m_width;
@@ -115,6 +110,11 @@ int32_t SimpleTextureDx11::getWidth() const
 int32_t SimpleTextureDx11::getHeight() const
 {
 	return m_height;
+}
+
+int32_t SimpleTextureDx11::getMips() const
+{
+	return m_mips;
 }
 
 bool SimpleTextureDx11::lock(int32_t level, Lock& lock)

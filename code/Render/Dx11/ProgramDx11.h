@@ -68,18 +68,13 @@ public:
 private:
 	struct ParameterOffset
 	{
-		UINT constant;
-		uint32_t offset;
-		uint32_t count;
+		UINT constant = 0;
+		uint32_t offset = 0;
+		uint32_t count = 0;
 
-		ParameterOffset()
-		:	constant(0)
-		,	offset(0)
-		,	count(0)
-		{
-		}
+		ParameterOffset() = default;
 
-		ParameterOffset(UINT constant_, uint32_t offset_, uint32_t count_)
+		explicit ParameterOffset(UINT constant_, uint32_t offset_, uint32_t count_)
 		:	constant(constant_)
 		,	offset(offset_)
 		,	count(count_)
@@ -94,14 +89,8 @@ private:
 #endif
 		ComRef< ID3D11Buffer > d3dBuffer;
 		AlignedVector< ParameterOffset > parameterOffsets;
-		ID3D11DeviceContext* d3dMappedContext;
-		bool dirty;
-
-		CBuffer()
-		:	d3dMappedContext(0)
-		,	dirty(true)
-		{
-		}
+		ID3D11DeviceContext* d3dMappedContext = nullptr;
+		bool dirty = true;
 	};
 
 	struct ParameterMap
@@ -109,16 +98,9 @@ private:
 #if defined(_DEBUG)
 		std::wstring name;
 #endif
-		uint32_t offset;
-		uint32_t count;
-		CBuffer* cbuffer[2];
-
-		ParameterMap()
-		:	offset(0)
-		{
-			cbuffer[0] =
-			cbuffer[1] = 0;
-		}
+		uint32_t offset = 0;
+		uint32_t count = 0;
+		CBuffer* cbuffer[2] = { nullptr, nullptr };
 	};
 
 	struct State
