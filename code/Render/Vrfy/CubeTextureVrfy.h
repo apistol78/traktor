@@ -26,9 +26,9 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int32_t getMips() const override final;
-
 	virtual int32_t getSide() const override final;
+
+	virtual int32_t getMips() const override final;
 
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 

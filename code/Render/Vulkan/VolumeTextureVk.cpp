@@ -142,11 +142,6 @@ ITexture* VolumeTextureVk::resolve()
 	return this;
 }
 
-int32_t VolumeTextureVk::getMips() const
-{
-	return m_desc.mipCount;
-}
-
 int32_t VolumeTextureVk::getWidth() const
 {
 	return m_desc.width;
@@ -160,6 +155,11 @@ int32_t VolumeTextureVk::getHeight() const
 int32_t VolumeTextureVk::getDepth() const
 {
 	return m_desc.depth;
+}
+
+int32_t VolumeTextureVk::getMips() const
+{
+	return m_desc.mipCount;
 }
 
 	}

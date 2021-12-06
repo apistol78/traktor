@@ -210,16 +210,17 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBuffer);
 
 	auto classITexture = new AutoRuntimeClass< ITexture >();
-	classITexture->addProperty("mips", &ITexture::getMips);
 	registrar->registerClass(classITexture);
 
 	auto classICubeTexture = new AutoRuntimeClass< ICubeTexture >();
 	classICubeTexture->addProperty("side", &ICubeTexture::getSide);
+	classICubeTexture->addProperty("mips", &ICubeTexture::getMips);
 	registrar->registerClass(classICubeTexture);
 
 	auto classISimpleTexture = new AutoRuntimeClass< ISimpleTexture >();
 	classISimpleTexture->addProperty("width", &ISimpleTexture::getWidth);
 	classISimpleTexture->addProperty("height", &ISimpleTexture::getHeight);
+	classISimpleTexture->addProperty("mips", &ISimpleTexture::getMips);
 	classISimpleTexture->addMethod("lock", &ISimpleTexture_lock);
 	classISimpleTexture->addMethod("unlock", &ISimpleTexture::unlock);
 	registrar->registerClass(classISimpleTexture);
@@ -228,6 +229,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIVolumeTexture->addProperty("width", &IVolumeTexture::getWidth);
 	classIVolumeTexture->addProperty("height", &IVolumeTexture::getHeight);
 	classIVolumeTexture->addProperty("depth", &IVolumeTexture::getDepth);
+	classIVolumeTexture->addProperty("mips", &IVolumeTexture::getMips);
 	registrar->registerClass(classIVolumeTexture);
 
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
@@ -236,12 +238,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIRenderSystem->addProperty("currentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
 	classIRenderSystem->addProperty("displayAspectRatio", &IRenderSystem::getDisplayAspectRatio);
 	classIRenderSystem->addMethod("getDisplayMode", &IRenderSystem_getDisplayMode);
-	// classIRenderSystem->addMethod("createVertexBuffer", &IRenderSystem_createVertexBuffer);
-	// classIRenderSystem->addMethod("createIndexBuffer", &IRenderSystem_createIndexBuffer);
-	//classIRenderSystem->addMethod("createStructBuffer", &IRenderSystem_createStructBuffer);
 	classIRenderSystem->addMethod("createSimpleTexture", &IRenderSystem_createSimpleTexture);
-	// classIRenderSystem->addMethod("createCubeTexture", &IRenderSystem_createCubeTexture);
-	// classIRenderSystem->addMethod("createVolumeTexture", &IRenderSystem_createVolumeTexture);
 	registrar->registerClass(classIRenderSystem);
 
 	auto classIRenderView = new AutoRuntimeClass< IRenderView >();

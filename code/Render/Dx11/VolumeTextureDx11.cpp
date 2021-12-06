@@ -82,11 +82,6 @@ ITexture* VolumeTextureDx11::resolve()
 	return this;
 }
 
-int32_t VolumeTextureDx11::getMips() const
-{
-	return 1;
-}
-
 int32_t VolumeTextureDx11::getWidth() const
 {
 	return m_width;
@@ -100,6 +95,11 @@ int32_t VolumeTextureDx11::getHeight() const
 int32_t VolumeTextureDx11::getDepth() const
 {
 	return m_depth;
+}
+
+int32_t VolumeTextureDx11::getMips() const
+{
+	return 1;
 }
 
 ID3D11ShaderResourceView* VolumeTextureDx11::getD3D11TextureResourceView() const

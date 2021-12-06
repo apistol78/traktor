@@ -35,12 +35,6 @@ ITexture* SimpleTextureVrfy::resolve()
 	return this;
 }
 
-int32_t SimpleTextureVrfy::getMips() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
-	return m_texture ? m_texture->getMips() : 0;
-}
-
 int32_t SimpleTextureVrfy::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
@@ -51,6 +45,12 @@ int32_t SimpleTextureVrfy::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
+}
+
+int32_t SimpleTextureVrfy::getMips() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getMips() : 0;
 }
 
 bool SimpleTextureVrfy::lock(int32_t level, Lock& lock)

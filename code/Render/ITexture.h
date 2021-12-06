@@ -38,12 +38,6 @@ public:
 	 * \return Render texture.
 	 */
 	virtual ITexture* resolve() = 0;
-
-	/*! Get number of mip maps.
-	 *
-	 * \return Number of mips.
-	 */
-	virtual int32_t getMips() const = 0;
 };
 
 	}

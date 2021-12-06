@@ -29,13 +29,13 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int32_t getMips() const override final;
-
 	virtual int32_t getWidth() const override final;
 
 	virtual int32_t getHeight() const override final;
 
 	virtual int32_t getDepth() const override final;
+
+	virtual int32_t getMips() const override final;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 

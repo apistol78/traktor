@@ -22,10 +22,5 @@ ITexture* TextureProxy::resolve()
 	return m_texture->resolve();
 }
 
-int32_t TextureProxy::getMips() const
-{
-	return m_texture->getMips();
-}
-
 	}
 }

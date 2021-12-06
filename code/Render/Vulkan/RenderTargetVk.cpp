@@ -129,11 +129,6 @@ ITexture* RenderTargetVk::resolve()
 	return this;
 }
 
-int32_t RenderTargetVk::getMips() const
-{
-	return 1;
-}
-
 int32_t RenderTargetVk::getWidth() const
 {
 	return m_width;
@@ -142,6 +137,11 @@ int32_t RenderTargetVk::getWidth() const
 int32_t RenderTargetVk::getHeight() const
 {
 	return m_height;
+}
+
+int32_t RenderTargetVk::getMips() const
+{
+	return 1;
 }
 
 bool RenderTargetVk::lock(int32_t level, Lock& lock)

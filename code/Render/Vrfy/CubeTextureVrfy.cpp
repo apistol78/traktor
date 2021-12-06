@@ -36,16 +36,16 @@ ITexture* CubeTextureVrfy::resolve()
 	return this;
 }
 
-int32_t CubeTextureVrfy::getMips() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
-	return m_texture ? m_texture->getMips() : 0;
-}
-
 int32_t CubeTextureVrfy::getSide() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	return m_texture ? m_texture->getSide() : 0;
+}
+
+int32_t CubeTextureVrfy::getMips() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	return m_texture ? m_texture->getMips() : 0;
 }
 
 bool CubeTextureVrfy::lock(int32_t side, int32_t level, Lock& lock)
