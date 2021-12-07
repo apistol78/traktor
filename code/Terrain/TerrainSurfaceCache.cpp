@@ -71,35 +71,19 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 
 	m_alloc = TerrainSurfaceAlloc(size);
 
-	// Create virtual terrain albedo texture.
+	// Create virtual terrain texture.
 	{
-		const int32_t mipCount = (int32_t)log2(size) + 1;
-
-		render::SimpleTextureCreateDesc desc = {};
+		render::RenderTargetSetCreateDesc desc = {};
+		desc.count = 2;
 		desc.width = size;
 		desc.height = size;
-		desc.mipCount = mipCount;
-		desc.format = render::TfR8G8B8A8;
-		desc.sRGB = false;
-		desc.immutable = false;
-		m_virtualAlbedo = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
-		if (!m_virtualAlbedo)
-			return false;
-	}
-
-	// Create virtual terrain normals texture.
-	{
-		const int32_t mipCount = (int32_t)log2(size) + 1;
-
-		render::SimpleTextureCreateDesc desc = {};
-		desc.width = size;
-		desc.height = size;
-		desc.mipCount = mipCount;
-		desc.format = render::TfR11G11B10F;
-		desc.sRGB = false;
-		desc.immutable = false;
-		m_virtualNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
-		if (!m_virtualNormals)
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = false;
+		desc.targets[0].format = render::TfR8G8B8A8;
+		desc.targets[1].format = render::TfR11G11B10F;
+		m_virtualTexture = renderSystem->createRenderTargetSet(desc, nullptr, T_FILE_LINE_W);
+		if (!m_virtualTexture)
 			return false;
 	}
 
@@ -108,8 +92,8 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	{
 		render::RenderTargetSetCreateDesc desc = {};
 		desc.count = 1;
-		desc.width = 256;
-		desc.height = 256;
+		desc.width = 512;
+		desc.height = 512;
 		desc.multiSample = 0;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = false;
@@ -131,8 +115,7 @@ void TerrainSurfaceCache::destroy()
 
 	flush();
 
-	safeDestroy(m_virtualAlbedo);
-	safeDestroy(m_virtualNormals);
+	safeDestroy(m_virtualTexture);
 	safeDestroy(m_base);
 	safeDestroy(m_screenRenderer);
 }
@@ -230,8 +213,6 @@ void TerrainSurfaceCache::setupPatch(
 	Vector4& outTextureOffset
 )
 {
-	const int32_t virtualMipCount = (int32_t)log2(m_alloc.getVirtualSize()) + 1;
-
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
@@ -285,27 +266,12 @@ void TerrainSurfaceCache::setupPatch(
 	patchOriginM -= Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(c_margin);
 	patchExtentM += Vector4(dpx, 0.0f, dpz, 0.0f) * Scalar(2.0f * c_margin);
 
-	for (int32_t mip = 0; mip < virtualMipCount; ++mip)
+	// Bake terrain surface patch into virtual texture.
 	{
-		// Intermediate target.
-		render::RenderGraphTargetSetDesc rgtsd;
-		rgtsd.count = 2;
-		rgtsd.width = std::max< int32_t >(tile.dim >> mip, 1);
-		rgtsd.height = std::max< int32_t >(tile.dim >> mip, 1);
-		rgtsd.createDepthStencil = false;
-		rgtsd.usingPrimaryDepthStencil = false;
-		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;		// Albedo
-		rgtsd.targets[1].colorFormat = render::TfR11G11B10F;	// Normals
-		auto updateTargetSetId = renderGraph.addTransientTargetSet(L"Terrain surface intermediate", rgtsd);
-
-		// Render patch surface.
-		render::Clear clear;
-		clear.mask = render::CfColor;
-		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-		clear.colors[1] = Color4f(0.5f, 0.5f, 1.0f, 0.0f);
+		auto virtualTargetSetId = renderGraph.addTargetSet(L"Terrain surface", m_virtualTexture);
 
 		Ref< render::RenderPass > updatePass = new render::RenderPass(L"Terrain surface update");
-		updatePass->setOutput(updateTargetSetId, clear, render::TfNone, render::TfColor);
+		updatePass->setOutput(virtualTargetSetId, render::TfColor, render::TfColor);
 		updatePass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			render::Shader* shader = terrain->getSurfaceShader();
 			if (!shader)
@@ -333,36 +299,19 @@ void TerrainSurfaceCache::setupPatch(
 			programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtentM);
 			programParams->endParameters(renderContext);
 
+			auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+			svrb->viewport = render::Viewport(
+				tile.x,
+				tile.y,
+				tile.dim,
+				tile.dim,
+				0.0f,
+				1.0f
+			);
+
 			m_screenRenderer->draw(renderContext, sp.program, programParams);
 		});
 		renderGraph.addPass(updatePass);
-
-		// Copy into place into virtual texture.
-		Ref< render::RenderPass > copyPass = new render::RenderPass(L"Terrain surface copy");
-		copyPass->addInput(updateTargetSetId);
-		copyPass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-			auto updateTargetSet = renderGraph.getTargetSet(updateTargetSetId);
-			auto lrb = renderContext->alloc< render::LambdaRenderBlock >();
-			lrb->lambda = [=](render::IRenderView* renderView)
-			{
-				render::Region sr = {};
-				sr.x = 0;
-				sr.y = 0;
-				sr.mip = 0;
-				sr.width = std::max< int32_t >(tile.dim >> mip, 1);
-				sr.height = std::max< int32_t >(tile.dim >> mip, 1);
-
-				render::Region dr = {};
-				dr.x = tile.x >> mip;
-				dr.y = tile.y >> mip;
-				dr.mip = mip;
-
-				renderView->copy(m_virtualAlbedo, dr, updateTargetSet->getColorTexture(0), sr);
-				renderView->copy(m_virtualNormals, dr, updateTargetSet->getColorTexture(1), sr);
-			};
-			renderContext->enqueue(lrb);
-		});
-		renderGraph.addPass(copyPass);
 	}
 
 	// Update cache entry.
@@ -374,12 +323,12 @@ void TerrainSurfaceCache::setupPatch(
 
 render::ISimpleTexture* TerrainSurfaceCache::getVirtualAlbedo() const
 {
-	return m_virtualAlbedo;
+	return m_virtualTexture->getColorTexture(0);
 }
 
 render::ISimpleTexture* TerrainSurfaceCache::getVirtualNormals() const
 {
-	return m_virtualNormals;
+	return m_virtualTexture->getColorTexture(1);
 }
 
 render::ISimpleTexture* TerrainSurfaceCache::getBaseTexture() const

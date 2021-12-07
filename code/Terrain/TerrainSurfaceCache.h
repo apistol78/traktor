@@ -28,7 +28,6 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderTargetSet;
-class ISimpleTexture;
 class ScreenRenderer;
 class RenderContext;
 class RenderBlock;
@@ -98,8 +97,7 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
-	Ref< render::ISimpleTexture > m_virtualAlbedo;
-	Ref< render::ISimpleTexture > m_virtualNormals;
+	Ref< render::IRenderTargetSet > m_virtualTexture;
 	Ref< render::IRenderTargetSet > m_base;
 	AlignedVector< Entry > m_entries;
 	bool m_haveBase;
