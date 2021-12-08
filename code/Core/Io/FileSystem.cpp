@@ -275,14 +275,16 @@ bool FileSystem::renameDirectory(const Path& directory, const std::wstring& newN
 
 Path FileSystem::getAbsolutePath(const Path& relativePath) const
 {
-	if (!relativePath.isRelative() && relativePath.hasVolume())
+	if (!relativePath.isRelative())
 		return relativePath;
 
-	Ref< IVolume > volume = getVolume(relativePath);
-	if (!volume)
-		return relativePath;
+	if (relativePath.hasVolume())
+	{
+		if (getCurrentVolume() != getVolume(relativePath))
+			return relativePath;
+	}
 
-	return getAbsolutePath(volume->getCurrentDirectory(), relativePath);
+	return getAbsolutePath(getCurrentVolume()->getCurrentDirectory(), relativePath);
 }
 
 Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath) const
@@ -307,19 +309,16 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 	if (absolutePath.isRelative() || relativeToPath.isRelative())
 		return false;
 
-	if (absolutePath.hasVolume() || relativeToPath.hasVolume())
+	if (absolutePath.hasVolume() && relativeToPath.hasVolume())
 	{
-		if (!absolutePath.hasVolume() || !relativeToPath.hasVolume())
-			return false;
-
 		if (compareIgnoreCase(absolutePath.getVolume(), relativeToPath.getVolume()) != 0)
 			return false;
 	}
 
 	AlignedVector< std::wstring > absoluteParts, relativeParts;
 
-	Split< std::wstring >::any(absolutePath.getPathName(), L"/", absoluteParts);
-	Split< std::wstring >::any(relativeToPath.getPathName(), L"/", relativeParts);
+	Split< std::wstring >::any(absolutePath.getPathNameNoVolume(), L"/", absoluteParts);
+	Split< std::wstring >::any(relativeToPath.getPathNameNoVolume(), L"/", relativeParts);
 
 	auto i1 = absoluteParts.begin();
 	auto i2 = relativeParts.begin();
