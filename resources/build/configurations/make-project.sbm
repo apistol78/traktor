@@ -68,7 +68,7 @@ local function collectDependencies(
 )
 	-- Add include paths.
 	for _, includePath in pairs(configuration.includePaths) do
-		local ip = Path(includePath).pathName
+		local ip = fileSystem:getAbsolutePath(Path(includePath)).pathNameNoVolume
 		if ip ~= "" then
 			insertLast(outIncludePaths, ip)
 		end
@@ -222,6 +222,14 @@ end
 
 local configurations = project.configurations
 local sourcePath = Path(project.sourcePath)
+local sourcePathAbs = fileSystem:getAbsolutePath(sourcePath)
+if sourcePathAbs ~= nil then
+	if os == "linux" or os == "osx" then
+		sourcePath = Path(sourcePathAbs.pathNameNoVolume)
+	elseif os == "windows" then
+		sourcePath = Path(sourcePathAbs.pathName)
+	end
+end
 
 -- Scan configurations.
 local includePaths = {}
@@ -514,9 +522,10 @@ else -- No architectures
 		output:print(configuration.name .. "_OBJS=")
 		for _, file in ipairs(sourceFiles) do
 			local f = fileSystem:getRelativePath(file, sourcePath)
-			assert (f ~= nil)
-			output:printLn(" \\")
-			output:print("\t" .. configuration.name .. "/" .. OBJNAME(f))
+			if f ~= nil then
+				output:printLn(" \\")
+				output:print("\t" .. configuration.name .. "/" .. OBJNAME(f))
+			end
 		end
 		output:printLn("")
 		output:printLn("")
