@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Timer/Profiler.h"
 #include "Input/X11/InputDriverX11.h"
@@ -90,22 +91,27 @@ InputDriverX11::UpdateResult InputDriverX11::update()
 			if (XGetEventData(m_display, &evt.xcookie))
 			{
 				for (auto device : m_devices)
+				{
+					T_PROFILER_SCOPE(str(L"InputDriverX11 update - %s", type_name(device)));
 					device->consumeEvent(evt);
-
+				}
 				XFreeEventData(m_display, &evt.xcookie);
 			}
 		}
 	}
 
 	// Check so our window still has input focus; release exlusive if not in focus.
-	::Window focusWindow;
-	int focusState;
+	{
+		T_PROFILER_SCOPE(L"InputDriverX11 update - focus");
+		::Window focusWindow;
+		int focusState;
 
-	XGetInputFocus(m_display, &focusWindow, &focusState);
+		XGetInputFocus(m_display, &focusWindow, &focusState);
 
-	for (auto device : m_devices)
-		device->setFocus(focusWindow == m_window);
-
+		for (auto device : m_devices)
+			device->setFocus(focusWindow == m_window);
+	}
+	
 	return UrOk;
 }
 

@@ -11,12 +11,14 @@ KeyUpEvent::KeyUpEvent(
 	EventSubject* sender,
 	VirtualKey virtualKey,
 	uint32_t systemKey,
-	wchar_t character
+	wchar_t character,
+	bool repeat
 )
 :	Event(sender)
 ,	m_virtualKey(virtualKey)
 ,	m_systemKey(systemKey)
 ,	m_character(character)
+,	m_repeat(repeat)
 {
 }
 
@@ -33,6 +35,11 @@ uint32_t KeyUpEvent::getSystemKey() const
 wchar_t KeyUpEvent::getCharacter() const
 {
 	return m_character;
+}
+
+bool KeyUpEvent::isRepeat() const
+{
+	return m_repeat;
 }
 
 	}

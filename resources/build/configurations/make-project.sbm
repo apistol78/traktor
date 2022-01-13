@@ -68,9 +68,14 @@ local function collectDependencies(
 )
 	-- Add include paths.
 	for _, includePath in pairs(configuration.includePaths) do
-		local ip = fileSystem:getAbsolutePath(Path(includePath)).pathNameNoVolume
-		if ip ~= "" then
-			insertLast(outIncludePaths, ip)
+		local ch = includePath:sub(1, 1)
+		if ch ~= "`" then
+			local ip = fileSystem:getAbsolutePath(Path(includePath)).pathNameNoVolume
+			if ip ~= "" then
+				insertLast(outIncludePaths, ip)
+			end
+		else
+			insertLast(outIncludePaths, includePath)
 		end
 	end
 
