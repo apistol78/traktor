@@ -29,7 +29,8 @@ public:
 		EventSubject* sender,
 		VirtualKey virtualKey,
 		uint32_t systemKey,
-		wchar_t character
+		wchar_t character,
+		bool repeat
 	);
 
 	VirtualKey getVirtualKey() const;
@@ -38,10 +39,13 @@ public:
 
 	wchar_t getCharacter() const;
 
+	bool isRepeat() const;
+
 private:
 	VirtualKey m_virtualKey;
 	uint32_t m_systemKey;
 	wchar_t m_character;
+	bool m_repeat;
 };
 
 	}

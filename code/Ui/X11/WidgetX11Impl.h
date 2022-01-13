@@ -626,7 +626,15 @@ protected:
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 			if (vk != VkNull)
 			{
-				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
+				bool repeat = false;
+				if (XPending(m_context->getDisplay()))
+				{
+					XEvent nextEvent;
+					XPeekEvent(m_context->getDisplay(), &nextEvent);
+					repeat = (nextEvent.type == KeyPress && nextEvent.xkey.time == xe.xkey.time && nextEvent.xkey.keycode == xe.xkey.keycode);
+				}
+
+				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0, repeat);
 				m_owner->raiseEvent(&keyUpEvent);
 			}
 

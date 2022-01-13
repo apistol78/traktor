@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"

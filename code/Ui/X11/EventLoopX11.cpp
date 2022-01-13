@@ -228,7 +228,7 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 			if (vk != VkNull)
 			{
-				KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0);
+				KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0, false);
 				owner->raiseEvent(&keyUpEvent);
 				consumed |= keyUpEvent.consumed();
 			}

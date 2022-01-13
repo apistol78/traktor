@@ -74,10 +74,13 @@ bool Image::setImage(IBitmap* image, bool transparent)
 	m_image = image;
 	m_transparent = transparent;
 
-	const Rect rc = getRect();
-	setRect(Rect(rc.getTopLeft(), getPreferredSize(rc.getSize())));
-	update();
+	if (!m_scale)
+	{
+		const Rect rc = getRect();
+		setRect(Rect(rc.getTopLeft(), getPreferredSize(rc.getSize())));
+	}
 
+	update();
 	return true;
 }
 

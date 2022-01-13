@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Io/StringOutputStream.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
