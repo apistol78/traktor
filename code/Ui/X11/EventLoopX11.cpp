@@ -228,7 +228,15 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 			if (vk != VkNull)
 			{
-				KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0, false);
+				bool repeat = false;
+				if (XPending(m_context->getDisplay()))
+				{
+					XEvent nextEvent;
+					XPeekEvent(m_context->getDisplay(), &nextEvent);
+					repeat = (nextEvent.type == KeyPress && nextEvent.xkey.time == e.xkey.time && nextEvent.xkey.keycode == e.xkey.keycode);
+				}
+
+				KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0, repeat);
 				owner->raiseEvent(&keyUpEvent);
 				consumed |= keyUpEvent.consumed();
 			}
