@@ -266,7 +266,7 @@ collectFiles(
 	project,
 	function(file)
 		local ext = file.extension
-		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
+		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" or ext == "s" then
 			table.insert(sourceFiles, file)
 		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" or ext == "cgv" or ext == "cgf" then
 			table.insert(resourceFiles, file)
