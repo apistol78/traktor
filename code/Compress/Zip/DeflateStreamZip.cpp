@@ -56,7 +56,7 @@ public:
 		int rc;
 
 		m_zstream.next_in = (Bytef*)block;
-		m_zstream.avail_in = nbytes;
+		m_zstream.avail_in = (uInt)nbytes;
 
 		for (;;)
 		{
@@ -67,7 +67,7 @@ public:
 
 			if (m_zstream.avail_out == 0)
 			{
-				int nwritten = m_stream->write(&m_buf[0], int(m_buf.size()));
+				int64_t nwritten = m_stream->write(&m_buf[0], int(m_buf.size()));
 				if (nwritten != m_buf.size())
 					return -1;
 
@@ -99,7 +99,7 @@ public:
 			if (nwrite > 0)
 			{
 				T_ASSERT(nwrite <= int(m_buf.size()));
-				int nwritten = m_stream->write(&m_buf[0], nwrite);
+				int64_t nwritten = m_stream->write(&m_buf[0], nwrite);
 				T_ASSERT(nwritten == nwrite);
 				nwritten = nwrite;
 			}

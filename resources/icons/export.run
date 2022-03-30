@@ -287,8 +287,6 @@ local outputs =
 		{
 			{ name = "SequenceExpand", column = 0, row = 5, width = 1, height = 1, base = 9 },
 			{ name = "SequenceCollapse", column = 1, row = 5, width = 1, height = 1, base = 9 },
-			{ name = "SequenceVisible", column = 5, row = 7, width = 1, height = 1 },
-			{ name = "SequenceHidden", column = 6, row = 7, width = 1, height = 1 },
 		}
 	},
 	{

@@ -589,7 +589,7 @@ protected:
 
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyUpEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0);
+		KeyUpEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0, false);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;

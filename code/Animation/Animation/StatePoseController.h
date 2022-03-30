@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Containers/SmallMap.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Pose.h"

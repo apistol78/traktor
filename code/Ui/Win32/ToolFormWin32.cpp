@@ -180,7 +180,7 @@ LRESULT ToolFormWin32::eventMouseActivate(HWND hWnd, UINT message, WPARAM wParam
 LRESULT ToolFormWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	m_modal = false;
-	m_result = wParam;
+	m_result = (int32_t)wParam;
 	return 0;
 }
 

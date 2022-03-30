@@ -59,13 +59,13 @@ public:
 		int rc;
 
 		m_zstream.next_out = (Bytef*)block;
-		m_zstream.avail_out = nbytes;
+		m_zstream.avail_out = (uInt)nbytes;
 
 		for (;;)
 		{
 			if (m_zstream.avail_in == 0)
 			{
-				int nread = m_stream->read(&m_buf[0], int(m_buf.size()));
+				int64_t nread = m_stream->read(&m_buf[0], (int64_t)m_buf.size());
 				if (!nread)
 					break;
 
@@ -78,7 +78,7 @@ public:
 				break;
 		}
 
-		int nread = nbytes - m_zstream.avail_out;
+		int64_t nread = nbytes - m_zstream.avail_out;
 
 		m_position += nread;
 		return nread;
@@ -100,7 +100,7 @@ public:
 		uint8_t dummy[1024];
 		while (m_position < position)
 		{
-			int nread = read(dummy, std::min< int >(sizeof_array(dummy), position - m_position));
+			int64_t nread = read(dummy, std::min< int64_t >(sizeof_array(dummy), position - m_position));
 			if (nread <=  0)
 				return -1;
 		}

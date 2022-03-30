@@ -220,7 +220,7 @@ std::wstring Url::encode(const uint8_t* bytes, uint32_t len)
 std::wstring Url::encode(const std::wstring& text)
 {
 	std::string s = wstombs(Utf8Encoding(), text);
-	return encode((const uint8_t*)s.c_str(), s.length());
+	return encode((const uint8_t*)s.c_str(), (uint32_t)s.length());
 }
 
 std::vector< uint8_t > Url::decodeBytes(const std::wstring& text)

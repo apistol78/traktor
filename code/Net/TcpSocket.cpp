@@ -80,7 +80,7 @@ bool TcpSocket::bind(const SocketAddressIPv6& socketAddress, bool reuseAddr)
 		::setsockopt(m_socket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on));
 	}
 
-	if (::bind(m_socket, (sockaddr *)info->ai_addr, info->ai_addrlen) < 0)
+	if (::bind(m_socket, (sockaddr *)info->ai_addr, (int)info->ai_addrlen) < 0)
 		return false;
 
 	return true;
@@ -120,7 +120,7 @@ bool TcpSocket::connect(const SocketAddressIPv6& socketAddress)
 			return false;
 	}
 
-	if (::connect(m_socket, (sockaddr *)info->ai_addr, info->ai_addrlen) < 0)
+	if (::connect(m_socket, (sockaddr *)info->ai_addr, (int)info->ai_addrlen) < 0)
 		return false;
 
 	return true;
