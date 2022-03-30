@@ -68,7 +68,7 @@ bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 	if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) < 0)
 		return false;
 
-	if (::bind(m_socket, (sockaddr *)info->ai_addr, info->ai_addrlen) < 0)
+	if (::bind(m_socket, (sockaddr *)info->ai_addr, (int)info->ai_addrlen) < 0)
 		return false;
 
 	return true;
@@ -108,7 +108,7 @@ bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 			return false;
 	}
 
-	if (::connect(m_socket, (sockaddr *)info->ai_addr, info->ai_addrlen) < 0)
+	if (::connect(m_socket, (sockaddr *)info->ai_addr, (int)info->ai_addrlen) < 0)
 		return false;
 
 	return true;

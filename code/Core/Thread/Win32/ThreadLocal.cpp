@@ -13,17 +13,17 @@ ThreadLocal::ThreadLocal()
 
 ThreadLocal::~ThreadLocal()
 {
-	TlsFree(m_handle);
+	TlsFree((DWORD)m_handle);
 }
 
 void ThreadLocal::set(void* ptr)
 {
-	TlsSetValue(m_handle, ptr);
+	TlsSetValue((DWORD)m_handle, ptr);
 }
 
 void* ThreadLocal::get() const
 {
-	return TlsGetValue(m_handle);
+	return TlsGetValue((DWORD)m_handle);
 }
 
 }

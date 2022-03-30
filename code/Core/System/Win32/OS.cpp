@@ -206,7 +206,7 @@ bool OS::openFile(const std::wstring& file) const
 		NULL,
 		SW_SHOWDEFAULT
 	);
-	return int(hInstance) > 32;
+	return intptr_t(hInstance) > 32;
 }
 
 bool OS::editFile(const std::wstring& file) const
@@ -219,7 +219,7 @@ bool OS::editFile(const std::wstring& file) const
 		NULL,
 		SW_SHOWDEFAULT
 	);
-	return int(hInstance) > 32;
+	return intptr_t(hInstance) > 32;
 }
 
 bool OS::exploreFile(const std::wstring& file) const
@@ -232,7 +232,7 @@ bool OS::exploreFile(const std::wstring& file) const
 		NULL,
 		SW_SHOWDEFAULT
 	);
-	return int(hInstance) > 32;
+	return intptr_t(hInstance) > 32;
 }
 
 bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
@@ -335,7 +335,7 @@ Ref< IProcess > OS::execute(
 		// Calculate how much space we need to allocate.
 		uint32_t size = 0;
 		for (auto i = e.begin(); i != e.end(); ++i)
-			size += i->first.length() + 1 + i->second.length() + 1;
+			size += (uint32_t)(i->first.length() + 1 + i->second.length() + 1);
 		size += 1;
 
 		environment.reset(new char [size]);

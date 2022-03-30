@@ -158,7 +158,7 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 	}
 	else if (msg.message == WM_KEYUP)
 	{
-		KeyUpEvent keyEvent(owner, translateToVirtualKey(int(msg.wParam)), int(msg.wParam), 0);
+		KeyUpEvent keyEvent(owner, translateToVirtualKey(int(msg.wParam)), int(msg.wParam), 0, false);
 		owner->raiseEvent(&keyEvent);
 		consumed = keyEvent.consumed();
 	}
