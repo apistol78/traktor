@@ -12,15 +12,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
 
-Library::Library()
-:   m_handle(0)
-{
-}
-
-Library::~Library()
-{
-}
-
 bool Library::open(const Path& libraryName)
 {
 	return open(libraryName, std::vector< Path >(), true);

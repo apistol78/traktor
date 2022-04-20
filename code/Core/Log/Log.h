@@ -28,7 +28,7 @@ public:
 class T_DLLCLASS LogStream : public OutputStream
 {
 public:
-	LogStream(int32_t level, ILogTarget* globalTarget);
+	explicit LogStream(int32_t level, ILogTarget* globalTarget);
 
 	virtual ~LogStream();
 

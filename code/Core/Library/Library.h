@@ -24,10 +24,6 @@ class T_DLLCLASS Library : public Object
 	T_RTTI_CLASS;
 
 public:
-	Library();
-
-	virtual ~Library();
-
 	/*! Open library.
 	 *
 	 * \param libraryName Name of library.
@@ -74,7 +70,7 @@ public:
 	Path getPath() const;
 
 private:
-	void* m_handle;
+	void* m_handle = nullptr;
 };
 
 }

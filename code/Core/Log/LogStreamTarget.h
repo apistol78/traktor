@@ -19,7 +19,7 @@ class OutputStream;
 class T_DLLCLASS LogStreamTarget : public ILogTarget
 {
 public:
-	LogStreamTarget(OutputStream* stream);
+	explicit LogStreamTarget(OutputStream* stream);
 
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final;
 

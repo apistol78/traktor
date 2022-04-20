@@ -8,16 +8,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
 
-Library::Library()
-:	m_handle(0)
-{
-}
-
-Library::~Library()
-{
-	T_ASSERT(m_handle == 0);
-}
-
 bool Library::open(const Path& libraryName)
 {
 	return open(libraryName, std::vector< Path >(), true);
@@ -25,7 +15,7 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-	m_handle = 0;
+	m_handle = nullptr;
 
 	std::wstring resolved = L"lib" + libraryName.getFileName() + L".dylib";
 	std::wstring errors;
@@ -67,13 +57,13 @@ void Library::close()
 	if (m_handle)
 	{
 		dlclose(m_handle);
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 }
 
 void Library::detach()
 {
-	m_handle = 0;
+	m_handle = nullptr;
 }
 
 void* Library::find(const std::wstring& symbol)

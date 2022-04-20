@@ -85,7 +85,7 @@ private:
 class LogTargetGlobalSink : public ILogTarget
 {
 public:
-	LogTargetGlobalSink(const Ref< ILogTarget >& globalTarget)
+	explicit LogTargetGlobalSink(const Ref< ILogTarget >& globalTarget)
 	:	m_globalTarget(globalTarget)
 	{
 	}
@@ -103,7 +103,7 @@ private:
 class LogStreamLocalBuffer : public IOutputStreamBuffer
 {
 public:
-	LogStreamLocalBuffer(int32_t level, const Ref< ILogTarget >& globalTarget)
+	explicit LogStreamLocalBuffer(int32_t level, const Ref< ILogTarget >& globalTarget)
 	:	m_level(level)
 	,	m_localTarget(new LogTargetGlobalSink(globalTarget))
 	{
@@ -176,7 +176,7 @@ private:
 class LogStreamGlobalBuffer : public IOutputStreamBuffer
 {
 public:
-	LogStreamGlobalBuffer(int32_t level, ILogTarget* globalTarget)
+	explicit LogStreamGlobalBuffer(int32_t level, ILogTarget* globalTarget)
 	:	m_level(level)
 	,	m_globalTarget(globalTarget)
 	{
