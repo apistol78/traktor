@@ -10,15 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
 
-Library::Library()
-:	m_handle(0)
-{
-}
-
-Library::~Library()
-{
-}
-
 bool Library::open(const Path& libraryName)
 {
 #if !defined(_XBOX)
@@ -97,13 +88,13 @@ void Library::close()
 	if (m_handle)
 	{
 		FreeLibrary((HMODULE)m_handle);
-		m_handle = 0;
+		m_handle = nullptr;
 	}
 }
 
 void Library::detach()
 {
-	m_handle = 0;
+	m_handle = nullptr;
 }
 
 void* Library::find(const std::wstring& symbol)
@@ -111,7 +102,7 @@ void* Library::find(const std::wstring& symbol)
 #if !defined(_XBOX)
 	return (void*)GetProcAddress((HMODULE)m_handle, wstombs(symbol).c_str());
 #else
-	return 0;
+	return nullptr;
 #endif
 }
 
