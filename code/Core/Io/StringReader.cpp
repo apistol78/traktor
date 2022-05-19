@@ -43,8 +43,8 @@ int64_t StringReader::readLine(std::wstring& out)
 {
 	wchar_t ch;
 
-	m_line.reserve(200);
-	m_line.resize(0);
+	out.reserve(200);
+	out.resize(0);
 
 	for (;;)
 	{
@@ -59,7 +59,7 @@ int64_t StringReader::readLine(std::wstring& out)
 			}
 			if (result > 0)
 				m_count += result;
-			else if (m_count <= 0 && m_line.empty())
+			else if (m_count <= 0 && out.empty())
 			{
 				out.clear();
 				return -1;
@@ -85,10 +85,9 @@ int64_t StringReader::readLine(std::wstring& out)
 		if (ch == L'\n')
 			break;
 		else if (ch != L'\r')
-			m_line.push_back(ch);
+			out.push_back(ch);
 	}
 
-	out = std::wstring(m_line.begin(), m_line.end());
 	return (int64_t)out.length();
 }
 
