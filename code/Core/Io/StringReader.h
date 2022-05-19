@@ -3,7 +3,6 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IEncoding.h"
 
 // import/export mechanism.
@@ -38,7 +37,6 @@ public:
 private:
 	Ref< IStream > m_stream;
 	Ref< IEncoding > m_encoding;
-	AlignedVector< wchar_t > m_line;
 	uint8_t m_buffer[IEncoding::MaxEncodingSize];
 	int64_t m_count;
 };
