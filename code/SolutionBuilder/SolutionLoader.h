@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +26,7 @@ public:
 	Solution* load(const std::wstring& fileName);
 
 private:
-	std::map< std::wstring, Ref< Solution > > m_solutions;
+	SmallMap< std::wstring, Ref< Solution > > m_solutions;
 };
 
 	}

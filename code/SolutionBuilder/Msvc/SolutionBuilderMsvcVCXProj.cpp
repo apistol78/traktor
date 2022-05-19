@@ -42,7 +42,7 @@ std::wstring systemPath(const Path& path)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 9, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 9, SolutionBuilderMsvcVCXProj, ISerializable)
 
 SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
 :	m_resolvePaths(true)
@@ -99,8 +99,9 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 6);
+
 	const wchar_t* itemNames[] = { L"staticLibrary", L"sharedLibrary", L"executable", L"executableConsole" };
-	std::wstring toolset;
 
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
@@ -108,14 +109,8 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 	if (s.getVersion() >= 8)
 		s >> Member< std::wstring >(L"windowsTargetPlatformVersion", m_windowsTargetPlatformVersion);
 
-	if (s.getVersion() >= 1 && s.getVersion() < 3)
-		s >> Member< std::wstring >(L"toolset", toolset);
-
-	if (s.getVersion() >= 2)
-	{
-		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
-		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
-	}
+	s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
+	s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
 
 	if (s.getVersion() >= 9)
 		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
@@ -125,92 +120,33 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 	else if (s.getVersion() >= 7)
 		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsBeforeImports", m_propertyGroupsBeforeImports);
 
-	if (s.getVersion() >= 5)
-		s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
-	else
-	{
-		m_imports.push_back(new SolutionBuilderMsvcVCXImport(L"", L"$(VCTargetsPath)\\Microsoft.Cpp.props", L""));
-		Ref< SolutionBuilderMsvcVCXImportGroup > importGroup = new SolutionBuilderMsvcVCXImportGroup(L"PropertySheets", L"");
-		importGroup->addImport(new SolutionBuilderMsvcVCXImport(
-			L"",
-			L"$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props",
-			L"exists('$(LocalAppData)\\Microsoft\\VisualStudio\\10.0\\Microsoft.Cpp.$(Platform).user.props')"
-		));
-		m_imports.push_back(importGroup);
-	}
+	s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
 
 	if (s.getVersion() >= 7)
 		s >> MemberRefArray< SolutionBuilderMsvcVCXPropertyGroup >(L"propertyGroupsAfterImports", m_propertyGroupsAfterImports);
 
+	s >> MemberStaticArray<
+		std::map< std::wstring, std::wstring >,
+		4,
+		MemberStlMap< std::wstring, std::wstring >
+	>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
 
-	if (s.getVersion() >= 3)
-	{
-		s >> MemberStaticArray<
-			std::map< std::wstring, std::wstring >,
-			4,
-			MemberStlMap< std::wstring, std::wstring >
-		>(L"configurationDefinitionsDebug", m_configurationDefinitionsDebug, itemNames);
+	s >> MemberStaticArray<
+		std::map< std::wstring, std::wstring >,
+		4,
+		MemberStlMap< std::wstring, std::wstring >
+	>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
 
-		s >> MemberStaticArray<
-			std::map< std::wstring, std::wstring >,
-			4,
-			MemberStlMap< std::wstring, std::wstring >
-		>(L"configurationDefinitionsRelease", m_configurationDefinitionsRelease, itemNames);
-	}
-	else
-	{
-		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
-		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"ConfigurationType", L"StaticLibrary"));
-		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
-		m_configurationDefinitionsDebug[0].insert(std::make_pair(L"PlatformToolset", toolset));
-
-		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
-		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"ConfigurationType", L"DynamicLibrary"));
-		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
-		m_configurationDefinitionsDebug[1].insert(std::make_pair(L"PlatformToolset", toolset));
-
-		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
-		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"ConfigurationType", L"Application"));
-		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
-		m_configurationDefinitionsDebug[2].insert(std::make_pair(L"PlatformToolset", toolset));
-
-		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"CharacterSet", L"MultiByte"));
-		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"ConfigurationType", L"Application"));
-		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"WholeProgramOptimization", L"false"));
-		m_configurationDefinitionsDebug[3].insert(std::make_pair(L"PlatformToolset", toolset));
-
-		m_configurationDefinitionsRelease[0] = m_configurationDefinitionsDebug[0];
-		m_configurationDefinitionsRelease[1] = m_configurationDefinitionsDebug[1];
-		m_configurationDefinitionsRelease[2] = m_configurationDefinitionsDebug[2];
-		m_configurationDefinitionsRelease[3] = m_configurationDefinitionsDebug[3];
-	}
-
-	if (s.getVersion() >= 6)
-	{
-		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsDebug),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
-		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsRelease),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
-	}
-	else
-	{
-		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsDebug),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsDebug", m_buildDefinitionsDebug);
-		s >> MemberStaticArray<
-				RefArray< SolutionBuilderMsvcVCXDefinition >,
-				sizeof_array(m_buildDefinitionsRelease),
-				MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-			>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
-	}
+	s >> MemberStaticArray<
+			RefArray< SolutionBuilderMsvcVCXDefinition >,
+			sizeof_array(m_buildDefinitionsDebug),
+			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+		>(L"buildDefinitionsDebug", m_buildDefinitionsDebug, itemNames);
+	s >> MemberStaticArray<
+			RefArray< SolutionBuilderMsvcVCXDefinition >,
+			sizeof_array(m_buildDefinitionsRelease),
+			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease, itemNames);
 
 	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
 }

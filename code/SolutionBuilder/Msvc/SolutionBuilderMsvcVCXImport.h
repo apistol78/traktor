@@ -12,9 +12,9 @@ class SolutionBuilderMsvcVCXImport : public SolutionBuilderMsvcVCXImportCommon
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderMsvcVCXImport();
+	SolutionBuilderMsvcVCXImport() = default;
 
-	SolutionBuilderMsvcVCXImport(
+	explicit SolutionBuilderMsvcVCXImport(
 		const std::wstring& label,
 		const std::wstring& project,
 		const std::wstring& condition

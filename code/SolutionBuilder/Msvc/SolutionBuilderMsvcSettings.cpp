@@ -2,7 +2,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcProject.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ void SolutionBuilderMsvcSettings::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"slnVersion", m_slnVersion);
 	s >> Member< std::wstring >(L"vsVersion", m_vsVersion);
-	s >> MemberRef< SolutionBuilderMsvcProject >(L"project", m_project);
+	s >> MemberRef< SolutionBuilderMsvcVCXProj >(L"project", m_project);
 }
 
 	}

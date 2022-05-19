@@ -44,23 +44,21 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 
 	if (configurationsDialog.showModal() == ui::DrOk)
 	{
-		const std::vector< ConfigurationsDialog::Action >& actions = configurationsDialog.getActions();
-		for (std::vector< ConfigurationsDialog::Action >::const_iterator i = actions.begin(); i != actions.end(); ++i)
+		for (const auto& action : configurationsDialog.getActions())
 		{
-			const RefArray< Project >& projects = solution->getProjects();
-			for (RefArray< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
+			for (auto project : solution->getProjects())
 			{
-				if (i->type == ConfigurationsDialog::AtNew)
+				if (action.type == ConfigurationsDialog::AtNew)
 				{
-					if ((*j)->getConfiguration(i->name))
+					if (project->getConfiguration(action.name))
 						continue;
 
-					Ref< Configuration > templateConfiguration = (*j)->getConfiguration(i->current);
+					Ref< Configuration > templateConfiguration = project->getConfiguration(action.current);
 					if (!templateConfiguration)
-						log::warning << L"Unable to find template configuration \"" << i->current << L"\" for project \"" << (*j)->getName() << L"\"" << Endl;
+						log::warning << L"Unable to find template configuration \"" << action.current << L"\" for project \"" << project->getName() << L"\"" << Endl;
 
 					Ref< Configuration > configuration = new Configuration();
-					configuration->setName(i->name);
+					configuration->setName(action.name);
 					if (templateConfiguration)
 					{
 						// Clone settings from template configuration.
@@ -77,25 +75,24 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 						// No template configuration, set default values.
 						configuration->setTargetFormat(Configuration::TfSharedLibrary);
 						configuration->setTargetProfile(Configuration::TpRelease);
-						configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
-						configuration->addDefinition(buildExportDefinition((*j)->getName()));
+						configuration->addDefinition(buildExportDefinition(project->getName()));
 						configuration->addDefinition(L"NDEBUG");
 					}
-					(*j)->addConfiguration(configuration);
+					project->addConfiguration(configuration);
 				}
-				else if (i->type == ConfigurationsDialog::AtRename)
+				else if (action.type == ConfigurationsDialog::AtRename)
 				{
-					Ref< Configuration > configuration = (*j)->getConfiguration(i->current);
+					Ref< Configuration > configuration = project->getConfiguration(action.current);
 					if (!configuration)
 						continue;
 
-					configuration->setName(i->name);
+					configuration->setName(action.name);
 				}
-				else if (i->type == ConfigurationsDialog::AtRemove)
+				else if (action.type == ConfigurationsDialog::AtRemove)
 				{
-					Ref< Configuration > configuration = (*j)->getConfiguration(i->name);
+					Ref< Configuration > configuration = project->getConfiguration(action.name);
 					if (configuration)
-						(*j)->removeConfiguration(configuration);
+						project->removeConfiguration(configuration);
 				}
 			}
 		}

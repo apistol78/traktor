@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -19,8 +20,6 @@ class SolutionBuilderMsvcVCXDefinition : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderMsvcVCXDefinition();
-
 	bool generate(
 		GeneratorContext& context,
 		const Solution* solution,
@@ -42,7 +41,7 @@ private:
 
 	std::wstring m_name;
 	std::wstring m_fileTypes;
-	bool m_resolvePaths;
+	bool m_resolvePaths = true;
 	std::vector< Option > m_options;
 
 	void collectAdditionalLibraries(

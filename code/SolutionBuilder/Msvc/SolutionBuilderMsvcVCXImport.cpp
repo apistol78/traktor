@@ -10,10 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXImport", 0, SolutionBuilderMsvcVCXImport, SolutionBuilderMsvcVCXImportCommon)
 
-SolutionBuilderMsvcVCXImport::SolutionBuilderMsvcVCXImport()
-{
-}
-
 SolutionBuilderMsvcVCXImport::SolutionBuilderMsvcVCXImport(
 	const std::wstring& label,
 	const std::wstring& project,

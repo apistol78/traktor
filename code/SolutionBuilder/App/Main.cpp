@@ -30,7 +30,7 @@ using namespace traktor::sb;
 #define ERROR_UNABLE_TO_CREATE_BUILDER 4
 #define ERROR_UNABLE_TO_CREATE_SOLUTION 5
 
-void flattenIncludePaths(Project* project, std::map< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths)
+void flattenIncludePaths(Project* project, SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths)
 {
 	for (auto configuration : project->getConfigurations())
 	{
@@ -138,7 +138,7 @@ int main(int argc, const char** argv)
 
 		for (auto project : solution->getProjects())
 		{
-			std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;
+			SmallMap< std::wstring, std::set< std::wstring > > configurationIncludePaths;
 			flattenIncludePaths(project, configurationIncludePaths);
 
 			for (auto configuration : project->getConfigurations())

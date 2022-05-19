@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "SolutionBuilder/Dependency.h"
 #include "SolutionBuilder/Project.h"
@@ -20,9 +21,9 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 	std::wstring pathName = toLower(FileSystem::getInstance().getAbsolutePath(fileName).getPathName());
 
 	// Have we already loaded the solution.
-	std::map< std::wstring, Ref< Solution > >::iterator i = m_solutions.find(pathName);
-	if (i != m_solutions.end())
-		return i->second;
+	auto it = m_solutions.find(pathName);
+	if (it != m_solutions.end())
+		return it->second;
 
 	// Open solution file and deserialize solution object.
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
@@ -31,7 +32,7 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 
 	Ref< Solution > solution = xml::XmlDeserializer(file).readObject< Solution >();
 
-	file->close();
+	safeClose(file);
 
 	// Resolve dependencies.
 	if (solution)

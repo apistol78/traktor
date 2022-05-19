@@ -20,8 +20,8 @@ void GeneratorContext::set(const std::wstring& key, const std::wstring& value)
 
 std::wstring GeneratorContext::get(const std::wstring& key) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(key);
-	return i != m_values.end() ? i->second : L"";
+	auto it = m_values.find(key);
+	return it != m_values.end() ? it->second : L"";
 }
 
 std::wstring GeneratorContext::format(const std::wstring& option) const
@@ -38,9 +38,9 @@ std::wstring GeneratorContext::format(const std::wstring& option) const
 			break;
 
 		std::wstring key = option.substr(n + 2, e - n - 2);
-		std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(key);
-		if (i != m_values.end())
-			final += i->second;
+		auto it = m_values.find(key);
+		if (it != m_values.end())
+			final += it->second;
 		else
 			final += L"%(" + key + L")";
 

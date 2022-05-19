@@ -11,10 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXImportGroup", 0, SolutionBuilderMsvcVCXImportGroup, SolutionBuilderMsvcVCXImportCommon)
 
-SolutionBuilderMsvcVCXImportGroup::SolutionBuilderMsvcVCXImportGroup()
-{
-}
-
 SolutionBuilderMsvcVCXImportGroup::SolutionBuilderMsvcVCXImportGroup(const std::wstring& label, const std::wstring& condition)
 :	m_label(label)
 ,	m_condition(condition)

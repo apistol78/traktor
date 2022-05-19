@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include "Core/Containers/SmallMap.h"
 
 namespace traktor
 {
@@ -12,7 +12,7 @@ namespace traktor
 class GeneratorContext
 {
 public:
-	GeneratorContext(bool includeExternal);
+	explicit GeneratorContext(bool includeExternal);
 
 	void set(const std::wstring& key, const std::wstring& value);
 
@@ -28,7 +28,7 @@ public:
 
 private:
 	bool m_includeExternal;
-	std::map< std::wstring, std::wstring > m_values;
+	SmallMap< std::wstring, std::wstring > m_values;
 };
 
 	}

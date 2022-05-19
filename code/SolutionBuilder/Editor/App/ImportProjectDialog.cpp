@@ -1,9 +1,9 @@
-#include <Ui/Application.h>
-#include <Ui/StyleBitmap.h>
-#include <Ui/TableLayout.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
-#include "ImportProjectDialog.h"
+#include "SolutionBuilder/Editor/App/ImportProjectDialog.h"
+#include "Ui/Application.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
 
 namespace traktor
 {
@@ -33,9 +33,8 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 	m_checkIncludeDependencies->create(this, L"Include dependencies", false);
 	m_checkIncludeDependencies->setEnable(includeDependencies);
 
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
-		m_listProjects->add((*i)->getName(), *i);
+	for (auto project : solution->getProjects())
+		m_listProjects->add(project->getName(), project);
 
 	return true;
 }
@@ -45,10 +44,11 @@ void ImportProjectDialog::getSelectedProjects(RefArray< Project >& outProjects)
 	std::vector< int > selected;
 	m_listProjects->getSelected(selected);
 
-	for (std::vector< int >::iterator i = selected.begin(); i != selected.end(); ++i)
+	for (auto idx : selected)
 	{
-		Project* p = mandatory_non_null_type_cast< Project* >(m_listProjects->getData(*i));
-		outProjects.push_back(p);
+		Project* p = m_listProjects->getData< Project >(idx);
+		if (p != nullptr)
+			outProjects.push_back(p);
 	}
 
 	//if (m_checkIncludeDependencies->isChecked())

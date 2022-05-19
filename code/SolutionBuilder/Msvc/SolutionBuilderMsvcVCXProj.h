@@ -1,6 +1,10 @@
 #pragma once
 
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcProject.h"
+#include <map>
+#include <string>
+#include <vector>
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -8,23 +12,26 @@ namespace traktor
 	{
 
 class Configuration;
+class GeneratorContext;
+class Project;
 class ProjectItem;
+class Solution;
 class SolutionBuilderMsvcVCXDefinition;
 class SolutionBuilderMsvcVCXBuildTool;
 class SolutionBuilderMsvcVCXImportCommon;
 class SolutionBuilderMsvcVCXPropertyGroup;
 
 /*! Visual Studio solution project settings. */
-class SolutionBuilderMsvcVCXProj : public SolutionBuilderMsvcProject
+class SolutionBuilderMsvcVCXProj : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
 	SolutionBuilderMsvcVCXProj();
 
-	virtual std::wstring getPlatform() const override final;
+	std::wstring getPlatform() const;
 
-	virtual bool getInformation(
+	bool getInformation(
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project,
@@ -32,13 +39,13 @@ public:
 		std::wstring& outProjectPath,
 		std::wstring& outProjectFileName,
 		std::wstring& outProjectGuid
-	) const override final;
+	) const;
 
-	virtual bool generate(
+	bool generate(
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project
-	) const override;
+	) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

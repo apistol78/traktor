@@ -1,3 +1,6 @@
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/Editor/App/ExtractSolutionDialog.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
@@ -7,26 +10,11 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Splitter.h"
 #include "Ui/ListBox/ListBox.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Project.h"
-#include "SolutionBuilder/Editor/App/ExtractSolutionDialog.h"
 
 namespace traktor
 {
 	namespace sb
 	{
-		namespace
-		{
-
-struct ProjectSortPredicate
-{
-	bool operator () (const Project* p1, const Project* p2) const
-	{
-		return p1->getName().compare(p2->getName()) < 0;
-	}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ExtractSolutionDialog", ExtractSolutionDialog, ui::ConfigDialog)
 
@@ -66,7 +54,9 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 	m_editSolutionName->create(container);
 
 	RefArray< Project > projects = solution->getProjects();
-	projects.sort(ProjectSortPredicate());
+	projects.sort([](const Project* p1, const Project* p2) {
+		return p1->getName().compare(p2->getName()) < 0;
+	});
 
 	for (auto project : projects)
 		m_listProjects->add(project->getName(), project);
