@@ -17,16 +17,9 @@
 #include "SolutionBuilder/Utilities.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvc.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcProject.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
 
 // Forced references
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCProj.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcCompilerTool.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcGenericTool.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcLibrarianTool.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcLinkerTool.h"
-#include "SolutionBuilder/Msvc/SolutionBuilderMsvcManifestTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXClCompileBuildTool.h"
@@ -99,11 +92,6 @@ bool collectExternalSolutions(
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
 
-SolutionBuilderMsvc::SolutionBuilderMsvc()
-:	m_includeExternal(false)
-{
-}
-
 bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 {
 	Ref< SolutionBuilderMsvcSettings > settings = new SolutionBuilderMsvcSettings();
@@ -163,12 +151,6 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderMsvc::generate(Solution* solution)
 {
-	T_FORCE_LINK_REF(SolutionBuilderMsvcVCProj)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcCompilerTool)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcGenericTool)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcLibrarianTool)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcLinkerTool)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcManifestTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXClCompileBuildTool)

@@ -22,11 +22,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 1, SolutionBuilderMsvcVCXDefinition, ISerializable)
 
-SolutionBuilderMsvcVCXDefinition::SolutionBuilderMsvcVCXDefinition()
-:	m_resolvePaths(true)
-{
-}
-
 bool SolutionBuilderMsvcVCXDefinition::generate(
 	GeneratorContext& context,
 	const Solution* solution,

@@ -10,12 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"Dependency", Dependency, ISerializable)
 
-Dependency::Dependency()
-:	m_inheritIncludePaths(true)
-,	m_link(LnkYes)
-{
-}
-
 void Dependency::setInheritIncludePaths(bool inheritIncludePaths)
 {
 	m_inheritIncludePaths = inheritIncludePaths;

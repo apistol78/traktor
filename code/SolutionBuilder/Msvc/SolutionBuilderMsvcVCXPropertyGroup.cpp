@@ -22,8 +22,8 @@ bool SolutionBuilderMsvcVCXPropertyGroup::generate(
 		os << L"<PropertyGroup Label=\"" << m_label << L"\" Condition=\"" << m_condition << L"\">" << Endl;
 
 	os << IncreaseIndent;
-	for (std::map< std::wstring, std::wstring >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
-		os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
+	for (auto it : m_values)
+		os << L"<" << it.first << L">" << it.second << L"</" << it.first << L">" << Endl;
 	os << DecreaseIndent;
 
 	os << L"</PropertyGroup>" << Endl;
@@ -32,9 +32,9 @@ bool SolutionBuilderMsvcVCXPropertyGroup::generate(
 
 void SolutionBuilderMsvcVCXPropertyGroup::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 1);
 	s >> Member< std::wstring >(L"label", m_label);
-	if (s.getVersion() >= 1)
-		s >> Member< std::wstring >(L"condition", m_condition);
+	s >> Member< std::wstring >(L"condition", m_condition);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"values", m_values);
 }
 

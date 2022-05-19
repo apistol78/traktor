@@ -1,11 +1,12 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
-#include "ImportProject.h"
-#include "ImportProjectDialog.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ExternalDependency.h"
+#include "SolutionBuilder/Editor/App/ImportProject.h"
+#include "SolutionBuilder/Editor/App/ImportProjectDialog.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FileDialog.h"
 #include "Xml/XmlDeserializer.h"
@@ -31,7 +32,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 		if (file)
 		{
 			Ref< Solution > otherSolution = xml::XmlDeserializer(file, filePath.getPathName()).readObject< Solution >();
-			file->close();
+			safeClose(file);
 
 			ImportProjectDialog importDialog;
 			importDialog.create(parent, L"Import project(s)", false, otherSolution);
@@ -41,49 +42,35 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 				RefArray< Project > otherProjects;
 				importDialog.getSelectedProjects(otherProjects);
 
-				for (RefArray< Project >::iterator i = otherProjects.begin(); i != otherProjects.end(); ++i)
+				for (auto otherProject : otherProjects)
 				{
-					// Ensure project doesn't already exist in solution.
-					bool existing = false;
-
-					const RefArray< Project >& projects = solution->getProjects();
-					for (RefArray< Project >::const_iterator k = projects.begin(); k != projects.end(); ++k)
+					// // Ensure project doesn't already exist in solution.
+					auto it = std::find_if(solution->getProjects().begin(), solution->getProjects().end(), [&](const Project* project) {
+						return project->getName() == otherProject->getName();
+					});
+					if (it != solution->getProjects().end())
 					{
-						if ((*k)->getName() == (*i)->getName())
-						{
-							existing = true;
-							break;
-						}
-					}
-
-					if (existing)
-					{
-						ui::MessageBox::show(parent, L"Project " + (*i)->getName() + L" already exists\nin solution.", L"Error", ui::MbIconExclamation | ui::MbOk);
+						ui::MessageBox::show(parent, L"Project " + otherProject->getName() + L" already exists\nin solution.", L"Error", ui::MbIconExclamation | ui::MbOk);
 						continue;
 					}
 
 					RefArray< Dependency > resolvedDependencies;
 
 					// Find local project for each dependency of the imported projects.
-					const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					for (auto dependency : otherProject->getDependencies())
 					{
-						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 						{
-							std::wstring projectName = projectDependency->getName();
-
-							// Find local project with same name.
-							const RefArray< Project >& projects = solution->getProjects();
-							for (RefArray< Project >::const_iterator k = projects.begin(); k != projects.end(); ++k)
+							for (auto project : solution->getProjects())
 							{
-								if ((*k)->getName() == projectName)
+								if (project->getName() == projectDependency->getName())
 								{
-									resolvedDependencies.push_back(new ProjectDependency(*k));
+									resolvedDependencies.push_back(new ProjectDependency(project));
 									break;
 								}
 							}
 						}
-						else if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*j))
+						else if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(dependency))
 						{
 							// Always add external dependencies.
 							resolvedDependencies.push_back(externalDependency);
@@ -91,10 +78,10 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 					}
 
 					// Replace dependencies.
-					(*i)->setDependencies(resolvedDependencies);
+					otherProject->setDependencies(resolvedDependencies);
 
 					// Finally add project to solution.
-					solution->addProject(*i);
+					solution->addProject(otherProject);
 				}
 			}
 

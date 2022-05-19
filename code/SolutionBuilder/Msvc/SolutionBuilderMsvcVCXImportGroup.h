@@ -13,9 +13,9 @@ class SolutionBuilderMsvcVCXImportGroup : public SolutionBuilderMsvcVCXImportCom
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderMsvcVCXImportGroup();
+	SolutionBuilderMsvcVCXImportGroup() = default;
 
-	SolutionBuilderMsvcVCXImportGroup(const std::wstring& label, const std::wstring& condition);
+	explicit SolutionBuilderMsvcVCXImportGroup(const std::wstring& label, const std::wstring& condition);
 
 	void addImport(SolutionBuilderMsvcVCXImportCommon* import);
 

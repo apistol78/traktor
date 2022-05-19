@@ -32,8 +32,6 @@ public:
 		LnkForce	//<! Link with product, MUST keep all symbols.
 	};
 
-	Dependency();
-
 	void setInheritIncludePaths(bool inheritIncludePaths);
 
 	bool getInheritIncludePaths() const;
@@ -51,8 +49,8 @@ public:
 	virtual void serialize(ISerializer& s) override;
 
 private:
-	bool m_inheritIncludePaths;
-	Link m_link;
+	bool m_inheritIncludePaths = true;
+	Link m_link = LnkYes;
 };
 
 	}
