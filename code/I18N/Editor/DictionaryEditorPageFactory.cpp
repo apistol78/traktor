@@ -12,9 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", 0, D
 
 const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Dictionary >();
-	return typeSet;
+	return makeTypeInfoSet< Dictionary >();
 }
 
 bool DictionaryEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

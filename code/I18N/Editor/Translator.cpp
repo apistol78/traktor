@@ -64,7 +64,7 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 		log::error << L"Unable to translate \"" << text << L"\"; no response." << Endl;
 
 	stream->close();
-	stream = 0;
+	stream = nullptr;
 
 	return result;
 }

@@ -73,9 +73,8 @@ Ref< Dictionary > DictionaryFormatCSV::read(IStream* stream, int32_t keyColumn, 
 bool DictionaryFormatCSV::write(IStream* stream, const Dictionary* dictionary) const
 {
 	FileOutputStream fos(stream, new Utf8Encoding());
-	const std::map< std::wstring, std::wstring >& map = dictionary->get();
-	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
-		fos << i->first << L"," << i->second << Endl;
+	for (auto it : dictionary->get())
+		fos << it.first << L"," << it.second << Endl;
 	return true;
 }
 

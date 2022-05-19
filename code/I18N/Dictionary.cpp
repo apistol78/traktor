@@ -26,12 +26,14 @@ void Dictionary::remove(const std::wstring& id)
 
 bool Dictionary::get(const std::wstring& id, std::wstring& outText) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator it = m_map.find(id);
-	if (it == m_map.end())
+	auto it = m_map.find(id);
+	if (it != m_map.end())
+	{
+		outText = it->second;
+		return true;
+	}
+	else
 		return false;
-
-	outText = it->second;
-	return true;
 }
 
 const std::map< std::wstring, std::wstring >& Dictionary::get() const
