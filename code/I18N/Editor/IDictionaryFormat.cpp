@@ -14,7 +14,7 @@ Ref< Dictionary > IDictionaryFormat::readAny(const Path& filePath, int32_t keyCo
 	if (file)
 		return readAny(file, filePath.getExtension(), keyColumn, textColumn);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< Dictionary > IDictionaryFormat::readAny(IStream* stream, const std::wstring& extension, int32_t keyColumn, int32_t textColumn)

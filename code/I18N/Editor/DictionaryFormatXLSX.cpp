@@ -15,7 +15,7 @@ bool DictionaryFormatXLSX::supportExtension(const std::wstring& extension) const
 
 Ref< Dictionary > DictionaryFormatXLSX::read(IStream* stream, int32_t keyColumn, int32_t textColumn) const
 {
-	return 0;
+	return nullptr;
 }
 
 bool DictionaryFormatXLSX::write(IStream* stream, const Dictionary* dictionary) const
