@@ -55,11 +55,6 @@ IUserWidget* WidgetFactoryCocoa::createUserWidget(EventSubject* owner)
 	return new UserWidgetCocoa(owner);
 }
 
-IWebBrowser* WidgetFactoryCocoa::createWebBrowser(EventSubject* owner)
-{
-	return nullptr;
-}
-
 ISystemBitmap* WidgetFactoryCocoa::createBitmap()
 {
 	return new BitmapCocoa();
