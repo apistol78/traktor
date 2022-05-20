@@ -11,8 +11,6 @@ namespace traktor
 class BitmapX11 : public ISystemBitmap
 {
 public:
-	BitmapX11();
-
 	virtual bool create(uint32_t width, uint32_t height) override final;
 
 	virtual void destroy() override final;
@@ -26,7 +24,7 @@ public:
 	cairo_surface_t* getSurface() const { return m_surface; }
 
 private:
-	cairo_surface_t* m_surface;
+	cairo_surface_t* m_surface = nullptr;
 };
 
 	}

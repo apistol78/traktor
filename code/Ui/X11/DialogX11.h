@@ -11,7 +11,7 @@ namespace traktor
 class DialogX11 : public WidgetX11Impl< IDialog >
 {
 public:
-	DialogX11(Context* context, EventSubject* owner);
+	explicit DialogX11(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 

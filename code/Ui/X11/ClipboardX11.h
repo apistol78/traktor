@@ -7,14 +7,12 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief
+/*!
  * \ingroup UI
  */
 class ClipboardX11 : public IClipboard
 {
 public:
-	ClipboardX11();
-
 	virtual void destroy() override final;
 
 	virtual bool setObject(ISerializable* object) override final;
@@ -32,7 +30,7 @@ public:
 	virtual Ref< const drawing::Image > getImage() const override final;
 
 private:
-	ClipboardContentType m_type;
+	ClipboardContentType m_type = CtEmpty;
 	Ref< ISerializable > m_object;
 	std::wstring m_text;
 	Ref< const drawing::Image > m_image;
@@ -40,4 +38,3 @@ private:
 
 	}
 }
-

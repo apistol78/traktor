@@ -8,7 +8,6 @@
 #include "Ui/Win32/PathDialogWin32.h"
 #include "Ui/Win32/ToolFormWin32.h"
 #include "Ui/Win32/UserWidgetWin32.h"
-#include "Ui/Win32/WebBrowserWin32.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/ClipboardWin32.h"
 
@@ -84,11 +83,6 @@ IToolForm* WidgetFactoryWin32::createToolForm(EventSubject* owner)
 IUserWidget* WidgetFactoryWin32::createUserWidget(EventSubject* owner)
 {
 	return new UserWidgetWin32(owner);
-}
-
-IWebBrowser* WidgetFactoryWin32::createWebBrowser(EventSubject* owner)
-{
-	return new WebBrowserWin32(owner);
 }
 
 ISystemBitmap* WidgetFactoryWin32::createBitmap()

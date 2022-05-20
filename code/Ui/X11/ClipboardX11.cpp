@@ -6,11 +6,6 @@ namespace traktor
 	namespace ui
 	{
 
-ClipboardX11::ClipboardX11()
-:	m_type(CtEmpty)
-{
-}
-
 void ClipboardX11::destroy()
 {
 }

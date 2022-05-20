@@ -9,11 +9,6 @@ namespace traktor
 	namespace ui
 	{
 
-BitmapX11::BitmapX11()
-:	m_surface(nullptr)
-{
-}
-
 bool BitmapX11::create(uint32_t width, uint32_t height)
 {
 	m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);

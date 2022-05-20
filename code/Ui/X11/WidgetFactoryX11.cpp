@@ -141,11 +141,6 @@ IUserWidget* WidgetFactoryX11::createUserWidget(EventSubject* owner)
 	return new UserWidgetX11(m_context, owner);
 }
 
-IWebBrowser* WidgetFactoryX11::createWebBrowser(EventSubject* owner)
-{
-	return nullptr;
-}
-
 ISystemBitmap* WidgetFactoryX11::createBitmap()
 {
 	return new BitmapX11();

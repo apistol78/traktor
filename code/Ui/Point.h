@@ -7,22 +7,20 @@ namespace traktor
 	namespace ui
 	{
 
-#pragma pack(1)
-
 /*! 2D point.
  * \ingroup UI
  */
 class Point
 {
 public:
-	int x;
-	int y;
+	int32_t x;
+	int32_t y;
 
 	inline Point();
 
 	inline Point(const Point& pnt);
 
-	inline Point(int x_, int y_);
+	inline Point(int32_t x_, int32_t y_);
 
 	inline Point operator + (const Size& s) const;
 
@@ -38,8 +36,6 @@ public:
 
 	inline bool operator != (const Point& p) const;
 };
-
-#pragma pack()
 
 	}
 }
