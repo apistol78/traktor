@@ -17,7 +17,7 @@ inline Point::Point(const Point& pnt)
 {
 }
 
-inline Point::Point(int x_, int y_)
+inline Point::Point(int32_t x_, int32_t y_)
 :	x(x_)
 ,	y(y_)
 {

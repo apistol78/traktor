@@ -14,7 +14,7 @@ class CanvasX11
 ,	public IFontMetric
 {
 public:
-	CanvasX11(cairo_t* cr);
+	explicit CanvasX11(cairo_t* cr);
 
 	virtual ~CanvasX11();
 

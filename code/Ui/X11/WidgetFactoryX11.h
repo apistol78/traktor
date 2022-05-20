@@ -42,8 +42,6 @@ public:
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner) override final;
 
-	virtual IWebBrowser* createWebBrowser(EventSubject* owner) override final;
-
 	virtual ISystemBitmap* createBitmap() override final;
 
 	virtual IClipboard* createClipboard() override final;

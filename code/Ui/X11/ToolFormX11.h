@@ -11,7 +11,7 @@ namespace traktor
 class ToolFormX11 : public WidgetX11Impl< IToolForm >
 {
 public:
-	ToolFormX11(Context* context, EventSubject* owner);
+	explicit ToolFormX11(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 

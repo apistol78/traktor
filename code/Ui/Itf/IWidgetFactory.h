@@ -21,7 +21,6 @@ class INotificationIcon;
 class IPathDialog;
 class IToolForm;
 class IUserWidget;
-class IWebBrowser;
 class ISystemBitmap;
 class IClipboard;
 
@@ -48,8 +47,6 @@ public:
 	virtual IToolForm* createToolForm(EventSubject* owner) = 0;
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner) = 0;
-
-	virtual IWebBrowser* createWebBrowser(EventSubject* owner) = 0;
 
 	virtual ISystemBitmap* createBitmap() = 0;
 

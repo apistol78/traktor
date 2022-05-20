@@ -33,7 +33,7 @@ class WidgetX11Impl
 ,	public IFontMetric
 {
 public:
-	WidgetX11Impl(Context* context, EventSubject* owner)
+	explicit WidgetX11Impl(Context* context, EventSubject* owner)
 	:	m_context(context)
 	,	m_owner(owner)
 	,	m_xic(0)
@@ -767,22 +767,13 @@ protected:
 		if (topLevel)
 		{
 			m_context->bind(&m_data, ConfigureNotify, [this](XEvent& xe){
-				Rect rect(
+				const Rect rect(
 					Point(xe.xconfigure.x, xe.xconfigure.y),
 					Size(xe.xconfigure.width, xe.xconfigure.height)
 				);
-
-				// int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
-				// int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
-
-				// int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
-				// int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
-
-				// if (oldWidth != newWidth || oldHeight != newHeight)
 				if (rect.getSize() != m_rect.getSize())
 				{
 					m_rect = rect;
-
 					SizeEvent sizeEvent(m_owner, m_rect.getSize());
 					m_owner->raiseEvent(&sizeEvent);
 				}

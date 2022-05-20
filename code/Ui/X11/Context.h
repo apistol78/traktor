@@ -20,7 +20,7 @@ class Context : public Object
 	T_RTTI_CLASS;
 
 public:
-    Context(Display* display, int screen, XIM xim);
+    explicit Context(Display* display, int screen, XIM xim);
 
 	//! Bind callback for specified event with given window target.
     void bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn);

@@ -5,21 +5,21 @@ namespace traktor
 	namespace ui
 	{
 
-inline Size::Size() :
-	cx(0),
-	cy(0)
+inline Size::Size()
+:	cx(0)
+,	cy(0)
 {
 }
 
-inline Size::Size(int x, int y) :
-	cx(x),
-	cy(y)
+inline Size::Size(int32_t x, int32_t y)
+:	cx(x)
+,	cy(y)
 {
 }
 
-inline Size::Size(const Size& size) :
-	cx(size.cx),
-	cy(size.cy)
+inline Size::Size(const Size& size)
+:	cx(size.cx)
+,	cy(size.cy)
 {
 }
 

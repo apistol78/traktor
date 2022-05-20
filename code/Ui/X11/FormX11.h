@@ -12,7 +12,7 @@ namespace traktor
 class FormX11 : public WidgetX11Impl< IForm >
 {
 public:
-	FormX11(Context* context, EventSubject* owner);
+	explicit FormX11(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 

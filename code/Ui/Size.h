@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 	namespace ui
@@ -11,12 +13,12 @@ namespace traktor
 class Size
 {
 public:
-	int cx;
-	int cy;
+	int32_t cx;
+	int32_t cy;
 
 	inline Size();
 
-	inline Size(int x, int y);
+	inline Size(int32_t x, int32_t y);
 
 	inline Size(const Size& size);
 
