@@ -53,27 +53,14 @@ class T_DLLCLASS Replicator
 public:
 	struct Configuration
 	{
-		float timeVarianceThreshold;
-		float nearDistance;
-		float farDistance;
-		float furthestDistance;
-		float timeUntilTxStateNear;
-		float timeUntilTxStateFar;
-		float timeUntilTxPing;
-
-		Configuration()
-		:	timeVarianceThreshold(0.03f)
-		,	nearDistance(8.0f)
-		,	farDistance(90.0f)
-		,	furthestDistance(120.0f)
-		,	timeUntilTxStateNear(0.1f)
-		,	timeUntilTxStateFar(0.3f)
-		,	timeUntilTxPing(1.0f)
-		{
-		}
+		float timeVarianceThreshold = 0.03f;
+		float nearDistance = 8.0f;
+		float farDistance = 90.0f;
+		float furthestDistance = 120.0f;
+		float timeUntilTxStateNear = 0.1f;
+		float timeUntilTxStateFar = 0.3f;
+		float timeUntilTxPing = 1.0f;
 	};
-
-	Replicator();
 
 	virtual ~Replicator();
 
@@ -280,21 +267,21 @@ private:
 	SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > > m_eventListeners;
 	std::wstring m_name;
 	Timer m_timer;
-	double m_time0;								/*!< Local time. */
-	double m_timeContinuousSync;				/*!< Network latency compensated time, but continuously synchronized. */
-	double m_time;								/*!< Network latency compensated time. */
+	double m_time0 = 0.0;						/*!< Local time. */
+	double m_timeContinuousSync = 0.0;			/*!< Network latency compensated time, but continuously synchronized. */
+	double m_time = 0.0;						/*!< Network latency compensated time. */
 	CircularVector< double, 32 > m_timeErrors;	/*!< History of time errors. */
-	double m_timeVariance;						/*!< Network time compensation time variance. */
-	uint8_t m_status;
-	bool m_allowPrimaryRequests;
-	Transform m_origin;
+	double m_timeVariance = 0.0;				/*!< Network time compensation time variance. */
+	uint8_t m_status = 0;
+	bool m_allowPrimaryRequests = true;
+	Transform m_origin = Transform::identity();
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
 	RefArray< ReplicatorProxy > m_proxies;
-	bool m_sendState;
-	bool m_timeSynchronization;
-	bool m_timeSynchronized;
-	uint32_t m_exceededDeltaTimeLimit;
+	bool m_sendState = false;
+	bool m_timeSynchronization = true;
+	bool m_timeSynchronized = false;
+	uint32_t m_exceededDeltaTimeLimit = 0;
 
 	std::wstring getLogPrefix() const;
 

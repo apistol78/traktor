@@ -27,32 +27,20 @@ class T_DLLCLASS Peer2PeerTopology : public INetworkTopology
 public:
 	struct Peer
 	{
-		net_handle_t handle;
-		net_handle_t send;
-		net_handle_t reverseSend;
+		net_handle_t handle = 0;
+		net_handle_t send = 0;
+		net_handle_t reverseSend = 0;
 		std::wstring name;
 		Ref< Object > user;
-		bool established;
-		uint8_t sequence;
+		bool established = false;
+		uint8_t sequence = 0;
 		StaticSet< net_handle_t, MaxPeers > connections;
-		double whenIAm;
-		uint32_t sentIAm;
-		double whenPropagate;
-
-		Peer()
-		:	handle(0)
-		,	send(0)
-		,	reverseSend(0)
-		,	established(false)
-		,	sequence(0)
-		,	whenIAm(0.0)
-		,	sentIAm(0)
-		,	whenPropagate(0.0)
-		{
-		}
+		double whenIAm = 0.0;
+		uint32_t sentIAm = 0;
+		double whenPropagate = 0.0;
 	};
 
-	Peer2PeerTopology(IPeer2PeerProvider* provider);
+	explicit Peer2PeerTopology(IPeer2PeerProvider* provider);
 
 	void setIAmInterval(double interval, double flux);
 

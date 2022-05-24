@@ -27,29 +27,9 @@ const double c_catastrophicDeltaTime = 30.0;
 const double c_maxDeltaTime = 0.1;
 const uint32_t c_maxDeltaTimeCount = 10;
 
-bool lowestLatencyPred(const ReplicatorProxy* l, const ReplicatorProxy* r)
-{
-	return l->getLatency() + l->getLatencySpread() < r->getLatency() + r->getLatencySpread();
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
-
-Replicator::Replicator()
-:	m_time0(0.0)
-,	m_timeContinuousSync(0.0)
-,	m_time(0.0)
-,	m_timeVariance(0.0)
-,	m_status(0)
-,	m_allowPrimaryRequests(true)
-,	m_origin(Transform::identity())
-,	m_sendState(false)
-,	m_timeSynchronization(true)
-,	m_timeSynchronized(false)
-,	m_exceededDeltaTimeLimit(0)
-{
-}
 
 Replicator::~Replicator()
 {
@@ -71,8 +51,8 @@ void Replicator::destroy()
 
 	if (m_topology)
 	{
-		m_topology->setCallback(0);
-		m_topology = 0;
+		m_topology->setCallback(nullptr);
+		m_topology = nullptr;
 	}
 }
 
@@ -429,7 +409,11 @@ bool Replicator::update()
 		else
 			m_exceededDeltaTimeLimit = 0;
 
-		m_proxies.sort(lowestLatencyPred);
+		// Sort on lowest latency.
+		m_proxies.sort([](const ReplicatorProxy* l, const ReplicatorProxy* r) {
+			return l->getLatency() + l->getLatencySpread() < r->getLatency() + r->getLatencySpread();
+		});
+
 		if ((m_status & 0x80) == 0x00 || m_exceededDeltaTimeLimit > c_maxDeltaTimeCount)
 		{
 			// Not "in session"; migrate primary if anyone else is.

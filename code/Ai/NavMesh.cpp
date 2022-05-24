@@ -34,7 +34,6 @@ NavMesh::~NavMesh()
 
 Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition)
 {
-#if !defined(__PS3__)
 	Ref< MoveQueryResult > result = new MoveQueryResult();
 	JobManager::getInstance().add([=](){
 		T_ANONYMOUS_VAR(Ref< NavMesh >)(this);
@@ -144,9 +143,6 @@ Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, co
 		return;
 	});
 	return result;
-#else
-	return nullptr;
-#endif
 }
 
 bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const
