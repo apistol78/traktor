@@ -20,6 +20,17 @@ namespace traktor
  *
  * Elements are stored column major
  * in order to efficiently transform vectors.
+ * 
+ * ===================================================
+ * General change of basis formula:
+ * 
+ * Mb = C * Ma * Cinv
+​ *
+ * Where:
+ * Ma is a matrix written based on your Source coordinate system, A.
+ * Mb is a matrix which will be valid in your Destination coordinate system, B.
+ * C is the change of basis transformation matrix from A to B.
+ * 
  */
 class T_MATH_ALIGN16 T_DLLCLASS Matrix44
 {
@@ -161,6 +172,6 @@ T_MATH_INLINE T_DLLCLASS Matrix44 lookAt(const Vector4& position, const Vector4&
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Matrix44.inl"
+#	include "Core/Math/Std/Matrix44.inl"
 #endif
 
