@@ -1,4 +1,4 @@
-#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/String.h"
 #include "Render/Vulkan/Private/VertexAttributes.h"
 
 namespace traktor
@@ -18,14 +18,12 @@ std::wstring VertexAttributes::getName(DataUsage usage, int32_t index)
 		L"Custom",
 		L""
 	};
-	StringOutputStream ss;
-	ss << L"in_" << s[(int)usage] << index;
-	return ss.str();
+	return str(L"in_%s%d", s[(int32_t)usage], index);
 }
 
 int32_t VertexAttributes::getLocation(DataUsage usage, int32_t index)
 {
-	int32_t base[] =
+	const int32_t base[] =
 	{
 		0,
 		1,
@@ -35,8 +33,8 @@ int32_t VertexAttributes::getLocation(DataUsage usage, int32_t index)
 		5,
 		16
 	};
-	int32_t location = base[int(usage)] + index;
-	return (location < base[int(usage) + 1]) ? location : -1;
+	const int32_t location = base[(int32_t)usage] + index;
+	return (location < base[(int32_t)usage + 1]) ? location : -1;
 }
 
 	}
