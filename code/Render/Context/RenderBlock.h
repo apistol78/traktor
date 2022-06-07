@@ -168,6 +168,23 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Indirect render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS IndirectRenderBlock : public DrawableRenderBlock
+{
+public:
+	const IBufferView* indexBuffer = nullptr;
+	IndexType indexType = IndexType::Void;
+	const IBufferView* vertexBuffer = nullptr;
+	const IVertexLayout* vertexLayout = nullptr;
+	PrimitiveType primitive = PrimitiveType::Points;
+	const IBufferView* drawBuffer = nullptr;
+	uint32_t drawCount = 0;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Begin pass render block.
  * \ingroup Render
  */

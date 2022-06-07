@@ -146,6 +146,27 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void IndirectRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	if (programParams)
+		programParams->fixup(program);
+
+	renderView->drawIndirect(
+		vertexBuffer,
+		vertexLayout,
+		indexBuffer,
+		indexType,
+		program,
+		primitive,
+		drawBuffer,
+		drawCount
+	);
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void BeginPassRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);

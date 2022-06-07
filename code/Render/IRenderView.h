@@ -150,6 +150,19 @@ public:
 	 */
 	virtual void draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
 
+	/*! Draw primitives using indirect draw.
+	 *
+	 * \param vertexBuffer View of buffer containing geometry.
+	 * \param vertexLayout Layout of vertices in vertex buffer.
+	 * \param indexBuffer View of buffer to be used for indices; null if no indices should be used.
+	 * \param indexType Type of indices in index buffer.
+	 * \param program Program to be used.
+	 * \param primitiveType Type of primitive.
+	 * \param drawBuffer Buffer containing draw offsets.
+	 * \param drawCount Number of indirect draws.
+	 */
+	virtual void drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount) = 0;
+
 	/*! Enqueue compute task.
 	 *
 	 * \param workSize Work size, 3 dimensional size.

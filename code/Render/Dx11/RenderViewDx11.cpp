@@ -849,6 +849,10 @@ void RenderViewDx11::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
+void RenderViewDx11::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount)
+{
+}
+
 void RenderViewDx11::compute(IProgram* program, const int32_t* workSize)
 {
 }
