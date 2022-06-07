@@ -520,6 +520,8 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t elementCount
 		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 	if ((usage & BuStructured) != 0)
 		usageBits |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+	if ((usage & BuIndirect) != 0)
+		usageBits |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 	if (usageBits == 0)
 		return nullptr;
 

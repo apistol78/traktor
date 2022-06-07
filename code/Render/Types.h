@@ -180,7 +180,8 @@ enum BufferUsage
 {
 	BuVertex = 1,
 	BuIndex = 2,
-	BuStructured = 4
+	BuStructured = 4,
+	BuIndirect = 8
 };
 
 /*! Clear target flags. */
@@ -594,6 +595,25 @@ struct Region
 	int32_t width;
 	int32_t height;
 	int32_t depth;
+};
+
+/*! Indirect draw structure. */
+struct IndirectDraw
+{
+	uint32_t vertexCount;
+	uint32_t instanceCount;
+	int32_t firstVertex;
+	uint32_t firstInstance;
+};
+
+/*! Indirect draw structure, indexed draw. */
+struct IndexedIndirectDraw
+{
+	uint32_t indexCount;
+	uint32_t instanceCount;
+	uint32_t firstIndex;
+	int32_t vertexOffset;
+	uint32_t firstInstance;
 };
 
 /*! Shader parameter handle. */

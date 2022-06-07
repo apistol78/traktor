@@ -299,6 +299,29 @@ void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* 
 	m_renderView->draw(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitives, instanceCount);
 }
 
+void RenderViewVrfy::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount)
+{
+	T_CAPTURE_TRACE(L"drawIndirect");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot draw outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	ProgramVrfy* programVrfy = dynamic_type_cast< ProgramVrfy* >(program);
+	T_CAPTURE_ASSERT(programVrfy, L"Incorrect program type.");
+
+	if (!programVrfy)
+		return;
+
+	T_CAPTURE_ASSERT(programVrfy->m_program, L"Trying to draw with destroyed program.");
+	T_CAPTURE_ASSERT(vertexBuffer, L"No vertex buffer.");
+
+	if (!vertexBuffer)
+		return;
+
+	programVrfy->verify();
+
+	m_renderView->drawIndirect(vertexBuffer, vertexLayout, indexBuffer, indexType, programVrfy->m_program, primitiveType, drawBuffer, drawCount);
+}
+
 void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 {
 	T_CAPTURE_TRACE(L"compute");

@@ -1009,6 +1009,67 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
+void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, PrimitiveType primitiveType, const IBufferView* drawBuffer, uint32_t drawCount)
+{
+	const BufferViewVk* dbv = static_cast< const BufferViewVk* >(drawBuffer);
+	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);
+	const VertexLayoutVk* vlv = static_cast< const VertexLayoutVk* >(vertexLayout);
+	ProgramVk* p = static_cast< ProgramVk* >(program);
+
+	auto& frame = m_frames[m_currentImageIndex];
+
+	validateGraphicsPipeline(vlv, p, primitiveType);
+
+	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
+	if (!p->validateGraphics(frame.graphicsCommandBuffer, targetSize))
+		return;
+
+	if (frame.boundVertexBuffer != *vbv)
+	{
+		const VkBuffer buffer = vbv->getVkBuffer();
+		const VkDeviceSize offset = vbv->getVkBufferOffset();
+		vkCmdBindVertexBuffers(*frame.graphicsCommandBuffer, 0, 1, &buffer, &offset);
+		frame.boundVertexBuffer = *vbv;
+	}
+
+	if (indexBuffer)
+	{
+		const BufferViewVk* ibv = static_cast< const BufferViewVk* >(indexBuffer);
+		if (frame.boundIndexBuffer != *ibv)
+		{
+			const VkBuffer buffer = ibv->getVkBuffer();
+			const VkDeviceSize offset = ibv->getVkBufferOffset();
+			vkCmdBindIndexBuffer(
+				*frame.graphicsCommandBuffer,
+				buffer,
+				offset,
+				(indexType == IndexType::UInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
+			);
+			frame.boundIndexBuffer = *ibv;
+		}
+
+		vkCmdDrawIndexedIndirect(
+			*frame.graphicsCommandBuffer,
+			dbv->getVkBuffer(),
+			dbv->getVkBufferOffset(),
+			drawCount,
+			sizeof(VkDrawIndexedIndirectCommand)
+		);
+	}
+	else
+	{
+		vkCmdDrawIndirect(
+			*frame.graphicsCommandBuffer,
+			dbv->getVkBuffer(),
+			dbv->getVkBufferOffset(),
+			drawCount,
+			sizeof(VkDrawIndexedIndirectCommand)
+		);
+	}
+
+	m_drawCalls++;
+}
+
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
