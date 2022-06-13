@@ -64,8 +64,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 		return false;
 
 	float length = 0.0f;
-	for (AlignedVector< RiverComponentData::ControlPoint >::const_iterator i = path.begin() + 1; i != path.end(); ++i)
-		length += (i->position - (i - 1)->position).length();
+	for (auto it = path.begin() + 1; it != path.end(); ++it)
+		length += (it->position - (it - 1)->position).length();
 
 	float dT = std::max(1.0f / length, 0.001f);
 
@@ -77,8 +77,8 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	{
 		RiverComponentData::ControlPoint pn = h.evaluate(T);
 
-		Vector4 d = pn.position - pc.position;
-		Vector4 e = cross(d, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
+		const Vector4 d = pn.position - pc.position;
+		const Vector4 e = cross(d, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
 
 		silouette.push_back((pc.position - e * Scalar(pc.width / 2.0f)).xyz0() + Vector4(0.0f, 0.0f, 0.0f, T));
 		silouette.push_back((pc.position + e * Scalar(pc.width / 2.0f)).xyz0() + Vector4(0.0f, 0.0f, 0.0f, T));
@@ -102,25 +102,25 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!m_vertexBuffer)
 		return false;
 
-	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
+	float* vertex = (float*)m_vertexBuffer->lock();
 	if (!vertex)
 		return false;
 
 	float u = 0.0f;
-	for (AlignedVector< Vector4 >::const_iterator i = silouette.begin(); i != silouette.end(); ++i)
+	for (const auto& s : silouette)
 	{
-		i->xyz1().storeUnaligned(vertex);
+		s.xyz1().storeUnaligned(vertex);
 		vertex += 4;
 
 		*vertex++ = u;
-		*vertex++ = data.getTileFactorV() * i->w();
+		*vertex++ = data.getTileFactorV() * s.w();
 
 		u = 1.0f - u;
 	}
 
 	m_vertexBuffer->unlock();
 
-	uint32_t triangleCount = uint32_t(silouette.size() - 2);
+	uint32_t triangleCount = (uint32_t)(silouette.size() - 2);
 
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
@@ -131,11 +131,11 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!m_indexBuffer)
 		return false;
 
-	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
+	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
 	if (!index)
 		return false;
 
-	for (uint16_t i = 0; i < uint16_t(triangleCount); i += 2)
+	for (uint16_t i = 0; i < (uint16_t)triangleCount; i += 2)
 	{
 		*index++ = i + 0;
 		*index++ = i + 1;
@@ -152,7 +152,7 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 		0,
 		triangleCount,
 		0,
-		uint32_t(silouette.size() - 1)
+		(uint32_t)(silouette.size() - 1)
 	);
 
 	if (!resourceManager->bind(data.getShader(), m_shader))

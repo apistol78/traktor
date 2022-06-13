@@ -35,16 +35,12 @@ class T_DLLCLASS RiverComponentData : public world::IEntityComponentData
 public:
 	struct T_MATH_ALIGN16 ControlPoint
 	{
-		Vector4 position;
-		float width;
-		float tension;
-
-		ControlPoint();
+		Vector4 position = Vector4::zero();
+		float width = 1.0f;
+		float tension = 1.0f;
 
 		void serialize(ISerializer& s);
 	};
-
-	RiverComponentData();
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
@@ -59,7 +55,7 @@ public:
 private:
 	resource::Id< render::Shader > m_shader;
 	AlignedVector< ControlPoint > m_path;
-	float m_tileFactorV;
+	float m_tileFactorV = 1.0f;
 };
 
 	}

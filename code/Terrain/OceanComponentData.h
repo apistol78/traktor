@@ -54,14 +54,12 @@ private:
 
 	struct Wave
 	{
-		float direction;
-		float amplitude;
-		float frequency;
-		float phase;
-		float pinch;
-		float rate;
-
-		Wave();
+		float direction = 0.0f;
+		float amplitude = 0.0f;
+		float frequency = 0.25f;
+		float phase = 0.0f;
+		float pinch = 3.0f;
+		float rate = 4.0f;
 
 		void serialize(ISerializer& s);
 	};
