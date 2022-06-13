@@ -51,16 +51,6 @@ void OceanComponentData::serialize(ISerializer& s)
 	s >> MemberStaticArray< Wave, 4, MemberComposite< Wave > >(L"waves", m_waves);
 }
 
-OceanComponentData::Wave::Wave()
-:	direction(0.0f)
-,	amplitude(0.0f)
-,	frequency(0.25f)
-,	phase(0.0f)
-,	pinch(3.0f)
-,	rate(4.0f)
-{
-}
-
 void OceanComponentData::Wave::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"direction", direction);

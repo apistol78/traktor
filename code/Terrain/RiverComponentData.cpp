@@ -14,11 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RiverComponentData", 0, RiverComponentData, world::IEntityComponentData)
 
-RiverComponentData::RiverComponentData()
-:	m_tileFactorV(1.0f)
-{
-}
-
 void RiverComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }
@@ -28,13 +23,6 @@ void RiverComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< ControlPoint, MemberComposite< ControlPoint > >(L"path", m_path);
 	s >> Member< float >(L"tileFactorV", m_tileFactorV, AttributeRange(0.0f));
-}
-
-RiverComponentData::ControlPoint::ControlPoint()
-:	position(Vector4::zero())
-,	width(0.0f)
-,	tension(1.0f)
-{
 }
 
 void RiverComponentData::ControlPoint::serialize(ISerializer& s)
