@@ -94,7 +94,7 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help"))
 	{
 		traktor::log::info << SB_TITLE << Endl;
-		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
+		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution] (include project names)" << Endl;
 		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
 		traktor::log::info << L"\t-v,verbose			Verbose" << Endl;
@@ -135,6 +135,24 @@ int main(int argc, const char** argv)
 
 		if (cmdLine.hasOption('v', L"verbose"))
 			traktor::log::info << L"Flatten include paths..." << Endl;
+
+		if (cmdLine.getCount() > 1)
+		{
+			for (auto project : solution->getProjects())
+			{
+				if (!project->getEnable())
+					continue;
+
+				bool include = false;
+				for (int32_t i = 1; !include && i < cmdLine.getCount(); ++i)
+				{
+					if (cmdLine.getString(i) == project->getName())
+						include = true;
+				}
+
+				project->setEnable(include);
+			}
+		}
 
 		for (auto project : solution->getProjects())
 		{
