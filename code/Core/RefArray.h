@@ -43,7 +43,7 @@ public:
 		typedef const value_type reference;
 
 		const_iterator()
-		:	m_item(0)
+		:	m_item(nullptr)
 		{
 		}
 
@@ -165,7 +165,7 @@ public:
 		typedef value_type reference;
 
 		iterator()
-		:	m_owner(0)
+		:	m_owner(nullptr)
 		{
 		}
 
@@ -258,7 +258,7 @@ public:
 
 	/*! Construct empty array. */
 	RefArray()
-	:	m_items(0)
+	:	m_items(nullptr)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
@@ -266,9 +266,6 @@ public:
 
 	/*! Construct array with size. */
 	RefArray(size_type size)
-	:	m_items(0)
-	,	m_size(0)
-	,	m_capacity(0)
 	{
 		m_items = new value_type [size];
 		m_size = size;
@@ -292,17 +289,15 @@ public:
 		}
 	}
 
-#if defined(T_CXX11)
 	RefArray(RefArray&& ref) T_NOEXCEPT
 	:	m_items(ref.m_items)
 	,	m_size(ref.m_size)
 	,	m_capacity(ref.m_capacity)
 	{
-		ref.m_items = 0;
+		ref.m_items = nullptr;
 		ref.m_size = 0;
 		ref.m_capacity = 0;
 	}
-#endif
 
 	virtual ~RefArray()
 	{
@@ -319,7 +314,7 @@ public:
 		for (size_type i = 0; i < m_size; ++i)
 			T_SAFE_RELEASE(m_items[i]);
 
-		delete[] m_items; m_items = 0;
+		delete[] m_items; m_items = nullptr;
 		m_size = 0;
 		m_capacity = 0;
 	}
@@ -492,7 +487,7 @@ public:
 		for (size_type i = offset; i < m_size - 1; ++i)
 			m_items[i] = m_items[i + 1];
 
-		m_items[m_size - 1] = 0;
+		m_items[m_size - 1] = nullptr;
 		shrink(1);
 
 		return iterator(&m_items[offset], this);
@@ -528,7 +523,7 @@ public:
 		for (size_type i = size; i < m_size; ++i)
 		{
 			T_SAFE_RELEASE(m_items[i]);
-			m_items[i] = 0;
+			m_items[i] = nullptr;
 		}
 
 		m_size = size;
@@ -566,7 +561,7 @@ public:
 			}
 
 			for (size_t i = m_size; i < size; ++i)
-				m_items[i] = 0;
+				m_items[i] = nullptr;
 		}
 		else
 		{
@@ -598,7 +593,7 @@ public:
 			for (size_type i = 0; i < m_size; ++i)
 				items[i] = m_items[i];
 			for (size_type i = m_size; i < size; ++i)
-				items[i] = 0;
+				items[i] = nullptr;
 
 			delete[] m_items;
 
@@ -650,7 +645,7 @@ public:
 		for (size_type i = 0; i < m_size; ++i)
 		{
 			T_SAFE_RELEASE(m_items[i]);
-			m_items[i] = 0;
+			m_items[i] = nullptr;
 		}
 
 		resize(src.m_size);
@@ -664,7 +659,6 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11)
 	RefArray& operator = (RefArray&& ref) T_NOEXCEPT
 	{
 		for (size_type i = 0; i < m_size; ++i)
@@ -676,13 +670,12 @@ public:
 		m_size = ref.m_size;
 		m_capacity = ref.m_capacity;
 
-		ref.m_items = 0;
+		ref.m_items = nullptr;
 		ref.m_size = 0;
 		ref.m_capacity = 0;
 
 		return *this;
 	}
-#endif
 
 private:
 	value_type* m_items;

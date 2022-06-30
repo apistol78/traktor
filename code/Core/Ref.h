@@ -37,14 +37,12 @@ public:
 		T_SAFE_ADDREF(m_ptr);
 	}
 
-#if defined(T_CXX11)
 	/*! Move reference to object. */
 	Ref(Ref&& ref) T_NOEXCEPT
 	:	m_ptr(ref.m_ptr)
 	{
 		ref.m_ptr = nullptr;
 	}
-#endif
 
 	/*! New naked reference to object. */
 	Ref(pointer ptr)
@@ -135,7 +133,6 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11)
 	Ref& operator = (Ref&& ref) T_NOEXCEPT
 	{
 		T_SAFE_RELEASE(m_ptr);
@@ -143,7 +140,6 @@ public:
 		ref.m_ptr = nullptr;
 		return *this;
 	}
-#endif
 
 	Ref& operator = (pointer ptr)
 	{

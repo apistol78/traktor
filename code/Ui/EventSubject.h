@@ -1,15 +1,12 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticVector.h"
 #include "Ui/Enums.h"
-
-#if defined(T_CXX11)
-#	include <functional>
-#endif
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -87,7 +84,6 @@ public:
 		method_t m_method;
 	};
 
-#if defined(T_CXX11)
 	template < typename EventType >
 	class LambdaEventHandler : public RefCountImpl< IEventHandler >
 	{
@@ -107,7 +103,6 @@ public:
 	private:
 		std::function< void( EventType* ) > m_fn;
 	};
-#endif
 
 	void raiseEvent(Event* event);
 
@@ -135,7 +130,6 @@ public:
 		return eventHandler;
 	}
 
-#if defined(T_CXX11)
 	template < typename EventType >
 	IEventHandler* addEventHandler(const std::function< void(EventType*) >& fn)
 	{
@@ -143,7 +137,6 @@ public:
 		addEventHandler(type_of< EventType >(), eventHandler);
 		return eventHandler;
 	}
-#endif
 
 	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
 

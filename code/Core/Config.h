@@ -15,9 +15,6 @@
 #	define T_FORCE_INLINE __forceinline
 #	define T_ALIGN16 __declspec(align(16))
 #	define T_NOEXCEPT noexcept
-#	if _MSC_VER >= 1700
-#		define T_CXX11
-#	endif
 #elif defined(__GNUC__) || defined(__ANDROID__) || defined(__PS3__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
@@ -28,9 +25,6 @@
 #	define T_ALIGN16 __attribute__((aligned(16)))
 #	if !defined(__APPLE__)
 #		define T_NOEXCEPT noexcept
-#	endif
-#	if __cplusplus >= 201103L || (defined(__PS3__) && !defined(SPU)) || defined(__APPLE__)
-#		define T_CXX11
 #	endif
 #	if defined(__PS3__) && defined(SPU)
 #		define nullptr 0
@@ -65,15 +59,11 @@
 #	define T_UNALIGNED
 #endif
 
-// C++11 delete method support.
-#if defined(T_CXX11)
-#	define T_NO_COPY_CLASS(NAME)				\
+// Prevent class from being copyable.
+#define T_NO_COPY_CLASS(NAME)					\
 	NAME(NAME const &) = delete;				\
 	NAME(NAME &&) = delete;						\
 	void operator = (NAME const &) = delete;
-#else
-#	define T_NO_COPY_CLASS(NAME)
-#endif
 
 // Detect endian.
 #if defined(__APPLE__)
