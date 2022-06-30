@@ -23,8 +23,6 @@ class T_DLLCLASS SphereShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
-	SphereShapeDesc();
-
 	void setRadius(float radius);
 
 	float getRadius() const;
@@ -32,7 +30,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_radius;
+	float m_radius = 1.0f;
 };
 
 	}

@@ -28,7 +28,7 @@ class Member : public MemberComplex
 public:
 	typedef Id< Class > value_type;
 
-	Member(const wchar_t* const name, value_type& ref)
+	explicit Member(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{

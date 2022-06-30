@@ -41,12 +41,12 @@ const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EnvelopeFeedbackEventData >();
-	typeSet.insert< OscillateFeedbackEventData >();
-	typeSet.insert< SoundEventData >();
-	typeSet.insert< SpawnEffectEventData >();
-	return typeSet;
+	return makeTypeInfoSet<
+		EnvelopeFeedbackEventData,
+		OscillateFeedbackEventData,
+		SoundEventData,
+		SpawnEffectEventData
+	>();
 }
 
 const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const

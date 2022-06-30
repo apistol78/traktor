@@ -38,18 +38,17 @@ Ref< Object > PhysicsFactory::create(resource::IResourceManager* resourceManager
 	{
 		Ref< MeshResource > resource = instance->getObject< MeshResource >();
 		if (!resource)
-			return 0;
+			return nullptr;
 
 		Ref< IStream > stream = instance->readData(L"Data");
 		if (!stream)
-			return 0;
+			return nullptr;
 
 		Ref< Mesh > mesh = new Mesh();
 		if (!mesh->read(stream))
-			mesh = 0;
+			mesh = nullptr;
 
 		stream->close();
-
 		return mesh;
 	}
 	else if (is_type_a< CollisionSpecification >(productType))
@@ -57,7 +56,7 @@ Ref< Object > PhysicsFactory::create(resource::IResourceManager* resourceManager
 		return instance->getObject< CollisionSpecification >();
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

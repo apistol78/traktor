@@ -228,6 +228,16 @@ TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeIn
 	return typeSet;
 }
 
+TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3, const TypeInfo& t4)
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&t1);
+	typeSet.insert(&t2);
+	typeSet.insert(&t3);
+	typeSet.insert(&t4);
+	return typeSet;
+}
+
 uint32_t type_difference(const TypeInfo& base, const TypeInfo& type)
 {
 	uint32_t difference = 0;

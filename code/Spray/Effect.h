@@ -20,7 +20,7 @@ namespace traktor
 class EffectInstance;
 class EffectLayer;
 
-/*! \brief
+/*! Effect immutable descriptor.
  * \ingroup Spray
  */
 class T_DLLCLASS Effect : public Object
@@ -28,7 +28,7 @@ class T_DLLCLASS Effect : public Object
 	T_RTTI_CLASS;
 
 public:
-	Effect(
+	explicit Effect(
 		float duration,
 		float loopStart,
 		float loopEnd,

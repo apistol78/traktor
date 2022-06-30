@@ -28,7 +28,7 @@ class MemberIdProxy : public MemberComplex
 public:
 	typedef IdProxy< Class > value_type;
 
-	MemberIdProxy(const wchar_t* const name, value_type& ref)
+	explicit MemberIdProxy(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
