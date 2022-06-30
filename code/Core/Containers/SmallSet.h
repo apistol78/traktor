@@ -1,11 +1,8 @@
 #pragma once
 
 #include <initializer_list>
+#include <utility>
 #include "Core/Containers/AlignedVector.h"
-
-#if defined(T_CXX11)
-#	include <utility>
-#endif
 
 namespace traktor
 {
@@ -32,12 +29,10 @@ public:
 	{
 	}
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	SmallSet(SmallSet&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 	}
-#endif
 
 	SmallSet(const std::initializer_list< Key >& iv)
 	:	m_data(iv)
@@ -192,13 +187,11 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	SmallSet& operator = (SmallSet&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 		return *this;
 	}
-#endif
 
 private:
 	AlignedVector< Key > m_data;

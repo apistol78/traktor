@@ -1,11 +1,8 @@
 #pragma once
 
+#include <functional>
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
-
-#if defined(T_CXX11) && !defined(__PS3__)
-#	include <functional>
-#endif
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,9 +27,7 @@ public:
 
 	virtual const wchar_t* const get() const = 0;
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	virtual void enumerate(const std::function< void(const wchar_t*) >& fn) const = 0;
-#endif
 
 	virtual void serialize(ISerializer& s) const override final;
 };
@@ -82,13 +77,11 @@ public:
 		return nullptr;
 	}
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	virtual void enumerate(const std::function< void(const wchar_t*) >& fn) const override final
 	{
 		for (const Key* k = m_keys; k->id; ++k)
 			fn(k->id);		
 	}
-#endif
 
 	const Key* keys() const { return m_keys; }
 

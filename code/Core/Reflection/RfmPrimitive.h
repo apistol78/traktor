@@ -56,35 +56,21 @@ private:
 	type_t T_ALIGN16 m_value;
 };
 
-#if defined(T_CXX11)
-#	define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
-		class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
-		{														\
-			T_RTTI_CLASS;										\
-																\
-		public:													\
-			NAME(const wchar_t* name, TYPE_CONST_REF value)		\
-			:	RfmPrimitive< TYPE >(name, value)				\
-			{													\
-			}													\
-																\
-			NAME(NAME const &) = delete;						\
-			NAME(NAME &&) = delete;								\
-			void operator = (NAME const &) = delete;			\
-		};
-#else
-#	define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
-		class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
-		{														\
-			T_RTTI_CLASS;										\
-																\
-		public:													\
-			NAME(const wchar_t* name, TYPE_CONST_REF value)		\
-			:	RfmPrimitive< TYPE >(name, value)				\
-			{													\
-			}													\
-		};
-#endif
+#define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
+	class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
+	{														\
+		T_RTTI_CLASS;										\
+															\
+	public:													\
+		NAME(const wchar_t* name, TYPE_CONST_REF value)		\
+		:	RfmPrimitive< TYPE >(name, value)				\
+		{													\
+		}													\
+															\
+		NAME(NAME const &) = delete;						\
+		NAME(NAME &&) = delete;								\
+		void operator = (NAME const &) = delete;			\
+	};
 
 T_DEFINE_DERIVED_CLASS(RfmPrimitiveBoolean, bool, bool)
 T_DEFINE_DERIVED_CLASS(RfmPrimitiveInt8, int8_t, int8_t)

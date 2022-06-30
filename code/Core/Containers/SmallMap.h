@@ -1,10 +1,7 @@
 #pragma once
 
+#include <utility>
 #include "Core/Containers/AlignedVector.h"
-
-#if defined(T_CXX11)
-#	include <utility>
-#endif
 
 namespace traktor
 {
@@ -34,12 +31,10 @@ public:
 	{
 	}
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	SmallMap(SmallMap&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 	}
-#endif
 
 	void swap(SmallMap& src)
 	{
@@ -248,13 +243,11 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11) && !defined(__PS3__)
 	SmallMap& operator = (SmallMap&& src) noexcept
 	{
 		m_data = std::move(src.m_data);
 		return *this;
 	}
-#endif
 
 private:
 	AlignedVector< pair_t > m_data;

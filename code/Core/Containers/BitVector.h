@@ -27,13 +27,11 @@ public:
 		m_size = bv.m_size;
 	}
 
-#if defined(T_CXX11)
 	BitVector(BitVector&& bv)
 	{
 		m_data.move(bv.m_data);
 		m_size = bv.m_size;
 	}
-#endif
 
 	void assign(uint32_t size, bool initial)
 	{
@@ -94,14 +92,12 @@ public:
 		return *this;
 	}
 
-#if defined(T_CXX11)
 	BitVector& operator = (BitVector&& bv)
 	{
 		m_data.move(bv.m_data);
 		m_size = bv.m_size;
 		return *this;
 	}
-#endif
 
 private:
 	AutoArrayPtr< uint32_t > m_data;
