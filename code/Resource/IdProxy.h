@@ -26,40 +26,32 @@ template < typename ResourceType >
 class IdProxy
 {
 public:
-	IdProxy()
-	:	m_tag(0)
-	{
-	}
+	IdProxy() = default;
 
 	IdProxy(const IdProxy< ResourceType >& rs)
 	:	m_id(rs.m_id)
 	,	m_handle(rs.m_handle)
-	,	m_tag(0)
 	{
 	}
 
 	explicit IdProxy(const Guid& id)
 	:	m_id(id)
-	,	m_tag(0)
 	{
 	}
 
 	explicit IdProxy(ResourceHandle* handle)
 	:	m_handle(handle)
-	,	m_tag(0)
 	{
 	}
 
 	explicit IdProxy(ResourceHandle* handle, const Guid& id)
 	:	m_id(id)
 	,	m_handle(handle)
-	,	m_tag(0)
 	{
 	}
 
 	explicit IdProxy< ResourceType >(ResourceType* resource)
 	:	m_handle(new ExplicitResourceHandle(resource))
-	,	m_tag(0)
 	{
 	}
 
@@ -155,7 +147,7 @@ public:
 private:
 	Guid m_id;
 	Ref< ResourceHandle > m_handle;
-	intptr_t m_tag;
+	intptr_t m_tag = 0;
 };
 
 	}

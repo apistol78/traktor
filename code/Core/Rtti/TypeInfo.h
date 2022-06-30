@@ -168,15 +168,20 @@ private:
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1);
 
-/*! Create type info set from single type.
+/*! Create type info set from two types.
  * \ingroup Core
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2);
 
-/*! Create type info set from single type.
+/*! Create type info set from three types.
  * \ingroup Core
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3);
+
+/*! Create type info set from four types.
+ * \ingroup Core
+ */
+TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3, const TypeInfo& t4);
 
 /*! Check if type is identical.
  * \ingroup Core

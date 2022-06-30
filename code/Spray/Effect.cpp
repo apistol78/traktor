@@ -25,9 +25,9 @@ Effect::Effect(
 Ref< EffectInstance > Effect::createInstance() const
 {
 	Ref< EffectInstance > effectInstance = new EffectInstance(this);
-	for (RefArray< EffectLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (auto layer : m_layers)
 	{
-		Ref< EffectLayerInstance > layerInstance = (*i)->createInstance();
+		Ref< EffectLayerInstance > layerInstance = layer->createInstance();
 		if (layerInstance)
 			effectInstance->m_layerInstances.push_back(layerInstance);
 	}

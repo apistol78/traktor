@@ -19,26 +19,25 @@ template < typename ResourceType >
 class Proxy
 {
 public:
-	Proxy< ResourceType >()
-	:	m_tag(0)
-	{
-	}
+	Proxy< ResourceType >() = default;
 
 	Proxy< ResourceType >(const Proxy< ResourceType >& rs)
 	:	m_handle(rs.m_handle)
-	,	m_tag(0)
 	{
+	}
+
+	Proxy< ResourceType >(Proxy< ResourceType >&& rs)
+	{
+		m_handle = std::move(rs.m_handle);
 	}
 
 	explicit Proxy< ResourceType >(ResourceHandle* handle)
 	:	m_handle(handle)
-	,	m_tag(0)
 	{
 	}
 
 	explicit Proxy< ResourceType >(ResourceType* resource)
 	:	m_handle(new ExplicitResourceHandle(resource))
-	,	m_tag(0)
 	{
 	}
 
@@ -122,9 +121,21 @@ public:
 		return bool(getResource() != rs);
 	}
 
+	Proxy< ResourceType >& operator = (const Proxy< ResourceType >& rh)
+	{
+		m_handle = rh.m_handle;
+		return *this;
+	}
+
+	Proxy< ResourceType >& operator = (Proxy< ResourceType >&& rh)
+	{
+		m_handle = std::move(rh.m_handle);
+		return *this;
+	}
+
 private:
 	Ref< ResourceHandle > m_handle;
-	mutable intptr_t m_tag;
+	mutable intptr_t m_tag = 0;
 };
 
 /*! Dynamic cast object.

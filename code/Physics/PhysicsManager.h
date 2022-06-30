@@ -42,20 +42,11 @@ class Joint;
 struct QueryResult
 {
 	Ref< Body > body;
-	Vector4 position;
-	Vector4 normal;
-	float distance;
-	float fraction;
-	int32_t material;
-
-	QueryResult()
-	:	position(Vector4::zero())
-	,	normal(Vector4::zero())
-	,	distance(0.0f)
-	,	fraction(0.0f)
-	,	material(0)
-	{
-	}
+	Vector4 position = Vector4::zero();
+	Vector4 normal = Vector4::zero();
+	float distance = 0.0f;
+	float fraction = 0.0f;
+	int32_t material = 0;
 };
 
 /*! Triangle result-
@@ -108,21 +99,21 @@ struct QueryFilter
 	uint32_t ignoreGroup;
 	uint32_t ignoreClusterId;
 
-	QueryFilter(uint32_t includeGroup_)
+	explicit QueryFilter(uint32_t includeGroup_)
 	:	includeGroup(includeGroup_)
 	,	ignoreGroup(0)
 	,	ignoreClusterId(0)
 	{
 	}
 
-	QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_)
+	explicit QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_)
 	:	includeGroup(includeGroup_)
 	,	ignoreGroup(ignoreGroup_)
 	,	ignoreClusterId(0)
 	{
 	}
 
-	QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_, uint32_t ignoreClusterId_)
+	explicit QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_, uint32_t ignoreClusterId_)
 	:	includeGroup(includeGroup_)
 	,	ignoreGroup(ignoreGroup_)
 	,	ignoreClusterId(ignoreClusterId_)

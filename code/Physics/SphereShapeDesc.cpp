@@ -10,11 +10,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.SphereShapeDesc", ShapeDesc::Version, SphereShapeDesc, ShapeDesc)
 
-SphereShapeDesc::SphereShapeDesc()
-:	m_radius(1.0f)
-{
-}
-
 void SphereShapeDesc::setRadius(float radius)
 {
 	m_radius = radius;
