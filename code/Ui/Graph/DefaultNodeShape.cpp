@@ -158,7 +158,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 					Point(sx[ix], sy[iy]),
 					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
 					m_imageNode[imageIndex],
-					ui::BmAlpha
+					ui::BlendMode::Alpha
 				);
 			}
 		}
@@ -201,7 +201,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			Point(0, 0),
 			node->getImage()->getSize(),
 			node->getImage(),
-			BmNone
+			BlendMode::Opaque
 		);
 		top += node->getImage()->getSize().cy;
 	}
@@ -226,7 +226,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			Point(0, 0),
 			pinSize,
 			hotPin == inputPins[i] ? m_imagePinHot : m_imagePin,
-			ui::BmAlpha
+			ui::BlendMode::Alpha
 		);
 	}
 
@@ -243,7 +243,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			Point(0, 0),
 			pinSize,
 			hotPin == outputPins[i] ? m_imagePinHot : m_imagePin,
-			ui::BmAlpha
+			ui::BlendMode::Alpha
 		);
 	}
 

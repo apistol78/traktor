@@ -87,9 +87,9 @@ public:
 
 	void fillPolygon(const Point* pnts, int count);
 
-	void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode = BmNone);
+	void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear);
 
-	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode = BmNone);
+	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode = BlendMode::Opaque, Filter filter = Filter::Linear);
 
 	void drawText(const Point& at, const std::wstring& text);
 

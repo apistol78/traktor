@@ -60,7 +60,7 @@ void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::Point(0, 0),
 		bitmapSize,
 		m_bitmap,
-		ui::BmAlpha
+		ui::BlendMode::Alpha
 	);
 }
 

@@ -93,7 +93,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
 				m_imageNode[imageIndex],
-				ui::BmAlpha
+				BlendMode::Alpha
 			);
 		}
 	}
@@ -113,7 +113,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		Point(0, 0),
 		pinSize,
 		hotPin == node->getOutputPins()[0] ? m_imagePinHot : m_imagePin,
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 
 	int32_t left = rc.left + ui::dpi96(c_marginWidth) + ui::dpi96(c_textMarginLeft);

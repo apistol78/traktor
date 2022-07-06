@@ -316,7 +316,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 			Point((m_state & GridRow::RsExpanded) ? size : 0, 0),
 			Size(size, size),
 			expand,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 

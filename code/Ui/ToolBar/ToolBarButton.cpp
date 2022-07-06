@@ -128,7 +128,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 			Point(m_imageIndex * imageWidth, 0),
 			Size(imageWidth, imageHeight),
 			images,
-			BmAlpha
+			BlendMode::Alpha
 		);
 		centerOffsetX += imageWidth + dpi96(4);
 	}

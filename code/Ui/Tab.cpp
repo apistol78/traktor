@@ -466,7 +466,7 @@ void Tab::eventPaint(PaintEvent* event)
 						Point(0, 0),
 						closeSize,
 						m_bitmapClose,
-						BmAlpha
+						BlendMode::Alpha
 					);
 				}
 

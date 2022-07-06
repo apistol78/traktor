@@ -276,7 +276,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::Point(platform->getIconIndex() * logoSize, 0),
 		ui::Size(logoSize, logoSize),
 		m_bitmapLogos,
-		ui::BmAlpha
+		ui::BlendMode::Alpha
 	);
 
 	if (m_instance->getState() == TsIdle)

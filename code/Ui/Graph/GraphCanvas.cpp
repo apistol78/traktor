@@ -108,7 +108,7 @@ void GraphCanvas::fillPolygon(const Point* pnts, int count)
 	m_canvas->fillPolygon(&tpnts[0], count);
 }
 
-void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
+void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
 {
 	m_canvas->drawBitmap(
 		(dstAt - Size(1, 1)) * m_scale,

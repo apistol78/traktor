@@ -84,7 +84,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 		Point(0, 0),
 		image->getSize(),
 		image,
-		BmAlpha
+		BlendMode::Alpha
 	);
 
 	Rect rcText = rcInner;

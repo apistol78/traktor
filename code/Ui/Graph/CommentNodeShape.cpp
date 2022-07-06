@@ -69,7 +69,7 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 					Point(sx[ix], sy[iy]),
 					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
 					m_imageNode,
-					ui::BmAlpha
+					ui::BlendMode::Alpha
 				);
 			}
 		}

@@ -116,7 +116,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
 				m_imageNode[imageIndex],
-				ui::BmAlpha
+				BlendMode::Alpha
 			);
 		}
 	}
@@ -136,7 +136,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		Point(0, 0),
 		pinSize,
 		hotPin == node->getInputPins()[0] ? m_imagePinHot : m_imagePin,
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 
 	Point outputPinPos(
@@ -150,7 +150,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		Point(0, 0),
 		pinSize,
 		hotPin == node->getOutputPins()[0] ? m_imagePinHot : m_imagePin,
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 
 	std::wstring info = node->getInfo();

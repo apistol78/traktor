@@ -76,7 +76,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 		Point(0, 0),
 		sz,
 		m_imageNode[imageIndex],
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 
 	int32_t f = dpi96(0);
@@ -88,7 +88,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 		Point(0, 0),
 		pinSize,
 		hotPin == node->getInputPins()[0] ? m_imagePinHot : m_imagePin,
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 
 	canvas->drawBitmap(
@@ -97,7 +97,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 		Point(0, 0),
 		pinSize,
 		hotPin == node->getOutputPins()[0] ? m_imagePinHot : m_imagePin,
-		ui::BmAlpha
+		BlendMode::Alpha
 	);
 }
 
