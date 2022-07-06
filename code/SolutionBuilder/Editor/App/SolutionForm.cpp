@@ -526,6 +526,7 @@ void SolutionForm::commandNew()
 
 	m_solution = new Solution();
 	m_solution->setName(L"Unnamed");
+	m_solution->setRootPath(L"build");
 
 	m_solutionHash = DeepHash(m_solution).get();
 	m_solutionFileName = L"";
@@ -870,6 +871,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				Ref< Project > project = new Project();
 				project->setName(L"Unnamed");
+				project->setSourcePath(L"code/");
 
 				solution->addProject(project);
 

@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
@@ -56,12 +57,16 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 	if (m_solution && m_project)
 		return true;
 
-	Path solutionFileName = Path(referringSolutionPath.getPathOnly()) + Path(m_solutionFileName);
+	const Path refSolutionPath = FileSystem::getInstance().getAbsolutePath(referringSolutionPath);
+	const Path externalSolutionFileName(m_solutionFileName);
+
+	Path solutionFileName = Path(refSolutionPath.getPathOnly()) + externalSolutionFileName;
+	solutionFileName = solutionFileName.normalized();
 
 	m_solution = solutionLoader->load(solutionFileName.getPathName());
 	if (!m_solution)
 	{
-		log::error << L"Unable to load external solution \"" << solutionFileName.getPathName() << L"\"; corrupt or missing" << Endl;
+		log::error << L"Unable to load external solution \"" << solutionFileName.getPathName() << L"\"; corrupt or missing?" << Endl;
 		return false;
 	}
 
@@ -86,7 +91,7 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 		if (auto projectDependency = dynamic_type_cast< ProjectDependency* >(dependency))
 		{
 			Ref< ExternalDependency > externalDependency = new ExternalDependency(
-				m_solutionFileName,
+				solutionFileName.getPathName(),
 				projectDependency->getProject()->getName()
 			);
 			if (externalDependency->resolve(solutionFileName, solutionLoader))

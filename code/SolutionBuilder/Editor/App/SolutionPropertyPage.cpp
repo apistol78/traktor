@@ -23,7 +23,7 @@ bool SolutionPropertyPage::create(ui::Widget* parent)
 		return false;
 
 	Ref< ui::Static > rootLabel = new ui::Static();
-	rootLabel->create(this, L"Root path");
+	rootLabel->create(this, L"Build path");
 
 	m_rootPath = new ui::Edit();
 	m_rootPath->create(this);
