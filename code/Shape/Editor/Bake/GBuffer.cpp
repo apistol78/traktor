@@ -1,4 +1,5 @@
 #include <ctime>
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Const.h"

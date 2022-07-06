@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
