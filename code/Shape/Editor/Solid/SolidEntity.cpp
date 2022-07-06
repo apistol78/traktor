@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Misc/SafeDestroy.h"
