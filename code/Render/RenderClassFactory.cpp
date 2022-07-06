@@ -37,7 +37,7 @@ class BoxedDisplayMode : public Object
 	T_RTTI_CLASS;
 
 public:
-	BoxedDisplayMode(const DisplayMode& displayMode)
+	explicit BoxedDisplayMode(const DisplayMode& displayMode)
 	:	m_displayMode(displayMode)
 	{
 	}
@@ -67,7 +67,7 @@ public:
 		m_value.format = TfR8G8B8A8;
 	}
 
-	BoxedSimpleTextureCreateDesc(const SimpleTextureCreateDesc& stcd)
+	explicit BoxedSimpleTextureCreateDesc(const SimpleTextureCreateDesc& stcd)
 	:	m_value(stcd)
 	{
 	}

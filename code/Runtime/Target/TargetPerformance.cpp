@@ -78,7 +78,7 @@ bool TpsRuntime::check(const TargetPerfSet& old) const
 		std::abs(physics - o.physics) >= 0.0001f ||
 		std::abs(input - o.input) >= 0.0001f ||
 		std::abs(garbageCollect - o.garbageCollect) >= 0.001f ||
-		std::abs(steps - o.steps) >= 0.001f ||
+		steps != o.steps ||
 		std::abs(interval - o.interval) >= 0.1f ||
 		collisions != o.collisions;
 }
@@ -93,7 +93,7 @@ void TpsRuntime::serialize(ISerializer& s)
 	s >> Member< float >(L"physics", physics);
 	s >> Member< float >(L"input", input);
 	s >> Member< float >(L"garbageCollect", garbageCollect);
-	s >> Member< float >(L"steps", steps);
+	s >> Member< int32_t >(L"steps", steps);
 	s >> Member< float >(L"interval", interval);
 	s >> Member< uint32_t >(L"collisions", collisions);
 }
