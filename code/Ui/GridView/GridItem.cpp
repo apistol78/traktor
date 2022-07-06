@@ -147,7 +147,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 			Point(0, 0),
 			szImage,
 			image,
-			BmAlpha
+			BlendMode::Alpha
 		);
 
 		rcText.left += szImage.cx + 2;

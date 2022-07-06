@@ -124,7 +124,7 @@ void Image::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			imageSize,
 			m_image,
-			m_transparent ? BmAlpha : BmNone
+			m_transparent ? BlendMode::Alpha : BlendMode::Opaque
 		);
 	}
 	else
@@ -150,7 +150,7 @@ void Image::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			imageSize,
 			m_image,
-			m_transparent ? BmAlpha : BmNone
+			m_transparent ? BlendMode::Alpha : BlendMode::Opaque
 		);
 	}
 	

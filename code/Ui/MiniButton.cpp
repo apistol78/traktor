@@ -121,7 +121,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			size,
 			m_image,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 	else

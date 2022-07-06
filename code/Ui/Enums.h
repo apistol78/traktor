@@ -88,18 +88,24 @@ enum Align
 	AnBottom	= AnRight
 };
 
-enum LineStyle
+enum class LineStyle
 {
-	LsSolid,
-	LsDot,
-	LsDotDash
+	Solid,
+	Dot,
+	DotDash
 };
 
-enum BlendMode
+enum class BlendMode
 {
-	BmNone		= 0,
-	BmAlpha		= 1,
-	BmModulate	= 2
+	Opaque,
+	Alpha,
+	Modulate
+};
+
+enum class Filter
+{
+	Nearest,
+	Linear
 };
 
 enum KeyStates

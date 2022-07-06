@@ -91,7 +91,7 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 			ui::Point(0, 0),
 			m_image->getSize(),
 			m_image,
-			ui::BmNone
+			ui::BlendMode::Opaque
 		);
 	}
 

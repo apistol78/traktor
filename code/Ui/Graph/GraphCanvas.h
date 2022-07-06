@@ -43,7 +43,7 @@ public:
 
 	void fillPolygon(const Point* pnts, int count);
 
-	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode);
+	void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode);
 
 	void drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign);
 

@@ -280,15 +280,15 @@ void LogList::eventPaint(PaintEvent* event)
 		{
 		case LvDebug:
 		case LvInfo:
-			canvas.drawBitmap(iconPos, Point(0, 0), iconSize, m_icons, BmAlpha);
+			canvas.drawBitmap(iconPos, Point(0, 0), iconSize, m_icons, BlendMode::Alpha);
 			break;
 
 		case LvWarning:
-			canvas.drawBitmap(iconPos, Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
+			canvas.drawBitmap(iconPos, Point(iconSize.cx, 0), iconSize, m_icons, BlendMode::Alpha);
 			break;
 
 		case LvError:
-			canvas.drawBitmap(iconPos, Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
+			canvas.drawBitmap(iconPos, Point(2 * iconSize.cx, 0), iconSize, m_icons, BlendMode::Alpha);
 			break;
 
 		default:

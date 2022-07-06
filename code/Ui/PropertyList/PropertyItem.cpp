@@ -256,7 +256,7 @@ void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 			ui::Point(m_expanded ? size : 0, 0),
 			ui::Size(size, size),
 			s_imageExpand,
-			BmAlpha
+			BlendMode::Alpha
 		);
 
 		left += size + dpi96(4);

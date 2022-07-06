@@ -75,7 +75,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::Point(0, y),
 		ui::Size(sz.cx, dy),
 		m_bitmapGrain,
-		ui::BmAlpha
+		ui::BlendMode::Alpha
 	);
 
 	canvas.drawBitmap(
@@ -86,7 +86,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		),
 		ui::Size(dx, dy),
 		m_bitmapGrain,
-		ui::BmAlpha
+		ui::BlendMode::Alpha
 	);
 
 	if (!m_text.empty())

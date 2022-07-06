@@ -228,7 +228,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 			Point(0, 0),
 			sz,
 			image,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 }

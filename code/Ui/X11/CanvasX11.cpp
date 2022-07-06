@@ -175,7 +175,7 @@ void CanvasX11::fillPolygon(const Point* pnts, int count)
 	cairo_fill(m_cr);
 }
 
-void CanvasX11::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasX11::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	BitmapX11* bm = static_cast< BitmapX11* >(bitmap);
 	T_ASSERT (bm);
@@ -185,11 +185,32 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& s
 		return;
 
 	cairo_set_source_surface(m_cr, cs, dstAt.x - srcAt.x, dstAt.y - srcAt.y);
+
+	cairo_pattern_t* p = cairo_get_source(m_cr);
+	if (filter == Filter::Nearest)
+		cairo_pattern_set_filter(p, CAIRO_FILTER_NEAREST);
+	else
+		cairo_pattern_set_filter(p, CAIRO_FILTER_BILINEAR);
+
+	switch (blendMode)
+	{
+	case BlendMode::Opaque:
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
+		break;
+
+	case BlendMode::Alpha:
+	case BlendMode::Modulate:
+		break;
+
+	default:
+		return;
+	}
+	
 	cairo_rectangle(m_cr, dstAt.x, dstAt.y, size.cx, size.cy);
 	cairo_fill(m_cr);
 }
 
-void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	BitmapX11* bm = static_cast< BitmapX11* >(bitmap);
 	T_ASSERT (bm);
@@ -204,14 +225,20 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 	cairo_scale(m_cr, sx, sy);
 	cairo_set_source_surface(m_cr, cs, dstAt.x / sx - srcAt.x, dstAt.y / sy - srcAt.y);
 
+	cairo_pattern_t* p = cairo_get_source(m_cr);
+	if (filter == Filter::Nearest)
+		cairo_pattern_set_filter(p, CAIRO_FILTER_NEAREST);
+	else
+		cairo_pattern_set_filter(p, CAIRO_FILTER_BILINEAR);
+
 	switch (blendMode)
 	{
-	case BmNone:
+	case BlendMode::Opaque:
 		cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
 		break;
 
-	case BmAlpha:
-	case BmModulate:
+	case BlendMode::Alpha:
+	case BlendMode::Modulate:
 		break;
 
 	default:

@@ -1554,7 +1554,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 					Point(m_lines[i].image * m_imageWidth, 0),
 					Size(m_imageWidth, m_imageHeight),
 					m_image,
-					BmAlpha
+					BlendMode::Alpha
 				);
 			}
 

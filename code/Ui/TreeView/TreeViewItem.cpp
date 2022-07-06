@@ -535,7 +535,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 			Point(isExpanded() ? d : 0, 0),
 			Size(d, d),
 			m_view->m_imageState,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 
@@ -557,7 +557,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 					Point(image * d, 0),
 					Size(d, d),
 					m_view->m_image,
-					BmAlpha
+					BlendMode::Alpha
 				);
 
 			if (getOverlayImage(i) >= 0)
@@ -566,7 +566,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 					Point(getOverlayImage(i) * d, 0),
 					Size(d, d),
 					m_view->m_image,
-					BmAlpha
+					BlendMode::Alpha
 				);
 		}
 	}

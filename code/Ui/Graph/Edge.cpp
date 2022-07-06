@@ -230,7 +230,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point(0, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BmAlpha
+			BlendMode::Alpha
 		);
 
 		canvas->drawBitmap(
@@ -239,7 +239,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point(sz.cx / 3, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BmAlpha
+			BlendMode::Alpha
 		);
 
 		canvas->drawBitmap(
@@ -248,7 +248,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 			Point((sz.cx * 2) / 3, 0),
 			Size(sz.cx / 3, sz.cy),
 			imageLabel,
-			BmAlpha
+			BlendMode::Alpha
 		);
 
 		canvas->drawText(

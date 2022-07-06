@@ -76,7 +76,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 			Point(0, 0),
 			thumbSize,
 			m_bitmapImage,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 

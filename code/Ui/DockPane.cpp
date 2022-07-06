@@ -428,7 +428,7 @@ void DockPane::draw(Canvas& canvas)
 				Point(0, 0),
 				Size(w, gh),
 				m_bitmapGripper,
-				BmAlpha
+				BlendMode::Alpha
 			);
 			gx += gw;
 		}
@@ -439,7 +439,7 @@ void DockPane::draw(Canvas& canvas)
 			Point(0, 0),
 			m_bitmapClose->getSize(),
 			m_bitmapClose,
-			BmAlpha
+			BlendMode::Alpha
 		);
 	}
 
