@@ -45,7 +45,7 @@ public:
 	float physics = 0.0f;
 	float input = 0.0f;
 	float garbageCollect = 0.0f;
-	float steps = 0.0f;
+	int32_t steps = 0;
 	float interval = 0.0f;
 	uint32_t collisions = 0;	//!< Render collisions, when update and render threads collide.
 

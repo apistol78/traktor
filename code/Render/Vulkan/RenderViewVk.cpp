@@ -516,6 +516,7 @@ bool RenderViewVk::beginFrame()
 	vmaSetCurrentFrameIndex(m_context->getAllocator(), m_counter);
 
 	// Get next target from swap chain.
+	T_PROFILER_BEGIN(L"vkAcquireNextImageKHR");
     vkAcquireNextImageKHR(
 		m_context->getLogicalDevice(),
 		m_swapChain,
@@ -524,6 +525,7 @@ bool RenderViewVk::beginFrame()
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
+	T_PROFILER_END();
 	if (m_currentImageIndex >= m_frames.size())
 		return false;
 
@@ -533,6 +535,7 @@ bool RenderViewVk::beginFrame()
 	// \hack Lazy create since we don't know about rendering thread until beginFrame
 	// is called... This assumes no other thread will perform rendering during the
 	// life time of the render view.
+	T_PROFILER_BEGIN(L"Wait graphics queue");
 	if (frame.graphicsCommandBuffer)
 	{
 		// Ensure command buffer has been consumed by GPU.
@@ -555,6 +558,7 @@ bool RenderViewVk::beginFrame()
 		if (!frame.graphicsCommandBuffer)
 			return false;
 	}
+	T_PROFILER_END();
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	// Reset time queries.
@@ -574,6 +578,8 @@ bool RenderViewVk::beginFrame()
 
 void RenderViewVk::endFrame()
 {
+	T_PROFILER_SCOPE(L"RenderViewVk::endFrame");
+
 	auto& frame = m_frames[m_currentImageIndex];
 
 	frame.boundPipeline = 0;
@@ -608,6 +614,8 @@ void RenderViewVk::endFrame()
 
 void RenderViewVk::present()
 {
+	T_PROFILER_SCOPE(L"RenderViewVk::present");
+
 	auto& frame = m_frames[m_currentImageIndex];
 	VkResult result;
 
@@ -1376,6 +1384,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	// Always use 3 buffers on iOS, seems to be preferred by MoltenVK.
 #if defined(__IOS__) || defined(__ANDROID__)
 	desiredImageCount = 3;
+#elif defined(__LINUX__)
+	desiredImageCount = 1;
 #endif
 
 #if defined(__IOS__)
@@ -1395,25 +1405,26 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::debug << L"Using FIFO presentation mode." << Endl;
+		log::info << L"Using FIFO presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
+		log::info << L"Using FIFO (relaxed) presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
+		log::info << L"Using IMMEDIATE presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::debug << L"Using MAILBOX presentation mode." << Endl;
+		log::info << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
-	if (desiredImageCount < surfaceCapabilities.minImageCount)
-		desiredImageCount = surfaceCapabilities.minImageCount;
-	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
-		desiredImageCount = surfaceCapabilities.maxImageCount;
+	uint32_t clampedImageCount = desiredImageCount;
+	if (clampedImageCount < surfaceCapabilities.minImageCount)
+		clampedImageCount = surfaceCapabilities.minImageCount;
+	else if (surfaceCapabilities.maxImageCount != 0 && clampedImageCount > surfaceCapabilities.maxImageCount)
+		clampedImageCount = surfaceCapabilities.maxImageCount;
 
 	// Create swap chain.
 	VkSwapchainCreateInfoKHR scci = {};
 	scci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	scci.surface = m_surface;
-	scci.minImageCount = desiredImageCount;
+	scci.minImageCount = clampedImageCount;
 	scci.imageFormat = colorFormat;
 	scci.imageColorSpace = colorSpace;
 	scci.imageExtent = surfaceResolution;
@@ -1452,7 +1463,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, presentImages.ptr());
 
-	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
+	log::info << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -1521,7 +1532,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
 		{
-			log::debug << L"Found debug marker extension; debug markers enabled." << Endl;
+			log::info << L"Found debug marker extension; debug markers enabled." << Endl;
 			m_haveDebugMarkers = true;
 			break;
 		}

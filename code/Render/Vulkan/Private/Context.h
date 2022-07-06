@@ -15,6 +15,11 @@ namespace traktor
 class Queue;
 class UniformBufferPool;
 
+/*! Render system shared context.
+ *
+ * This context is owned by render system and shared
+ * across all render views.
+ */
 class Context : public Object
 {
 	T_RTTI_CLASS;
