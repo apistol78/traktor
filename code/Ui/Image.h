@@ -30,6 +30,7 @@ public:
 		WsTransparent = WsUser,
 		WsScale = (WsUser << 1),
 		WsScaleKeepAspect = (WsUser << 2),
+		WsNearestFilter = (WsUser << 3)
 	};
 
 	bool create(Widget* parent, IBitmap* image = nullptr, int style = WsNone);
@@ -53,6 +54,7 @@ private:
 	bool m_transparent = false;
 	bool m_scale = false;
 	bool m_keepAspect = false;
+	bool m_nearest = false;
 
 	void eventPaint(PaintEvent* event);
 };

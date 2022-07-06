@@ -19,6 +19,7 @@ bool Image::create(Widget* parent, IBitmap* image, int style)
 	m_transparent = bool((style & WsTransparent) == WsTransparent);
 	m_scale = bool((style & (WsScale | WsScaleKeepAspect)) != 0);
 	m_keepAspect = bool((style & WsScaleKeepAspect) == WsScaleKeepAspect);
+	m_nearest = bool((style & WsNearestFilter) == WsNearestFilter);
 
 	addEventHandler< PaintEvent >(this, &Image::eventPaint);
 
@@ -124,7 +125,8 @@ void Image::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			imageSize,
 			m_image,
-			m_transparent ? BlendMode::Alpha : BlendMode::Opaque
+			m_transparent ? BlendMode::Alpha : BlendMode::Opaque,
+			m_nearest ? Filter::Nearest : Filter::Linear
 		);
 	}
 	else
@@ -150,7 +152,8 @@ void Image::eventPaint(PaintEvent* event)
 			Point(0, 0),
 			imageSize,
 			m_image,
-			m_transparent ? BlendMode::Alpha : BlendMode::Opaque
+			m_transparent ? BlendMode::Alpha : BlendMode::Opaque,
+			m_nearest ? Filter::Nearest : Filter::Linear
 		);
 	}
 	
