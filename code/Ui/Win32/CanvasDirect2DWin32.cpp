@@ -701,12 +701,12 @@ void CanvasDirect2DWin32::fillPolygon(const Point* pnts, int npnts)
 	);
 }
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
-	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode);
+	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode, filter);
 }
 
-void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	ID2D1Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
