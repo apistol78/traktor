@@ -75,7 +75,8 @@ std::wstring OS::getCommandLine() const
 	FILE* fp = fopen("/proc/self/cmdline", "r");
 	if (fp)
 	{
-		fgets(cmdLine, sizeof(cmdLine), fp);
+		if (fgets(cmdLine, sizeof(cmdLine), fp) == nullptr)
+			cmdLine[0] = '\0';
 		fclose(fp);
 	}
 	return mbstows(cmdLine);
@@ -125,14 +126,12 @@ std::wstring OS::getWritableFolderPath() const
 
 bool OS::openFile(const std::wstring& file) const
 {
-	system(("xdg-open " + wstombs(file)).c_str());
-	return true;
+	return system(("xdg-open " + wstombs(file)).c_str()) != 0;
 }
 
 bool OS::editFile(const std::wstring& file) const
 {
-	system(("xdg-open " + wstombs(file)).c_str());
-	return true;
+	return system(("xdg-open " + wstombs(file)).c_str()) != 0;
 }
 
 bool OS::exploreFile(const std::wstring& file) const
@@ -258,8 +257,10 @@ Ref< IProcess > OS::execute(
 	// Redirect standard IO.
 	if ((flags & EfRedirectStdIO) != 0)
 	{
-		pipe(childStdOut);
-		pipe(childStdErr);
+		if (pipe(childStdOut) != 0)
+			return nullptr;
+		if (pipe(childStdErr) != 0)
+			return nullptr;
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
