@@ -17,7 +17,7 @@ class SizeModifier : public Modifier
 public:
 	explicit SizeModifier(float adjustRate);
 
-	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const override final;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 
 private:
 	float m_adjustRate;

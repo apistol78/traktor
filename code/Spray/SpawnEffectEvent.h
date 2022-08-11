@@ -26,7 +26,7 @@ class SpawnEffectEvent : public world::IEntityEvent
 	T_RTTI_CLASS;
 
 public:
-	SpawnEffectEvent(
+	explicit SpawnEffectEvent(
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< Effect >& effect,
 		const Transform& transform,

@@ -27,8 +27,6 @@ class T_DLLCLASS SpawnEffectEventData : public world::IEntityEventData
 	T_RTTI_CLASS;
 
 public:
-	SpawnEffectEventData();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< Effect >& getEffect() const { return m_effect; }
@@ -41,9 +39,9 @@ public:
 
 private:
 	resource::Id< Effect > m_effect;
-	Transform m_transform;
-	bool m_follow;
-	bool m_useRotation;
+	Transform m_transform = Transform::identity();
+	bool m_follow = true;
+	bool m_useRotation = true;
 };
 
 	}

@@ -14,7 +14,7 @@ PlaneCollisionModifier::PlaneCollisionModifier(const Plane& plane, float radius,
 {
 }
 
-void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	Plane planeW = transform.toMatrix44() * m_plane;
 	Vector4 center = transform.translation();
@@ -22,7 +22,7 @@ void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& tr
 	for (size_t i = first; i < last; ++i)
 	{
 		Scalar rv = dot3(planeW.normal(), points[i].velocity);
-		if (rv >= 0.0f)
+		if (rv >= 0.0_simd)
 			continue;
 
 		Scalar rd = planeW.distance(points[i].position);

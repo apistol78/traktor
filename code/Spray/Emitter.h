@@ -44,7 +44,7 @@ class T_DLLCLASS Emitter : public Object
 	T_RTTI_CLASS;
 
 public:
-	Emitter(
+	explicit Emitter(
 		const Source* source,
 		const RefArray< const Modifier >& modifiers,
 		const resource::Proxy< render::Shader >& shader,

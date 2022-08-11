@@ -12,7 +12,7 @@ BrownianModifier::BrownianModifier(float factor)
 {
 }
 
-void BrownianModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void BrownianModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
 	{

@@ -13,7 +13,7 @@ GravityModifier::GravityModifier(const Vector4& gravity, bool world)
 {
 }
 
-void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	Vector4 gravity = (m_world ? m_gravity : transform * m_gravity) * deltaTime;
 	for (size_t i = first; i < last; ++i)

@@ -46,7 +46,7 @@ class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityFactory(
+	explicit EffectEntityFactory(
 		resource::IResourceManager* resourceManager,
 		world::EntityEventManager* eventManager,
 		sound::ISoundPlayer* soundPlayer,

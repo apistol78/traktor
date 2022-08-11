@@ -9,12 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SourceData", SourceData, ISerializable)
 
-SourceData::SourceData()
-:	m_constantRate(0.0f)
-,	m_velocityRate(0.0f)
-{
-}
-
 void SourceData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"constantRate", m_constantRate);

@@ -17,14 +17,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SequenceData", 0, SequenceData, I
 Ref< Sequence > SequenceData::createSequence(const world::IEntityBuilder* entityBuilder) const
 {
 	AlignedVector< Sequence::Key > keys;
-
 	keys.resize(m_keys.size());
 	for (size_t i = 0; i < m_keys.size(); ++i)
 	{
 		keys[i].T = m_keys[i].T;
 		keys[i].event = entityBuilder->create(m_keys[i].event);
 	}
-
 	return new Sequence(keys);
 }
 

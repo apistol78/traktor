@@ -17,10 +17,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.MeshRenderer", MeshRenderer, Object)
 void MeshRenderer::render(
 	mesh::InstanceMesh* mesh,
 	bool meshOrientationFromVelocity,
-	const PointVector& points
+	const pointVector_t& points
 )
 {
-	PointVector& p = m_meshes[mesh].first;
+	pointVector_t& p = m_meshes[mesh].first;
 	if (p.size() <= c_maxInstances)
 	{
 		p.insert(
@@ -37,7 +37,7 @@ void MeshRenderer::flush(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
+	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< pointVector_t, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
 		if (i->second.first.empty())
 			continue;

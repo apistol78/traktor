@@ -30,7 +30,7 @@ class T_DLLCLASS EffectFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectFactory(const world::IEntityBuilder* entityBuilder);
+	explicit EffectFactory(const world::IEntityBuilder* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

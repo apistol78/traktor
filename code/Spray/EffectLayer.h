@@ -36,7 +36,7 @@ class T_DLLCLASS EffectLayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	EffectLayer(
+	explicit EffectLayer(
 		float time,
 		float duration,
 		Emitter* emitter,

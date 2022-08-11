@@ -35,7 +35,7 @@ class T_DLLCLASS EffectInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	EffectInstance(const Effect* effect);
+	explicit EffectInstance(const Effect* effect);
 
 	void update(Context& context, const Transform& transform, bool enable);
 

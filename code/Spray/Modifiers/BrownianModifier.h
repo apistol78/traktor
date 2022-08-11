@@ -18,7 +18,7 @@ class BrownianModifier : public Modifier
 public:
 	explicit BrownianModifier(float factor);
 
-	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const override final;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 
 private:
 	Scalar m_factor;

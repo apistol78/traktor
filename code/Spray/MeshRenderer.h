@@ -50,7 +50,7 @@ public:
 	void render(
 		mesh::InstanceMesh* mesh,
 		bool meshOrientationFromVelocity,
-		const PointVector& points
+		const pointVector_t& points
 	);
 
 	void flush(
@@ -59,7 +59,7 @@ public:
 	);
 
 private:
-	SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > > m_meshes;
+	SmallMap< Ref< mesh::InstanceMesh >, std::pair< pointVector_t, bool > > m_meshes;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instances;
 };
 

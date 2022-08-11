@@ -47,9 +47,9 @@ class T_DLLCLASS EffectComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
+	explicit EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
-	EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context);
+	explicit EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context);
 
 	virtual void destroy() override final;
 

@@ -40,7 +40,7 @@ class T_DLLCLASS EffectLayerInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	EffectLayerInstance(
+	explicit EffectLayerInstance(
 		const EffectLayer* layer,
 		EmitterInstance* emitterInstance,
 		TrailInstance* trailInstance,

@@ -24,7 +24,7 @@ class SoundEvent : public world::IEntityEvent
 	T_RTTI_CLASS;
 
 public:
-	SoundEvent(
+	explicit SoundEvent(
 		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< sound::Sound >& sound,
 		bool positional,
