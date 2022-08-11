@@ -36,7 +36,7 @@ private:
 	Ref< const Sequence > m_sequence;
 	int32_t m_index;
 
-	SequenceInstance(const Sequence* sequence);
+	explicit SequenceInstance(const Sequence* sequence);
 };
 
 	}

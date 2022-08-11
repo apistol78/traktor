@@ -101,7 +101,7 @@ void PointRenderer::destroy()
 void PointRenderer::render(
 	render::Shader* shader,
 	const Plane& cameraPlane,
-	const PointVector& points,
+	const pointVector_t& points,
 	float middleAge,
 	float cullNearDistance,
 	float fadeNearRange,

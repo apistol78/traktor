@@ -33,7 +33,7 @@ class SoundEventInstance : public world::IEntityEventInstance
 	T_RTTI_CLASS;
 
 public:
-	SoundEventInstance(
+	explicit SoundEventInstance(
 		world::Entity* sender,
 		const Transform& Toffset,
 		sound::ISoundPlayer* soundPlayer,

@@ -24,7 +24,7 @@ VortexModifier::VortexModifier(
 {
 }
 
-void VortexModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void VortexModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	Vector4 axis = m_world ? m_axis : transform * m_axis;
 	Vector4 center = m_world ? transform.translation() : Vector4::origo();

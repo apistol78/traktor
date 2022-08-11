@@ -9,10 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSet", PointSet, Object)
 
-PointSet::PointSet()
-{
-}
-
 void PointSet::add(const Point& point)
 {
 	m_points.push_back(point);
@@ -43,7 +39,7 @@ bool PointSet::write(IStream* stream) const
 {
 	Writer w(stream);
 
-	w << uint32_t(m_points.size());
+	w << (uint32_t)m_points.size();
 
 	for (uint32_t i = 0; i < m_points.size(); ++i)
 	{

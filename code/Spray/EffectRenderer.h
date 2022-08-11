@@ -34,7 +34,7 @@ class T_DLLCLASS EffectRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EffectRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
+	explicit EffectRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
 
 	void setLodDistances(float lod1Distance, float lod2Distance);
 

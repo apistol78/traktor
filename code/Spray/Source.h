@@ -27,7 +27,7 @@ class T_DLLCLASS Source : public Object
 	T_RTTI_CLASS;
 
 public:
-	Source(
+	explicit Source(
 		float constantRate,
 		float velocityRate
 	);

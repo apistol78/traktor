@@ -33,8 +33,6 @@ class T_DLLCLASS SourceData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	SourceData();
-
 	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const = 0;
 
 	virtual void serialize(ISerializer& s) override;
@@ -44,8 +42,8 @@ public:
 	float getVelocityRate() const { return m_velocityRate; }
 
 private:
-	float m_constantRate;
-	float m_velocityRate;
+	float m_constantRate = 0.0f;
+	float m_velocityRate = 0.0f;
 };
 
 	}

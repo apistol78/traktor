@@ -27,7 +27,7 @@ class SpawnEffectEventInstance : public world::IEntityEventInstance
 	T_RTTI_CLASS;
 
 public:
-	SpawnEffectEventInstance(
+	explicit SpawnEffectEventInstance(
 		const SpawnEffectEvent* spawnEffect,
 		world::Entity* sender,
 		const Transform& Toffset,

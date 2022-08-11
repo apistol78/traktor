@@ -45,21 +45,12 @@ struct VirtualSourceCallback
  */
 struct Context
 {
-	float deltaTime;
+	float deltaTime = 0.0f;
 	RandomGeometry random;
-	world::Entity* owner;
-	world::EntityEventManager* eventManager;
-	sound::ISoundPlayer* soundPlayer;
-	VirtualSourceCallback* virtualSourceCallback;
-
-	Context()
-	:	deltaTime(0.0f)
-	,	owner(nullptr)
-	,	eventManager(nullptr)
-	,	soundPlayer(nullptr)
-	,	virtualSourceCallback(nullptr)
-	{
-	}
+	world::Entity* owner = nullptr;
+	world::EntityEventManager* eventManager = nullptr;
+	sound::ISoundPlayer* soundPlayer = nullptr;
+	VirtualSourceCallback* virtualSourceCallback = nullptr;
 };
 
 	}

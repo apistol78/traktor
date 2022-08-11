@@ -14,7 +14,7 @@ IntegrateModifier::IntegrateModifier(float timeScale, bool linear, bool angular)
 {
 }
 
-void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	Scalar scaledDeltaTime = deltaTime * m_timeScale;
 	if (m_linear && m_angular)

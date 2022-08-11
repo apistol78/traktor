@@ -31,8 +31,6 @@ class T_DLLCLASS SoundEventData : public world::IEntityEventData
 	T_RTTI_CLASS;
 
 public:
-	SoundEventData();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -40,9 +38,9 @@ private:
 	friend class EffectEntityPipeline;
 
 	resource::Id< sound::Sound > m_sound;
-	bool m_positional;
-	bool m_follow;
-	bool m_autoStopFar;
+	bool m_positional = true;
+	bool m_follow = true;
+	bool m_autoStopFar = true;
 };
 
 	}

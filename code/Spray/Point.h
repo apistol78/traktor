@@ -28,7 +28,7 @@ struct T_MATH_ALIGN16 Point
 /*! Array of particles.
  * \ingroup Spray
  */
-typedef AlignedVector< Point > PointVector;
+typedef AlignedVector< Point > pointVector_t;
 
 	}
 }

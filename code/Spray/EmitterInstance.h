@@ -41,7 +41,7 @@ class T_DLLCLASS EmitterInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	EmitterInstance(const Emitter* emitter, float duration);
+	explicit EmitterInstance(const Emitter* emitter, float duration);
 
 	virtual ~EmitterInstance();
 
@@ -65,7 +65,7 @@ public:
 
 	void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
 
-	const PointVector& getPoints() const { return m_points; }
+	const pointVector_t& getPoints() const { return m_points; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
@@ -80,8 +80,8 @@ private:
 	Ref< const Emitter > m_emitter;
 	Transform m_transform;
 	Plane m_sortPlane;
-	PointVector m_points;
-	PointVector m_renderPoints;
+	pointVector_t m_points;
+	pointVector_t m_renderPoints;
 	RefArray< EffectInstance > m_effectInstances;
 	float m_totalTime;
 	float m_emitFraction;

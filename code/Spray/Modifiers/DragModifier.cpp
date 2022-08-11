@@ -13,9 +13,9 @@ DragModifier::DragModifier(float linearDrag, float angularDrag)
 {
 }
 
-void DragModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void DragModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
-	Scalar dv = Scalar(1.0f) - m_linearDrag * deltaTime;
+	Scalar dv = 1.0_simd - m_linearDrag * deltaTime;
 	float da = 1.0f - m_angularDrag * deltaTime;
 
 	for (size_t i = first; i < last; ++i)

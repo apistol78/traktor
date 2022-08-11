@@ -35,8 +35,6 @@ public:
 		Vector4 color;
 	};
 
-	PointSet();
-
 	void add(const Point& point);
 
 	const AlignedVector< Point >& get() const { return m_points; }

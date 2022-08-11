@@ -18,7 +18,7 @@ class PlaneCollisionModifier : public Modifier
 public:
 	explicit PlaneCollisionModifier(const Plane& plane, float radius, float restitution);
 
-	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const override final;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 
 private:
 	Plane m_plane;

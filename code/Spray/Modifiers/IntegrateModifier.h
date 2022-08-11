@@ -17,7 +17,7 @@ class IntegrateModifier : public Modifier
 public:
 	explicit IntegrateModifier(float timeScale, bool linear, bool angular);
 
-	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const override final;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const override final;
 
 private:
 	Scalar m_timeScale;

@@ -50,7 +50,7 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_trailCount * c_stripeLength * 2, sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
-	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
+	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
 	for (uint32_t i = 0; i < c_trailCount * c_stripeLength * 2; ++i)
 		*index++ = i;
 

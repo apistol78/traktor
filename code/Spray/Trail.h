@@ -25,7 +25,7 @@ class Trail : public Object
 	T_RTTI_CLASS;
 
 public:
-	Trail(
+	explicit Trail(
 		const resource::Proxy< render::Shader >& shader,
 		float width,
 		float age,

@@ -16,13 +16,13 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 		return;
 
 	int32_t index = 0;
-	for (index = int32_t(keys.size() - 1); index >= 0; --index)
+	for (index = (int32_t)(keys.size() - 1); index >= 0; --index)
 	{
 		if (T >= keys[index].T)
 			break;
 	}
 
-	if (index != m_index && index >= 0 && index < int32_t(keys.size()))
+	if (index != m_index && index >= 0 && index < (int32_t)keys.size())
 	{
 		context.eventManager->raise(
 			keys[index].event,

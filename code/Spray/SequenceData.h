@@ -48,7 +48,7 @@ public:
 
 	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
-	 AlignedVector< Key >& getKeys() { return m_keys; }
+	AlignedVector< Key >& getKeys() { return m_keys; }
 
 private:
 	AlignedVector< Key > m_keys;

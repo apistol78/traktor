@@ -12,7 +12,7 @@ SizeModifier::SizeModifier(float adjustRate)
 {
 }
 
-void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
+void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
 	float deltaSize = m_adjustRate * deltaTime;
 	for (size_t i = first; i < last; ++i)
