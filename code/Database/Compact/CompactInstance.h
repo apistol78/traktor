@@ -18,7 +18,7 @@ class CompactInstance : public IProviderInstance
 	T_RTTI_CLASS;
 
 public:
-	CompactInstance(CompactContext* context);
+	explicit CompactInstance(CompactContext& context);
 
 	bool internalCreate(CompactInstanceEntry* instanceEntry);
 
@@ -59,7 +59,7 @@ public:
 	virtual Ref< IStream > writeData(const std::wstring& dataName) override final;
 
 private:
-	Ref< CompactContext > m_context;
+	CompactContext& m_context;
 	Ref< CompactInstanceEntry > m_instanceEntry;
 };
 

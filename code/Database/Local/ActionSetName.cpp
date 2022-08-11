@@ -20,9 +20,9 @@ ActionSetName::ActionSetName(const Path& instancePath, const std::wstring& newNa
 {
 }
 
-bool ActionSetName::execute(Context* context)
+bool ActionSetName::execute(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 
 	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
@@ -63,9 +63,9 @@ bool ActionSetName::execute(Context* context)
 	return true;
 }
 
-bool ActionSetName::undo(Context* context)
+bool ActionSetName::undo(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 
 	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
 	if (m_removedMeta)
@@ -89,9 +89,9 @@ bool ActionSetName::undo(Context* context)
 	return true;
 }
 
-void ActionSetName::clean(Context* context)
+void ActionSetName::clean(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 
 	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);

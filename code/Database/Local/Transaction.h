@@ -34,7 +34,7 @@ public:
 
 	void add(Action* action);
 
-	bool commit(Context* context);
+	bool commit(Context& context);
 
 	uint32_t get(const TypeInfo& actionType, RefArray< Action >& outActions) const;
 

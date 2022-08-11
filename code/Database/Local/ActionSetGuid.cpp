@@ -21,9 +21,9 @@ ActionSetGuid::ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool
 {
 }
 
-bool ActionSetGuid::execute(Context* context)
+bool ActionSetGuid::execute(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Ref< LocalInstanceMeta > instanceMeta;
 
@@ -48,7 +48,7 @@ bool ActionSetGuid::execute(Context* context)
 
 	instanceMeta->setGuid(m_newGuid);
 
-	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context.preferBinary()))
 	{
 		log::error << L"Unable to write instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
@@ -60,9 +60,9 @@ bool ActionSetGuid::execute(Context* context)
 	return true;
 }
 
-bool ActionSetGuid::undo(Context* context)
+bool ActionSetGuid::undo(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editMeta)
@@ -80,9 +80,9 @@ bool ActionSetGuid::undo(Context* context)
 	return true;
 }
 
-void ActionSetGuid::clean(Context* context)
+void ActionSetGuid::clean(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editMeta)

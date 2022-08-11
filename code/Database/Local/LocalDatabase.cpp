@@ -87,7 +87,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 	}
 
 	// Create context.
-	m_context = new Context(
+	m_context = Context(
 		binary,
 		fileStore
 	);
@@ -120,11 +120,10 @@ void LocalDatabase::close()
 		m_bus = nullptr;
 	}
 
-	if (m_context)
+	if (m_context.getFileStore())
 	{
-		if (m_context->getFileStore())
-			m_context->getFileStore()->destroy();
-		m_context = nullptr;
+		m_context.getFileStore()->destroy();
+		m_context = Context();
 	}
 }
 

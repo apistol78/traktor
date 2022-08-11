@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Database/Compact/CompactContext.h"
 #include "Database/Provider/IProviderDatabase.h"
 
 // import/export mechanism.
@@ -18,7 +19,6 @@ class Path;
 	namespace db
 	{
 
-class CompactContext;
 class CompactGroup;
 
 /*! Compact database provider
@@ -29,8 +29,6 @@ class T_DLLCLASS CompactDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
-	CompactDatabase() = default;
-
 	virtual bool create(const ConnectionString& connectionString) override final;
 
 	virtual bool open(const ConnectionString& connectionString) override final;
@@ -42,7 +40,7 @@ public:
 	virtual IProviderGroup* getRootGroup() override final;
 
 private:
-	Ref< CompactContext > m_context;
+	CompactContext m_context;
 	Ref< CompactGroup > m_rootGroup;
 	bool m_readOnly = false;
 	uint32_t m_registryHash = 0;

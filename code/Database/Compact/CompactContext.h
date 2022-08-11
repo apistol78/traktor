@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Ref.h"
 
 namespace traktor
@@ -14,12 +13,12 @@ class CompactRegistry;
 /*! Compact database context
  * \ingroup Database
  */
-class CompactContext : public Object
+class CompactContext
 {
-	T_RTTI_CLASS;
-
 public:
-	CompactContext(BlockFile* blockFile, CompactRegistry* registry);
+	CompactContext() = default;
+
+	explicit CompactContext(BlockFile* blockFile, CompactRegistry* registry);
 
 	BlockFile* getBlockFile() { return m_blockFile; }
 

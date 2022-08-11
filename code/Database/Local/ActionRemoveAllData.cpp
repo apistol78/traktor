@@ -18,9 +18,9 @@ ActionRemoveAllData::ActionRemoveAllData(const Path& instancePath)
 {
 }
 
-bool ActionRemoveAllData::execute(Context* context)
+bool ActionRemoveAllData::execute(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
@@ -51,7 +51,7 @@ bool ActionRemoveAllData::execute(Context* context)
 
 	instanceMeta->removeAllBlobs();
 
-	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context.preferBinary()))
 	{
 		log::error << L"Unable to write instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
@@ -59,9 +59,9 @@ bool ActionRemoveAllData::execute(Context* context)
 	return true;
 }
 
-bool ActionRemoveAllData::undo(Context* context)
+bool ActionRemoveAllData::undo(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 
 	// Rollback all removed data blobs.
 	for (const auto& renamedFile : m_renamedFiles)
@@ -77,9 +77,9 @@ bool ActionRemoveAllData::undo(Context* context)
 	return true;
 }
 
-void ActionRemoveAllData::clean(Context* context)
+void ActionRemoveAllData::clean(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	for (const auto& renamedFile : m_renamedFiles)
 		fileStore->clean(renamedFile);
 }

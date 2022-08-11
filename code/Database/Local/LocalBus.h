@@ -22,7 +22,7 @@ class LocalBus : public IProviderBus
 	T_RTTI_CLASS;
 
 public:
-	LocalBus(const std::wstring& journalFileName);
+	explicit LocalBus(const std::wstring& journalFileName);
 
 	virtual ~LocalBus();
 

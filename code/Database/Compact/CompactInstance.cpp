@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.CompactInstance", CompactInstance, IProviderInstance)
 
-CompactInstance::CompactInstance(CompactContext* context)
+CompactInstance::CompactInstance(CompactContext& context)
 :	m_context(context)
 {
 }
@@ -88,14 +88,14 @@ bool CompactInstance::remove()
 {
 	T_ASSERT(m_instanceEntry);
 
-	BlockFile* blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	const auto& dataBlocks = m_instanceEntry->getDataBlocks();
 	for (auto it : dataBlocks)
 	{
 		blockFile->freeBlockId(it.second->getBlockId());
-		if (!m_context->getRegistry()->removeBlock(it.second))
+		if (!m_context.getRegistry()->removeBlock(it.second))
 			return false;
 	}
 
@@ -103,11 +103,11 @@ bool CompactInstance::remove()
 	if (objectBlock)
 	{
 		blockFile->freeBlockId(objectBlock->getBlockId());
-		if (!m_context->getRegistry()->removeBlock(objectBlock))
+		if (!m_context.getRegistry()->removeBlock(objectBlock))
 			return false;
 	}
 
-	if (!m_context->getRegistry()->removeInstance(m_instanceEntry))
+	if (!m_context.getRegistry()->removeInstance(m_instanceEntry))
 		return false;
 
 	m_instanceEntry = nullptr;
@@ -122,7 +122,7 @@ Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType) c
 	if (!objectBlockEntry)
 		return nullptr;
 
-	Ref< BlockFile > blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	Ref< IStream > objectStream = blockFile->readBlock(objectBlockEntry->getBlockId());
@@ -137,7 +137,7 @@ Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName,
 {
 	T_ASSERT(m_instanceEntry);
 
-	Ref< BlockFile > blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	Ref< CompactBlockEntry > objectBlockEntry = m_instanceEntry->getObjectBlock();
@@ -145,7 +145,7 @@ Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName,
 	{
 		uint32_t objectBlockId = blockFile->allocBlockId();
 
-		objectBlockEntry = m_context->getRegistry()->createBlockEntry();
+		objectBlockEntry = m_context.getRegistry()->createBlockEntry();
 		objectBlockEntry->setBlockId(objectBlockId);
 
 		m_instanceEntry->setObjectBlock(objectBlockEntry);
@@ -179,14 +179,14 @@ bool CompactInstance::getDataLastWriteTime(const std::wstring& dataName, DateTim
 
 bool CompactInstance::removeAllData()
 {
-	BlockFile* blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	auto& dataBlocks = m_instanceEntry->getDataBlocks();
 	for (auto it : dataBlocks)
 	{
 		blockFile->freeBlockId(it.second->getBlockId());
-		if (!m_context->getRegistry()->removeBlock(it.second))
+		if (!m_context.getRegistry()->removeBlock(it.second))
 			return false;
 	}
 
@@ -204,7 +204,7 @@ Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 	if (it == dataBlocks.end())
 		return nullptr;
 
-	BlockFile* blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	return blockFile->readBlock(it->second->getBlockId());
@@ -214,13 +214,13 @@ Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT(m_instanceEntry);
 
-	BlockFile* blockFile = m_context->getBlockFile();
+	BlockFile* blockFile = m_context.getBlockFile();
 	T_ASSERT(blockFile);
 
 	auto& dataBlocks = m_instanceEntry->getDataBlocks();
 	if (!dataBlocks[dataName])
 	{
-		dataBlocks[dataName] = m_context->getRegistry()->createBlockEntry();
+		dataBlocks[dataName] = m_context.getRegistry()->createBlockEntry();
 		dataBlocks[dataName]->setBlockId(blockFile->allocBlockId());
 	}
 

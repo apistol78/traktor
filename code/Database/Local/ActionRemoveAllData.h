@@ -19,13 +19,13 @@ class ActionRemoveAllData : public Action
 	T_RTTI_CLASS;
 
 public:
-	ActionRemoveAllData(const Path& instancePath);
+	explicit ActionRemoveAllData(const Path& instancePath);
 
-	virtual bool execute(Context* context) override final;
+	virtual bool execute(Context& context) override final;
 
-	virtual bool undo(Context* context) override final;
+	virtual bool undo(Context& context) override final;
 
-	virtual void clean(Context* context) override final;
+	virtual void clean(Context& context) override final;
 
 	virtual bool redundant(const Action* action) const override final;
 

@@ -5,7 +5,6 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Database/ConnectionString.h"
 #include "Database/Compact/BlockFile.h"
-#include "Database/Compact/CompactContext.h"
 #include "Database/Compact/CompactDatabase.h"
 #include "Database/Compact/CompactGroup.h"
 #include "Database/Compact/CompactRegistry.h"
@@ -47,7 +46,7 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 	m_readOnly = false;
 	m_registryHash = DeepHash(registry).get();
 
-	m_context = new CompactContext(blockFile, registry);
+	m_context = CompactContext(blockFile, registry);
 
 	m_rootGroup = new CompactGroup(m_context);
 	if (!m_rootGroup->internalCreate(rootGroupEntry))
@@ -93,7 +92,7 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 	if ((m_readOnly = readOnly) == false)
 		m_registryHash = DeepHash(registry).get();
 
-	m_context = new CompactContext(blockFile, registry);
+	m_context = CompactContext(blockFile, registry);
 
 	m_rootGroup = new CompactGroup(m_context);
 	if (!m_rootGroup->internalCreate(registry->getRootGroup()))
@@ -104,24 +103,18 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 
 void CompactDatabase::close()
 {
-	if (m_context)
+	BlockFile* blockFile = m_context.getBlockFile();
+	if (blockFile != nullptr)
 	{
-		Ref< BlockFile > blockFile = m_context->getBlockFile();
-		T_ASSERT(blockFile);
-
-		if (!m_readOnly && DeepHash(m_context->getRegistry()) != m_registryHash)
+		if (!m_readOnly && DeepHash(m_context.getRegistry()) != m_registryHash)
 		{
-			Ref< IStream > registryStream = blockFile->writeBlock(1);
-			T_ASSERT(registryStream);
-
-			BinarySerializer(registryStream).writeObject(m_context->getRegistry());
-
+			IStream* registryStream = blockFile->writeBlock(1);
+			T_FATAL_ASSERT(registryStream);
+			BinarySerializer(registryStream).writeObject(m_context.getRegistry());
 			registryStream->close();
 		}
-
 		blockFile->close();
-
-		m_context = nullptr;
+		m_context = CompactContext();
 	}
 }
 

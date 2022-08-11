@@ -17,13 +17,13 @@ class ActionSetGuid : public Action
 	T_RTTI_CLASS;
 
 public:
-	ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool create);
+	explicit ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool create);
 
-	virtual bool execute(Context* context) override final;
+	virtual bool execute(Context& context) override final;
 
-	virtual bool undo(Context* context) override final;
+	virtual bool undo(Context& context) override final;
 
-	virtual void clean(Context* context) override final;
+	virtual void clean(Context& context) override final;
 
 	virtual bool redundant(const Action* action) const override final;
 

@@ -20,6 +20,13 @@ class ConnectionString;
 
 /*! File store interface.
  * \ingroup Database
+ *
+ * A file store is an abstraction for file systems which
+ * require special attention when modifying files, such
+ * as a SCM like Perforce.
+ * 
+ * This enables automatic checkout of instances when
+ * working from the editor.
  */
 class T_DLLCLASS IFileStore : public Object
 {

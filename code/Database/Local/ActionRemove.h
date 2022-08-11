@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "Database/Local/Action.h"
 #include "Core/Io/Path.h"
+#include "Database/Local/Action.h"
 
 namespace traktor
 {
@@ -19,11 +19,11 @@ class ActionRemove : public Action
 public:
 	ActionRemove(const Path& instancePath);
 
-	virtual bool execute(Context* context) override final;
+	virtual bool execute(Context& context) override final;
 
-	virtual bool undo(Context* context) override final;
+	virtual bool undo(Context& context) override final;
 
-	virtual void clean(Context* context) override final;
+	virtual void clean(Context& context) override final;
 
 	virtual bool redundant(const Action* action) const override final;
 
