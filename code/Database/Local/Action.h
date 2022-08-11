@@ -17,11 +17,11 @@ class Action : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool execute(Context* context) = 0;
+	virtual bool execute(Context& context) = 0;
 
-	virtual bool undo(Context* context) = 0;
+	virtual bool undo(Context& context) = 0;
 
-	virtual void clean(Context* context) = 0;
+	virtual void clean(Context& context) = 0;
 
 	virtual bool redundant(const Action* action) const = 0;
 };

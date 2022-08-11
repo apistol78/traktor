@@ -14,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalGroup", LocalGroup, IProviderGroup)
 
-LocalGroup::LocalGroup(Context* context, const Path& groupPath)
+LocalGroup::LocalGroup(Context& context, const Path& groupPath)
 :	m_context(context)
 ,	m_groupPath(groupPath)
 {

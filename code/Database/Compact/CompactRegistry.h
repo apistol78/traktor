@@ -24,11 +24,6 @@ class CompactBlockEntry : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	CompactBlockEntry()
-	:	m_blockId(0)
-	{
-	}
-
 	inline void setBlockId(uint32_t blockId) { m_blockId = blockId; }
 
 	inline uint32_t getBlockId() const { return m_blockId; }
@@ -36,7 +31,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_blockId;
+	uint32_t m_blockId = 0;
 };
 
 /*! Compact registry group entry.

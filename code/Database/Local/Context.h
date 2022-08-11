@@ -19,7 +19,9 @@ class Context : public Object
 	T_RTTI_CLASS;
 
 public:
-	Context(bool preferBinary, IFileStore* fileStore);
+	Context() = default;
+
+	explicit Context(bool preferBinary, IFileStore* fileStore);
 
 	const Guid& getSessionGuid() const;
 
@@ -29,10 +31,9 @@ public:
 
 private:
 	Guid m_sessionGuid;
-	bool m_preferBinary;
+	bool m_preferBinary = false;
 	Ref< IFileStore > m_fileStore;
 };
 
 	}
 }
-

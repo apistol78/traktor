@@ -27,7 +27,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalInstance", LocalInstance, IProviderInstance)
 
-LocalInstance::LocalInstance(Context* context, const Path& instancePath)
+LocalInstance::LocalInstance(Context& context, const Path& instancePath)
 :	m_context(context)
 ,	m_instancePath(instancePath)
 {
@@ -159,7 +159,7 @@ bool LocalInstance::getLastModifyDate(DateTime& outModifyDate) const
 
 uint32_t LocalInstance::getFlags() const
 {
-	return m_context->getFileStore()->flags(getInstanceObjectPath(m_instancePath));
+	return m_context.getFileStore()->flags(getInstanceObjectPath(m_instancePath));
 }
 
 bool LocalInstance::remove()
@@ -218,7 +218,7 @@ Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, c
 	if (!m_transaction)
 		return nullptr;
 
-	if (!m_context->preferBinary())
+	if (!m_context.preferBinary())
 		outSerializerType = &type_of< xml::XmlSerializer >();
 	else
 		outSerializerType = &type_of< BinarySerializer >();

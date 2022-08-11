@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.CompactGroup", CompactGroup, IProviderGroup)
 
-CompactGroup::CompactGroup(CompactContext* context)
+CompactGroup::CompactGroup(CompactContext& context)
 :	m_context(context)
 {
 }
@@ -56,7 +56,7 @@ bool CompactGroup::rename(const std::wstring& name)
 bool CompactGroup::remove()
 {
 	T_ASSERT(m_groupEntry);
-	if (!m_context->getRegistry()->removeGroup(m_groupEntry))
+	if (!m_context.getRegistry()->removeGroup(m_groupEntry))
 		return false;
 	m_groupEntry = nullptr;
 	return true;
@@ -66,7 +66,7 @@ Ref< IProviderGroup > CompactGroup::createGroup(const std::wstring& groupName)
 {
 	T_ASSERT(m_groupEntry);
 
-	Ref< CompactGroupEntry > childGroupEntry = m_context->getRegistry()->createGroupEntry();
+	Ref< CompactGroupEntry > childGroupEntry = m_context.getRegistry()->createGroupEntry();
 	if (!childGroupEntry)
 		return nullptr;
 
@@ -86,7 +86,7 @@ Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instan
 {
 	T_ASSERT(m_groupEntry);
 
-	Ref< CompactInstanceEntry > childInstanceEntry = m_context->getRegistry()->createInstanceEntry();
+	Ref< CompactInstanceEntry > childInstanceEntry = m_context.getRegistry()->createInstanceEntry();
 	if (!childInstanceEntry)
 		return nullptr;
 

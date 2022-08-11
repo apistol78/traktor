@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Database/Provider/IProviderInstance.h"
 #include "Core/Io/Path.h"
+#include "Database/Provider/IProviderInstance.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ class LocalInstance : public IProviderInstance
 	T_RTTI_CLASS;
 
 public:
-	LocalInstance(Context* context, const Path& instancePath);
+	explicit LocalInstance(Context& context, const Path& instancePath);
 
 	bool internalCreateNew(const Guid& instanceGuid);
 
@@ -61,7 +61,7 @@ public:
 	virtual Ref< IStream > writeData(const std::wstring& dataName) override final;
 
 private:
-	Ref< Context > m_context;
+	Context& m_context;
 	Path m_instancePath;
 	Ref< Transaction > m_transaction;
 	std::wstring m_transactionName;

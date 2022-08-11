@@ -20,7 +20,7 @@ class CompactGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	explicit CompactGroup(CompactContext* context);
+	explicit CompactGroup(CompactContext& context);
 
 	bool internalCreate(CompactGroupEntry* groupEntry);
 
@@ -37,7 +37,7 @@ public:
 	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) override final;
 
 private:
-	Ref< CompactContext > m_context;
+	CompactContext& m_context;
 	Ref< CompactGroupEntry > m_groupEntry;
 	RefArray< CompactGroup > m_childGroups;
 	RefArray< CompactInstance > m_childInstances;

@@ -17,13 +17,13 @@ class ActionSetName : public Action
 	T_RTTI_CLASS;
 
 public:
-	ActionSetName(const Path& instancePath, const std::wstring& newName);
+	explicit ActionSetName(const Path& instancePath, const std::wstring& newName);
 
-	virtual bool execute(Context* context) override final;
+	virtual bool execute(Context& context) override final;
 
-	virtual bool undo(Context* context) override final;
+	virtual bool undo(Context& context) override final;
 
-	virtual void clean(Context* context) override final;
+	virtual void clean(Context& context) override final;
 
 	virtual bool redundant(const Action* action) const override final;
 

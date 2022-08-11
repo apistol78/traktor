@@ -20,13 +20,13 @@ class ActionWriteData : public Action
 	T_RTTI_CLASS;
 
 public:
-	ActionWriteData(const Path& instancePath, const std::wstring& dataName);
+	explicit ActionWriteData(const Path& instancePath, const std::wstring& dataName);
 
-	virtual bool execute(Context* context) override final;
+	virtual bool execute(Context& context) override final;
 
-	virtual bool undo(Context* context) override final;
+	virtual bool undo(Context& context) override final;
 
-	virtual void clean(Context* context) override final;
+	virtual void clean(Context& context) override final;
 
 	virtual bool redundant(const Action* action) const override final;
 

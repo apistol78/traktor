@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Database/Local/Context.h"
 #include "Database/Provider/IProviderDatabase.h"
 
 // import/export mechanism.
@@ -41,7 +42,7 @@ public:
 	virtual IProviderGroup* getRootGroup() override final;
 
 private:
-	Ref< Context > m_context;
+	Context m_context;
 	Ref< LocalBus > m_bus;
 	Ref< LocalGroup > m_rootGroup;
 };

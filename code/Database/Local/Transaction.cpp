@@ -103,7 +103,7 @@ uint32_t Transaction::get(const TypeInfo& actionType, RefArray< Action >& outAct
 	return (uint32_t)outActions.size();
 }
 
-bool Transaction::commit(Context* context)
+bool Transaction::commit(Context& context)
 {
 	T_ASSERT_M (m_locked, L"Transaction not created");
 

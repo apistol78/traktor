@@ -18,7 +18,7 @@ class LocalGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	LocalGroup(Context* contex, const Path& groupPath);
+	explicit LocalGroup(Context& contex, const Path& groupPath);
 
 	virtual std::wstring getName() const override final;
 
@@ -33,7 +33,7 @@ public:
 	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) override final;
 
 private:
-	Ref< Context > m_context;
+	Context& m_context;
 	Path m_groupPath;
 };
 

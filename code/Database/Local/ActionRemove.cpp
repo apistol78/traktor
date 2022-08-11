@@ -18,9 +18,9 @@ ActionRemove::ActionRemove(const Path& instancePath)
 {
 }
 
-bool ActionRemove::execute(Context* context)
+bool ActionRemove::execute(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
@@ -62,9 +62,9 @@ bool ActionRemove::execute(Context* context)
 	return true;
 }
 
-bool ActionRemove::undo(Context* context)
+bool ActionRemove::undo(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	for (const auto& renamedFile : m_renamedFiles)
 	{
 		if (!fileStore->rollback(renamedFile))
@@ -74,9 +74,9 @@ bool ActionRemove::undo(Context* context)
 	return true;
 }
 
-void ActionRemove::clean(Context* context)
+void ActionRemove::clean(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	for (const auto& renamedFile : m_renamedFiles)
 		fileStore->clean(renamedFile);
 }

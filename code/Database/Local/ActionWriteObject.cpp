@@ -25,9 +25,9 @@ ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstrin
 	m_objectMemory = new ChunkMemory();
 }
 
-bool ActionWriteObject::execute(Context* context)
+bool ActionWriteObject::execute(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
@@ -82,7 +82,7 @@ bool ActionWriteObject::execute(Context* context)
 
 		instanceMeta->setPrimaryType(m_primaryTypeName);
 
-		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context.preferBinary()))
 		{
 			log::error << L"Unable to write instance meta data, \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 			return false;
@@ -92,9 +92,9 @@ bool ActionWriteObject::execute(Context* context)
 	return true;
 }
 
-bool ActionWriteObject::undo(Context* context)
+bool ActionWriteObject::undo(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
@@ -109,9 +109,9 @@ bool ActionWriteObject::undo(Context* context)
 	return true;
 }
 
-void ActionWriteObject::clean(Context* context)
+void ActionWriteObject::clean(Context& context)
 {
-	Ref< IFileStore > fileStore = context->getFileStore();
+	IFileStore* fileStore = context.getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
