@@ -4967,7 +4967,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -4998,7 +4998,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -5038,11 +5038,11 @@
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>$(TRAKTOR_HOME)/3rdp/android/native_app_glue/*.c</fileName>
+					<fileName>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue/*.c</fileName>
 					<items/>
 				</item>
 				<item type="File">
-					<fileName>$(TRAKTOR_HOME)/3rdp/android/native_app_glue/*.h</fileName>
+					<fileName>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue/*.h</fileName>
 					<items/>
 				</item>
 			</items>
@@ -5082,7 +5082,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5112,7 +5112,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5420,7 +5420,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5451,7 +5451,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/android/native_app_glue</item>
+						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
