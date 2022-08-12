@@ -100,6 +100,15 @@ std::wstring Path::getPathOnlyNoVolume() const
 	return ss.str();
 }
 
+std::wstring Path::getPathOnlyOS() const
+{
+#if defined(_WIN32)
+	return getPathOnly();
+#else
+	return getPathOnlyNoVolume();
+#endif
+}
+
 std::wstring Path::getPathName() const
 {
 	StringOutputStream ss;
@@ -152,6 +161,15 @@ std::wstring Path::getPathNameNoVolume() const
 	return ss.str();
 }
 
+std::wstring Path::getPathNameOS() const
+{
+#if defined(_WIN32)
+	return getPathName();
+#else
+	return getPathNameNoVolume();
+#endif
+}
+
 Path Path::normalized() const
 {
 	AlignedVector< std::wstring > p;
@@ -192,6 +210,9 @@ Path Path::normalized() const
 Path Path::operator + (const Path& rh) const
 {
 	if (!rh.isRelative())
+		return rh;
+
+	if (empty())
 		return rh;
 
 	return Path(getPathName() + L"/" + rh.getPathName());

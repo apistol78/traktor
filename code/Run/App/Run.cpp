@@ -128,12 +128,14 @@ Run::Run(
 
 void Run::cd(const std::wstring& path)
 {
-	m_cwd.back() = path;
+	Path tmp = Path(m_cwd.back()) + Path(path);
+	m_cwd.back() = tmp.getPathNameOS();
 }
 
 void Run::pushd(const std::wstring& path)
 {
-	m_cwd.push_back(path);
+	Path tmp = Path(m_cwd.back()) + Path(path);
+	m_cwd.push_back(tmp.getPathNameOS());
 }
 
 void Run::popd()
@@ -156,9 +158,11 @@ int32_t Run::run(const std::wstring& command, const std::wstring& saveOutputAs, 
 
 int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
 {
+	Path workingDirectory = FileSystem::getInstance().getAbsolutePath(cwd());
+
 	Ref< IProcess > process = OS::getInstance().execute(
 		command,
-		cwd(),
+		workingDirectory,
 		env,
 		OS::EfRedirectStdIO | OS::EfMute
 	);
