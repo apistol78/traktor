@@ -329,9 +329,11 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPath->addProperty("fileNameNoExtension", &Path::getFileNameNoExtension);
 	classPath->addProperty("pathOnly", &Path::getPathOnly);
 	classPath->addProperty("pathOnlyNoVolume", &Path::getPathOnlyNoVolume);
+	classPath->addProperty("pathOnlyOS", &Path::getPathOnlyOS);
 	classPath->addProperty("pathName", &Path::getPathName);
 	classPath->addProperty("pathNameNoExtension", &Path::getPathNameNoExtension);
 	classPath->addProperty("pathNameNoVolume", &Path::getPathNameNoVolume);
+	classPath->addProperty("pathNameOS", &Path::getPathNameOS);
 	classPath->addProperty("extension", &Path::getExtension);
 	classPath->addMethod("normalized", &Path::normalized);
 	classPath->addMethod("concat", &Path_concat);

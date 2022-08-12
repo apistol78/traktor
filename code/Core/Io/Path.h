@@ -112,6 +112,9 @@ public:
 	 */
 	std::wstring getPathOnlyNoVolume() const;
 
+	/*! Return OS matching path, ie with volume on Windows and no volume on all others. */
+	std::wstring getPathOnlyOS() const;
+
 	/*! Return path.
 	 *
 	 * C:/foo/bar.txt => C:/foo/bar.txt
@@ -141,6 +144,9 @@ public:
 	 * \return Encapsulated path without volume.
 	 */
 	std::wstring getPathNameNoVolume() const;
+
+	/*! Return OS matching path, ie with volume on Windows and no volume on all others. */
+	std::wstring getPathNameOS() const;
 
 	/*! Return file extension.
 	 *
