@@ -57,6 +57,33 @@
 
 		{
 			"type": "shell",
+			"label": "Platform - DebugStatic",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"osx": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.sh macOS DebugStatic",
+				"problemMatcher": [
+					"$gcc"
+				]
+			},
+
+			"windows": {
+				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows DebugStatic",
+				"problemMatcher": [
+					"$msCompile"
+				]			
+			}			
+		},
+
+		{
+			"type": "shell",
 			"label": "Platform - ReleaseStatic",
 			"group": "build",
 

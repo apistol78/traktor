@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "3rdp"
+		},
+		{
+			"path": "3rdp_"
+		},
+		{
+			"path": "bin"
 		}
 	],
 	"settings": {

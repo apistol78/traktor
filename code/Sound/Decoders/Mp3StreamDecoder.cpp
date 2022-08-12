@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-#include <mpg123.h>
+// #include <mpg123.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
@@ -14,7 +14,7 @@ namespace traktor
 {
 	namespace sound
 	{
-
+/*
 class Mp3StreamDecoderImpl : public Object
 {
 public:
@@ -198,7 +198,7 @@ private:
 };
 
 int32_t Mp3StreamDecoderImpl::ms_instances = 0;
-
+*/
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDecoder, IStreamDecoder)
 
 bool Mp3StreamDecoder::create(IStream* stream)
@@ -206,38 +206,40 @@ bool Mp3StreamDecoder::create(IStream* stream)
 	if ((m_stream = stream) == 0)
 		return false;
 
-	m_decoderImpl = new Mp3StreamDecoderImpl();
-	if (!m_decoderImpl->create(m_stream))
-	{
-		m_decoderImpl = 0;
-		m_stream = 0;
-		return false;
-	}
+	// m_decoderImpl = new Mp3StreamDecoderImpl();
+	// if (!m_decoderImpl->create(m_stream))
+	// {
+	// 	m_decoderImpl = 0;
+	// 	m_stream = 0;
+	// 	return false;
+	// }
 
 	return true;
 }
 
 void Mp3StreamDecoder::destroy()
 {
-	safeDestroy(m_decoderImpl);
+	// safeDestroy(m_decoderImpl);
 }
 
 double Mp3StreamDecoder::getDuration() const
 {
-	T_ASSERT(m_decoderImpl);
-	return m_decoderImpl->getDuration();
+	// T_ASSERT(m_decoderImpl);
+	// return m_decoderImpl->getDuration();
+	return 0.0;
 }
 
 bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
 {
-	T_ASSERT(m_decoderImpl);
-	return m_decoderImpl->getBlock(outSoundBlock);
+	// T_ASSERT(m_decoderImpl);
+	// return m_decoderImpl->getBlock(outSoundBlock);
+	return false;
 }
 
 void Mp3StreamDecoder::rewind()
 {
-	T_ASSERT(m_decoderImpl);
-	m_decoderImpl->reset();
+	// T_ASSERT(m_decoderImpl);
+	// m_decoderImpl->reset();
 }
 
 	}

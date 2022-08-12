@@ -15,21 +15,42 @@ export TRAKTOR_3RDP=$TRAKTOR_HOME/3rdp
 
 # Paths to 3rd party dependencies.
 export STEAMWORKS_SDK=$TRAKTOR_3RDP/steamworks-sdk-142
-export BULLET_SDK=$TRAKTOR_3RDP/bullet3-master-210317
+#export BULLET_SDK=$TRAKTOR_3RDP/bullet3-master-210317
 export FBX_SDK=$TRAKTOR_3RDP/FbxSdk/2016.1.2
-export GLSLANG=$TRAKTOR_3RDP/glslang-master-200605
-export SQLITE_SDK=$TRAKTOR_3RDP/sqlite-3.8.7.2
-export LUA_SDK=$TRAKTOR_3RDP/lua-5.4.3
-export EXPAT_SDK=$TRAKTOR_3RDP/libexpat-R_2_2_5/expat
-export ZLIB_SDK=$TRAKTOR_3RDP/zlib-1.2.11
+#export GLSLANG=$TRAKTOR_3RDP/glslang-master-200605
+#export SQLITE_SDK=$TRAKTOR_3RDP/sqlite-3.8.7.2
+#export LUA_SDK=$TRAKTOR_3RDP/lua-5.4.3
+#export EXPAT_SDK=$TRAKTOR_3RDP/libexpat-R_2_2_5/expat
+#export ZLIB_SDK=$TRAKTOR_3RDP/zlib-1.2.11
 export P4_SDK=$TRAKTOR_3RDP/p4api-2018.1.1660568
 export RPI_SYSROOT=$TRAKTOR_3RDP/raspberry-sysroot
-export VULKAN_SDK=$TRAKTOR_3RDP/vulkan/Vulkan-Headers-master-201012
+#export VULKAN_SDK=$TRAKTOR_3RDP/vulkan/Vulkan-Headers-master-201012
 export MOLTEN_SDK=$TRAKTOR_3RDP/vulkan/vulkansdk-macos-1.2.154.0/MoltenVK 
-export VMA_SDK=$TRAKTOR_3RDP/VulkanMemoryAllocator-master-210504
-export SPIRVTOOLS_SDK=$TRAKTOR_3RDP/SPIRV-Tools-master-201029
-export SPIRVCROSS_SDK=$TRAKTOR_3RDP/SPIRV-Cross-master-201009
-export ASTCENC_SDK=$TRAKTOR_3RDP/astc-encoder-master-201104
+#export VMA_SDK=$TRAKTOR_3RDP/VulkanMemoryAllocator-master-210504
+#export SPIRVTOOLS_SDK=$TRAKTOR_3RDP/SPIRV-Tools-master-201029
+#export SPIRVCROSS_SDK=$TRAKTOR_3RDP/SPIRV-Cross-master-201009
+#export ASTCENC_SDK=$TRAKTOR_3RDP/astc-encoder-master-201104
+
+export JPEG_SDK=$TRAKTOR_HOME/3rdp_/jpeg/jpeg-9e
+export AGG_SDK=$TRAKTOR_HOME/3rdp_/agg-2.6
+export BULLET_SDK=$TRAKTOR_HOME/3rdp_/bullet3
+export GLSLANG=$TRAKTOR_HOME/3rdp_/glslang
+export SQLITE_SDK=$TRAKTOR_HOME/3rdp_/sqlite
+export LUA_SDK=$TRAKTOR_HOME/3rdp_/lua/lua-5.4.4
+export EXPAT_SDK=$TRAKTOR_HOME/3rdp_/libexpat/expat
+export ZLIB_SDK=$TRAKTOR_HOME/3rdp_/zlib
+export ASTCENC_SDK=$TRAKTOR_HOME/3rdp_/astc-encoder
+export MIKKTSPACE_SDK=$TRAKTOR_HOME/3rdp_/MikkTSpace
+export XATLAS_SDK=$TRAKTOR_HOME/3rdp_/xatlas
+export VULKAN_SDK=$TRAKTOR_HOME/3rdp_/Vulkan-Headers
+export VMA_SDK=$TRAKTOR_HOME/3rdp_/VulkanMemoryAllocator
+export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp_/SPIRV-Tools
+export SPIRVCROSS_SDK=$TRAKTOR_HOME/3rdp_/SPIRV-Cross
+export FLAC_SDK=$TRAKTOR_HOME/3rdp_/flac
+export FREETYPE_SDK=$TRAKTOR_HOME/3rdp_/freetype
+export SQUISH_SDK=$TRAKTOR_HOME/3rdp_/squish
+export LZF_SDK=$TRAKTOR_HOME/3rdp_/liblzf/liblzf-3.6
+export OGG_SDK=$TRAKTOR_HOME/3rdp_/ogg
 
 # Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then

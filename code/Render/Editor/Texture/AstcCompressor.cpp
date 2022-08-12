@@ -34,7 +34,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 			1,	// block z,
 			ASTCENC_PRE_MEDIUM,
 			0,
-			config
+			&config
 		);
 		break;
 
@@ -47,7 +47,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 			1,	// block z,
 			ASTCENC_PRE_MEDIUM,
 			0,
-			config
+			&config
 		);
 		break;
 
@@ -60,7 +60,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 			1,	// block z,
 			ASTCENC_PRE_MEDIUM,
 			0,
-			config
+			&config
 		);
 		break;
 
@@ -73,7 +73,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 			1,	// block z,
 			ASTCENC_PRE_MEDIUM,
 			0,
-			config
+			&config
 		);
 		break;
 
@@ -89,7 +89,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	}
 
 	astcenc_context* context = nullptr;
-	result = astcenc_context_alloc(config, 1, &context);
+	result = astcenc_context_alloc(&config, 1, &context);
 	if (result != ASTCENC_SUCCESS)
 	{
 		log::error << L"Unable to compress using ASTC; failed to allocate context." << Endl;
@@ -113,7 +113,6 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		image.dim_x = mipImages[i]->getWidth();
 		image.dim_y = mipImages[i]->getHeight();
 		image.dim_z = 1;
-		image.dim_pad = 0;
 
 		if (mipImages[i]->getPixelFormat().isFloatPoint())
 		{
@@ -141,7 +140,7 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		size_t imageSize = getTextureMipPitch(textureFormat, image.dim_x, image.dim_y);
 		AutoArrayPtr< uint8_t > imageData(new uint8_t [imageSize]);
 
-		result = astcenc_compress_image(context, image, swizzle, imageData.ptr(), imageSize, 0);
+		result = astcenc_compress_image(context, &image, &swizzle, imageData.ptr(), imageSize, 0);
 		if (result != ASTCENC_SUCCESS)
 		{
 			log::error << L"Unable to compress using ASTC; failed to compress image." << Endl;

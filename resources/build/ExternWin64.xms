@@ -408,8 +408,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.freetype-2.3.5</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
+			<name>Extern.freetype</name>
+			<sourcePath>$(FREETYPE_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -417,8 +417,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(FREETYPE_SDK)/include</item>
+						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -443,8 +443,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(FREETYPE_SDK)/include</item>
+						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -469,8 +469,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(FREETYPE_SDK)/include</item>
+						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -488,11 +488,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.freetype-2.3.5.pdb</sourceFile>
+							<sourceFile>Extern.freetype.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.freetype-2.3.5.lib</sourceFile>
+							<sourceFile>Extern.freetype.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -504,8 +504,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</item>
+						<item>$(FREETYPE_SDK)/include</item>
+						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -523,11 +523,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.freetype-2.3.5.pdb</sourceFile>
+							<sourceFile>Extern.freetype.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.freetype-2.3.5.lib</sourceFile>
+							<sourceFile>Extern.freetype.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1504,8 +1504,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.jpeg-6b</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
+			<name>Extern.jpeg</name>
+			<sourcePath>$(JPEG_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -1513,7 +1513,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1538,7 +1538,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1563,7 +1563,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1581,11 +1581,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.pdb</sourceFile>
+							<sourceFile>Extern.jpeg.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.lib</sourceFile>
+							<sourceFile>Extern.jpeg.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1597,7 +1597,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1615,11 +1615,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.pdb</sourceFile>
+							<sourceFile>Extern.jpeg.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.jpeg-6b.lib</sourceFile>
+							<sourceFile>Extern.jpeg.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1640,8 +1640,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libflac-1.2.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
+			<name>Extern.flac</name>
+			<sourcePath>$(FLAC_SDK)/src/libFLAC</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -1649,8 +1649,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBFLAC_EXPORT</item>
@@ -1678,8 +1678,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBFLAC_EXPORT</item>
@@ -1707,8 +1707,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1729,11 +1729,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.pdb</sourceFile>
+							<sourceFile>Extern.flac.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.lib</sourceFile>
+							<sourceFile>Extern.flac.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1745,8 +1745,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1767,11 +1767,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.pdb</sourceFile>
+							<sourceFile>Extern.flac.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libflac-1.2.1.lib</sourceFile>
+							<sourceFile>Extern.flac.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2116,8 +2116,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libogg-1.3.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
+			<name>Extern.ogg</name>
+			<sourcePath>$(OGG_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -2125,7 +2125,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
@@ -2149,7 +2150,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
@@ -2173,7 +2175,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2190,11 +2193,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.pdb</sourceFile>
+							<sourceFile>Extern.ogg.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.lib</sourceFile>
+							<sourceFile>Extern.ogg.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2206,7 +2209,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2223,11 +2227,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.pdb</sourceFile>
+							<sourceFile>Extern.ogg.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libogg-1.3.0.lib</sourceFile>
+							<sourceFile>Extern.ogg.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2259,7 +2263,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
@@ -2285,7 +2288,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
@@ -2311,7 +2313,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2346,7 +2347,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2928,8 +2928,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.squish-1.10</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
+			<name>Extern.squish</name>
+			<sourcePath>$(SQUISH_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -2937,7 +2937,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2961,7 +2961,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2985,7 +2985,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3002,11 +3002,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.pdb</sourceFile>
+							<sourceFile>Extern.squish.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.lib</sourceFile>
+							<sourceFile>Extern.squish.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3018,7 +3018,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3035,11 +3035,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.pdb</sourceFile>
+							<sourceFile>Extern.squish.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.squish-1.10.lib</sourceFile>
+							<sourceFile>Extern.squish.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3208,7 +3208,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3233,7 +3232,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3258,7 +3256,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3292,7 +3289,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3343,9 +3339,9 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.mpg123-1.13.2</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
+			<sourcePath>$(MPG123_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -3353,9 +3349,9 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
@@ -3381,9 +3377,9 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
@@ -3409,9 +3405,9 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3446,9 +3442,9 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3838,8 +3834,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.liblzf-3.6</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
+			<name>Extern.liblzf</name>
+			<sourcePath>$(LZF_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -3847,7 +3843,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3870,7 +3866,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3893,7 +3889,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3909,11 +3905,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.liblzf-3.6.pdb</sourceFile>
+							<sourceFile>Extern.liblzf.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.liblzf-3.6.lib</sourceFile>
+							<sourceFile>Extern.liblzf.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3925,7 +3921,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3941,11 +3937,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.liblzf-3.6.pdb</sourceFile>
+							<sourceFile>Extern.liblzf.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Extern.liblzf-3.6.lib</sourceFile>
+							<sourceFile>Extern.liblzf.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -5839,7 +5835,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.agg</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
+			<sourcePath>$(AGG_SDK)/agg-src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -5847,8 +5843,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_AGG_EXPORT</item>
@@ -5872,8 +5868,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_AGG_EXPORT</item>
@@ -5897,8 +5893,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5931,8 +5927,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6201,7 +6197,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.xatlas</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</sourcePath>
+			<sourcePath>$(XATLAS_SDK)/source/xatlas</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -6209,7 +6205,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
+						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6232,7 +6228,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
+						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6255,7 +6251,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
+						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6287,7 +6283,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/xatlas-master-210906/source/xatlas</item>
+						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6926,7 +6922,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.MikkTSpace</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/MikkTSpace-master-200911</sourcePath>
+			<sourcePath>$(MIKKTSPACE_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -6934,7 +6930,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/MikkTSpace-master-200911</item>
+						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_MIKKTSPACE_EXPORT</item>
@@ -6958,7 +6954,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/MikkTSpace-master-200911</item>
+						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_MIKKTSPACE_EXPORT</item>
@@ -6982,7 +6978,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/MikkTSpace-master-200911</item>
+						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -7015,7 +7011,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/MikkTSpace-master-200911</item>
+						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
