@@ -1,0 +1,310 @@
+-- Install or update all 3rdp dependencies.
+
+import(traktor)
+import(traktor.run)
+
+local PACKAGES =
+{
+	{
+		type = "GIT",
+		url = "https://github.com/ghaerr/agg-2.6.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/ARM-software/astc-encoder.git",
+		patch = function()
+			generate_configuration(
+				"Source/astcenccli_version.h.in",
+				"Source/astcenccli_version.h",
+				{
+					["@astcencoder_VERSION@"] = "4.0.0",
+					["@astcencoder_YEAR@"] = "2022"
+				}
+			)
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/bulletphysics/bullet3.git"
+	},
+	--[[
+	{
+		type = "GET",
+		name = "embree-linux",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz"
+	},
+	{
+		type = "GET",
+		name = "embree-windows",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip"
+	},
+	{
+		type = "GET",
+		name = "embree-macOS",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip"
+	},
+	]]
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/flac.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/KhronosGroup/glslang.git",
+		--[[
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:popd()
+		end
+		]]
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/libexpat/libexpat.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/ogg.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:popd()
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/theora.git"
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/vorbis.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/glennrp/libpng.git"
+	},
+	{
+		type = "GET",
+		name = "lua",
+		url = "http://www.lua.org/ftp/lua-5.4.4.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf lua-5.4.4.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "lzo",
+		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/mmikk/MikkTSpace.git"
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/sqlite/sqlite.git",
+		patch = function()
+			run:execute("/bin/sh ./configure")
+		end
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/jpcy/xatlas.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/KhronosGroup/SPIRV-Tools.git",
+		post_clone = function()
+			run:execute("/usr/bin/git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/spirv-headers")
+		end,
+		--[[
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/usr/bin/make")
+			run:popd()
+		end
+		]]
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/KhronosGroup/SPIRV-Cross.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/KhronosGroup/Vulkan-Headers.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/madler/zlib.git",
+		patch = function()
+			run:execute("/bin/sh ./configure")
+			run:execute("/usr/bin/rm gz*")		-- remove gz files, we don't need those...
+		end
+	},
+	{
+		type = "GET",
+		name = "jpeg",
+		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf jpegsrc.v9e.tar.gz")
+			run:execute("/usr/bin/rm gz*")		-- remove gz files, we don't need those...
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://gitlab.freedesktop.org/freetype/freetype.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/Cavewhere/squish.git"
+	},
+	{
+		type = "GET",
+		name = "liblzf",
+		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf liblzf-3.6.tar.gz")
+		end
+	}
+}
+
+--[[
+	Generate files similar to CMake configuration files,
+	since we don't have CMake environment we need to provide keys and values manually.
+]]
+function generate_configuration(infile, outfile, kv)
+	local inf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. infile
+	local utf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. outfile
+	local txt = {}
+
+	-- Read entire file into array.
+	local f = fileSystem:open(Path(inf), File.FmRead)
+    local r = StringReader(f, Utf8Encoding())
+    while true do
+        local ln = r:readLine()
+        if ln == nil then break end
+        table.insert(txt, ln)
+    end
+    f:close()
+
+	-- Write out entire file from array, modify lines as we go along.
+	local f = fileSystem:open(Path(utf), File.FmWrite)
+	local s = StreamOutput(f, Utf8Encoding())
+	for _, ln in ipairs(txt) do
+		for k, v in pairs(kv) do
+			ln = ln:gsub(k, v)
+		end
+		s:printLn(ln)
+	end
+    f:close()
+
+	return true
+end
+
+--[[
+	Update package, if package not found then it will be installed appropriately.
+]]
+function update(pkg)
+	if pkg.type == "GIT" then
+
+		local name = pkg.url:match(".+/(.*).git")
+		if name == nil then
+			stderr:printLn("Unable to extract repo name from url " .. pkg.url)
+			return false
+		end
+
+		local result = true
+		if run:exist(name) then
+			stdout:printLn("Updating " .. pkg.url)
+			run:pushd(name)
+			result = result and (run:execute("/usr/bin/git pull") == 0)
+			result = result and (run:execute("/usr/bin/git submodule update") == 0)
+			run:popd()
+			if result and pkg.post_update ~= nil then
+				stdout:printLn("Running post update...")
+				run:pushd(name)
+				pkg.post_update()
+				run:popd()
+			end			
+		else
+			stdout:printLn("Cloning " .. pkg.url)
+			result = (run:execute("/usr/bin/git clone --recurse-submodules " .. pkg.url) == 0)
+			if result and pkg.post_clone ~= nil then
+				stdout:printLn("Running post clone...")
+				run:pushd(name)
+				pkg.post_clone()
+				run:popd()
+			end
+		end
+
+		if not result then
+			stderr:printLn("GIT failed!")
+			return false
+		end
+
+		if pkg.patch ~= nil then
+			run:pushd(name)
+			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			pkg.patch()
+			run:popd()
+		end
+
+	elseif pkg.type == "GET" then
+
+		if run:exist(pkg.name) then
+			stdout:printLn("Path already exist, assuming already up to date.")
+			return true
+		end
+
+		local file = pkg.url:match(".+/(.*)")
+		if file == nil then
+			stderr:printLn("Unable to extract file name from url " .. pkg.url)
+			return false
+		end
+
+		run:mkdir(pkg.name)
+		run:pushd(pkg.name)
+		local result = run:execute("/usr/bin/wget " .. pkg.url)
+		run:popd()
+
+		if result ~= 0 then
+			stderr:printLn("GET failed, error code " .. result)
+			return false
+		end
+
+		if pkg.patch ~= nil then
+			run:pushd(pkg.name)
+			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			pkg.patch()
+			run:popd()
+		end		
+
+	else
+		stderr:printLn("Unknown package type " .. pkg.type)
+		return false
+	end
+
+	return true
+end
+
+function main(argv)
+	if not run:mkdir("3rdp_") then
+		stderr:printLn("Unable to create output directory.")
+		return 1
+	end
+	run:pushd("3rdp_")
+	for _, pkg in ipairs(PACKAGES) do
+		update(pkg)
+	end
+	run:popd()
+	return 0
+end

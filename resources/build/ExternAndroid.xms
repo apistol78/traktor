@@ -290,8 +290,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.jpeg-6b</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
+			<name>Extern.jpeg</name>
+			<sourcePath>$(JPEG_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -318,7 +318,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
+							<sourceFile>libExtern.jpeg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -349,7 +349,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.jpeg-6b.a</sourceFile>
+							<sourceFile>libExtern.jpeg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -370,8 +370,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libflac-1.2.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
+			<name>Extern.flac</name>
+			<sourcePath>$(FLAC_SDK)/src/libFLAC</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -379,9 +379,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -402,7 +401,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
+							<sourceFile>libExtern.flac.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -414,9 +413,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
+						<item>$(FLAC_SDK)/src/libFLAC/include</item>
+						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -437,7 +435,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libflac-1.2.1.a</sourceFile>
+							<sourceFile>libExtern.flac.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -726,8 +724,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libogg-1.3.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
+			<name>Extern.ogg</name>
+			<sourcePath>$(OGG_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -735,7 +733,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -753,7 +752,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
+							<sourceFile>libExtern.ogg.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -765,7 +764,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(OGG_SDK)/include</item>
+						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -783,7 +783,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libogg-1.3.0.a</sourceFile>
+							<sourceFile>libExtern.ogg.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -815,7 +815,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -847,7 +846,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1320,8 +1318,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.squish-1.10</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
+			<name>Extern.squish</name>
+			<sourcePath>$(SQUISH_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1329,7 +1327,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1348,7 +1346,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.a</sourceFile>
+							<sourceFile>libExtern.squish.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1360,7 +1358,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+						<item>$(SQUISH_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1379,7 +1377,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.squish-1.10.a</sourceFile>
+							<sourceFile>libExtern.squish.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1496,7 +1494,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1528,7 +1525,6 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1577,9 +1573,9 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.mpg123-1.13.2</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
+			<sourcePath>$(MPG123_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1587,9 +1583,9 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/emscripten</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/emscripten</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1621,9 +1617,9 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/emscripten</item>
+						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(MPG123_SDK)/ports/emscripten</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1958,8 +1954,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.liblzf-3.6</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
+			<name>Extern.liblzf</name>
+			<sourcePath>$(LZF_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1967,8 +1963,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1985,7 +1980,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
+							<sourceFile>libExtern.liblzf.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1997,8 +1992,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+						<item>$(LZF_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -2015,7 +2009,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.liblzf-3.6.a</sourceFile>
+							<sourceFile>libExtern.liblzf.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2371,7 +2365,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.agg</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/agg-2.5</sourcePath>
+			<sourcePath>$(AGG_SDK)/agg-src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2379,8 +2373,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -2409,8 +2403,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/agg-2.5/gpc</item>
+						<item>$(AGG_SDK)/agg-src/include</item>
+						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

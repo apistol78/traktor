@@ -1399,7 +1399,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternXboxOne.xms</solutionFileName>
-														<projectName>Extern.liblzf-3.6</projectName>
+														<projectName>Extern.liblzf</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -2896,7 +2896,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternXboxOne.xms</solutionFileName>
-					<projectName>Extern.jpeg-6b</projectName>
+					<projectName>Extern.jpeg</projectName>
 				</item>
 			</dependencies>
 		</item>
@@ -4391,7 +4391,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternXboxOne.xms</solutionFileName>
-								<projectName>Extern.libflac-1.2.1</projectName>
+								<projectName>Extern.flac</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -6479,7 +6479,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternXboxOne.xms</solutionFileName>
-					<projectName>Extern.libogg-1.3.0</projectName>
+					<projectName>Extern.ogg</projectName>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

@@ -1142,11 +1142,8 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
@@ -1175,11 +1172,8 @@
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
@@ -1208,11 +1202,8 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1241,11 +1232,8 @@
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
 															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1327,7 +1315,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternLinux.xms</solutionFileName>
-														<projectName>Extern.liblzf-3.6</projectName>
+														<projectName>Extern.liblzf</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -2989,12 +2977,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_DRAWING_EXPORT</item>
 															<item>_DEBUG</item>
@@ -3022,12 +3005,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_DRAWING_EXPORT</item>
 															<item>NDEBUG</item>
@@ -3055,12 +3033,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
@@ -3088,12 +3061,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
@@ -3172,7 +3140,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternLinux.xms</solutionFileName>
-														<projectName>Extern.jpeg-6b</projectName>
+														<projectName>Extern.jpeg</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -5554,7 +5522,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(SQUISH_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 														</includePaths>
 														<definitions>
@@ -5585,7 +5553,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(SQUISH_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 														</includePaths>
 														<definitions>
@@ -5616,7 +5584,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(SQUISH_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 														</includePaths>
 														<definitions>
@@ -5647,7 +5615,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+															<item>$(SQUISH_SDK)</item>
 															<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
 														</includePaths>
 														<definitions>
@@ -6200,7 +6168,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternLinux.xms</solutionFileName>
-														<projectName>Extern.squish-1.10</projectName>
+														<projectName>Extern.squish</projectName>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -6416,7 +6384,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
@@ -6447,7 +6414,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
@@ -6478,7 +6444,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6509,7 +6474,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6553,7 +6517,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternLinux.xms</solutionFileName>
-											<projectName>Extern.libogg-1.3.0</projectName>
+											<projectName>Extern.ogg</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -6595,8 +6559,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/linux</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 											</includePaths>
 											<definitions>
@@ -6630,8 +6592,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/linux</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 											</includePaths>
 											<definitions>
@@ -6665,8 +6625,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/linux</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 											</includePaths>
 											<definitions>
@@ -6700,8 +6658,6 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
-												<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/linux</item>
 												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 											</includePaths>
 											<definitions>
@@ -6821,7 +6777,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternLinux.xms</solutionFileName>
-											<projectName>Extern.libflac-1.2.1</projectName>
+											<projectName>Extern.flac</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -8784,7 +8740,6 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
@@ -8815,7 +8770,6 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
@@ -8846,7 +8800,6 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8877,7 +8830,6 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8982,7 +8934,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternLinux.xms</solutionFileName>
-								<projectName>Extern.libogg-1.3.0</projectName>
+								<projectName>Extern.ogg</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
