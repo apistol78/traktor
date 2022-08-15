@@ -8,7 +8,7 @@
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	if !defined(_XBOX_ONE) && !defined(_XBOX)
+#	if !defined(_XBOX)
 #		define DRAWING_INCLUDE_EXR
 #	endif
 #elif defined(__APPLE__)

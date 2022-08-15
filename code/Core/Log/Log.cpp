@@ -47,7 +47,7 @@ public:
 		NSLogCpp(str);
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_INFO, "Traktor", "%s", wstombs(str).c_str());
-#elif defined(_WIN32) && !defined(_XBOX_ONE)
+#elif defined(_WIN32)
 		OutputDebugStringW(str);
 		OutputDebugStringW(L"\n");
 #endif
@@ -64,7 +64,7 @@ public:
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#if defined(_WIN32) && !defined(_XBOX_ONE)
+#if defined(_WIN32)
 		StringOutputStream ss;
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 		OutputDebugStringW(ss.str().c_str());

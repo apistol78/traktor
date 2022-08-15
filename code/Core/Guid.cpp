@@ -89,7 +89,7 @@ Guid Guid::create()
 {
 	Guid guid;
 
-#if defined(_WIN32) && !defined(_XBOX) && !defined(_XBOX_ONE)
+#if defined(_WIN32) && !defined(_XBOX)
 
 	GUID tmp;
 	CoCreateGuid(&tmp);

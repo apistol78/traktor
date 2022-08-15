@@ -39,7 +39,7 @@ namespace traktor
 	 */
 	struct SystemWindow
 	{
-#if defined(_WIN32) && !defined(_XBOX_ONE)
+#if defined(_WIN32)
 		void* hWnd;
 
 		SystemWindow()

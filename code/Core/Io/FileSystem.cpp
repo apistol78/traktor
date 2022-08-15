@@ -9,9 +9,6 @@
 #if defined(_WIN32)
 #	include "Core/Io/Win32/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#elif defined(_XBOX_ONE)
-#	include "Core/Io/XboxOne/NativeVolume.h"
-#	define HAS_NATIVE_VOLUME
 #elif defined(__IOS__)		// IOS
 #	include "Core/Io/iOS/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
