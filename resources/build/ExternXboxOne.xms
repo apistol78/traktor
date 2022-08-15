@@ -369,7 +369,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.detour</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
+			<sourcePath>$(RECAST_SDK)/Detour</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -377,7 +377,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -400,7 +400,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -423,7 +423,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -451,7 +451,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -1490,8 +1490,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libtheora-1.1.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
+			<name>Extern.theora</name>
+			<sourcePath>$(THEORA_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -1499,8 +1499,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 						<item>$(OGG_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -1524,8 +1524,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 						<item>$(OGG_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -1549,8 +1549,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 						<item>$(OGG_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -1567,7 +1567,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libtheora-1.1.1.lib</sourceFile>
+							<sourceFile>Extern.theora.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1579,8 +1579,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 						<item>$(OGG_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -1597,7 +1597,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.libtheora-1.1.1.lib</sourceFile>
+							<sourceFile>Extern.theora.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1625,8 +1625,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.libvorbis-1.3.3</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
+						<name>Extern.vorbis</name>
+						<sourcePath>$(VORBIS_SDK)/lib</sourcePath>
 						<configurations>
 							<item type="Configuration" version="5">
 								<name>DebugShared</name>
@@ -1634,8 +1634,8 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(VORBIS_SDK)/lib</item>
+									<item>$(VORBIS_SDK)/include</item>
 									<item>$(OGG_SDK)/include</item>
 								</includePaths>
 								<definitions>
@@ -1660,8 +1660,8 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(VORBIS_SDK)/lib</item>
+									<item>$(VORBIS_SDK)/include</item>
 									<item>$(OGG_SDK)/include</item>
 								</includePaths>
 								<definitions>
@@ -1686,8 +1686,8 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(VORBIS_SDK)/lib</item>
+									<item>$(VORBIS_SDK)/include</item>
 									<item>$(OGG_SDK)/include</item>
 								</includePaths>
 								<definitions>
@@ -1705,7 +1705,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Extern.libvorbis-1.3.3.lib</sourceFile>
+										<sourceFile>Extern.vorbis.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -1717,8 +1717,8 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(VORBIS_SDK)/lib</item>
+									<item>$(VORBIS_SDK)/include</item>
 									<item>$(OGG_SDK)/include</item>
 								</includePaths>
 								<definitions>
@@ -1736,7 +1736,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Extern.libvorbis-1.3.3.lib</sourceFile>
+										<sourceFile>Extern.vorbis.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -2023,7 +2023,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lpng</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
+			<sourcePath>$(PNG_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2031,7 +2031,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -2061,7 +2061,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -2091,7 +2091,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -2116,7 +2116,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -2411,8 +2411,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.minilzo-2.05</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+			<name>Extern.lzo</name>
+			<sourcePath>$(LZO_SDK)/minilzo</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -2420,8 +2420,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2444,8 +2444,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2468,8 +2468,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2485,7 +2485,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.minilzo-2.05.lib</sourceFile>
+							<sourceFile>Extern.lzo.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2497,8 +2497,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2514,7 +2514,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.minilzo-2.05.lib</sourceFile>
+							<sourceFile>Extern.lzo.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2890,7 +2890,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.recast</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
+			<sourcePath>$(RECAST_SDK)/Recast</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -2898,7 +2898,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2921,7 +2921,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2944,7 +2944,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2972,7 +2972,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3020,7 +3020,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.rg_etc1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</sourcePath>
+			<sourcePath>$(RG_ETC1_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -3028,7 +3028,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3051,7 +3051,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3074,7 +3074,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3102,7 +3102,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3387,8 +3387,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.stb_vorbis</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
+			<name>Extern.stb</name>
+			<sourcePath>$(STB_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -3396,7 +3396,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3419,7 +3419,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3442,7 +3442,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3458,7 +3458,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.stb_vorbis.lib</sourceFile>
+							<sourceFile>Extern.stb.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3470,7 +3470,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3486,7 +3486,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Extern.stb_vorbis.lib</sourceFile>
+							<sourceFile>Extern.stb.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

@@ -322,6 +322,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	// Create memory allocator.
 	VmaVulkanFunctions vf = {};
+	vf.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
+	vf.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
 	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
 	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
 	vf.vkAllocateMemory = vkAllocateMemory;

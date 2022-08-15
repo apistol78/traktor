@@ -626,7 +626,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -656,7 +656,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -686,7 +686,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -716,7 +716,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1142,8 +1142,8 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
@@ -1172,8 +1172,8 @@
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
@@ -1202,8 +1202,8 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1232,8 +1232,8 @@
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -1321,7 +1321,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternRPi.xms</solutionFileName>
-														<projectName>Extern.minilzo-2.05</projectName>
+														<projectName>Extern.lzo</projectName>
 													</item>
 												</dependencies>
 											</project>
@@ -5488,7 +5488,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(THEORA_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
@@ -5518,7 +5518,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(THEORA_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
@@ -5548,7 +5548,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(THEORA_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5578,7 +5578,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+												<item>$(THEORA_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5628,7 +5628,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternRPi.xms</solutionFileName>
-											<projectName>Extern.libtheora-1.1.1</projectName>
+											<projectName>Extern.theora</projectName>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -5664,7 +5664,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -5696,7 +5696,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -5728,7 +5728,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5760,7 +5760,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5890,7 +5890,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternRPi.xms</solutionFileName>
-											<projectName>Extern.stb_vorbis</projectName>
+											<projectName>Extern.stb</projectName>
 										</item>
 									</dependencies>
 								</project>
@@ -6176,7 +6176,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -6206,7 +6206,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -6236,7 +6236,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6266,7 +6266,7 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6396,7 +6396,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+															<item>$(RAPIDJSON_SDK)/include</item>
 														</includePaths>
 														<definitions>
 															<item>T_JSON_EXPORT</item>
@@ -6426,7 +6426,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+															<item>$(RAPIDJSON_SDK)/include</item>
 														</includePaths>
 														<definitions>
 															<item>T_JSON_EXPORT</item>
@@ -6456,7 +6456,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+															<item>$(RAPIDJSON_SDK)/include</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6486,7 +6486,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+															<item>$(RAPIDJSON_SDK)/include</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6555,7 +6555,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(SQUISH_SDK)</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+												<item>$(RG_ETC1_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_RENDER_EDITOR_EXPORT</item>
@@ -6586,7 +6586,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(SQUISH_SDK)</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+												<item>$(RG_ETC1_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_RENDER_EDITOR_EXPORT</item>
@@ -6617,7 +6617,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(SQUISH_SDK)</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+												<item>$(RG_ETC1_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6648,7 +6648,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(SQUISH_SDK)</item>
-												<item>$(TRAKTOR_HOME)/3rdp/rg_etc1_v104</item>
+												<item>$(RG_ETC1_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -7750,7 +7750,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
@@ -7780,7 +7780,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
@@ -7810,7 +7810,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -7840,7 +7840,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8110,7 +8110,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -8140,7 +8140,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -8170,7 +8170,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8200,7 +8200,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8290,7 +8290,6 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
@@ -8320,7 +8319,6 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
@@ -8350,7 +8348,6 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8380,7 +8377,6 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -8491,7 +8487,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternRPi.xms</solutionFileName>
-								<projectName>Extern.libvorbis-1.3.3</projectName>
+								<projectName>Extern.vorbis</projectName>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12170,10 +12166,7 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
+											<includePaths/>
 											<definitions>
 												<item>T_AI_EXPORT</item>
 												<item>_DEBUG</item>
@@ -12200,10 +12193,7 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
+											<includePaths/>
 											<definitions>
 												<item>T_AI_EXPORT</item>
 												<item>NDEBUG</item>
@@ -12230,10 +12220,7 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
+											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
@@ -12260,10 +12247,7 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-											</includePaths>
+											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
@@ -14004,11 +13988,7 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_AI_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
@@ -14035,11 +14015,7 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_AI_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
@@ -14066,11 +14042,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
@@ -14097,11 +14069,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
