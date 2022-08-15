@@ -174,13 +174,6 @@
 			</deploy>
 		</item>
 		<item>
-			<platform>{C83644BC-848F-AD4C-9C23-9330903EB34D}</platform>
-			<executableFile/>
-			<deploy type="traktor.PropertyGroup">
-				<value/>
-			</deploy>
-		</item>
-		<item>
 			<platform>{13FF3E12-076E-274E-B347-8F323ECD53A7}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
