@@ -94,10 +94,17 @@ ProcessLinux::~ProcessLinux()
 	{
 		posix_spawn_file_actions_destroy(m_fileActions);
 		delete m_fileActions;
-
-		::close(m_childStdOut);
-		::close(m_childStdErr);
 	}
+	if (m_spawnAttrp)
+	{
+		posix_spawnattr_destroy(m_spawnAttrp);
+		delete m_spawnAttrp;
+	}
+
+	if (m_childStdOut != 0)
+		::close(m_childStdOut);
+	if (m_childStdErr != 0)
+		::close(m_childStdErr);
 }
 
 bool ProcessLinux::setPriority(Priority priority)
@@ -122,6 +129,9 @@ IStream* ProcessLinux::waitPipeStream(int32_t timeout)
 {
 	fd_set readSet = {};
 	int nfd = 0;
+
+	if (m_childStdOut == 0 && m_childStdErr == 0)
+		return nullptr;
 
  	if (m_childStdOut != 0)
 	{
@@ -191,9 +201,16 @@ bool ProcessLinux::wait(int32_t timeout)
 		return waitpid(m_pid, &m_exitCode, 0) >= 0;
 }
 
-ProcessLinux::ProcessLinux(pid_t pid, posix_spawn_file_actions_t* fileActions, int childStdOut, int childStdErr)
+ProcessLinux::ProcessLinux(
+	pid_t pid,
+	posix_spawn_file_actions_t* fileActions,
+	posix_spawnattr_t* spawnAttrp,
+	int childStdOut,
+	int childStdErr
+)
 :	m_pid(pid)
 ,	m_fileActions(fileActions)
+,	m_spawnAttrp(spawnAttrp)
 ,	m_childStdOut(childStdOut)
 ,	m_childStdErr(childStdErr)
 ,	m_exitCode(0)

@@ -156,11 +156,12 @@ Ref< Environment > OS::getEnvironment() const
 		char* sep = strchr(*e, '=');
 		if (sep)
 		{
-			char* val = sep + 1;
-			env->set(
-				mbstows(std::string(*e, sep)),
-				mbstows(val)
-			);
+			std::wstring ek = mbstows(std::string(*e, sep));
+			if (!ek.empty())
+			{
+				char* val = sep + 1;
+				env->set(ek, mbstows(val));
+			}
 		}
 	}
 	return env;
@@ -186,9 +187,10 @@ Ref< IProcess > OS::execute(
 ) const
 {
 	posix_spawn_file_actions_t* fileActions = nullptr;
-	char cwd[4096];
+	posix_spawnattr_t* spawnAttrp = nullptr;
 	AlignedVector< char* > envv;
 	AlignedVector< char* > argv;
+	char cwd[4096];
 	int envc = 0;
 	int argc = 0;
 	int err;
@@ -225,6 +227,8 @@ Ref< IProcess > OS::execute(
 	}
 #else
 	Path awd = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+	if (awd.empty())
+		return nullptr;
 	strcpy(cwd, wstombs(awd.getPathNameNoVolume()).c_str());
 #endif
 
@@ -243,12 +247,6 @@ Ref< IProcess > OS::execute(
 		for (auto it : env->get())
 			envv.push_back(strdup(wstombs(it.first + L"=" + it.second).c_str()));
 	}
-	else
-	{
-		Ref< Environment > env2 = getEnvironment();
-		for (auto it : env2->get())
-			envv.push_back(strdup(wstombs(it.first + L"=" + it.second).c_str()));
-	}
 
 	// Terminate argument and environment vectors.
 	envv.push_back(nullptr);
@@ -261,6 +259,10 @@ Ref< IProcess > OS::execute(
 			return nullptr;
 		if (pipe(childStdErr) != 0)
 			return nullptr;
+
+		spawnAttrp = new posix_spawnattr_t;
+		posix_spawnattr_init(spawnAttrp);
+		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP);
 
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
@@ -275,17 +277,21 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addclose(fileActions, childStdErr[1]);
 
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
+		err = posix_spawn(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
 	}
 	else
 	{
+		spawnAttrp = new posix_spawnattr_t;
+		posix_spawnattr_init(spawnAttrp);
+		posix_spawnattr_setflags(spawnAttrp, POSIX_SPAWN_SETPGROUP);
+
 		fileActions = new posix_spawn_file_actions_t;
 		posix_spawn_file_actions_init(fileActions);
 #if !defined(__RPI__)
 		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
+		err = posix_spawn(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
 	}
 
 	// Free arguments.
@@ -300,14 +306,25 @@ Ref< IProcess > OS::execute(
 			free(env);
 	}
 
+	// Cleanup in case of failure.
 	if (err != 0)
 	{
 		posix_spawn_file_actions_destroy(fileActions);
 		delete fileActions;
+
+		posix_spawnattr_destroy(spawnAttrp);
+		delete spawnAttrp;
+
 		return nullptr;
 	}
 
-	return new ProcessLinux(pid, fileActions, childStdOut[0], childStdErr[0]);
+	return new ProcessLinux(
+		pid, 
+		fileActions,
+		spawnAttrp,
+		childStdOut[0],
+		childStdErr[0]
+	);
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
