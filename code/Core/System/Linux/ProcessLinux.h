@@ -33,13 +33,20 @@ private:
 
 	pid_t m_pid;
 	posix_spawn_file_actions_t* m_fileActions;
+	posix_spawnattr_t* m_spawnAttrp;
 	int m_childStdOut;
 	int m_childStdErr;
 	Ref< IStream > m_streamStdOut;
 	Ref< IStream > m_streamStdErr;
 	int32_t m_exitCode;
 
-	ProcessLinux(pid_t pid, posix_spawn_file_actions_t* fileActions, int childStdOut, int childStdErr);
+	ProcessLinux(
+		pid_t pid,
+		posix_spawn_file_actions_t* fileActions,
+		posix_spawnattr_t* spawnAttrp,
+		int childStdOut,
+		int childStdErr
+	);
 };
 
 }

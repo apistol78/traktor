@@ -27,12 +27,17 @@ public:
 
 	const std::wstring& getFileName() const;
 
+	void setExcludeFilter(const std::wstring& excludeFilter);
+
+	const std::wstring& getExcludeFilter() const;
+
 	void getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_fileName;
+	std::wstring m_excludeFilter;
 };
 
 	}

@@ -31,8 +31,10 @@ void HeaderScanner::addIncludePath(const std::wstring& includePath)
 
 bool HeaderScanner::get(const std::wstring& fileName, const std::wstring& projectPath, SmallSet< std::wstring >& outHeaderFiles)
 {
+	const std::wstring nfn = Path(fileName).normalized().getPathNameOS();
+
 	AlignedVector< std::wstring > fileNames;
-	fileNames.push_back(fileName);
+	fileNames.push_back(nfn);
 
 	while (!fileNames.empty())
 	{
@@ -96,7 +98,7 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
 		if (!filePath.empty())
 		{
-			std::wstring dependencyName = filePath + L"/" + dep;
+			std::wstring dependencyName = Path(filePath + L"/" + dep).normalized().getPathNameOS();
 			if (FileSystem::getInstance().exist(dependencyName))
 			{
 				includes->files.insert(dependencyName);
@@ -106,7 +108,7 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
         for (auto includePath : m_includePaths)
 		{
-			std::wstring dependencyName = includePath + L"/" + dep;
+			std::wstring dependencyName = Path(includePath + L"/" + dep).normalized().getPathNameOS();
 			if (FileSystem::getInstance().exist(dependencyName))
 			{
 				includes->files.insert(dependencyName);
