@@ -636,7 +636,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -673,7 +673,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -710,7 +710,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -743,7 +743,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1405,7 +1405,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternXboxOne.xms</solutionFileName>
-														<projectName>Extern.minilzo-2.05</projectName>
+														<projectName>Extern.lzo</projectName>
 													</item>
 												</dependencies>
 											</project>
@@ -4403,7 +4403,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternXboxOne.xms</solutionFileName>
-								<projectName>Extern.stb_vorbis</projectName>
+								<projectName>Extern.stb</projectName>
 							</item>
 						</dependencies>
 					</project>
@@ -6485,7 +6485,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternXboxOne.xms</solutionFileName>
-					<projectName>Extern.libtheora-1.1.1</projectName>
+					<projectName>Extern.theora</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

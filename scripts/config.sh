@@ -14,15 +14,15 @@ export TRAKTOR_HOME
 export TRAKTOR_3RDP=$TRAKTOR_HOME/3rdp
 
 # Paths to 3rd party dependencies.
-export STEAMWORKS_SDK=$TRAKTOR_3RDP/steamworks-sdk-142
+#export STEAMWORKS_SDK=$TRAKTOR_3RDP/steamworks-sdk-142
 #export BULLET_SDK=$TRAKTOR_3RDP/bullet3-master-210317
-export FBX_SDK=$TRAKTOR_3RDP/FbxSdk/2016.1.2
+#export FBX_SDK=$TRAKTOR_3RDP/FbxSdk/2016.1.2
 #export GLSLANG=$TRAKTOR_3RDP/glslang-master-200605
 #export SQLITE_SDK=$TRAKTOR_3RDP/sqlite-3.8.7.2
 #export LUA_SDK=$TRAKTOR_3RDP/lua-5.4.3
 #export EXPAT_SDK=$TRAKTOR_3RDP/libexpat-R_2_2_5/expat
 #export ZLIB_SDK=$TRAKTOR_3RDP/zlib-1.2.11
-export P4_SDK=$TRAKTOR_3RDP/p4api-2018.1.1660568
+#export P4_SDK=$TRAKTOR_3RDP/p4api-2018.1.1660568
 export RPI_SYSROOT=$TRAKTOR_3RDP/raspberry-sysroot
 #export VULKAN_SDK=$TRAKTOR_3RDP/vulkan/Vulkan-Headers-master-201012
 export MOLTEN_SDK=$TRAKTOR_3RDP/vulkan/vulkansdk-macos-1.2.154.0/MoltenVK 
@@ -50,7 +50,19 @@ export FLAC_SDK=$TRAKTOR_HOME/3rdp_/flac
 export FREETYPE_SDK=$TRAKTOR_HOME/3rdp_/freetype
 export SQUISH_SDK=$TRAKTOR_HOME/3rdp_/squish
 export LZF_SDK=$TRAKTOR_HOME/3rdp_/liblzf/liblzf-3.6
+export LZO_SDK=$TRAKTOR_HOME/3rdp_/lzo/lzo-2.10
 export OGG_SDK=$TRAKTOR_HOME/3rdp_/ogg
+export STB_SDK=$TRAKTOR_HOME/3rdp_/stb
+export TINYEXR_SDK=$TRAKTOR_HOME/3rdp_/tinyexr
+export RAPIDJSON_SDK=$TRAKTOR_HOME/3rdp_/rapidjson
+export FBX_SDK=$TRAKTOR_HOME/3rdp_/fbx/2016.1.2
+export RG_ETC1_SDK=$TRAKTOR_HOME/3rdp_/rg-etc1
+export THEORA_SDK=$TRAKTOR_HOME/3rdp_/theora
+export PNG_SDK=$TRAKTOR_HOME/3rdp_/libpng
+export VORBIS_SDK=$TRAKTOR_HOME/3rdp_/vorbis
+export RECAST_SDK=$TRAKTOR_HOME/3rdp_/recastnavigation
+export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp_/steamworks-sdk-142
+export P4_SDK=$TRAKTOR_HOME/3rdp_/p4api-linux/p4api-2022.1.2305383
 
 # Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then
@@ -65,11 +77,15 @@ fi
 
 # Platform specific 3rd party dependencies.
 if [[ $TRAKTOR_PLATFORM == linux ]]; then
-	export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.5.2.x86_64.linux
-	export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.linux
+	#export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.5.2.x86_64.linux
+	export EMBREE_SDK=$TRAKTOR_HOME/3rdp_/embree-linux/embree-3.13.4.x86_64.linux
+	#export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.linux
+	export OIDN_SDK=$TRAKTOR_HOME/3rdp_/oidn-linux/oidn-1.4.3.x86_64.linux
 elif [[ $TRAKTOR_PLATFORM == macos ]]; then
-	export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.6.1.x86_64.macosx
-	export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.macos
+	#export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.6.1.x86_64.macosx
+	export EMBREE_SDK=$TRAKTOR_HOME/3rdp_/embree-macOS/embree-3.13.4.x86_64.macosx
+	#export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.macos
+	export OIDN_SDK=$TRAKTOR_HOME/3rdp_/oidn-macOS/oidn-1.4.3.x86_64.macos
 fi
 
 # Export name of solution builder binary.

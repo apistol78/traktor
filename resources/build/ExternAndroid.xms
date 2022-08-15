@@ -804,8 +804,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libvorbis-1.3.3</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
+			<name>Extern.vorbis</name>
+			<sourcePath>$(VORBIS_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -813,8 +813,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(VORBIS_SDK)/lib</item>
+						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -832,7 +832,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
+							<sourceFile>libExtern.vorbis.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -844,8 +844,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(VORBIS_SDK)/lib</item>
+						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -863,7 +863,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libvorbis-1.3.3.a</sourceFile>
+							<sourceFile>libExtern.vorbis.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1152,7 +1152,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.lpng</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng1632</sourcePath>
+			<sourcePath>$(PNG_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1160,7 +1160,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1192,7 +1192,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
+						<item>$(PNG_SDK)</item>
 						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1483,8 +1483,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libtheora-1.1.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
+			<name>Extern.theora</name>
+			<sourcePath>$(THEORA_SDK)/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1492,8 +1492,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1511,7 +1511,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+							<sourceFile>libExtern.theora.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1523,8 +1523,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/lib</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1542,7 +1542,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.libtheora-1.1.1.a</sourceFile>
+							<sourceFile>libExtern.theora.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1874,8 +1874,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.minilzo-2.05</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+			<name>Extern.lzo</name>
+			<sourcePath>$(LZO_SDK)/minilzo</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1884,8 +1884,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1902,7 +1902,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
+							<sourceFile>libExtern.lzo.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -1915,8 +1915,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(LZO_SDK)/minilzo</item>
+						<item>$(LZO_SDK)/include/lzo</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1933,7 +1933,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.minilzo-2.05.a</sourceFile>
+							<sourceFile>libExtern.lzo.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2046,8 +2046,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.stb_vorbis</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
+			<name>Extern.stb</name>
+			<sourcePath>$(STB_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2070,7 +2070,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+							<sourceFile>libExtern.stb.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2097,7 +2097,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.stb_vorbis.a</sourceFile>
+							<sourceFile>libExtern.stb.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -2115,7 +2115,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.recast</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
+			<sourcePath>$(RECAST_SDK)/Recast</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2123,7 +2123,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -2152,7 +2152,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -2201,7 +2201,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.detour</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
+			<sourcePath>$(RECAST_SDK)/Detour</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2209,7 +2209,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -2238,7 +2238,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>

@@ -1087,7 +1087,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1117,7 +1117,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1222,8 +1222,8 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+									<item>$(LZO_SDK)/minilzo</item>
+									<item>$(LZO_SDK)/include/lzo</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1252,8 +1252,8 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+									<item>$(LZO_SDK)/minilzo</item>
+									<item>$(LZO_SDK)/include/lzo</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1335,7 +1335,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternPs3.xms</solutionFileName>
-								<projectName>Extern.minilzo-2.05</projectName>
+								<projectName>Extern.lzo</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -1698,7 +1698,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1730,7 +1730,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1833,7 +1833,7 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternPs3.xms</solutionFileName>
-								<projectName>Extern.stb_vorbis</projectName>
+								<projectName>Extern.stb</projectName>
 							</item>
 						</dependencies>
 					</project>
@@ -3620,7 +3620,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3650,7 +3650,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4127,7 +4127,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4157,7 +4157,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4207,7 +4207,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternPs3.xms</solutionFileName>
-					<projectName>Extern.libtheora-1.1.1</projectName>
+					<projectName>Extern.theora</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -4637,10 +4637,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
@@ -4667,10 +4664,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
@@ -4998,7 +4992,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+						<item>$(RAPIDJSON_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5028,7 +5022,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+						<item>$(RAPIDJSON_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

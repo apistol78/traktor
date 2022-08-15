@@ -27,38 +27,74 @@ local PACKAGES =
 		type = "GIT",
 		url = "https://github.com/bulletphysics/bullet3.git"
 	},
-	--[[
 	{
 		type = "GET",
 		name = "embree-linux",
-		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz"
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
+		end
 	},
 	{
 		type = "GET",
 		name = "embree-windows",
-		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip"
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
+		patch = function()
+			run:execute("/usr/bin/unzip embree-3.13.4.x64.vc14.windows.zip")
+		end
 	},
 	{
 		type = "GET",
 		name = "embree-macOS",
-		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip"
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip",
+		patch = function()
+			run:execute("/usr/bin/unzip embree-3.13.4.x86_64.macosx.zip")
+		end
 	},
-	]]
+	{
+		type = "GET",
+		name = "oidn-linux",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.linux.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "oidn-windows",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
+		patch = function()
+			run:execute("/usr/bin/unzip oidn-1.4.3.x64.vc14.windows.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "oidn-macOS",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.macos.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
+		end
+	},
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/flac.git"
+		url = "https://github.com/xiph/flac.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -D WITH_OGG=FALSE -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/usr/bin/make")
+			run:popd()
+		end
 	},
 	{
 		type = "GIT",
 		url = "https://github.com/KhronosGroup/glslang.git",
-		--[[
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:popd()
 		end
-		]]
 	},
 	{
 		type = "GIT",
@@ -70,7 +106,7 @@ local PACKAGES =
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:popd()
 		end
 	},
@@ -84,7 +120,15 @@ local PACKAGES =
 	},
 	{
 		type = "GIT",
-		url = "https://github.com/glennrp/libpng.git"
+		url = "https://github.com/glennrp/libpng.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/usr/bin/make")
+			run:popd()
+			-- @fixme our zlib is newer than system, so I've manually patched the configuration file...
+		end
 	},
 	{
 		type = "GET",
@@ -97,7 +141,10 @@ local PACKAGES =
 	{
 		type = "GET",
 		name = "lzo",
-		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz"
+		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf lzo-2.10.tar.gz")
+		end
 	},
 	{
 		type = "GIT",
@@ -108,6 +155,7 @@ local PACKAGES =
 		url = "https://github.com/sqlite/sqlite.git",
 		patch = function()
 			run:execute("/bin/sh ./configure")
+			run:execute("/usr/bin/make")
 		end
 	},	
 	{
@@ -120,15 +168,13 @@ local PACKAGES =
 		post_clone = function()
 			run:execute("/usr/bin/git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/spirv-headers")
 		end,
-		--[[
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:execute("/usr/bin/make")
 			run:popd()
 		end
-		]]
 	},
 	{
 		type = "GIT",
@@ -147,7 +193,6 @@ local PACKAGES =
 		url = "https://github.com/madler/zlib.git",
 		patch = function()
 			run:execute("/bin/sh ./configure")
-			run:execute("/usr/bin/rm gz*")		-- remove gz files, we don't need those...
 		end
 	},
 	{
@@ -156,12 +201,18 @@ local PACKAGES =
 		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
 		patch = function()
 			run:execute("/usr/bin/tar -xzf jpegsrc.v9e.tar.gz")
-			run:execute("/usr/bin/rm gz*")		-- remove gz files, we don't need those...
+			run:execute("/bin/sh ./configure")
 		end
 	},
 	{
 		type = "GIT",
-		url = "https://gitlab.freedesktop.org/freetype/freetype.git"
+		url = "https://gitlab.freedesktop.org/freetype/freetype.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
+			run:popd()
+		end
 	},
 	{
 		type = "GIT",
@@ -174,7 +225,35 @@ local PACKAGES =
 		patch = function()
 			run:execute("/usr/bin/tar -xzf liblzf-3.6.tar.gz")
 		end
-	}
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/nothings/stb.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/syoyo/tinyexr.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/Tencent/rapidjson.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/richgel999/rg-etc1.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/recastnavigation/recastnavigation.git"
+	},
+	{
+		type = "GET",
+		name = "p4api-linux",
+		url = "https://www.perforce.com/downloads/perforce/r22.1/bin.linux26x86_64/p4api.tgz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf p4api.tgz")
+		end
+	},
 }
 
 --[[
@@ -237,7 +316,7 @@ function update(pkg)
 			end			
 		else
 			stdout:printLn("Cloning " .. pkg.url)
-			result = (run:execute("/usr/bin/git clone --recurse-submodules " .. pkg.url) == 0)
+			result = (run:execute("/usr/bin/git clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
 			if result and pkg.post_clone ~= nil then
 				stdout:printLn("Running post clone...")
 				run:pushd(name)
