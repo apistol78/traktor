@@ -115,14 +115,15 @@ local PACKAGES =
 	{
 		type = "GIT",
 		url = "https://github.com/glennrp/libpng.git",
+		--[[
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
 			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:execute("/usr/bin/make")
 			run:popd()
-			-- @fixme our zlib is newer than system, so I've manually patched the configuration file...
 		end
+		]]
 	},
 	{
 		type = "GET",
