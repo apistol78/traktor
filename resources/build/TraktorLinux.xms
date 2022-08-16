@@ -2336,22 +2336,13 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
-						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/x86</item>
-						<item>$(FBX_SDK)/lib/gcc4/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2016.1.2-staticd</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2372,22 +2363,13 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
-						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/x86</item>
-						<item>$(FBX_SDK)/lib/gcc4/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2016.1.2-static</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2408,22 +2390,13 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
-						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/x86</item>
-						<item>$(FBX_SDK)/lib/gcc4/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2016.1.2-staticd</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2444,22 +2417,13 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
-						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK)/lib/gcc4/x86</item>
-						<item>$(FBX_SDK)/lib/gcc4/x64</item>
-					</libraryPaths>
-					<libraries>
-						<item>fbxsdk-2016.1.2-static</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
