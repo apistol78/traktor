@@ -16937,7 +16937,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -16967,7 +16966,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -16997,7 +16995,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -17027,7 +17024,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>

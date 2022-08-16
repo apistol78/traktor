@@ -15,7 +15,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -47,7 +48,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
+						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -299,7 +301,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -330,7 +332,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -357,12 +359,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*</excludeFilter>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
+					<fileName>jmemansi.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>jmemmgr.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter>gz*</excludeFilter>
 					<items/>
 				</item>
 			</items>
@@ -379,6 +393,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FLAC_SDK)/build</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
@@ -413,6 +428,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FLAC_SDK)/build</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
@@ -1161,7 +1177,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>
@@ -1193,7 +1209,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>__ANDROID__</item>

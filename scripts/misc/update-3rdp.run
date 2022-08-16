@@ -30,63 +30,65 @@ local PACKAGES =
 	{
 		type = "GET",
 		name = "embree-linux",
+		os = "linux",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
+			run:execute("tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
 		end
 	},
-	--[[
 	{
 		type = "GET",
 		name = "embree-windows",
+		os = "windows",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("/usr/bin/unzip embree-3.13.4.x64.vc14.windows.zip")
+			run:execute("unzip embree-3.13.4.x64.vc14.windows.zip")
 		end
 	},
 	{
 		type = "GET",
 		name = "embree-macOS",
+		os = "macos",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip",
 		patch = function()
-			run:execute("/usr/bin/unzip embree-3.13.4.x86_64.macosx.zip")
+			run:execute("unzip embree-3.13.4.x86_64.macosx.zip")
 		end
 	},
-	]]
 	{
 		type = "GET",
 		name = "oidn-linux",
+		os = "linux",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
+			run:execute("tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
 		end
 	},
-	--[[
 	{
 		type = "GET",
 		name = "oidn-windows",
+		os = "windows",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("/usr/bin/unzip oidn-1.4.3.x64.vc14.windows.zip")
+			run:execute("unzip oidn-1.4.3.x64.vc14.windows.zip")
 		end
 	},
 	{
 		type = "GET",
 		name = "oidn-macOS",
+		os = "macos",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.macos.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
+			run:execute("tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
 		end
 	},
-	]]
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/flac.git",
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -D WITH_OGG=FALSE -DCMAKE_BUILD_TYPE=Release ..")
-			run:execute("/usr/bin/make")
+			run:execute("env --default-signal cmake -D WITH_OGG=FALSE -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("make")
 			run:popd()
 		end
 	},
@@ -100,7 +102,7 @@ local PACKAGES =
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:popd()
 		end
 	},
@@ -115,22 +117,13 @@ local PACKAGES =
 	{
 		type = "GIT",
 		url = "https://github.com/glennrp/libpng.git",
-		--[[
-		patch = function()
-			run:mkdir("build")
-			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
-			run:execute("/usr/bin/make")
-			run:popd()
-		end
-		]]
 	},
 	{
 		type = "GET",
 		name = "lua",
 		url = "http://www.lua.org/ftp/lua-5.4.4.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf lua-5.4.4.tar.gz")
+			run:execute("tar -xzf lua-5.4.4.tar.gz")
 		end
 	},
 	{
@@ -138,7 +131,7 @@ local PACKAGES =
 		name = "lzo",
 		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf lzo-2.10.tar.gz")
+			run:execute("tar -xzf lzo-2.10.tar.gz")
 		end
 	},
 	{
@@ -149,8 +142,8 @@ local PACKAGES =
 		type = "GIT",
 		url = "https://github.com/sqlite/sqlite.git",
 		patch = function()
-			run:execute("/bin/sh ./configure")
-			run:execute("/usr/bin/make")
+			run:execute("sh ./configure")
+			run:execute("make")
 		end
 	},	
 	{
@@ -161,7 +154,7 @@ local PACKAGES =
 		type = "GIT",
 		url = "https://github.com/madler/zlib.git",
 		patch = function()
-			run:execute("/bin/sh ./configure")
+			run:execute("sh ./configure")
 		end
 	},
 	{
@@ -169,8 +162,10 @@ local PACKAGES =
 		name = "jpeg",
 		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf jpegsrc.v9e.tar.gz")
-			run:execute("/bin/sh ./configure")
+			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
+			run:pushd("jpeg-9e")
+			run:execute("sh ./configure")
+			run:popd()
 		end
 	},
 	{
@@ -179,7 +174,7 @@ local PACKAGES =
 		patch = function()
 			run:mkdir("build")
 			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
+			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
 			run:popd()
 		end
 	},
@@ -192,7 +187,7 @@ local PACKAGES =
 		name = "liblzf",
 		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf liblzf-3.6.tar.gz")
+			run:execute("tar -xzf liblzf-3.6.tar.gz")
 		end
 	},
 	{
@@ -218,17 +213,19 @@ local PACKAGES =
 	{
 		type = "GET",
 		name = "p4api-linux",
+		os = "linux",
 		url = "https://www.perforce.com/downloads/perforce/r22.1/bin.linux26x86_64/p4api.tgz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf p4api.tgz")
+			run:execute("tar -xzf p4api.tgz")
 		end
 	},
 	{
 		type = "GET",
 		name = "vulkan-linux",
+		os = "linux",
 		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/linux/vulkansdk-linux-x86_64-1.3.216.0.tar.gz",
 		patch = function()
-			run:execute("/usr/bin/tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
+			run:execute("tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
 		end
 	},
 	{
@@ -236,7 +233,19 @@ local PACKAGES =
 		name = "steamworks",
 		url = "https://partner.steamgames.com/downloads/steamworks_sdk.zip",
 		patch = function()
-			run:execute("/usr/bin/unzip steamworks_sdk.zip")
+			run:execute("unzip steamworks_sdk.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "android-sdk-linux",
+		os = "linux",
+		url = "https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip",
+		patch = function()
+			run:execute("unzip commandlinetools-linux-8512546_latest.zip")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle")
 		end
 	},
 }
@@ -252,6 +261,7 @@ function generate_configuration(infile, outfile, kv)
 
 	-- Read entire file into array.
 	local f = fileSystem:open(Path(inf), File.FmRead)
+	if f == nil then return false end
     local r = StringReader(f, Utf8Encoding())
     while true do
         local ln = r:readLine()
@@ -262,6 +272,7 @@ function generate_configuration(infile, outfile, kv)
 
 	-- Write out entire file from array, modify lines as we go along.
 	local f = fileSystem:open(Path(utf), File.FmWrite)
+	if f == nil then return false end
 	local s = StreamOutput(f, Utf8Encoding())
 	for _, ln in ipairs(txt) do
 		for k, v in pairs(kv) do
@@ -278,6 +289,12 @@ end
 	Update package, if package not found then it will be installed appropriately.
 ]]
 function update(pkg)
+
+	-- Check if package is necessary on current host.
+	if pkg.os ~= nil and os.identifier ~= pkg.os then
+		return true
+	end
+
 	if pkg.type == "GIT" then
 
 		local name = pkg.url:match(".+/(.*).git")
@@ -290,8 +307,8 @@ function update(pkg)
 		if run:exist(name) then
 			stdout:printLn("Updating " .. pkg.url)
 			run:pushd(name)
-			result = result and (run:execute("/usr/bin/git pull") == 0)
-			result = result and (run:execute("/usr/bin/git submodule update") == 0)
+			result = result and (run:execute("git pull") == 0)
+			result = result and (run:execute("git submodule update") == 0)
 			run:popd()
 			if result and pkg.post_update ~= nil then
 				stdout:printLn("Running post update...")
@@ -301,7 +318,7 @@ function update(pkg)
 			end			
 		else
 			stdout:printLn("Cloning " .. pkg.url)
-			result = (run:execute("/usr/bin/git clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
+			result = (run:execute("git clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
 			if result and pkg.post_clone ~= nil then
 				stdout:printLn("Running post clone...")
 				run:pushd(name)
@@ -325,7 +342,7 @@ function update(pkg)
 	elseif pkg.type == "GET" then
 
 		if run:exist(pkg.name) then
-			stdout:printLn("Path already exist, assuming already up to date.")
+			stdout:printLn("Path \"" .. pkg.name .. "\" already exist; assuming up to date.")
 			return true
 		end
 
@@ -337,7 +354,7 @@ function update(pkg)
 
 		run:mkdir(pkg.name)
 		run:pushd(pkg.name)
-		local result = run:execute("/usr/bin/wget " .. pkg.url)
+		local result = run:execute("wget " .. pkg.url)
 		run:popd()
 
 		if result ~= 0 then
