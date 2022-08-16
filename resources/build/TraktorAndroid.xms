@@ -2135,9 +2135,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>__ANDROID__</item>
 						<item>T_STATIC</item>
@@ -2166,9 +2164,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>__ANDROID__</item>
 						<item>T_STATIC</item>
@@ -5395,8 +5391,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>
@@ -5426,8 +5421,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src</item>
+						<item>$(VULKAN_SDK)/include</item>
 						<item>$(ANDROID_NDK_ROOT)/sources/android/native_app_glue</item>
 					</includePaths>
 					<definitions>

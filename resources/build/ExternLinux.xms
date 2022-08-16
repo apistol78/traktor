@@ -554,7 +554,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
@@ -582,7 +582,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
@@ -610,7 +610,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
@@ -643,7 +643,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
@@ -1165,7 +1165,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1189,7 +1189,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1213,7 +1213,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1242,7 +1242,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
