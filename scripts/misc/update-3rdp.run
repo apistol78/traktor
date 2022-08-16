@@ -35,6 +35,7 @@ local PACKAGES =
 			run:execute("/usr/bin/tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
 		end
 	},
+	--[[
 	{
 		type = "GET",
 		name = "embree-windows",
@@ -51,6 +52,7 @@ local PACKAGES =
 			run:execute("/usr/bin/unzip embree-3.13.4.x86_64.macosx.zip")
 		end
 	},
+	]]
 	{
 		type = "GET",
 		name = "oidn-linux",
@@ -59,6 +61,7 @@ local PACKAGES =
 			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
 		end
 	},
+	--[[
 	{
 		type = "GET",
 		name = "oidn-windows",
@@ -75,6 +78,7 @@ local PACKAGES =
 			run:execute("/usr/bin/tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
 		end
 	},
+	]]
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/flac.git",
@@ -83,16 +87,6 @@ local PACKAGES =
 			run:pushd("build")
 			run:execute("/bin/env --default-signal /usr/bin/cmake -D WITH_OGG=FALSE -DCMAKE_BUILD_TYPE=Release ..")
 			run:execute("/usr/bin/make")
-			run:popd()
-		end
-	},
-	{
-		type = "GIT",
-		url = "https://github.com/KhronosGroup/glslang.git",
-		patch = function()
-			run:mkdir("build")
-			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
 			run:popd()
 		end
 	},
@@ -164,32 +158,6 @@ local PACKAGES =
 	},
 	{
 		type = "GIT",
-		url = "https://github.com/KhronosGroup/SPIRV-Tools.git",
-		post_clone = function()
-			run:execute("/usr/bin/git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/spirv-headers")
-		end,
-		patch = function()
-			run:mkdir("build")
-			run:pushd("build")
-			run:execute("/bin/env --default-signal /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release ..")
-			run:execute("/usr/bin/make")
-			run:popd()
-		end
-	},
-	{
-		type = "GIT",
-		url = "https://github.com/KhronosGroup/SPIRV-Cross.git"
-	},
-	{
-		type = "GIT",
-		url = "https://github.com/KhronosGroup/Vulkan-Headers.git"
-	},
-	{
-		type = "GIT",
-		url = "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git"
-	},
-	{
-		type = "GIT",
 		url = "https://github.com/madler/zlib.git",
 		patch = function()
 			run:execute("/bin/sh ./configure")
@@ -252,6 +220,14 @@ local PACKAGES =
 		url = "https://www.perforce.com/downloads/perforce/r22.1/bin.linux26x86_64/p4api.tgz",
 		patch = function()
 			run:execute("/usr/bin/tar -xzf p4api.tgz")
+		end
+	},
+	{
+		type = "GET",
+		name = "vulkan-linux",
+		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/linux/vulkansdk-linux-x86_64-1.3.216.0.tar.gz",
+		patch = function()
+			run:execute("/usr/bin/tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
 		end
 	},
 }
