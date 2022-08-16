@@ -230,6 +230,14 @@ local PACKAGES =
 			run:execute("/usr/bin/tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
 		end
 	},
+	{
+		type = "GET",
+		name = "steamworks",
+		url = "https://partner.steamgames.com/downloads/steamworks_sdk.zip",
+		patch = function()
+			run:execute("/usr/bin/unzip steamworks_sdk.zip")
+		end
+	},
 }
 
 --[[
