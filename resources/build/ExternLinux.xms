@@ -2693,7 +2693,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(PNG_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2722,7 +2722,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(PNG_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2751,7 +2751,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(PNG_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2775,7 +2775,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(PNG_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
