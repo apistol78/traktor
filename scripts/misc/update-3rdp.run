@@ -244,11 +244,31 @@ local PACKAGES =
 		patch = function()
 			run:execute("unzip commandlinetools-linux-8512546_latest.zip")
 			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
-			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools")
-			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle")
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+				}
+			)
+			run:execute("sh ./install.sh")
 		end
 	},
 }
+
+--[[
+	Write text file.
+]]
+function write_file(fn, lines)
+	local f = fileSystem:open(Path(run:cwd() .. "/" .. fn), File.FmWrite)
+	if f == nil then return false end
+	local so = StreamOutput(f, Utf8Encoding())
+	for _, ln in ipairs(lines) do
+		so:printLn(ln)
+	end
+	f:close()
+end
 
 --[[
 	Generate files similar to CMake configuration files,
