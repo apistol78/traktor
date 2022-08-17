@@ -401,6 +401,7 @@
 						<item>__ANDROID__</item>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
@@ -436,6 +437,7 @@
 						<item>__ANDROID__</item>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
@@ -1318,12 +1320,14 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.c</fileName>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.h</fileName>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
 						</items>
