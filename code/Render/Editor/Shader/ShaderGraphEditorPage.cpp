@@ -1272,6 +1272,7 @@ void ShaderGraphEditorPage::updateGraph()
 			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
 			switch (value.getType())
 			{
+			default:
 			case PinType::Void:
 				break;
 

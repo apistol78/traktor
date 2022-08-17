@@ -1,3 +1,4 @@
+#include <limits>
 #include "Model/Model.h"
 #include "Shape/Editor/Bake/Embree/SplitModel.h"
 

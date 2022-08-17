@@ -509,7 +509,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__IOS__</item>
@@ -540,7 +540,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__IOS__</item>
@@ -846,11 +846,8 @@
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>__IOS__</item>
@@ -880,11 +877,8 @@
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
 														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(ZLIB_SDK)</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
-															<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+															<item>$(LZO_SDK)/minilzo</item>
+															<item>$(LZO_SDK)/include/lzo</item>
 														</includePaths>
 														<definitions>
 															<item>__IOS__</item>
@@ -967,13 +961,13 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternIOS.xms</solutionFileName>
-														<projectName>Extern.liblzf-3.6</projectName>
+														<projectName>Extern.liblzf</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternIOS.xms</solutionFileName>
-														<projectName>Extern.minilzo-2.05</projectName>
+														<projectName>Extern.lzo</projectName>
 													</item>
 												</dependencies>
 											</project>
@@ -2241,12 +2235,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>__IOS__</item>
 						<item>T_STATIC</item>
@@ -2275,12 +2264,7 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lpng1632</item>
-						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
-						<item>$(TRAKTOR_HOME)/3rdp/jpeg-6b</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>__IOS__</item>
 						<item>T_STATIC</item>
@@ -2354,7 +2338,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternIOS.xms</solutionFileName>
-					<projectName>Extern.jpeg-6b</projectName>
+					<projectName>Extern.jpeg</projectName>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -2382,7 +2366,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -2413,7 +2397,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -2620,7 +2604,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__IOS__</item>
@@ -2655,7 +2639,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__IOS__</item>
@@ -2796,13 +2780,13 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternIOS.xms</solutionFileName>
-								<projectName>Extern.libflac-1.2.1</projectName>
+								<projectName>Extern.flac</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternIOS.xms</solutionFileName>
-								<projectName>Extern.stb_vorbis</projectName>
+								<projectName>Extern.stb</projectName>
 							</item>
 						</dependencies>
 					</project>
@@ -4511,8 +4495,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -4543,8 +4526,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
+						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>__IOS__</item>
@@ -4589,13 +4571,13 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternIOS.xms</solutionFileName>
-					<projectName>Extern.libogg-1.3.0</projectName>
+					<projectName>Extern.ogg</projectName>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<solutionFileName>ExternIOS.xms</solutionFileName>
-					<projectName>Extern.libtheora-1.1.1</projectName>
+					<projectName>Extern.theora</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -5063,10 +5045,7 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>__IOS__</item>
 									<item>T_STATIC</item>
@@ -5094,10 +5073,7 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>__IOS__</item>
 									<item>T_STATIC</item>
@@ -5408,7 +5384,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+						<item>$(RAPIDJSON_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5438,7 +5414,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+						<item>$(RAPIDJSON_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

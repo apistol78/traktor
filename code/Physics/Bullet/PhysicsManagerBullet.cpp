@@ -1237,6 +1237,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	const float dT = simulationDeltaTime * m_timeScale;
 	m_dynamicsWorld->stepSimulation(dT, 10, 1.0f / m_simulationFrequency);
 
+/*
 	// Issue collision events.
 	if (issueCollisionEvents)
 	{
@@ -1307,6 +1308,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			manifold->m_fresh = false;
 		}
 	}
+*/
 
 	m_queryCountLast = m_queryCount;
 	m_queryCount = 0;
