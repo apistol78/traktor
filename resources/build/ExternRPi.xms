@@ -668,7 +668,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.freetype</name>
 			<sourcePath>$(FREETYPE_SDK)/src</sourcePath>
 			<configurations>
@@ -678,6 +678,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -704,6 +705,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -730,6 +732,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -761,6 +764,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -791,92 +795,9 @@
 				<item type="Filter">
 					<name>autofit</name>
 					<items>
-						<item type="File">
-							<fileName>autofit/afangles.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afangles.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afcjk.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afcjk.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afdummy.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afdummy.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aferrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afglobal.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afglobal.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afhints.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afhints.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afindic.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afindic.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aflatin.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aflatin.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afloader.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afloader.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afmodule.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afmodule.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aftypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afwarp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afwarp.h</fileName>
+						<item type="File" version="1">
+							<fileName>autofit/autofit.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -884,124 +805,9 @@
 				<item type="Filter">
 					<name>base</name>
 					<items>
-						<item type="File">
-							<fileName>base/ftapi.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbbox.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbdf.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbitmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftcalc.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftdbgmem.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftdebug.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgasp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgloadr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftglyph.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgxval.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftinit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftlcdfil.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftmm.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftnames.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftotval.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftoutln.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftpatent.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftpfr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftrfork.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftstream.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftstroke.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftsynth.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftsystem.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/fttrigon.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/fttype1.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftutil.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftwinfnt.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftxf86.c</fileName>
+						<item type="File" version="1">
+							<fileName>base/ft*.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1009,20 +815,9 @@
 				<item type="Filter">
 					<name>bdf</name>
 					<items>
-						<item type="File">
-							<fileName>bdf/bdferror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdflib.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdfdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdfdrivr.h</fileName>
+						<item type="File" version="1">
+							<fileName>bdf/bdf.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1030,68 +825,9 @@
 				<item type="Filter">
 					<name>cache</name>
 					<items>
-						<item type="File">
-							<fileName>cache/ftccback.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcerror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcglyph.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcglyph.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcimage.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcimage.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmanag.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmanag.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmru.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmru.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcsbits.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcsbits.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcbasic.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccache.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccache.h</fileName>
+						<item type="File" version="1">
+							<fileName>cache/ftcache.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1099,64 +835,9 @@
 				<item type="Filter">
 					<name>cff</name>
 					<items>
-						<item type="File">
-							<fileName>cff/cfftypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffdrivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cfferrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cfftoken.h</fileName>
+						<item type="File" version="1">
+							<fileName>cff/cff.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1164,581 +845,9 @@
 				<item type="Filter">
 					<name>cid</name>
 					<items>
-						<item type="File">
-							<fileName>cid/cidtoken.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/ciderrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidriver.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pcf</name>
-					<items>
-						<item type="File">
-							<fileName>pcf/pcfutil.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcf.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfdrivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcferror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfread.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfread.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfutil.c</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>psaux</name>
-					<items>
-						<item type="File">
-							<fileName>psaux/afmparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/afmparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxerr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxmod.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxmod.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psconv.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psconv.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1cmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1cmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1decode.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1decode.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pshinter</name>
-					<items>
-						<item type="File">
-							<fileName>pshinter/pshalgo.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshalgo.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshglob.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshglob.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshmod.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshmod.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshnterr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshrec.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshrec.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>psnames</name>
-					<items>
-						<item type="File">
-							<fileName>psnames/pstables.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psmodule.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psmodule.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psnamerr.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>raster</name>
-					<items>
-						<item type="File">
-							<fileName>raster/ftmisc.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftraster.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftraster.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftrend1.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftrend1.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/rasterrs.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>sfnt</name>
-					<items>
-						<item type="File">
-							<fileName>sfnt/sfdriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfdriver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sferrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttbdf.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttbdf.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttkern.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttkern.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttmtx.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttmtx.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttpost.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttpost.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttsbit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttsbit.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>smooth</name>
-					<items>
-						<item type="File">
-							<fileName>smooth/ftsmooth.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftgrays.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftgrays.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftsmerrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftsmooth.c</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>truetype</name>
-					<items>
-						<item type="File">
-							<fileName>truetype/ttdriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttdriver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/tterrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgxvar.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgxvar.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttinterp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttinterp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttpload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttpload.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>type1</name>
-					<items>
-						<item type="File">
-							<fileName>type1/t1afm.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1afm.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1driver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1driver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1errors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1gload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1gload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1load.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1load.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1objs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1objs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1parse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1parse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1tokens.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>type42</name>
-					<items>
-						<item type="File">
-							<fileName>type42/t42drivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42drivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42error.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42objs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42objs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42parse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42parse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42types.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>winfonts</name>
-					<items>
-						<item type="File">
-							<fileName>winfonts/*.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>winfonts/*.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pfr</name>
-					<items>
-						<item type="File">
-							<fileName>pfr/pfrerror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrsbit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrsbit.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrtypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrdrivr.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>lzw</name>
-					<items>
-						<item type="File">
-							<fileName>lzw/ftlzw.c</fileName>
+						<item type="File" version="1">
+							<fileName>cid/type1cid.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1746,8 +855,149 @@
 				<item type="Filter">
 					<name>gzip</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>gzip/ftgzip.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>lzw</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>lzw/ftlzw.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pcf</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pcf/pcf.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pfr</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pfr/pfr.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>psaux</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>psaux/psaux.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pshinter</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pshinter/pshinter.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>raster</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>raster/raster.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>sdf</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>sdf/sdf.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>sfnt</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>sfnt/sfnt.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>smooth</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>smooth/smooth.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>svg</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>svg/svg.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>truetype</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>truetype/truetype.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>type1</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>type1/type1.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>type42</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>type42/type42.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>winfonts</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>winfonts/winfnt.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1886,7 +1136,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1910,7 +1160,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1934,7 +1184,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1963,7 +1213,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -1988,12 +1238,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*</excludeFilter>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
+					<fileName>jmemansi.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>jmemmgr.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter>gz*</excludeFilter>
 					<items/>
 				</item>
 			</items>
@@ -2010,12 +1272,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBFLAC_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 					</definitions>
@@ -2037,12 +1301,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBFLAC_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 					</definitions>
@@ -2064,12 +1330,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 					</definitions>
@@ -2096,12 +1364,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>HAVE_CONFIG_H</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 					</definitions>
@@ -3271,7 +2541,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3300,7 +2570,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3329,7 +2599,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -3354,7 +2624,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 					</includePaths>
 					<definitions>
 						<item>T_LPNG128_EXPORT</item>
@@ -3500,12 +2770,14 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.c</fileName>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.h</fileName>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
 						</items>
@@ -4729,7 +4001,7 @@
 		</item>
 		<item ref="/object/projects/item[13]/dependencies/item/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.vulkan.glslang</name>
 			<sourcePath>$(GLSLANG)</sourcePath>
 			<configurations>
@@ -5511,7 +4783,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.SPIRV-Cross</name>
 			<sourcePath>$(SPIRVCROSS_SDK)</sourcePath>
 			<configurations>
@@ -5857,7 +5129,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.spirvtools</name>
 			<sourcePath>$(SPIRVTOOLS_SDK)</sourcePath>
 			<configurations>

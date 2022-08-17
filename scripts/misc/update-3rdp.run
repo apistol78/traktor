@@ -83,14 +83,7 @@ local PACKAGES =
 	},
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/flac.git",
-		patch = function()
-			run:mkdir("build")
-			run:pushd("build")
-			run:execute("env --default-signal cmake -D WITH_OGG=FALSE -DCMAKE_BUILD_TYPE=Release ..")
-			run:execute("make")
-			run:popd()
-		end
+		url = "https://github.com/xiph/flac.git"
 	},
 	{
 		type = "GIT",

@@ -17105,7 +17105,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
@@ -17137,7 +17136,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
@@ -17169,7 +17167,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
@@ -17201,7 +17198,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
