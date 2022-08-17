@@ -248,6 +248,24 @@ local PACKAGES =
 			run:execute("sh ./install.sh")
 		end
 	},
+	{
+		type = "GET",
+		name = "fastbuild-windows",
+		os = "windows",
+		url = "https://fastbuild.org/downloads/v1.07/FASTBuild-Windows-x64-v1.07.zip",
+		patch = function()
+			run:execute("unzip FASTBuild-Windows-x64-v1.07.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "ninja-windows",
+		os = "windows",
+		url = "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip",
+		patch = function()
+			run:execute("unzip ninja-win.zip")
+		end		
+	}
 }
 
 --[[
