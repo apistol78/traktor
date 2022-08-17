@@ -54,6 +54,7 @@ export ZLIB_SDK=$TRAKTOR_HOME/3rdp_/zlib
 #	VULKAN_GLSLANG_SDK
 #	VULKAN_SPIRVTOOLS_SDK
 #	VULKAN_SPIRVCROSS_SDK
+export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp_/vulkan-linux/1.3.216.0
 export VULKAN_SDK=$TRAKTOR_HOME/3rdp_/vulkan-linux/1.3.216.0/source/Vulkan-Headers
 export VMA_SDK=$TRAKTOR_HOME/3rdp_/vulkan-linux/1.3.216.0/source/VulkanMemoryAllocator
 export GLSLANG_SDK=$TRAKTOR_HOME/3rdp_/vulkan-linux/1.3.216.0/source/glslang

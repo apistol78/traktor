@@ -17107,14 +17107,31 @@
 					<includePaths>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent</item>
+						<item>OSDependent</item>
+						<item>OGLCompiler</item>
+						<item>SPIRV</item>
+						<item>SPIRV-Tools</item>
+						<item>SPIRV-Tools-shared</item>
+						<item>SPIRV-Tools-opt</item>
+						<item>shaderc_combined</item>
+						<item>glslang</item>
+						<item>spirv-cross-core</item>
+						<item>spirv-cross-glsl</item>
+						<item>spirv-cross-hlsl</item>
+						<item>spirv-cross-msl</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17138,14 +17155,31 @@
 					<includePaths>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent</item>
+						<item>OSDependent</item>
+						<item>OGLCompiler</item>
+						<item>SPIRV</item>
+						<item>SPIRV-Tools</item>
+						<item>SPIRV-Tools-shared</item>
+						<item>SPIRV-Tools-opt</item>
+						<item>shaderc_combined</item>
+						<item>glslang</item>
+						<item>spirv-cross-core</item>
+						<item>spirv-cross-glsl</item>
+						<item>spirv-cross-hlsl</item>
+						<item>spirv-cross-msl</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17169,14 +17203,31 @@
 					<includePaths>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent</item>
+						<item>OSDependent</item>
+						<item>OGLCompiler</item>
+						<item>SPIRV</item>
+						<item>SPIRV-Tools</item>
+						<item>SPIRV-Tools-shared</item>
+						<item>SPIRV-Tools-opt</item>
+						<item>shaderc_combined</item>
+						<item>glslang</item>
+						<item>spirv-cross-core</item>
+						<item>spirv-cross-glsl</item>
+						<item>spirv-cross-hlsl</item>
+						<item>spirv-cross-msl</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17200,14 +17251,31 @@
 					<includePaths>
 						<item>$(GLSLANG_SDK)</item>
 						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)</item>
 						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent</item>
+						<item>OSDependent</item>
+						<item>OGLCompiler</item>
+						<item>SPIRV</item>
+						<item>SPIRV-Tools</item>
+						<item>SPIRV-Tools-shared</item>
+						<item>SPIRV-Tools-opt</item>
+						<item>shaderc_combined</item>
+						<item>glslang</item>
+						<item>spirv-cross-core</item>
+						<item>spirv-cross-glsl</item>
+						<item>spirv-cross-hlsl</item>
+						<item>spirv-cross-msl</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17246,24 +17314,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[88]"/>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternLinux.xms</solutionFileName>
-					<projectName>Extern.vulkan.glslang</projectName>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternLinux.xms</solutionFileName>
-					<projectName>Extern.spirvtools</projectName>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternLinux.xms</solutionFileName>
-					<projectName>Extern.SPIRV-Cross</projectName>
 				</item>
 			</dependencies>
 		</item>
