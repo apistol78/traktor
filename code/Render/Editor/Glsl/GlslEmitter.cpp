@@ -589,6 +589,9 @@ bool emitDot(GlslContext& cx, Dot* node)
 		case GlslType::Integer4:
 			f << L"\t" << out->getName() << L" = tmp.x + tmp.y + tmp.z + tmp.w;" << Endl;
 			break;
+
+		default:
+			break;
 		}
 		f << L"}" << Endl;
 	}
