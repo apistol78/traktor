@@ -16514,7 +16514,9 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(GLSLANG_SDK)</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
@@ -16543,7 +16545,9 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(GLSLANG_SDK)</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
@@ -16572,7 +16576,9 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(GLSLANG_SDK)</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16601,7 +16607,9 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(GLSLANG_SDK)</item>
+						<item>$(SPIRVTOOLS_SDK)/include</item>
+						<item>$(SPIRVCROSS_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

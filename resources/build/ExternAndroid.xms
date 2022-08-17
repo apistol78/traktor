@@ -393,7 +393,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FLAC_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
@@ -429,7 +429,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(FLAC_SDK)/build</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
