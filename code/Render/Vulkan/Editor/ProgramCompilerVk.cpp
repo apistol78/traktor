@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include <glslang/Include/ShHandle.h>
- #include <glslang/Public/ShaderLang.h>
+#include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
 #include <SPIRV/GLSL.std.450.h>
 #include <SPIRV/doc.h>
