@@ -30,12 +30,14 @@ set VMA_SDK=%TRAKTOR_3RDP%\VulkanMemoryAllocator-master-210504
 set SPIRVTOOLS_SDK=%TRAKTOR_3RDP%\SPIRV-Tools-master-201029
 set SPIRVCROSS_SDK=%TRAKTOR_3RDP%\SPIRV-Cross-master-201009
 set ASTCENC_SDK=%TRAKTOR_3RDP%\astc-encoder-master-201104
+set MIKKTSPACE_SDK=%TRAKTOR_3RDP%\MikkTSpace-master-200911
+set AGG_SDK=%TRAKTOR_3RDP%\agg-2.5
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
 :: Export path to Ninja binary.
-set NINJA=%TRAKTOR_3RDP%\ninja\win\ninja
+set NINJA=%TRAKTOR_3RDP%\ninja-windows\ninja
 
 :: Export path to FBuild executable.
-set FBUILD=%TRAKTOR_3RDP%\FASTBuild-Windows-x64-v1.05\FBuild.exe
+set FBUILD=%TRAKTOR_3RDP%\fastbuild-windows\FBuild.exe

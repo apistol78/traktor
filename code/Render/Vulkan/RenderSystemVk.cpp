@@ -322,6 +322,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	// Create memory allocator.
 	VmaVulkanFunctions vf = {};
+	vf.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
+	vf.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
 	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
 	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
 	vf.vkAllocateMemory = vkAllocateMemory;
@@ -395,12 +397,9 @@ bool RenderSystemVk::reset(const RenderSystemDesc& desc)
 
 void RenderSystemVk::getInformation(RenderSystemInformation& outInfo) const
 {
-	VmaStats stats = {};
-	vmaCalculateStats(m_allocator, &stats);
-
-	outInfo.dedicatedMemoryTotal = (uint32_t)(stats.total.unusedBytes + stats.total.usedBytes);
+	outInfo.dedicatedMemoryTotal = 0;
 	outInfo.sharedMemoryTotal = 0;
-	outInfo.dedicatedMemoryAvailable = (uint32_t)stats.total.unusedBytes;
+	outInfo.dedicatedMemoryAvailable = 0;
 	outInfo.sharedMemoryAvailable = 0;
 }
 
@@ -623,13 +622,7 @@ void RenderSystemVk::purge()
 
 void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 {
-	VmaStats stats = {};
-	vmaCalculateStats(m_allocator, &stats);
-
 	outStatistics = m_statistics;
-	outStatistics.memoryAvailable = stats.total.unusedBytes;
-	outStatistics.memoryUsage = stats.total.usedBytes;
-	outStatistics.allocationCount = stats.total.allocationCount;
 }
 
 	}

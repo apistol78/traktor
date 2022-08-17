@@ -277,7 +277,7 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addclose(fileActions, childStdErr[1]);
 
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
+		err = posix_spawnp(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
 	}
 	else
 	{
@@ -291,7 +291,7 @@ Ref< IProcess > OS::execute(
 		posix_spawn_file_actions_addchdir_np(fileActions, cwd);
 #endif
 		// Spawn process.
-		err = posix_spawn(&pid, argv[0], fileActions, spawnAttrp, argv.ptr(), env ? envv.ptr() : environ);
+		err = posix_spawnp(&pid, argv[0], fileActions, 0, argv.ptr(), envv.ptr());
 	}
 
 	// Free arguments.

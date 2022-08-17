@@ -29,7 +29,7 @@ class Run : public Object
 	T_RTTI_CLASS;
 
 public:
-	Run(
+	explicit Run(
 		script::IScriptCompiler* scriptCompiler,
 		script::IScriptManager* scriptManager,
 		script::IScriptContext* scriptContext

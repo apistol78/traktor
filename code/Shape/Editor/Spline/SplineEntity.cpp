@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Misc/SafeDestroy.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"

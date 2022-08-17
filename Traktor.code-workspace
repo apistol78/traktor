@@ -14,10 +14,17 @@
 		},
 		{
 			"path": "3rdp"
+		},
+		{
+			"path": "3rdp_"
+		},
+		{
+			"path": "bin"
 		}
 	],
 	"settings": {
 		"files.associations": {
+			"*.run": "lua",
 			"functional": "cpp",
 			"set": "cpp",
 			"string": "cpp",
@@ -128,7 +135,8 @@
 			"hash_map": "cpp",
 			"hash_set": "cpp",
 			"span": "cpp",
-			"slist": "cpp"
+			"slist": "cpp",
+			"*.prebuilt": "c"
 		}
 	}
 }

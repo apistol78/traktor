@@ -648,7 +648,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -685,7 +685,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
@@ -722,7 +722,7 @@
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -755,7 +755,7 @@
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
 								<includePaths>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+									<item>$(STB_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -1438,13 +1438,13 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.liblzf-3.6</projectName>
+														<projectName>Extern.liblzf</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.minilzo-2.05</projectName>
+														<projectName>Extern.lzo</projectName>
 													</item>
 												</dependencies>
 											</project>
@@ -3434,7 +3434,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.jpeg-6b</projectName>
+														<projectName>Extern.jpeg</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -6154,7 +6154,7 @@
 																	<includePaths>
 																		<item>$(FBX_SDK)/include</item>
 																		<item>$(SIMPLYGON_SDK)</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_MODEL_EXPORT</item>
@@ -6203,7 +6203,7 @@
 																	<includePaths>
 																		<item>$(FBX_SDK)/include</item>
 																		<item>$(SIMPLYGON_SDK)</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_MODEL_EXPORT</item>
@@ -6252,7 +6252,7 @@
 																	<includePaths>
 																		<item>$(FBX_SDK)/include</item>
 																		<item>$(SIMPLYGON_SDK)</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -6297,7 +6297,7 @@
 																	<includePaths>
 																		<item>$(FBX_SDK)/include</item>
 																		<item>$(SIMPLYGON_SDK)</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -6446,7 +6446,7 @@
 																				<precompiledHeader/>
 																				<includePaths>
 																					<item>$(TRAKTOR_HOME)/code</item>
-																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																					<item>$(RAPIDJSON_SDK)/include</item>
 																				</includePaths>
 																				<definitions>
 																					<item>T_JSON_EXPORT</item>
@@ -6484,7 +6484,7 @@
 																				<precompiledHeader/>
 																				<includePaths>
 																					<item>$(TRAKTOR_HOME)/code</item>
-																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																					<item>$(RAPIDJSON_SDK)/include</item>
 																				</includePaths>
 																				<definitions>
 																					<item>T_JSON_EXPORT</item>
@@ -6522,7 +6522,7 @@
 																				<precompiledHeader/>
 																				<includePaths>
 																					<item>$(TRAKTOR_HOME)/code</item>
-																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																					<item>$(RAPIDJSON_SDK)/include</item>
 																				</includePaths>
 																				<definitions>
 																					<item>T_STATIC</item>
@@ -6556,7 +6556,7 @@
 																				<precompiledHeader/>
 																				<includePaths>
 																					<item>$(TRAKTOR_HOME)/code</item>
-																					<item>$(TRAKTOR_HOME)/3rdp/rapidjson/include</item>
+																					<item>$(RAPIDJSON_SDK)/include</item>
 																				</includePaths>
 																				<definitions>
 																					<item>T_STATIC</item>
@@ -6617,7 +6617,7 @@
 														<inheritIncludePaths>true</inheritIncludePaths>
 														<link>LnkYes</link>
 														<solutionFileName>ExternWin64.xms</solutionFileName>
-														<projectName>Extern.squish-1.10</projectName>
+														<projectName>Extern.squish</projectName>
 													</item>
 													<item type="ProjectDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -6992,13 +6992,13 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternWin64.xms</solutionFileName>
-											<projectName>Extern.libogg-1.3.0</projectName>
+											<projectName>Extern.ogg</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternWin64.xms</solutionFileName>
-											<projectName>Extern.libtheora-1.1.1</projectName>
+											<projectName>Extern.theora</projectName>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -7265,7 +7265,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternWin64.xms</solutionFileName>
-											<projectName>Extern.libflac-1.2.1</projectName>
+											<projectName>Extern.flac</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -7277,7 +7277,7 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<solutionFileName>ExternWin64.xms</solutionFileName>
-											<projectName>Extern.stb_vorbis</projectName>
+											<projectName>Extern.stb</projectName>
 										</item>
 									</dependencies>
 								</project>
@@ -8427,7 +8427,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
@@ -8464,7 +8464,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
@@ -8501,7 +8501,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8534,7 +8534,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8828,7 +8828,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -8865,7 +8865,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
@@ -8902,7 +8902,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -8935,7 +8935,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/stb_rect_pack</item>
+						<item>$(STB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -9260,13 +9260,13 @@
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternWin64.xms</solutionFileName>
-								<projectName>Extern.libogg-1.3.0</projectName>
+								<projectName>Extern.ogg</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
 								<solutionFileName>ExternWin64.xms</solutionFileName>
-								<projectName>Extern.libvorbis-1.3.3</projectName>
+								<projectName>Extern.vorbis</projectName>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>

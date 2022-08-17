@@ -151,12 +151,17 @@ std::wstring Environment_get(Environment* self, const std::wstring& name)
 	return self->get(name);
 }
 
-Ref< traktor::IStream > IProcess_getStdOut(IProcess* self)
+traktor::IStream* IProcess_getStdIn(IProcess* self)
+{
+	return self->getPipeStream(IProcess::SpStdIn);
+}
+
+traktor::IStream* IProcess_getStdOut(IProcess* self)
 {
 	return self->getPipeStream(IProcess::SpStdOut);
 }
 
-Ref< traktor::IStream > IProcess_getStdErr(IProcess* self)
+traktor::IStream* IProcess_getStdErr(IProcess* self)
 {
 	return self->getPipeStream(IProcess::SpStdErr);
 }
@@ -510,6 +515,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEnvironment);
 
 	auto classIProcess = new AutoRuntimeClass< IProcess >();
+	classIProcess->addProperty("stdIn", &IProcess_getStdIn);
 	classIProcess->addProperty("stdOut", &IProcess_getStdOut);
 	classIProcess->addProperty("stdErr", &IProcess_getStdErr);
 	classIProcess->addProperty("exitCode", &IProcess::exitCode);

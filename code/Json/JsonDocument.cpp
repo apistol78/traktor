@@ -69,6 +69,11 @@ public:
 		return true;
 	}
 
+	bool RawNumber(const Ch* str, size_t length, bool copy)
+	{
+		return true;
+	}
+
 	bool String(const Ch* str, size_t length, bool copy)
 	{
 		setValue(Any::fromString((const wchar_t*)str));

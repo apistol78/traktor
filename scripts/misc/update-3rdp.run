@@ -1,0 +1,422 @@
+-- Install or update all 3rdp dependencies.
+
+import(traktor)
+import(traktor.run)
+
+local PACKAGES =
+{
+	{
+		type = "GIT",
+		url = "https://github.com/ghaerr/agg-2.6.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/ARM-software/astc-encoder.git",
+		patch = function()
+			generate_configuration(
+				"Source/astcenccli_version.h.in",
+				"Source/astcenccli_version.h",
+				{
+					["@astcencoder_VERSION@"] = "4.0.0",
+					["@astcencoder_YEAR@"] = "2022"
+				}
+			)
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/bulletphysics/bullet3.git"
+	},
+	{
+		type = "GET",
+		name = "embree-linux",
+		os = "linux",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
+		patch = function()
+			run:execute("tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "embree-windows",
+		os = "windows",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
+		patch = function()
+			run:execute("unzip embree-3.13.4.x64.vc14.windows.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "embree-macOS",
+		os = "macos",
+		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip",
+		patch = function()
+			run:execute("unzip embree-3.13.4.x86_64.macosx.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "oidn-linux",
+		os = "linux",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.linux.tar.gz",
+		patch = function()
+			run:execute("tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "oidn-windows",
+		os = "windows",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
+		patch = function()
+			run:execute("unzip oidn-1.4.3.x64.vc14.windows.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "oidn-macOS",
+		os = "macos",
+		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.macos.tar.gz",
+		patch = function()
+			run:execute("tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/flac.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/libexpat/libexpat.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/ogg.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release ..")
+			run:popd()
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/theora.git"
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/xiph/vorbis.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/glennrp/libpng.git",
+	},
+	{
+		type = "GET",
+		name = "lua",
+		url = "http://www.lua.org/ftp/lua-5.4.4.tar.gz",
+		patch = function()
+			run:execute("tar -xzf lua-5.4.4.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "lzo",
+		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz",
+		patch = function()
+			run:execute("tar -xzf lzo-2.10.tar.gz")
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/mmikk/MikkTSpace.git"
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/sqlite/sqlite.git",
+		patch = function()
+			run:execute("sh ./configure")
+			run:execute("make")
+		end
+	},	
+	{
+		type = "GIT",
+		url = "https://github.com/jpcy/xatlas.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/madler/zlib.git",
+		patch = function()
+			run:execute("sh ./configure")
+		end
+	},
+	{
+		type = "GET",
+		name = "jpeg",
+		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
+		patch = function()
+			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
+			run:pushd("jpeg-9e")
+			run:execute("sh ./configure")
+			run:popd()
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://gitlab.freedesktop.org/freetype/freetype.git",
+		patch = function()
+			run:mkdir("build")
+			run:pushd("build")
+			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
+			run:popd()
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/Cavewhere/squish.git"
+	},
+	{
+		type = "GET",
+		name = "liblzf",
+		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
+		patch = function()
+			run:execute("tar -xzf liblzf-3.6.tar.gz")
+		end
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/nothings/stb.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/syoyo/tinyexr.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/Tencent/rapidjson.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/richgel999/rg-etc1.git"
+	},
+	{
+		type = "GIT",
+		url = "https://github.com/recastnavigation/recastnavigation.git"
+	},
+	{
+		type = "GET",
+		name = "p4api-linux",
+		os = "linux",
+		url = "https://www.perforce.com/downloads/perforce/r22.1/bin.linux26x86_64/p4api.tgz",
+		patch = function()
+			run:execute("tar -xzf p4api.tgz")
+		end
+	},
+	{
+		type = "GET",
+		name = "vulkan-linux",
+		os = "linux",
+		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/linux/vulkansdk-linux-x86_64-1.3.216.0.tar.gz",
+		patch = function()
+			run:execute("tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "steamworks",
+		url = "https://partner.steamgames.com/downloads/steamworks_sdk.zip",
+		patch = function()
+			run:execute("unzip steamworks_sdk.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "android-sdk-linux",
+		os = "linux",
+		url = "https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip",
+		patch = function()
+			run:execute("unzip commandlinetools-linux-8512546_latest.zip")
+			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
+					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+				}
+			)
+			run:execute("sh ./install.sh")
+		end
+	},
+	{
+		type = "GET",
+		name = "fastbuild-windows",
+		os = "windows",
+		url = "https://fastbuild.org/downloads/v1.07/FASTBuild-Windows-x64-v1.07.zip",
+		patch = function()
+			run:execute("unzip FASTBuild-Windows-x64-v1.07.zip")
+		end
+	},
+	{
+		type = "GET",
+		name = "ninja-windows",
+		os = "windows",
+		url = "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip",
+		patch = function()
+			run:execute("unzip ninja-win.zip")
+		end		
+	}
+}
+
+--[[
+	Write text file.
+]]
+function write_file(fn, lines)
+	local f = fileSystem:open(Path(run:cwd() .. "/" .. fn), File.FmWrite)
+	if f == nil then return false end
+	local so = StreamOutput(f, Utf8Encoding())
+	for _, ln in ipairs(lines) do
+		so:printLn(ln)
+	end
+	f:close()
+end
+
+--[[
+	Generate files similar to CMake configuration files,
+	since we don't have CMake environment we need to provide keys and values manually.
+]]
+function generate_configuration(infile, outfile, kv)
+	local inf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. infile
+	local utf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. outfile
+	local txt = {}
+
+	-- Read entire file into array.
+	local f = fileSystem:open(Path(inf), File.FmRead)
+	if f == nil then return false end
+    local r = StringReader(f, Utf8Encoding())
+    while true do
+        local ln = r:readLine()
+        if ln == nil then break end
+        table.insert(txt, ln)
+    end
+    f:close()
+
+	-- Write out entire file from array, modify lines as we go along.
+	local f = fileSystem:open(Path(utf), File.FmWrite)
+	if f == nil then return false end
+	local s = StreamOutput(f, Utf8Encoding())
+	for _, ln in ipairs(txt) do
+		for k, v in pairs(kv) do
+			ln = ln:gsub(k, v)
+		end
+		s:printLn(ln)
+	end
+    f:close()
+
+	return true
+end
+
+--[[
+	Update package, if package not found then it will be installed appropriately.
+]]
+function update(pkg)
+
+	-- Check if package is necessary on current host.
+	if pkg.os ~= nil and os.identifier ~= pkg.os then
+		return true
+	end
+
+	if pkg.type == "GIT" then
+
+		local name = pkg.url:match(".+/(.*).git")
+		if name == nil then
+			stderr:printLn("Unable to extract repo name from url " .. pkg.url)
+			return false
+		end
+
+		local result = true
+		if run:exist(name) then
+			stdout:printLn("Updating " .. pkg.url)
+			run:pushd(name)
+			result = result and (run:execute("git pull") == 0)
+			result = result and (run:execute("git submodule update") == 0)
+			run:popd()
+			if result and pkg.post_update ~= nil then
+				stdout:printLn("Running post update...")
+				run:pushd(name)
+				pkg.post_update()
+				run:popd()
+			end			
+		else
+			stdout:printLn("Cloning " .. pkg.url)
+			result = (run:execute("git clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
+			if result and pkg.post_clone ~= nil then
+				stdout:printLn("Running post clone...")
+				run:pushd(name)
+				pkg.post_clone()
+				run:popd()
+			end
+		end
+
+		if not result then
+			stderr:printLn("GIT failed!")
+			return false
+		end
+
+		if pkg.patch ~= nil then
+			run:pushd(name)
+			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			pkg.patch()
+			run:popd()
+		end
+
+	elseif pkg.type == "GET" then
+
+		if run:exist(pkg.name) then
+			stdout:printLn("Path \"" .. pkg.name .. "\" already exist; assuming up to date.")
+			return true
+		end
+
+		local file = pkg.url:match(".+/(.*)")
+		if file == nil then
+			stderr:printLn("Unable to extract file name from url " .. pkg.url)
+			return false
+		end
+
+		run:mkdir(pkg.name)
+		run:pushd(pkg.name)
+		local result = run:execute("wget " .. pkg.url)
+		run:popd()
+
+		if result ~= 0 then
+			stderr:printLn("GET failed, error code " .. result)
+			return false
+		end
+
+		if pkg.patch ~= nil then
+			run:pushd(pkg.name)
+			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			pkg.patch()
+			run:popd()
+		end		
+
+	else
+		stderr:printLn("Unknown package type " .. pkg.type)
+		return false
+	end
+
+	return true
+end
+
+function main(argv)
+	if not run:mkdir("3rdp_") then
+		stderr:printLn("Unable to create output directory.")
+		return 1
+	end
+	run:pushd("3rdp_")
+	for _, pkg in ipairs(PACKAGES) do
+		update(pkg)
+	end
+	run:popd()
+	return 0
+end
