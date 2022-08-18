@@ -31,14 +31,14 @@ public:
 	class T_DLLCLASS Argument
 	{
 	public:
-		enum Type
+		enum class Type
 		{
-			AtVoid,
-			AtChar,
-			AtInt32,
-			AtFloat,
-			AtDouble,
-			AtString
+			Void,
+			Char,
+			Int32,
+			Float,
+			Double,
+			String
 		};
 
 		Argument(void);
@@ -56,6 +56,8 @@ public:
 		Argument(const wchar_t* s);
 
 		Argument(const Argument& s);
+
+		Argument(Argument&& s);
 
 		virtual ~Argument();
 
