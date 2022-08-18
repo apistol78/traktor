@@ -91,13 +91,7 @@ local PACKAGES =
 	},
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/ogg.git",
-		patch = function()
-			run:mkdir("build")
-			run:pushd("build")
-			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release ..")
-			run:popd()
-		end
+		url = "https://github.com/xiph/ogg.git"
 	},
 	{
 		type = "GIT",
@@ -221,6 +215,7 @@ local PACKAGES =
 			run:execute("tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
 		end
 	},
+	--[[
 	{
 		type = "GET",
 		name = "steamworks",
@@ -229,6 +224,7 @@ local PACKAGES =
 			run:execute("unzip steamworks_sdk.zip")
 		end
 	},
+	]]
 	{
 		type = "GET",
 		name = "android-sdk-linux",
