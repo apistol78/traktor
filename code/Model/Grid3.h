@@ -64,12 +64,12 @@ public:
 	{
 		// Remove index from cell.
 		{
-			Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
+			const Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 
 			auto& indices = m_indices[hash];
 			auto it = std::remove(indices.begin(), indices.end(), index);
@@ -78,12 +78,12 @@ public:
 
 		// Add index to new cell.
 		{
-			Vector4 p = PositionAccessor::get(v) / m_cellSize;
+			const Vector4 p = PositionAccessor::get(v) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].push_back(index);
 		}
 
@@ -95,12 +95,12 @@ public:
 	{
 		T_ASSERT(distance <= m_cellSize / 2.0f);
 
-		Vector4 p = PositionAccessor::get(v);
-		Vector4 pq = p / m_cellSize;
+		const Vector4 p = PositionAccessor::get(v);
+		const Vector4 pq = p / m_cellSize;
 
 		const Scalar sd(distance);
-		Vector4 mnpq = pq - sd - 0.5_simd;
-		Vector4 mxpq = pq + sd + 0.5_simd;
+		const Vector4 mnpq = pq - sd - 0.5_simd;
+		const Vector4 mxpq = pq + sd + 0.5_simd;
 
 		T_MATH_ALIGN16 int32_t mne[4];
 		mnpq.storeIntegersAligned(mne);
@@ -147,8 +147,8 @@ public:
 		T_MATH_ALIGN16 int32_t pe[4];
 		p.storeIntegersAligned(pe);
 
-		uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-		uint32_t id = uint32_t(m_values.size());
+		const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+		const uint32_t id = (uint32_t)m_values.size();
 
 		m_values.push_back(v);
 		m_indices[hash].push_back(id);
@@ -160,14 +160,14 @@ public:
 		m_values.swap(values);
 		m_indices.reset();
 		m_indices.reserve(m_values.size());
-		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
+		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
 			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].push_back(i);
 		}
 	}
@@ -177,14 +177,14 @@ public:
 		m_values = values;
 		m_indices.reset();
 		m_indices.reserve(m_values.size());
-		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
+		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
 			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
 			m_indices[hash].push_back(i);
 		}
 	}
