@@ -1136,6 +1136,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1160,6 +1161,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1184,6 +1186,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1213,6 +1216,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -1872,8 +1876,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/ogg</item>
 						<item>$(OGG_SDK)/include</item>
-						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__LINUX__</item>
@@ -1897,8 +1901,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/ogg</item>
 						<item>$(OGG_SDK)/include</item>
-						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__LINUX__</item>
@@ -1922,8 +1926,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/ogg</item>
 						<item>$(OGG_SDK)/include</item>
-						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__LINUX__</item>
@@ -1952,8 +1956,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/ogg</item>
 						<item>$(OGG_SDK)/include</item>
-						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
 					<definitions>
 						<item>__LINUX__</item>
