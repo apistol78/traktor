@@ -334,8 +334,10 @@ function update(pkg)
 		if run:exist(name) then
 			stdout:printLn("Updating " .. pkg.url)
 			run:pushd(name)
+			result = result and (run:execute("git stash push") == 0)
 			result = result and (run:execute("git pull") == 0)
 			result = result and (run:execute("git submodule update") == 0)
+			run:execute("git stash pop")
 			run:popd()
 			if result and pkg.post_update ~= nil then
 				stdout:printLn("Running post update...")
