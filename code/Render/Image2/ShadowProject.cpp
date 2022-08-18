@@ -74,25 +74,25 @@ void ShadowProject::build(
 	if (!shadowMap)
 		return;
 
-	float shadowMapBias = view.shadowMapBias / view.shadowFarZ;
-	float shadowFadeZ = view.shadowFarZ * 0.7f;
-	float shadowFadeRate = 1.0f / (view.shadowFarZ - shadowFadeZ);
+	const float shadowMapBias = view.shadowMapBias / view.shadowFarZ;
+	const float shadowFadeZ = view.shadowFarZ * 0.7f;
+	const float shadowFadeRate = 1.0f / (view.shadowFarZ - shadowFadeZ);
 
-	Vector4 shadowMapSizeAndBias(
+	const Vector4 shadowMapSizeAndBias(
 		1.0f / (float)shadowMap->getWidth(),
 		shadowMapBias / 1.0f,
 		shadowFadeZ,
 		shadowFadeRate
 	);
 
-	Scalar viewEdgeNorm = view.viewFrustum.getFarZ() / Scalar(view.shadowFarZ);
-	Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4] / viewEdgeNorm;
-	Vector4 viewEdgeTopRight = view.viewFrustum.corners[5] / viewEdgeNorm;
-	Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7] / viewEdgeNorm;
-	Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6] / viewEdgeNorm;
+	const Scalar viewEdgeNorm = view.viewFrustum.getFarZ() / Scalar(view.shadowFarZ);
+	const Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4] / viewEdgeNorm;
+	const Vector4 viewEdgeTopRight = view.viewFrustum.corners[5] / viewEdgeNorm;
+	const Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7] / viewEdgeNorm;
+	const Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6] / viewEdgeNorm;
 
-	Scalar p11 = view.projection.get(0, 0);
-	Scalar p22 = view.projection.get(1, 1);
+	const Scalar p11 = view.projection.get(0, 0);
+	const Scalar p22 = view.projection.get(1, 1);
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();

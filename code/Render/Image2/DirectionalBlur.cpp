@@ -60,12 +60,12 @@ void DirectionalBlur::build(
 	ScreenRenderer* screenRenderer
 ) const
 {
-	Scalar p11 = view.projection.get(0, 0);
-	Scalar p22 = view.projection.get(1, 1);
-	Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4];
-	Vector4 viewEdgeTopRight = view.viewFrustum.corners[5];
-	Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7];
-	Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6];
+	const Scalar p11 = view.projection.get(0, 0);
+	const Scalar p22 = view.projection.get(1, 1);
+	const Vector4 viewEdgeTopLeft = view.viewFrustum.corners[4];
+	const Vector4 viewEdgeTopRight = view.viewFrustum.corners[5];
+	const Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7];
+	const Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6];
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();

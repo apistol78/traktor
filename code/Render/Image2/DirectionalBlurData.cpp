@@ -57,8 +57,8 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 		for (int32_t i = 0; i < 10; ++i)
 		{
 			const float x = m_taps / 2.0f;
-			float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
-			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			const float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+			const float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
 			if (weight > 0.01f)
 				sigma -= 0.1f;
 			else if (weight < 0.001f)
@@ -70,9 +70,8 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 		const float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
 		for (int32_t i = 0; i < m_taps; ++i)
 		{
-			float x = i - m_taps / 2.0f;
-
-			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			const float x = i - m_taps / 2.0f;
+			const float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
 			totalWeight += weight;
 
 			instance->m_gaussianOffsetWeights[i].set(
@@ -85,15 +84,14 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 	}
 	else if (m_blurType == BtSine)
 	{
-		float step = 1.0f / (m_taps - 1.0f);
-		float angleMin = (PI * step) / 2.0f;
-		float angleMax = PI - angleMin;
+		const float step = 1.0f / (m_taps - 1.0f);
+		const float angleMin = (PI * step) / 2.0f;
+		const float angleMax = PI - angleMin;
 
 		for (int i = 0; i < m_taps; ++i)
 		{
-			float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
-
-			float weight = sinf(phi);
+			const float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
+			const float weight = sinf(phi);
 			totalWeight += weight;
 
 			instance->m_gaussianOffsetWeights[i].set(
@@ -106,7 +104,7 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 	}
 	else if (m_blurType == BtBox)
 	{
-		for (int i = 0; i < m_taps; ++i)
+		for (int32_t i = 0; i < m_taps; ++i)
 		{
 			instance->m_gaussianOffsetWeights[i].set(
 				i - (m_taps - 1.0f) / 2.0f,
@@ -119,10 +117,10 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 	}
 	else if (m_blurType == BtBox2D)
 	{
-		for (int i = 0; i < m_taps; ++i)
+		for (int32_t i = 0; i < m_taps; ++i)
 		{
-			float x = s_random.nextFloat() * 2.0f - 1.0f;
-			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			const float x = s_random.nextFloat() * 2.0f - 1.0f;
+			const float y = s_random.nextFloat() * 2.0f - 1.0f;
 			instance->m_gaussianOffsetWeights[i].set(
 				x,
 				y,
@@ -133,10 +131,10 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 	}
 	else if (m_blurType == BtCircle2D)
 	{
-		for (int i = 0; i < m_taps; )
+		for (int32_t i = 0; i < m_taps; )
 		{
-			float x = s_random.nextFloat() * 2.0f - 1.0f;
-			float y = s_random.nextFloat() * 2.0f - 1.0f;
+			const float x = s_random.nextFloat() * 2.0f - 1.0f;
+			const float y = s_random.nextFloat() * 2.0f - 1.0f;
 			if (std::sqrt(x * x + y * y) <= 1.0f)
 			{
 				instance->m_gaussianOffsetWeights[i].set(
@@ -153,7 +151,7 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 	if (totalWeight > FUZZY_EPSILON)
 	{
 		Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
-		for (int i = 0; i < m_taps; ++i)
+		for (int32_t i = 0; i < m_taps; ++i)
 			instance->m_gaussianOffsetWeights[i] *= invWeight;
 	}
 
