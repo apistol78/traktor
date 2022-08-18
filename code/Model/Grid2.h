@@ -62,28 +62,27 @@ public:
 	{
 		T_ASSERT(distance <= m_cellSize / 2.0f);
 
-		Vector2 p = PositionAccessor::get(v);
-		Vector2 pq = p / m_cellSize;
+		const Vector2 p = PositionAccessor::get(v);
+		const Vector2 pq = p / m_cellSize;
 
-		int32_t x = int32_t(pq.x);
-		int32_t y = int32_t(pq.y);
+		const int32_t x = (int32_t)pq.x;
+		const int32_t y = (int32_t)pq.y;
 
 		for (int32_t iy = -1; iy <= 1; ++iy)
 		{
 			for (int32_t ix = -1; ix <= 1; ++ix)
 			{
-				uint32_t hash = HashFunction::get(x + ix, y + iy);
+				const uint32_t hash = HashFunction::get(x + ix, y + iy);
 
-				SmallMap< uint32_t, AlignedVector< uint32_t > >::const_iterator i = m_indices.find(hash);
-				if (i == m_indices.end())
+				const auto it = m_indices.find(hash);
+				if (it == m_indices.end())
 					continue;
 
-				const AlignedVector< uint32_t >& indices = i->second;
-				for (AlignedVector< uint32_t >::const_iterator j = indices.begin(); j != indices.end(); ++j)
+				for (auto index : it->second)
 				{
-					Vector2 pv = PositionAccessor::get(m_values[*j]);
+					const Vector2 pv = PositionAccessor::get(m_values[index]);
 					if ((pv - p).length2() <= distance * distance)
-						return *j;
+						return index;
 				}
 			}
 		}
@@ -93,19 +92,14 @@ public:
 
 	uint32_t add(const ValueType& v)
 	{
-		Vector2 p = PositionAccessor::get(v) / m_cellSize;
-
-		int32_t x = int32_t(p.x);
-		int32_t y = int32_t(p.y);
-
-		uint32_t hash = HashFunction::get(x, y);
+		const Vector2 p = PositionAccessor::get(v) / m_cellSize;
+		const int32_t x = (int32_t)p.x;
+		const int32_t y = (int32_t)p.y;
+		const uint32_t hash = HashFunction::get(x, y);
 		AlignedVector< uint32_t >& indices = m_indices[hash];
-
-		uint32_t id = uint32_t(m_values.size());
+		const uint32_t id = (uint32_t)m_values.size();
 		m_values.push_back(v);
-
 		indices.push_back(id);
-
 		return id;
 	}
 
@@ -117,11 +111,9 @@ public:
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
 			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
-
-			int32_t x = int32_t(p.x);
-			int32_t y = int32_t(p.y);
-
-			uint32_t hash = HashFunction::get(x, y);
+			const int32_t x = (int32_t)p.x;
+			const int32_t y = (int32_t)p.y;
+			const uint32_t hash = HashFunction::get(x, y);
 			m_indices[hash].push_back(i);
 		}
 	}
@@ -134,11 +126,9 @@ public:
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
 			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
-
-			int32_t x = int32_t(p.x);
-			int32_t y = int32_t(p.y);
-
-			uint32_t hash = HashFunction::get(x, y);
+			const int32_t x = (int32_t)p.x;
+			const int32_t y = (int32_t)p.y;
+			const uint32_t hash = HashFunction::get(x, y);
 			m_indices[hash].push_back(i);
 		}
 	}

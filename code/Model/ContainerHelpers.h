@@ -13,16 +13,16 @@ namespace traktor
 // \ingroup Model
 
 template < typename ContainerType, typename ItemType >
-int addId(ContainerType& v, ItemType item)
+int32_t addId(ContainerType& v, ItemType item)
 {
 	v.push_back(item);
-	return int(v.size() - 1);
+	return (int32_t)(v.size() - 1);
 }
 
 template < typename ContainerType, typename ItemType, typename ItemPredicate >
-int addUniqueId(ContainerType& v, ItemType item, const ItemPredicate& predicate = ItemPredicate())
+int32_t addUniqueId(ContainerType& v, ItemType item, const ItemPredicate& predicate = ItemPredicate())
 {
-	for (int i = 0; i < int(v.size()); ++i)
+	for (int32_t i = 0; i < (int32_t)v.size(); ++i)
 	{
 		if (predicate(v[i], item))
 			return i;
