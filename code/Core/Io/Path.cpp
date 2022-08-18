@@ -9,18 +9,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Path", Path, Object)
 
-Path::Path()
-:	m_relative(false)
-{
-}
-
 Path::Path(const Path& path)
 :	m_original(path.m_original)
 ,	m_volume(path.m_volume)
-,	m_relative(path.m_relative)
 ,	m_path(path.m_path)
 ,	m_file(path.m_file)
 ,	m_ext(path.m_ext)
+,	m_relative(path.m_relative)
 {
 }
 
@@ -68,35 +63,29 @@ std::wstring Path::getFileName() const
 
 std::wstring Path::getFileNameNoExtension() const
 {
-	std::wstring::size_type ext = m_file.find_last_of(L'.');
+	const std::wstring::size_type ext = m_file.find_last_of(L'.');
 	return (ext != std::wstring::npos) ? m_file.substr(0, ext) : m_file;
 }
 
 std::wstring Path::getPathOnly() const
 {
 	StringOutputStream ss;
-
 	if (!m_volume.empty())
 		ss << m_volume << L":";
 	if (!m_relative)
 		ss << L"/";
-
 	if (!m_path.empty())
 		ss << m_path;
-
 	return ss.str();
 }
 
 std::wstring Path::getPathOnlyNoVolume() const
 {
 	StringOutputStream ss;
-
 	if (!m_relative)
 		ss << L"/";
-
 	if (!m_path.empty())
 		ss << m_path;
-
 	return ss.str();
 }
 
@@ -112,12 +101,10 @@ std::wstring Path::getPathOnlyOS() const
 std::wstring Path::getPathName() const
 {
 	StringOutputStream ss;
-
 	if (!m_volume.empty())
 		ss << m_volume << L":";
 	if (!m_relative)
 		ss << L"/";
-
 	if (!m_path.empty())
 	{
 		ss << m_path;
@@ -126,14 +113,13 @@ std::wstring Path::getPathName() const
 	}
 	if (!m_file.empty())
 		ss << m_file;
-
 	return ss.str();
 }
 
 std::wstring Path::getPathNameNoExtension() const
 {
-	std::wstring pathName = getPathName();
-	std::wstring::size_type ext = pathName.find_last_of(L'.');
+	const std::wstring pathName = getPathName();
+	const std::wstring::size_type ext = pathName.find_last_of(L'.');
 	return (ext != std::wstring::npos) ? pathName.substr(0, ext) : pathName;
 }
 
@@ -144,11 +130,9 @@ std::wstring Path::getExtension() const
 
 std::wstring Path::getPathNameNoVolume() const
 {
-	std::wstringstream ss;
-
+	StringOutputStream ss;
 	if (!m_relative)
 		ss << L"/";
-
 	if (!m_path.empty())
 	{
 		ss << m_path;
@@ -157,7 +141,6 @@ std::wstring Path::getPathNameNoVolume() const
 	}
 	if (!m_file.empty())
 		ss << m_file;
-
 	return ss.str();
 }
 
@@ -180,21 +163,17 @@ Path Path::normalized() const
 	{
 		if (*i == L".")
 			continue;
-
 		if (*i == L".." && !p.empty())
 		{
 			p.pop_back();
 			continue;
 		}
-
 		p.push_back(*i);
 	}
 
 	StringOutputStream s;
-
 	if (hasVolume())
 		s << getVolume() << L":";
-
 	if (!p.empty())
 	{
 		if (!isRelative())
@@ -203,7 +182,6 @@ Path Path::normalized() const
 			s << *i << L"/";
 		s << p.back();
 	}
-
 	return Path(s.str());
 }
 
@@ -211,17 +189,15 @@ Path Path::operator + (const Path& rh) const
 {
 	if (!rh.isRelative())
 		return rh;
-
 	if (empty())
 		return rh;
-
 	return Path(getPathName() + L"/" + rh.getPathName());
 }
 
 bool Path::operator == (const Path& rh) const
 {
-	std::wstring pl = getPathName();
-	std::wstring pr = rh.getPathName();
+	const std::wstring pl = getPathName();
+	const std::wstring pr = rh.getPathName();
 #if defined(_WIN32)
 	return compareIgnoreCase(pl, pr) == 0;
 #else
@@ -262,7 +238,7 @@ void Path::resolve()
 			tmp = tmp.substr(0, s) + tmp.substr(e + 1);
 	}
 
-	std::wstring::size_type vol = tmp.find(L':');
+	const std::wstring::size_type vol = tmp.find(L':');
 	if (vol != std::wstring::npos)
 	{
 		m_volume = toLower(tmp.substr(0, vol));
@@ -283,7 +259,7 @@ void Path::resolve()
 			break;
 	}
 
-	std::wstring::size_type sls = tmp.find_last_of(L'/');
+	const std::wstring::size_type sls = tmp.find_last_of(L'/');
 	if (sls != std::wstring::npos)
 	{
 		m_path = replaceAll(tmp.substr(0, sls), L"//", L"/");
@@ -292,7 +268,7 @@ void Path::resolve()
 
 	m_file = tmp;
 
-	std::wstring::size_type ext = tmp.find_last_of(L'.');
+	const std::wstring::size_type ext = tmp.find_last_of(L'.');
 	if (ext != std::wstring::npos)
 		m_ext = toLower(tmp.substr(ext + 1));
 }

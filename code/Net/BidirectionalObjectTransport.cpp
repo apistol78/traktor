@@ -74,7 +74,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		{
 			outObject = typeInQueue.front();
 			typeInQueue.pop_front();
-			return RtSuccess;
+			return Result::Success;
 		}
 	}
 
@@ -97,7 +97,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				{
 					outObject = typeInQueue.front();
 					typeInQueue.pop_front();
-					return RtSuccess;
+					return Result::Success;
 				}
 			}
 
@@ -120,7 +120,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				if (is_type_of(*objectType, type_of(object)))
 				{
 					outObject = object;
-					return RtSuccess;
+					return Result::Success;
 				}
 			}
 
@@ -137,12 +137,12 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		for (const auto& it : m_inQueue)
 		{
 			if (!it.second.empty())
-				return RtTimeout;
+				return Result::Timeout;
 		}
-		return RtDisconnected;
+		return Result::Disconnected;
 	}
 
-	return RtTimeout;
+	return Result::Timeout;
 }
 
 void BidirectionalObjectTransport::flush(const TypeInfo& objectType)

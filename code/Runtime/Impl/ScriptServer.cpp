@@ -178,7 +178,7 @@ void ScriptServer::threadDebugger()
 		if (m_scriptDebugger)
 		{
 			Ref< ISerializable > object;
-			if (m_transport->recv(makeTypeInfoSet< ScriptDebuggerBreakpoint, ScriptDebuggerControl >(), 500, object) == net::BidirectionalObjectTransport::RtSuccess)
+			if (m_transport->recv(makeTypeInfoSet< ScriptDebuggerBreakpoint, ScriptDebuggerControl >(), 500, object) == net::BidirectionalObjectTransport::Result::Success)
 			{
 				if (ScriptDebuggerBreakpoint* breakpoint = dynamic_type_cast< ScriptDebuggerBreakpoint* >(object))
 				{

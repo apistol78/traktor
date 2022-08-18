@@ -114,7 +114,7 @@ bool TargetManager::update()
 
 			// Target must send it's identifier upon connection.
 			Ref< TargetID > targetId;
-			if (transport->recv< TargetID >(1000, targetId) == net::BidirectionalObjectTransport::RtSuccess)
+			if (transport->recv< TargetID >(1000, targetId) == net::BidirectionalObjectTransport::Result::Success)
 			{
 				// Find instance with matching identifier.
 				auto it = std::find_if(m_instances.begin(), m_instances.end(), [&](TargetInstance* ti) {

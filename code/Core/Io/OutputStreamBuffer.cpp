@@ -5,13 +5,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStreamBuffer", OutputStreamBuffer, IOutputStreamBuffer)
 
-OutputStreamBuffer::OutputStreamBuffer()
-:	m_indent(0)
-,	m_decimals(6)
-,	m_pushIndent(false)
-{
-}
-
 int32_t OutputStreamBuffer::getIndent() const
 {
 	return m_indent;

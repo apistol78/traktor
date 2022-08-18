@@ -11,13 +11,6 @@ const uint32_t c_modAdler = 65521;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Adler32", Adler32, IHash)
 
-Adler32::Adler32()
-:	m_A(0)
-,	m_B(0)
-,	m_feed(0)
-{
-}
-
 void Adler32::begin()
 {
 	m_A = 1;

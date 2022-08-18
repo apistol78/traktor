@@ -21,8 +21,6 @@ class T_DLLCLASS OutputStreamBuffer : public IOutputStreamBuffer
 	T_RTTI_CLASS;
 
 public:
-	OutputStreamBuffer();
-
 	virtual int32_t getIndent() const override final;
 
 	virtual void setIndent(int32_t indent) override final;
@@ -36,9 +34,9 @@ public:
 	virtual void setPushIndent(bool pushIndent) override final;
 
 private:
-	int32_t m_indent;
-	int32_t m_decimals;
-	bool m_pushIndent;
+	int32_t m_indent = 0;
+	int32_t m_decimals = 6;
+	bool m_pushIndent = false;
 };
 
 }

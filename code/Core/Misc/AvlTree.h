@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 
@@ -9,7 +11,7 @@ namespace traktor
 template < typename KeyType >
 struct DefaultCompare
 {
-	static int compare(const KeyType& a, const KeyType& b)
+	static int32_t compare(const KeyType& a, const KeyType& b)
 	{
 		return (a < b) ? -1 : ((a > b) ? 1 : 0);
 	}
@@ -37,11 +39,11 @@ class AvlTree
 		{
 		}
 
-		int depth()
+		int32_t depth() const
 		{
-			int ld = left ? left->depth() + 1 : 0;
-			int rd = right ? right->depth() + 1 : 0;
-			return std::max< int >(ld, rd);
+			int32_t ld = left ? left->depth() + 1 : 0;
+			int32_t rd = right ? right->depth() + 1 : 0;
+			return std::max< int32_t >(ld, rd);
 		}
 	};
 
@@ -76,11 +78,6 @@ public:
 		}
 	};
 
-	AvlTree()
-	:	m_root(nullptr)
-	{
-	}
-
 	void insert(const KeyType& key, const ItemType& item)
 	{
 		m_root = m_root ? _insert(m_root, key, item) : new Node(key, item);
@@ -101,11 +98,11 @@ public:
 	}
 
 private:
-	Node* m_root;
+	Node* m_root = nullptr;
 
 	Node* _insert(Node* node, const KeyType& key, const ItemType& item) const
 	{
-		int cmp = KeyCompare::compare(key, node->key);
+		int32_t cmp = KeyCompare::compare(key, node->key);
 		if (cmp < 0)
 		{
 			if (node->left)
@@ -135,8 +132,8 @@ private:
 
 	Node* _balance(Node* node) const
 	{
-		int ld = node->left ? node->left->depth() : 0;
-		int rd = node->right ? node->right->depth() : 0;
+		int32_t ld = node->left ? node->left->depth() : 0;
+		int32_t rd = node->right ? node->right->depth() : 0;
 
 		if (abs(ld - rd) < 2)
 			return node;
@@ -148,8 +145,8 @@ private:
 			Node* lc = r->left;
 			Node* rc = r->right;
 
-			int lcd = lc ? lc->depth() : 0;
-			int rcd = rc ? rc->depth() : 0;
+			int32_t lcd = lc ? lc->depth() : 0;
+			int32_t rcd = rc ? rc->depth() : 0;
 
 			if (lcd < rcd)
 			{
@@ -173,8 +170,8 @@ private:
 			Node* lc = l->left;
 			Node* rc = l->right;
 
-			int lcd = lc ? lc->depth() : 0;
-			int rcd = rc ? rc->depth() : 0;
+			int32_t lcd = lc ? lc->depth() : 0;
+			int32_t rcd = rc ? rc->depth() : 0;
 
 			if (lcd > rcd)
 			{
@@ -199,10 +196,10 @@ private:
 	{
 		if (node)
 		{
-			int cmp = KeyCompare::compare(key, node->key);
+			int32_t cmp = KeyCompare::compare(key, node->key);
 			if (cmp < 0)
 				return _find(node->left, key);
-			if (cmp > 0)
+			else if (cmp > 0)
 				return _find(node->right, key);
 		}
 		return node;

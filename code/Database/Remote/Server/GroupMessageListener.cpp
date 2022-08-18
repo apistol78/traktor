@@ -34,7 +34,7 @@ GroupMessageListener::GroupMessageListener(Connection* connection)
 
 bool GroupMessageListener::messageGetGroupName(const DbmGetGroupName* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{
@@ -48,7 +48,7 @@ bool GroupMessageListener::messageGetGroupName(const DbmGetGroupName* message)
 
 bool GroupMessageListener::messageRenameGroup(const DbmRenameGroup* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{
@@ -63,7 +63,7 @@ bool GroupMessageListener::messageRenameGroup(const DbmRenameGroup* message)
 
 bool GroupMessageListener::messageRemoveGroup(const DbmRemoveGroup* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{
@@ -78,7 +78,7 @@ bool GroupMessageListener::messageRemoveGroup(const DbmRemoveGroup* message)
 
 bool GroupMessageListener::messageCreateGroup(const DbmCreateGroup* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{
@@ -100,7 +100,7 @@ bool GroupMessageListener::messageCreateGroup(const DbmCreateGroup* message)
 
 bool GroupMessageListener::messageCreateInstance(const DbmCreateInstance* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{
@@ -122,7 +122,7 @@ bool GroupMessageListener::messageCreateInstance(const DbmCreateInstance* messag
 
 bool GroupMessageListener::messageGetChildren(const DbmGetChildren* message)
 {
-	uint32_t groupHandle = message->getHandle();
+	const uint32_t groupHandle = message->getHandle();
 	Ref< IProviderGroup > group = m_connection->getObject< IProviderGroup >(groupHandle);
 	if (!group)
 	{

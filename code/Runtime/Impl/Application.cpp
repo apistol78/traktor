@@ -456,7 +456,7 @@ bool Application::update()
 
 		// Emit action in current state as we're about to reconfigured servers.
 		// Also ensure state are flushed before reconfiguring.
-		if ((currentState = m_stateManager->getCurrent()) != 0)
+		if ((currentState = m_stateManager->getCurrent()) != nullptr)
 		{
 			ReconfigureEvent configureEvent(false, 0);
 			currentState->take(&configureEvent);
@@ -471,7 +471,7 @@ bool Application::update()
 		}
 
 		// Emit action in current state as we've successfully reconfigured servers.
-		if ((currentState = m_stateManager->getCurrent()) != 0)
+		if ((currentState = m_stateManager->getCurrent()) != nullptr)
 		{
 			ReconfigureEvent configureEvent(true, result);
 			currentState->take(&configureEvent);
@@ -896,7 +896,7 @@ bool Application::update()
 		{
 			Ref< IRemoteEvent > remoteEvent;
 			if (
-				m_targetManagerConnection->getTransport()->recv< IRemoteEvent >(0, remoteEvent) == net::BidirectionalObjectTransport::RtSuccess &&
+				m_targetManagerConnection->getTransport()->recv< IRemoteEvent >(0, remoteEvent) == net::BidirectionalObjectTransport::Result::Success &&
 				remoteEvent != nullptr
 			)
 			{

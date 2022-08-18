@@ -22,8 +22,6 @@ class T_DLLCLASS Adler32 : public IHash
 	T_RTTI_CLASS;
 
 public:
-	Adler32();
-
 	virtual void begin() override final;
 
 	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
@@ -45,9 +43,9 @@ public:
 	}
 
 private:
-	uint32_t m_A;
-	uint32_t m_B;
-	uint32_t m_feed;
+	uint32_t m_A = 0;
+	uint32_t m_B = 0;
+	uint32_t m_feed = 0;
 };
 
 }
