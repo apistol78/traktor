@@ -596,6 +596,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 
 	// IInput
 	auto classIInput = new AutoRuntimeClass< IInput >();
+	classIInput->addProperty("endOfFile", &IInput::endOfFile);
 	classIInput->addMethod("endOfFile", &IInput::endOfFile);
 	classIInput->addMethod("readChar", &IInput::readChar);
 	classIInput->addMethod("readLn", &IInput::readLn);
@@ -608,6 +609,10 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 
 	// Run
 	auto classRun = new AutoRuntimeClass< Run >();
+	classRun->addProperty("cwd", &Run::cwd);
+	classRun->addProperty("stdOut", &Run::stdOut);
+	classRun->addProperty("stdErr", &Run::stdErr);
+	classRun->addProperty("exitCode", &Run::exitCode);
 	classRun->addMethod("cd", &Run::cd);
 	classRun->addMethod("pushd", &Run::pushd);
 	classRun->addMethod("popd", &Run::popd);

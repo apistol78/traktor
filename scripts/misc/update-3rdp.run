@@ -268,7 +268,7 @@ local PACKAGES =
 	Write text file.
 ]]
 function write_file(fn, lines)
-	local f = fileSystem:open(Path(run:cwd() .. "/" .. fn), File.FmWrite)
+	local f = fileSystem:open(Path(run.cwd .. "/" .. fn), File.FmWrite)
 	if f == nil then return false end
 	local so = StreamOutput(f, Utf8Encoding())
 	for _, ln in ipairs(lines) do
@@ -282,8 +282,8 @@ end
 	since we don't have CMake environment we need to provide keys and values manually.
 ]]
 function generate_configuration(infile, outfile, kv)
-	local inf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. infile
-	local utf = fileSystem:getAbsolutePath(Path(run:cwd())).pathNameOS .. "/" .. outfile
+	local inf = fileSystem:getAbsolutePath(Path(run.cwd)).pathNameOS .. "/" .. infile
+	local utf = fileSystem:getAbsolutePath(Path(run.cwd)).pathNameOS .. "/" .. outfile
 	local txt = {}
 
 	-- Read entire file into array.
@@ -361,7 +361,7 @@ function update(pkg)
 
 		if pkg.patch ~= nil then
 			run:pushd(name)
-			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			stdout:printLn("Patching (" .. run.cwd .. ")...")
 			pkg.patch()
 			run:popd()
 		end
@@ -391,7 +391,7 @@ function update(pkg)
 
 		if pkg.patch ~= nil then
 			run:pushd(pkg.name)
-			stdout:printLn("Patching (" .. run:cwd() .. ")...")
+			stdout:printLn("Patching (" .. run.cwd .. ")...")
 			pkg.patch()
 			run:popd()
 		end		
