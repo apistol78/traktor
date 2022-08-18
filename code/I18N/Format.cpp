@@ -56,42 +56,42 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.Format", Format, Object)
 Format::Argument Format::Argument::ms_void;
 
 Format::Argument::Argument(void)
-:	m_type(AtVoid)
+:	m_type(Type::Void)
 {
 }
 
 Format::Argument::Argument(wchar_t c)
-:	m_type(AtChar)
+:	m_type(Type::Char)
 {
 	m_value.c = c;
 }
 
 Format::Argument::Argument(int32_t i)
-:	m_type(AtInt32)
+:	m_type(Type::Int32)
 {
 	m_value.i = i;
 }
 
 Format::Argument::Argument(float f)
-:	m_type(AtFloat)
+:	m_type(Type::Float)
 {
 	m_value.f = f;
 }
 
 Format::Argument::Argument(double d)
-:	m_type(AtDouble)
+:	m_type(Type::Double)
 {
 	m_value.d = d;
 }
 
 Format::Argument::Argument(const std::wstring& s)
-:	m_type(AtString)
+:	m_type(Type::String)
 {
 	m_value.s = refStringCreate(s.c_str());
 }
 
 Format::Argument::Argument(const wchar_t* s)
-:	m_type(AtString)
+:	m_type(Type::String)
 {
 	m_value.s = refStringCreate(s);
 }
@@ -100,13 +100,20 @@ Format::Argument::Argument(const Argument& s)
 :	m_type(s.m_type)
 ,	m_value(s.m_value)
 {
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		refStringInc(m_value.s);
+}
+
+Format::Argument::Argument(Argument&& s)
+:	m_type(s.m_type)
+,	m_value(s.m_value)
+{
+	s.m_type = Type::Void;
 }
 
 Format::Argument::~Argument()
 {
-	if (m_type == AtString)
+	if (m_type == Type::String)
 		refStringDec(m_value.s);
 }
 
@@ -114,24 +121,24 @@ std::wstring Format::Argument::format() const
 {
 	switch (m_type)
 	{
-	case AtChar:
+	case Type::Char:
 		{
 			wchar_t tmp[] = { m_value.c, L'\0' };
 			return std::wstring(tmp);
 		}
-	case AtInt32:
+	case Type::Int32:
 		{
 			return toString< int32_t >(m_value.i);
 		}
-	case AtFloat:
+	case Type::Float:
 		{
 			return toString< float >(m_value.f);
 		}
-	case AtDouble:
+	case Type::Double:
 		{
 			return toString< double >(m_value.d);
 		}
-	case AtString:
+	case Type::String:
 		{
 			return m_value.s ? m_value.s : L"";
 		}
@@ -152,18 +159,18 @@ Format::Format(
 	m_text = I18N::getInstance().get(id, id);
 	for (int32_t i = 0; i < 16; ++i)
 	{
-		size_t s = m_text.find(L"{");
+		const size_t s = m_text.find(L"{");
 		if (s == std::string::npos)
 			break;
 
-		size_t e = m_text.find(L"}", s + 1);
+		const size_t e = m_text.find(L"}", s + 1);
 		if (e == std::string::npos)
 			break;
 
-		std::wstring argument = m_text.substr(s + 1, e - s - 1);
-		std::wstring value = L"";
+		const std::wstring argument = m_text.substr(s + 1, e - s - 1);
 
-		switch (parseString< int >(argument))
+		std::wstring value;
+		switch (parseString< int32_t >(argument))
 		{
 		case 0:
 			value = arg1.format();
@@ -176,6 +183,9 @@ Format::Format(
 			break;
 		case 3:
 			value = arg4.format();
+			break;
+		default:
+			value = L"";
 			break;
 		}
 
