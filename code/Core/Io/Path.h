@@ -22,7 +22,7 @@ class T_DLLCLASS Path : public Object
 	T_RTTI_CLASS;
 
 public:
-	Path();
+	Path() = default;
 
 	Path(const Path& path);
 
@@ -202,10 +202,10 @@ public:
 private:
 	std::wstring m_original;
 	std::wstring m_volume;
-	bool m_relative;
 	std::wstring m_path;
 	std::wstring m_file;
 	std::wstring m_ext;
+	bool m_relative = false;
 
 	/*! Resolve path.
 	 *

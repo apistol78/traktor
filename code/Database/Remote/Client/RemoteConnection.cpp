@@ -48,7 +48,7 @@ Ref< IMessage > RemoteConnection::sendMessage(const IMessage& message)
 	if (!m_transport->send(&message))
 		return nullptr;
 
-	if (m_transport->recv(60000, reply) <= 0)
+	if (m_transport->recv(60000, reply) != net::BidirectionalObjectTransport::Result::Success)
 		return nullptr;
 
 	return reply;

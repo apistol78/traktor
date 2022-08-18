@@ -78,7 +78,7 @@ bool TargetConnection::update()
 	{
 		bool receivedPerfSet = false;
 		Ref< TargetPerfSet > perfSet;
-		while (m_transport->recv< TargetPerfSet >(0, perfSet) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetPerfSet >(0, perfSet) == net::BidirectionalObjectTransport::Result::Success)
 		{
 			m_performance[&type_of(perfSet)] = perfSet;
 			receivedPerfSet = true;
@@ -92,7 +92,7 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetProfilerDictionary > profilerDictionary;
-		while (m_transport->recv< TargetProfilerDictionary >(0, profilerDictionary) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetProfilerDictionary >(0, profilerDictionary) == net::BidirectionalObjectTransport::Result::Success)
 		{
 			m_dictionary = profilerDictionary->getDictionary();
 			if (m_profilerEventsCallback)
@@ -102,7 +102,7 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetProfilerEvents > profilerEvents;
-		while (m_transport->recv< TargetProfilerEvents >(0, profilerEvents) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetProfilerEvents >(0, profilerEvents) == net::BidirectionalObjectTransport::Result::Success)
 		{
 			if (m_profilerEventsCallback)
 				m_profilerEventsCallback->receivedProfilerEvents(profilerEvents->getCurrentTime(), profilerEvents->getEvents());
@@ -111,13 +111,13 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetLog > tlog;
-		while (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::Result::Success)
 			m_targetLog->log(tlog->getThreadId(), tlog->getLevel(), tlog->getText().c_str());
 	}
 
 	{
 		Ref< ScriptProfilerCallMeasured > measured;
-		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::Result::Success)
 		{
 			m_targetProfiler->notifyListeners(
 				measured->getScriptId(),

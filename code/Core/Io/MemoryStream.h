@@ -21,9 +21,9 @@ class T_DLLCLASS MemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	MemoryStream(void* buffer, int64_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
+	explicit MemoryStream(void* buffer, int64_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
 
-	MemoryStream(const void* buffer, int64_t bufferSize);
+	explicit MemoryStream(const void* buffer, int64_t bufferSize);
 
 	virtual ~MemoryStream();
 

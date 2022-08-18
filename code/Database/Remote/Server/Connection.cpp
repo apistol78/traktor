@@ -57,7 +57,7 @@ bool Connection::process()
 		return false;
 
 	Ref< IMessage > message;
-	if (m_transport->recv< IMessage >(100, message) < 0)
+	if (m_transport->recv< IMessage >(100, message) == net::BidirectionalObjectTransport::Result::Disconnected)
 		return false;
 
 	if (!message)

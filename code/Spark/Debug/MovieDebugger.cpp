@@ -104,7 +104,7 @@ MovieDebugger::MovieDebugger(net::BidirectionalObjectTransport* transport, const
 	m_transport->send(&movieInfo);
 
 	Ref< CaptureControl > captureControl;
-	if (m_transport->recv< CaptureControl >(100, captureControl) == net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< CaptureControl >(100, captureControl) == net::BidirectionalObjectTransport::Result::Success)
 		m_captureFrames = captureControl->getFrameCount();
 }
 
@@ -117,7 +117,7 @@ void MovieDebugger::postExecuteFrame(
 ) const
 {
 	Ref< CaptureControl > captureControl;
-	if (m_transport->recv< CaptureControl >(0, captureControl) == net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< CaptureControl >(0, captureControl) == net::BidirectionalObjectTransport::Result::Success)
 		m_captureFrames = captureControl->getFrameCount();
 
 	if (m_captureFrames > 0)

@@ -36,7 +36,7 @@ public:
 
 	typedef OutputStream& (*manipulator_t)(OutputStream& s);
 
-	OutputStream(IOutputStreamBuffer* buffer = 0, LineEnd lineEnd = LineEnd::Auto);
+	explicit OutputStream(IOutputStreamBuffer* buffer = nullptr, LineEnd lineEnd = LineEnd::Auto);
 
 	void setBuffer(IOutputStreamBuffer* buffer);
 

@@ -32,11 +32,11 @@ class T_DLLCLASS BidirectionalObjectTransport : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum Result
+	enum class Result
 	{
-		RtTimeout = 0,
-		RtSuccess = 1,
-		RtDisconnected = -1
+		Timeout,
+		Success,
+		Disconnected
 	};
 
 	BidirectionalObjectTransport(TcpSocket* socket);
@@ -62,11 +62,11 @@ public:
 		Result result;
 
 		result = recv(makeTypeInfoSet< ObjectType >(), timeout, obj);
-		if (result != RtSuccess)
+		if (result != Result::Success)
 			return result;
 
 		outObject = dynamic_type_cast< ObjectType* >(obj);
-		return RtSuccess;
+		return Result::Success;
 	}
 
 	template < typename ObjectType >

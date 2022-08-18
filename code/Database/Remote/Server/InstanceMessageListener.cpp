@@ -55,7 +55,7 @@ InstanceMessageListener::InstanceMessageListener(Connection* connection)
 
 bool InstanceMessageListener::messageGetInstancePrimaryType(const DbmGetInstancePrimaryType* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -69,7 +69,7 @@ bool InstanceMessageListener::messageGetInstancePrimaryType(const DbmGetInstance
 
 bool InstanceMessageListener::messageOpenTransaction(const DbmOpenTransaction* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -84,7 +84,7 @@ bool InstanceMessageListener::messageOpenTransaction(const DbmOpenTransaction* m
 
 bool InstanceMessageListener::messageCommitTransaction(const DbmCommitTransaction* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -99,7 +99,7 @@ bool InstanceMessageListener::messageCommitTransaction(const DbmCommitTransactio
 
 bool InstanceMessageListener::messageCloseTransaction(const DbmCloseTransaction* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -114,7 +114,7 @@ bool InstanceMessageListener::messageCloseTransaction(const DbmCloseTransaction*
 
 bool InstanceMessageListener::messageGetInstanceName(const DbmGetInstanceName* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -128,7 +128,7 @@ bool InstanceMessageListener::messageGetInstanceName(const DbmGetInstanceName* m
 
 bool InstanceMessageListener::messageSetInstanceName(const DbmSetInstanceName* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -143,7 +143,7 @@ bool InstanceMessageListener::messageSetInstanceName(const DbmSetInstanceName* m
 
 bool InstanceMessageListener::messageGetInstanceGuid(const DbmGetInstanceGuid* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -158,7 +158,7 @@ bool InstanceMessageListener::messageGetInstanceGuid(const DbmGetInstanceGuid* m
 
 bool InstanceMessageListener::messageSetInstanceGuid(const DbmSetInstanceGuid* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -173,7 +173,7 @@ bool InstanceMessageListener::messageSetInstanceGuid(const DbmSetInstanceGuid* m
 
 bool InstanceMessageListener::messageRemoveInstance(const DbmRemoveInstance* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -188,7 +188,7 @@ bool InstanceMessageListener::messageRemoveInstance(const DbmRemoveInstance* mes
 
 bool InstanceMessageListener::messageReadObject(const DbmReadObject* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -211,7 +211,7 @@ bool InstanceMessageListener::messageReadObject(const DbmReadObject* message)
 
 bool InstanceMessageListener::messageWriteObject(const DbmWriteObject* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -234,7 +234,7 @@ bool InstanceMessageListener::messageWriteObject(const DbmWriteObject* message)
 
 bool InstanceMessageListener::messageGetDataNames(const DbmGetDataNames* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -251,7 +251,7 @@ bool InstanceMessageListener::messageGetDataNames(const DbmGetDataNames* message
 
 bool InstanceMessageListener::messageRemoveAllData(const DbmRemoveAllData* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -266,7 +266,7 @@ bool InstanceMessageListener::messageRemoveAllData(const DbmRemoveAllData* messa
 
 bool InstanceMessageListener::messageReadData(const DbmReadData* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{
@@ -288,7 +288,7 @@ bool InstanceMessageListener::messageReadData(const DbmReadData* message)
 
 bool InstanceMessageListener::messageWriteData(const DbmWriteData* message)
 {
-	uint32_t instanceHandle = message->getHandle();
+	const uint32_t instanceHandle = message->getHandle();
 	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
 	if (!instance)
 	{

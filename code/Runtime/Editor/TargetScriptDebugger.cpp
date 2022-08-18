@@ -32,7 +32,7 @@ TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* tr
 void TargetScriptDebugger::update()
 {
 	Ref< ScriptDebuggerStateChange > stateChange;
-	while (m_transport->recv< ScriptDebuggerStateChange >(0, stateChange) == net::BidirectionalObjectTransport::RtSuccess)
+	while (m_transport->recv< ScriptDebuggerStateChange >(0, stateChange) == net::BidirectionalObjectTransport::Result::Success)
 	{
 		m_running = stateChange->isRunning();
 		for (auto listener : m_listeners)
@@ -72,7 +72,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 	}
 
 	Ref< ScriptDebuggerStackFrame > sf;
-	if (m_transport->recv< ScriptDebuggerStackFrame >(c_timeout, sf) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerStackFrame >(c_timeout, sf) != net::BidirectionalObjectTransport::Result::Success)
 	{
 		log::error << L"Target script debugger error; No response while requesting stack frame." << Endl;
 		return false;
@@ -92,7 +92,7 @@ bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Varia
 	}
 
 	Ref< ScriptDebuggerLocals > l;
-	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::Result::Success)
 	{
 		log::error << L"Target script debugger error; No response while requesting locals." << Endl;
 		return false;
@@ -112,7 +112,7 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 	}
 
 	Ref< ScriptDebuggerLocals > l;
-	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerLocals >(c_timeout, l) != net::BidirectionalObjectTransport::Result::Success)
 	{
 		log::error << L"Target script debugger error; No response while requesting object capture." << Endl;
 		return false;
@@ -132,7 +132,7 @@ bool TargetScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBrea
 	}
 
 	Ref< ScriptDebuggerBreadcrumbs> bc;
-	if (m_transport->recv< ScriptDebuggerBreadcrumbs >(c_timeout, bc) != net::BidirectionalObjectTransport::RtSuccess)
+	if (m_transport->recv< ScriptDebuggerBreadcrumbs >(c_timeout, bc) != net::BidirectionalObjectTransport::Result::Success)
 	{
 		log::error << L"Target script debugger error; No response while requesting breadcrumbs capture." << Endl;
 		return false;

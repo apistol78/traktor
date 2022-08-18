@@ -101,26 +101,26 @@ void TerrainComponent::setup(
 )
 {
 	const int32_t viewIndex = worldRenderView.getIndex();
-	bool snapshot = worldRenderView.getSnapshot();
+	const bool snapshot = worldRenderView.getSnapshot();
 
 	if (!validate(viewIndex, cacheSize))
 		return;
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
-	Matrix44 viewInv = worldRenderView.getView().inverse();
-	Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
-	Vector4 eyePosition = worldRenderView.getEyePosition();
-	Vector4 eyeDirection = worldRenderView.getEyeDirection();
+	const Matrix44 viewInv = worldRenderView.getView().inverse();
+	const Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const Vector4 eyeDirection = worldRenderView.getEyeDirection();
 
-	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+	const Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+	const Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 	Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
-	Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-	Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Calculate world frustum.
-	Frustum viewCullFrustum = worldRenderView.getCullFrustum();
+	const Frustum viewCullFrustum = worldRenderView.getCullFrustum();
 	Frustum worldCullFrustum = viewCullFrustum;
 	for (uint32_t i = 0; i < worldCullFrustum.planes.size(); ++i)
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
@@ -132,28 +132,28 @@ void TerrainComponent::setup(
 		Vector4 patchOrigin = patchTopLeft;
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-			uint32_t patchId = px + pz * m_patchCount;
+			const uint32_t patchId = px + pz * m_patchCount;
 
 			const Patch& patch = m_patches[patchId];
-			Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
+			const Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
 
-			Aabb3 patchAabb(
+			const Aabb3 patchAabb(
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight - FUZZY_EPSILON, -patchDeltaHalf.z(), 0.0f),
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight + FUZZY_EPSILON,  patchDeltaHalf.z(), 0.0f)
 			);
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
-				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
-				Vector4 patchCenterWorld_x0zw = patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f);
-				Vector4 eyePosition_0y00 = Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f);
+				const Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
+				const Vector4 patchCenterWorld_x0zw = patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+				const Vector4 eyePosition_0y00 = Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f);
 
 				CullPatch cp;
 
 				// Calculate screen error for each lod.
 				for (int i = 0; i < LodCount; ++i)
 				{
-					Vector4 Pworld[2] =
+					const Vector4 Pworld[2] =
 					{
 						patchCenterWorld_x0zw + eyePosition_0y00,
 						patchCenterWorld_x0zw + eyePosition_0y00 + Vector4(0.0f, patch.error[i], 0.0f, 0.0f)
@@ -182,10 +182,10 @@ void TerrainComponent::setup(
 					Pclip[0] /= Pclip[0].w();
 					Pclip[1] /= Pclip[1].w();
 
-					Vector4 d = Pclip[1] - Pclip[0];
+					const Vector4 d = Pclip[1] - Pclip[0];
 
-					float dx = d.x();
-					float dy = d.y();
+					const float dx = d.x();
+					const float dy = d.y();
 
 					cp.error[i] = std::sqrt(dx * dx + dy * dy) * 100.0f;
 				}
@@ -208,7 +208,6 @@ void TerrainComponent::setup(
 				);
 
 				bool clipped = false;
-
 				for (int32_t i = 0; i < sizeof_array(extents); ++i)
 				{
 					Vector4 p = viewProj * extents[i];
@@ -226,7 +225,7 @@ void TerrainComponent::setup(
 					mx = max(mx, p);
 				}
 
-				Vector4 e = mx - mn;
+				const Vector4 e = mx - mn;
 
 				cp.distance = lodDistance;
 				cp.area = !clipped ? e.x() * e.y() : Scalar(1000.0f);
@@ -264,9 +263,9 @@ void TerrainComponent::setup(
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
 		// Calculate which surface lod to use based one distance to patch center.
-		float distance = max(visiblePatch.distance - detailDistance, 0.0f);
-		float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
-		float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
+		const float distance = max(visiblePatch.distance - detailDistance, 0.0f);
+		const float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
+		const float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
 		int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
 
 		const float c_lodHysteresisThreshold = 0.5f;
@@ -356,8 +355,8 @@ void TerrainComponent::build(
 		return;
 
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	Vector4 eyePosition = worldRenderView.getEyePosition();
-	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
 	render::RenderContext* renderContext = context.getRenderContext();
 
@@ -517,24 +516,24 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 
 void TerrainComponent::updatePatches(const uint32_t* region)
 {
-	uint32_t patchDim = m_terrain->getPatchDim();
-	uint32_t heightfieldSize = m_heightfield->getSize();
+	const uint32_t patchDim = m_terrain->getPatchDim();
+	const uint32_t heightfieldSize = m_heightfield->getSize();
 
-	uint32_t mnx = region ? max< uint32_t >(region[0], 0) : 0;
-	uint32_t mnz = region ? max< uint32_t >(region[1], 0) : 0;
-	uint32_t mxx = region ? min< uint32_t >(region[2] + 1, m_patchCount) : m_patchCount;
-	uint32_t mxz = region ? min< uint32_t >(region[3] + 1, m_patchCount) : m_patchCount;
+	const uint32_t mnx = region ? max< uint32_t >(region[0], 0) : 0;
+	const uint32_t mnz = region ? max< uint32_t >(region[1], 0) : 0;
+	const uint32_t mxx = region ? min< uint32_t >(region[2] + 1, m_patchCount) : m_patchCount;
+	const uint32_t mxz = region ? min< uint32_t >(region[3] + 1, m_patchCount) : m_patchCount;
 
 	for (uint32_t pz = mnz; pz < mxz; ++pz)
 	{
 		for (uint32_t px = mnx; px < mxx; ++px)
 		{
-			uint32_t patchId = px + pz * m_patchCount;
+			const uint32_t patchId = px + pz * m_patchCount;
 
-			int32_t pminX = (heightfieldSize * px) / m_patchCount;
-			int32_t pminZ = (heightfieldSize * pz) / m_patchCount;
-			int32_t pmaxX = (heightfieldSize * (px + 1)) / m_patchCount;
-			int32_t pmaxZ = (heightfieldSize * (pz + 1)) / m_patchCount;
+			const int32_t pminX = (heightfieldSize * px) / m_patchCount;
+			const int32_t pminZ = (heightfieldSize * pz) / m_patchCount;
+			const int32_t pmaxX = (heightfieldSize * (px + 1)) / m_patchCount;
+			const int32_t pmaxZ = (heightfieldSize * (pz + 1)) / m_patchCount;
 
 			const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
 			Patch& patch = m_patches[patchId];
