@@ -1,8 +1,6 @@
+#include <direct.h>
 #include <iostream>
 #include <sstream>
-#if !defined(_XBOX)
-#	include <direct.h>
-#endif
 #include "Core/Io/Win32/NativeVolume.h"
 #include "Core/Io/Win32/NativeStream.h"
 #include "Core/Io/Win32/NativeMappedStream.h"
@@ -65,14 +63,8 @@ NativeVolume::NativeVolume(const Path& currentDirectory)
 
 std::wstring NativeVolume::getDescription() const
 {
-#if defined(_XBOX)
-
-	return m_currentDirectory.getPathName();
-
-#else
-
 	wchar_t volumeName[256] = { L"" };
-	if (!GetVolumeInformation(
+	if (GetVolumeInformation(
 		m_currentDirectory.getVolume().c_str(),
 		volumeName,
 		sizeof_array(volumeName),
@@ -82,11 +74,9 @@ std::wstring NativeVolume::getDescription() const
 		NULL,
 		0
 	))
+		return volumeName;
+	else
 		return L"";
-
-	return volumeName;
-
-#endif
 }
 
 Ref< File > NativeVolume::get(const Path& path)
@@ -95,7 +85,7 @@ Ref< File > NativeVolume::get(const Path& path)
 	std::memset(&fa, 0, sizeof(fa));
 
 	if (!GetFileAttributesEx(wstots(getSystemPath(path)).c_str(), GetFileExInfoStandard, &fa))
-		return 0;
+		return nullptr;
 
 	int flags =
 		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_NORMAL   ) == FILE_ATTRIBUTE_NORMAL   ) ? File::FfNormal    : 0) |
@@ -358,8 +348,6 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-#if !defined(_XBOX)
-
 	wchar_t mountPoint[] = { L"A" };
 	wchar_t driveFormat[] = { L"A:" };
 
@@ -384,14 +372,6 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 			fileSystem.setCurrentVolume(volume);
 		}
 	}
-
-#elif defined(_XBOX)
-
-	Ref< IVolume > volume = new NativeVolume(L"D:");
-	fileSystem.mount(L"D", volume);
-	fileSystem.setCurrentVolume(volume);
-
-#endif
 }
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const

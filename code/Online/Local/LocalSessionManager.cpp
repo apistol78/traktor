@@ -27,8 +27,6 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 
 #if defined(__IOS__) || defined(__ANDROID__)
 	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/" + std::wstring(gc->m_dbName) + L".db";
-#elif defined(_PS3)
-	std::wstring dbPath = std::wstring(gc->m_dbName) + L".db";
 #else
 	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Lan/" + std::wstring(gc->m_dbName) + L".db";
 #endif

@@ -15,7 +15,7 @@ namespace traktor
 IAllocator* s_stdAllocator = nullptr;
 IAllocator* s_allocator = nullptr;
 
-#if !defined(_PS3) && !defined(__MAC__) && !defined(__IOS__)
+#if !defined(__MAC__) && !defined(__IOS__)
 void destroyAllocator()
 {
 	if (s_allocator != s_stdAllocator)
@@ -36,7 +36,7 @@ IAllocator* getAllocator()
 	{
 		s_stdAllocator = allocConstruct< StdAllocator >();
 
-#if defined(__ANDROID__) || defined(_PS3) || defined(__APPLE__)
+#if defined(__ANDROID__) || defined(__APPLE__)
 		s_allocator = s_stdAllocator;
 #elif !defined(_DEBUG) || defined(__LINUX__) || defined(__RPI__)
 		//s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
@@ -47,7 +47,7 @@ IAllocator* getAllocator()
 		//s_allocator = s_stdAllocator;
 #endif
 
-#if !defined(_PS3) && !defined(__MAC__) && !defined(__IOS__)
+#if !defined(__MAC__) && !defined(__IOS__)
 		std::atexit(destroyAllocator);
 #endif
 	}

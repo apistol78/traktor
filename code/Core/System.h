@@ -1,12 +1,8 @@
 #pragma once
 
 #if defined (_WIN32)
-#	if defined (_XBOX)
-#		include <xtl.h>
-#	else
-#		define NOMINMAX
-#		include <windows.h>
-#	endif
+#	define NOMINMAX
+#	include <windows.h>
 #	include <tchar.h>
 #elif defined(__ANDROID__)
 #	include <android/native_window.h>

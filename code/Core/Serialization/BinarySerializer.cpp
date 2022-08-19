@@ -1,6 +1,3 @@
-#if defined(_PS3)
-#	include <alloca.h>
-#endif
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>

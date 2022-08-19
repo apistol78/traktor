@@ -37,9 +37,7 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	}
 
 	Path fileName = FileSystem::getInstance().getAbsolutePath(cs[L"fileName"]);
-#if !defined(_PS3)
 	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
-#endif
 
 #if defined(TARGET_OS_MAC) || defined(__LINUX__) || defined(__RPI__) || defined(__ANDROID__)
 	std::wstring dbName = fileName.getPathNameNoVolume();

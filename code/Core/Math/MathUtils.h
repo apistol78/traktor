@@ -1,9 +1,6 @@
 #pragma once
 
 #include <cmath>
-#if defined(_XBOX)
-#	include <ppcintrinsics.h>
-#endif
 #if defined(_MSC_VER)
 #	include "Core/Math/Scalar.h"
 #endif
@@ -87,47 +84,13 @@ inline Scalar sign(const Scalar& a)
 
 #endif
 
-#if defined(_XBOX)
-
-template < >
-inline float min(float a, float b)
-{
-	return float(__fsel(a - b, b, a));
-}
-
-template < >
-inline float max(float a, float b)
-{
-	return float(__fsel(a - b, a, b));
-}
-
-template < >
-inline float abs(float a)
-{
-	return float(__fsel(a, a, -a));
-}
-
-template < >
-inline float select(float a, float b, float c)
-{
-	return float(__fsel(a, b, c));
-}
-
-template < >
-inline float sign(float a)
-{
-	return float(__fsel(a, 1.0f, -1.0f));
-}
-
-#endif
-
 template < typename Type >
 inline Type clamp(Type value, Type minLimit, Type maxLimit)
 {
 	return max(min(value, maxLimit), minLimit);
 }
 
-#if defined(_MSC_VER) || defined(_PS3)
+#if defined(_MSC_VER)
 
 inline float sinf(float rad)
 {

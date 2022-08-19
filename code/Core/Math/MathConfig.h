@@ -10,13 +10,9 @@
 #	if !defined(_DEBUG)
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE __forceinline
-#		if !defined(_XBOX)
-#			define T_MATH_USE_SSE2
-#		endif
+#		define T_MATH_USE_SSE2
 #	else	// _DEBUG
-#		if !defined(_XBOX)
-#			define T_MATH_USE_SSE2
-#		endif
+#		define T_MATH_USE_SSE2
 #	endif
 
 #endif	// _MSC_VER
@@ -58,30 +54,6 @@
 
 #endif	// __GNUC__
 
-#if defined(_PS3)
-
-#	define T_MATH_ALIGN16 T_ALIGN16
-
-#	if !defined(SPU)
-#		if !defined(_DEBUG)
-#			define T_MATH_USE_INLINE
-#			define T_MATH_INLINE inline
-#			define T_MATH_USE_ALTIVEC
-#		else	// _DEBUG
-#			define T_MATH_USE_ALTIVEC
-#		endif
-#	else
-#		if !defined(_DEBUG)
-#			define T_MATH_USE_INLINE
-#			define T_MATH_INLINE inline
-#			define T_MATH_USE_ALTIVEC_SPU
-#		else	// _DEBUG
-#			define T_MATH_USE_ALTIVEC_SPU
-#		endif
-#	endif
-
-#endif	// _PS3
-
 #if defined(T_MATH_USE_SSE2)
 #	if defined(_MSC_VER) || defined(__APPLE__) || defined(__LINUX__)
 #		include <xmmintrin.h>
@@ -90,12 +62,8 @@
 #	endif
 #endif
 
-#if defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
-#	if defined(_PS3)
-#		include <vec_types.h>
-#	else
-#		include <altivec.h>
-#	endif
+#if defined(T_MATH_USE_ALTIVEC)
+#	include <altivec.h>
 #endif
 
 #if defined(T_MATH_USE_NEON)

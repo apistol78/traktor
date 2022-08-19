@@ -210,35 +210,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	m_renderViewDesc.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
 	m_renderViewDesc.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 
-#if defined(_PS3)
-
-	switch (m_originalDisplayMode.height)
-	{
-	case 720:
-		log::info << L"Using HD television settings" << Endl;
-		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
-		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
-		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
-		break;
-
-	case 1080:
-		log::info << L"Using FullHD television settings" << Endl;
-		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
-		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
-		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
-		break;
-
-	default:
-		log::info << L"Using default television settings" << Endl;
-		m_renderViewDesc.displayMode.width = m_originalDisplayMode.width;
-		m_renderViewDesc.displayMode.height = m_originalDisplayMode.height;
-		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
-	}
-
-	m_renderViewDesc.displayMode.colorBits = 24;
-
-#else
-
 	// Get display mode from settings; use default settings if none is provided.
 	if (m_renderViewDesc.fullscreen)
 	{
@@ -261,8 +232,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 
 	m_renderViewDesc.displayMode.colorBits = 24;
-
-#endif
 
 	// Ensure no invalid multi-sample configuration is entered.
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
@@ -287,13 +256,11 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 
 	// We've successfully created the render view; update settings to reflect found display mode.
-#if !defined(_PS3)
 	if (m_renderViewDesc.fullscreen)
 	{
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_renderViewDesc.displayMode.height);
 	}
-#endif
 
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
@@ -335,45 +302,6 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	rvdd.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 	rvdd.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
 
-#if defined(_PS3)
-
-	rvdd.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
-	if (!rvdd.displayMode.stereoscopic)
-	{
-		switch (m_originalDisplayMode.height)
-		{
-		case 720:
-			log::info << L"Using HD television settings" << Endl;
-			rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
-			rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
-			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
-			break;
-
-		case 1080:
-			log::info << L"Using FullHD television settings" << Endl;
-			rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
-			rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
-			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
-			break;
-
-		default:
-			log::info << L"Using default television settings" << Endl;
-			rvdd.displayMode.width = m_originalDisplayMode.width;
-			rvdd.displayMode.height = m_originalDisplayMode.height;
-			rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
-		}
-	}
-	else
-	{
-		log::info << L"Using 3D television settings" << Endl;
-		rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Width", 960);
-		rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Height", 720);
-		rvdd.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/MultiSample", 0);
-	}
-	rvdd.displayMode.colorBits = 24;
-
-#else
-
 	if (rvdd.fullscreen)
 	{
 		rvdd.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
@@ -386,8 +314,6 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	}
 
 	rvdd.displayMode.colorBits = 24;
-
-#endif
 
 	// Ensure display mode is still supported; else find closest match.
 	if (rvdd.fullscreen)
@@ -461,8 +387,6 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 {
 	RenderServer::update(settings);
 
-#if !defined(_PS3)
-
 	if (!m_renderView)
 		return UrSuccess;
 
@@ -502,8 +426,6 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 			return UrReconfigure;
 		}
 	}
-
-#endif
 
 	return UrSuccess;
 }

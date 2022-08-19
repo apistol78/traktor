@@ -63,8 +63,6 @@ struct CastSample
 	}
 };
 
-#if !defined(_XBOX)
-
 template < >
 struct CastSample < int8_t >
 {
@@ -102,8 +100,6 @@ struct CastSample < int16_t >
 		return (int16_t)_mm_cvtt_ss2si(sf);
 	}
 };
-
-#endif
 
 template < typename SampleType >
 void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint32_t writeStride)
@@ -158,9 +154,7 @@ bool AudioDriverXAudio2::create(const SystemApplication& sysapp, const AudioDriv
 		}
 	}
 
-#if !defined(_XBOX)
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
-#endif
 
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)
@@ -224,9 +218,7 @@ void AudioDriverXAudio2::destroy()
 		m_buffers[i] = nullptr;
 	}
 
-#if !defined(_XBOX)
 	CoUninitialize();
-#endif
 }
 
 void AudioDriverXAudio2::wait()

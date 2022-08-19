@@ -1,11 +1,7 @@
 #pragma once
 
-#if defined(_XBOX)
-#include <xtl.h>
-#else
 #include <windows.h>
 #include <xinput.h>
-#endif
 #include "Input/IInputDevice.h"
 
 // import/export mechanism.

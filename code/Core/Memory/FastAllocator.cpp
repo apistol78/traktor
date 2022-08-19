@@ -13,13 +13,7 @@ namespace traktor
 
 const uint32_t c_blockCounts[] =
 {
-#if defined(_PS3)
-	32768,				// 16
-	36864,				// 32
-	20480,				// 64
-	8192,				// 128
-	4096				// 256
-#elif defined(__IOS__) || defined(__ANDROID__)
+#if defined(__IOS__) || defined(__ANDROID__)
 	32768,				// 16
 	36864,				// 32
 	20480,				// 64

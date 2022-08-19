@@ -10,7 +10,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
-#if !TARGET_OS_IPHONE && !defined(_PS3)
+#if !TARGET_OS_IPHONE
 #	define T_USE_UPDATE_JOBS
 #endif
 

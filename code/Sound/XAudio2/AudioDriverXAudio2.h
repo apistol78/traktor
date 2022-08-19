@@ -1,9 +1,7 @@
 #pragma once
 
-#if !defined(_XBOX)
-#	define _WIN32_DCOM
-#	include <windows.h>
-#endif
+#define _WIN32_DCOM
+#include <windows.h>
 #include <xaudio2.h>
 #include "Core/Misc/ComRef.h"
 #include "Sound/IAudioDriver.h"

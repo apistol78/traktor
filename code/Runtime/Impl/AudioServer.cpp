@@ -46,7 +46,6 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 
 	sound::SoundSystemCreateDesc sscd;
 	sscd.sysapp = sysapp;
-#if !defined(_PS3)
 	sscd.channels = settings->getProperty< int32_t >(L"Audio.Channels", 16);
 	sscd.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Audio.SampleRate", 44100);
 	sscd.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Audio.BitsPerSample", 16);
@@ -56,13 +55,6 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 #	else
 	sscd.driverDesc.frameSamples = 512;
 #	endif
-#else
-	sscd.channels = 16;
-	sscd.driverDesc.sampleRate = 48000;
-	sscd.driverDesc.bitsPerSample = 16;
-	sscd.driverDesc.hwChannels = 5+1;
-	sscd.driverDesc.frameSamples = 4 * 256;
-#endif
 
 	if (!m_audioSystem->create(sscd))
 	{
