@@ -57,9 +57,7 @@ public:
 
 	T_MATH_INLINE bool operator != (const Transform& rh) const;
 
-#if !(defined(_PS3) && defined(SPU))
 	void serialize(ISerializer& s);
-#endif
 
 	friend T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& rh, const Transform& lh);
 
@@ -75,6 +73,5 @@ T_MATH_INLINE T_DLLCLASS Transform lerp(const Transform& a, const Transform& b, 
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Transform.inl"
+#	include "Core/Math/Std/Transform.inl"
 #endif
-

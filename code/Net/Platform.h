@@ -22,15 +22,11 @@
 #		define SOMAXCONN 4
 #	endif
 #elif defined(_WIN32)
-#	if defined(_XBOX)
-#		include <xtl.h>
-#	else
-#		define _WIN32_LEAN_AND_MEAN
-#		define NOMINMAX
-#		include <winsock2.h>
-#		include <ws2tcpip.h>
-#		include <windows.h>
-#	endif
+#	define _WIN32_LEAN_AND_MEAN
+#	define NOMINMAX
+#	include <winsock2.h>
+#	include <ws2tcpip.h>
+#	include <windows.h>
 
 typedef int socklen_t;
 #	define CLOSE_SOCKET(s) closesocket(s)

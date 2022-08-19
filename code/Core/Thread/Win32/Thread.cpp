@@ -52,23 +52,7 @@ bool Thread::start(Priority priority)
 	if (!m_handle)
 		return false;
 
-#if defined(_XBOX)
-	if (m_hardwareCore != -1)
-	{
-		DWORD result = XSetThreadProcessor(m_handle, m_hardwareCore);
-		if (result == ~0U)
-			return false;
-	}
-#endif
-
-#if !defined(_XBOX)
 	SetThreadDescription(m_handle, m_name);
-#endif
-
-#if defined(_XBOX)
-	PIXNameThread(m_name.c_str());
-#endif
-
 	return resume(priority);
 }
 
@@ -110,18 +94,14 @@ bool Thread::resume(Priority priority)
 
 void Thread::sleep(int duration)
 {
-#if !defined(_XBOX)
 	MMRESULT result = TIMERR_NOCANDO;
 	if (duration <= 10)
 		result = timeBeginPeriod(1);
-#endif
 
 	Sleep(duration);
 
-#if !defined(_XBOX)
 	if (result == TIMERR_NOERROR)
 		timeEndPeriod(1);
-#endif
 }
 
 void Thread::yield()

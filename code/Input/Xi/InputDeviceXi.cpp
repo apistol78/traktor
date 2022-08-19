@@ -172,7 +172,6 @@ void InputDeviceXi::readState()
 	{
 		bool connected = m_connected;
 
-#if !defined(_XBOX)
 		HWND hWndActive = GetActiveWindow();
 		DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
 		if (GetCurrentProcessId() != dwPID)
@@ -181,7 +180,6 @@ void InputDeviceXi::readState()
 			m_skip = c_skipReadStateNoConnect;
 		}
 		else
-#endif
 			m_connected = bool(XInputGetState(m_controller, &m_state) == ERROR_SUCCESS);
 
 #if defined(_DEBUG)

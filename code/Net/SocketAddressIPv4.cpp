@@ -5,7 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Net/SocketAddressIPv4.h"
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 #	include <ws2ipdef.h>
 #	include <iphlpapi.h>
 #endif
@@ -80,15 +80,12 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 		// Try to resolve address, first try string denoted IP number as it will
 		// probably fail faster than gethostbyname.
 		ia = inet_addr(wstombs(host).c_str());
-
-#if !defined(_XBOX)
 		if (ia == INADDR_NONE)
 		{
 			hostent* hostent = gethostbyname(wstombs(host).c_str());
 			if (hostent != 0)
 				ia = *reinterpret_cast< uint32_t* >(hostent->h_addr_list[0]);
 		}
-#endif
 	}
 
 	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
@@ -104,11 +101,7 @@ bool SocketAddressIPv4::valid() const
 
 std::wstring SocketAddressIPv4::getHostName() const
 {
-#if !defined(_XBOX)
 	return mbstows(inet_ntoa(*const_cast< in_addr* >(&m_sockaddr.sin_addr)));
-#else
-	return L"<unsupported>";
-#endif
 }
 
 uint32_t SocketAddressIPv4::getAddr() const
@@ -133,7 +126,7 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 
 bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 
 	ULONG bufLen = 0;
 	GetAdaptersInfo(0, &bufLen);

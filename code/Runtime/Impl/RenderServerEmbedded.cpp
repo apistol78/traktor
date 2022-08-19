@@ -224,8 +224,6 @@ RenderServer::UpdateResult RenderServerEmbedded::update(PropertyGroup* settings)
 {
 	RenderServer::update(settings);
 
-#if !defined(_PS3)
-
 	if (!m_renderView)
 		return UrSuccess;
 
@@ -237,8 +235,6 @@ RenderServer::UpdateResult RenderServerEmbedded::update(PropertyGroup* settings)
 		else if (evt.type == render::RenderEventType::Resize)
 			return UrReconfigure;
 	}
-
-#endif
 
 	return UrSuccess;
 }

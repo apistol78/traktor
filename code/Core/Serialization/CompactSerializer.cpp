@@ -1,6 +1,3 @@
-#if defined(_PS3)
-#	include <calloca>
-#endif
 #include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
