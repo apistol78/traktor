@@ -80,10 +80,13 @@ public:
 
 private:
 	cairo_t* m_cr;
+	Color4ub m_currentSourceColor;
 	Color4ub m_foreground;
 	Color4ub m_background;
 	int32_t m_thickness;
 	bool m_underline;
+
+	void setSourceColor(const Color4ub& color);
 };
 
 	}

@@ -24,25 +24,23 @@ void CenterLayout::update(Widget* widget)
 	Widget* child = widget->getFirstChild();
 	if (child)
 	{
-		Rect rc = widget->getInnerRect();
+		const Rect rc = widget->getInnerRect();
 		Size sz = child->getPreferredSize(rc.getSize());
 
-		float ratio = float(sz.cx) / sz.cy;
-
+		const float ratio = float(sz.cx) / sz.cy;
 		if (sz.cx > rc.getWidth())
 		{
 			sz.cx = rc.getWidth();
 			sz.cy = (int32_t)(sz.cx / ratio);
 		}
-
 		if (sz.cy > rc.getHeight())
 		{
 			sz.cy = rc.getHeight();
 			sz.cx = (int32_t)(sz.cy * ratio);
 		}
 
-		int32_t x = (m_centerAxis & CaHorizontal) != 0 ? (rc.getWidth() - sz.cx) / 2 : 0;
-		int32_t y = (m_centerAxis & CaVertical) != 0 ? (rc.getHeight() - sz.cy) / 2 : 0;
+		const int32_t x = (m_centerAxis & CaHorizontal) != 0 ? (rc.getWidth() - sz.cx) / 2 : 0;
+		const int32_t y = (m_centerAxis & CaVertical) != 0 ? (rc.getHeight() - sz.cy) / 2 : 0;
 
 		child->setRect(Rect(x, y, x + sz.cx, y + sz.cy));
 	}
