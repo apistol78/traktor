@@ -24,7 +24,7 @@
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	if !defined(__ANDROID__) && !defined(__PS3__)
+#	if !defined(__ANDROID__)
 #		define DRAWING_INCLUDE_EXR
 #	endif
 #endif

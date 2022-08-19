@@ -214,8 +214,6 @@ T_MATH_INLINE T_DLLCLASS bool compareFuzzyEqual(const Vector4& l, const Vector4&
 #		include "Core/Math/Sse2/Vector4.inl"
 #	elif defined(T_MATH_USE_ALTIVEC)
 #		include "Core/Math/AltiVec/Vector4.inl"
-#	elif defined(T_MATH_USE_ALTIVEC_SPU)
-#		include "Core/Math/AltiVec/Ps3/Spu/Vector4.inl"
 #	elif defined(T_MATH_USE_NEON)
 #		include "Core/Math/Neon/Vector4.inl"
 #	else

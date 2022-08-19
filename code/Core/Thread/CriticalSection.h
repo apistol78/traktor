@@ -1,8 +1,5 @@
 #pragma once
 
-#if defined(__PS3__)
-#	include <sys/synchronization.h>
-#endif
 #include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
@@ -31,11 +28,7 @@ public:
 	void release();
 
 private:
-#if defined(__PS3__)
-	sys_lwmutex_t m_mutex;
-#else
 	void* m_handle;
-#endif
 };
 
 }

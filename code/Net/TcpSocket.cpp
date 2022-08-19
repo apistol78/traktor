@@ -50,7 +50,6 @@ bool TcpSocket::bind(const SocketAddressIPv4& socketAddress, bool reuseAddr)
 
 bool TcpSocket::bind(const SocketAddressIPv6& socketAddress, bool reuseAddr)
 {
-#if !defined(__PS3__) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_STREAM);
 	if (!info)
 		return false;
@@ -84,9 +83,6 @@ bool TcpSocket::bind(const SocketAddressIPv6& socketAddress, bool reuseAddr)
 		return false;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 bool TcpSocket::connect(const SocketAddressIPv4& socketAddress)
@@ -108,7 +104,6 @@ bool TcpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 bool TcpSocket::connect(const SocketAddressIPv6& socketAddress)
 {
-#if !defined(__PS3__) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_STREAM);
 	if (!info)
 		return false;
@@ -124,9 +119,6 @@ bool TcpSocket::connect(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 bool TcpSocket::listen()

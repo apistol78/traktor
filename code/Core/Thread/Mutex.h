@@ -1,8 +1,5 @@
 #pragma once
 
-#if defined(__PS3__)
-#	include <sys/synchronization.h>
-#endif
 #include <string>
 #include "Core/Guid.h"
 #include "Core/Thread/IWaitable.h"
@@ -37,11 +34,7 @@ public:
 	bool existing() const;
 
 private:
-#if defined(__PS3__)
-	sys_mutex_t m_mutex;
-#else
 	void* m_handle;
-#endif
 	bool m_existing;
 };
 

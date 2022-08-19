@@ -28,11 +28,7 @@ namespace traktor
 		namespace
 		{
 
-#if !defined(__PS3__)
 const int32_t c_maxInstanceCount = 180;
-#else
-const int32_t c_maxInstanceCount = 20;
-#endif
 
 #pragma pack(1)
 struct Vertex

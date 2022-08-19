@@ -247,7 +247,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolPlatform->add(L"iOS");
 	m_toolPlatform->add(L"Linux");
 	m_toolPlatform->add(L"macOS");
-	m_toolPlatform->add(L"PS3");
 	m_toolPlatform->add(L"RaspberryPI");
 	m_toolPlatform->add(L"Windows");
 	m_toolBar->addItem(m_toolPlatform);

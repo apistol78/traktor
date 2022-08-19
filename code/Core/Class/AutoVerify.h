@@ -6,9 +6,6 @@
 #elif defined(__ANDROID__)
 #	define T_VERIFY_ENABLE 0
 #	define T_VERIFY_USING_EXCEPTIONS 0
-#elif defined(__PS3__)
-#	define T_VERIFY_ENABLE 0
-#	define T_VERIFY_USING_EXCEPTIONS 0
 #else
 #	define T_VERIFY_ENABLE 1
 #	define T_VERIFY_USING_EXCEPTIONS 1

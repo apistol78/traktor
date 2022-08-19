@@ -100,8 +100,6 @@ T_MATH_INLINE T_DLLCLASS Scalar clamp(const Scalar& value, const Scalar& minLimi
 #		include "Core/Math/Sse2/Scalar.inl"
 #	elif defined(T_MATH_USE_ALTIVEC)
 #		include "Core/Math/AltiVec/Scalar.inl"
-#	elif defined(T_MATH_USE_ALTIVEC_SPU)
-#		include "Core/Math/AltiVec/Ps3/Spu/Scalar.inl"
 #	elif defined(T_MATH_USE_NEON)
 #		include "Core/Math/Neon/Scalar.inl"
 #	else

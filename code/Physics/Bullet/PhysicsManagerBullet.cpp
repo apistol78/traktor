@@ -38,25 +38,6 @@
 #include "Physics/Bullet/PhysicsManagerBullet.h"
 #include "Resource/IResourceManager.h"
 
-#if defined(T_BULLET_USE_SPURS)
-
-#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
-
-// Collision detection.
-#	include <SpuDispatch/BulletCollisionSpursSupport.h>
-#	include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
-
-// Constraint solver.
-#	include <SpuDispatch/BulletPE2ConstraintSolverSpursSupport.h>
-#	include <BulletMultiThreaded/btParallelConstraintSolver.h>
-#	include <BulletCollision/CollisionDispatch/btSimulationIslandManager.h>
-
-// Integration.
-#	include <SpuDispatch/btParallelDynamicsWorld.h>
-#	include <SpuDispatch/BulletPEGatherScatterSpursSupport.h>
-
-#endif
-
 namespace traktor
 {
 	namespace physics
@@ -594,61 +575,11 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 	m_simulationFrequency = desc.simulationFrequency;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 
-#if !defined(T_BULLET_USE_SPURS)
 	m_dispatcher = new btCollisionDispatcher(m_configuration);
 	m_solver = new btSequentialImpulseConstraintSolver();
 	m_broadphase = new btDbvtBroadphase();
 	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_configuration);
 	m_dynamicsWorld->getSolverInfo().m_numIterations = std::max(1, desc.solverIterations);
-#else
-	btThreadSupportInterface* collisionThreadSupport = new BulletCollisionSpursSupport(
-		SpursManager::getInstance().getSpurs(),
-		SpursManager::getInstance().getSpuCount(),
-		SpursManager::getInstance().getSpuCount()
-	);
-
-	m_dispatcher = new SpuGatheringCollisionDispatcher(
-		collisionThreadSupport,
-		SpursManager::getInstance().getSpuCount(),
-		m_configuration
-	);
-
-#	if 1
-	btThreadSupportInterface* constraintThreadSupport = new BulletPE2ConstraintSolverSpursSupport(
-		SpursManager::getInstance().getSpurs(),
-		SpursManager::getInstance().getSpuCount(),
-		SpursManager::getInstance().getSpuCount()
-	);
-	m_solver = new btParallelConstraintSolver(constraintThreadSupport);
-#	else
-	m_solver = new btSequentialImpulseConstraintSolver();
-#	endif
-
-	m_broadphase = new btDbvtBroadphase();
-
-#	if 1
-	btThreadSupportInterface* integrateThreadSupport = new BulletPEGatherScatterSpursSupport(
-		SpursManager::getInstance().getSpurs(),
-		SpursManager::getInstance().getSpuCount(),
-		SpursManager::getInstance().getSpuCount()
-	);
-
-	m_dynamicsWorld = new btParallelDynamicsWorld(
-		m_dispatcher,
-		m_broadphase,
-		m_solver,
-		m_configuration,
-		integrateThreadSupport
-	);
-#	else
-	m_dynamicsWorld = new btDiscreteDynamicsWorld(
-		m_dispatcher,
-		m_broadphase,
-		m_solver,
-		m_configuration
-	);
-#	endif
-#endif
 
 	m_dispatcher->setNearCallback(&PhysicsManagerBullet::nearCallback);
 

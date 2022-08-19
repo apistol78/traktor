@@ -31,9 +31,6 @@
 						<Directory Id="bin_latest_linux" Name="linux"/>
 						<Directory Id="bin_latest_ios" Name="ios"/>
 						<Directory Id="bin_latest_osx" Name="osx"/>
-						<!--
-						<Directory Id="bin_latest_ps3" Name="ps3"/>
-						-->
 						<Directory Id="bin_latest_rpi" Name="rpi"/>
 						<Directory Id="bin_latest_win64" Name="win64"/>
 					</Directory>

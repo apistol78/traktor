@@ -626,20 +626,6 @@ for i, configuration in pairs(configurations) do
 		output:printLn(outputFileH .. " : \\")
 		output:printLn("\t" .. inputFile)
 
-		-- \hack Compile PS3/CG embedded shaders.
-		local ext = f1.extension
-		if ext == "cgv" then
-			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".vpo"
-			printWithColor(Color.Magenta, "Compiling vertex shader " .. file.fileNameNoExtension .. "...")
-			output:printLn("\t@$(CGC) -profile sce_vp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
-			inputFile = intermediateFile
-		elseif ext == "cgf" then
-			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".fpo"
-			printWithColor(Color.Magenta, "Compiling fragment shader " .. file.fileNameNoExtension .. "...")
-			output:printLn("\t@$(CGC) -profile sce_fp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
-			inputFile = intermediateFile
-		end
-
 		printWithColor(Color.Magenta, "Converting " .. file.fileName .. "...")
 		if dialect == "nmake" then
 			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
