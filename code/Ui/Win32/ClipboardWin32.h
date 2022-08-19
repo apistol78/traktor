@@ -23,7 +23,7 @@ public:
 
 	virtual bool setImage(const drawing::Image* image);
 
-	virtual ClipboardContentType getContentType() const;
+	virtual ClipboardContent getContentType() const;
 
 	virtual Ref< ISerializable > getObject() const;
 

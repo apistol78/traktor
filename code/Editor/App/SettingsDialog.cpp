@@ -105,7 +105,7 @@ void SettingsDialog::destroy()
 
 void SettingsDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (event->getCommand() == ui::DrOk)
+	if ((ui::DialogResult)event->getCommand().getId() == ui::DialogResult::Ok)
 	{
 		for (auto settingPage : m_settingPages)
 			settingPage->apply(m_settings);

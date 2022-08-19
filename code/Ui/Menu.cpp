@@ -109,7 +109,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
 		selectedItem = e->getItem();
-		form->endModal(DrOk);
+		form->endModal(DialogResult::Ok);
 	});
 
 	for (auto item : m_items)

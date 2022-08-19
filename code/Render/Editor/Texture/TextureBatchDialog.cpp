@@ -76,7 +76,7 @@ void TextureBatchDialog::destroy()
 
 bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 {
-	if (ui::ConfigDialog::showModal() != ui::DrOk)
+	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 
 	m_texturePropertyList->apply();
@@ -96,7 +96,7 @@ void TextureBatchDialog::addTexture()
 		return;
 
 	std::vector< Path > fileNames;
-	if (fileDialog.showModal(fileNames) != ui::DrOk)
+	if (fileDialog.showModal(fileNames) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;

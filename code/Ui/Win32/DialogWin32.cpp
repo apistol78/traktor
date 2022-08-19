@@ -19,7 +19,7 @@ DialogWin32::DialogWin32(EventSubject* owner)
 ,	m_minSize(0, 0)
 ,	m_centerStyle(0)
 ,	m_keepCentered(false)
-,	m_result(0)
+,	m_result(DialogResult::Ok)
 {
 }
 
@@ -103,7 +103,7 @@ void DialogWin32::setIcon(ISystemBitmap* icon)
 	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 }
 
-int DialogWin32::showModal()
+DialogResult DialogWin32::showModal()
 {
 	MSG msg;
 
@@ -140,7 +140,7 @@ int DialogWin32::showModal()
 	}
 
 	// Handle events from the dialog.
-	m_result = DrCancel;
+	m_result = DialogResult::Cancel;
 	m_modal = true;
 
 	while (m_modal)
@@ -180,7 +180,7 @@ int DialogWin32::showModal()
 	return m_result;
 }
 
-void DialogWin32::endModal(int result)
+void DialogWin32::endModal(DialogResult result)
 {
 	T_ASSERT_M (m_modal, L"Not modal");
 	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
@@ -304,7 +304,7 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		return 0;
 
 	if (modal)
-		endModal(DrCancel);
+		endModal(DialogResult::Cancel);
 
 	return 0;
 }
@@ -312,7 +312,7 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 LRESULT DialogWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	m_modal = false;
-	m_result = (int32_t)wParam;
+	m_result = (DialogResult)wParam;
 	return 0;
 }
 

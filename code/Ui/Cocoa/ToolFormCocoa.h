@@ -27,9 +27,9 @@ public:
 
 	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual int showModal() override final;
+	virtual DialogResult showModal() override final;
 
-	virtual void endModal(int result) override final;
+	virtual void endModal(DialogResult result) override final;
 
 	// IWidget implementation
 
@@ -136,7 +136,7 @@ private:
 	IWidget* m_parent = nullptr;
 	NSWindow* m_window = nullptr;
 	NSTimer* m_timer = nullptr;
-	int32_t m_result = 0;
+	DialogResult m_result = 0;
 	
 	void callbackTimer(id controlId);
 };

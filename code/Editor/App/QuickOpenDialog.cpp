@@ -70,7 +70,7 @@ db::Instance* QuickOpenDialog::showDialog()
 
 	updateSuggestions(L"");
 
-	if (showModal() != ui::DrOk || m_gridSuggestions->getSelectedRow() == 0)
+	if (showModal() != ui::DialogResult::Ok || m_gridSuggestions->getSelectedRow() == 0)
 		return 0;
 
 	return m_gridSuggestions->getSelectedRow()->getData< db::Instance >(L"INSTANCE");
@@ -115,12 +115,12 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 {
 	if (event->getVirtualKey() == ui::VkReturn)
 	{
-		endModal(ui::DrOk);
+		endModal(ui::DialogResult::Ok);
 		event->consume();
 	}
 	else if (event->getVirtualKey() == ui::VkEscape)
 	{
-		endModal(ui::DrCancel);
+		endModal(ui::DialogResult::Cancel);
 		event->consume();
 	}
 	else if (event->getVirtualKey() == ui::VkUp)
@@ -129,7 +129,7 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 		if (row)
 		{
 			const RefArray< ui::GridRow >& rows = m_gridSuggestions->getRows();
-			RefArray< ui::GridRow >::const_iterator i = std::find(rows.begin(), rows.end(), row);
+			auto i = std::find(rows.begin(), rows.end(), row);
 			if (i != rows.end())
 			{
 				if (i != rows.begin())
@@ -152,7 +152,7 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 		if (row)
 		{
 			const RefArray< ui::GridRow >& rows = m_gridSuggestions->getRows();
-			RefArray< ui::GridRow >::const_iterator i = std::find(rows.begin(), rows.end(), row);
+			auto i = std::find(rows.begin(), rows.end(), row);
 			if (i != rows.end())
 			{
 				if (++i != rows.end())
@@ -174,7 +174,7 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 void QuickOpenDialog::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 {
 	if (m_gridSuggestions->getSelectedRow() != 0)
-		endModal(ui::DrOk);
+		endModal(ui::DialogResult::Ok);
 }
 
 	}

@@ -79,7 +79,7 @@ void ModulesSettingsPage::eventAddModule(ui::ButtonClickEvent* event)
 		fields,
 		sizeof_array(fields)
 	);
-	if (inputDialog.showModal() == ui::DrOk && !fields[0].value.empty())
+	if (inputDialog.showModal() == ui::DialogResult::Ok && !fields[0].value.empty())
 		m_listModules->add(fields[0].value);
 	inputDialog.destroy();
 }

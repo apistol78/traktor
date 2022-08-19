@@ -594,7 +594,7 @@ void InputMappingEditor::eventNodeActivated(ui::NodeActivateEvent* event)
 			fields,
 			sizeof_array(fields)
 		);
-		if (inputDialog.showModal() == ui::DrOk && !fields[0].value.empty())
+		if (inputDialog.showModal() == ui::DialogResult::Ok && !fields[0].value.empty())
 		{
 			InputMappingStateData* mappingStateData = m_mappingAsset->getStateData();
 			T_ASSERT(mappingStateData);

@@ -94,7 +94,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 			updateFiles();
 		}
 		else
-			endModal(DrOk);
+			endModal(DialogResult::Ok);
 	});
 
 	if (save)
@@ -120,7 +120,7 @@ void FileDialog::destroy()
 	ConfigDialog::destroy();
 }
 
-int32_t FileDialog::showModal(Path& outPath)
+DialogResult FileDialog::showModal(Path& outPath)
 {
 	std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
@@ -138,36 +138,36 @@ int32_t FileDialog::showModal(Path& outPath)
 
 	m_gridFiles->setMultiSelect(false);
 
-	if (ConfigDialog::showModal() != DrOk)
-		return DrCancel;
+	if (ConfigDialog::showModal() != DialogResult::Ok)
+		return DialogResult::Cancel;
 
 	if (!m_editFileName)
 	{
 		auto selectedRow = m_gridFiles->getSelectedRow();
 		if (selectedRow == nullptr)
-			return DrCancel;
+			return DialogResult::Cancel;
 
 		auto file = selectedRow->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);
 
 		if (file->isDirectory())
-			return DrCancel;
+			return DialogResult::Cancel;
 
 		outPath = file->getPath();
 	}
 	else
 	{
 		if (m_editFileName->getText().empty())
-			return DrCancel;
+			return DialogResult::Cancel;
 
 		outPath = m_currentPath.getPathName() + L"/" + m_editFileName->getText();
 	}
 
 	Application::getInstance()->getProperties()->setProperty< PropertyString >(m_key, m_currentPath.getPathName());
-	return DrOk;
+	return DialogResult::Ok;
 }
 
-int32_t FileDialog::showModal(std::vector< Path >& outPaths)
+DialogResult FileDialog::showModal(std::vector< Path >& outPaths)
 {
 	std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
@@ -180,8 +180,8 @@ int32_t FileDialog::showModal(std::vector< Path >& outPaths)
 
 	m_gridFiles->setMultiSelect(true);
 
-	if (ConfigDialog::showModal() != DrOk)
-		return DrCancel;
+	if (ConfigDialog::showModal() != DialogResult::Ok)
+		return DialogResult::Cancel;
 
 	RefArray< ui::GridRow > rows;
 	m_gridFiles->getRows(rows, ui::GridView::GfSelectedOnly);
@@ -198,7 +198,7 @@ int32_t FileDialog::showModal(std::vector< Path >& outPaths)
 	}
 
 	Application::getInstance()->getProperties()->setProperty< PropertyString >(m_key, m_currentPath.getPathName());
-	return DrOk;
+	return DialogResult::Ok;
 }
 
 void FileDialog::updatePath()

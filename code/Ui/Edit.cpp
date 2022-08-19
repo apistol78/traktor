@@ -210,7 +210,7 @@ void Edit::paste()
 	auto clipboard = Application::getInstance()->getClipboard();
 	if (clipboard != nullptr)
 	{
-		if (clipboard->getContentType() == CtText)
+		if (clipboard->getContentType() == ClipboardContent::Text)
 			insert(clipboard->getText());
 	}
 }

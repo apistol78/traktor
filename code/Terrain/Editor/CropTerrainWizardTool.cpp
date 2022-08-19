@@ -112,12 +112,12 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		sizeof_array(fields)
 	);
 
-	if (inputDialog.showModal() == ui::DrCancel)
+	if (inputDialog.showModal() == ui::DialogResult::Cancel)
 		return false;
 
-	int32_t x = parseString< int32_t >(fields[0].value);
-	int32_t y = parseString< int32_t >(fields[1].value);
-	int32_t size = parseString< int32_t >(fields[2].value);
+	const int32_t x = parseString< int32_t >(fields[0].value);
+	const int32_t y = parseString< int32_t >(fields[1].value);
+	const int32_t size = parseString< int32_t >(fields[2].value);
 
 	if (size <= 0)
 	{

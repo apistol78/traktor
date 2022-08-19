@@ -73,7 +73,7 @@ void ErrorDialog::eventButtonCopyQuit(ui::ButtonClickEvent* event)
 
 void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)
 {
-	endModal(0);
+	endModal(DialogResult::Ok);
 }
 
 	}

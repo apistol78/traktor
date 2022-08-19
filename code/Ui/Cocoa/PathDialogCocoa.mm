@@ -32,15 +32,15 @@ void PathDialogCocoa::destroy()
 	}
 }
 
-int PathDialogCocoa::showModal(Path& outPath)
+DialogResult PathDialogCocoa::showModal(Path& outPath)
 {
 	[m_openPanel setAllowsMultipleSelection: NO];
 	if ([m_openPanel runModal] == NSOKButton)
 	{
 		outPath = Path(fromNSString([m_openPanel filename]));
-		return DrOk;
+		return DialogResult::Ok;
 	}
-	return DrCancel;
+	return DialogResult::Cancel;
 }
 
 	}

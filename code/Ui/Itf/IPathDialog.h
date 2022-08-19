@@ -22,7 +22,7 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual int showModal(Path& outPath) = 0;
+	virtual DialogResult showModal(Path& outPath) = 0;
 };
 
 	}

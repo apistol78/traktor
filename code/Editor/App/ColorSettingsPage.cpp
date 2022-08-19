@@ -112,7 +112,7 @@ void ColorSettingsPage::eventPropertyCommand(ui::PropertyCommandEvent* event)
 			ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha,
 			colorItem->getValue()
 		);
-		if (colorDialog.showModal() == ui::DrOk)
+		if (colorDialog.showModal() == ui::DialogResult::Ok)
 		{
 			colorItem->setValue(colorDialog.getColor());
 			m_colorList->update();

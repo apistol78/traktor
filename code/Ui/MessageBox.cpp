@@ -61,20 +61,19 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	return true;
 }
 
-int MessageBox::show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
+DialogResult MessageBox::show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
 {
 	MessageBox mb;
-
 	if (!mb.create(parent, message, caption, style))
-		return DrCancel;
+		return DialogResult::Cancel;
 
-	int result = mb.showModal();
+	const DialogResult result = mb.showModal();
 
 	mb.destroy();
 	return result;
 }
 
-int MessageBox::show(const std::wstring& message, const std::wstring& caption, int style)
+DialogResult MessageBox::show(const std::wstring& message, const std::wstring& caption, int style)
 {
 	return show(nullptr, message, caption, style);
 }

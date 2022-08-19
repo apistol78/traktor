@@ -387,7 +387,7 @@ void ClientPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		fileDialog.create(this, type_name(this), L"Load capture...", L"All files;*.*", false);
 
 		Path fileName;
-		if (fileDialog.showModal(fileName) == ui::DrOk)
+		if (fileDialog.showModal(fileName) == ui::DialogResult::Ok)
 		{
 			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 			if (file)
@@ -423,7 +423,7 @@ void ClientPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		//	fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
 
 		//	Path fileName;
-		//	if (fileDialog.showModal(fileName) == ui::DrOk)
+		//	if (fileDialog.showModal(fileName) == ui::DialogResult::Ok)
 		//	{
 		//		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 		//		if (file)

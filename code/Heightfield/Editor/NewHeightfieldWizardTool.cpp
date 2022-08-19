@@ -34,7 +34,7 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 	if (!newHeightfieldDialog->create(parent))
 		return false;
 
-	if (newHeightfieldDialog->showModal() != ui::DrOk)
+	if (newHeightfieldDialog->showModal() != ui::DialogResult::Ok)
 		return false;
 
 	const int32_t gridSize = newHeightfieldDialog->getGridSize();

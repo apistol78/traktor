@@ -95,17 +95,17 @@ void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
 	{
 		if (event->getSender() == m_ok)
 		{
-			ui::ButtonClickEvent clickEvent(this, ui::Command(DrOk));
+			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Ok));
 			raiseEvent(&clickEvent);
 		}
 		else if (event->getSender() == m_cancel)
 		{
-			ui::ButtonClickEvent clickEvent(this, ui::Command(DrCancel));
+			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Cancel));
 			raiseEvent(&clickEvent);
 		}
 		else if (event->getSender() == m_apply)
 		{
-			ui::ButtonClickEvent clickEvent(this, ui::Command(DrApply));
+			ui::ButtonClickEvent clickEvent(this, ui::Command((int32_t)DialogResult::Apply));
 			raiseEvent(&clickEvent);
 		}
 	}
@@ -113,9 +113,9 @@ void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
 	if (!event->consumed() && isModal())
 	{
 		if (event->getSender() == m_ok)
-			endModal(DrOk);
+			endModal(DialogResult::Ok);
 		else if (event->getSender() == m_cancel)
-			endModal(DrCancel);
+			endModal(DialogResult::Cancel);
 	}
 }
 

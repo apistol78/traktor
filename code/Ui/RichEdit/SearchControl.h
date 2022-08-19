@@ -25,8 +25,6 @@ class T_DLLCLASS SearchControl : public ui::Container
 	T_RTTI_CLASS;
 
 public:
-	SearchControl();
-
 	bool create(ui::Widget* parent);
 
 	void setNeedle(const std::wstring& needle);

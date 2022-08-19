@@ -33,18 +33,18 @@ void PathDialogWin32::destroy()
 {
 }
 
-int PathDialogWin32::showModal(Path& outPath)
+DialogResult PathDialogWin32::showModal(Path& outPath)
 {
 	PIDLIST_ABSOLUTE idl = SHBrowseForFolder(&m_bi);
 	if (idl == NULL)
-		return DrCancel;
+		return DialogResult::Cancel;
 
 	TCHAR path[MAX_PATH];
 	if (!SHGetPathFromIDList(idl, path))
-		return DrCancel;
+		return DialogResult::Cancel;
 
 	outPath = tstows(path);
-	return DrOk;
+	return DialogResult::Ok;
 }
 
 	}

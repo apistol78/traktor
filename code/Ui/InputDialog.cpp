@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InputDialog", InputDialog, ConfigDialog)
 
-InputDialog::InputDialog()
-:	m_outFields(0)
-{
-}
-
 bool InputDialog::create(
 	Widget* parent,
 	const std::wstring& title,
@@ -81,10 +76,10 @@ bool InputDialog::create(
 	return true;
 }
 
-int InputDialog::showModal()
+DialogResult InputDialog::showModal()
 {
 	if (m_editFields.empty())
-		return DrCancel;
+		return DialogResult::Cancel;
 
 	Ref< Edit > edit = dynamic_type_cast< Edit* >(m_editFields.front());
 	if (edit)
@@ -93,8 +88,8 @@ int InputDialog::showModal()
 		edit->selectAll();
 	}
 
-	int result = ConfigDialog::showModal();
-	if (result == DrOk && m_outFields)
+	const DialogResult result = ConfigDialog::showModal();
+	if (result == DialogResult::Ok && m_outFields)
 	{
 		for (uint32_t i = 0; i < uint32_t(m_editFields.size()); ++i)
 		{

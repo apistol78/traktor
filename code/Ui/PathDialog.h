@@ -35,7 +35,7 @@ public:
 
 	void destroy();
 
-	int showModal(Path& outPath);
+	DialogResult showModal(Path& outPath);
 
 private:
 	IPathDialog* m_pathDialog;

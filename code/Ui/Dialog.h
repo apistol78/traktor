@@ -38,9 +38,9 @@ public:
 
 	void setIcon(IBitmap* icon);
 
-	virtual int showModal();
+	virtual DialogResult showModal();
 
-	virtual void endModal(int result);
+	virtual void endModal(DialogResult result);
 
 	bool isModal() const;
 

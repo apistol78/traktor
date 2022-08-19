@@ -77,7 +77,7 @@ void SwitchNodeFacade::editShaderNode(
 	SwitchNodeDialog nodeDialog;
 	if (!nodeDialog.create(graphControl, checked_type_cast< Switch* >(shaderNode)))
 		return;
-	if (nodeDialog.showModal() == ui::DrOk)
+	if (nodeDialog.showModal() == ui::DialogResult::Ok)
 	{
 	}
 	nodeDialog.destroy();

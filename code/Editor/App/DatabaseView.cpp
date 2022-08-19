@@ -695,7 +695,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			BrowseTypeDialog browseTypeDlg(m_editor->checkoutGlobalSettings());
 			browseTypeDlg.create(this, &serializableTypeSet, true, true);
 
-			if (browseTypeDlg.showModal() == ui::DrOk)
+			if (browseTypeDlg.showModal() == ui::DialogResult::Ok)
 			{
 				const TypeInfo* type = browseTypeDlg.getSelectedType();
 				T_ASSERT(type);
@@ -724,7 +724,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
-			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != 1)
+			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != ui::DialogResult::Yes)
 				return false;
 
 			if (!instance->checkout())
@@ -971,7 +971,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
 			newInstanceDlg.create(this, initialGroupHint);
 
-			if (newInstanceDlg.showModal() == ui::DrOk && newInstanceDlg.getType() != nullptr)
+			if (newInstanceDlg.showModal() == ui::DialogResult::Ok && newInstanceDlg.getType() != nullptr)
 			{
 				const TypeInfo* type = newInstanceDlg.getType();
 
@@ -1005,7 +1005,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Delete")	// Delete
 		{
-			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != 1)
+			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != ui::DialogResult::Yes)
 				return false;
 
 			if (!group->remove())

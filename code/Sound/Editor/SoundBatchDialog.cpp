@@ -76,7 +76,7 @@ void SoundBatchDialog::destroy()
 
 bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 {
-	if (ui::ConfigDialog::showModal() != ui::DrOk)
+	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 
 	m_soundPropertyList->apply();
@@ -96,7 +96,7 @@ void SoundBatchDialog::addSound()
 		return;
 
 	std::vector< Path > fileNames;
-	if (fileDialog.showModal(fileNames) != ui::DrOk)
+	if (fileDialog.showModal(fileNames) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;

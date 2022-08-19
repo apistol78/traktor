@@ -1,9 +1,8 @@
 #pragma once
 
-#include <map>
 #include <string>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
 #include "Ui/Associative.h"

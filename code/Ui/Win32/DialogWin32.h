@@ -35,7 +35,7 @@ private:
 	Size m_minSize;
 	int32_t m_centerStyle;
 	bool m_keepCentered;
-	int32_t m_result;
+	DialogResult m_result;
 
 	LRESULT eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 

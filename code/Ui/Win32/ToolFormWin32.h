@@ -26,7 +26,7 @@ public:
 
 private:
 	bool m_modal;
-	int32_t m_result;
+	DialogResult m_result;
 
 	LRESULT eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

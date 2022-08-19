@@ -182,16 +182,16 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Theater.RemoveAct")
 	{
-		int32_t selected = m_listActs->getSelected();
+		const int32_t selected = m_listActs->getSelected();
 		if (selected >= 0)
 		{
-			int result = ui::MessageBox::show(
+			const ui::DialogResult result = ui::MessageBox::show(
 				m_toolBarActs,
 				i18n::Text(L"THEATER_EDITOR_MESSAGE_REMOVE_ACT"),
 				i18n::Text(L"THEATER_EDITOR_TITLE_REMOVE_ACT"),
 				ui::MbYesNo | ui::MbIconExclamation
 			);
-			if (result == ui::DrYes)
+			if (result == ui::DialogResult::Yes)
 			{
 				Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 				Ref< TheaterControllerData > controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
@@ -723,7 +723,7 @@ void TheaterControllerEditor::timeScaleAct()
 	ui::InputDialog enterTimeDialog;
 	enterTimeDialog.create(m_listActs, i18n::Text(L"THEATER_EDITOR_TIME_SCALE_TITLE"), i18n::Text(L"THEATER_EDITOR_TIME_SCALE_MESSAGE"), fields, sizeof_array(fields));
 
-	if (enterTimeDialog.showModal() == ui::DrOk)
+	if (enterTimeDialog.showModal() == ui::DialogResult::Ok)
 	{
 		float toDuration = parseString< float >(fields[0].value);
 		float f = toDuration / fromDuration;

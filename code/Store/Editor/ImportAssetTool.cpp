@@ -198,7 +198,7 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 	BrowseAssetDialog browseAssetDialog(serverHost);
 	if (!browseAssetDialog.create(parent))
 		return false;
-	if (browseAssetDialog.showModal(urls) != ui::DrOk)
+	if (browseAssetDialog.showModal(urls) != ui::DialogResult::Ok)
 	{
 		browseAssetDialog.destroy();
 		return false;

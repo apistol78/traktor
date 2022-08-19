@@ -45,21 +45,21 @@ enum MessageBoxStyles : uint32_t
 	MbStayOnTop			= 1 << 9
 };
 
-enum DialogResult
+enum class DialogResult
 {
-	DrCancel		= 0,
-	DrOk			= 1,
-	DrApply			= 2,
-	DrNo			= DrCancel,
-	DrYes			= DrOk
+	Cancel		= 0,
+	Ok			= 1,
+	Apply		= 2,
+	No			= Cancel,
+	Yes			= Ok
 };
 
-enum ClipboardContentType
+enum class ClipboardContent
 {
-	CtEmpty,
-	CtObject,
-	CtText,
-	CtImage
+	Empty,
+	Object,
+	Text,
+	Image
 };
 
 enum Cursor

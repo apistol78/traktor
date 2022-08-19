@@ -30,9 +30,9 @@ public:
 
 	virtual void setIcon(ISystemBitmap* icon) override;
 
-	virtual int showModal() override;
+	virtual DialogResult showModal() override;
 
-	virtual void endModal(int result) override;
+	virtual void endModal(DialogResult result) override;
 
 	virtual void setMinSize(const Size& minSize) override;
 
@@ -158,7 +158,7 @@ private:
 	EventSubject* m_owner;
 	NSWindow* m_window;
 	NSCustomControl* m_control;
-	int m_result;
+	DialogResult m_result;
 	NSTimer* m_timer;
 
 	void callbackTimer(id controlId);

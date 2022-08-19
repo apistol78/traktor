@@ -13,7 +13,7 @@ namespace traktor
 
 ToolFormX11::ToolFormX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IToolForm >(context, owner)
-,	m_result(0)
+,	m_result(DialogResult::Ok)
 ,	m_modal(false)
 {
 }
@@ -109,7 +109,7 @@ void ToolFormX11::setIcon(ISystemBitmap* icon)
 	XFlush(m_context->getDisplay());
 }
 
-int ToolFormX11::showModal()
+DialogResult ToolFormX11::showModal()
 {
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_ADD);
 	setVisible(true);
@@ -132,7 +132,7 @@ int ToolFormX11::showModal()
 	return m_result;
 }
 
-void ToolFormX11::endModal(int result)
+void ToolFormX11::endModal(DialogResult result)
 {
 	m_result = result;
 	m_modal = false;

@@ -54,8 +54,8 @@ const TypeInfo* QuickMenuTool::showMenu()
 
 	updateSuggestions(L"");
 
-	if (showModal() != ui::DrOk)
-		return 0;
+	if (showModal() != ui::DialogResult::Ok)
+		return nullptr;
 
 	Ref< TypeInfoWrapper > typeInfoWrapper = static_cast< TypeInfoWrapper* >(m_listBoxSuggestions->getSelectedData());
 	return typeInfoWrapper ? &typeInfoWrapper->m_typeInfo : nullptr;
@@ -98,12 +98,12 @@ void QuickMenuTool::eventFilterKey(ui::KeyDownEvent* event)
 {
 	if (event->getVirtualKey() == ui::VkReturn || event->getVirtualKey() == ui::VkSpace)
 	{
-		endModal(ui::DrOk);
+		endModal(ui::DialogResult::Ok);
 		event->consume();
 	}
 	else if (event->getVirtualKey() == ui::VkEscape)
 	{
-		endModal(ui::DrCancel);
+		endModal(ui::DialogResult::Cancel);
 		event->consume();
 	}
 	else if (event->getVirtualKey() == ui::VkUp)
@@ -129,7 +129,7 @@ void QuickMenuTool::eventFilterKey(ui::KeyDownEvent* event)
 void QuickMenuTool::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 {
 	if (m_listBoxSuggestions->getSelectedData() != 0)
-		endModal(ui::DrOk);
+		endModal(ui::DialogResult::Ok);
 }
 
 	}

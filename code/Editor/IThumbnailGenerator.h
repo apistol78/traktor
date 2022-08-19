@@ -29,21 +29,21 @@ class T_DLLCLASS IThumbnailGenerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum AlphaMode
+	enum class Alpha
 	{
-		AmNoAlpha = 0,
-		AmWithAlpha = 1,
-		AmAlphaOnly = 2
+		NoAlpha = 0,
+		WithAlpha = 1,
+		AlphaOnly = 2
 	};
 
-	enum GammaMode
+	enum class Gamma
 	{
-		GmAuto = 0,
-		GmLinear = 1,
-		GmSRGB = 2
+		Auto = 0,
+		Linear = 1,
+		SRGB = 2
 	};
 
-	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode, GammaMode gammaMode) = 0;
+	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, Alpha alpha, Gamma gamma) = 0;
 };
 
 	}

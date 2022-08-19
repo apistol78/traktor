@@ -42,9 +42,9 @@ public:
 
 	virtual void destroy() override;
 
-	int32_t showModal(Path& outPath);
+	DialogResult showModal(Path& outPath);
 
-	int32_t showModal(std::vector< Path >& outPaths);
+	DialogResult showModal(std::vector< Path >& outPaths);
 
 private:
 	Ref< Container > m_containerPath;

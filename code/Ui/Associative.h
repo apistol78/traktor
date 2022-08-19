@@ -2,7 +2,6 @@
 
 #include <string>
 #include "Core/Object.h"
-#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,8 +25,6 @@ namespace traktor
 class T_DLLCLASS Associative
 {
 public:
-	Associative();
-
 	virtual ~Associative();
 
 	/*! Remove all objects. */
@@ -53,7 +50,7 @@ public:
 private:
 	class Impl;
 
-	Impl* m_impl;
+	Impl* m_impl = nullptr;
 };
 
 	}

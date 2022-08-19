@@ -960,7 +960,7 @@ const TypeInfo* EditorForm::browseType()
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
 	if (dlgBrowse.create(this, nullptr, false, false))
 	{
-		if (dlgBrowse.showModal() == ui::DrOk)
+		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			type = dlgBrowse.getSelectedType();
 		dlgBrowse.destroy();
 	}
@@ -975,7 +975,7 @@ const TypeInfo* EditorForm::browseType(const TypeInfoSet& base, bool onlyEditabl
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
 	if (dlgBrowse.create(this, &base, onlyEditable, onlyInstantiable))
 	{
-		if (dlgBrowse.showModal() == ui::DrOk)
+		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			type = dlgBrowse.getSelectedType();
 		dlgBrowse.destroy();
 	}
@@ -990,7 +990,7 @@ Ref< db::Group > EditorForm::browseGroup()
 	BrowseGroupDialog dlgBrowse(this, m_mergedSettings);
 	if (dlgBrowse.create(this, m_sourceDatabase))
 	{
-		if (dlgBrowse.showModal() == ui::DrOk)
+		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			group = dlgBrowse.getGroup();
 		dlgBrowse.destroy();
 	}
@@ -1034,7 +1034,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 	BrowseInstanceDialog dlgBrowse(this, m_mergedSettings);
 	if (dlgBrowse.create(this, m_sourceDatabase, filter))
 	{
-		if (dlgBrowse.showModal() == ui::DrOk)
+		if (dlgBrowse.showModal() == ui::DialogResult::Ok)
 			instance = dlgBrowse.getInstance();
 		dlgBrowse.destroy();
 	}
@@ -1381,7 +1381,7 @@ bool EditorForm::createWorkspace()
 	if (!newWorkspaceDialog.create(this))
 		return false;
 
-	if (newWorkspaceDialog.showModal() != ui::DrOk || newWorkspaceDialog.getWorkspacePath().empty())
+	if (newWorkspaceDialog.showModal() != ui::DialogResult::Ok || newWorkspaceDialog.getWorkspacePath().empty())
 	{
 		newWorkspaceDialog.destroy();
 		return false;
@@ -1400,7 +1400,7 @@ bool EditorForm::openWorkspace()
 		return false;
 
 	Path path;
-	if (fileDialog.showModal(path) != ui::DrOk)
+	if (fileDialog.showModal(path) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return false;
@@ -2079,7 +2079,7 @@ void EditorForm::saveAsCurrentDocument()
 	if (!saveAsDialog.create(this, m_sourceDatabase))
 		return;
 
-	if (saveAsDialog.showModal() != ui::DrOk)
+	if (saveAsDialog.showModal() != ui::DialogResult::Ok)
 	{
 		saveAsDialog.destroy();
 		return;
@@ -2198,13 +2198,13 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 	// Ask user when trying to close an editor which contains unsaved data.
 	if (isModified(tabPage))
 	{
-		int result = ui::MessageBox::show(
+		ui::DialogResult result = ui::MessageBox::show(
 			this,
 			i18n::Text(L"QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
 			i18n::Text(L"QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
 			ui::MbIconExclamation | ui::MbYesNo
 		);
-		if (result == ui::DrNo)
+		if (result == ui::DialogResult::No)
 			return false;
 	}
 
@@ -2494,7 +2494,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		buildAssets(false);
 	else if (command == L"Editor.Rebuild")
 	{
-		if (ui::MessageBox::show(this, i18n::Text(L"EDITOR_SURE_TO_REBUILD_MESSAGE"), i18n::Text(L"EDITOR_SURE_TO_REBUILD_CAPTION"), ui::MbYesNo | ui::MbIconExclamation) == ui::DrYes)
+		if (ui::MessageBox::show(this, i18n::Text(L"EDITOR_SURE_TO_REBUILD_MESSAGE"), i18n::Text(L"EDITOR_SURE_TO_REBUILD_CAPTION"), ui::MbYesNo | ui::MbIconExclamation) == ui::DialogResult::Yes)
 			buildAssets(true);
 	}
 	else if (command == L"Editor.CancelBuild")
@@ -2510,7 +2510,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			WorkspaceDialog workspaceDialog;
 			if (workspaceDialog.create(this, m_workspaceSettings))
 			{
-				if (workspaceDialog.showModal() == ui::DrOk)
+				if (workspaceDialog.showModal() == ui::DialogResult::Ok)
 				{
 					// Create merged settings.
 					if (m_workspaceSettings)
@@ -2539,7 +2539,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		SettingsDialog settingsDialog;
 		if (settingsDialog.create(this, m_originalSettings, m_globalSettings, m_shortcutCommands))
 		{
-			if (settingsDialog.showModal() == ui::DrOk)
+			if (settingsDialog.showModal() == ui::DialogResult::Ok)
 			{
 				// Create merged settings.
 				if (m_workspaceSettings)
@@ -2805,13 +2805,13 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 {
 	if (anyModified())
 	{
-		int result = ui::MessageBox::show(
+		ui::DialogResult result = ui::MessageBox::show(
 			this,
 			i18n::Text(L"QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
 			i18n::Text(L"QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
 			ui::MbIconExclamation | ui::MbYesNo
 		);
-		if (result == ui::DrNo)
+		if (result == ui::DialogResult::No)
 		{
 			event->consume();
 			event->cancel();

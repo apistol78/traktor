@@ -40,8 +40,6 @@ public:
 		virtual bool read(int32_t& outStep, std::wstring& outStatus) = 0;
 	};
 
-	BackgroundWorkerDialog();
-
 	bool create(Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton);
 
 	bool execute(IWaitable* waitable, IWorkerStatus* status);

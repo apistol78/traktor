@@ -24,7 +24,7 @@ class T_DLLCLASS HashStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	HashStream(IHash* hash);
+	explicit HashStream(IHash* hash);
 
 	virtual void close() override;
 

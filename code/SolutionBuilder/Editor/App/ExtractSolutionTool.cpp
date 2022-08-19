@@ -26,7 +26,7 @@ bool ExtractSolutionTool::execute(ui::Widget* parent, Solution* solution)
 	if (!dialog->create(parent, solution))
 		return false;
 
-	if (dialog->showModal() != ui::DrOk)
+	if (dialog->showModal() != ui::DialogResult::Ok)
 		return false;
 
 	const std::wstring externalSolutionFileName = dialog->getSolutionFile();

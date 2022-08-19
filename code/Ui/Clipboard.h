@@ -50,7 +50,7 @@ public:
 
 	bool setImage(const drawing::Image* image);
 
-	ClipboardContentType getContentType() const;
+	ClipboardContent getContentType() const;
 
 	Ref< ISerializable > getObject() const;
 

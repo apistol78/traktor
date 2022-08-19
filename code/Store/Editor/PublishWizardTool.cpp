@@ -113,7 +113,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 	PublishWizardDialog publishDialog;
 	if (!publishDialog.create(parent, instance->getName()))
 		return false;
-	if (publishDialog.showModal() != ui::DrOk)
+	if (publishDialog.showModal() != ui::DialogResult::Ok)
 	{
 		publishDialog.destroy();
 		return false;

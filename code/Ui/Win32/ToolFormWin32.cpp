@@ -18,7 +18,7 @@ const UINT WM_ENDMODAL = WM_USER + 2000;
 ToolFormWin32::ToolFormWin32(EventSubject* owner)
 :	WidgetWin32Impl< IToolForm >(owner)
 ,	m_modal(false)
-,	m_result(0)
+,	m_result(DialogResult::Ok)
 {
 }
 
@@ -66,7 +66,7 @@ void ToolFormWin32::setIcon(ISystemBitmap* icon)
 	m_hWnd.sendMessage(WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 }
 
-int ToolFormWin32::showModal()
+DialogResult ToolFormWin32::showModal()
 {
 	// Ensure tool form is visible.
 	setVisible(true);
@@ -75,7 +75,7 @@ int ToolFormWin32::showModal()
 	HWND hParentWnd = GetParent(m_hWnd);
 
 	// Handle events from the dialog.
-	m_result = DrCancel;
+	m_result = DialogResult::Cancel;
 	m_modal = true;
 
 	while (m_modal)
@@ -90,7 +90,7 @@ int ToolFormWin32::showModal()
 	return m_result;
 }
 
-void ToolFormWin32::endModal(int result)
+void ToolFormWin32::endModal(DialogResult result)
 {
 	T_ASSERT_M (m_modal, L"Not modal");
 	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
@@ -180,7 +180,7 @@ LRESULT ToolFormWin32::eventMouseActivate(HWND hWnd, UINT message, WPARAM wParam
 LRESULT ToolFormWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	m_modal = false;
-	m_result = (int32_t)wParam;
+	m_result = (DialogResult)wParam;
 	return 0;
 }
 

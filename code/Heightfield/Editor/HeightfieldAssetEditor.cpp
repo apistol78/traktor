@@ -193,7 +193,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		ui::FileDialog saveAsDialog;
 		saveAsDialog.create(m_container, type_name(this), i18n::Text(L"EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", L"", true);
-		if (saveAsDialog.showModal(fileName) != ui::DrOk)
+		if (saveAsDialog.showModal(fileName) != ui::DialogResult::Ok)
 		{
 			saveAsDialog.destroy();
 			return false;
@@ -219,7 +219,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		ui::FileDialog saveAsDialog;
 		saveAsDialog.create(m_container, type_name(this), i18n::Text(L"EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", L"", true);
-		if (saveAsDialog.showModal(fileName) != ui::DrOk)
+		if (saveAsDialog.showModal(fileName) != ui::DialogResult::Ok)
 		{
 			saveAsDialog.destroy();
 			return false;
@@ -263,7 +263,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			sizeof_array(fields)
 		);
 
-		if (inputDialog.showModal() == ui::DrCancel)
+		if (inputDialog.showModal() == ui::DialogResult::Cancel)
 		{
 			inputDialog.destroy();
 			return false;
@@ -327,7 +327,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			sizeof_array(fields)
 		);
 
-		if (inputDialog.showModal() == ui::DrCancel)
+		if (inputDialog.showModal() == ui::DialogResult::Cancel)
 		{
 			inputDialog.destroy();
 			return false;

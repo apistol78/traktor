@@ -133,8 +133,8 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 					fileName,
 					ui::dpi96(64),
 					ui::dpi96(64),
-					visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha,
-					linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
+					visibleAlpha ? editor::IThumbnailGenerator::Alpha::WithAlpha : editor::IThumbnailGenerator::Alpha::NoAlpha,
+					linearGamma ? editor::IThumbnailGenerator::Gamma::Linear : editor::IThumbnailGenerator::Gamma::SRGB
 				);
 				if (thumbnail)
 				{

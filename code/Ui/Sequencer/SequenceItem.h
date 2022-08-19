@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <map>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Ui/Associative.h"
 
@@ -44,7 +44,7 @@ public:
 
 	bool isSelected() const;
 
-	Ref< SequenceItem > getParentItem();
+	SequenceItem* getParentItem() const;
 
 	void addChildItem(SequenceItem* childItem);
 
@@ -54,7 +54,7 @@ public:
 
 	RefArray< SequenceItem >& getChildItems();
 
-	int getDepth();
+	int32_t getDepth() const;
 
 	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) = 0;
 

@@ -37,7 +37,7 @@ bool SequenceItem::isSelected() const
 	return m_selected;
 }
 
-Ref< SequenceItem > SequenceItem::getParentItem()
+SequenceItem* SequenceItem::getParentItem() const
 {
 	return m_parent;
 }
@@ -72,10 +72,10 @@ RefArray< SequenceItem >& SequenceItem::getChildItems()
 	return m_childItems;
 }
 
-int SequenceItem::getDepth()
+int32_t SequenceItem::getDepth() const
 {
-	int depth = 0;
-	for (SequenceItem* i = this; i->getParentItem(); i = i->getParentItem())
+	int32_t depth = 0;
+	for (const SequenceItem* i = this; i->getParentItem(); i = i->getParentItem())
 		++depth;
 	return depth;
 }

@@ -38,7 +38,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 		return false;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return true;

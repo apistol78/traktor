@@ -341,7 +341,7 @@ bool ModelToolDialog::loadModel()
 		return false;
 
 	std::vector< Path > fileNames;
-	if (fileDialog.showModal(fileNames) != ui::DrOk)
+	if (fileDialog.showModal(fileNames) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return true;
@@ -369,7 +369,7 @@ bool ModelToolDialog::loadTexture()
 		return false;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return true;
@@ -405,7 +405,7 @@ bool ModelToolDialog::saveModel(Model* model)
 		return false;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return true;

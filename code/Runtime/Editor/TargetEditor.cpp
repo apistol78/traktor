@@ -481,7 +481,7 @@ void TargetEditor::eventButtonNewTargetConfigurationClick(ui::ButtonClickEvent* 
 
 	Ref< ui::InputDialog > dialogInputName = new ui::InputDialog();
 	dialogInputName->create(m_containerOuter, L"Enter name", L"Enter configuration name", fields, sizeof_array(fields));
-	if (dialogInputName->showModal() == ui::DrOk)
+	if (dialogInputName->showModal() == ui::DialogResult::Ok)
 	{
 		Ref< TargetConfiguration > targetConfiguration = new TargetConfiguration();
 		targetConfiguration->setName(fields[0].value);
@@ -514,7 +514,7 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent
 
 	Ref< ui::InputDialog > dialogInputName = new ui::InputDialog();
 	dialogInputName->create(m_containerOuter, L"Enter name", L"Enter configuration name", fields, sizeof_array(fields));
-	if (dialogInputName->showModal() == ui::DrOk)
+	if (dialogInputName->showModal() == ui::DialogResult::Ok)
 	{
 		targetConfiguration->setName(fields[0].value);
 
@@ -644,7 +644,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 	if (fileDialog.create(m_containerOuter, type_name(this), L"Select icon image", L"All files;*.*"))
 	{
 		Path fileName;
-		if (fileDialog.showModal(fileName) == ui::DrOk)
+		if (fileDialog.showModal(fileName) == ui::DialogResult::Ok)
 		{
 			Path projectPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 

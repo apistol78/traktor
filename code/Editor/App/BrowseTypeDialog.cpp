@@ -240,7 +240,7 @@ void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 	else
 		m_type = 0;
 
-	endModal(ui::DrOk);
+	endModal(ui::DialogResult::Ok);
 }
 
 	}

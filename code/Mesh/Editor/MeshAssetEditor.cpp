@@ -579,7 +579,7 @@ void MeshAssetEditor::createMaterialShader()
 	ui::InputDialog materialNameDialog;
 	if (materialNameDialog.create(m_materialShaderList, i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), &materialNameField, 1))
 	{
-		if (materialNameDialog.showModal() == ui::DrOk)
+		if (materialNameDialog.showModal() == ui::DialogResult::Ok)
 			outputName = materialNameField.value;
 		else
 			outputName.clear();
@@ -758,7 +758,7 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath);
 	Path path = assetPath + Path(m_editFileName->getText());
 
-	if (fileDialog.showModal(path) == ui::DrOk)
+	if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 	{
 		// Try get path relative to asset path.
 		Path relPath;

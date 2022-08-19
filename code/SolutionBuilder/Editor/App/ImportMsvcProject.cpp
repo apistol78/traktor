@@ -83,7 +83,7 @@ bool ImportMsvcProject::execute(ui::Widget* parent, Solution* solution, const st
 	fileDialog.create(parent, type_name(this), L"Import MSVC project", L"MS Visual Studio projects;*.vcproj");
 
 	Path filePath;
-	if (fileDialog.showModal(filePath))
+	if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 	{
 		xml::Document document;
 		if (document.loadFromFile(filePath.getPathName()))

@@ -143,17 +143,17 @@ bool ClipboardWin32::setImage(const drawing::Image* image)
 	return true;
 }
 
-ClipboardContentType ClipboardWin32::getContentType() const
+ClipboardContent ClipboardWin32::getContentType() const
 {
-	ClipboardContentType contentType = CtEmpty;
+	ClipboardContent contentType = ClipboardContent::Empty;
 	if (OpenClipboard(NULL))
 	{
 		if (GetClipboardData(m_objectFormat) != NULL)
-			contentType = CtObject;
+			contentType = ClipboardContent::Object;
 		else if (GetClipboardData(CF_UNICODETEXT) != NULL)
-			contentType = CtText;
+			contentType = ClipboardContent::Text;
 		else if (GetClipboardData(CF_DIB) != NULL)
-			contentType = CtImage;
+			contentType = ClipboardContent::Image;
 		CloseClipboard();
 	}
 	return contentType;
