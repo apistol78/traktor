@@ -13,6 +13,7 @@ namespace traktor
 
 CanvasX11::CanvasX11(cairo_t* cr)
 :	m_cr(cr)
+,	m_currentSourceColor(255, 255, 255, 255)
 ,	m_foreground(255, 255, 255, 255)
 ,	m_background(255, 255, 255, 255)
 ,	m_thickness(1)
@@ -86,7 +87,7 @@ void CanvasX11::drawPixel(int x, int y, const Color4ub& c)
 
 void CanvasX11::drawLine(int x1, int y1, int x2, int y2)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, x1, y1);
 	cairo_line_to(m_cr, x2, y2);
 	cairo_stroke(m_cr);
@@ -94,7 +95,7 @@ void CanvasX11::drawLine(int x1, int y1, int x2, int y2)
 
 void CanvasX11::drawLines(const Point* pnts, int npnts)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < npnts; ++i)
 		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
@@ -103,7 +104,7 @@ void CanvasX11::drawLines(const Point* pnts, int npnts)
 
 void CanvasX11::fillCircle(int x, int y, float radius)
 {
-	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+	setSourceColor(m_background);
 	cairo_move_to(m_cr, x, y);
 	cairo_arc(m_cr, x, y, radius, 0.0, TWO_PI);
 	cairo_fill(m_cr);
@@ -111,7 +112,7 @@ void CanvasX11::fillCircle(int x, int y, float radius)
 
 void CanvasX11::drawCircle(int x, int y, float radius)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, x, y);
 	cairo_arc(m_cr, x, y, radius, 0.0, TWO_PI);
 	cairo_stroke(m_cr);
@@ -129,35 +130,35 @@ void CanvasX11::drawSpline(const Point* pnts, int npnts)
 
 void CanvasX11::fillRect(const Rect& rc)
 {
-	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+	setSourceColor(m_background);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_fill(m_cr);
 }
 
 void CanvasX11::fillGradientRect(const Rect& rc, bool vertical)
 {
-	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+	setSourceColor(m_background);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_fill(m_cr);
 }
 
 void CanvasX11::drawRect(const Rect& rc)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_stroke(m_cr);
 }
 
 void CanvasX11::drawRoundRect(const Rect& rc, int radius)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_stroke(m_cr);
 }
 
 void CanvasX11::drawPolygon(const Point* pnts, int count)
 {
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < count; ++i)
 		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
@@ -167,7 +168,7 @@ void CanvasX11::drawPolygon(const Point* pnts, int count)
 
 void CanvasX11::fillPolygon(const Point* pnts, int count)
 {
-	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+	setSourceColor(m_background);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < count; ++i)
 		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
@@ -219,8 +220,8 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 	if (cs == nullptr)
 		return;
 
-	float sx = float(dstSize.cx) / srcSize.cx;
-	float sy = float(dstSize.cy) / srcSize.cy;
+	const float sx = float(dstSize.cx) / srcSize.cx;
+	const float sy = float(dstSize.cy) / srcSize.cy;
 
 	cairo_scale(m_cr, sx, sy);
 	cairo_set_source_surface(m_cr, cs, dstAt.x / sx - srcAt.x, dstAt.y / sy - srcAt.y);
@@ -255,7 +256,7 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 	cairo_font_extents_t x;
 	cairo_font_extents(m_cr, &x);
 
-	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, at.x, at.y + x.ascent);
 
 	cairo_show_text(m_cr, wstombs(text).c_str());
@@ -265,7 +266,7 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 		cairo_text_extents_t tx;
 		cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
 
-		int32_t thickness = std::max< int32_t >(1, x.ascent / 10);
+		const int32_t thickness = std::max< int32_t >(1, x.ascent / 10);
 		cairo_set_line_width(m_cr, thickness);
 
 		cairo_move_to(m_cr, at.x, at.y + x.ascent + thickness);
@@ -317,6 +318,15 @@ Size CanvasX11::getExtent(const std::wstring& text) const
 	cairo_font_extents(m_cr, &fx);
 	cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
 	return Size(tx.width, fx.height);
+}
+
+void CanvasX11::setSourceColor(const Color4ub& color)
+{
+	if (color != m_currentSourceColor)
+	{
+		cairo_set_source_rgba(m_cr, color.e[0] / 255.0, color.e[1] / 255.0, color.e[2] / 255.0, color.e[3] / 255.0);
+		m_currentSourceColor = color;
+	}
 }
 
 	}
