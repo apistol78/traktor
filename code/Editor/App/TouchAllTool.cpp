@@ -43,30 +43,30 @@ bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGro
 	);
 
 	int32_t errorCount = 0;
-	for (RefArray< db::Instance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+	for (auto instance : instances)
 	{
-		if (!(*i)->checkout())
+		if (!instance->checkout())
 		{
-			log::error << L"Unable to checkout " << (*i)->getPath() << L"." << Endl;
+			log::error << L"Unable to checkout " << instance->getPath() << L"." << Endl;
 			errorCount++;
 			continue;
 		}
 
-		Ref< ISerializable > object = (*i)->getObject();
+		Ref< ISerializable > object = instance->getObject();
 		if (!object)
 		{
-			log::error << L"Unable to get object from " << (*i)->getPath() << L"." << Endl;
-			(*i)->revert();
+			log::error << L"Unable to get object from " << instance->getPath() << L"." << Endl;
+			instance->revert();
 			errorCount++;
 			continue;
 		}
 
-		(*i)->setObject(object);
+		instance->setObject(object);
 
-		if (!(*i)->commit())
+		if (!instance->commit())
 		{
-			(*i)->revert();
-			log::error << L"Unable to commit " << (*i)->getPath() << L"." << Endl;
+			instance->revert();
+			log::error << L"Unable to commit " << instance->getPath() << L"." << Endl;
 			errorCount++;
 		}
 	}

@@ -21,7 +21,7 @@ DialogCocoa::DialogCocoa(EventSubject* owner)
 :	m_owner(owner)
 ,	m_window(nullptr)
 ,	m_control(nullptr)
-,	m_result(0)
+,	m_result(DialogResult::Ok)
 ,	m_timer(nullptr)
 {
 }
@@ -99,7 +99,7 @@ int DialogCocoa::showModal()
 	return m_result;
 }
 
-void DialogCocoa::endModal(int result)
+void DialogCocoa::endModal(DialogResult result)
 {
 	m_result = result;
 	[NSApp abortModal];
@@ -394,7 +394,7 @@ bool DialogCocoa::event_windowShouldClose()
 		if ([NSApp modalWindow] == m_window)
 			[NSApp stopModal];
 
-		m_result = DrCancel;
+		m_result = DialogResult::Cancel;
 		return true;
 	}
 	else

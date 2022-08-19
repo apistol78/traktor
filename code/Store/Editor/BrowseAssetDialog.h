@@ -32,7 +32,7 @@ public:
 
     bool create(ui::Widget* parent);
 
-    bool showModal(RefArray< net::Url >& outUrls);
+    ui::DialogResult showModal(RefArray< net::Url >& outUrls);
 
 private:
     std::wstring m_serverHost;

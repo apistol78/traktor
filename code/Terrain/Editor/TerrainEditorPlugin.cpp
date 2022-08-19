@@ -212,7 +212,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 				return false;
 
 			Path path;
-			if (fileDialog.showModal(path) == ui::DrOk)
+			if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 			{
 				Ref< drawing::Image > image = drawing::Image::load(path);
 				if (image)
@@ -323,7 +323,7 @@ void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
 		ui::ColorDialog::WsDefaultFixed,
 		Color4f::fromColor4ub(m_colorControl->getColor())
 	);
-	if (colorDialog.showModal() == ui::DrOk)
+	if (colorDialog.showModal() == ui::DialogResult::Ok)
 	{
 		Color4ub color = colorDialog.getColor().toColor4ub();
 		m_colorControl->setColor(color);

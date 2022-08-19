@@ -42,7 +42,7 @@ bool Clipboard::setImage(const drawing::Image* image)
 	return m_clipboard->setImage(image);
 }
 
-ClipboardContentType Clipboard::getContentType() const
+ClipboardContent Clipboard::getContentType() const
 {
 	T_ASSERT(m_clipboard);
 	return m_clipboard->getContentType();

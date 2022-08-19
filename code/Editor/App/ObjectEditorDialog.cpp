@@ -154,18 +154,18 @@ void ObjectEditorDialog::handleDatabaseEvent(db::Database* database, const Guid&
 void ObjectEditorDialog::eventClick(ui::ButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
-	switch (command.getId())
+	switch ((ui::DialogResult)command.getId())
 	{
-	case ui::DrApply:
+	case ui::DialogResult::Apply:
 		apply(true);
 		break;
 
-	case ui::DrOk:
+	case ui::DialogResult::Ok:
 		if (apply(false))
 			destroy();
 		break;
 
-	case ui::DrCancel:
+	case ui::DialogResult::Cancel:
 		cancel();
 		break;
 	}

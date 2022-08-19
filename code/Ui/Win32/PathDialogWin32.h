@@ -23,7 +23,7 @@ public:
 
 	virtual void destroy();
 
-	virtual int showModal(Path& outPath);
+	virtual DialogResult showModal(Path& outPath);
 
 private:
 	EventSubject* m_owner;

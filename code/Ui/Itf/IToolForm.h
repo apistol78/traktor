@@ -19,9 +19,9 @@ public:
 
 	virtual void setIcon(ISystemBitmap* icon) = 0;
 
-	virtual int showModal() = 0;
+	virtual DialogResult showModal() = 0;
 
-	virtual void endModal(int result) = 0;
+	virtual void endModal(DialogResult result) = 0;
 };
 
 	}

@@ -218,7 +218,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 		return;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;
@@ -256,7 +256,7 @@ void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* 
 		return;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;
@@ -288,7 +288,7 @@ void GameEntityWizardDialog::eventBrowseAnimationMeshClick(ui::ButtonClickEvent*
 		return;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;
@@ -320,7 +320,7 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 		return;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;
@@ -345,7 +345,7 @@ void GameEntityWizardDialog::eventCopyCollisionMeshClick(ui::ButtonClickEvent* e
 
 void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (event->getCommand() == ui::DrOk)
+	if ((ui::DialogResult)event->getCommand().getId() == ui::DialogResult::Ok)
 	{
 		std::wstring name = m_editName->getText();
 		std::wstring visualMesh = m_editVisualMesh->getText();

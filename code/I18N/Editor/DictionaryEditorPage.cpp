@@ -229,7 +229,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			return;
 
 		Path fileName;
-		if (fileDialog.showModal(fileName) != ui::DrOk)
+		if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 		{
 			fileDialog.destroy();
 			return;
@@ -252,7 +252,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			return;
 
 		Path fileName;
-		if (fileDialog.showModal(fileName) != ui::DrOk)
+		if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 		{
 			fileDialog.destroy();
 			return;
@@ -287,7 +287,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			fields,
 			sizeof_array(fields)
 		);
-		if (inputDialog.showModal() == ui::DrOk)
+		if (inputDialog.showModal() == ui::DialogResult::Ok)
 		{
 			m_document->push();
 

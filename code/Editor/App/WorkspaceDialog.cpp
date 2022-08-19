@@ -68,7 +68,7 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 
 void WorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (event->getCommand() == ui::DrOk)
+	if ((ui::DialogResult)event->getCommand().getId() == ui::DialogResult::Ok)
 	{
 		m_settings->setProperty< PropertyString >(L"Runtime.SystemRoot", m_editSystemRoot->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());

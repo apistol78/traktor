@@ -289,7 +289,7 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath);
 	Path path = assetPath + Path(m_editFileName->getText());
 
-	if (fileDialog.showModal(path) == ui::DrOk)
+	if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 	{
 		// Try get path relative to asset path.
 		Path relPath;

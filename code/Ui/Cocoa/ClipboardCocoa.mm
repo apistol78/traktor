@@ -59,14 +59,14 @@ bool ClipboardCocoa::setImage(const drawing::Image *image)
 	return false;
 }
 
-ClipboardContentType ClipboardCocoa::getContentType() const
+ClipboardContent ClipboardCocoa::getContentType() const
 {
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
 
 	if ([pb dataForType: s_objectDataPboardType])
-		return CtObject;
+		return ClipboardContent::Object;
 
-	return CtEmpty;
+	return ClipboardContent::Empty;
 }
 
 Ref< ISerializable > ClipboardCocoa::getObject() const

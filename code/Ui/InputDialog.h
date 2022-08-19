@@ -112,8 +112,6 @@ public:
 		}
 	};
 
-	InputDialog();
-
 	bool create(
 		Widget* parent,
 		const std::wstring& title,
@@ -122,10 +120,10 @@ public:
 		uint32_t outFieldsCount
 	);
 
-	virtual int showModal() override;
+	virtual DialogResult showModal() override;
 
 private:
-	Field* m_outFields;
+	Field* m_outFields = nullptr;
 	RefArray< Widget > m_editFields;
 };
 

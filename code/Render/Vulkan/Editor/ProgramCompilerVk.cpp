@@ -244,7 +244,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	RefArray< PixelOutput > pixelOutputs;
 	RefArray< ComputeOutput > computeOutputs;
 	RefArray< Script > scriptOutputs;
-
+	
+	// Gather all output nodes from shader graph, type and number
+	// of output nodes determine type of shader program (vertex-, 
+	// pixel- or compute shader).
 	for (auto node : shaderGraph->getNodes())
 	{
 		if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
@@ -267,15 +270,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::TShader* fragmentShader = nullptr;
 	glslang::TShader* computeShader = nullptr;
 
+	// Generate and compile vertex and fragment shaders.
 	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
 
+		// Emit shader code by traversing from output nodes.
 		cx.getEmitter().emit(cx, pixelOutputs[0]);
 		cx.getEmitter().emit(cx, vertexOutputs[0]);
 
-		GlslRequirements vertexRequirements = cx.requirements();
-		GlslRequirements fragmentRequirements = cx.requirements();
+		const GlslRequirements vertexRequirements = cx.requirements();
+		const GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
 		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements));
@@ -286,7 +291,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		vertexShader = new glslang::TShader(EShLangVertex);
 		vertexShader->setStrings(&vst, 1);
 		vertexShader->setEntryPoint("main");
-		bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
+		const bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (vertexShader->getInfoLog())
 		{
 			std::wstring info = trim(mbstows(vertexShader->getInfoLog()));
@@ -301,7 +306,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		fragmentShader = new glslang::TShader(EShLangFragment);
 		fragmentShader->setStrings(&fst, 1);
 		fragmentShader->setEntryPoint("main");
-		bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
+		const bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (fragmentShader->getInfoLog())
 		{
 			std::wstring info = trim(mbstows(fragmentShader->getInfoLog()));
@@ -314,16 +319,18 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		program->addShader(vertexShader);
 		program->addShader(fragmentShader);
 	}
+	// Generate and compile compute shader.
 	else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
 	{
 		const auto defaultBuiltInResource = getDefaultBuiltInResource();
 
+		// Emit shader code by traversing from output nodes.
 		for (auto computeOutput : computeOutputs)
 			cx.getEmitter().emit(cx, computeOutput);
 		for (auto scriptOutput : scriptOutputs)
 			cx.getEmitter().emit(cx, scriptOutput);
 
-		GlslRequirements computeRequirements = cx.requirements();
+		const GlslRequirements computeRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
 		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements)).c_str());
@@ -350,7 +357,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		return nullptr;
 	}
 
-	// Link program shaders.
+	// Link shaders into a program.
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 

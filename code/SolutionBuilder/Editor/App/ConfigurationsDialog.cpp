@@ -93,7 +93,7 @@ void ConfigurationsDialog::eventButtonNew(ui::ButtonClickEvent* event)
 		inputFields,
 		sizeof_array(inputFields)
 	);
-	if (inputDialog.showModal() == ui::DrOk)
+	if (inputDialog.showModal() == ui::DialogResult::Ok)
 	{
 		Action action = { AtNew, inputFields[0].value, current };
 		if (!action.name.empty())
@@ -127,7 +127,7 @@ void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 		inputFields,
 		sizeof_array(inputFields)
 	);
-	if (inputDialog.showModal() == ui::DrOk)
+	if (inputDialog.showModal() == ui::DialogResult::Ok)
 	{
 		Action action = { AtRename, inputFields[0].value, current };
 		if (!action.name.empty() && action.name != action.current)

@@ -34,7 +34,7 @@ public:
 
 	virtual bool setImage(const drawing::Image* image) = 0;
 
-	virtual ClipboardContentType getContentType() const = 0;
+	virtual ClipboardContent getContentType() const = 0;
 
 	virtual Ref< ISerializable > getObject() const = 0;
 

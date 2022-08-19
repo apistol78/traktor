@@ -1,4 +1,5 @@
 #include <map>
+#include "Core/Ref.h"
 #include "Ui/Associative.h"
 
 namespace traktor
@@ -35,11 +36,6 @@ public:
 			setData(kv.first, kv.second);
 	}
 };
-
-Associative::Associative()
-:	m_impl(nullptr)
-{
-}
 
 Associative::~Associative()
 {

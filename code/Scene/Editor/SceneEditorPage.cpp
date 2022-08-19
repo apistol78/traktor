@@ -910,7 +910,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.RenameAllEntityIds")
 	{
-		if (ui::MessageBox::show(m_editControl, i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_MESSAGE"), i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_TITLE"), ui::MbIconExclamation | ui::MbYesNo) == ui::DrYes)
+		if (ui::MessageBox::show(m_editControl, i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_MESSAGE"), i18n::Text(L"SCENE_EDITOR_RENAME_ALL_ENTITY_IDS_TITLE"), ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::Yes)
 		{
 			SmallMap< Guid, Guid > renamedMap;
 

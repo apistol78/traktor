@@ -222,7 +222,7 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::GridRowDoubleClickEvent
 			inputFields,
 			sizeof_array(inputFields)
 		);
-		if (inputDialog.showModal() == ui::DrOk)
+		if (inputDialog.showModal() == ui::DialogResult::Ok)
 		{
 			selectedDependency->setSolutionFileName(inputFields[0].value);
 			updateDependencyList();
@@ -288,7 +288,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 	fileDialog.create(this, type_name(this), L"Select solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;
-	if (fileDialog.showModal(filePath))
+	if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 	{
 		Ref< Solution > solution = SolutionLoader().load(filePath.getPathName());
 		if (solution)
@@ -296,7 +296,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 			ImportProjectDialog importDialog;
 			importDialog.create(this, L"Select project(s)", false, solution);
 
-			if (importDialog.showModal() == ui::DrOk)
+			if (importDialog.showModal() == ui::DialogResult::Ok)
 			{
 				Path filePathRel;
 				if (!FileSystem::getInstance().getRelativePath(

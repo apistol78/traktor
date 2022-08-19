@@ -71,23 +71,19 @@ void Dialog::setIcon(IBitmap* icon)
 	static_cast< IDialog* >(m_widget)->setIcon(icon->getSystemBitmap());
 }
 
-int Dialog::showModal()
+DialogResult Dialog::showModal()
 {
 	T_ASSERT(m_widget);
-
 	m_modal = true;
-
 	update();
 	return static_cast< IDialog* >(m_widget)->showModal();
 }
 
-void Dialog::endModal(int result)
+void Dialog::endModal(DialogResult result)
 {
 	T_ASSERT(m_widget);
 	T_ASSERT(m_modal);
-
 	static_cast< IDialog* >(m_widget)->endModal(result);
-
 	m_modal = false;
 }
 

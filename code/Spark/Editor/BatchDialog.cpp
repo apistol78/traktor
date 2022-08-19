@@ -77,7 +77,7 @@ void BatchDialog::destroy()
 
 bool BatchDialog::showModal(RefArray< MovieAsset >& outAssets)
 {
-	if (ui::ConfigDialog::showModal() != ui::DrOk)
+	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 
 	m_moviePropertyList->apply();
@@ -97,7 +97,7 @@ void BatchDialog::addTexture()
 		return;
 
 	std::vector< Path > fileNames;
-	if (fileDialog.showModal(fileNames) != ui::DrOk)
+	if (fileDialog.showModal(fileNames) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return;

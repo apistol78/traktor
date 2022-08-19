@@ -315,7 +315,7 @@ void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 
 		ui::FileDialog fileDialog;
 		fileDialog.create(this, type_name(this), L"Save shader as", L"Shader;*.*", L"", true);
-		bool cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
+		bool cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
 		fileDialog.destroy();
 
 		if (!cancelled)

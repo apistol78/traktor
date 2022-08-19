@@ -13,7 +13,7 @@ namespace traktor
 template < typename Type, typename P0 >
 void invokeOnce(Type*& ref, void (Type::*M)(P0 p0), P0 p0)
 {
-	Type* ptr = Atomic::exchange< Type* >(ref, 0);
+	Type* ptr = Atomic::exchange< Type* >(ref, nullptr);
 	if (ptr)
 		(ptr->*M)(p0);
 }
@@ -21,7 +21,7 @@ void invokeOnce(Type*& ref, void (Type::*M)(P0 p0), P0 p0)
 template < typename Type, typename P0, typename P1 >
 void invokeOnce(Type*& ref, void (Type::*M)(P0 p0, P1 p1), P0 p0, P1 p1)
 {
-	Type* ptr = Atomic::exchange< Type* >(ref, 0);
+	Type* ptr = Atomic::exchange< Type* >(ref, nullptr);
 	if (ptr)
 		(ptr->*M)(p0, p1);
 }
@@ -29,7 +29,7 @@ void invokeOnce(Type*& ref, void (Type::*M)(P0 p0, P1 p1), P0 p0, P1 p1)
 template < typename Type, typename P0, typename P1, typename P2 >
 void invokeOnce(Type*& ref, void (Type::*M)(P0 p0, P1 p1, P2 p2), P0 p0, P1 p1, P2 p2)
 {
-	Type* ptr = Atomic::exchange< Type* >(ref, 0);
+	Type* ptr = Atomic::exchange< Type* >(ref, nullptr);
 	if (ptr)
 		(ptr->*M)(p0, p1, p2);
 }

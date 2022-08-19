@@ -21,7 +21,7 @@ public:
 
 	virtual bool setImage(const drawing::Image* image) override final;
 
-	virtual ClipboardContentType getContentType() const override final;
+	virtual ClipboardContent getContentType() const override final;
 
 	virtual Ref< ISerializable > getObject() const override final;
 
@@ -30,7 +30,7 @@ public:
 	virtual Ref< const drawing::Image > getImage() const override final;
 
 private:
-	ClipboardContentType m_type = CtEmpty;
+	ClipboardContent m_type = ClipboardContent::Empty;
 	Ref< ISerializable > m_object;
 	std::wstring m_text;
 	Ref< const drawing::Image > m_image;

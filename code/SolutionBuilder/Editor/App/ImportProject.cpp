@@ -26,7 +26,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 	fileDialog.create(parent, type_name(this), L"Open other solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;
-	if (fileDialog.showModal(filePath))
+	if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 	{
 		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (file)
@@ -37,7 +37,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 			ImportProjectDialog importDialog;
 			importDialog.create(parent, L"Import project(s)", false, otherSolution);
 
-			if (importDialog.showModal() == ui::DrOk)
+			if (importDialog.showModal() == ui::DialogResult::Ok)
 			{
 				RefArray< Project > otherProjects;
 				importDialog.getSelectedProjects(otherProjects);

@@ -89,10 +89,10 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 	return true;
 }
 
-bool BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
+ui::DialogResult BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
 {
-	if (ui::ConfigDialog::showModal() != ui::DrOk)
-		return false;
+	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
+		return ui::DialogResult::Cancel;
 
 	RefArray< ui::PreviewItem > selectedItems;
 	m_listAssets->getSelectedItems(selectedItems);
@@ -104,7 +104,7 @@ bool BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
 			outUrls.push_back(url);
 	}
 
-	return true;
+	return ui::DialogResult::Ok;
 }
 
 void BrowseAssetDialog::updatePackages()

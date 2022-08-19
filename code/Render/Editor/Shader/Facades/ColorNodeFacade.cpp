@@ -83,7 +83,7 @@ void ColorNodeFacade::editShaderNode(
 		ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha | ui::ColorDialog::WsHDR,
 		colorNode->getColor()
 	);
-	if (colorDialog.showModal() == ui::DrOk)
+	if (colorDialog.showModal() == ui::DialogResult::Ok)
 		colorNode->setColor(colorDialog.getColor());
 	colorDialog.destroy();
 }

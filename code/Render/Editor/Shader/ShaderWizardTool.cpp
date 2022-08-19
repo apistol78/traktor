@@ -104,7 +104,7 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 
 	inputDialog.setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
-	if (inputDialog.showModal() != ui::DrOk)
+	if (inputDialog.showModal() != ui::DialogResult::Ok)
 	{
 		inputDialog.destroy();
 		return false;

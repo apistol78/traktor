@@ -22,7 +22,7 @@ public:
 
 	virtual bool setImage(const drawing::Image* image) override final;
 
-	virtual ClipboardContentType getContentType() const override final;
+	virtual ClipboardContent getContentType() const override final;
 
 	virtual Ref< ISerializable > getObject() const override final;
 

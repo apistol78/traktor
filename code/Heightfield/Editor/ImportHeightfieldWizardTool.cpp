@@ -95,7 +95,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		return false;
 
 	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
+	if (fileDialog.showModal(fileName) != ui::DialogResult::Ok)
 	{
 		fileDialog.destroy();
 		return false;

@@ -18,10 +18,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SearchControl", SearchControl, ui::Container)
 
-SearchControl::SearchControl()
-{
-}
-
 bool SearchControl::create(ui::Widget* parent)
 {
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(4), ui::dpi96(4))))

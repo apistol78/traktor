@@ -20,7 +20,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual int showModal(Path& outPath) override final;
+	virtual DialogResult showModal(Path& outPath) override final;
 
 private:
 	EventSubject* m_owner;

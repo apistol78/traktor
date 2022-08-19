@@ -48,9 +48,9 @@ bool Guid::create(const std::wstring& s)
 	if (s[0] != L'{' || s[9] != L'-' || s[14] != L'-' || s[19] != L'-' || s[24] != L'-' || s[37] != L'}')
 		return false;
 
-	for (int i = 0; i < 16; ++i)
+	for (int32_t i = 0; i < 16; ++i)
 	{
-		int o = i * 2 + 1, tmp = 0;
+		int32_t o = i * 2 + 1, tmp = 0;
 
 		if (o >= 9)
 			o++;
@@ -61,8 +61,8 @@ bool Guid::create(const std::wstring& s)
 		if (o >= 24)
 			o++;
 
-		wchar_t hn = std::tolower(s[o]);
-		wchar_t ln = std::tolower(s[o + 1]);
+		const wchar_t hn = std::tolower(s[o]);
+		const wchar_t ln = std::tolower(s[o + 1]);
 
 		if (hn >= L'0' && hn <= L'9')
 			tmp = (hn - L'0') << 4;
@@ -98,11 +98,11 @@ Guid Guid::create()
 
 #elif defined(__APPLE__)
 
-	uint64_t cputick = mach_absolute_time();
+	const uint64_t cputick = mach_absolute_time();
 	std::memcpy(guid.m_data, &cputick, sizeof(cputick));
 
 	static Random s_rnd;
-	for (int i = 8; i < 16; ++i)
+	for (int32_t i = 8; i < 16; ++i)
 		guid.m_data[i] = uint8_t(s_rnd.nextDouble() * 255);
 
 	guid.m_valid = true;
@@ -126,7 +126,7 @@ std::wstring Guid::format() const
 	StringOutputStream ss;
 	ss.put(L'{');
 
-	for (int i = 0; i < 16; ++i)
+	for (int32_t i = 0; i < 16; ++i)
 	{
 		if (i == 4 || i == 6 || i == 8 || i == 10)
 			ss.put(L'-');
@@ -135,7 +135,6 @@ std::wstring Guid::format() const
 	}
 
 	ss.put(L'}');
-
 	return ss.str();
 }
 
@@ -146,7 +145,7 @@ bool Guid::isValid() const
 
 bool Guid::isNull() const
 {
-	for (int i = 0; i < sizeof_array(m_data); ++i)
+	for (int32_t i = 0; i < sizeof_array(m_data); ++i)
 	{
 		if (m_data[i] != 0)
 			return false;
@@ -177,7 +176,7 @@ Guid Guid::permutation(uint32_t iterations) const
 Guid Guid::permutation(const Guid& seed) const
 {
 	uint8_t d[16];
-	for (int i = 0; i < 16; ++i)
+	for (int32_t i = 0; i < 16; ++i)
 		d[i] = m_data[i] ^ seed[i];
 	return Guid(d);
 }

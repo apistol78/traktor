@@ -16,7 +16,7 @@ void HashStream::close()
 {
 	T_ASSERT(m_hash);
 	m_hash->end();
-	m_hash = 0;
+	m_hash = nullptr;
 }
 
 bool HashStream::canRead() const

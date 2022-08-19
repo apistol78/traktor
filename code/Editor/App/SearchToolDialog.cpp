@@ -373,7 +373,7 @@ void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 		return;
 
 	Path saveAsPath;
-	if (fileDialog.showModal(saveAsPath) != ui::DrOk)
+	if (fileDialog.showModal(saveAsPath) != ui::DialogResult::Ok)
 		return;
 
 	fileDialog.destroy();

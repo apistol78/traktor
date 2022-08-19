@@ -268,7 +268,7 @@ void BrowseInstanceDialog::eventListItemSelected(ui::PreviewSelectionChangeEvent
 void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
 	if (m_instance)
-		endModal(ui::DrOk);
+		endModal(ui::DialogResult::Ok);
 }
 
 void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)

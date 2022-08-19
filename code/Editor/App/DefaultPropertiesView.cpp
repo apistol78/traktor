@@ -216,7 +216,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				return;
 
 			Path path = fileItem->getPath();
-			if (fileDialog.showModal(path) == ui::DrOk)
+			if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 			{
 				fileItem->setPath(path);
 				m_propertyList->apply();
@@ -286,7 +286,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 		{
 			TextEditorDialog textEditorDialog;
 			textEditorDialog.create(this, textItem->getValue());
-			if (textEditorDialog.showModal() == ui::DrOk)
+			if (textEditorDialog.showModal() == ui::DialogResult::Ok)
 			{
 				textItem->setValue(textEditorDialog.getText());
 				m_propertyList->apply();
@@ -307,7 +307,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha | (colorItem->getHighDynamicRange() ? ui::ColorDialog::WsHDR : 0),
 				colorItem->getValue()
 			);
-			if (colorDialog.showModal() == ui::DrOk)
+			if (colorDialog.showModal() == ui::DialogResult::Ok)
 			{
 				colorItem->setValue(colorDialog.getColor());
 				m_propertyList->apply();

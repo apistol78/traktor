@@ -14,7 +14,7 @@ namespace traktor
 DialogX11::DialogX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IDialog >(context, owner)
 ,	m_parent(0)
-,	m_result(0)
+,	m_result(DialogResult::Ok)
 ,	m_modal(false)
 {
 }
@@ -89,7 +89,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 			CloseEvent closeEvent(m_owner);
 			m_owner->raiseEvent(&closeEvent);
 			if (!(closeEvent.consumed() && closeEvent.cancelled()))
-				endModal(DrCancel);
+				endModal(DialogResult::Cancel);
 		}
 	});
 
@@ -106,7 +106,7 @@ void DialogX11::setIcon(ISystemBitmap* icon)
 {
 }
 
-int DialogX11::showModal()
+DialogResult DialogX11::showModal()
 {
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_ADD);
 	setVisible(true);
@@ -143,7 +143,7 @@ int DialogX11::showModal()
 	return m_result;
 }
 
-void DialogX11::endModal(int result)
+void DialogX11::endModal(DialogResult result)
 {
 	m_result = result;
 	m_modal = false;

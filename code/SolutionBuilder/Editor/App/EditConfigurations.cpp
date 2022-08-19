@@ -42,7 +42,7 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 	ConfigurationsDialog configurationsDialog;
 	configurationsDialog.create(parent, solution);
 
-	if (configurationsDialog.showModal() == ui::DrOk)
+	if (configurationsDialog.showModal() == ui::DialogResult::Ok)
 	{
 		for (const auto& action : configurationsDialog.getActions())
 		{

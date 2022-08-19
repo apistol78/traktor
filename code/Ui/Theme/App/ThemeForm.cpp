@@ -322,7 +322,7 @@ void ThemeForm::handleCommand(const Command& command)
 		fileDialog.create(this, type_name(this), L"Open stylesheet", L"Stylesheet;*.xss;All files;*.*");
 
 		Path filePath;
-		if (fileDialog.showModal(filePath))
+		if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 		{
 			if ((m_styleSheet = loadStyleSheet(filePath, false)) != nullptr)
 			{
@@ -360,7 +360,7 @@ void ThemeForm::handleCommand(const Command& command)
 			fileDialog.create(this, type_name(this), L"Save stylesheet", L"Stylesheet;*.xss;All files;*.*", L"", true);
 
 			Path filePath;
-			if (fileDialog.showModal(filePath))
+			if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 			{
 				if (saveStyleSheet(filePath, m_styleSheet))
 				{
@@ -460,7 +460,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 
 	ColorDialog colorDialog;
 	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha);
-	if (colorDialog.showModal() == DialogResult::DrOk)
+	if (colorDialog.showModal() == ui::DialogResult::Ok)
 	{
 		int32_t imageIndex = itemElement->getImage(0);
 

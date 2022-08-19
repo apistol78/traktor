@@ -30,9 +30,9 @@ class T_DLLCLASS MessageBox : public ConfigDialog
 public:
 	bool create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
 
-	static int show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
+	static DialogResult show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
 
-	static int show(const std::wstring& message, const std::wstring& caption, int style);
+	static DialogResult show(const std::wstring& message, const std::wstring& caption, int style);
 };
 
 	}

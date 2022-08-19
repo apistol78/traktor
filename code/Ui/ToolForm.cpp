@@ -55,23 +55,19 @@ IBitmap* ToolForm::getIcon()
 	return m_icon;
 }
 
-int ToolForm::showModal()
+DialogResult ToolForm::showModal()
 {
 	T_ASSERT(m_widget);
-
 	m_modal = true;
-
 	update();
 	return static_cast< IToolForm* >(m_widget)->showModal();
 }
 
-void ToolForm::endModal(int result)
+void ToolForm::endModal(DialogResult result)
 {
 	T_ASSERT(m_widget);
 	T_ASSERT(m_modal);
-
 	static_cast< IToolForm* >(m_widget)->endModal(result);
-
 	m_modal = false;
 }
 

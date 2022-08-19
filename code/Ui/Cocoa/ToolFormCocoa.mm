@@ -62,7 +62,7 @@ void ToolFormCocoa::setIcon(ISystemBitmap* icon)
 {
 }
 
-int ToolFormCocoa::showModal()
+DialogResult ToolFormCocoa::showModal()
 {
 	m_result = -1;
 	[m_window makeKeyAndOrderFront: nil];
@@ -85,7 +85,7 @@ int ToolFormCocoa::showModal()
 	return m_result;
 }
 
-void ToolFormCocoa::endModal(int result)
+void ToolFormCocoa::endModal(DialogResult result)
 {
 	m_result = result;
 	[NSApp abortModal];

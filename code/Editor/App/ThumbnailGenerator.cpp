@@ -19,12 +19,12 @@ ThumbnailGenerator::ThumbnailGenerator(const Path& thumbsPath)
 {
 }
 
-Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode, GammaMode gammaMode)
+Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, Alpha alpha, Gamma gamma)
 {
 	const wchar_t* alphaPrefix[] = { L"o", L"a", L"ao" };
 	const wchar_t* gammaPrefix[] = { L"a", L"l", L"r" };
 
-	std::wstring pathName = fileName.getPathName();
+	const std::wstring pathName = fileName.getPathName();
 
 	// Stat source file.
 	Ref< File > file = FileSystem::getInstance().get(fileName);
@@ -37,13 +37,13 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	adler.feed(pathName.c_str(), pathName.length());
 	adler.end();
 
-	Path thumbFileName =
+	const Path thumbFileName =
 		m_thumbsPath.getPathName() + L"/" +
 		fileName.getFileNameNoExtension() + L"_" +
 		toString(adler.get()) + L"_" +
 		toString(width) + L"x" + toString(height) + L"_" +
-		alphaPrefix[(int32_t)alphaMode] +
-		gammaPrefix[(int32_t)gammaMode] +
+		alphaPrefix[(int32_t)alpha] +
+		gammaPrefix[(int32_t)gamma] +
 		toString(file->getLastWriteTime().getSecondsSinceEpoch()) +
 		L".png";
 
@@ -65,14 +65,14 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	);
 	image->apply(&scale);
 
-	if (image->getPixelFormat().getAlphaBits() > 0 && alphaMode == AmWithAlpha)
+	if (image->getPixelFormat().getAlphaBits() > 0 && alpha == Alpha::WithAlpha)
 	{
 		Color4f pixel;
 		for (int32_t y = 0; y < height; ++y)
 		{
 			for (int32_t x = 0; x < width; ++x)
 			{
-				Color4f alpha =
+				const Color4f alpha =
 					((x >> 2) & 1) ^ ((y >> 2) & 1) ?
 					Color4f(0.4f, 0.4f, 0.4f) :
 					Color4f(0.6f, 0.6f, 0.6f);
@@ -86,7 +86,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 			}
 		}
 	}
-	else if (alphaMode == AmAlphaOnly)
+	else if (alpha == Alpha::AlphaOnly)
 	{
 		drawing::SwizzleFilter swizzleFilter(L"aaa1");
 		image->apply(&swizzleFilter);
@@ -98,13 +98,13 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	}
 
 	// Convert to sRGB if image is expected to be linear.
-	if (gammaMode == GmAuto)
+	if (gamma == Gamma::Auto)
 	{
 		const auto imageInfo = image->getImageInfo();
 		if (imageInfo != nullptr && abs(imageInfo->getGamma() - 1.0f) < 0.01f)
-			gammaMode = GmLinear;
+			gamma = Gamma::Linear;
 	}
-	if (gammaMode == GmLinear)
+	if (gamma == Gamma::Linear)
 	{
 		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
 		image->apply(&gammaFilter);

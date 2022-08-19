@@ -14,10 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.BackgroundWorkerDialog", BackgroundWorkerDialog, Dialog)
 
-BackgroundWorkerDialog::BackgroundWorkerDialog()
-{
-}
-
 bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton)
 {
 	if (!ui::Dialog::create(parent, title, dpi96(380), dpi96(150), WsCenterParent, new ui::TableLayout(L"100%", L"*,*,*", dpi96(4), dpi96(4))))
@@ -77,7 +73,7 @@ void BackgroundWorkerDialog::eventAbortClick(ButtonClickEvent* event)
 	m_buttonAbort->setEnable(false);
 
 	stopTimer();
-	endModal(DrCancel);
+	endModal(DialogResult::Cancel);
 }
 
 void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
@@ -122,7 +118,7 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 
 	// End dialog if all job threads are finished.
 	if (finished)
-		endModal(DrOk);
+		endModal(DialogResult::Ok);
 }
 
 void BackgroundWorkerDialog::eventPaint(PaintEvent* event)

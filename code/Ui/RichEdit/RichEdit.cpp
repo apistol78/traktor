@@ -108,17 +108,16 @@ void RichEdit::setText(const std::wstring& text)
 		size_t i = 0;
 		while (i < text.length())
 		{
-			size_t j = text.find(L'\n', i);
-
-			std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
+			const size_t j = text.find(L'\n', i);
+			const std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
 
 			Line line;
 			line.start = int32_t(m_text.size());
 			line.stop = line.start + int32_t(ln.length());
 			m_lines.push_back(line);
 
-			for (std::wstring::const_iterator k = ln.begin(); k != ln.end(); ++k)
-				m_text.push_back(Character(*k));
+			for (auto ch : ln)
+				m_text.push_back(Character(ch));
 
 			m_text.push_back(Character(L'\n'));
 
@@ -144,7 +143,7 @@ void RichEdit::setText(const std::wstring& text)
 	m_selectionStart =
 	m_selectionStop = -1;
 
-	int32_t lastOffset = int32_t(m_text.size());
+	const int32_t lastOffset = int32_t(m_text.size());
 	if (m_caret >= lastOffset)
 	{
 		m_caret = lastOffset;
@@ -177,7 +176,7 @@ std::wstring RichEdit::getText(std::function< std::wstring (wchar_t) > cfn, std:
 	StringOutputStream ss;
 	for (size_t i = 0; i < m_text.size(); ++i)
 	{
-		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator j = m_specialCharacters.find(m_text[i].ch);
+		auto j = m_specialCharacters.find(m_text[i].ch);
 		if (j == m_specialCharacters.end())
 			ss << cfn(m_text[i].ch);
 		else
@@ -190,8 +189,8 @@ void RichEdit::setFont(const Font& font)
 {
 	Widget::setFont(font);
 
-	for (std::vector< Character >::iterator i = m_text.begin(); i != m_text.end(); ++i)
-		i->width = 0;
+	for (auto& ch : m_text)
+		ch.width = 0;
 
 	updateCharacterWidths();
 }
@@ -280,8 +279,8 @@ int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
 
 	if (m_image)
 	{
-		uint32_t width = m_image->getSize().cx + image->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
+		const uint32_t width = m_image->getSize().cx + image->getSize().cx;
+		const uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
@@ -295,7 +294,7 @@ int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
 		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
 	}
 
-	uint32_t imageBase = m_imageCount;
+	const uint32_t imageBase = m_imageCount;
 	m_imageCount += imageCount;
 
 	return imageBase;
@@ -310,7 +309,7 @@ void RichEdit::setImage(int32_t line, int32_t image)
 
 wchar_t RichEdit::addSpecialCharacter(const ISpecialCharacter* specialCharacter)
 {
-	wchar_t ch = m_nextSpecialCharacter++;
+	const wchar_t ch = m_nextSpecialCharacter++;
 	m_specialCharacters[ch] = specialCharacter;
 	updateCharacterWidths();
 	return ch;
@@ -320,13 +319,13 @@ void RichEdit::clear(bool attributes, bool images, bool content, bool specialCha
 {
 	if (attributes)
 	{
-		for (std::vector< Character >::iterator i = m_text.begin(); i != m_text.end(); ++i)
+		for (auto& ch : m_text)
 		{
-			i->tai = 0;
-			i->bgai = 0;
+			ch.tai = 0;
+			ch.bgai = 0;
 		}
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-			i->attrib = 0xffff;
+		for (auto& line : m_lines)
+			line.attrib = 0xffff;
 	}
 
 	if (content)
@@ -336,8 +335,8 @@ void RichEdit::clear(bool attributes, bool images, bool content, bool specialCha
 	}
 	else if (images)
 	{
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-			i->image = -1;
+		for (auto& line : m_lines)
+			line.image = -1;
 	}
 
 	if (specialCharacters)
@@ -370,9 +369,9 @@ void RichEdit::insert(const std::wstring& text)
 	if (text.empty())
 		return;
 
-	std::wstring tmp = traktor::replaceAll(text, L"\r\n", L"\n");
-	for (std::wstring::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
-		insertCharacter(*i, false);
+	const std::wstring tmp = traktor::replaceAll(text, L"\r\n", L"\n");
+	for (auto ch : tmp)
+		insertCharacter(ch, false);
 
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
@@ -383,14 +382,14 @@ void RichEdit::insert(const std::wstring& text)
 
 int32_t RichEdit::getOffsetFromPosition(const Point& position)
 {
-	uint32_t lineCount = (uint32_t)m_lines.size();
+	const uint32_t lineCount = (uint32_t)m_lines.size();
 	if (lineCount == 0)
 		return -1;
 
-	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+	const uint32_t lineOffset = m_scrollBarV->getPosition();
+	const uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
 
-	uint32_t line = lineOffset + position.y / lineHeight;
+	const uint32_t line = lineOffset + position.y / lineHeight;
 	if (line >= lineCount)
 		return m_lines.back().stop;
 
@@ -405,8 +404,8 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 		x += m_text[i].width;
 	}
 
-	int32_t lineWidth = x;
-	int32_t linePosition = std::max(position.x - m_lineMargin, 0) + m_lineOffsetH;
+	const int32_t lineWidth = x;
+	const int32_t linePosition = std::max(position.x - m_lineMargin, 0) + m_lineOffsetH;
 	if (linePosition < lineWidth)
 	{
 		for (int32_t i = int32_t(stops.size()) - 1; i >= 0; --i)
@@ -426,11 +425,10 @@ int32_t RichEdit::getCaretOffset() const
 
 int32_t RichEdit::getLineFromPosition(int32_t position)
 {
-	uint32_t lineCount = (uint32_t)m_lines.size();
-	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-
-	uint32_t line = lineOffset + position / lineHeight;
+	const uint32_t lineCount = (uint32_t)m_lines.size();
+	const uint32_t lineOffset = m_scrollBarV->getPosition();
+	const uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+	const uint32_t line = lineOffset + position / lineHeight;
 	return line < lineCount ? line : -1;
 }
 
@@ -470,7 +468,7 @@ void RichEdit::setLine(int32_t line, const std::wstring& text)
 	for (uint32_t i = 0; i < text.size(); ++i)
 		m_text.insert(m_text.begin() + ln.start + i, Character(text[i]));
 
-	int32_t adjust = int32_t(text.size()) - (ln.stop - ln.start);
+	const int32_t adjust = int32_t(text.size()) - (ln.stop - ln.start);
 	for (uint32_t i = line + 1; i < m_lines.size(); ++i)
 	{
 		m_lines[i].start += adjust;
@@ -540,7 +538,7 @@ std::wstring RichEdit::getSelectedText(std::function< std::wstring (wchar_t) > c
 	StringOutputStream ss;
 	for (int32_t i = m_selectionStart; i < m_selectionStop; ++i)
 	{
-		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator j = m_specialCharacters.find(m_text[i].ch);
+		auto j = m_specialCharacters.find(m_text[i].ch);
 		if (j == m_specialCharacters.end())
 			ss << cfn(m_text[i].ch);
 		else
@@ -564,12 +562,11 @@ int32_t RichEdit::getScrollLine() const
 
 bool RichEdit::showLine(int32_t line)
 {
-	Rect rc = getEditRect();
+	const Rect rc = getEditRect();
 
-	int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-	int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
-
-	int32_t top = m_scrollBarV->getPosition();
+	const int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+	const int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+	const int32_t top = m_scrollBarV->getPosition();
 
 	if (line >= top && line < top + pageLines)
 		return true;
@@ -614,7 +611,7 @@ bool RichEdit::copy()
 	if (!clipboard)
 		return false;
 
-	std::wstring selectedText = getSelectedText();
+	const std::wstring selectedText = getSelectedText();
 	return clipboard->setText(selectedText);
 }
 
@@ -636,7 +633,7 @@ bool RichEdit::paste()
 	if (!hasFocus())
 		return false;
 
-	std::wstring pasteText = clipboard->getText();
+	const std::wstring pasteText = clipboard->getText();
 	if (m_selectionStart >= 0)
 		deleteCharacters();
 	insert(pasteText);
@@ -647,11 +644,11 @@ bool RichEdit::paste()
 bool RichEdit::find()
 {
 	// Initialize needle with selection; only if selection is single line.
-	int32_t startLine = getLineFromOffset(getSelectionStartOffset());
-	int32_t stopLine = getLineFromOffset(getSelectionStopOffset());
+	const int32_t startLine = getLineFromOffset(getSelectionStartOffset());
+	const int32_t stopLine = getLineFromOffset(getSelectionStopOffset());
 	if (startLine == stopLine)
 	{
-		std::wstring needle = getSelectedText();
+		const std::wstring needle = getSelectedText();
 		m_searchControl->setNeedle(needle);
 	}
 
@@ -665,14 +662,14 @@ bool RichEdit::findNext()
 {
 	FindResult result;
 
-	std::wstring needle = m_searchControl->getNeedle();
-	bool caseSensitive = m_searchControl->caseSensitive();
-	bool wholeWord = m_searchControl->wholeWord();
-	bool wildcard = m_searchControl->wildcard();
+	const std::wstring needle = m_searchControl->getNeedle();
+	const bool caseSensitive = m_searchControl->caseSensitive();
+	const bool wholeWord = m_searchControl->wholeWord();
+	const bool wildcard = m_searchControl->wildcard();
 
 	m_searchControl->setAnyMatchingHint(false);
 
-	int32_t caretLine = getLineFromOffset(getCaretOffset());
+	const int32_t caretLine = getLineFromOffset(getCaretOffset());
 	if (!findNextLine(caretLine, needle, caseSensitive, wholeWord, wildcard, result))
 		return false;
 
@@ -699,7 +696,7 @@ bool RichEdit::replaceAll()
 Rect RichEdit::getEditRect() const
 {
 	Rect rc = getInnerRect();
-	Size sz = rc.getSize();
+	const Size sz = rc.getSize();
 	rc.right -= m_scrollBarV->getPreferredSize(sz).cx;
 	if (m_scrollBarH->isVisible(false))
 		rc.bottom -= m_scrollBarH->getPreferredSize(sz).cy;
@@ -715,9 +712,9 @@ void RichEdit::updateScrollBars()
 {
 	Rect rc = getEditRect();
 
-	uint32_t lineCount = uint32_t(m_lines.size());
-	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+	const uint32_t lineCount = uint32_t(m_lines.size());
+	const uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+	const uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	m_scrollBarV->setRange(lineCount + pageLines);
 	m_scrollBarV->setPage(pageLines);
@@ -745,20 +742,20 @@ void RichEdit::updateCharacterWidths()
 		blw = 1;
 
 	m_widestLineWidth = 0;
-	for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+	for (const auto& line : m_lines)
 	{
 		int32_t x = 0;
-		for (int32_t j = i->start; j < i->stop; ++j)
+		for (int32_t j = line.start; j < line.stop; ++j)
 		{
 			Character& c = m_text[j];
 			if (c.width == 0)
 			{
 				if (c.ch != L'\t')
 				{
-					std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(c.ch);
+					auto k = m_specialCharacters.find(c.ch);
 					if (k == m_specialCharacters.end())
 					{
-						int32_t chw = getFontMetric().getAdvance(c.ch, 0);
+						const int32_t chw = getFontMetric().getAdvance(c.ch, 0);
 						c.width = chw;
 					}
 					else
@@ -768,7 +765,7 @@ void RichEdit::updateCharacterWidths()
 				}
 				else
 				{
-					int32_t nx = alignUp(x + 4 * blw, 4 * blw);
+					const int32_t nx = alignUp(x + 4 * blw, 4 * blw);
 					c.width = nx - x;
 				}
 			}
@@ -872,14 +869,14 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents)
 	{
 		if (m_selectionStart >= 0)
 		{
-			int32_t indentFromLine = getLineFromOffset(m_selectionStart);
-			int32_t indentToLine = getLineFromOffset(m_selectionStop - 1);
+			const int32_t indentFromLine = getLineFromOffset(m_selectionStart);
+			const int32_t indentToLine = getLineFromOffset(m_selectionStop - 1);
 
 			if (indentFromLine <= indentToLine)
 			{
 				for (int32_t i = indentFromLine; i <= indentToLine; ++i)
 				{
-					int32_t offset = getLineOffset(i);
+					const int32_t offset = getLineOffset(i);
 					insertAt(offset, L'\t');
 				}
 
@@ -935,7 +932,7 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 
 	if (ch == L'\n' || ch == L'\r')
 	{
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		for (auto i = m_lines.begin(); i != m_lines.end(); ++i)
 		{
 			if (offset >= i->start && offset <= i->stop)
 			{
@@ -957,14 +954,14 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 	}
 	else
 	{
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		for (auto& line : m_lines)
 		{
-			if (offset >= i->start && offset <= i->stop)
-				i->stop++;
-			else if (offset < i->start)
+			if (offset >= line.start && offset <= line.stop)
+				line.stop++;
+			else if (offset < line.start)
 			{
-				i->start++;
-				i->stop++;
+				line.start++;
+				line.stop++;
 			}
 		}
 	}
@@ -977,13 +974,13 @@ void RichEdit::scrollToCaret()
 {
 	if (m_scrollBarV->isVisible(false))
 	{
-		int32_t caretLine = getLineFromOffset(m_caret);
-		Rect rc = getEditRect();
+		const int32_t caretLine = getLineFromOffset(m_caret);
+		const Rect rc = getEditRect();
 
-		int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-		int32_t pageLines = rc.getHeight() / lineHeight;
+		const int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+		const int32_t pageLines = rc.getHeight() / lineHeight;
 
-		int32_t top = m_scrollBarV->getPosition();
+		const int32_t top = m_scrollBarV->getPosition();
 
 		if (caretLine < top)
 		{
@@ -1016,10 +1013,10 @@ void RichEdit::updateFindPreview() const
 {
 	FindResult result;
 
-	std::wstring needle = m_searchControl->getNeedle();
-	bool caseSensitive = m_searchControl->caseSensitive();
-	bool wholeWord = m_searchControl->wholeWord();
-	bool wildcard = m_searchControl->wildcard();
+	const std::wstring needle = m_searchControl->getNeedle();
+	const bool caseSensitive = m_searchControl->caseSensitive();
+	const bool wholeWord = m_searchControl->wholeWord();
+	const bool wildcard = m_searchControl->wildcard();
 
 	m_searchControl->setAnyMatchingHint(
 		findFirstLine(0, needle, caseSensitive, wholeWord, wildcard, result)
@@ -1028,13 +1025,13 @@ void RichEdit::updateFindPreview() const
 
 bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const
 {
-	std::wstring ndl = caseSensitive ? needle : toLower(needle);
+	const std::wstring ndl = caseSensitive ? needle : toLower(needle);
 	int32_t line = currentLine;
 
 	while (line < getLineCount())
 	{
-		std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
-		size_t p = text.find(ndl);
+		const std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
+		const size_t p = text.find(ndl);
 		if (p != text.npos)
 		{
 			outResult.line = line;
@@ -1049,8 +1046,8 @@ bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bo
 		line = 0;
 		while (line < currentLine)
 		{
-			std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
-			size_t p = text.find(ndl);
+			const std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
+			const size_t p = text.find(ndl);
 			if (p != text.npos)
 			{
 				outResult.line = line;
@@ -1109,7 +1106,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			// Scroll up.
 			if (m_scrollBarV->isVisible(false))
 			{
-				int32_t position = m_scrollBarV->getPosition();
+				const int32_t position = m_scrollBarV->getPosition();
 				m_scrollBarV->setPosition(position - 1);
 				m_scrollBarV->update();
 				update();
@@ -1139,7 +1136,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			// Scroll down.
 			if (m_scrollBarV->isVisible(false))
 			{
-				int32_t position = m_scrollBarV->getPosition();
+				const int32_t position = m_scrollBarV->getPosition();
 				m_scrollBarV->setPosition(position + 1);
 				m_scrollBarV->update();
 				update();
@@ -1193,11 +1190,11 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		{
 			if ((event->getKeyState() & KsControl) == 0)
 			{
-				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+				for (const auto& line : m_lines)
 				{
-					if (m_caret > i->start && m_caret <= i->stop)
+					if (m_caret > line.start && m_caret <= line.stop)
 					{
-						m_caret = i->start;
+						m_caret = line.start;
 						break;
 					}
 				}
@@ -1213,11 +1210,11 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		{
 			if ((event->getKeyState() & KsControl) == 0)
 			{
-				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+				for (const auto& line : m_lines)
 				{
-					if (m_caret >= i->start && m_caret < i->stop)
+					if (m_caret >= line.start && m_caret < line.stop)
 					{
-						m_caret = i->stop;
+						m_caret = line.stop;
 						break;
 					}
 				}
@@ -1232,17 +1229,17 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	case VkPageUp:
 		// Move caret one page up.
 		{
-			Rect rc = getEditRect();
+			const Rect rc = getEditRect();
 
-			int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+			const int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+			const int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 1; i < int32_t(m_lines.size()); ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 				{
 					int32_t offset = m_caret - m_lines[i].start;
-					int32_t di = std::min(pageLines, i);
+					const int32_t di = std::min(pageLines, i);
 					offset = std::min(offset, m_lines[i - di].stop - m_lines[i - di].start);
 					m_caret = m_lines[i - di].start + offset;
 					break;
@@ -1255,17 +1252,17 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	case VkPageDown:
 		// Move caret one page down.
 		{
-			Rect rc = getEditRect();
+			const Rect rc = getEditRect();
 
-			int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+			const int32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+			const int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 			for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 				{
 					int32_t offset = m_caret - m_lines[i].start;
-					int32_t di = std::min< int32_t >(pageLines, int32_t(m_lines.size()) - 1 - i);
+					const int32_t di = std::min< int32_t >(pageLines, int32_t(m_lines.size()) - 1 - i);
 					offset = std::min(offset, m_lines[i + di].stop - m_lines[i + di].start);
 					m_caret = m_lines[i + di].start + offset;
 					break;
@@ -1308,8 +1305,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		}
 		else
 		{
-			bool caretAtSelectionHead = bool(caret == m_selectionStart);
-			bool caretAtSelectionTail = bool(caret == m_selectionStop);
+			const bool caretAtSelectionHead = bool(caret == m_selectionStart);
+			const bool caretAtSelectionTail = bool(caret == m_selectionStop);
 
 			if (caretAtSelectionHead && !caretAtSelectionTail)
 				m_selectionStart = m_caret;
@@ -1349,7 +1346,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 void RichEdit::eventKey(KeyEvent* event)
 {
-	wchar_t ch = event->getCharacter();
+	const wchar_t ch = event->getCharacter();
 
 	if (ch == 3 && m_clipboard)
 		copy();
@@ -1368,7 +1365,7 @@ void RichEdit::eventKey(KeyEvent* event)
 
 void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 	if (position.x < m_lineMargin)
 		return;
 
@@ -1376,7 +1373,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (event->getButton() == MbtLeft)
 	{
-		int32_t offset = getOffsetFromPosition(position);
+		const int32_t offset = getOffsetFromPosition(position);
 		if (offset >= 0)
 		{
 			if ((event->getKeyState() & ui::KsShift) != 0)
@@ -1414,7 +1411,7 @@ void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
 	if (!hasCapture())
 		return;
 
-	std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+	auto i = m_specialCharacters.find(m_text[m_caret].ch);
 	if (i != m_specialCharacters.end())
 		i->second->mouseButtonUp(event);
 
@@ -1423,7 +1420,7 @@ void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
 
 void RichEdit::eventMouseMove(MouseMoveEvent* event)
 {
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 	if (position.x >= m_lineMargin)
 		setCursor(CrIBeam);
 	else
@@ -1432,7 +1429,7 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	int32_t offset = getOffsetFromPosition(position);
+	const int32_t offset = getOffsetFromPosition(position);
 	if (offset >= 0)
 	{
 		m_caret = offset;
@@ -1460,11 +1457,11 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 	if (position.x < m_lineMargin)
 		return;
 
-	int32_t offset = getOffsetFromPosition(position);
+	const int32_t offset = getOffsetFromPosition(position);
 	if (offset >= 0)
 	{
 		if ((m_selectionStart = offset) > 0)
@@ -1485,7 +1482,7 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 		}
 		m_caret = m_selectionStop;
 
-		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+		auto i = m_specialCharacters.find(m_text[m_caret].ch);
 		if (i != m_specialCharacters.end())
 			i->second->mouseDoubleClick(event);
 
@@ -1519,15 +1516,15 @@ void RichEdit::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(innerRc);
 
-	Size sz = innerRc.getSize();
+	const Size sz = innerRc.getSize();
 	innerRc.right -= m_scrollBarV->getPreferredSize(sz).cx;
 	if (m_scrollBarH->isVisible(false))
 		innerRc.bottom -= m_scrollBarH->getPreferredSize(sz).cy;
 
-	uint32_t lineCount = uint32_t(m_lines.size());
-	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
-	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
+	const uint32_t lineCount = uint32_t(m_lines.size());
+	const uint32_t lineOffset = m_scrollBarV->getPosition();
+	const uint32_t lineHeight = getFontMetric().getHeight() + ui::dpi96(c_fontHeightMargin);
+	const uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.
 	m_lineMargin = dpi96(c_iconSize) + canvas.getFontMetric().getExtent(toString(lineOffset + pageLines)).cx + dpi96(2);
@@ -1565,7 +1562,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 
 	// Formatted text.
 	{
-		bool showCaret = m_caretBlink && hasFocus();
+		const bool showCaret = m_caretBlink && hasFocus();
 
 		canvas.setClipRect(Rect(
 			innerRc.left + m_lineMargin,
@@ -1575,7 +1572,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 		));
 
 		Rect lineRc(innerRc.left, innerRc.top, innerRc.right, innerRc.top + lineHeight);
-		uint32_t lineOffsetEnd = std::min(lineOffset + pageLines, lineCount);
+		const uint32_t lineOffsetEnd = std::min(lineOffset + pageLines, lineCount);
 		for (uint32_t i = lineOffset; i < lineOffsetEnd; ++i)
 		{
 			const Line& line = m_lines[i];
@@ -1630,7 +1627,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				if (solidBackground)
 					canvas.fillRect(textRc);
 
-				std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(m_text[j].ch);
+				auto k = m_specialCharacters.find(m_text[j].ch);
 				if (k == m_specialCharacters.end())
 				{
 					if (m_text[j].ch != L'\t' && m_text[j].ch != L' ')
@@ -1664,18 +1661,18 @@ void RichEdit::eventPaint(PaintEvent* event)
 void RichEdit::eventSize(SizeEvent* event)
 {
 	const Rect inner = getInnerRect();
-	int32_t width = m_scrollBarV->getPreferredSize(inner.getSize()).cx;
-	int32_t height = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPreferredSize(inner.getSize()).cy : 0;
+	const int32_t width = m_scrollBarV->getPreferredSize(inner.getSize()).cx;
+	const int32_t height = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPreferredSize(inner.getSize()).cy : 0;
 
 	updateScrollBars();
 
-	Rect rcV(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight() - height));
+	const Rect rcV(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight() - height));
 	m_scrollBarV->setRect(rcV);
 
-	Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
+	const Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));
 	m_scrollBarH->setRect(rcH);
 
-	ui::Size searchControlSize = m_searchControl->getPreferredSize(inner.getSize());
+	const ui::Size searchControlSize = m_searchControl->getPreferredSize(inner.getSize());
 	m_searchControl->setRect(ui::Rect(
 		ui::Point(getEditRect().getWidth() - searchControlSize.cx, 0),
 		searchControlSize
@@ -1701,12 +1698,12 @@ void RichEdit::eventSearch(SearchEvent* event)
 	{
 		FindResult result;
 
-		std::wstring needle = m_searchControl->getNeedle();
-		bool caseSensitive = m_searchControl->caseSensitive();
-		bool wholeWord = m_searchControl->wholeWord();
-		bool wildcard = m_searchControl->wildcard();
+		const std::wstring needle = m_searchControl->getNeedle();
+		const bool caseSensitive = m_searchControl->caseSensitive();
+		const bool wholeWord = m_searchControl->wholeWord();
+		const bool wildcard = m_searchControl->wildcard();
 
-		int32_t caretLine = getLineFromOffset(getCaretOffset());
+		const int32_t caretLine = getLineFromOffset(getCaretOffset());
 		if (findFirstLine(caretLine, needle, caseSensitive, wholeWord, wildcard, result))
 		{
 			showLine(result.line);

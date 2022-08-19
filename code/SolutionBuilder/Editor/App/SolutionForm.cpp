@@ -520,7 +520,7 @@ void SolutionForm::commandNew()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::No)
 			return;
 	}
 
@@ -540,7 +540,7 @@ void SolutionForm::commandOpen()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::No)
 			return;
 	}
 
@@ -548,7 +548,7 @@ void SolutionForm::commandOpen()
 	fileDialog.create(this, type_name(this), L"Open solution", L"SolutionBuilder solutions;*.xms;All files;*.*");
 
 	Path filePath;
-	if (fileDialog.showModal(filePath))
+	if (fileDialog.showModal(filePath) == ui::DialogResult::Ok)
 	{
 		if (!loadSolution(filePath))
 			ui::MessageBox::show(this, L"Unable to open solution", L"Error", ui::MbIconExclamation | ui::MbOk);
@@ -569,7 +569,7 @@ void SolutionForm::commandSave(bool saveAs)
 	{
 		ui::FileDialog fileDialog;
 		fileDialog.create(this, type_name(this), L"Save solution as", L"SolutionBuilder solutions;*.xms", L"", true);
-		cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
+		cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
 		fileDialog.destroy();
 	}
 	else
@@ -605,7 +605,7 @@ bool SolutionForm::commandExit()
 {
 	if (isModified())
 	{
-		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
+		if (ui::MessageBox::show(this, L"Solution not saved, discard changes?", L"Solution not saved", ui::MbIconExclamation | ui::MbYesNo) == ui::DialogResult::No)
 			return false;
 	}
 
@@ -924,7 +924,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
-					if (fileDialog.showModal(paths) == ui::DrOk)
+					if (fileDialog.showModal(paths) == ui::DialogResult::Ok)
 					{
 						Path sourcePath = FileSystem::getInstance().getAbsolutePath(project->getSourcePath());
 
@@ -1045,7 +1045,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
-					if (fileDialog.showModal(paths) == ui::DrOk)
+					if (fileDialog.showModal(paths) == ui::DialogResult::Ok)
 					{
 						Path sourcePath = FileSystem::getInstance().getAbsolutePath(project->getSourcePath());
 

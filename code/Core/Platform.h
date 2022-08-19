@@ -13,24 +13,17 @@ namespace traktor
 	struct SystemApplication
 	{
 #if defined(__ANDROID__)
-		class DelegateInstance* instance;
+		class DelegateInstance* instance = nullptr;
 
-		SystemApplication()
-		:	instance(nullptr)
-		{
-		}
+		SystemApplication() = default;
 
 		explicit SystemApplication(class DelegateInstance* instance_)
 		:	instance(instance_)
 		{
 		}
-#else
-		void* unk;
 
-		SystemApplication()
-		:	unk(nullptr)
-		{
-		}
+#else
+		void* unk = nullptr;
 #endif
 	};
 
@@ -40,12 +33,9 @@ namespace traktor
 	struct SystemWindow
 	{
 #if defined(_WIN32)
-		void* hWnd;
+		void* hWnd = nullptr;
 
-		SystemWindow()
-		:	hWnd(nullptr)
-		{
-		}
+		SystemWindow() = default;
 
 		explicit SystemWindow(void* hWnd_)
 		:	hWnd(hWnd_)
@@ -53,14 +43,10 @@ namespace traktor
 		}
 
 #elif defined(__LINUX__) || defined(__RPI__)
-		void* display;
-		unsigned long window;
+		void* display = nullptr;
+		unsigned long window = 0;
 
-		SystemWindow()
-		:	display(nullptr)
-		,	window(0)
-		{
-		}
+		SystemWindow() = default;
 
 		explicit SystemWindow(void* display_, unsigned long window_)
 		:	display(display_)
@@ -69,12 +55,9 @@ namespace traktor
 		}
 
 #elif defined(__APPLE__)
-		void* view;
+		void* view = nullptr;
 
-		SystemWindow()
-		:	view(nullptr)
-		{
-		}
+		SystemWindow() = default;
 
 		explicit SystemWindow(void* view_)
 		:	view(view_)
@@ -82,12 +65,9 @@ namespace traktor
 		}
 
 #elif defined(__ANDROID__)
-		struct ::ANativeWindow** window;
+		struct ::ANativeWindow** window = nullptr;
 
-		SystemWindow()
-		:	window(nullptr)
-		{
-		}
+		SystemWindow() = default;
 
 		explicit SystemWindow(struct ::ANativeWindow** window_)
 		:	window(window_)
@@ -95,12 +75,7 @@ namespace traktor
 		}
 
 #else
-		void* unk;
-
-		SystemWindow()
-		:	unk(nullptr)
-		{
-		}
+		void* unk = nullptr;
 #endif
 	};
 

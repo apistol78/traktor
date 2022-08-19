@@ -143,7 +143,7 @@ void NewWorkspaceDialog::eventBrowsePathButtonClick(ui::ButtonClickEvent* event)
 	Path path;
 
 	pathDialog.create(this, i18n::Text(L"EDITOR_NEW_WORKSPACE_PATH"));
-	if (pathDialog.showModal(path) == ui::DrOk)
+	if (pathDialog.showModal(path) == ui::DialogResult::Ok)
 		m_editPath->setText(path.getPathName());
 
 	pathDialog.destroy();
@@ -152,7 +152,7 @@ void NewWorkspaceDialog::eventBrowsePathButtonClick(ui::ButtonClickEvent* event)
 
 void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	if (event->getCommand() == ui::DrOk)
+	if ((ui::DialogResult)event->getCommand().getId() == ui::DialogResult::Ok)
 	{
 		Ref< ui::PreviewItem > selectedItem = m_templateList->getSelectedItem();
 		if (selectedItem)

@@ -12,26 +12,26 @@ void ClipboardX11::destroy()
 
 bool ClipboardX11::setObject(ISerializable* object)
 {
-	m_type = CtObject;
+	m_type = ClipboardContent::Object;
 	m_object = object;
 	return true;
 }
 
 bool ClipboardX11::setText(const std::wstring& text)
 {
-	m_type = CtText;
+	m_type = ClipboardContent::Text;
 	m_text = text;
 	return true;
 }
 
 bool ClipboardX11::setImage(const drawing::Image* image)
 {
-	m_type = CtImage;
+	m_type = ClipboardContent::Image;
 	m_image = image;
 	return true;
 }
 
-ClipboardContentType ClipboardX11::getContentType() const
+ClipboardContent ClipboardX11::getContentType() const
 {
 	return m_type;
 }

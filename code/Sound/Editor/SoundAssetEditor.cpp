@@ -249,7 +249,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 				return;
 
 			Path path = fileItem->getPath();
-			if (fileDialog.showModal(path) == ui::DrOk)
+			if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 			{
 				fileItem->setPath(path);
 				m_propertyList->apply();
@@ -314,7 +314,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		{
 			TextEditorDialog textEditorDialog;
 			textEditorDialog.create(m_propertyList, textItem->getValue());
-			if (textEditorDialog.showModal() == ui::DrOk)
+			if (textEditorDialog.showModal() == ui::DialogResult::Ok)
 			{
 				textItem->setValue(textEditorDialog.getText());
 				m_propertyList->apply();
@@ -327,7 +327,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		{
 			ui::ColorDialog colorDialog;
 			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
-			if (colorDialog.showModal() == ui::DrOk)
+			if (colorDialog.showModal() == ui::DialogResult::Ok)
 			{
 				colorItem->setValue(colorDialog.getColor());
 				m_propertyList->apply();
