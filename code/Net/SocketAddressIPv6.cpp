@@ -10,15 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
-#if !defined(__PS3__) && !defined(_XBOX)
-
-SocketAddressIPv6::SocketAddressIPv6()
-:	m_info(0)
-{
-}
-
 SocketAddressIPv6::SocketAddressIPv6(uint16_t port)
-:	m_info(0)
 {
 	addrinfo hints;
 
@@ -37,11 +29,10 @@ SocketAddressIPv6::SocketAddressIPv6(uint16_t port)
 		&m_info
 	);
 	if (ret != 0)
-		m_info = 0;
+		m_info = nullptr;
 }
 
 SocketAddressIPv6::SocketAddressIPv6(const std::wstring& host, uint16_t port)
-:	m_info(0)
 {
 	std::string mbsh = wstombs(host);
 	addrinfo hints;
@@ -60,7 +51,7 @@ SocketAddressIPv6::SocketAddressIPv6(const std::wstring& host, uint16_t port)
 		&m_info
 	);
 	if (ret != 0)
-		m_info = 0;
+		m_info = nullptr;
 }
 
 SocketAddressIPv6::~SocketAddressIPv6()
@@ -68,13 +59,13 @@ SocketAddressIPv6::~SocketAddressIPv6()
 	if (m_info)
 	{
 		freeaddrinfo(m_info);
-		m_info = 0;
+		m_info = nullptr;
 	}
 }
 
 bool SocketAddressIPv6::valid() const
 {
-	return bool(m_info != 0);
+	return bool(m_info != nullptr);
 }
 
 std::wstring SocketAddressIPv6::getHostName() const
@@ -106,43 +97,8 @@ const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
 			return iter;
 	}
 
-	return 0;
+	return nullptr;
 }
-
-#else	// _PS3
-
-SocketAddressIPv6::SocketAddressIPv6()
-{
-}
-
-SocketAddressIPv6::SocketAddressIPv6(uint16_t port)
-{
-}
-
-SocketAddressIPv6::SocketAddressIPv6(const std::wstring& host, uint16_t port)
-{
-}
-
-SocketAddressIPv6::~SocketAddressIPv6()
-{
-}
-
-bool SocketAddressIPv6::valid() const
-{
-	return false;
-}
-
-std::wstring SocketAddressIPv6::getHostName() const
-{
-	return L"";
-}
-
-const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
-{
-	return 0;
-}
-
-#endif
 
 	}
 }

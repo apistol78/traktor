@@ -112,7 +112,6 @@ bool Server::update()
 	    AlignedVector< std::wstring > platforms;
 #if defined(_WIN32)
         platforms.push_back(L"Android");
-        platforms.push_back(L"PS3");
         platforms.push_back(L"Win64");
 #elif defined(__APPLE__)
         platforms.push_back(L"Android");

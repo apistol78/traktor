@@ -15,9 +15,6 @@
 #elif defined(__APPLE__)	// MAC
 #	include "Core/Io/OsX/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#elif defined(__PS3__)			// PS3
-#	include "Core/Io/Ps3/NativeVolume.h"
-#	define HAS_NATIVE_VOLUME
 #elif defined(__ANDROID__)
 #	include "Core/Io/Android/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME

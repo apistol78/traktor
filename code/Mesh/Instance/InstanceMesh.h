@@ -52,11 +52,7 @@ class T_DLLCLASS InstanceMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-#if defined(__PS3__)
-	enum { MaxInstanceCount = 20 };
-#else
 	enum { MaxInstanceCount = 60 };
-#endif
 
 	struct Part
 	{

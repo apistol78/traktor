@@ -27,7 +27,7 @@ class T_DLLCLASS SocketAddressIPv6 : public SocketAddress
 	T_RTTI_CLASS;
 
 public:
-	SocketAddressIPv6();
+	SocketAddressIPv6() = default;
 
 	SocketAddressIPv6(uint16_t port);
 
@@ -42,9 +42,7 @@ public:
 	const addrinfo* getAddrInfo(int socktype) const;
 
 private:
-#if !defined(__PS3__) && !defined(_XBOX)
-	addrinfo* m_info;
-#endif
+	addrinfo* m_info = nullptr;
 };
 
 	}

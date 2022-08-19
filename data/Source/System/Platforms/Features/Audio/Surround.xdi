@@ -153,13 +153,6 @@
 			</deploy>
 		</item>
 		<item>
-			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
-			<executableFile/>
-			<deploy type="traktor.PropertyGroup">
-				<value/>
-			</deploy>
-		</item>
-		<item>
 			<platform>{9D506CE7-880A-4899-8A83-1FF53E9CD590}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">

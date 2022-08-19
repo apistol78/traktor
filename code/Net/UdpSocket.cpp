@@ -46,7 +46,6 @@ bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 {
-#if !defined(__PS3__) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
@@ -72,9 +71,6 @@ bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
@@ -96,7 +92,6 @@ bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 {
-#if !defined(__PS3__) && !defined(_XBOX)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
@@ -112,9 +107,6 @@ bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 Ref< SocketAddress > UdpSocket::getLocalAddress()

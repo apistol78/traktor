@@ -1406,7 +1406,6 @@ const ImmutableNode::InputPinDesc c_Platform_i[] =
 	{ L"iOS", true },
 	{ L"Linux", true },
 	{ L"macOS", true },
-	{ L"PS3", true },
 	{ L"RaspberryPI", true },
 	{ L"Windows", true },
 	{ L"Other", false },

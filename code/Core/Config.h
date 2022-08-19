@@ -15,7 +15,7 @@
 #	define T_FORCE_INLINE __forceinline
 #	define T_ALIGN16 __declspec(align(16))
 #	define T_NOEXCEPT noexcept
-#elif defined(__GNUC__) || defined(__ANDROID__) || defined(__PS3__)
+#elif defined(__GNUC__) || defined(__ANDROID__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
 #		define T_DLLEXPORT __attribute__((visibility("default")))
@@ -25,9 +25,6 @@
 #	define T_ALIGN16 __attribute__((aligned(16)))
 #	if !defined(__APPLE__)
 #		define T_NOEXCEPT noexcept
-#	endif
-#	if defined(__PS3__) && defined(SPU)
-#		define nullptr 0
 #	endif
 #endif
 
@@ -74,10 +71,7 @@
 #	elif TARGET_RT_BIG_ENDIAN
 #		define T_BIG_ENDIAN
 #	endif
-#elif defined(_XBOX) || defined(__PS3__)
-// Both Xenon and PS3 use a PowerPC derivate.
-#	define T_BIG_ENDIAN
-#elif defined(_WIN32) || defined(__PS3__) || defined(_XBOX_ONE)
+#elif defined(_WIN32)
 // Assume little endian on Win32 as it's probably most common.
 #	define T_LITTLE_ENDIAN
 #elif defined(__GNUC__)
@@ -117,11 +111,7 @@ typedef unsigned __int64 uint64_t;
 #	endif
 #else
 #	if !defined(T_HAVE_TYPES)
-#		if defined(__PS3__)
-#			include <sys/types.h>
-#		else
-#			include <stdint.h>
-#		endif
+#		include <stdint.h>
 #		define T_HAVE_TYPES
 #	endif
 #	include <stddef.h>
@@ -133,7 +123,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Use these macros in c/d tors only.
-#if defined(__ANDROID__) || defined(__PS3__)
+#if defined(__ANDROID__)
 #	define T_EXCEPTION_GUARD_BEGIN
 #	define T_EXCEPTION_GUARD_END
 #endif

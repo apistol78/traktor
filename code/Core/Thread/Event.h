@@ -1,8 +1,5 @@
 #pragma once
 
-#if defined(__PS3__)
-#	include <sys/synchronization.h>
-#endif
 #include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
@@ -35,14 +32,7 @@ public:
 	virtual bool wait(int32_t timeout = -1);
 
 private:
-#if defined(__PS3__)
-	sys_lwmutex_t m_mutex;
-	sys_lwcond_t m_cond;
-	uint32_t m_signal;
-	uint32_t m_waiters;
-#else
 	void* m_handle;
-#endif
 };
 
 }
