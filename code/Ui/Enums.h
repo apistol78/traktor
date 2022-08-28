@@ -192,6 +192,9 @@ enum VirtualKey
 	VkNumLock	= 1054,
 	VkScroll	= 1055,
 
+	VkComma = ',',
+	VkPeriod = '.',
+
 	Vk0 = '0',
 	Vk1 = '1',
 	Vk2 = '2',

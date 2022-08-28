@@ -71,6 +71,8 @@ const struct { uint32_t keySym; VirtualKey vkey; } c_translateTable[] =
 	{ XK_F12, VkF12 },
 	//{ VK_NUMLOCK, VkNumLock },
 	//{ VK_SCROLL, VkScroll },
+	{ XK_comma, VkComma },
+	{ XK_period, VkPeriod },
 	{ XK_Q, VkQ },
 	{ XK_W, VkW },
 	{ XK_E, VkE },
