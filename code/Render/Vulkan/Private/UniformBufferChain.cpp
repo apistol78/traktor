@@ -1,10 +1,8 @@
 #include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/UniformBufferChain.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 Ref< UniformBufferChain > UniformBufferChain::create(Context* context, uint32_t blockCount, uint32_t blockSize)
 {
@@ -64,5 +62,4 @@ UniformBufferChain::UniformBufferChain(ApiBuffer* buffer, void* top, uint32_t bl
 {
 }
 
-	}
 }

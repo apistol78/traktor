@@ -4,10 +4,8 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderPassCache : public Object
 {
@@ -38,5 +36,4 @@ private:
 	SmallMap< Specification, VkRenderPass > m_renderPasses;
 };
 
-	}
 }

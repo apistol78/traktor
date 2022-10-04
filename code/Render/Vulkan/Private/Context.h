@@ -7,10 +7,8 @@
 #include "Core/Thread/Semaphore.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Queue;
 class UniformBufferPool;
@@ -80,5 +78,4 @@ private:
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 };
 
-	}
 }

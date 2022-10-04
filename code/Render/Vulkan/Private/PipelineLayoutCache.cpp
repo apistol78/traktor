@@ -5,12 +5,10 @@
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 #if defined(_DEBUG)
 
@@ -47,7 +45,7 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 
 #endif
 
-		}
+	}
 
 PipelineLayoutCache::PipelineLayoutCache(VkDevice logicalDevice)
 :	m_logicalDevice(logicalDevice)
@@ -135,5 +133,4 @@ VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 	return sampler;
 }
 
-	}
 }

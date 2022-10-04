@@ -5,10 +5,8 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 // Mappings between our enums and Vulkan.
 extern const VkCullModeFlagBits c_cullMode[];
@@ -36,6 +34,5 @@ VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);
 
 VkAccessFlags getAccessMask(const VkImageLayout layout);
 
-	}
 }
 

@@ -4,10 +4,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 class PipelineLayoutCache : public Object
 {
@@ -35,5 +33,4 @@ private:
 	SmallMap< uint32_t, VkSampler > m_samplers;
 };
 
-	}
 }

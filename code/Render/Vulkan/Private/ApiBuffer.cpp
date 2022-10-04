@@ -3,10 +3,8 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ApiBuffer", ApiBuffer, Object)
 
@@ -82,5 +80,4 @@ void ApiBuffer::unlock()
 	m_locked = nullptr;
 }
 
-    }
 }

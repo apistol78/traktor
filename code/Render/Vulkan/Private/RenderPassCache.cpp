@@ -4,10 +4,8 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/RenderPassCache.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 bool operator < (const RenderPassCache::Specification& lh, const RenderPassCache::Specification& rh)
 {
@@ -218,5 +216,4 @@ bool RenderPassCache::get(
 	return true;
 }
 
-	}
 }
