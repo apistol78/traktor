@@ -1,9 +1,7 @@
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 void UniformBufferPool::destroy()
 {
@@ -70,5 +68,4 @@ UniformBufferPool::UniformBufferPool(Context* context, uint32_t blockCount, cons
 {
 }
 
-	}
 }

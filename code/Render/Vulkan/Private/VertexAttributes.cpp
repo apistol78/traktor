@@ -1,10 +1,8 @@
 #include "Core/Misc/String.h"
 #include "Render/Vulkan/Private/VertexAttributes.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 std::wstring VertexAttributes::getName(DataUsage usage, int32_t index)
 {
@@ -37,5 +35,4 @@ int32_t VertexAttributes::getLocation(DataUsage usage, int32_t index)
 	return (location < base[(int32_t)usage + 1]) ? location : -1;
 }
 
-	}
 }

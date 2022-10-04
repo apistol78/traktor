@@ -4,10 +4,8 @@
 #include "Core/Ref.h"
 #include "Core/Memory/BlockAllocator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ApiBuffer;
 class Context;
@@ -40,5 +38,4 @@ private:
 	explicit UniformBufferChain(ApiBuffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize);
 };
 
-	}
 }

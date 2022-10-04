@@ -1,10 +1,8 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/ShaderModuleCache.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 ShaderModuleCache::ShaderModuleCache(VkDevice logicalDevice)
 :	m_logicalDevice(logicalDevice)
@@ -36,5 +34,4 @@ VkShaderModule ShaderModuleCache::get(const AlignedVector< uint32_t >& shader, u
 	return sm;
 }
 
-	}
 }

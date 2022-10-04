@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS VertexAttributes
 {;
@@ -23,5 +21,4 @@ public:
 	static int32_t getLocation(DataUsage usage, int32_t index);
 };
 
-	}
 }

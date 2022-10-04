@@ -4,10 +4,8 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 const VkCullModeFlagBits c_cullMode[] =
 {
@@ -517,5 +515,4 @@ VkAccessFlags getAccessMask(const VkImageLayout layout)
 	return 0;
 }
 
-	}
 }

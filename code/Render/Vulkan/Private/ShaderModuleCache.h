@@ -4,10 +4,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderModuleCache : public Object
 {
@@ -23,5 +21,4 @@ private:
 	SmallMap< uint32_t, VkShaderModule > m_shaderModules;
 };
 
-	}
 }

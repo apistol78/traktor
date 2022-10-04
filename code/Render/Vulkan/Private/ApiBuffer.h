@@ -4,10 +4,8 @@
 #include "Core/Ref.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class Context;
 
@@ -16,35 +14,34 @@ class Context;
  */
 class ApiBuffer : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    ApiBuffer() = delete;
+	ApiBuffer() = delete;
 
-    ApiBuffer(const ApiBuffer&) = delete;
+	ApiBuffer(const ApiBuffer&) = delete;
 
-    ApiBuffer(ApiBuffer&&) = delete;
+	ApiBuffer(ApiBuffer&&) = delete;
 
-    explicit ApiBuffer(Context* context);
+	explicit ApiBuffer(Context* context);
 
-    virtual ~ApiBuffer();
+	virtual ~ApiBuffer();
 
 	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess);
 
 	void destroy();
 
-    void* lock();
+	void* lock();
 
-    void unlock();
+	void unlock();
 
-    operator VkBuffer () const { return m_buffer; }
+	operator VkBuffer () const { return m_buffer; }
 
 private:
-    Context* m_context = nullptr;
+	Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkBuffer m_buffer = 0;
-    void* m_locked = nullptr;
+	void* m_locked = nullptr;
 };
-        
-    }
+		
 }

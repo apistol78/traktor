@@ -9,8 +9,10 @@ namespace traktor
 class Semaphore;
 class Thread;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class Context;
 class Queue;
@@ -49,5 +51,4 @@ private:
 	explicit CommandBuffer(Context* context, Queue* queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer);
 };
 
-	}
 }

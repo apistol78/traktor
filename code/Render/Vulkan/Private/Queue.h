@@ -6,10 +6,8 @@
 #include "Core/Thread/Semaphore.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class CommandBuffer;
 class Context;
@@ -47,5 +45,4 @@ private:
 	Queue(Context* context, VkQueue queue, uint32_t queueIndex);
 };
 
-	}
 }

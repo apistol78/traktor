@@ -4,10 +4,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/Vulkan/Private/UniformBufferChain.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class UniformBufferPool : public Object
 {
@@ -35,5 +33,4 @@ private:
 	explicit UniformBufferPool(Context* context, uint32_t blockCount, const wchar_t* const name);
 };
 
-	}
 }
