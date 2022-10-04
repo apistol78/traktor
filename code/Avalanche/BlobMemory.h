@@ -15,8 +15,10 @@ namespace traktor
 
 class ChunkMemory;
 
-	namespace avalanche
-	{
+}
+
+namespace traktor::avalanche
+{
 
 class T_DLLCLASS BlobMemory : public IBlob
 {
@@ -42,5 +44,4 @@ private:
 	mutable DateTime m_lastAccessed;
 };
 
-	}
 }

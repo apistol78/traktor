@@ -17,8 +17,10 @@ namespace traktor
 
 class IStream;
 
-	namespace avalanche
-	{
+}
+
+namespace traktor::avalanche
+{
 
 class T_DLLCLASS IBlob : public Object
 {
@@ -38,5 +40,4 @@ public:
 	virtual DateTime lastAccessed() const = 0;
 };
 
-	}
 }

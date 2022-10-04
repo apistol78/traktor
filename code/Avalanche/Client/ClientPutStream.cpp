@@ -6,10 +6,8 @@
 #include "Core/Thread/Acquire.h"
 #include "Net/SocketStream.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.ClientPutStream", ClientPutStream, IStream)
 
@@ -114,5 +112,4 @@ void ClientPutStream::flush()
 {
 }
 
-	}
 }

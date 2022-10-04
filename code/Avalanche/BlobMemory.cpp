@@ -2,10 +2,8 @@
 #include "Core/Io/ChunkMemory.h"
 #include "Core/Io/ChunkMemoryStream.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.BlobMemory", BlobMemory, Object)
 
@@ -49,5 +47,4 @@ DateTime BlobMemory::lastAccessed() const
 	return m_lastAccessed;
 }
 
-	}
 }

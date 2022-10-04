@@ -13,12 +13,8 @@
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::avalanche::test
 {
-	namespace avalanche
-	{
-		namespace test
-		{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.avalanche.test.CaseServer", 0, CaseServer, traktor::test::Case)
 
@@ -93,6 +89,4 @@ void CaseServer::run()
 	server = nullptr;
 }
 
-		}
-	}
 }

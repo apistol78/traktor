@@ -8,18 +8,16 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadPool.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
+	namespace
 	{
-		namespace
-		{
 
 constexpr uint8_t c_queueEventGet = 0x01;
 constexpr uint8_t c_queueEventPut = 0x02;
 constexpr uint8_t c_queueEventRemove = 0x03;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Peer", Peer, Object)
 
@@ -226,5 +224,4 @@ void Peer::dictionaryRemove(const Key& key)
 	// Do not signal queue event since, for now, we try to gather evictions in batch.
 }
 
-	}
 }

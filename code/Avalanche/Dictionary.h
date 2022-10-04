@@ -16,10 +16,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 class IBlob;
 
@@ -70,5 +68,4 @@ private:
 	Stats m_stats;
 };
 
-	}
 }

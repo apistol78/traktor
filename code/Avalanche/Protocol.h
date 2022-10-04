@@ -2,10 +2,8 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 constexpr static uint8_t c_replyOk				= 0x01;
 constexpr static uint8_t c_replyContinue		= 0x02;
@@ -24,5 +22,4 @@ constexpr static uint8_t c_subCommandPutAppend	= 0x41;
 constexpr static uint8_t c_subCommandPutCommit	= 0x42;
 constexpr static uint8_t c_subCommandPutDiscard	= 0x43;
 
-	}
 }

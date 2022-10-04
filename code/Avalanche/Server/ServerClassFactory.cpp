@@ -4,10 +4,8 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Settings/PropertyGroup.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.avalanche.ServerClassFactory", 0, ServerClassFactory, IRuntimeClassFactory)
 
@@ -21,5 +19,4 @@ void ServerClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classServer);
 }
 
-	}
 }
