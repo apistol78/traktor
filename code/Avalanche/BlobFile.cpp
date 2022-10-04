@@ -6,10 +6,8 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Misc/Key.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.BlobFile", BlobFile, Object)
 
@@ -83,5 +81,4 @@ DateTime BlobFile::lastAccessed() const
 	return m_lastAccessed;
 }
 
-	}
 }

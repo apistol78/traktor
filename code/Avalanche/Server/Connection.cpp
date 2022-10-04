@@ -9,10 +9,8 @@
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Connection", Connection, Object)
 
@@ -365,5 +363,4 @@ bool Connection::process()
 	return true;
 }
 
-	}
 }

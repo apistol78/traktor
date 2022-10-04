@@ -17,10 +17,8 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Server", Server, Object)
 
@@ -246,5 +244,4 @@ bool Server::update()
 	return true;
 }
 
-	}
 }

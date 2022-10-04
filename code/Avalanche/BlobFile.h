@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 class T_DLLCLASS BlobFile : public IBlob
 {
@@ -45,5 +43,4 @@ private:
 	mutable DateTime m_lastAccessed;
 };
 
-	}
 }

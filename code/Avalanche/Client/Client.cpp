@@ -7,10 +7,8 @@
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Client", Client, Object)
 
@@ -310,5 +308,4 @@ Ref< net::SocketStream > Client::establish(uint8_t command)
 	return stream;
 }
 
-	}
 }

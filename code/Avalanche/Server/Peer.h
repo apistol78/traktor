@@ -21,8 +21,10 @@ namespace traktor
 
 class Thread;
 
-	namespace avalanche
-	{
+}
+
+namespace traktor::avalanche
+{
 
 class Client;
 
@@ -67,5 +69,4 @@ private:
 	Event m_eventQueued;
 };
 
-	}
 }

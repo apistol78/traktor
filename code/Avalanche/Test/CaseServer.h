@@ -10,12 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::avalanche::test
 {
-	namespace avalanche
-	{
-		namespace test
-		{
 
 class T_DLLCLASS CaseServer : public traktor::test::Case
 {
@@ -25,7 +21,5 @@ public:
 	virtual void run() override final;
 };
 
-		}
-	}
 }
 

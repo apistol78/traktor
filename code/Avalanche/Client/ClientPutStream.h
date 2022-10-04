@@ -3,17 +3,15 @@
 #include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class SocketStream;
 
-	}
+}
 
-	namespace avalanche
-	{
+namespace traktor::avalanche
+{
 
 class Client;
 
@@ -49,5 +47,4 @@ private:
 	Ref< net::SocketStream > m_stream;
 };
 
-	}
 }

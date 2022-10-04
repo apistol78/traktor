@@ -18,16 +18,18 @@ namespace traktor
 
 class PropertyGroup;
 
-    namespace net
-    {
+}
+
+namespace traktor::net
+{
 
 class DiscoveryManager;
 class TcpSocket;
 
-    }
+}
 
-    namespace avalanche
-    {
+namespace traktor::avalanche
+{
 
 class Connection;
 class Dictionary;
@@ -35,30 +37,29 @@ class Peer;
 
 class T_DLLCLASS Server : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    constexpr static int32_t c_majorVersion = 7;
-    constexpr static int32_t c_minorVersion = 0;
+	constexpr static int32_t c_majorVersion = 7;
+	constexpr static int32_t c_minorVersion = 0;
 
-    bool create(const PropertyGroup* settings);
+	bool create(const PropertyGroup* settings);
 
-    void destroy();
+	void destroy();
 
-    bool update();
+	bool update();
 
-    size_t getConnectionCount() const { return m_connections.size(); }
+	size_t getConnectionCount() const { return m_connections.size(); }
 
 private:
-    Ref< net::TcpSocket > m_serverSocket;
-    RefArray< Connection > m_connections;
-    Ref< net::DiscoveryManager > m_discoveryManager;
-    RefArray< Peer > m_peers;
-    Ref< Dictionary > m_dictionary;
-    Guid m_instanceId;
-    bool m_master = false;
-    int32_t m_memoryBudget = 8;
+	Ref< net::TcpSocket > m_serverSocket;
+	RefArray< Connection > m_connections;
+	Ref< net::DiscoveryManager > m_discoveryManager;
+	RefArray< Peer > m_peers;
+	Ref< Dictionary > m_dictionary;
+	Guid m_instanceId;
+	bool m_master = false;
+	int32_t m_memoryBudget = 8;
 };
 
-    }
 }

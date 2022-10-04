@@ -15,17 +15,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class SocketStream;
 
-	}
+}
 
-	namespace avalanche
-	{
+namespace traktor::avalanche
+{
 
 class T_DLLCLASS Client : public Object
 {
@@ -65,5 +63,4 @@ private:
 	Ref< net::SocketStream > establish(uint8_t command);
 };
 
-	}
 }

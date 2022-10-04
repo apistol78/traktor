@@ -16,16 +16,18 @@ namespace traktor
 
 class Thread;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class SocketStream;
 class TcpSocket;
 
-	}
+}
 
-	namespace avalanche
-	{
+namespace traktor::avalanche
+{
 
 class Dictionary;
 
@@ -52,5 +54,4 @@ private:
 	bool process();
 };
 
-	}
 }

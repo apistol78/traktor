@@ -6,10 +6,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.avalanche.Dictionary", Dictionary, Object)
 
@@ -158,5 +156,4 @@ bool Dictionary::getStats(Stats& outStats) const
 	return true;
 }
 
-	}
 }
