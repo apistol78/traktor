@@ -2311,12 +2311,12 @@
 						<items>
 							<item type="File" version="1">
 								<fileName>*.c</fileName>
-								<excludeFilter/>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
 							<item type="File" version="1">
 								<fileName>*.h</fileName>
-								<excludeFilter/>
+								<excludeFilter>gz*</excludeFilter>
 								<items/>
 							</item>
 						</items>
