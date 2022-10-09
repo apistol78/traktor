@@ -497,7 +497,7 @@ void ClientPage::eventTimer(ui::TimerEvent* event)
 		makeTypeInfoSet< MovieDebugInfo, FrameDebugInfo >(),
 		10,
 		debugInfo
-	) != net::BidirectionalObjectTransport::RtSuccess)
+	) != net::BidirectionalObjectTransport::Result::Success)
 		return;
 
 	if (const FrameDebugInfo* frameInfo = dynamic_type_cast< const FrameDebugInfo* >(debugInfo))

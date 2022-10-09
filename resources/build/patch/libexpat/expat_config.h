@@ -19,7 +19,7 @@
 #define HAVE_GETPAGESIZE
 
 /* Define to 1 if you have the `getrandom' function. */
-#define HAVE_GETRANDOM
+//#define HAVE_GETRANDOM
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H
@@ -46,7 +46,7 @@
 #define HAVE_STRING_H
 
 /* Define to 1 if you have `syscall' and `SYS_getrandom'. */
-#define HAVE_SYSCALL_GETRANDOM
+//#define HAVE_SYSCALL_GETRANDOM
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H

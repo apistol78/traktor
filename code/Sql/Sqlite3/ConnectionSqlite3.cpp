@@ -82,7 +82,7 @@ Ref< IResultSet > ConnectionSqlite3::executeQuery(const std::wstring& query)
 	int err = sqlite3_prepare_v2(
 		(sqlite3*)m_db,
 		wstombs(query).c_str(),
-		query.length(),
+		(int)query.length(),
 		&stmt,
 		0
 	);
@@ -106,7 +106,7 @@ int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 	err = sqlite3_prepare_v2(
 		(sqlite3*)m_db,
 		wstombs(update).c_str(),
-		update.length(),
+		(int)update.length(),
 		&stmt,
 		0
 	);

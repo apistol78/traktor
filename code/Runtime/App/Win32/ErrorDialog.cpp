@@ -83,7 +83,7 @@ void ErrorDialog::eventButtonClickUpload(ui::ButtonClickEvent* event)
 
 void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)
 {
-	endModal(DialogResult::Ok);
+	endModal(ui::DialogResult::Ok);
 }
 
 	}

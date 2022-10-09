@@ -43,7 +43,7 @@ public:
 			ptr += ncopy;
 			nbytes -= ncopy;
 
-			if (m_uncompressedBufferCount >= m_uncompressedBuffer.size())
+			if (m_uncompressedBufferCount >= (int64_t)m_uncompressedBuffer.size())
 			{
 				lzo_uint compressedBlockSize = m_uncompressedBuffer.size();
 				lzo1x_1_compress(

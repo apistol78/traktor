@@ -51,7 +51,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 			if (!chunk.ptr)
 				break;
 
-			int32_t nsent = m_socket->send(chunk.ptr, chunk.size);
+			int32_t nsent = m_socket->send(chunk.ptr, (int)chunk.size);
 			if (nsent < 0)
 				return false;
 

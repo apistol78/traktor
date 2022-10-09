@@ -70,7 +70,7 @@ public:
 					break;
 
 				m_zstream.next_in = &m_buf[0];
-				m_zstream.avail_in = nread;
+				m_zstream.avail_in = (uInt)nread;
 			}
 
 			rc = inflate(&m_zstream, Z_SYNC_FLUSH);

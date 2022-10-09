@@ -2,6 +2,7 @@
 
 #include "Core/Config.h"
 #include "Core/Io/Path.h"
+#include "Ui/Enums.h"
 
 namespace traktor
 {

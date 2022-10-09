@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <random>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Theater/ActData.h"
@@ -45,7 +46,9 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const Sma
 		for (size_t i = 0; i < indices.size(); ++i)
 			indices[i] = i;
 
-		std::random_shuffle(indices.begin(), indices.end());
+		std::random_device rd;
+		std::mt19937 g(rd());
+		std::shuffle(indices.begin(), indices.end(), g);
 
 		RefArray< const Act > tmp(m_acts.size());
 		for (size_t i = 0; i < indices.size(); ++i)

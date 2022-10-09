@@ -15,13 +15,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
-						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -41,13 +42,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
-						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -67,13 +69,14 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
-						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -102,13 +105,14 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libexpat</item>
 						<item>$(EXPAT_SDK)/lib</item>
 					</includePaths>
 					<definitions>
-						<item>COMPILED_FROM_DSP</item>
 						<item>XML_STATIC</item>
 						<item>XML_BUILDING_EXPAT</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>XML_POOR_ENTROPY</item>
+						<item>HAVE_MEMMOVE</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -133,24 +137,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>xmlparse.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>xmlrole.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>xmltok.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
-					<fileName>loadlibrary.c</fileName>
-					<items/>
-				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -167,12 +171,11 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -192,12 +195,11 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -217,12 +219,11 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -251,12 +252,11 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(BULLET_SDK)/include</item>
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -281,12 +281,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>src/*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>src/*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
@@ -295,12 +297,14 @@
 						<item type="Filter">
 							<name>BroadphaseCollision</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/BroadphaseCollision/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/BroadphaseCollision/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -308,12 +312,14 @@
 						<item type="Filter">
 							<name>CollisionDispatch</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/CollisionDispatch/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/CollisionDispatch/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -321,12 +327,14 @@
 						<item type="Filter">
 							<name>CollisionShapes</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/CollisionShapes/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/CollisionShapes/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -334,12 +342,14 @@
 						<item type="Filter">
 							<name>NarrowPhaseCollision</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/NarrowPhaseCollision/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletCollision/NarrowPhaseCollision/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -352,12 +362,14 @@
 						<item type="Filter">
 							<name>ConstraintSolver</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/ConstraintSolver/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/ConstraintSolver/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -365,12 +377,14 @@
 						<item type="Filter">
 							<name>Dynamics</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/Dynamics/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/Dynamics/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -378,12 +392,14 @@
 						<item type="Filter">
 							<name>Vehicle</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/Vehicle/*.cpp</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>src/BulletDynamics/Vehicle/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -393,12 +409,14 @@
 				<item type="Filter">
 					<name>LinearMath</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/LinearMath/*.cpp</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/LinearMath/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -417,6 +435,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -443,6 +462,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -469,6 +489,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -504,6 +525,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(FREETYPE_SDK)/build/include</item>
 						<item>$(FREETYPE_SDK)/include</item>
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
@@ -538,92 +560,9 @@
 				<item type="Filter">
 					<name>autofit</name>
 					<items>
-						<item type="File">
-							<fileName>autofit/afangles.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afangles.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afcjk.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afcjk.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afdummy.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afdummy.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aferrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afglobal.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afglobal.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afhints.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afhints.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afindic.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afindic.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aflatin.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aflatin.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afloader.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afloader.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afmodule.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afmodule.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/aftypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afwarp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>autofit/afwarp.h</fileName>
+						<item type="File" version="1">
+							<fileName>autofit/autofit.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -631,124 +570,9 @@
 				<item type="Filter">
 					<name>base</name>
 					<items>
-						<item type="File">
-							<fileName>base/ftapi.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbbox.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbdf.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftbitmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftcalc.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftdbgmem.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftdebug.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgasp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgloadr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftglyph.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftgxval.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftinit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftlcdfil.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftmm.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftnames.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftotval.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftoutln.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftpatent.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftpfr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftrfork.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftstream.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftstroke.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftsynth.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftsystem.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/fttrigon.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/fttype1.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftutil.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftwinfnt.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>base/ftxf86.c</fileName>
+						<item type="File" version="1">
+							<fileName>base/ft*.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -756,20 +580,9 @@
 				<item type="Filter">
 					<name>bdf</name>
 					<items>
-						<item type="File">
-							<fileName>bdf/bdferror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdflib.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdfdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bdf/bdfdrivr.h</fileName>
+						<item type="File" version="1">
+							<fileName>bdf/bdf.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -777,68 +590,9 @@
 				<item type="Filter">
 					<name>cache</name>
 					<items>
-						<item type="File">
-							<fileName>cache/ftccback.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcerror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcglyph.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcglyph.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcimage.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcimage.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmanag.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmanag.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmru.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcmru.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcsbits.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcsbits.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftcbasic.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccache.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cache/ftccache.h</fileName>
+						<item type="File" version="1">
+							<fileName>cache/ftcache.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -846,64 +600,9 @@
 				<item type="Filter">
 					<name>cff</name>
 					<items>
-						<item type="File">
-							<fileName>cff/cfftypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffdrivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cfferrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cffparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cff/cfftoken.h</fileName>
+						<item type="File" version="1">
+							<fileName>cff/cff.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -911,581 +610,9 @@
 				<item type="Filter">
 					<name>cid</name>
 					<items>
-						<item type="File">
-							<fileName>cid/cidtoken.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/ciderrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cid/cidriver.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pcf</name>
-					<items>
-						<item type="File">
-							<fileName>pcf/pcfutil.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcf.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfdrivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcferror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfread.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfread.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pcf/pcfutil.c</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>psaux</name>
-					<items>
-						<item type="File">
-							<fileName>psaux/afmparse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/afmparse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxerr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxmod.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psauxmod.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psconv.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psconv.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/psobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1cmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1cmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1decode.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psaux/t1decode.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pshinter</name>
-					<items>
-						<item type="File">
-							<fileName>pshinter/pshalgo.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshalgo.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshglob.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshglob.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshmod.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshmod.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshnterr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshrec.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pshinter/pshrec.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>psnames</name>
-					<items>
-						<item type="File">
-							<fileName>psnames/pstables.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psmodule.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psmodule.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>psnames/psnamerr.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>raster</name>
-					<items>
-						<item type="File">
-							<fileName>raster/ftmisc.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftraster.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftraster.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftrend1.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/ftrend1.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>raster/rasterrs.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>sfnt</name>
-					<items>
-						<item type="File">
-							<fileName>sfnt/sfdriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfdriver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sferrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/sfobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttbdf.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttbdf.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttkern.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttkern.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttmtx.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttmtx.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttpost.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttpost.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttsbit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>sfnt/ttsbit.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>smooth</name>
-					<items>
-						<item type="File">
-							<fileName>smooth/ftsmooth.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftgrays.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftgrays.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftsmerrs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smooth/ftsmooth.c</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>truetype</name>
-					<items>
-						<item type="File">
-							<fileName>truetype/ttdriver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttdriver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/tterrors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgxvar.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttgxvar.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttinterp.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttinterp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttpload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>truetype/ttpload.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>type1</name>
-					<items>
-						<item type="File">
-							<fileName>type1/t1afm.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1afm.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1driver.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1driver.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1errors.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1gload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1gload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1load.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1load.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1objs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1objs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1parse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1parse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type1/t1tokens.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>type42</name>
-					<items>
-						<item type="File">
-							<fileName>type42/t42drivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42drivr.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42error.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42objs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42objs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42parse.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42parse.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>type42/t42types.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>winfonts</name>
-					<items>
-						<item type="File">
-							<fileName>winfonts/*.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>winfonts/*.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>pfr</name>
-					<items>
-						<item type="File">
-							<fileName>pfr/pfrerror.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrgload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrgload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrload.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrload.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrobjs.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrobjs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrsbit.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrsbit.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrtypes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrcmap.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrcmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrdrivr.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>pfr/pfrdrivr.h</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>lzw</name>
-					<items>
-						<item type="File">
-							<fileName>lzw/ftlzw.c</fileName>
+						<item type="File" version="1">
+							<fileName>cid/type1cid.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1493,8 +620,149 @@
 				<item type="Filter">
 					<name>gzip</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>gzip/ftgzip.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>lzw</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>lzw/ftlzw.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pcf</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pcf/pcf.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pfr</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pfr/pfr.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>psaux</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>psaux/psaux.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>pshinter</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>pshinter/pshinter.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>raster</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>raster/raster.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>sdf</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>sdf/sdf.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>sfnt</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>sfnt/sfnt.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>smooth</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>smooth/smooth.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>svg</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>svg/svg.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>truetype</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>truetype/truetype.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>type1</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>type1/type1.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>type42</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>type42/type42.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>winfonts</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>winfonts/winfnt.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -1627,12 +895,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter>jmem*;example*;wr*;rd*;cjpeg*;ckconfig*;djpeg*</excludeFilter>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
+					<fileName>jmemansi.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>jmemmgr.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter>gz*</excludeFilter>
 					<items/>
 				</item>
 			</items>
@@ -1649,14 +929,15 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBFLAC_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
+						<item>HAVE_CONFIG_H</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -1678,14 +959,15 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBFLAC_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
+						<item>HAVE_CONFIG_H</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -1707,14 +989,15 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
+						<item>HAVE_CONFIG_H</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -1745,14 +1028,15 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/flac</item>
 						<item>$(FLAC_SDK)/src/libFLAC/include</item>
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
+						<item>HAVE_CONFIG_H</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -1779,8 +1063,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitmath.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
@@ -1789,8 +1074,9 @@
 						<item type="Filter">
 							<name>private</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>include/private/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -1798,76 +1084,93 @@
 						<item type="Filter">
 							<name>protected</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>include/protected/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
 					</items>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitreader.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitwriter.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>cpu.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>crc.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>fixed.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>float.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>format.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lpc.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>md5.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>memory.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>metadata_iterators.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>metadata_object.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>stream_decoder.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>stream_encoder.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>stream_encoder_framing.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>window.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -2009,106 +1312,131 @@
 				<item type="Filter">
 					<name>platform</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>platforms/win64/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>version.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bit.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>decoder.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>fixed.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>frame.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>huffman.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>layer3.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>layer12.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>stream.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>synth.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>timer.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bit.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>decoder.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>fixed.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>frame.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>global.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>huffman.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>layer3.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>layer12.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>mad.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>stream.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>synth.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>timer.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>version.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -2239,12 +1567,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitwise.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>framing.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -2265,7 +1595,6 @@
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2290,7 +1619,6 @@
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2375,239 +1703,297 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>vorbisfile.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>analysis.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>backends.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitrate.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>bitrate.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>block.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>codebook.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>codebook.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>codec_internal.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>envelope.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>envelope.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>floor0.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>floor1.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>highlevel.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>info.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lookup.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lookup.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lookup_data.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lpc.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lpc.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lsp.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lsp.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>mapping0.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>masking.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>mdct.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>mdct.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>misc.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>os.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>psy.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>psy.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>registry.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>registry.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>res0.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>scales.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>sharedbook.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>smallft.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>smallft.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>synthesis.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>window.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>window.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>vorbisenc.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>modes</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_X.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/floor_all.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/psych_8.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/psych_11.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/psych_16.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/psych_44.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/residue_8.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/residue_16.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/residue_44.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/residue_44u.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_8.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_11.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_16.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_22.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_32.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_44.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>modes/setup_44u.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -2618,8 +2004,9 @@
 						<item type="Filter">
 							<name>coupled</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>books/coupled/res_books_stereo.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -2627,8 +2014,9 @@
 						<item type="Filter">
 							<name>floor</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>books/floor/floor_books.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -2636,8 +2024,9 @@
 						<item type="Filter">
 							<name>uncoupled</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>books/uncoupled/res_books_uncoupled.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -2645,7 +2034,13 @@
 					</items>
 				</item>
 			</items>
-			<dependencies/>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[6]"/>
+				</item>
+			</dependencies>
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -2658,8 +2053,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2692,8 +2087,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2726,8 +2121,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -2751,8 +2146,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/libpng</item>
 						<item>$(PNG_SDK)</item>
-						<item>$(ZLIB_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -2772,12 +2167,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -2912,12 +2309,14 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.c</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.h</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -3047,12 +2446,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -3180,16 +2581,19 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>sqlite3.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>sqlite3.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>sqlite3ext.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -3316,12 +2720,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -3478,208 +2884,259 @@
 				<item type="Filter">
 					<name>libmpg123</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/compat.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/dct64.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/equalizer.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/feature.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/format.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/frame.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/icy.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/icy2utf8.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/id3.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/index.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/layer1.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/layer2.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/layer3.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/libmpg123.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/ntom.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/optimize.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/parse.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/readers.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/stringbuf.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/tabinit.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/testcpu.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/compat.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/debug.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/decode.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/frame.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/getbits.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/getcpuflags.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/huffman.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/icy.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/icy2utf8.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/id3.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/index.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/intsym.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/l12_integer_tables.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/l2tables.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/l3_integer_tables.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/mangle.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/optimize.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/parse.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/reader.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/sample.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synths.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/true.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth_8bit.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth_8bit.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth_real.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/synth_s32.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/libmpg123/dct64_i386.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -3687,12 +3144,14 @@
 				<item type="Filter">
 					<name>ports</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>ports/Msvc++/*.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>ports/Msvc++/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -3821,12 +3280,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>minilzo.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>minilzo.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -3949,28 +3410,34 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lzf_c.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lzf_d.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>config.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>crc32.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lzf.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>lzfP.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -4093,8 +3560,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -4221,8 +3689,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>glew.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -4348,8 +3817,9 @@
 				<item type="Filter">
 					<name>Source</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Source/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -4357,8 +3827,9 @@
 				<item type="Filter">
 					<name>Include</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Include/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -4486,8 +3957,9 @@
 				<item type="Filter">
 					<name>Source</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Source/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -4495,8 +3967,9 @@
 				<item type="Filter">
 					<name>Include</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Include/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -4674,20 +4147,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>libGLESv2.def</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>libGLESv2.rc</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -4859,12 +4336,14 @@
 							<item type="Filter">
 								<name>common</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>common/*.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>common/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4872,23 +4351,27 @@
 							<item type="Filter">
 								<name>libANGLE</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>libANGLE/*.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>libANGLE/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>renderer</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>libANGLE/renderer/*.cpp</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>libANGLE/renderer/*.h</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 											<item type="Filter">
@@ -4897,35 +4380,41 @@
 													<item type="Filter">
 														<name>d3d11</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>libANGLE/renderer/d3d/d3d11/*.cpp</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>libANGLE/renderer/d3d/d3d11/*.h</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 															<item type="Filter">
 																<name>win32</name>
 																<items>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>libANGLE/renderer/d3d/d3d11/win32/*.cpp</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>libANGLE/renderer/d3d/d3d11/win32/*.h</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
 																</items>
 															</item>
 														</items>
 													</item>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>libANGLE/renderer/d3d/*.cpp</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>libANGLE/renderer/d3d/*.h</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 												</items>
@@ -4940,12 +4429,14 @@
 									<item type="Filter">
 										<name>preprocessor</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>compiler/preprocessor/*.cpp</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>compiler/preprocessor/*.h</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -4953,18 +4444,21 @@
 									<item type="Filter">
 										<name>translator</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>compiler/translator/*.cpp</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>compiler/translator/*.h</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>compiler/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4972,12 +4466,14 @@
 							<item type="Filter">
 								<name>image_util</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>image_util/*.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>image_util/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4988,12 +4484,14 @@
 									<item type="Filter">
 										<name>murmurhash</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>third_party/murmurhash/*.cpp</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>third_party/murmurhash/*.h</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -5001,12 +4499,14 @@
 									<item type="Filter">
 										<name>compiler</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>third_party/compiler/*.cpp</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>third_party/compiler/*.h</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -5177,20 +4677,24 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>libEGL.def</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>libEGL.rc</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -5319,8 +4823,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -5456,12 +4961,14 @@
 				<item type="Filter">
 					<name>IlmImf</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>IlmImf/*.cpp</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>IlmImf/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -5615,12 +5122,14 @@
 							<item type="Filter">
 								<name>Half</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Half/half.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Half/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -5628,12 +5137,14 @@
 							<item type="Filter">
 								<name>Imath</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Imath/*.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Imath/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -5641,12 +5152,14 @@
 							<item type="Filter">
 								<name>Iex</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Iex/*.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Iex/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -5654,36 +5167,44 @@
 							<item type="Filter">
 								<name>IlmThread</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/*.h</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThread.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadMutex.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadMutexWin32.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadPool.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadSemaphore.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadSemaphoreWin32.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>IlmThread/IlmThreadWin32.cpp</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -5821,12 +5342,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.c</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -5960,8 +5483,9 @@
 				<item type="Filter">
 					<name>src</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>src/*.cpp</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -5969,8 +5493,9 @@
 				<item type="Filter">
 					<name>include</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>include/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -5978,12 +5503,14 @@
 				<item type="Filter">
 					<name>gpc</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>gpc/*.c</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>gpc/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -5992,7 +5519,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.vulkan.glslang</name>
 			<sourcePath>$(GLSLANG)</sourcePath>
 			<configurations>
@@ -6114,8 +5641,9 @@
 						<item type="Filter">
 							<name>GenericCodeGen</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>glslang/GenericCodeGen/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6123,8 +5651,9 @@
 						<item type="Filter">
 							<name>Include</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>glslang/Include/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6132,15 +5661,17 @@
 						<item type="Filter">
 							<name>MachineIndependent</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>glslang/MachineIndependent/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 								<item type="Filter">
 									<name>preprocessor</name>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>glslang/MachineIndependent/preprocessor/*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -6153,8 +5684,9 @@
 								<item type="Filter">
 									<name>Windows</name>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>glslang/OSDependent/Windows/ossource.cpp</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -6164,8 +5696,9 @@
 						<item type="Filter">
 							<name>Public</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>glslang/Public/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6175,8 +5708,9 @@
 				<item type="Filter">
 					<name>Spirv</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Spirv/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -6184,8 +5718,9 @@
 				<item type="Filter">
 					<name>OGLCompilersDLL</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>OGLCompilersDLL/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -6311,12 +5846,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -6344,7 +5881,6 @@
 					<libraries>
 						<item>embree3.lib</item>
 						<item>tbb.lib</item>
-						<item>tbbmalloc.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -6373,7 +5909,6 @@
 					<libraries>
 						<item>embree3.lib</item>
 						<item>tbb.lib</item>
-						<item>tbbmalloc.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -6402,7 +5937,6 @@
 					<libraries>
 						<item>embree3.lib</item>
 						<item>tbb.lib</item>
-						<item>tbbmalloc.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -6440,7 +5974,6 @@
 					<libraries>
 						<item>embree3.lib</item>
 						<item>tbb.lib</item>
-						<item>tbbmalloc.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -6611,7 +6144,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/include</item>
+						<item>$(VMA_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6634,7 +6167,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/include</item>
+						<item>$(VMA_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6657,7 +6190,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/include</item>
+						<item>$(VMA_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6689,7 +6222,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(VMA_SDK)/include</item>
+						<item>$(VMA_SDK)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6720,7 +6253,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.spirvtools</name>
 			<sourcePath>$(SPIRVTOOLS_SDK)</sourcePath>
 			<configurations>
@@ -6854,8 +6387,9 @@
 						<item type="Filter">
 							<name>spirv-tools</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>include/spirv-tools/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6868,8 +6402,9 @@
 						<item type="Filter">
 							<name>link</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>source/link/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6877,8 +6412,9 @@
 						<item type="Filter">
 							<name>opt</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>source/opt/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6886,8 +6422,9 @@
 						<item type="Filter">
 							<name>reduce</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>source/reduce/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6895,8 +6432,9 @@
 						<item type="Filter">
 							<name>util</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>source/util/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
@@ -6904,14 +6442,16 @@
 						<item type="Filter">
 							<name>val</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>source/val/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>source/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -7040,15 +6580,16 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.SPIRV-Cross</name>
 			<sourcePath>$(SPIRVCROSS_SDK)</sourcePath>
 			<configurations>
@@ -7164,16 +6705,19 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.hpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -7315,12 +6859,14 @@
 				<item type="Filter">
 					<name>Source</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Source/*.cpp</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Source/*.h</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -7449,12 +6995,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>tinyexr.cc</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>tinyexr.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
@@ -7463,12 +7011,14 @@
 						<item type="Filter">
 							<name>miniz</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>deps/miniz/*.c</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>deps/miniz/*.h</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>

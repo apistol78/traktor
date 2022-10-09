@@ -1,13 +1,13 @@
 #include <cstring>
 #include <sstream>
 
-#include <glslang/Include/ShHandle.h>
+// #include <glslang/Include/ShHandle.h>
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
-#include <SPIRV/GLSL.std.450.h>
-#include <SPIRV/doc.h>
-#include <SPIRV/disassemble.h>
+//#include <SPIRV/doc.h>
+//#include <SPIRV/disassemble.h>
 
+#include <spirv-headers/GLSL.std.450.h>
 #include <spirv-tools/optimizer.hpp>
 
 #include <spirv_hlsl.hpp>
@@ -768,27 +768,27 @@ bool ProgramCompilerVk::generate(
 
 		if (crossDialect == L"SPIRV")
 		{
-			if (!programResource->m_vertexShader.empty())
-			{
-				std::stringstream ss;
-				std::vector< uint32_t > v(programResource->m_vertexShader.begin(), programResource->m_vertexShader.end());
-				spv::Disassemble(ss, v);
-				outVertexShader = mbstows(ss.str());
-			}
-			if (!programResource->m_fragmentShader.empty())
-			{
-				std::stringstream ss;
-				std::vector< uint32_t > f(programResource->m_fragmentShader.begin(), programResource->m_fragmentShader.end());
-				spv::Disassemble(ss, f);
-				outPixelShader = mbstows(ss.str());
-			}
-			if (!programResource->m_computeShader.empty())
-			{
-				std::stringstream ss;
-				std::vector< uint32_t > c(programResource->m_computeShader.begin(), programResource->m_computeShader.end());
-				spv::Disassemble(ss, c);
-				outComputeShader = mbstows(ss.str());
-			}
+			//if (!programResource->m_vertexShader.empty())
+			//{
+			//	std::stringstream ss;
+			//	std::vector< uint32_t > v(programResource->m_vertexShader.begin(), programResource->m_vertexShader.end());
+			//	spv::Disassemble(ss, v);
+			//	outVertexShader = mbstows(ss.str());
+			//}
+			//if (!programResource->m_fragmentShader.empty())
+			//{
+			//	std::stringstream ss;
+			//	std::vector< uint32_t > f(programResource->m_fragmentShader.begin(), programResource->m_fragmentShader.end());
+			//	spv::Disassemble(ss, f);
+			//	outPixelShader = mbstows(ss.str());
+			//}
+			//if (!programResource->m_computeShader.empty())
+			//{
+			//	std::stringstream ss;
+			//	std::vector< uint32_t > c(programResource->m_computeShader.begin(), programResource->m_computeShader.end());
+			//	spv::Disassemble(ss, c);
+			//	outComputeShader = mbstows(ss.str());
+			//}
 			return true;
 		}
 		else if (crossDialect == L"MSL")

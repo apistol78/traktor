@@ -20,9 +20,9 @@ public:
 
 	virtual void setIcon(ISystemBitmap* icon) override;
 
-	virtual int showModal() override;
+	virtual DialogResult showModal() override;
 
-	virtual void endModal(int result) override;
+	virtual void endModal(DialogResult result) override;
 
 	virtual void setMinSize(const Size& minSize) override;
 

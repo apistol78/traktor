@@ -25,6 +25,8 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXClCompileBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImport.h"
+#include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
 
 namespace traktor
 {
@@ -156,6 +158,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXClCompileBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXCustomBuildTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXDefinition)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXImport)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXImportGroup)
 
 	std::wstring solutionFileName = solution->getRootPath() + L"/" + solution->getName() + L".sln";
 

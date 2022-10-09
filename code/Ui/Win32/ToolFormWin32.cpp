@@ -94,7 +94,7 @@ void ToolFormWin32::endModal(DialogResult result)
 {
 	T_ASSERT_M (m_modal, L"Not modal");
 	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
-	PostMessage(m_hWnd, WM_ENDMODAL, result, 0);
+	PostMessage(m_hWnd, WM_ENDMODAL, (WPARAM)result, 0);
 }
 
 LRESULT ToolFormWin32::eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

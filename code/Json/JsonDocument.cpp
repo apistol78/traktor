@@ -65,7 +65,7 @@ public:
 
 	bool Double(double d)
 	{
-		setValue(Any::fromFloat(d));
+		setValue(Any::fromFloat((float)d));
 		return true;
 	}
 
@@ -239,7 +239,7 @@ public:
 
 private:
 	IStream* m_stream;
-	int32_t m_origin;
+	int64_t m_origin;
 	Ch m_peek;
 };
 
