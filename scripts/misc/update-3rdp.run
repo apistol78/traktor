@@ -42,7 +42,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("unzip embree-3.13.4.x64.vc14.windows.zip")
+			run:execute("unzip -qq embree-3.13.4.x64.vc14.windows.zip")
 		end
 	},
 	{
@@ -69,7 +69,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("unzip oidn-1.4.3.x64.vc14.windows.zip")
+			run:execute("unzip -qq oidn-1.4.3.x64.vc14.windows.zip")
 		end
 	},
 	{
@@ -140,7 +140,7 @@ local PACKAGES =
 		name = "sqlite",
 		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
 		patch = function()
-			run:execute("unzip sqlite-amalgamation-3390200.zip")
+			run:execute("unzip -qq sqlite-amalgamation-3390200.zip")
 		end
 	},
 	{
@@ -288,7 +288,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://fastbuild.org/downloads/v1.07/FASTBuild-Windows-x64-v1.07.zip",
 		patch = function()
-			run:execute("unzip FASTBuild-Windows-x64-v1.07.zip")
+			run:execute("unzip -qq FASTBuild-Windows-x64-v1.07.zip")
 		end
 	},
 	{
@@ -297,7 +297,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip",
 		patch = function()
-			run:execute("unzip ninja-win.zip")
+			run:execute("unzip -qq ninja-win.zip")
 		end		
 	}
 }
