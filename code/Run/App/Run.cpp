@@ -164,7 +164,7 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 		command,
 		workingDirectory,
 		env,
-		OS::EfRedirectStdIO | OS::EfMute
+		OS::EfMute // OS::EfRedirectStdIO | OS::EfMute
 	);
 	if (!process)
 		return -1;

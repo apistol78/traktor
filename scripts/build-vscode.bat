@@ -5,6 +5,10 @@ set CONFIG=%2
 
 call %~dp0config.bat
 
+echo Building...
+echo %TRAKTOR_HOME%
+echo %FBUILD%
+
 if "%PLATFORM%" == "Windows" (
     call %~dp0config-vs-x64.bat
     pushd "%TRAKTOR_HOME%\build\win64"

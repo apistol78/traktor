@@ -127,31 +127,60 @@ local PACKAGES =
 	},	
 	{
 		type = "GIT",
+		os = "linux",
 		url = "https://github.com/sqlite/sqlite.git",
 		patch = function()
 			run:execute("sh ./configure")
 			run:execute("make")
 		end
-	},	
+	},
+	{
+		type = "GET",
+		os = "windows",
+		name = "sqlite",
+		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
+		patch = function()
+			run:execute("unzip sqlite-amalgamation-3390200.zip")
+		end
+	},
 	{
 		type = "GIT",
 		url = "https://github.com/jpcy/xatlas.git"
 	},
 	{
 		type = "GIT",
+		os = "linux",
 		url = "https://github.com/madler/zlib.git",
 		patch = function()
 			run:execute("sh ./configure")
 		end
 	},
 	{
+		type = "GIT",
+		os = "windows",
+		url = "https://github.com/madler/zlib.git",
+	},
+	{
 		type = "GET",
+		os = "linux",
 		name = "jpeg",
 		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
 		patch = function()
 			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
 			run:pushd("jpeg-9e")
 			run:execute("sh ./configure")
+			run:popd()
+		end
+	},
+	{
+		type = "GET",
+		os = "windows",
+		name = "jpeg",
+		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
+		patch = function()
+			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
+			run:pushd("jpeg-9e")
+			run:copy("jconfig.vc", "jconfig.h")
 			run:popd()
 		end
 	},
@@ -213,6 +242,15 @@ local PACKAGES =
 		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/linux/vulkansdk-linux-x86_64-1.3.216.0.tar.gz",
 		patch = function()
 			run:execute("tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "vulkan-windows",
+		os = "windows",
+		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanSDK-1.3.216.0-Installer.exe",
+		patch = function()
+			run:execute("VulkanSDK-1.3.216.0-Installer.exe --root VulkanSDK-1.3.216.0 --accept-licenses --default-answer --confirm-command install")
 		end
 	},
 	--[[
@@ -381,13 +419,15 @@ function update(pkg)
 			return false
 		end
 
+		stdout:printLn("Downloading " .. file .. " into " .. pkg.name .. " ...")
+
 		run:mkdir(pkg.name)
 		run:pushd(pkg.name)
 		local result = run:execute("wget " .. pkg.url)
 		run:popd()
 
 		if result ~= 0 then
-			stderr:printLn("GET failed, error code " .. result)
+			stderr:printLn("GET failed \"" .. pkg.url .. "\", error code " .. result)
 			return false
 		end
 

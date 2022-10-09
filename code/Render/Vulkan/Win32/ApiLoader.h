@@ -98,6 +98,8 @@ extern PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
 extern PFN_vkCreatePipelineCache vkCreatePipelineCache;
 extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
 extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
+extern PFN_vkCmdDrawIndirect vkCmdDrawIndirect;
+extern PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

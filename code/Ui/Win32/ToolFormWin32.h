@@ -20,9 +20,9 @@ public:
 
 	virtual void setIcon(ISystemBitmap* icon) override final;
 
-	virtual int showModal() override final;
+	virtual DialogResult showModal() override final;
 
-	virtual void endModal(int result) override final;
+	virtual void endModal(DialogResult result) override final;
 
 private:
 	bool m_modal;

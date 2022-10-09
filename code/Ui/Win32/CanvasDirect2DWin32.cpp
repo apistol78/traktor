@@ -200,8 +200,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 		DWRITE_FONT_METRICS fontMetrics;
 		dwFont->GetMetrics(&fontMetrics);
 
-		outAscent = dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm;
-		outDescent = dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm;
+		outAscent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm);
+		outDescent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm);
 	}
 	else	// Inside begin/end thus use current paint context.
 	{
@@ -295,8 +295,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDe
 {
 	if (m_dwTextFormat)
 	{
-		outAscent = m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm;
-		outDescent = m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm;
+		outAscent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm);
+		outDescent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm);
 	}
 	else
 	{

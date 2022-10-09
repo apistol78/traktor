@@ -65,7 +65,7 @@ int32_t EnvelopeGrainFacade::getImage(const IGrainData* grain) const
 
 std::wstring EnvelopeGrainFacade::getText(const IGrainData* grain) const
 {
-	uint32_t count = checked_type_cast< const EnvelopeGrainData* >(grain)->getGrains().size();
+	int32_t count = (int32_t)checked_type_cast< const EnvelopeGrainData* >(grain)->getGrains().size();
 	return i18n::Format(L"RESOUND_ENVELOPE_GRAIN_TEXT", int32_t(count));
 }
 

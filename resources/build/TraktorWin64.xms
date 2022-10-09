@@ -12930,19 +12930,11 @@
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
 										<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(OIDN_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -12985,19 +12977,11 @@
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
 										<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(OIDN_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -13036,19 +13020,11 @@
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
 										<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(OIDN_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -13087,19 +13063,11 @@
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
 										<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>$(OIDN_SDK)/bin/tbb12.dll</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -18317,7 +18285,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -18355,7 +18322,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -18393,7 +18359,6 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -18427,7 +18392,6 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
@@ -20609,14 +20573,32 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+						<item>$(VULKAN_SDK)/include/glslang</item>
+						<item>$(VULKAN_SDK)/include/spirv_cross</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_SDK)/Lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent.lib</item>
+						<item>OSDependent.lib</item>
+						<item>OGLCompiler.lib</item>
+						<item>SPIRV.lib</item>
+						<item>SPIRV-Tools.lib</item>
+						<item>SPIRV-Tools-shared.lib</item>
+						<item>SPIRV-Tools-opt.lib</item>
+						<item>shaderc_combined.lib</item>
+						<item>glslang.lib</item>
+						<item>spirv-cross-core.lib</item>
+						<item>spirv-cross-glsl.lib</item>
+						<item>spirv-cross-hlsl.lib</item>
+						<item>spirv-cross-msl.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -20646,14 +20628,32 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+						<item>$(VULKAN_SDK)/include/glslang</item>
+						<item>$(VULKAN_SDK)/include/spirv_cross</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_SDK)/Lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent.lib</item>
+						<item>OSDependent.lib</item>
+						<item>OGLCompiler.lib</item>
+						<item>SPIRV.lib</item>
+						<item>SPIRV-Tools.lib</item>
+						<item>SPIRV-Tools-shared.lib</item>
+						<item>SPIRV-Tools-opt.lib</item>
+						<item>shaderc_combined.lib</item>
+						<item>glslang.lib</item>
+						<item>spirv-cross-core.lib</item>
+						<item>spirv-cross-glsl.lib</item>
+						<item>spirv-cross-hlsl.lib</item>
+						<item>spirv-cross-msl.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -20683,14 +20683,32 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+						<item>$(VULKAN_SDK)/include/glslang</item>
+						<item>$(VULKAN_SDK)/include/spirv_cross</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_SDK)/Lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent.lib</item>
+						<item>OSDependent.lib</item>
+						<item>OGLCompiler.lib</item>
+						<item>SPIRV.lib</item>
+						<item>SPIRV-Tools.lib</item>
+						<item>SPIRV-Tools-shared.lib</item>
+						<item>SPIRV-Tools-opt.lib</item>
+						<item>shaderc_combined.lib</item>
+						<item>glslang.lib</item>
+						<item>spirv-cross-core.lib</item>
+						<item>spirv-cross-glsl.lib</item>
+						<item>spirv-cross-hlsl.lib</item>
+						<item>spirv-cross-msl.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -20716,14 +20734,32 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(VULKAN_SDK)/include</item>
+						<item>$(VULKAN_SDK)/include/glslang</item>
+						<item>$(VULKAN_SDK)/include/spirv_cross</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(VULKAN_SDK)/Lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>MachineIndependent.lib</item>
+						<item>OSDependent.lib</item>
+						<item>OGLCompiler.lib</item>
+						<item>SPIRV.lib</item>
+						<item>SPIRV-Tools.lib</item>
+						<item>SPIRV-Tools-shared.lib</item>
+						<item>SPIRV-Tools-opt.lib</item>
+						<item>shaderc_combined.lib</item>
+						<item>glslang.lib</item>
+						<item>spirv-cross-core.lib</item>
+						<item>spirv-cross-glsl.lib</item>
+						<item>spirv-cross-hlsl.lib</item>
+						<item>spirv-cross-msl.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -20765,24 +20801,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[87]"/>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternWin64.xms</solutionFileName>
-					<projectName>Extern.vulkan.glslang</projectName>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternWin64.xms</solutionFileName>
-					<projectName>Extern.spirvtools</projectName>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternWin64.xms</solutionFileName>
-					<projectName>Extern.SPIRV-Cross</projectName>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

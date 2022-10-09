@@ -48,7 +48,7 @@ public:
 			ptr += ncopy;
 			nbytes -= ncopy;
 
-			if (m_uncompressedBufferCount >= m_uncompressedBuffer.size())
+			if (m_uncompressedBufferCount >= (int64_t)m_uncompressedBuffer.size())
 			{
 				uint32_t compressedBlockSize = lzf_compress(
 					&m_uncompressedBuffer[0],

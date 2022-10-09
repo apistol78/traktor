@@ -228,6 +228,10 @@
 							<name>ProgramDataBaseFileName</name>
 							<value>$(OutDir)$(TargetName).pdb</value>
 						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -277,6 +281,10 @@
 						<item>
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
 						</item>
 					</options>
 				</item>
@@ -380,6 +388,10 @@
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
 						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -477,6 +489,10 @@
 						<item>
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
 						</item>
 					</options>
 				</item>
@@ -606,6 +622,10 @@
 							<name>ProgramDataBaseFileName</name>
 							<value>$(OutDir)$(TargetName).pdb</value>
 						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -679,6 +699,10 @@
 						<item>
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
 						</item>
 					</options>
 				</item>
@@ -806,6 +830,10 @@
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
 						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -927,6 +955,10 @@
 						<item>
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>LanguageStandard</name>
+							<value>stdcpp17</value>
 						</item>
 					</options>
 				</item>
