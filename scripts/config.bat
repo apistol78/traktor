@@ -62,8 +62,8 @@ set XATLAS_SDK=%TRAKTOR_HOME%\3rdp_\xatlas
 set ZLIB_SDK=%TRAKTOR_HOME%\3rdp_\zlib
 
 :: Vulkan SDK
-set VULKAN_SDK=%TRAKTOR_HOME%\3rdp_\vulkan-windows
-set VMA_SDK=%TRAKTOR_HOME%\3rdp_\vulkan-windows\include\vma
+set VULKAN_SDK=%TRAKTOR_HOME%\3rdp_\vulkan-windows\VulkanSDK-1.3.216.0
+set VMA_SDK=%TRAKTOR_HOME%\3rdp_\vulkan-windows\VulkanSDK-1.3.216.0\include\vma
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
