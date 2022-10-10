@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Vertex layout. 
  * \ingroup Render
@@ -23,5 +21,4 @@ class T_DLLCLASS IVertexLayout : public Object
 	T_RTTI_CLASS;
 };
 
-	}
 }

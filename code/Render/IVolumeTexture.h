@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Volume texture.
  * \ingroup Render
@@ -48,5 +46,4 @@ public:
 	virtual int32_t getMips() const = 0;	
 };
 
-	}
 }

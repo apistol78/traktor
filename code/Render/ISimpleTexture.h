@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Simple 2d texture.
  * \ingroup Render
@@ -62,5 +60,4 @@ public:
 	virtual void* getInternalHandle() = 0;
 };
 
-	}
 }

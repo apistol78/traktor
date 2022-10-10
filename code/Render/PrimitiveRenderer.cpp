@@ -16,12 +16,10 @@
 #include "Render/VertexElement.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< Shader > c_idPrimitiveShader(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));
 const resource::Id< ISimpleTexture > c_idFontTexture(Guid(L"{123602E4-BC6F-874D-92E8-A20852D140A3}"));
@@ -34,7 +32,7 @@ static const Handle s_handleDepthWrite(L"DepthWrite");
 static const Handle s_handleTexture(L"Texture");
 static const Handle s_handleDepth(L"Depth");
 
-		}
+	}
 
 #pragma pack(1)
 struct Vertex
@@ -1178,5 +1176,4 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 	return vertexPtr;
 }
 
-	}
 }

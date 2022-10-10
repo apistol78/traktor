@@ -18,12 +18,10 @@
 #include "Render/Context/ProgramParameters.h"
 #include "Render/Image2/ImageGraphContext.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class BoxedDataType : public Object
 {
@@ -151,7 +149,7 @@ Ref< ISimpleTexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, con
 	return self->createSimpleTexture(stcd->unbox(), T_FILE_LINE_W);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderClassFactory", 0, RenderClassFactory, IRuntimeClassFactory)
 
@@ -322,5 +320,4 @@ void BoxedProgramParameters::operator delete (void* ptr)
 	s_allocBoxedProgramParameters.free(ptr);
 }
 
-	}
 }

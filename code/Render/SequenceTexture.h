@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Sequence, flipbook, texture.
  * \ingroup Render
@@ -38,5 +36,4 @@ private:
 	AlignedVector< resource::Proxy< ITexture > > m_textures;
 };
 
-	}
 }

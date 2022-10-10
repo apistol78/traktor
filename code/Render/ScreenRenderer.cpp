@@ -8,12 +8,10 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct ScreenVertex
@@ -23,7 +21,7 @@ struct ScreenVertex
 };
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScreenRenderer", ScreenRenderer, Object)
 
@@ -118,5 +116,4 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 		draw(renderContext, program, programParams);
 }
 
-	}
 }

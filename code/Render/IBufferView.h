@@ -10,15 +10,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS IBufferView : public Object
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }

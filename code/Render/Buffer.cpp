@@ -1,9 +1,7 @@
 #include "Render/Buffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Buffer", Buffer, Object)
 
@@ -28,5 +26,4 @@ Buffer::Buffer(uint32_t elementCount, uint32_t elementSize)
 {
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! \ingroup Render */
 //@{
@@ -61,6 +59,4 @@ AlignedVector< VertexElement >::const_iterator T_DLLCLASS findVertexElement(
 
 //@}
 
-	}
 }
-

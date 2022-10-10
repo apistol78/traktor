@@ -6,12 +6,10 @@
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class HandleRegistry
 {
@@ -123,7 +121,7 @@ c_textureFormatInfo[] =
 	{ L"TfASTC12x12F", 16, 12 }
 };
 
-		}
+	}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
@@ -294,5 +292,4 @@ uint32_t getTargetSetMemoryEstimate(const RenderTargetSetCreateDesc& rtscd)
 	return estimate;
 }
 
-	}
 }
