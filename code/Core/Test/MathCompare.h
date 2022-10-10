@@ -6,10 +6,8 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Const.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 inline bool fuzzyEqual(float a, float b)
 {
@@ -57,5 +55,4 @@ inline bool compareTransformEqual(const Transform& lh, const Transform& rh)
 	return true;
 }
 
-	}
 }

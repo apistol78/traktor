@@ -1,10 +1,8 @@
 #include "Core/Test/CaseTransform.h"
 #include "Core/Test/MathCompare.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseTransform", 0, CaseTransform, Case)
 
@@ -108,5 +106,4 @@ void CaseTransform::run()
 	}
 }
 
-	}
 }

@@ -4,12 +4,10 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 int32_t g_ids[16];
 
@@ -20,7 +18,7 @@ void threadTest(int32_t number)
 	//log::info << number << L", id " << id << Endl;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseThreadId", 0, CaseThreadId, Case)
 
@@ -47,5 +45,4 @@ void CaseThreadId::run()
 	CASE_ASSERT(unique.find(-1) == unique.end());
 }
 
-	}
 }

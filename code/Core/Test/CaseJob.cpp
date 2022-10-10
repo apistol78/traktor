@@ -2,12 +2,10 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Test/CaseJob.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 std::atomic< int32_t > g_job;
 std::atomic< int32_t > g_active;
@@ -21,7 +19,7 @@ void jobTask(int32_t index)
 	g_active--;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseJob", 0, CaseJob, Case)
 
@@ -74,5 +72,4 @@ void CaseJob::run()
 	}
 }
 
-	}
 }

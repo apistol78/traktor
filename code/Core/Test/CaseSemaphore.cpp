@@ -3,12 +3,10 @@
 #include "Core/Test/CaseSemaphore.h"
 #include "Core/Timer/Timer.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 Semaphore g_semaphore;
 std::atomic< int32_t > g_count[16];
@@ -89,5 +87,4 @@ void CaseSemaphore::run()
 	CASE_ASSERT_EQUAL(g_errorStopped, false);
 }
 
-	}
 }

@@ -3,12 +3,10 @@
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 bool compareEqual(const Vector4& a, const Vector4& b)
 {
@@ -20,7 +18,7 @@ bool compareEqual(const Vector4& a, const Vector4& b)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseWinding", 0, CaseWinding, Case)
 
@@ -88,5 +86,4 @@ void CaseWinding::run()
 	}
 }
 
-	}
 }

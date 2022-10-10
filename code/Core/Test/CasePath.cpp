@@ -1,10 +1,8 @@
 #include "Core/Test/CasePath.h"
 #include "Core/Io/Path.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CasePath", 0, CasePath, Case)
 
@@ -87,5 +85,4 @@ void CasePath::run()
 	CASE_ASSERT_EQUAL (path8.normalized().getPathName(), L"c:/../bar.txt");
 }
 
-	}
 }

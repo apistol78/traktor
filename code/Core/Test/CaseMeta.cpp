@@ -2,10 +2,8 @@
 #include "Core/Meta/TypeList.h"
 #include "Core/Meta/Equal.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMeta", 0, CaseMeta, Case)
 
@@ -20,5 +18,4 @@ void CaseMeta::run()
 	CASE_ASSERT((Equal< third_type_t, float >::value));
 }
 
-	}
 }

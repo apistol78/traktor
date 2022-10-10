@@ -1,12 +1,8 @@
 #include "Core/Misc/Murmur3.h"
 #include "Core/Test/CaseMurmur.h"
 
-#include "Core/Log/Log.h"
-
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMurmur", 0, CaseMurmur, Case)
 
@@ -23,5 +19,4 @@ void CaseMurmur::run()
 	CASE_ASSERT(h == 3720714118);
 }
 
-	}
 }

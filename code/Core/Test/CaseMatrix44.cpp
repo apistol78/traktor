@@ -1,10 +1,8 @@
 #include "Core/Test/CaseMatrix44.h"
 #include "Core/Test/MathCompare.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMatrix44", 0, CaseMatrix44, Case)
 
@@ -60,5 +58,4 @@ void CaseMatrix44::run()
 	CASE_ASSERT_COMPARE(md.determinant(), 1.0f, fuzzyEqual);
 }
 
-	}
 }
