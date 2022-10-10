@@ -17,8 +17,10 @@ namespace traktor
 class Vector4;
 class Matrix44;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IBufferView;
 class ITexture;
@@ -54,5 +56,4 @@ public:
 	virtual void setStencilReference(uint32_t stencilReference) = 0;
 };
 
-	}
 }

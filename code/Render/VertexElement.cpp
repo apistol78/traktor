@@ -1,10 +1,8 @@
 #include <algorithm>
 #include "Render/VertexElement.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 VertexElement::VertexElement(DataUsage usage, DataType type, uint32_t offset, uint32_t index)
 :	m_usage(usage)
@@ -68,5 +66,4 @@ AlignedVector< VertexElement >::const_iterator findVertexElement(
 	return vertexElements.end();
 }
 
-	}
 }

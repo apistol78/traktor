@@ -8,10 +8,8 @@
 #	include "Render/Image2/ShadowProjectData.h"
 #	include "Render/Image2/SimpleData.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 extern "C" void __module__Traktor_Render()
 {
@@ -23,7 +21,6 @@ extern "C" void __module__Traktor_Render()
 	T_FORCE_LINK_REF(SimpleData);
 }
 
-	}
 }
 
 #endif

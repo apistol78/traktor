@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ISimpleTexture;
 
@@ -62,5 +60,4 @@ public:
 	virtual void unlock(int32_t side, int32_t level) = 0;
 };
 
-	}
 }

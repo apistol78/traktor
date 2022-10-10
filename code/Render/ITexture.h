@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Texture base class.
  * \ingroup Render
@@ -40,5 +38,4 @@ public:
 	virtual ITexture* resolve() = 0;
 };
 
-	}
 }
