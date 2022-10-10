@@ -5,10 +5,13 @@ import(traktor.run)
 
 local PACKAGES =
 {
+	-- Antigrain
 	{
 		type = "GIT",
 		url = "https://github.com/ghaerr/agg-2.6.git"
 	},
+
+	-- ASTC encoder
 	{
 		type = "GIT",
 		url = "https://github.com/ARM-software/astc-encoder.git",
@@ -23,10 +26,14 @@ local PACKAGES =
 			)
 		end
 	},
+
+	-- Bullet
 	{
 		type = "GIT",
 		url = "https://github.com/bulletphysics/bullet3.git"
 	},
+
+	-- Intel Embree
 	{
 		type = "GET",
 		name = "embree-linux",
@@ -54,6 +61,8 @@ local PACKAGES =
 			run:execute("unzip embree-3.13.4.x86_64.macosx.zip")
 		end
 	},
+
+	-- Intel Open Image Denoise
 	{
 		type = "GET",
 		name = "oidn-linux",
@@ -81,30 +90,44 @@ local PACKAGES =
 			run:execute("tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
 		end
 	},
+
+	-- FLAC
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/flac.git"
 	},
+
+	-- Expat
 	{
 		type = "GIT",
 		url = "https://github.com/libexpat/libexpat.git"
 	},
+
+	-- OGG
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/ogg.git"
 	},
+
+	-- Theora
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/theora.git"
 	},	
+
+	-- Vorbis
 	{
 		type = "GIT",
 		url = "https://github.com/xiph/vorbis.git"
 	},
+
+	-- PNG
 	{
 		type = "GIT",
 		url = "https://github.com/glennrp/libpng.git",
 	},
+
+	-- LUA
 	{
 		type = "GET",
 		name = "lua",
@@ -113,6 +136,8 @@ local PACKAGES =
 			run:execute("tar -xzf lua-5.4.4.tar.gz")
 		end
 	},
+
+	-- LZO
 	{
 		type = "GET",
 		name = "lzo",
@@ -121,32 +146,30 @@ local PACKAGES =
 			run:execute("tar -xzf lzo-2.10.tar.gz")
 		end
 	},
+
+	-- MikkTSpace
 	{
 		type = "GIT",
 		url = "https://github.com/mmikk/MikkTSpace.git"
-	},	
-	{
-		type = "GIT",
-		os = "linux",
-		url = "https://github.com/sqlite/sqlite.git",
-		patch = function()
-			run:execute("sh ./configure")
-			run:execute("make")
-		end
 	},
+
+	-- SQLite
 	{
 		type = "GET",
-		os = "windows",
 		name = "sqlite",
 		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
 		patch = function()
 			run:execute("unzip -qq sqlite-amalgamation-3390200.zip")
 		end
 	},
+
+	-- XAtlas
 	{
 		type = "GIT",
 		url = "https://github.com/jpcy/xatlas.git"
 	},
+
+	-- Zlib
 	{
 		type = "GIT",
 		os = "linux",
@@ -160,6 +183,8 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/madler/zlib.git",
 	},
+
+	-- JPEG
 	{
 		type = "GET",
 		os = "linux",
@@ -184,6 +209,8 @@ local PACKAGES =
 			run:popd()
 		end
 	},
+
+	-- FreeType
 	{
 		type = "GIT",
 		url = "https://gitlab.freedesktop.org/freetype/freetype.git",
@@ -194,10 +221,14 @@ local PACKAGES =
 			run:popd()
 		end
 	},
+
+	-- Squish
 	{
 		type = "GIT",
 		url = "https://github.com/Cavewhere/squish.git"
 	},
+
+	-- LZF
 	{
 		type = "GET",
 		name = "liblzf",
@@ -206,26 +237,38 @@ local PACKAGES =
 			run:execute("tar -xzf liblzf-3.6.tar.gz")
 		end
 	},
+
+	-- STB
 	{
 		type = "GIT",
 		url = "https://github.com/nothings/stb.git"
 	},
+
+	-- TinyEXR
 	{
 		type = "GIT",
 		url = "https://github.com/syoyo/tinyexr.git"
 	},
+
+	-- RapidJSON
 	{
 		type = "GIT",
 		url = "https://github.com/Tencent/rapidjson.git"
 	},
+
+	-- RG ETC1
 	{
 		type = "GIT",
 		url = "https://github.com/richgel999/rg-etc1.git"
 	},
+
+	-- Recast
 	{
 		type = "GIT",
 		url = "https://github.com/recastnavigation/recastnavigation.git"
 	},
+
+	-- P4 API
 	{
 		type = "GET",
 		name = "p4api-linux",
@@ -235,6 +278,8 @@ local PACKAGES =
 			run:execute("tar -xzf p4api.tgz")
 		end
 	},
+
+	-- Vulkan SDK
 	{
 		type = "GET",
 		name = "vulkan-linux",
@@ -254,7 +299,9 @@ local PACKAGES =
 			run:execute("VulkanSDK-1.3.216.0-Installer.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install")
 		end
 	},
+
 	--[[
+	-- Steamworks SDK
 	{
 		type = "GET",
 		name = "steamworks",
@@ -264,6 +311,8 @@ local PACKAGES =
 		end
 	},
 	]]
+
+	-- Android SDK
 	{
 		type = "GET",
 		name = "android-sdk-linux",
@@ -283,6 +332,8 @@ local PACKAGES =
 			run:execute("sh ./install.sh")
 		end
 	},
+
+	-- FastBUILD
 	{
 		type = "GET",
 		name = "fastbuild-windows",
@@ -292,6 +343,8 @@ local PACKAGES =
 			run:execute("unzip -qq FASTBuild-Windows-x64-v1.07.zip")
 		end
 	},
+
+	-- Ninja
 	{
 		type = "GET",
 		name = "ninja-windows",
@@ -361,6 +414,10 @@ function update(pkg)
 		return true
 	end
 
+	stdout:printLn("")
+	stdout:printLn("===============================================================================")
+	stdout:printLn("")
+
 	if pkg.type == "GIT" then
 
 		local name = pkg.url:match(".+/(.*).git")
@@ -373,10 +430,8 @@ function update(pkg)
 		if run:exist(name) then
 			stdout:printLn("Updating " .. pkg.url)
 			run:pushd(name)
-			result = result and (run:execute("git stash push") == 0)
-			result = result and (run:execute("git pull") == 0)
+			result = result and (run:execute("git pull --rebase --autostash") == 0)
 			result = result and (run:execute("git submodule update") == 0)
-			run:execute("git stash pop")
 			run:popd()
 			if result and pkg.post_update ~= nil then
 				stdout:printLn("Running post update...")
@@ -405,6 +460,14 @@ function update(pkg)
 			stdout:printLn("Patching (" .. run.cwd .. ")...")
 			pkg.patch()
 			run:popd()
+		end
+
+		run:pushd(name)
+		result = (run:execute("git log -1 --format=format:\"Current hash: %H\"") == 0)
+		run:popd()
+		if not result then
+			stderr:printLn("GIT current hash failed!")
+			return false
 		end
 
 	elseif pkg.type == "GET" then

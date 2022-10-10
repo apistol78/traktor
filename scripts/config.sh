@@ -37,7 +37,7 @@ export RECAST_SDK=$TRAKTOR_HOME/3rdp_/recastnavigation
 export RG_ETC1_SDK=$TRAKTOR_HOME/3rdp_/rg-etc1
 export STB_SDK=$TRAKTOR_HOME/3rdp_/stb
 export STEAMWORKS_SDK=$TRAKTOR_HOME/3rdp_/steamworks/sdk
-export SQLITE_SDK=$TRAKTOR_HOME/3rdp_/sqlite
+export SQLITE_SDK=$TRAKTOR_HOME/3rdp_/sqlite/sqlite-amalgamation-3390200
 export SQUISH_SDK=$TRAKTOR_HOME/3rdp_/squish
 export THEORA_SDK=$TRAKTOR_HOME/3rdp_/theora
 export TINYEXR_SDK=$TRAKTOR_HOME/3rdp_/tinyexr
@@ -74,14 +74,10 @@ fi
 
 # Platform specific 3rd party dependencies.
 if [[ $TRAKTOR_PLATFORM == linux ]]; then
-	#export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.5.2.x86_64.linux
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp_/embree-linux/embree-3.13.4.x86_64.linux
-	#export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.linux
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp_/oidn-linux/oidn-1.4.3.x86_64.linux
 elif [[ $TRAKTOR_PLATFORM == macos ]]; then
-	#export EMBREE_SDK=$TRAKTOR_3RDP/embree-3.6.1.x86_64.macosx
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp_/embree-macOS/embree-3.13.4.x86_64.macosx
-	#export OIDN_SDK=$TRAKTOR_3RDP/oidn-1.3.0.x86_64.macos
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp_/oidn-macOS/oidn-1.4.3.x86_64.macos
 fi
 
