@@ -3,10 +3,8 @@
 #include "Core/Math/Random.h"
 #include "Core/Test/CaseSmallMap.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseSmallMap", 0, CaseSmallMap, Case)
 
@@ -56,5 +54,4 @@ void CaseSmallMap::run()
 	CASE_ASSERT(miss0 == miss1);
 }
 
-	}
 }

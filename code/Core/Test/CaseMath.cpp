@@ -7,10 +7,8 @@
 #include "Core/Test/CaseMath.h"
 #include "Core/Test/MathCompare.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMath", 0, CaseMath, Case)
 
@@ -272,5 +270,4 @@ void CaseMath::run()
 */
 }
 
-	}
 }

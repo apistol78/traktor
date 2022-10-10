@@ -1,12 +1,10 @@
 #include "Core/CycleRefDebugger.h"
 #include "Core/Test/CaseCycleDebugger.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 class DummyWrapper
 {
@@ -20,7 +18,7 @@ public:
 	std::map< std::wstring, DummyWrapper > m_dummy;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseCycleDebugger", 0, CaseCycleDebugger, Case)
 
@@ -37,5 +35,4 @@ void CaseCycleDebugger::run()
 	Object::setReferenceDebugger(0);
 }
 
-	}
 }

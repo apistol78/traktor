@@ -4,12 +4,10 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Event.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 Signal g_signal1;
 Signal g_signal2;
@@ -35,7 +33,7 @@ void threadEvent()
 Semaphore g_semaphore;
 uint32_t g_error = 0;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseThread", 0, CaseThread, Case)
 
@@ -163,5 +161,4 @@ void CaseThread::run()
 	}
 }
 
-	}
 }

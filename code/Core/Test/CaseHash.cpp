@@ -2,10 +2,8 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Test/CaseHash.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseHash", 0, CaseHash, Case)
 
@@ -25,5 +23,4 @@ void CaseHash::run()
 	CASE_ASSERT(h3 == 2985061813);
 }
 
-	}
 }

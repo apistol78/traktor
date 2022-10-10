@@ -4,12 +4,10 @@
 #include "Core/Log/Log.h"
 #include "Core/Test/CaseAlignedVector.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
+	namespace
 	{
-		namespace
-		{
 
 int32_t g_countCopy = 0;
 int32_t g_countMove = 0;
@@ -34,7 +32,7 @@ public:
 	TestItem& operator = (TestItem&& s) { value = s.value; s.value = -1; g_countMove++; return *this; }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseAlignedVector", 0, CaseAlignedVector, Case)
 
@@ -125,5 +123,4 @@ void CaseAlignedVector::run()
 	}
 }
 
-	}
 }

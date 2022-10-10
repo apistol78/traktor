@@ -5,10 +5,8 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Test/CaseClone.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 class Clone_Base : public ISerializable
 {
@@ -78,5 +76,4 @@ void CaseClone::run()
 	}
 }
 
-	}
 }

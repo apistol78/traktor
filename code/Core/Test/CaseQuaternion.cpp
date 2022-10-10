@@ -3,10 +3,8 @@
 #include "Core/Math/Polar.h"
 #include "Core/Math/RandomGeometry.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseQuaternion", 0, CaseQuaternion, Case)
 
@@ -91,5 +89,4 @@ void CaseQuaternion::run()
 	}
 }
 
-	}
 }

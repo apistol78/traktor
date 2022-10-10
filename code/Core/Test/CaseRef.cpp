@@ -2,10 +2,8 @@
 #include "Core/RefArray.h"
 #include "Core/Test/CaseRef.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 class A : public Object {};
 
@@ -127,5 +125,4 @@ void CaseRef::run()
 //	std::sort(ra_2.begin(), ra_2.end(), sortPredicate);
 //}
 
-	}
 }

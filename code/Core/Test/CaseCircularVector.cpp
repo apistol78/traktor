@@ -1,10 +1,8 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Test/CaseCircularVector.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseCircularVector", 0, CaseCircularVector, Case)
 
@@ -72,5 +70,4 @@ void CaseCircularVector::run()
 	CASE_ASSERT_EQUAL(v[3], 7);	
 }
 
-	}
 }

@@ -1,10 +1,8 @@
 #include "Core/Test/CaseMatrix33.h"
 #include "Core/Math/Matrix33.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMatrix33", 0, CaseMatrix33, Case)
 
@@ -31,5 +29,4 @@ void CaseMatrix33::run()
 	}
 }
 
-	}
 }

@@ -1,10 +1,8 @@
 #include "Core/Test/CaseAtomic.h"
 #include "Core/Thread/Atomic.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseAtomic", 0, CaseAtomic, Case)
 
@@ -46,5 +44,4 @@ void CaseAtomic::run()
 	}
 }
 
-	}
 }

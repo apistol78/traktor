@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 /*! Unit test case.
  * \ingroup Core
@@ -128,5 +126,4 @@ private:
 		} \
 	}
 
-	}
 }

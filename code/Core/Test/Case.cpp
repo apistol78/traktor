@@ -1,10 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Test/Case.h"
 
-namespace traktor
+namespace traktor::test
 {
-	namespace test
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.test.Case", Case, Object)
 
@@ -64,5 +62,4 @@ void Case::failed(const std::wstring& message)
 	m_failed = true;
 }
 
-	}
 }
