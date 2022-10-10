@@ -222,6 +222,17 @@ local PACKAGES =
 		end
 	},
 
+	-- FBX
+	{
+		type = "GET",
+		name = "fbx",
+		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_linux.tar.gz",
+		patch = function()
+			run:execute("tar -xzf fbx202001_fbxsdk_linux.tar.gz")
+			run:execute("./fbx202001_fbxsdk_linux " .. run.pwd)
+		end
+	},
+
 	-- Squish
 	{
 		type = "GIT",
@@ -511,11 +522,11 @@ function update(pkg)
 end
 
 function main(argv)
-	if not run:mkdir("3rdp_") then
+	if not run:mkdir("3rdp") then
 		stderr:printLn("Unable to create output directory.")
 		return 1
 	end
-	run:pushd("3rdp_")
+	run:pushd("3rdp")
 	for _, pkg in ipairs(PACKAGES) do
 		update(pkg)
 	end
