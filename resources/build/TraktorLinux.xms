@@ -5905,10 +5905,10 @@
 																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
 																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc4/x64</item>
+																		<item>$(FBX_SDK)/lib/gcc/x64/debug</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>fbxsdk-2016.1.2-staticd</item>
+																		<item>fbxsdk</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -5941,10 +5941,10 @@
 																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
 																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc4/x64</item>
+																		<item>$(FBX_SDK)/lib/gcc/x64/release</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>fbxsdk-2016.1.2-static</item>
+																		<item>fbxsdk</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -5977,10 +5977,10 @@
 																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
 																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc4/x64</item>
+																		<item>$(FBX_SDK)/lib/gcc/x64/debug</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>fbxsdk-2016.1.2-staticd</item>
+																		<item>fbxsdk</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -6013,10 +6013,10 @@
 																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
 																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc4/x64</item>
+																		<item>$(FBX_SDK)/lib/gcc/x64/release</item>
 																	</libraryPaths>
 																	<libraries>
-																		<item>fbxsdk-2016.1.2-static</item>
+																		<item>fbxsdk</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
