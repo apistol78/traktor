@@ -110,10 +110,7 @@ public:
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
 
-		const_iterator()
-		:	m_ptr(nullptr)
-		{
-		}
+		const_iterator() = default;
 
 		const_iterator(const const_iterator& r)
 		:	m_ptr(r.m_ptr)
@@ -130,12 +127,17 @@ public:
 			return m_ptr;
 		}
 
-		reference operator [] (int offset) const
+		reference operator [] (int32_t offset) const
 		{
 			return *(m_ptr + offset);
 		}
 
-		const_iterator operator + (int offset) const
+		const_iterator operator + (int32_t offset) const
+		{
+			return const_iterator(m_ptr + offset);
+		}
+
+		const_iterator operator + (uint32_t offset) const
 		{
 			return const_iterator(m_ptr + offset);
 		}
@@ -145,7 +147,12 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
-		const_iterator operator - (int offset) const
+		const_iterator operator - (int32_t offset) const
+		{
+			return const_iterator(m_ptr - offset);
+		}
+
+		const_iterator operator - (uint32_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
 		}
@@ -155,12 +162,12 @@ public:
 			return const_iterator(m_ptr - offset);
 		}
 
-		void operator += (int offset)
+		void operator += (int32_t offset)
 		{
 			m_ptr += offset;
 		}
 
-		void operator -= (int offset)
+		void operator -= (int32_t offset)
 		{
 			m_ptr -= offset;
 		}
@@ -228,7 +235,7 @@ public:
 
 	protected:
 		friend class AlignedVector;
-		ItemType* m_ptr;
+		ItemType* m_ptr = nullptr;
 
 		explicit const_iterator(ItemType* ptr)
 		:	m_ptr(ptr)
@@ -246,10 +253,7 @@ public:
 		typedef value_type* pointer;
 		typedef value_type& reference;
 
-		iterator()
-		:	const_iterator()
-		{
-		}
+		iterator() = default;
 
 		reference operator * () const
 		{
@@ -261,22 +265,32 @@ public:
 			return _O::m_ptr;
 		}
 
-		reference operator [] (int offset) const
+		reference operator [] (int32_t offset) const
 		{
 			return *(_O::m_ptr + offset);
 		}
 
-		iterator operator + (int offset) const
+		iterator operator + (int32_t offset) const
 		{
 			return iterator(_O::m_ptr + offset);
 		}
+
+		iterator operator + (uint32_t offset) const
+		{
+			return iterator(_O::m_ptr + offset);
+		}		
 
 		iterator operator + (size_t offset) const
 		{
 			return iterator(_O::m_ptr + offset);
 		}
 
-		iterator operator - (int offset) const
+		iterator operator - (int32_t offset) const
+		{
+			return iterator(_O::m_ptr - offset);
+		}
+
+		iterator operator - (uint32_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
 		}
@@ -356,10 +370,7 @@ public:
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
 
-		const_reverse_iterator()
-		:	m_ptr(nullptr)
-		{
-		}
+		const_reverse_iterator() = default;
 
 		const_reverse_iterator(const const_reverse_iterator& r)
 		:	m_ptr(r.m_ptr)
@@ -376,7 +387,7 @@ public:
 			return m_ptr;
 		}
 
-		const_reverse_iterator operator + (int offset) const
+		const_reverse_iterator operator + (int32_t offset) const
 		{
 			return const_reverse_iterator(m_ptr - offset);
 		}
@@ -386,7 +397,7 @@ public:
 			return const_reverse_iterator(m_ptr - offset);
 		}
 
-		const_reverse_iterator operator - (int offset) const
+		const_reverse_iterator operator - (int32_t offset) const
 		{
 			return const_reverse_iterator(m_ptr + offset);
 		}
@@ -454,7 +465,7 @@ public:
 
 	protected:
 		friend class AlignedVector;
-		ItemType* m_ptr;
+		ItemType* m_ptr = nullptr;
 
 		explicit const_reverse_iterator(ItemType* ptr)
 		:	m_ptr(ptr)
@@ -482,7 +493,7 @@ public:
 			return _O::m_ptr;
 		}
 
-		reverse_iterator operator + (int offset) const
+		reverse_iterator operator + (int32_t offset) const
 		{
 			return reverse_iterator(_O::m_ptr - offset);
 		}
@@ -492,7 +503,7 @@ public:
 			return reverse_iterator(_O::m_ptr - offset);
 		}
 
-		reverse_iterator operator - (int offset) const
+		reverse_iterator operator - (int32_t offset) const
 		{
 			return reverse_iterator(_O::m_ptr + offset);
 		}

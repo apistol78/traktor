@@ -1,13 +1,15 @@
 #include <cstring>
 #include <sstream>
 
-// #include <glslang/Include/ShHandle.h>
 #include <glslang/Public/ShaderLang.h>
 #include <SPIRV/GlslangToSpv.h>
-//#include <SPIRV/doc.h>
-//#include <SPIRV/disassemble.h>
 
-#include <spirv-headers/GLSL.std.450.h>
+#if defined(__LINUX__)
+#	include <SPIRV/GLSL.std.450.h>
+#else
+#	include <spirv-headers/GLSL.std.450.h>
+#endif
+
 #include <spirv-tools/optimizer.hpp>
 
 #include <spirv_hlsl.hpp>
