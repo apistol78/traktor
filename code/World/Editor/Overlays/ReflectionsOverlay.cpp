@@ -6,12 +6,10 @@
 #include "Resource/IResourceManager.h"
 #include "World/Editor/Overlays/ReflectionsOverlay.h"
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
-        namespace
-        {
+	namespace
+	{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Default");
@@ -28,16 +26,16 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 	return 0;
 }
 
-        }
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ReflectionsOverlay", 0, ReflectionsOverlay, IDebugOverlay)
 
 bool ReflectionsOverlay::create(resource::IResourceManager* resourceManager)
 {
-    if (!resourceManager->bind(c_debugShader, m_shader))
-        return false;
+	if (!resourceManager->bind(c_debugShader, m_shader))
+		return false;
 
-    return true;
+	return true;
 }
 
 void ReflectionsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
@@ -67,5 +65,4 @@ void ReflectionsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenR
 	renderGraph.addPass(rp);
 }
 
-    }
 }

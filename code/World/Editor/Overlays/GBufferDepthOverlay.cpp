@@ -7,12 +7,10 @@
 #include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/GBufferDepthOverlay.h"
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
-        namespace
-        {
+	namespace
+	{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"ViewDepth");
@@ -30,16 +28,16 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 	return 0;
 }
 
-        }
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferDepthOverlay", 0, GBufferDepthOverlay, IDebugOverlay)
 
 bool GBufferDepthOverlay::create(resource::IResourceManager* resourceManager)
 {
-    if (!resourceManager->bind(c_debugShader, m_shader))
-        return false;
+	if (!resourceManager->bind(c_debugShader, m_shader))
+		return false;
 
-    return true;
+	return true;
 }
 
 void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
@@ -48,8 +46,8 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 	if (!gbufferId)
 		return;
 
-	float nearZ = worldRenderView.getViewFrustum().getNearZ();
-	float farZ = worldRenderView.getViewFrustum().getFarZ();
+	const float nearZ = worldRenderView.getViewFrustum().getNearZ();
+	const float farZ = worldRenderView.getViewFrustum().getFarZ();
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer depth overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
@@ -73,5 +71,4 @@ void GBufferDepthOverlay::setup(render::RenderGraph& renderGraph, render::Screen
 	renderGraph.addPass(rp);
 }
 
-    }
 }

@@ -40,46 +40,46 @@ void UniformShadowProjection::calculate(
 		lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 	}
 
-	Matrix44 lightView(
+	const Matrix44 lightView(
 		lightAxisX,
 		lightAxisY,
 		lightAxisZ,
 		Vector4::origo()
 	);
 
-	Matrix44 viewToLight = lightView.inverse() * viewInverse;
+	const Matrix44 viewToLight = lightView.inverse() * viewInverse;
 
 	// Calculate bounding box of view frustum in light space.
 	Aabb3 viewFrustumBox;
 	for (int i = 0; i < 8; ++i)
 	{
-		Vector4 lightCorner = viewToLight * viewFrustum.corners[i];
+		const Vector4 lightCorner = viewToLight * viewFrustum.corners[i];
 		viewFrustumBox.contain(lightCorner);
 	}
 
 	// Update light view matrix with bounding box centered.
-	Vector4 center = viewFrustumBox.getCenter();
-	Vector4 extent = viewFrustumBox.getExtent() * Vector4(2.0f, 2.0f, 1.0f, 0.0f);
+	const Vector4 center = viewFrustumBox.getCenter();
+	const Vector4 extent = viewFrustumBox.getExtent() * Vector4(2.0f, 2.0f, 1.0f, 0.0f);
 
 	const float c_extentStep = 8.0f;
 
-	Scalar ex = quantizeProjection ? Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep) : extent.x();
-	Scalar ey = quantizeProjection ? Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep) : extent.y();
+	const Scalar ex = quantizeProjection ? Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep) : extent.x();
+	const Scalar ey = quantizeProjection ? Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep) : extent.y();
 
-	Scalar smx = ex / Scalar(m_realShadowMapSize);
-	Scalar smy = ey / Scalar(m_realShadowMapSize);
+	const Scalar smx = ex / Scalar(m_realShadowMapSize);
+	const Scalar smy = ey / Scalar(m_realShadowMapSize);
 
-	Scalar cx = quantizeProjection ? Scalar(std::floor(center.x() / smx) * smx) : center.x();
-	Scalar cy = quantizeProjection ? Scalar(std::floor(center.y() / smy) * smy) : center.y();
+	const Scalar cx = quantizeProjection ? Scalar(std::floor(center.x() / smx) * smx) : center.x();
+	const Scalar cy = quantizeProjection ? Scalar(std::floor(center.y() / smy) * smy) : center.y();
 
 	// Calculate world center of view frustum's bounding box.
-	Vector4 worldCenter = (
+	const Vector4 worldCenter = (
 		lightAxisX * cx +
 		lightAxisY * cy +
 		lightAxisZ * center.z()
 	).xyz1();
 
-	Scalar lightDistance = Scalar(shadowFarZ * 2.0f);
+	const Scalar lightDistance = Scalar(shadowFarZ) * 2.0_simd;
 
 	outLightView = Matrix44(
 		lightAxisX,
@@ -94,21 +94,21 @@ void UniformShadowProjection::calculate(
 		ex,
 		ey,
 		0.0f,
-		lightDistance + extent.z() * Scalar(2.0f)
+		lightDistance + extent.z() * 2.0_simd
 	);
 
 	outShadowFrustum.buildOrtho(
 		ex,
 		ey,
 		0.0f,
-		lightDistance + extent.z() * Scalar(2.0f)
+		lightDistance + extent.z() * 2.0_simd
 	);
 
 	// Add part of view frustum to shadow frustum.
-	Matrix44 view2Light = outLightView * viewInverse;
+	const Matrix44 view2Light = outLightView * viewInverse;
 	for (uint32_t i = 0; i < viewFrustum.planes.size(); ++i)
 	{
-		Plane viewFrustumPlane = view2Light * viewFrustum.planes[i];
+		const Plane viewFrustumPlane = view2Light * viewFrustum.planes[i];
 		if (viewFrustumPlane.normal().z() <= 0.0f)
 			outShadowFrustum.planes.push_back(viewFrustumPlane);
 	}

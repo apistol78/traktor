@@ -39,7 +39,7 @@ render::Shader::Permutation WorldRenderPassSimple::getPermutation(const render::
 
 void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams) const
 {
-	Matrix44 w = Matrix44::identity();
+	const Matrix44 w = Matrix44::identity();
 	programParams->attachParameters(m_globalProgramParams);
 	programParams->setMatrixParameter(s_handleView, m_view);
 	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
@@ -50,7 +50,7 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 
 void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
-	Matrix44 w = world.toMatrix44();
+	const Matrix44 w = world.toMatrix44();
 	programParams->attachParameters(m_globalProgramParams);
 	programParams->setMatrixParameter(s_handleView, m_view);
 	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
