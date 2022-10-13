@@ -228,8 +228,16 @@ local PACKAGES =
 		name = "fbx",
 		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_linux.tar.gz",
 		patch = function()
-			run:execute("tar -xzf fbx202001_fbxsdk_linux.tar.gz")
-			run:execute("./fbx202001_fbxsdk_linux " .. run.pwd)
+			local cwd = fileSystem:getAbsolutePath(Path(run.cwd)).pathNameOS
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					"tar -xzf fbx202001_fbxsdk_linux.tar.gz",
+					"yes yes | ./fbx202001_fbxsdk_linux " .. cwd,
+				}
+			)
+			run:execute("sh ./install.sh")		
 		end
 	},
 
