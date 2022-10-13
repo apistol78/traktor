@@ -1,10 +1,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Xml/Text.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Text", Text, Node)
 
@@ -40,5 +38,4 @@ Ref< Node > Text::cloneUntyped() const
 	return clone();
 }
 
-	}
 }

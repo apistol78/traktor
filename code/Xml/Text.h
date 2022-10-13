@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 /*! XML Text.
  * \ingroup XML
@@ -40,6 +38,4 @@ private:
 	std::wstring m_text;
 };
 
-	}
 }
-

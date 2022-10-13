@@ -20,12 +20,10 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Xml/XmlDeserializer.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
+	namespace
 	{
-		namespace
-		{
 
 inline
 XmlPullParser::Attributes::const_iterator findAttribute(const XmlPullParser::Attributes& attr, const std::wstring& name)
@@ -38,7 +36,7 @@ XmlPullParser::Attributes::const_iterator findAttribute(const XmlPullParser::Att
 	return attr.end();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlDeserializer", XmlDeserializer, Serializer)
 
@@ -532,5 +530,4 @@ bool XmlDeserializer::nextElementValue(const std::wstring& name, std::wstring& v
 	return true;
 }
 
-	}
 }

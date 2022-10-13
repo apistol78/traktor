@@ -9,10 +9,8 @@
 #include "Xml/Text.h"
 #include "Xml/XmlPullParser.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Document", Document, Object)
 
@@ -162,5 +160,4 @@ Ref< Document > Document::clone() const
 	return cloneDocument;
 }
 
-	}
 }

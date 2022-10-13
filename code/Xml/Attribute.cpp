@@ -1,9 +1,7 @@
 #include "Xml/Attribute.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Attribute", Attribute, Object)
 
@@ -44,5 +42,4 @@ Attribute* Attribute::getNext() const
 	return m_next;
 }
 
-	}
 }

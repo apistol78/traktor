@@ -6,10 +6,8 @@
 #include "Xml/Element.h"
 #include "Xml/Text.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Element", Element, Node)
 
@@ -351,5 +349,4 @@ Ref< Node > Element::cloneUntyped() const
 	return clone();
 }
 
-	}
 }

@@ -15,10 +15,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 class Node;
 class Element;
@@ -55,6 +53,4 @@ private:
 	Ref< Element > m_docElement;
 };
 
-	}
 }
-

@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 /*! XML Attribute.
  * \ingroup XML
@@ -48,6 +46,4 @@ private:
 	Ref< Attribute > m_next;
 };
 
-	}
 }
-
