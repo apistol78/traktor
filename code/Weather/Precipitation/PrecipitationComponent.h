@@ -12,26 +12,24 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class StaticMesh;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 /*! Precipitation component.
  * \ingroup Weather
@@ -41,7 +39,7 @@ class T_DLLCLASS PrecipitationComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	PrecipitationComponent(
+	explicit PrecipitationComponent(
 		const resource::Proxy< mesh::StaticMesh >& mesh,
 		float tiltRate,
 		float parallaxDistance,
@@ -72,6 +70,4 @@ private:
 	float m_layerAngle[4];
 };
 
-	}
 }
-

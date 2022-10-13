@@ -8,18 +8,16 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleWeather_SkyRadius(L"Weather_SkyRadius");
 const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
@@ -81,7 +79,7 @@ void SkyComponent::build(
 	if (!sp)
 		return;
 
-	float rotation = m_transform.rotation().toEulerAngles().x();
+	const float rotation = m_transform.rotation().toEulerAngles().x();
 
 	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
 
@@ -108,5 +106,4 @@ void SkyComponent::build(
 	renderContext->draw(sp.priority, renderBlock);
 }
 
-	}
 }

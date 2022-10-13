@@ -12,12 +12,10 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyComponentData.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
 const resource::Id< render::ITexture > c_defaultTexture(Guid(L"{93E6996B-8903-4AD0-811A-C8C03C8E38C6}"));
@@ -27,7 +25,7 @@ const int32_t c_vertexCount = (c_longitudes + 1) * c_latitudes;
 const int32_t c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
 const int32_t c_indexCount = c_triangleCount * 3;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 3, SkyComponentData, world::IEntityComponentData)
 
@@ -69,10 +67,10 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	for (int32_t i = 0; i < c_latitudes; ++i)
 	{
-		float phi = float(i) / (c_latitudes - 1);
+		const float phi = float(i) / (c_latitudes - 1);
 		for (int32_t j = 0; j <= c_longitudes; ++j)
 		{
-			float theta = float(j) / c_longitudes;
+			const float theta = float(j) / c_longitudes;
 			*vertex++ = phi;
 			*vertex++ = theta;
 		}
@@ -95,7 +93,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	for (int32_t k = 0; k < c_latitudes - 1; ++k)
 	{
-		int32_t o = k * (c_longitudes + 1);
+		const int32_t o = k * (c_longitudes + 1);
 		for (int32_t i = 0, j = c_longitudes; i <= c_longitudes; j = i, ++i)
 		{
 			*index++ = o + i;
@@ -151,5 +149,4 @@ void SkyComponentData::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

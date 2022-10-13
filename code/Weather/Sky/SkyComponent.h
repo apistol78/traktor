@@ -12,28 +12,26 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IWorldRenderPass;
 class WorldRenderView;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Buffer;
 class RenderContext;
 class ITexture;
 class IVertexLayout;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 /*! Sky background component.
  * \ingroup Weather
@@ -80,6 +78,4 @@ private:
 	Transform m_transform;
 };
 
-	}
 }
-

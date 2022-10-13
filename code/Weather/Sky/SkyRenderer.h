@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 /*! Sky background renderer.
  * \ingroup Weather
@@ -54,6 +52,4 @@ public:
 	) override final;
 };
 
-	}
 }
-

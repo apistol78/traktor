@@ -11,26 +11,24 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class ITexture;
 class Shader;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 class SkyComponent;
 
@@ -59,6 +57,4 @@ private:
 	resource::Id< render::ITexture > m_texture;
 };
 
-	}
 }
-
