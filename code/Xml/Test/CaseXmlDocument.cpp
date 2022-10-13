@@ -4,14 +4,10 @@
 #include "Xml/Element.h"
 #include "Xml/Test/CaseXmlDocument.h"
 
-namespace traktor
+namespace traktor::xml::test
 {
-	namespace xml
+	namespace
 	{
-		namespace test
-		{
-			namespace
-			{
 
 const char c_validXml[] =
 {
@@ -24,7 +20,7 @@ const char c_validXml[] =
 	"</root>"
 };
 
-			}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.xml.test.CaseXmlDocument", 0, CaseXmlDocument, traktor::test::Case)
 
@@ -36,6 +32,4 @@ void CaseXmlDocument::run()
 	CASE_ASSERT_EQUAL(doc.getDocumentElement()->getName(), L"root");
 }
 
-		}
-	}
 }

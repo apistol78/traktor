@@ -8,12 +8,10 @@
 #include "Xml/Text.h"
 #include "Xml/XmlClassFactory.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
+	namespace
 	{
-		namespace
-		{
 
 std::wstring xml_Node_write(xml::Node* node)
 {
@@ -112,5 +110,4 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classDocument);
 }
 
-	}
 }

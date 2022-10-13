@@ -9,12 +9,10 @@
 #define XML_STATIC
 #include "expat.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
+	namespace
 	{
-		namespace
-		{
 
 const Utf8Encoding c_utf8enc;
 
@@ -28,7 +26,7 @@ std::wstring xmltows(const XML_Char* xmlstr)
 	return mbstows((const char*)xmlstr);
 }
 
-		}
+	}
 
 class XmlPullParserImpl
 {
@@ -303,5 +301,4 @@ const XmlPullParser::Event& XmlPullParser::getEvent() const
 	return m_event;
 }
 
-	}
 }

@@ -10,12 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::xml::test
 {
-	namespace xml
-	{
-		namespace test
-		{
 
 class T_DLLCLASS CaseXmlPullParser : public traktor::test::Case
 {
@@ -25,7 +21,4 @@ public:
 	virtual void run() override final;
 };
 
-		}
-	}
 }
-

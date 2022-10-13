@@ -17,8 +17,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace xml
-	{
+}
+
+namespace traktor::xml
+{
 
 class Attribute;
 
@@ -87,6 +89,4 @@ private:
 	Ref< Attribute > m_lastAttribute;
 };
 
-	}
 }
-

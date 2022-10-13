@@ -17,8 +17,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace xml
-	{
+}
+
+namespace traktor::xml
+{
 
 /*! XML Node.
  * \ingroup XML
@@ -28,8 +30,6 @@ class T_DLLCLASS Node : public Object
 	T_RTTI_CLASS;
 
 public:
-	Node();
-
 	virtual ~Node();
 
 	virtual std::wstring getName() const;
@@ -70,13 +70,11 @@ protected:
 	void cloneChildren(Node* clone) const;
 
 private:
-	Node* m_parent;
-	Node* m_previousSibling;
+	Node* m_parent = nullptr;
+	Node* m_previousSibling = nullptr;
 	Ref< Node > m_nextSibling;
 	Ref< Node > m_firstChild;
 	Ref< Node > m_lastChild;
 };
 
-	}
 }
-

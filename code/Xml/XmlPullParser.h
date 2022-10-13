@@ -17,8 +17,10 @@ namespace traktor
 
 class IStream;
 
-	namespace xml
-	{
+}
+
+namespace traktor::xml
+{
 
 class XmlPullParserImpl;
 
@@ -66,6 +68,4 @@ private:
 	int32_t m_pushed;			/**< If current event is being pushed. */
 };
 
-	}
 }
-

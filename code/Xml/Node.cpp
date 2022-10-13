@@ -1,18 +1,10 @@
 #include "Core/Io/IStream.h"
 #include "Xml/Node.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Node", Node, Object)
-
-Node::Node()
-:	m_parent(0)
-,	m_previousSibling(0)
-{
-}
 
 Node::~Node()
 {
@@ -23,8 +15,8 @@ Node::~Node()
 			child->m_nextSibling.reset();
 	}
 
-	m_firstChild = 0;
-	m_lastChild = 0;
+	m_firstChild = nullptr;
+	m_lastChild = nullptr;
 }
 
 std::wstring Node::getName() const
@@ -47,7 +39,7 @@ void Node::setValue(const std::wstring& value)
 
 void Node::write(OutputStream& os) const
 {
-	for (Node* child = m_firstChild; child != 0; child = child->m_nextSibling)
+	for (Node* child = m_firstChild; child != nullptr; child = child->m_nextSibling)
 		child->write(os);
 }
 
@@ -56,7 +48,7 @@ void Node::unlink()
 	if (m_parent)
 	{
 		m_parent->removeChild(this);
-		m_parent = 0;
+		m_parent = nullptr;
 	}
 }
 
@@ -64,8 +56,8 @@ void Node::addChild(Node* child)
 {
 	child->unlink();
 
-	T_ASSERT(child->m_previousSibling == 0);
-	T_ASSERT(child->m_nextSibling == 0);
+	T_ASSERT(child->m_previousSibling == nullptr);
+	T_ASSERT(child->m_nextSibling == nullptr);
 
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
@@ -93,9 +85,9 @@ void Node::removeChild(Node* child)
 	if (m_lastChild == child)
 		m_lastChild = child->m_previousSibling;
 
-	child->m_parent = 0;
-	child->m_previousSibling = 0;
-	child->m_nextSibling = 0;
+	child->m_parent = nullptr;
+	child->m_previousSibling = nullptr;
+	child->m_nextSibling = nullptr;
 }
 
 void Node::removeAllChildren()
@@ -103,17 +95,17 @@ void Node::removeAllChildren()
 	for (Ref< Node > child = m_firstChild; child; child = child->m_nextSibling)
 	{
 		T_ASSERT(child->m_parent == this);
-		child->m_parent = 0;
-		child->m_previousSibling = 0;
+		child->m_parent = nullptr;
+		child->m_previousSibling = nullptr;
 	}
-	m_firstChild = 0;
-	m_lastChild = 0;
+	m_firstChild = nullptr;
+	m_lastChild = nullptr;
 }
 
 void Node::insertBefore(Node* child, Node* beforeNode)
 {
-	T_ASSERT(child->m_parent == 0);
-	T_ASSERT(child->m_previousSibling == 0);
+	T_ASSERT(child->m_parent == nullptr);
+	T_ASSERT(child->m_previousSibling == nullptr);
 	T_ASSERT(!beforeNode || beforeNode->m_parent == this);
 
 	if (!beforeNode)
@@ -121,7 +113,7 @@ void Node::insertBefore(Node* child, Node* beforeNode)
 
 	child->m_parent = this;
 
-	child->m_previousSibling = beforeNode ? beforeNode->m_previousSibling : 0;
+	child->m_previousSibling = beforeNode ? beforeNode->m_previousSibling : nullptr;
 	child->m_nextSibling = beforeNode;
 
 	if (child->m_previousSibling)
@@ -136,7 +128,7 @@ void Node::insertBefore(Node* child, Node* beforeNode)
 
 void Node::insertAfter(Node* child, Node* afterNode)
 {
-	T_ASSERT(child->m_parent == 0);
+	T_ASSERT(child->m_parent == nullptr);
 	T_ASSERT(!afterNode || afterNode->m_parent == this);
 
 	if (afterNode)
@@ -156,7 +148,7 @@ void Node::insertAfter(Node* child, Node* afterNode)
 	}
 	else
 	{
-		T_ASSERT(m_firstChild == 0);
+		T_ASSERT(m_firstChild == nullptr);
 		addChild(child);
 	}
 }
@@ -195,5 +187,4 @@ void Node::cloneChildren(Node* clone) const
 	}
 }
 
-	}
 }

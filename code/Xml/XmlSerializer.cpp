@@ -1,7 +1,7 @@
-#include <sstream>
 #include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Color4f.h"
@@ -18,12 +18,10 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
+	namespace
 	{
-		namespace
-		{
 
 std::wstring characterEntity(const std::wstring& str)
 {
@@ -37,13 +35,13 @@ std::wstring characterEntity(const std::wstring& str)
 	};
 
 	std::wstring result = str;
-	for (int i = 0; i < sizeof_array(c_entities); ++i)
+	for (int32_t i = 0; i < sizeof_array(c_entities); ++i)
 		result = replaceAll(result, c_entities[i].needle, c_entities[i].escape);
 
 	return result;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlSerializer", XmlSerializer, Serializer)
 
@@ -252,10 +250,10 @@ void XmlSerializer::operator >> (const Member< ISerializable* >& m)
 	T_CHECK_STATUS;
 
 	ISerializable* o = *m;
-	std::map< ISerializable*, std::wstring >::iterator i = m_refs.find(o);
-	if (i != m_refs.end())
+	auto it = m_refs.find(o);
+	if (it != m_refs.end())
 	{
-		m_xml << m_indent << L"<" << m.getName() << L" ref=\"" << i->second << L"\"/>" << Endl;
+		m_xml << m_indent << L"<" << m.getName() << L" ref=\"" << it->second << L"\"/>" << Endl;
 
 		enterElement(m.getName());
 		leaveElement();
@@ -384,12 +382,12 @@ void XmlSerializer::operator >> (const MemberEnumBase& m)
 
 std::wstring XmlSerializer::stackPath()
 {
-	std::wstringstream ss;
-	for (std::list< Entry >::const_iterator i = m_stack.begin(); i != m_stack.end(); ++i)
+	StringOutputStream ss;
+	for (const auto& entry : m_stack)
 	{
-		ss << L'/' << i->name;
-		if (i->index > 0)
-			ss << L'[' << i->index << L']';
+		ss << L'/' << entry.name;
+		if (entry.index > 0)
+			ss << L'[' << entry.index << L']';
 	}
 	return ss.str();
 }
@@ -427,5 +425,4 @@ void XmlSerializer::decrementIndent()
 	m_indent.erase(m_indent.end() - 1);
 }
 
-	}
 }
