@@ -12,12 +12,10 @@
 #include "Terrain/RiverComponentData.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 struct ControlPointAccessor
 {
@@ -53,7 +51,7 @@ struct ControlPointAccessor
 
 typedef Hermite< RiverComponentData::ControlPoint, RiverComponentData::ControlPoint, ControlPointAccessor > hermite_t;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RiverComponent", RiverComponent, world::IEntityComponent)
 
@@ -67,7 +65,7 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	for (auto it = path.begin() + 1; it != path.end(); ++it)
 		length += (it->position - (it - 1)->position).length();
 
-	float dT = std::max(1.0f / length, 0.001f);
+	const float dT = std::max(1.0f / length, 0.001f);
 
 	AlignedVector< Vector4 > silouette;
 
@@ -120,7 +118,7 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_vertexBuffer->unlock();
 
-	uint32_t triangleCount = (uint32_t)(silouette.size() - 2);
+	const uint32_t triangleCount = (uint32_t)(silouette.size() - 2);
 
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
@@ -213,5 +211,4 @@ void RiverComponent::build(
 	renderContext->draw(sp.priority, renderBlock);
 }
 
-	}
 }

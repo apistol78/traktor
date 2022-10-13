@@ -7,10 +7,8 @@
 #include "Terrain/TerrainResource.h"
 #include "Terrain/TerrainFactory.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainFactory", TerrainFactory, resource::IResourceFactory)
 
@@ -80,5 +78,4 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 	return terrain;
 }
 
-	}
 }

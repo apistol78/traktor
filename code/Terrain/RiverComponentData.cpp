@@ -7,10 +7,8 @@
 #include "Resource/Member.h"
 #include "Terrain/RiverComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RiverComponentData", 0, RiverComponentData, world::IEntityComponentData)
 
@@ -32,5 +30,4 @@ void RiverComponentData::ControlPoint::serialize(ISerializer& s)
 	s >> Member< float >(L"tension", tension, AttributeRange(0.1f, 10.0f));
 }
 
-	}
 }

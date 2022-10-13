@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 class Terrain;
 
@@ -27,8 +25,6 @@ class T_DLLCLASS TerrainComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	TerrainComponentData();
-
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -49,14 +45,12 @@ public:
 
 private:
 	resource::Id< Terrain > m_terrain;
-	float m_patchLodDistance;
-	float m_patchLodBias;
-	float m_patchLodExponent;
-	float m_surfaceLodDistance;
-	float m_surfaceLodBias;
-	float m_surfaceLodExponent;
+	float m_patchLodDistance = 100.0f;
+	float m_patchLodBias = 0.0f;
+	float m_patchLodExponent = 1.0f;
+	float m_surfaceLodDistance = 100.0f;
+	float m_surfaceLodBias = 0.0f;
+	float m_surfaceLodExponent = 1.0f;
 };
 
-	}
 }
-

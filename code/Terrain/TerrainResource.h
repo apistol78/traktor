@@ -11,25 +11,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ISimpleTexture;
 class Shader;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! Terrain persistent resource data.
  * \ingroup Terrain
@@ -46,8 +44,6 @@ public:
 
 		void serialize(ISerializer& s);
 	};
-
-	TerrainResource();
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -76,8 +72,8 @@ public:
 private:
 	friend class TerrainPipeline;
 
-	uint32_t m_detailSkip;
-	uint32_t m_patchDim;
+	uint32_t m_detailSkip = 0;
+	uint32_t m_patchDim = 0;
 	resource::Id< hf::Heightfield > m_heightfield;
 	resource::Id< render::ISimpleTexture > m_colorMap;
 	resource::Id< render::ISimpleTexture > m_normalMap;
@@ -89,6 +85,4 @@ private:
 	std::vector< Patch > m_patches;
 };
 
-	}
 }
-

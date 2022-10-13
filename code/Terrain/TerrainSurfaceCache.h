@@ -14,17 +14,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderTargetSet;
@@ -33,10 +31,10 @@ class RenderContext;
 class RenderBlock;
 class RenderGraph;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class Terrain;
 
@@ -100,11 +98,9 @@ private:
 	Ref< render::IRenderTargetSet > m_virtualTexture;
 	Ref< render::IRenderTargetSet > m_base;
 	AlignedVector< Entry > m_entries;
-	bool m_haveBase;
-	bool m_clearCache;
-	uint32_t m_updateCount;
+	bool m_haveBase = false;
+	bool m_clearCache = true;
+	uint32_t m_updateCount = 0;
 };
 
-	}
 }
-

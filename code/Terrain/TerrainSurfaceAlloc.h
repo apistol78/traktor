@@ -3,10 +3,8 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 /*! Terrain surface allocator.
  * \ingroup Terrain
@@ -18,18 +16,10 @@ class TerrainSurfaceAlloc : public Object
 public:
 	struct Tile
 	{
-		uint32_t lod;
-		uint32_t x;
-		uint32_t y;
-		uint32_t dim;
-
-		Tile()
-		:	lod(0)
-		,	x(0)
-		,	y(0)
-		,	dim(0)
-		{
-		}
+		uint32_t lod = 0;
+		uint32_t x = 0;
+		uint32_t y = 0;
+		uint32_t dim = 0;
 	};
 
 	TerrainSurfaceAlloc(uint32_t size);
@@ -52,6 +42,4 @@ private:
 	AlignedVector< Tile > m_free[4];
 };
 
-	}
 }
-

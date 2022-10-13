@@ -15,17 +15,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Buffer;
 class IRenderSystem;
@@ -34,27 +32,27 @@ class ITexture;
 class IVertexLayout;
 class RenderContext;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 class WorldSetupContext;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class TerrainSurfaceCache;
 
@@ -66,10 +64,7 @@ class T_DLLCLASS TerrainComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	enum
-	{
-		LodCount = 4
-	};
+	static constexpr int32_t LodCount = 4;
 
 	enum VisualizeMode
 	{
@@ -103,7 +98,7 @@ public:
 		Vector4 patchOrigin;
 	};
 
-	TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	explicit TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	bool create(const TerrainComponentData& data);
 
@@ -167,7 +162,7 @@ private:
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
 	AlignedVector< CullPatch > m_visiblePatches;
-	 AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
+	AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
@@ -176,6 +171,4 @@ private:
 	bool createPatches();
 };
 
-	}
 }
-

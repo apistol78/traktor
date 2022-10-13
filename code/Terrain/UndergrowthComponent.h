@@ -7,35 +7,31 @@
 #include "Terrain/TerrainLayerComponent.h"
 #include "Terrain/UndergrowthComponentData.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
 class IVertexLayout;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class UndergrowthComponent : public TerrainLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	UndergrowthComponent();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -78,20 +74,16 @@ private:
 		uint32_t count;
 	};
 
-	world::Entity* m_owner;
-
+	world::Entity* m_owner = nullptr;
 	UndergrowthComponentData m_layerData;
-
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Cluster > m_clusters;
 	SmallMap< int32_t, ViewState > m_viewState;
-	float m_clusterSize;
-	uint32_t m_plantsCount;
+	float m_clusterSize = 0.0f;
+	uint32_t m_plantsCount = 0;
 };
 
-	}
 }
-

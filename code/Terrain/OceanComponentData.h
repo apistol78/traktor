@@ -13,19 +13,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 class ITexture;
 class Shader;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class Terrain;
 
@@ -76,6 +74,4 @@ private:
 	Wave m_waves[4];
 };
 
-	}
 }
-

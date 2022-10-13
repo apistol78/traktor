@@ -6,31 +6,16 @@
 #include "Resource/Member.h"
 #include "Terrain/UndergrowthComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthComponentData", 1, UndergrowthComponentData, TerrainLayerComponentData)
-
-UndergrowthComponentData::UndergrowthComponentData()
-:	m_spreadDistance(100.0f)
-{
-}
 
 void UndergrowthComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
 	s >> MemberAlignedVector< Plant, MemberComposite< Plant > >(L"plants", m_plants);
-}
-
-UndergrowthComponentData::Plant::Plant()
-:	attribute(1)
-,	density(100)
-,	plant(0)
-,	scale(1.0f)
-{
 }
 
 void UndergrowthComponentData::Plant::serialize(ISerializer& s)
@@ -45,5 +30,4 @@ void UndergrowthComponentData::Plant::serialize(ISerializer& s)
 	s >> Member< float >(L"scale", scale);
 }
 
-	}
 }

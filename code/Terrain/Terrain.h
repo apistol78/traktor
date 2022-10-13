@@ -12,25 +12,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ISimpleTexture;
 class Shader;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! Terrain runtime description.
  * \ingroup Terrain
@@ -45,8 +43,6 @@ public:
 		float height[2];
 		float error[3];
 	};
-
-	Terrain();
 
 	/*! Get amount of detail to skip.
 	 *
@@ -130,8 +126,8 @@ private:
 	friend class TerrainFactory;
 	friend class TerrainEditModifier;
 
-	uint32_t m_detailSkip;
-	uint32_t m_patchDim;
+	uint32_t m_detailSkip = 0;
+	uint32_t m_patchDim = 0;
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< render::ISimpleTexture > m_colorMap;
 	resource::Proxy< render::ISimpleTexture > m_normalMap;
@@ -144,6 +140,4 @@ private:
 	AlignedVector< Patch > m_patches;
 };
 
-	}
 }
-

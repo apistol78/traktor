@@ -7,16 +7,14 @@
 #include "Terrain/OceanComponentData.h"
 #include "Terrain/Terrain.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
-		
+	
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-82EB-453BE2B558A8}"));
-		
-		}
+	
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 1, OceanComponentData, world::IEntityComponentData)
 
@@ -61,5 +59,4 @@ void OceanComponentData::Wave::serialize(ISerializer& s)
 	s >> Member< float >(L"rate", rate);
 }
 
-	}
 }

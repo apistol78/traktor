@@ -20,12 +20,10 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle s_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
@@ -53,17 +51,9 @@ const uint32_t c_gridSize = 512;
 const uint32_t c_gridInfSize = 128;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanComponent", OceanComponent, world::IEntityComponent)
-
-OceanComponent::OceanComponent()
-:	m_owner(0)
-,	m_opacity(0.0f)
-,	m_elevation(0.0f)
-,	m_maxAmplitude(0.0f)
-{
-}
 
 OceanComponent::~OceanComponent()
 {
@@ -277,5 +267,4 @@ void OceanComponent::build(
 	renderContext->draw(sp.priority, renderBlock);
 }
 
-	}
 }

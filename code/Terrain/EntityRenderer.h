@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 /*! Terrain entity renderer.
  * \ingroup Terrain
@@ -70,6 +68,4 @@ private:
 	bool m_oceanReflectionEnable;
 };
 
-	}
 }
-

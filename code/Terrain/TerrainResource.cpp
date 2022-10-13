@@ -8,18 +8,10 @@
 #include "Resource/Member.h"
 #include "Terrain/TerrainResource.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainResource", 7, TerrainResource, ISerializable)
-
-TerrainResource::TerrainResource()
-:	m_detailSkip(0)
-,	m_patchDim(0)
-{
-}
 
 void TerrainResource::serialize(ISerializer& s)
 {
@@ -43,5 +35,4 @@ void TerrainResource::Patch::serialize(ISerializer& s)
 	s >> MemberStaticArray< float, 3 >(L"error", error);
 }
 
-	}
 }

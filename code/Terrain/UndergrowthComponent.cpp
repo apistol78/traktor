@@ -21,12 +21,10 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maxInstanceCount = 180;
 
@@ -57,16 +55,9 @@ Vertex packVertex(const Vector4& position, float u, float v)
 	return vtx;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthComponent", UndergrowthComponent, TerrainLayerComponent)
-
-UndergrowthComponent::UndergrowthComponent()
-:	m_owner(nullptr)
-,	m_clusterSize(0.0f)
-,	m_plantsCount(0)
-{
-}
 
 bool UndergrowthComponent::create(
 	resource::IResourceManager* resourceManager,
@@ -179,9 +170,9 @@ void UndergrowthComponent::build(
 	// Update clusters at first pass from eye pow.
 	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
-	Matrix44 view = worldRenderView.getView();
-	Matrix44 viewInv = view.inverse();
-	Vector4 eye = viewInv.translation();
+	const Matrix44 view = worldRenderView.getView();
+	const Matrix44 viewInv = view.inverse();
+	const Vector4 eye = viewInv.translation();
 
 	// Get plant state for current view.
 	ViewState& vs = m_viewState[worldRenderView.getIndex()];
@@ -206,7 +197,7 @@ void UndergrowthComponent::build(
 
 			vs.distances[i] = (cluster.center - eye).length();
 
-			bool visible = vs.pvs[i];
+			const bool visible = vs.pvs[i];
 			vs.pvs.set(i, viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::IrOutside);
 			if (!vs.pvs[i])
 				continue;
@@ -216,13 +207,13 @@ void UndergrowthComponent::build(
 			RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
 			for (int32_t j = cluster.from; j < cluster.to; ++j)
 			{
-				Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
+				const Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
 
-				float dx = (ruv.x * 2.0f - 1.0f) * m_clusterSize;
-				float dz = (ruv.y * 2.0f - 1.0f) * m_clusterSize;
+				const float dx = (ruv.x * 2.0f - 1.0f) * m_clusterSize;
+				const float dz = (ruv.y * 2.0f - 1.0f) * m_clusterSize;
 
-				float px = cluster.center.x() + dx;
-				float pz = cluster.center.z() + dz;
+				const float px = cluster.center.x() + dx;
+				const float pz = cluster.center.z() + dz;
 
 				vs.plants[j * 2 + 0] = Vector4(
 					px,
@@ -258,10 +249,10 @@ void UndergrowthComponent::build(
 
 		const Cluster& cluster = m_clusters[i];
 
-		int32_t count = cluster.to - cluster.from;
+		const int32_t count = cluster.to - cluster.from;
 		for (int32_t j = 0; j < count; )
 		{
-			int32_t batch = std::min(count - j, c_maxInstanceCount);
+			const int32_t batch = std::min(count - j, c_maxInstanceCount);
 
 			for (int32_t k = 0; k < batch; ++k, ++j)
 			{
@@ -325,8 +316,8 @@ void UndergrowthComponent::updatePatches()
 	for (const auto& plant : m_layerData.m_plants)
 		um[plant.attribute] = ++maxMaterialIndex;
 
-	int32_t size = heightfield->getSize();
-	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
+	const int32_t size = heightfield->getSize();
+	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
 
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
@@ -344,8 +335,8 @@ void UndergrowthComponent::updatePatches()
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
 				{
-					uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
-					uint8_t index = um[attribute];
+					const uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
+					const uint8_t index = um[attribute];
 					if (index > 0)
 					{
 						cm[index - 1]++;
@@ -359,7 +350,7 @@ void UndergrowthComponent::updatePatches()
 			float wx, wz;
 			heightfield->gridToWorld(x + 8, z + 8, wx, wz);
 
-			float wy = heightfield->getWorldHeight(wx, wz);
+			const float wy = heightfield->getWorldHeight(wx, wz);
 
 			for (uint32_t i = 0; i < maxMaterialIndex; ++i)
 			{
@@ -370,14 +361,14 @@ void UndergrowthComponent::updatePatches()
 				{
 					if (um[plant.attribute] == i + 1)
 					{
-						int32_t densityFactor = cm[i];
+						const int32_t densityFactor = cm[i];
 
-						int32_t density = (plant.density * densityFactor) / (16 * 16);
+						const int32_t density = (plant.density * densityFactor) / (16 * 16);
 						if (density <= 4)
 							continue;
 
-						int32_t from = m_plantsCount;
-						int32_t to = from + density;
+						const int32_t from = m_plantsCount;
+						const int32_t to = from + density;
 
 						Cluster c;
 						c.center = Vector4(wx, wy, wz, 1.0f);
@@ -395,5 +386,4 @@ void UndergrowthComponent::updatePatches()
 	}
 }
 
-	}
 }

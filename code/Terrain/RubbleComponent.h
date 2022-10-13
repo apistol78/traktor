@@ -7,32 +7,28 @@
 #include "Terrain/TerrainLayerComponent.h"
 #include "Terrain/RubbleComponentData.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class RubbleComponent : public TerrainLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	RubbleComponent();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -86,17 +82,15 @@ private:
 		bool visible;
 	};
 
-	world::Entity* m_owner;
+	world::Entity* m_owner = nullptr;
 	RubbleComponentData m_data;
 	AlignedVector< RubbleMesh > m_rubble;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
-	float m_clusterSize;
-	Vector4 m_eye;
-	Vector4 m_fwd;
+	float m_clusterSize = 0.0f;
+	Vector4 m_eye = Vector4::zero();
+	Vector4 m_fwd = Vector4::zero();
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 
-	}
 }
-

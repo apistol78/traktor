@@ -18,12 +18,10 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle c_handleTerrain_VisualizeLods(L"Terrain_VisualizeLods");
 const render::Handle c_handleTerrain_VisualizeMap(L"Terrain_VisualizeMap");
@@ -60,7 +58,7 @@ struct CullPatch
 
 typedef std::pair< float, const TerrainComponent::Patch* > cull_patch_t;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
 
@@ -560,13 +558,13 @@ bool TerrainComponent::createPatches()
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
 
-	uint32_t heightfieldSize = m_heightfield->getSize();
+	const uint32_t heightfieldSize = m_heightfield->getSize();
 	T_ASSERT(heightfieldSize > 0);
 
-	uint32_t patchDim = m_terrain->getPatchDim();
-	uint32_t detailSkip = m_terrain->getDetailSkip();
+	const uint32_t patchDim = m_terrain->getPatchDim();
+	const uint32_t detailSkip = m_terrain->getDetailSkip();
 
-	uint32_t patchVertexCount = patchDim * patchDim;
+	const uint32_t patchVertexCount = patchDim * patchDim;
 	m_patchCount = heightfieldSize / (patchDim * detailSkip);
 
 	AlignedVector< render::VertexElement > vertexElements;
@@ -613,17 +611,17 @@ bool TerrainComponent::createPatches()
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
-		size_t indexOffset = indices.size();
-		uint32_t lodSkip = 1 << lod;
+		const size_t indexOffset = indices.size();
+		const uint32_t lodSkip = 1 << lod;
 
 		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
 		{
-			uint32_t offset = y * patchDim;
+			const uint32_t offset = y * patchDim;
 			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
 			{
 				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
 				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
+					const int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
 
 					if (x == 0)
 					{
@@ -712,11 +710,11 @@ bool TerrainComponent::createPatches()
 			}
 		}
 
-		size_t indexEndOffset = indices.size();
+		const size_t indexEndOffset = indices.size();
 		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
 
-		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
-		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+		const uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+		const uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
 
 		T_ASSERT(minIndex < patchVertexCount);
 		T_ASSERT(maxIndex < patchVertexCount);
@@ -749,5 +747,4 @@ bool TerrainComponent::createPatches()
 	return true;
 }
 
-	}
 }

@@ -7,32 +7,28 @@
 #include "Terrain/ForestComponentData.h"
 #include "Terrain/TerrainLayerComponent.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class ForestComponent : public TerrainLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	ForestComponent();
-
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -65,7 +61,7 @@ private:
 		float scale;
 	};
 
-	world::Entity* m_owner;
+	world::Entity* m_owner = nullptr;
 	ForestComponentData m_data;
 	resource::Proxy< mesh::InstanceMesh > m_lod0mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;
@@ -75,6 +71,4 @@ private:
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 
-	}
 }
-

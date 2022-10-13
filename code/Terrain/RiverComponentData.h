@@ -13,17 +13,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! River component data.
  * \ingroup Terrain
@@ -58,6 +56,4 @@ private:
 	float m_tileFactorV = 1.0f;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 /*! Terrain resource factory.
  * \ingroup Terrain
@@ -32,6 +30,4 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 };
 
-	}
 }
-
