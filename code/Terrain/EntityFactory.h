@@ -10,24 +10,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! Terrain entity factory.
  * \ingroup Terrain
@@ -37,7 +35,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	explicit EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -56,6 +54,4 @@ private:
 	render::IRenderSystem* m_renderSystem;
 };
 
-	}
 }
-

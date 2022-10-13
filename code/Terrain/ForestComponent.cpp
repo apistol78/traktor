@@ -17,12 +17,10 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
@@ -30,14 +28,9 @@ const render::Handle s_handleTerrain_Surface(L"Terrain_Surface");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleForest_Eye(L"Forest_Eye");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ForestComponent", ForestComponent, TerrainLayerComponent)
-
-ForestComponent::ForestComponent()
-:	m_owner(nullptr)
-{
-}
 
 bool ForestComponent::create(
 	resource::IResourceManager* resourceManager,
@@ -233,5 +226,4 @@ void ForestComponent::updatePatches()
 	}
 }
 
-	}
 }

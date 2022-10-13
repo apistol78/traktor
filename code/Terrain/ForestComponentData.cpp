@@ -1,4 +1,3 @@
-#include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
@@ -7,24 +6,10 @@
 #include "Resource/Member.h"
 #include "Terrain/ForestComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 2, ForestComponentData, TerrainLayerComponentData)
-
-ForestComponentData::ForestComponentData()
-:	m_attribute(0)
-,	m_density(0.1f)
-,	m_lod0distance(50.0f)
-,	m_lod1distance(200.0f)
-,	m_upness(0.8f)
-,	m_randomScale(0.2f)
-,	m_randomTilt(deg2rad(4.0f))
-,	m_slopeAngleThreshold(deg2rad(45.0f))
-{
-}
 
 void ForestComponentData::serialize(ISerializer& s)
 {
@@ -47,5 +32,4 @@ void ForestComponentData::serialize(ISerializer& s)
 		s >> Member< float >(L"slopeAngleThreshold", m_slopeAngleThreshold, AttributeRange(0.0f, HALF_PI) | AttributeUnit(UnitType::Radians));
 }
 
-	}
 }

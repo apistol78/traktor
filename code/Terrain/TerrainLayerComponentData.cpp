@@ -1,9 +1,7 @@
 #include "Terrain/TerrainLayerComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainLayerComponentData", TerrainLayerComponentData, world::IEntityComponentData)
 
@@ -11,5 +9,4 @@ void TerrainLayerComponentData::setTransform(const world::EntityData* owner, con
 {
 }
 
-	}
 }

@@ -5,22 +5,10 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainComponentData", 0, TerrainComponentData, world::IEntityComponentData)
-
-TerrainComponentData::TerrainComponentData()
-:	m_patchLodDistance(100.0f)
-,	m_patchLodBias(0.0f)
-,	m_patchLodExponent(1.0f)
-,	m_surfaceLodDistance(100.0f)
-,	m_surfaceLodBias(0.0f)
-,	m_surfaceLodExponent(1.0f)
-{
-}
 
 void TerrainComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
@@ -37,5 +25,4 @@ void TerrainComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
 }
 
-	}
 }

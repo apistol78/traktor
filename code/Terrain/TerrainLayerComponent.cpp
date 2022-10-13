@@ -1,16 +1,9 @@
 #include "Terrain/TerrainLayerComponent.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainLayerComponent", TerrainLayerComponent, world::IEntityComponent)
-
-TerrainLayerComponent::TerrainLayerComponent()
-:	m_dirty(false)
-{
-}
 
 void TerrainLayerComponent::setOwner(world::Entity* owner)
 {
@@ -26,5 +19,4 @@ void TerrainLayerComponent::update(const world::UpdateParams& update)
 	}
 }
 
-	}
 }

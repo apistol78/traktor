@@ -11,10 +11,8 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainSurfaceCache.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainClassFactory", 0, TerrainClassFactory, IRuntimeClassFactory)
 
@@ -51,5 +49,4 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classTerrainComponent);
 }
 
-	}
 }

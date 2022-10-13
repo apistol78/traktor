@@ -17,12 +17,10 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
@@ -31,17 +29,9 @@ const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleRubble_Eye(L"Rubble_Eye");
 const render::Handle s_handleRubble_MaxDistance(L"Rubble_MaxDistance");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.RubbleComponent", RubbleComponent, TerrainLayerComponent)
-
-RubbleComponent::RubbleComponent()
-:	m_owner(nullptr)
-,	m_clusterSize(0.0f)
-,	m_eye(Vector4::zero())
-,	m_fwd(Vector4::zero())
-{
-}
 
 bool RubbleComponent::create(
 	resource::IResourceManager* resourceManager,
@@ -312,5 +302,4 @@ void RubbleComponent::updatePatches()
 	}
 }
 
-	}
 }

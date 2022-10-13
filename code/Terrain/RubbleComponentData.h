@@ -12,25 +12,21 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class InstanceMesh;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class T_DLLCLASS RubbleComponentData : public TerrainLayerComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	RubbleComponentData();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -40,21 +36,17 @@ private:
 	struct RubbleMesh
 	{
 		resource::Id< mesh::InstanceMesh > mesh;
-		uint8_t attribute;
-		int32_t density;
-		float randomScaleAmount;
-		float randomTilt;
-		float upness;
-
-		RubbleMesh();
+		uint8_t attribute = 1;
+		int32_t density = 10;
+		float randomScaleAmount = 0.5f;
+		float randomTilt = 0.0f;
+		float upness = 1.0f;
 
 		void serialize(ISerializer& s);
 	};
 
-	float m_spreadDistance;
+	float m_spreadDistance = 100.0f;
 	AlignedVector< RubbleMesh > m_rubble;
 };
 
-	}
 }
-

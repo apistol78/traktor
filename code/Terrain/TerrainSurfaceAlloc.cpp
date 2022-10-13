@@ -1,10 +1,8 @@
 #include <algorithm>
 #include "Terrain/TerrainSurfaceAlloc.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceAlloc", TerrainSurfaceAlloc, Object)
 
@@ -18,11 +16,11 @@ TerrainSurfaceAlloc::TerrainSurfaceAlloc(uint32_t size)
 
 	for (uint32_t i = 0; i < sizeof_array(m_tileDims); ++i)
 	{
-		uint32_t dim = m_tileDims[i];
-		uint32_t rows = m_tileDims[0] / dim;
+		const uint32_t dim = m_tileDims[i];
+		const uint32_t rows = m_tileDims[0] / dim;
 		for (uint32_t row = 0; row < rows; ++row)
 		{
-			uint32_t columns = size / dim;
+			const uint32_t columns = size / dim;
 			for (uint32_t col = 0; col < columns; ++col)
 			{
 				Tile& t = m_free[i].push_back();
@@ -55,5 +53,4 @@ void TerrainSurfaceAlloc::free(const Tile& tile)
 	m_free[tile.lod].push_back(tile);
 }
 
-	}
 }

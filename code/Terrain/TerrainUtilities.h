@@ -10,17 +10,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! Calculate grid coordinate from patch coordinate.
  * \ingroup Terrain
@@ -42,6 +40,4 @@ void T_DLLCLASS calculatePatchMinMaxHeight(const hf::Heightfield* heightfield, u
  */
 void T_DLLCLASS calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lodCount, uint32_t patchX, uint32_t patchZ, uint32_t patchDim, uint32_t detailSkip, float* outErrors);
 
-	}
 }
-

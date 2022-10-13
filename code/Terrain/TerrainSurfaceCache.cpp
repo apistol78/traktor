@@ -12,12 +12,10 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
@@ -43,15 +41,12 @@ Vector4 offsetFromTile(const TerrainSurfaceAlloc& alloc, const TerrainSurfaceAll
 	);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCache, Object)
 
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_alloc(1024)
-,	m_haveBase(false)
-,	m_clearCache(true)
-,	m_updateCount(0)
 {
 }
 
@@ -252,13 +247,13 @@ void TerrainSurfaceCache::setupPatch(
 		return;
 	}
 
-	Vector4 worldOriginM = worldOrigin;
-	Vector4 worldExtentM = worldExtent;
+	const Vector4 worldOriginM = worldOrigin;
+	const Vector4 worldExtentM = worldExtent;
 
 	// Number of patch units per texel.
-	float f = (float)m_alloc.getVirtualSize() / tile.dim;
-	float dpx = f * patchExtent.x() / m_alloc.getVirtualSize();
-	float dpz = f * patchExtent.z() / m_alloc.getVirtualSize();
+	const float f = (float)m_alloc.getVirtualSize() / tile.dim;
+	const float dpx = f * patchExtent.x() / m_alloc.getVirtualSize();
+	const float dpz = f * patchExtent.z() / m_alloc.getVirtualSize();
 
 	Vector4 patchOriginM = patchOrigin;
 	Vector4 patchExtentM = patchExtent;
@@ -336,5 +331,4 @@ render::ISimpleTexture* TerrainSurfaceCache::getBaseTexture() const
 	return m_base->getColorTexture(0);
 }
 
-	}
 }

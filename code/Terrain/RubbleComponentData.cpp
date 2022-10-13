@@ -9,17 +9,10 @@
 #include "Resource/Member.h"
 #include "Terrain/RubbleComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RubbleComponentData", 3, RubbleComponentData, TerrainLayerComponentData)
-
-RubbleComponentData::RubbleComponentData()
-:	m_spreadDistance(100.0f)
-{
-}
 
 void RubbleComponentData::serialize(ISerializer& s)
 {
@@ -27,15 +20,6 @@ void RubbleComponentData::serialize(ISerializer& s)
 
 	s >> Member< float >(L"spreadDistance", m_spreadDistance);
 	s >> MemberAlignedVector< RubbleMesh, MemberComposite< RubbleMesh > >(L"rubble", m_rubble);
-}
-
-RubbleComponentData::RubbleMesh::RubbleMesh()
-:	attribute(1)
-,	density(10)
-,	randomScaleAmount(0.5f)
-,	randomTilt(0.0f)
-,	upness(1.0f)
-{
 }
 
 void RubbleComponentData::RubbleMesh::serialize(ISerializer& s)
@@ -57,5 +41,4 @@ void RubbleComponentData::RubbleMesh::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

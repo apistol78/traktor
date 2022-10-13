@@ -10,19 +10,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class TerrainComponent;
 
@@ -31,8 +29,6 @@ class T_DLLCLASS TerrainLayerComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	TerrainLayerComponent();
-
 	virtual void setOwner(world::Entity* owner) override;
 
 	virtual void update(const world::UpdateParams& update) override;
@@ -46,8 +42,7 @@ public:
 	virtual void updatePatches() = 0;
 
 private:
-	bool m_dirty;
+	bool m_dirty = false;
 };
 
-	}
 }

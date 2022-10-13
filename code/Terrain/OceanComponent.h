@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -26,25 +24,25 @@ class IVertexLayout;
 class RenderContext;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldRenderView;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class OceanComponentData;
 class Terrain;
@@ -57,9 +55,7 @@ class T_DLLCLASS OceanComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxWaves = 32 };
-
-	OceanComponent();
+	static constexpr int32_t MaxWaves = 32;
 
 	virtual ~OceanComponent();
 
@@ -105,7 +101,7 @@ public:
 	float getMaxAmplitude() const { return m_maxAmplitude; }
 
 private:
-	world::Entity* m_owner;
+	world::Entity* m_owner = nullptr;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionTexture;
 	resource::Proxy< Terrain > m_terrain;
@@ -117,13 +113,11 @@ private:
 	Color4f m_reflectionTint;
 	Color4f m_shadowTint;
 	Color4f m_deepColor;
-	float m_opacity;
-	float m_elevation;
-	float m_maxAmplitude;
+	float m_opacity = 0.5f;
+	float m_elevation = 0.0f;
+	float m_maxAmplitude = 1.0f;
 	Vector4 m_wavesA[4];
 	Vector4 m_wavesB[4];
 };
 
-	}
 }
-

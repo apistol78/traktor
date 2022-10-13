@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 class T_DLLCLASS TerrainLayerComponentData : public world::IEntityComponentData
 {
@@ -23,6 +21,5 @@ public:
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override;
 };
 
-	}
 }
 

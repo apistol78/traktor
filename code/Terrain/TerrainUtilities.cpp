@@ -3,34 +3,32 @@
 #include "Heightfield/Heightfield.h"
 #include "Terrain/TerrainUtilities.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 uint32_t patchToGrid(const hf::Heightfield* heightfield, uint32_t patchDim, uint32_t detailSkip, uint32_t patch)
 {
-	uint32_t heightfieldSize = heightfield->getSize();
-	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+	const uint32_t heightfieldSize = heightfield->getSize();
+	const uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 	return (heightfieldSize * patch) / patchCount;
 }
 
 uint32_t gridToPatch(const hf::Heightfield* heightfield, uint32_t patchDim, uint32_t detailSkip, uint32_t grid)
 {
-	uint32_t heightfieldSize = heightfield->getSize();
-	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+	const uint32_t heightfieldSize = heightfield->getSize();
+	const uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 	return (grid * patchCount) / heightfieldSize;
 }
 
 void calculatePatchMinMaxHeight(const hf::Heightfield* heightfield, uint32_t patchX, uint32_t patchZ, uint32_t patchDim, uint32_t detailSkip, float outHeights[2])
 {
-	uint32_t heightfieldSize = heightfield->getSize();
-	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+	const uint32_t heightfieldSize = heightfield->getSize();
+	const uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 
-	int32_t pminX = (heightfieldSize * patchX) / patchCount;
-	int32_t pminZ = (heightfieldSize * patchZ) / patchCount;
-	int32_t pmaxX = (heightfieldSize * (patchX + 1)) / patchCount;
-	int32_t pmaxZ = (heightfieldSize * (patchZ + 1)) / patchCount;
+	const int32_t pminX = (heightfieldSize * patchX) / patchCount;
+	const int32_t pminZ = (heightfieldSize * patchZ) / patchCount;
+	const int32_t pmaxX = (heightfieldSize * (patchX + 1)) / patchCount;
+	const int32_t pmaxZ = (heightfieldSize * (patchZ + 1)) / patchCount;
 
 	float minHeight =  std::numeric_limits< float >::max();
 	float maxHeight = -std::numeric_limits< float >::max();
@@ -55,11 +53,11 @@ void calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lod
 {
 	const float c_errorBias = 0.25f;	// 25% average error, 75% max error
 
-	uint32_t heightfieldSize = heightfield->getSize();
-	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+	const uint32_t heightfieldSize = heightfield->getSize();
+	const uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 
-	int32_t pminX = (heightfieldSize * patchX) / patchCount;
-	int32_t pminZ = (heightfieldSize * patchZ) / patchCount;
+	const int32_t pminX = (heightfieldSize * patchX) / patchCount;
+	const int32_t pminZ = (heightfieldSize * patchZ) / patchCount;
 
 	for (uint32_t lod = 1; lod < lodCount; ++lod)
 	{
@@ -67,22 +65,22 @@ void calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lod
 		float avgError = 0.0f;
 		int32_t avgCount = 0;
 
-		uint32_t lodSkip = 1 << lod;
+		const uint32_t lodSkip = 1 << lod;
 		for (uint32_t z = 0; z < patchDim; z += lodSkip)
 		{
 			for (uint32_t x = 0; x < patchDim; x += lodSkip)
 			{
-				float fx0 = float(x) / (patchDim - 1);
-				float fz0 = float(z) / (patchDim - 1);
-				float fx1 = float(x + lodSkip) / (patchDim - 1);
-				float fz1 = float(z + lodSkip) / (patchDim - 1);
+				const float fx0 = float(x) / (patchDim - 1);
+				const float fz0 = float(z) / (patchDim - 1);
+				const float fx1 = float(x + lodSkip) / (patchDim - 1);
+				const float fz1 = float(z + lodSkip) / (patchDim - 1);
 
-				float gx0 = (fx0 * patchDim * detailSkip) + pminX;
-				float gz0 = (fz0 * patchDim * detailSkip) + pminZ;
-				float gx1 = (fx1 * patchDim * detailSkip) + pminX;
-				float gz1 = (fz1 * patchDim * detailSkip) + pminZ;
+				const float gx0 = (fx0 * patchDim * detailSkip) + pminX;
+				const float gz0 = (fz0 * patchDim * detailSkip) + pminZ;
+				const float gx1 = (fx1 * patchDim * detailSkip) + pminX;
+				const float gz1 = (fz1 * patchDim * detailSkip) + pminZ;
 
-				float h[] =
+				const float h[] =
 				{
 					heightfield->getGridHeightBilinear(gx0, gz0),
 					heightfield->getGridHeightBilinear(gx1, gz0),
@@ -94,24 +92,24 @@ void calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lod
 				{
 					for (uint32_t lx = 0; lx <= lodSkip; ++lx)
 					{
-						float fx = float(lx) / lodSkip;
-						float fz = float(lz) / lodSkip;
+						const float fx = float(lx) / lodSkip;
+						const float fz = float(lz) / lodSkip;
 
-						float gx = lerp(gx0, gx1, fx);
-						float gz = lerp(gz0, gz1, fz);
+						const float gx = lerp(gx0, gx1, fx);
+						const float gz = lerp(gz0, gz1, fz);
 
-						float ht = lerp(h[0], h[1], fx);
-						float hb = lerp(h[2], h[3], fx);
-						float h0 = lerp(ht, hb, fz);
+						const float ht = lerp(h[0], h[1], fx);
+						const float hb = lerp(h[2], h[3], fx);
+						const float h0 = lerp(ht, hb, fz);
 
-						float hl = lerp(h[0], h[2], fz);
-						float hr = lerp(h[1], h[3], fz);
-						float h1 = lerp(hl, hr, fx);
+						const float hl = lerp(h[0], h[2], fz);
+						const float hr = lerp(h[1], h[3], fz);
+						const float h1 = lerp(hl, hr, fx);
 
-						float h = heightfield->getGridHeightBilinear(gx, gz);
+						const float h = heightfield->getGridHeightBilinear(gx, gz);
 
-						float herr0 = abs(h - h0);
-						float herr1 = abs(h - h1);
+						const float herr0 = abs(h - h0);
+						const float herr1 = abs(h - h1);
 						float herr = max(herr0, herr1);
 
 						herr = heightfield->getWorldExtent().y() * herr;
@@ -129,5 +127,4 @@ void calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lod
 	}
 }
 
-	}
 }

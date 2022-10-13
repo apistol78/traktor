@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -23,25 +21,25 @@ class IVertexLayout;
 class RenderContext;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldRenderView;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class RiverComponentData;
 
@@ -79,6 +77,4 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 };
 
-	}
 }
-

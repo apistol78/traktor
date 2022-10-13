@@ -12,10 +12,8 @@
 #include "Terrain/UndergrowthComponent.h"
 #include "Terrain/UndergrowthComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::IEntityFactory)
 
@@ -98,5 +96,4 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 	return nullptr;
 }
 
-	}
 }

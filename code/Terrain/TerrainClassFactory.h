@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 class T_DLLCLASS TerrainClassFactory : public IRuntimeClassFactory
 {
@@ -23,6 +21,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-
