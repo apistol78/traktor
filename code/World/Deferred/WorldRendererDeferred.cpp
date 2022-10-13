@@ -30,12 +30,10 @@
 #include "World/Deferred/WorldRenderPassDeferred.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maxLightCount = 1024;
 
@@ -155,7 +153,7 @@ Vector2 jitter(int32_t count)
 	);
 }
 
-		}
+	}
 
 #pragma pack(1)
 struct LightShaderData
@@ -1657,5 +1655,4 @@ void WorldRendererDeferred::setupProcessPass(
 	}
 }
 
-	}
 }

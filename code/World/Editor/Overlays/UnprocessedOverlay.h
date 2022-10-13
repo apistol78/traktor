@@ -11,30 +11,27 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class Shader;
 
-    }
+}
 
-    namespace world
-    {
+namespace traktor::world
+{
 
 class T_DLLCLASS UnprocessedOverlay : public IDebugOverlay
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual bool create(resource::IResourceManager* resourceManager) override final;
+	virtual bool create(resource::IResourceManager* resourceManager) override final;
 
-    virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const override final;
+	virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const override final;
 
 private:
-    resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< render::Shader > m_shader;
 };
 
-    }
 }

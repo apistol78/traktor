@@ -15,10 +15,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class ImageGraph;
@@ -27,10 +25,10 @@ class ITexture;
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IEntityRenderer;
 class IrradianceGrid;
@@ -228,5 +226,4 @@ private:
 	) const;
 };
 
-	}
 }

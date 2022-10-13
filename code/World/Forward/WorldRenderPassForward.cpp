@@ -76,13 +76,13 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 {
 	programParams->attachParameters(m_sharedParams);
 
-	Matrix44 w = world.toMatrix44();
+	const Matrix44 w = world.toMatrix44();
 	programParams->setMatrixParameter(s_handleWorld, w);
 	programParams->setMatrixParameter(s_handleWorldView, m_worldRenderView.getView() * w);
 
 	if (m_technique == s_techniqueVelocityWrite)
 	{
-		Matrix44 w0 = lastWorld.toMatrix44();
+		const Matrix44 w0 = lastWorld.toMatrix44();
 		programParams->setMatrixParameter(s_handleLastWorld, w0);
 		programParams->setMatrixParameter(s_handleLastWorldView, m_worldRenderView.getLastView() * w0);
 	}

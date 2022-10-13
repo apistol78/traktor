@@ -8,12 +8,10 @@
 #include "World/Editor/Overlays/GBufferRoughnessOverlay.h"
 #include "World/Forward/WorldRendererForward.h"
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
-        namespace
-        {
+	namespace
+	{
 
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Roughness");
@@ -30,16 +28,16 @@ render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const 
 	return 0;
 }
 
-        }
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.GBufferRoughnessOverlay", 0, GBufferRoughnessOverlay, IDebugOverlay)
 
 bool GBufferRoughnessOverlay::create(resource::IResourceManager* resourceManager)
 {
-    if (!resourceManager->bind(c_debugShader, m_shader))
-        return false;
+	if (!resourceManager->bind(c_debugShader, m_shader))
+		return false;
 
-    return true;
+	return true;
 }
 
 void GBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
@@ -78,5 +76,4 @@ void GBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 	renderGraph.addPass(rp);
 }
 
-    }
 }
