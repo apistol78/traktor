@@ -30,7 +30,7 @@ bool SolutionBuilderMake2::create(const CommandLine& cmdLine)
 		m_projectTemplate = cmdLine.getOption('p', L"make-project-template").getString();
 
 	m_scriptProcessor = new ScriptProcessor();
-	if (!m_scriptProcessor->create())
+	if (!m_scriptProcessor->create(cmdLine))
 		return false;
 
 	return true;
@@ -57,10 +57,10 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		std::wstring projectPath = solution->getRootPath() + L"/" + project->getName();
+		const std::wstring projectPath = solution->getRootPath() + L"/" + project->getName();
 		log::info << projectPath + L"/makefile";
 
-		double timeStart = timer.getElapsedTime();
+		const double timeStart = timer.getElapsedTime();
 
 		if (!FileSystem::getInstance().makeDirectory(projectPath))
 			return false;
@@ -78,12 +78,12 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		buf.resize(IEncoding::MaxEncodingSize * projectOut.length());
-		int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), (int)projectOut.length(), buf.ptr());
+		const int32_t nbuf = Utf8Encoding().translate(projectOut.c_str(), (int)projectOut.length(), buf.ptr());
 		file->write(buf.c_ptr(), nbuf);
 
 		file->close();
 
-		double timeEnd = timer.getElapsedTime();
+		const double timeEnd = timer.getElapsedTime();
 		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms, " << nbuf << L" bytes)" << Endl;
 	}
 
@@ -102,10 +102,10 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		if (!m_scriptProcessor->generate(solution, nullptr, L"", solution->getRootPath(), cprojectOut))
 			return false;
 
-		std::wstring solutionPath = solution->getRootPath() + L"/" + solution->getName() + L".mak";
+		const std::wstring solutionPath = solution->getRootPath() + L"/" + solution->getName() + L".mak";
 		log::info << solutionPath;
 
-		double timeStart = timer.getElapsedTime();
+		const double timeStart = timer.getElapsedTime();
 
 		Ref< IStream > file = FileSystem::getInstance().open(
 			solutionPath,
@@ -115,12 +115,12 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 			return false;
 
 		buf.resize(IEncoding::MaxEncodingSize * cprojectOut.length());
-		int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), (int)cprojectOut.length(), buf.ptr());
+		const int32_t nbuf = Utf8Encoding().translate(cprojectOut.c_str(), (int)cprojectOut.length(), buf.ptr());
 		file->write(buf.c_ptr(), nbuf);
 
 		file->close();
 
-		double timeEnd = timer.getElapsedTime();
+		const double timeEnd = timer.getElapsedTime();
 		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms)" << Endl;
 	}
 

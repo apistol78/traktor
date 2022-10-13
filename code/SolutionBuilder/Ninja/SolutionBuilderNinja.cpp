@@ -33,7 +33,7 @@ bool SolutionBuilderNinja::create(const CommandLine& cmdLine)
 		m_projectTemplate = cmdLine.getOption(L"ninja-project-template").getString();
 
 	m_scriptProcessor = new ScriptProcessor();
-	if (!m_scriptProcessor->create())
+	if (!m_scriptProcessor->create(cmdLine))
 		return false;
 
 	return true;

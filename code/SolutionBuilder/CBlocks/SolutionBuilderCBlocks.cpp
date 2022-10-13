@@ -33,7 +33,7 @@ bool SolutionBuilderCBlocks::create(const CommandLine& cmdLine)
 		m_projectTemplate = cmdLine.getOption('p', L"cblocks-project-template").getString();
 
 	m_scriptProcessor = new ScriptProcessor();
-	if (!m_scriptProcessor->create())
+	if (!m_scriptProcessor->create(cmdLine))
 		return false;
 
 	return true;

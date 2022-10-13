@@ -32,7 +32,7 @@ bool SolutionBuilderXcode2::create(const CommandLine& cmdLine)
 	m_workspaceSchemeTemplate = cmdLine.getOption(L"xcode-workspace-scheme-template").getString();
 
 	m_scriptProcessor = new ScriptProcessor();
-	if (!m_scriptProcessor->create())
+	if (!m_scriptProcessor->create(cmdLine))
 		return false;
 
 	return true;
