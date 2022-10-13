@@ -28,7 +28,7 @@ SolutionBuilderEclipse::SolutionBuilderEclipse()
 bool SolutionBuilderEclipse::create(const CommandLine& cmdLine)
 {
 	m_scriptProcessor = new ScriptProcessor();
-	if (!m_scriptProcessor->create())
+	if (!m_scriptProcessor->create(cmdLine))
 		return false;
 
 	if (cmdLine.hasOption('p', L"project"))

@@ -12,17 +12,22 @@
 
 namespace traktor
 {
-	namespace script
-	{
+
+class CommandLine;
+
+}
+
+namespace traktor::script
+{
 
 class IScriptCompiler;
 class IScriptContext;
 class IScriptManager;
 
-	}
+}
 
-	namespace sb
-	{
+namespace traktor::sb
+{
 
 class Project;
 class Solution;
@@ -32,7 +37,7 @@ class T_DLLCLASS ScriptProcessor : public Object
 	T_RTTI_CLASS;
 
 public:
-	bool create();
+	bool create(const CommandLine& cmdLine);
 
 	void destroy();
 
@@ -45,8 +50,8 @@ private:
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptContext > m_scriptContext;
 	std::vector< std::wstring > m_sections;
+	bool m_profile = false;
 };
 
-	}
-}
 
+}

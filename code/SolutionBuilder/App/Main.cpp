@@ -95,9 +95,10 @@ int main(int argc, const char** argv)
 	{
 		traktor::log::info << SB_TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution] (include project names)" << Endl;
-		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
-		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
-		traktor::log::info << L"\t-v,verbose			Verbose" << Endl;
+		traktor::log::info << L"\t-f,-format=[format]  [\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
+		traktor::log::info << L"\t-rootPath=Path       Override solution root path" << Endl;
+		traktor::log::info << L"\t-v,verbose           Verbose" << Endl;
+		traktor::log::info << L"\t-profile             Profile build scripts" << Endl;
 		if (builder)
 			builder->showOptions();
 		return 0;

@@ -5,12 +5,14 @@
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedStdVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptProfiler.h"
@@ -28,8 +30,6 @@
 #include "SolutionBuilder/ProjectItem.h"
 #include "SolutionBuilder/Solution.h"
 
-#define T_PROFILER_ENABLE 0
-
 namespace traktor
 {
 	namespace sb
@@ -37,11 +37,10 @@ namespace traktor
 		namespace
 		{
 
-#if T_PROFILER_ENABLE
 class ScriptProfilerListener : public script::IScriptProfiler::IListener
 {
 public:
-	std::map< std::wstring, double > m_durations;
+	SmallMap< std::wstring, double > m_durations;
 
 	virtual void callEnter(const Guid& scriptId, const std::wstring& function) override final
 	{
@@ -56,7 +55,6 @@ public:
 		m_durations[function] += exclusiveDuration;
 	}
 };
-#endif
 
 class Output : public Object
 {
@@ -85,7 +83,7 @@ public:
 		m_ss << m_sections[id];
 	}
 
-	std::wstring getProduct()
+	std::wstring getProduct() const
 	{
 		return m_ss.str();
 	}
@@ -167,11 +165,12 @@ Any HeaderScanner_get(HeaderScanner* self, const std::wstring& fileName, const s
 
 T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
 
-bool ScriptProcessor::create()
+bool ScriptProcessor::create(const CommandLine& cmdLine)
 {
 	// Create script manager and register our classes.
 	m_scriptCompiler = new script::ScriptCompilerLua();
 	m_scriptManager = new script::ScriptManagerLua();
+	m_profile = cmdLine.hasOption(L"profile");
 
 	BoxedClassFactory().createClasses(m_scriptManager);
 	CoreClassFactory1().createClasses(m_scriptManager);
@@ -377,7 +376,7 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 
 bool ScriptProcessor::generate(const Solution* solution, const Project* project, const std::wstring& configurationName, const std::wstring& projectPath, std::wstring& output) const
 {
-	Path projectPathAbs = FileSystem::getInstance().getAbsolutePath(Path(projectPath));
+	const Path projectPathAbs = FileSystem::getInstance().getAbsolutePath(Path(projectPath));
 
 	Ref< Output > o = new Output(m_sections);
 
@@ -388,26 +387,24 @@ bool ScriptProcessor::generate(const Solution* solution, const Project* project,
 	m_scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPathAbs)));
 	m_scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 
-#if T_PROFILER_ENABLE
+	Ref< script::IScriptProfiler > profiler;
 	ScriptProfilerListener pl;
 
-	Ref< script::IScriptProfiler > profiler = m_scriptManager->createProfiler();
-	if (profiler)
-		profiler->addListener(&pl);
-#endif
+	if (m_profile)
+	{
+		if ((profiler = m_scriptManager->createProfiler()) != nullptr)
+			profiler->addListener(&pl);
+	}
 
 	m_scriptContext->executeFunction("__main__");
 
-#if T_PROFILER_ENABLE
 	if (profiler)
 	{
 		profiler->removeListener(&pl);
 		for (auto it : pl.m_durations)
-		{
 			log::info << it.first << L" : " << (int32_t)(it.second * 1000.0) << L" ms" << Endl;
-		}
+		profiler = nullptr;
 	}
-#endif
 
 	output = o->getProduct();
 	return true;
