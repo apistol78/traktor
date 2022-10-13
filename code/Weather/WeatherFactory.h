@@ -10,24 +10,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 /*! Weather entity factory.
  * \ingroup Weather
@@ -37,7 +35,7 @@ class T_DLLCLASS WeatherFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	WeatherFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	explicit WeatherFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -56,6 +54,4 @@ private:
 	render::IRenderSystem* m_renderSystem;
 };
 
-	}
 }
-

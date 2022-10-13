@@ -11,24 +11,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class StaticMesh;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 class PrecipitationComponent;
 
@@ -52,12 +50,11 @@ public:
 
 private:
 	resource::Id< mesh::StaticMesh > m_mesh;
-	float m_tiltRate;
-	float m_parallaxDistance;
-	float m_depthDistance;
-	float m_opacity;
+	float m_tiltRate = 6.0f;
+	float m_parallaxDistance = 1.0f;
+	float m_depthDistance = 1.0f;
+	float m_opacity = 0.1f;
 };
 
-	}
 }
 

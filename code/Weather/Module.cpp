@@ -2,16 +2,13 @@
 
 #if defined(T_STATIC)
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 extern "C" void __module__Traktor_Weather()
 {
 }
 
-	}
 }
 
 #endif

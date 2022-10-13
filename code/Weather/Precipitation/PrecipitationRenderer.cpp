@@ -3,10 +3,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.PrecipitationRenderer", PrecipitationRenderer, world::IEntityRenderer)
 
@@ -56,5 +54,4 @@ void PrecipitationRenderer::build(
 {
 }
 
-	}
 }

@@ -8,12 +8,10 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle c_handleFrustumEdges(L"Precipitation_FrustumEdges");
 const render::Handle c_handleParallaxDistance(L"Precipitation_ParallaxDistance");
@@ -42,7 +40,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.PrecipitationComponent", PrecipitationComponent, world::IEntityComponent)
 
@@ -91,11 +89,7 @@ Aabb3 PrecipitationComponent::getBoundingBox() const
 
 void PrecipitationComponent::update(const world::UpdateParams& update)
 {
-	const struct
-	{
-		float k1, k2, k3;
-	}
-	c_layerFactors[] =
+	const struct { float k1, k2, k3; } c_layerFactors[] =
 	{
 		{  0.7f,  0.4f, -0.02f },
 		{ -0.5f, -0.2f,  0.02f },
@@ -103,69 +97,68 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 		{ -0.3f,  0.1f,  0.02f }
 	};
 
-	float x = update.totalTime;
-
+	const float x = update.totalTime;
 	for (int i = 0; i < 4; ++i)
 	{
-		float s1 = std::sin(x);
-		float s2 = std::sin(2.0f * x);
-		float s3 = std::sin(3.0f * x);
-
+		const float s1 = std::sin(x);
+		const float s2 = std::sin(2.0f * x);
+		const float s3 = std::sin(3.0f * x);
 		m_layerAngle[i] = (s1 * c_layerFactors[i].k1 + s2 * c_layerFactors[i].k2 + s3 * c_layerFactors[i].k3) * 0.25f;
 	}
 }
 
 void PrecipitationComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	//if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
-	//	return;
+	const mesh::StaticMesh::techniqueParts_t* techniqueParts = m_mesh->findTechniqueParts(worldRenderPass.getTechnique());
+	if (!techniqueParts)
+		return;
 
-	//Vector4& lastEyePosition = m_lastEyePosition[worldRenderView.getIndex()];
-	//Quaternion& rotation = m_rotation[worldRenderView.getIndex()];
+	Vector4& lastEyePosition = m_lastEyePosition[worldRenderView.getIndex()];
+	Quaternion& rotation = m_rotation[worldRenderView.getIndex()];
 
-	//Matrix44 view = worldRenderView.getView();
-	//Matrix44 viewInv = view.inverse();
-	//Vector4 eyePosition = viewInv.translation().xyz1();
-	//Vector4 movement = lastEyePosition - eyePosition;
+	const Matrix44 view = worldRenderView.getView();
+	const Matrix44 viewInv = view.inverse();
+	const Vector4 eyePosition = viewInv.translation().xyz1();
+	const Vector4 movement = lastEyePosition - eyePosition;
 
-	//Vector4 pivot = Vector4::zero();
-	//Scalar angle(0.0f);
+	Vector4 pivot = Vector4::zero();
+	Scalar angle(0.0f);
 
-	//if (movement.length2() > Scalar(FUZZY_EPSILON))
-	//{
-	//	pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
-	//	angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
-	//}
+	if (movement.length2() > Scalar(FUZZY_EPSILON))
+	{
+		pivot = cross(movement, Vector4(0.0f, 1.0f, 0.0f)).normalized();
+		angle = clamp(movement.length() * 0.8_simd, Scalar(-HALF_PI / 2.0f), Scalar(HALF_PI / 2.0f));
+	}
 
-	//lastEyePosition = eyePosition;
+	lastEyePosition = eyePosition;
 
-	//rotation = lerp(
-	//	rotation,
-	//	Quaternion::fromAxisAngle(pivot, angle),
-	//	m_tiltRate / 60.0f
-	//);
+	rotation = lerp(
+		rotation,
+		Quaternion::fromAxisAngle(pivot, angle),
+		m_tiltRate / 60.0f
+	);
 
-	//const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
-	//PrecipitationMeshCallback mc;
-	//mc.m_frustumEdges[0] = viewFrustum.corners[4] - viewFrustum.corners[0];
-	//mc.m_frustumEdges[1] = viewFrustum.corners[5] - viewFrustum.corners[1];
-	//mc.m_frustumEdges[2] = viewFrustum.corners[6] - viewFrustum.corners[2];
-	//mc.m_frustumEdges[3] = viewFrustum.corners[7] - viewFrustum.corners[3];
-	//mc.m_parallaxDistance = m_parallaxDistance;
-	//mc.m_depthDistance = m_depthDistance;
-	//mc.m_opacity = m_opacity;
-	//mc.m_layerAngle = m_layerAngle;
+	PrecipitationMeshCallback mc;
+	mc.m_frustumEdges[0] = viewFrustum.corners[4] - viewFrustum.corners[0];
+	mc.m_frustumEdges[1] = viewFrustum.corners[5] - viewFrustum.corners[1];
+	mc.m_frustumEdges[2] = viewFrustum.corners[6] - viewFrustum.corners[2];
+	mc.m_frustumEdges[3] = viewFrustum.corners[7] - viewFrustum.corners[3];
+	mc.m_parallaxDistance = m_parallaxDistance;
+	mc.m_depthDistance = m_depthDistance;
+	mc.m_opacity = m_opacity;
+	mc.m_layerAngle = m_layerAngle;
 
-	//m_mesh->build(
-	//	context.getRenderContext(),
-	//	worldRenderPass,
-	//	Transform(rotation),
-	//	Transform(rotation),
-	//	0.0f,
-	//	&mc
-	//);
+	m_mesh->build(
+		context.getRenderContext(),
+		worldRenderPass,
+		*techniqueParts,
+		Transform(rotation),
+		Transform(rotation),
+		0.0f,
+		&mc
+	);
 }
 
-	}
 }

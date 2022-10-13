@@ -6,10 +6,8 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyComponentData.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherFactory", WeatherFactory, world::IEntityFactory)
 
@@ -60,5 +58,4 @@ Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world
 		return nullptr;
 }
 
-	}
 }

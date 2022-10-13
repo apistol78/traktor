@@ -7,25 +7,19 @@
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationComponentData.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 		
 const resource::Id< mesh::StaticMesh > c_defaultMesh(Guid(L"{C07C9EBA-22DF-2148-B045-34BD4F84AC09}"));
 		
-		}
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.PrecipitationComponentData", 0, PrecipitationComponentData, world::IEntityComponentData)
 
 PrecipitationComponentData::PrecipitationComponentData()
 :	m_mesh(c_defaultMesh)
-,	m_tiltRate(6.0f)
-,	m_parallaxDistance(1.0f)
-,	m_depthDistance(1.0f)
-,	m_opacity(0.1f)
 {
 }
 
@@ -51,5 +45,4 @@ void PrecipitationComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"opacity", m_opacity, AttributeRange(0.0f));
 }
 
-	}
 }
