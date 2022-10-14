@@ -32,10 +32,10 @@ SHCoeffs SHCoeffs::transform(const SHMatrix& matrix) const
 {
 	SHCoeffs out;
 	out.resize(m_data.size());
-	for (int r = 0; r < matrix.getRows(); ++r)
+	for (int32_t r = 0; r < matrix.getRows(); ++r)
 	{
 		out.m_data[r] = Vector4::zero();
-		for (int c = 0; c < matrix.getColumns(); ++c)
+		for (int32_t c = 0; c < matrix.getColumns(); ++c)
 			out.m_data[r] += m_data[c] * Scalar(matrix.r(r, c));
 	}
 	return out;
@@ -48,7 +48,7 @@ Vector4 SHCoeffs::evaluate(float phi, float theta) const
 	{
 		for (int32_t m = -l; m <= l; ++m)
 		{
-			int32_t index = l * (l + 1) + m;
+			const int32_t index = l * (l + 1) + m;
 			result += Scalar(SH(l, m, phi, theta)) * m_data[index];
 		}
 	}

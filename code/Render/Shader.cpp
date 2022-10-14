@@ -43,7 +43,7 @@ bool Shader::hasTechnique(handle_t handle) const
 
 void Shader::setCombination(handle_t handle, bool param, Permutation& inoutPermutation) const
 {
-	uint32_t bit = m_parameterBits[handle];
+	const uint32_t bit = m_parameterBits[handle];
 	if (param)
 		inoutPermutation.combination |= bit;
 	else

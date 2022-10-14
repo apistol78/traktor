@@ -18,7 +18,6 @@
 #include "Render/ITexture.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/AliasTextureFactory.h"
-#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -139,7 +138,6 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
-	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new scene::SceneFactory(entityBuilder));

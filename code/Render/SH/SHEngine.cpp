@@ -33,7 +33,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 {
 	RandomGeometry rg;
 
-	uint32_t sqrtCount = uint32_t(std::sqrt(double(count)));
+	const uint32_t sqrtCount = uint32_t(std::sqrt(double(count)));
 	count = sqrtCount * sqrtCount;
 
 	m_samplePoints.resize(count);
@@ -41,12 +41,12 @@ void SHEngine::generateSamplePoints(uint32_t count)
 	{
 		for (uint32_t j = 0; j < sqrtCount; ++j)
 		{
-			uint32_t o = i + j * sqrtCount;
+			const uint32_t o = i + j * sqrtCount;
 
-			Vector2 uv = Quasirandom::hammersley(o, count);
+			const Vector2 uv = Quasirandom::hammersley(o, count);
 
-			float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
-			float theta = 2.0f * PI * uv.y;
+			const float phi = 2.0f * std::acos(std::sqrt(1.0f - uv.x));
+			const float theta = 2.0f * PI * uv.y;
 
 			m_samplePoints[o].unit = Polar(phi, theta).toUnitCartesian();
 			m_samplePoints[o].phi = phi;
@@ -57,8 +57,8 @@ void SHEngine::generateSamplePoints(uint32_t count)
 			{
 				for (int32_t m = -l; m <= l; ++m)
 				{
-					int32_t index = l * (l + 1) + m;
-					float shc = float(SH(l, m, phi, theta));
+					const int32_t index = l * (l + 1) + m;
+					const float shc = float(SH(l, m, phi, theta));
 					m_samplePoints[o].coefficients[index] = Vector4(shc, shc, shc, 0.0f);
 				}
 			}
@@ -70,7 +70,7 @@ void SHEngine::generateCoefficients(SHFunction* function, bool parallell, SHCoef
 {
 	const double weight = 4.0 * PI;
 
-	uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
+	const uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
 
 	SHCoeffs intermediate[4];
 	intermediate[0].resize(m_bandCount);
@@ -131,9 +131,9 @@ void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uin
 {
 	for (uint32_t i = start; i < end; ++i)
 	{
-		float phi = m_samplePoints[i].phi;
-		float theta = m_samplePoints[i].theta;
-		Vector4 fs = function->evaluate(phi, theta, m_samplePoints[i].unit);
+		const float phi = m_samplePoints[i].phi;
+		const float theta = m_samplePoints[i].theta;
+		const Vector4 fs = function->evaluate(phi, theta, m_samplePoints[i].unit);
 		for (uint32_t n = 0; n < m_coefficientCount; ++n)
 			(*outResult)[n] += fs * m_samplePoints[i].coefficients[n];
 	}
