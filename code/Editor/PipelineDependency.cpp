@@ -9,10 +9,8 @@
 #include "Core/Serialization/MemberType.h"
 #include "Editor/PipelineDependency.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependency", 0, PipelineDependency, ISerializable)
 
@@ -77,5 +75,4 @@ void PipelineDependency::ExternalFile::serialize(ISerializer& s)
 	s >> MemberComposite< DateTime >(L"lastWriteTime", lastWriteTime);
 }
 
-	}
 }

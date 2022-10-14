@@ -166,8 +166,8 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 	if (y + height > srcHeight)
 		height = srcHeight - y;
 
-	int32_t mx = m_width - dx;
-	int32_t my = m_height - dy;
+	const int32_t mx = m_width - dx;
+	const int32_t my = m_height - dy;
 
 	if (width > mx)
 		width = mx;
@@ -198,8 +198,8 @@ void Image::copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t 
 
 void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height, const ITransferFunction& tf)
 {
-	int32_t srcWidth = int32_t(src->getWidth());
-	int32_t srcHeight = int32_t(src->getHeight());
+	const int32_t srcWidth = int32_t(src->getWidth());
+	const int32_t srcHeight = int32_t(src->getHeight());
 	Color4f sp, dp;
 
 	if (x < 0)
@@ -235,8 +235,8 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 	if (y + height > srcHeight)
 		height = srcHeight - y;
 
-	int32_t mx = m_width - dx;
-	int32_t my = m_height - dy;
+	const int32_t mx = m_width - dx;
+	const int32_t my = m_height - dy;
 
 	if (width > mx)
 		width = mx;
@@ -271,7 +271,7 @@ void Image::clear(const Color4f& color)
 	float T_MATH_ALIGN16 tmp[4];
 	color.storeAligned(tmp);
 
-	uint32_t byteSize = m_pixelFormat.getByteSize();
+	const uint32_t byteSize = m_pixelFormat.getByteSize();
 	AlignedVector< uint8_t > c(byteSize);
 
 	PixelFormat::getRGBAF32().convert(
@@ -363,7 +363,7 @@ void Image::setPixelAlphaBlendUnsafe(int32_t x, int32_t y, const Color4f& color)
 
 void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const
 {
-	int32_t offset = y * m_pitch;
+	const int32_t offset = y * m_pitch;
 	m_pixelFormat.convertTo4f(
 		m_palette,
 		&m_data[offset],
@@ -375,7 +375,7 @@ void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const
 
 void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 {
-	int32_t offset = y * m_pitch;
+	const int32_t offset = y * m_pitch;
 	m_pixelFormat.convertFrom4f(
 		span,
 		m_palette,
@@ -387,7 +387,7 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 
 void Image::getVerticalSpanUnsafe(int32_t x, Color4f* outSpan) const
 {
-	int32_t offset = x * m_pixelFormat.getByteSize();
+	const int32_t offset = x * m_pixelFormat.getByteSize();
 	m_pixelFormat.convertTo4f(
 		m_palette,
 		&m_data[offset],
@@ -399,7 +399,7 @@ void Image::getVerticalSpanUnsafe(int32_t x, Color4f* outSpan) const
 
 void Image::setVerticalSpanUnsafe(int32_t x, const Color4f* span)
 {
-	int32_t offset = x * m_pixelFormat.getByteSize();
+	const int32_t offset = x * m_pixelFormat.getByteSize();
 	m_pixelFormat.convertFrom4f(
 		span,
 		m_palette,
@@ -431,7 +431,7 @@ void Image::convert(const PixelFormat& intoPixelFormat, Palette* intoPalette)
 	}
 	else
 	{
-		size_t size = m_width * m_height * intoPixelFormat.getByteSize();
+		const size_t size = m_width * m_height * intoPixelFormat.getByteSize();
 		uint8_t* tmp = allocData(size);
 
 		m_pixelFormat.convert(
@@ -467,9 +467,9 @@ void Image::swap(Image* source)
 	m_data = source->m_data;
 	m_imageInfo = source->m_imageInfo;
 
-	source->m_palette = 0;
-	source->m_data = 0;
-	source->m_imageInfo = 0;
+	source->m_palette = nullptr;
+	source->m_data = nullptr;
+	source->m_imageInfo = nullptr;
 }
 
 Ref< Image > Image::load(const Path& fileName)
@@ -477,12 +477,12 @@ Ref< Image > Image::load(const Path& fileName)
 	Ref< Image > image;
 
 	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(fileName);
-	if (imageFormat == 0)
-		return 0;
+	if (imageFormat == nullptr)
+		return nullptr;
 
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (file == 0)
-		return 0;
+	if (file == nullptr)
+		return nullptr;
 
 	BufferedStream bufferedFile(file);
 	image = imageFormat->read(&bufferedFile);
@@ -499,8 +499,8 @@ Ref< Image > Image::load(IStream* stream, const std::wstring& extension)
 	Ref< Image > image;
 
 	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
-	if (imageFormat == 0)
-		return 0;
+	if (imageFormat == nullptr)
+		return nullptr;
 
 	BufferedStream bufferedFile(stream);
 	image = imageFormat->read(&bufferedFile);
@@ -516,8 +516,8 @@ Ref< Image > Image::load(const void* resource, uint32_t size, const std::wstring
 	Ref< Image > image;
 
 	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
-	if (imageFormat == 0)
-		return 0;
+	if (imageFormat == nullptr)
+		return nullptr;
 
 	MemoryStream stream(resource, size);
 	image = imageFormat->read(&stream);
@@ -534,11 +534,11 @@ bool Image::save(const Path& fileName) const
 		return false;
 
 	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(fileName);
-	if (imageFormat == 0)
+	if (imageFormat == nullptr)
 		return false;
 
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
-	if (file == 0)
+	if (file == nullptr)
 		return false;
 
 	bool result = imageFormat->write(file, this);
@@ -554,7 +554,7 @@ bool Image::save(IStream* stream, const std::wstring& extension) const
 		return false;
 
 	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
-	if (imageFormat == 0)
+	if (imageFormat == nullptr)
 		return false;
 
 	bool result = imageFormat->write(stream, this);

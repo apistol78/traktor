@@ -1,10 +1,8 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Instance.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 TypeBrowseFilter::TypeBrowseFilter(const TypeInfoSet& typeSet)
 :	m_typeSet(typeSet)
@@ -32,5 +30,4 @@ bool TypeBrowseFilter::acceptable(db::Instance* instance) const
 	return false;
 }
 
-	}
 }

@@ -18,15 +18,17 @@ namespace traktor
 
 class ISerializable;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IPipelineBuilder;
 class IPipelineSettings;
@@ -125,6 +127,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

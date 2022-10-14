@@ -11,25 +11,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Command;
 class Widget;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditorPageSite;
 
@@ -78,6 +76,4 @@ public:
 	virtual void handleWorkspaceClosed() = 0;
 };
 
-	}
 }
-

@@ -2,10 +2,8 @@
 
 #include "Core/Date/DateTime.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 /*! Pipeline dependency flags.
  * \ingroup Editor
@@ -67,6 +65,4 @@ struct PipelineFileHash
 	uint32_t hash = 0;			/*!< Hash of file's content. */
 };
 
-	}
 }
-

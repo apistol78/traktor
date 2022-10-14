@@ -15,15 +15,17 @@ namespace traktor
 
 class ISerializable;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Command;
 
-	}
+}
 
-    namespace editor
-	{
+namespace traktor::editor
+{
 
 /*!
  * \ingroup Editor
@@ -40,5 +42,4 @@ public:
 	virtual bool handleCommand(const ui::Command& command) = 0;
 };
 
-    }
 }

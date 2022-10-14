@@ -31,8 +31,8 @@ CubeMap::CubeMap(const Ref< drawing::Image > sides[6])
 
 Ref< CubeMap > CubeMap::createFromCrossImage(const drawing::Image* image)
 {
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
 
 	int32_t layout = 0;
 	int32_t size = height;
@@ -119,9 +119,9 @@ Ref< CubeMap > CubeMap::createFromCrossImage(const drawing::Image* image)
 
 Ref< CubeMap > CubeMap::createFromEquirectangularImage(const drawing::Image* image)
 {
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
-	int32_t size = height;
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
+	const int32_t size = height;
 
 	Ref< CubeMap > cubeMap = new CubeMap(size, image->getPixelFormat());	
 
@@ -210,8 +210,8 @@ Ref< CubeMap > CubeMap::createFromEquirectangularImage(const drawing::Image* ima
 
 Ref< CubeMap > CubeMap::createFromImage(const drawing::Image* image)
 {
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
 	
 	if (width / 4 == height || width / 2 == height)
 		return CubeMap::createFromEquirectangularImage(image);
@@ -264,15 +264,15 @@ Ref< drawing::Image > CubeMap::createEquirectangular() const
 	Ref< drawing::Image > output = new drawing::Image(m_side[0]->getPixelFormat(), m_size * 4, m_size);
 	for (int32_t y = 0; y < output->getHeight(); ++y)
 	{
-		float fy = (float)y / (output->getHeight() - 1);
+		const float fy = (float)y / (output->getHeight() - 1);
 		for (int32_t x = 0; x < output->getWidth(); ++x)
 		{
-			float fx = (float)x / (output->getWidth() - 1);
-			float phi = fx * TWO_PI;
-			float theta = fy * PI;
-			float dx = sin(phi) * sin(theta);
-			float dy = cos(theta);
-			float dz = cos(phi) * sin(theta);
+			const float fx = (float)x / (output->getWidth() - 1);
+			const float phi = fx * TWO_PI;
+			const float theta = fy * PI;
+			const float dx = sin(phi) * sin(theta);
+			const float dy = cos(theta);
+			const float dz = cos(phi) * sin(theta);
 
 			Color4f c = get(Vector4(dx, dy, dz));
 			output->setPixel(x, y, c);
@@ -283,8 +283,8 @@ Ref< drawing::Image > CubeMap::createEquirectangular() const
 
 Vector4 CubeMap::getDirection(int32_t side, int32_t x, int32_t y) const
 {
-	float fx = 2.0f * float(x) / m_size - 1.0f;
-	float fy = 2.0f * float(y) / m_size - 1.0f;
+	const float fx = 2.0f * float(x) / m_size - 1.0f;
+	const float fy = 2.0f * float(y) / m_size - 1.0f;
 	switch (side)
 	{
 	case 0:	// +x
@@ -312,7 +312,7 @@ Vector4 CubeMap::getDirection(int32_t side, int32_t x, int32_t y) const
 
 void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& outX, int32_t& outY) const
 {
-	int32_t major = majorAxis3(direction);
+	const int32_t major = majorAxis3(direction);
 	outSide = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
@@ -350,8 +350,8 @@ void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& o
 
 void CubeMap::set(const Vector4& direction, const Color4f& value)
 {
-	int32_t major = majorAxis3(direction);
-	int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
+	const int32_t major = majorAxis3(direction);
+	const int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
 	switch (major)
@@ -381,17 +381,17 @@ void CubeMap::set(const Vector4& direction, const Color4f& value)
 	u *= n;
 	v *= n;
 
-	int32_t s = m_size - 1;
-	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
-	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
+	const int32_t s = m_size - 1;
+	const int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
+	const int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
 
 	m_side[side]->setPixel(x, y, value);
 }
 
 Color4f CubeMap::get(const Vector4& direction) const
 {
-	int32_t major = majorAxis3(direction);
-	int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
+	const int32_t major = majorAxis3(direction);
+	const int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
 	switch (major)
@@ -421,9 +421,9 @@ Color4f CubeMap::get(const Vector4& direction) const
 	u *= n;
 	v *= n;
 
-	int32_t s = m_size - 1;
-	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
-	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
+	const int32_t s = m_size - 1;
+	const int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
+	const int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
 
 	Color4f color;
 	if (m_side[side]->getPixel(x, y, color))

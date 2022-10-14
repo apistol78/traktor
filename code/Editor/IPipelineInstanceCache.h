@@ -17,8 +17,10 @@ namespace traktor
 class ISerializable;
 class Guid;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 /*! Pipeline database instance object read-only cache.
  * \ingroup Editor
@@ -33,6 +35,4 @@ public:
 	virtual void flush(const Guid& instanceGuid) = 0;
 };
 
-	}
 }
-

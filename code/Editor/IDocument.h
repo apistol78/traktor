@@ -16,15 +16,17 @@ namespace traktor
 
 class ISerializable;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Editor page working document.
  * \ingroup Editor
@@ -194,6 +196,4 @@ public:
 	}
 };
 
-	}
 }
-

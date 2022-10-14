@@ -21,8 +21,10 @@ class IStream;
 class OutputStream;
 class PropertyGroup;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class T_DLLCLASS IPipelineCache : public Object
 {
@@ -62,6 +64,4 @@ public:
 	virtual void getInformation(OutputStream& os) = 0;
 };
 
-	}
 }
-

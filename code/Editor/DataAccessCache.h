@@ -18,8 +18,10 @@ namespace traktor
 
 class IStream;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IPipelineCache;
 
@@ -62,5 +64,4 @@ private:
 	);
 };
 
-	}
 }

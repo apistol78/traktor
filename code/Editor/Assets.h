@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 /*! Root assets.
  * \ingroup Editor
@@ -41,6 +39,4 @@ private:
 	std::vector< Dependency > m_dependencies;
 };
 
-	}
 }
-

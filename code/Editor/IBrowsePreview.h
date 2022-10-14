@@ -11,24 +11,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Bitmap;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
@@ -45,6 +43,4 @@ public:
 	virtual Ref< ui::Bitmap > generate(const IEditor* editor, db::Instance* instance) const = 0;
 };
 
-	}
 }
-

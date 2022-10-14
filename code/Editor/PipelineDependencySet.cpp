@@ -5,10 +5,8 @@
 #include "Editor/PipelineDependency.h"
 #include "Editor/PipelineDependencySet.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependencySet", 0, PipelineDependencySet, ISerializable)
 
@@ -67,5 +65,4 @@ void PipelineDependencySet::serialize(ISerializer& s)
 	s >> MemberSmallMap< Guid, uint32_t >(L"indices", m_indices);
 }
 
-	}
 }

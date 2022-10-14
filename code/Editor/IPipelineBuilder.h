@@ -11,17 +11,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class DataAccessCache;
 class PipelineDependencySet;
@@ -117,6 +115,4 @@ public:
 	//@}
 };
 
-	}
 }
-

@@ -19,15 +19,17 @@ namespace traktor
 
 class ISerializable;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Command;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 class IObjectEditor;
@@ -51,6 +53,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const = 0;
 };
 
-	}
 }
-

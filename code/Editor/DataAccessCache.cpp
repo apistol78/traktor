@@ -3,10 +3,8 @@
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineCache.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DataAccessCache", DataAccessCache, Object)
 
@@ -54,5 +52,4 @@ Ref< Object > DataAccessCache::readObject(
 	return object;
 }
 
-	}
 }
