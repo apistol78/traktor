@@ -1,16 +1,14 @@
 #include "Core/Class/BoxedAllocator.h"
 #include "Render/Frame/RenderPass.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 BoxedAllocator< RenderPass, 128 > s_allocRenderPass;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPass", RenderPass, Object)
 
@@ -84,5 +82,4 @@ void RenderPass::operator delete (void* ptr)
 	s_allocRenderPass.free(ptr);
 }
 
-	}
 }

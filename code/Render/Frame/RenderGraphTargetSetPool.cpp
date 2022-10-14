@@ -5,16 +5,14 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maxUnusuedFrames = 8;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
 
@@ -202,5 +200,4 @@ void RenderGraphTargetSetPool::cleanup()
 	}
 }
 
-	}
 }
