@@ -18,17 +18,19 @@ class Object;
 class PropertyGroup;
 class TypeInfo;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 class Group;
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditorPage;
 class IBrowseFilter;
@@ -165,5 +167,4 @@ public:
 	}
 };
 
-	}
 }

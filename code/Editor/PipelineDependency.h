@@ -23,8 +23,10 @@ namespace traktor
 class ISerializable;
 class OutputStream;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IPipeline;
 
@@ -67,6 +69,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }
-

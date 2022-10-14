@@ -51,8 +51,8 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
     std::wstring system = L"rpi";
 #endif
 
-	std::wstring globalFile = pathName.getPathName();
-	std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
+	const std::wstring globalFile = pathName.getPathName();
+	const std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
 
     // Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != nullptr)

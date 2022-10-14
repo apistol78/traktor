@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 /*! Default pipeline.
  * \ingroup Editor
@@ -70,6 +68,4 @@ public:
 	) const override;
 };
 
-	}
 }
-

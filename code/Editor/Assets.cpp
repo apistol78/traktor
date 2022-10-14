@@ -3,10 +3,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", 1, Assets, ISerializable)
 
@@ -22,5 +20,4 @@ void Assets::Dependency::serialize(ISerializer& s)
 	s >> Member< bool >(L"editorDeployOnly", editorDeployOnly);
 }
 
-	}
 }

@@ -17,24 +17,26 @@ namespace traktor
 
 class ISerializable;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Command;
 class Widget;
 
-	}
+}
 
-	namespace db
-	{
+namespace traktor::db
+{
 
 class Database;
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Object editor base.
  * \ingroup Editor
@@ -96,6 +98,4 @@ public:
 	virtual ui::Size getPreferredSize() const = 0;
 };
 
-	}
 }
-

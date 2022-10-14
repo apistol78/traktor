@@ -12,17 +12,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class T_DLLCLASS IThumbnailGenerator : public Object
 {
@@ -46,6 +44,4 @@ public:
 	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, Alpha alpha, Gamma gamma) = 0;
 };
 
-	}
 }
-

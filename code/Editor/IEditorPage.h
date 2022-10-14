@@ -11,28 +11,26 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 class Event;
 class Instance;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class Point;
 class Command;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Editor page base.
  * \ingroup Editor
@@ -103,6 +101,4 @@ public:
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 };
 
-	}
 }
-

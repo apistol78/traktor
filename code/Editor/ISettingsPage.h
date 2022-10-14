@@ -16,16 +16,18 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Container;
 class Command;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Interface for settings pages.
  * \ingroup Editor
@@ -42,6 +44,4 @@ public:
 	virtual bool apply(PropertyGroup* settings) = 0;
 };
 
-	}
 }
-

@@ -80,15 +80,15 @@ void QuickOpenDialog::updateSuggestions(const std::wstring& filter)
 {
 	m_gridSuggestions->removeAllRows();
 
-	for (RefArray< db::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (auto instance : m_instances)
 	{
-		std::wstring instanceName = (*i)->getName();
+		const std::wstring instanceName = instance->getName();
 		if (startsWith(toLower(instanceName), toLower(filter)))
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(new ui::GridItem(instanceName));
-			row->add(new ui::GridItem((*i)->getPath()));
-			row->setData(L"INSTANCE", *i);
+			row->add(new ui::GridItem(instance->getPath()));
+			row->setData(L"INSTANCE", instance);
 			m_gridSuggestions->addRow(row);
 		}
 	}
@@ -106,7 +106,7 @@ void QuickOpenDialog::eventFilterChange(ui::ContentChangeEvent* event)
 	// Check isModel in to make sure we haven't called endModal in key down event handler already.
 	if (isModal())
 	{
-		std::wstring filter = m_editFilter->getText();
+		const std::wstring filter = m_editFilter->getText();
 		updateSuggestions(filter);
 	}
 }

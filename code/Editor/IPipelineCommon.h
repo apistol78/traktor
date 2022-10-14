@@ -20,15 +20,17 @@ class ISerializable;
 class IStream;
 class Path;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! \Pipeline common interface.
  * \ingroup Editor
@@ -48,6 +50,4 @@ public:
 	}
 };
 
-	}
 }
-

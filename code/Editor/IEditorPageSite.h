@@ -11,17 +11,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class PropertiesView;
 
@@ -49,6 +47,4 @@ public:
 	virtual void hideAdditionalPanel(ui::Widget* widget) = 0;
 };
 
-	}
 }
-

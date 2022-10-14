@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 /*! Filter instances by type.
  * \ingroup Editor
@@ -22,9 +20,9 @@ namespace traktor
 class T_DLLCLASS TypeBrowseFilter : public IBrowseFilter
 {
 public:
-	TypeBrowseFilter(const TypeInfoSet& typeSet);
+	explicit TypeBrowseFilter(const TypeInfoSet& typeSet);
 
-	TypeBrowseFilter(const TypeInfo& typeInfo);
+	explicit TypeBrowseFilter(const TypeInfo& typeInfo);
 
 	virtual bool acceptable(db::Instance* instance) const override final;
 
@@ -32,6 +30,4 @@ private:
 	TypeInfoSet m_typeSet;
 };
 
-	}
 }
-

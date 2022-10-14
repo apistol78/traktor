@@ -9,10 +9,8 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultPipeline", 2, DefaultPipeline, IPipeline)
 
@@ -108,5 +106,4 @@ Ref< ISerializable > DefaultPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

@@ -1,11 +1,8 @@
 #include "Editor/IPipelineInstanceCache.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktort.editor.IPipelineInstanceCache", IPipelineInstanceCache, Object)
 
-	}
 }

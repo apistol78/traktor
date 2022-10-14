@@ -10,17 +10,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Browse instance filter interface.
  * \ingroup Editor
@@ -31,6 +29,4 @@ public:
 	virtual bool acceptable(db::Instance* instance) const = 0;
 };
 
-	}
 }
-

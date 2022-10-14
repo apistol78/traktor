@@ -34,7 +34,7 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 	std::pair< float, int32_t > mn(std::numeric_limits< float >::max(), -1);
 	for (AlignedVector< Color4f >::const_iterator i = m_colors.begin(); i != m_colors.end(); ++i)
 	{
-		float diff =
+		const float diff =
 			std::abs(c.getRed() - i->getRed()) +
 			std::abs(c.getGreen() - i->getGreen()) +
 			std::abs(c.getBlue() - i->getBlue()) +

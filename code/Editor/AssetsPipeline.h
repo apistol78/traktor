@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 /*! Assets pipeline.
  * \ingroup Editor
@@ -64,6 +62,4 @@ private:
 	bool m_editorDeploy = false;
 };
 
-	}
 }
-

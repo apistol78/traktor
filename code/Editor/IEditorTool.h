@@ -19,16 +19,18 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class IBitmap;
 class Widget;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
@@ -49,5 +51,4 @@ public:
 	virtual bool launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param) = 0;
 };
 
-	}
 }

@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 class IEditorPlugin;
@@ -33,6 +31,4 @@ public:
 	virtual Ref< IEditorPlugin > createEditorPlugin(IEditor* editor) const = 0;
 };
 
-	}
 }
-

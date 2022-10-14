@@ -17,8 +17,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class PipelineDependency;
 
@@ -53,5 +55,4 @@ private:
 	SmallMap< Guid, uint32_t > m_indices;
 };
 
-	}
 }
