@@ -5,11 +5,9 @@
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferStaticVk", BufferStaticVk, BufferVk)
 
 BufferStaticVk::BufferStaticVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances)
@@ -82,5 +80,4 @@ const IBufferView* BufferStaticVk::getBufferView() const
 	return &m_bufferView;
 }
 
-	}
 }

@@ -3,10 +3,8 @@
 #include "Render/IVolumeTexture.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ApiBuffer;
 class Context;
@@ -50,5 +48,4 @@ private:
 	VolumeTextureCreateDesc m_desc;
 };
 
-	}
 }

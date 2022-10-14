@@ -4,10 +4,8 @@
 #include "Render/Vulkan/Private/ApiHeader.h"
 #include "Render/Vulkan/Private/Image.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Context;
 class CommandBuffer;
@@ -90,5 +88,4 @@ private:
 	void prepareForReadBack(CommandBuffer* commandBuffer);
 };
 
-	}
 }

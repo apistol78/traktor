@@ -9,10 +9,8 @@
 #include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ISimpleTexture)
 
@@ -148,5 +146,4 @@ void RenderTargetDepthVk::prepareAsTexture(CommandBuffer* commandBuffer)
 	);
 }
 
-	}
 }

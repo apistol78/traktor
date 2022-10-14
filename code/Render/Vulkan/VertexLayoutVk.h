@@ -3,10 +3,8 @@
 #include "Render/IVertexLayout.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class VertexLayoutVk : public IVertexLayout
 {
@@ -30,5 +28,4 @@ public:
 	uint32_t m_hash;
 };
 
-	}
 }

@@ -2,10 +2,8 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferDynamicVk", BufferDynamicVk, BufferVk)
 
@@ -92,5 +90,4 @@ const IBufferView* BufferDynamicVk::getBufferView() const
 	return &m_bufferViews[m_view];
 }
 
-	}
 }

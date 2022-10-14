@@ -3,13 +3,8 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-
-class Semaphore;
-
-	namespace render
-	{
 
 class CommandBuffer;
 class Context;
@@ -75,5 +70,4 @@ private:
 	void prepareAsTexture(CommandBuffer* commandBuffer);
 };
 
-	}
 }

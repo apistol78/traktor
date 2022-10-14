@@ -9,10 +9,8 @@
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimpleTexture)
 
@@ -180,5 +178,4 @@ void RenderTargetVk::prepareForReadBack(CommandBuffer* commandBuffer)
 	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 }
 
-	}
 }

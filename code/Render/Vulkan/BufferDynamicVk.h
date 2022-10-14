@@ -5,10 +5,8 @@
 #include "Render/Vulkan/BufferVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class BufferDynamicVk : public BufferVk
 {
@@ -39,5 +37,4 @@ private:
 	uint8_t* m_ptr = nullptr;
 };
 
-	}
 }

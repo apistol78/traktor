@@ -22,12 +22,10 @@
 
 #undef max
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 render::Handle s_handleTargetSize(L"_vk_targetSize");
 
@@ -86,7 +84,7 @@ bool storeIfNotEqual(const Vector4* source, int32_t length, float* dest)
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
@@ -783,5 +781,4 @@ bool ProgramVk::DescriptorSetKey::operator > (const DescriptorSetKey& rh) const
 	return false;
 }
 
-	}
 }

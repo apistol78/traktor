@@ -5,12 +5,10 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class MemberRenderState : public MemberComplex
 {
@@ -80,7 +78,7 @@ private:
 	SamplerState& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 4, ProgramResourceVk, ProgramResource)
 
@@ -140,5 +138,4 @@ void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
 	s >> Member< uint8_t >(L"stages", stages);
 }
 
-	}
 }

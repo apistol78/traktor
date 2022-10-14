@@ -5,10 +5,8 @@
 #include "Render/Vulkan/BufferVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ApiBuffer;
 
@@ -38,5 +36,4 @@ private:
 	uint32_t m_size = 0;
 };
 
-	}
 }

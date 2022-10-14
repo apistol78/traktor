@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Context;
 class PipelineLayoutCache;
@@ -97,6 +95,4 @@ private:
 	float m_mipBias = 0.0f;
 };
 
-	}
 }
-

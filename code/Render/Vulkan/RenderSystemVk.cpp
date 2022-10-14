@@ -40,12 +40,10 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const char* c_validationLayerNames[] = { "VK_LAYER_KHRONOS_validation", nullptr };
 #if defined(_WIN32)
@@ -102,7 +100,7 @@ bool isDeviceSuitable(VkPhysicalDevice device)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
 
@@ -625,5 +623,4 @@ void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 	outStatistics = m_statistics;
 }
 
-	}
 }
