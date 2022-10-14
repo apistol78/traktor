@@ -336,8 +336,8 @@ void PrimitiveRenderer::drawArrowHead(
 	const Color4ub& color
 )
 {
-	Vector4 d = end - start;
-	Vector4 dn = d.normalized();
+	const Vector4 d = end - start;
+	const Vector4 dn = d.normalized();
 
 	const Vector4 c_axis[] =
 	{
@@ -346,31 +346,31 @@ void PrimitiveRenderer::drawArrowHead(
 		Vector4(0.0f, 1.0f, 0.0f)
 	};
 
-	Vector4 u = cross(dn, c_axis[majorAxis3(dn)]).normalized();
-	Vector4 v = cross(u, dn).normalized();
+	const Vector4 u = cross(dn, c_axis[majorAxis3(dn)]).normalized();
+	const Vector4 v = cross(u, dn).normalized();
 
-	float radius = d.length() * (1.0f - sharpness);
+	const float radius = d.length() * (1.0f - sharpness);
 
 	// Cull backward face.
-	Vector4 vn = m_worldView * dn.xyz0();
-	if (vn.z() >= 0.0f)
+	const Vector4 vn = m_worldView * dn.xyz0();
+	if (vn.z() >= 0.0_simd)
 	{
-		Scalar diffuse = dot3(-dn, Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
-		uint8_t mcap = uint8_t(diffuse * 255);
+		const Scalar diffuse = dot3(-dn, Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
+		const uint8_t mcap = uint8_t(diffuse * 255);
 
 		// Render cap
 		for (int32_t i = 0; i < 16; ++i)
 		{
-			float a0 = (i / 16.0f) * TWO_PI;
-			float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+			const float a0 = (i / 16.0f) * TWO_PI;
+			const float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
 
-			float u0 = cosf(a0);
-			float v0 = sinf(a0);
-			float u1 = cosf(a1);
-			float v1 = sinf(a1);
+			const float u0 = cosf(a0);
+			const float v0 = sinf(a0);
+			const float u1 = cosf(a1);
+			const float v1 = sinf(a1);
 
-			Vector4 w0 = start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius);
-			Vector4 w1 = start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius);
+			const Vector4 w0 = start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius);
+			const Vector4 w1 = start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius);
 
 			drawSolidTriangle(
 				w0,
@@ -381,16 +381,16 @@ void PrimitiveRenderer::drawArrowHead(
 		}
 	}
 
-	Vector4 eye = m_worldView.inverse() * Vector4::origo();
+	const Vector4 eye = m_worldView.inverse() * Vector4::origo();
 	for (int32_t i = 0; i < 16; ++i)
 	{
-		float a0 = (i / 16.0f) * TWO_PI;
-		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+		const float a0 = (i / 16.0f) * TWO_PI;
+		const float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
 
-		float u0 = cosf(a0);
-		float v0 = sinf(a0);
-		float u1 = cosf(a1);
-		float v1 = sinf(a1);
+		const float u0 = cosf(a0);
+		const float v0 = sinf(a0);
+		const float u1 = cosf(a1);
+		const float v1 = sinf(a1);
 
 		Winding3 w(
 			start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius),
@@ -402,13 +402,13 @@ void PrimitiveRenderer::drawArrowHead(
 		w.getPlane(plane);
 
 		// Cull backward face.
-		Vector4 n = m_worldView * plane.normal();
-		if (n.z() >= 0.0f)
+		const Vector4 n = m_worldView * plane.normal();
+		if (n.z() >= 0.0_simd)
 			continue;
 
 		// Calculate lighting from above.
-		Scalar diffuse = dot3(plane.normal(), Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
-		uint8_t m = uint8_t(diffuse * 255);
+		const Scalar diffuse = dot3(plane.normal(), Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
+		const uint8_t m = uint8_t(diffuse * 255);
 
 		drawSolidTriangle(
 			w[0],
@@ -448,8 +448,8 @@ void PrimitiveRenderer::drawWireAabb(
 	Vector4 extents[8];
 	aabb.getExtents(extents);
 
-	const int* edges = Aabb3::getEdges();
-	for (int i = 0; i < 12; ++i)
+	const int32_t* edges = Aabb3::getEdges();
+	for (int32_t i = 0; i < 12; ++i)
 	{
 		drawLine(
 			extents[edges[i * 2 + 0]],
@@ -532,18 +532,18 @@ void PrimitiveRenderer::drawWireCircle(
 		Vector4(0.0f, 1.0f, 0.0f)
 	};
 
-	Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
-	Vector4 v = cross(u, normal).normalized();
+	const Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
+	const Vector4 v = cross(u, normal).normalized();
 
 	for (int32_t i = 0; i < 16; ++i)
 	{
-		float a0 = (i / 16.0f) * TWO_PI;
-		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+		const float a0 = (i / 16.0f) * TWO_PI;
+		const float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
 
-		float u0 = cosf(a0);
-		float v0 = sinf(a0);
-		float u1 = cosf(a1);
-		float v1 = sinf(a1);
+		const float u0 = cosf(a0);
+		const float v0 = sinf(a0);
+		const float u1 = cosf(a1);
+		const float v1 = sinf(a1);
 
 		drawLine(
 			center + u * Scalar(u0 * radius) + v * Scalar(v0 * radius),
@@ -560,22 +560,22 @@ void PrimitiveRenderer::drawWireSphere(
 	const Color4ub& color
 )
 {
-	Vector4 centerV = m_worldView * frame.translation().xyz1();
+	const Vector4 centerV = m_worldView * frame.translation().xyz1();
 
 	int32_t nlat = int32_t(4.0f * 15.0f / centerV.z() + 1);
 	if (nlat > 16)
 		nlat = 16;
 
-	for (int lat = 0; lat < nlat; ++lat)
+	for (int32_t lat = 0; lat < nlat; ++lat)
 	{
-		float r = radius * sinf(PI * float(lat + 1) / (nlat + 1));
-		float y = radius * cosf(PI * float(lat + 1) / (nlat + 1));
+		const float r = radius * sinf(PI * float(lat + 1) / (nlat + 1));
+		const float y = radius * cosf(PI * float(lat + 1) / (nlat + 1));
 
 		float x1 = r, z1 = 0.0f;
 		for (int lng = 1; lng <= 32; ++lng)
 		{
-			float x2 = r * cosf(TWO_PI * (lng / 32.0f));
-			float z2 = r * sinf(TWO_PI * (lng / 32.0f));
+			const float x2 = r * cosf(TWO_PI * (lng / 32.0f));
+			const float z2 = r * sinf(TWO_PI * (lng / 32.0f));
 
 			drawLine(
 				frame * Vector4(x1, y, z1, 1.0f),
@@ -613,19 +613,19 @@ void PrimitiveRenderer::drawWireCylinder(
 
 	for (int i = 0; i < 16; ++i)
 	{
-		float a1 = 2.0f * PI * float(i) / 16.0f;
-		float a2 = 2.0f * PI * float(i + 1.0f) / 16.0f;
+		const float a1 = 2.0f * PI * float(i) / 16.0f;
+		const float a2 = 2.0f * PI * float(i + 1.0f) / 16.0f;
 
-		Vector4 v1 = axisU * Scalar(cosf(a1)) + axisV * Scalar(sinf(a1));
-		Vector4 v2 = axisU * Scalar(cosf(a2)) + axisV * Scalar(sinf(a2));
+		const Vector4 v1 = axisU * Scalar(cosf(a1)) + axisV * Scalar(sinf(a1));
+		const Vector4 v2 = axisU * Scalar(cosf(a2)) + axisV * Scalar(sinf(a2));
 
-		Vector4 c1 = frame.translation() + frame.axisZ() * Scalar(length / 2.0f);
-		Vector4 c2 = frame.translation() - frame.axisZ() * Scalar(length / 2.0f);
+		const Vector4 c1 = frame.translation() + frame.axisZ() * Scalar(length / 2.0f);
+		const Vector4 c2 = frame.translation() - frame.axisZ() * Scalar(length / 2.0f);
 
-		Vector4 p1_1 = c1 + v1 * Scalar(radius);
-		Vector4 p2_1 = c1 + v2 * Scalar(radius);
-		Vector4 p1_2 = c2 + v1 * Scalar(radius);
-		Vector4 p2_2 = c2 + v2 * Scalar(radius);
+		const Vector4 p1_1 = c1 + v1 * Scalar(radius);
+		const Vector4 p2_1 = c1 + v2 * Scalar(radius);
+		const Vector4 p1_2 = c2 + v1 * Scalar(radius);
+		const Vector4 p2_2 = c2 + v2 * Scalar(radius);
 
 		drawLine(p1_1, p2_1, 1.0f, color);
 		drawLine(p1_2, p2_2, 1.0f, color);
@@ -657,10 +657,10 @@ void PrimitiveRenderer::drawSolidPoint(
 	const Color4ub& color
 )
 {
-	Vector4 cv = m_worldView * center.xyz1();
-	Vector4 cc = m_currentFrame->projections.back() * cv;
-	Scalar dx = cc.w() * Scalar(size / 500.0f);
-	Vector4 normal = m_worldView.inverse() * Vector4(0.0f, 0.0f, -1.0f, 0.0f);
+	const Vector4 cv = m_worldView * center.xyz1();
+	const Vector4 cc = m_currentFrame->projections.back() * cv;
+	const Scalar dx = cc.w() * Scalar(size / 500.0f);
+	const Vector4 normal = m_worldView.inverse() * Vector4(0.0f, 0.0f, -1.0f, 0.0f);
 
 	const Vector4 c_axis[] =
 	{
@@ -669,18 +669,18 @@ void PrimitiveRenderer::drawSolidPoint(
 		Vector4(0.0f, 1.0f, 0.0f)
 	};
 
-	Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
-	Vector4 v = cross(u, normal).normalized();
+	const Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
+	const Vector4 v = cross(u, normal).normalized();
 
 	for (int32_t i = 0; i < 16; ++i)
 	{
-		float a0 = (i / 16.0f) * TWO_PI;
-		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+		const float a0 = (i / 16.0f) * TWO_PI;
+		const float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
 
-		float u0 = cosf(a0);
-		float v0 = sinf(a0);
-		float u1 = cosf(a1);
-		float v1 = sinf(a1);
+		const float u0 = cosf(a0);
+		const float v0 = sinf(a0);
+		const float u1 = cosf(a1);
+		const float v1 = sinf(a1);
 
 		drawSolidTriangle(
 			center + u * Scalar(u0 * dx) + v * Scalar(v0 * dx),
@@ -708,7 +708,7 @@ void PrimitiveRenderer::drawSolidAabb(
 	if (aabb.empty())
 		return;
 
-	Vector4 eyeCenter = m_worldView.inverse().translation();
+	const Vector4 eyeCenter = m_worldView.inverse().translation();
 
 	Vector4 extents[8];
 	aabb.getExtents(extents);
@@ -718,14 +718,14 @@ void PrimitiveRenderer::drawSolidAabb(
 
 	for (int i = 0; i < 6; ++i)
 	{
-		Vector4 faceCenter = (
+		const Vector4 faceCenter = (
 			extents[faces[i * 4 + 0]] +
 			extents[faces[i * 4 + 1]] +
 			extents[faces[i * 4 + 2]] +
 			extents[faces[i * 4 + 3]]
 		) / Scalar(4.0f);
 
-		Scalar phi = dot3((eyeCenter - faceCenter).normalized(), normals[i]);
+		const Scalar phi = dot3((eyeCenter - faceCenter).normalized(), normals[i]);
 		if (phi < 0.0_simd)
 			continue;
 
@@ -762,9 +762,9 @@ void PrimitiveRenderer::drawSolidTriangle(
 	const Color4ub& color3
 )
 {
-	Vector4 v1 = m_worldView * vert1.xyz1();
-	Vector4 v2 = m_worldView * vert2.xyz1();
-	Vector4 v3 = m_worldView * vert3.xyz1();
+	const Vector4 v1 = m_worldView * vert1.xyz1();
+	const Vector4 v2 = m_worldView * vert2.xyz1();
+	const Vector4 v3 = m_worldView * vert3.xyz1();
 
 	Vertex* v = allocBatch(PrimitiveType::Triangles, 1, nullptr);
 	if (!v)
@@ -843,9 +843,9 @@ void PrimitiveRenderer::drawTextureTriangle(
 	ITexture* texture
 )
 {
-	Vector4 v1 = m_worldView * vert1.xyz1();
-	Vector4 v2 = m_worldView * vert2.xyz1();
-	Vector4 v3 = m_worldView * vert3.xyz1();
+	const Vector4 v1 = m_worldView * vert1.xyz1();
+	const Vector4 v2 = m_worldView * vert2.xyz1();
+	const Vector4 v3 = m_worldView * vert3.xyz1();
 
 	Vertex* v = allocBatch(PrimitiveType::Triangles, 1, texture);
 	if (!v)
@@ -891,13 +891,13 @@ void PrimitiveRenderer::drawProtractor(
 	if (maxAngle - minAngle < FUZZY_EPSILON)
 		return;
 
-	float minAngleClamp = std::ceil(minAngle / angleStep) * angleStep;
-	float maxAngleClamp = std::floor(maxAngle / angleStep) * angleStep;
+	const float minAngleClamp = std::ceil(minAngle / angleStep) * angleStep;
+	const float maxAngleClamp = std::floor(maxAngle / angleStep) * angleStep;
 
 	float angle1 = minAngle;
 	float angle2 = minAngleClamp;
 
-	Vector4 vxb[] =
+	const Vector4 vxb[] =
 	{
 		position,
 		position + (base * Scalar(cosf(angle1)) + zero * Scalar(sinf(angle1))) * Scalar(radius),
@@ -922,7 +922,7 @@ void PrimitiveRenderer::drawProtractor(
 		angle1 = i;
 		angle2 = i + angleStep;
 
-		Vector4 vx[] =
+		const Vector4 vx[] =
 		{
 			position,
 			position + (base * Scalar(cosf(angle1)) + zero * Scalar(sinf(angle1))) * Scalar(radius),
@@ -946,7 +946,7 @@ void PrimitiveRenderer::drawProtractor(
 	angle1 = maxAngleClamp;
 	angle2 = maxAngle;
 
-	Vector4 vxe[] =
+	const Vector4 vxe[] =
 	{
 		position,
 		position + (base * Scalar(cosf(angle1)) + zero * Scalar(sinf(angle1))) * Scalar(radius),
@@ -979,14 +979,14 @@ void PrimitiveRenderer::drawBone(
 	const Color4ub& color
 )
 {
-	Vector4 start = bone * Vector4::origo();
-	Vector4 end = bone * Vector4(0.0f, 0.0f, length, 1.0f);
+	const Vector4 start = bone * Vector4::origo();
+	const Vector4 end = bone * Vector4(0.0f, 0.0f, length, 1.0f);
 
 	Vector4 z = (end - start).normalized();
 	Vector4 x = bone.axisX();
 	Vector4 y = bone.axisY();
 
-	Scalar radius(length * 0.1f);
+	const Scalar radius(length * 0.1f);
 	x *= radius;
 	y *= radius;
 	z *= radius;
@@ -1018,28 +1018,28 @@ void PrimitiveRenderer::drawCone(
 	const Color4ub& colorHint
 )
 {
-	Vector4 c1 = frame.axisZ() * Scalar(cosf(angleX / 2.0f));
-	Vector4 c2 = frame.axisZ() * Scalar(cosf(angleY / 2.0f));
+	const Vector4 c1 = frame.axisZ() * Scalar(cosf(angleX / 2.0f));
+	const Vector4 c2 = frame.axisZ() * Scalar(cosf(angleY / 2.0f));
 
-	Vector4 d1 = frame.axisX() * Scalar(sinf(angleX / 2.0f));
-	Vector4 d2 = frame.axisY() * Scalar(sinf(angleY / 2.0f));
+	const Vector4 d1 = frame.axisX() * Scalar(sinf(angleX / 2.0f));
+	const Vector4 d2 = frame.axisY() * Scalar(sinf(angleY / 2.0f));
 
 	Vector4 vx[32];
-	for (int i = 0; i < 32; ++i)
+	for (int32_t i = 0; i < 32; ++i)
 	{
-		float a = (i / 32.0f) * PI * 2.0f;
-		float b1 = (cosf(a * 2.0f) + 1.0f) / 2.0f;
-		float b2 = cosf(a);
-		float b3 = sinf(a);
+		const float a = (i / 32.0f) * PI * 2.0f;
+		const float b1 = (cosf(a * 2.0f) + 1.0f) / 2.0f;
+		const float b2 = cosf(a);
+		const float b3 = sinf(a);
 
-		Vector4 c = c1 * Scalar(b1) + c2 * Scalar(1.0f - b1);
-		Vector4 d = d1 * Scalar(b2) + d2 * Scalar(b3);
-		Vector4 e = c + d;
+		const Vector4 c = c1 * Scalar(b1) + c2 * Scalar(1.0f - b1);
+		const Vector4 d = d1 * Scalar(b2) + d2 * Scalar(b3);
+		const Vector4 e = c + d;
 
 		vx[i] = frame.translation() + e * Scalar(length);
 	}
 
-	for (int i = 0; i < 32; ++i)
+	for (int32_t i = 0; i < 32; ++i)
 	{
 		drawSolidTriangle(
 			frame.translation(),
@@ -1049,7 +1049,7 @@ void PrimitiveRenderer::drawCone(
 		);
 	}
 
-	for (int i = 0; i < 32; ++i)
+	for (int32_t i = 0; i < 32; ++i)
 	{
 		drawLine(
 			frame.translation(),
@@ -1068,17 +1068,17 @@ void PrimitiveRenderer::drawText(
 )
 {
 	Vector4 p = position;
-	Vector4 dx(glyphWidth, 0.0f, 0.0f);
-	Vector4 dy(0.0f, glyphHeight, 0.0f);
+	const Vector4 dx(glyphWidth, 0.0f, 0.0f);
+	const Vector4 dy(0.0f, glyphHeight, 0.0f);
 
-	float du = 1.0f / 16.0f;
-	float dv = 1.0f / 16.0f;
+	const float du = 1.0f / 16.0f;
+	const float dv = 1.0f / 16.0f;
 
-	std::string tx = wstombs(AnsiEncoding(), text);
-	for (std::string::const_iterator i = tx.begin(); i != tx.end(); ++i)
+	const std::string tx = wstombs(AnsiEncoding(), text);
+	for (auto ch : tx)
 	{
-		float u = (int32_t(*i - L' ') % 16) * du;
-		float v = (int32_t(*i - L' ') / 16) * dv;
+		const float u = (int32_t(ch - L' ') % 16) * du;
+		const float v = (int32_t(ch - L' ') / 16) * dv;
 
 		drawTextureQuad(
 			p, Vector2(u, v + dv),
@@ -1104,14 +1104,14 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 0, 3 };
 
-	uint32_t vertexCount = primitiveCount * c_primitiveMul[(int32_t)primitiveType];
+	const uint32_t vertexCount = primitiveCount * c_primitiveMul[(int32_t)primitiveType];
 	if (!vertexCount)
 		return nullptr;
 
 	// Check if enough room is available in current vertex buffer.
 	if (m_vertexHead)
 	{
-		uint32_t vertexCountAvail = c_bufferCount - uint32_t(m_vertexTail - m_vertexHead);
+		const uint32_t vertexCountAvail = c_bufferCount - uint32_t(m_vertexTail - m_vertexHead);
 		if (vertexCount > vertexCountAvail)
 		{
 			// Not enough room, finish of current vertex buffer.
@@ -1150,7 +1150,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 	// Create new batch if necessary.
 	AlignedVector< Batch >& batches = m_currentFrame->batches;
-	uint32_t projection = (uint32_t)m_currentFrame->projections.size() - 1;
+	const uint32_t projection = (uint32_t)m_currentFrame->projections.size() - 1;
 	if (
 		batches.empty() ||
 		batches.back().projection != projection ||

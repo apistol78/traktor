@@ -9,12 +9,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHMatrix", 0, SHMatrix, ISerializable)
 
-SHMatrix::SHMatrix()
-:	m_rows(0)
-,	m_columns(0)
-{
-}
-
 SHMatrix::SHMatrix(int32_t rows, int32_t columns)
 :	m_rows(rows)
 ,	m_columns(columns)

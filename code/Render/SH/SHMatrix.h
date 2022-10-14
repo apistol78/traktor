@@ -25,7 +25,7 @@ class T_DLLCLASS SHMatrix : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	SHMatrix();
+	SHMatrix() = default;
 
 	SHMatrix(int32_t rows, int32_t columns);
 
@@ -46,8 +46,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_rows;
-	int32_t m_columns;
+	int32_t m_rows = 0;
+	int32_t m_columns = 0;
 	AlignedVector< float > m_elements;
 };
 

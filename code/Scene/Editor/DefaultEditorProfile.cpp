@@ -9,7 +9,6 @@
 // Resource factories
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/Resource/AliasTextureFactory.h"
-#include "Render/Resource/SequenceTextureFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Script/ScriptFactory.h"
@@ -78,7 +77,6 @@ void DefaultEditorProfile::createResourceFactories(
 {
 	outResourceFactories.push_back(new render::AliasTextureFactory());
 	outResourceFactories.push_back(new render::ImageGraphFactory(context->getRenderSystem()));
-	outResourceFactories.push_back(new render::SequenceTextureFactory());
 	outResourceFactories.push_back(new render::ShaderFactory(context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new sound::SoundFactory());

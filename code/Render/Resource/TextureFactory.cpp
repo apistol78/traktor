@@ -122,7 +122,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+		const uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 		Ref< IStream > readerStream = stream;
@@ -134,10 +134,9 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		uint8_t* data = buffer.ptr();
 		for (int i = 0; i < mipCount; ++i)
 		{
-			int32_t mipWidth = std::max(imageWidth >> i, 1);
-			int32_t mipHeight = std::max(imageHeight >> i, 1);
-
-			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
+			const int32_t mipWidth = std::max(imageWidth >> i, 1);
+			const int32_t mipHeight = std::max(imageHeight >> i, 1);
+			const uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 			if (i >= skipMips)
 			{
@@ -185,8 +184,8 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		uint32_t sliceDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
-		uint32_t textureDataSize = sliceDataSize * desc.depth;
+		const uint32_t sliceDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+		const uint32_t textureDataSize = sliceDataSize * desc.depth;
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 		Ref< IStream > readerStream = stream;
@@ -199,10 +198,9 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		uint8_t* data = buffer.ptr();
 		for (int32_t i = 0; i < mipCount; ++i)
 		{
-			int32_t mipWidth = std::max(imageWidth >> i, 1);
-			int32_t mipHeight = std::max(imageHeight >> i, 1);
-
-			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
+			const int32_t mipWidth = std::max(imageWidth >> i, 1);
+			const int32_t mipHeight = std::max(imageHeight >> i, 1);
+			const uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 			if (i >= skipMips)
 			{
@@ -220,14 +218,13 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			data = buffer.ptr() + slice * sliceDataSize;
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int32_t mipWidth = std::max(imageWidth >> i, 1);
-				int32_t mipHeight = std::max(imageHeight >> i, 1);
-
-				uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
+				const int32_t mipWidth = std::max(imageWidth >> i, 1);
+				const int32_t mipHeight = std::max(imageHeight >> i, 1);
+				const uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 				if (i >= skipMips)
 				{
-					int64_t nread = readerData.read(data, mipPitch);
+					const int64_t nread = readerData.read(data, mipPitch);
 					if (nread != mipPitch)
 					{
 						log::error << L"Unable to read texture; not enough data in stream." << Endl;
@@ -267,7 +264,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.sRGB = sRGB;
 		desc.immutable = true;
 
-		uint32_t textureDataSize = mipChainSize(desc.format, desc.side, desc.side, desc.mipCount);
+		const uint32_t textureDataSize = mipChainSize(desc.format, desc.side, desc.side, desc.mipCount);
 
 		AutoArrayPtr< uint8_t > buffer[6];
 
@@ -284,12 +281,12 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			uint8_t* data = buffer[side].ptr();
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				uint32_t mipPitch = getTextureMipPitch(desc.format, desc.side, desc.side, i);
+				const uint32_t mipPitch = getTextureMipPitch(desc.format, desc.side, desc.side, i);
 
 				desc.initialData[side * mipCount + i].data = data;
 				desc.initialData[side * mipCount + i].pitch = getTextureRowPitch(desc.format, desc.side, i);
 
-				int64_t nread = readerData.read(data, mipPitch);
+				const int64_t nread = readerData.read(data, mipPitch);
 				if (nread != mipPitch)
 				{
 					log::error << L"Unable to read texture; not enough data in stream." << Endl;
@@ -307,7 +304,6 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	}
 
 	stream->close();
-
 	return texture;
 }
 
