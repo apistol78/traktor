@@ -10,12 +10,10 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t index, const std::function< void(int32_t, int32_t) >& fn)
 {
@@ -33,7 +31,7 @@ void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t
 	fn(depth, index);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraph", RenderGraph, Object)
 
@@ -510,5 +508,4 @@ void RenderGraph::cleanup()
 		m_order[i].resize(0);
 }
 
-	}
 }

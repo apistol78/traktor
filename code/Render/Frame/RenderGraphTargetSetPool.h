@@ -5,10 +5,8 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 class IRenderTargetSet;
@@ -73,5 +71,4 @@ private:
 	AlignedVector< Pool > m_pool;
 };
 
-	}
 }

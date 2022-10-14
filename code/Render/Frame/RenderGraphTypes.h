@@ -2,10 +2,8 @@
 
 #include "Render/Types.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*!
  * \ingroup Render
@@ -39,5 +37,4 @@ struct RenderGraphTargetSetDesc
 	RenderGraphTargetDesc targets[MaxColorTargets];
 };
 
-	}
 }
