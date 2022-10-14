@@ -1,9 +1,7 @@
 #include "Render/Vulkan/BufferViewVk.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferViewVk", BufferViewVk, IBufferView)
 
@@ -15,5 +13,4 @@ BufferViewVk::BufferViewVk(VkBuffer buffer, uint32_t offset, uint32_t range, uin
 {
 }
 
-	}
 }

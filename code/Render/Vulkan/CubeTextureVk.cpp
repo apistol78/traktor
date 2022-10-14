@@ -13,10 +13,8 @@
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureVk", CubeTextureVk, ICubeTexture)
 
@@ -210,5 +208,4 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	commandBuffer->submitAndWait();
 }
 
-	}
 }

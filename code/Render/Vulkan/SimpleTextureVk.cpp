@@ -13,10 +13,8 @@
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
@@ -221,5 +219,4 @@ void* SimpleTextureVk::getInternalHandle()
 	return nullptr;
 }
 
-	}
 }

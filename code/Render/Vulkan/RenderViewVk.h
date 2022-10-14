@@ -14,10 +14,8 @@
 #	include "Render/Vulkan/macOS/Window.h"
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class BufferViewVk;
 class CommandBuffer;
@@ -198,5 +196,4 @@ private:
 #endif
 };
 
-	}
 }

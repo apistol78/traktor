@@ -31,12 +31,10 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR presentationMode)
 {
@@ -52,7 +50,7 @@ bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR sur
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
@@ -1898,5 +1896,4 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 }
 #endif
 
-	}
 }

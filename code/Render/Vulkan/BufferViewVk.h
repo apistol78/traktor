@@ -3,10 +3,8 @@
 #include "Render/IBufferView.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*!
  * \ingroup Vulkan
@@ -43,5 +41,4 @@ private:
 	uint32_t m_size = 0;
 };
 
-	}
 }

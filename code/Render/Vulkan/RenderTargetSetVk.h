@@ -7,13 +7,8 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
-namespace traktor
+namespace traktor::render
 {
-
-class Semaphore;
-
-	namespace render
-	{
 
 class CommandBuffer;
 class Context;
@@ -98,5 +93,4 @@ private:
 	bool m_depthTargetShared = false;
 };
 
-	}
 }

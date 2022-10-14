@@ -6,10 +6,8 @@
 #include "Render/Vulkan/Private/ApiHeader.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class BufferViewVk;
@@ -163,6 +161,4 @@ private:
 	bool validateDescriptorSet();
 };
 
-	}
 }
-

@@ -1,10 +1,8 @@
 #include "Core/Thread/Atomic.h"
 #include "Render/Vulkan/BufferVk.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVk", BufferVk, Buffer)
 
@@ -21,5 +19,4 @@ BufferVk::~BufferVk()
 	Atomic::decrement((int32_t&)m_instances);
 }
 
-	}
 }

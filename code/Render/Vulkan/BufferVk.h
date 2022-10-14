@@ -2,10 +2,8 @@
 
 #include "Render/Buffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Context;
 
@@ -23,5 +21,4 @@ protected:
 	uint32_t& m_instances;
 };
 
-	}
 }
