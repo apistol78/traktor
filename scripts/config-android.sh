@@ -2,9 +2,9 @@
 
 # Android SDK
 if [[ `uname -s` == Linux* ]]; then
-	export ANDROID_HOME=$TRAKTOR_HOME/3rdp_/android-sdk-linux
+	export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-linux
 elif [[ `uname -s` == Darwin* ]]; then
-	export ANDROID_HOME=$TRAKTOR_HOME/3rdp_/android-sdk-macOS
+	export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-macOS
 fi
 
 # Android NDK
