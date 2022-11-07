@@ -398,6 +398,17 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/microsoft/vswhere/releases/download/3.0.3/vswhere.exe"
 	},
+
+	-- WIX
+	{
+		type = "GET",
+		name = "wix-windows",
+		os = "windows",
+		url = "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
+		patch = function()
+			run:execute("unzip -qq wix311-binaries.zip")
+		end
+	},
 }
 
 --[[
