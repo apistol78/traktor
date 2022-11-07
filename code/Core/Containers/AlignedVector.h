@@ -142,10 +142,12 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
+#if !defined(__ANDROID__)
 		const_iterator operator + (size_t offset) const
 		{
 			return const_iterator(m_ptr + offset);
 		}
+#endif
 
 		const_iterator operator - (int32_t offset) const
 		{
@@ -157,10 +159,12 @@ public:
 			return const_iterator(m_ptr - offset);
 		}
 
+#if !defined(__ANDROID__)
 		const_iterator operator - (size_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
 		}
+#endif
 
 		void operator += (int32_t offset)
 		{
@@ -280,10 +284,12 @@ public:
 			return iterator(_O::m_ptr + offset);
 		}		
 
+#if !defined(__ANDROID__)
 		iterator operator + (size_t offset) const
 		{
 			return iterator(_O::m_ptr + offset);
 		}
+#endif
 
 		iterator operator - (int32_t offset) const
 		{
@@ -295,10 +301,12 @@ public:
 			return iterator(_O::m_ptr - offset);
 		}
 
+#if !defined(__ANDROID__)
 		iterator operator - (size_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
 		}
+#endif
 
 		iterator operator ++ ()		// pre-fix
 		{
