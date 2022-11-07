@@ -4,7 +4,7 @@
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
 # Local sysroot path.
-export SYSROOT=$TRAKTOR_HOME/3rdp/raspberry-sysroot
+export SYSROOT=$TRAKTOR_HOME/3rdp-restricted/raspberry-sysroot
 
 echo "Cleaning local sysroot \"$SYSROOT\"..."
 
