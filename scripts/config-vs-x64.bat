@@ -1,5 +1,5 @@
 @echo off
-set VSWHERE="%~dp0..\3rdp\Visual Studio\vswhere"
+set VSWHERE="%~dp0..\3rdp\vswhere-windows\vswhere"
 
 :: Check if already setup.
 if "%HAVE_CONFIG_VS%" == "x64" (

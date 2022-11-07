@@ -1,5 +1,5 @@
 @echo off
-set VSWHERE="%~dp0..\3rdp\Visual Studio\vswhere"
+set VSWHERE="%~dp0..\3rdp\vswhere-windows\vswhere"
 
 :: Legacy environment script.
 for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -legacy -version %1 -property installationPath`) do (

@@ -390,6 +390,14 @@ local PACKAGES =
 		type = "GIT",
 		url = "https://github.com/compiler-dept/lemon.git"
 	},
+
+	-- vswhere
+	{
+		type = "GET",
+		name = "vswhere-windows",
+		os = "windows",
+		url = "https://github.com/microsoft/vswhere/releases/download/3.0.3/vswhere.exe"
+	},
 }
 
 --[[
