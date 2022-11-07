@@ -372,7 +372,18 @@ local PACKAGES =
 		patch = function()
 			run:execute("unzip -qq ninja-win.zip")
 		end		
-	}
+	},
+
+	-- JOM
+	{
+		type = "GET",
+		name = "jom-windows",
+		os = "windows",
+		url = "http://download.qt.io/official_releases/jom/jom.zip",
+		patch = function()
+			run:execute("unzip -qq jom.zip")
+		end		
+	},
 }
 
 --[[
