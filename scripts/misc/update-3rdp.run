@@ -384,6 +384,12 @@ local PACKAGES =
 			run:execute("unzip -qq jom.zip")
 		end		
 	},
+
+	-- Lemon
+	{
+		type = "GIT",
+		url = "https://github.com/compiler-dept/lemon.git"
+	},
 }
 
 --[[
