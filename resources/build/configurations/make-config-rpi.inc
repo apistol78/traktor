@@ -28,7 +28,7 @@ CC_FLAGS_COMMON=\
 	--target=arm-linux-gnueabihf\
 	--sysroot=$(SYSROOT)\
     -fno-common\
-    -std=c++14\
+    -std=c++17\
     -D _UNICODE\
     -D UNICODE\
     -D __RPI__\

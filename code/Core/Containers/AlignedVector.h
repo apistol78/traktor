@@ -142,7 +142,7 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
 		const_iterator operator + (size_t offset) const
 		{
 			return const_iterator(m_ptr + offset);
@@ -159,7 +159,7 @@ public:
 			return const_iterator(m_ptr - offset);
 		}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
 		const_iterator operator - (size_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
@@ -284,7 +284,7 @@ public:
 			return iterator(_O::m_ptr + offset);
 		}		
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
 		iterator operator + (size_t offset) const
 		{
 			return iterator(_O::m_ptr + offset);
@@ -301,7 +301,7 @@ public:
 			return iterator(_O::m_ptr - offset);
 		}
 
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__RPI__)
 		iterator operator - (size_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
