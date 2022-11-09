@@ -1,9 +1,7 @@
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object)
 
@@ -90,5 +88,4 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_interval = interval;
 }
 
-	}
 }

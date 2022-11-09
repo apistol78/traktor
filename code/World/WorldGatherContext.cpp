@@ -2,10 +2,8 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldEntityRenderers.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldGatherContext", WorldGatherContext, Object)
 
@@ -33,5 +31,4 @@ void WorldGatherContext::include(IEntityRenderer* entityRenderer, Object* render
 	m_filter(entityRenderer, renderable);
 }
 
-	}
 }

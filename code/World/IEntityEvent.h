@@ -16,14 +16,16 @@ namespace traktor
 
 class Transform;
 
-	namespace world
-	{
+}
+
+namespace traktor::world
+{
 
 class Entity;
 class IEntityEventInstance;
 class EntityEventManager;
 
-/*! \brief
+/*! Entity event.
  * \ingroup World
  */
 class T_DLLCLASS IEntityEvent : public Object
@@ -34,6 +36,4 @@ public:
 	virtual Ref< IEntityEventInstance > createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const = 0;
 };
 
-	}
 }
-

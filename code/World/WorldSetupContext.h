@@ -11,17 +11,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderGraph;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class WorldEntityRenderers;
@@ -48,6 +46,4 @@ private:
 	render::RenderGraph& m_renderGraph;
 };
 
-	}
 }
-

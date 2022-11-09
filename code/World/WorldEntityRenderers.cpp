@@ -2,12 +2,10 @@
 #include "World/IEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 /*! Find only direct child types. */
 void findAllChildTypes(const TypeInfo* type, TypeInfoSet& outChildTypes)
@@ -63,7 +61,7 @@ void updateEntityRendererMap(
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityRenderers", WorldEntityRenderers, Object)
 
@@ -81,5 +79,4 @@ void WorldEntityRenderers::remove(IEntityRenderer* entityRenderer)
 	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
 }
 
-	}
 }

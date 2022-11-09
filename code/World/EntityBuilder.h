@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! Entity builder.
  * \ingroup World
@@ -50,6 +48,4 @@ private:
 	mutable SmallMap< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
 };
 
-	}
 }
-

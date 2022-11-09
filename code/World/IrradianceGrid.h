@@ -13,17 +13,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class Buffer;
 
-    }
+}
 
-    namespace world
-    {
+namespace traktor::world
+{
 
 #pragma pack(1)
 
@@ -48,28 +46,27 @@ struct IrradianceGridData
  */
 class T_DLLCLASS IrradianceGrid : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    typedef uint32_t gridSize_t [3];
+	typedef uint32_t gridSize_t [3];
 
-    IrradianceGrid(
-        gridSize_t size,
-        const Aabb3& boundingBox,
-        render::Buffer* buffer
-    );
+	IrradianceGrid(
+		gridSize_t size,
+		const Aabb3& boundingBox,
+		render::Buffer* buffer
+	);
 
-    const gridSize_t& getSize() const { return m_size; }
+	const gridSize_t& getSize() const { return m_size; }
 
-    const Aabb3& getBoundingBox() const { return m_boundingBox; }
+	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
-    render::Buffer* getBuffer() const { return m_buffer; }
+	render::Buffer* getBuffer() const { return m_buffer; }
 
 private:
-    gridSize_t m_size;
-    Aabb3 m_boundingBox;
-    Ref< render::Buffer > m_buffer;
+	gridSize_t m_size;
+	Aabb3 m_boundingBox;
+	Ref< render::Buffer > m_buffer;
 };
 
-    }
 }

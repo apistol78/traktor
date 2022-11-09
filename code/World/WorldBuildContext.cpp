@@ -2,10 +2,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldBuildContext", WorldBuildContext, Object)
 
@@ -16,5 +14,4 @@ WorldBuildContext::WorldBuildContext(const WorldEntityRenderers* entityRenderers
 {
 }
 
-	}
 }

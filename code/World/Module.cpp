@@ -4,10 +4,8 @@
 #	include "World/Forward/WorldRendererForward.h"
 #	include "World/Simple/WorldRendererSimple.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 extern "C" void __module__Traktor_World()
 {
@@ -17,6 +15,5 @@ extern "C" void __module__Traktor_World()
 	T_FORCE_LINK_REF(WorldRendererSimple);
 }
 
-	}
 }
 #endif

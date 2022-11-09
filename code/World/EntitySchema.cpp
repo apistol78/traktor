@@ -2,10 +2,8 @@
 #include "World/Entity.h"
 #include "World/EntitySchema.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntitySchema", EntitySchema, Object)
 
@@ -302,5 +300,4 @@ uint32_t EntitySchema::getChildEntities(const Entity* parentEntity, const std::w
 	return (uint32_t)outEntities.size();
 }
 
-	}
 }

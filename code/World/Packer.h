@@ -2,10 +2,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Packer : public Object
 {
@@ -32,5 +30,4 @@ private:
 	class PackerImpl* m_impl;
 };
 
-	}
 }

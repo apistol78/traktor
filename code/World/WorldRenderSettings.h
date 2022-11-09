@@ -13,17 +13,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ImageGraph;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IrradianceGrid;
 
@@ -84,5 +82,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }

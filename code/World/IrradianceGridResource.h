@@ -10,18 +10,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
 
 class T_DLLCLASS IrradianceGridResource : public ISerializable
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual void serialize(ISerializer& s) override final;
+	virtual void serialize(ISerializer& s) override final;
 };
 
-    }
 }

@@ -2,10 +2,8 @@
 
 #include "Render/Types.h"
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
 
 // Techniques
 extern const render::Handle s_techniqueDeferredColor;
@@ -81,5 +79,4 @@ extern const render::Handle s_handleInputVelocity;
 extern const render::Handle s_handleInputShadowMap;
 extern const render::Handle s_handleInputRoughness;
 
-    }
 }

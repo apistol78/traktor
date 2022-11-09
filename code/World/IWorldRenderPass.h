@@ -12,18 +12,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IProgram;
 class ProgramParameters;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 /*! World render pass.
  * \ingroup World
@@ -71,6 +69,4 @@ public:
 	}
 };
 
-	}
 }
-

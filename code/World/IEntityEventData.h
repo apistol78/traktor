@@ -10,12 +10,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
-/*! \brief
+/*! Entity event data.
  * \ingroup World
  */
 class T_DLLCLASS IEntityEventData : public ISerializable
@@ -23,6 +21,4 @@ class T_DLLCLASS IEntityEventData : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

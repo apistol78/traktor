@@ -15,27 +15,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ImageGraphContext;
 class IRenderSystem;
 class IRenderTargetSet;
 class RenderGraph;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class WorldEntityRenderers;
@@ -117,6 +115,4 @@ public:
 	virtual render::ImageGraphContext* getImageGraphContext() const = 0;
 };
 
-	}
 }
-

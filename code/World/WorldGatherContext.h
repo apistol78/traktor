@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 class IEntityRenderer;
@@ -44,6 +42,4 @@ private:
 	gatherFn_t m_filter;
 };
 
-	}
 }
-

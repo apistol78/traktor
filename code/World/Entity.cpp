@@ -1,10 +1,8 @@
 #include "World/Entity.h"
 #include "World/IEntityComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
@@ -108,5 +106,4 @@ IEntityComponent* Entity::getComponent(const TypeInfo& componentType) const
 	return nullptr;
 }
 
-	}
 }
