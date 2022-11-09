@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
@@ -38,6 +36,4 @@ public:
 	virtual void update(const UpdateParams& update) = 0;
 };
 
-	}
 }
-

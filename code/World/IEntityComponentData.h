@@ -15,8 +15,10 @@ namespace traktor
 
 class Transform;
 
-	namespace world
-	{
+}
+
+namespace traktor::world
+{
 
 class EntityData;
 
@@ -31,6 +33,4 @@ public:
 	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 
-	}
 }
-

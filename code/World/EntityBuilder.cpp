@@ -7,10 +7,8 @@
 #include "World/IEntityEventData.h"
 #include "World/IEntityFactory.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilder", EntityBuilder, IEntityBuilder)
 
@@ -208,5 +206,4 @@ const IEntityBuilder* EntityBuilder::getCompositeEntityBuilder() const
 	return this;
 }
 
-	}
 }

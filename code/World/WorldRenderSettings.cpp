@@ -10,12 +10,10 @@
 #include "World/IrradianceGrid.h"
 #include "World/WorldRenderSettings.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_ShadowSettings_elementNames18[] =
 {
@@ -44,7 +42,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 	L"ultra"
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 36, WorldRenderSettings, ISerializable)
 
@@ -212,5 +210,4 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

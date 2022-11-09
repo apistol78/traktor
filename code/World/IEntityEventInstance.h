@@ -12,14 +12,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
-/*! \brief
+/*! Entity event instance.
  * \ingroup World
  */
 class T_DLLCLASS IEntityEventInstance : public Object
@@ -34,6 +32,4 @@ public:
 	virtual void cancel(Cancel when) = 0;
 };
 
-	}
 }
-

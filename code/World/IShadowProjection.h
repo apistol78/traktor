@@ -4,10 +4,8 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IShadowProjection : public Object
 {
@@ -27,6 +25,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

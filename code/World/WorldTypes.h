@@ -2,10 +2,8 @@
 
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 enum
 {
@@ -55,6 +53,4 @@ struct UpdateParams
 	float alternateTime = 0.0f;			/*!< Alternative absolute time. */
 };
 
-	}
 }
-

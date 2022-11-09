@@ -5,10 +5,8 @@
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 1, EntityData, ISerializable)
 
@@ -90,5 +88,4 @@ void EntityData::serialize(ISerializer& s)
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);
 }
 
-	}
 }

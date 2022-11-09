@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! World render view.
  * \ingroup World
@@ -135,6 +133,4 @@ private:
 	Vector4 m_eyeDirection;
 };
 
-	}
 }
-

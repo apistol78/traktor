@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 class EntityData;
@@ -117,6 +115,4 @@ public:
 	}
 };
 
-	}
 }
-

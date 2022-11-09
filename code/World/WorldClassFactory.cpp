@@ -31,12 +31,10 @@
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 void IEntityEventInstance_cancelImmediate(IEntityEventInstance* self)
 {
@@ -143,7 +141,7 @@ RefArray< Entity > FacadeComponent_visibleEntities(FacadeComponent* self)
 	return entities;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClassFactory, IRuntimeClassFactory)
 
@@ -304,5 +302,4 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIWorldRenderer);
 }
 
-	}
 }

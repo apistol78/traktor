@@ -5,10 +5,8 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldSetupContext.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityRenderer", EntityRenderer, IEntityRenderer)
 
@@ -58,5 +56,4 @@ void EntityRenderer::build(
 {
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityBuilder;
 class IEntityComponent;
@@ -45,6 +43,4 @@ public:
 	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const = 0;
 };
 
-	}
 }
-

@@ -12,10 +12,8 @@
 #include "World/IrradianceGridResource.h"
 #include "World/WorldResourceFactory.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldResourceFactory", WorldResourceFactory, resource::IResourceFactory)
 
@@ -168,5 +166,4 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		return nullptr;
 }
 
-	}
 }

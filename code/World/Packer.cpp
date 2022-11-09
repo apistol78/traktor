@@ -3,10 +3,8 @@
 #include <stb_rect_pack.h>
 #include "World/Packer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class PackerImpl
 {
@@ -79,5 +77,4 @@ void Packer::reset()
 	m_impl->reset();
 }
 
-	}
 }

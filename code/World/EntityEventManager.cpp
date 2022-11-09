@@ -3,10 +3,8 @@
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, Object)
 
@@ -62,5 +60,4 @@ void EntityEventManager::cancelAll(Cancel when)
 		m_eventInstances.resize(0);
 }
 
-	}
 }

@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityComponentData;
 
@@ -27,7 +25,8 @@ class IEntityComponentData;
  * Serialized data used to create runtime entities.
  * The entity data is stored separately in order to
  * save runtime memory as the data structure is
- * normally tossed away when the entity has been created.
+ * normally tossed away after when the entity has
+ * been created.
  */
 class T_DLLCLASS EntityData : public ISerializable
 {
@@ -94,5 +93,4 @@ private:
 	RefArray< IEntityComponentData > m_components;
 };
 
-	}
 }

@@ -1,9 +1,7 @@
 #include "World/WorldHandles.h"
 
-namespace traktor
+namespace traktor::world
 {
-    namespace world
-    {
 
 // Techniques
 const render::Handle s_techniqueDeferredColor(L"World_DeferredColor");
@@ -79,5 +77,4 @@ const render::Handle s_handleInputVelocity(L"InputVelocity");
 const render::Handle s_handleInputShadowMap(L"InputShadowMap");
 const render::Handle s_handleInputRoughness(L"InputRoughness");
 
-    }
 }
