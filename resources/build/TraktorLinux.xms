@@ -5909,6 +5909,7 @@
 																	</libraryPaths>
 																	<libraries>
 																		<item>fbxsdk</item>
+																		<item>xml2</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -5945,6 +5946,7 @@
 																	</libraryPaths>
 																	<libraries>
 																		<item>fbxsdk</item>
+																		<item>xml2</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -5981,6 +5983,7 @@
 																	</libraryPaths>
 																	<libraries>
 																		<item>fbxsdk</item>
+																		<item>xml2</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
@@ -6017,6 +6020,7 @@
 																	</libraryPaths>
 																	<libraries>
 																		<item>fbxsdk</item>
+																		<item>xml2</item>
 																	</libraries>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
