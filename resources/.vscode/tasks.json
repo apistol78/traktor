@@ -240,9 +240,11 @@
 			"type": "shell",
 			"label": "Update 3rdp",
 			"group": "build",
-
+			"options": {
+				"cwd": "${workspaceRoot}/.."
+			},
 			"linux": {
-				"command": "${workspaceRoot}/../bin/linux/releasestatic/Traktor.Run.App ${workspaceRoot}/../scripts/misc/update-3rdp.run"
+				"command": "./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run"
 			}
 		}		
 	]
