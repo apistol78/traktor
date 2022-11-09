@@ -234,6 +234,16 @@
 					"$gcc"
 				]
 			}
-		}
+		},
+
+		{
+			"type": "shell",
+			"label": "Update 3rdp",
+			"group": "build",
+
+			"linux": {
+				"command": "${workspaceRoot}/../bin/linux/releasestatic/Traktor.Run.App ${workspaceRoot}/../scripts/misc/update-3rdp.run"
+			}
+		}		
 	]
 }
