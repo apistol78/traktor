@@ -7,10 +7,8 @@
 #include "Mesh/MeshFactory.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshFactory", MeshFactory, resource::IResourceFactory)
 
@@ -72,5 +70,4 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 	return mesh;
 }
 
-	}
 }

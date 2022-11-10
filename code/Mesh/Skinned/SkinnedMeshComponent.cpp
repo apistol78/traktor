@@ -7,16 +7,14 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
@@ -99,5 +97,4 @@ void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& j
 	m_count = 1 - m_count;
 }
 
-	}
 }

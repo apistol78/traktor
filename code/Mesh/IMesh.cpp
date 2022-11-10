@@ -1,11 +1,8 @@
 #include "Mesh/IMesh.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IMesh", IMesh, Object)
 
-	}
 }

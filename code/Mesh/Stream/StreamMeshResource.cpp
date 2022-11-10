@@ -8,10 +8,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 4, StreamMeshResource, MeshResource)
 
@@ -66,15 +64,10 @@ void StreamMeshResource::serialize(ISerializer& s)
 	>(L"parts", m_parts);
 }
 
-StreamMeshResource::Part::Part()
-{
-}
-
 void StreamMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< std::wstring >(L"meshPart", meshPart);
 }
 
-	}
 }

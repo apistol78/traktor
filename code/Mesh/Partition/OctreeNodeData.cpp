@@ -6,10 +6,8 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Mesh/Partition/OctreeNodeData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreeNodeData", 0, OctreeNodeData, ISerializable)
 
@@ -41,5 +39,4 @@ void OctreeNodeData::serialize(ISerializer& s)
 	s >> MemberStaticArray< Ref< const OctreeNodeData >, 8, MemberRef< const OctreeNodeData > >(L"children", m_children);
 }
 
-	}
 }

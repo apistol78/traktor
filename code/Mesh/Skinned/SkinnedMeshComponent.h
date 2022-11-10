@@ -13,18 +13,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class SkinnedMesh;
 
@@ -52,6 +50,4 @@ private:
 	std::atomic< int32_t > m_count;
 };
 
-	}
 }
-

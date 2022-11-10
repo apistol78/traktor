@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class StaticMeshResource;
 
@@ -24,8 +22,6 @@ class T_DLLCLASS AutoLodMeshResource : public MeshResource
 	T_RTTI_CLASS;
 
 public:
-	AutoLodMeshResource();
-
 	virtual Ref< IMesh > createMesh(
 		const std::wstring& name,
 		IStream* dataStream,
@@ -39,12 +35,10 @@ public:
 private:
 	friend class AutoLodMeshConverter;
 
-	float m_maxDistance;
-	float m_cullDistance;
+	float m_maxDistance = 0.0f;
+	float m_cullDistance = 0.0f;
 	Aabb3 m_boundingBox;
 	RefArray< StaticMeshResource > m_lods;
 };
 
-	}
 }
-

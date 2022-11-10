@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*! Streaming mesh component.
  * \ingroup Mesh
@@ -25,7 +23,7 @@ class T_DLLCLASS StreamMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling);
+	explicit StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -45,6 +43,4 @@ private:
 	uint32_t m_frame;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class OctreeNode;
 
@@ -25,7 +23,7 @@ class OctreePartition : public IPartition
 	T_RTTI_CLASS;
 
 public:
-	OctreePartition(OctreeNode* node, const AlignedVector< render::handle_t >& worldTechniques);
+	explicit OctreePartition(OctreeNode* node, const AlignedVector< render::handle_t >& worldTechniques);
 
 	virtual void traverse(
 		const Frustum& frustum,
@@ -39,6 +37,4 @@ private:
 	AlignedVector< render::handle_t > m_worldTechniques;
 };
 
-	}
 }
-

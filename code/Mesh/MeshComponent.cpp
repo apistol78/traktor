@@ -1,10 +1,8 @@
 #include "Mesh/MeshComponent.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponent", MeshComponent, world::IEntityComponent)
 
@@ -40,5 +38,4 @@ void MeshComponent::update(const world::UpdateParams& update)
 	m_transform.step();
 }
 
-	}
 }

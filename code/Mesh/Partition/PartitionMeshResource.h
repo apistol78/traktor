@@ -13,17 +13,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IPartitionData;
 
@@ -35,10 +33,8 @@ public:
 	struct T_DLLCLASS Part
 	{
 		std::wstring shaderTechnique;
-		uint32_t meshPart;
+		uint32_t meshPart = 0;
 		Aabb3 boundingBox;
-
-		Part();
 
 		void serialize(ISerializer& s);
 	};
@@ -61,6 +57,4 @@ private:
 	Ref< IPartitionData > m_partitionData;
 };
 
-	}
 }
-

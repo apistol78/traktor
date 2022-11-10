@@ -2,10 +2,8 @@
 #include "Mesh/Partition/OctreeNode.h"
 #include "Mesh/Partition/OctreeNodeData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.OctreeNode", OctreeNode, Object)
 
@@ -66,5 +64,4 @@ void OctreeNode::traverse(
 	}
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*! Blend mesh component.
  * \ingroup Mesh
@@ -43,6 +41,4 @@ private:
 	AlignedVector< float > m_blendWeights;
 };
 
-	}
 }
-

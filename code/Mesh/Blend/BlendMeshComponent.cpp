@@ -5,10 +5,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshComponent", BlendMeshComponent, MeshComponent)
 
@@ -84,5 +82,4 @@ const AlignedVector< float >& BlendMeshComponent::getBlendWeights() const
 	return m_blendWeights;
 }
 
-	}
 }

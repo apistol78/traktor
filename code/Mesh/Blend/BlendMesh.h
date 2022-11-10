@@ -17,10 +17,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -28,17 +26,17 @@ class ITexture;
 class Mesh;
 class RenderContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 
@@ -61,15 +59,8 @@ public:
 		Ref< render::Buffer > vertexBuffers[VertexBufferCount];
 		Ref< render::Mesh > mesh;
 		AlignedVector< float > weights;
-		uint32_t count;
-
-		Instance()
-		:	count(0)
-		{
-		}
+		uint32_t count = 0;
 	};
-
-	BlendMesh();
 
 	const Aabb3& getBoundingBox() const;
 
@@ -109,6 +100,4 @@ private:
 	std::map< std::wstring, int > m_targetMap;
 };
 
-	}
 }
-

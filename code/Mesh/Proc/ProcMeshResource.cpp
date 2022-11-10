@@ -1,10 +1,8 @@
 #include "Mesh/Proc/ProcMesh.h"
 #include "Mesh/Proc/ProcMeshResource.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.ProcMeshResource", 0, ProcMeshResource, MeshResource)
 
@@ -26,5 +24,4 @@ void ProcMeshResource::serialize(ISerializer& s)
 	MeshResource::serialize(s);
 }
 
-	}
 }

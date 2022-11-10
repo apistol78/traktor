@@ -10,16 +10,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class T_DLLCLASS IMesh : public Object
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

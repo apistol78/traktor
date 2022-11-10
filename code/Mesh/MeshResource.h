@@ -17,23 +17,25 @@ namespace traktor
 
 class IStream;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IRenderSystem;
 class MeshFactory;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMesh;
 
@@ -64,6 +66,4 @@ private:
 	bool m_compressed = false;
 };
 
-	}
 }
-

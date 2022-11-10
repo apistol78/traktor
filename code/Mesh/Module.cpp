@@ -12,10 +12,8 @@
 #	include "Mesh/Static/StaticMeshResource.h"
 #	include "Mesh/Stream/StreamMeshResource.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 extern "C" void __module__Traktor_Mesh()
 {
@@ -31,7 +29,6 @@ extern "C" void __module__Traktor_Mesh()
 	T_FORCE_LINK_REF(StreamMeshResource);
 }
 
-	}
 }
 
 #endif

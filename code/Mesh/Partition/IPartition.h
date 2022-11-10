@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*!
  * \ingroup Mesh
@@ -35,6 +33,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

@@ -7,16 +7,10 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMesh", IndoorMesh, IMesh)
-
-IndoorMesh::IndoorMesh()
-{
-}
 
 const Aabb3& IndoorMesh::getBoundingBox() const
 {
@@ -183,5 +177,4 @@ void IndoorMesh::findVisibleSectors(
 	}
 }
 
-	}
 }

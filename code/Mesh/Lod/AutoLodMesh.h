@@ -14,25 +14,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldCulling;
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 class StaticMesh;
@@ -44,8 +42,6 @@ class T_DLLCLASS AutoLodMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-	AutoLodMesh();
-
 	const Aabb3& getBoundingBox(float lodDistance) const;
 
 	bool supportTechnique(float lodDistance, render::handle_t technique) const;
@@ -63,14 +59,12 @@ public:
 private:
 	friend class AutoLodMeshResource;
 
-	float m_maxDistance;
-	float m_cullDistance;
+	float m_maxDistance = 0.0f;
+	float m_cullDistance = 0.0f;
 	Aabb3 m_boundingBox;
 	RefArray< StaticMesh > m_lods;
 
 	StaticMesh* getStaticMesh(float lodDistance) const;
 };
 
-	}
 }
-

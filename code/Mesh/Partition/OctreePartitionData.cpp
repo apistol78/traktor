@@ -6,10 +6,8 @@
 #include "Mesh/Partition/OctreePartition.h"
 #include "Mesh/Partition/OctreePartitionData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreePartitionData", 0, OctreePartitionData, IPartitionData)
 
@@ -27,5 +25,4 @@ void OctreePartitionData::serialize(ISerializer& s)
 	s >> MemberRef< const OctreeNodeData >(L"nodeData", m_nodeData);
 }
 
-	}
 }

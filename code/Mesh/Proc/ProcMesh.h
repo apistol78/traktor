@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-    namespace mesh
-	{
 
 /*! Procedural mesh.
  *
@@ -32,5 +30,4 @@ private:
 	friend class ProcMeshResource;
 };
 
-	}
 }

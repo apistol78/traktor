@@ -14,12 +14,10 @@
 #	define T_USE_UPDATE_JOBS
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 #if defined(T_USE_UPDATE_JOBS)
 const uint32_t c_vertexCountFork = 1000;	//< Fork blend update on multiple threads if vertex count exceed this value.
@@ -113,13 +111,9 @@ struct BlendMeshTask
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMesh", BlendMesh, IMesh)
-
-BlendMesh::BlendMesh()
-{
-}
 
 const Aabb3& BlendMesh::getBoundingBox() const
 {
@@ -318,5 +312,4 @@ const std::map< std::wstring, int >& BlendMesh::getBlendTargetMap() const
 	return m_targetMap;
 }
 
-	}
 }

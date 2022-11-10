@@ -1,11 +1,8 @@
 #include "Mesh/Proc/ProcMesh.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-    namespace mesh
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.ProcMesh", ProcMesh, IMesh)
 
-    }
 }

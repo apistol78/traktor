@@ -7,16 +7,14 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponentRenderer", InstanceMeshComponentRenderer, world::IEntityRenderer)
 
@@ -112,5 +110,4 @@ void InstanceMeshComponentRenderer::build(
 	}
 }
 
-	}
 }

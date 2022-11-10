@@ -5,10 +5,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMeshComponent", PartitionMeshComponent, MeshComponent)
 
@@ -58,5 +56,4 @@ void PartitionMeshComponent::build(const world::WorldBuildContext& context, cons
 	);
 }
 
-	}
 }

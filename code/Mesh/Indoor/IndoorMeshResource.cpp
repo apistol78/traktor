@@ -12,10 +12,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 4, IndoorMeshResource, MeshResource)
 
@@ -82,11 +80,6 @@ void IndoorMeshResource::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Portal, MemberComposite< Portal > >(L"portals", m_portals);
 }
 
-IndoorMeshResource::Part::Part()
-:	meshPart(0)
-{
-}
-
 void IndoorMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
@@ -112,5 +105,4 @@ void IndoorMeshResource::Portal::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"sectorB", sectorB);
 }
 
-	}
 }

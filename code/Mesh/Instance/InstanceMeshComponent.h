@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class InstanceMesh;
 
@@ -26,7 +24,7 @@ class T_DLLCLASS InstanceMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh, bool screenSpaceCulling);
+	explicit InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -40,6 +38,4 @@ private:
 	resource::Proxy< InstanceMesh > m_mesh;
 };
 
-	}
 }
-

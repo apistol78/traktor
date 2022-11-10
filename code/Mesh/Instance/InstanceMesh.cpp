@@ -7,12 +7,10 @@
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
@@ -25,7 +23,7 @@ struct SortRenderInstance
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
@@ -211,5 +209,4 @@ void InstanceMesh::build(
 	}
 }
 
-	}
 }

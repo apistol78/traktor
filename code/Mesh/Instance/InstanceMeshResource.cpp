@@ -12,10 +12,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 7, InstanceMeshResource, MeshResource)
 
@@ -87,5 +85,4 @@ void InstanceMeshResource::Part::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 }
 
-	}
 }
