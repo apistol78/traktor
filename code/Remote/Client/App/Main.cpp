@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Compress/Lzo/DeflateStreamLzo.h"
-#include "Compress/Lzo/InflateStreamLzo.h"
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
@@ -201,7 +201,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 		fileStream->seek(traktor::IStream::SeekSet, 0);
 
 		clientStream.setTimeout(-1);
-		compress::DeflateStreamLzo deflateStream(&clientStream);
+		compress::DeflateStreamLzf deflateStream(&clientStream);
 		if (!StreamCopy(&deflateStream, fileStream).execute(int32_t(file->getSize())))
 		{
 			log::error << L"Unable to deploy file \"" << sourceFile.getPathName() << L"\"; unable to transmit." << Endl;
@@ -340,7 +340,7 @@ bool fetchFile(const net::SocketAddressIPv4& addr, const Path& fileName, const P
 			return false;
 		}
 
-		compress::InflateStreamLzo inflateStream(&clientStream);
+		compress::InflateStreamLzf inflateStream(&clientStream);
 		if (!StreamCopy(fileStream, &inflateStream).execute(ret))
 		{
 			log::error << L"Unable to receive file \"" << fileName.getPathName() << L"\"." << Endl;

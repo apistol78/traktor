@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Compress/Lzo/DeflateStreamLzo.h"
-#include "Compress/Lzo/InflateStreamLzo.h"
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
@@ -233,7 +233,7 @@ uint8_t Server::handleDeploy(net::TcpSocket* clientSocket)
 			return c_errIoFailed;
 		}
 
-		compress::InflateStreamLzo inflateStream(&clientStream);
+		compress::InflateStreamLzf inflateStream(&clientStream);
 		if (!StreamCopy(fileStream, &inflateStream).execute(size))
 		{
 			log::error << L"Unable to receive file \"" << pathName << L"\"." << Endl;
@@ -333,7 +333,7 @@ uint8_t Server::handleFetch(net::TcpSocket* clientSocket)
 		{
 			writer << (int64_t)file->getSize();
 
-			compress::DeflateStreamLzo deflateStream(&clientStream);
+			compress::DeflateStreamLzf deflateStream(&clientStream);
 			if (!StreamCopy(&deflateStream, fileStream).execute(file->getSize()))
 			{
 				log::error << L"Unable to serve file \"" << pathName << L"\"; unable to transmit." << Endl;

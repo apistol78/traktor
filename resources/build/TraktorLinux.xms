@@ -1193,10 +1193,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
 															<item>_DEBUG</item>
@@ -1223,10 +1220,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
 															<item>NDEBUG</item>
@@ -1253,10 +1247,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
@@ -1283,10 +1274,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
@@ -1320,16 +1308,6 @@
 														<items>
 															<item type="File" version="1">
 																<fileName>Zip/*.*</fileName>
-																<excludeFilter/>
-																<items/>
-															</item>
-														</items>
-													</item>
-													<item type="Filter">
-														<name>Lzo</name>
-														<items>
-															<item type="File" version="1">
-																<fileName>Lzo/*.*</fileName>
 																<excludeFilter/>
 																<items/>
 															</item>
@@ -1373,12 +1351,6 @@
 														<link>LnkYes</link>
 														<solutionFileName>ExternLinux.xms</solutionFileName>
 														<projectName>Extern.liblzf</projectName>
-													</item>
-													<item type="ExternalDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<solutionFileName>ExternLinux.xms</solutionFileName>
-														<projectName>Extern.lzo</projectName>
 													</item>
 												</dependencies>
 											</project>

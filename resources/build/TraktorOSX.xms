@@ -127,15 +127,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>PathEntity</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>PathEntity/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -143,8 +145,9 @@
 				<item type="Filter">
 					<name>RagDoll</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>RagDoll/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -152,8 +155,9 @@
 				<item type="Filter">
 					<name>IK</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>IK/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -161,8 +165,9 @@
 				<item type="Filter">
 					<name>Animation</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Animation/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -170,8 +175,9 @@
 				<item type="Filter">
 					<name>Cloth</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Cloth/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -179,8 +185,9 @@
 				<item type="Filter">
 					<name>Boids</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Boids/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -188,8 +195,9 @@
 				<item type="Filter">
 					<name>Rotator</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Rotator/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -334,15 +342,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Memory</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Memory/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -353,14 +363,16 @@
 									<item type="Filter">
 										<name>OsX</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Io/OsX/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Io/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -371,14 +383,16 @@
 									<item type="Filter">
 										<name>OsX</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Library/OsX/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Library/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -386,8 +400,9 @@
 							<item type="Filter">
 								<name>Log</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Log/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -398,21 +413,24 @@
 									<item type="Filter">
 										<name>Std</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Math/Std/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Math/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>Sse2</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Math/Sse2/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -422,8 +440,9 @@
 							<item type="Filter">
 								<name>Rtti</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Rtti/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -431,8 +450,9 @@
 							<item type="Filter">
 								<name>Serialization</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Serialization/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -440,15 +460,17 @@
 							<item type="Filter">
 								<name>Thread</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Thread/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>OsX</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Thread/OsX/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -458,15 +480,17 @@
 							<item type="Filter">
 								<name>Timer</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Timer/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>OsX</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Timer/OsX/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -476,8 +500,9 @@
 							<item type="Filter">
 								<name>Misc</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Misc/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -488,14 +513,16 @@
 									<item type="Filter">
 										<name>Ansi</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Debug/Ansi/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Debug/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -503,15 +530,17 @@
 							<item type="Filter">
 								<name>System</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>System/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>OsX</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>System/OsX/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -521,8 +550,9 @@
 							<item type="Filter">
 								<name>Singleton</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Singleton/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -530,8 +560,9 @@
 							<item type="Filter">
 								<name>Date</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Date/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -539,8 +570,9 @@
 							<item type="Filter">
 								<name>Containers</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Containers/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -548,8 +580,9 @@
 							<item type="Filter">
 								<name>Meta</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Meta/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -557,8 +590,9 @@
 							<item type="Filter">
 								<name>Settings</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Settings/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -566,8 +600,9 @@
 							<item type="Filter">
 								<name>Reflection</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Reflection/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -575,15 +610,17 @@
 							<item type="Filter">
 								<name>Class</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Class/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>Boxes</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Class/Boxes/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -593,8 +630,9 @@
 							<item type="Filter">
 								<name>Test</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Test/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -733,15 +771,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Entity</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Entity/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -749,8 +789,9 @@
 							<item type="Filter">
 								<name>SMProj</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>SMProj/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -758,8 +799,9 @@
 							<item type="Filter">
 								<name>Forward</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Forward/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -767,8 +809,9 @@
 							<item type="Filter">
 								<name>Deferred</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Deferred/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -776,8 +819,9 @@
 							<item type="Filter">
 								<name>Simple</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Simple/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -915,15 +959,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Mesh</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Mesh/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -931,8 +977,9 @@
 										<item type="Filter">
 											<name>Context</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Context/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -940,8 +987,9 @@
 										<item type="Filter">
 											<name>SH</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>SH/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -949,8 +997,9 @@
 										<item type="Filter">
 											<name>Resource</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Resource/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -958,8 +1007,9 @@
 										<item type="Filter">
 											<name>Image2</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Image2/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -967,8 +1017,9 @@
 										<item type="Filter">
 											<name>Frame</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Frame/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -1106,8 +1157,9 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 												</items>
@@ -1133,10 +1185,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_ZIP_EXPORT</item>
 															<item>_DEBUG</item>
@@ -1163,10 +1212,7 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_ZIP_EXPORT</item>
 															<item>NDEBUG</item>
@@ -1193,10 +1239,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
@@ -1223,10 +1266,7 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(LZO_SDK)/minilzo</item>
-															<item>$(LZO_SDK)/include/lzo</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
@@ -1250,24 +1290,17 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 													<item type="Filter">
 														<name>Zip</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Zip/*.*</fileName>
-																<items/>
-															</item>
-														</items>
-													</item>
-													<item type="Filter">
-														<name>Lzo</name>
-														<items>
-															<item type="File">
-																<fileName>Lzo/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -1275,8 +1308,9 @@
 													<item type="Filter">
 														<name>Lzf</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Lzf/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -1284,8 +1318,9 @@
 													<item type="Filter">
 														<name>Test</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Test/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -1302,12 +1337,6 @@
 														<link>LnkYes</link>
 														<solutionFileName>ExternOSX.xms</solutionFileName>
 														<projectName>Extern.zlib</projectName>
-													</item>
-													<item type="ExternalDependency" version="3">
-														<inheritIncludePaths>true</inheritIncludePaths>
-														<link>LnkYes</link>
-														<solutionFileName>ExternOSX.xms</solutionFileName>
-														<projectName>Extern.lzo</projectName>
 													</item>
 													<item type="ExternalDependency" version="3">
 														<inheritIncludePaths>true</inheritIncludePaths>
@@ -1452,15 +1481,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Provider</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Provider/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -1468,8 +1499,9 @@
 										<item type="Filter">
 											<name>Events</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Events/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -1611,8 +1643,9 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 												</items>
@@ -1763,15 +1796,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Indoor</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Indoor/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1779,8 +1814,9 @@
 							<item type="Filter">
 								<name>Skinned</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Skinned/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1788,8 +1824,9 @@
 							<item type="Filter">
 								<name>Static</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Static/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1797,8 +1834,9 @@
 							<item type="Filter">
 								<name>Instance</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Instance/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1806,8 +1844,9 @@
 							<item type="Filter">
 								<name>Blend</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Blend/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1815,8 +1854,9 @@
 							<item type="Filter">
 								<name>Composite</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Composite/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1824,8 +1864,9 @@
 							<item type="Filter">
 								<name>Stream</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Stream/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1833,8 +1874,9 @@
 							<item type="Filter">
 								<name>Partition</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Partition/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1842,8 +1884,9 @@
 							<item type="Filter">
 								<name>Lod</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Lod/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -1851,8 +1894,9 @@
 							<item type="Filter">
 								<name>Proc</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Proc/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -2023,22 +2067,25 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>World</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>World/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>Character</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>World/Character/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -2046,8 +2093,9 @@
 									<item type="Filter">
 										<name>Vehicle</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>World/Vehicle/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -2202,8 +2250,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -2390,15 +2439,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>PathEntity</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>PathEntity/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -2406,8 +2457,9 @@
 				<item type="Filter">
 					<name>Cloth</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Cloth/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -2555,22 +2607,25 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Pipeline</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Pipeline/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>File</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Pipeline/File/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -2578,8 +2633,9 @@
 									<item type="Filter">
 										<name>Avalanche</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Pipeline/Avalanche/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -2587,8 +2643,9 @@
 									<item type="Filter">
 										<name>Memory</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Pipeline/Memory/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -2728,15 +2785,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Itf</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Itf/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2744,8 +2803,9 @@
 										<item type="Filter">
 											<name>Resources</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Resources/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2753,8 +2813,9 @@
 										<item type="Filter">
 											<name>Events</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Events/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2762,8 +2823,9 @@
 										<item type="Filter">
 											<name>ColorPicker</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>ColorPicker/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2771,8 +2833,9 @@
 										<item type="Filter">
 											<name>Envelope</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Envelope/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2780,8 +2843,9 @@
 										<item type="Filter">
 											<name>Graph</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Graph/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2789,15 +2853,17 @@
 										<item type="Filter">
 											<name>PropertyList</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>PropertyList/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Resources</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>PropertyList/Resources/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -2807,15 +2873,17 @@
 										<item type="Filter">
 											<name>Sequencer</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Sequencer/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Resources</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>Sequencer/Resources/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -2825,8 +2893,9 @@
 										<item type="Filter">
 											<name>ToolBar</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>ToolBar/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2834,15 +2903,17 @@
 										<item type="Filter">
 											<name>LogList</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>LogList/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Resources</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>LogList/Resources/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -2852,15 +2923,17 @@
 										<item type="Filter">
 											<name>GridView</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>GridView/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Resources</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>GridView/Resources/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -2870,8 +2943,9 @@
 										<item type="Filter">
 											<name>StatusBar</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>StatusBar/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2879,8 +2953,9 @@
 										<item type="Filter">
 											<name>SyntaxRichEdit</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>SyntaxRichEdit/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2888,8 +2963,9 @@
 										<item type="Filter">
 											<name>Auto</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Auto/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2897,8 +2973,9 @@
 										<item type="Filter">
 											<name>PreviewList</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>PreviewList/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2906,8 +2983,9 @@
 										<item type="Filter">
 											<name>RichEdit</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>RichEdit/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2915,8 +2993,9 @@
 										<item type="Filter">
 											<name>BuildChart</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>BuildChart/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -2924,15 +3003,17 @@
 										<item type="Filter">
 											<name>TreeView</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>TreeView/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Resources</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>TreeView/Resources/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -2942,8 +3023,9 @@
 										<item type="Filter">
 											<name>ListBox</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>ListBox/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3075,15 +3157,17 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 													<item type="Filter">
 														<name>Filters</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Filters/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -3091,8 +3175,9 @@
 													<item type="Filter">
 														<name>Formats</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Formats/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -3100,8 +3185,9 @@
 													<item type="Filter">
 														<name>Functions</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Functions/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -3280,15 +3366,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Ftp</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Ftp/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3296,8 +3384,9 @@
 										<item type="Filter">
 											<name>Http</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Http/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3305,8 +3394,9 @@
 										<item type="Filter">
 											<name>Smtp</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Smtp/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3314,8 +3404,9 @@
 										<item type="Filter">
 											<name>File</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>File/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3323,8 +3414,9 @@
 										<item type="Filter">
 											<name>Discovery</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Discovery/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3332,15 +3424,17 @@
 										<item type="Filter">
 											<name>Replication</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Replication/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>State</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>Replication/State/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -3350,8 +3444,9 @@
 										<item type="Filter">
 											<name>Stream</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Stream/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3492,8 +3587,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -3634,8 +3730,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -3785,15 +3882,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Messages</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Messages/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -3944,8 +4043,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -4086,8 +4186,9 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 												</items>
@@ -4236,8 +4337,9 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 												</items>
@@ -4399,15 +4501,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Test</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Test/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -4415,8 +4519,9 @@
 										<item type="Filter">
 											<name>Server</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Server/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -4424,8 +4529,9 @@
 										<item type="Filter">
 											<name>Client</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Client/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -4589,8 +4695,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -4729,15 +4836,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Modifiers</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Modifiers/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4745,8 +4854,9 @@
 							<item type="Filter">
 								<name>Resources</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Resources/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4754,8 +4864,9 @@
 							<item type="Filter">
 								<name>Events</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Events/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4763,8 +4874,9 @@
 							<item type="Filter">
 								<name>RenderControls</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>RenderControls/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -4917,8 +5029,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -5082,15 +5195,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Clouds</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Clouds/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -5098,8 +5213,9 @@
 										<item type="Filter">
 											<name>Sky</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Sky/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -5107,8 +5223,9 @@
 										<item type="Filter">
 											<name>Precipitation</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Precipitation/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -5289,15 +5406,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Overlays</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Overlays/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -5477,22 +5596,25 @@
 													</item>
 												</configurations>
 												<items>
-													<item type="File">
+													<item type="File" version="1">
 														<fileName>*.*</fileName>
+														<excludeFilter/>
 														<items/>
 													</item>
 													<item type="Filter">
 														<name>Shader</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Shader/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 															<item type="Filter">
 																<name>Traits</name>
 																<items>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>Shader/Traits/*.*</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
 																</items>
@@ -5500,8 +5622,9 @@
 															<item type="Filter">
 																<name>Facades</name>
 																<items>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>Shader/Facades/*.*</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
 																</items>
@@ -5509,8 +5632,9 @@
 															<item type="Filter">
 																<name>Resources</name>
 																<items>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>Shader/Resources/*.*</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
 																</items>
@@ -5520,15 +5644,17 @@
 													<item type="Filter">
 														<name>Texture</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Texture/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 															<item type="Filter">
 																<name>Resources</name>
 																<items>
-																	<item type="File">
+																	<item type="File" version="1">
 																		<fileName>Texture/Resources/*.*</fileName>
+																		<excludeFilter/>
 																		<items/>
 																	</item>
 																</items>
@@ -5538,8 +5664,9 @@
 													<item type="Filter">
 														<name>Image2</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Image2/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -5547,8 +5674,9 @@
 													<item type="Filter">
 														<name>SH</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>SH/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -5556,8 +5684,9 @@
 													<item type="Filter">
 														<name>Glsl</name>
 														<items>
-															<item type="File">
+															<item type="File" version="1">
 																<fileName>Glsl/*.*</fileName>
+																<excludeFilter/>
 																<items/>
 															</item>
 														</items>
@@ -5776,22 +5905,25 @@
 																</item>
 															</configurations>
 															<items>
-																<item type="File">
+																<item type="File" version="1">
 																	<fileName>*.*</fileName>
+																	<excludeFilter/>
 																	<items/>
 																</item>
 																<item type="Filter">
 																	<name>Formats</name>
 																	<items>
-																		<item type="File">
+																		<item type="File" version="1">
 																			<fileName>Formats/*.*</fileName>
+																			<excludeFilter/>
 																			<items/>
 																		</item>
 																		<item type="Filter">
 																			<name>Fbx</name>
 																			<items>
-																				<item type="File">
+																				<item type="File" version="1">
 																					<fileName>Formats/Fbx/*.*</fileName>
+																					<excludeFilter/>
 																					<items/>
 																				</item>
 																			</items>
@@ -5799,8 +5931,9 @@
 																		<item type="Filter">
 																			<name>Gltf</name>
 																			<items>
-																				<item type="File">
+																				<item type="File" version="1">
 																					<fileName>Formats/Gltf/*.*</fileName>
+																					<excludeFilter/>
 																					<items/>
 																				</item>
 																			</items>
@@ -5808,8 +5941,9 @@
 																		<item type="Filter">
 																			<name>Obj</name>
 																			<items>
-																				<item type="File">
+																				<item type="File" version="1">
 																					<fileName>Formats/Obj/*.*</fileName>
+																					<excludeFilter/>
 																					<items/>
 																				</item>
 																			</items>
@@ -5817,8 +5951,9 @@
 																		<item type="Filter">
 																			<name>Tmd</name>
 																			<items>
-																				<item type="File">
+																				<item type="File" version="1">
 																					<fileName>Formats/Tmd/*.*</fileName>
+																					<excludeFilter/>
 																					<items/>
 																				</item>
 																			</items>
@@ -5826,8 +5961,9 @@
 																		<item type="Filter">
 																			<name>Blend</name>
 																			<items>
-																				<item type="File">
+																				<item type="File" version="1">
 																					<fileName>Formats/Blend/*.*</fileName>
+																					<excludeFilter/>
 																					<items/>
 																				</item>
 																			</items>
@@ -5837,8 +5973,9 @@
 																<item type="Filter">
 																	<name>Operations</name>
 																	<items>
-																		<item type="File">
+																		<item type="File" version="1">
 																			<fileName>Operations/*.*</fileName>
+																			<excludeFilter/>
 																			<items/>
 																		</item>
 																	</items>
@@ -5996,8 +6133,9 @@
 																			</item>
 																		</configurations>
 																		<items>
-																			<item type="File">
+																			<item type="File" version="1">
 																				<fileName>*.*</fileName>
+																				<excludeFilter/>
 																				<items/>
 																			</item>
 																		</items>
@@ -6172,8 +6310,9 @@
 																</item>
 															</configurations>
 															<items>
-																<item type="File">
+																<item type="File" version="1">
 																	<fileName>*.*</fileName>
+																	<excludeFilter/>
 																	<items/>
 																</item>
 															</items>
@@ -6348,15 +6487,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Decoders</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Decoders/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6529,15 +6670,17 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 										<item type="Filter">
 											<name>Decoders</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Decoders/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6545,8 +6688,9 @@
 										<item type="Filter">
 											<name>Filters</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Filters/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6554,8 +6698,9 @@
 										<item type="Filter">
 											<name>Resound</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Resound/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6563,8 +6708,9 @@
 										<item type="Filter">
 											<name>Player</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Player/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6572,15 +6718,17 @@
 										<item type="Filter">
 											<name>Processor</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Processor/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 												<item type="Filter">
 													<name>Nodes</name>
 													<items>
-														<item type="File">
+														<item type="File" version="1">
 															<fileName>Processor/Nodes/*.*</fileName>
+															<excludeFilter/>
 															<items/>
 														</item>
 													</items>
@@ -6590,8 +6738,9 @@
 										<item type="Filter">
 											<name>Test</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Test/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6599,8 +6748,9 @@
 										<item type="Filter">
 											<name>Tracker</name>
 											<items>
-												<item type="File">
+												<item type="File" version="1">
 													<fileName>Tracker/*.*</fileName>
+													<excludeFilter/>
 													<items/>
 												</item>
 											</items>
@@ -6774,8 +6924,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -6947,15 +7098,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Indoor</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Indoor/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -6963,8 +7116,9 @@
 							<item type="Filter">
 								<name>Skinned</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Skinned/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -6972,8 +7126,9 @@
 							<item type="Filter">
 								<name>Static</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Static/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -6981,8 +7136,9 @@
 							<item type="Filter">
 								<name>Instance</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Instance/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -6990,8 +7146,9 @@
 							<item type="Filter">
 								<name>Blend</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Blend/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -6999,8 +7156,9 @@
 							<item type="Filter">
 								<name>Stream</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Stream/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -7008,8 +7166,9 @@
 							<item type="Filter">
 								<name>Partition</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Partition/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -7017,8 +7176,9 @@
 							<item type="Filter">
 								<name>Lod</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Lod/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -7026,8 +7186,9 @@
 							<item type="Filter">
 								<name>Proc</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Proc/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -7243,8 +7404,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -7452,8 +7614,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -7602,8 +7765,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -7765,15 +7929,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -7966,8 +8132,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -8116,8 +8283,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -8274,15 +8442,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Acc</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Acc/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8290,8 +8460,9 @@
 				<item type="Filter">
 					<name>Sw</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Sw/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8299,8 +8470,9 @@
 				<item type="Filter">
 					<name>Sound</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Sound/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8308,8 +8480,9 @@
 				<item type="Filter">
 					<name>Debug</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Debug/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8317,8 +8490,9 @@
 				<item type="Filter">
 					<name>Swf</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Swf/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8504,15 +8678,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -8695,15 +8871,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Resound</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Resound/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -8711,8 +8889,9 @@
 							<item type="Filter">
 								<name>Resources</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Resources/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -8720,8 +8899,9 @@
 							<item type="Filter">
 								<name>Encoders</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Encoders/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -8729,8 +8909,9 @@
 							<item type="Filter">
 								<name>Processor</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Processor/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -8738,8 +8919,9 @@
 							<item type="Filter">
 								<name>Tracker</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Tracker/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -8932,8 +9114,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -9083,8 +9266,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -9239,15 +9423,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Binding</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Binding/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -9402,8 +9588,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -9558,8 +9745,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -9720,15 +9908,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -9886,8 +10076,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -10039,8 +10230,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -10180,15 +10372,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Modifiers</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Modifiers/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -10196,8 +10390,9 @@
 				<item type="Filter">
 					<name>Sources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Sources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -10205,8 +10400,9 @@
 				<item type="Filter">
 					<name>Feedback</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Feedback/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -10373,15 +10569,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -10593,8 +10791,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -10754,15 +10953,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -10945,8 +11146,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -11191,8 +11393,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
@@ -11201,21 +11404,24 @@
 									<item type="Filter">
 										<name>Local</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Bake/Local/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
 									</item>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Bake/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 									<item type="Filter">
 										<name>Embree</name>
 										<items>
-											<item type="File">
+											<item type="File" version="1">
 												<fileName>Bake/Embree/*.*</fileName>
+												<excludeFilter/>
 												<items/>
 											</item>
 										</items>
@@ -11225,8 +11431,9 @@
 							<item type="Filter">
 								<name>Prefab</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Prefab/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -11234,8 +11441,9 @@
 							<item type="Filter">
 								<name>Spline</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Spline/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -11243,8 +11451,9 @@
 							<item type="Filter">
 								<name>Solid</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Solid/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -11476,8 +11685,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -11622,15 +11832,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -11810,15 +12022,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Clouds</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Clouds/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -11983,8 +12197,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -12144,8 +12359,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
@@ -12154,14 +12370,16 @@
 						<item type="Filter">
 							<name>Tasks</name>
 							<items>
-								<item type="File">
+								<item type="File" version="1">
 									<fileName>Impl/Tasks/*.*</fileName>
+									<excludeFilter/>
 									<items/>
 								</item>
 							</items>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Impl/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -12169,8 +12387,9 @@
 				<item type="Filter">
 					<name>Provider</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Provider/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -12322,8 +12541,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -12481,8 +12701,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -12660,8 +12881,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -12811,19 +13033,22 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.png</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.image</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -12831,8 +13056,9 @@
 				<item type="Filter">
 					<name>Ui</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Ui/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -13000,15 +13226,17 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 							<item type="Filter">
 								<name>Impl</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Impl/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -13016,8 +13244,9 @@
 							<item type="Filter">
 								<name>Events</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Events/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -13025,8 +13254,9 @@
 							<item type="Filter">
 								<name>Engine</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Engine/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -13034,8 +13264,9 @@
 							<item type="Filter">
 								<name>Target</name>
 								<items>
-									<item type="File">
+									<item type="File" version="1">
 										<fileName>Target/*.*</fileName>
+										<excludeFilter/>
 										<items/>
 									</item>
 								</items>
@@ -13270,8 +13501,9 @@
 										</item>
 									</configurations>
 									<items>
-										<item type="File">
+										<item type="File" version="1">
 											<fileName>*.*</fileName>
+											<excludeFilter/>
 											<items/>
 										</item>
 									</items>
@@ -13479,8 +13711,9 @@
 							</item>
 						</configurations>
 						<items>
-							<item type="File">
+							<item type="File" version="1">
 								<fileName>*.*</fileName>
+								<excludeFilter/>
 								<items/>
 							</item>
 						</items>
@@ -13667,8 +13900,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -13815,15 +14049,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -13998,21 +14234,24 @@
 				<item type="Filter">
 					<name>OsX</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>OsX/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Resources/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -14174,8 +14413,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -14312,8 +14552,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -14536,12 +14777,14 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>GcGameConfiguration.h</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>GcGameConfiguration.cpp</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -14673,8 +14916,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -14824,8 +15068,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -15034,8 +15279,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -15191,8 +15437,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -15337,8 +15584,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -15503,15 +15751,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>Make</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Make/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15519,8 +15769,9 @@
 				<item type="Filter">
 					<name>Msvc</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Msvc/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15528,8 +15779,9 @@
 				<item type="Filter">
 					<name>Xcode</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Xcode/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15537,8 +15789,9 @@
 				<item type="Filter">
 					<name>CBlocks</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>CBlocks/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15546,8 +15799,9 @@
 				<item type="Filter">
 					<name>GraphViz</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>GraphViz/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15555,8 +15809,9 @@
 				<item type="Filter">
 					<name>Eclipse</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Eclipse/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15564,8 +15819,9 @@
 				<item type="Filter">
 					<name>Dependencies</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Dependencies/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15573,8 +15829,9 @@
 				<item type="Filter">
 					<name>FBuild</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>FBuild/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15582,8 +15839,9 @@
 				<item type="Filter">
 					<name>Ninja</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Ninja/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -15735,8 +15993,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -15876,8 +16135,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -16037,8 +16297,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -16211,8 +16472,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -16397,8 +16659,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -16568,8 +16831,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -16752,15 +17016,17 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="Filter">
 					<name>macOS</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>macOS/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -16768,8 +17034,9 @@
 				<item type="Filter">
 					<name>Private</name>
 					<items>
-						<item type="File">
+						<item type="File" version="1">
 							<fileName>Private/*.*</fileName>
+							<excludeFilter/>
 							<items/>
 						</item>
 					</items>
@@ -16917,8 +17184,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -17086,8 +17354,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -17232,8 +17501,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -17379,8 +17649,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>
@@ -17525,8 +17796,9 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
+				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
 					<items/>
 				</item>
 			</items>

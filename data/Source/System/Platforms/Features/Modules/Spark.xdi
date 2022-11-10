@@ -56,7 +56,6 @@
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng.a</item>
-								<item>libExtern.minilzo-2.05.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
 								<item>libTraktor.Core.a</item>
@@ -333,7 +332,6 @@
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng.lib</item>
-								<item>Extern.minilzo-2.05.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -435,7 +433,6 @@
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng.lib</item>
-								<item>Extern.minilzo-2.05.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -524,7 +521,6 @@
 								<item>Extern.jpeg-6b.lib</item>
 								<item>Extern.liblzf-3.6.lib</item>
 								<item>Extern.lpng.lib</item>
-								<item>Extern.minilzo-2.05.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -613,7 +609,6 @@
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng.a</item>
-								<item>libExtern.minilzo-2.05.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
 								<item>libTraktor.Core.a</item>
@@ -702,7 +697,6 @@
 								<item>libExtern.jpeg-6b.a</item>
 								<item>libExtern.liblzf-3.6.a</item>
 								<item>libExtern.lpng.a</item>
-								<item>libExtern.minilzo-2.05.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
 								<item>libTraktor.Core.a</item>

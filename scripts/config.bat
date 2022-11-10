@@ -19,7 +19,6 @@ set FREETYPE_SDK=%TRAKTOR_HOME%\3rdp\freetype
 set JPEG_SDK=%TRAKTOR_HOME%\3rdp\jpeg\jpeg-9e
 set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua\lua-5.4.4
 set LZF_SDK=%TRAKTOR_HOME%\3rdp\liblzf\liblzf-3.6
-set LZO_SDK=%TRAKTOR_HOME%\3rdp\lzo\lzo-2.10
 set MIKKTSPACE_SDK=%TRAKTOR_HOME%\3rdp\MikkTSpace
 set OGG_SDK=%TRAKTOR_HOME%\3rdp\ogg
 set OIDN_SDK=%TRAKTOR_HOME%\3rdp\oidn-windows\oidn-1.4.3.x64.vc14.windows
