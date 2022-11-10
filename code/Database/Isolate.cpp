@@ -1,15 +1,13 @@
-#include "Database/Isolate.h"
-#include "Database/Instance.h"
-#include "Database/Group.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Io/Reader.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Io/Writer.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Database/Isolate.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 {
@@ -93,5 +91,4 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stre
 	return instance;
 }
 
-	}
 }

@@ -23,8 +23,10 @@ class ISerializable;
 class IStream;
 class Thread;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Group;
 class IInstanceEventListener;
@@ -135,6 +137,4 @@ private:
 	void internalFlush();
 };
 
-	}
 }
-

@@ -10,16 +10,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class T_DLLCLASS IEvent : public ISerializable
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

@@ -11,12 +11,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 enum CacheFlags
 {
@@ -35,7 +33,7 @@ enum TransactionFlags
 	TfDataChanged = 32
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
@@ -414,5 +412,4 @@ void Instance::internalFlush()
 	m_cachedFlags = 0;
 }
 
-	}
 }
