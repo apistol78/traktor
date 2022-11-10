@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! \ingroup Render */
 //@{
@@ -75,6 +73,4 @@ int32_t T_DLLCLASS glsl_vertex_attribute_location(DataUsage usage, int32_t index
 
 //@}
 
-	}
 }
-

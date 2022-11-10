@@ -1,10 +1,8 @@
 #include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslResource.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslResource", GlslResource, Object)
 	
@@ -24,5 +22,4 @@ int32_t GlslResource::getBinding(GlslDialect dialect) const
 		return -1;
 }
 
-	}
 }

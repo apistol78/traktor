@@ -23,8 +23,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class GlslLayout;
 class OutputPin;
@@ -110,6 +112,4 @@ private:
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
 };
 
-	}
 }
-

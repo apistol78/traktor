@@ -17,12 +17,10 @@
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 uint8_t getBindStage(const GlslContext& cx)
 {
@@ -3102,7 +3100,7 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	return true;
 }
 
-		}
+	}
 
 struct Emitter
 {
@@ -3239,5 +3237,4 @@ bool GlslEmitter::emit(GlslContext& c, Node* node)
 	return i->second->emit(c, node);
 }
 
-	}
 }

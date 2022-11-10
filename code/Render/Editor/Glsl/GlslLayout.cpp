@@ -1,10 +1,8 @@
 #include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslResource.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslLayout", GlslLayout, Object)
 
@@ -101,5 +99,4 @@ uint32_t GlslLayout::count(const TypeInfo& resourceType, uint8_t stageMask) cons
 	return c;
 }
 
-	}
 }

@@ -1,10 +1,8 @@
 #include "Core/Misc/String.h"
 #include "Render/Editor/Glsl/GlslType.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 std::wstring glsl_type_name(GlslType type)
 {
@@ -225,5 +223,4 @@ int32_t glsl_vertex_attribute_location(DataUsage usage, int32_t index)
 	return (location < base[(int)usage + 1]) ? location : -1;
 }
 
-	}
 }

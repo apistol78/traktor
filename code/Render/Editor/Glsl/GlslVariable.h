@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Node;
 
@@ -27,7 +25,7 @@ class T_DLLCLASS GlslVariable : public Object
 public:
 	GlslVariable() = default;
 
-	GlslVariable(const Node* node, const std::wstring& name, GlslType type);
+	explicit GlslVariable(const Node* node, const std::wstring& name, GlslType type);
 
 	const Node* getNode() const { return m_node; }
 
@@ -47,6 +45,4 @@ private:
 	GlslType m_type = GlslType::Void;
 };
 
-	}
 }
-

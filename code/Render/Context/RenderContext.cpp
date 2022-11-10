@@ -7,12 +7,10 @@
 #	include "Core/Misc/TString.h"
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const float c_distanceQuantizeRangeInv = 1.0f / 10.0f;
 
@@ -21,9 +19,8 @@ T_FORCE_INLINE bool SortOpaquePredicate(const DrawableRenderBlock* renderBlock1,
 // Don't sort front-to-back on iOS as it's a TDBR architecture thus
 // we focus on minimizing state changes on the CPU instead.
 #if !defined(__IOS__)
-	float d1 = std::floor(renderBlock1->distance * c_distanceQuantizeRangeInv);
-	float d2 = std::floor(renderBlock2->distance * c_distanceQuantizeRangeInv);
-
+	const float d1 = std::floor(renderBlock1->distance * c_distanceQuantizeRangeInv);
+	const float d2 = std::floor(renderBlock2->distance * c_distanceQuantizeRangeInv);
 	if (d1 < d2)
 		return true;
 	else if (d1 > d2)
@@ -38,7 +35,7 @@ T_FORCE_INLINE bool SortAlphaBlendPredicate(const DrawableRenderBlock* renderBlo
 	return renderBlock1->distance > renderBlock2->distance;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
@@ -191,5 +188,4 @@ bool RenderContext::havePendingDraws() const
 	return false;
 }
 
-	}
 }

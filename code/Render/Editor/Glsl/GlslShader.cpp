@@ -10,10 +10,8 @@
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 GlslShader::GlslShader(ShaderType shaderType, GlslDialect dialect)
 :	m_shaderType(shaderType)
@@ -449,5 +447,4 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	return ss.str();
 }
 
-	}
 }

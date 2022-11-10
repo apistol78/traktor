@@ -1,12 +1,10 @@
 #include "Core/Misc/String.h"
 #include "Render/Editor/Glsl/GlslVariable.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_castFormat[10][10] =
 {
@@ -22,7 +20,7 @@ const wchar_t* c_castFormat[10][10] =
 	/* F4 */ {  L"int(%.x)",     L"ivec2(%.xy)",   L"ivec3(%.xyz)",          L"ivec4(%)",        L"%.x",       L"%.xy",            L"%.xyz",                     L"%" },
 };
 
-		}
+	}
 
 GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType type)
 :	m_node(node)
@@ -49,5 +47,4 @@ GlslVariable& GlslVariable::operator = (const GlslVariable& other)
 	return *this;
 }
 
-	}
 }

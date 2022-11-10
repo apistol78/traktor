@@ -1,11 +1,9 @@
 #include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslImage.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslImage", GlslImage, GlslResource)
 
 GlslImage::GlslImage(const std::wstring& name, uint8_t stages)
@@ -22,5 +20,4 @@ int32_t GlslImage::getOrdinal() const
 	return (int32_t)cs.get();
 }
 
-	}
 }

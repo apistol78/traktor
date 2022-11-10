@@ -1,10 +1,8 @@
 #include "Core/Misc/Murmur3.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslTexture", GlslTexture, GlslResource)
 
@@ -23,5 +21,4 @@ int32_t GlslTexture::getOrdinal() const
 	return (int32_t)cs.get();
 }
 
-	}
 }
