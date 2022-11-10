@@ -11,10 +11,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 6, StaticMeshResource, MeshResource)
 
@@ -90,16 +88,10 @@ void StaticMeshResource::serialize(ISerializer& s)
 	>(L"parts", m_parts);
 }
 
-StaticMeshResource::Part::Part()
-:	meshPart(0)
-{
-}
-
 void StaticMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class PartitionMesh;
 
@@ -26,7 +24,7 @@ class T_DLLCLASS PartitionMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling);
+	explicit PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -38,6 +36,4 @@ private:
 	resource::Proxy< PartitionMesh > m_mesh;
 };
 
-	}
 }
-

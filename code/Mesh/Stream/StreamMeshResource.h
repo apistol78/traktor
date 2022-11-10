@@ -14,17 +14,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class T_DLLCLASS StreamMeshResource : public MeshResource
 {
@@ -35,8 +33,6 @@ public:
 	{
 		std::wstring shaderTechnique;
 		std::wstring meshPart;
-
-		Part();
 
 		void serialize(ISerializer& s);
 	};
@@ -61,6 +57,4 @@ private:
 	std::map< std::wstring, parts_t > m_parts;
 };
 
-	}
 }
-

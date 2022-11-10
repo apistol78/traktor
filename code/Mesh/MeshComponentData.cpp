@@ -20,10 +20,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshComponentData", 0, MeshComponentData, world::IEntityComponentData)
 
@@ -70,5 +68,4 @@ void MeshComponentData::serialize(ISerializer& s)
 	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 }
 
-	}
 }

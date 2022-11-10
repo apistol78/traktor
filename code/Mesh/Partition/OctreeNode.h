@@ -19,8 +19,10 @@ namespace traktor
 class Frustum;
 class Matrix44;
 
-	namespace mesh
-	{
+}
+
+namespace traktor::mesh
+{
 
 class OctreeNodeData;
 
@@ -47,6 +49,4 @@ private:
 	bool m_leaf;
 };
 
-	}
 }
-

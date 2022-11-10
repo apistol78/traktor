@@ -14,10 +14,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 2, PartitionMeshResource, MeshResource)
 
@@ -76,11 +74,6 @@ void PartitionMeshResource::serialize(ISerializer& s)
 	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);
 }
 
-PartitionMeshResource::Part::Part()
-:	meshPart(0)
-{
-}
-
 void PartitionMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
@@ -88,5 +81,4 @@ void PartitionMeshResource::Part::serialize(ISerializer& s)
 	s >> MemberAabb3(L"boundingBox", boundingBox);
 }
 
-	}
 }

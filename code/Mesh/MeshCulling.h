@@ -5,10 +5,8 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/MathUtils.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*! Enable screen-space culling; quite expensive but might yield less draw calls. */
 #define T_ENABLE_SCREENSPACE_CULLING 1
@@ -42,8 +40,8 @@ inline bool isMeshVisible(
 		return false;
 
 	// Early out of bounding sphere is outside of frustum.
-	Vector4 center = worldView * meshBoundingBox.getCenter().xyz1();
-	Scalar radius = meshBoundingBox.getExtent().length();
+	const Vector4 center = worldView * meshBoundingBox.getCenter().xyz1();
+	const Scalar radius = meshBoundingBox.getExtent().length();
 
 	if (frustum.inside(center, radius) == Frustum::IrOutside)
 		return false;
@@ -69,7 +67,7 @@ inline bool isMeshVisible(
 			-std::numeric_limits< float >::max()
 		);
 
-		Matrix44 worldViewProj = projection * worldView;
+		const Matrix44 worldViewProj = projection * worldView;
 
 		for (int i = 0; i < sizeof_array(extents); ++i)
 		{
@@ -94,7 +92,7 @@ inline bool isMeshVisible(
 			return false;
 
 		// Calculate screen area, cull if it's below threshold.
-		Vector4 e = mx - mn;
+		const Vector4 e = mx - mn;
 		if (e.x() * e.y() < minScreenArea)
 			return false;
 	}
@@ -105,6 +103,4 @@ inline bool isMeshVisible(
 	return true;
 }
 
-	}
 }
-

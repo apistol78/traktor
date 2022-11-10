@@ -5,10 +5,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponent", InstanceMeshComponent, MeshComponent)
 
@@ -34,5 +32,4 @@ void InstanceMeshComponent::build(const world::WorldBuildContext& context, const
 	T_ASSERT_M(0, L"Forgot to register InstanceMeshComponentRenderer?");
 }
 
-	}
 }

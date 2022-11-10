@@ -5,10 +5,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.AutoLodMeshComponent", AutoLodMeshComponent, MeshComponent)
 
@@ -64,5 +62,4 @@ void AutoLodMeshComponent::build(const world::WorldBuildContext& context, const 
 	);
 }
 
-	}
 }

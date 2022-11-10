@@ -5,10 +5,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMeshComponent", StreamMeshComponent, MeshComponent)
 
@@ -87,5 +85,4 @@ uint32_t StreamMeshComponent::getFrame() const
 	return m_frame;
 }
 
-	}
 }

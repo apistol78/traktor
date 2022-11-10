@@ -6,17 +6,15 @@
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleLastJoints(L"Mesh_LastJoints");
 const render::Handle s_handleJoints(L"Mesh_Joints");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
 
@@ -100,5 +98,4 @@ Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* rend
 	return renderSystem->createBuffer(render::BuStructured, jointCount, sizeof(JointData), true);
 }
 
-	}
 }

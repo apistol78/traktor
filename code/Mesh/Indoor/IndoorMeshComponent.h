@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class IndoorMesh;
 
@@ -38,6 +36,4 @@ private:
 	resource::Proxy< IndoorMesh > m_mesh;
 };
 
-	}
 }
-

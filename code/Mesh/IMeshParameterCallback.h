@@ -10,18 +10,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ProgramParameters;
 class Shader;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 /*! Set custom shader parameter callback.
  *
@@ -34,6 +32,4 @@ public:
 	virtual void setParameters(render::ProgramParameters* programParameters) const = 0;
 };
 
-	}
 }
-

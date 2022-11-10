@@ -12,19 +12,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 
@@ -65,5 +63,4 @@ protected:
 	IntervalTransform m_transform;	//!< Contain interval of update transforms. 
 };
 
-	}
 }

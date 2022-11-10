@@ -2,10 +2,8 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshEntityFactory.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityFactory", MeshEntityFactory, world::IEntityFactory)
 
@@ -46,5 +44,4 @@ Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const wo
 	return meshComponentData->createComponent(m_resourceManager, m_renderSystem);
 }
 
-	}
 }

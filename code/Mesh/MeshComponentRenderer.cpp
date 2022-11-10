@@ -2,10 +2,8 @@
 #include "Mesh/MeshComponentRenderer.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponentRenderer", MeshComponentRenderer, world::IEntityRenderer)
 
@@ -55,5 +53,4 @@ void MeshComponentRenderer::build(
 {
 }
 
-	}
 }

@@ -8,10 +8,8 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMesh", PartitionMesh, IMesh)
 
@@ -90,5 +88,4 @@ void PartitionMesh::build(
 	}
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*!
  * \ingroup Mesh
@@ -40,6 +38,4 @@ private:
 	Ref< const OctreeNodeData > m_children[8];
 };
 
-	}
 }
-

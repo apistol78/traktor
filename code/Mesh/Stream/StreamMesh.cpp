@@ -8,16 +8,14 @@
 #include "Render/Mesh/MeshReader.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 struct NamedMeshPart
 {
-	std::wstring m_meshPart;
+	const std::wstring& m_meshPart;
 
 	NamedMeshPart(const std::wstring& meshPart)
 	:	m_meshPart(meshPart)
@@ -30,7 +28,7 @@ struct NamedMeshPart
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMesh", StreamMesh, IMesh)
 
@@ -122,5 +120,4 @@ void StreamMesh::build(
 	}
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class IPartition;
 
@@ -26,6 +24,4 @@ public:
 	virtual Ref< IPartition > createPartition() const = 0;
 };
 
-	}
 }
-

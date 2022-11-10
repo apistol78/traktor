@@ -1,18 +1,10 @@
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Static/StaticMesh.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.AutoLodMesh", AutoLodMesh, IMesh)
-
-AutoLodMesh::AutoLodMesh()
-:	m_maxDistance(0.0f)
-,	m_cullDistance(0.0f)
-{
-}
 
 const Aabb3& AutoLodMesh::getBoundingBox(float lodDistance) const
 {
@@ -63,5 +55,4 @@ StaticMesh* AutoLodMesh::getStaticMesh(float lodDistance) const
 	return m_lods[index];
 }
 
-	}
 }

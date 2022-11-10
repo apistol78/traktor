@@ -11,10 +11,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 5, SkinnedMeshResource, MeshResource)
 
@@ -82,16 +80,10 @@ void SkinnedMeshResource::serialize(ISerializer& s)
 	s >> MemberSmallMap< std::wstring, int32_t >(L"jointMap", m_jointMap);
 }
 
-SkinnedMeshResource::Part::Part()
-:	meshPart(0)
-{
-}
-
 void SkinnedMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 }
 
-	}
 }

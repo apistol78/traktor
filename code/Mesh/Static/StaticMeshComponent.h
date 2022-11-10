@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class StaticMesh;
 
@@ -26,7 +24,7 @@ class T_DLLCLASS StaticMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling);
+	explicit StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -41,6 +39,4 @@ private:
 	Transform m_lastTransform;		//!< Last rendered transform.
 };
 
-	}
 }
-

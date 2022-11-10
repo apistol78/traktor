@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -25,17 +23,17 @@ class ITexture;
 class RenderContext;
 class Mesh;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 
@@ -100,6 +98,4 @@ private:
 #endif
 };
 
-	}
 }
-

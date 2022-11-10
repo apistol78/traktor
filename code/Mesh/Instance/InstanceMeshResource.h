@@ -12,17 +12,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class T_DLLCLASS InstanceMeshResource : public MeshResource
 {
@@ -57,6 +55,4 @@ private:
 	int32_t m_maxInstanceCount = 0;
 };
 
-	}
 }
-

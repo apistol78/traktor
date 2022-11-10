@@ -18,27 +18,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderContext;
 class Mesh;
 class ITexture;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldRenderView;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 
@@ -47,8 +45,6 @@ class T_DLLCLASS IndoorMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-	IndoorMesh();
-
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;
@@ -98,6 +94,4 @@ private:
 	);
 };
 
-	}
 }
-

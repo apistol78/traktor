@@ -4,10 +4,8 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Transform.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*!
  * Per instance data structure.
@@ -35,6 +33,4 @@ inline InstanceMeshData packInstanceMeshData(const Transform& transform)
 	return imd;
 }
 
-	}
 }
-

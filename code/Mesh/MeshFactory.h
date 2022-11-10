@@ -10,25 +10,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 class MeshFactory;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class T_DLLCLASS MeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
+	explicit MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = nullptr);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -43,6 +41,4 @@ private:
 	Ref< render::MeshFactory > m_meshFactory;
 };
 
-	}
 }
-

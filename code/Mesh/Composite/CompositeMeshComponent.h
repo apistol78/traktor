@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*! Composite mesh component.
  * \ingroup Mesh
@@ -46,6 +44,4 @@ private:
 	RefArray< MeshComponent > m_meshComponents;
 };
 
-	}
 }
-

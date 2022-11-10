@@ -7,18 +7,10 @@
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshResource.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.AutoLodMeshResource", 1, AutoLodMeshResource, MeshResource)
-
-AutoLodMeshResource::AutoLodMeshResource()
-:	m_maxDistance(0.0f)
-,	m_cullDistance(0.0f)
-{
-}
 
 Ref< IMesh > AutoLodMeshResource::createMesh(
 	const std::wstring& name,
@@ -61,5 +53,4 @@ void AutoLodMeshResource::serialize(ISerializer& s)
 	s >> MemberRefArray< StaticMeshResource >(L"lods", m_lods);
 }
 
-	}
 }

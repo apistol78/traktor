@@ -5,10 +5,8 @@
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, IMesh)
 
@@ -74,5 +72,4 @@ void StaticMesh::build(
 	}
 }
 
-	}
 }

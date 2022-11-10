@@ -18,28 +18,26 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ProgramParameters;
 class RenderContext;
 class Mesh;
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldCulling;
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 /*! Instance mesh.
  *
@@ -98,6 +96,4 @@ private:
 	int32_t m_maxInstanceCount = 0;
 };
 
-	}
 }
-

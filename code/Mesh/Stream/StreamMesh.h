@@ -20,25 +20,27 @@ namespace traktor
 
 class IStream;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class ITexture;
 class Mesh;
 class MeshReader;
 class RenderContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class IMeshParameterCallback;
 
@@ -90,6 +92,4 @@ private:
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 };
 
-	}
 }
-

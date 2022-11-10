@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class AutoLodMesh;
 
@@ -26,7 +24,7 @@ class T_DLLCLASS AutoLodMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh, bool screenSpaceCulling);
+	explicit AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh, bool screenSpaceCulling);
 
 	virtual void destroy() override final;
 
@@ -39,6 +37,4 @@ private:
 	float m_lodDistance;
 };
 
-	}
 }
-

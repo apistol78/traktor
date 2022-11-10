@@ -2,10 +2,8 @@
 #include "Mesh/Partition/OctreeNode.h"
 #include "Mesh/Partition/OctreePartition.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.OctreePartition", OctreePartition, IPartition)
 
@@ -37,5 +35,4 @@ void OctreePartition::traverse(
 	m_node->traverse(frustumObject, worldTechniqueId, outPartIndices);
 }
 
-	}
 }
