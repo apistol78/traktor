@@ -162,17 +162,6 @@ local PACKAGES =
 		license = "MIT"
 	},
 
-	-- LZO
-	{
-		type = "GET",
-		name = "lzo",
-		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz",
-		patch = function()
-			run:execute("tar -xzf lzo-2.10.tar.gz")
-		end,
-		license = "GPL"
-	},
-
 	-- MikkTSpace
 	{
 		type = "GIT",

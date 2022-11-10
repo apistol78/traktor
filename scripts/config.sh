@@ -24,7 +24,6 @@ export FREETYPE_SDK=$TRAKTOR_HOME/3rdp/freetype
 export JPEG_SDK=$TRAKTOR_HOME/3rdp/jpeg/jpeg-9e
 export LUA_SDK=$TRAKTOR_HOME/3rdp/lua/lua-5.4.4
 export LZF_SDK=$TRAKTOR_HOME/3rdp/liblzf/liblzf-3.6
-export LZO_SDK=$TRAKTOR_HOME/3rdp/lzo/lzo-2.10
 export MIKKTSPACE_SDK=$TRAKTOR_HOME/3rdp/MikkTSpace
 export OGG_SDK=$TRAKTOR_HOME/3rdp/ogg
 export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-linux/p4api

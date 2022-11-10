@@ -7,8 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Avalanche/Client/Client.h"
-#include "Compress/Lzo/DeflateStreamLzo.h"
-#include "Compress/Lzo/InflateStreamLzo.h"
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -75,7 +75,7 @@ Ref< IStream > AvalanchePipelineCache::get(const Guid& guid, const PipelineDepen
 	}
 
 	m_hits++;
-	return new compress::InflateStreamLzo(stream);
+	return new compress::InflateStreamLzf(stream);
 }
 
 Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
@@ -92,7 +92,7 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 	if (!stream)
 		return nullptr;
 
-	return new compress::DeflateStreamLzo(stream, 16384);
+	return new compress::DeflateStreamLzf(stream, 16384);
 }
 
 Ref< IStream > AvalanchePipelineCache::get(const Key& key)
@@ -104,7 +104,7 @@ Ref< IStream > AvalanchePipelineCache::get(const Key& key)
 	if (!stream)
 		return nullptr;
 
-	return new compress::InflateStreamLzo(stream);
+	return new compress::InflateStreamLzf(stream);
 }
 
 Ref< IStream > AvalanchePipelineCache::put(const Key& key)
@@ -116,7 +116,7 @@ Ref< IStream > AvalanchePipelineCache::put(const Key& key)
 	if (!stream)
 		return nullptr;
 
-	return new compress::DeflateStreamLzo(stream, 16384);
+	return new compress::DeflateStreamLzf(stream, 16384);
 }
 
 void AvalanchePipelineCache::getInformation(OutputStream& os)
