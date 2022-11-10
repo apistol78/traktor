@@ -9,12 +9,10 @@
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDbFlat.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_version = 3;
 const uint32_t c_flushAfterChanges = 100;	//!< Flush pipeline after N changes.
@@ -60,7 +58,7 @@ private:
 	PipelineFileHash& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbFlat", PipelineDbFlat, IPipelineDb)
 
@@ -245,5 +243,4 @@ bool PipelineDbFlat::getFileByIndex(uint32_t index, Path& outPath, PipelineFileH
 	return true;
 }
 
-	}
 }

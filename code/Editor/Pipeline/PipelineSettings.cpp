@@ -4,10 +4,8 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/Pipeline/PipelineSettings.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineSettings", PipelineSettings, IPipelineSettings)
 
@@ -55,5 +53,4 @@ std::wstring PipelineSettings::getLog() const
 	return m_log.str();
 }
 
-	}
 }

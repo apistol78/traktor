@@ -8,10 +8,8 @@
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Editor/Pipeline/PipelineSettings.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Object)
 
@@ -119,5 +117,4 @@ IPipeline* PipelineFactory::findPipeline(const TypeInfo& pipelineType) const
 	return it != m_pipelines.end() ? it->second : nullptr;
 }
 
-	}
 }

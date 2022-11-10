@@ -14,10 +14,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class T_DLLCLASS PipelineProfiler : public Object
 {
@@ -51,5 +49,4 @@ private:
 	CriticalSection m_lock;
 };
 
-	}
 }

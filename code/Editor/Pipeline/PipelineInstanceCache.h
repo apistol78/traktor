@@ -12,17 +12,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 /*! Pipeline database instance object read-only cache.
  * \ingroup Editor
@@ -32,7 +30,7 @@ class T_DLLCLASS PipelineInstanceCache : public IPipelineInstanceCache
 	T_RTTI_CLASS;
 
 public:
-	PipelineInstanceCache(db::Database* database, const std::wstring& cacheDirectory);
+	explicit PipelineInstanceCache(db::Database* database, const std::wstring& cacheDirectory);
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
@@ -51,6 +49,4 @@ private:
 	SmallMap< Guid, CacheEntry > m_readCache;
 };
 
-	}
 }
-

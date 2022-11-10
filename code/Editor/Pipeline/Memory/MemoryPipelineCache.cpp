@@ -2,10 +2,8 @@
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemoryPipelineCache", MemoryPipelineCache, IPipelineCache)
 
@@ -70,5 +68,4 @@ void MemoryPipelineCache::getInformation(OutputStream& os)
 {
 }
 
-	}
 }

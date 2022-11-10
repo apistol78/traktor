@@ -16,8 +16,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class T_DLLCLASS PipelineSettings : public IPipelineSettings
 {
@@ -38,6 +40,4 @@ private:
 	mutable StringOutputStream m_log;
 };
 
-	}
 }
-

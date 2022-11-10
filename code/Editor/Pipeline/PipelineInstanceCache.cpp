@@ -12,10 +12,8 @@
 #include "Database/Instance.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineInstanceCache", PipelineInstanceCache, IPipelineInstanceCache)
 
@@ -133,5 +131,4 @@ void PipelineInstanceCache::flush(const Guid& instanceGuid)
 	FileSystem::getInstance().remove(cachedPathName);
 }
 
-	}
 }

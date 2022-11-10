@@ -24,10 +24,8 @@
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDependsParallel, IPipelineDepends)
 
@@ -569,5 +567,4 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	);
 }
 
-	}
 }

@@ -19,15 +19,17 @@ namespace traktor
 
 class Thread;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Group;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IPipelineCache;
 class IPipelineDb;
@@ -139,5 +141,4 @@ private:
 	) const;
 };
 
-	}
 }

@@ -2,10 +2,8 @@
 #include "Core/Log/Log.h"
 #include "Editor/Pipeline/File/FilePipelinePutStream.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.FilePipelinePutStream", FilePipelinePutStream, IStream)
 
@@ -75,5 +73,4 @@ void FilePipelinePutStream::flush()
 	return m_file->flush();
 }
 
-	}
 }

@@ -16,10 +16,8 @@
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDependsIncremental, IPipelineDepends)
 
@@ -476,5 +474,4 @@ void PipelineDependsIncremental::updateDependencyHashes(
 	}
 }
 
-	}
 }

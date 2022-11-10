@@ -2,10 +2,8 @@
 
 #include "Core/Io/IStream.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class FilePipelinePutStream : public IStream
 {
@@ -39,6 +37,4 @@ private:
 	std::wstring m_path;
 };
 
-	}
 }
-
