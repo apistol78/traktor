@@ -17,7 +17,8 @@ local PACKAGES =
 	-- Antigrain
 	{
 		type = "GIT",
-		url = "https://github.com/ghaerr/agg-2.6.git"
+		url = "https://github.com/ghaerr/agg-2.6.git",
+		license = "BSD"
 	},
 
 	-- ASTC encoder
@@ -33,13 +34,15 @@ local PACKAGES =
 					["@astcencoder_YEAR@"] = "2022"
 				}
 			)
-		end
+		end,
+		license = "Apache 2.0"
 	},
 
 	-- Bullet
 	{
 		type = "GIT",
-		url = "https://github.com/bulletphysics/bullet3.git"
+		url = "https://github.com/bulletphysics/bullet3.git",
+		license = "ZLIB"
 	},
 
 	-- Intel Embree
@@ -50,7 +53,8 @@ local PACKAGES =
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
 		patch = function()
 			run:execute("tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 	{
 		type = "GET",
@@ -59,7 +63,8 @@ local PACKAGES =
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
 		patch = function()
 			run:execute("unzip -qq embree-3.13.4.x64.vc14.windows.zip")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 	{
 		type = "GET",
@@ -68,7 +73,8 @@ local PACKAGES =
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip",
 		patch = function()
 			run:execute("unzip embree-3.13.4.x86_64.macosx.zip")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 
 	-- Intel Open Image Denoise
@@ -79,7 +85,8 @@ local PACKAGES =
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.linux.tar.gz",
 		patch = function()
 			run:execute("tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 	{
 		type = "GET",
@@ -88,7 +95,8 @@ local PACKAGES =
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
 		patch = function()
 			run:execute("unzip -qq oidn-1.4.3.x64.vc14.windows.zip")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 	{
 		type = "GET",
@@ -97,43 +105,50 @@ local PACKAGES =
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.macos.tar.gz",
 		patch = function()
 			run:execute("tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
-		end
+		end,
+		license = "Apache 2.0"
 	},
 
 	-- FLAC
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/flac.git"
+		url = "https://github.com/xiph/flac.git",
+		license = "BSD"
 	},
 
 	-- Expat
 	{
 		type = "GIT",
-		url = "https://github.com/libexpat/libexpat.git"
+		url = "https://github.com/libexpat/libexpat.git",
+		license = "MIT"
 	},
 
 	-- OGG
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/ogg.git"
+		url = "https://github.com/xiph/ogg.git",
+		license = "BSD"
 	},
 
 	-- Theora
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/theora.git"
+		url = "https://github.com/xiph/theora.git",
+		license = "BSD"
 	},	
 
 	-- Vorbis
 	{
 		type = "GIT",
-		url = "https://github.com/xiph/vorbis.git"
+		url = "https://github.com/xiph/vorbis.git",
+		license = "BSD"
 	},
 
 	-- PNG
 	{
 		type = "GIT",
 		url = "https://github.com/glennrp/libpng.git",
+		license = "PNG"
 	},
 
 	-- LUA
@@ -143,7 +158,8 @@ local PACKAGES =
 		url = "http://www.lua.org/ftp/lua-5.4.4.tar.gz",
 		patch = function()
 			run:execute("tar -xzf lua-5.4.4.tar.gz")
-		end
+		end,
+		license = "MIT"
 	},
 
 	-- LZO
@@ -153,13 +169,15 @@ local PACKAGES =
 		url = "http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz",
 		patch = function()
 			run:execute("tar -xzf lzo-2.10.tar.gz")
-		end
+		end,
+		license = "GPL"
 	},
 
 	-- MikkTSpace
 	{
 		type = "GIT",
-		url = "https://github.com/mmikk/MikkTSpace.git"
+		url = "https://github.com/mmikk/MikkTSpace.git",
+		license = "PD"
 	},
 
 	-- SQLite
@@ -169,13 +187,15 @@ local PACKAGES =
 		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
 		patch = function()
 			run:execute("unzip -qq sqlite-amalgamation-3390200.zip")
-		end
+		end,
+		license = "PD"
 	},
 
 	-- XAtlas
 	{
 		type = "GIT",
-		url = "https://github.com/jpcy/xatlas.git"
+		url = "https://github.com/jpcy/xatlas.git",
+		license = "MIT"
 	},
 
 	-- Zlib
@@ -185,12 +205,14 @@ local PACKAGES =
 		url = "https://github.com/madler/zlib.git",
 		patch = function()
 			run:execute("sh ./configure")
-		end
+		end,
+		license = "ZLIB"
 	},
 	{
 		type = "GIT",
 		os = "windows",
 		url = "https://github.com/madler/zlib.git",
+		license = "ZLIB"
 	},
 
 	-- JPEG
@@ -204,7 +226,8 @@ local PACKAGES =
 			run:pushd("jpeg-9e")
 			run:execute("sh ./configure")
 			run:popd()
-		end
+		end,
+		license = "JPEG"
 	},
 	{
 		type = "GET",
@@ -216,7 +239,8 @@ local PACKAGES =
 			run:pushd("jpeg-9e")
 			run:copy("jconfig.vc", "jconfig.h")
 			run:popd()
-		end
+		end,
+		license = "JPEG"
 	},
 
 	-- FreeType
@@ -228,7 +252,8 @@ local PACKAGES =
 			run:pushd("build")
 			run:execute("env --default-signal cmake -DCMAKE_BUILD_TYPE=Release -D FT_DISABLE_HARFBUZZ=TRUE ..")
 			run:popd()
-		end
+		end,
+		license = "FreeType"
 	},
 
 	-- FBX
@@ -247,13 +272,15 @@ local PACKAGES =
 				}
 			)
 			run:execute("sh ./install.sh")		
-		end
+		end,
+		license = "AUTODESK"
 	},
 
 	-- Squish
 	{
 		type = "GIT",
-		url = "https://github.com/Cavewhere/squish.git"
+		url = "https://github.com/Cavewhere/squish.git",
+		license = "MIT"
 	},
 
 	-- LZF
@@ -263,37 +290,43 @@ local PACKAGES =
 		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
 		patch = function()
 			run:execute("tar -xzf liblzf-3.6.tar.gz")
-		end
+		end,
+		license = "LZF"
 	},
 
 	-- STB
 	{
 		type = "GIT",
-		url = "https://github.com/nothings/stb.git"
+		url = "https://github.com/nothings/stb.git",
+		license = "MIT,PD"
 	},
 
 	-- TinyEXR
 	{
 		type = "GIT",
-		url = "https://github.com/syoyo/tinyexr.git"
+		url = "https://github.com/syoyo/tinyexr.git",
+		license = "BSD"
 	},
 
 	-- RapidJSON
 	{
 		type = "GIT",
-		url = "https://github.com/Tencent/rapidjson.git"
+		url = "https://github.com/Tencent/rapidjson.git",
+		license = "MIT"
 	},
 
 	-- RG ETC1
 	{
 		type = "GIT",
-		url = "https://github.com/richgel999/rg-etc1.git"
+		url = "https://github.com/richgel999/rg-etc1.git",
+		license = "ZLIB"
 	},
 
 	-- Recast
 	{
 		type = "GIT",
-		url = "https://github.com/recastnavigation/recastnavigation.git"
+		url = "https://github.com/recastnavigation/recastnavigation.git",
+		license = "ZLIB"
 	},
 
 	-- P4 API
@@ -405,7 +438,8 @@ local PACKAGES =
 	-- Lemon
 	{
 		type = "GIT",
-		url = "https://github.com/compiler-dept/lemon.git"
+		url = "https://github.com/compiler-dept/lemon.git",
+		license = "SQLITE"
 	},
 
 	-- vswhere
