@@ -18,8 +18,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class ShaderGraph;
 class InputPin;
@@ -175,6 +177,4 @@ private:
 	std::wstring m_error;
 };
 
-	}
 }
-

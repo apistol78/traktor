@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class GlslLayout;
 
@@ -52,5 +50,4 @@ private:
 	uint8_t m_stages = 0;
 };
 
-	}
 }

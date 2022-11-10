@@ -4,12 +4,10 @@
 #include "Render/Context/ProgramParameters.h"
 #include "Render/Context/RenderContext.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 /*! Move pointer to next aligned address for current type. */
 template < typename Type >
@@ -107,7 +105,7 @@ enum ParameterTypes
 	PmtAttachedParameters
 };
 
-		}
+	}
 
 void ProgramParameters::beginParameters(RenderContext* context)
 {
@@ -292,5 +290,4 @@ void ProgramParameters::fixup(IProgram* program) const
 	}
 }
 
-	}
 }

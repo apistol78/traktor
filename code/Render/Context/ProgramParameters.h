@@ -16,8 +16,10 @@ namespace traktor
 class Vector4;
 class Matrix44;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IBufferView;
 class IProgram;
@@ -71,6 +73,4 @@ private:
 	uint8_t* m_parameterLast = nullptr;
 };
 
-	}
 }
-

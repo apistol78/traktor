@@ -10,21 +10,19 @@
 #include "Render/Editor/Glsl/GlslShader.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 std::wstring getClassNameOnly(const Object* o)
 {
-	std::wstring qn = type_name(o);
-	size_t p = qn.find_last_of('.');
+	const std::wstring qn = type_name(o);
+	const size_t p = qn.find_last_of('.');
 	return qn.substr(p + 1);
 }
 
-		}
+	}
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, GlslDialect dialect)
 :	m_shaderGraph(shaderGraph)
@@ -285,5 +283,4 @@ void GlslContext::setRenderState(const RenderState& renderState)
 	m_renderState = renderState;
 }
 
-	}
 }

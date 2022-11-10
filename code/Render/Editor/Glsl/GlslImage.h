@@ -11,11 +11,9 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-	
+
 class T_DLLCLASS GlslImage : public GlslResource
 {
 	T_RTTI_CLASS;
@@ -26,5 +24,4 @@ public:
 	virtual int32_t getOrdinal() const override final;
 };
 
-	}
 }

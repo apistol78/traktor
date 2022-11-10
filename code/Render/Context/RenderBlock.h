@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IBufferView;
 class IProgram;
@@ -275,6 +273,4 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
-	}
 }
-

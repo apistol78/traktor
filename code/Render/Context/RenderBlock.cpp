@@ -10,10 +10,8 @@
 #	define T_CONTEXT_POP_MARKER(renderView)
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 void NullRenderBlock::render(IRenderView* renderView) const
 {
@@ -256,5 +254,4 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 	sink(name, start, duration);
 }
 
-	}
 }

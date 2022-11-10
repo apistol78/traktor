@@ -16,8 +16,10 @@ namespace traktor
 
 class TypeInfo;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class GlslContext;
 class Node;
@@ -30,7 +32,6 @@ struct Emitter;
 class T_DLLCLASS GlslEmitter
 {
 public:
-
 	explicit GlslEmitter(GlslDialect dialect);
 
 	virtual ~GlslEmitter();
@@ -41,6 +42,4 @@ private:
 	SmallMap< const TypeInfo*, Emitter* > m_emitters;
 };
 
-	}
 }
-
