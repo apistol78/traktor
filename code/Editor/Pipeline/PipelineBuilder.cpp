@@ -30,12 +30,10 @@
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_cacheVersion = 1;
 
@@ -100,7 +98,7 @@ void calculateGlobalHash(
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilder", PipelineBuilder, IPipelineBuilder)
 
@@ -1055,5 +1053,4 @@ bool PipelineBuilder::getInstancesFromCache(
 	return true;
 }
 
-	}
 }

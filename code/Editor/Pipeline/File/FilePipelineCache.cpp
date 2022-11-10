@@ -10,10 +10,8 @@
 #include "Editor/Pipeline/File/FilePipelineCache.h"
 #include "Editor/Pipeline/File/FilePipelinePutStream.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.FilePipelineCache", FilePipelineCache, IPipelineCache)
 
@@ -153,5 +151,4 @@ bool FilePipelineCache::commit(const Guid& guid, const PipelineDependencyHash& h
 	return true;
 }
 
-	}
 }

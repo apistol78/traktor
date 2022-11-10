@@ -10,17 +10,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::avalanche
 {
-	namespace avalanche
-	{
 
 class Client;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class T_DLLCLASS AvalanchePipelineCache : public IPipelineCache
 {
@@ -53,6 +51,4 @@ private:
 	uint32_t m_misses = 0;
 };
 
-	}
 }
-

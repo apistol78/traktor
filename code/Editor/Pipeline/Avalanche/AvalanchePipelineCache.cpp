@@ -12,10 +12,8 @@
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
 #include "Net/Network.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.AvalanchePipelineCache", AvalanchePipelineCache, IPipelineCache)
 
@@ -138,5 +136,4 @@ bool AvalanchePipelineCache::commit(const Guid& guid, const PipelineDependencyHa
 	return true;
 }
 
-	}
 }

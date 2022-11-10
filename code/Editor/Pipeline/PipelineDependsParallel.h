@@ -18,8 +18,10 @@ namespace traktor
 
 class Job;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IPipelineDb;
 class PipelineDependencySet;
@@ -124,6 +126,4 @@ private:
 	void jobAddDependency(Ref< PipelineDependency > parentDependency, Guid sourceAssetGuid, uint32_t flags);
 };
 
-	}
 }
-

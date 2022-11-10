@@ -1,10 +1,8 @@
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineProfiler", PipelineProfiler, Object)
 
@@ -48,5 +46,4 @@ void PipelineProfiler::end(const TypeInfo& pipelineType)
 	delete current;
 }
 
-	}
 }

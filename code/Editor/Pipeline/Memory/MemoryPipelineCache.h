@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class T_DLLCLASS MemoryPipelineCache : public IPipelineCache
 {
@@ -45,6 +43,4 @@ private:
 	SmallMap< Guid, Ref< ChunkMemory > > m_committed;
 };
 
-	}
 }
-

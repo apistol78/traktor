@@ -18,8 +18,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IPipeline;
 
@@ -44,11 +46,8 @@ private:
 		uint32_t distance;
 	};
 
-	//std::vector< std::pair< Ref< IPipeline >, uint32_t > > m_pipelines;
 	SmallMap< const TypeInfo*, Ref< IPipeline > > m_pipelines;
 	SmallMap< const TypeInfo*, PipelineMatch > m_pipelineMap;
 };
 
-	}
 }
-
