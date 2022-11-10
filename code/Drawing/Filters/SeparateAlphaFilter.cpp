@@ -4,10 +4,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/SeparateAlphaFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.SeparateAlphaFilter", SeparateAlphaFilter, IImageFilter)
 
@@ -37,5 +35,4 @@ void SeparateAlphaFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

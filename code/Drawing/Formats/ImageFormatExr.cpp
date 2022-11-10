@@ -10,10 +10,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatExr", ImageFormatExr, IImageFormat)
 
@@ -51,7 +49,6 @@ bool ImageFormatExr::write(IStream* stream, const Image* image)
 	return false;
 }
 
-	}
 }
 
 #endif	// DRAWING_INCLUDE_EXR

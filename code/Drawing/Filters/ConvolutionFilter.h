@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Convolution filter.
  * \ingroup Drawing
@@ -45,6 +43,4 @@ private:
 	int32_t m_size;
 };
 
-	}
 }
-

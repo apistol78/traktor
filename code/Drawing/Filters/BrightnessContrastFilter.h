@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Brightness & Contrast filter.
  * \ingroup Drawing
@@ -23,7 +21,7 @@ class T_DLLCLASS BrightnessContrastFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	BrightnessContrastFilter(float brightness, float contrast);
+	explicit BrightnessContrastFilter(float brightness, float contrast);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -33,6 +31,4 @@ private:
 	float m_contrast;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class ImageFormatJpegImpl;
 
@@ -41,6 +39,4 @@ private:
 	ImageFormatJpegImpl* m_impl;
 };
 
-	}
 }
-

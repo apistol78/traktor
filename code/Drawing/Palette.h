@@ -12,10 +12,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Palette
  * \ingroup Drawing
@@ -39,6 +37,4 @@ private:
 	AlignedVector< Color4f > m_colors;
 };
 
-	}
 }
-

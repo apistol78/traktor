@@ -17,8 +17,10 @@ namespace traktor
 
 class Color4f;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 class IRasterImpl;
@@ -106,6 +108,4 @@ private:
 	Ref< IRasterImpl > m_impl;
 };
 
-	}
 }
-

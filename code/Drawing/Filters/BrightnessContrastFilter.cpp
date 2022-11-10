@@ -1,10 +1,8 @@
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Image.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BrightnessContrastFilter", BrightnessContrastFilter, IImageFilter)
 
@@ -30,5 +28,4 @@ void BrightnessContrastFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

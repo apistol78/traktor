@@ -1,16 +1,14 @@
 #include <stack>
+#include "Core/Log/Log.h"
+#include "Core/Math/Color4f.h"
 #include "Drawing/Formats/ImageFormatGif.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/Palette.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Math/Color4f.h"
-#include "Core/Log/Log.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 namespace
 {
@@ -337,5 +335,4 @@ bool ImageFormatGif::write(IStream* stream, const Image* image)
 	return false;
 }
 
-	}
 }

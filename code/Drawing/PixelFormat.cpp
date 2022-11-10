@@ -16,12 +16,10 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 inline float clamp(float v)
 {
@@ -178,7 +176,7 @@ void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 
 #endif
 
-		}
+	}
 
 PixelFormat::PixelFormat()
 :	m_palettized(false)
@@ -1054,5 +1052,4 @@ const PixelFormat PixelFormat::ms_pfRGBAF32(128, 32, 0, 32, 32, 32, 64, 32, 96, 
 const PixelFormat PixelFormat::ms_pfABGRF16(64, 16, 48, 16, 32, 16, 16, 16, 0, false, true);
 const PixelFormat PixelFormat::ms_pfABGRF32(128, 32, 96, 32, 64, 32, 32, 32, 0, false, true);
 
-	}
 }

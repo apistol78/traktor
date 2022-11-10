@@ -13,10 +13,8 @@
 
 #if defined(DRAWING_INCLUDE_EXR)
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! EXR format.
  * \ingroup Drawing
@@ -31,8 +29,6 @@ public:
 	virtual bool write(IStream* stream, const Image* image) override final;
 };
 
-	}
 }
 
 #endif	// DRAWING_INCLUDE_EXR
-

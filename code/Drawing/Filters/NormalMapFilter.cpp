@@ -1,10 +1,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalMapFilter", NormalMapFilter, IImageFilter)
 
@@ -27,7 +25,7 @@ void NormalMapFilter::apply(Image* image) const
 			image->getPixel(x + 1, y, in1);
 			image->getPixel(x, y + 1, in2);
 
-			for (int i = 0; i < 3; ++i)
+			for (int32_t i = 0; i < 3; ++i)
 				c[i] = (in0.getRed() + in1.getGreen() + in2.getBlue()) / Scalar(3.0f);
 
 			Vector4 normal =
@@ -37,7 +35,7 @@ void NormalMapFilter::apply(Image* image) const
 					1.0f
 				).normalized();
 
-			normal = normal * Scalar(0.5f) + Scalar(0.5f);
+			normal = normal * 0.5_simd + 0.5_simd;
 
 			final->setPixelUnsafe(x, y, Color4f(normal.xyz0()));
 		}
@@ -46,5 +44,4 @@ void NormalMapFilter::apply(Image* image) const
 	image->swap(final);
 }
 
-	}
 }

@@ -9,13 +9,10 @@
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-
-namespace
-{
 
 void t_user_write(png_structp png_ptr, png_bytep data, png_size_t length)
 {
@@ -46,7 +43,7 @@ void t_user_error(png_structp png_ptr, png_const_charp error)
 {
 }
 
-}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, IImageFormat)
 
@@ -230,7 +227,6 @@ bool ImageFormatPng::write(IStream* stream, const Image* image)
 	return true;
 }
 
-	}
 }
 
 #endif	// DRAWING_INCLUDE_PNG

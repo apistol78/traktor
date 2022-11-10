@@ -8,12 +8,10 @@
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct RGBE
@@ -159,7 +157,7 @@ bool decrunch(IStream* stream, RGBE* scan, int32_t len)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatHdr", ImageFormatHdr, IImageFormat)
 
@@ -227,5 +225,4 @@ bool ImageFormatHdr::write(IStream* stream, const Image* image)
 	return false;
 }
 
-	}
 }

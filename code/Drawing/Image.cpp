@@ -10,12 +10,10 @@
 #include "Drawing/IImageFilter.h"
 #include "Drawing/ITransferFunction.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 #if defined(DRAWING_CHECK_DATA)
 const uint32_t c_wallSize = 64;
@@ -65,7 +63,7 @@ void freeData(uint8_t* ptr, size_t size)
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Image", Image, Object)
 
@@ -592,5 +590,4 @@ Image& Image::operator = (const Image& src)
 	return *this;
 }
 
-	}
 }

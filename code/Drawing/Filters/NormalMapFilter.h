@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Normal map image filter.
  * \ingroup Drawing
@@ -26,7 +24,7 @@ class T_DLLCLASS NormalMapFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	NormalMapFilter(float scale);
+	explicit NormalMapFilter(float scale);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -35,6 +33,4 @@ private:
 	float m_scale;
 };
 
-	}
 }
-

@@ -3,10 +3,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/NormalizeFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalizeFilter", NormalizeFilter, IImageFilter)
 
@@ -34,7 +32,7 @@ void NormalizeFilter::apply(Image* image) const
 		{
 			Vector4 n = (Vector4(row[x]) * c_two - c_one) * scale;
 
-			Scalar ln = n.length2();
+			const Scalar ln = n.length2();
 			if (ln >= FUZZY_EPSILON * FUZZY_EPSILON)
 				n *= reciprocalSquareRoot(ln);
 			else
@@ -46,5 +44,4 @@ void NormalizeFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

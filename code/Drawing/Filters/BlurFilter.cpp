@@ -4,10 +4,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BlurFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BlurFilter", BlurFilter, IImageFilter)
 
@@ -92,5 +90,4 @@ void BlurFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

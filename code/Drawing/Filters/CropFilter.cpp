@@ -2,10 +2,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/CropFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.CropFilter", CropFilter, IImageFilter)
 
@@ -82,5 +80,4 @@ void CropFilter::apply(Image* image) const
 	image->swap(final);
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Image information.
  * \ingroup Drawing
@@ -51,6 +49,4 @@ private:
 	float m_gamma = 0.0f;
 };
 
-	}
 }
-

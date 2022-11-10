@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 class PixelFormat;
@@ -77,6 +75,4 @@ private:
 	int32_t m_size;
 };
 
-	}
 }
-

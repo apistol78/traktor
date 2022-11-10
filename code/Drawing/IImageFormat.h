@@ -13,10 +13,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
@@ -37,6 +35,4 @@ public:
 	virtual bool write(IStream* stream, const Image* image) = 0;
 };
 
-	}
 }
-

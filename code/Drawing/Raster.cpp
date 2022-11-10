@@ -18,10 +18,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 int32_t cycle(float f)
 {
@@ -702,5 +700,4 @@ void Raster::submit()
 	m_impl->submit();
 }
 
-	}
 }

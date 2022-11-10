@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Common blend transfer function.
  * \ingroup Drawing
@@ -46,7 +44,7 @@ public:
 		BoMax
 	};
 
-	BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation);
+	explicit BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation);
 
 protected:
 	virtual void evaluate(const Color4f& in, Color4f& out) const override final;
@@ -57,6 +55,4 @@ private:
 	Operation m_operation;
 };
 
-	}
 }
-

@@ -1,10 +1,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ChainFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ChainFilter", ChainFilter, IImageFilter)
 
@@ -19,5 +17,4 @@ void ChainFilter::apply(Image* image) const
 		image->apply(filter);
 }
 
-	}
 }

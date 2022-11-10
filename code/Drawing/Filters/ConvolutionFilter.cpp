@@ -4,10 +4,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ConvolutionFilter", ConvolutionFilter, IImageFilter)
 
@@ -114,5 +112,4 @@ void ConvolutionFilter::apply(Image* image) const
 	image->swap(final);
 }
 
-	}
 }

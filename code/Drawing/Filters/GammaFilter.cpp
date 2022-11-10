@@ -3,10 +3,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/GammaFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GammaFilter", GammaFilter, IImageFilter)
 
@@ -45,5 +43,4 @@ void GammaFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

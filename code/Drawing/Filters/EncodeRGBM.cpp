@@ -2,12 +2,10 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 // Force val[N+1] to be contrained to not be less than val[N]*(R/256).
 void imposeRatio(uint8_t* data, int32_t length, int32_t stride, int32_t ratio)
@@ -111,7 +109,7 @@ void prepareForBlockCompression(drawing::Image* image, int32_t blockDimX, int32_
     }
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.EncodeRGBM", EncodeRGBM, IImageFilter)
 
@@ -156,5 +154,4 @@ void EncodeRGBM::apply(Image* image) const
 	}
 }
 
-	}
 }

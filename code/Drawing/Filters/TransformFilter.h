@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Transform colors filter.
  * \ingroup Drawing
@@ -25,7 +23,7 @@ class T_DLLCLASS TransformFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	TransformFilter(const Color4f& Km, const Color4f& Kc);
+	explicit TransformFilter(const Color4f& Km, const Color4f& Kc);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -35,6 +33,4 @@ private:
 	Color4f m_Kc;
 };
 
-	}
 }
-

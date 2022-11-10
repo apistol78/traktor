@@ -3,10 +3,8 @@
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.SharpenFilter", SharpenFilter, IImageFilter)
 
@@ -55,5 +53,4 @@ void SharpenFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

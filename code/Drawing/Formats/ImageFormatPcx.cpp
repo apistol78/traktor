@@ -7,10 +7,8 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPcx", ImageFormatPcx, IImageFormat)
 
@@ -242,5 +240,4 @@ bool ImageFormatPcx::write(IStream* stream, const Image* image)
 	return true;
 }
 
-	}
 }

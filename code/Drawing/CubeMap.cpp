@@ -4,10 +4,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.CubeMap", CubeMap, Object)
 
@@ -432,5 +430,4 @@ Color4f CubeMap::get(const Vector4& direction) const
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-	}
 }

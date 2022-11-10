@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! RGBM encoding filter.
  * \ingroup Drawing
@@ -23,7 +21,7 @@ class T_DLLCLASS EncodeRGBM : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	EncodeRGBM(float range, int32_t blockSizeX = 0, int32_t blockSizeY = 0, float blockFilterRatio = 0.0f);
+	explicit EncodeRGBM(float range, int32_t blockSizeX = 0, int32_t blockSizeY = 0, float blockFilterRatio = 0.0f);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -35,6 +33,4 @@ private:
 	float m_blockFilterRatio;
 };
 
-	}
 }
-
