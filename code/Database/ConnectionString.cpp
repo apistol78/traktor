@@ -3,16 +3,10 @@
 #include "Core/Misc/String.h"
 #include "Database/ConnectionString.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ConnectionString", ConnectionString, Object)
-
-ConnectionString::ConnectionString()
-{
-}
 
 ConnectionString::ConnectionString(const std::wstring& connectionString)
 {
@@ -62,5 +56,4 @@ std::wstring ConnectionString::format() const
 	return ss.str();
 }
 
-	}
 }

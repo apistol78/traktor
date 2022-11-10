@@ -2,10 +2,8 @@
 
 #include "Core/RefArray.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! \ingroup Database */
 //@{
@@ -203,6 +201,4 @@ struct FindInstanceByName
 
 //@}
 
-	}
 }
-

@@ -7,8 +7,10 @@ namespace traktor
 
 class Guid;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Instance;
 
@@ -31,6 +33,4 @@ public:
 	virtual void instanceEventCommitted(Instance* instance) = 0;
 };
 
-	}
 }
-

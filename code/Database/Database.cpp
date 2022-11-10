@@ -15,12 +15,10 @@
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstanceMap)
 {
@@ -40,7 +38,7 @@ void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstan
 		buildInstanceMap(childGroup, outInstanceMap);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
@@ -434,5 +432,4 @@ void Database::groupEventRenamed(Group* group, const std::wstring& previousPath)
 		m_providerBus->putEvent(new EvtGroupRenamed(group->getName(), previousPath));
 }
 
-	}
 }

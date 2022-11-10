@@ -20,8 +20,10 @@ namespace traktor
 
 class Guid;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class IGroupEventListener;
 class IInstanceEventListener;
@@ -103,6 +105,4 @@ private:
 	// \}
 };
 
-	}
 }
-

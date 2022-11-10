@@ -8,10 +8,8 @@
 #include "Database/Provider/IProviderGroup.h"
 #include "Database/Provider/IProviderInstance.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Group", Group, Object)
 
@@ -347,5 +345,4 @@ void Group::instanceEventCommitted(Instance* instance)
 	m_instanceEventListener->instanceEventCommitted(instance);
 }
 
-	}
 }

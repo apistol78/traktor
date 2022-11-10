@@ -16,8 +16,10 @@ namespace traktor
 
 class IStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Group;
 class Instance;
@@ -32,6 +34,4 @@ struct T_DLLCLASS Isolate
 	static Ref< Instance > createInstanceFromIsolation(Group* group, IStream* stream);
 };
 
-	}
 }
-

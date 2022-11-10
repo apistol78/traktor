@@ -1,9 +1,7 @@
 #pragma once
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! \ingroup Database */
 //@{
@@ -30,6 +28,4 @@ enum InstanceFlags
 
 //@}
 
-	}
 }
-

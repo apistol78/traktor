@@ -12,12 +12,10 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 Ref< Instance > Database_getInstanceByGuid(Database* self, const Guid& instanceGuid)
 {
@@ -119,7 +117,7 @@ Ref< Class > ref_new()
 	return new Class();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DatabaseClassFactory", 0, DatabaseClassFactory, IRuntimeClassFactory)
 
@@ -170,5 +168,4 @@ void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	registrar->registerClass(classInstance);
 }
 
-	}
 }

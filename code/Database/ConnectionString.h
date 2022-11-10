@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Connection string parser.
  * \ingroup Database
@@ -24,7 +22,7 @@ class T_DLLCLASS ConnectionString : public Object
 	T_RTTI_CLASS;
 
 public:
-	ConnectionString();
+	ConnectionString() = default;
 
 	ConnectionString(const std::wstring& connectionString);
 
@@ -40,6 +38,4 @@ private:
 	std::map< std::wstring, std::wstring > m_values;
 };
 
-	}
 }
-

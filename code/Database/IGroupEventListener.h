@@ -2,10 +2,8 @@
 
 #include <string>
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Group;
 
@@ -20,6 +18,4 @@ public:
 	virtual void groupEventRenamed(Group* group, const std::wstring& previousName) = 0;
 };
 
-	}
 }
-

@@ -23,8 +23,10 @@ namespace traktor
 
 class ISerializable;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class IEvent;
 class IProviderBus;
@@ -167,6 +169,4 @@ private:
 	// \}
 };
 
-	}
 }
-
