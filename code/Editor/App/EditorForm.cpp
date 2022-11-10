@@ -2265,7 +2265,8 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 		}
 	}
 
-	tab->update();
+	m_dock->update();
+	update();
 	return true;
 }
 
