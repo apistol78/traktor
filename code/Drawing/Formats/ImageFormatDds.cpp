@@ -7,12 +7,10 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Formats/ImageFormatDds.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t DDPF_FOURCC = 0x4;
 const uint32_t DDPF_RGB = 0x40;
@@ -241,7 +239,7 @@ void decompressBlockDXT5(uint32_t x, uint32_t y, uint32_t width, const uint8_t* 
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatDds", ImageFormatDds, IImageFormat)
 
@@ -349,5 +347,4 @@ bool ImageFormatDds::write(IStream* stream, const Image* image)
 	return false;
 }
 
-	}
 }

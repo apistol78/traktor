@@ -5,10 +5,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Formats/ImageFormatBmp.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatBmp", ImageFormatBmp, IImageFormat)
 
@@ -137,5 +135,4 @@ bool ImageFormatBmp::write(IStream* stream, const Image* image)
 	return false;
 }
 
-	}
 }

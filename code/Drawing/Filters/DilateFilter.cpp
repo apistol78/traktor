@@ -2,10 +2,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.DilateFilter", DilateFilter, IImageFilter)
 
@@ -77,5 +75,4 @@ void DilateFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

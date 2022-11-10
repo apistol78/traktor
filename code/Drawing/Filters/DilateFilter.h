@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Dilate filter.
  * \ingroup Drawing
@@ -23,7 +21,7 @@ class T_DLLCLASS DilateFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	DilateFilter(int32_t iterations);
+	explicit DilateFilter(int32_t iterations);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -32,6 +30,4 @@ private:
 	int32_t m_iterations;
 };
 
-	}
 }
-

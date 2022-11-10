@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Crop filter.
  * \ingroup Drawing
@@ -32,7 +30,7 @@ public:
 		AtDown = 1
 	};
 
-	CropFilter(
+	explicit CropFilter(
 		AnchorType anchorX,
 		AnchorType anchorY,
 		int32_t width,
@@ -49,6 +47,4 @@ private:
 	int32_t m_height;
 };
 
-	}
 }
-

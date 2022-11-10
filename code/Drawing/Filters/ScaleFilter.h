@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Scale image filter.
  * \ingroup Drawing
@@ -40,7 +38,7 @@ public:
 		MgLinear	// Linear interpolate source pixels.
 	};
 
-	ScaleFilter(
+	explicit ScaleFilter(
 		int32_t width,
 		int32_t height,
 		MinifyType minify,
@@ -59,6 +57,4 @@ private:
 	bool m_keepZeroAlpha;
 };
 
-	}
 }
-

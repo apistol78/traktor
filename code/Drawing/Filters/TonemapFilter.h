@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Tone map filter.
  * \ingroup Drawing
@@ -29,6 +27,4 @@ protected:
 	virtual void apply(Image* image) const override final;
 };
 
-	}
 }
-

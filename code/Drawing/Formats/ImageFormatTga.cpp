@@ -5,12 +5,10 @@
 #include "Drawing/PixelFormat.h"
 #include "Core/Io/Reader.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct TGAHEADER
@@ -30,7 +28,7 @@ struct TGAHEADER
 };
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, IImageFormat)
 
@@ -164,5 +162,4 @@ bool ImageFormatTga::write(IStream* stream, const Image* image)
 	return true;
 }
 
-	}
 }

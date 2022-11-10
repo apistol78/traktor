@@ -19,8 +19,10 @@ namespace traktor
 
 class IStream;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Palette;
 class IImageFilter;
@@ -203,6 +205,4 @@ private:
 	Ref< const ImageInfo > m_imageInfo;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Separate alpha from a premultiplied alpha image.
  * \ingroup Drawing
@@ -26,6 +24,4 @@ protected:
 	virtual void apply(Image* image) const override final;
 };
 
-	}
 }
-

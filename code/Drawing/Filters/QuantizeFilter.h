@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Quantize filter.
  * \ingroup Drawing
@@ -23,7 +21,7 @@ class T_DLLCLASS QuantizeFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	QuantizeFilter(int steps);
+	explicit QuantizeFilter(int steps);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -32,6 +30,4 @@ private:
 	int m_steps;
 };
 
-	}
 }
-

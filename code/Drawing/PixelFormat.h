@@ -15,8 +15,10 @@ namespace traktor
 
 class Color4f;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Palette;
 
@@ -315,6 +317,4 @@ private:
 	static const PixelFormat ms_pfABGRF32;
 };
 
-	}
 }
-

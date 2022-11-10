@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Noise filter filter.
  * \ingroup Drawing
@@ -23,7 +21,7 @@ class T_DLLCLASS NoiseFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	NoiseFilter(float strength);
+	explicit NoiseFilter(float strength);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -32,6 +30,4 @@ private:
 	float m_strength;
 };
 
-	}
 }
-

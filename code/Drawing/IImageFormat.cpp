@@ -23,10 +23,8 @@
 #include "Drawing/Formats/ImageFormatTga.h"
 #include "Drawing/Formats/ImageFormatTri.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.IImageFormat", IImageFormat, Object)
 
@@ -75,5 +73,4 @@ Ref< IImageFormat > IImageFormat::determineFormat(const Path& fileName)
 	return determineFormat(fileName.getExtension());
 }
 
-	}
 }

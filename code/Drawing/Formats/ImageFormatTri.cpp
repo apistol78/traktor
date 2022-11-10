@@ -4,10 +4,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Formats/ImageFormatTri.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTri", ImageFormatTri, IImageFormat)
 
@@ -109,5 +107,4 @@ bool ImageFormatTri::write(IStream* stream, const Image* image)
 	return true;
 }
 
-	}
 }

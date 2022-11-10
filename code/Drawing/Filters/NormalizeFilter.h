@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Normalize normal map image filter.
  * \ingroup Drawing
@@ -34,6 +32,4 @@ private:
 	float m_scale = 0.0f;
 };
 
-	}
 }
-

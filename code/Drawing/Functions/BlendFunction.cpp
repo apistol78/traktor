@@ -1,9 +1,7 @@
 #include "Drawing/Functions/BlendFunction.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BlendFunction", BlendFunction, ITransferFunction)
 
@@ -128,5 +126,4 @@ void BlendFunction::evaluate(const Color4f& in, Color4f& out) const
 	}
 }
 
-	}
 }

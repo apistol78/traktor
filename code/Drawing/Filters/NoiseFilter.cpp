@@ -2,10 +2,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/NoiseFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NoiseFilter", NoiseFilter, IImageFilter)
 
@@ -23,12 +21,11 @@ void NoiseFilter::apply(Image* image) const
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			float f = 1.0f + (2.0f * r.nextFloat() - 1.0f) * m_strength;
+			const float f = 1.0f + (2.0f * r.nextFloat() - 1.0f) * m_strength;
 			image->getPixelUnsafe(x, y, in);
 			image->setPixelUnsafe(x, y, in * Scalar(f));
 		}
 	}
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 /*! Gamma filter.
  * \ingroup Drawing
@@ -23,9 +21,9 @@ class T_DLLCLASS GammaFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	GammaFilter(float gamma);
+	explicit GammaFilter(float gamma);
 
-	GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
+	explicit GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
 
 protected:
 	virtual void apply(Image* image) const override final;
@@ -34,6 +32,4 @@ private:
 	float m_gamma[4];
 };
 
-	}
 }
-

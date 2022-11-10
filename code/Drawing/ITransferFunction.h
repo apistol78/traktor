@@ -11,10 +11,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
@@ -31,6 +29,4 @@ protected:
 	virtual void evaluate(const Color4f& in, Color4f& out) const = 0;
 };
 
-	}
 }
-

@@ -3,10 +3,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/TransformFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TransformFilter", TransformFilter, IImageFilter)
 
@@ -20,8 +18,8 @@ void TransformFilter::apply(Image* image) const
 {
 	Color4f in;
 
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
 
 	AlignedVector< Color4f > span(width);
 
@@ -49,5 +47,4 @@ void TransformFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

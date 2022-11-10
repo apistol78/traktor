@@ -10,19 +10,17 @@
 #include "Drawing/Formats/ImageFormatIco.h"
 #include "Drawing/Formats/ImageFormatPng.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 int32_t convertDim(int32_t dim)
 {
 	return dim >= 256 ? 0 : dim;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatIco", ImageFormatIco, IImageFormat)
 
@@ -100,7 +98,6 @@ bool ImageFormatIco::write(IStream* stream, const Image* image)
 	return true;
 }
 
-	}
 }
 
 #endif	// DRAWING_INCLUDE_ICO

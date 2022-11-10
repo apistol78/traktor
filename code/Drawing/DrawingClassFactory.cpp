@@ -37,12 +37,10 @@
 #include "Drawing/Filters/TransformFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
+	namespace
 	{
-		namespace
-		{
 
 class BoxedPixelFormat : public Object
 {
@@ -254,7 +252,7 @@ void Raster_stroke(Raster* self, int32_t style, float width, int32_t cap)
 	self->stroke(style, width, (Raster::StrokeCap)cap);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.DrawingClassFactory", 0, DrawingClassFactory, IRuntimeClassFactory)
 
@@ -468,5 +466,4 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classRaster);
 }
 
-	}
 }

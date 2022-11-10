@@ -3,10 +3,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.MirrorFilter", MirrorFilter, IImageFilter)
 
@@ -18,11 +16,11 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 
 void MirrorFilter::apply(Image* image) const
 {
-	int32_t imageWidth = image->getWidth();
-	int32_t imageHeight = image->getHeight();
+	const int32_t imageWidth = image->getWidth();
+	const int32_t imageHeight = image->getHeight();
 
-	int32_t pixelPitch = image->getPixelFormat().getByteSize();
-	int32_t rowPitch = imageWidth * pixelPitch;
+	const int32_t pixelPitch = image->getPixelFormat().getByteSize();
+	const int32_t rowPitch = imageWidth * pixelPitch;
 
 	Ref< Image > final = image->clone(false);
 
@@ -33,10 +31,10 @@ void MirrorFilter::apply(Image* image) const
 	{
 		for (int32_t y = 0; y < imageHeight; ++y)
 		{
-			int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
+			const int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
 			for (int32_t x = 0; x < imageWidth; ++x)
 			{
-				int32_t dx = imageWidth - x - 1;
+				const int32_t dx = imageWidth - x - 1;
 				const uint8_t* sourcePixel = &source[x * pixelPitch + y * rowPitch];
 				uint8_t* destinationPixel = &destination[dx * pixelPitch + dy * rowPitch];
 				std::memcpy(destinationPixel, sourcePixel, pixelPitch);
@@ -47,7 +45,7 @@ void MirrorFilter::apply(Image* image) const
 	{
 		for (int32_t y = 0; y < imageHeight; ++y)
 		{
-			int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
+			const int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
 			std::memcpy(&destination[dy * rowPitch], &source[y * rowPitch], rowPitch);
 		}
 	}
@@ -55,5 +53,4 @@ void MirrorFilter::apply(Image* image) const
 	image->swap(final);
 }
 
-	}
 }

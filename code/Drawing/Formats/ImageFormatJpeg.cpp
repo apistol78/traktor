@@ -14,10 +14,8 @@ extern "C"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 const int c_bufferSize = 4096;
 static bool s_errorOccured = false;
@@ -260,7 +258,6 @@ Ref< Image > ImageFormatJpeg::readJpegImage(IStream* stream)
 	return m_impl->readJpegImage(stream);
 }
 
-	}
 }
 
 #endif	// DRAWING_INCLUDE_JPEG

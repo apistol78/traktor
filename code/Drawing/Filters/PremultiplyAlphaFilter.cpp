@@ -3,10 +3,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PremultiplyAlphaFilter", PremultiplyAlphaFilter, IImageFilter)
 
@@ -14,8 +12,8 @@ void PremultiplyAlphaFilter::apply(Image* image) const
 {
 	Color4f in;
 
-	int32_t width = image->getWidth();
-	int32_t height = image->getHeight();
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
 
 	AlignedVector< Color4f > span(width);
 
@@ -42,5 +40,4 @@ void PremultiplyAlphaFilter::apply(Image* image) const
 	}
 }
 
-	}
 }

@@ -2,10 +2,8 @@
 #include <limits>
 #include "Drawing/Palette.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Palette", Palette, Object)
 
@@ -32,7 +30,7 @@ const Color4f& Palette::get(int32_t index) const
 int32_t Palette::find(const Color4f& c, bool exact) const
 {
 	std::pair< float, int32_t > mn(std::numeric_limits< float >::max(), -1);
-	for (AlignedVector< Color4f >::const_iterator i = m_colors.begin(); i != m_colors.end(); ++i)
+	for (auto i = m_colors.begin(); i != m_colors.end(); ++i)
 	{
 		const float diff =
 			std::abs(c.getRed() - i->getRed()) +
@@ -49,5 +47,4 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 	return (exact && mn.first != 0.0f) ? -1 : mn.second;
 }
 
-	}
 }
