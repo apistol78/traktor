@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Script shader node.
  * \ingroup Render
@@ -89,6 +87,4 @@ private:
 	std::wstring m_script;
 };
 
-	}
 }
-
