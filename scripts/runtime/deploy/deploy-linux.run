@@ -30,7 +30,7 @@ function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	if run.exitCode ~= 0 then return run.exitCode end
 
 	-- Get shared paths.
 	local paths = nil
@@ -50,7 +50,7 @@ function deploy(args)
 			run:pushd(p)
 			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 			run:popd()
-			if run:exitCode() ~= 0 then return run:exitCode() end
+			if run.exitCode ~= 0 then return run.exitCode end
 		end
 	end
 
@@ -93,7 +93,7 @@ function migrate(args)
 
 	-- Build content database.
 	run:execute(tools.migrate .. " -p -s=Migrate")
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	if run.exitCode ~= 0 then return run.exitCode end
 
 	-- Create application folders.
 	run:mkdir("bin")
