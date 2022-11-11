@@ -110,7 +110,7 @@ namespace traktor
 int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	// Compile script into a runnable blob.
-	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), text, nullptr);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getFileName(), text, nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script \"" << fileName.getPathName() << L"\"." << Endl;
@@ -187,7 +187,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getPathName(), ss.str(), nullptr);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getFileName(), ss.str(), nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script \"" << fileName.getPathName() << L"\"." << Endl;
