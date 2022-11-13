@@ -28,7 +28,7 @@ class KeyboardDeviceX11 : public InputDeviceX11
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceX11(Display* display, Window window, int deviceId);
+	explicit KeyboardDeviceX11(Display* display, Window window, int deviceId);
 
 	virtual ~KeyboardDeviceX11();
 

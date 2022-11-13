@@ -41,7 +41,8 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 
 	XISelectEvents(m_display, m_window, &evmask, 1);
 
-	m_kbdesc = XkbGetKeyboard(m_display, XkbAllComponentsMask, XkbUseCoreKbd);
+	if ((m_kbdesc = XkbGetMap(m_display, XkbAllComponentsMask, XkbUseCoreKbd)) == nullptr)
+		log::warning << L"Unable to get keyboard; XkbGetMap returned null." << Endl;
 
 	resetState();
 }
@@ -73,7 +74,7 @@ int32_t KeyboardDeviceX11::getControlCount()
 
 std::wstring KeyboardDeviceX11::getControlName(int32_t control)
 {
-	KeySym ks = c_x11ControlKeys[control];
+	const KeySym ks = c_x11ControlKeys[control];
 	if (ks != 0)
 		return mbstows(XKeysymToString(ks));
 	else
@@ -150,7 +151,7 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 {
 	m_exclusive = exclusive;
 
-	bool shouldGrab = (exclusive && m_focus);
+	const bool shouldGrab = (exclusive && m_focus);
 	if (shouldGrab == m_haveGrab)
 		return;
 
@@ -233,7 +234,7 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 			key_data.keycode      = event->detail;
 			key_data.state        = event->mods.effective;
 
-			int nbuf = XLookupString(
+			const int nbuf = XLookupString(
 				&key_data,
 				buf,
 				sizeof(buf),
