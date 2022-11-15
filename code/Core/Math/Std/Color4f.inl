@@ -12,11 +12,6 @@
 namespace traktor
 {
 
-T_MATH_INLINE Color4f::Color4f()
-:	m_data(Vector4::zero())
-{
-}
-
 T_MATH_INLINE Color4f::Color4f(const Color4f& src)
 :	m_data(src.m_data)
 {

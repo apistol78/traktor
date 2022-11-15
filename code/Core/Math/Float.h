@@ -18,13 +18,13 @@ namespace traktor
 
 inline bool isNan(float value)
 {
-	uint32_t bits = *reinterpret_cast< const uint32_t* >(&value);
+	const uint32_t bits = *reinterpret_cast< const uint32_t* >(&value);
 	return ((bits & 0x7f800000) >> 23) == 0xff && (bits & 0x7fffff) != 0;
 }
 
 inline bool isInfinite(float value)
 {
-	uint32_t bits = *reinterpret_cast< const uint32_t* >(&value);
+	const uint32_t bits = *reinterpret_cast< const uint32_t* >(&value);
 	return (bits & 0x7f800000) == 0x7f800000 && (bits & 0x7fffff) == 0;
 }
 

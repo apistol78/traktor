@@ -80,7 +80,7 @@ T_MATH_INLINE Vector4 Transform::axisZ() const
 
 T_MATH_INLINE Transform Transform::inverse() const
 {
-	Quaternion rotationInv = m_rotation.inverse().normalized();
+	const Quaternion rotationInv = m_rotation.inverse().normalized();
 	return Transform(
 		-(rotationInv * m_translation),
 		rotationInv

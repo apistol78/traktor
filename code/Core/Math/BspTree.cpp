@@ -19,11 +19,6 @@ const float c_thickness = 0.001f;
 
 	}
 
-BspPolygon::BspPolygon()
-:	m_index(0)
-{
-}
-
 BspPolygon::BspPolygon(intptr_t index, const vertices_t& vertices)
 :	m_index(index)
 ,	m_vertices(vertices)
@@ -79,30 +74,30 @@ int32_t BspPolygon::classify(const Plane& plane) const
 			side[1]++;
 	}
 	if (side[0] && !side[1])
-		return ClFront;
+		return Front;
 	else if (!side[0] && side[1])
-		return ClBack;
+		return Back;
 	else if (!side[0] && !side[1])
-		return ClCoplanar;
+		return Coplanar;
 	else
-		return ClSpan;
+		return Span;
 }
 
 void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCoplanarFront, AlignedVector< BspPolygon >& outCoplanarBack, AlignedVector< BspPolygon >& outFront, AlignedVector< BspPolygon >& outBack) const
 {
-	int32_t cl = classify(plane);
-	if (cl == ClFront)
+	const int32_t cl = classify(plane);
+	if (cl == Front)
 		outFront.push_back(*this);
-	else if (cl == ClBack)
+	else if (cl == Back)
 		outBack.push_back(*this);
-	else if (cl == ClCoplanar)
+	else if (cl == Coplanar)
 	{
 		if (dot3(m_plane.normal(), plane.normal()) >= 0.0f)
 			outCoplanarFront.push_back(*this);
 		else
 			outCoplanarBack.push_back(*this);
 	}
-	else	// ClSpan
+	else	// Span
 	{
 		BspPolygon& fp = outFront.push_back();
 		BspPolygon& bp = outBack.push_back();
@@ -118,8 +113,8 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 			const BspVertex& a = m_vertices[i];
 			const BspVertex& b = m_vertices[j];
 
-			Scalar da = plane.distance(a.position);
-			Scalar db = plane.distance(b.position);
+			const Scalar da = plane.distance(a.position);
+			const Scalar db = plane.distance(b.position);
 
 			if (
 				(da < -c_thickness && db > -c_thickness) ||
@@ -157,12 +152,6 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 			outBack.pop_back();
 		}
 	}
-}
-
-BspNode::BspNode()
-:   m_front(nullptr)
-,   m_back(nullptr)
-{
 }
 
 BspNode::BspNode(const BspNode& node)
@@ -273,7 +262,7 @@ void BspNode::build(const AlignedVector< BspPolygon >& polygons, bool fast)
 				{
 					if (i == index)
 						continue;
-					if (polygons[i].classify(plane) == BspPolygon::ClSpan)
+					if (polygons[i].classify(plane) == BspPolygon::Span)
 						++span;
 				}
 

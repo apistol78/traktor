@@ -30,7 +30,7 @@ namespace traktor
 class T_MATH_ALIGN16 T_DLLCLASS Color4f
 {
 public:
-	T_MATH_INLINE Color4f();
+	T_MATH_INLINE Color4f() = default;
 
 	T_MATH_INLINE Color4f(const Color4f &src);
 
@@ -127,7 +127,7 @@ public:
 	T_MATH_INLINE operator const Vector4 &() const;
 
 private:
-	Vector4 m_data;
+	Vector4 m_data = Vector4::zero();
 };
 
 #if defined(min)

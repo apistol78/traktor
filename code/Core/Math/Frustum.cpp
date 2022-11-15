@@ -45,10 +45,10 @@ void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 {
 	vfov /= 2.0f;
 
-	float a = sinf(vfov) * aspect;
-	float b = cosf(vfov);
-	float c = sqrtf(a * a + b * b);
-	float hfov = asinf(a / c);
+	const float a = sinf(vfov) * aspect;
+	const float b = cosf(vfov);
+	const float c = sqrtf(a * a + b * b);
+	const float hfov = asinf(a / c);
 
 	planes[0].set(Vector4(cosf(hfov), 0.0f, sinf(hfov)), Scalar(0.0f));
 	planes[1].set(Vector4(-cosf(hfov), 0.0f, sinf(hfov)), Scalar(0.0f));
@@ -62,8 +62,8 @@ void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 
 void Frustum::buildOrtho(float width, float height, float zn, float zf)
 {
-	Scalar hw = Scalar(-width * 0.5f);
-	Scalar hh = Scalar(-height * 0.5f);
+	const Scalar hw = Scalar(-width * 0.5f);
+	const Scalar hh = Scalar(-height * 0.5f);
 
 	planes[0].set(Vector4(1.0f, 0.0f, 0.0f), hw);
 	planes[1].set(Vector4(-1.0f, 0.0f, 0.0f), hw);
@@ -153,7 +153,7 @@ void Frustum::update()
 	Plane::uniqueIntersectionPoint(planes[PsFar] , planes[PsBottom], planes[PsLeft]  , corners[7]);
 
 	center = corners[0];
-	for (int i = 1; i < 8; ++i)
+	for (int32_t i = 1; i < 8; ++i)
 		center += corners[i];
 	center /= Scalar(8.0f);
 }
