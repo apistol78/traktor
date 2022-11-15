@@ -9,11 +9,6 @@
 namespace traktor
 {
 
-IntervalTransform::IntervalTransform()
-:	m_stepped(false)
-{
-}
-
 IntervalTransform::IntervalTransform(const Transform& transform)
 :	m_stepped(true)
 {

@@ -41,15 +41,15 @@ class T_DLLCLASS BspPolygon
 public:
 	enum Classification
 	{
-		ClFront = 1,
-		ClBack = 2,
-		ClSpan = 3,
-		ClCoplanar = 4
+		Front = 1,
+		Back = 2,
+		Span = 3,
+		Coplanar = 4
 	};
 
 	typedef StaticVector< BspVertex, 32 > vertices_t;
 
-	BspPolygon();
+	BspPolygon() = default;
 
 	explicit BspPolygon(intptr_t index, const vertices_t& vertices);
 
@@ -82,7 +82,7 @@ public:
 	const Plane& getPlane() const { return m_plane; }
 
 private:
-	intptr_t m_index;
+	intptr_t m_index = 0;
 	vertices_t m_vertices;
 	Plane m_plane;
 };
@@ -93,7 +93,7 @@ private:
 class T_DLLCLASS BspNode
 {
 public:
-	BspNode();
+	BspNode() = default;
 
 	BspNode(const BspNode& node);
 
@@ -124,8 +124,8 @@ public:
 private:
 	Plane m_plane;
 	AlignedVector< BspPolygon > m_polygons;
-	BspNode* m_front;
-	BspNode* m_back;
+	BspNode* m_front = nullptr;
+	BspNode* m_back = nullptr;
 
 	BspNode* clone() const;
 };

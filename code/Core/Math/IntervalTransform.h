@@ -31,7 +31,7 @@ namespace traktor
 class T_MATH_ALIGN16 T_DLLCLASS IntervalTransform
 {
 public:
-	T_MATH_INLINE IntervalTransform();
+	T_MATH_INLINE IntervalTransform() = default;
 
 	T_MATH_INLINE IntervalTransform(const Transform& transform);
 
@@ -49,7 +49,7 @@ public:
 
 private:
 	Transform m_transform[2];
-	bool m_stepped;
+	bool m_stepped = false;
 };
 
 }
