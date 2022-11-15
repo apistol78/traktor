@@ -21,3 +21,18 @@ sudo ./scripts/misc/install-linux-deps.sh
 ```
 ./scripts/build-vscode.sh Linux
 ```
+
+---
+
+## How to run
+
+### Editor
+```
+./scripts/run-editor.sh
+```
+
+### Standalone remote server
+Note, since each editor include an embedded server so this is only required on remote hosts which only need to be a deploy target.
+```
+./scripts/run-server.sh
+```
