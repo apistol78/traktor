@@ -257,8 +257,8 @@ int GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusiv
 	outEdges.resize(0);
 	for (auto edge : m_edges)
 	{
-		bool n1 = bool(std::find(nodes.begin(), nodes.end(), edge->getSourcePin()->getNode()) != nodes.end());
-		bool n2 = bool(std::find(nodes.begin(), nodes.end(), edge->getDestinationPin()->getNode()) != nodes.end());
+		const bool n1 = bool(std::find(nodes.begin(), nodes.end(), edge->getSourcePin()->getNode()) != nodes.end());
+		const bool n2 = bool(std::find(nodes.begin(), nodes.end(), edge->getDestinationPin()->getNode()) != nodes.end());
 		if ((inclusive && (n1 && n2)) || (!inclusive && (n1 || n2)))
 			outEdges.push_back(edge);
 	}
@@ -326,7 +326,7 @@ void GraphControl::center(bool selectedOnly)
 	if (nodes.empty())
 		return;
 
-	Rect inner = getInnerRect();
+	const Rect inner = getInnerRect();
 
 	Rect bounds(
 		std::numeric_limits< int >::max(),
@@ -336,7 +336,7 @@ void GraphControl::center(bool selectedOnly)
 	);
 	for (auto node : nodes)
 	{
-		Rect rc = node->calculateRect();
+		const Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
 		bounds.top = std::min(bounds.top, rc.top);
@@ -360,7 +360,7 @@ void GraphControl::alignNodes(Alignment align)
 	);
 	for (auto node : nodes)
 	{
-		Rect rc = node->calculateRect();
+		const Rect rc = node->calculateRect();
 		bounds.left = std::min(bounds.left, rc.left);
 		bounds.right = std::max(bounds.right, rc.right);
 		bounds.top = std::min(bounds.top, rc.top);
@@ -369,7 +369,7 @@ void GraphControl::alignNodes(Alignment align)
 
 	for (auto node : nodes)
 	{
-		Rect rc = node->calculateRect();
+		const Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();
 
 		switch (align)
@@ -432,14 +432,14 @@ void GraphControl::evenSpace(EvenSpace space)
 		totalHeight += rc.getHeight();
 	}
 
-	int32_t spaceHoriz = (bounds.getWidth() - totalWidth) / (int32_t)(nodes.size() - 1);
-	int32_t spaceVert = (bounds.getHeight() - totalHeight) / (int32_t)(nodes.size() - 1);
+	const int32_t spaceHoriz = (bounds.getWidth() - totalWidth) / (int32_t)(nodes.size() - 1);
+	const int32_t spaceVert = (bounds.getHeight() - totalHeight) / (int32_t)(nodes.size() - 1);
 
 	int32_t x = bounds.left, y = bounds.top;
 
 	for (auto node : nodes)
 	{
-		Rect rc = node->calculateRect();
+		const Rect rc = node->calculateRect();
 		Point pt = rc.getTopLeft();
 
 		switch (space)
@@ -482,7 +482,7 @@ Point GraphControl::virtualToClient(const Point& vpt) const
 
 Rect GraphControl::getVirtualRect() const
 {
-	Rect rcClient = getInnerRect();
+	const Rect rcClient = getInnerRect();
 	return Rect(
 		clientToVirtual(rcClient.getTopLeft()),
 		clientToVirtual(rcClient.getBottomRight())
@@ -581,7 +581,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			// Update edge selection states.
 			for (auto edge : m_edges)
 			{
-				bool selected =
+				const bool selected =
 					edge->getSourcePin()->getNode()->isSelected() ||
 					edge->getDestinationPin()->getNode()->isSelected();
 
@@ -939,11 +939,11 @@ void GraphControl::eventPaint(PaintEvent* event)
 	uint32_t arrowsDrawn = 0;
 	for (auto node : m_nodes)
 	{
-		Rect rcNode = node->calculateRect().offset(m_offset);
+		const Rect rcNode = node->calculateRect().offset(m_offset);
 		if ((arrowsDrawn & 1) == 0 && (int32_t)(rcNode.left * m_scale) < rc.left)
 		{
-			Point p(rc.left + 16, center.y);
-			Point pl[] =
+			const Point p(rc.left + 16, center.y);
+			const Point pl[] =
 			{
 				Point(p.x - 8, p.y),
 				Point(p.x + 8, p.y - 8),
@@ -954,8 +954,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 		}
 		if ((arrowsDrawn & 2) == 0 && (int32_t)(rcNode.top * m_scale) < rc.top)
 		{
-			Point p(center.x, rc.top + 16);
-			Point pl[] =
+			const Point p(center.x, rc.top + 16);
+			const Point pl[] =
 			{
 				Point(p.x, p.y - 8),
 				Point(p.x + 8, p.y + 8),
@@ -966,8 +966,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 		}
 		if ((arrowsDrawn & 4) == 0 && (int32_t)(rcNode.right * m_scale) > rc.right)
 		{
-			Point p(rc.right - 16, center.y);
-			Point pl[] =
+			const Point p(rc.right - 16, center.y);
+			const Point pl[] =
 			{
 				Point(p.x + 8, p.y),
 				Point(p.x - 8, p.y - 8),
@@ -978,8 +978,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 		}
 		if ((arrowsDrawn & 8) == 0 && (int32_t)(rcNode.bottom * m_scale) > rc.bottom)
 		{
-			Point p(center.x, rc.bottom - 16);
-			Point pl[] =
+			const Point p(center.x, rc.bottom - 16);
+			const Point pl[] =
 			{
 				Point(p.x, p.y + 8),
 				Point(p.x + 8, p.y - 8),
@@ -1007,7 +1007,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	// Node shapes.
 	graphCanvas.setFont(m_paintSettings->getFont());
-	Rect cullRc = rc / m_scale;
+	const Rect cullRc = rc / m_scale;
 	for (auto node : m_nodes)
 	{
 		if (node->calculateRect().offset(m_offset).intersect(cullRc))
