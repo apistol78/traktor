@@ -85,18 +85,21 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 	// Draw node shape.
 	{
-		int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		Size sz = m_imageNode[imageIndex]->getSize();
+		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+		const Size sz = m_imageNode[imageIndex]->getSize();
 
-		int32_t tw = sz.cx / 3;
+		const int32_t tw = sz.cx / 3;
 
-		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
+		const int32_t dw = rc.getWidth() - ui::dpi96(c_marginWidth) * 2;
+		const int32_t dh = rc.getHeight();
+
+		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
+		const int32_t dx[] = { 0, tw, dw - tw, dw };
 
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
 			canvas->drawBitmap(
-				rc.getTopLeft() + Size(dx[ix], 0),
+				rc.getTopLeft() + Size(ui::dpi96(c_marginWidth), 0) + Size(dx[ix], 0),
 				Size(dx[ix + 1] - dx[ix], sz.cy),
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
@@ -106,12 +109,12 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		}
 	}
 
-	Size pinSize = m_imagePin->getSize();
+	const Size pinSize = m_imagePin->getSize();
 
 	canvas->setBackground(Color4ub(255, 255, 255));
 
-	Point pos(
-		rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
+	const Point pos(
+		rc.right - pinSize.cx,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -126,7 +129,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 	int32_t left = rc.left + ui::dpi96(c_marginWidth) + ui::dpi96(c_textMarginLeft);
 
-	std::wstring title = node->getTitle();
+	const std::wstring title = node->getTitle();
 	if (!title.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color"));

@@ -909,10 +909,10 @@ void GraphControl::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);
 
-	int32_t gridSpacing = m_scale * dpi96(32);
+	const int32_t gridSpacing = m_scale * dpi96(32);
 
-	int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
-	int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
+	const int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
+	const int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
 
 	canvas.setForeground(ss->getColor(this, L"color-grid"));
 	for (int32_t x = ox - gridSpacing; x < rc.getWidth(); x += gridSpacing)
@@ -922,7 +922,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		canvas.drawLine(rc.left, y, rc.right, y);
 
 	// Draw text.
-	std::wstring text = getText();
+	const std::wstring text = getText();
 	if (!text.empty())
 	{
 		auto fn = m_paintSettings->getFont();
@@ -935,7 +935,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	// Draw arrow hints.
 	canvas.setBackground(ss->getColor(this, L"color-arrow-hints"));
-	Point center = rc.getCenter();
+	const Point center = rc.getCenter();
 	uint32_t arrowsDrawn = 0;
 	for (auto node : m_nodes)
 	{
@@ -1012,6 +1012,13 @@ void GraphControl::eventPaint(PaintEvent* event)
 	{
 		if (node->calculateRect().offset(m_offset).intersect(cullRc))
 			node->paint(&graphCanvas, m_hotPin, m_offset);
+
+#if defined(_DEBUG)
+		graphCanvas.setForeground(Color4ub(255, 255, 255, 255));
+		graphCanvas.drawRect(
+			node->calculateRect().offset(m_offset)
+		);
+#endif
 	}
 
 	// Draw selected edges.

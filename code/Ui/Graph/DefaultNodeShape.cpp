@@ -29,7 +29,7 @@ const int32_t c_marginWidth = 2;	/*< Distance from image edge to "visual" edge. 
 const int32_t c_marginHeight = 4;
 const int32_t c_topMargin = 4;		/*< Distance from top to top of title. */
 const int32_t c_titlePad = 10;		/*< Padding between title (and info) from first pin. */
-const int32_t c_pinNamePad = 12;	/*< Distance between pin and pin's name. */
+const int32_t c_pinNamePad = 14;	/*< Distance between pin and pin's name. */
 const int32_t c_pinCenterPad = 16;	/*< Distance between input and output pin names. */
 const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
@@ -144,24 +144,27 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 	// Draw node shape.
 	{
-		int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		Size sz = m_imageNode[imageIndex]->getSize();
+		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+		const Size sz = m_imageNode[imageIndex]->getSize();
 
-		int32_t tw = sz.cx / 3;
-		int32_t th = sz.cy / 3;
+		const int32_t tw = sz.cx / 3;
+		const int32_t th = sz.cy / 3;
 
-		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
+		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
+		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
 
-		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
-		int32_t dy[] = { 0, th, rc.getHeight() - th, rc.getHeight() };
+		const int32_t dw = rc.getWidth() - ui::dpi96(c_marginWidth) * 2;
+		const int32_t dh = rc.getHeight();
+
+		const int32_t dx[] = { 0, tw, dw - tw, dw };
+		const int32_t dy[] = { 0, th, dh - th, dh };
 
 		for (int32_t iy = 0; iy < 3; ++iy)
 		{
 			for (int32_t ix = 0; ix < 3; ++ix)
 			{
 				canvas->drawBitmap(
-					rc.getTopLeft() + Size(dx[ix], dy[iy]),
+					rc.getTopLeft() + Size(ui::dpi96(c_marginWidth), 0) + Size(dx[ix], dy[iy]),
 					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
 					Point(sx[ix], sy[iy]),
 					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
@@ -219,12 +222,12 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const RefArray< Pin >& inputPins = node->getInputPins();
 	const RefArray< Pin >& outputPins = node->getOutputPins();
 
-	Size pinSize = m_imagePin->getSize();
+	const Size pinSize = m_imagePin->getSize();
 
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
 		Point pos(
-			rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth) - 1,
+			rc.left,
 			top + i * textHeight - pinSize.cy / 2
 		);
 
@@ -241,7 +244,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
 	{
 		Point pos(
-			rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
+			rc.right - pinSize.cx,
 			top + i * textHeight - pinSize.cy / 2
 		);
 
