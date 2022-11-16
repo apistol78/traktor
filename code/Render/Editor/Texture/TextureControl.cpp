@@ -11,10 +11,20 @@
 #include "Ui/IBitmap.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
+
+ui::Size operator * (const ui::Size& sz, float scale)
+{
+	return ui::Size(
+		(int32_t)(sz.cx * scale),
+		(int32_t)(sz.cy * scale)
+	);
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureControl", TextureControl, ui::Widget)
 
@@ -26,6 +36,7 @@ bool TextureControl::create(ui::Widget* parent)
 	addEventHandler< ui::MouseButtonDownEvent >(this, &TextureControl::eventMouseDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &TextureControl::eventMouseUp);
 	addEventHandler< ui::MouseMoveEvent >(this, &TextureControl::eventMouseMove);
+	addEventHandler< ui::MouseWheelEvent >(this, &TextureControl::eventMouseWheel);
 	addEventHandler< ui::PaintEvent >(this, &TextureControl::eventPaint);
 	return true;
 }
@@ -75,6 +86,16 @@ void TextureControl::eventMouseMove(ui::MouseMoveEvent* event)
 	update();
 }
 
+void TextureControl::eventMouseWheel(ui::MouseWheelEvent* event)
+{
+	const int32_t rotation = event->getRotation();
+
+	m_scale += rotation * 0.2f;
+	m_scale = std::max(m_scale, 0.2f);
+
+	update();
+}
+
 void TextureControl::eventPaint(ui::PaintEvent* event)
 {
 	const ui::StyleSheet* ss = getStyleSheet();
@@ -96,15 +117,16 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 
 		canvas.drawBitmap(
 			center + m_offset,
+			m_image->getSize() * m_scale,
 			ui::Point(0, 0),
 			m_image->getSize(),
 			m_image,
-			ui::BlendMode::Opaque
+			ui::BlendMode::Opaque,
+			ui::Filter::Nearest
 		);
 	}
 
 	event->consume();
 }
 
-	}
 }
