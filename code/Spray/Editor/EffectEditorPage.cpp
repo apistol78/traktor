@@ -139,7 +139,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
 	Ref< world::IEntityBuilder > entityBuilder = new world::EntityBuilder();
-	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, true));
+	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, nullptr, true));
 	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
 	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, renderSystem));
 

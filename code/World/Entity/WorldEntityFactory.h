@@ -45,7 +45,12 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	WorldEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, bool editor);
+	explicit WorldEntityFactory(
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		EntityEventManager* eventManager,
+		bool editor
+	);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -62,6 +67,7 @@ public:
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< EntityEventManager > m_eventManager;
 	bool m_editor;
 };
 

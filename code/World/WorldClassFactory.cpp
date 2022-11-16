@@ -282,6 +282,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEventSetComponentData);
 
 	auto classEventSetComponent = new AutoRuntimeClass< EventSetComponent >();
+	classEventSetComponent->addMethod("raise", &EventSetComponent::raise);
 	classEventSetComponent->addMethod("getEvent", &EventSetComponent::getEvent);
 	registrar->registerClass(classEventSetComponent);
 

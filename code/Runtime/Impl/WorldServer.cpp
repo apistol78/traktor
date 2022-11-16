@@ -159,7 +159,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, false));
+	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, m_eventManager, false));
 }
 
 void WorldServer::createEntityRenderers(IEnvironment* environment)
