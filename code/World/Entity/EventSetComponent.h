@@ -21,11 +21,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
+class EntityEventManager;
 class IEntityEvent;
 
 class T_DLLCLASS EventSetComponent : public IEntityComponent
@@ -33,6 +32,8 @@ class T_DLLCLASS EventSetComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
+	explicit EventSetComponent(EntityEventManager* eventManager);
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
@@ -43,13 +44,16 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	world::IEntityEvent* getEvent(const std::wstring& name) const;
+	void raise(const std::wstring& name);
+
+	const IEntityEvent* getEvent(const std::wstring& name) const;
 
 private:
 	friend class EventSetComponentData;
 
-	SmallMap< std::wstring, Ref< IEntityEvent > > m_events;
+	Entity* m_owner = nullptr;
+	Ref< EntityEventManager > m_eventManager;
+	SmallMap< std::wstring, Ref< const IEntityEvent > > m_events;
 };
 
-	}
 }

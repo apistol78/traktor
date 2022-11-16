@@ -14,16 +14,14 @@
 #include "World/IEntityBuilder.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EventSetComponentData", 0, EventSetComponentData, IEntityComponentData)
 
-Ref< EventSetComponent > EventSetComponentData::createComponent(const IEntityBuilder* entityBuilder) const
+Ref< EventSetComponent > EventSetComponentData::createComponent(EntityEventManager* eventManager, const IEntityBuilder* entityBuilder) const
 {
-	Ref< EventSetComponent > eventSet = new EventSetComponent();
+	Ref< EventSetComponent > eventSet = new EventSetComponent(eventManager);
 	for (auto eventData : m_eventData)
 	{
 		if (!eventData.second)
@@ -55,5 +53,4 @@ void EventSetComponentData::serialize(ISerializer& s)
 	>(L"eventData", m_eventData);
 }
 
-	}
 }
