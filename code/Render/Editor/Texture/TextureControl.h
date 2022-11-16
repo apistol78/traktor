@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IBitmap;
 
@@ -46,7 +44,7 @@ private:
 	ui::Size m_offset = { 0, 0 };
 	ui::Point m_moveOrigin;
 	ui::Size m_moveOriginOffset;
-
+	float m_scale = 1.0f;
 
 	void eventMouseDown(ui::MouseButtonDownEvent* event);
 
@@ -54,9 +52,9 @@ private:
 
 	void eventMouseMove(ui::MouseMoveEvent* event);
 
+	void eventMouseWheel(ui::MouseWheelEvent* event);
+
 	void eventPaint(ui::PaintEvent* event);
 };
 
-	}
 }
-
