@@ -79,7 +79,7 @@ bool InputDialog::create(
 		}
 	}
 
-	fit(Container::FaBoth);
+	fit(Container::Both);
 
 	return true;
 }
