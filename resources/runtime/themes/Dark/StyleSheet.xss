@@ -182,6 +182,23 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.Edge</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>80, 80, 80, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.Edit</typeName>
 			<colors>
 				<item>
@@ -231,7 +248,7 @@
 				</item>
 				<item>
 					<first>color-label</first>
-					<second>120, 120, 120, 255</second>
+					<second>58, 58, 58, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -511,6 +528,23 @@
 				<item>
 					<first>progress-color-disabled</first>
 					<second>40, 80, 30, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.PropertyItem</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -801,23 +835,6 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.PropertyItem</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>37, 37, 38, 255</second>
-				</item>
-				<item>
-					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
 				</item>
 			</colors>
 		</item>
