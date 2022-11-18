@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Editor/App/Splash.h"
+#include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Image.h"
@@ -30,9 +31,12 @@ bool Splash::create()
 	T_ASSERT(splash);
 
 	Ref< ui::Image > image = new ui::Image();
-	image->create(this, splash, false);
+	image->create(this, splash, ui::Image::WsScale);
 
-	fit(Container::FaBoth);
+	const int32_t scale = ui::dpi96(1);
+	const ui::Size sz = splash->getSize();
+	setRect({ 0, 0, sz.cx * scale, sz.cy * scale });
+
 	show();
 
 	update(nullptr, true);
