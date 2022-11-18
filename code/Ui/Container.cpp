@@ -70,9 +70,9 @@ void Container::fit(uint32_t axis)
 		Rect outer = getRect();
 		Size nc = outer.getSize() - inner;
 
-		if ((axis & FaHorizontal) != 0)
+		if ((axis & Horizontal) != 0)
 			outer.setWidth(bounds.cx + nc.cx);
-		if ((axis & FaVertical) != 0)
+		if ((axis & Vertical) != 0)
 			outer.setHeight(bounds.cy + nc.cy);
 
 		setRect(outer);

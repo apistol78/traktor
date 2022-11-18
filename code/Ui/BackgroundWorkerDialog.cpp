@@ -46,7 +46,7 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 		m_buttonAbort->addEventHandler< ButtonClickEvent >(this, &BackgroundWorkerDialog::eventAbortClick);
 	}
 
-	fit(Container::FaVertical);
+	fit(Container::Vertical);
 
 	startTimer(100);
 	return true;

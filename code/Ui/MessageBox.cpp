@@ -65,7 +65,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	staticMessage->create(this, message);
 	staticMessage->setVerticalAlign(AnCenter);
 
-	fit(Container::FaBoth);
+	fit(Container::Both);
 	return true;
 }
 

@@ -36,9 +36,9 @@ class T_DLLCLASS Container : public Widget
 public:
 	enum FitAxis
 	{
-		FaHorizontal = 1,
-		FaVertical = 2,
-		FaBoth = (FaHorizontal | FaVertical)
+		Horizontal = 1,
+		Vertical = 2,
+		Both = (Horizontal | Vertical)
 	};
 
 	bool create(Widget* parent, int style = WsNone, Layout* layout = 0);

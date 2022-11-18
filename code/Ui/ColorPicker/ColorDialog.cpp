@@ -158,7 +158,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 
 	m_color = initialColor;
 
-	fit(Container::FaBoth);
+	fit(Container::Both);
 	return true;
 }
 

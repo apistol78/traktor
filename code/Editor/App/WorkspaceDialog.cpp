@@ -70,7 +70,7 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 
 	m_settings = settings;
 
-	fit(Container::FaVertical);
+	fit(Container::Vertical);
 	return true;
 }
 
