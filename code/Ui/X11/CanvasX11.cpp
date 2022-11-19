@@ -209,6 +209,7 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& s
 
 	case BlendMode::Alpha:
 	case BlendMode::Modulate:
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
 		break;
 
 	default:
@@ -249,6 +250,7 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 
 	case BlendMode::Alpha:
 	case BlendMode::Modulate:
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
 		break;
 
 	default:
