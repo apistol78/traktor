@@ -11,10 +11,8 @@
 #include "Database/Compact/CompactContext.h"
 #include "Database/Compact/CompactRegistry.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.CompactGroup", CompactGroup, IProviderGroup)
 
@@ -124,5 +122,4 @@ bool CompactGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefAr
 	return true;
 }
 
-	}
 }

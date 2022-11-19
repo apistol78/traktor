@@ -9,10 +9,8 @@
 #include "Database/Compact/BlockFile.h"
 #include "Database/Compact/BlockReadStream.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 BlockReadStream::BlockReadStream(BlockFile* blockFile, IStream* stream, int64_t endOffset)
 :	StreamStream(stream, endOffset)
@@ -34,5 +32,4 @@ void BlockReadStream::close()
 	}
 }
 
-	}
 }

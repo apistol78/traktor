@@ -50,11 +50,6 @@ void buildInstanceMap(Group* group, SmallMap< Guid, Ref< Instance > >& outInstan
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
-Database::Database()
-:	m_lastEntrySqnr(0)
-{
-}
-
 bool Database::open(IProviderDatabase* providerDatabase)
 {
 	T_ASSERT(providerDatabase);
@@ -220,7 +215,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerDatabase);
 
-	auto i = m_instanceMap.find(instanceGuid);
+	const auto i = m_instanceMap.find(instanceGuid);
 	return i != m_instanceMap.end() ? i->second : nullptr;
 }
 
@@ -232,7 +227,7 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 	std::wstring instanceName = instancePath;
 	Ref< Group > group = m_rootGroup;
 
-	auto i = instanceName.find_last_of(L'/');
+	const auto i = instanceName.find_last_of(L'/');
 	if (i != std::wstring::npos)
 	{
 		group = getGroup(instanceName.substr(0, i));
@@ -253,7 +248,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	std::wstring instanceName;
 	Ref< Group > group;
 
-	auto i = instancePath.find_last_of(L'/');
+	const auto i = instancePath.find_last_of(L'/');
 	if (i != std::wstring::npos)
 	{
 		instanceName = instancePath.substr(i + 1);
@@ -284,7 +279,7 @@ Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerDatabase);
 
-	auto i = m_instanceMap.find(guid);
+	const auto i = m_instanceMap.find(guid);
 	if (i == m_instanceMap.end() || !i->second)
 		return nullptr;
 
@@ -393,7 +388,7 @@ void Database::instanceEventRemoved(Instance* instance)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	auto i = m_instanceMap.find(instance->getGuid());
+	const auto i = m_instanceMap.find(instance->getGuid());
 	if (i != m_instanceMap.end())
 		m_instanceMap.erase(i);
 
@@ -407,7 +402,7 @@ void Database::instanceEventGuidChanged(Instance* instance, const Guid& previous
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	auto i = m_instanceMap.find(previousGuid);
+	const auto i = m_instanceMap.find(previousGuid);
 	if (i != m_instanceMap.end())
 		m_instanceMap.erase(i);
 

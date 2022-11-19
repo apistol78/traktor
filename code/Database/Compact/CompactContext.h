@@ -10,10 +10,8 @@
 
 #include "Core/Ref.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class BlockFile;
 class CompactRegistry;
@@ -37,6 +35,5 @@ private:
 	Ref< CompactRegistry > m_registry;
 };
 
-	}
 }
 

@@ -20,8 +20,10 @@ namespace traktor
 
 class IStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 /*! Block file
  * \ingroup Database
@@ -74,6 +76,5 @@ private:
 	bool m_needFlushTOC = false;
 };
 
-	}
 }
 

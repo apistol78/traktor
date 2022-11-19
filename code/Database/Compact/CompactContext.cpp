@@ -8,10 +8,8 @@
  */
 #include "Database/Compact/CompactContext.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 CompactContext::CompactContext(BlockFile* blockFile, CompactRegistry* registry)
 :	m_blockFile(blockFile)
@@ -19,5 +17,4 @@ CompactContext::CompactContext(BlockFile* blockFile, CompactRegistry* registry)
 {
 }
 
-	}
 }

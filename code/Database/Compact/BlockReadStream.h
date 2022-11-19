@@ -10,10 +10,8 @@
 
 #include "Core/Io/StreamStream.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class BlockFile;
 
@@ -30,6 +28,4 @@ private:
 	Ref< BlockFile > m_blockFile;
 };
 
-	}
 }
-

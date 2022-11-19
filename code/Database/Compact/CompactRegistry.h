@@ -14,10 +14,8 @@
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class CompactBlockEntry;
 class CompactGroupEntry;
@@ -145,6 +143,4 @@ private:
 	RefArray< CompactBlockEntry > m_blockEntries;
 };
 
-	}
 }
-

@@ -17,10 +17,8 @@
 #include "Database/Compact/CompactGroup.h"
 #include "Database/Compact/CompactRegistry.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactDatabase", 0, CompactDatabase, IProviderDatabase)
 
@@ -32,8 +30,8 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 		return false;
 	}
 
-	Path fileName = connectionString.get(L"fileName");
-	bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
+	const Path fileName = connectionString.get(L"fileName");
+	const bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
 
 	Ref< BlockFile > blockFile = new BlockFile();
 	if (!blockFile->create(fileName, flushAlways))
@@ -42,7 +40,7 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 		return false;
 	}
 
-	uint32_t registryBlockId = blockFile->allocBlockId();
+	const uint32_t registryBlockId = blockFile->allocBlockId();
 	T_FATAL_ASSERT (registryBlockId == 1);
 
 	Ref< CompactRegistry > registry = new CompactRegistry();
@@ -71,9 +69,9 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 		return false;
 	}
 
-	Path fileName = connectionString.get(L"fileName");
-	bool readOnly = parseString< bool >(connectionString.get(L"readOnly"));
-	bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
+	const Path fileName = connectionString.get(L"fileName");
+	const bool readOnly = parseString< bool >(connectionString.get(L"readOnly"));
+	const bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
 
 	Ref< BlockFile > blockFile = new BlockFile();
 	if (!blockFile->open(fileName, readOnly, flushAlways))
@@ -136,5 +134,4 @@ IProviderGroup* CompactDatabase::getRootGroup()
 	return m_rootGroup;
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Database/Events/EvtInstanceCreated.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EvtInstanceCreated", 0, EvtInstanceCreated, EvtInstance)
 
@@ -34,5 +32,4 @@ void EvtInstanceCreated::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"groupPath", m_groupPath);
 }
 
-	}
 }
