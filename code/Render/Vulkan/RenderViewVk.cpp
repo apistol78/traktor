@@ -1404,11 +1404,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
 		presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
 #endif
+
+#if !defined(__LINUX__)
 	if (vblanks <= 0)
 	{
 		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_IMMEDIATE_KHR))
 			presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 	}
+#endif
 
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
 		log::info << L"Using FIFO presentation mode." << Endl;
