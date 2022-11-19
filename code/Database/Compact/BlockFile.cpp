@@ -17,19 +17,17 @@
 #include "Database/Compact/BlockReadStream.h"
 #include "Database/Compact/BlockWriteStream.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_version = 3;
 const uint32_t c_maxBlockCount = 8192;
 const uint32_t c_headerSize = 3 * sizeof(uint32_t);
 const uint32_t c_dataOffset = c_headerSize + c_maxBlockCount * (sizeof(uint32_t) + sizeof(BlockFile::Block));
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockFile", BlockFile, Object)
 
@@ -293,5 +291,4 @@ void BlockFile::returnReadStream(IStream* readStream)
 	m_unusedReadStreams.push_back(readStream);
 }
 
-	}
 }

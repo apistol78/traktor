@@ -15,10 +15,8 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Database/Compact/CompactRegistry.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactBlockEntry", 0, CompactBlockEntry, ISerializable)
 
@@ -79,7 +77,7 @@ CompactBlockEntry* CompactRegistry::createBlockEntry()
 
 bool CompactRegistry::removeGroup(CompactGroupEntry* groupEntry)
 {
-	RefArray< CompactGroupEntry >::iterator i = std::find(m_groupEntries.begin(), m_groupEntries.end(), groupEntry);
+	const auto i = std::find(m_groupEntries.begin(), m_groupEntries.end(), groupEntry);
 	if (i == m_groupEntries.end())
 		return false;
 
@@ -89,7 +87,7 @@ bool CompactRegistry::removeGroup(CompactGroupEntry* groupEntry)
 
 bool CompactRegistry::removeInstance(CompactInstanceEntry* instanceEntry)
 {
-	RefArray< CompactInstanceEntry >::iterator i = std::find(m_instanceEntries.begin(), m_instanceEntries.end(), instanceEntry);
+	const auto i = std::find(m_instanceEntries.begin(), m_instanceEntries.end(), instanceEntry);
 	if (i == m_instanceEntries.end())
 		return false;
 
@@ -99,7 +97,7 @@ bool CompactRegistry::removeInstance(CompactInstanceEntry* instanceEntry)
 
 bool CompactRegistry::removeBlock(CompactBlockEntry* blockEntry)
 {
-	RefArray< CompactBlockEntry >::iterator i = std::find(m_blockEntries.begin(), m_blockEntries.end(), blockEntry);
+	const auto i = std::find(m_blockEntries.begin(), m_blockEntries.end(), blockEntry);
 	if (i == m_blockEntries.end())
 		return false;
 
@@ -115,5 +113,4 @@ void CompactRegistry::serialize(ISerializer& s)
 	s >> MemberRefArray< CompactBlockEntry >(L"blockEntries", m_blockEntries);
 }
 
-	}
 }

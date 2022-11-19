@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Instance guid changed event.
  * \ingroup Database
@@ -47,6 +45,4 @@ private:
 	Guid m_instancePreviousGuid;
 };
 
-	}
 }
-

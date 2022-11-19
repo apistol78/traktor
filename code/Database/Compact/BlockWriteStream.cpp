@@ -11,10 +11,8 @@
 #include "Core/Io/StreamCopy.h"
 #include "Database/Compact/BlockWriteStream.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 BlockWriteStream::BlockWriteStream(BlockFile* blockFile, IStream* stream, BlockFile::Block& outBlock)
 :	m_blockFile(blockFile)
@@ -43,7 +41,7 @@ void BlockWriteStream::close()
 	const size_t size = m_memory->size();
 
 	// Find region in block file which has enough room to write gathered data.
-	int64_t offset = m_blockFile->allocateRegion(size);
+	const int64_t offset = m_blockFile->allocateRegion(size);
 
 	// Move write pointer to region.
 	m_outputStream->seek(IStream::SeekSet, offset);
@@ -110,5 +108,4 @@ void BlockWriteStream::flush()
 	m_memoryStream->flush();
 }
 
-	}
 }

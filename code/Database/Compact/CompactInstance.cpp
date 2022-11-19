@@ -14,10 +14,8 @@
 #include "Database/Compact/CompactInstance.h"
 #include "Database/Compact/CompactRegistry.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.CompactInstance", CompactInstance, IProviderInstance)
 
@@ -208,7 +206,7 @@ Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 
 	const auto& dataBlocks = m_instanceEntry->getDataBlocks();
 
-	auto it = dataBlocks.find(dataName);
+	const auto it = dataBlocks.find(dataName);
 	if (it == dataBlocks.end())
 		return nullptr;
 
@@ -239,5 +237,4 @@ Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 	return dataStream;
 }
 
-	}
 }

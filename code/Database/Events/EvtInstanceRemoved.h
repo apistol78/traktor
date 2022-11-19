@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Instance removed event.
  * \ingroup Database
@@ -36,6 +34,4 @@ public:
 	explicit EvtInstanceRemoved(const Guid& instanceGuid);
 };
 
-	}
 }
-

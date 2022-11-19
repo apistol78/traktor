@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Group renamed event.
  * \ingroup Database
@@ -57,6 +55,4 @@ private:
 	std::wstring m_previousPath;
 };
 
-	}
 }
-

@@ -18,13 +18,15 @@ namespace traktor
 class ChunkMemory;
 class ChunkMemoryStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class BlockWriteStream : public IStream
 {
 public:
-	BlockWriteStream(BlockFile* blockFile, IStream* stream, BlockFile::Block& outBlock);
+	explicit BlockWriteStream(BlockFile* blockFile, IStream* stream, BlockFile::Block& outBlock);
 
 	virtual ~BlockWriteStream();
 
@@ -56,5 +58,4 @@ private:
 	BlockFile::Block& m_outBlock;
 };
 
-	}
 }

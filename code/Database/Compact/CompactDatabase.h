@@ -24,8 +24,10 @@ namespace traktor
 
 class Path;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class CompactGroup;
 
@@ -54,6 +56,4 @@ private:
 	uint32_t m_registryHash = 0;
 };
 
-	}
 }
-

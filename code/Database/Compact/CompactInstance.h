@@ -10,10 +10,8 @@
 
 #include "Database/Provider/IProviderInstance.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class CompactContext;
 class CompactInstanceEntry;
@@ -71,6 +69,4 @@ private:
 	Ref< CompactInstanceEntry > m_instanceEntry;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Database/Events/EvtGroupRenamed.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EvtGroupRenamed", 0, EvtGroupRenamed, IEvent)
 
@@ -39,5 +37,4 @@ void EvtGroupRenamed::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"previousPath", m_previousPath);
 }
 
-	}
 }

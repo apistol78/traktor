@@ -11,10 +11,8 @@
 #include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class CompactContext;
 class CompactGroupEntry;
@@ -51,6 +49,4 @@ private:
 	RefArray< CompactInstance > m_childInstances;
 };
 
-	}
 }
-

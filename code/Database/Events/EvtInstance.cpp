@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Database/Events/EvtInstance.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.EvtInstance", EvtInstance, IEvent)
 
@@ -32,5 +30,4 @@ void EvtInstance::serialize(ISerializer& s)
 	s >> Member< Guid >(L"instanceGuid", m_instanceGuid);
 }
 
-	}
 }
