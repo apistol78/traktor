@@ -36,16 +36,20 @@ public:
 		double seconds;
 	};
 
-	void begin(const TypeInfo& pipelineType);
+	void begin(const wchar_t* const id);
 
-	void end(const TypeInfo& pipelineType);
+	void end(const wchar_t* const id);
 
-	const SmallMap< const TypeInfo*, Duration >& getDurations() const { return m_durations; }
+	void begin(const TypeInfo& pipelineType) { begin(pipelineType.getName()); }
+
+	void end(const TypeInfo& pipelineType) { end(pipelineType.getName()); }
+
+	const SmallMap< const wchar_t*, Duration >& getDurations() const { return m_durations; }
 
 private:
 	struct Scope
 	{
-		const TypeInfo* pipelineType;
+		const wchar_t* id;
 		Scope* parent;
 		double start;
 		double child;
@@ -53,7 +57,7 @@ private:
 
 	Timer m_timer;
 	ThreadLocal m_scope;
-	SmallMap< const TypeInfo*, Duration > m_durations;
+	SmallMap< const wchar_t*, Duration > m_durations;
 	CriticalSection m_lock;
 };
 

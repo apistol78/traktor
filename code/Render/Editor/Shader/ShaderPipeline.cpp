@@ -156,7 +156,7 @@ uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
 	if (!programCompiler)
 		return 0;
 
-	std::wstring rendererSignature = programCompiler->getRendererSignature();
+	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform)) == nullptr)
 		return 0;
@@ -180,7 +180,7 @@ bool ShaderPipeline::buildDependencies(
 	if (!programCompiler)
 		return false;
 
-	std::wstring rendererSignature = programCompiler->getRendererSignature();
+	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	// Extract platform permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
@@ -240,7 +240,7 @@ bool ShaderPipeline::buildOutput(
 	if (!programCompiler)
 		return false;
 
-	std::wstring rendererSignature = programCompiler->getRendererSignature();
+	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
@@ -330,7 +330,7 @@ bool ShaderPipeline::buildOutput(
 		T_ASSERT(shaderGraphTechnique);
 
 		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
-		uint32_t combinationCount = combinations->getCombinationCount();
+		const uint32_t combinationCount = combinations->getCombinationCount();
 
 		log::info << L"Building shader technique \"" << techniqueName << L"\" (" << combinationCount << L" permutations)..." << Endl;
 		log::info << IncreaseIndent;
@@ -362,11 +362,11 @@ bool ShaderPipeline::buildOutput(
 				const auto& parameterBits = shaderResource->getParameterBits();
 
 				// Remap parameter mask and value for this combination as shader consist of multiple techniques.
-				uint32_t mask = combinations->getCombinationMask(combination);
-				uint32_t value = combinations->getCombinationValue(combination);
+				const uint32_t mask = combinations->getCombinationMask(combination);
+				const uint32_t value = combinations->getCombinationValue(combination);
 
-				auto maskNames = combinations->getParameterNames(mask);
-				auto valueNames = combinations->getParameterNames(value);
+				const auto maskNames = combinations->getParameterNames(mask);
+				const auto valueNames = combinations->getParameterNames(value);
 
 				ShaderResource::Combination& shaderCombination = shaderResourceTechnique.combinations[combination];
 				for (const auto& maskName : maskNames)
@@ -497,7 +497,7 @@ bool ShaderPipeline::buildOutput(
 						return;
 					}
 
-					auto it = std::find(shaderCombination.textures.begin(), shaderCombination.textures.end(), textureGuid);
+					const auto it = std::find(shaderCombination.textures.begin(), shaderCombination.textures.end(), textureGuid);
 					if (it != shaderCombination.textures.end())
 						textureIndex = (int32_t)std::distance(shaderCombination.textures.begin(), it);
 					else
@@ -523,7 +523,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Compile shader program.
-				uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
+				const uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
 					[&](IStream* stream) {
