@@ -32,6 +32,7 @@ namespace traktor::editor
 {
 
 class IPipelineCache;
+class PipelineProfiler;
 
 /*! Data access cache.
  *
@@ -43,7 +44,7 @@ class T_DLLCLASS DataAccessCache : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit DataAccessCache(IPipelineCache* cache);
+	explicit DataAccessCache(PipelineProfiler* profiler, IPipelineCache* cache);
 
 	template< typename ObjectType >
 	Ref< ObjectType > read(
@@ -62,6 +63,7 @@ public:
 	}
 
 private:
+	Ref< PipelineProfiler > m_profiler;
 	IPipelineCache* m_cache;
 
 	Ref< Object > readObject(

@@ -663,7 +663,7 @@ bool BakePipelineOperator::build(
 							return nullptr;
 
 						// Calculate size of lightmap from geometry.
-						int32_t lightmapSize = calculateLightmapSize(
+						const int32_t lightmapSize = calculateLightmapSize(
 							model,
 							configuration->getLumelDensity(),
 							configuration->getMinimumLightMapSize(),

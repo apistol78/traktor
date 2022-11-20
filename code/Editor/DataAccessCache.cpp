@@ -8,16 +8,19 @@
  */
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineCache.h"
+#include "Editor/Pipeline/PipelineProfiler.h"
 
 namespace traktor::editor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DataAccessCache", DataAccessCache, Object)
 
-DataAccessCache::DataAccessCache(IPipelineCache* cache)
-:	m_cache(cache)
+DataAccessCache::DataAccessCache(PipelineProfiler* profiler, IPipelineCache* cache)
+:	m_profiler(profiler)
+,	m_cache(cache)
 {
 }
 
@@ -28,6 +31,11 @@ Ref< Object > DataAccessCache::readObject(
 	const std::function< Ref< Object > () >& create
 )
 {
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[&](){ m_profiler->begin(type_of< DataAccessCache >()); },
+		[&](){ m_profiler->end(type_of< DataAccessCache >()); }
+	);
+
 	Ref< IStream > s;
 
 	// Try to read from cache first.
@@ -35,13 +43,18 @@ Ref< Object > DataAccessCache::readObject(
 	{
 		if ((s = m_cache->get(key)) != nullptr)
 		{
-			Ref< Object > object = read(s); s->close();
+			m_profiler->begin(L"DataAccessCache read");
+			Ref< Object > object = read(s);
+			m_profiler->end(L"DataAccessCache read");
+			s->close();
 			return object;
 		}
 	}
 
 	// No cached entry; need to fabricate object.
+	m_profiler->begin(L"DataAccessCache create");
 	Ref< Object > object = create();
+	m_profiler->end(L"DataAccessCache create");
 	if (!object)
 		return nullptr;
 
@@ -50,7 +63,10 @@ Ref< Object > DataAccessCache::readObject(
 	{
 		if ((s = m_cache->put(key)) != nullptr)
 		{
-			if (write(object, s))
+			m_profiler->begin(L"DataAccessCache write");
+			const bool result = write(object, s);
+			m_profiler->end(L"DataAccessCache write");
+			if (result)
 				s->close();
 			else
 				log::error << L"Unable to upload memento object to cache." << Endl;

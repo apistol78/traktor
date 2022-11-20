@@ -14,41 +14,39 @@ namespace traktor::editor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineProfiler", PipelineProfiler, Object)
 
-void PipelineProfiler::begin(const TypeInfo& pipelineType)
+void PipelineProfiler::begin(const wchar_t* const id)
 {
 	Scope* current = new Scope();
-	current->pipelineType = &pipelineType;
+	current->id = id;
 	current->parent = (Scope*)m_scope.get();
 	current->start = m_timer.getElapsedTime();
 	current->child = 0.0;
 	m_scope.set(current);
 }
 
-void PipelineProfiler::end(const TypeInfo& pipelineType)
+void PipelineProfiler::end(const wchar_t* const id)
 {
 	Scope* current = (Scope*)m_scope.get();
 	m_scope.set(current->parent);
 
-	T_FATAL_ASSERT(current->pipelineType == &pipelineType);
+	const double end = m_timer.getElapsedTime();
 
-	double end = m_timer.getElapsedTime();
-
-	double inclusive = end - current->start;
-	double exclusive = inclusive - current->child;
+	const double inclusive = end - current->start;
+	const double exclusive = inclusive - current->child;
 	
 	if (current->parent)
 		current->parent->child += inclusive;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
-		auto it = m_durations.find(&pipelineType);
+		auto it = m_durations.find(id);
 		if (it != m_durations.end())
 		{
 			it->second.count++;
 			it->second.seconds += exclusive;
 		}
 		else
-			m_durations.insert(&pipelineType, { 1, exclusive });
+			m_durations.insert(id, { 1, exclusive });
 	}
 
 	delete current;
