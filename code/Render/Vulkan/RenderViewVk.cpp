@@ -1414,13 +1414,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 #endif
 
 	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-		log::info << L"Using FIFO presentation mode." << Endl;
+		log::debug << L"Using FIFO presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-		log::info << L"Using FIFO (relaxed) presentation mode." << Endl;
+		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		log::info << L"Using IMMEDIATE presentation mode." << Endl;
+		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
 	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		log::info << L"Using MAILBOX presentation mode." << Endl;
+		log::debug << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
 	uint32_t clampedImageCount = desiredImageCount;
@@ -1472,7 +1472,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_context->getLogicalDevice(), m_swapChain, &imageCount, presentImages.ptr());
 
-	log::info << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
+	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
