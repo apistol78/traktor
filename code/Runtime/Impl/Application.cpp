@@ -110,9 +110,9 @@ bool Application::create(
 )
 {
 	// Establish target manager connection is launched from the Editor.
-	std::wstring targetManagerHost = settings->getProperty< std::wstring >(L"Runtime.TargetManager/Host");
-	int32_t targetManagerPort = settings->getProperty< int32_t >(L"Runtime.TargetManager/Port");
-	Guid targetManagerId = Guid(settings->getProperty< std::wstring >(L"Runtime.TargetManager/Id"));
+	const std::wstring targetManagerHost = settings->getProperty< std::wstring >(L"Runtime.TargetManager/Host");
+	const int32_t targetManagerPort = settings->getProperty< int32_t >(L"Runtime.TargetManager/Port");
+	const Guid targetManagerId = Guid(settings->getProperty< std::wstring >(L"Runtime.TargetManager/Id"));
 	if (!targetManagerHost.empty() && targetManagerPort && targetManagerId.isValid())
 	{
 		m_targetManagerConnection = new TargetManagerConnection();
@@ -127,7 +127,7 @@ bool Application::create(
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	auto modules = defaultSettings->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
+	const auto modules = defaultSettings->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
 	for (const auto& module : modules)
 	{
 		Ref< Library > library = new Library();
@@ -147,7 +147,7 @@ bool Application::create(
 	// Database
 	T_DEBUG(L"Creating database...");
 	m_database = new db::Database ();
-	std::wstring connectionString = settings->getProperty< std::wstring >(L"Runtime.Database");
+	const std::wstring connectionString = settings->getProperty< std::wstring >(L"Runtime.Database");
 	if (!m_database->open(connectionString))
 	{
 		log::error << L"Application failed; unable to open database \"" << connectionString << L"\"" << Endl;
@@ -213,8 +213,8 @@ bool Application::create(
 		T_DEBUG(L"Creating script server...");
 		m_scriptServer = new ScriptServer();
 
-		bool attachDebugger = settings->getProperty< bool >(L"Script.AttachDebugger", false);
-		bool attachProfiler = settings->getProperty< bool >(L"Script.AttachProfiler", false);
+		const bool attachDebugger = settings->getProperty< bool >(L"Script.AttachDebugger", false);
+		const bool attachProfiler = settings->getProperty< bool >(L"Script.AttachProfiler", false);
 
 		if ((attachDebugger || attachProfiler) && m_targetManagerConnection)
 		{
@@ -471,7 +471,7 @@ bool Application::update()
 		}
 
 		// Execute configuration on all servers.
-		int32_t result = m_environment->executeReconfigure();
+		const int32_t result = m_environment->executeReconfigure();
 		if (result == CrFailed)
 		{
 			log::error << L"Failed to reconfigure application; cannot continue." << Endl;
@@ -569,7 +569,7 @@ bool Application::update()
 	{
 #if !defined(__ANDROID__) && !defined(__IOS__)
 		// Check render active state; notify application when changes.
-		bool renderViewActive = m_renderServer->getRenderView()->isActive() && !m_renderServer->getRenderView()->isMinimized();
+		const bool renderViewActive = m_renderServer->getRenderView()->isActive() && !m_renderServer->getRenderView()->isMinimized();
 		if (renderViewActive != m_renderViewActive)
 		{
 			ActiveEvent activeEvent(renderViewActive);
@@ -656,7 +656,7 @@ bool Application::update()
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
-					float excessTime = std::max(m_renderCpuDurations[1] - m_buildDuration - m_updateDuration * updateCount, 0.0f);
+					const float excessTime = std::max(m_renderCpuDurations[1] - m_buildDuration - m_updateDuration * updateCount, 0.0f);
 					updateInterval = std::min(excessTime / updateCount, 0.03f);
 
 					// Need some wait margin as events, especially on Windows, have very low accuracy.
@@ -670,32 +670,32 @@ bool Application::update()
 				}
 
 				// Update input.
-				double inputTimeStart = m_timer.getElapsedTime();
+				const double inputTimeStart = m_timer.getElapsedTime();
 				if (m_inputServer)
 				{
 					T_PROFILER_SCOPE(L"Application update - Input server");
 					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
 				}
-				double inputTimeEnd = m_timer.getElapsedTime();
+				const double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
 
 				// Update current state for each simulation tick.
-				double updateTimeStart = m_timer.getElapsedTime();
+				const double updateTimeStart = m_timer.getElapsedTime();
 				IState::UpdateResult result;
 				{
 					T_PROFILER_SCOPE(L"Application update - State");
 					result = currentState->update(m_stateManager, m_updateInfo);
 				}
-				double updateTimeEnd = m_timer.getElapsedTime();
+				const double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
 
 				// Update physics.
-				double physicsTimeStart = m_timer.getElapsedTime();
+				const double physicsTimeStart = m_timer.getElapsedTime();
 				{
 					T_PROFILER_SCOPE(L"Application update - Physics server");
 					m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
 				}
-				double physicsTimeEnd = m_timer.getElapsedTime();
+				const double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
 				m_updateDuration = (float)(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
@@ -741,13 +741,13 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
-			double updateTimeStart = m_timer.getElapsedTime();
+			const double updateTimeStart = m_timer.getElapsedTime();
 			IState::UpdateResult updateResult;
 			{
 				T_PROFILER_SCOPE(L"Application update - State");
 				updateResult = currentState->update(m_stateManager, m_updateInfo);
 			}
-			double updateTimeEnd = m_timer.getElapsedTime();
+			const double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
 
@@ -777,23 +777,23 @@ bool Application::update()
 			return true;
 
 		// Build frame.
-		double buildTimeStart = m_timer.getElapsedTime();
+		const double buildTimeStart = m_timer.getElapsedTime();
 		IState::BuildResult buildResult;
 		{
 			T_PROFILER_SCOPE(L"Application build - State");
 			buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		}
-		double buildTimeEnd = m_timer.getElapsedTime();
+		const double buildTimeEnd = m_timer.getElapsedTime();
 		m_buildDuration = float(buildTimeEnd - buildTimeStart);
 
 		// Update scripting language runtime.
-		double gcTimeStart = m_timer.getElapsedTime();
+		const double gcTimeStart = m_timer.getElapsedTime();
 		if (m_scriptServer)
 		{
 			T_PROFILER_SCOPE(L"Application script GC");
 			m_scriptServer->cleanup(false);
 		}
-		double gcTimeEnd = m_timer.getElapsedTime();
+		const double gcTimeEnd = m_timer.getElapsedTime();
 		gcDuration = gcTimeEnd - gcTimeStart;
 
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
@@ -803,7 +803,7 @@ bool Application::update()
 				T_PROFILER_SCOPE(L"Application sync render");
 
 				// Synchronize with render thread and issue another rendering.
-				bool renderFinished = m_signalRenderFinish.wait(1000);
+				const bool renderFinished = m_signalRenderFinish.wait(1000);
 				if (renderFinished)
 				{
 					m_signalRenderFinish.reset();
@@ -824,14 +824,14 @@ bool Application::update()
 			else
 			{
 				T_PROFILER_SCOPE(L"Application render");
-				double renderBegin = m_timer.getElapsedTime();
+				const double renderBegin = m_timer.getElapsedTime();
 
 				// Single threaded rendering; perform rendering here.
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView && !renderView->isMinimized())
 				{
 					T_PROFILER_BEGIN(L"Application render beginFrame");
-					bool frameBegun = renderView->beginFrame();
+					const bool frameBegun = renderView->beginFrame();
 					T_PROFILER_END();
 
 					if (frameBegun)
@@ -853,7 +853,7 @@ bool Application::update()
 						renderView->endFrame();
 						T_PROFILER_END();
 
-						double renderEnd = m_timer.getElapsedTime();
+						const double renderEnd = m_timer.getElapsedTime();
 						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
 					}
 					
@@ -881,7 +881,7 @@ bool Application::update()
 					m_threadRender->sleep(10);
 				}
 
-				double renderEnd = m_timer.getElapsedTime();
+				const double renderEnd = m_timer.getElapsedTime();
 				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
 
 				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
@@ -1034,7 +1034,7 @@ void Application::pollDatabase()
 	Ref< const db::IEvent > event;
 	bool remote;
 
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	const Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	while (!currentThread->stopped() && m_database->getEvent(event, remote))
 	{
 		if (auto committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
@@ -1090,7 +1090,7 @@ void Application::threadRender()
 			{
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
-				double renderBegin = m_timer.getElapsedTime();
+				const double renderBegin = m_timer.getElapsedTime();
 
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView && !renderView->isMinimized())
@@ -1098,7 +1098,7 @@ void Application::threadRender()
 					T_PROFILER_BEGIN(L"Application render");
 
 					T_PROFILER_BEGIN(L"Application render beginFrame");
-					bool frameBegun = renderView->beginFrame();
+					const bool frameBegun = renderView->beginFrame();
 					T_PROFILER_END();
 
 					if (frameBegun)
@@ -1120,7 +1120,7 @@ void Application::threadRender()
 						renderView->endFrame();
 						T_PROFILER_END();
 
-						double renderEnd = m_timer.getElapsedTime();
+						const double renderEnd = m_timer.getElapsedTime();
 						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
 
 						T_PROFILER_BEGIN(L"Application render present");
@@ -1150,8 +1150,8 @@ void Application::threadRender()
 					m_threadRender->sleep(100);
 				}
 
-				double renderEnd = m_timer.getElapsedTime();
-				m_renderCpuDurations[1] = float(renderEnd - renderBegin);
+				const double renderEnd = m_timer.getElapsedTime();
+				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
 
 				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
 				m_stateRender = nullptr;

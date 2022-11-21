@@ -96,7 +96,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 	int32_t bestRefreshRate = 0;
 	uint32_t bestDisplayModeIndex = 0;
 
-	uint32_t displayModeCount = renderSystem->getDisplayModeCount();
+	const uint32_t displayModeCount = renderSystem->getDisplayModeCount();
 	if (!displayModeCount)
 	{
 		render::DisplayMode currentMode = renderSystem->getCurrentDisplayMode();
@@ -118,11 +118,11 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 	{
 		for (uint32_t j = 0; j < displayModeCount; ++j)
 		{
-			render::DisplayMode check = renderSystem->getDisplayMode(j);
+			const render::DisplayMode check = renderSystem->getDisplayMode(j);
 			if (check.colorBits != c_preferColorBits[i])
 				continue;
 
-			int32_t match =
+			const int32_t match =
 				traktor::abs((int32_t)(check.width - criteria.width)) +
 				traktor::abs((int32_t)(check.height - criteria.height));
 
@@ -160,9 +160,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerDefault", RenderServerDefau
 
 bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp)
 {
-	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
-	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
-	std::wstring vrCompositorType = settings->getProperty< std::wstring >(L"Render.VRCompositorType");
+	const std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
+	const std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType.c_str()));
 	if (!renderSystem)
@@ -178,7 +177,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		std::swap(captureRenderSystem, renderSystem);
 	}
 
-	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
@@ -225,12 +224,12 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 	else
 	{
-		int32_t defaultDenominator = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/DefaultDenominator", 2);
+		const int32_t defaultDenominator = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/DefaultDenominator", 2);
 		int32_t defaultWidth = m_originalDisplayMode.width / defaultDenominator;
 		int32_t defaultHeight = m_originalDisplayMode.height / defaultDenominator;
 
 		// Clamp width if display is wider than 16:10.
-		float ratio = float(defaultWidth) / defaultHeight;
+		const float ratio = float(defaultWidth) / defaultHeight;
 		if (ratio > 16.0f / 10.0f)
 			defaultWidth = (defaultHeight * 16) / 10;
 
@@ -284,8 +283,8 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
-	int32_t skipMips = skipMipsFromQuality(textureQuality);
+	const int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
 
@@ -359,10 +358,10 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	else
 		T_DEBUG(L"Render view settings unchanged");
 
-	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	// Update texture quality; manifest through skipping high-detail mips.
-	int32_t skipMips = skipMipsFromQuality(textureQuality);
+	const int32_t skipMips = skipMipsFromQuality(textureQuality);
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
@@ -463,7 +462,7 @@ float RenderServerDefault::getScreenAspectRatio() const
 
 float RenderServerDefault::getViewAspectRatio() const
 {
-	float aspectRatio = float(getWidth()) / getHeight();
+	const float aspectRatio = float(getWidth()) / getHeight();
 	return min(aspectRatio, c_maxAspectRatio);
 }
 

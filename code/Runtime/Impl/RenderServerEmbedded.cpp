@@ -91,8 +91,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerEmbedded", RenderServerEmbe
 
 bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin)
 {
-	std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
-	std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
+	const std::wstring renderType = defaultSettings->getProperty< std::wstring >(L"Render.Type");
+	const std::wstring captureRenderType = settings->getProperty< std::wstring >(L"Render.CaptureType");
 
 	Ref< render::IRenderSystem > renderSystem = dynamic_type_cast< render::IRenderSystem* >(TypeInfo::createInstance(renderType.c_str()));
 	if (!renderSystem)
@@ -108,7 +108,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 		std::swap(captureRenderSystem, renderSystem);
 	}
 
-	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
 	rsd.capture = captureRenderSystem;
@@ -167,12 +167,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 
 void RenderServerEmbedded::destroy()
 {
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
-
+	safeClose(m_renderView);
 	safeDestroy(m_renderSystem);
 }
 
@@ -180,8 +175,8 @@ void RenderServerEmbedded::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
-	int32_t skipMips = skipMipsFromQuality(textureQuality);
+	const int32_t textureQuality = environment->getSettings()->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
 
@@ -196,10 +191,10 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	int32_t result = CrUnaffected;
 
-	int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
+	const int32_t textureQuality = settings->getProperty< int32_t >(L"Render.TextureQuality", 2);
 
 	// Update texture quality; manifest through skipping high-detail mips.
-	int32_t skipMips = skipMipsFromQuality(textureQuality);
+	const int32_t skipMips = skipMipsFromQuality(textureQuality);
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
@@ -272,7 +267,7 @@ float RenderServerEmbedded::getScreenAspectRatio() const
 
 float RenderServerEmbedded::getViewAspectRatio() const
 {
-	float aspectRatio = float(m_renderView->getWidth()) / m_renderView->getHeight();
+	const float aspectRatio = float(m_renderView->getWidth()) / m_renderView->getHeight();
 	return aspectRatio;
 }
 

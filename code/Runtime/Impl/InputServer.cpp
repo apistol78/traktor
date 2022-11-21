@@ -44,14 +44,14 @@ namespace traktor
 
 bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory deviceCategory)
 {
-	int32_t deviceCount = inputSystem->getDeviceCount(deviceCategory, true);
+	const int32_t deviceCount = inputSystem->getDeviceCount(deviceCategory, true);
 	for (int32_t i = 0; i < deviceCount; ++i)
 	{
 		input::IInputDevice* device = inputSystem->getDevice(deviceCategory, i, true);
 		if (!device)
 			continue;
 
-		int32_t controlCount = device->getControlCount();
+		const int32_t controlCount = device->getControlCount();
 		for (int32_t j = 0; j < controlCount; ++j)
 		{
 			if (device->isControlAnalogue(j))
@@ -99,7 +99,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	}
 
 	// Read default input mapping.
-	Guid defaultSourceDataGuid(defaultSettings->getProperty< std::wstring >(L"Input.Default"));
+	const Guid defaultSourceDataGuid(defaultSettings->getProperty< std::wstring >(L"Input.Default"));
 	if (defaultSourceDataGuid.isNotNull())
 	{
 		Ref< input::InputMappingResource > inputMappingResource = db->getObjectReadOnly< input::InputMappingResource >(defaultSourceDataGuid);
@@ -204,7 +204,7 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 		result |= CrAccepted;
 	}
 
-	bool enableRumble = settings->getProperty< bool >(L"Input.Rumble", true);
+	const bool enableRumble = settings->getProperty< bool >(L"Input.Rumble", true);
 	if (enableRumble != bool(m_rumbleEffectPlayer != nullptr))
 	{
 		if (enableRumble)
@@ -313,7 +313,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 
 			if (m_inputMappingSourceData)
 			{
-				uint32_t sourceHash = DeepHash(sourceData).get();
+				const uint32_t sourceHash = DeepHash(sourceData).get();
 
 				// Discard duplicated input sources.
 				for (auto it : m_inputMappingSourceData->getSourceData())
@@ -355,7 +355,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		else
 		{
 			// Abort fabrication if escape or backspace on any keyboard has been pressed.
-			int32_t keyboardCount = m_inputSystem->getDeviceCount(input::CtKeyboard, true);
+			const int32_t keyboardCount = m_inputSystem->getDeviceCount(input::CtKeyboard, true);
 			for (int32_t i = 0; i < keyboardCount; ++i)
 			{
 				Ref< input::IInputDevice > keyboardDevice = m_inputSystem->getDevice(input::CtKeyboard, i, true);
@@ -464,7 +464,7 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 
 	const auto& defaultSourceData = m_inputMappingDefaultSourceData->getSourceData();
 
-	auto i = defaultSourceData.find(sourceId);
+	const auto i = defaultSourceData.find(sourceId);
 	if (i == defaultSourceData.end())
 		return false;
 
@@ -504,7 +504,7 @@ bool InputServer::isIdle() const
 
 	for (auto it : m_inputMapping->getStates())
 	{
-		float dV = it.second->getValue() - it.second->getPreviousValue();
+		const float dV = it.second->getValue() - it.second->getPreviousValue();
 		if (std::abs(dV) > FUZZY_EPSILON)
 			return false;
 	}

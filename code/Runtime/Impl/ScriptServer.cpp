@@ -54,7 +54,7 @@ bool ScriptServer::create(
 	net::BidirectionalObjectTransport* transport
 )
 {
-	std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
+	const std::wstring scriptType = defaultSettings->getProperty< std::wstring >(L"Script.Type");
 
 	m_scriptManager = dynamic_type_cast< script::IScriptManager* >(TypeInfo::createInstance(scriptType.c_str()));
 	if (!m_scriptManager)
@@ -286,7 +286,7 @@ void ScriptServer::threadDebugger()
 			ThreadManager::getInstance().getCurrentThread()->sleep(500);
 
 		{
-			int32_t index = (m_callSamplesIndex + 1) % 3;
+			const int32_t index = (m_callSamplesIndex + 1) % 3;
 
 			std::map< std::pair< Guid, std::wstring >, CallSample >& samples = m_callSamples[index];
 			for (std::map< std::pair< Guid, std::wstring >, CallSample >::const_iterator i = samples.begin(); i != samples.end(); ++i)
@@ -312,7 +312,7 @@ void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 	// Ensure no device is captured exclusively in case debugger has stopped script execution.
 	if (!m_scriptDebugger->isRunning() && m_inputSystem != nullptr)
 	{
-		int32_t deviceCount = m_inputSystem->getDeviceCount();
+		const int32_t deviceCount = m_inputSystem->getDeviceCount();
 		for (int32_t i = 0; i < deviceCount; ++i)
 		{
 			Ref< input::IInputDevice > device = m_inputSystem->getDevice(i);

@@ -120,7 +120,7 @@ void AudioLayer::tweenParameter(const std::wstring& parameterName, float fromVal
 
 void AudioLayer::transition(Layer* fromLayer)
 {
-	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
 	if (!permit)
 		return;
 
@@ -175,7 +175,7 @@ void AudioLayer::update(const UpdateInfo& info)
 			{
 				if (tween.duration >= FUZZY_EPSILON)
 				{
-					float k = tween.time / tween.duration;
+					const float k = tween.time / tween.duration;
 					tween.lastValue = lerp(tween.fromValue, tween.toValue, k);
 				}
 				else

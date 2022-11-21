@@ -89,7 +89,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 		for (auto i = cv.begin(); i != cv.end(); ++i)
 		{
 			const std::wstring& category = i->first;
-			float volume = PropertyFloat::get(i->second);
+			const float volume = PropertyFloat::get(i->second);
 			m_audioSystem->setVolume(
 				sound::getParameterHandle(category),
 				volume
@@ -98,9 +98,9 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	}
 
 	// Create surround environment.
-	float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
-	float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
-	float surroundFallOffExponent = settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
+	const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
+	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
+	const float surroundFallOffExponent = settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
 		surroundMaxDistance,
 		surroundInnerRadius,
@@ -114,7 +114,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	{
 		log::error << L"Audio server failed; unable to create sound player, sound muted" << Endl;
 		safeDestroy(m_audioSystem);
-		m_soundPlayer = 0;
+		m_soundPlayer = nullptr;
 		return true;
 	}
 
@@ -123,7 +123,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 
 void AudioServer::destroy()
 {
-	m_surroundEnvironment = 0;
+	m_surroundEnvironment = nullptr;
 	safeDestroy(m_soundPlayer);
 	safeDestroy(m_audioSystem);
 }
@@ -203,7 +203,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		return CrUnaffected;
 
 	// Replace audio driver.
-	std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
+	const std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
 		Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(audioType.c_str()));
@@ -225,7 +225,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		for (auto i = cv.begin(); i != cv.end(); ++i)
 		{
 			const std::wstring& category = i->first;
-			float volume = PropertyFloat::get(i->second);
+			const float volume = PropertyFloat::get(i->second);
 			m_audioSystem->setVolume(
 				sound::getParameterHandle(category),
 				volume
@@ -234,8 +234,8 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	}
 
 	// Configure surround environment distances.
-	float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
-	float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
+	const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
+	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
 	m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
 	m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
 

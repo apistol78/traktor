@@ -36,7 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.PhysicsServer", PhysicsServer, IPhysics
 
 bool PhysicsServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings)
 {
-	std::wstring physicsType = defaultSettings->getProperty< std::wstring >(L"Physics.Type");
+	const std::wstring physicsType = defaultSettings->getProperty< std::wstring >(L"Physics.Type");
 
 	Ref< physics::PhysicsManager > physicsManager = dynamic_type_cast< physics::PhysicsManager* >(TypeInfo::createInstance(physicsType.c_str()));
 	if (!physicsManager)
