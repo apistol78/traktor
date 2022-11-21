@@ -33,10 +33,8 @@ namespace traktor
 uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 {
 	uint32_t totalSize = 0;
-
 	for (int i = 0; i < mipCount; ++i)
 		totalSize += getTextureMipPitch(format, width, height, i);
-
 	return totalSize;
 }
 

@@ -35,7 +35,6 @@ namespace traktor::render
 
 class Buffer;
 class IRenderSystem;
-class ISimpleTexture;
 class ITexture;
 class IVertexLayout;
 class RenderContext;

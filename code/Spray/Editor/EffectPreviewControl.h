@@ -46,7 +46,6 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
-class ISimpleTexture;
 class RenderContext;
 class RenderGraph;
 class PrimitiveRenderer;

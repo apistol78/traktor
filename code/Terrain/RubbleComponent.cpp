@@ -12,7 +12,7 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"

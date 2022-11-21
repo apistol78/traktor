@@ -187,9 +187,9 @@ void TerrainSurfaceCache::setupBaseColor(
 			if (!shader)
 				return;
 
-			render::ISimpleTexture* heightMap = terrain->getHeightMap();
-			render::ISimpleTexture* colorMap = terrain->getColorMap();
-			render::ISimpleTexture* splatMap = terrain->getSplatMap();
+			render::ITexture* heightMap = terrain->getHeightMap();
+			render::ITexture* colorMap = terrain->getColorMap();
+			render::ITexture* splatMap = terrain->getSplatMap();
 
 			render::Shader::Permutation perm;
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
@@ -314,9 +314,9 @@ void TerrainSurfaceCache::setupPatch(
 			if (!shader)
 				return;
 
-			render::ISimpleTexture* heightMap = terrain->getHeightMap();
-			render::ISimpleTexture* colorMap = terrain->getColorMap();
-			render::ISimpleTexture* splatMap = terrain->getSplatMap();
+			render::ITexture* heightMap = terrain->getHeightMap();
+			render::ITexture* colorMap = terrain->getColorMap();
+			render::ITexture* splatMap = terrain->getSplatMap();
 
 			render::Shader::Permutation perm;
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);
@@ -375,17 +375,17 @@ void TerrainSurfaceCache::setupPatch(
 	outTextureOffset = offsetFromTile(m_alloc, tile);
 }
 
-render::ISimpleTexture* TerrainSurfaceCache::getVirtualAlbedo() const
+render::ITexture* TerrainSurfaceCache::getVirtualAlbedo() const
 {
 	return m_virtualAlbedo;
 }
 
-render::ISimpleTexture* TerrainSurfaceCache::getVirtualNormals() const
+render::ITexture* TerrainSurfaceCache::getVirtualNormals() const
 {
 	return m_virtualNormals;
 }
 
-render::ISimpleTexture* TerrainSurfaceCache::getBaseTexture() const
+render::ITexture* TerrainSurfaceCache::getBaseTexture() const
 {
 	return m_base->getColorTexture(0);
 }

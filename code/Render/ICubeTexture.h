@@ -21,8 +21,6 @@
 namespace traktor::render
 {
 
-class ISimpleTexture;
-
 /*! Cube texture.
  * \ingroup Render
  */

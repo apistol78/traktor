@@ -11,7 +11,7 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/TerrainResource.h"
@@ -27,11 +27,11 @@ void TerrainResource::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
-	s >> resource::Member< render::ISimpleTexture >(L"colorMap", m_colorMap);
-	s >> resource::Member< render::ISimpleTexture >(L"normalMap", m_normalMap);
-	s >> resource::Member< render::ISimpleTexture >(L"heightMap", m_heightMap);
-	s >> resource::Member< render::ISimpleTexture >(L"splatMap", m_splatMap);
-	s >> resource::Member< render::ISimpleTexture >(L"cutMap", m_cutMap);
+	s >> resource::Member< render::ITexture >(L"colorMap", m_colorMap);
+	s >> resource::Member< render::ITexture >(L"normalMap", m_normalMap);
+	s >> resource::Member< render::ITexture >(L"heightMap", m_heightMap);
+	s >> resource::Member< render::ITexture >(L"splatMap", m_splatMap);
+	s >> resource::Member< render::ITexture >(L"cutMap", m_cutMap);
 	s >> resource::Member< render::Shader >(L"terrainShader", m_terrainShader);
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
 	s >> MemberStlVector< Patch, MemberComposite< Patch > >(L"patches", m_patches);

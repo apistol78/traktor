@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializable.h"
-#include "Render/ISimpleTexture.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/EntityFactory.h"

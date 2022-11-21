@@ -16,7 +16,6 @@
 #include "Resource/IResourceManager.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Terrain/Terrain.h"

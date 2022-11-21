@@ -384,15 +384,15 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_detailSkip = terrainAsset->getDetailSkip();
 	terrainResource->m_patchDim = terrainAsset->getPatchDim();
 	terrainResource->m_heightfield = terrainAsset->getHeightfield();
-	terrainResource->m_colorMap = resource::Id< render::ISimpleTexture >(colorMapGuid);
-	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
-	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
-	terrainResource->m_splatMap = resource::Id< render::ISimpleTexture >(splatMapGuid);
+	terrainResource->m_colorMap = resource::Id< render::ITexture >(colorMapGuid);
+	terrainResource->m_normalMap = resource::Id< render::ITexture >(normalMapGuid);
+	terrainResource->m_heightMap = resource::Id< render::ITexture >(heightMapGuid);
+	terrainResource->m_splatMap = resource::Id< render::ITexture >(splatMapGuid);
 	terrainResource->m_terrainShader = resource::Id< render::Shader >(terrainShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);
 
 	if (cutsCount >= c_cutsCountThreshold)
-		terrainResource->m_cutMap = resource::Id< render::ISimpleTexture >(cutMapGuid);
+		terrainResource->m_cutMap = resource::Id< render::ITexture >(cutMapGuid);
 
 	// Calculate lod errors for each terrain patch.
 	calculatePatches(terrainAsset, heightfield, terrainResource->m_patches);

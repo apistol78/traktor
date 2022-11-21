@@ -10,7 +10,7 @@
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Resource/ResourceCast.h"
 #include "Terrain/OceanComponent.h"
 #include "Terrain/RiverComponent.h"

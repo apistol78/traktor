@@ -26,7 +26,7 @@ namespace traktor
 	namespace render
 	{
 
-class ISimpleTexture;
+class ITexture;
 class Shader;
 
 /*!
@@ -64,7 +64,7 @@ private:
 
 	mutable resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Source > m_sources;
-	Ref< ISimpleTexture > m_shadowMapDiscRotation[2];
+	Ref< ITexture > m_shadowMapDiscRotation[2];
 };
 
 	}

@@ -8,7 +8,7 @@
  */
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"
