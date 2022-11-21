@@ -30,6 +30,14 @@ class T_DLLCLASS PipelineProfiler : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Scope
+	{
+		const wchar_t* id;
+		Scope* parent;
+		double start;
+		double child;
+	};
+	
 	struct Duration
 	{
 		uint32_t count;
@@ -47,14 +55,6 @@ public:
 	const SmallMap< const wchar_t*, Duration >& getDurations() const { return m_durations; }
 
 private:
-	struct Scope
-	{
-		const wchar_t* id;
-		Scope* parent;
-		double start;
-		double child;
-	};
-
 	Timer m_timer;
 	ThreadLocal m_scope;
 	SmallMap< const wchar_t*, Duration > m_durations;

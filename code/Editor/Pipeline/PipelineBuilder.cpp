@@ -426,7 +426,7 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 
 bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams)
 {
-	std::wstring outputPath = L"Generated/" + outputGuid.format();
+	const std::wstring outputPath = L"Generated/" + outputGuid.format();
 	return buildAdHocOutput(sourceAsset, outputPath, outputGuid, buildParams);
 }
 
