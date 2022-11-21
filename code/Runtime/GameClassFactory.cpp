@@ -56,19 +56,17 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 class BoxedTransition : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	BoxedTransition(const std::wstring& id, const Guid& reference)
+	explicit BoxedTransition(const std::wstring& id, const Guid& reference)
 	:	m_id(id)
 	,	m_reference(reference)
 	{
@@ -368,5 +366,4 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classStageLoader);
 }
 
-	}
 }

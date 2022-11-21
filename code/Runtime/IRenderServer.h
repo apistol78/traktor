@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 class IRenderView;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Render server.
  * \ingroup Runtime
@@ -71,6 +69,4 @@ public:
 	virtual int32_t getThreadFrameQueueCount() const = 0;
 };
 
-	}
 }
-

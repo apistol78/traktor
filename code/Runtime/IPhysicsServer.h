@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class PhysicsManager;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Physics server.
  * \ingroup Runtime
@@ -43,6 +41,4 @@ public:
 	virtual physics::PhysicsManager* getPhysicsManager() = 0;
 };
 
-	}
 }
-

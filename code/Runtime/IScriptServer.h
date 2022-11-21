@@ -18,18 +18,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class IScriptContext;
 class IScriptManager;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Script server.
  * \ingroup Runtime
@@ -47,6 +45,4 @@ public:
 	virtual script::IScriptContext* getScriptContext() = 0;
 };
 
-	}
 }
-

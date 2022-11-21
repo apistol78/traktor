@@ -8,12 +8,9 @@
  */
 #include "Runtime/IEnvironment.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.IEnvironment", IEnvironment, Object)
 
-	}
 }

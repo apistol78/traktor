@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IStateManager;
 class UpdateInfo;
@@ -95,6 +93,4 @@ public:
 	virtual bool take(const Object* event) = 0;
 };
 
-	}
 }
-

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Update control.
  * \ingroup Runtime
@@ -58,6 +56,4 @@ private:
 	float m_simulationFrequency = 60.0f;
 };
 
-	}
 }
-

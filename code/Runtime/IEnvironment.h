@@ -33,15 +33,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Runtime environment.
  * \ingroup Runtime
@@ -90,6 +92,4 @@ public:
 	/*! \} */
 };
 
-	}
 }
-

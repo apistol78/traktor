@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IEnvironment;
 class IStateManager;
@@ -51,6 +49,4 @@ public:
 	virtual IStateManager* getStateManager() = 0;
 };
 
-	}
 }
-

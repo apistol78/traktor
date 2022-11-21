@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! System server interface.
  * \ingroup Runtime
@@ -37,6 +35,4 @@ class T_DLLCLASS IServer : public Object
 	T_RTTI_CLASS;
 };
 
-	}
 }
-
