@@ -13,10 +13,8 @@
 #include "Model/Model.h"
 #include "Model/Pose.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Pose", 0, Pose, ISerializable)
 
@@ -51,5 +49,4 @@ void Pose::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Transform, MemberComposite< Transform > >(L"jointTransforms", m_jointTransforms);
 }
 
-	}
 }

@@ -8,10 +8,8 @@
  */
 #include "Model/Formats/Fbx/Conversion.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 Vector2 convertVector2(const FbxVector2& v)
 {
@@ -120,5 +118,4 @@ Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem)
 	return axisTransform;
 }
 
-	}
 }

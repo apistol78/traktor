@@ -20,16 +20,14 @@
 #include "Model/Model.h"
 #include "Model/Formats/Blend/ModelFormatBlend.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Semaphore g_lock;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBlend", 0, ModelFormatBlend, ModelFormat)
 
@@ -52,7 +50,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	const std::wstring intermediate = L"intermediate.fbx";
 
 	// Determine working path.
-	std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender/" + threadFolder;
+	const std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender/" + threadFolder;
 	if (!FileSystem::getInstance().makeAllDirectories(scratchPath))
 		return nullptr;
 
@@ -81,17 +79,17 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		return nullptr;
 
 #if defined(_WIN32)
-	std::wstring blender = blenderPath.getPathName();
+	const std::wstring blender = blenderPath.getPathName();
 #else
-	std::wstring blender = blenderPath.getPathNameNoVolume();
+	const std::wstring blender = blenderPath.getPathNameNoVolume();
 #endif
 
-	Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
+	const Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
 
 #if defined(_WIN32)
-	std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathName() + L"\" -P " + scratchPath + L"/__export__.py";
+	const std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathName() + L"\" -P " + scratchPath + L"/__export__.py";
 #else
-	std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathNameNoVolume() + L"\" -P " + scratchPath + L"/__export__.py";
+	const std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathNameNoVolume() + L"\" -P " + scratchPath + L"/__export__.py";
 #endif
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
@@ -115,5 +113,4 @@ bool ModelFormatBlend::write(const Path& filePath, const Model* model) const
 	return false;
 }
 
-	}
 }

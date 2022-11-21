@@ -15,12 +15,10 @@
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 uint32_t hash(const std::wstring& text)
 {
@@ -31,7 +29,7 @@ uint32_t hash(const std::wstring& text)
 	return cs.get();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelCache", ModelCache, Object)
 
@@ -91,5 +89,4 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	return model;
 }
 
-	}
 }

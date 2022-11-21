@@ -22,17 +22,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 /*! Material descriptor.
  * \ingroup Model
@@ -183,6 +181,4 @@ private:
 	bool m_doubleSided = false;
 };
 
-	}
 }
-

@@ -11,10 +11,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 template < typename ValueType, typename HashFunction >
 class HashVector
@@ -119,5 +117,4 @@ private:
 	AlignedVector< ValueType > m_values;	
 };
 
-	}
 }

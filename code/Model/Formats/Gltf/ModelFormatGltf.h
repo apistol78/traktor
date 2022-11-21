@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 /*! glTF 2.0 model format.
  * \ingroup Model
@@ -40,5 +38,4 @@ public:
 	virtual bool write(const Path& filePath, const Model* model) const override final;
 };
 
-	}
 }

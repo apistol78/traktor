@@ -16,8 +16,10 @@ namespace traktor
 
 class Matrix44;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class Model;
 class Pose;
@@ -37,5 +39,4 @@ Ref< Pose > convertPose(
 	const Matrix44& axisTransform
 );
 
-	}
 }

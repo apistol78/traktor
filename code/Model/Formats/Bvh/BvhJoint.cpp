@@ -8,10 +8,8 @@
  */
 #include "Model/Formats/Bvh/BvhJoint.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.BvhJoint", BvhJoint, Object)
 
@@ -75,5 +73,4 @@ const RefArray< BvhJoint >& BvhJoint::getChildren() const
 	return m_children;
 }
 
-	}
 }

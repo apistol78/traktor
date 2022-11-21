@@ -13,10 +13,8 @@
 #include "Model/Animation.h"
 #include "Model/Pose.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Animation", 0, Animation, ISerializable)
 
@@ -70,5 +68,4 @@ void Animation::KeyFrame::serialize(ISerializer& s)
 	s >> MemberRef< const Pose >(L"pose", pose);
 }
 
-	}
 }

@@ -16,8 +16,10 @@ namespace traktor
 
 class IStream;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class IStreamWrapper : public FbxStream
 {
@@ -57,5 +59,4 @@ private:
 	EState m_state;
 };
 
-	}
 }

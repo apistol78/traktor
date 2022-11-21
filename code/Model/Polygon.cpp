@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberStaticVector.h"
 #include "Model/Polygon.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Polygon", 0, Polygon, ISerializable)
 
@@ -106,5 +104,4 @@ bool Polygon::operator == (const Polygon& r) const
 	return m_material == r.m_material && m_vertices == r.m_vertices;
 }
 
-	}
 }

@@ -26,8 +26,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 /*! Joint
  * \ingroup Model
@@ -70,5 +72,4 @@ private:
 	float m_length = 1.0f;
 };
 
-	}
 }

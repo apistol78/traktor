@@ -13,19 +13,17 @@
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/MaterialConverter.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 void scanCustomProperties(const FbxObject* node, Material& outMaterial)
 {
 	FbxProperty prop = node->GetFirstProperty();
 	while (prop.IsValid())
 	{
-		int userTag = prop.GetUserTag();
+		//const int userTag = prop.GetUserTag();
 		std::wstring propName = mbstows(prop.GetNameAsCStr());
 		if (startsWith(propName, L"Traktor_"))
 		{
@@ -81,7 +79,7 @@ const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbx
 	if (!prop.IsValid())
 		return nullptr;
 
-	int fileTextureCount = prop.GetSrcObjectCount< FbxFileTexture >();
+	const int fileTextureCount = prop.GetSrcObjectCount< FbxFileTexture >();
 	for (int i = 0; i < fileTextureCount; ++i)
 	{
 		FbxFileTexture* fileTexture = prop.GetSrcObject< FbxFileTexture >(i);
@@ -89,7 +87,7 @@ const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbx
 			return fileTexture;
 	}
 
-	int layeredTextureCount = prop.GetSrcObjectCount< FbxLayeredTexture >();
+	const int layeredTextureCount = prop.GetSrcObjectCount< FbxLayeredTexture >();
 	if (layeredTextureCount)
 	{
 		for (int i = 0; i < layeredTextureCount; ++i)
@@ -120,7 +118,7 @@ std::wstring uvChannel(Model& outModel, const std::string& name)
 	return mbstows(name);
 }
 
-		}
+	}
 
 bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode)
 {
@@ -414,5 +412,4 @@ void fixMaterialUvSets(Model& outModel)
 	outModel.setMaterials(materials);
 }
 
-	}
 }

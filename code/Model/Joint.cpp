@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Model/Joint.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Joint", 0, Joint, ISerializable)
 
@@ -88,5 +86,4 @@ bool Joint::operator == (const Joint& rh) const
 		m_length == rh.m_length;
 }
 
-	}
 }

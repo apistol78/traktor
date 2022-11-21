@@ -15,8 +15,10 @@ namespace traktor
 
 class Matrix44;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class Model;
 
@@ -27,5 +29,4 @@ bool convertMesh(
 	const Matrix44& axisTransform
 );
 
-	}
 }

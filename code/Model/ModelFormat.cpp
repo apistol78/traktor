@@ -11,10 +11,8 @@
 #include "Core/Misc/String.h"
 #include "Model/ModelFormat.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
@@ -56,5 +54,4 @@ bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 	return false;
 }
 
-	}
 }

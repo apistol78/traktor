@@ -18,12 +18,10 @@
 #include "Model/Model.h"
 #include "Model/Pose.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 /*! Return true if a replacing vertex match or "exceed" an existing vertex. */
 bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
@@ -79,7 +77,7 @@ bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 1, Model, PropertyGroup)
 
@@ -492,5 +490,4 @@ void Model::validate() const
 	}
 }
 
-	}
 }

@@ -17,18 +17,16 @@
 #include "Model/Formats/Bvh/BvhJoint.h"
 #include "Model/Formats/Bvh/ModelFormatBvh.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 std::wstring getJointName(const BvhJoint* bvhJoint)
 {
 	std::wstring jointName = bvhJoint->getName();
 
-	size_t p = jointName.find(L':');
+	const size_t p = jointName.find(L':');
 	if (p != std::wstring::npos)
 		jointName = jointName.substr(p + 1);
 
@@ -44,7 +42,7 @@ void createJoints(
 	uint32_t parent
 )
 {
-	std::wstring jointName = getJointName(bvhJoint);
+	const std::wstring jointName = getJointName(bvhJoint);
 
 	Joint joint;
 	joint.setParent(parent);
@@ -53,7 +51,7 @@ void createJoints(
 		bvhJoint->getOffset() * Vector4(1.0f, 1.0f, -1.0f, 1.0f)
 	));
 
-	int32_t jointIndex = model->addJoint(joint);
+	const int32_t jointIndex = model->addJoint(joint);
 
 	for (const auto childBvhJoint : bvhJoint->getChildren())
 		createJoints(model, childBvhJoint, jointIndex);
@@ -66,9 +64,9 @@ bool convertKeyPose(
 	const BvhDocument::cv_t& cv
 )
 {
-	std::wstring jointName = getJointName(bvhJoint);
+	const std::wstring jointName = getJointName(bvhJoint);
 
-	uint32_t jointId = model->findJointIndex(jointName);
+	const uint32_t jointId = model->findJointIndex(jointName);
 	if (jointId == c_InvalidIndex)
 	{
 		log::error << L"Unable to find joint \"" << jointName << L"\" in skeleton when parsing pose." << Endl;
@@ -101,7 +99,7 @@ bool convertKeyPose(
 	if (bvhJoint->getParent() == nullptr)
 		P = bvhJoint->getOffset();
 
-	Transform Tpose(
+	const Transform Tpose(
 		P * Vector4(1.0f, 1.0f, -1.0f, 1.0f),
 		Quaternion(R)
 	);
@@ -125,7 +123,7 @@ bool convertKeyPose(
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBvh", 0, ModelFormatBvh, ModelFormat)
 
@@ -187,5 +185,4 @@ bool ModelFormatBvh::write(const Path& filePath, const Model* model) const
 	return false;
 }
 
-	}
 }

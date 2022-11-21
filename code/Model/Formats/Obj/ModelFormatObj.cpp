@@ -16,10 +16,8 @@
 #include "Model/Model.h"
 #include "Model/Formats/Obj/ModelFormatObj.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatObj", 0, ModelFormatObj, ModelFormat)
 
@@ -238,5 +236,4 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 	return true;
 }
 
-	}
 }

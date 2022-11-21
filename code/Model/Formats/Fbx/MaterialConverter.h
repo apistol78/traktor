@@ -11,10 +11,8 @@
 #include <map>
 #include <fbxsdk.h>
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 class Model;
 
@@ -22,5 +20,4 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 
 void fixMaterialUvSets(Model& outModel);
 
-	}
 }

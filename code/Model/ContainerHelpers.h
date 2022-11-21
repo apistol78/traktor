@@ -12,10 +12,8 @@
 #include "Core/Math/Vector4.h"
 #include "Model/Material.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 //@{
 // \ingroup Model
@@ -96,6 +94,4 @@ struct MaterialPredicate
 
 //@}
 
-	}
 }
-

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 class ModelToolDialog;
 
@@ -44,6 +42,4 @@ private:
 	Ref< ModelToolDialog > m_dialog;
 };
 
-	}
 }
-
