@@ -38,7 +38,7 @@ class T_DLLCLASS PipelineFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	PipelineFactory(const PropertyGroup* settings);
+	explicit PipelineFactory(const PropertyGroup* settings);
 
 	virtual ~PipelineFactory();
 

@@ -31,13 +31,13 @@ Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& pr
 		m_log << L"\"" << propertyName << L"\"";
 		if (prop)
 		{
-			uint32_t hash = DeepHash(prop).get();
+			const uint32_t hash = DeepHash(prop).get();
 			m_log << L" " << str(L"0x%08x", hash);
 			m_hash += hash;
 		}
 		else if(defaultValue)
 		{
-			uint32_t hash = DeepHash(defaultValue).get();
+			const uint32_t hash = DeepHash(defaultValue).get();
 			m_log << L" " << str(L"0x%08x", hash) << L" (default)";
 			m_hash += hash;
 		}

@@ -30,8 +30,8 @@ bool AvalanchePipelineCache::create(const PropertyGroup* settings)
 	if (!net::Network::initialize())
 		return false;
 
-	std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
-	int32_t port = settings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 40001);
+	const std::wstring host = settings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
+	const int32_t port = settings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 40001);
 
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", true);
 	m_accessWrite = settings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", true);
@@ -63,9 +63,9 @@ Ref< IStream > AvalanchePipelineCache::get(const Guid& guid, const PipelineDepen
 		return nullptr;
 
 	// Combine guid and hash to generate 128-bit storage key.
-	Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
+	const Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
 	const uint32_t* kv = (const uint32_t*)(const uint8_t*)gk;
-	Key key(kv[0], kv[1], kv[2], kv[3]);
+	const Key key(kv[0], kv[1], kv[2], kv[3]);
 
 	Ref< IStream > stream = m_client->get(key);
 	if (!stream)
@@ -84,9 +84,9 @@ Ref< IStream > AvalanchePipelineCache::put(const Guid& guid, const PipelineDepen
 		return nullptr;
 
 	// Combine guid and hash to generate 128-bit storage key.
-	Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
+	const Guid gk = guid.permutation(Guid((const uint8_t*)&hash));
 	const uint32_t* kv = (const uint32_t*)(const uint8_t*)gk;
-	Key key(kv[0], kv[1], kv[2], kv[3]);
+	const Key key(kv[0], kv[1], kv[2], kv[3]);
 
 	Ref< IStream > stream = m_client->put(key);
 	if (!stream)

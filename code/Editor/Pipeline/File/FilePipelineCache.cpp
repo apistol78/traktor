@@ -41,9 +41,9 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 		return nullptr;
 
 	// Format guid as string and use two first, textual, bytes as subfolders.
-	std::wstring gs = guid.format();
-	std::wstring fa = gs.substr(1, 2);
-	std::wstring fb = gs.substr(3, 2);
+	const std::wstring gs = guid.format();
+	const std::wstring fa = gs.substr(1, 2);
+	const std::wstring fb = gs.substr(3, 2);
 
 	// Concate output path name.
 	StringOutputStream ss;
@@ -67,9 +67,9 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 		return nullptr;
 
 	// Format guid as string and use two first, textual, bytes as subfolders.
-	std::wstring gs = guid.format();
-	std::wstring fa = gs.substr(1, 2);
-	std::wstring fb = gs.substr(3, 2);
+	const std::wstring gs = guid.format();
+	const std::wstring fa = gs.substr(1, 2);
+	const std::wstring fb = gs.substr(3, 2);
 
 	// Concate output path name.
 	StringOutputStream ss;
@@ -101,7 +101,7 @@ Ref< IStream > FilePipelineCache::get(const Key& key)
 {
 	StringOutputStream ss;
 	ss << m_path << L"/" << key.format() << L".cache";
-	Path p(ss.str());
+	const Path p(ss.str());
 
 	// Ensure output path exists.
 	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
@@ -118,7 +118,7 @@ Ref< IStream > FilePipelineCache::put(const Key& key)
 {
 	StringOutputStream ss;
 	ss << m_path << L"/" << key.format() << L".cache";
-	Path p(ss.str());
+	const Path p(ss.str());
 
 	// Ensure output path exists.
 	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
