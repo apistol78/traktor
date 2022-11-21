@@ -2102,6 +2102,16 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Test</name>
+								<items>
+									<item type="File" version="1">
+										<fileName>Test/*.*</fileName>
+										<excludeFilter/>
+										<items/>
+									</item>
+								</items>
+							</item>						
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -3370,6 +3380,16 @@
 											<fileName>*.*</fileName>
 											<excludeFilter/>
 											<items/>
+										</item>
+										<item type="Filter">
+											<name>Test</name>
+											<items>
+												<item type="File" version="1">
+													<fileName>Test/*.*</fileName>
+													<excludeFilter/>
+													<items/>
+												</item>
+											</items>
 										</item>
 										<item type="Filter">
 											<name>Ftp</name>

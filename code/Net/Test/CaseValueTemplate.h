@@ -8,16 +8,17 @@
  */
 #pragma once
 
-#include "UnitTest/Case.h"
+#include "Core/Test/Case.h"
 
-namespace traktor
+namespace traktor::net::test
 {
 
-class CaseBodyState : public Case
+class CaseValueTemplate : public traktor::test::Case
 {
+	T_RTTI_CLASS;
+
 public:
 	virtual void run() override final;
 };
 
 }
-
