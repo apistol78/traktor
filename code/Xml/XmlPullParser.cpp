@@ -115,7 +115,7 @@ bool XmlPullParserImpl::parse()
 {
 	if (!m_done)
 	{
-		int64_t nread = m_stream->read(m_buf, sizeof(m_buf));
+		const int64_t nread = m_stream->read(m_buf, sizeof(m_buf));
 		if (nread < 0)
 		{
 			log::error << L"Unexpected out-of-data in XML parser (" << m_name << L")." << Endl;
@@ -150,7 +150,7 @@ bool XmlPullParserImpl::parse()
 		pushEvent();
 
 		XML_ParserFree(m_parser);
-		m_parser = 0;
+		m_parser = nullptr;
 	}
 	return true;
 }
@@ -172,7 +172,7 @@ void XmlPullParserImpl::pushEvent()
 
 void XmlPullParserImpl::pushCharacterData()
 {
-	size_t len = m_cdata.size();
+	const size_t len = m_cdata.size();
 	if (!len)
 		return;
 

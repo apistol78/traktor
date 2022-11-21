@@ -33,7 +33,7 @@ namespace traktor::xml
 
 std::wstring characterEntity(const std::wstring& str)
 {
-	struct { const wchar_t* needle; const wchar_t* escape; } c_entities[] =
+	const struct { const wchar_t* needle; const wchar_t* escape; } c_entities[] =
 	{
 		{ L"&", L"&amp;" },
 		{ L"<", L"&lt;" },
@@ -273,14 +273,14 @@ void XmlSerializer::operator >> (const Member< ISerializable* >& m)
 		StringOutputStream v2;
 
 		const TypeInfo* ti = &type_of(o);
-		int32_t version = ti->getVersion();
+		const int32_t version = ti->getVersion();
 
 		if (version > 0)
 			v2 << version;
 
 		for (ti = ti->getSuper() ; ti != 0; ti = ti->getSuper())
 		{
-			int32_t typeVersion = ti->getVersion();
+			const int32_t typeVersion = ti->getVersion();
 			if (typeVersion > 0)
 			{
 				if (!v2.empty())
@@ -315,7 +315,7 @@ void XmlSerializer::operator >> (const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
-	uint32_t size = m.getBlobSize();
+	const uint32_t size = m.getBlobSize();
 	uint8_t* blob = reinterpret_cast< uint8_t* >(m.getBlob());
 
 	if (size > 0)
@@ -402,7 +402,7 @@ std::wstring XmlSerializer::stackPath()
 
 void XmlSerializer::enterElement(const std::wstring& name)
 {
-	Entry e =
+	const Entry e =
 	{
 		name,
 		m_stack.empty() ? 0 : m_stack.back().dups[name]++

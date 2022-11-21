@@ -58,7 +58,7 @@ public:
 
 	std::wstring getPath() const;
 
-	bool match(const std::wstring& condition);
+	bool match(const std::wstring& condition) const;
 
 	bool hasAttribute(const std::wstring& name) const;
 
@@ -84,7 +84,7 @@ public:
 	 */
 	Ref< Attribute > getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
 
-	Element* getChildElementByName(const std::wstring& name);
+	Element* getChildElementByName(const std::wstring& name) const;
 
 	Ref< Element > clone() const;
 

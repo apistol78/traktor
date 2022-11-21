@@ -27,7 +27,7 @@ bool Document::loadFromFile(const Path& fileName)
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	bool result = false;
 
-	if (file != 0)
+	if (file != nullptr)
 	{
 		result = loadFromStream(file, fileName.getPathName());
 		file->close();
@@ -109,7 +109,7 @@ bool Document::saveAsFile(const Path& fileName)
 	if (!file)
 		return false;
 
-	bool result = saveIntoStream(file);
+	const bool result = saveIntoStream(file);
 	file->close();
 
 	return result;
@@ -148,7 +148,7 @@ int32_t Document::get(const std::wstring& path, RefArray< Element >& outElements
 Element* Document::getSingle(const std::wstring& path) const
 {
 	RefArray< Element > elements;
-	return (get(path, elements) > 0) ? elements.front() : 0;
+	return (get(path, elements) > 0) ? elements.front() : nullptr;
 }
 
 void Document::setDocumentElement(Element* docElement)
