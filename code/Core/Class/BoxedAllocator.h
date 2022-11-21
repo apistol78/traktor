@@ -12,6 +12,10 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
+#if defined(T_BOXES_USE_MT_LOCK)
+#	include "Core/Thread/Acquire.h"
+#	include "Core/Thread/SpinLock.h"
+#endif
 
 namespace traktor
 {
@@ -29,7 +33,7 @@ public:
 			Alloc::freeAlign(allocator.top());
 	}
 
-	void* alloc()
+	BoxedType* alloc()
 	{
 #if defined(T_BOXES_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
@@ -40,7 +44,7 @@ public:
 		if (m_allocator)
 		{
 			if ((ptr = m_allocator->alloc()) != nullptr)
-				return ptr;
+				return (BoxedType*)ptr;
 		}
 
 		// Try all allocators, remember one which was successful.
@@ -49,7 +53,7 @@ public:
 			if ((ptr = allocator.alloc()) != nullptr)
 			{
 				m_allocator = &allocator;
-				return ptr;
+				return (BoxedType*)ptr;
 			}
 		}
 
@@ -60,7 +64,7 @@ public:
 		m_allocators.push_back(BlockAllocator(top, BoxesPerBlock, sizeof(BoxedType)));
 		m_allocator = &m_allocators.back();
 
-		return m_allocator->alloc();
+		return (BoxedType*)m_allocator->alloc();
 	}
 
 	void free(void* ptr)

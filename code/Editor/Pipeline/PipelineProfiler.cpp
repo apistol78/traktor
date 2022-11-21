@@ -6,17 +6,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#define T_BOXES_USE_MT_LOCK
+#include "Core/Class/BoxedAllocator.h"
 #include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 
 namespace traktor::editor
 {
+	namespace
+	{
+
+BoxedAllocator< PipelineProfiler::Scope, 256 > s_allocScope;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineProfiler", PipelineProfiler, Object)
 
 void PipelineProfiler::begin(const wchar_t* const id)
 {
-	Scope* current = new Scope();
+	Scope* current = s_allocScope.alloc();
 	current->id = id;
 	current->parent = (Scope*)m_scope.get();
 	current->start = m_timer.getElapsedTime();
@@ -30,7 +38,6 @@ void PipelineProfiler::end(const wchar_t* const id)
 	m_scope.set(current->parent);
 
 	const double end = m_timer.getElapsedTime();
-
 	const double inclusive = end - current->start;
 	const double exclusive = inclusive - current->child;
 	
@@ -49,7 +56,7 @@ void PipelineProfiler::end(const wchar_t* const id)
 			m_durations.insert(id, { 1, exclusive });
 	}
 
-	delete current;
+	s_allocScope.free(current);
 }
 
 }
