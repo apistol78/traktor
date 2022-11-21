@@ -44,7 +44,7 @@ class T_DLLCLASS PipelineDependsParallel : public IPipelineDepends
 	T_RTTI_CLASS;
 
 public:
-	PipelineDependsParallel(
+	explicit PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,

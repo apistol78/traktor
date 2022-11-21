@@ -39,7 +39,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	DateTime lastModifyDate;
 
 	// First check if this object has already been read during this build.
-	auto it = m_readCache.find(instanceGuid);
+	const auto it = m_readCache.find(instanceGuid);
 	if (it != m_readCache.end())
 	{
 		T_FATAL_ASSERT (it->second.object);
@@ -64,8 +64,8 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	}
 
 	// Generate cached instance filename.
-	std::wstring cachedFileName = instanceGuid.format();
-	std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
+	const std::wstring cachedFileName = instanceGuid.format();
+	const std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
 
 	// Read from cache; discard cached item if not matching time stamp.
 	Ref< IStream > stream = FileSystem::getInstance().open(cachedPathName, File::FmRead);
@@ -102,7 +102,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 		return nullptr;
 	}
 
-	uint32_t hash = DeepHash(object).get();
+	const uint32_t hash = DeepHash(object).get();
 
 	m_readCache[instanceGuid].object = object;
 	m_readCache[instanceGuid].hash = hash;
@@ -127,13 +127,13 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 void PipelineInstanceCache::flush(const Guid& instanceGuid)
 {
 	// Remove from in-memory map.
-	auto it = m_readCache.find(instanceGuid);
+	const auto it = m_readCache.find(instanceGuid);
 	if (it != m_readCache.end())
 		m_readCache.erase(it);
 
 	// Generate cached instance filename.
-	std::wstring cachedFileName = instanceGuid.format();
-	std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
+	const std::wstring cachedFileName = instanceGuid.format();
+	const std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
 
 	// Delete cached instance if exists.
 	FileSystem::getInstance().remove(cachedPathName);

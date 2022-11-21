@@ -25,7 +25,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
 	const bool verbose = settings->getProperty< bool >(L"Pipeline.Verbose", false);
 
-	TypeInfoSet pipelineTypes = type_of< IPipeline >().findAllOf(false);
+	const TypeInfoSet pipelineTypes = type_of< IPipeline >().findAllOf(false);
 
 	AlignedVector< const TypeInfo* > sortedPipelineTypes;
 	sortedPipelineTypes.insert(sortedPipelineTypes.begin(), pipelineTypes.begin(), pipelineTypes.end());
@@ -66,7 +66,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		{
 			for (auto buildableType : assetType->findAllOf())
 			{
-				auto it = m_pipelineMap.find(buildableType);
+				const auto it = m_pipelineMap.find(buildableType);
 				if (it != m_pipelineMap.end())
 				{
 					uint32_t currentDistance = type_difference(*assetType, *buildableType);
@@ -108,7 +108,7 @@ bool PipelineFactory::findPipelineType(const TypeInfo& sourceType, const TypeInf
 	outPipelineType = nullptr;
 	outPipelineHash = 0;
 
-	auto it = m_pipelineMap.find(&sourceType);
+	const auto it = m_pipelineMap.find(&sourceType);
 	if (it != m_pipelineMap.end())
 	{
 		outPipelineType = &type_of(it->second.pipeline);
@@ -121,7 +121,7 @@ bool PipelineFactory::findPipelineType(const TypeInfo& sourceType, const TypeInf
 
 IPipeline* PipelineFactory::findPipeline(const TypeInfo& pipelineType) const
 {
-	auto it = m_pipelines.find(&pipelineType);
+	const auto it = m_pipelines.find(&pipelineType);
 	return it != m_pipelines.end() ? it->second : nullptr;
 }
 

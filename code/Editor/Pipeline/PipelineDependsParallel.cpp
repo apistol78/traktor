@@ -171,7 +171,7 @@ void PipelineDependsParallel::addDependency(
 		T_FATAL_ASSERT_M(parentDependency->sourceAssetHash == 0, L"Dependency already hashed");
 
 		const Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
-		auto it = std::find_if(parentDependency->files.begin(), parentDependency->files.end(), [&](const PipelineDependency::ExternalFile& file) {
+		const auto it = std::find_if(parentDependency->files.begin(), parentDependency->files.end(), [&](const PipelineDependency::ExternalFile& file) {
 			return file.filePath == filePath;
 		});
 		if (it == parentDependency->files.end())
