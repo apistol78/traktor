@@ -108,11 +108,11 @@ void RubbleComponent::build(
 		return;
 
 	// Update clusters at first pass from eye pow.
-	bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
+	const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
-	Matrix44 view = worldRenderView.getView();
-	Vector4 eye = view.inverse().translation();
-	Vector4 fwd = view.axisZ();
+	const Matrix44 view = worldRenderView.getView();
+	const Vector4 eye = view.inverse().translation();
+	const Vector4 fwd = view.axisZ();
 
 	if (updateClusters)
 	{
@@ -130,7 +130,7 @@ void RubbleComponent::build(
 			{
 				cluster.distance = (cluster.center - eye).length();
 
-				bool visible = cluster.visible;
+				const bool visible = cluster.visible;
 				cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::IrOutside);
 				if (!cluster.visible)
 					continue;
@@ -144,13 +144,13 @@ void RubbleComponent::build(
 				RandomGeometry random(cluster.seed);
 				for (int32_t j = cluster.from; j < cluster.to; ++j)
 				{
-					float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
-					float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+					const float dx = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
+					const float dz = (random.nextFloat() * 2.0f - 1.0f) * m_clusterSize;
 
 					// Calculate world position.
-					float px = cluster.center.x() + dx;
-					float pz = cluster.center.z() + dz;
-					float py = terrain->getHeightfield()->getWorldHeight(px, pz);
+					const float px = cluster.center.x() + dx;
+					const float pz = cluster.center.z() + dz;
+					const float py = terrain->getHeightfield()->getWorldHeight(px, pz);
 
 					// Get ground normal.
 					float gx, gz;
@@ -158,12 +158,12 @@ void RubbleComponent::build(
 					Vector4 normal = heightfield->normalAt(gx, gz);
 
 					// Calculate rotation.
-					float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
-					float rz = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
-					float head = random.nextFloat() * TWO_PI;
-					Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), upness);
-					Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
-					Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
+					const float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+					const float rz = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
+					const float head = random.nextFloat() * TWO_PI;
+					const Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), upness);
+					const Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
+					const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 
 					// Update instance data.
 					m_instances[j].position = Vector4(px, py, pz, 0.0f);
@@ -192,10 +192,10 @@ void RubbleComponent::build(
 		if (!cluster.visible)
 			continue;
 
-		int32_t count = cluster.to - cluster.from;
+		const int32_t count = cluster.to - cluster.from;
 		for (int32_t j = 0; j < count; )
 		{
-			int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
+			const int32_t batch = std::min< int32_t >(count - j, mesh::InstanceMesh::MaxInstanceCount);
 
 			m_instanceData.resize(batch);
 			for (int32_t k = 0; k < batch; ++k, ++j)
@@ -255,8 +255,8 @@ void RubbleComponent::updatePatches()
 			{
 				for (int32_t cx = 0; cx < 16; ++cx)
 				{
-					uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
-					uint8_t index = um[attribute];
+					const uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
+					const uint8_t index = um[attribute];
 					if (index > 0)
 					{
 						cm[index - 1]++;
@@ -269,7 +269,7 @@ void RubbleComponent::updatePatches()
 
 			float wx, wz;
 			heightfield->gridToWorld(x + 8, z + 8, wx, wz);
-			float wy = heightfield->getWorldHeight(wx, wz);
+			const float wy = heightfield->getWorldHeight(wx, wz);
 
 			for (uint32_t i = 0; i < maxMaterialIndex; ++i)
 			{
@@ -281,12 +281,12 @@ void RubbleComponent::updatePatches()
 					if (um[rubble.attribute] != i + 1)
 						continue;
 
-					int32_t densityFactor = cm[i];
-					int32_t density = (rubble.density * densityFactor) / (16 * 16);
+					const int32_t densityFactor = cm[i];
+					const int32_t density = (rubble.density * densityFactor) / (16 * 16);
 					if (density <= 4)
 						continue;
 
-					int32_t from = (int32_t)m_instances.size();
+					const int32_t from = (int32_t)m_instances.size();
 					for (int32_t k = 0; k < density; ++k)
 					{
 						Instance& instance = m_instances.push_back();
@@ -294,7 +294,7 @@ void RubbleComponent::updatePatches()
 						instance.rotation = Quaternion::identity();
 						instance.scale = 0.0f;
 					}
-					int32_t to = (int32_t)m_instances.size();
+					const int32_t to = (int32_t)m_instances.size();
 
 					Cluster& c = m_clusters.push_back();
 					c.rubbleDef = &rubble;
