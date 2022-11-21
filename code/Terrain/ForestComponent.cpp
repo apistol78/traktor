@@ -92,15 +92,15 @@ void ForestComponent::build(
 	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
 
 	// Update clusters at first pass from eye pow.
-	bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
+	const bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
 
-	Matrix44 view = worldRenderView.getView();
-	Vector4 eye = view.inverse().translation();
+	const Matrix44 view = worldRenderView.getView();
+	const Vector4 eye = view.inverse().translation();
 
 	if (updateClusters)
 	{
 		// Brute force test.
-		Frustum viewFrustum = worldRenderView.getViewFrustum();
+		const Frustum viewFrustum = worldRenderView.getViewFrustum();
 
 		m_lod0indices.resize(0);
 		m_lod1indices.resize(0);
@@ -108,7 +108,7 @@ void ForestComponent::build(
 		for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 		{
 			const auto& tree = m_trees[i];
-			Scalar distance = (tree.position - eye).length();
+			const Scalar distance = (tree.position - eye).length();
 			if (distance < m_data.m_lod0distance)
 			{
 				if (viewFrustum.inside(view * tree.position))
@@ -137,7 +137,7 @@ void ForestComponent::build(
 
 	for (uint32_t i = 0; i < m_lod1indices.size(); )
 	{
-		uint32_t batch = std::min< uint32_t >(m_lod1indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+		const uint32_t batch = std::min< uint32_t >(m_lod1indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
 
 		m_instanceData.resize(batch);
 		for (int32_t j = 0; j < batch; ++j, ++i)
@@ -158,7 +158,7 @@ void ForestComponent::build(
 
 	for (uint32_t i = 0; i < m_lod0indices.size(); )
 	{
-		uint32_t batch = std::min< uint32_t >(m_lod0indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+		const uint32_t batch = std::min< uint32_t >(m_lod0indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
 
 		m_instanceData.resize(batch);
 		for (int32_t j = 0; j < batch; ++j, ++i)
@@ -213,17 +213,17 @@ void ForestComponent::updatePatches()
 			Vector4 normal = heightfield->normalAt(gx, gz);
 
 			// Check slope angle threshold.
-			float slopeAngle = acos(normal.y());
+			const float slopeAngle = acos(normal.y());
 			if (slopeAngle > m_data.m_slopeAngleThreshold)
 				continue;
 
 			// Calculate rotation.
-			float rx = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
-			float rz = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
-			float head = random.nextFloat() * TWO_PI;
-			Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), m_data.m_upness);
-			Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
-			Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
+			const float rx = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
+			const float rz = (random.nextFloat() * 2.0f - 1.0f) * m_data.m_randomTilt;
+			const float head = random.nextFloat() * TWO_PI;
+			const Quaternion Qu = slerp(Quaternion(Vector4(0.0f, 1.0f, 0.0f), normal), Quaternion::identity(), m_data.m_upness);
+			const Quaternion Qr = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f), rx) * Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f), rz);
+			const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 
 			// Add tree on position.
 			auto& tree = m_trees.push_back();

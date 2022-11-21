@@ -81,7 +81,7 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 	RiverComponentData::ControlPoint pc = h.evaluate(0.0f);
 	for (float T = dT; T <= 1.0f; )
 	{
-		RiverComponentData::ControlPoint pn = h.evaluate(T);
+		const RiverComponentData::ControlPoint pn = h.evaluate(T);
 
 		const Vector4 d = pn.position - pc.position;
 		const Vector4 e = cross(d, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();

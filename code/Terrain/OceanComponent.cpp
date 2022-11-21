@@ -83,18 +83,16 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	for (int32_t iz = 0; iz < c_gridSize; ++iz)
 	{
-		float fz = float(iz) * 2.0f / c_gridSize - 1.0f;
-
-		float ez0 = clamp(1.0f - float(iz) / c_gridInfSize, 0.0f, 1.0f);
-		float ez1 = clamp(1.0f - float(c_gridSize - 1 - iz) / c_gridInfSize, 0.0f, 1.0f);
+		const float fz = float(iz) * 2.0f / c_gridSize - 1.0f;
+		const float ez0 = clamp(1.0f - float(iz) / c_gridInfSize, 0.0f, 1.0f);
+		const float ez1 = clamp(1.0f - float(c_gridSize - 1 - iz) / c_gridInfSize, 0.0f, 1.0f);
 
 		for (int32_t ix = 0; ix < c_gridSize; ++ix)
 		{
-			float fx = float(ix) * 2.0f / c_gridSize - 1.0f;
-
-			float ex0 = clamp(1.0f - float(ix) / c_gridInfSize, 0.0f, 1.0f);
-			float ex1 = clamp(1.0f - float(c_gridSize - 1 - ix) / c_gridInfSize, 0.0f, 1.0f);
-			float f = std::pow(max(max(ex0, ex1), max(ez0, ez1)), 8);
+			const float fx = float(ix) * 2.0f / c_gridSize - 1.0f;
+			const float ex0 = clamp(1.0f - float(ix) / c_gridInfSize, 0.0f, 1.0f);
+			const float ex1 = clamp(1.0f - float(c_gridSize - 1 - ix) / c_gridInfSize, 0.0f, 1.0f);
+			const float f = std::pow(max(max(ex0, ex1), max(ez0, ez1)), 8);
 
 			vertex->pos[0] = fx;
 			vertex->pos[1] = fz;
@@ -115,10 +113,10 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	for (uint32_t iz = 0; iz < c_gridSize - 1; ++iz)
 	{
-		uint32_t base = iz * c_gridSize;
+		const uint32_t base = iz * c_gridSize;
 		for (uint32_t ix = 0; ix < c_gridSize - 1; ++ix)
 		{
-			uint32_t quad[] =
+			const uint32_t quad[] =
 			{
 				base + ix,
 				base + ix + 1,
@@ -159,8 +157,8 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	for (int32_t i = 0; i < sizeof_array(m_wavesA); ++i)
 	{
-		float dx = std::cos(data.m_waves[i].direction);
-		float dz = std::sin(data.m_waves[i].direction);
+		const float dx = std::cos(data.m_waves[i].direction);
+		const float dz = std::sin(data.m_waves[i].direction);
 		m_wavesA[i] = Vector4(dx, dz, data.m_waves[i].rate, 0.0f);
 		m_wavesB[i] = Vector4(data.m_waves[i].amplitude, data.m_waves[i].frequency, data.m_waves[i].phase, data.m_waves[i].pinch);
 		m_maxAmplitude += std::abs(data.m_waves[i].amplitude);
@@ -217,10 +215,10 @@ void OceanComponent::build(
 	Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
 
 	const Matrix44& view = worldRenderView.getView();
-	Matrix44 viewInv = view.inverse();
+	const Matrix44 viewInv = view.inverse();
 
 	// Get eye position in world space; cull entire ocean if beneath surface.
-	Vector4 eye = viewInv.translation().xyz1();
+	const Vector4 eye = viewInv.translation().xyz1();
 	if (eye.y() < transform.translation().y() - m_maxAmplitude)
 		return;
 
@@ -256,7 +254,7 @@ void OceanComponent::build(
 		const auto& terrain = terrainComponent->getTerrain();
 
 		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
-		Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
+		const Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
 
 		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
