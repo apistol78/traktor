@@ -215,7 +215,7 @@ bool TerrainEditModifier::activate()
 		return false;
 	}
 
-	int32_t size = m_heightfield->getSize();
+	const int32_t size = m_heightfield->getSize();
 
 	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
 
@@ -247,7 +247,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace height map in resource with our texture.
-		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ISimpleTexture >(m_heightMap);
+		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
 	}
 
 	// Get splat image from terrain asset.
@@ -302,7 +302,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace splat map in resource with our texture.
-		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ISimpleTexture >(m_splatMap);
+		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
 	}
 
 	// Get color image from terrain asset.
@@ -361,7 +361,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace color map in resource with our texture.
-		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ISimpleTexture >(m_colorMap);
+		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
 	}
 
 	// Create normal texture data.
@@ -370,10 +370,11 @@ bool TerrainEditModifier::activate()
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-			uint8_t nx = uint8_t(normal.x() * 255);
-			uint8_t ny = uint8_t(normal.y() * 255);
-			uint8_t nz = uint8_t(normal.z() * 255);
+			const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+			const uint8_t nx = uint8_t(normal.x() * 255);
+			const uint8_t ny = uint8_t(normal.y() * 255);
+			const uint8_t nz = uint8_t(normal.z() * 255);
+
 			uint8_t* ptr = &m_normalData[(u + v * size) * 4];
 			ptr[0] = nx;
 			ptr[1] = ny;
@@ -402,7 +403,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace normal map in resource with our texture.
-		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
 	}
 
 	// Create cut texture data.
@@ -435,7 +436,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace cut map in resource with our texture.
-		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
+		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
 	}
 
 	// Create material mask texture data.
@@ -468,7 +469,7 @@ bool TerrainEditModifier::activate()
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_attributeMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ITexture >(m_attributeMap);
 	}
 
 	// Create default brush; try set same brush type as before.
@@ -814,7 +815,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 		}
 
 		// Replace height map in resource with our texture.
-		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ISimpleTexture >(m_heightMap);
+		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
 	}
 
 	// Update splats.
@@ -886,7 +887,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 		}
 
 		// Replace normal map in resource with our texture.
-		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
 	}
 
 	// Update cuts.
@@ -914,7 +915,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 		}
 
 		// Replace cut map in resource with our texture.
-		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
+		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
 	}
 
 	// Update material mask.
@@ -942,7 +943,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 		}
 
 		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ISimpleTexture >(m_attributeMap);
+		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ITexture >(m_attributeMap);
 	}
 
 	m_applied = true;	
@@ -973,8 +974,8 @@ void TerrainEditModifier::end()
 
 		auto& patches = terrain->editPatches();
 
-		uint32_t heightfieldSize = m_heightfield->getSize();
-		uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
+		const uint32_t heightfieldSize = m_heightfield->getSize();
+		const uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
 
 		for (uint32_t pz = m_updateRegion[1]; pz <= m_updateRegion[3]; ++pz)
 		{

@@ -20,14 +20,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class Buffer;
-class ISimpleTexture;
-
-	}
-
 	namespace world
 	{
 
@@ -39,7 +31,7 @@ class T_DLLCLASS WorldRenderPassSimple : public IWorldRenderPass
 	T_RTTI_CLASS;
 
 public:
-	WorldRenderPassSimple(
+	explicit WorldRenderPassSimple(
 		render::handle_t technique,
 		render::ProgramParameters* globalProgramParams,
 		const Matrix44& view

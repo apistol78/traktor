@@ -10,6 +10,7 @@
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Image2/ShadowProject.h"
 #include "Render/Image2/ShadowProjectData.h"

@@ -29,7 +29,7 @@ class Heightfield;
 namespace traktor::render
 {
 
-class ISimpleTexture;
+class ITexture;
 class Shader;
 
 }
@@ -61,15 +61,15 @@ public:
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Id< render::ISimpleTexture >& getColorMap() const { return m_colorMap; }
+	const resource::Id< render::ITexture >& getColorMap() const { return m_colorMap; }
 
-	const resource::Id< render::ISimpleTexture >& getNormalMap() const { return m_normalMap; }
+	const resource::Id< render::ITexture >& getNormalMap() const { return m_normalMap; }
 
-	const resource::Id< render::ISimpleTexture >& getHeightMap() const { return m_heightMap; }
+	const resource::Id< render::ITexture >& getHeightMap() const { return m_heightMap; }
 
-	const resource::Id< render::ISimpleTexture >& getSplatMap() const { return m_splatMap; }
+	const resource::Id< render::ITexture >& getSplatMap() const { return m_splatMap; }
 
-	const resource::Id< render::ISimpleTexture >& getCutMap() const { return m_cutMap; }
+	const resource::Id< render::ITexture >& getCutMap() const { return m_cutMap; }
 
 	const resource::Id< render::Shader >& getTerrainShader() const { return m_terrainShader; }
 
@@ -83,11 +83,11 @@ private:
 	uint32_t m_detailSkip = 0;
 	uint32_t m_patchDim = 0;
 	resource::Id< hf::Heightfield > m_heightfield;
-	resource::Id< render::ISimpleTexture > m_colorMap;
-	resource::Id< render::ISimpleTexture > m_normalMap;
-	resource::Id< render::ISimpleTexture > m_heightMap;
-	resource::Id< render::ISimpleTexture > m_splatMap;
-	resource::Id< render::ISimpleTexture > m_cutMap;
+	resource::Id< render::ITexture > m_colorMap;
+	resource::Id< render::ITexture > m_normalMap;
+	resource::Id< render::ITexture > m_heightMap;
+	resource::Id< render::ITexture > m_splatMap;
+	resource::Id< render::ITexture > m_cutMap;
 	resource::Id< render::Shader > m_terrainShader;
 	resource::Id< render::Shader > m_surfaceShader;
 	std::vector< Patch > m_patches;

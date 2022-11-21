@@ -25,7 +25,7 @@ namespace traktor
 	namespace render
 	{
 
-class ISimpleTexture;
+class ITexture;
 class Shader;
 
 /*!
@@ -65,8 +65,8 @@ private:
 	AlignedVector< Source > m_sources;
 	Vector4 m_offsets[64];
 	Vector4 m_directions[8];
-	Ref< ISimpleTexture > m_randomNormals;
-	Ref< ISimpleTexture > m_randomRotations;
+	Ref< ITexture > m_randomNormals;
+	Ref< ITexture > m_randomRotations;
 };
 
 	}

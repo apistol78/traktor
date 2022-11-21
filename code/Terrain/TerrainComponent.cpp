@@ -14,7 +14,6 @@
 #include "Heightfield/Heightfield.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"

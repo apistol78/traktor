@@ -42,7 +42,6 @@ namespace traktor::render
 class Buffer;
 class IRenderSystem;
 class IRenderView;
-class ISimpleTexture;
 class ITexture;
 class IVertexLayout;
 class Shader;
@@ -363,7 +362,7 @@ private:
 	// System
 	Ref< IRenderSystem > m_renderSystem;
 	resource::Proxy< Shader > m_shader;
-	resource::Proxy< ISimpleTexture > m_fontTexture;
+	resource::Proxy< ITexture > m_fontTexture;
 	Ref< const IVertexLayout > m_vertexLayout;
 	RefArray< Buffer > m_freeVertexBuffers;
 	Semaphore m_lock;

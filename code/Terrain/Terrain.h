@@ -30,7 +30,7 @@ class Heightfield;
 namespace traktor::render
 {
 
-class ISimpleTexture;
+class ITexture;
 class Shader;
 
 }
@@ -74,37 +74,37 @@ public:
 	 *
 	 * \return Color map resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getColorMap() const { return m_colorMap; }
+	const resource::Proxy< render::ITexture >& getColorMap() const { return m_colorMap; }
 
 	/*! Get terrain normal map resource.
 	 *
 	 * \return Normal map resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getNormalMap() const { return m_normalMap; }
+	const resource::Proxy< render::ITexture >& getNormalMap() const { return m_normalMap; }
 
 	/*! Get heightmap resource.
 	 *
 	 * \return Heightmap resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getHeightMap() const { return m_heightMap; }
+	const resource::Proxy< render::ITexture >& getHeightMap() const { return m_heightMap; }
 
 	/*! Get material splat map resource.
 	 *
 	 * \return Material splat map resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getSplatMap() const { return m_splatMap; }
+	const resource::Proxy< render::ITexture >& getSplatMap() const { return m_splatMap; }
 
 	/*! Get terrain cut map resource.
 	 *
 	 * \return Cut map resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getCutMap() const { return m_cutMap; }
+	const resource::Proxy< render::ITexture >& getCutMap() const { return m_cutMap; }
 
 	/*! Get terrain material mask map resource.
 	 *
 	 * \return Material mask map resource.
 	 */
-	const resource::Proxy< render::ISimpleTexture >& getMaterialMap() const { return m_materialMap; }
+	const resource::Proxy< render::ITexture >& getMaterialMap() const { return m_materialMap; }
 
 	/*! Get terrain shader resource.
 	 *
@@ -137,12 +137,12 @@ private:
 	uint32_t m_detailSkip = 0;
 	uint32_t m_patchDim = 0;
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< render::ISimpleTexture > m_colorMap;
-	resource::Proxy< render::ISimpleTexture > m_normalMap;
-	resource::Proxy< render::ISimpleTexture > m_heightMap;
-	resource::Proxy< render::ISimpleTexture > m_splatMap;
-	resource::Proxy< render::ISimpleTexture > m_cutMap;
-	resource::Proxy< render::ISimpleTexture > m_materialMap;
+	resource::Proxy< render::ITexture > m_colorMap;
+	resource::Proxy< render::ITexture > m_normalMap;
+	resource::Proxy< render::ITexture > m_heightMap;
+	resource::Proxy< render::ITexture > m_splatMap;
+	resource::Proxy< render::ITexture > m_cutMap;
+	resource::Proxy< render::ITexture > m_materialMap;
 	resource::Proxy< render::Shader > m_terrainShader;
 	resource::Proxy< render::Shader > m_surfaceShader;
 	AlignedVector< Patch > m_patches;

@@ -28,10 +28,7 @@ class IBufferView;
 class IRenderSystem;
 class IRenderTargetSet;
 class ITexture;
-class ISimpleTexture;
-class ICubeTexture;
 class IVertexLayout;
-class IVolumeTexture;
 class IProgram;
 
 #define T_USE_RENDER_MARKERS

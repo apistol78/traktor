@@ -34,7 +34,7 @@ namespace traktor::render
 
 class IRenderSystem;
 class IRenderTargetSet;
-class ISimpleTexture;
+class ITexture;
 class ScreenRenderer;
 class RenderContext;
 class RenderBlock;
@@ -87,11 +87,11 @@ public:
 		Vector4& outTextureOffset
 	);
 
-	render::ISimpleTexture* getVirtualAlbedo() const;
+	render::ITexture* getVirtualAlbedo() const;
 
-	render::ISimpleTexture* getVirtualNormals() const;
+	render::ITexture* getVirtualNormals() const;
 
-	render::ISimpleTexture* getBaseTexture() const;
+	render::ITexture* getBaseTexture() const;
 
 private:
 	struct Entry
@@ -104,8 +104,8 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	TerrainSurfaceAlloc m_alloc;
-	Ref< render::ISimpleTexture > m_virtualAlbedo;
-	Ref< render::ISimpleTexture > m_virtualNormals;
+	Ref< render::ITexture > m_virtualAlbedo;
+	Ref< render::ITexture > m_virtualNormals;
 	Ref< render::IRenderTargetSet > m_base;
 	AlignedVector< Entry > m_entries;
 	bool m_haveBase = false;
