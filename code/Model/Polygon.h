@@ -25,8 +25,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 /*! Polygon
  * \ingroup Model
@@ -90,5 +92,4 @@ private:
 	vertices_t m_vertices;
 };
 
-	}
 }

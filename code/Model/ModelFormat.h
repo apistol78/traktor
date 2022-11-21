@@ -26,8 +26,10 @@ namespace traktor
 
 class IStream;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class Model;
 
@@ -88,5 +90,4 @@ public:
 	static bool writeAny(const Path& filePath, const Model* model);
 };
 
-	}
 }

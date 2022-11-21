@@ -26,8 +26,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 /*! Vertex
  * \ingroup Model
@@ -105,5 +107,4 @@ struct VertexHashFunction
 	}
 };
 
-	}
 }

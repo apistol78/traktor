@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 class Model;
 
@@ -59,5 +57,4 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 };
 
-	}
 }

@@ -14,12 +14,10 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class BvhJoint : public Object
@@ -27,7 +25,7 @@ class BvhJoint : public Object
 	T_RTTI_CLASS;
 
 public:
-	BvhJoint(const std::wstring& name);
+	explicit BvhJoint(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
@@ -58,5 +56,4 @@ private:
 	RefArray< BvhJoint > m_children;
 };
 
-	}
 }

@@ -14,10 +14,8 @@
 #include "Core/Serialization/MemberStaticVector.h"
 #include "Model/Vertex.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Vertex", 0, Vertex, ISerializable)
 
@@ -150,5 +148,4 @@ bool Vertex::operator == (const Vertex& r) const
 	return true;
 }
 
-	}
 }

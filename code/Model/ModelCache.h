@@ -26,8 +26,10 @@ namespace traktor
 
 class IStream;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class Model;
 
@@ -49,5 +51,4 @@ private:
 	Path m_cachePath;
 };
 
-	}
 }

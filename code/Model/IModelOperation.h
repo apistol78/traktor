@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 class Model;
 
@@ -36,6 +34,4 @@ public:
 	virtual bool apply(Model& model) const = 0;
 };
 
-	}
 }
-

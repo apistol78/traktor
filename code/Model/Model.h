@@ -30,10 +30,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 /*! Intermediate 3D model.
  * \ingroup Model
@@ -283,5 +281,4 @@ private:
 	void validate() const;
 };
 
-	}
 }

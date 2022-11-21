@@ -9,10 +9,8 @@
 #include "Core/Io/IStream.h"
 #include "Model/Formats/Fbx/IStreamWrapper.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 IStreamWrapper::IStreamWrapper()
 :	m_stream(nullptr)
@@ -106,5 +104,4 @@ void IStreamWrapper::ClearError()
 {
 }
 
-	}
 }

@@ -13,10 +13,8 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Model/Material.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 
@@ -175,5 +173,4 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< Guid >(L"texture", texture);
 }
 
-	}
 }

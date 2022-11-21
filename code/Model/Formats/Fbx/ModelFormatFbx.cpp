@@ -25,12 +25,10 @@
 #include "Model/Formats/Fbx/ModelFormatFbx.h"
 #include "Model/Formats/Fbx/SkeletonConverter.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Semaphore s_fbxLock;
 FbxManager* s_fbxManager = nullptr;
@@ -181,7 +179,7 @@ void dump(FbxNode* node)
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFbx, ModelFormat)
 
@@ -377,5 +375,4 @@ bool ModelFormatFbx::write(const Path& filePath, const Model* model) const
 	return false;
 }
 
-	}
 }

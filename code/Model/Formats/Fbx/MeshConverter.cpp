@@ -14,12 +14,10 @@
 #include "Model/Formats/Fbx/MaterialConverter.h"
 #include "Model/Formats/Fbx/MeshConverter.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Matrix44 normalize(const Matrix44& m)
 {
@@ -31,7 +29,7 @@ Matrix44 normalize(const Matrix44& m)
 	);
 }
 
-		}
+	}
 
 bool convertMesh(
 	Model& outModel,
@@ -383,5 +381,4 @@ bool convertMesh(
 	return true;
 }
 
-	}
 }

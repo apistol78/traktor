@@ -16,12 +16,10 @@
 #include "Model/Formats/Fbx/Conversion.h"
 #include "Model/Formats/Fbx/SkeletonConverter.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 bool traverse(FbxNode* parent, FbxNode* node, const std::function< bool (FbxNode* parent, FbxNode* node) >& visitor)
 {
@@ -31,7 +29,7 @@ bool traverse(FbxNode* parent, FbxNode* node, const std::function< bool (FbxNode
 	if (!visitor(parent, node))
 		return false;
 
-	int32_t childCount = node->GetChildCount();
+	const int32_t childCount = node->GetChildCount();
 	for (int32_t i = 0; i < childCount; ++i)
 	{
 		FbxNode* childNode = node->GetChild(i);
@@ -49,14 +47,14 @@ std::wstring getJointName(FbxNode* node)
 {
 	std::wstring jointName = mbstows(node->GetName());
 
-	size_t p = jointName.find(L':');
+	const size_t p = jointName.find(L':');
 	if (p != std::wstring::npos)
 		jointName = jointName.substr(p + 1);
 
 	return jointName;
 }
 
-		}
+	}
 
 bool convertSkeleton(
 	Model& outModel,
@@ -210,5 +208,4 @@ Ref< Pose > convertPose(
 	return pose;
 }
 
-	}
 }

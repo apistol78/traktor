@@ -17,12 +17,10 @@
 #include "Model/Formats/Gltf/ModelFormatGltf.h"
 #include "Model/Model.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Matrix44 parseTransform(const json::JsonObject* node)
 {
@@ -205,7 +203,7 @@ bool decodeAsVectors(
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatGltf", 0, ModelFormatGltf, ModelFormat)
 
@@ -604,5 +602,4 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	return false;
 }
 
-	}
 }

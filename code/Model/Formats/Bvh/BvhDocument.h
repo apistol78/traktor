@@ -19,8 +19,10 @@ namespace traktor
 class IStream;
 class Vector4;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class BvhJoint;
 
@@ -49,5 +51,4 @@ private:
 	cv_list_t m_channelValues;
 };
 
-	}
 }

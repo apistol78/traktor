@@ -14,10 +14,8 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 Vector2 convertVector2(const FbxVector2& v);
 
@@ -39,5 +37,4 @@ Color4f convertColor(const FbxColor& c);
 
 Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem);
 
-	}
 }

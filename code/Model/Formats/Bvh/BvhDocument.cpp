@@ -14,12 +14,10 @@
 #include "Model/Formats/Bvh/BvhDocument.h"
 #include "Model/Formats/Bvh/BvhJoint.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 {
@@ -52,14 +50,14 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 			std::vector< std::wstring > sv;
 			if (Split< std::wstring >::any(str.substr(9), L" ", sv) >= 1)
 			{
-				int32_t nchannels = parseString< int32_t >(sv[0]);
+				const int32_t nchannels = parseString< int32_t >(sv[0]);
 				if (nchannels != int32_t(sv.size() - 1))
 					return false;
 
 				joint->setChannelOffset(channelCount);
 				channelCount += nchannels;
 
-				for (int i = 0; i < nchannels; ++i)
+				for (int32_t i = 0; i < nchannels; ++i)
 					joint->addChannel(sv[i + 1]);
 			}
 		}
@@ -84,7 +82,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BvhDocument", BvhDocument, Object)
 
@@ -144,5 +142,4 @@ const BvhDocument::cv_list_t& BvhDocument::getChannelValues() const
 	return m_channelValues;
 }
 
-	}
 }

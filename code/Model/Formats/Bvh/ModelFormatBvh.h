@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS ModelFormatBvh : public ModelFormat
@@ -40,5 +38,4 @@ public:
 	virtual bool write(const Path& filePath, const Model* model) const override final;
 };
 
-	}
 }

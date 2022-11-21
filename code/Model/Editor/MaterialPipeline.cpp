@@ -11,10 +11,8 @@
 #include "Model/Material.h"
 #include "Model/Editor/MaterialPipeline.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.MaterialPipeline", 0, MaterialPipeline, editor::IPipeline)
 
@@ -88,5 +86,4 @@ Ref< ISerializable > MaterialPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

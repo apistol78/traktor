@@ -8,16 +8,12 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 /*! Invalid primitive index.
  * \ingroup Model
  */
 const uint32_t c_InvalidIndex = ~0U;
 
-	}
 }
-

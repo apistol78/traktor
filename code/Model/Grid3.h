@@ -12,10 +12,8 @@
 #include "Core/Containers/SmallSet.h"
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 /*! Default accessor of position from value.
  * \ingroup Model
@@ -224,6 +222,4 @@ private:
 	AlignedVector< ValueType > m_values;
 };
 
-	}
 }
-

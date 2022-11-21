@@ -13,10 +13,8 @@
 #include "Model/Model.h"
 #include "Model/Formats/Tmd/ModelFormatTmd.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatTmd", 0, ModelFormatTmd, ModelFormat)
 
@@ -54,5 +52,4 @@ bool ModelFormatTmd::write(const Path& filePath, const Model* model) const
 	return true;
 }
 
-	}
 }

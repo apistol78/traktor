@@ -9,10 +9,8 @@
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelAdjacency", ModelAdjacency, Object)
 
@@ -276,5 +274,4 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 	}
 }
 
-	}
 }

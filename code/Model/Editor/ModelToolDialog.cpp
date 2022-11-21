@@ -72,12 +72,10 @@
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< render::ITexture > c_textureDebug(Guid(L"{0163BEDD-9297-A64F-AAD5-360E27E37C6E}"));
 
@@ -109,7 +107,7 @@ void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* 
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelToolDialog", ModelToolDialog, ui::Dialog)
 
@@ -1381,5 +1379,4 @@ void ModelToolDialog::eventSkeletonSelect(ui::SelectionChangeEvent* event)
 	m_renderWidget->update();
 }
 
-	}
 }

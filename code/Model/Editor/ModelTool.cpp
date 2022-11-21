@@ -22,10 +22,8 @@
 #include "Script/IScriptManager.h"
 #include "Script/ScriptFactory.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelTool", 0, ModelTool, editor::IEditorTool)
 
@@ -96,5 +94,4 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 	return true;
 }
 
-	}
 }

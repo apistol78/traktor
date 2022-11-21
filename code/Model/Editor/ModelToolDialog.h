@@ -12,34 +12,32 @@
 #include "Resource/Proxy.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderView;
 class ITexture;
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class GridView;
 class Menu;
@@ -49,10 +47,10 @@ class ToolBarDropDown;
 class TreeView;
 class TreeViewItem;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 class IModelOperation;
 class Model;
@@ -145,5 +143,4 @@ private:
 	void eventSkeletonSelect(ui::SelectionChangeEvent* event);
 };
 
-	}
 }
