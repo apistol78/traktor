@@ -91,7 +91,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldServer", WorldServer, IWorldServer
 
 bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
-	std::wstring worldType = defaultSettings->getProperty< std::wstring >(L"World.Type");
+	const std::wstring worldType = defaultSettings->getProperty< std::wstring >(L"World.Type");
 
 	m_worldType = TypeInfo::find(worldType.c_str());
 	if (!m_worldType)
@@ -117,7 +117,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_feedbackManager = new spray::FeedbackManager();
 	m_entityRenderers = new world::WorldEntityRenderers();
 
-	int32_t maxEventInstances = settings->getProperty< int32_t >(L"World.MaxEventInstances", 512);
+	const int32_t maxEventInstances = settings->getProperty< int32_t >(L"World.MaxEventInstances", 512);
 	m_eventManager = new world::EntityEventManager(maxEventInstances);
 
 	return true;
@@ -167,8 +167,8 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
-	float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
+	const float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
+	const float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
 	m_effectEntityRenderer = new spray::EffectRenderer(renderSystem, sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer = new terrain::EntityRenderer(
@@ -198,16 +198,16 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
-	world::Quality motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", (int32_t)world::Quality::Medium);
-	world::Quality shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", (int32_t)world::Quality::Medium);
-	world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
-	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
-	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
-	world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
-	world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
-	world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
-	world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
-	float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	const world::Quality motionBlurQuality = (world::Quality)settings->getProperty< int32_t >(L"World.MotionBlurQuality", (int32_t)world::Quality::Medium);
+	const world::Quality shadowQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ShadowQuality", (int32_t)world::Quality::Medium);
+	const world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
+	const world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
+	const world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
+	const world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
+	const world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
+	const world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
+	const world::Quality oceanQuality = (world::Quality)settings->getProperty< int32_t >(L"World.OceanQuality", (int32_t)world::Quality::Medium);
+	const float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	// Check if we need to be reconfigured.
 	if (
@@ -225,8 +225,8 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		return CrUnaffected;
 
 	// Adjust in-place systems.
-	float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
-	float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
+	const float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
+	const float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
 	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[(int32_t)terrainQuality]);

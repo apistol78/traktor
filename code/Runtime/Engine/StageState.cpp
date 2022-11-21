@@ -39,7 +39,7 @@ StageState::StageState(
 	// properly checked and also shared between
 	// states.
 
-	uint32_t frameCount = environment->getRender()->getThreadFrameQueueCount();
+	const uint32_t frameCount = environment->getRender()->getThreadFrameQueueCount();
 	T_ASSERT(frameCount > 0);
 
 	m_frames.resize(frameCount);
@@ -91,8 +91,8 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	T_FATAL_ASSERT(renderView);
 
 	// Render entire view.
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
+	const int32_t width = renderView->getWidth();
+	const int32_t height = renderView->getHeight();
 
 	// Setup stage passes.
 	{

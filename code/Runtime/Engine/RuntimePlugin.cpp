@@ -36,7 +36,7 @@ void RuntimePlugin::destroy(IEnvironment* environment)
 
 Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 {
-	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Runtime.Startup"));
+	const Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Runtime.Startup"));
 
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(startupGuid);
 	if (!stageData)

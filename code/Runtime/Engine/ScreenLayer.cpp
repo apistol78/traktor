@@ -50,7 +50,7 @@ void ScreenLayer::destroy()
 
 void ScreenLayer::transition(Layer* fromLayer)
 {
-	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
 	if (!permit)
 		return;
 

@@ -111,7 +111,7 @@ void WorldLayer::destroy()
 
 void WorldLayer::transition(Layer* fromLayer)
 {
-	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
 	if (!permit)
 		return;
 
@@ -151,8 +151,8 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 	}
 
 	// Get render view dimensions.
-	int32_t width = m_environment->getRender()->getWidth();
-	int32_t height = m_environment->getRender()->getHeight();
+	const int32_t width = m_environment->getRender()->getWidth();
+	const int32_t height = m_environment->getRender()->getHeight();
 
 	// Update world view.
 	m_worldRenderView.setPerspective(
@@ -469,9 +469,9 @@ bool WorldLayer::screenToView(const Vector2& screenPosition, Ray3& outViewRay) c
 {
 	const Frustum& viewFrustum = m_worldRenderView.getViewFrustum();
 
-	Vector4 t = lerp(viewFrustum.corners[0], viewFrustum.corners[1], Scalar(screenPosition.x * 0.5f + 0.5f));
-	Vector4 b = lerp(viewFrustum.corners[3], viewFrustum.corners[2], Scalar(screenPosition.x * 0.5f + 0.5f));
-	Vector4 p = lerp(b, t, Scalar(screenPosition.y * 0.5f + 0.5f));
+	const Vector4 t = lerp(viewFrustum.corners[0], viewFrustum.corners[1], Scalar(screenPosition.x * 0.5f + 0.5f));
+	const Vector4 b = lerp(viewFrustum.corners[3], viewFrustum.corners[2], Scalar(screenPosition.x * 0.5f + 0.5f));
+	const Vector4 p = lerp(b, t, Scalar(screenPosition.y * 0.5f + 0.5f));
 
 	outViewRay.origin = Vector4::origo();
 	outViewRay.direction = p.xyz0().normalized();
@@ -484,7 +484,7 @@ bool WorldLayer::screenToWorld(const Vector2& screenPosition, Ray3& outWorldRay)
 	if (!screenToView(screenPosition, viewRay))
 		return false;
 
-	Matrix44 viewInverse = m_worldRenderView.getView().inverse();
+	const Matrix44 viewInverse = m_worldRenderView.getView().inverse();
 	outWorldRay.origin = viewInverse * viewRay.origin;
 	outWorldRay.direction = viewInverse * viewRay.direction;
 	return true;

@@ -81,7 +81,7 @@ void Stage::destroy()
 		const IRuntimeDispatch* methodFinalize = findRuntimeClassMethod(m_class, "finalize");
 		if (m_initialized && methodFinalize != nullptr)
 		{
-			Any argv[] =
+			const Any argv[] =
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
@@ -238,7 +238,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 			T_PROFILER_SCOPE(L"Script update");
 			if (m_object)
 			{
-				Any argv[] =
+				const Any argv[] =
 				{
 					Any::fromObject(const_cast< UpdateInfo* >(&info))
 				};
@@ -259,7 +259,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 			T_PROFILER_SCOPE(L"Script post update");
 			if (m_object)
 			{
-				Any argv[] =
+				const Any argv[] =
 				{
 					Any::fromObject(const_cast< UpdateInfo* >(&info))
 				};
@@ -286,7 +286,7 @@ bool Stage::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		T_PROFILER_SCOPE(L"Script setup");
 		if (m_object)
 		{
-			Any argv[] =
+			const Any argv[] =
 			{
 				Any::fromObject(const_cast< UpdateInfo* >(&info))
 			};
@@ -326,7 +326,7 @@ void Stage::transition()
 	// to transition data, such as playing music etc.
 	for (auto layer : m_transitionStage->m_layers)
 	{
-		std::wstring layerName = layer->getName();
+		const std::wstring layerName = layer->getName();
 		if (layerName.empty())
 			continue;
 
@@ -394,7 +394,7 @@ bool Stage::validateScriptContext()
 		if (m_class)
 		{
 			// Call script constructor.
-			Any argv[] =
+			const Any argv[] =
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
 				Any::fromObject(m_environment)
