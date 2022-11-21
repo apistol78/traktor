@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Update information.
  * \ingroup Runtime
@@ -113,6 +111,4 @@ private:
 	bool m_runningSlow = false;
 };
 
-	}
 }
-

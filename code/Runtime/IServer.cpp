@@ -8,12 +8,9 @@
  */
 #include "Runtime/IServer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.IServer", IServer, Object)
 
-	}
 }

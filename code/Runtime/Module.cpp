@@ -17,10 +17,8 @@
 #include "Runtime/Engine/VideoLayerData.h"
 #include "Runtime/Engine/WorldLayerData.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 extern "C" void __module__Traktor_Runtime()
 {
@@ -32,7 +30,6 @@ extern "C" void __module__Traktor_Runtime()
 	T_FORCE_LINK_REF(WorldLayerData);
 }
 
-	}
 }
 
 #endif

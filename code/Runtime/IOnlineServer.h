@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class ISessionManager;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Online server.
  * \ingroup Runtime
@@ -41,6 +39,4 @@ public:
 	virtual online::ISessionManager* getSessionManager() = 0;
 };
 
-	}
 }
-

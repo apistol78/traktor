@@ -19,20 +19,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputMapping;
 class InputMappingStateData;
 class InputSystem;
 class RumbleEffectPlayer;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Input server.
  * \ingroup Runtime
@@ -67,6 +65,4 @@ public:
 	virtual input::RumbleEffectPlayer* getRumbleEffectPlayer() = 0;
 };
 
-	}
 }
-

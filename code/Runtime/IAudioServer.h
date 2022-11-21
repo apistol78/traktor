@@ -18,19 +18,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class AudioSystem;
 class ISoundPlayer;
 class SurroundEnvironment;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Audio server.
  * \ingroup Runtime
@@ -53,6 +51,4 @@ public:
 	virtual sound::SurroundEnvironment* getSurroundEnvironment() = 0;
 };
 
-	}
 }
-

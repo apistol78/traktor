@@ -19,15 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IEnvironment;
 class IState;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS IRuntimePlugin : public Object
@@ -42,6 +40,4 @@ public:
 	virtual Ref< IState > createInitialState(IEnvironment* environment) = 0;
 };
 
-	}
 }
-

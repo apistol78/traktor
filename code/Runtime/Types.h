@@ -8,10 +8,8 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 enum ConfigureResult
 {
@@ -20,6 +18,4 @@ enum ConfigureResult
 	CrAccepted = 1
 };
 
-	}
 }
-

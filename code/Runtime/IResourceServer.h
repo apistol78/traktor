@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Resource server.
  * \ingroup Runtime
@@ -41,6 +39,4 @@ public:
 	virtual resource::IResourceManager* getResourceManager() = 0;
 };
 
-	}
 }
-

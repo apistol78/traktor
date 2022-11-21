@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class IFeedbackManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IEntityBuilder;
 class EntityEventManager;
@@ -39,10 +37,10 @@ class IWorldRenderer;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! World server.
  * \ingroup Runtime
@@ -73,6 +71,4 @@ public:
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) = 0;
 };
 
-	}
 }
-

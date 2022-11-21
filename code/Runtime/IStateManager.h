@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IState;
 
@@ -44,6 +42,4 @@ public:
 	virtual void enter(IState* state) = 0;
 };
 
-	}
 }
-
