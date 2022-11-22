@@ -631,6 +631,16 @@
 								</items>
 							</item>
 							<item type="Filter">
+								<name>Shared</name>
+								<items>
+									<item type="File" version="1">
+										<fileName>Shared/*.*</fileName>
+										<excludeFilter/>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
 								<name>Forward</name>
 								<items>
 									<item type="File" version="1">
