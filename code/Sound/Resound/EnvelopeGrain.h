@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Math/Envelope.h"
 #include "Sound/Resound/IGrain.h"
@@ -20,12 +21,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
-/*! \brief
+/*!
  * \ingroup Sound
  */
 class T_DLLCLASS EnvelopeGrain : public IGrain
@@ -61,6 +60,4 @@ private:
 	Envelope< float, HermiteEvaluator< float > > m_envelope;
 };
 
-	}
 }
-

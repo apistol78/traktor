@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class WorldRenderSettings;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class T_DLLCLASS ScenePermutationAsset : public ISerializable
 {
@@ -47,6 +45,4 @@ private:
 	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
 };
 
-	}
 }
-

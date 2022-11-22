@@ -24,15 +24,17 @@ namespace traktor
 
 class ISerializable;
 
-    namespace world
-    {
+}
+
+namespace traktor::world
+{
 
 class EntityData;
 
-    }
+}
 
-    namespace scene
-    {
+namespace traktor::scene
+{
 
 /*! Scene/entity data traverser.
  * \ingroup Scene
@@ -40,17 +42,16 @@ class EntityData;
 class T_DLLCLASS Traverser
 {
 public:
-    enum VisitorResult
-    {
-        VrContinue,
-        VrSkip,
-        VrFailed
-    };
+	enum VisitorResult
+	{
+		VrContinue,
+		VrSkip,
+		VrFailed
+	};
 
-    static bool visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
+	static bool visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
 
-    static bool visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
+	static bool visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
 };
 
-    }
 }

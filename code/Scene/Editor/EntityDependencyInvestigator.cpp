@@ -35,12 +35,10 @@
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 std::wstring getCategoryText(const TypeInfo* categoryType)
 {
@@ -48,7 +46,7 @@ std::wstring getCategoryText(const TypeInfo* categoryType)
 	return i18n::Text(id, categoryType->getName());
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityDependencyInvestigator", EntityDependencyInvestigator, ui::Container)
 
@@ -181,14 +179,14 @@ void EntityDependencyInvestigator::eventDependencyButtonDown(ui::MouseButtonDown
 
 			if (selectedItem->getCommand() == L"Scene.Editor.Edit")
 			{
-				std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
+				const std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
 				OS::getInstance().editFile(filePath.getPathName());
 			}
 			else if (selectedItem->getCommand() == L"Scene.Editor.Explore")
 			{
-				std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
+				const std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + asset->getFileName());
 				OS::getInstance().exploreFile(filePath.getPathName());
 			}
 			else if (selectedItem->getCommand() == L"Scene.Editor.FindInDatabase")
@@ -222,14 +220,14 @@ void EntityDependencyInvestigator::eventDependencyButtonDown(ui::MouseButtonDown
 
 		if (selectedItem->getCommand() == L"Scene.Editor.Edit")
 		{
-			std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
+			const std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
 			OS::getInstance().editFile(filePath.getPathName());
 		}
 		else if (selectedItem->getCommand() == L"Scene.Editor.Explore")
 		{
-			std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
+			const std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + externalFile->getFileName());
 			OS::getInstance().exploreFile(filePath.getPathName());
 		}
 	}
@@ -264,5 +262,4 @@ void EntityDependencyInvestigator::eventContextSelect(ui::SelectionChangeEvent* 
 		setEntityAdapter(nullptr);
 }
 
-	}
 }

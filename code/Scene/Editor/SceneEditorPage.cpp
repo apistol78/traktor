@@ -94,12 +94,10 @@
 #include "World/Entity/GroupComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
 
@@ -162,7 +160,7 @@ bool filterIncludeEntity(const TypeInfo& entityOrComponentType, EntityAdapter* e
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
 
@@ -1633,5 +1631,4 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 	m_gridMeasurements->addRow(row);
 }
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class IScenePipelineOperator;
 
@@ -82,5 +80,4 @@ private:
 	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;
 };
 
-	}
 }

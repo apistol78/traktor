@@ -10,13 +10,10 @@
 
 #include "Scene/Editor/IEntityEditorFactory.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
-/*! \brief
- */
+/*! */
 class DefaultEntityEditorFactory : public IEntityEditorFactory
 {
 	T_RTTI_CLASS;
@@ -27,6 +24,4 @@ public:
 	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const override final;
 };
 
-	}
 }
-

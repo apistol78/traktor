@@ -19,14 +19,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class ISceneControllerEditor;
 
-/*! \brief
+/*!
  * \ingroup Scene
  */
 class T_DLLCLASS ISceneControllerEditorFactory : public Object
@@ -47,6 +45,4 @@ public:
 	virtual Ref< ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const = 0;
 };
 
-	}
 }
-

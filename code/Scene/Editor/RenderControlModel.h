@@ -12,17 +12,15 @@
 #include "Ui/Point.h"
 #include "Ui/Events/AllEvents.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneRenderControl;
 class SceneEditorContext;
@@ -62,6 +60,4 @@ private:
 	ModifyType m_modify;
 };
 
-	}
 }
-

@@ -25,15 +25,17 @@ namespace traktor
 
 class Guid;
 
-	namespace world
-	{
+}
+
+namespace traktor::world
+{
 
 class Entity;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneController;
 
@@ -58,6 +60,4 @@ public:
 	virtual Ref< ISceneController > createController(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const = 0;
 };
 
-	}
 }
-

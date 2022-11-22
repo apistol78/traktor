@@ -11,17 +11,15 @@
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class EntityData;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class EntityClipboardData : public ISerializable
 {
@@ -38,6 +36,4 @@ private:
 	RefArray< world::EntityData > m_entityData;
 };
 
-	}
 }
-

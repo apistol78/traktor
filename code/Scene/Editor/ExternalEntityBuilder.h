@@ -11,10 +11,8 @@
 #include "Core/Ref.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 /*! External entity builder.
  *
@@ -26,7 +24,7 @@ class ExternalEntityBuilder : public world::IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	ExternalEntityBuilder(world::IEntityBuilder* entityBuilder);
+	explicit ExternalEntityBuilder(world::IEntityBuilder* entityBuilder);
 
 	virtual void addFactory(const world::IEntityFactory* entityFactory) override final;
 
@@ -50,6 +48,4 @@ private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
 };
 
-	}
 }
-

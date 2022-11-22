@@ -12,10 +12,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityRendererCache", EntityRendererCache, Object)
 
@@ -48,5 +46,4 @@ void EntityRendererCache::end()
 {
 }
 
-	}
 }

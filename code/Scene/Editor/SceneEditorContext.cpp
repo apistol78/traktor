@@ -47,10 +47,8 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
 
@@ -835,5 +833,4 @@ void SceneEditorContext::raiseMeasurement(int32_t pass, int32_t level, const std
 	raiseEvent(&measurementEvent);
 }
 
-	}
 }

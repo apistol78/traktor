@@ -10,19 +10,16 @@
 
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
-
 class Menu;
 class TreeView;
 class TreeViewItemActivateEvent;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 class EntityAdapter;
@@ -33,7 +30,7 @@ class EntityDependencyInvestigator : public ui::Container
 	T_RTTI_CLASS;
 
 public:
-	EntityDependencyInvestigator(SceneEditorContext* context);
+	explicit EntityDependencyInvestigator(SceneEditorContext* context);
 
 	virtual void destroy() override final;
 
@@ -56,6 +53,4 @@ private:
 	void eventContextSelect(ui::SelectionChangeEvent* event);
 };
 
-	}
 }
-

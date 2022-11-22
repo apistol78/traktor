@@ -10,10 +10,8 @@
 
 #include "Editor/IWizardTool.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class CreatePreviewSceneTool : public editor::IWizardTool
 {
@@ -27,6 +25,4 @@ public:
 	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) override final;
 };
 
-	}
 }
-

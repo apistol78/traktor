@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class ToolBar;
 class Widget;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 
@@ -47,6 +45,4 @@ public:
 	virtual bool handleCommand(const ui::Command& command) = 0;
 };
 
-	}
 }
-

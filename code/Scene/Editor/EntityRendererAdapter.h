@@ -12,10 +12,8 @@
 #include "Core/Ref.h"
 #include "World/IEntityRenderer.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class EntityRendererCache;
 
@@ -62,6 +60,4 @@ private:
 	std::function< bool(const EntityAdapter*) > m_filter;
 };
 
-	}
 }
-

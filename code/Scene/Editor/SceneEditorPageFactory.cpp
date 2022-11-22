@@ -23,12 +23,10 @@
 #include "Ui/Command.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
 {
@@ -57,7 +55,7 @@ void renameIds(ISerializable* object, const SmallMap< Guid, Guid >& renamedMap)
 	reflection->apply(object);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorPageFactory", 0, SceneEditorPageFactory, editor::IEditorPageFactory)
 
@@ -184,5 +182,4 @@ Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* ass
 	return mutableAsset;
 }
 
-	}
 }

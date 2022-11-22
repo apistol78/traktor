@@ -18,10 +18,8 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePermutationPipeline", 4, ScenePermutationPipeline, editor::IPipeline)
 
@@ -129,5 +127,4 @@ Ref< ISerializable > ScenePermutationPipeline::buildProduct(
 	return scenePermutation;
 }
 
-	}
 }

@@ -8,10 +8,8 @@
  */
 #include "Scene/Editor/TransformChain.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.TransformChain", TransformChain, Object)
 
@@ -113,5 +111,4 @@ bool TransformChain::objectToScreen(const Vector4& op, Vector2& outScreen) const
 	return clipToScreen(objectToClip(op), outScreen);
 }
 
-	}
 }

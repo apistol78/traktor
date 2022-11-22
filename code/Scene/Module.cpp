@@ -11,17 +11,14 @@
 #if defined(T_STATIC)
 #	include "Scene/SceneClassFactory.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 extern "C" void __module__Traktor_Scene()
 {
 	T_FORCE_LINK_REF(SceneClassFactory);
 }
 
-	}
 }
 
 #endif

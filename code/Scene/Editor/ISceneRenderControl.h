@@ -14,26 +14,24 @@
 #include "Render/Types.h"
 #include "World/WorldTypes.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Command;
 class Point;
 class Rect;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IDebugOverlay;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneRenderControl : public Object
 {
@@ -81,6 +79,4 @@ public:
 	virtual void showSelectionRectangle(const ui::Rect& rect) = 0;
 };
 
-	}
 }
-

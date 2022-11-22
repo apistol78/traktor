@@ -18,22 +18,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityComponentData;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class EntityAdapter;
 class SceneEditorContext;
 
-/*! \brief
+/*!
  * \ingroup Scene
  */
 class T_DLLCLASS DefaultComponentEditor : public IComponentEditor
@@ -41,7 +39,7 @@ class T_DLLCLASS DefaultComponentEditor : public IComponentEditor
 	T_RTTI_CLASS;
 
 public:
-	DefaultComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
+	explicit DefaultComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override;
 
@@ -51,6 +49,4 @@ protected:
 	world::IEntityComponentData* m_componentData;
 };
 
-	}
 }
-

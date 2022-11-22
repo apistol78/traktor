@@ -15,10 +15,8 @@
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultComponentEditor", DefaultComponentEditor, IComponentEditor)
 
@@ -31,7 +29,7 @@ DefaultComponentEditor::DefaultComponentEditor(SceneEditorContext* context, Enti
 
 void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Transform transform = m_entityAdapter->getTransform();
+	const Transform transform = m_entityAdapter->getTransform();
 
 	if (is_a< world::CameraComponentData >(m_componentData))
 	{
@@ -47,8 +45,8 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 		for (int j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
 		{
-			int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
-			int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
+			const int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
+			const int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
 
 			const float* v1 = &c_cameraMeshVertices[i1 * 3];
 			const float* v2 = &c_cameraMeshVertices[i2 * 3];
@@ -68,10 +66,10 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 	{
 		if (m_context->shouldDrawGuide(L"Entity.Light"))
 		{
-			Vector4 lightPosition = transform.translation();
-			Vector4 lightDirection = -transform.axisY();
-			Vector4 lightX = transform.axisX();
-			Vector4 lightZ = transform.axisZ();
+			const Vector4 lightPosition = transform.translation();
+			const Vector4 lightDirection = -transform.axisY();
+			const Vector4 lightX = transform.axisX();
+			const Vector4 lightZ = transform.axisZ();
 
 			if (lightComponent->getLightType() == world::LightType::LtDirectional)
 			{
@@ -170,5 +168,4 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 	}
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Scene/Editor/EntityRendererAdapter.h"
 #include "Scene/Editor/EntityRendererCache.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityRendererAdapter", EntityRendererAdapter, world::IEntityRenderer)
 
@@ -103,5 +101,4 @@ void EntityRendererAdapter::build(
 	);
 }
 
-	}
 }

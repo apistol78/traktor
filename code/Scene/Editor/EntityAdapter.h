@@ -24,17 +24,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class EntityData;
@@ -42,10 +40,10 @@ class IEntityComponent;
 class IEntityComponentData;
 class ILayerAttribute;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class IComponentEditor;
 class IEntityEditor;
@@ -257,6 +255,4 @@ private:
 	bool m_locked;
 };
 
-	}
 }
-

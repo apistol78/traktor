@@ -18,10 +18,8 @@
 #include "World/IEntityFactory.h"
 #include "World/WorldRenderSettings.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneResource", 0, SceneResource, ISerializable)
 
@@ -93,5 +91,4 @@ void SceneResource::serialize(ISerializer& s)
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 }
 
-	}
 }

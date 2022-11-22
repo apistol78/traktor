@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityBuilder;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 /*! Scene factory.
  * \ingroup Scene
@@ -57,6 +55,4 @@ private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
 };
 
-	}
 }
-

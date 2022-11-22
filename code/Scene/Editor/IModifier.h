@@ -20,24 +20,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Command;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class TransformChain;
 
@@ -100,6 +98,4 @@ public:
 	//\}
 };
 
-	}
 }
-

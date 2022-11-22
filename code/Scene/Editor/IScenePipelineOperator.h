@@ -24,25 +24,27 @@ namespace traktor
 
 class ISerializable;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IPipelineBuilder;
 class IPipelineCommon;
 class IPipelineDepends;
 class IPipelineSettings;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneAsset;
 
@@ -80,5 +82,4 @@ public:
 	) const = 0;
 };
 
-	}
 }

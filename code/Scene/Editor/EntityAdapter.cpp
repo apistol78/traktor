@@ -21,10 +21,8 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
@@ -469,5 +467,4 @@ void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer) con
 		componentEditor->drawGuide(primitiveRenderer);
 }
 
-	}
 }

@@ -23,63 +23,61 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IDocument;
 class IEditor;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class PhysicsManager;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class EntityData;
 class EntityEventManager;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class Camera;
 class EntityAdapter;
@@ -352,6 +350,4 @@ private:
 	SmallMap< const world::Entity*, EntityAdapter* > m_entityAdapterMap;
 };
 
-	}
 }
-
