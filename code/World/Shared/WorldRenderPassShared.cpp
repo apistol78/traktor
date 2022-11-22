@@ -10,56 +10,77 @@
 #include "Render/Context/ProgramParameters.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
-#include "World/Deferred/WorldRenderPassDeferred.h"
+#include "World/Shared/WorldRenderPassShared.h"
 
-namespace traktor::world
+namespace traktor
 {
+	namespace world
+	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassDeferred", WorldRenderPassDeferred, IWorldRenderPass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassShared", WorldRenderPassShared, IWorldRenderPass)
 
-WorldRenderPassDeferred::WorldRenderPassDeferred(
+WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
-	bool irradianceEnable
+	bool irradianceEnable,
+	bool shadowEnable,
+	bool reflectionsEnable
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
 ,	m_irradianceEnable(irradianceEnable)
+,	m_shadowEnable(shadowEnable)
+,	m_reflectionsEnable(reflectionsEnable)
 {
 }
 
-render::handle_t WorldRenderPassDeferred::getTechnique() const
+WorldRenderPassShared::WorldRenderPassShared(
+	render::handle_t technique,
+	render::ProgramParameters* sharedParams,
+	const WorldRenderView& worldRenderView,
+	uint32_t passFlags
+)
+:	m_technique(technique)
+,	m_sharedParams(sharedParams)
+,	m_worldRenderView(worldRenderView)
+,	m_passFlags(passFlags)
+{
+}
+
+render::handle_t WorldRenderPassShared::getTechnique() const
 {
 	return m_technique;
 }
 
-uint32_t WorldRenderPassDeferred::getPassFlags() const
+uint32_t WorldRenderPassShared::getPassFlags() const
 {
 	return m_passFlags;
 }
 
-render::Shader::Permutation WorldRenderPassDeferred::getPermutation(const render::Shader* shader) const
+render::Shader::Permutation WorldRenderPassShared::getPermutation(const render::Shader* shader) const
 {
 	render::Shader::Permutation perm(m_technique);
 	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
+	shader->setCombination(s_handleShadowEnable, m_shadowEnable, perm);
+	shader->setCombination(s_handleReflectionsEnable, m_reflectionsEnable, perm);
 	return perm;
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
+void WorldRenderPassShared::setProgramParameters(render::ProgramParameters* programParams) const
 {
 	setWorldProgramParameters(programParams, Transform::identity(), Transform::identity());
 }
 
-void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
+void WorldRenderPassShared::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
 	setWorldProgramParameters(programParams, lastWorld, world);
 }
 
-void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
+void WorldRenderPassShared::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
 {
 	programParams->attachParameters(m_sharedParams);
 
@@ -75,4 +96,5 @@ void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameter
 	}
 }
 
+	}
 }

@@ -28,14 +28,14 @@ class WorldRenderView;
 /*! World render pass.
  * \ingroup World
  */
-class T_DLLCLASS WorldRenderPassForward : public IWorldRenderPass
+class T_DLLCLASS WorldRenderPassShared : public IWorldRenderPass
 {
 	T_RTTI_CLASS;
 
 public:
-	WorldRenderPassForward() = delete;
+	WorldRenderPassShared() = delete;
 
-	WorldRenderPassForward(
+	WorldRenderPassShared(
 		render::handle_t technique,
 		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
@@ -45,7 +45,7 @@ public:
 		bool reflectionsEnable
 	);
 
-	WorldRenderPassForward(
+	WorldRenderPassShared(
 		render::handle_t technique,
 		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,

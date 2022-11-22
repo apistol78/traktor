@@ -13,6 +13,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/TilesOverlay.h"
 #include "World/Forward/WorldRendererForward.h"
 
