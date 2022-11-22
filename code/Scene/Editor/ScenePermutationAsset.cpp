@@ -17,10 +17,8 @@
 #include "Scene/Editor/ScenePermutationAsset.h"
 #include "World/WorldRenderSettings.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.ScenePermutationAsset", 5, ScenePermutationAsset, ISerializable)
 
@@ -39,5 +37,4 @@ void ScenePermutationAsset::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

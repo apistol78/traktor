@@ -22,17 +22,15 @@
 #include "Ui/DropDown.h"
 #include "World/IWorldRenderer.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, SceneEditorSettingsPage, editor::ISettingsPage)
 
@@ -148,5 +146,4 @@ void SceneEditorSettingsPage::eventValueChange(ui::ContentChangeEvent* event)
 	updateValues();
 }
 
-	}
 }

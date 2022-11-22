@@ -21,24 +21,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Command;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class EntityAdapter;
 
@@ -140,6 +138,4 @@ public:
 	virtual bool getStatusText(std::wstring& outStatusText) const = 0;
 };
 
-	}
 }
-

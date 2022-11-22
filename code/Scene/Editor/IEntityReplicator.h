@@ -25,32 +25,34 @@ namespace traktor
 
 class Guid;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IPipelineCommon;
 class IPipelineSettings;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 class Model;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityData;
 class GroupComponentData;
 class IEntityComponentData;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 /*! Generate model from source entity or component data, such as mesh, terrain, spline, solid etc.
  * \ingroup Scene
@@ -105,5 +107,4 @@ public:
 	) const = 0;
 };
 
-	}
 }

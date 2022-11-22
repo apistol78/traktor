@@ -19,16 +19,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class EntityAdapter;
 class IEntityEditor;
 class SceneEditorContext;
 
-/*! \brief
+/*!
  * \ingroup Scene
  */
 class T_DLLCLASS IEntityEditorFactory : public Object
@@ -51,6 +49,4 @@ public:
 	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const = 0;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 9, SceneAsset, ISerializable)
 
@@ -91,5 +89,4 @@ void SceneAsset::serialize(ISerializer& s)
 		s >> MemberRefArray< ISerializable >(L"operationData", m_operationData);
 }
 
-	}
 }

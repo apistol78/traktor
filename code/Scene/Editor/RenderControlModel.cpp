@@ -16,12 +16,10 @@
 #include "Scene/Editor/TransformChain.h"
 #include "Ui/Widget.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 int32_t translateMouseButton(int32_t uimb)
 {
@@ -35,7 +33,7 @@ int32_t translateMouseButton(int32_t uimb)
 		return 0;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RenderControlModel", RenderControlModel, Object)
 
@@ -324,5 +322,4 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	m_mousePosition = mousePosition;
 }
 
-	}
 }

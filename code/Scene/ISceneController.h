@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class Scene;
 
@@ -43,6 +41,4 @@ public:
 	virtual void update(Scene* scene, float time, float deltaTime) = 0;
 };
 
-	}
 }
-

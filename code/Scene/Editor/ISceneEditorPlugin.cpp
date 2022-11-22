@@ -8,12 +8,9 @@
  */
 #include "Scene/Editor/ISceneEditorPlugin.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ISceneEditorPlugin", ISceneEditorPlugin, Object)
 
-	}
 }

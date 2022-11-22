@@ -20,20 +20,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ModifierChangedEvent;
 class RedrawEvent;
@@ -100,6 +98,4 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 };
 
-	}
 }
-

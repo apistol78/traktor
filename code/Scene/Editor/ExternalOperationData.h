@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS ExternalOperationData : public ISerializable
 {
@@ -37,5 +35,4 @@ private:
 	Guid m_externalDataId;
 };
 
-	}
 }

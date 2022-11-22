@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class CheckBox;
 class ContentChangeEvent;
@@ -29,10 +27,10 @@ class DropDown;
 class Slider;
 class Static;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 /*! Scene editor settings page.
  * \ingroup Scene
@@ -66,6 +64,4 @@ private:
 	void eventValueChange(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-

@@ -13,10 +13,8 @@
 #include "Core/RefArray.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class EntityAdapter;
 class SceneEditorContext;
@@ -74,6 +72,4 @@ private:
 	mutable uint32_t m_cacheMiss;
 };
 
-	}
 }
-

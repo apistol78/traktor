@@ -21,18 +21,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class LayerEntityData;
 class WorldRenderSettings;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneControllerData;
 
@@ -68,6 +66,4 @@ private:
 	RefArray< ISerializable > m_operationData;
 };
 
-	}
 }
-

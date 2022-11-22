@@ -11,17 +11,15 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class EntityAdapter;
 class SceneEditorContext;
@@ -40,7 +38,7 @@ class EntityRendererCache : public Object
 	T_RTTI_CLASS;
 
 public:
-	EntityRendererCache(SceneEditorContext* context);
+	explicit EntityRendererCache(SceneEditorContext* context);
 
 	EntityAdapter* begin(const Object* renderable);
 
@@ -50,6 +48,4 @@ private:
 	SceneEditorContext* m_context;
 };
 
-	}
 }
-

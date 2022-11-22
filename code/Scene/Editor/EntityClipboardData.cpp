@@ -11,10 +11,8 @@
 #include "Scene/Editor/EntityClipboardData.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.EntityClipboardData", 0, EntityClipboardData, ISerializable)
 
@@ -33,5 +31,4 @@ void EntityClipboardData::serialize(ISerializer& s)
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 }
 
-	}
 }

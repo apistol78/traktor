@@ -10,10 +10,8 @@
 
 #include "Scene/Editor/ISceneEditorProfile.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 /*! Default scene editor profile. */
 class DefaultEditorProfile : public ISceneEditorProfile
@@ -21,8 +19,6 @@ class DefaultEditorProfile : public ISceneEditorProfile
 	T_RTTI_CLASS;
 
 public:
-	DefaultEditorProfile();
-
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
 	) const override final;
@@ -75,6 +71,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

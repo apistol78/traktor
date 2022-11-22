@@ -8,10 +8,8 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 const float c_cameraMeshVertices[] =
 {
@@ -151,6 +149,4 @@ const int32_t c_cameraMeshIndices[] =
 	47, 27
 };
 
-	}
 }
-

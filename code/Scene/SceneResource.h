@@ -20,19 +20,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityBuilder;
 class EntityData;
 class WorldRenderSettings;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneControllerData;
 class Scene;
@@ -69,6 +67,4 @@ private:
 	Ref< ISceneControllerData > m_controllerData;
 };
 
-	}
 }
-

@@ -13,10 +13,8 @@
 #include "Scene/SceneClassFactory.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneClassFactory", 0, SceneClassFactory, IRuntimeClassFactory)
 
@@ -31,5 +29,4 @@ void SceneClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classScene);
 }
 
-	}
 }

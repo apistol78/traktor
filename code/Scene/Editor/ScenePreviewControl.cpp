@@ -49,10 +49,8 @@
 #include "Ui/QuadSplitter.h"
 #include "World/EntityEventManager.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
@@ -553,5 +551,4 @@ void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 	m_context->raiseRedraw(nullptr);
 }
 
-	}
 }

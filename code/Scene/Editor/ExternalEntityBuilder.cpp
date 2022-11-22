@@ -12,10 +12,8 @@
 #include "World/IEntityFactory.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ExternalEntityBuilder", ExternalEntityBuilder, world::IEntityBuilder)
 
@@ -88,5 +86,4 @@ const world::IEntityBuilder* ExternalEntityBuilder::getCompositeEntityBuilder() 
 	return this;
 }
 
-	}
 }

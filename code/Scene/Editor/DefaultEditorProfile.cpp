@@ -45,16 +45,10 @@
 #include "Scene/Editor/DefaultComponentEditorFactory.h"
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", 0, DefaultEditorProfile, ISceneEditorProfile)
-
-DefaultEditorProfile::DefaultEditorProfile()
-{
-}
 
 void DefaultEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -165,5 +159,4 @@ Ref< world::EntityData > DefaultEditorProfile::createEntityData(
 	return entityData;
 }
 
-	}
 }

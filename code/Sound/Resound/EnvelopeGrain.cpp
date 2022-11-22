@@ -14,12 +14,10 @@
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/EnvelopeGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
@@ -33,7 +31,7 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 	EnvelopeGrainCursor()
 	{
-		m_outputSamples[0] = 0;
+		m_outputSamples[0] = nullptr;
 	}
 
 	virtual ~EnvelopeGrainCursor()
@@ -46,24 +44,24 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		if (m_id == id)
 			m_parameter = parameter;
 
-		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
-			(*i)->setParameter(id, parameter);
+		for (auto cursor : m_cursors)
+			cursor->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat() override final
 	{
-		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
-			(*i)->disableRepeat();
+		for (auto cursor : m_cursors)
+			cursor->disableRepeat();
 	}
 
 	virtual void reset() override final
 	{
-		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
-			(*i)->reset();
+		for (auto cursor : m_cursors)
+			cursor->reset();
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrain", EnvelopeGrain, IGrain)
 
@@ -80,20 +78,20 @@ EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, co
 Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
 {
 	if (m_grains.empty())
-		return 0;
+		return nullptr;
 
 	Ref< EnvelopeGrainCursor > cursor = new EnvelopeGrainCursor();
 	cursor->m_id = m_id;
 	cursor->m_parameter = 0.0f;
 	cursor->m_lastP = 0.0f;
-	cursor->m_outputSamples[0] = 0;
+	cursor->m_outputSamples[0] = nullptr;
 
 	cursor->m_cursors.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
 		cursor->m_cursors[i] = m_grains[i].grain->createCursor();
 		if (!cursor->m_cursors[i])
-			return 0;
+			return nullptr;
 	}
 
 	const uint32_t outputSamplesCount = 1024/*hwFrameSamples*/ * c_outputSamplesBlockCount;
@@ -127,13 +125,13 @@ void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 
 	outActiveGrains.push_back(this);
 
-	float p = envelopeCursor->m_lastP;
+	const float p = envelopeCursor->m_lastP;
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		float I = m_grains[i].in;
-		float O = m_grains[i].out;
-		float Ie = m_grains[i].easeIn;
-		float Oe = m_grains[i].easeOut;
+		const float I = m_grains[i].in;
+		const float O = m_grains[i].out;
+		const float Ie = m_grains[i].easeIn;
+		const float Oe = m_grains[i].easeOut;
 
 		if (p < I - Ie)
 			continue;
@@ -168,21 +166,21 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixe
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	T_ASSERT(envelopeCursor);
 
-	float p0 = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
+	const float p0 = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
 
 	// Filter parameter to reduce intense changes causing clipping noises.
-	float k = clamp(m_response * float(outBlock.samplesCount) / 44050.0f, 0.0f, 1.0f);
-	float p = envelopeCursor->m_lastP * (1.0f - k) + p0 * k;
+	const float k = clamp(m_response * float(outBlock.samplesCount) / 44050.0f, 0.0f, 1.0f);
+	const float p = envelopeCursor->m_lastP * (1.0f - k) + p0 * k;
 	envelopeCursor->m_lastP = p;
 
 	bool result = false;
 
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		float I = m_grains[i].in;
-		float O = m_grains[i].out;
-		float Ie = m_grains[i].easeIn;
-		float Oe = m_grains[i].easeOut;
+		const float I = m_grains[i].in;
+		const float O = m_grains[i].out;
+		const float Ie = m_grains[i].easeIn;
+		const float Oe = m_grains[i].easeOut;
 
 		if (p < I - Ie)
 			continue;
@@ -207,7 +205,7 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixe
 		if (v < FUZZY_EPSILON)
 			continue;
 
-		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
+		SoundBlock soundBlock = { { nullptr }, outBlock.samplesCount, 0, 0 };
 		if (m_grains[i].grain->getBlock(
 			envelopeCursor->m_cursors[i],
 			mixer,
@@ -259,5 +257,4 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixe
 	return result;
 }
 
-	}
 }

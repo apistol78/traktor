@@ -18,25 +18,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class Command;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 class EntityAdapter;
@@ -64,6 +62,4 @@ public:
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) = 0;
 };
 
-	}
 }
-

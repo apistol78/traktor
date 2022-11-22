@@ -18,19 +18,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
-/*! \brief
+/*!
  * \ingroup Scene
  */
 class T_DLLCLASS IComponentEditor : public Object
@@ -48,6 +46,4 @@ public:
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const = 0;
 };
 
-	}
 }
-

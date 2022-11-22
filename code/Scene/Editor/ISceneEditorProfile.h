@@ -24,48 +24,46 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderView;
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceFactory;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Command;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityData;
 class IEntityFactory;
 class IEntityRenderer;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 class IComponentEditorFactory;
@@ -185,6 +183,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

@@ -20,12 +20,10 @@
 #include "World/IEntityFactory.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >& outEntityAdapters)
 {
@@ -38,7 +36,7 @@ void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >&
 		collectAllAdapters(childAdapter, outEntityAdapters);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
@@ -127,7 +125,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		return nullptr;
 
 	// Calculate deep hash of entity data.
-	uint32_t hash = DeepHash(entityData).get();
+	const uint32_t hash = DeepHash(entityData).get();
 
 	// Get adapter; reuse adapters containing same type of entity.
 	Cache& cache = m_cache[&type_of(entityData)];
@@ -236,5 +234,4 @@ const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() c
 	return m_entityBuilder;
 }
 
-	}
 }

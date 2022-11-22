@@ -29,10 +29,8 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 18, ScenePipeline, editor::IPipeline)
 
@@ -330,5 +328,4 @@ const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operat
 	return nullptr;
 }
 
-	}
 }

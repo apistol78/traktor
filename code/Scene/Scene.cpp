@@ -13,10 +13,8 @@
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 
@@ -79,5 +77,4 @@ world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS ScenePermutationPipeline : public editor::IPipeline
 {
@@ -66,6 +64,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

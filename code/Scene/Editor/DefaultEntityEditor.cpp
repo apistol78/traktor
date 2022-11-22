@@ -26,12 +26,10 @@
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 template < typename ComponentDataType >
 ComponentDataType* getComponentOf(const world::EntityData* entityData)
@@ -44,7 +42,7 @@ ComponentDataType* getComponentOf(const world::EntityData* entityData)
 	return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
@@ -153,17 +151,17 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
 	// Transform ray into object space.
-	Transform worldInv = m_entityAdapter->getTransform().inverse();
-	Vector4 objectRayOrigin = worldInv * worldRayOrigin.xyz1();
-	Vector4 objectRayDirection = worldInv * worldRayDirection.xyz0();
+	const Transform worldInv = m_entityAdapter->getTransform().inverse();
+	const Vector4 objectRayOrigin = worldInv * worldRayOrigin.xyz1();
+	const Vector4 objectRayDirection = worldInv * worldRayDirection.xyz0();
 
 	// Get entity bounding box; do not pick if origin of ray is within box.
-	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
+	const Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	if (boundingBox.empty() || boundingBox.inside(objectRayOrigin))
 		return false;
 
 	// Trace bounding box to see if ray intersect.
-	Scalar length = outDistance - Scalar(FUZZY_EPSILON);
+	const Scalar length = outDistance - Scalar(FUZZY_EPSILON);
 	Scalar distance;
 	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * length, distance))
 		return false;
@@ -176,13 +174,13 @@ bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 bool DefaultEntityEditor::queryFrustum(const Frustum& worldFrustum) const
 {
 	// Transform frustum into object space.
-	Transform worldInv = m_entityAdapter->getTransform().inverse();
+	const Transform worldInv = m_entityAdapter->getTransform().inverse();
 	Plane objectPlanes[6];
 	for (int32_t i = 0; i < 6; ++i)
 		objectPlanes[i] = worldInv.toMatrix44() * worldFrustum.planes[i];
 
 	// Get entity bounding box.
-	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
+	const Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	if (boundingBox.empty())
 		return false;
 
@@ -206,7 +204,7 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 {
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
-	Transform transform = m_entityAdapter->getTransform();
+	const Transform transform = m_entityAdapter->getTransform();
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
@@ -254,5 +252,4 @@ void DefaultEntityEditor::updateSettings()
 	m_colorSnap = colors->getProperty< Color4ub >(L"SnapPoint");
 }
 
-	}
 }

@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS TransformChain : public Object
 {
@@ -79,6 +77,4 @@ private:
 	AlignedVector< Matrix44 > m_world;
 };
 
-	}
 }
-

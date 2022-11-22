@@ -12,10 +12,8 @@
 #include "Scene/Editor/Traverser.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-    namespace scene
-    {
 
 bool Traverser::visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor)
 {
@@ -105,5 +103,4 @@ bool Traverser::visit(ISerializable* object, const std::function< VisitorResult(
 	return true;
 }
 
-    }
 }

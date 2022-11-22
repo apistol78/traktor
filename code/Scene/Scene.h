@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 class IWorldRenderer;
@@ -31,10 +29,10 @@ struct UpdateParams;
 class WorldRenderSettings;
 class WorldRenderView;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class ISceneController;
 
@@ -77,6 +75,4 @@ private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 };
 
-	}
 }
-

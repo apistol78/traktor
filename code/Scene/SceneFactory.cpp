@@ -11,10 +11,8 @@
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneResource.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
@@ -47,5 +45,4 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 		return nullptr;
 }
 
-	}
 }

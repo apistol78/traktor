@@ -19,16 +19,14 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const Guid c_guidWhiteRoomScene(L"{B4AFD9C3-E47C-654B-99BE-B281AD10DD1A}");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.CreatePreviewSceneTool", 0, CreatePreviewSceneTool, editor::IWizardTool)
 
@@ -77,8 +75,8 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 			return false;
 		}
 
-		int32_t x = i % n;
-		int32_t z = i / n;
+		const int32_t x = i % n;
+		const int32_t z = i / n;
 
 		entityData->setName(entityInstances[i]->getName());
 		entityData->setTransform(Transform(
@@ -103,5 +101,4 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 	return true;
 }
 
-	}
 }

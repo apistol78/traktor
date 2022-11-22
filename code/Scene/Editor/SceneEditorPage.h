@@ -24,17 +24,19 @@ namespace traktor
 
 class ISerializable;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IDocument;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class ContentChangeEvent;
@@ -53,17 +55,17 @@ class GridRow;
 class GridRowStateChangeEvent;
 class GridView;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityData;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class CameraMovedEvent;
 class EntityAdapter;
@@ -188,6 +190,4 @@ private:
 	void eventContextMeasurement(MeasurementEvent* event);
 };
 
-	}
 }
-
