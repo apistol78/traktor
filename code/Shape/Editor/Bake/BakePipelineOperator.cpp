@@ -207,7 +207,7 @@ void addSky(
 		0.0f
 	);
 
-	uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
+	const uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
 
 	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
 		Key(0x00000001, 0x00000000, 0x00000000, textureAssetHash),
@@ -237,7 +237,7 @@ void addSky(
 			safeClose(file);
 
 			// Ensure image is of reasonable size, only used for low frequency data so size doesn't matter much.
-			int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
+			const int32_t dim = min(skyImage->getWidth(), skyImage->getHeight());
 			if (dim > 128)
 			{
 				drawing::ScaleFilter scaleFilter(
@@ -263,15 +263,15 @@ void addSky(
 					{
 						for (int32_t x = 0; x < 128; ++x)
 						{
-							Vector4 d = headRotation * radianceCube->getDirection(side, x, y);
+							const Vector4 d = headRotation * radianceCube->getDirection(side, x, y);
 							Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
 							Scalar totalWeight = 0.0_simd;
 							for (int32_t i = 0; i < 10000; ++i)
 							{
-								Vector2 uv = Quasirandom::hammersley(i, 10000, random);
+								const Vector2 uv = Quasirandom::hammersley(i, 10000, random);
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 								direction = lerp(d, direction, 0.125_simd).normalized();
-								Scalar weight = 1.0_simd; // dot3(d, direction);
+								const Scalar weight = 1.0_simd; // dot3(d, direction);
 								cl += sourceRadianceCube->get(direction) * weight;
 								totalWeight += weight;
 							}
@@ -293,7 +293,7 @@ void addSky(
 
 			// Attenuate images; imperically measured using Blender as reference.
 			const float c_refScale = 5.0f / 4.0f;
-			drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 			radiance->apply(&tform);
 
 			return new IblProbe(radiance);
@@ -301,7 +301,7 @@ void addSky(
 	);
 
 	// Scale probe by user attenuation factor.
-	drawing::TransformFilter tform(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	const drawing::TransformFilter tform(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 	probe->apply(&tform);
 
 	// Create tracer environment.
@@ -311,10 +311,12 @@ void addSky(
 /*! */
 int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
 {
+	Winding3 polygonWinding;
+
 	float totalWorldArea = 0.0f;
 	for (const auto& polygon : model->getPolygons())
 	{
-		Winding3 polygonWinding;
+		polygonWinding.resize(0);
 		for (const auto index : polygon.getVertices())
 			polygonWinding.push(model->getVertexPosition(index));
 		totalWorldArea += abs(polygonWinding.area());
@@ -322,7 +324,6 @@ int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int
 
 	const float totalLightMapArea = lumelDensity * lumelDensity * totalWorldArea;
 	int32_t size = (int32_t)(std::sqrt(totalLightMapArea) + 0.5f);
-        
 	size = std::max< int32_t >(minimumSize, size);
 	size = std::min< int32_t >(maximumSize, size);
 
@@ -375,7 +376,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
 
 	// Instantiate raytracer implementation.
-	std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	const std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	m_tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!m_tracerType)
 	{
@@ -384,7 +385,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	}
 
 	// Do this last since we want to ensure asynchronous flag is properly set.
-	bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
+	const bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
 	if (!tracerEnable)
 		return true;
 
@@ -534,6 +535,9 @@ bool BakePipelineOperator::build(
 	// Cancel any bake process currently running for given scene.
 	ms_tracerProcessor->cancel(sourceInstance->getGuid());
 
+	// Calculate hash of configuration so we don't use stale models from cache.
+	const uint32_t configurationHash = DeepHash(configuration).get();
+
 	log::info << L"Creating lightmap tasks..." << Endl;
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
@@ -632,7 +636,7 @@ bool BakePipelineOperator::build(
 			}
 
 			// Calculate synthesized ids.
-			Guid entityId = inoutEntityData->getId();
+			const Guid entityId = inoutEntityData->getId();
 			Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
 			Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
 			Guid outputId = entityId.permutation(c_outputIdSeed);
@@ -646,9 +650,10 @@ bool BakePipelineOperator::build(
 					continue;
 
 				const uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
+				const uint32_t modelHash = configurationHash + componentDataHash;
 
 				Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), componentDataHash),
+					Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
 					},
@@ -679,12 +684,13 @@ bool BakePipelineOperator::build(
 						))
 							return nullptr;
 
+						model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
 						return model;
 					}
 				);
 
 				Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), componentDataHash),
+					Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 					[&](IStream* stream) -> Ref< model::Model > {
 						return BinarySerializer(stream).readObject< model::Model >();
 					},
@@ -704,14 +710,7 @@ bool BakePipelineOperator::build(
 				{
 					log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
 
-					// Calculate size of lightmap from geometry.
-					int32_t lightmapSize = calculateLightmapSize(
-						visualModel,
-						configuration->getLumelDensity(),
-						configuration->getMinimumLightMapSize(),
-						configuration->getMaximumLightMapSize()
-					);
-
+					const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
 					bool needDirectionalMap = false;
 
 					// Modify all materials to contain reference to lightmap channel.
@@ -746,7 +745,7 @@ bool BakePipelineOperator::build(
 									if (image && !textureAsset->m_output.m_linearGamma)
 									{
 										// Convert to linear color space.
-										drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+										const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
 										image->apply(&gammaFilter);							
 									}
 									images[filePath] = image;
