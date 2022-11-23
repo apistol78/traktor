@@ -146,6 +146,8 @@ DialogResult DialogWin32::showModal()
 		};
 		SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
+	else
+		ShowWindow(m_hWnd, SW_SHOW);
 
 	// Handle events from the dialog.
 	m_result = DialogResult::Cancel;

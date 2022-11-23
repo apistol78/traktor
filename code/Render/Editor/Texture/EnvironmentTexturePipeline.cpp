@@ -204,32 +204,32 @@ bool EnvironmentTexturePipeline::buildOutput(
 			{
 				for (int32_t x = 0; x < mipSize; ++x)
 				{
-					Vector4 direction = cubeMap->getDirection(side, x << i, y << i);
+					const Vector4 direction = cubeMap->getDirection(side, x << i, y << i);
 					
 					Vector4 u, v;
 					orthogonalFrame(direction, u, v);
-					Matrix44 M(u, v, direction, Vector4::zero());
+					const Matrix44 M(u, v, direction, Vector4::zero());
 
 					Color4f color(0.0f, 0.0f, 0.0f);
 					Scalar weight(0.0f);
 
 					for (int32_t i = 0; i < samples; ++i)
 					{
-						Vector2 rnd = Quasirandom::hammersley(i, samples);
+						const Vector2 rnd = Quasirandom::hammersley(i, samples);
 
-						float a = roughness * roughness;
-						float phi = TWO_PI * rnd.x;
-						float cosTheta = std::sqrt((1.0f - rnd.y) / (1.0f + (a * a - 1.0f) * rnd.y));
-						float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
+						const float a = roughness * roughness;
+						const float phi = TWO_PI * rnd.x;
+						const float cosTheta = std::sqrt((1.0f - rnd.y) / (1.0f + (a * a - 1.0f) * rnd.y));
+						const float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
 
-						Vector4 H(
+						const Vector4 H(
 							std::cos(phi) * sinTheta,
 							std::sin(phi) * sinTheta,
 							cosTheta
 						);
 
-						Vector4 Hw = (M * H).normalized();
-						Vector4 L = Hw * (2.0_simd * dot3(direction, Hw)) - direction;
+						const Vector4 Hw = (M * H).normalized();
+						const Vector4 L = Hw * (2.0_simd * dot3(direction, Hw)) - direction;
 
 						color += min(cubeMap->get(L.normalized()), Color4f(10.0f, 10.0f, 10.0f, 0.0f));
 						weight += max(dot3(direction, L), 0.0_simd);

@@ -781,6 +781,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -806,6 +807,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -831,6 +833,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -865,6 +868,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/jpeg</item>
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
@@ -921,7 +925,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.flac</name>
-			<sourcePath>$(FLAC_SDK)/src/libFLAC</sourcePath>
+			<sourcePath>$(FLAC_SDK)/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -1064,7 +1068,7 @@
 			</configurations>
 			<items>
 				<item type="File" version="1">
-					<fileName>bitmath.c</fileName>
+					<fileName>libFLAC/bitmath.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
@@ -1075,7 +1079,7 @@
 							<name>private</name>
 							<items>
 								<item type="File" version="1">
-									<fileName>include/private/*.*</fileName>
+									<fileName>libFLAC/include/private/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
@@ -1085,7 +1089,7 @@
 							<name>protected</name>
 							<items>
 								<item type="File" version="1">
-									<fileName>include/protected/*.*</fileName>
+									<fileName>libFLAC/include/protected/*.*</fileName>
 									<excludeFilter/>
 									<items/>
 								</item>
@@ -1094,82 +1098,87 @@
 					</items>
 				</item>
 				<item type="File" version="1">
-					<fileName>bitreader.c</fileName>
+					<fileName>libFLAC/bitreader.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>bitwriter.c</fileName>
+					<fileName>libFLAC/bitwriter.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>cpu.c</fileName>
+					<fileName>libFLAC/cpu.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>crc.c</fileName>
+					<fileName>libFLAC/crc.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>fixed.c</fileName>
+					<fileName>libFLAC/fixed.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>float.c</fileName>
+					<fileName>libFLAC/float.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>format.c</fileName>
+					<fileName>libFLAC/format.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>lpc.c</fileName>
+					<fileName>libFLAC/lpc.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>md5.c</fileName>
+					<fileName>libFLAC/md5.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>memory.c</fileName>
+					<fileName>libFLAC/memory.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>metadata_iterators.c</fileName>
+					<fileName>libFLAC/metadata_iterators.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>metadata_object.c</fileName>
+					<fileName>libFLAC/metadata_object.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>stream_decoder.c</fileName>
+					<fileName>libFLAC/stream_decoder.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>stream_encoder.c</fileName>
+					<fileName>libFLAC/stream_encoder.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>stream_encoder_framing.c</fileName>
+					<fileName>libFLAC/stream_encoder_framing.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
 				<item type="File" version="1">
-					<fileName>window.c</fileName>
+					<fileName>libFLAC/window.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>share/win_utf8_io/win_utf8_io.c</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>
