@@ -77,10 +77,10 @@
 /* #undef GIT_COMMIT_TAG */
 
 /* Compiler has the __builtin_bswap16 intrinsic */
-#define HAVE_BSWAP16
+//#define HAVE_BSWAP16
 
 /* Compiler has the __builtin_bswap32 intrinsic */
-#define HAVE_BSWAP32
+//#define HAVE_BSWAP32
 
 /* Define to 1 if you have the <byteswap.h> header file. */
 #define HAVE_BYTESWAP_H
