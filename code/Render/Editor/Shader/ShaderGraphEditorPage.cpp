@@ -513,6 +513,8 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 
 bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 {
+	RefArray< ui::Node > selectedNodes;
+
 	if (m_shaderViewer->handleCommand(command))
 		return true;
 
@@ -521,8 +523,14 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		RefArray< ui::Node > selectedNodes;
-		if (m_editorGraph->containFocus() && m_editorGraph->getSelectedNodes(selectedNodes) > 0)
+		if (m_scriptEditor->containFocus())
+		{
+			if (command == L"Editor.Copy")
+				m_scriptEditor->copy();
+			else
+				m_scriptEditor->cut();
+		}
+		else if (m_editorGraph->containFocus() && m_editorGraph->getSelectedNodes(selectedNodes) > 0)
 		{
 			// Also copy edges which are affected by selected nodes.
 			RefArray< ui::Edge > selectedEdges;
@@ -590,42 +598,49 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Paste")
 	{
-		Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
-			ui::Application::getInstance()->getClipboard()->getObject()
-		);
-		if (m_editorGraph->containFocus() && data)
+		if (m_scriptEditor->containFocus())
 		{
-			// Save undo state.
-			m_document->push();
-
-			const ui::Rect& bounds = data->getBounds();
-
-			ui::Rect rcClient = m_editorGraph->getInnerRect();
-			ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
-
-			for (auto node : data->getNodes())
-			{
-				// Create new unique instance ID.
-				node->setId(Guid::create());
-
-				// Place node in view.
-				std::pair< int, int > position = node->getPosition();
-				position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
-				position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
-				node->setPosition(position);
-
-				// Add node to graph.
-				m_shaderGraph->addNode(node);
-			}
-
-			for (auto edge : data->getEdges())
-				m_shaderGraph->addEdge(edge);
-
-			createEditorNodes(
-				data->getNodes(),
-				data->getEdges()
+			m_scriptEditor->paste();
+		}
+		else if (m_editorGraph->containFocus())
+		{
+			Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
+				ui::Application::getInstance()->getClipboard()->getObject()
 			);
-			updateGraph();
+			if (data)
+			{
+				// Save undo state.
+				m_document->push();
+
+				const ui::Rect& bounds = data->getBounds();
+
+				ui::Rect rcClient = m_editorGraph->getInnerRect();
+				ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
+
+				for (auto node : data->getNodes())
+				{
+					// Create new unique instance ID.
+					node->setId(Guid::create());
+
+					// Place node in view.
+					std::pair< int, int > position = node->getPosition();
+					position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
+					position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
+					node->setPosition(position);
+
+					// Add node to graph.
+					m_shaderGraph->addNode(node);
+				}
+
+				for (auto edge : data->getEdges())
+					m_shaderGraph->addEdge(edge);
+
+				createEditorNodes(
+					data->getNodes(),
+					data->getEdges()
+				);
+				updateGraph();
+			}
 		}
 	}
 	else if (command == L"Editor.SelectAll")
