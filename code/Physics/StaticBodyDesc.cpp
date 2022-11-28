@@ -11,10 +11,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/StaticBodyDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 5, StaticBodyDesc, BodyDesc)
 
@@ -67,5 +65,4 @@ void StaticBodyDesc::serialize(ISerializer& s)
 	s >> Member< bool >(L"kinematic", m_kinematic);
 }
 
-	}
 }

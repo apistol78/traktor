@@ -8,10 +8,7 @@
  */
 #include "Physics/CollisionListener.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
-	}
 }

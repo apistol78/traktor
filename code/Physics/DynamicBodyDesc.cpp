@@ -12,10 +12,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 6, DynamicBodyDesc, BodyDesc)
 
@@ -137,5 +135,4 @@ void DynamicBodyDesc::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

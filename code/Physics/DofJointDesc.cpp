@@ -11,12 +11,10 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Physics/DofJointDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 class MemberLimit : public MemberComplex
 {
@@ -38,7 +36,7 @@ private:
 	DofJointDesc::Limit& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DofJointDesc", 0, DofJointDesc, JointDesc)
 
@@ -48,5 +46,4 @@ void DofJointDesc::serialize(ISerializer& s)
 	s >> MemberLimit(L"rotate", m_rotate);
 }
 
-	}
 }

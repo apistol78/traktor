@@ -10,17 +10,15 @@
 #include "Physics/Body.h"
 #include "Physics/CollisionListener.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Body", Body, Object)
 
 void Body::destroy()
 {
 	removeAllCollisionListeners();
-	m_userObject = 0;
+	m_userObject = nullptr;
 }
 
 void Body::addCollisionListener(CollisionListener* collisionListener)
@@ -53,5 +51,4 @@ Body::Body(const wchar_t* const tag)
 {
 }
 
-	}
 }

@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Physics/JointDesc.h"
 #include "Core/Math/Vector4.h"
+#include "Physics/JointDesc.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Axis joint description.
  * \ingroup Physics
@@ -49,6 +47,4 @@ private:
 	Vector4 m_axis;
 };
 
-	}
 }
-

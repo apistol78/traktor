@@ -28,12 +28,10 @@
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 class CollisionContactWrapper : public Object
 {
@@ -297,7 +295,7 @@ Ref< BodyStateWrapper > Body_getState(Body* self)
 	return new BodyStateWrapper(self->getState());
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, PhysicsClassFactory, IRuntimeClassFactory)
 
@@ -447,5 +445,4 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCollisionListenerDelegate);
 }
 
-	}
 }

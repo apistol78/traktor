@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 class MaterialMask;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 /*! Heightfield collision shape.
  * \ingroup Physics
@@ -55,6 +53,4 @@ private:
 	resource::Id< hf::MaterialMask > m_materialMask;
 };
 
-	}
 }
-

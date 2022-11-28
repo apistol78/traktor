@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Cone twist joint.
  * \ingroup Physics
@@ -32,6 +30,4 @@ class T_DLLCLASS ConeTwistJoint : public Joint
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

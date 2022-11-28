@@ -12,10 +12,8 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Rigid body state.
  * \ingroup Physics
@@ -59,18 +57,18 @@ struct BodyState
 
 		state.m_transform = lerp(m_transform, stateTarget.m_transform, interpolate);
 
-		Scalar lv0 = m_linearVelocity.length();
-		Scalar lv1 = stateTarget.m_linearVelocity.length();
-		Scalar lv = lerp(lv0, lv1, interpolate);
+		const Scalar lv0 = m_linearVelocity.length();
+		const Scalar lv1 = stateTarget.m_linearVelocity.length();
+		const Scalar lv = lerp(lv0, lv1, interpolate);
 
 		if (abs(lv) > FUZZY_EPSILON)
 			state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate).normalized() * lv;
 		else
 			state.m_linearVelocity = Vector4::zero();
 
-		Scalar av0 = m_angularVelocity.length();
-		Scalar av1 = stateTarget.m_angularVelocity.length();
-		Scalar av = lerp(av0, av1, interpolate);
+		const Scalar av0 = m_angularVelocity.length();
+		const Scalar av1 = stateTarget.m_angularVelocity.length();
+		const Scalar av = lerp(av0, av1, interpolate);
 
 		if (abs(av) > FUZZY_EPSILON)
 			state.m_angularVelocity = lerp(m_angularVelocity, stateTarget.m_angularVelocity, interpolate).normalized() * av;
@@ -86,6 +84,4 @@ private:
 	Vector4 m_angularVelocity;
 };
 
-	}
 }
-

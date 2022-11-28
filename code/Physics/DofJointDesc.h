@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Degree-of-freedom joint description.
  * \ingroup Physics
@@ -47,6 +45,4 @@ private:
 	Limit m_rotate = { false, false, false };
 };
 
-	}
 }
-

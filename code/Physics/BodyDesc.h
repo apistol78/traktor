@@ -34,7 +34,7 @@ class T_DLLCLASS BodyDesc : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	BodyDesc();
+	BodyDesc() = default;
 
 	explicit BodyDesc(ShapeDesc* shape);
 

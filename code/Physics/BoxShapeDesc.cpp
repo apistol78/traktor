@@ -13,10 +13,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BoxShapeDesc", ShapeDesc::Version, BoxShapeDesc, ShapeDesc)
 
@@ -54,5 +52,4 @@ void BoxShapeDesc::serialize(ISerializer& s)
 		s >> Member< float >(L"margin", m_margin, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
-	}
 }

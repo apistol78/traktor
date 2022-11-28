@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class Mesh;
 
@@ -48,6 +46,4 @@ private:
 	resource::Id< Mesh > m_mesh;
 };
 
-	}
 }
-

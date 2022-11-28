@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Compound collision shape.
  * \ingroup Physics
@@ -38,6 +36,4 @@ private:
 	RefArray< ShapeDesc > m_shapes;
 };
 
-	}
 }
-

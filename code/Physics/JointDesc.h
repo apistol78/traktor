@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Joint description.
  * \ingroup Physics
@@ -31,6 +29,4 @@ class T_DLLCLASS JointDesc : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

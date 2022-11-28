@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Hinge joint.
  * \ingroup Physics
@@ -43,6 +41,4 @@ public:
 	virtual void setMotor(float targetVelocity, float maxImpulse) = 0;
 };
 
-	}
 }
-

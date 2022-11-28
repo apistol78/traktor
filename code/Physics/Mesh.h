@@ -25,8 +25,10 @@ namespace traktor
 
 class IStream;
 
-	namespace physics
-	{
+}
+
+namespace traktor::physics
+{
 
 /*! Mesh geometry.
  * \ingroup Physics
@@ -101,6 +103,4 @@ private:
 	float m_margin;
 };
 
-	}
 }
-

@@ -11,10 +11,8 @@
 #include "Physics/MeshShapeDesc.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshShapeDesc", ShapeDesc::Version, MeshShapeDesc, ShapeDesc)
 
@@ -39,5 +37,4 @@ void MeshShapeDesc::serialize(ISerializer& s)
 	s >> resource::Member< Mesh >(L"mesh", m_mesh);
 }
 
-	}
 }

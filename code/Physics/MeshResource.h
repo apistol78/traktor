@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Mesh geometry resource.
  * \ingroup Physics
@@ -34,6 +32,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }
-

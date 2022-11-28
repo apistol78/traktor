@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! 2 axis hinge joint description.
  * \ingroup Physics
@@ -79,6 +77,4 @@ private:
 	float m_suspensionStiffness;
 };
 
-	}
 }
-

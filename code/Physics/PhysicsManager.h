@@ -24,17 +24,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 struct CollisionInfo;
 class CollisionListener;
@@ -432,6 +430,4 @@ private:
 	RefArray< CollisionListener > m_collisionListeners;
 };
 
-	}
 }
-
