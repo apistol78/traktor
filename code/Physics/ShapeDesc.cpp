@@ -13,10 +13,8 @@
 #include "Physics/ShapeDesc.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ShapeDesc", ShapeDesc::Version, ShapeDesc, ISerializable)
 
@@ -69,5 +67,4 @@ void ShapeDesc::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"material", m_material);
 }
 
-	}
 }

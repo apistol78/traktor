@@ -13,10 +13,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/AxisJointDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.AxisJointDesc", 0, AxisJointDesc, JointDesc)
 
@@ -52,5 +50,4 @@ void AxisJointDesc::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
 }
 
-	}
 }

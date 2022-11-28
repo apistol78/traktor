@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Dynamic rigid body description.
  * \ingroup Physics
@@ -85,6 +83,4 @@ private:
 	float m_angularThreshold = 1.0f;
 };
 
-	}
 }
-

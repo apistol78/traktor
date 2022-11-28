@@ -11,16 +11,14 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_version = 7;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Mesh", Mesh, Object)
 
@@ -213,5 +211,4 @@ bool Mesh::write(IStream* stream)
 	return true;
 }
 
-	}
 }

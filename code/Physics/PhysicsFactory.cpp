@@ -13,10 +13,8 @@
 #include "Physics/MeshResource.h"
 #include "Physics/PhysicsFactory.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsFactory", PhysicsFactory, resource::IResourceFactory)
 
@@ -67,5 +65,4 @@ Ref< Object > PhysicsFactory::create(resource::IResourceManager* resourceManager
 		return nullptr;
 }
 
-	}
 }

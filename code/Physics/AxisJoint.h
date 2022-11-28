@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Axis joint.
  * \ingroup Physics
@@ -35,6 +33,4 @@ public:
 	virtual Vector4 getAxis() const = 0;
 };
 
-	}
 }
-

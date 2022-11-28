@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! 2 axis hinge joint.
  * \ingroup Physics
@@ -43,6 +41,4 @@ public:
 	virtual void getAnchors(Vector4& outAnchor1, Vector4& outAnchor2) const = 0;
 };
 
-	}
 }
-

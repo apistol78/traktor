@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Ball joint.
  * \ingroup Physics
@@ -37,6 +35,4 @@ public:
 	virtual Vector4 getAnchor() const = 0;
 };
 
-	}
 }
-

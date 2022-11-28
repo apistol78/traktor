@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class CollisionSpecification;
 
@@ -63,6 +61,4 @@ private:
 	int32_t m_material = 0;
 };
 
-	}
 }
-

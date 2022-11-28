@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Physics/CompoundShapeDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CompoundShapeDesc", ShapeDesc::Version, CompoundShapeDesc, ShapeDesc)
 
@@ -23,5 +21,4 @@ void CompoundShapeDesc::serialize(ISerializer& s)
 	s >> MemberRefArray< ShapeDesc >(L"shapes", m_shapes);
 }
 
-	}
 }

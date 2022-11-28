@@ -15,10 +15,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ConeTwistJointDesc", 0, ConeTwistJointDesc, JointDesc)
 
@@ -68,5 +66,4 @@ void ConeTwistJointDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"twistAngle", m_twistAngle, AttributeRange(-PI, PI) | AttributeUnit(UnitType::Radians));
 }
 
-	}
 }

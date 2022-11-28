@@ -11,10 +11,8 @@
 #include "Physics/CollisionListener.h"
 #include "Physics/Body.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsManager", PhysicsManager, Object)
 
@@ -48,5 +46,4 @@ bool PhysicsManager::haveCollisionListeners() const
 	return !m_collisionListeners.empty();
 }
 
-	}
 }

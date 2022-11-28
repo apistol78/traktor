@@ -11,10 +11,8 @@
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldShapeDesc", ShapeDesc::Version, HeightfieldShapeDesc, ShapeDesc)
 
@@ -35,5 +33,4 @@ void HeightfieldShapeDesc::serialize(ISerializer& s)
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 }
 
-	}
 }

@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! \ingroup Physics */
 //@{
@@ -83,6 +81,4 @@ inline Ref< CollisionListener > createCollisionListener(TargetType* object, type
 
 //@}
 
-	}
 }
-

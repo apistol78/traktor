@@ -14,10 +14,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/HingeJointDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 2, HingeJointDesc, JointDesc)
 
@@ -98,5 +96,4 @@ void HingeJointDesc::serialize(ISerializer& s)
 		s >> Member< bool >(L"angularOnly", m_angularOnly);
 }
 
-	}
 }

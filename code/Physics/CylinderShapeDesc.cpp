@@ -11,10 +11,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/CylinderShapeDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CylinderShapeDesc", ShapeDesc::Version, CylinderShapeDesc, ShapeDesc)
 
@@ -52,5 +50,4 @@ void CylinderShapeDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));
 }
 
-	}
 }

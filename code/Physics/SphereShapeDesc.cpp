@@ -11,10 +11,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/SphereShapeDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.SphereShapeDesc", ShapeDesc::Version, SphereShapeDesc, ShapeDesc)
 
@@ -34,5 +32,4 @@ void SphereShapeDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 }
 
-	}
 }

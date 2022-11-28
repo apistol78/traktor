@@ -11,16 +11,10 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyDesc", BodyDesc, ISerializable)
-
-BodyDesc::BodyDesc()
-{
-}
 
 BodyDesc::BodyDesc(ShapeDesc* shape)
 :	m_shape(shape)
@@ -42,5 +36,4 @@ void BodyDesc::serialize(ISerializer& s)
 	s >> MemberRef< ShapeDesc >(L"shape", m_shape);
 }
 
-	}
 }

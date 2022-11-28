@@ -14,10 +14,8 @@
 #include "Core/Serialization/Member.h"
 #include "Physics/Hinge2JointDesc.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.Hinge2JointDesc", 0, Hinge2JointDesc, JointDesc)
 
@@ -125,5 +123,4 @@ void Hinge2JointDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"suspensionStiffness", m_suspensionStiffness, AttributeRange(0.0f));
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Sphere collision shape.
  * \ingroup Physics
@@ -41,6 +39,4 @@ private:
 	float m_radius = 1.0f;
 };
 
-	}
 }
-

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Static rigid body description.
  * \ingroup Physics
@@ -55,6 +53,4 @@ private:
 	bool m_kinematic = false;
 };
 
-	}
 }
-

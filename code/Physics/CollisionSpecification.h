@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Collision detection specification.
  * \ingroup Physics
@@ -31,7 +29,7 @@ class T_DLLCLASS CollisionSpecification : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	CollisionSpecification();
+	CollisionSpecification() = default;
 
 	explicit CollisionSpecification(uint32_t bitMask);
 
@@ -40,9 +38,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint32_t m_bitMask;
+	uint32_t m_bitMask = 0;
 };
 
-	}
 }
-
