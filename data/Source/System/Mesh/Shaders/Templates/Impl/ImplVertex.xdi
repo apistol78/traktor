@@ -144,38 +144,6 @@
 			</position>
 			<name>T_WorldPosition</name>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{ED10D868-8955-46AA-8399-79AA24DF81E4}</id>
-			<comment>
-			<![CDATA[
-Setup global variables required by material shaders.
-			]]>
-			</comment>
-			<position>
-				<first>1268</first>
-				<second>781</second>
-			</position>
-			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
-					<name>ViewVelocity</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -276,36 +244,6 @@ Setup global variables required by material shaders.
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewVelocity</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

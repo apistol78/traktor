@@ -909,17 +909,20 @@ void GraphControl::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rc);
 
-	const int32_t gridSpacing = m_scale * dpi96(32);
+	if (m_scale > 0.20f)
+	{
+		const int32_t gridSpacing = m_scale * dpi96(32);
 
-	const int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
-	const int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
+		const int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
+		const int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
 
-	canvas.setForeground(ss->getColor(this, L"color-grid"));
-	for (int32_t x = ox - gridSpacing; x < rc.getWidth(); x += gridSpacing)
-		canvas.drawLine(x, rc.top, x, rc.bottom);
+		canvas.setForeground(ss->getColor(this, L"color-grid"));
+		for (int32_t x = ox - gridSpacing; x < rc.getWidth(); x += gridSpacing)
+			canvas.drawLine(x, rc.top, x, rc.bottom);
 
-	for (int32_t y = oy - gridSpacing; y < rc.getHeight(); y += gridSpacing)
-		canvas.drawLine(rc.left, y, rc.right, y);
+		for (int32_t y = oy - gridSpacing; y < rc.getHeight(); y += gridSpacing)
+			canvas.drawLine(rc.left, y, rc.right, y);
+	}
 
 	// Draw text.
 	const std::wstring text = getText();

@@ -580,6 +580,58 @@
 				<second>623</second>
 			</position>
 		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{6D8D9003-E172-7540-B079-67DEE45BF7AF}</id>
+			<comment>
+			<![CDATA[
+Setup global variables required by material shaders.
+			]]>
+			</comment>
+			<position>
+				<first>1390</first>
+				<second>547</second>
+			</position>
+			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{46D5CABD-84EB-4E4B-84AB-F276873F6122}</id>
+			<comment/>
+			<position>
+				<first>1885</first>
+				<second>978</second>
+			</position>
+			<name>L_ViewVelocity</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{53E9AAF6-74EF-9247-8157-D02A8FE90C08}</id>
+			<comment/>
+			<position>
+				<first>1180</first>
+				<second>641</second>
+			</position>
+			<name>L_ViewVelocity</name>
+			<global>false</global>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1120,6 +1172,46 @@
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

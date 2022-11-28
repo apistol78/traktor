@@ -6,9 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Drawing/Image.h"
+#include "Drawing/Filters/EncodeRGBM.h"
+#include "Drawing/Filters/MirrorFilter.h"
+#include "Drawing/Filters/NoiseFilter.h"
+#include "Drawing/Filters/NormalMapFilter.h"
+#include "Drawing/Filters/PremultiplyAlphaFilter.h"
+#include "Drawing/Filters/SphereMapFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Render/Editor/Texture/TextureControl.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Ui/Application.h"
-#include "Ui/IBitmap.h"
+#include "Ui/Bitmap.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::render
@@ -43,18 +52,82 @@ bool TextureControl::create(ui::Widget* parent)
 
 ui::Size TextureControl::getMinimumSize() const
 {
-	return m_image ? m_image->getSize() : ui::Size(0, 0);
+	return m_imageSource ? m_imageSource->getSize() : ui::Size(0, 0);
 }
 
 ui::Size TextureControl::getPreferredSize(const ui::Size& hint) const
 {
-	return m_image ? m_image->getSize() : ui::Size(0, 0);
+	return m_imageSource ? m_imageSource->getSize() : ui::Size(0, 0);
 }
 
-bool TextureControl::setImage(ui::IBitmap* image)
+bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output)
 {
-	m_image = image;
-	m_offset = { 0, 0 };
+	if (image != nullptr)
+	{
+		// Create source image.
+		m_imageSource = new ui::Bitmap(image);
+
+		// Create output image.
+		Ref< drawing::Image > imageOutput = image->clone();
+	
+		if (output.m_flipX || output.m_flipY)
+		{
+			drawing::MirrorFilter mirrorFilter(output.m_flipX, output.m_flipY);
+			imageOutput->apply(&mirrorFilter);
+		}
+		if (output.m_generateSphereMap)
+		{
+			drawing::SphereMapFilter sphereMapFilter;
+			imageOutput->apply(&sphereMapFilter);
+		}
+		if (output.m_noiseStrength > 0.0f)
+		{
+			drawing::NoiseFilter noiseFilter(output.m_noiseStrength);
+			imageOutput->apply(&noiseFilter);
+		}
+		if (output.m_premultiplyAlpha)
+		{
+			drawing::PremultiplyAlphaFilter preAlphaFilter;
+			imageOutput->apply(&preAlphaFilter);
+		}
+		if (output.m_encodeAsRGBM)
+		{
+			const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
+			imageOutput->apply(&encodeRGBM);
+		}
+		if (output.m_generateNormalMap)
+		{
+			drawing::NormalMapFilter filter(output.m_scaleDepth);
+			imageOutput->apply(&filter);
+		}
+		if (output.m_inverseNormalMapX || output.m_inverseNormalMapY)
+		{
+			drawing::TransformFilter transformFilter(
+				Color4f(
+					output.m_inverseNormalMapX ? -1.0f : 1.0f,
+					output.m_inverseNormalMapY ? -1.0f : 1.0f,
+					1.0f,
+					1.0f
+				),
+				Color4f(
+					output.m_inverseNormalMapX ? 1.0f : 0.0f,
+					output.m_inverseNormalMapY ? 1.0f : 0.0f,
+					0.0f,
+					0.0f
+				)
+			);
+			imageOutput->apply(&transformFilter);
+		}
+
+		m_imageOutput = new ui::Bitmap(imageOutput);
+	}
+	else
+	{
+		m_imageSource = nullptr;
+		m_imageOutput = nullptr;
+	}
+
+	// Update view.
 	update();
 	return true;
 }
@@ -104,10 +177,10 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(getInnerRect());
 
-	if (m_image)
+	if (m_imageSource)
 	{
 		ui::Size clientSize = getInnerRect().getSize();
-		ui::Size imageSize = m_image->getSize();
+		ui::Size imageSize = m_imageSource->getSize();
 
 		ui::Point center =
 		{
@@ -115,15 +188,29 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 			(clientSize.cy - imageSize.cy) / 2
 		};
 
+		canvas.setClipRect(ui::Rect(0, 0, clientSize.cx / 2, clientSize.cy));
 		canvas.drawBitmap(
 			center + m_offset,
-			m_image->getSize() * m_scale,
+			m_imageSource->getSize() * m_scale,
 			ui::Point(0, 0),
-			m_image->getSize(),
-			m_image,
+			m_imageSource->getSize(),
+			m_imageSource,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest
 		);
+
+		canvas.setClipRect(ui::Rect(clientSize.cx / 2, 0, clientSize.cx, clientSize.cy));
+		canvas.drawBitmap(
+			center + m_offset,
+			m_imageOutput->getSize() * m_scale,
+			ui::Point(0, 0),
+			m_imageOutput->getSize(),
+			m_imageOutput,
+			ui::BlendMode::Opaque,
+			ui::Filter::Nearest
+		);
+
+		canvas.resetClipRect();
 	}
 
 	event->consume();

@@ -18,10 +18,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::drawing
+{
+
+class Image;
+
+}
+
 namespace traktor::render
 {
 
 class IBitmap;
+class TextureOutput;
 
 /*! Texture preview control.
  * \ingroup Render
@@ -37,10 +45,11 @@ public:
 
 	virtual ui::Size getPreferredSize(const ui::Size& hint) const override;
 
-	bool setImage(ui::IBitmap* image);
+	bool setImage(drawing::Image* image, const TextureOutput& output);
 
 private:
-	Ref< ui::IBitmap > m_image;
+	Ref< ui::IBitmap > m_imageSource;
+	Ref< ui::IBitmap > m_imageOutput;
 	ui::Size m_offset = { 0, 0 };
 	ui::Point m_moveOrigin;
 	ui::Size m_moveOriginOffset;

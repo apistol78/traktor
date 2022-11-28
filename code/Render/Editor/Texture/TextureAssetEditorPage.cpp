@@ -106,83 +106,15 @@ void TextureAssetEditorPage::handleDatabaseEvent(db::Database* database, const G
 
 void TextureAssetEditorPage::updatePreview()
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
-	// if (image)
-	// {
-	// 	StringOutputStream ss;
-	// 	ss << L"Width " << image->getWidth() << Endl;
-	// 	ss << L"Height " << image->getHeight() << Endl;
-	// 	ss << L"Color bits " << image->getPixelFormat().getColorBits() << Endl;
-	// 	ss << L"Alpha bits " << image->getPixelFormat().getAlphaBits() << Endl;
 
-	// 	const auto imageInfo = image->getImageInfo();
-	// 	if (imageInfo)
-	// 	{
-	// 		ss << L"Author " << imageInfo->getAuthor() << Endl;
-	// 		ss << L"Copyright " << imageInfo->getCopyright() << Endl;
-	// 		ss << L"Format " << imageInfo->getFormat() << Endl;
-	// 		ss << L"Gamma " << imageInfo->getGamma() << Endl;
-	// 	}
-
-	// 	m_imageInfo->setText(ss.str());
-	// }
-	// else
-	// 	m_imageInfo->setText(L"");
-
-	// Ref< editor::IThumbnailGenerator > thumbnailGenerator = m_editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
-	// if (!thumbnailGenerator)
-	// 	return;
-
-	const bool visibleAlpha = (m_asset->m_output.m_hasAlpha == true && m_asset->m_output.m_ignoreAlpha == false);
-	const bool linearGamma = m_asset->m_output.m_linearGamma;
-
-	// textureThumb = thumbnailGenerator->get(
-	// 	fileName,
-	// 	size,
-	// 	size,
-	// 	visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha,
-	// 	linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
-	// );
 	if (image)
-	{
-		Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(image);
-		m_textureControl->setImage(textureBitmap);
-	}
+		m_textureControl->setImage(image, m_asset->m_output);
 	else
-		m_textureControl->setImage(nullptr);
-
-	// textureThumb = thumbnailGenerator->get(
-	// 	fileName,
-	// 	size,
-	// 	size,
-	// 	editor::IThumbnailGenerator::AmNoAlpha,
-	// 	linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
-	// );
-	// if (textureThumb)
-	// {
-	// 	Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
-	// 	m_imageTextureNoAlpha->setImage(textureBitmap, false);
-	// }
-	// else
-	// 	m_imageTextureNoAlpha->setImage(nullptr, false);
-
-	// textureThumb = thumbnailGenerator->get(
-	// 	fileName,
-	// 	size,
-	// 	size,
-	// 	editor::IThumbnailGenerator::AmAlphaOnly,
-	// 	linearGamma ? editor::IThumbnailGenerator::GmLinear : editor::IThumbnailGenerator::GmSRGB
-	// );
-	// if (textureThumb)
-	// {
-	// 	Ref< ui::Bitmap > textureBitmap = new ui::Bitmap(textureThumb);
-	// 	m_imageTextureAlphaOnly->setImage(textureBitmap, false);
-	// }
-	// else
-	// 	m_imageTextureAlphaOnly->setImage(nullptr, false);
+		m_textureControl->setImage(nullptr, m_asset->m_output);
 }
 
 void TextureAssetEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
