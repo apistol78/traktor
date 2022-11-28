@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.TextureAsset" version="17">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Hdri/EppingForest.hdr</fileName>
+	<textureFormat>TfR16G16B16A16F</textureFormat>
+	<generateNormalMap>false</generateNormalMap>
+	<scaleDepth>0</scaleDepth>
+	<generateMips>true</generateMips>
+	<keepZeroAlpha>true</keepZeroAlpha>
+	<textureType>TtCube</textureType>
+	<hasAlpha>false</hasAlpha>
+	<generateAlpha>false</generateAlpha>
+	<invertAlpha>false</invertAlpha>
+	<ignoreAlpha>false</ignoreAlpha>
+	<premultiplyAlpha>false</premultiplyAlpha>
+	<scaleImage>false</scaleImage>
+	<scaleWidth>0</scaleWidth>
+	<scaleHeight>0</scaleHeight>
+	<flipX>false</flipX>
+	<flipY>false</flipY>
+	<enableCompression>true</enableCompression>
+	<enableNormalMapCompression>false</enableNormalMapCompression>
+	<encodeAsRGBM>false</encodeAsRGBM>
+	<inverseNormalMapX>false</inverseNormalMapX>
+	<inverseNormalMapY>false</inverseNormalMapY>
+	<scaleNormalMap>0</scaleNormalMap>
+	<linearGamma>true</linearGamma>
+	<generateSphereMap>false</generateSphereMap>
+	<preserveAlphaCoverage>false</preserveAlphaCoverage>
+	<alphaCoverageReference>0.5</alphaCoverageReference>
+	<sharpenRadius>5</sharpenRadius>
+	<sharpenStrength>1</sharpenStrength>
+	<noiseStrength>0</noiseStrength>
+	<systemTexture>false</systemTexture>
+</object>

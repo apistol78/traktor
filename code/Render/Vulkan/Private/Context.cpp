@@ -85,19 +85,19 @@ Context::Context(
 	// Create descriptor set pool.
 	VkDescriptorPoolSize dps[4];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-	dps[0].descriptorCount = 40000;
+	dps[0].descriptorCount = 80000;
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-	dps[1].descriptorCount = 40000;
+	dps[1].descriptorCount = 80000;
 	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	dps[2].descriptorCount = 40000;
+	dps[2].descriptorCount = 80000;
 	dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-	dps[3].descriptorCount = 4000;
+	dps[3].descriptorCount = 8000;
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	dpci.pNext = nullptr;
 	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-	dpci.maxSets = 16000;
+	dpci.maxSets = 32000;
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);

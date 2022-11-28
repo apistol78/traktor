@@ -626,8 +626,8 @@ bool ProgramVk::validateDescriptorSet()
 		return false;
 
 	StaticVector< VkDescriptorBufferInfo, 16 > bufferInfos;
-	StaticVector< VkDescriptorImageInfo, 16 + 16 > imageInfos;
-	StaticVector< VkWriteDescriptorSet, 16 + 16 > writes;
+	StaticVector< VkDescriptorImageInfo, 32 + 32 > imageInfos;
+	StaticVector< VkWriteDescriptorSet, 16 + 32 + 32 > writes;
 
 	// Add uniform buffer bindings.
 	for (uint32_t i = 0; i < 3; ++i)

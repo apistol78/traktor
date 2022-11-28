@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/CircularVector.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -124,6 +125,7 @@ private:
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
 	const TypeInfo* m_entityFilterType = nullptr;
+	CircularVector< double, 256 > m_measurementVariance[64];
 
 	bool createSceneAsset();
 

@@ -1624,10 +1624,18 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 	if (event->getPass() <= 0)
 		m_gridMeasurements->removeAllRows();
 
+	auto& v = m_measurementVariance[event->getPass()];
+	v.push_back(event->getDuration());
+
+	double total = 0.0;
+	for (size_t i = 0; i < v.size(); ++i)
+		total += v[i];
+	total /= (double)v.size();
+
 	Ref< ui::GridRow > row = new ui::GridRow();
 	row->add(new ui::GridItem(str(L"%d [%d]", event->getPass(), event->getLevel())));
 	row->add(new ui::GridItem(event->getName()));
-	row->add(new ui::GridItem(str(L"%.2f \xb5s", (float)(event->getDuration() * 1000000.0))));
+	row->add(new ui::GridItem(str(L"%d \xb5s", (int32_t)(total * 1000000.0))));
 	m_gridMeasurements->addRow(row);
 }
 
