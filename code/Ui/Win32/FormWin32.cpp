@@ -174,7 +174,12 @@ LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wPa
 {
 	CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&m_taskBarList.getAssign());
 	if (m_taskBarList)
-		m_taskBarList->SetProgressState(hWnd, TBPF_NOPROGRESS);
+	{
+		if (SUCCEEDED(m_taskBarList->HrInit()))
+			m_taskBarList->SetProgressState(hWnd, TBPF_NOPROGRESS);
+		else
+			m_taskBarList.release();
+	}
 	return 0;
 }
 

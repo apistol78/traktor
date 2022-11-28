@@ -33,7 +33,7 @@ class ProgramVk : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	class DescriptorSetKey : public StaticVector< intptr_t, 20 >
+	class DescriptorSetKey : public StaticVector< intptr_t, 32 >
 	{
 	public:
 		bool operator < (const DescriptorSetKey& rh) const;

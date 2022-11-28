@@ -196,7 +196,7 @@ private:
 	SmallMap< handle_t, TargetResource > m_targets;
 	SmallMap< handle_t, BufferResource > m_buffers;
 	RefArray< const RenderPass > m_passes;
-	StaticVector< uint32_t, 32 > m_order[16];
+	StaticVector< uint32_t, 32 > m_order[32];
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;

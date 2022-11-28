@@ -58,20 +58,20 @@
 			</items>
 			<dependencies>
 				<item type="ExternalDependency">
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 				<item type="ExternalDependency">
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Ui</projectName>
 				</item>
 				<item type="ExternalDependency">
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Ui.Win32</projectName>
 				</item>
 				<item type="ExternalDependency">
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
-					<projectName>Traktor.Ui.Custom</projectName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Xml</projectName>
 				</item>
 			</dependencies>
 		</item>
