@@ -5,8 +5,8 @@
 			<id>{13F7D07E-8C1D-9549-9F74-8D78D03ECBD1}</id>
 			<comment/>
 			<position>
-				<first>1336</first>
-				<second>132</second>
+				<first>1428</first>
+				<second>32</second>
 			</position>
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
@@ -462,8 +462,8 @@
 			<id>{CE3E5C40-644F-F144-A17C-BDD4C76DD787}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>271</second>
+				<first>1428</first>
+				<second>175</second>
 			</position>
 			<name>ViewVelocity</name>
 		</item>
@@ -471,8 +471,8 @@
 			<id>{FC4B31FC-A822-1344-A009-36633051211B}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>321</second>
+				<first>1428</first>
+				<second>225</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -480,8 +480,8 @@
 			<id>{8CE036C6-F69A-BB40-8547-37A52E25F280}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>471</second>
+				<first>1428</first>
+				<second>375</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
@@ -489,8 +489,8 @@
 			<id>{AD6BA6B9-73FC-1640-BE90-894D314708D7}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>371</second>
+				<first>1428</first>
+				<second>275</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -498,8 +498,8 @@
 			<id>{9E32E525-CFB1-0949-89AE-1FB1DEF65C59}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>421</second>
+				<first>1428</first>
+				<second>325</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -507,10 +507,42 @@
 			<id>{0CCC27F1-F64A-C842-82E6-4262A95518B7}</id>
 			<comment/>
 			<position>
-				<first>1454</first>
-				<second>521</second>
+				<first>1428</first>
+				<second>425</second>
 			</position>
 			<name>WorldPosition</name>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{E202275F-A519-AB40-803B-3CD8ECD65550}</id>
+			<comment>
+			<![CDATA[
+Setup global variables required by material shaders.
+			]]>
+			</comment>
+			<position>
+				<first>1428</first>
+				<second>533</second>
+			</position>
+			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -832,6 +864,36 @@
 			<destination>
 				<node ref="/object/nodes/item[30]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>ClipVelocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

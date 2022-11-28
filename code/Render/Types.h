@@ -298,11 +298,11 @@ enum TextureFormat
 	/*! \name Compressed texture formats. */
 	//@{
 
-	TfDXT1 = 30,
-	TfDXT2 = 31,
-	TfDXT3 = 32,
-	TfDXT4 = 33,
-	TfDXT5 = 34,
+	TfDXT1 = 30,	// BC1
+	TfDXT2 = 31,	// BC2 (premul alpha)
+	TfDXT3 = 32,	// BC2
+	TfDXT4 = 33,	// BC3 (premul alpha)
+	TfDXT5 = 34,	// BC3
 	TfPVRTC1 = 40,	// 4bpp, no alpha
 	TfPVRTC2 = 41,	// 2bpp, no alpha
 	TfPVRTC3 = 42,	// 4bpp, alpha

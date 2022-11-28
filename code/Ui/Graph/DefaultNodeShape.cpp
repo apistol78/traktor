@@ -258,22 +258,24 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		);
 	}
 
-	canvas->setForeground(ss->getColor(this, L"color"));
+	const auto textColor = ss->getColor(this, L"color");
+	const auto textColorHot = ss->getColor(this, L"color-hot");
 
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
 		const Pin* pin = inputPins[i];
-		Point pos(
+		const Point pos(
 			rc.left,
 			top + i * textHeight
 		);
 
 		const std::wstring& label = pin->getLabel();
-		Size extent = canvas->getTextExtent(label);
+		const Size extent = canvas->getTextExtent(label);
 
 		if (pin->isMandatory())
 			canvas->setFont(settings->getFontUnderline());
 
+		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
 				Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
@@ -290,14 +292,15 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
 	{
 		const Pin* pin = outputPins[i];
-		Point pos(
+		const Point pos(
 			rc.right,
 			top + i * textHeight
 		);
 
 		const std::wstring& label = pin->getLabel();
-		Size extent = canvas->getTextExtent(label);
+		const Size extent = canvas->getTextExtent(label);
 
+		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
 				Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),

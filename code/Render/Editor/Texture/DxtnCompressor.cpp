@@ -40,10 +40,10 @@ struct CompressTextureTask
 
 	void execute()
 	{
-		int32_t width = image->getWidth();
-		int32_t height = image->getHeight();
+		const int32_t width = image->getWidth();
+		const int32_t height = image->getHeight();
 
-		uint32_t outputSize = getTextureMipPitch(
+		const uint32_t outputSize = getTextureMipPitch(
 			textureFormat,
 			width,
 			height
@@ -67,13 +67,13 @@ struct CompressTextureTask
 				{
 					for (int ix = 0; ix < 4; ++ix)
 					{
-						int32_t sx = x + ix;
-						int32_t sy = y + iy;
+						const int32_t sx = x + ix;
+						const int32_t sy = y + iy;
 
 						if (sx >= width || sy >= height)
 							continue;
 
-						uint32_t offset = (sx + sy * image->getWidth()) * 4;
+						const uint32_t offset = (sx + sy * image->getWidth()) * 4;
 						rgba[iy][ix][0] = data[offset + 0];
 						rgba[iy][ix][1] = data[offset + 1];
 						rgba[iy][ix][2] = data[offset + 2];
@@ -145,7 +145,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DxtnCompressor", DxtnCompressor, ICompre
 
 bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	int32_t mipCount = (int32_t)mipImages.size();
+	const int32_t mipCount = (int32_t)mipImages.size();
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		CompressTextureTask task;
