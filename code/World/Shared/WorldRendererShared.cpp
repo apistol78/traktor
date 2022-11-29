@@ -483,7 +483,7 @@ render::handle_t WorldRendererShared::setupGBufferPass(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldBuildContext wc(
+			const WorldBuildContext wc(
 				m_entityRenderers,
 				rootEntity,
 				renderContext
@@ -497,7 +497,7 @@ render::handle_t WorldRendererShared::setupGBufferPass(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->endParameters(renderContext);
 
-			WorldRenderPassShared gbufferPass(
+			const WorldRenderPassShared gbufferPass(
 				s_techniqueForwardGBufferWrite,
 				sharedParams,
 				worldRenderView,
@@ -568,7 +568,7 @@ render::handle_t WorldRendererShared::setupVelocityPass(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldBuildContext wc(
+			const WorldBuildContext wc(
 				m_entityRenderers,
 				rootEntity,
 				renderContext
@@ -582,7 +582,7 @@ render::handle_t WorldRendererShared::setupVelocityPass(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->endParameters(renderContext);
 
-			WorldRenderPassShared velocityPass(
+			const WorldRenderPassShared velocityPass(
 				s_techniqueVelocityWrite,
 				sharedParams,
 				worldRenderView,
@@ -815,8 +815,8 @@ void WorldRendererShared::setupProcessPass(
 	m_imageGraphContext->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
 
 	// Expose jitter; in texture space.
-	Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
-	Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
+	const Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
+	const Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
 	m_imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 4 > processes;
@@ -833,7 +833,7 @@ void WorldRendererShared::setupProcessPass(
 	for (size_t i = 0; i < processes.size(); ++i)
 	{
 		auto process = processes[i];
-		bool next = (bool)((i + 1) < processes.size());
+		const bool next = (bool)((i + 1) < processes.size());
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
 

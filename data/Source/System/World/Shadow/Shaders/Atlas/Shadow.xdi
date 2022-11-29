@@ -132,10 +132,10 @@ Light space position
 				<first>2724</first>
 				<second>736</second>
 			</position>
-			<fromX>-1</fromX>
-			<toX>1</toX>
-			<fromY>-1</fromY>
-			<toY>1</toY>
+			<fromX>-3</fromX>
+			<toX>3</toX>
+			<fromY>-3</fromY>
+			<toY>3</toY>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{61CBC4A4-25BA-BB42-9E2A-6A97004D4AB9}</id>
@@ -327,7 +327,7 @@ Light space position
 				<first>3172</first>
 				<second>884</second>
 			</position>
-			<value>9</value>
+			<value>49</value>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{7E3E0539-035D-794A-99EA-ADB1107E6F41}</id>
@@ -882,16 +882,6 @@ Light space position
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[28]"/>
 				<name>Output</name>
 			</source>
@@ -1368,6 +1358,16 @@ Light space position
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

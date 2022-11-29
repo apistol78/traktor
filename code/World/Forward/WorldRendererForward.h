@@ -65,6 +65,7 @@ public:
 
 private:
 	friend class TilesOverlay;
+	friend class SliceOverlay;
 
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< Packer > m_shadowAtlasPacker;
