@@ -720,8 +720,11 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 	if (!bm)
 		return;
 
-	D2D1_BITMAP_INTERPOLATION_MODE im =
-		(dstSize.cx == srcSize.cx && dstSize.cy == srcSize.cy) ? D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR : D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+	D2D1_BITMAP_INTERPOLATION_MODE im = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+	if (filter == Filter::Nearest)
+		im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+	else if (dstSize.cx == srcSize.cx && dstSize.cy == srcSize.cy)
+		im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 
 	m_d2dRenderTarget->DrawBitmap(
 		bm,
@@ -812,22 +815,21 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 			m_cachedBitmaps.erase(it);
 	}
 
-	Size size = bmw32->getSize();
+	const Size size = bmw32->getSize();
 
 	const uint32_t* colorBits = (const uint32_t*)(bmw32->haveAlpha() ? bmw32->getBitsPreMulAlpha() : bmw32->getBits());
 	AutoArrayPtr< uint32_t > bits(new uint32_t [size.cx * size.cy]);
 
 	for (uint32_t y = 0; y < size.cy; ++y)
 	{
-		uint32_t srcOffset = (size.cy - y - 1) * size.cx;
-		uint32_t dstOffset = y * size.cx;
-
+		const uint32_t srcOffset = (size.cy - y - 1) * size.cx;
+		const uint32_t dstOffset = y * size.cx;
 		for (uint32_t x = 0; x < size.cx; ++x)
 			bits[dstOffset + x] = colorBits[srcOffset + x];
 	}
 
-	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, bmw32->haveAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
-	D2D1_BITMAP_PROPERTIES bitmapProps = D2D1::BitmapProperties(pixelFormat);
+	const D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, bmw32->haveAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
+	const D2D1_BITMAP_PROPERTIES bitmapProps = D2D1::BitmapProperties(pixelFormat);
 
 	ComRef< ID2D1Bitmap > d2dBitmap;
 	HRESULT hr = m_d2dRenderTarget->CreateBitmap(
