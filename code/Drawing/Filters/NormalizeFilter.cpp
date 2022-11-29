@@ -23,12 +23,7 @@ NormalizeFilter::NormalizeFilter(float scale)
 
 void NormalizeFilter::apply(Image* image) const
 {
-	const Scalar c_two(2.0f);
-	const Scalar c_one(1.0f);
-	const Scalar c_half(0.5f);
-
-	const Vector4 scale(1.0f + m_scale, 1.0f + m_scale, 1.0f - m_scale);
-
+	const Vector4 scale(1.0f + m_scale, 1.0f + m_scale, 1.0f);
 	const int32_t width = image->getWidth();
 	const int32_t height = image->getHeight();
 
@@ -38,7 +33,7 @@ void NormalizeFilter::apply(Image* image) const
 		image->getSpanUnsafe(y, row.ptr());
 		for (int32_t x = 0; x < width; ++x)
 		{
-			Vector4 n = (Vector4(row[x]) * c_two - c_one) * scale;
+			Vector4 n = (Vector4(row[x]) * 2.0_simd - 1.0_simd) * scale;
 
 			const Scalar ln = n.length2();
 			if (ln >= FUZZY_EPSILON * FUZZY_EPSILON)
@@ -46,7 +41,7 @@ void NormalizeFilter::apply(Image* image) const
 			else
 				n.set(0.0f, 0.0f, 1.0f);
 
-			row[x] = Color4f((n * c_half + c_half).xyz0() + Vector4(0.0f, 0.0f, 0.0f, row[x].getAlpha()));
+			row[x] = Color4f((n * 0.5_simd + 0.5_simd).xyz0() + Vector4(0.0f, 0.0f, 0.0f, row[x].getAlpha()));
 		}
 		image->setSpanUnsafe(y, row.ptr());
 	}
