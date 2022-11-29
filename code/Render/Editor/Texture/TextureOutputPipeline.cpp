@@ -811,8 +811,8 @@ bool TextureOutputPipeline::buildOutput(
 
 		for (int32_t i = 0; i < mipCount; ++i)
 		{
-			int32_t mipWidth = std::max(width >> i, 1);
-			int32_t mipHeight = std::max(height >> i, 1);
+			const int32_t mipWidth = std::max(width >> i, 1);
+			const int32_t mipHeight = std::max(height >> i, 1);
 
 			// Clone previous mip image.
 			mipImages[i] = i > 0 ? mipImages[i - 1]->clone() : image->clone();

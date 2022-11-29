@@ -121,7 +121,7 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"inverseNormalMapY", m_inverseNormalMapY);
 
 	if (s.getVersion() >= 17)
-		s >> Member< float >(L"scaleNormalMap", m_scaleNormalMap, AttributeRange(0.0f));
+		s >> Member< float >(L"scaleNormalMap", m_scaleNormalMap, AttributeRange(-1.0f, 10.0f));
 
 	s >> Member< bool >(L"linearGamma", m_linearGamma);
 
