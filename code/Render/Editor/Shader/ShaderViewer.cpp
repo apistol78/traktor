@@ -389,7 +389,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	T_ASSERT(rendererSignature);
 
 	// Resolve all local variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
@@ -402,7 +402,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		return;
 
 	// Resolve all global variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtGlobal);
+	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtGlobal);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
@@ -410,7 +410,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Get connected permutation.
-	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getConnectedPermutation();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
@@ -418,7 +418,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Get platform shader permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"Other");
+	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getPlatformPermutation(L"Other");
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to create platform permutation." << Endl;
@@ -426,7 +426,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Get renderer shader permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to create renderer permutation." << Endl;
@@ -438,7 +438,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
-	ShaderGraphTechniques techniques(shaderGraph);
+	ShaderGraphTechniques techniques(shaderGraph, Guid());
 	std::set< std::wstring > techniqueNames = techniques.getNames();
 	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
 	{
@@ -447,7 +447,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		Ref< const ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
 		T_ASSERT(shaderGraphTechnique);
 
-		ShaderGraphCombinations combinations(shaderGraphTechnique);
+		ShaderGraphCombinations combinations(shaderGraphTechnique, Guid());
 		ti.parameters = combinations.getParameterNames();
 
 		uint32_t combinationCount = combinations.getCombinationCount();
@@ -463,16 +463,16 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 			if (!combinationGraph)
 				continue;
 
-			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getConnectedPermutation();
+			Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph, Guid()).getConnectedPermutation();
 
 			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+				programGraph = ShaderGraphStatic(programGraph, Guid()).getTypePermutation();
 
 			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
+				programGraph = ShaderGraphStatic(programGraph, Guid()).getConstantFolded();
 
 			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).getStateResolved();
+				programGraph = ShaderGraphStatic(programGraph, Guid()).getStateResolved();
 
 			if (programGraph)
 				programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
@@ -481,10 +481,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(false);
 
 			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+				programGraph = ShaderGraphStatic(programGraph, Guid()).getSwizzledPermutation();
 
 			if (programGraph)
-				programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
+				programGraph = ShaderGraphStatic(programGraph, Guid()).cleanupRedundantSwizzles();
 
 			if (programGraph)
 			{

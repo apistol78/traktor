@@ -100,28 +100,30 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 
 	for (auto externalNode : externalNodes)
 	{
-		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());
+		const Guid& fragmentId = externalNode->getFragmentGuid();
+
+		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);
 		if (!fragmentShaderGraph)
 		{
-			log::error << errorPrefix << L"unable to read fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+			log::error << errorPrefix << L"unable to read fragment \"" << fragmentId.format() << L"\"" << Endl;
 			return nullptr;
 		}
 
 		// Resolve variables of each fragment.
-		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved(ShaderGraphStatic::VrtLocal);
 		if (!fragmentShaderGraph)
 		{
-			log::error << errorPrefix << L"unable to resolve local variables in fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+			log::error << errorPrefix << L"unable to resolve local variables in fragment \"" << fragmentId.format() << L"\"" << Endl;
 			return nullptr;
 		}
 
 		// Recursive resolve fragments if we need a full resolve.
 		if (fullResolve)
 		{
-			fragmentShaderGraph = resolve(fragmentShaderGraph, true, &externalNode->getFragmentGuid());
+			fragmentShaderGraph = resolve(fragmentShaderGraph, true, &fragmentId);
 			if (!fragmentShaderGraph)
 			{
-				log::error << errorPrefix << L"unable to resolve fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+				log::error << errorPrefix << L"unable to resolve fragment \"" << fragmentId.format() << L"\"" << Endl;
 				return nullptr;
 			}
 		}
@@ -167,7 +169,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 					}
 					else
 					{
-						log::error << errorPrefix << L"mandatory input \"" << inputPort->getName() << L"\" of fragment \"" << externalNode->getFragmentGuid().format() << L"\" not connected." << Endl;
+						log::error << errorPrefix << L"mandatory input \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
 						return nullptr;
 					}
 				}

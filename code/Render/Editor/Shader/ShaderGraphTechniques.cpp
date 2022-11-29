@@ -47,7 +47,7 @@ struct CopyVisitor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechniques, Object)
 
-ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
+ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
 {
 	T_IMMUTABLE_CHECK(shaderGraph);
 
@@ -58,9 +58,9 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 
 	// Constant fold entire graph so disabled outputs can be efficiently evaluated.
 	if (shaderGraphOpt)
-		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).getConstantFolded();
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).getConstantFolded();
 	if (shaderGraphOpt)
-		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).removeDisabledOutputs();
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).removeDisabledOutputs();
 
 	// Get all technique names.
 	if (shaderGraphOpt)

@@ -81,10 +81,11 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 
 void buildCombinations(
 	const ShaderGraph* shaderGraph,
-	const std::vector< std::wstring >& parameterNames,
+	const Guid& shaderGraphId,
+	const AlignedVector< std::wstring >& parameterNames,
 	uint32_t parameterMask,
 	uint32_t parameterValue,
-	std::vector< ShaderGraphCombinations::Combination >& outCombinations
+	AlignedVector< ShaderGraphCombinations::Combination >& outCombinations
 )
 {
 	RefArray< Branch > branchNodes;
@@ -95,14 +96,15 @@ void buildCombinations(
 		Branch* branch = branchNodes.front();
 		T_ASSERT(branch);
 
-		auto parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
-		uint32_t parameterBit = 1 << (uint32_t)std::distance(parameterNames.begin(), parameterIter);
+		const auto parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
+		const uint32_t parameterBit = 1 << (uint32_t)std::distance(parameterNames.begin(), parameterIter);
 
 		Ref< ShaderGraph > shaderGraphBranchTrue = replaceBranch(shaderGraph, branch, true);
 		if (shaderGraphBranchTrue)
 		{
 			buildCombinations(
 				shaderGraphBranchTrue,
+				shaderGraphId,
 				parameterNames,
 				parameterMask | parameterBit,
 				parameterValue | parameterBit,
@@ -115,6 +117,7 @@ void buildCombinations(
 		{
 			buildCombinations(
 				shaderGraphBranchFalse,
+				shaderGraphId,
 				parameterNames,
 				parameterMask | parameterBit,
 				parameterValue,
@@ -126,7 +129,7 @@ void buildCombinations(
 	{
 		if (std::find_if(outCombinations.begin(), outCombinations.end(), FindCombinationMaskValue(parameterMask, parameterValue)) == outCombinations.end())
 		{
-			Ref< ShaderGraph > shaderGraphNoBranch = ShaderGraphStatic(shaderGraph).getConstantFolded();
+			Ref< ShaderGraph > shaderGraphNoBranch = ShaderGraphStatic(shaderGraph, shaderGraphId).getConstantFolded();
 			if (shaderGraphNoBranch)
 			{
 				ShaderGraphCombinations::Combination c;
@@ -143,7 +146,7 @@ void buildCombinations(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCombinations, Object)
 
-ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
+ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
 {
 	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 
@@ -161,17 +164,17 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 		parameterNames.insert(name);
 	}
 
-	buildCombinations(m_shaderGraph, m_parameterNames, 0, 0, m_combinations);
+	buildCombinations(m_shaderGraph, shaderGraphId, m_parameterNames, 0, 0, m_combinations);
 }
 
-const std::vector< std::wstring >& ShaderGraphCombinations::getParameterNames() const
+const AlignedVector< std::wstring >& ShaderGraphCombinations::getParameterNames() const
 {
 	return m_parameterNames;
 }
 
-std::vector< std::wstring > ShaderGraphCombinations::getParameterNames(uint32_t mask) const
+AlignedVector< std::wstring > ShaderGraphCombinations::getParameterNames(uint32_t mask) const
 {
-	std::vector< std::wstring > parameterNames;
+	AlignedVector< std::wstring > parameterNames;
 	for (uint32_t i = 0; i < uint32_t(m_parameterNames.size()); ++i)
 	{
 		if ((mask & (1 << i)) != 0)

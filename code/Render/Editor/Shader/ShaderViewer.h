@@ -66,7 +66,7 @@ private:
 
 	struct TechniqueInfo
 	{
-		std::vector< std::wstring > parameters;
+		AlignedVector< std::wstring > parameters;
 		std::vector< CombinationInfo > combinations;
 	};
 

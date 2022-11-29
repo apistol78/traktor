@@ -219,6 +219,16 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	if (!m_shaderGraph)
 		return false;
 
+	// Sanitize shader graph; remove broken edges etc.
+	RefArray< Edge > edges = m_shaderGraph->getEdges();
+	for (auto edge : edges)
+	{
+		const OutputPin* sourcePin = edge->getSource();
+		const InputPin* destinationPin = edge->getDestination();
+		if (!sourcePin || !destinationPin)
+			m_shaderGraph->removeEdge(edge);
+	}
+
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
@@ -744,7 +754,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConnectedPermutation();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -755,7 +765,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getTypePermutation();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -812,13 +822,13 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConnectedPermutation();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
 		T_ASSERT(m_shaderGraph);
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getTypePermutation();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
 		T_ASSERT(m_shaderGraph);
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConstantFolded();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -829,7 +839,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getSwizzledPermutation();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getSwizzledPermutation();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -840,7 +850,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).cleanupRedundantSwizzles();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).cleanupRedundantSwizzles();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -862,7 +872,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -888,7 +898,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getPlatformPermutation(platformSignature);
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getPlatformPermutation(platformSignature);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -900,7 +910,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getRendererPermutation(rendererSignature);
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getRendererPermutation(rendererSignature);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -912,7 +922,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		std::wstring technique = m_toolTechniques->getSelectedItem();
-		m_shaderGraph = ShaderGraphTechniques(m_shaderGraph).generate(technique);
+		m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid()).generate(technique);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -1160,7 +1170,7 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Extract techniques.
 	m_toolTechniques->removeAll();
-	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph).getNames())
+	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
 		m_toolTechniques->add(technique);
 
 	// Update variables grid.

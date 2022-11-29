@@ -476,6 +476,7 @@ bool MeshPipeline::buildOutput(
 	for (const auto& materialPair : materials)
 	{
 		Ref< const render::ShaderGraph > materialShaderGraph;
+		Guid materialShaderGraphId;
 
 		auto it = materialShaders.find(materialPair.first);
 		if (
@@ -495,6 +496,8 @@ bool MeshPipeline::buildOutput(
 				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
+
+			materialShaderGraphId = it->second;
 		}
 		else
 		{
@@ -531,7 +534,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Resolve all local variables.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved(render::ShaderGraphStatic::VrtLocal);
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved(render::ShaderGraphStatic::VrtLocal);
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to resolve local variables." << Endl;
@@ -548,7 +551,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Resolve all global variables.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved(render::ShaderGraphStatic::VrtGlobal);
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved(render::ShaderGraphStatic::VrtGlobal);
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to resolve global variables." << Endl;
@@ -556,7 +559,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Get connected permutation.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConnectedPermutation();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
@@ -564,7 +567,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract platform permutation.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(m_platform);
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getPlatformPermutation(m_platform);
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
@@ -575,7 +578,7 @@ bool MeshPipeline::buildOutput(
 		const wchar_t* rendererSignature = programCompiler->getRendererSignature();
 		T_ASSERT(rendererSignature);
 
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getRendererPermutation(rendererSignature);
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getRendererPermutation(rendererSignature);
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get renderer permutation." << Endl;
@@ -583,7 +586,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Freeze types, get typed permutation.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getTypePermutation();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << materialPair.first << L"\"." << Endl;
@@ -617,7 +620,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract each material technique.
-		render::ShaderGraphTechniques techniques(materialShaderGraph);
+		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId);
 		std::set< std::wstring > materialTechniqueNames = techniques.getNames();
 		if (!m_includeOnlyTechniques.empty())
 		{

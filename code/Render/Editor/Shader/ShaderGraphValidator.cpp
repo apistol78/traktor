@@ -394,9 +394,9 @@ bool ShaderGraphValidator::validateIntegrity() const
 		{
 			log::error << L"Invalid edge found in shader graph (" << m_shaderGraphId.format() << L")." << Endl;
 			if (sourcePin)
-				log::error << L"Source pin from a " << type_name(sourcePin->getNode()) << L" node; \"" << sourcePin->getName() << L"\"." << Endl;
+				log::error << L"Source pin from a " << type_name(sourcePin->getNode()) << L" node (" << sourcePin->getNode()->getId().format() << L"); \"" << sourcePin->getName() << L"\"." << Endl;
 			if (destinationPin)
-				log::error << L"Destination pin to a " << type_name(destinationPin->getNode()) << L" node; \"" << destinationPin->getName() << L"\"." << Endl;
+				log::error << L"Destination pin to a " << type_name(destinationPin->getNode()) << L" node (" << destinationPin->getNode()->getId().format() << L"); \"" << destinationPin->getName() << L"\"." << Endl;
 			return false;
 		}
 

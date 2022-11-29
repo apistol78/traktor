@@ -158,10 +158,10 @@ uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
 
 	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
-	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform)) == nullptr)
+	if ((shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getPlatformPermutation(m_platform)) == nullptr)
 		return 0;
 
-	if ((shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature)) == nullptr)
+	if ((shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getRendererPermutation(rendererSignature)) == nullptr)
 		return 0;
 
 	return ShaderGraphHash(true).calculate(shaderGraph);
@@ -180,10 +180,11 @@ bool ShaderPipeline::buildDependencies(
 	if (!programCompiler)
 		return false;
 
+	const Guid shaderGraphId = sourceInstance->getGuid();
 	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	// Extract platform permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getPlatformPermutation(m_platform);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
@@ -191,7 +192,7 @@ bool ShaderPipeline::buildDependencies(
 	}
 
 	// Extract renderer permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
@@ -240,13 +241,14 @@ bool ShaderPipeline::buildOutput(
 	if (!programCompiler)
 		return false;
 
+	const Guid shaderGraphId = sourceInstance->getGuid();
 	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
 	// Resolve all local variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved(ShaderGraphStatic::VrtLocal);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
@@ -263,7 +265,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Resolve all global variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtGlobal);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved(ShaderGraphStatic::VrtGlobal);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
@@ -271,7 +273,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Get connected permutation.
-	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getConnectedPermutation();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
@@ -279,7 +281,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Extract platform permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(m_platform);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getPlatformPermutation(m_platform);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
@@ -287,7 +289,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Extract renderer permutation.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getRendererPermutation(rendererSignature);
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
@@ -303,7 +305,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Generate shader graphs from techniques and combinations.
-	ShaderGraphTechniques techniques(shaderGraph);
+	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId);
 
 	std::set< std::wstring > techniqueNames = techniques.getNames();
 	if (!m_includeOnlyTechniques.empty())
@@ -329,7 +331,7 @@ bool ShaderPipeline::buildOutput(
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(techniqueName);
 		T_ASSERT(shaderGraphTechnique);
 
-		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
+		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique, shaderGraphId);
 		const uint32_t combinationCount = combinations->getCombinationCount();
 
 		log::info << L"Building shader technique \"" << techniqueName << L"\" (" << combinationCount << L" permutations)..." << Endl;
@@ -379,7 +381,7 @@ bool ShaderPipeline::buildOutput(
 				T_ASSERT(combinationGraph);
 
 				// Freeze type permutation.
-				Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
+				Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph, shaderGraphId).getTypePermutation();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"." << Endl;
@@ -388,7 +390,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Constant propagation; calculate constant branches.
-				programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
+				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getConstantFolded();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"." << Endl;
@@ -397,7 +399,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Get output state resolved.
-				programGraph = ShaderGraphStatic(programGraph).getStateResolved();
+				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getStateResolved();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"." << Endl;
@@ -424,7 +426,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Create swizzle nodes in order to improve compiler optimizing.
-				programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getSwizzledPermutation();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"." << Endl;
@@ -433,7 +435,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Remove redundant swizzle patterns.
-				programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
+				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).cleanupRedundantSwizzles();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"." << Endl;

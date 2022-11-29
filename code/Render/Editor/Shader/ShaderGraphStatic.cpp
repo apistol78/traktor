@@ -122,9 +122,9 @@ struct ConstantFoldingVisitor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, Object)
 
-ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
+ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
 {
-	T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
+	T_ASSERT(ShaderGraphValidator(shaderGraph, shaderGraphId).validateIntegrity());
 	m_shaderGraph = shaderGraph;
 }
 
