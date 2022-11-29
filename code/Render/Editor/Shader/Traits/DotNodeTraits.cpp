@@ -66,20 +66,27 @@ bool DotNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	if (inputConstants[0].isAllConst() && inputConstants[1].isAllConst())
+	const int32_t w0 = inputConstants[0].getWidth();
+	const int32_t w1 = inputConstants[1].getWidth();
+
+	if (w0 > 0 && w0 == w1)
 	{
-		outputConstant = Constant(
-			inputConstants[0].x() * inputConstants[1].x() +
-			inputConstants[0].y() * inputConstants[1].y() +
-			inputConstants[0].z() * inputConstants[1].z() +
-			inputConstants[0].w() * inputConstants[1].w()
-		);
+		if (inputConstants[0].isAllConst() && inputConstants[1].isAllConst())
+		{
+			outputConstant = Constant(
+				inputConstants[0].x() * inputConstants[1].x() +
+				inputConstants[0].y() * inputConstants[1].y() +
+				inputConstants[0].z() * inputConstants[1].z() +
+				inputConstants[0].w() * inputConstants[1].w()
+			);
+		}
+		else if (inputConstants[0].isAllZero() || inputConstants[1].isAllZero())
+		{
+			outputConstant = Constant(0.0f);
+			return true;
+		}
 	}
-	else if (inputConstants[0].isAllZero() || inputConstants[1].isAllZero())
-	{
-		outputConstant = Constant(0.0f);
-		return true;
-	}
+	
 	return false;
 }
 

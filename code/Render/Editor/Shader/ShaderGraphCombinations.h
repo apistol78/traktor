@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderGraph;
 
@@ -41,11 +39,11 @@ public:
 		Ref< const ShaderGraph > shaderGraph;
 	};
 
-	explicit ShaderGraphCombinations(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphCombinations(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
-	const std::vector< std::wstring >& getParameterNames() const;
+	const AlignedVector< std::wstring >& getParameterNames() const;
 
-	std::vector< std::wstring > getParameterNames(uint32_t mask) const;
+	AlignedVector< std::wstring > getParameterNames(uint32_t mask) const;
 
 	uint32_t getCombinationCount() const;
 
@@ -57,10 +55,8 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	std::vector< std::wstring > m_parameterNames;
-	std::vector< Combination > m_combinations;
+	AlignedVector< std::wstring > m_parameterNames;
+	AlignedVector< Combination > m_combinations;
 };
 
-	}
 }
-

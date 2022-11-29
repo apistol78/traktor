@@ -663,7 +663,7 @@ void MeshAssetEditor::createMaterialShader()
 	);
 	if (materialShader)
 	{
-		materialShader = render::ShaderGraphStatic(materialShader).propagateConstantExternalValues();
+		materialShader = render::ShaderGraphStatic(materialShader, Guid()).propagateConstantExternalValues();
 		T_ASSERT(materialShader != nullptr);
 
 		materialShader = render::ShaderGraphOptimizer(materialShader).removeUnusedBranches(true);

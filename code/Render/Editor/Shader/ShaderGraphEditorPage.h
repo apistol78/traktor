@@ -74,7 +74,7 @@ class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit ShaderGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
