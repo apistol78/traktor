@@ -66,7 +66,7 @@ extern const render::Handle s_handleReflectionsEnable;
 extern const render::Handle s_handleScreenMap;
 extern const render::Handle s_handleShadowEnable;
 extern const render::Handle s_handleShadowMapAtlas;
-extern const render::Handle s_handleShadowMapCascade;
+extern const render::Handle s_handleShadowBias;
 extern const render::Handle s_handleShadowMask;
 extern const render::Handle s_handleTileSBuffer;
 extern const render::Handle s_handleTime;
@@ -77,6 +77,7 @@ extern const render::Handle s_handleWorld;
 extern const render::Handle s_handleWorldView;
 extern const render::Handle s_handleWorldViewInv;
 extern const render::Handle s_handleJitter;
+extern const render::Handle s_handleSlicePositions;
 
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;

@@ -64,7 +64,7 @@ const render::Handle s_handleReflectionsEnable(L"World_ReflectionsEnable");
 const render::Handle s_handleScreenMap(L"World_ScreenMap");
 const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
 const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
-const render::Handle s_handleShadowMapCascade(L"World_ShadowMapCascade");
+const render::Handle s_handleShadowBias(L"World_ShadowBias");
 const render::Handle s_handleShadowMask(L"World_ShadowMask");
 const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");
 const render::Handle s_handleTime(L"World_Time");
@@ -75,6 +75,7 @@ const render::Handle s_handleWorld(L"World_World");
 const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 const render::Handle s_handleJitter(L"World_Jitter");
+const render::Handle s_handleSlicePositions(L"World_SlicePositions");
 
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");
