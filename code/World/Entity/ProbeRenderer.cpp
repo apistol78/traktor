@@ -264,8 +264,8 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 	if (m_captureState < 6)
 	{
-		Vector4 pivot = m_capture->getTransform().translation().xyz1();
-		int32_t face = m_captureState;
+		const Vector4 pivot = m_capture->getTransform().translation().xyz1();
+		const int32_t face = m_captureState;
 
 		// Render world into first mip of reflection cube.
 		Matrix44 view;
@@ -385,7 +385,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				// Each mip represent one step rougher surface.
-				float roughness = (float)mip / mipCount;
+				const float roughness = std::pow((float)mip / mipCount, 0.5f);
 
 				Vector4 corners[4];
 				switch (side)
