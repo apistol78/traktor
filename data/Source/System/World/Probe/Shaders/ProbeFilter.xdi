@@ -505,8 +505,8 @@ $Output = vec4(normalize(sampleVec), 0);
 			<id>{A0043244-66C5-BB47-87A6-6771E27A124B}</id>
 			<comment/>
 			<position>
-				<first>-839</first>
-				<second>-1154</second>
+				<first>-834</first>
+				<second>-1147</second>
 			</position>
 			<parameterName>World_ProbeRoughness</parameterName>
 			<type>Scalar</type>
@@ -1208,16 +1208,6 @@ ENTRY
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Roughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[39]"/>
 				<name>Output</name>
 			</source>
@@ -1534,6 +1524,16 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
 				<name>DX11</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Roughness</name>
 			</destination>
 		</item>
 	</edges>
