@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! External entity data.
  * \ingroup World
@@ -33,9 +31,9 @@ class T_DLLCLASS ExternalEntityData : public EntityData
 	T_RTTI_CLASS;
 
 public:
-	ExternalEntityData();
+	ExternalEntityData() = default;
 
-	ExternalEntityData(const resource::Id< EntityData >& entityData);
+	explicit ExternalEntityData(const resource::Id< EntityData >& entityData);
 
 	void setEntityData(const resource::Id< EntityData >& entityData);
 
@@ -47,6 +45,4 @@ private:
 	resource::Id< EntityData > m_entityData;
 };
 
-	}
 }
-

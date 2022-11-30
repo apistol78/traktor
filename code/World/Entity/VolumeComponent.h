@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class VolumeComponentData;
 
@@ -34,7 +32,7 @@ class T_DLLCLASS VolumeComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	VolumeComponent(const VolumeComponentData* data);
+	explicit VolumeComponent(const VolumeComponentData* data);
 
 	virtual void destroy() override final;
 
@@ -54,6 +52,4 @@ private:
 	Aabb3 m_boundingBox;
 };
 
-	}
 }
-

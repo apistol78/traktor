@@ -8,10 +8,8 @@
  */
 #include "World/SMProj/UniformShadowProjection.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.UniformShadowProjection", UniformShadowProjection, IShadowProjection)
 
@@ -122,5 +120,4 @@ void UniformShadowProjection::calculate(
 	}
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupComponentData", 0, GroupComponentData, IEntityComponentData)
 
@@ -77,5 +75,4 @@ void GroupComponentData::serialize(ISerializer& s)
     s >> MemberRefArray< EntityData >(L"entityData", m_entityData, AttributePrivate());
 }
 
-	}
 }

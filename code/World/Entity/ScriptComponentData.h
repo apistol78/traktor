@@ -25,15 +25,17 @@ namespace traktor
 class IRuntimeClass;
 class PropertyGroup;
 
-	namespace resource
-	{
+}
+
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class ScriptComponent;
 
@@ -65,6 +67,4 @@ private:
 	bool m_editorSupport = false;
 };
 
-	}
 }
-

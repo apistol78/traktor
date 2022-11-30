@@ -8,10 +8,8 @@
  */
 #include "World/Entity/DecalComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalComponent", DecalComponent, IEntityComponent)
 
@@ -57,5 +55,4 @@ void DecalComponent::update(const UpdateParams& update)
 	m_age += update.deltaTime;
 }
 
-	}
 }

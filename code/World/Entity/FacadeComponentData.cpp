@@ -11,10 +11,8 @@
 #include "World/EntityData.h"
 #include "World/Entity/FacadeComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FacadeComponentData", 0, FacadeComponentData, GroupComponentData)
 
@@ -29,5 +27,4 @@ void FacadeComponentData::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"show", m_show);
 }
 
-	}
 }

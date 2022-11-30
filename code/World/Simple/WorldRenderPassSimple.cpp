@@ -11,10 +11,8 @@
 #include "World/WorldHandles.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassSimple", WorldRenderPassSimple, IWorldRenderPass)
 
@@ -66,5 +64,4 @@ void WorldRenderPassSimple::setProgramParameters(render::ProgramParameters* prog
 	programParams->setMatrixParameter(s_handleWorldView, m_view * w);
 }
 
-	}
 }

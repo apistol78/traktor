@@ -71,7 +71,7 @@ bool ClearCachesTool::needOutputResources(std::set< Guid >& outDependencies) con
 
 bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
-	std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
+	const std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 	log::info << L"Clearing pipeline instance cache \"" << cachePath << L"\"..." << Endl;
 	if (!clearDirectory(cachePath))
 	{
@@ -81,7 +81,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 
 	if (editor->getSettings()->getProperty< bool >(L"Pipeline.FileCache", false))
 	{
-		std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.FileCache.Path");
+		const std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.FileCache.Path");
 		log::info << L"Clearing pipeline output cache \"" << cachePath << L"\"..." << Endl;
 		if (!clearDirectory(cachePath))
 		{
@@ -91,7 +91,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	}
 
 	{
-		std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+		const std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 		log::info << L"Clearing model cache \"" << cachePath << L"\"..." << Endl;
 		if (!clearDirectory(cachePath))
 		{
@@ -101,7 +101,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	}
 
 	{
-		std::wstring connectionString = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.Db");
+		const std::wstring connectionString = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.Db");
 
 		std::vector< std::wstring > pairs;
 		std::map< std::wstring, std::wstring > cs;
@@ -124,7 +124,7 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 			cs[trim(i->substr(0, p))] = i->substr(p + 1);
 		}
 
-		std::wstring file = cs[L"fileName"];
+		const std::wstring file = cs[L"fileName"];
 		log::info << L"Clearing pipeline db \"" << file << L"\"..." << Endl;
 		if (!FileSystem::getInstance().remove(Path(file)))
 		{

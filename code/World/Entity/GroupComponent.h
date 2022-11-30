@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
@@ -35,8 +33,6 @@ class T_DLLCLASS GroupComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	GroupComponent();
-
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
@@ -60,12 +56,11 @@ public:
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
 private:
-	Entity* m_owner;
+	Entity* m_owner = nullptr;
 	Transform m_transform;
 	RefArray< Entity > m_entities;
-	bool m_update;
 	RefArray< Entity > m_deferred[2];
+	bool m_update = false;
 };
 
-	}
 }

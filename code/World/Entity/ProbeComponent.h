@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ICubeTexture;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 /*! Reflection probe component.
  * \ingroup World
@@ -88,5 +86,4 @@ private:
 	bool m_dirty;
 };
 
-	}
 }

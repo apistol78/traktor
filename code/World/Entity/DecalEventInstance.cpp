@@ -13,10 +13,8 @@
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventInstance.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEventInstance", DecalEventInstance, IEntityEventInstance)
 
@@ -54,5 +52,4 @@ void DecalEventInstance::cancel(Cancel when)
 	safeDestroy(m_entity);
 }
 
-	}
 }

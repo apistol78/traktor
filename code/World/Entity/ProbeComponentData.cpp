@@ -13,10 +13,8 @@
 #include "Resource/Member.h"
 #include "World/Entity/ProbeComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ProbeComponentData", 0, ProbeComponentData, IEntityComponentData)
 
@@ -32,5 +30,4 @@ void ProbeComponentData::serialize(ISerializer& s)
 	s >> MemberAabb3(L"volume", m_volume);
 }
 
-	}
 }

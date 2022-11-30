@@ -13,16 +13,10 @@
 #include "World/Entity/FacadeComponent.h"
 #include "World/Entity/FacadeRenderer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FacadeRenderer", FacadeRenderer, IEntityRenderer)
-
-FacadeRenderer::FacadeRenderer()
-{
-}
 
 const TypeInfoSet FacadeRenderer::getRenderableTypes() const
 {
@@ -70,5 +64,4 @@ void FacadeRenderer::build(
 {
 }
 
-	}
 }

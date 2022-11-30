@@ -264,10 +264,9 @@ void WorldRendererForward::setupLightPass(
 {
 	T_PROFILER_SCOPE(L"WorldRendererForward setupLightPass");
 
-	const UniformShadowProjection shadowProjection(1024);
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-	const auto& lights = m_lights;
+	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
 	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBuffer->lock();
 	if (!lightShaderData)
@@ -283,11 +282,10 @@ void WorldRendererForward::setupLightPass(
 	
 	// Find cascade shadow light.
 	int32_t lightCascadeIndex = -1;
-	if (shadowsEnable && shadowSettings.cascadingSlices > 0)
 	{
-		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
-			const auto light = lights[i];
+			const auto& light = m_lights[i];
 			if (light->getCastShadow() && light->getLightType() == LightType::LtDirectional)
 			{
 				lightCascadeIndex = i;
@@ -300,9 +298,9 @@ void WorldRendererForward::setupLightPass(
 	StaticVector< int32_t, 32 > lightAtlasIndices;
 	if (shadowsEnable)
 	{
-		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
-			const auto light = lights[i];
+			const auto& light = m_lights[i];
 			if (light->getCastShadow() && light->getLightType() == LightType::LtSpot)
 				lightAtlasIndices.push_back(i);
 		}
@@ -313,7 +311,7 @@ void WorldRendererForward::setupLightPass(
 		// First 4 entires are cascading shadow light.
 		if (lightCascadeIndex >= 0)
 		{
-			const auto light = lights[lightCascadeIndex];
+			const auto& light = m_lights[lightCascadeIndex];
 			auto* lsd = lightShaderData;
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -323,7 +321,7 @@ void WorldRendererForward::setupLightPass(
 				lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
 				lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-				Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+				const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 				lightTransform.translation().xyz1().storeUnaligned(lsd->position);
 				lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
 				light->getColor().storeUnaligned(lsd->color);
@@ -338,9 +336,9 @@ void WorldRendererForward::setupLightPass(
 		}
 
 		// Append all other lights, \note we could ignore cascading shadow light.
-		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
-			const auto light = lights[i];
+			const auto& light = m_lights[i];
 			auto* lsd = &lightShaderData[i + 4];
 
 			lsd->typeRangeRadius[0] = (float)light->getLightType();
@@ -348,7 +346,7 @@ void WorldRendererForward::setupLightPass(
 			lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
 			lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
-			Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
 			lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
 			light->getColor().storeUnaligned(lsd->color);
@@ -391,7 +389,7 @@ void WorldRendererForward::setupLightPass(
 
 		if (lightCascadeIndex >= 0)
 		{
-			const auto light = lights[lightCascadeIndex];
+			const auto& light = m_lights[lightCascadeIndex];
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -505,7 +503,7 @@ void WorldRendererForward::setupLightPass(
 
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
 		{
-			const auto light = lights[lightAtlasIndex];
+			const auto& light = m_lights[lightAtlasIndex];
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();

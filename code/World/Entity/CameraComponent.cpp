@@ -9,10 +9,8 @@
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CameraComponent", CameraComponent, IEntityComponent)
 
@@ -85,5 +83,4 @@ float CameraComponent::getHeight() const
 	return m_height;
 }
 
-	}
 }

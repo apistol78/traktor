@@ -19,12 +19,10 @@
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalRenderer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct Vertex
@@ -35,7 +33,7 @@ struct Vertex
 
 const uint32_t c_maxRenderDecals = 32;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalRenderer", DecalRenderer, IEntityRenderer)
 
@@ -169,8 +167,8 @@ void DecalRenderer::build(
 
 		const Transform& transform = decalComponent->getTransform();
 
-		Matrix44 worldView = view * transform.toMatrix44();
-		Matrix44 worldViewInv = worldView.inverse();
+		const Matrix44 worldView = view * transform.toMatrix44();
+		const Matrix44 worldViewInv = worldView.inverse();
 
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Decal");
 
@@ -212,5 +210,4 @@ void DecalRenderer::build(
 	m_decalComponents.resize(0);
 }
 
-	}
 }

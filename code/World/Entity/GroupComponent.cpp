@@ -10,18 +10,10 @@
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupComponent", GroupComponent, IEntityComponent)
-
-GroupComponent::GroupComponent()
-:	m_owner(nullptr)
-,	m_update(false)
-{
-}
 
 void GroupComponent::destroy()
 {
@@ -164,5 +156,4 @@ RefArray< world::Entity > GroupComponent::getEntities(const std::wstring& name) 
 	return entities;
 }
 
-	}
 }

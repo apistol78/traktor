@@ -17,10 +17,8 @@
 #include "Resource/Member.h"
 #include "World/Entity/LightComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 10, LightComponentData, IEntityComponentData)
 
@@ -124,5 +122,4 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

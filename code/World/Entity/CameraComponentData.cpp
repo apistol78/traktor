@@ -12,20 +12,10 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "World/Entity/CameraComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.CameraComponentData", 0, CameraComponentData, IEntityComponentData)
-
-CameraComponentData::CameraComponentData()
-:	m_projection(Projection::Orthographic)
-,	m_fov(deg2rad(70.0f))
-,	m_width(1.0f)
-,	m_height(1.0f)
-{
-}
 
 void CameraComponentData::setProjection(Projection projection)
 {
@@ -86,5 +76,4 @@ void CameraComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"height", m_height);
 }
 
-	}
 }

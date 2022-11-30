@@ -10,10 +10,8 @@
 
 #include "World/IShadowProjection.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class TrapezoidShadowProjection : public IShadowProjection
 {
@@ -33,6 +31,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

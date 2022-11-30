@@ -225,7 +225,7 @@ bool isInstanceInPrivate(const db::Instance* instance)
 
 std::wstring getCategoryText(const TypeInfo* categoryType)
 {
-	std::wstring id = replaceAll(toUpper(std::wstring(categoryType->getName())), L".", L"_");
+	const std::wstring id = replaceAll(toUpper(std::wstring(categoryType->getName())), L".", L"_");
 	return i18n::Text(id, categoryType->getName());
 }
 
@@ -236,7 +236,7 @@ std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* grou
 
 	for (int32_t i = 2;; ++i)
 	{
-		std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
+		const std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
 		if (!group->getInstance(sequenceName))
 			return sequenceName;
 	}
@@ -507,10 +507,10 @@ void DatabaseView::setDatabase(db::Database* db)
 		int32_t nextWizardId = 0;
 		for (auto wizardTool : m_wizardTools)
 		{
-			std::wstring wizardDescription = wizardTool->getDescription();
+			const std::wstring wizardDescription = wizardTool->getDescription();
 			T_ASSERT(!wizardDescription.empty());
 
-			int32_t wizardId = nextWizardId++;
+			const int32_t wizardId = nextWizardId++;
 
 			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
 				m_menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
@@ -550,9 +550,9 @@ void DatabaseView::updateView()
 			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
 		else if (viewMode == 1)	// Category
 		{
-			bool showFiltered = m_toolFilterShow->isToggled();
-			bool showFavorites = m_toolFavoritesShow->isToggled();
-			bool showPrivate = false;
+			const bool showFiltered = m_toolFilterShow->isToggled();
+			const bool showFavorites = m_toolFavoritesShow->isToggled();
+			const bool showPrivate = false;
 
 			TypeInfoSet instanceTypes;
 			db::recursiveFindChildInstance(m_db->getRootGroup(), CollectInstanceTypes(instanceTypes));
@@ -682,8 +682,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< Asset > editAsset = instance->getObject< Asset >();
 			if (editAsset)
 			{
-				std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + editAsset->getFileName());
+				const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + editAsset->getFileName());
 				OS::getInstance().editFile(filePath.getPathName());
 			}
 		}
@@ -692,14 +692,14 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
 			{
-				std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + exploreAsset->getFileName());
+				const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + exploreAsset->getFileName());
 				OS::getInstance().exploreFile(filePath.getPathName());
 			}
 		}
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{
-			TypeInfoSet serializableTypeSet = makeTypeInfoSet< ISerializable >();
+			const TypeInfoSet serializableTypeSet = makeTypeInfoSet< ISerializable >();
 			BrowseTypeDialog browseTypeDlg(m_editor->checkoutGlobalSettings());
 			browseTypeDlg.create(this, &serializableTypeSet, true, true);
 
@@ -884,7 +884,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.ToggleRoot")	// Toggle root flag.
 		{
-			Guid instanceGuid = instance->getGuid();
+			const Guid instanceGuid = instance->getGuid();
 
 			auto it = m_rootInstances.find(instanceGuid);
 			if (it == m_rootInstances.end())
@@ -904,7 +904,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.ToggleFavorite")	// Toggle favorite flag.
 		{
-			Guid instanceGuid = instance->getGuid();
+			const Guid instanceGuid = instance->getGuid();
 
 			auto it = m_favoriteInstances.find(instanceGuid);
 			if (it == m_favoriteInstances.end())
@@ -954,11 +954,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				const TypeInfo* type = childInstance->getPrimaryType();
 				if (type)
 				{
-					std::wstring typeName = type->getName();
-					size_t ln = typeName.find_last_of(L'.');
+					const std::wstring typeName = type->getName();
+					const size_t ln = typeName.find_last_of(L'.');
 					if (ln > 0 && ln != typeName.npos)
 					{
-						std::wstring groupName = typeName.substr(0, ln);
+						const std::wstring groupName = typeName.substr(0, ln);
 						groupNames[groupName]++;
 					}
 				}
@@ -974,7 +974,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return lh.second > rh.second;
 			});
 
-			std::wstring initialGroupHint = !tmp.empty() ? tmp.front().first : L"";
+			const std::wstring initialGroupHint = !tmp.empty() ? tmp.front().first : L"";
 
 			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
 			newInstanceDlg.create(this, initialGroupHint);
@@ -983,7 +983,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			{
 				const TypeInfo* type = newInstanceDlg.getType();
 
-				std::wstring instanceName = newInstanceDlg.getInstanceName();
+				const std::wstring instanceName = newInstanceDlg.getInstanceName();
 				T_ASSERT(!instanceName.empty());
 
 				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
@@ -1048,7 +1048,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			for (const auto& pasteInstance : pasteInstances)
 			{
-				std::wstring pasteName = getUniqueInstanceName(pasteInstance.name, group);
+				const std::wstring pasteName = getUniqueInstanceName(pasteInstance.name, group);
 
 				Ref< db::Instance > instanceCopy = group->createInstance(pasteName, db::CifDefault, &pasteInstance.pasteId);
 				if (!instanceCopy)
@@ -1070,7 +1070,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.FavoriteEntireGroup" || command == L"Editor.Database.UnFavoriteEntireGroup")
 		{
-			bool addToFavorites = bool(command == L"Editor.Database.FavoriteEntireGroup");
+			const bool addToFavorites = bool(command == L"Editor.Database.FavoriteEntireGroup");
 
 			RefArray< db::Instance > instances;
 			db::recursiveFindChildInstances(group, db::FindInstanceAll(), instances);
@@ -1159,9 +1159,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	for (auto childGroup : childGroups)
 		buildTreeItem(treeView, groupItem, childGroup);
 
-	bool showFiltered = m_toolFilterShow->isToggled();
-	bool showFavorites = m_toolFavoritesShow->isToggled();
-	bool showPrivate = true;
+	const bool showFiltered = m_toolFilterShow->isToggled();
+	const bool showFavorites = m_toolFavoritesShow->isToggled();
+	const bool showPrivate = true;
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
@@ -1243,7 +1243,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 void DatabaseView::updateGridInstances()
 {
 	// Grid is only visible in "split" mode.
-	int32_t viewMode = m_toolViewMode->getSelected();
+	const int32_t viewMode = m_toolViewMode->getSelected();
 	if (viewMode != 2)
 		return;
 
@@ -1264,9 +1264,9 @@ void DatabaseView::updateGridInstances()
 		return compareIgnoreCase(a->getName(), b->getName()) < 0;
 	});
 
-	bool showFiltered = m_toolFilterShow->isToggled();
-	bool showFavorites = m_toolFavoritesShow->isToggled();
-	bool showPrivate = true;
+	const bool showFiltered = m_toolFilterShow->isToggled();
+	const bool showFavorites = m_toolFavoritesShow->isToggled();
+	const bool showPrivate = true;
 
 	for (auto childInstance : childInstances)
 	{
@@ -1361,7 +1361,7 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 	if (!instance)
 		return;
 
-	Guid findInstanceGuid = instance->getGuid();
+	const Guid findInstanceGuid = instance->getGuid();
 
 	for (const auto& rootGuid : m_rootInstances)
 	{
@@ -1462,7 +1462,7 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (cmd == L"Database.ViewModes")
 	{
-		int32_t viewMode = m_toolViewMode->getSelected();
+		const int32_t viewMode = m_toolViewMode->getSelected();
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseView", viewMode);
 	}
 
@@ -1481,7 +1481,7 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 	{
 		if (!m_filterText.empty())
 		{
-			Guid filterGuid(m_filterText);
+			const Guid filterGuid(m_filterText);
 			if (filterGuid.isValid() && filterGuid.isNotNull())
 				m_filter = new GuidFilter(filterGuid);
 			else
@@ -1560,7 +1560,7 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	}
 	else if (group)
 	{
-		bool showFavorites = m_toolFavoritesShow->isToggled();
+		const bool showFavorites = m_toolFavoritesShow->isToggled();
 		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
 			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),
 			event->getPosition()

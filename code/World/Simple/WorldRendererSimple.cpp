@@ -24,12 +24,10 @@
 #include "World/Simple/WorldRendererSimple.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSystem, float value)
 {
@@ -45,7 +43,7 @@ Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSyst
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererSimple", 0, WorldRendererSimple, IWorldRenderer)
 
@@ -86,7 +84,7 @@ void WorldRendererSimple::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
-		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		const WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
 
 		for (auto gathered : m_gathered)
 			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
@@ -107,7 +105,7 @@ void WorldRendererSimple::setup(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-			WorldBuildContext wc(
+			const WorldBuildContext wc(
 				m_entityRenderers,
 				rootEntity,
 				renderContext
@@ -122,7 +120,7 @@ void WorldRendererSimple::setup(
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.
-			WorldRenderPassSimple defaultPass(
+			const WorldRenderPassSimple defaultPass(
 				s_techniqueSimpleColor,
 				globalProgramParams,
 				worldRenderView.getView()
@@ -145,5 +143,4 @@ render::ImageGraphContext* WorldRendererSimple::getImageGraphContext() const
 	return nullptr;
 }
 
-	}
 }

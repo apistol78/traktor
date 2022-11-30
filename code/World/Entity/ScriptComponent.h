@@ -26,8 +26,10 @@ class IRuntimeClass;
 class IRuntimeDispatch;
 class PropertyGroup;
 
-	namespace world
-	{
+}
+
+namespace traktor::world
+{
 
 /*! Script component.
  * \ingroup World
@@ -66,6 +68,4 @@ private:
 	bool validate();
 };
 
-	}
 }
-

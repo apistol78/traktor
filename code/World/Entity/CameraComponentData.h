@@ -32,8 +32,6 @@ class T_DLLCLASS CameraComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	CameraComponentData();
-
 	void setProjection(Projection projection);
 
 	Projection getProjection() const;
@@ -55,10 +53,10 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Projection m_projection;
-	float m_fov;
-	float m_width;
-	float m_height;
+	Projection m_projection = Projection::Orthographic;
+	float m_fov = deg2rad(70.0f);
+	float m_width = 1.0f;
+	float m_height = 1.0f;
 };
 
 	}

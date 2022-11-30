@@ -19,19 +19,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
 class IVertexLayout;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class DecalComponent;
 
@@ -82,6 +80,4 @@ private:
 	RefArray< const DecalComponent > m_decalComponents;
 };
 
-	}
 }
-
