@@ -49,9 +49,9 @@ bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 	group->getChildInstances(childInstances);
 
 	// Does this group contain a valid instance?
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		if (filter->acceptable(*i))
+		if (filter->acceptable(childInstance))
 			return true;
 	}
 
@@ -59,9 +59,9 @@ bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 	group->getChildGroups(childGroups);
 
 	// No instances at this level, check if any child group contains valid instances.
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (auto childGroup : childGroups)
 	{
-		if (recursiveIncludeGroup(*i, filter))
+		if (recursiveIncludeGroup(childGroup, filter))
 			return true;
 	}
 
@@ -76,7 +76,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDia
 BrowseInstanceDialog::BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings)
 :	m_editor(editor)
 ,	m_settings(settings)
-,	m_threadGeneratePreview(0)
+,	m_threadGeneratePreview(nullptr)
 {
 }
 
@@ -142,7 +142,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	// Traverse database and filter out items.
 	ui::TreeViewItem* groupRoot = buildGroupItems(
 		m_treeDatabase,
-		0,
+		nullptr,
 		database->getRootGroup(),
 		filter
 	);
@@ -199,7 +199,7 @@ Ref< db::Instance > BrowseInstanceDialog::getInstance()
 ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
 {
 	if (filter && !recursiveIncludeGroup(group, filter))
-		return 0;
+		return nullptr;
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
@@ -207,19 +207,19 @@ ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, 
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		buildGroupItems(treeView, groupItem, *i, filter);
+	for (auto childGroup : childGroups)
+		buildGroupItems(treeView, groupItem, childGroup, filter);
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
 
 	Ref< ui::PreviewItems > instanceItems = new ui::PreviewItems();
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		if (!filter || filter->acceptable(*i))
+		if (!filter || filter->acceptable(childInstance))
 		{
-			Ref< ui::PreviewItem > instanceItem = new ui::PreviewItem((*i)->getName());
-			instanceItem->setData(L"INSTANCE", (*i));
+			Ref< ui::PreviewItem > instanceItem = new ui::PreviewItem(childInstance->getName());
+			instanceItem->setData(L"INSTANCE", childInstance);
 			instanceItems->add(instanceItem);
 		}
 	}
@@ -256,7 +256,7 @@ void BrowseInstanceDialog::updatePreviewList()
 		}
 	}
 	else
-		m_listInstances->setItems(0);
+		m_listInstances->setItems(nullptr);
 }
 
 void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
@@ -270,7 +270,7 @@ void BrowseInstanceDialog::eventListItemSelected(ui::PreviewSelectionChangeEvent
 	if (item)
 		m_instance = item->getData< db::Instance >(L"INSTANCE");
 	else
-		m_instance = 0;
+		m_instance = nullptr;
 }
 
 void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)

@@ -10,10 +10,8 @@
 
 #include "World/IShadowProjection.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class UniformShadowProjection : public IShadowProjection
 {
@@ -38,6 +36,4 @@ private:
 	float m_realShadowMapSize;
 };
 
-	}
 }
-

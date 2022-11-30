@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ISimpleTexture;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class WorldEntityRenderers;
 
@@ -75,5 +73,4 @@ private:
 	AlignedVector< Gather > m_gathered;
 };
 
-	}
 }

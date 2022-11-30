@@ -11,7 +11,6 @@
 #include "Core/Math/Aabb3.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
-//#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ICubeTexture;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 /*! Reflection probe component.
  * \ingroup World
@@ -41,8 +38,6 @@ class T_DLLCLASS ProbeComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	ProbeComponentData() = default;
-
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -70,5 +65,4 @@ private:
 	Aabb3 m_volume = Aabb3(Vector4::zero(), Vector4::zero());
 };
 
-	}
 }

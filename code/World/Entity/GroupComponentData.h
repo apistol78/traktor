@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class EntityData;
 
@@ -58,5 +56,4 @@ private:
     RefArray< EntityData > m_entityData;
 };
 
-	}
 }

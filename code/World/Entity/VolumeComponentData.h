@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*!
  * \ingroup World
@@ -43,6 +41,4 @@ private:
 	AlignedVector< Aabb3 > m_volumes;
 };
 
-	}
 }
-

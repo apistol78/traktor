@@ -9,16 +9,10 @@
 #include "Resource/Member.h"
 #include "World/Entity/ExternalEntityData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalEntityData", 1, ExternalEntityData, EntityData)
-
-ExternalEntityData::ExternalEntityData()
-{
-}
 
 ExternalEntityData::ExternalEntityData(const resource::Id< EntityData >& entityData)
 :	m_entityData(entityData)
@@ -45,5 +39,4 @@ void ExternalEntityData::serialize(ISerializer& s)
 		s >> resource::Member< EntityData >(L"guid", m_entityData);
 }
 
-	}
 }

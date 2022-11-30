@@ -10,16 +10,14 @@
 #include "World/Entity.h"
 #include "World/Entity/LightComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 Random s_random;
 		
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightComponent", LightComponent, IEntityComponent)
 
@@ -74,5 +72,4 @@ Transform LightComponent::getTransform() const
 	return m_owner->getTransform();
 }
 
-	}
 }

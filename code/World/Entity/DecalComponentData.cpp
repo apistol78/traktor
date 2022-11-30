@@ -12,20 +12,10 @@
 #include "Resource/Member.h"
 #include "World/Entity/DecalComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DecalComponentData", 0, DecalComponentData, IEntityComponentData)
-
-DecalComponentData::DecalComponentData()
-:	m_size(1.0f)
-,	m_thickness(1.0f)
-,	m_alpha(2.0f)
-,	m_cullDistance(100.0f)
-{
-}
 
 void DecalComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
@@ -40,5 +30,4 @@ void DecalComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 
-	}
 }

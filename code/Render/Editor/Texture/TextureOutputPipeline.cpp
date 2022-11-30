@@ -235,12 +235,17 @@ bool TextureOutputPipeline::buildOutput(
 	TextureFormat textureFormat;
 	bool needAlpha;
 
-	// Check if linear space is explicit in image.
+	// Check if linear space is explicit in image; this is mearly an
+	// warning and rest of pipeline still expect image to be linear is explicitly tagged as such.
 	if (image->getImageInfo() != nullptr && image->getImageInfo()->getGamma() >= 0.001f)
 	{
-		bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.001f);
+		const bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.001f);
 		if (explicitLinear != textureOutput->m_linearGamma)
-			log::warning << L"Image linear gamma mismatch in texture \"" << outputGuid.format() << L"\"; image is " << (explicitLinear ? L"linear" : L"non-linear") << L", while asset declare as " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
+		{
+			log::warning << L"Image linear gamma mismatch in texture \"" << outputGuid.format() << L"\";" << Endl;
+			log::warning << L"\tImage is " << (explicitLinear ? L"linear" : L"non-linear") << L" (" << str(L"%.2f", image->getImageInfo()->getGamma()) << L")" << Endl;
+			log::warning << L"\tAsset is " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
+		}
 	}
 
 	// Use explicit texture format if specified.
@@ -485,13 +490,30 @@ bool TextureOutputPipeline::buildOutput(
 		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
-		if (m_sRGB)
-			sRGB = true;
+		if (image->getImageInfo() != nullptr)
+		{
+			const float imageGamma = image->getImageInfo()->getGamma();
+			const float is_sRGB = (bool)(std::abs(imageGamma - m_gamma) <= 0.1f);
+			if (is_sRGB)
+				sRGB = true;
+			else
+			{
+				log::info << L"Converting from " << str(L"%.2f", imageGamma) << L" to linear gamma..." << Endl;
+				drawing::GammaFilter gammaFilter(imageGamma);
+				image->apply(&gammaFilter);
+			}
+		}
 		else
 		{
-			log::info << L"Converting into linear gamma..." << Endl;
-			drawing::GammaFilter gammaFilter(m_gamma);
-			image->apply(&gammaFilter);
+			// No image meta data; assume image is sRGB.
+			if (m_sRGB)
+				sRGB = true;
+			else
+			{
+				log::info << L"Converting into linear gamma..." << Endl;
+				drawing::GammaFilter gammaFilter(m_gamma);
+				image->apply(&gammaFilter);
+			}
 		}
 	}
 

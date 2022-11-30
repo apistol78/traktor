@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! Group entity renderer.
  * \ingroup World
@@ -62,6 +60,4 @@ public:
 	) override final;
 };
 
-	}
 }
-

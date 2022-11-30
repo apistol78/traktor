@@ -47,7 +47,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	if (!database)
 		return true;
 
-	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	RefArray< db::Instance > assetInstances;
 	db::recursiveFindChildInstances(
@@ -74,7 +74,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const Property
 			++errorCount;
 		}
 
-		Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+		const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
 		RefArray< File > files;
 		FileSystem::getInstance().find(fileName, files);

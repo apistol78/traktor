@@ -12,19 +12,17 @@
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS DecalComponent : public IEntityComponent
@@ -74,6 +72,4 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 };
 
-	}
 }
-

@@ -10,17 +10,10 @@
 #include "World/Entity/FacadeComponent.h"
 #include "World/Entity/ScriptComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FacadeComponent", FacadeComponent, IEntityComponent)
-
-FacadeComponent::FacadeComponent()
-:	m_owner(nullptr)
-{
-}
 
 void FacadeComponent::destroy()
 {
@@ -139,5 +132,4 @@ bool FacadeComponent::isVisible(const std::wstring& id)
 	return m_visibleEntities.find(it->second) != m_visibleEntities.end();
 }
 
-	}
 }

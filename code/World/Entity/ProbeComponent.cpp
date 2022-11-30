@@ -9,10 +9,8 @@
 #include "World/Entity.h"
 #include "World/Entity/ProbeComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityComponent)
 
@@ -64,5 +62,4 @@ Transform ProbeComponent::getTransform() const
 	return m_owner->getTransform();
 }
 
-	}
 }

@@ -12,20 +12,10 @@
 #include "Resource/Member.h"
 #include "World/Entity/DecalEventData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DecalEventData", 0, DecalEventData, IEntityEventData)
-
-DecalEventData::DecalEventData()
-:	m_size(1.0f)
-,	m_thickness(1.0f)
-,	m_alpha(2.0f)
-,	m_cullDistance(100.0f)
-{
-}
 
 void DecalEventData::serialize(ISerializer& s)
 {
@@ -36,5 +26,4 @@ void DecalEventData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 
-	}
 }

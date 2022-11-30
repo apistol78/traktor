@@ -37,10 +37,8 @@
 #include "World/Entity/VolumeComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, IEntityFactory)
 
@@ -276,5 +274,4 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	return nullptr;
 }
 
-	}
 }

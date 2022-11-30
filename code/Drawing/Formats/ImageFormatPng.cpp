@@ -25,21 +25,21 @@ namespace traktor::drawing
 void t_user_write(png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
-	if (stream != 0)
+	if (stream != nullptr)
 		stream->write(data, int(length));
 }
 
 void t_user_read(png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
-	if (stream != 0)
+	if (stream != nullptr)
 		stream->read(data, int(length));
 }
 
 void t_user_flush(png_structp png_ptr)
 {
 	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
-	if (stream != 0)
+	if (stream != nullptr)
 		stream->flush();
 }
 
@@ -66,7 +66,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	int color_type;
 
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (png_ptr == 0)
+	if (png_ptr == nullptr)
 		return nullptr;
 
 	png_set_error_fn(png_ptr, 0, t_user_error, t_user_warning);
@@ -78,7 +78,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == 0)
+	if (info_ptr == nullptr)
 	{
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
 		return nullptr;
@@ -142,7 +142,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
 	for (uint32_t i = 0; i < height; ++i)
 	{
-		int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
+		const int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
 		std::memcpy(
 			data,
 			rows[i],

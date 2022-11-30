@@ -18,24 +18,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 	
 class IRenderSystem;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 /*! World entity factory.
  * \ingroup World
@@ -71,6 +69,4 @@ private:
 	bool m_editor;
 };
 
-	}
 }
-

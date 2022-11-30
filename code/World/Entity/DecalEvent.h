@@ -11,19 +11,17 @@
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class DecalEvent : public IEntityEvent
@@ -31,8 +29,6 @@ class DecalEvent : public IEntityEvent
 	T_RTTI_CLASS;
 
 public:
-	DecalEvent();
-
 	virtual Ref< IEntityEventInstance > createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const override final;
 
 	float getSize() const { return m_size; }
@@ -48,13 +44,11 @@ public:
 private:
 	friend class WorldEntityFactory;
 
-	float m_size;
-	float m_thickness;
-	float m_alpha;
-	float m_cullDistance;
+	float m_size = 1.0f;
+	float m_thickness = 1.0f;
+	float m_alpha = 2.0f;
+	float m_cullDistance = 100.0f;
 	resource::Proxy< render::Shader > m_shader;
 };
 
-	}
 }
-

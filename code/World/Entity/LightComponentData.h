@@ -21,17 +21,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 /*!
  * \ingroup World
@@ -100,5 +98,4 @@ private:
 	LightBakeMode m_bakeMode;
 };
 
-	}
 }

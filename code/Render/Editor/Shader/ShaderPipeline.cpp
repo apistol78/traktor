@@ -180,7 +180,7 @@ bool ShaderPipeline::buildDependencies(
 	if (!programCompiler)
 		return false;
 
-	const Guid shaderGraphId = sourceInstance->getGuid();
+	const Guid shaderGraphId = sourceInstance ? sourceInstance->getGuid() : Guid();
 	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	// Extract platform permutation.
@@ -241,7 +241,7 @@ bool ShaderPipeline::buildOutput(
 	if (!programCompiler)
 		return false;
 
-	const Guid shaderGraphId = sourceInstance->getGuid();
+	const Guid shaderGraphId = sourceInstance ? sourceInstance->getGuid() : Guid();
 	const std::wstring rendererSignature = programCompiler->getRendererSignature();
 
 	Ref< ShaderResource > shaderResource = new ShaderResource();

@@ -12,10 +12,8 @@
 #include "World/Entity.h"
 #include "World/Entity/ScriptComponent.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntityComponent)
 
@@ -55,7 +53,7 @@ void ScriptComponent::setTransform(const Transform& transform)
 	// Invoke set transform method if available.
 	if (m_methodSetTransform != nullptr)
 	{
-		Any argv[] = { CastAny< Transform >::set(transform) };
+		const Any argv[] = { CastAny< Transform >::set(transform) };
 		m_methodSetTransform->invoke(m_object, sizeof_array(argv), argv);
 	}
 }
@@ -76,7 +74,7 @@ void ScriptComponent::update(const UpdateParams& update)
 	// Invoke update method if available.
 	if (m_methodUpdate != nullptr)
 	{
-		Any argv[] =
+		const Any argv[] =
 		{
 			Any::fromObject(update.contextObject),
 			Any::fromFloat(update.totalTime),
@@ -109,5 +107,4 @@ bool ScriptComponent::validate()
 	return (bool)(m_class != nullptr && m_object != nullptr);
 }
 
-	}
 }

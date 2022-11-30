@@ -15,10 +15,8 @@
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ScriptComponentData", 2, ScriptComponentData, IEntityComponentData)
 
@@ -49,5 +47,4 @@ void ScriptComponentData::serialize(ISerializer& s)
 		s >> Member< bool >(L"editorSupport", m_editorSupport);
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! World render pass.
  * \ingroup World
@@ -54,5 +52,4 @@ private:
 	Matrix44 m_viewInverse;
 };
 
-	}
 }

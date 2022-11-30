@@ -13,10 +13,8 @@
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupRenderer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupRenderer", GroupRenderer, IEntityRenderer)
 
@@ -66,5 +64,4 @@ void GroupRenderer::build(
 {
 }
 
-	}
 }

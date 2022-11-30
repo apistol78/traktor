@@ -10,10 +10,8 @@
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumeComponent", VolumeComponent, IEntityComponent)
 
@@ -52,8 +50,8 @@ bool VolumeComponent::inside(const Vector4& point) const
 	if (!m_owner)
 		return false;
 
-	Transform transform = m_owner->getTransform();
-	Vector4 p = transform.inverse() * point.xyz1();
+	const Transform transform = m_owner->getTransform();
+	const Vector4 p = transform.inverse() * point.xyz1();
 	for (const auto& volume : m_data->getVolumes())
 	{
 		if (volume.inside(p))
@@ -63,5 +61,4 @@ bool VolumeComponent::inside(const Vector4& point) const
 	return false;
 }
 
-	}
 }

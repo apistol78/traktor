@@ -32,12 +32,10 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeRenderer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 const int32_t c_faceSize = 1024;
@@ -59,7 +57,7 @@ struct Vertex
 };
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRenderer)
 
@@ -596,5 +594,4 @@ void ProbeRenderer::build(
 {
 }
 
-	}
 }

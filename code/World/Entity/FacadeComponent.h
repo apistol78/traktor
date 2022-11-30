@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
@@ -38,8 +36,6 @@ class T_DLLCLASS FacadeComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	FacadeComponent();
-
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
@@ -69,11 +65,10 @@ public:
     const SmallSet< Entity* >& getVisibleEntities() const { return m_visibleEntities; }
 
 private:
-	Entity* m_owner;
+	Entity* m_owner = nullptr;
 	Transform m_transform;
     SmallMap< std::wstring, Ref< Entity > > m_entities;
     SmallSet< Entity* > m_visibleEntities;
 };
 
-	}
 }

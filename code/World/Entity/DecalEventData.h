@@ -19,19 +19,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
-/*! \brief
+/*!
  * \ingroup World
  */
 class T_DLLCLASS DecalEventData : public IEntityEventData
@@ -39,8 +37,6 @@ class T_DLLCLASS DecalEventData : public IEntityEventData
 	T_RTTI_CLASS;
 
 public:
-	DecalEventData();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	float getSize() const { return m_size; }
@@ -54,13 +50,11 @@ public:
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	float m_size;
-	float m_thickness;
-	float m_alpha;
-	float m_cullDistance;
+	float m_size = 1.0f;
+	float m_thickness = 1.0f;
+	float m_alpha = 2.0f;
+	float m_cullDistance = 100.0f;
 	resource::Id< render::Shader > m_shader;
 };
 
-	}
 }
-

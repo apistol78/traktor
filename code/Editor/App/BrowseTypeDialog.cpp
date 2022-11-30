@@ -53,7 +53,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseTypeDialog", BrowseTypeDialog, ui:
 
 BrowseTypeDialog::BrowseTypeDialog(PropertyGroup* settings)
 :	m_settings(settings)
-,	m_type(0)
+,	m_type(nullptr)
 {
 }
 
@@ -215,7 +215,7 @@ void BrowseTypeDialog::updatePreviewList()
 		m_typeList->setItems(previewItems);
 	}
 	else
-		m_typeList->setItems(0);
+		m_typeList->setItems(nullptr);
 }
 
 void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
@@ -228,7 +228,7 @@ void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	if (typeInfoWrapper)
 		m_type = &typeInfoWrapper->m_typeInfo;
 	else
-		m_type = 0;
+		m_type = nullptr;
 }
 
 void BrowseTypeDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
@@ -246,7 +246,7 @@ void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 	if (typeInfoWrapper)
 		m_type = &typeInfoWrapper->m_typeInfo;
 	else
-		m_type = 0;
+		m_type = nullptr;
 
 	endModal(ui::DialogResult::Ok);
 }

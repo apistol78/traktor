@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -32,17 +30,17 @@ class IVertexLayout;
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 	
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderer;
 class ProbeComponent;
@@ -55,7 +53,7 @@ class T_DLLCLASS ProbeRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	ProbeRenderer(
+	explicit ProbeRenderer(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		const TypeInfo& worldRendererType
@@ -111,5 +109,4 @@ private:
 	int32_t m_captureMip;
 };
 
-	}
 }

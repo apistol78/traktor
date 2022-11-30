@@ -11,10 +11,8 @@
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRenderer", LightRenderer, IEntityRenderer)
 
@@ -64,6 +62,4 @@ void LightRenderer::build(
 {
 }
 
-
-	}
 }

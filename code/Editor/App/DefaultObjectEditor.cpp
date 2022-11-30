@@ -58,8 +58,8 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 void DefaultObjectEditor::destroy()
 {
 	safeDestroy(m_propertyList);
-	m_instance = 0;
-	m_object = 0;
+	m_instance = nullptr;
+	m_object = nullptr;
 }
 
 void DefaultObjectEditor::apply()
@@ -231,7 +231,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
-			Guid instanceGuid = browseItem->getValue();
+			const Guid instanceGuid = browseItem->getValue();
 			if (instanceGuid.isNull() || !instanceGuid.isValid())
 				return;
 

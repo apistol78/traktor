@@ -145,6 +145,7 @@ LRESULT FormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	if (closeEvent.consumed() && closeEvent.cancelled())
 		return TRUE;
 
+	m_taskBarList.release();
 	DestroyWindow(hWnd);
 	return TRUE;
 }
@@ -172,7 +173,7 @@ LRESULT FormWin32::eventActivate(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
-	CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_ALL, IID_ITaskbarList3, (void**)&m_taskBarList.getAssign());
+	CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_taskBarList.getAssign());
 	if (m_taskBarList)
 	{
 		if (SUCCEEDED(m_taskBarList->HrInit()))

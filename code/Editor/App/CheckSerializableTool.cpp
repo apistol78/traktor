@@ -75,21 +75,21 @@ bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const Pr
 				for (uint32_t j = 0; j < 1024 * 1024; ++j)
 					memory[j] = std::rand() & 255;
 
-				ISerializable* object0 = checked_type_cast< ISerializable* >(rf->clone(memory.ptr()));
+				const ISerializable* object0 = checked_type_cast< ISerializable* >(rf->clone(memory.ptr()));
 				if (!object0)
 					continue;
 
-				uint32_t hash0 = DeepHash(object0).get();
+				const uint32_t hash0 = DeepHash(object0).get();
 
 				// Randomize memory again.
 				for (uint32_t j = 0; j < 1024 * 1024; ++j)
 					memory[j] = std::rand() & 255;
 
-				ISerializable* object1 = checked_type_cast< ISerializable* >(rf->clone(memory.ptr()));
+				const ISerializable* object1 = checked_type_cast< ISerializable* >(rf->clone(memory.ptr()));
 				if (!object1)
 					continue;
 
-				uint32_t hash1 = DeepHash(object1).get();
+				const uint32_t hash1 = DeepHash(object1).get();
 
 				// If all members are properly initialized then the hashes must match.
 				if (hash0 != hash1)

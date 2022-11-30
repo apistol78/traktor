@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 /*! Facade entity renderer.
  * \inFacade World
@@ -31,8 +29,6 @@ class T_DLLCLASS FacadeRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	explicit FacadeRenderer();
-
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void gather(
@@ -64,6 +60,4 @@ public:
 	) override final;
 };
 
-	}
 }
-
