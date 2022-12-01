@@ -20,12 +20,10 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class MemberInputPin : public MemberComplex
 {
@@ -225,7 +223,7 @@ struct SortOutputPinPredicate
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 2, External, Node)
 
@@ -388,5 +386,4 @@ void External::serialize(ISerializer& s)
 		s >> MemberSmallMap< std::wstring, float >(L"values", m_values, AttributePrivate());
 }
 
-	}
 }

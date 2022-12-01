@@ -11,24 +11,22 @@
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ListBox;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ShaderDependencyTracker;
 
@@ -39,7 +37,7 @@ class ShaderDependencyPane
 	T_RTTI_CLASS;
 
 public:
-	ShaderDependencyPane(editor::IEditor* editor, const Guid& shaderId);
+	explicit ShaderDependencyPane(editor::IEditor* editor, const Guid& shaderId);
 
 	virtual void destroy() override final;
 
@@ -58,6 +56,4 @@ private:
 	void eventRefereeListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
-	}
 }
-

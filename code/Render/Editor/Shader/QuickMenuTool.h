@@ -10,18 +10,16 @@
 
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 class ListBox;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class QuickMenuTool : public ui::Dialog
 {
@@ -45,6 +43,4 @@ private:
 	void eventSuggestionSelect(ui::SelectionChangeEvent* event);
 };
 
-	}
 }
-

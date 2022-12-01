@@ -21,10 +21,8 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphBrowsePreview", 0, ShaderGraphBrowsePreview, editor::IBrowsePreview)
 
@@ -39,11 +37,11 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	if (!shaderGraph)
 		return nullptr;
 
-	int32_t w = ui::dpi96(64);
-	int32_t h = ui::dpi96(64);
-	int32_t m = ui::dpi96(4);
-	float sw = (float)ui::dpi96(100) / 100.0f;
-	float ns = (float)ui::dpi96(200) / 100.0f;
+	const int32_t w = ui::dpi96(64);
+	const int32_t h = ui::dpi96(64);
+	const int32_t m = ui::dpi96(4);
+	const float sw = (float)ui::dpi96(100) / 100.0f;
+	const float ns = (float)ui::dpi96(200) / 100.0f;
 
 	Ref< drawing::Image > shaderGraphThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
@@ -55,9 +53,9 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 
 	drawing::Raster raster(shaderGraphThumb);
 
-	int32_t clearStyle = raster.defineSolidStyle(Color4f(0.2f, 0.2f, 0.2f, 0.8f));
-	int32_t edgeStyle = raster.defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
-	int32_t nodeStyle = raster.defineSolidStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+	const int32_t clearStyle = raster.defineSolidStyle(Color4f(0.2f, 0.2f, 0.2f, 0.8f));
+	const int32_t edgeStyle = raster.defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+	const int32_t nodeStyle = raster.defineSolidStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
 
 	raster.clear();
 	raster.moveTo(m, m);
@@ -101,10 +99,10 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		const auto position1 = edge->getSource()->getNode()->getPosition();
 		const auto position2 = edge->getDestination()->getNode()->getPosition();
 
-		float x1 = float((position1.first - bounds.left) * w) / bounds.getSize().cx;
-		float y1 = float((position1.second - bounds.top) * h) / bounds.getSize().cy;
-		float x2 = float((position2.first - bounds.left) * w) / bounds.getSize().cx;
-		float y2 = float((position2.second - bounds.top) * h) / bounds.getSize().cy;
+		const float x1 = float((position1.first - bounds.left) * w) / bounds.getSize().cx;
+		const float y1 = float((position1.second - bounds.top) * h) / bounds.getSize().cy;
+		const float x2 = float((position2.first - bounds.left) * w) / bounds.getSize().cx;
+		const float y2 = float((position2.second - bounds.top) * h) / bounds.getSize().cy;
 
 		raster.clear();
 		raster.moveTo(x1, y1);
@@ -116,8 +114,8 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	{
 		const auto position = node->getPosition();
 
-		float x = float((position.first - bounds.left) * w) / bounds.getSize().cx;
-		float y = float((position.second - bounds.top) * h) / bounds.getSize().cy;
+		const float x = float((position.first - bounds.left) * w) / bounds.getSize().cx;
+		const float y = float((position.second - bounds.top) * h) / bounds.getSize().cy;
 
 		raster.clear();
 		raster.moveTo(x - ns, y - ns);
@@ -133,5 +131,4 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	return new ui::Bitmap(shaderGraphThumb);
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Core/Math/Const.h"
 #include "Render/Editor/Shader/Constant.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 Constant::Constant()
 :	m_type(PinType::Void)
@@ -197,5 +195,4 @@ bool Constant::operator != (const Constant& rh) const
 	return !(*this == rh);
 }
 
-	}
 }

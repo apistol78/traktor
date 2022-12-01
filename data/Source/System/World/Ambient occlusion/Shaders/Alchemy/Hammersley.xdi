@@ -47,11 +47,11 @@
 			<technique/>
 			<inputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{396FADAC-E3D6-4102-9DC0-ABBB802B77AB}</id>
 					<name>Index</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{D4353E88-0122-484D-9625-B2675EC7F256}</id>
 					<name>Count</name>
 				</item>
 			</inputPins>

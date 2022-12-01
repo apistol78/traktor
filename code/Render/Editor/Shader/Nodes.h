@@ -23,17 +23,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 /*! \ingroup Render */
 //@{
@@ -1281,5 +1279,4 @@ private:
 
 //@}
 
-	}
 }

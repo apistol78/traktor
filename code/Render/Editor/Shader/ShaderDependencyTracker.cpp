@@ -16,12 +16,10 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database)
 {
@@ -58,7 +56,7 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyTracker", ShaderDependencyTracker, Object)
 
@@ -171,5 +169,4 @@ bool ShaderDependencyTracker::Dependency::operator < (const Dependency& rh) cons
 		return false;
 }
 
-	}
 }

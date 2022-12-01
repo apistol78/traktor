@@ -12,10 +12,8 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 struct NodeCategory
 {
@@ -108,6 +106,4 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< VertexOutput >(), L"SHADERGRAPH_VALUE", L"Output value from vertex shader" }
 };
 
-	}
 }
-

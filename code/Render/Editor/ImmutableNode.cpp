@@ -36,7 +36,7 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 
 			InputPin* ptr = m_inputPins;
 			for (auto pin = inputPins; pin->name; ++pin)
-				*ptr++ = InputPin(this, c_null, pin->name, pin->optional);
+				*ptr++ = InputPin(this, Guid(pin->id), pin->name, pin->optional);
 		}
 	}
 
@@ -53,7 +53,7 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 
 			OutputPin* ptr = m_outputPins;
 			for (auto pin = outputPins; pin->name; ++pin)
-				*ptr++ = OutputPin(this, c_null, pin->name); 
+				*ptr++ = OutputPin(this, Guid(pin->id), pin->name); 
 		}
 	}
 }

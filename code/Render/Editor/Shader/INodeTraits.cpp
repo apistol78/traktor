@@ -13,17 +13,15 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 std::atomic< int32_t > s_lock(0);
 SmallMap< const TypeInfo*, Ref< INodeTraits > > s_traits;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 
@@ -41,7 +39,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 			Ref< INodeTraits > tr = checked_type_cast< INodeTraits*, false >(traitsType->createInstance());
 			T_ASSERT(tr);
 
-			TypeInfoSet nodeTypes = tr->getNodeTypes();
+			const TypeInfoSet nodeTypes = tr->getNodeTypes();
 			for (const auto& nodeType : nodeTypes)
 				s_traits[nodeType] = tr;
 		}
@@ -55,5 +53,4 @@ const INodeTraits* INodeTraits::find(const Node* node)
 	return it != s_traits.end() ? it->second : nullptr;
 }
 
-	}
 }

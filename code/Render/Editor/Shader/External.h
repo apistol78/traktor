@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderGraph;
 
@@ -44,7 +42,7 @@ class T_DLLCLASS External : public Node
 public:
 	External() = default;
 
-	External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
+	explicit External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
 
 	virtual ~External();
 
@@ -93,6 +91,4 @@ private:
 	SmallMap< std::wstring, float > m_values;
 };
 
-	}
 }
-

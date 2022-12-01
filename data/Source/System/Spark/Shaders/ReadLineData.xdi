@@ -67,36 +67,36 @@
 			<technique/>
 			<inputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{15B12EA1-37CF-4A83-B15A-1BEE605C0D97}</id>
 					<name>LineData</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{EADF08BD-5927-4BAE-B8A9-1975FE60BD6A}</id>
 					<name>Offset</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{6208A243-2992-4BA7-A572-9AEBBCFF384B}</id>
 					<name>Index</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{C0277744-FCD6-4C1D-9474-BD049624917A}</id>
 					<name>Start</name>
 					<type>Vector</type>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{1F1C595E-8DA9-4141-A6AA-7579EFEBFB7B}</id>
 					<name>End</name>
 					<type>Vector</type>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{50DF2C5A-F043-4576-8C52-EE2938C102B6}</id>
 					<name>Width</name>
 					<type>Scalar</type>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{790802ED-BF28-44BA-B122-9299A646AECD}</id>
 					<name>Color</name>
 					<type>Vector</type>
 				</item>

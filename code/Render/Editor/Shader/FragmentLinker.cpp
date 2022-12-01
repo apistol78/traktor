@@ -17,15 +17,13 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
-const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", L"{581D486E-5A7F-46CE-BB38-251008DCF746}", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output", L"{255B6D44-455E-46D2-9865-E1764FBF20BF}" }, { 0 } };
 
 class PortConnector : public ImmutableNode
 {
@@ -64,12 +62,12 @@ const OutputPin* findExternalOutputPin(const External* externalNode, const Outpu
 	return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker", FragmentLinker, Object)
 
 FragmentLinker::FragmentLinker()
-:	m_fragmentReader(0)
+:	m_fragmentReader(nullptr)
 {
 }
 
@@ -269,5 +267,4 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	return mutableShaderGraph;
 }
 
-	}
 }

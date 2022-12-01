@@ -560,11 +560,11 @@ Merge
 					<name>Input</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{43265DB8-F1D3-4790-B4DD-76A5C3F18385}</id>
 					<name>Min</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{45CFAC28-9892-4F37-8F71-5441EEB79CEC}</id>
 					<name>Max</name>
 				</item>
 			</inputPins>

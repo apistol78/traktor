@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderGraph;
 class External;
@@ -85,6 +83,4 @@ private:
 	const IFragmentReader* m_fragmentReader;
 };
 
-	}
 }
-

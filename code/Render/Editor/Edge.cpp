@@ -13,15 +13,16 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 struct OutputPinAccessor
 {
+	static const OutputPin* get(Ref< Node >& node, const Guid& id) {
+		return node->findOutputPin(id);
+	}
 	static const OutputPin* get(Ref< Node >& node, const std::wstring& name) {
 		return node->findOutputPin(name);
 	}
@@ -29,6 +30,9 @@ struct OutputPinAccessor
 
 struct InputPinAccessor
 {
+	static const InputPin* get(Ref< Node >& node, const Guid& id) {
+		return node->findInputPin(id);
+	}
 	static const InputPin* get(Ref< Node >& node, const std::wstring& name) {
 		return node->findInputPin(name);
 	}
@@ -48,24 +52,43 @@ public:
 	{
 		if (s.getDirection() == ISerializer::Direction::Write)
 		{
-			Ref< Node > node = m_pin ? m_pin->getNode() : 0;
-			std::wstring name = m_pin ? m_pin->getName() : L"";
-
+			Ref< Node > node = m_pin ? m_pin->getNode() : nullptr;
 			s >> MemberRef< Node >(L"node", node);
-			s >> Member< std::wstring >(L"name", name);
+
+			if (s.getVersion< Edge >() >= 1)
+			{
+				Guid id = m_pin ? m_pin->getId() : Guid();
+				s >> Member< Guid >(L"id", id);
+			}
+			else
+			{
+				std::wstring name = m_pin ? m_pin->getName() : L"";
+				s >> Member< std::wstring >(L"name", name);
+			}
 		}
 		else	// Direction::Read
 		{
 			Ref< Node > node;
-			std::wstring name;
-
 			s >> MemberRef< Node >(L"node", node);
-			s >> Member< std::wstring >(L"name", name);
 
-			if (node)
-				m_pin = PinAccessor::get(node, name);
+			if (s.getVersion< Edge >() >= 1)
+			{
+				Guid id;
+				s >> Member< Guid >(L"id", id);
+				if (node)
+					m_pin = PinAccessor::get(node, id);
+				else
+					m_pin = nullptr;
+			}
 			else
-				m_pin = nullptr;
+			{
+				std::wstring name;
+				s >> Member< std::wstring >(L"name", name);
+				if (node)
+					m_pin = PinAccessor::get(node, name);
+				else
+					m_pin = nullptr;
+			}
 		}
 	}
 
@@ -73,9 +96,9 @@ private:
 	PinType*& m_pin;
 };
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", 0, Edge, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", 1, Edge, ISerializable)
 
 Edge::Edge(const OutputPin* source, const InputPin* destination)
 :	m_source(source)
@@ -91,5 +114,4 @@ void Edge::serialize(ISerializer& s)
 	s >> MemberPin< const InputPin, InputPinAccessor >(L"destination", m_destination);
 }
 
-	}
 }
