@@ -18,10 +18,8 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ListUniformsTool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ListUniformsTool", 0, ListUniformsTool, IEditorTool)
 
@@ -135,5 +133,4 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 	return true;
 }
 
-	}
 }

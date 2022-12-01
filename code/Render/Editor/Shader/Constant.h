@@ -10,10 +10,8 @@
 
 #include "Render/Editor/Shader/PinType.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Evaluation SIMD constant.
  * \ingroup Render
@@ -101,6 +99,4 @@ private:
 	float m_value[4];
 };
 
-	}
 }
-

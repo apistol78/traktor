@@ -18,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-const ImmutableNode::OutputPinDesc c_ImgTexture_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ImgTexture_o[] = { { L"Output", L"{42CDF5D7-B6EF-43C2-B889-0D5621AB4DFF}" }, { 0 } };
 
 		}
 

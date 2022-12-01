@@ -250,17 +250,17 @@
 			<technique/>
 			<inputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{28738737-CE7D-4B88-9693-3EDCEEAD945F}</id>
 					<name>Bounds</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{60F1061E-4CAC-413F-A028-1C305D3FFEB8}</id>
 					<name>Position</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{C5DE10AA-1BCD-4C8E-ACF9-E8D7C963DE6D}</id>
 					<name>Inside</name>
 					<type>Scalar</type>
 				</item>
@@ -303,17 +303,17 @@ ENTRY
 			<technique/>
 			<inputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{35A3136B-18F7-4AA1-98AA-A02FCF9F3684}</id>
 					<name>Bounds</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{C793514C-1A2A-46F0-921E-56C5C12C450F}</id>
 					<name>Position</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{08814B8D-B3DD-4FEC-B241-3A1F0403E235}</id>
 					<name>Inside</name>
 					<type>Scalar</type>
 				</item>

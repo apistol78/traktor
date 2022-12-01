@@ -18,15 +18,17 @@ namespace traktor
 
 class Thread;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ShaderDependencyTracker : public Object
 {
@@ -76,6 +78,4 @@ private:
 	std::set< Dependency > m_dependencies;
 };
 
-	}
 }
-

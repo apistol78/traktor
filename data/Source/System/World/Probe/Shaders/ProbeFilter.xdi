@@ -347,7 +347,7 @@
 					<name>I</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{316F0531-4F58-4891-B5E2-232EBACB18E5}</id>
 					<name>N</name>
 				</item>
 			</inputPins>
@@ -450,11 +450,11 @@ $Output = vec4(
 					<name>Xi</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{7A452731-449A-4372-A8E7-2497C2FD0A3F}</id>
 					<name>N</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{A42E0B4F-8CEF-478B-9765-818D375876CA}</id>
 					<name>Roughness</name>
 				</item>
 			</inputPins>
@@ -770,7 +770,7 @@ V
 					<name>I</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{C96B0779-348E-4F56-8D35-4CAA65CA8C36}</id>
 					<name>N</name>
 				</item>
 			</inputPins>
@@ -820,11 +820,11 @@ ENTRY
 					<name>Xi</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{121C4E17-4647-4B3F-95A0-F79EA2F1B146}</id>
 					<name>N</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{AC15A342-DBF6-4DE1-A223-00F39E5550D0}</id>
 					<name>Roughness</name>
 				</item>
 			</inputPins>

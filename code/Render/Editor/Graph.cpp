@@ -15,10 +15,8 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Graph.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Graph", 0, Graph, ISerializable)
 
@@ -128,7 +126,7 @@ void Graph::detach(const Node* node)
 {
 	RefSet< Edge > edges;
 
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		Edge* edge = findEdge(node->getInputPin(i));
@@ -136,7 +134,7 @@ void Graph::detach(const Node* node)
 			removeEdge(edge);
 	}
 
-	int32_t outputPinCount = node->getOutputPinCount();
+	const int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		edges.reset();
@@ -236,5 +234,4 @@ void Graph::updateOutputPinDestinationCount()
 		m_outputPinDestinationCount[edge->getSource()]++;
 }
 
-	}
 }

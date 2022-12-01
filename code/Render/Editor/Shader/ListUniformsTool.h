@@ -10,10 +10,8 @@
 
 #include "Editor/IEditorTool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ListUniformsTool : public editor::IEditorTool
 {
@@ -29,5 +27,4 @@ public:
 	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param) override final;
 };
 
-	}
 }

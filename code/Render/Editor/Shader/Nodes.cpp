@@ -21,12 +21,10 @@
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/Nodes.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class MemberRenderState : public MemberComplex
 {
@@ -231,14 +229,22 @@ private:
 	SamplerState& m_ref;
 };
 
-		}
+	}
 
 /*---------------------------------------------------------------------------*/
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Abs", 0, Abs, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Abs_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Abs_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Abs_i[] =
+{
+	{ L"Input", L"{7FC3EE08-50EF-41A7-A6EA-94FA670F7607}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Abs_o[] =
+{
+	{ L"Output", L"{F467883B-A337-4DFB-92CC-FE41A84F5C46}" },
+	{ 0 }
+};
 
 Abs::Abs()
 :	ImmutableNode(c_Abs_i, c_Abs_o)
@@ -249,8 +255,17 @@ Abs::Abs()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Add", 0, Add, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Add_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Add_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Add_i[] =
+{
+	{ L"Input1", L"{3DE04294-4DEA-4A13-A460-2274647357EA}", false },
+	{ L"Input2", L"{9F45B2C3-B513-4646-B0C1-663748FD169C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Add_o[] =
+{
+	{ L"Output", L"{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}" },
+	{ 0 }
+};
 
 Add::Add()
 :	ImmutableNode(c_Add_i, c_Add_o)
@@ -261,8 +276,16 @@ Add::Add()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusCos", 0, ArcusCos, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ArcusCos_i[] = { { L"Theta", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_ArcusCos_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_ArcusCos_i[] =
+{
+	{ L"Theta", L"{98592661-CD08-47A6-89FC-250FC6060922}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_ArcusCos_o[] =
+{
+	{ L"Output", L"{BEF8F577-31CA-4C43-9B37-964EC60F06C3}" },
+	{ 0 }
+};
 
 ArcusCos::ArcusCos()
 :	ImmutableNode(c_ArcusCos_i, c_ArcusCos_o)
@@ -273,8 +296,16 @@ ArcusCos::ArcusCos()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTan", 0, ArcusTan, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"XY", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_ArcusTan_i[] =
+{
+	{ L"XY", L"{C7CA3BF9-EB86-4968-AA77-6F5607DD055C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_ArcusTan_o[] =
+{
+	{ L"Output", L"{F5BB1AD0-2D03-495A-83D5-BC17A3E21C55}" },
+	{ 0 }
+};
 
 ArcusTan::ArcusTan()
 :	ImmutableNode(c_ArcusTan_i, c_ArcusTan_o)
@@ -285,8 +316,16 @@ ArcusTan::ArcusTan()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Clamp", 0, Clamp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Clamp_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Clamp_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Clamp_i[] =
+{
+	{ L"Input", L"{9BA81525-6E53-498C-AA97-B31FB48F3A50}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Clamp_o[] =
+{
+	{ L"Output", L"{8F2140B5-F4E2-4E8F-8121-13C980250D3C}" },
+	{ 0 }
+};
 
 Clamp::Clamp(float min, float max)
 :	ImmutableNode(c_Clamp_i, c_Clamp_o)
@@ -334,8 +373,17 @@ void Clamp::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Branch", 0, Branch, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Branch_i[] = { { L"True", false }, { L"False", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Branch_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Branch_i[] =
+{
+	{ L"True", L"{A1DDB166-9422-45A3-AE93-6702275DAD1C}", false },
+	{ L"False", L"{92AA3735-BB4C-4541-81DA-AC500930B2E6}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Branch_o[] =
+{
+	{ L"Output", L"{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}" },
+	{ 0 }
+};
 
 Branch::Branch(const std::wstring& parameterName)
 :	ImmutableNode(c_Branch_i, c_Branch_o)
@@ -368,7 +416,11 @@ void Branch::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 2, Color, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Color_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Color_o[] =
+{
+	{ L"Output", L"{4B2822D0-4D9A-4BBB-9956-A996493EE672}" },
+	{ 0 }
+};
 
 Color::Color(const traktor::Color4f& color)
 :	ImmutableNode(nullptr, c_Color_o)
@@ -401,20 +453,20 @@ std::wstring Color::getInformation() const
 {
 	StringOutputStream ss;
 
-	float ev = m_color.getEV();
+	const float ev = m_color.getEV();
 
 	Color4f c0 = m_color;
 	c0.setEV(traktor::Scalar(0.0f));
 
-	float r = c0.getRed();
-	float g = c0.getGreen();
-	float b = c0.getBlue();
-	float a = c0.getAlpha();
+	const float r = c0.getRed();
+	const float g = c0.getGreen();
+	const float b = c0.getBlue();
+	const float a = c0.getAlpha();
 
-	int32_t ir = int32_t(r * 255.0f);
-	int32_t ig = int32_t(g * 255.0f);
-	int32_t ib = int32_t(b * 255.0f);
-	int32_t ia = int32_t(a * 255.0f);
+	const int32_t ir = int32_t(r * 255.0f);
+	const int32_t ig = int32_t(g * 255.0f);
+	const int32_t ib = int32_t(b * 255.0f);
+	const int32_t ia = int32_t(a * 255.0f);
 
 	ss << ir << L", " << ig << L", " << ib << L", " << ia << L" (EV " << (ev > 0.0f ? L"+" : L"") << ev << L")";
 	return ss.str();
@@ -453,7 +505,14 @@ Comment::Comment()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 0, ComputeOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ComputeOutput_i[] = { { L"Enable", true }, { L"Storage", false }, { L"Offset", false }, { L"Input", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_ComputeOutput_i[] =
+{
+	{ L"Enable", L"{7DAABFF8-8E54-44AF-B94F-4EE0DAC2C189}", true },
+	{ L"Storage", L"{60D25829-A948-4883-B26F-F2BE12B49891}", false },
+	{ L"Offset", L"{0907D535-A1B6-409A-A70A-C250D3CDCD58}", false },
+	{ L"Input", L"{4356E929-19D3-45DD-8143-0168015DB701}", false },
+	{ 0 }
+};
 const ImmutableNode::OutputPinDesc c_ComputeOutput_o[] = { { 0 } };
 
 ComputeOutput::ComputeOutput()
@@ -487,8 +546,19 @@ void ComputeOutput::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Conditional", 1, Conditional, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Conditional_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Conditional_i[] =
+{
+	{ L"Input", L"{70F5921B-7C4D-41E7-88F1-5A71903D2B34}", false },
+	{ L"Reference", L"{E66A382E-EDDD-4790-B93E-5CA128757BCC}", false },
+	{ L"CaseTrue", L"{6BD21B41-32B3-4296-BE06-B5D7734CA0FB}", false },
+	{ L"CaseFalse", L"{6DB78B3B-C272-4243-BCDA-E31CA159D644}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Conditional_o[] =
+{
+	{ L"Output", L"{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}" },
+	{ 0 }
+};
 
 Conditional::Conditional()
 :	ImmutableNode(c_Conditional_i, c_Conditional_o)
@@ -556,8 +626,18 @@ void Conditional::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Connected", 0, Connected, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", true }, { L"False", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Connected_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Connected_i[] =
+{
+	{ L"Input", L"{197CC347-3580-4502-8AA1-976E476EA843}", true },
+	{ L"True", L"{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}", true },
+	{ L"False", L"{5539AA7E-F780-482E-82B8-1E817340D7C0}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Connected_o[] =
+{
+	{ L"Output", L"{DBDA59DC-83A0-4619-BB51-792A017346DF}" },
+	{ 0 }
+};
 
 Connected::Connected()
 :	ImmutableNode(c_Connected_i, c_Connected_o)
@@ -568,8 +648,16 @@ Connected::Connected()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cos", 0, Cos, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Cos_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Cos_i[] =
+{
+	{ L"Theta", L"{47AF9AC9-B428-4DFB-8622-6455FD5B79AC}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Cos_o[] =
+{
+	{ L"Output", L"{676B22B4-EF0F-461F-9BB7-3ACBB50B7A08}" },
+	{ 0 }
+};
 
 Cos::Cos()
 :	ImmutableNode(c_Cos_i, c_Cos_o)
@@ -580,8 +668,17 @@ Cos::Cos()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cross", 0, Cross, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Cross_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Cross_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Cross_i[] =
+{
+	{ L"Input1", L"{FBA4F44A-9C8C-4AC5-9A2C-1E2D9D410187}", false },
+	{ L"Input2", L"{38F0F19A-E863-4D0D-9AA1-72392DF1A076}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Cross_o[] =
+{
+	{ L"Output", L"{04ABEE84-0049-4827-A742-D44EB2D15560}" },
+	{ 0 }
+};
 
 Cross::Cross()
 :	ImmutableNode(c_Cross_i, c_Cross_o)
@@ -592,8 +689,16 @@ Cross::Cross()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Derivative", 1, Derivative, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Derivative_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Derivative_i[] =
+{
+	{ L"Input", L"{E8138FAF-A686-4404-9A2C-C518185097AD}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Derivative_o[] =
+{
+	{ L"Output", L"{DBDA9965-A7DF-484F-967C-017DEBFBF42B}" },
+	{ 0 }
+};
 
 Derivative::Derivative()
 :	ImmutableNode(c_Derivative_i, c_Derivative_o)
@@ -648,8 +753,18 @@ void Derivative::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Discard", 0, Discard, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Discard_i[] = { { L"Input", false }, { L"Reference", false }, { L"Pass", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Discard_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Discard_i[] =
+{
+	{ L"Input", L"{5438A442-AF6D-45EB-8163-DF351C6DBF4B}", false },
+	{ L"Reference", L"{52792682-A02B-4627-81A2-C83D24BE7143}", false },
+	{ L"Pass", L"{2A4105A4-A10B-4669-AE99-DE69647E09D7}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Discard_o[] =
+{
+	{ L"Output", L"{291502CF-D8D7-4CEC-8457-E867D70CD04E}" },
+	{ 0 }
+};
 
 Discard::Discard()
 :	ImmutableNode(c_Discard_i, c_Discard_o)
@@ -696,7 +811,11 @@ void Discard::serialize(ISerializer& s)
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DispatchIndex", 0, DispatchIndex, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_DispatchIndex_i[] = { { 0 } };
-const ImmutableNode::OutputPinDesc c_DispatchIndex_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_DispatchIndex_o[] =
+{
+	{ L"Output", L"{AAE82FD3-522F-43C6-A594-2E13D126E5DB}" },
+	{ 0 }
+};
 
 DispatchIndex::DispatchIndex()
 :	ImmutableNode(c_DispatchIndex_i, c_DispatchIndex_o)
@@ -707,8 +826,17 @@ DispatchIndex::DispatchIndex()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Div", 0, Div, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Div_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Div_i[] =
+{
+	{ L"Input1", L"{3E538F69-C85C-44E2-9320-73F876288BAE}", false },
+	{ L"Input2", L"{C9CC095B-00C6-4A84-88B5-2455115CAF9C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Div_o[] =
+{
+	{ L"Output", L"{3B01355D-9153-4864-9B56-7D55F801BFF3}" },
+	{ 0 }
+};
 
 Div::Div()
 :	ImmutableNode(c_Div_i, c_Div_o)
@@ -719,8 +847,17 @@ Div::Div()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Dot", 0, Dot, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Dot_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Dot_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Dot_i[] =
+{
+	{ L"Input1", L"{403E07EE-E6D1-4863-B70E-CF14F8CD623A}", false },
+	{ L"Input2", L"{91730BBC-BBE9-45F0-9C41-31141255F359}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Dot_o[] =
+{
+	{ L"Output", L"{73A3DE7A-6D35-4844-BF53-55E239F553F1}" },
+	{ 0 }
+};
 
 Dot::Dot()
 :	ImmutableNode(c_Dot_i, c_Dot_o)
@@ -731,8 +868,16 @@ Dot::Dot()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Exp", 0, Exp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Exp_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Exp_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Exp_i[] =
+{
+	{ L"Input", L"{016440FF-B769-41EF-9AD1-C23805A34E5A}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Exp_o[] =
+{
+	{ L"Output", L"{B5039420-505F-450F-BD34-EB95792428A4}" },
+	{ 0 }
+};
 
 Exp::Exp()
 :	ImmutableNode(c_Exp_i, c_Exp_o)
@@ -743,8 +888,16 @@ Exp::Exp()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Fraction", 0, Fraction, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Fraction_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Fraction_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Fraction_i[] =
+{
+	{ L"Input", L"{D82995D3-DEC5-4361-9C27-E4CE24F6F96F}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Fraction_o[] =
+{
+	{ L"Output", L"{911D26D6-E535-4D73-983D-A812B4ECEFE9}" },
+	{ 0 }
+};
 
 Fraction::Fraction()
 :	ImmutableNode(c_Fraction_i, c_Fraction_o)
@@ -755,7 +908,11 @@ Fraction::Fraction()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentPosition", 0, FragmentPosition, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] =
+{
+	{ L"Output", L"{C9223159-9DF2-46A9-B0F2-D0D7D5BEE6F7}" },
+	{ 0 }
+};
 
 FragmentPosition::FragmentPosition()
 :	ImmutableNode(nullptr, c_FragmentPosition_o)
@@ -766,7 +923,11 @@ FragmentPosition::FragmentPosition()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FrontFace", 0, FrontFace, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_FrontFace_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_FrontFace_o[] =
+{
+	{ L"Output", L"{0C479505-83BD-4054-9091-B6A95467B0AC}" },
+	{ 0 }
+};
 
 FrontFace::FrontFace()
 :	ImmutableNode(nullptr, c_FrontFace_o)
@@ -777,8 +938,16 @@ FrontFace::FrontFace()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 3, IndexedUniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_IndexedUniform_i[] =
+{
+	{ L"Index", L"{E457DE92-8BE5-4385-9AD3-3903238A8FD9}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] =
+{
+	{ L"Output", L"{410A240E-17E1-40F0-82FE-BB8ECD086DCA}" },
+	{ 0 }
+};
 
 IndexedUniform::IndexedUniform(
 	const std::wstring& parameterName,
@@ -903,7 +1072,11 @@ void IndexedUniform::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", 2, InputPort, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_InputPort_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_InputPort_o[] =
+{
+	{ L"Output", L"{9AE16BB1-EB68-45A0-A878-8D01C210082B}" },
+	{ 0 }
+};
 
 InputPort::InputPort()
 :	ImmutableNode(nullptr, c_InputPort_o)
@@ -1004,7 +1177,11 @@ void InputPort::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Instance", 0, Instance, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Instance_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Instance_o[] =
+{
+	{ L"Output", L"{61C214E2-B4D2-4905-A50C-7C38F98E8F91}" },
+	{ 0 }
+};
 
 Instance::Instance()
 :	ImmutableNode(nullptr, c_Instance_o)
@@ -1015,8 +1192,16 @@ Instance::Instance()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Interpolator", 0, Interpolator, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Interpolator_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Interpolator_i[] =
+{
+	{ L"Input", L"{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Interpolator_o[] =
+{
+	{ L"Output", L"{8FFB3BDB-A00E-4406-994C-0D52FAF04871}" },
+	{ 0 }
+};
 
 Interpolator::Interpolator()
 :	ImmutableNode(c_Interpolator_i, c_Interpolator_o)
@@ -1027,8 +1212,19 @@ Interpolator::Interpolator()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate", 0, Iterate, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Iterate_o[] = { { L"N" }, { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Iterate_i[] =
+{
+	{ L"Input", L"{32B75C55-9ABF-43D3-BD90-2759D8BC47E9}", false },
+	{ L"Initial", L"{4918677A-523D-4D9C-BA19-798731AC046E}", true },
+	{ L"Condition", L"{E37F8315-037A-4BE4-8E5B-5C7647E2117F}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Iterate_o[] =
+{
+	{ L"N", L"{E6115BB9-BD93-43FB-84A4-9A6A51DE8C27}" },
+	{ L"Output", L"{5230F675-56E5-41DD-83FC-7F14F3D661AC}" },
+	{ 0 }
+};
 
 Iterate::Iterate(int32_t from, int32_t to)
 :	ImmutableNode(c_Iterate_i, c_Iterate_o)
@@ -1076,28 +1272,28 @@ void Iterate::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2", 0, Iterate2, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate2_i[] 
+const ImmutableNode::InputPinDesc c_Iterate2_i[] =
 {
-	{ L"From", false },
-	{ L"To", false },
-	{ L"Input0", false },
-	{ L"Initial0", true },
-	{ L"Input1", true },
-	{ L"Initial1", true },
-	{ L"Input2", true },
-	{ L"Initial2", true },
-	{ L"Input3", true },
-	{ L"Initial3", true },
-	{ L"Condition", true },
+	{ L"From", L"{185EFF9F-C1A0-4090-B5A5-D1ECB2207C1D}", false },
+	{ L"To", L"{1FEC3EA7-3529-4990-B0F5-A13751DF2DBA}", false },
+	{ L"Input0", L"{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}", false },
+	{ L"Initial0", L"{AFBF2539-CF97-47C0-A9CC-7D5C806E819B}", true },
+	{ L"Input1", L"{9DF821A1-CB26-483E-8CC8-C259352111E9}", true },
+	{ L"Initial1", L"{90389353-C168-420E-B18A-07FBD721A05D}", true },
+	{ L"Input2", L"{140976D7-E8E8-489B-A5E2-E830730A1115}", true },
+	{ L"Initial2", L"{68EB5D65-A95C-43A4-8171-D164E03BCA6B}", true },
+	{ L"Input3", L"{380153CA-2717-409A-9435-0E1367A62C75}", true },
+	{ L"Initial3", L"{D488EE3A-3389-4EAE-A200-DC5AAA049743}", true },
+	{ L"Condition", L"{5E04170E-C005-4415-AD07-AEB1A3CEFDE1}", true },
 	{ 0 }
 };
 const ImmutableNode::OutputPinDesc c_Iterate2_o[] =
 {
-	{ L"N" },
-	{ L"Output0" },
-	{ L"Output1" },
-	{ L"Output2" },
-	{ L"Output3" },
+	{ L"N", L"{36E29D75-02C6-405F-832D-B0A91528A58A}" },
+	{ L"Output0", L"{48BD0EF3-A583-439B-84D6-00023498BD11}" },
+	{ L"Output1", L"{D1209320-B416-47D5-91BC-128FBB52BF93}" },
+	{ L"Output2", L"{C65A8663-8A3F-4F52-9267-022834C88DF7}" },
+	{ L"Output3", L"{9C4C1D83-4E9B-4C53-87FF-D4C1A343926C}" },
 	{ 0 }
 };
 
@@ -1110,8 +1306,20 @@ Iterate2::Iterate2()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2d", 0, Iterate2d, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate2d_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Iterate2d_o[] = { { L"X" }, { L"Y" }, { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Iterate2d_i[] =
+{
+	{ L"Input", L"{416E14C7-223F-4249-8B99-DF2D33E1925F}", false },
+	{ L"Initial", L"{F4874E81-9AB1-4AC9-B804-74656FC9B1B5}", true },
+	{ L"Condition", L"{C523918D-E9EE-4CF7-AB8E-AF49525FA332}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Iterate2d_o[] =
+{
+	{ L"X", L"{01C16D15-9227-4FC8-BD1E-E6B55220A259}" },
+	{ L"Y", L"{53AF6F56-60DD-453C-A082-85C28D9D7520}" },
+	{ L"Output", L"{EB350BD3-62DC-46F1-8339-24858AA9F964}" },
+	{ 0 }
+};
 
 Iterate2d::Iterate2d(int32_t fromX, int32_t toX, int32_t fromY, int32_t toY)
 :	ImmutableNode(c_Iterate2d_i, c_Iterate2d_o)
@@ -1183,8 +1391,16 @@ void Iterate2d::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Length", 0, Length, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Length_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Length_i[] =
+{
+	{ L"Input", L"{AEFD686C-1E92-44B0-81E9-EA26CA3070F7}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Length_o[] =
+{
+	{ L"Output", L"{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}" },
+	{ 0 }
+};
 
 Length::Length()
 :	ImmutableNode(c_Length_i, c_Length_o)
@@ -1195,8 +1411,18 @@ Length::Length()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Lerp", 0, Lerp, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Lerp_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Blend", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Lerp_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Lerp_i[] =
+{
+	{ L"Input1", L"{8760B263-C70C-46BA-9E97-A3D6B08941E9}", false },
+	{ L"Input2", L"{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}", false },
+	{ L"Blend", L"{5A25771B-894F-4D92-8D1E-FBF8449850E8}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Lerp_o[] =
+{
+	{ L"Output", L"{0D78442F-AA88-4B95-A497-E86A86E07FB8}" },
+	{ 0 }
+};
 
 Lerp::Lerp()
 :	ImmutableNode(c_Lerp_i, c_Lerp_o)
@@ -1207,8 +1433,16 @@ Lerp::Lerp()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Log", 0, Log, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Log_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Log_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Log_i[] =
+{
+	{ L"Input", L"{CADFA48F-B72D-4BC8-8CFA-30D367EA2D09}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Log_o[] =
+{
+	{ L"Output", L"{483BBCAE-725F-44AD-8EBD-96993FB92BA6}" },
+	{ 0 }
+};
 
 Log::Log(Base base)
 :	ImmutableNode(c_Log_i, c_Log_o)
@@ -1256,8 +1490,19 @@ void Log::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixIn", 0, MatrixIn, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MatrixIn_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_MatrixIn_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_MatrixIn_i[] =
+{
+	{ L"XAxis", L"{06867C72-4921-4EB8-8806-EFCF09BD0C34}", true },
+	{ L"YAxis", L"{6A074E66-11A2-4867-A53C-8165AE05CB3B}", true },
+	{ L"ZAxis", L"{CB2AD645-8548-45AA-8E8F-FB5226460883}", true },
+	{ L"Translate", L"{172A43BF-BADE-41A5-AF3B-3A88FBE9FA80}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_MatrixIn_o[] =
+{
+	{ L"Output", L"{585541AA-7E7B-44C5-B872-328289FB4854}" },
+	{ 0 }
+};
 
 MatrixIn::MatrixIn()
 :	ImmutableNode(c_MatrixIn_i, c_MatrixIn_o)
@@ -1268,8 +1513,19 @@ MatrixIn::MatrixIn()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixOut", 0, MatrixOut, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MatrixOut_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_MatrixOut_o[] = { { L"XAxis" }, { L"YAxis" }, { L"ZAxis" }, { L"Translate" }, { 0 } };
+const ImmutableNode::InputPinDesc c_MatrixOut_i[] =
+{
+	{ L"Input", L"{69B552F1-EBCF-4393-8967-DD2A7D9A9C3A}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_MatrixOut_o[] =
+{
+	{ L"XAxis", L"{9464D788-37CB-49C1-97FA-D5DC48937BE5}" },
+	{ L"YAxis", L"{D7BE8909-43BC-49D3-A843-767771142DDD}" },
+	{ L"ZAxis", L"{79FBABA2-975A-4D62-81D7-72552A87BF75}" },
+	{ L"Translate", L"{516A331D-8EF6-4354-A29B-214078F183FC}" },
+	{ 0 }
+};
 
 MatrixOut::MatrixOut()
 :	ImmutableNode(c_MatrixOut_i, c_MatrixOut_o)
@@ -1280,8 +1536,17 @@ MatrixOut::MatrixOut()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Max", 0, Max, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Max_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Max_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Max_i[] =
+{
+	{ L"Input1", L"{1CD3B29D-693D-4635-B49F-EF53300CAA8A}", false },
+	{ L"Input2", L"{EF189922-9B95-4572-B8C9-E5BE23606F9C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Max_o[] =
+{
+	{ L"Output", L"{D833DB7F-13CB-42D8-8135-48F35EB1288B}" },
+	{ 0 }
+};
 
 Max::Max()
 :	ImmutableNode(c_Max_i, c_Max_o)
@@ -1292,8 +1557,17 @@ Max::Max()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Min", 0, Min, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Min_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Min_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Min_i[] =
+{
+	{ L"Input1", L"{A638D9DC-801B-4225-BD42-C113E75BFCB7}", false },
+	{ L"Input2", L"{18238878-3A1B-43B7-967A-B4BE70B8091E}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Min_o[] =
+{
+	{ L"Output", L"{03ABBB82-6E2D-4FD8-B171-F14ECC9720DA}" },
+	{ 0 }
+};
 
 Min::Min()
 :	ImmutableNode(c_Min_i, c_Min_o)
@@ -1304,8 +1578,19 @@ Min::Min()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixIn", 0, MixIn, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MixIn_i[] = { { L"X", true }, { L"Y", true }, { L"Z", true }, { L"W", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_MixIn_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_MixIn_i[] =
+{
+	{ L"X", L"{AE1EB082-4A05-45B9-BA6A-7F85D78DCA70}", true },
+	{ L"Y", L"{64D2F72D-2607-4893-9F25-B1EA45BB8E7B}", true },
+	{ L"Z", L"{1FAB08BF-4315-4DDA-99DA-91F76FCA4F12}", true },
+	{ L"W", L"{3A4F77F2-38C5-4B62-93EB-267A5D20D28E}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_MixIn_o[] =
+{
+	{ L"Output", L"{28E6DBB6-876B-4DB2-9A84-4801CAE6A2C2}" },
+	{ 0 }
+};
 
 MixIn::MixIn()
 :	ImmutableNode(c_MixIn_i, c_MixIn_o)
@@ -1316,8 +1601,19 @@ MixIn::MixIn()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixOut", 0, MixOut, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MixOut_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_MixOut_o[] = { { L"X" }, { L"Y" }, { L"Z" }, { L"W" }, { 0 } };
+const ImmutableNode::InputPinDesc c_MixOut_i[] =
+{
+	{ L"Input", L"{EBC2324F-DA7F-4CF7-8F4C-55E7FBB5A66E}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_MixOut_o[] =
+{
+	{ L"X", L"{1C507FD0-1C24-4CD6-AAD5-B10043E8E8F6}" },
+	{ L"Y", L"{796E45D7-8C17-4E31-9F8E-ABE972465631}" },
+	{ L"Z", L"{A266EE7E-90AE-4423-890F-C1F43D173C78}" },
+	{ L"W", L"{42FBDF1A-5EDE-485D-BCD8-BF288A5EE88A}" },
+	{ 0 }
+};
 
 MixOut::MixOut()
 :	ImmutableNode(c_MixOut_i, c_MixOut_o)
@@ -1328,8 +1624,17 @@ MixOut::MixOut()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Mul", 0, Mul, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Mul_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Mul_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Mul_i[] =
+{
+	{ L"Input1", L"{69997292-C813-490C-910C-620B9AD3A2BB}", false },
+	{ L"Input2", L"{D2D716D6-C4A1-471F-894A-D718515F6281}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Mul_o[] =
+{
+	{ L"Output", L"{9E839249-E9B9-4736-8BDD-A95A1C892B42}" },
+	{ 0 }
+};
 
 Mul::Mul()
 :	ImmutableNode(c_Mul_i, c_Mul_o)
@@ -1340,8 +1645,18 @@ Mul::Mul()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MulAdd", 0, MulAdd, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_MulAdd_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Input3", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_MulAdd_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_MulAdd_i[] =
+{
+	{ L"Input1", L"{4067F6C8-9404-45CA-9359-D9E2456F7431}", false },
+	{ L"Input2", L"{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}", false },
+	{ L"Input3", L"{567A2DC4-F113-4DE2-917A-791917DA5DA5}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_MulAdd_o[] =
+{
+	{ L"Output", L"{29BA4386-B838-4550-93DF-F53D8B812C88}" },
+	{ 0 }
+};
 
 MulAdd::MulAdd()
 :	ImmutableNode(c_MulAdd_i, c_MulAdd_o)
@@ -1352,8 +1667,16 @@ MulAdd::MulAdd()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Neg", 0, Neg, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Neg_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Neg_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Neg_i[] =
+{
+	{ L"Input", L"{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Neg_o[] =
+{
+	{ L"Output", L"{D74E3627-9E70-4BAD-A6CE-2087D41D6ED7}" },
+	{ 0 }
+};
 
 Neg::Neg()
 :	ImmutableNode(c_Neg_i, c_Neg_o)
@@ -1364,8 +1687,16 @@ Neg::Neg()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Normalize", 0, Normalize, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Normalize_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Normalize_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Normalize_i[] =
+{
+	{ L"Input", L"{FE413452-19EB-4DC9-B724-2984FA17CC20}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Normalize_o[] =
+{
+	{ L"Output", L"{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}" },
+	{ 0 }
+};
 
 Normalize::Normalize()
 :	ImmutableNode(c_Normalize_i, c_Normalize_o)
@@ -1376,7 +1707,11 @@ Normalize::Normalize()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.OutputPort", 0, OutputPort, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_OutputPort_i[] =
+{
+	{ L"Input", L"{731844D4-AFDC-4EAA-8B41-C4BA2455898F}", false },
+	{ 0 }
+};
 
 OutputPort::OutputPort(const std::wstring& name)
 :	ImmutableNode(c_OutputPort_i, nullptr)
@@ -1410,16 +1745,20 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", 0, Platform, Immutabl
 
 const ImmutableNode::InputPinDesc c_Platform_i[] =
 {
-	{ L"Android", true },
-	{ L"iOS", true },
-	{ L"Linux", true },
-	{ L"macOS", true },
-	{ L"RaspberryPI", true },
-	{ L"Windows", true },
-	{ L"Other", false },
+	{ L"Android", L"{F9FF9BED-2CEE-4116-A6D3-3E03D2C3B91C}", true },
+	{ L"iOS", L"{352EC3DB-B30A-4686-ADF4-4812E6550789}", true },
+	{ L"Linux", L"{84B13963-5727-4B25-BACD-515545C763AA}", true },
+	{ L"macOS", L"{857F1D67-2B8E-4607-92DF-326E9682C7DF}", true },
+	{ L"RaspberryPI", L"{E4CD016C-B1C7-424C-8428-55AF0FAA4A27}", true },
+	{ L"Windows", L"{3B3811D6-891D-4D1F-82A7-D5A23B406B88}", true },
+	{ L"Other", L"{AD09EB97-E7F6-45B5-8FCC-4FA391F0738A}", false },
 	{ 0 }
 };
-const ImmutableNode::OutputPinDesc c_Platform_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Platform_o[] =
+{
+	{ L"Output", L"{DF6B63C8-1558-4EDE-8619-C3C0D1BB38BA}" },
+	{ 0 }
+};
 
 Platform::Platform()
 :	ImmutableNode(c_Platform_i, c_Platform_o)
@@ -1430,7 +1769,16 @@ Platform::Platform()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 9, PixelOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Enable", true }, { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] =
+{
+	{ L"Enable", L"{185C5A67-11F2-4641-B007-2EA8FCB020D7}", true },
+	{ L"Input", L"{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}", false },
+	{ L"Input1", L"{1BE35A74-64EA-4C68-926E-B66760B718DB}", true },
+	{ L"Input2", L"{6642BD4D-39D8-4AF4-A31B-5D7A491E0C48}", true },
+	{ L"Input3", L"{1EB6B476-B7FE-48E3-A12E-EE40F79FEBE0}", true },
+	{ L"State", L"{BEF751FF-A4A9-4FCA-B177-1FB2122E50F6}", true },
+	{ 0 }
+};
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, nullptr)
@@ -1555,7 +1903,11 @@ void PixelOutput::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelState", 9, PixelState, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_PixelState_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_PixelState_o[] =
+{
+	{ L"Output", L"{D6BD4EC1-DD7F-4CA0-83F5-231EED3C487B}" },
+	{ 0 }
+};
 
 PixelState::PixelState()
 	: ImmutableNode(nullptr, c_PixelState_o)
@@ -1648,8 +2000,17 @@ void PixelState::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Polynomial_i[] =
+{
+	{ L"X", L"{186E5F99-35AD-4FEA-8D90-36BE6F62E149}", false },
+	{ L"Coefficients", L"{E3096274-67F2-4DB8-A985-0F2449175EE6}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Polynomial_o[] =
+{
+	{ L"Output", L"{45163CD3-DB70-46F4-B195-695CC94BE2BE}" },
+	{ 0 }
+};
 
 Polynomial::Polynomial()
 :	ImmutableNode(c_Polynomial_i, c_Polynomial_o)
@@ -1660,8 +2021,17 @@ Polynomial::Polynomial()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Pow", 0, Pow, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Pow_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Pow_i[] =
+{
+	{ L"Exponent", L"{1A674CC4-1D87-4859-AB19-4DDD06A12987}", false },
+	{ L"Input", L"{E96D386C-3A96-4807-BFC9-50180678A096}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Pow_o[] =
+{
+	{ L"Output", L"{B4FEA355-7A63-498C-966D-42F58570CB20}" },
+	{ 0 }
+};
 
 Pow::Pow()
 :	ImmutableNode(c_Pow_i, c_Pow_o)
@@ -1672,8 +2042,17 @@ Pow::Pow()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ReadStruct", 0, ReadStruct, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ReadStruct_i[] = { { L"Struct", false }, { L"Index", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_ReadStruct_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_ReadStruct_i[] =
+{
+	{ L"Struct", L"{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}", false },
+	{ L"Index", L"{4FD10E49-F598-45AB-9E40-5ABA13905D14}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_ReadStruct_o[] =
+{
+	{ L"Output", L"{DD079887-A171-407B-AD10-E0CE5B164BC1}" },
+	{ 0 }
+};
 
 ReadStruct::ReadStruct()
 :	ImmutableNode(c_ReadStruct_i, c_ReadStruct_o)
@@ -1706,8 +2085,16 @@ void ReadStruct::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RecipSqrt", 0, RecipSqrt, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_RecipSqrt_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_RecipSqrt_i[] =
+{
+	{ L"Input", L"{771D8BDC-E118-418D-9CA2-43A8B71F9D79}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_RecipSqrt_o[] =
+{
+	{ L"Output", L"{66F22047-5285-4274-A3D8-27614185E30C}" },
+	{ 0 }
+};
 
 RecipSqrt::RecipSqrt()
 :	ImmutableNode(c_RecipSqrt_i, c_RecipSqrt_o)
@@ -1720,13 +2107,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Renderer", 0, Renderer, Immutabl
 
 const ImmutableNode::InputPinDesc c_Renderer_i[] =
 {
-	{ L"DX11", true },
-	{ L"Vulkan", true },
-	{ L"GCM", true },
-	{ L"Other", false },
+	{ L"DX11", L"{638D0AA5-A02C-4A52-96E3-126E59AE55C7}", true },
+	{ L"Vulkan", L"{26C3B4A1-CBBC-4F07-85D2-D493F40C212A}", true },
+	{ L"GCM", L"{97661A23-03C3-44E9-99B7-D964DBE76F35}", true },
+	{ L"Other", L"{37801E29-B776-42E5-A71E-C44FBDD19992}", false },
 	{ 0 }
 };
-const ImmutableNode::OutputPinDesc c_Renderer_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Renderer_o[] =
+{
+	{ L"Output", L"{C7F0969C-A9E9-4C5A-B110-78095B267380}" },
+	{ 0 }
+};
 
 Renderer::Renderer()
 :	ImmutableNode(c_Renderer_i, c_Renderer_o)
@@ -1737,8 +2128,17 @@ Renderer::Renderer()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Reflect", 0, Reflect, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Reflect_i[] = { { L"Normal", false }, { L"Direction", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Reflect_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Reflect_i[] =
+{
+	{ L"Normal", L"{24E97134-2FDB-4E95-B7D6-EF81F3E17837}", false },
+	{ L"Direction", L"{0AAE2EAE-B01B-425A-A8C3-539576B45ECC}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Reflect_o[] =
+{
+	{ L"Output", L"{15053FB1-8C13-4C18-8958-193FEDDCFB11}" },
+	{ 0 }
+};
 
 Reflect::Reflect()
 :	ImmutableNode(c_Reflect_i, c_Reflect_o)
@@ -1749,8 +2149,19 @@ Reflect::Reflect()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Repeat", 0, Repeat, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Repeat_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Repeat_o[] = { { L"N" }, { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Repeat_i[] =
+{
+	{ L"Input", L"{D4105C5D-982B-4ECA-A9F2-1F62797D1515}", false },
+	{ L"Initial", L"{FD0BDE23-8D5C-464A-BD43-18A47E64FF19}", true },
+	{ L"Condition", L"{BE0520F2-C5BC-4781-B558-025B5839BD45}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Repeat_o[] =
+{
+	{ L"N", L"{F8D8BDE3-2059-4B35-A616-2127FF64F3C4}" },
+	{ L"Output", L"{E755A1B9-CA5A-4B85-B5C5-32D817195D0B}" },
+	{ 0 }
+};
 
 Repeat::Repeat()
 :	ImmutableNode(c_Repeat_i, c_Repeat_o)
@@ -1761,8 +2172,16 @@ Repeat::Repeat()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Round", 0, Round, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Round_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Round_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Round_i[] =
+{
+	{ L"Input", L"{FFCC8EF4-A7AD-4D1A-8F77-0E95961D76A3}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Round_o[] =
+{
+	{ L"Output", L"{1B0067AD-7ED9-423E-A04D-E6DCBED62481}" },
+	{ 0 }
+};
 
 Round::Round()
 :	ImmutableNode(c_Round_i, c_Round_o)
@@ -1773,8 +2192,18 @@ Round::Round()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 5, Sampler, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, { L"Mip", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sampler_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sampler_i[] =
+{
+	{ L"Texture", L"{32EB5230-1F0D-40B8-93F6-9C8E5469454E}", false },
+	{ L"TexCoord", L"{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}", false },
+	{ L"Mip", L"{A790CEB7-0729-490D-94B0-4D7982C139F9}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sampler_o[] =
+{
+	{ L"Output", L"{AF6C971B-D67A-42EE-A12B-97D36927C89F}" },
+	{ 0 }
+};
 
 Sampler::Sampler()
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
@@ -1860,7 +2289,11 @@ void Sampler::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Scalar", 0, Scalar, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Scalar_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Scalar_o[] =
+{
+	{ L"Output", L"{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}" },
+	{ 0 }
+};
 
 Scalar::Scalar(float value)
 :	ImmutableNode(nullptr, c_Scalar_o)
@@ -1895,8 +2328,16 @@ void Scalar::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sign", 0, Sign, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sign_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sign_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sign_i[] =
+{
+	{ L"Input", L"{8EC793C5-36F2-4490-8A5C-E1084D1EC400}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sign_o[] =
+{
+	{ L"Output", L"{408B350C-B173-4C75-83FD-64C3AA70CF77}" },
+	{ 0 }
+};
 
 Sign::Sign()
 :	ImmutableNode(c_Sign_i, c_Sign_o)
@@ -1907,8 +2348,16 @@ Sign::Sign()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sin", 0, Sin, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sin_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sin_i[] =
+{
+	{ L"Theta", L"{B3BDF230-63F4-4908-A76B-7ACE2D548C3E}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sin_o[] =
+{
+	{ L"Output", L"{6CCEDC7B-43DA-48EA-B342-0F628A3A4BD8}" },
+	{ 0 }
+};
 
 Sin::Sin()
 :	ImmutableNode(c_Sin_i, c_Sin_o)
@@ -1919,8 +2368,16 @@ Sin::Sin()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sqrt", 0, Sqrt, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sqrt_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sqrt_i[] =
+{
+	{ L"Input", L"{B60C292C-649F-48CF-A344-914B0831FE04}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sqrt_o[] =
+{
+	{ L"Output", L"{1C843C59-B7CA-415B-A537-D8E2C2B0ED10}" },
+	{ 0 }
+};
 
 Sqrt::Sqrt()
 :	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
@@ -1931,8 +2388,17 @@ Sqrt::Sqrt()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Step", 0, Step, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Step_i[] = { { L"X", false }, { L"Y", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Step_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Step_i[] =
+{
+	{ L"X", L"{7CEDA35F-46C0-465D-9C5D-EABAB3FF5838}", false },
+	{ L"Y", L"{4853FA43-A9C2-4427-9B87-9E372EC50182}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Step_o[] =
+{
+	{ L"Output", L"{DB775C57-E48D-484B-B438-6EAA9A69B1CC}" },
+	{ 0 }
+};
 
 Step::Step()
 :	ImmutableNode(c_Step_i, c_Step_o)
@@ -1943,7 +2409,11 @@ Step::Step()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 0, Struct, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Struct_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Struct_o[] =
+{
+	{ L"Output", L"{ACC77B35-91B5-4405-ABC8-D0DA24D68178}" },
+	{ 0 }
+};
 
 Struct::Struct()
 :	ImmutableNode(nullptr, c_Struct_o)
@@ -2017,8 +2487,17 @@ void Struct::NamedElement::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sub", 0, Sub, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sub_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sub_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sub_i[] =
+{
+	{ L"Input1", L"{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}", false },
+	{ L"Input2", L"{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sub_o[] =
+{
+	{ L"Output", L"{2D90AB77-694C-4586-AA05-5CF062EFFFAB}" },
+	{ 0 }
+};
 
 Sub::Sub()
 :	ImmutableNode(c_Sub_i, c_Sub_o)
@@ -2029,8 +2508,17 @@ Sub::Sub()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sum", 0, Sum, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sum_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Sum_o[] = { { L"N" }, { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Sum_i[] =
+{
+	{ L"Input", L"{BBF4CC03-E1C6-4A44-B665-EA0C44E7C44C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Sum_o[] =
+{
+	{ L"N", L"{688F879C-3CC1-436C-AF6D-11188221D18F}" },
+	{ L"Output", L"{B90DEAE3-E53C-4925-B4E8-5DF015400991}" },
+	{ 0 }
+};
 
 Sum::Sum(int32_t from, int32_t to)
 :	ImmutableNode(c_Sum_i, c_Sum_o)
@@ -2164,7 +2652,7 @@ void Switch::serialize(ISerializer& s)
 
 void Switch::updatePins()
 {
-	const Guid c_null;
+	Guid id(L"{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}");
 
 	for (auto& inputPin : m_inputPins)
 		delete inputPin;
@@ -2172,14 +2660,16 @@ void Switch::updatePins()
 		delete outputPin;
 
 	m_inputPins.resize(1 + (1 + m_cases.size()) * m_width);
-	m_inputPins[0] = new InputPin(this, c_null, L"Select", false);
+	m_inputPins[0] = new InputPin(this, id, L"Select", false);
+	id.permutate();
 	for (int32_t c = 0; c < m_width; ++c)
 	{
 		StringOutputStream ss;
 		ss << L"Default";
 		if (m_width > 1)
 			ss << L" (" << c << L")";
-		m_inputPins[1 + c] = new InputPin(this, c_null, ss.str(), false);
+		m_inputPins[1 + c] = new InputPin(this, id, ss.str(), false);
+		id.permutate();
 	}
 	for (uint32_t i = 0; i < (uint32_t)m_cases.size(); ++i)
 	{
@@ -2189,7 +2679,8 @@ void Switch::updatePins()
 			ss << L"Case " << m_cases[i];
 			if (m_width > 1)
 				ss << L" (" << c << L")";
-			m_inputPins[1 + (1 + i) * m_width + c] = new InputPin(this, c_null, ss.str(), false);
+			m_inputPins[1 + (1 + i) * m_width + c] = new InputPin(this, id, ss.str(), false);
+			id.permutate();
 		}
 	}
 
@@ -2200,7 +2691,8 @@ void Switch::updatePins()
 		ss << L"Output";
 		if (m_width > 1)
 			ss << L" (" << c << L")";
-		m_outputPins[c] = new OutputPin(this, c_null, ss.str());
+		m_outputPins[c] = new OutputPin(this, id, ss.str());
+		id.permutate();
 	}
 }
 
@@ -2208,8 +2700,16 @@ void Switch::updatePins()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Swizzle", 0, Swizzle, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Swizzle_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Swizzle_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Swizzle_i[] =
+{
+	{ L"Input", L"{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Swizzle_o[] =
+{
+	{ L"Output", L"{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}" },
+	{ 0 }
+};
 
 Swizzle::Swizzle(const std::wstring& swizzle)
 :	ImmutableNode(c_Swizzle_i, c_Swizzle_o)
@@ -2242,8 +2742,16 @@ void Swizzle::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Tan", 0, Tan, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Tan_i[] = { { L"Theta", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Tan_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Tan_i[] =
+{
+	{ L"Theta", L"{D9CF48DF-27F8-4F5D-8C90-EAE28F19D757}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Tan_o[] =
+{
+	{ L"Output", L"{3C10ABA8-AB56-410A-AEB4-89D1DC0B7755}" },
+	{ 0 }
+};
 
 Tan::Tan()
 :	ImmutableNode(c_Tan_i, c_Tan_o)
@@ -2255,7 +2763,11 @@ Tan::Tan()
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TargetSize", 0, TargetSize, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_TargetSize_i[] = { { 0 } };
-const ImmutableNode::OutputPinDesc c_TargetSize_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_TargetSize_o[] =
+{
+	{ L"Output", L"{853B6F75-1464-40E7-BEDC-2716C763046E}" },
+	{ 0 }
+};
 
 TargetSize::TargetSize()
 :	ImmutableNode(c_TargetSize_i, c_TargetSize_o)
@@ -2267,7 +2779,11 @@ TargetSize::TargetSize()
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 1, Texture, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Texture_i[] = { { 0 } };
-const ImmutableNode::OutputPinDesc c_Texture_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Texture_o[] =
+{
+	{ L"Output", L"{FFE19E4E-24A8-47A4-AE80-307495E31066}" },
+	{ 0 }
+};
 
 Texture::Texture(const Guid& external, ParameterType type)
 :	ImmutableNode(c_Texture_i, c_Texture_o)
@@ -2330,8 +2846,16 @@ void Texture::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureSize", 0, TextureSize, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_TextureSize_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_TextureSize_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_TextureSize_i[] =
+{
+	{ L"Input", L"{E2A0DADF-10C2-4699-8EA4-78AC796C5158}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_TextureSize_o[] =
+{
+	{ L"Output", L"{C6373DB1-EC15-47B5-A4B9-D301E446C95A}" },
+	{ 0 }
+};
 
 TextureSize::TextureSize()
 :	ImmutableNode(c_TextureSize_i, c_TextureSize_o)
@@ -2342,8 +2866,17 @@ TextureSize::TextureSize()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transform", 0, Transform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Transform_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Transform_i[] =
+{
+	{ L"Input", L"{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}", false },
+	{ L"Transform", L"{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Transform_o[] =
+{
+	{ L"Output", L"{70C35B91-1C36-454C-98EC-7514AACF73C8}" },
+	{ 0 }
+};
 
 Transform::Transform()
 :	ImmutableNode(c_Transform_i, c_Transform_o)
@@ -2354,8 +2887,16 @@ Transform::Transform()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transpose", 0, Transpose, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Transpose_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Transpose_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Transpose_i[] =
+{
+	{ L"Input", L"{CD126085-5A74-404A-A1DB-A01F2380B427}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Transpose_o[] =
+{
+	{ L"Output", L"{2AB76522-5A35-44B4-B3E9-BEB766EA4A23}" },
+	{ 0 }
+};
 
 Transpose::Transpose()
 :	ImmutableNode(c_Transpose_i, c_Transpose_o)
@@ -2366,8 +2907,16 @@ Transpose::Transpose()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Truncate", 0, Truncate, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Truncate_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Truncate_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Truncate_i[] =
+{
+	{ L"Input", L"{58E01BB0-182E-4FF2-8629-A1EA043A57F1}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Truncate_o[] =
+{
+	{ L"Output", L"{7E002805-FA4B-4EEE-9D3B-6FA3AB0B2DAB}" },
+	{ 0 }
+};
 
 Truncate::Truncate()
 :	ImmutableNode(c_Truncate_i, c_Truncate_o)
@@ -2378,8 +2927,22 @@ Truncate::Truncate()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Type", 0, Type, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", true }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Type_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Type_i[] =
+{
+	{ L"Type", L"{324A6471-CD60-4928-A4E2-2B085856B91C}", true },
+	{ L"Scalar", L"{EF748FE9-7B56-4008-AA99-483F5AAD8F91}", true },
+	{ L"Vector", L"{C458F1E6-5144-4289-ADF4-C07453D38038}", true },
+	{ L"Matrix", L"{1D1C012E-A545-4858-9BB2-B989CE01ED41}", true },
+	{ L"Texture", L"{E830E538-4DEA-4402-9C34-E9BAF5DD2393}", true },
+	{ L"State", L"{4E32E8F5-1C4E-4A13-82C3-B32D711490F4}", true },
+	{ L"Default", L"{1B4A2BC3-42EE-4852-B198-6390A449A0F5}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Type_o[] =
+{
+	{ L"Output", L"{4EE768A0-1734-4FC2-B15E-6CD78C14933C}" },
+	{ 0 }
+};
 
 Type::Type()
 :	ImmutableNode(c_Type_i, c_Type_o)
@@ -2390,8 +2953,16 @@ Type::Type()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 3, Uniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Uniform_i[] =
+{
+	{ L"Initial", L"{CDD51665-CD39-444D-8D5C-5FD37C1646B7}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Uniform_o[] =
+{
+	{ L"Output", L"{1E6639B6-8B58-4694-99E7-C058E3583522}" },
+	{ 0 }
+};
 
 Uniform::Uniform(
 	const std::wstring& parameterName,
@@ -2512,8 +3083,16 @@ void Uniform::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Variable", 1, Variable, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Variable_i[] = { { L"Input", true }, { 0 } };
-const ImmutableNode::OutputPinDesc c_Variable_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_Variable_i[] =
+{
+	{ L"Input", L"{11585EBC-914D-4E6D-A10D-D01694FF9840}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Variable_o[] =
+{
+	{ L"Output", L"{84BF3C26-64A7-4032-B775-1D369052B243}" },
+	{ 0 }
+};
 
 Variable::Variable()
 :	ImmutableNode(c_Variable_i, c_Variable_o)
@@ -2555,7 +3134,11 @@ void Variable::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Vector", 0, Vector, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_Vector_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_Vector_o[] =
+{
+	{ L"Output", L"{D51E6077-37E9-4B1C-86D2-92DA544DC613}" },
+	{ 0 }
+};
 
 Vector::Vector(const Vector4& value)
 :	ImmutableNode(nullptr, c_Vector_o)
@@ -2590,7 +3173,11 @@ void Vector::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", 1, VertexInput, ImmutableNode)
 
-const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::OutputPinDesc c_VertexInput_o[] =
+{
+	{ L"Output", L"{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}" },
+	{ 0 }
+};
 
 VertexInput::VertexInput(const std::wstring& name, DataUsage usage, DataType type, int index)
 :	ImmutableNode(nullptr, c_VertexInput_o)
@@ -2710,7 +3297,11 @@ void VertexInput::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", 3, VertexOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_VertexOutput_i[] =
+{
+	{ L"Input", L"{BFBE8191-F6E6-4A4F-A2CC-6CBC1D19BF70}", false },
+	{ 0 }
+};
 
 VertexOutput::VertexOutput()
 :	ImmutableNode(c_VertexOutput_i, 0)
@@ -2782,5 +3373,4 @@ void VertexOutput::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-	}
 }

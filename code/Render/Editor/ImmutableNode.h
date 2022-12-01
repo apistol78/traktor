@@ -40,12 +40,14 @@ public:
 	struct InputPinDesc
 	{
 		const wchar_t* name;
+		const wchar_t* id;
 		bool optional;
 	};
 
 	struct OutputPinDesc
 	{
 		const wchar_t* name;
+		const wchar_t* id;
 	};
 
 	explicit ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);

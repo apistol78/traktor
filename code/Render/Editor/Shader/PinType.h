@@ -10,10 +10,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Pin types.
  * \ingroup Render
@@ -118,6 +116,4 @@ inline PinOrderType pinOrderConstantOrNonLinear(const PinOrderType* pinOrders, i
 	return PotConstant;
 }
 
-	}
 }
-

@@ -131,21 +131,21 @@
 			<technique/>
 			<inputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{0161B8E0-D38C-40FF-B501-57E8789084A1}</id>
 					<name>LineStart</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{245389D9-F41B-479F-8A94-C96B6FEBD450}</id>
 					<name>LineEnd</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{4C1AE7C4-33C5-480C-AC9D-FC1F05B25D85}</id>
 					<name>Position</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{1EADF121-D817-4CCB-91BB-BADB8CD2EAFE}</id>
 					<name>Distance</name>
 					<type>Scalar</type>
 				</item>

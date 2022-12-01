@@ -12,10 +12,8 @@
 #include "Render/Editor/Shader/Constant.h"
 #include "Render/Editor/Shader/PinType.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class InputPin;
 class Node;
@@ -120,6 +118,4 @@ public:
 	static const INodeTraits* find(const Node* node);
 };
 
-	}
 }
-

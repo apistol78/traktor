@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Shader graph.
  * \ingroup Render
@@ -31,10 +29,9 @@ class T_DLLCLASS ShaderGraph : public Graph
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraph();
+	ShaderGraph() = default;
 
-	ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+	explicit ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 };
 
-	}
 }

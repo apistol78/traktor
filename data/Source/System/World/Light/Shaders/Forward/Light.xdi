@@ -1635,7 +1635,7 @@ Spot
 					<name>Input</name>
 				</item>
 				<item>
-					<id>{00000000-0000-0000-0000-000000000000}</id>
+					<id>{2EBBD4FC-E7B9-4465-B180-870FE37214D1}</id>
 					<name>SlicePositions</name>
 				</item>
 			</inputPins>

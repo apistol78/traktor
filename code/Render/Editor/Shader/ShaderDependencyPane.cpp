@@ -14,10 +14,8 @@
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyPane", ShaderDependencyPane, ui::Container)
 
@@ -75,7 +73,7 @@ void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid&
 	if (toShader != m_shaderId)
 		return;
 
-	int32_t count = m_refereeList->count();
+	const int32_t count = m_refereeList->count();
 	for (int32_t i = 0; i < count; ++i)
 	{
 		Ref< db::Instance > instance = m_refereeList->getData< db::Instance >(i);
@@ -94,5 +92,4 @@ void ShaderDependencyPane::eventRefereeListDoubleClick(ui::MouseDoubleClickEvent
 		m_editor->openEditor(instance);
 }
 
-	}
 }

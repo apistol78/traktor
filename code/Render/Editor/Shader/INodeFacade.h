@@ -11,25 +11,23 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class GraphControl;
 class Node;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Node;
 class ShaderGraph;
@@ -83,6 +81,4 @@ public:
 	) = 0;
 };
 
-	}
 }
-

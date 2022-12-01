@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-const ImmutableNode::InputPinDesc c_ImgOutput_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_ImgOutput_i[] = { { L"Input", L"{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}", false }, { 0 } };
 
 		}
 

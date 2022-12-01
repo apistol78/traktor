@@ -15,12 +15,10 @@
 #include "Ui/TableLayout.h"
 #include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class TypeInfoWrapper : public Object
 {
@@ -33,7 +31,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.QuickMenuTool", QuickMenuTool, ui::Dialog)
 
@@ -140,5 +138,4 @@ void QuickMenuTool::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 		endModal(ui::DialogResult::Ok);
 }
 
-	}
 }

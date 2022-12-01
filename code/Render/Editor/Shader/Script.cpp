@@ -101,6 +101,11 @@ public:
 		}
 	}
 
+	static InputPin* createNew(Node* node)
+	{
+		return new InputPin(node, Guid::create(), L"Unnamed", false);
+	}
+
 private:
 	Node* m_node;
 	value_type& m_pin;
@@ -176,6 +181,11 @@ public:
 		}
 	}
 
+	static TypedOutputPin* createNew(Node* node)
+	{
+		return new TypedOutputPin(node, Guid::create(), L"Unnamed", ParameterType::Scalar);
+	}
+
 private:
 	Node* m_node;
 	value_type& m_pin;
@@ -221,7 +231,7 @@ public:
 
 	virtual bool insert() const override final
 	{
-		m_pins.push_back(new typename IsPointer< pin_type >::base_t());
+		m_pins.push_back(PinMember::createNew(m_node));
 		return true;
 	}
 
