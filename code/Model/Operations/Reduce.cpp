@@ -102,25 +102,25 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
 		if (sharedEdges.size() > 0)
 		{
-			uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
+			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 
-			Vector4 sharedMidPoint = triangleMidPoint(model, sharedTriangleId);
-			Vector4 diff = midPoint - sharedMidPoint;
+			const Vector4 sharedMidPoint = triangleMidPoint(model, sharedTriangleId);
+			const Vector4 diff = midPoint - sharedMidPoint;
 
-			Vector4 position0 = model.getVertexPosition(polygon.getVertex(j));
-			Vector4 position1 = model.getVertexPosition(polygon.getVertex((j + 1) % 3));
+			const Vector4 position0 = model.getVertexPosition(polygon.getVertex(j));
+			const Vector4 position1 = model.getVertexPosition(polygon.getVertex((j + 1) % 3));
 
-			Vector4 edge = position1 - position0;
+			const Vector4 edge = position1 - position0;
 
 			Vector4 pivot;
 			Scalar k;
 
-			if (!Plane(cross(normal, diff).normalized(), midPoint).rayIntersection(position0, edge.normalized(), k, pivot))
+			if (!Plane(cross(normal, diff).normalized(), midPoint).intersectRay(position0, edge.normalized(), k, pivot))
 				continue;
 
-			Vector4 V = (pivot - sharedMidPoint).normalized();
+			const Vector4 V = (pivot - sharedMidPoint).normalized();
 
-			Scalar kd = dot3((midPoint - pivot).normalized(), V);
+			const Scalar kd = dot3((midPoint - pivot).normalized(), V);
 			if (kd <= FUZZY_EPSILON)
 				continue;
 
@@ -150,7 +150,7 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
 		if (sharedEdges.size() > 0)
 		{
-			uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
+			const uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
 			outNeighborTriangleIds.push_back(sharedTriangleId);
 		}
 	}
@@ -181,7 +181,7 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, Alig
 
 		for (uint32_t j = 0; j < 3; ++j)
 		{
-			uint32_t sharedPositionId = model.getVertex(vertices[j]).getPosition();
+			const uint32_t sharedPositionId = model.getVertex(vertices[j]).getPosition();
 			if (
 				sharedPositionId == positionIds[0] ||
 				sharedPositionId == positionIds[1] ||

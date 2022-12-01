@@ -254,8 +254,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedPlane->addProperty("distance", &BoxedPlane::setDistance, &BoxedPlane::distance);
 	classBoxedPlane->addMethod("distanceToPoint", &BoxedPlane::distanceToPoint);
 	classBoxedPlane->addMethod("project", &BoxedPlane::project);
-	classBoxedPlane->addMethod("rayIntersection", &BoxedPlane::rayIntersection);
-	classBoxedPlane->addMethod("segmentIntersection", &BoxedPlane::segmentIntersection);
+	classBoxedPlane->addMethod("intersectRay", &BoxedPlane::intersectRay);
+	classBoxedPlane->addMethod("intersectSegment", &BoxedPlane::intersectSegment);
 	classBoxedPlane->addStaticMethod("uniqueIntersectionPoint", &BoxedPlane::uniqueIntersectionPoint);
 	registrar->registerClass(classBoxedPlane);
 

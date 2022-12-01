@@ -122,7 +122,7 @@ void BspPolygon::split(const Plane& plane, AlignedVector< BspPolygon >& outCopla
 			)
 			{
 				Scalar k;
-				plane.segmentIntersection(a.position, b.position, k);
+				plane.intersectSegment(a.position, b.position, k);
 
 				BspVertex p;
 				p.position = lerp(a.position, b.position, k);

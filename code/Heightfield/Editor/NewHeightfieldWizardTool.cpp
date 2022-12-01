@@ -65,9 +65,9 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 			Scalar k;
 			Vector4 p = Vector4::zero();
 
-			worldPlane.rayIntersection(Vector4(wx, -1e8f, wz, 1.0f), Vector4(0.0f, 1.0f, 0.0f, 0.0f), k, p);
+			worldPlane.intersectRay(Vector4(wx, -1e8f, wz, 1.0f), Vector4(0.0f, 1.0f, 0.0f, 0.0f), k, p);
 
-			float h = heightfield->worldToUnit(p.y());
+			const float h = heightfield->worldToUnit(p.y());
 
 			heightfield->setGridHeight(x, z, clamp(h, 0.0f, 1.0f));
 			heightfield->setGridCut(x, z, true);
@@ -81,7 +81,7 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 	HeightfieldFormat().write(file, heightfield);
 
 	file->close();
-	file = 0;
+	file = nullptr;
 
 	Ref< HeightfieldAsset > heightfieldAsset = new HeightfieldAsset(worldExtent);
 	heightfieldInstance->setObject(heightfieldAsset);

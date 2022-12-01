@@ -67,20 +67,20 @@ public:
 
 	T_MATH_INLINE Vector4 project(const Vector4& v) const;
 
-	T_MATH_INLINE bool rayIntersection(
+	T_MATH_INLINE bool intersectRay(
 		const Vector4& origin,
 		const Vector4& direction,
 		Scalar& outK
 	) const;
 
-	T_MATH_INLINE bool rayIntersection(
+	T_MATH_INLINE bool intersectRay(
 		const Vector4& origin,
 		const Vector4& direction,
 		Scalar& outK,
 		Vector4& outPoint
 	) const;
 
-	T_MATH_INLINE bool segmentIntersection(
+	T_MATH_INLINE bool intersectSegment(
 		const Vector4& a,
 		const Vector4& b,
 		Scalar& outK,
