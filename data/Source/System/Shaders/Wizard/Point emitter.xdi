@@ -197,14 +197,14 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>SurfaceColor</name>
+				<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			</destination>
 		</item>
 	</edges>

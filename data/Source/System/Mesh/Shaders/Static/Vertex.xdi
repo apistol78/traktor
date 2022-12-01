@@ -304,194 +304,194 @@ Setup global variables required by material shaders.
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ClipPosition</name>
+				<id>{1AC3512B-4C97-CB48-96DB-556B6435976A}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
+				<id>{BFBE8191-F6E6-4A4F-A2CC-6CBC1D19BF70}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Position</name>
+				<id>{BCD7AD3C-20EF-2045-AA9D-3F9E50BC0A9B}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Binormal</name>
+				<id>{6C9DEC8F-7CD7-EC42-9478-FCB2FBD80AA9}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Normal</name>
+				<id>{AFE59FA6-25AE-8A48-B0AC-92A5B3CDAFF7}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Tangent</name>
+				<id>{808710AB-C367-7E4A-8C4C-4653156A583C}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
+				<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Input</name>
+				<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ClipVelocity</name>
+				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewBinormal</name>
+				<id>{BAB1B9B3-E3FB-B745-9F56-B0EF26BAF2C6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewNormal</name>
+				<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewPosition</name>
+				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewTangent</name>
+				<id>{5172DC2C-EB40-174A-97E2-34D0AA84201E}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>WorldPosition</name>
+				<id>{099C3159-AA8C-954A-B41A-516554123CC2}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
-				<name>Input</name>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ClipVelocity</name>
+				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
-				<name>ViewVelocity</name>
+				<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewPosition</name>
+				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
-				<name>ViewPosition</name>
+				<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>ViewNormal</name>
+				<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
-				<name>ViewNormal</name>
+				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
 			</destination>
 		</item>
 	</edges>
