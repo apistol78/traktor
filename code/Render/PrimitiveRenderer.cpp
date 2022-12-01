@@ -277,8 +277,8 @@ void PrimitiveRenderer::drawLine(
 
 	const Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
 
-	bool i1 = bool(vp.distance(vs1) >= 0.0f);
-	bool i2 = bool(vp.distance(vs2) >= 0.0f);
+	const bool i1 = bool(vp.distance(vs1) >= 0.0f);
+	const bool i2 = bool(vp.distance(vs2) >= 0.0f);
 	if (!i1 && !i2)
 		return;
 
@@ -287,7 +287,7 @@ void PrimitiveRenderer::drawLine(
 		Vector4 vsc;
 		Scalar k;
 
-		if (vp.segmentIntersection(vs1, vs2, k, &vsc))
+		if (vp.intersectSegment(vs1, vs2, k, &vsc))
 		{
 			if (!i1)
 				vs1 = vsc;
@@ -296,34 +296,34 @@ void PrimitiveRenderer::drawLine(
 		}
 	}
 
-	Vector4 cs1 = m_currentFrame->projections.back() * vs1;
-	Vector4 cs2 = m_currentFrame->projections.back() * vs2;
+	const Vector4 cs1 = m_currentFrame->projections.back() * vs1;
+	const Vector4 cs2 = m_currentFrame->projections.back() * vs2;
 
-	Scalar cw1 = cs1.w(), cw2 = cs2.w();
+	const Scalar cw1 = cs1.w(), cw2 = cs2.w();
 	if (cw1 <= Scalar(FUZZY_EPSILON) || cw2 <= Scalar(FUZZY_EPSILON))
 		return;
 
-	Scalar sx1 = cs1.x() / cw1;
-	Scalar sy1 = cs1.y() / cw1;
+	const Scalar sx1 = cs1.x() / cw1;
+	const Scalar sy1 = cs1.y() / cw1;
 
-	Scalar sx2 = cs2.x() / cw2;
-	Scalar sy2 = cs2.y() / cw2;
+	const Scalar sx2 = cs2.x() / cw2;
+	const Scalar sy2 = cs2.y() / cw2;
 
 	Scalar dy =   sx2 - sx1;
 	Scalar dx = -(sy2 - sy1);
 
-	Scalar dln = Scalar(sqrtf(dx * dx + dy * dy));
+	const Scalar dln = Scalar(sqrtf(dx * dx + dy * dy));
 	if (dln <= FUZZY_EPSILON)
 		return;
 
-	dx = (dx * Scalar(width)) / (dln * Scalar(500.0f));
-	dy = (dy * Scalar(width)) / (dln * Scalar(500.0f));
+	dx = (dx * Scalar(width)) / (dln * 500.0_simd);
+	dy = (dy * Scalar(width)) / (dln * 500.0_simd);
 
-	Scalar dx1 = dx * cs1.w();
-	Scalar dy1 = dy * cs1.w();
+	const Scalar dx1 = dx * cs1.w();
+	const Scalar dy1 = dy * cs1.w();
 
-	Scalar dx2 = dx * cs2.w();
-	Scalar dy2 = dy * cs2.w();
+	const Scalar dx2 = dx * cs2.w();
+	const Scalar dy2 = dy * cs2.w();
 
 	Vertex* v = allocBatch(PrimitiveType::Triangles, 2, nullptr);
 	if (!v)

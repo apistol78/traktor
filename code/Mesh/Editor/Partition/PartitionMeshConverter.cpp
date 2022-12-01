@@ -70,7 +70,7 @@ void splitPolygon(
 		if ((dp < -epsilon && dc > epsilon) || (dc < -epsilon && dp > epsilon))
 		{
 			Scalar k;
-			plane.segmentIntersection(pp, pc, k, 0);
+			plane.intersectSegment(pp, pc, k, 0);
 
 			model::Vertex splitVertex;
 			splitVertex.setPosition(model.addUniquePosition(lerp(pp, pc, k)));

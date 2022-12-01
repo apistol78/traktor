@@ -116,9 +116,9 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 					continue;
 
 				const Plane& plane = m_planes[index];
-				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T <= outResult.distance)
+				if (plane.intersectRay(origin, direction, T, p) && T > 0.0f && T <= outResult.distance)
 				{
-					Vector2 pnt(
+					const Vector2 pnt(
 						dot3(m_projectedU[index], p),
 						dot3(m_projectedV[index], p)
 					);
@@ -137,8 +137,8 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 		}
 		else
 		{
-			Vector4 O = origin + direction * nearT;
-			Scalar e = O[N->axis];
+			const Vector4 O = origin + direction * nearT;
+			const Scalar e = O[N->axis];
 
 			T = nearT + (N->split - e) / direction[N->axis];
 
@@ -211,9 +211,9 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 					continue;
 
 				const Plane& plane = m_planes[index];
-				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T < md)
+				if (plane.intersectRay(origin, direction, T, p) && T > 0.0f && T < md)
 				{
-					Vector2 pnt(
+					const Vector2 pnt(
 						dot3(m_projectedU[index], p),
 						dot3(m_projectedV[index], p)
 					);
@@ -226,8 +226,8 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 		}
 		else
 		{
-			Vector4 O = origin + direction * nearT;
-			Scalar e = O[N->axis];
+			const Vector4 O = origin + direction * nearT;
+			const Scalar e = O[N->axis];
 
 			T = nearT + (N->split - e) / direction[N->axis];
 
@@ -259,7 +259,7 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 
 bool SahTree::checkPoint(int32_t index, const Vector4& position) const
 {
-	Vector2 pnt(
+	const Vector2 pnt(
 		dot3(m_projectedU[index], position),
 		dot3(m_projectedV[index], position)
 	);
@@ -339,13 +339,13 @@ void SahTree::buildNode(Node* node, int32_t depth)
 		Aabb3 rightAabb = node->aabb;
 		rightAabb.mn.set(node->axis, Scalar(i->position));
 
-		Vector4 leftAabbExtent = leftAabb.getExtent();
-		float surfaceAreaLeft = dot3(leftAabbExtent.shuffle< 0, 0, 1, 3 >(), leftAabbExtent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
+		const Vector4 leftAabbExtent = leftAabb.getExtent();
+		const float surfaceAreaLeft = dot3(leftAabbExtent.shuffle< 0, 0, 1, 3 >(), leftAabbExtent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
 
-		Vector4 rightAabbExtent = rightAabb.getExtent();
-		float surfaceAreaRight = dot3(rightAabbExtent.shuffle< 0, 0, 1, 3 >(), rightAabbExtent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
+		const Vector4 rightAabbExtent = rightAabb.getExtent();
+		const float surfaceAreaRight = dot3(rightAabbExtent.shuffle< 0, 0, 1, 3 >(), rightAabbExtent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
 
-		float splitCost =
+		const float splitCost =
 			float(0.3f) +
 			surfaceAreaLeft * float(i->countLeft) / surfaceArea +
 			surfaceAreaRight * float(i->countRight) / surfaceArea;
@@ -383,14 +383,14 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	node->leftChild = allocNode();
 	node->leftChild->aabb = bestLeftAabb;
 	node->leftChild->indices = leftIndices;
-	node->leftChild->leftChild = 0;
-	node->leftChild->rightChild = 0;
+	node->leftChild->leftChild = nullptr;
+	node->leftChild->rightChild = nullptr;
 
 	node->rightChild = allocNode();
 	node->rightChild->aabb = bestRightAabb;
 	node->rightChild->indices = rightIndices;
-	node->rightChild->leftChild = 0;
-	node->rightChild->rightChild = 0;
+	node->rightChild->leftChild = nullptr;
+	node->rightChild->rightChild = nullptr;
 
 	// Release memory before recursing.
 	leftIndices.clear();
@@ -413,7 +413,7 @@ SahTree::Node* SahTree::allocNode()
 		return node;
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 }

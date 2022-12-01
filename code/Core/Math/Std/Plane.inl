@@ -88,58 +88,58 @@ T_MATH_INLINE Vector4 Plane::project(const Vector4& v) const
 	return v - m_normal * distance(v);
 }
 
-T_MATH_INLINE bool Plane::rayIntersection(
+T_MATH_INLINE bool Plane::intersectRay(
 	const Vector4& origin,
 	const Vector4& direction,
 	Scalar& outK
 ) const
 {
-	Scalar denom = -dot3(m_normal, direction);
+	const Scalar denom = -dot3(m_normal, direction);
 	if (denom == 0.0f)
 		return false;
 
-	Scalar divend = distance(origin);
+	const Scalar divend = distance(origin);
 	outK = divend / denom;
 	return true;
 }
 
-T_MATH_INLINE bool Plane::rayIntersection(
+T_MATH_INLINE bool Plane::intersectRay(
 	const Vector4& origin,
 	const Vector4& direction,
 	Scalar& outK,
 	Vector4& outPoint
 ) const
 {
-	Scalar denom = -dot3(m_normal, direction);
+	const Scalar denom = -dot3(m_normal, direction);
 	if (denom == 0.0f)
 		return false;
 
-	Scalar divend = distance(origin);
+	const Scalar divend = distance(origin);
 	outK = divend / denom;
 	outPoint = origin + direction * outK;
 	return true;
 }
 
-T_MATH_INLINE bool Plane::segmentIntersection(
+T_MATH_INLINE bool Plane::intersectSegment(
 	const Vector4& a,
 	const Vector4& b,
 	Scalar& outK,
 	Vector4* outPoint
 ) const
 {
-	Vector4 d = b - a;
+	const Vector4 d = b - a;
 
-	Scalar denom = dot3(m_normal, d);
-	if (denom == 0.0f)
+	const Scalar denom = dot3(m_normal, d);
+	if (denom == 0.0_simd)
 		return false;
 
-	Scalar divend = -dot3(m_normal, a) + m_distance;
+	const Scalar divend = -dot3(m_normal, a) + m_distance;
 
 	outK = divend / denom;
-	if (outK < 0.0f || outK > 1.0f)
+	if (outK < 0.0_simd || outK > 1.0_simd)
 		return false;
 
-	if (outPoint != 0)
+	if (outPoint != nullptr)
 		*outPoint = a + d * outK;
 
 	return true;
@@ -153,12 +153,12 @@ T_MATH_INLINE bool Plane::uniqueIntersectionPoint(
 )
 {
 	// n1 * (n2 x n3) != 0
-	Scalar denom = dot3(a.m_normal, cross(b.m_normal, c.m_normal));
+	const Scalar denom = dot3(a.m_normal, cross(b.m_normal, c.m_normal));
 	if (denom == 0.0f)
 		return false;
 
 	// d1(n2 x n3) + d2(n3 x n1) + d3(n1 x n2)
-	Vector4 divend =
+	const Vector4 divend =
 		a.m_distance * cross(b.m_normal, c.m_normal) +
 		b.m_distance * cross(c.m_normal, a.m_normal) +
 		c.m_distance * cross(a.m_normal, b.m_normal);
@@ -176,8 +176,8 @@ T_MATH_INLINE Plane& Plane::operator = (const Plane& src)
 
 T_MATH_INLINE Plane operator * (const Matrix44& m, const Plane& pl)
 {
-	Vector4 N = m * pl.normal().xyz0();
-	Vector4 P = m * (pl.normal().xyz0() * pl.distance()).xyz1();
+	const Vector4 N = m * pl.normal().xyz0();
+	const Vector4 P = m * (pl.normal().xyz0() * pl.distance()).xyz1();
 	return Plane(N, P);
 }
 

@@ -48,7 +48,7 @@ BoxedPlane::BoxedPlane(float a, float b, float c, float d)
 {
 }
 
-Ref< BoxedVector4 > BoxedPlane::rayIntersection(
+Ref< BoxedVector4 > BoxedPlane::intersectRay(
 	const Vector4& origin,
 	const Vector4& direction
 ) const
@@ -56,13 +56,13 @@ Ref< BoxedVector4 > BoxedPlane::rayIntersection(
 	Vector4 result;
 	Scalar k;
 
-	if (m_value.rayIntersection(origin, direction, k, result))
+	if (m_value.intersectRay(origin, direction, k, result))
 		return new BoxedVector4(result);
 	else
 		return nullptr;
 }
 
-Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
+Ref< BoxedVector4 > BoxedPlane::intersectSegment(
 	const Vector4& a,
 	const Vector4& b
 ) const
@@ -70,7 +70,7 @@ Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
 	Vector4 result;
 	Scalar k;
 
-	if (m_value.segmentIntersection(a, b, k, &result))
+	if (m_value.intersectSegment(a, b, k, &result))
 		return new BoxedVector4(result);
 	else
 		return nullptr;

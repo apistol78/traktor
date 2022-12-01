@@ -135,14 +135,14 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 		const Vector4& a = m_points[i];
 		const Vector4& b = m_points[j];
 
-		Scalar da = plane.distance(a);
-		Scalar db = plane.distance(b);
+		const Scalar da = plane.distance(a);
+		const Scalar db = plane.distance(b);
 
 		if ((da <= -FUZZY_EPSILON && db >= FUZZY_EPSILON) || (da >= FUZZY_EPSILON && db <= -FUZZY_EPSILON))
 		{
 			Scalar k;
-			plane.segmentIntersection(a, b, k);
-			T_ASSERT(k >= 0.0f && k <= 1.0f);
+			plane.intersectSegment(a, b, k);
+			T_ASSERT(k >= 0.0_simd && k <= 1.0_simd);
 
 			Vector4 p = lerp(a, b, k);
 			outFront.m_points.push_back(p);
@@ -161,7 +161,7 @@ int Winding3::classify(const Plane& plane) const
 	int32_t side[2] = { 0, 0 };
 	for (size_t i = 0; i < m_points.size(); ++i)
 	{
-		Scalar d = plane.distance(m_points[i]);
+		const Scalar d = plane.distance(m_points[i]);
 		if (d >= FUZZY_EPSILON)
 			side[0]++;
 		else if (d <= -FUZZY_EPSILON)
@@ -181,7 +181,7 @@ int Winding3::classify(const Plane& plane) const
 
 float Winding3::area() const
 {
-	int32_t n = int32_t(m_points.size());
+	const int32_t n = int32_t(m_points.size());
 	if (n <= 2)
 		return 0.0f;
 
@@ -192,15 +192,15 @@ float Winding3::area() const
 	float area = 0.0f;
 	int32_t i, j, k;
 
-	Vector4 N = plane.normal();
-	Vector4 A = N.absolute();
-	int32_t coord = majorAxis3(A);
+	const Vector4 N = plane.normal();
+	const Vector4 A = N.absolute();
+	const int32_t coord = majorAxis3(A);
 
 	for (i = 1, j = 2, k = 0; i <= n; i++, j++, k++)
 	{
-		int32_t ii = i % n;
-		int32_t jj = j % n;
-		int32_t kk = k % n;
+		const int32_t ii = i % n;
+		const int32_t jj = j % n;
+		const int32_t kk = k % n;
 
 		switch (coord)
 		{
@@ -218,7 +218,7 @@ float Winding3::area() const
 		}
 	}
 
-	float Aln = A.length();
+	const float Aln = A.length();
 	switch (coord)
 	{
 	case 0:
@@ -259,7 +259,7 @@ bool Winding3::rayIntersection(
 	if (!getPlane(plane))
 		return false;
 
-	if (!plane.rayIntersection(origin, direction, outK, p) || outK <= 0.0f)
+	if (!plane.intersectRay(origin, direction, outK, p) || outK <= 0.0_simd)
 		return false;
 
 	Vector4 u, v;
@@ -275,7 +275,7 @@ bool Winding3::rayIntersection(
 	}
 
 	// Use odd-even rule to determine if point is in polygon.
-	Vector2 pnt(
+	const Vector2 pnt(
 		dot3(u, p),
 		dot3(v, p)
 	);
@@ -283,16 +283,16 @@ bool Winding3::rayIntersection(
 	bool pass = false;
 	for (size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
 	{
-		float dx = projected[j].x - projected[i].x;
-		float dy = projected[j].y - projected[i].y;
+		const float dx = projected[j].x - projected[i].x;
+		const float dy = projected[j].y - projected[i].y;
 
 		if (abs(dy) <= FUZZY_EPSILON)
 			continue;
 
-		float mny = min(projected[i].y, projected[j].y);
-		float mxy = max(projected[i].y, projected[j].y);
+		const float mny = min(projected[i].y, projected[j].y);
+		const float mxy = max(projected[i].y, projected[j].y);
 
-		float x = projected[i].x + dx * (pnt.y - projected[i].y) / dy;
+		const float x = projected[i].x + dx * (pnt.y - projected[i].y) / dy;
 		if (
 			(pnt.y >= mny && pnt.y <= mxy) &&
 			(pnt.x < x)

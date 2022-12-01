@@ -57,12 +57,12 @@ public:
 
 	Vector4 project(const Vector4& v) const { return m_value.project(v); }
 
-	Ref< BoxedVector4 > rayIntersection(
+	Ref< BoxedVector4 > intersectRay(
 		const Vector4& origin,
 		const Vector4& direction
 	) const;
 
-	Ref< BoxedVector4 > segmentIntersection(
+	Ref< BoxedVector4 > intersectSegment(
 		const Vector4& a,
 		const Vector4& b
 	) const;
