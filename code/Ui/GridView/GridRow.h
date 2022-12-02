@@ -37,11 +37,11 @@ class T_DLLCLASS GridRow : public AutoWidgetCell
 public:
 	enum RowStates
 	{
-		RsExpanded = 1,
-		RsSelected = 2
+		Expanded = 1,
+		Selected = 2
 	};
 
-	GridRow(uint32_t initialState = RsExpanded);
+	explicit GridRow(uint32_t initialState = Expanded);
 
 	virtual ~GridRow();
 

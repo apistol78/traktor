@@ -8,6 +8,7 @@
  */
 #include "Drawing/Image.h"
 #include "Drawing/Filters/EncodeRGBM.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
@@ -64,12 +65,35 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 {
 	if (image != nullptr)
 	{
+		float gamma = 2.2f;
+		bool sRGB = true;
+
+		if (image->getImageInfo() != nullptr)
+		{
+			gamma = image->getImageInfo()->getGamma();
+			sRGB = (bool)(std::abs(gamma - 2.2f) <= FUZZY_EPSILON);
+		}
+
 		// Create source image.
-		m_imageSource = new ui::Bitmap(image);
+		Ref< drawing::Image > imageSource = image->clone();
+		if (!sRGB)
+		{
+			// Ensure image is in sRGB since that's what UI expects.
+			const drawing::GammaFilter gammaFilter(gamma, 2.2f);
+			imageSource->apply(&gammaFilter);
+		}
+		m_imageSource = new ui::Bitmap(imageSource);
 
 		// Create output image.
 		Ref< drawing::Image > imageOutput = image->clone();
-	
+
+		// Convert image into linear space to ensure all filters are applied in linear space.
+		if (!output.m_linearGamma)
+		{
+			const drawing::GammaFilter gammaFilter(gamma, 1.0f);
+			imageOutput->apply(&gammaFilter);
+		}	
+
 		if (output.m_flipX || output.m_flipY)
 		{
 			drawing::MirrorFilter mirrorFilter(output.m_flipX, output.m_flipY);
@@ -119,6 +143,11 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			imageOutput->apply(&transformFilter);
 		}
 
+		// Convert to sRGB last since that's what UI expect.
+		{
+			const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+			imageOutput->apply(&gammaFilter);
+		}
 		m_imageOutput = new ui::Bitmap(imageOutput);
 	}
 	else
@@ -179,10 +208,10 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_imageSource)
 	{
-		ui::Size clientSize = getInnerRect().getSize();
-		ui::Size imageSize = m_imageSource->getSize();
+		const ui::Size clientSize = getInnerRect().getSize();
+		const ui::Size imageSize = m_imageSource->getSize();
 
-		ui::Point center =
+		const ui::Point center =
 		{
 			(clientSize.cx - imageSize.cx) / 2,
 			(clientSize.cy - imageSize.cy) / 2

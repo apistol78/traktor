@@ -31,6 +31,8 @@ class T_DLLCLASS GammaFilter : public IImageFilter
 public:
 	explicit GammaFilter(float gamma);
 
+	explicit GammaFilter(float fromGamma, float toGamma);
+
 	explicit GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
 
 protected:

@@ -105,7 +105,7 @@ void QuickOpenDialog::updateSuggestions(const std::wstring& filter)
 	{
 		ui::GridRow* row = m_gridSuggestions->getRow(0);
 		if (row)
-			row->setState(ui::GridRow::RsSelected);
+			row->setState(ui::GridRow::Selected);
 	}
 }
 
@@ -144,12 +144,12 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 					--i;
 
 				m_gridSuggestions->deselectAll();
-				(*i)->setState(ui::GridRow::RsSelected);
+				(*i)->setState(ui::GridRow::Selected);
 			}
 			else if (!rows.empty())
 			{
 				m_gridSuggestions->deselectAll();
-				rows[0]->setState(ui::GridRow::RsSelected);
+				rows[0]->setState(ui::GridRow::Selected);
 			}
 		}
 		event->consume();
@@ -166,13 +166,13 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 				if (++i != rows.end())
 				{
 					m_gridSuggestions->deselectAll();
-					(*i)->setState(ui::GridRow::RsSelected);
+					(*i)->setState(ui::GridRow::Selected);
 				}
 			}
 			else if (!rows.empty())
 			{
 				m_gridSuggestions->deselectAll();
-				rows[0]->setState(ui::GridRow::RsSelected);
+				rows[0]->setState(ui::GridRow::Selected);
 			}
 		}
 		event->consume();
@@ -181,7 +181,7 @@ void QuickOpenDialog::eventFilterKey(ui::KeyDownEvent* event)
 
 void QuickOpenDialog::eventSuggestionSelect(ui::SelectionChangeEvent* event)
 {
-	if (m_gridSuggestions->getSelectedRow() != 0)
+	if (m_gridSuggestions->getSelectedRow() != nullptr)
 		endModal(ui::DialogResult::Ok);
 }
 
