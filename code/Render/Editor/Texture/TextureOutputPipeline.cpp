@@ -148,7 +148,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 35, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 36, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
