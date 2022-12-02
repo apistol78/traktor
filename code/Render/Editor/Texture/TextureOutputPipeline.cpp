@@ -493,7 +493,7 @@ bool TextureOutputPipeline::buildOutput(
 		if (image->getImageInfo() != nullptr)
 		{
 			const float imageGamma = image->getImageInfo()->getGamma();
-			const float is_sRGB = (bool)(std::abs(imageGamma - m_gamma) <= 0.1f);
+			const bool is_sRGB = (bool)(std::abs(imageGamma - m_gamma) <= 0.1f);
 			if (is_sRGB)
 				sRGB = true;
 			else

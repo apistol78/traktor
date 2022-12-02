@@ -24,6 +24,14 @@ GammaFilter::GammaFilter(float gamma)
 	m_gamma[3] = 1.0f;
 }
 
+GammaFilter::GammaFilter(float fromGamma, float toGamma)
+{
+	m_gamma[0] =
+	m_gamma[1] =
+	m_gamma[2] = fromGamma / toGamma;
+	m_gamma[3] = 1.0f;
+}
+
 GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
 {
 	m_gamma[0] = gammaR;

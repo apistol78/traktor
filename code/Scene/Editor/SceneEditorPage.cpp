@@ -602,7 +602,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Create instance and adapter.
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-		entityAdapter->prepare(entityData, 0, 0);
+		entityAdapter->prepare(entityData, nullptr, 0);
 
 		// Place instance in front of perspective camera.
 		const Camera* camera = m_context->getCamera(viewIndex);
@@ -722,7 +722,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			entityData->setId(Guid::create());
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-			entityAdapter->prepare(entityData, 0, 0);
+			entityAdapter->prepare(entityData, nullptr, 0);
 			parentEntity->addChild(entityAdapter);
 		}
 
@@ -1085,8 +1085,8 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	Ref< ui::GridRow > row = new ui::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
 	row->setState(
-		(entityAdapter->isSelected() ? ui::GridRow::RsSelected : 0) |
-		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
+		(entityAdapter->isSelected() ? ui::GridRow::Selected : 0) |
+		(entityAdapter->isExpanded() ? ui::GridRow::Expanded : 0)
 	);
 
 	if (entityAdapter->isLayer())
@@ -1159,8 +1159,8 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 
 	row->setState(
-		(entityAdapter->isSelected() ? ui::GridRow::RsSelected : 0) |
-		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
+		(entityAdapter->isSelected() ? ui::GridRow::Selected : 0) |
+		(entityAdapter->isExpanded() ? ui::GridRow::Expanded : 0)
 	);
 
 	for (auto childRow : row->getChildren())
@@ -1469,7 +1469,7 @@ void SceneEditorPage::eventInstanceExpand(ui::GridRowStateChangeEvent* event)
 {
 	ui::GridRow* row = event->getRow();
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
-	entityAdapter->setExpanded((row->getState() & ui::GridRow::RsExpanded) != 0);
+	entityAdapter->setExpanded((row->getState() & ui::GridRow::Expanded) != 0);
 }
 
 void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)

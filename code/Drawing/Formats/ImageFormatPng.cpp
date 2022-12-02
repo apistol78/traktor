@@ -102,6 +102,10 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	double gamma = 2.2;
 	png_get_gAMA(png_ptr, info_ptr, &gamma);
 
+	// Seems sometimes the gamma value is reciprocal and sometimes not.
+	if (gamma > FUZZY_EPSILON && gamma < 1.0)
+		gamma = 1.0 / gamma;
+
 	PixelFormat pixelFormat(0, 0, 0, 0, 0, false, false);
 	switch (color_type)
 	{

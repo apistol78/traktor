@@ -224,7 +224,7 @@ uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 
 			if (flags & GfSelectedOnly)
 			{
-				if (row->getState() & GridRow::RsSelected)
+				if (row->getState() & GridRow::Selected)
 					outRows.push_back(row);
 			}
 			else
@@ -232,7 +232,7 @@ uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 
 			if (flags & GfDescendants)
 			{
-				if ((flags & GfExpandedOnly) != GfExpandedOnly || (row->getState() & GridRow::RsExpanded) == GridRow::RsExpanded)
+				if ((flags & GfExpandedOnly) != GfExpandedOnly || (row->getState() & GridRow::Expanded) == GridRow::Expanded)
 				{
 					const RefArray< GridRow >& children = row->getChildren();
 					if (!children.empty())
@@ -261,7 +261,7 @@ void GridView::selectAll()
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants);
 	for (auto row : rows)
-		row->setState(row->getState() | GridRow::RsSelected);
+		row->setState(row->getState() | GridRow::Selected);
 	requestUpdate();
 }
 
@@ -270,7 +270,7 @@ void GridView::deselectAll()
 	RefArray< GridRow > rows;
 	getRows(rows, GfDescendants);
 	for (auto row : rows)
-		row->setState(row->getState() & ~GridRow::RsSelected);
+		row->setState(row->getState() & ~GridRow::Selected);
 	requestUpdate();
 }
 
@@ -288,8 +288,8 @@ Ref< HierarchicalState > GridView::captureState() const
 	{
 		state->addState(
 			getRowPath(row),
-			(row->getState() & GridRow::RsExpanded) != 0,
-			(row->getState() & GridRow::RsSelected) != 0
+			(row->getState() & GridRow::Expanded) != 0,
+			(row->getState() & GridRow::Selected) != 0
 		);
 	}
 	return state;
@@ -303,8 +303,8 @@ void GridView::applyState(const HierarchicalState* state)
 	{
 		std::wstring path = getRowPath(row);
 		row->setState(
-			(state->getExpanded(path) ? GridRow::RsExpanded : 0) |
-			(state->getSelected(path) ? GridRow::RsSelected : 0)
+			(state->getExpanded(path) ? GridRow::Expanded : 0) |
+			(state->getSelected(path) ? GridRow::Selected : 0)
 		);
 	}
 }
@@ -432,13 +432,13 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	// De-select all rows if no modifier key or only single select.
-	bool modifier = bool((state & (KsShift | KsControl)) != 0);
+	const bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier || !m_multiSelect)
 	{
 		RefArray< GridRow > rows;
 		getRows(rows, GfDescendants);
 		for (auto row : rows)
-			row->setState(row->getState() & ~GridRow::RsSelected);
+			row->setState(row->getState() & ~GridRow::Selected);
 	}
 
 	// Check for row click; move selection.
@@ -458,16 +458,16 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 					std::swap(fromRowIndex, toRowIndex);
 
 				for (int32_t i = fromRowIndex; i <= toRowIndex; ++i)
-					rows[i]->setState(rows[i]->getState() | GridRow::RsSelected);
+					rows[i]->setState(rows[i]->getState() | GridRow::Selected);
 			}
 		}
 		else
 		{
 			// Toggle selection on row.
-			if ((row->getState() & GridRow::RsSelected) != 0)
-				row->setState(row->getState() & ~GridRow::RsSelected);
+			if ((row->getState() & GridRow::Selected) != 0)
+				row->setState(row->getState() & ~GridRow::Selected);
 			else
-				row->setState(row->getState() | GridRow::RsSelected);
+				row->setState(row->getState() | GridRow::Selected);
 		}
 
 		// Save column index.

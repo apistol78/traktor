@@ -174,7 +174,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 		++depth;
 
 	auto expand = gridView->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
-	int32_t size = expand->getSize().cy;
+	const int32_t size = expand->getSize().cy;
 
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
@@ -214,15 +214,15 @@ void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	// Handle expand/collapse.
 	if (!m_children.empty())
 	{
-		int32_t depth = getDepth();
-		int32_t size = expand->getSize().cy;
-		int32_t rx = depth * size + size;
+		const int32_t depth = getDepth();
+		const int32_t size = expand->getSize().cy;
+		const int32_t rx = depth * size + size;
 		if (position.x <= rx)
 		{
-			if (m_state & RsExpanded)
-				m_state &= ~RsExpanded;
+			if (m_state & Expanded)
+				m_state &= ~Expanded;
 			else
-				m_state |= RsExpanded;
+				m_state |= Expanded;
 
 			GridRowStateChangeEvent expandEvent(getWidget< GridView >(), this);
 			getWidget< GridView >()->raiseEvent(&expandEvent);
@@ -256,7 +256,7 @@ void GridRow::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	if (m_editMode == 2)
 	{
-		int32_t index = getWidget< GridView >()->getColumnIndex(position.x);
+		const int32_t index = getWidget< GridView >()->getColumnIndex(position.x);
 		if (index >= 0 && m_items[index] != nullptr)
 		{
 			const GridColumn* column = getWidget< GridView >()->getColumn(index);
@@ -275,7 +275,7 @@ void GridRow::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& positi
 
 void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 {
-	Size d = position - m_mouseDownPosition;
+	const Size d = position - m_mouseDownPosition;
 	if (abs(d.cx) > dpi96(2) || abs(d.cy) > dpi96(2))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
@@ -304,7 +304,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	}
 
 	// Paint selection background.
-	if (m_state & GridRow::RsSelected)
+	if (m_state & GridRow::Selected)
 	{
 		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
 		canvas.fillRect(rect);
@@ -318,17 +318,17 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	if (!m_children.empty())
 	{
 		auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
-		int32_t size = expand->getSize().cy;
+		const int32_t size = expand->getSize().cy;
 		canvas.drawBitmap(
 			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
-			Point((m_state & GridRow::RsExpanded) ? size : 0, 0),
+			Point((m_state & GridRow::Expanded) ? size : 0, 0),
 			Size(size, size),
 			expand,
 			BlendMode::Alpha
 		);
 	}
 
-	canvas.setForeground(ss->getColor(this, (m_state & GridRow::RsSelected) ? L"line-color-selected" : L"line-color"));
+	canvas.setForeground(ss->getColor(this, (m_state & GridRow::Selected) ? L"line-color-selected" : L"line-color"));
 
 	if (columns.size() >= 2)
 	{

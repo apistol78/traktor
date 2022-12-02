@@ -239,8 +239,8 @@ void SongEditor::eventTimer(ui::TimerEvent* event)
 	if (!cursor)
 		return;
 
-	int32_t pattern = m_songBuffer->getCurrentPattern(cursor);
-	int32_t row = m_songBuffer->getCurrentRow(cursor);
+	const int32_t pattern = m_songBuffer->getCurrentPattern(cursor);
+	const int32_t row = m_songBuffer->getCurrentRow(cursor);
 
 	if (pattern != m_currentPattern)
 	{
@@ -251,7 +251,7 @@ void SongEditor::eventTimer(ui::TimerEvent* event)
 	m_patternGrid->deselectAll();
 
 	if (row >= 0)
-		m_patternGrid->getRow(row)->setState(ui::GridRow::RsSelected);
+		m_patternGrid->getRow(row)->setState(ui::GridRow::Selected);
 
 	m_patternGrid->update();
 }

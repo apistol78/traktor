@@ -955,7 +955,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			BitVector materialSelections(rows.size(), false);
 			for (uint32_t i = 0; i < rows.size(); ++i)
 			{
-				if ((rows[i]->getState() & ui::GridRow::RsSelected) != 0)
+				if ((rows[i]->getState() & ui::GridRow::Selected) != 0)
 					materialSelections.set(i);
 			}
 
