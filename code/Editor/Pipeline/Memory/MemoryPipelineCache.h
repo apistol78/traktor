@@ -49,6 +49,7 @@ private:
 	Semaphore m_lock;
 	SmallMap< Guid, Ref< ChunkMemory > > m_pending;
 	SmallMap< Guid, Ref< ChunkMemory > > m_committed;
+	SmallMap< Key, Ref< ChunkMemory > > m_blobs;
 };
 
 }
