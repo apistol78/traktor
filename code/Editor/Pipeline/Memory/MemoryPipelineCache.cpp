@@ -64,12 +64,27 @@ bool MemoryPipelineCache::commit(const Guid& guid, const PipelineDependencyHash&
 
 Ref< IStream > MemoryPipelineCache::get(const Key& key)
 {
-	return nullptr;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	auto it = m_blobs.find(key);
+	if (it == m_blobs.end())
+		return nullptr;
+
+	return new ChunkMemoryStream(it->second, true, false);
 }
 
 Ref< IStream > MemoryPipelineCache::put(const Key& key)
 {
-	return nullptr;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	auto it = m_blobs.find(key);
+	if (it != m_blobs.end())
+		return nullptr;
+
+	Ref< ChunkMemory > cm = new ChunkMemory();
+	Ref< ChunkMemoryStream > cms = new ChunkMemoryStream(cm, false, true);
+	m_blobs.insert(std::make_pair(key, cm));
+	return cms;
 }
 
 void MemoryPipelineCache::getInformation(OutputStream& os)
