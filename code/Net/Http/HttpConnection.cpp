@@ -32,7 +32,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		return ErInvalidUrl;
 
 	// Lookup host address.
-	SocketAddressIPv6 addr(url.getHost(), url.getPort());
+	const SocketAddressIPv6 addr(url.getHost(), url.getPort());
 	if (!addr.valid())
 		return ErInvalidUrl;
 
@@ -44,11 +44,11 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	// Build GET string.
 	std::wstring resource = url.getPath();
 
-	std::wstring query = url.getQuery();
+	const std::wstring query = url.getQuery();
 	if (!query.empty())
 		resource += L"?" + query;
 
-	std::wstring ref = url.getRef();
+	const std::wstring ref = url.getRef();
 	if (!ref.empty())
 		resource += L"#" + ref;
 
@@ -90,7 +90,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		// Handle redirect response.
 		if (response.getStatusCode() == 302 && outRedirectionUrl)
 		{
-			std::wstring location = response.get(L"Location");
+			const std::wstring location = response.get(L"Location");
 			if (!location.empty())
 			{
 				*outRedirectionUrl = Url(location);
@@ -111,7 +111,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		stream = new HttpChunkStream(stream);
 
 	// If response contains content length field we can cap stream.
-	int contentLength = parseString< int >(response.get(L"Content-Length"));
+	const int32_t contentLength = parseString< int32_t >(response.get(L"Content-Length"));
 	if (contentLength > 0)
 		stream = new StreamStream(stream, contentLength);
 
