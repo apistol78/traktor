@@ -285,7 +285,7 @@ void WorldRendererForward::setupLightPass(
 		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
 			const auto& light = m_lights[i];
-			if (light->getCastShadow() && light->getLightType() == LightType::LtDirectional)
+			if (light->getCastShadow() && light->getLightType() == LightType::Directional)
 			{
 				lightCascadeIndex = i;
 				break;
@@ -300,7 +300,7 @@ void WorldRendererForward::setupLightPass(
 		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
 			const auto& light = m_lights[i];
-			if (light->getCastShadow() && light->getLightType() == LightType::LtSpot)
+			if (light->getCastShadow() && light->getLightType() == LightType::Spot)
 				lightAtlasIndices.push_back(i);
 		}
 	}

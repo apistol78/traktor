@@ -148,7 +148,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		return false;
 
 	Light light;
-	if (lightComponentData->getLightType() == world::LightType::LtDirectional)
+	if (lightComponentData->getLightType() == world::LightType::Directional)
 	{
 		light.type = Light::LtDirectional;
 		light.position = Vector4::origo();
@@ -158,7 +158,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
-	else if (lightComponentData->getLightType() == world::LightType::LtPoint)
+	else if (lightComponentData->getLightType() == world::LightType::Point)
 	{
 		light.type = Light::LtPoint;
 		light.position = transform.translation().xyz1();
@@ -168,7 +168,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
-	else if (lightComponentData->getLightType() == world::LightType::LtSpot)
+	else if (lightComponentData->getLightType() == world::LightType::Spot)
 	{
 		light.type = Light::LtSpot;
 		light.position = transform.translation().xyz1();

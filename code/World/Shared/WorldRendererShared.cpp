@@ -282,7 +282,6 @@ void WorldRendererShared::setupTileDataPass(
 	m_tileJob = JobManager::getInstance().add([=]() {
 #endif
 		const auto& viewFrustum = worldRenderView.getViewFrustum();
-		const auto& lights = m_lights;
 
 		TileShaderData* tileShaderData = (TileShaderData*)m_tileSBuffer->lock();
 		std::memset(tileShaderData, 0, ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData));
@@ -294,7 +293,7 @@ void WorldRendererShared::setupTileDataPass(
 		StaticVector< int32_t, c_maxLightCount > sliceLights;
 
 		// Calculate positions of lights in view space.
-		for (const auto& light : lights)
+		for (const auto& light : m_lights)
 		{
 			Vector4 lightPosition = light->getTransform().translation().xyz1();
 			lightPositions.push_back(worldRenderView.getView() * lightPosition);
@@ -346,21 +345,21 @@ void WorldRendererShared::setupTileDataPass(
 
 			// Gather all lights intersecting slice.
 			sliceLights.clear();
-			for (uint32_t i = 0; i < lights.size(); ++i)
+			for (uint32_t i = 0; i < m_lights.size(); ++i)
 			{
-				const auto light = lights[i];
-				if (light->getLightType() == LightType::LtDirectional)
+				const auto light = m_lights[i];
+				if (light->getLightType() == LightType::Directional)
 				{
 					sliceLights.push_back(i);
 				}
-				else if (light->getLightType() == LightType::LtPoint)
+				else if (light->getLightType() == LightType::Point)
 				{
 					const Scalar lr = light->getRange();				
 					const Scalar lz = lightPositions[i].z();
 					if (lz + lr >= snz && lz - lr <= sfz)
 						sliceLights.push_back(i);
 				}
-				else if (light->getLightType() == LightType::LtSpot)
+				else if (light->getLightType() == LightType::Spot)
 				{
 					const Scalar lr = light->getRange();				
 					const Scalar lz = lightPositions[i].z();
@@ -404,13 +403,13 @@ void WorldRendererShared::setupTileDataPass(
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
 					{
 						const int32_t lightIndex = sliceLights[i];
-						const auto light = lights[lightIndex];
-						if (light->getLightType() == LightType::LtDirectional)
+						const auto light = m_lights[lightIndex];
+						if (light->getLightType() == LightType::Directional)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
 						}
-						else if (light->getLightType() == LightType::LtPoint)
+						else if (light->getLightType() == LightType::Point)
 						{
 							if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
 							{
@@ -418,7 +417,7 @@ void WorldRendererShared::setupTileDataPass(
 								++count;
 							}
 						}
-						else if (light->getLightType() == LightType::LtSpot)
+						else if (light->getLightType() == LightType::Spot)
 						{
 							// \fixme Implement frustum to frustum culling.
 							if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
