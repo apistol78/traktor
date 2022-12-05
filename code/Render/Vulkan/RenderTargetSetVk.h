@@ -56,9 +56,9 @@ public:
 
 	virtual int32_t getHeight() const override final;
 
-	virtual ISimpleTexture* getColorTexture(int32_t index) const override final;
+	virtual ITexture* getColorTexture(int32_t index) const override final;
 
-	virtual ISimpleTexture* getDepthTexture() const override final;
+	virtual ITexture* getDepthTexture() const override final;
 
 	virtual bool isContentValid() const override final;
 

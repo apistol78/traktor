@@ -14,7 +14,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderView.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Video/Video.h"
@@ -159,7 +159,7 @@ void VideoLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	// 	}
 	// }
 
-	render::ISimpleTexture* texture = m_video->getTexture();
+	render::ITexture* texture = m_video->getTexture();
 	if (texture)
 	{
 		// \fixme

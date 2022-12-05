@@ -17,13 +17,12 @@
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/BufferViewVk.h"
-#include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
-#include "Render/Vulkan/SimpleTextureVk.h"
+#include "Render/Vulkan/TextureVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -665,10 +664,7 @@ bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 		return false;
 
 	const auto& frame = m_frames[m_currentImageIndex];
-
-	Clear cl = {};
-	if (clear)
-		cl = *clear;
+	const Clear cl = clear ? *clear : Clear{};
 
 	m_targetSet = frame.primaryTarget;
 	m_targetColorIndex = 0;
@@ -748,10 +744,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 		return false;
 
 	const auto& frame = m_frames[m_currentImageIndex];
-
-	Clear cl = {};
-	if (clear)
-		cl = *clear;
+	const Clear cl = clear ? *clear : Clear{};
 
 	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	m_targetColorIndex = -1;
@@ -837,10 +830,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		return false;
 
 	const auto& frame = m_frames[m_currentImageIndex];
-
-	Clear cl = {};
-	if (clear)
-		cl = *clear;
+	const Clear cl = clear ? *clear : Clear{};
 
 	m_targetSet = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	m_targetColorIndex = renderTarget;
@@ -973,7 +963,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
 	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
-	uint32_t vertexCount = primitives.count * c_primitiveMul[(int32_t)primitives.type] + c_primitiveAdd[(int32_t)primitives.type];
+	const uint32_t vertexCount = primitives.count * c_primitiveMul[(int32_t)primitives.type] + c_primitiveAdd[(int32_t)primitives.type];
 
 	if (frame.boundVertexBuffer != *vbv)
 	{
@@ -1123,11 +1113,9 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetVk* >(sourceTexture))
 		sourceImage = sourceRenderTarget->getImageResolved();
-	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(sourceTexture))
-		sourceImage = &sourceSimpleTexture->getImage();
-	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureVk* >(sourceTexture))
+	else if (auto sourceTextureVk = dynamic_type_cast< TextureVk* >(sourceTexture))
 	{
-		sourceImage = &sourceCubeTexture->getImage();
+		sourceImage = &sourceTextureVk->getImage();
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
 	}
 	else
@@ -1135,18 +1123,16 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetVk* >(destinationTexture))
 		destinationImage = destinationRenderTarget->getImageResolved();
-	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureVk* >(destinationTexture))
-		destinationImage = &destinationSimpleTexture->getImage();
-	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureVk* >(destinationTexture))
+	else if (auto destinationTextureVk = dynamic_type_cast< TextureVk* >(destinationTexture))
 	{
-		destinationImage = &destinationCubeTexture->getImage();
+		destinationImage = &destinationTextureVk->getImage();
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
 	}
 	else
 		return false;
 
-	VkImageLayout sourceImageLayout = sourceImage->getVkImageLayout(sourceRegion.mip, region.srcSubresource.baseArrayLayer);
-	VkImageLayout destinationImageLayout = destinationImage->getVkImageLayout(destinationRegion.mip, region.dstSubresource.baseArrayLayer);
+	const VkImageLayout sourceImageLayout = sourceImage->getVkImageLayout(sourceRegion.mip, region.srcSubresource.baseArrayLayer);
+	const VkImageLayout destinationImageLayout = destinationImage->getVkImageLayout(destinationRegion.mip, region.dstSubresource.baseArrayLayer);
 
 	// Change image layouts for optimal transfer.
 	if (!sourceImage->changeLayout(

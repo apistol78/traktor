@@ -571,11 +571,11 @@ bool MathNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType MathNodeTraits::evaluateOrder(
+PinOrder MathNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
@@ -618,7 +618,7 @@ PinOrderType MathNodeTraits::evaluateOrder(
 	else if (is_a< Sub >(node))
 		return pinOrderMax(inputPinOrders[0], inputPinOrders[1]);
 	else
-		return PotConstant;
+		return PinOrder::Constant;
 }
 
 	}

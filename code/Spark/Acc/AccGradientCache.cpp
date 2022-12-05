@@ -9,7 +9,7 @@
 #include <cstring>
 #include "Core/Misc/Murmur3.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Resource/Proxy.h"
 #include "Spark/FillStyle.h"
 #include "Spark/Acc/AccBitmapRect.h"
@@ -64,7 +64,7 @@ AccGradientCache::AccGradientCache(render::IRenderSystem* renderSystem)
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = false;
-	m_gradientsTexture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
+	m_gradientsTexture = resource::Proxy< render::ITexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
 	T_FATAL_ASSERT (m_gradientsTexture);
 
 	m_gradientsData.reset(new uint8_t [c_gradientsWidth * c_gradientsHeight * 4]);
@@ -147,7 +147,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		}
 
 		m_cache[hash] = new AccBitmapRect(
-			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
+			resource::Proxy< render::ITexture >(m_gradientsTexture),
 			m_currentGradientColumn * invGradWidth,
 			(m_nextGradient + 0.5f) * invGradHeight,
 			1.0f / c_gradientsColumns - invGradWidth,
@@ -191,7 +191,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		}
 
 		m_cache[hash] = new AccBitmapRect(
-			resource::Proxy< render::ISimpleTexture >(m_gradientsTexture),
+			resource::Proxy< render::ITexture >(m_gradientsTexture),
 			(m_currentGradientColumn + 0.5f) * invGradWidth,
 			(m_nextGradient + 0.5f) * invGradHeight,
 			(c_gradientsSize - 1) * invGradWidth,
@@ -213,7 +213,7 @@ void AccGradientCache::synchronize()
 		return;
 
 	render::ITexture::Lock lock;
-	if (m_gradientsTexture->lock(0, lock))
+	if (m_gradientsTexture->lock(0, 0, lock))
 	{
 		uint8_t* dp = static_cast< uint8_t* >(lock.bits);
 		for (uint32_t y = 0; y < c_gradientsHeight; ++y)
@@ -221,7 +221,7 @@ void AccGradientCache::synchronize()
 			std::memcpy(dp, &m_gradientsData[y * c_gradientsWidth * 4], c_gradientsWidth * 4);
 			dp += lock.pitch;
 		}
-		m_gradientsTexture->unlock(0);
+		m_gradientsTexture->unlock(0, 0);
 		m_dirty = false;
 	}
 }

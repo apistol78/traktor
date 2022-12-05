@@ -11,7 +11,6 @@
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Video/IVideoDecoder.h"
 #include "Video/Video.h"
 
@@ -131,14 +130,14 @@ void Video::rewind()
 	update(0.0f);
 }
 
-render::ISimpleTexture* Video::getTexture()
+render::ITexture* Video::getTexture()
 {
 	if (m_lastUploadedFrame != m_lastDecodedFrame)
 	{
 		m_current = (m_current + 1) % sizeof_array(m_textures);
-		render::ISimpleTexture* texture = m_textures[m_current];
+		render::ITexture* texture = m_textures[m_current];
 		render::ITexture::Lock lock;
-		if (texture->lock(0, lock))
+		if (texture->lock(0, 0, lock))
 		{
 			const uint8_t* s = m_frameBuffer.c_ptr();
 			uint8_t* d = static_cast< uint8_t* >(lock.bits);
@@ -151,7 +150,7 @@ render::ISimpleTexture* Video::getTexture()
 				d += lock.pitch;
 			}
 
-			texture->unlock(0);
+			texture->unlock(0, 0);
 		}
 		m_lastUploadedFrame = m_lastDecodedFrame;
 		return texture;

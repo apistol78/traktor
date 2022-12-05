@@ -16,7 +16,6 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
-#include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
@@ -725,7 +724,7 @@ void WorldRendererForward::setupVisualPass(
 			if (probe)
 			{
 				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getMips());
+				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
 			}
 

@@ -9,7 +9,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/Entity.h"
@@ -29,7 +28,7 @@ namespace traktor::world
 	namespace
 	{
 
-Ref< render::ISimpleTexture > create1x1Texture(render::IRenderSystem* renderSystem, float value)
+Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, float value)
 {
 	render::SimpleTextureCreateDesc stcd = {};
 	stcd.width = 1;

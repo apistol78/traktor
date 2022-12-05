@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class ResourceTracker;
-class SimpleTextureVrfy;
+class TextureVrfy;
 
 /*!
  * \ingroup Vrfy
@@ -37,9 +37,9 @@ public:
 
 	virtual int32_t getHeight() const override final;
 
-	virtual ISimpleTexture* getColorTexture(int32_t index) const override final;
+	virtual ITexture* getColorTexture(int32_t index) const override final;
 
-	virtual ISimpleTexture* getDepthTexture() const override final;
+	virtual ITexture* getDepthTexture() const override final;
 
 	virtual bool isContentValid() const override final;
 
@@ -59,8 +59,8 @@ private:
 	Ref< ResourceTracker > m_resourceTracker;
 	RenderTargetSetCreateDesc m_setDesc;
 	Ref< IRenderTargetSet > m_renderTargetSet;
-	mutable Ref< SimpleTextureVrfy > m_colorTextures[4];
-	mutable Ref< SimpleTextureVrfy > m_depthTexture;
+	mutable Ref< TextureVrfy > m_colorTextures[4];
+	mutable Ref< TextureVrfy > m_depthTexture;
 };
 
 	}

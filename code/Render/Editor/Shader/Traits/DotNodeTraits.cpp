@@ -102,11 +102,11 @@ bool DotNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType DotNodeTraits::evaluateOrder(
+PinOrder DotNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {

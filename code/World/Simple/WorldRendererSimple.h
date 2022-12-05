@@ -21,7 +21,7 @@
 namespace traktor::render
 {
 
-class ISimpleTexture;
+class ITexture;
 
 }
 
@@ -69,7 +69,7 @@ private:
 	};
 
 	Ref< WorldEntityRenderers > m_entityRenderers;
-	Ref< render::ISimpleTexture > m_depthTexture;
+	Ref< render::ITexture > m_depthTexture;
 	AlignedVector< Gather > m_gathered;
 };
 

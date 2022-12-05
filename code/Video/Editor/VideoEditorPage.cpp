@@ -15,7 +15,6 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -157,7 +156,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	{
 		if (m_video)
 		{
-			render::ISimpleTexture* texture = m_video->getTexture();
+			render::ITexture* texture = m_video->getTexture();
 			if (texture)
 			{
 				// \fixme

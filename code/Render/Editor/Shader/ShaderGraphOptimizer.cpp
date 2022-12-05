@@ -336,14 +336,14 @@ void ShaderGraphOptimizer::insertInterpolators(
 		bool vertexMandatory = is_a< VertexInput >(sourceNode);
 		bool inCycle = insideCycle(shaderGraph, sourceOutputPin);
 
-		PinOrderType inputOrder = PotConstant;
+		PinOrder inputOrder = PinOrder::Constant;
 		if (!vertexMandatory)
 			inputOrder = inoutOrderEvaluator->evaluate(sourceOutputPin);
 
-		if (vertexMandatory || (!isSwizzle && !inCycle && inputOrder <= PotLinear))
+		if (vertexMandatory || (!isSwizzle && !inCycle && inputOrder <= PinOrder::Linear))
 		{
 			// We've reached low enough order; insert interpolator if linear and stop.
-			if (vertexMandatory || inputOrder == PotLinear)
+			if (vertexMandatory || inputOrder == PinOrder::Linear)
 			{
 				// Remove edge; replace with interpolator.
 				Ref< Edge > edge = shaderGraph->findEdge(inputPin);

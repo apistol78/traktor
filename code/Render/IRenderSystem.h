@@ -25,13 +25,10 @@ namespace traktor::render
 {
 
 class Buffer;
-class ICubeTexture;
 class IProgram;
 class IRenderTargetSet;
 class IRenderView;
-class ISimpleTexture;
 class IVertexLayout;
-class IVolumeTexture;
 class ProgramResource;
 class VertexElement;
 
@@ -122,13 +119,13 @@ public:
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) = 0;
 
 	/*! Create simple, 2d, texture. */
-	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) = 0;
+	virtual Ref< ITexture > createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! Create cube texture. */
-	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
+	virtual Ref< ITexture > createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! Create volume texture. */
-	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
+	virtual Ref< ITexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
 	/*! Create render target set.
 	 *

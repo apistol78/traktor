@@ -26,13 +26,15 @@ const uint32_t c_blockCounts[] =
 	36864,				// 32
 	20480,				// 64
 	8192,				// 128
-	4096				// 256
+	4096,				// 256
+	128					// 512
 #else
 	131072,				// 16
 	131072,				// 32
 	40960,				// 64
 	16384,				// 128
-	16384				// 256
+	16384,				// 256
+	1024				// 512
 #endif
 };
 
@@ -43,7 +45,7 @@ FastAllocator::FastAllocator(IAllocator* systemAllocator)
 {
 	for (size_t i = 0; i < sizeof_array(c_blockCounts); ++i)
 	{
-		uint32_t qsize = 1U << (i + 4);
+		const uint32_t qsize = 1U << (i + 4);
 		m_blockAlloc[i] = allocConstruct< BlockAllocator >(
 			m_systemAllocator->alloc(qsize * c_blockCounts[i], 16, T_FILE_LINE),
 			c_blockCounts[i],
@@ -67,15 +69,14 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
 	void* p = nullptr;
 
-	if (size > 0 && size <= 256 && align <= 16)
+	if (size > 0 && size <= 512 && align <= 16)
 	{
 		if (size < 16)
 			size = 16;
 
 		size = nearestLog2(uint32_t(size));
 
-		uint32_t qid = log2(uint32_t(size));
-		qid -= 4;
+		const uint32_t qid = log2(uint32_t(size)) - 4;
 
 		BlockAllocator* blockAlloc = m_blockAlloc[qid];
 		T_ASSERT(blockAlloc)

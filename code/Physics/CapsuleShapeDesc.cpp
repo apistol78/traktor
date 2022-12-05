@@ -17,12 +17,6 @@ namespace traktor::physics
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CapsuleShapeDesc", ShapeDesc::Version, CapsuleShapeDesc, ShapeDesc)
 
-CapsuleShapeDesc::CapsuleShapeDesc()
-:	m_radius(0.0f)
-,	m_length(0.0f)
-{
-}
-
 void CapsuleShapeDesc::setRadius(float radius)
 {
 	m_radius = radius;

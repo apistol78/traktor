@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Render/ICubeTexture.h"
-#include "Render/Types.h"
+#include "Core/Ref.h"
+#include "Render/ITexture.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
@@ -19,33 +19,44 @@ class ApiBuffer;
 class Context;
 class Image;
 
-struct CubeTextureCreateDesc;
+struct SimpleTextureCreateDesc;
 
 /*!
  * \ingroup Vulkan
  */
-class CubeTextureVk : public ICubeTexture
+class TextureVk : public ITexture
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit CubeTextureVk(Context* context, const CubeTextureCreateDesc& desc, uint32_t& instances);
+	explicit TextureVk(Context* context, uint32_t& instances);
 
-	virtual ~CubeTextureVk();
+	virtual ~TextureVk();
 
-	bool create(const wchar_t* const tag);
+	bool create(
+		const SimpleTextureCreateDesc& desc,
+		const wchar_t* const tag
+	);
+
+	bool create(
+		const CubeTextureCreateDesc& desc,
+		const wchar_t* const tag
+	);
+
+	bool create(
+		const VolumeTextureCreateDesc& desc,
+		const wchar_t* const tag
+	);
 
 	virtual void destroy() override final;
 
-	virtual ITexture* resolve() override final;
-
-	virtual int32_t getSide() const override final;
-
-	virtual int32_t getMips() const override final;
+	virtual Size getSize() const override final;
 
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
+
+	virtual ITexture* resolve() override final;
 
 	Image& getImage() const { return *m_textureImage; }
 
@@ -54,7 +65,8 @@ private:
 	uint32_t& m_instances;
 	Ref< ApiBuffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
-	CubeTextureCreateDesc m_desc;
+	ITexture::Size m_size;
+	TextureFormat m_format;
 };
 
 }

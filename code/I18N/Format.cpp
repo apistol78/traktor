@@ -136,15 +136,15 @@ std::wstring Format::Argument::format() const
 		}
 	case Type::Int32:
 		{
-			return toString< int32_t >(m_value.i);
+			return traktor::str(L"%d", m_value.i);
 		}
 	case Type::Float:
 		{
-			return toString< float >(m_value.f);
+			return traktor::str(L"%f", m_value.f);
 		}
 	case Type::Double:
 		{
-			return toString< double >(m_value.d);
+			return traktor::str(L"%f", m_value.d);
 		}
 	case Type::String:
 		{

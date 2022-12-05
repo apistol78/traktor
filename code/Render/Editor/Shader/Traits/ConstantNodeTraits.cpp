@@ -154,15 +154,15 @@ bool ConstantNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType ConstantNodeTraits::evaluateOrder(
+PinOrder ConstantNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
-	return PotConstant;
+	return PinOrder::Constant;
 }
 
 	}

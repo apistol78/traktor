@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Render/ICubeTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -21,33 +21,31 @@ class ResourceTracker;
 /*!
  * \ingroup Vrfy
  */
-class CubeTextureVrfy : public ICubeTexture
+class TextureVrfy : public ITexture
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit CubeTextureVrfy(ResourceTracker* resourceTracker, ICubeTexture* texture);
+	explicit TextureVrfy(ResourceTracker* resourceTracker, ITexture* texture);
 
-	virtual ~CubeTextureVrfy();
+	virtual ~TextureVrfy();
 
 	virtual void destroy() override final;
 
-	virtual ITexture* resolve() override final;
-
-	virtual int32_t getSide() const override final;
-
-	virtual int32_t getMips() const override final;
+	virtual Size getSize() const override final;
 
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
-	ICubeTexture* getTexture() const { return m_texture; }
+	virtual ITexture* resolve() override final;
+
+	ITexture* getTexture() const { return m_texture; }
 
 private:
 	Ref< ResourceTracker > m_resourceTracker;
-	Ref< ICubeTexture > m_texture;
-	int32_t m_locked[2];
+	Ref< ITexture > m_texture;
+	int32_t m_locked;
 };
 
 	}

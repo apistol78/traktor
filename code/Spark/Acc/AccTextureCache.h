@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class ISimpleTexture;
+class ITexture;
 
 	}
 
@@ -40,7 +40,7 @@ class Bitmap;
 class AccTextureCache : public Object
 {
 public:
-	AccTextureCache(
+	explicit AccTextureCache(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		bool reuseTextures
@@ -54,12 +54,12 @@ public:
 
 	Ref< AccBitmapRect > getBitmapTexture(const Bitmap& bitmap);
 
-	void freeTexture(render::ISimpleTexture* texture);
+	void freeTexture(render::ITexture* texture);
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	RefArray< render::ISimpleTexture > m_freeTextures;
+	RefArray< render::ITexture > m_freeTextures;
 	bool m_reuseTextures;
 };
 

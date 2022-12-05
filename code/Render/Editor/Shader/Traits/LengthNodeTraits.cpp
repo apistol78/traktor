@@ -92,11 +92,11 @@ bool LengthNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType LengthNodeTraits::evaluateOrder(
+PinOrder LengthNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {

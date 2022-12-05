@@ -14,7 +14,6 @@
 #include "Spark/Acc/AccBitmapRect.h"
 #include "Spark/Acc/AccTextureCache.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Proxy.h"
 
@@ -25,10 +24,10 @@ namespace traktor
 		namespace
 		{
 
-class AccCachedTexture : public render::ISimpleTexture
+class AccCachedTexture : public render::ITexture
 {
 public:
-	AccCachedTexture(AccTextureCache* cache, render::ISimpleTexture* texture)
+	explicit AccCachedTexture(AccTextureCache* cache, render::ITexture* texture)
 	:	m_cache(cache)
 	,	m_texture(texture)
 	{
@@ -48,44 +47,29 @@ public:
 		}
 	}
 
+	virtual Size getSize() const override final
+	{
+		return m_texture->getSize();
+	}
+
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final
+	{
+		return m_texture->lock(side, level, lock);
+	}
+
+	virtual void unlock(int32_t side, int32_t level) override final
+	{
+		m_texture->unlock(side, level);
+	}
+
 	virtual render::ITexture* resolve() override final
 	{
 		return m_texture;
 	}
 
-	virtual int32_t getWidth() const override final
-	{
-		return m_texture->getWidth();
-	}
-
-	virtual int32_t getHeight() const override final
-	{
-		return m_texture->getHeight();
-	}
-
-	virtual int32_t getMips() const override final
-	{
-		return m_texture->getMips();
-	}
-
-	virtual bool lock(int32_t level, Lock& lock) override final
-	{
-		return m_texture->lock(level, lock);
-	}
-
-	virtual void unlock(int32_t level) override final
-	{
-		m_texture->unlock(level);
-	}
-
-	virtual void* getInternalHandle() override final
-	{
-		return m_texture->getInternalHandle();
-	}
-
 private:
 	Ref< AccTextureCache > m_cache;
-	Ref< render::ISimpleTexture > m_texture;
+	Ref< render::ITexture > m_texture;
 };
 
 		}
@@ -129,10 +113,10 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 
 	if (auto bitmapResource = dynamic_type_cast< const BitmapResource* >(&bitmap))
 	{
-		resource::Proxy< render::ISimpleTexture > texture;
+		resource::Proxy< render::ITexture > texture;
 
 		m_resourceManager->bind(
-			resource::Id< render::ISimpleTexture >(bitmapResource->getResourceId()),
+			resource::Id< render::ITexture >(bitmapResource->getResourceId()),
 			texture
 		);
 
@@ -153,7 +137,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 	else if (auto bitmapTexture = dynamic_type_cast< const BitmapTexture* >(&bitmap))
 	{
 		Ref< AccBitmapRect > br = new AccBitmapRect(
-			resource::Proxy< render::ISimpleTexture >(bitmapTexture->getTexture()),
+			resource::Proxy< render::ITexture >(bitmapTexture->getTexture()),
 			0.0f,
 			0.0f,
 			1.0f,
@@ -165,14 +149,15 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 	}
 	else if (auto bitmapData = dynamic_type_cast< const BitmapImage* >(&bitmap))
 	{
-		Ref< render::ISimpleTexture > texture;
+		Ref< render::ITexture > texture;
 
 		// Check if any free texture matching requested size.
 		if (m_reuseTextures)
 		{
 			for (auto i = m_freeTextures.begin(); i != m_freeTextures.end(); ++i)
 			{
-				if (i->getWidth() == bitmapData->getWidth() && i->getHeight() == bitmapData->getHeight())
+				const auto sz = i->getSize();
+				if (sz.x == bitmapData->getWidth() && sz.y == bitmapData->getHeight())
 				{
 					texture = *i;
 					m_freeTextures.erase(i);
@@ -192,14 +177,14 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 			desc.format = render::TfR8G8B8A8;
 			desc.immutable = false;
 
-			texture = resource::Proxy< render::ISimpleTexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
+			texture = resource::Proxy< render::ITexture >(m_renderSystem->createSimpleTexture(desc, T_FILE_LINE_W));
 		}
 
 		if (!texture)
 			return nullptr;
 
 		render::ITexture::Lock tl;
-		if (texture->lock(0, tl))
+		if (texture->lock(0, 0, tl))
 		{
 			const uint8_t* s = reinterpret_cast< const uint8_t* >(bitmapData->getBits());
 			uint8_t* d = static_cast< uint8_t* >(tl.bits);
@@ -211,11 +196,11 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 				d += tl.pitch;
 			}
 
-			texture->unlock(0);
+			texture->unlock(0, 0);
 		}
 
 		Ref< AccBitmapRect > br = new AccBitmapRect(
-			resource::Proxy< render::ISimpleTexture >(new AccCachedTexture(this, texture)),
+			resource::Proxy< render::ITexture >(new AccCachedTexture(this, texture)),
 			0.0f,
 			0.0f,
 			1.0f,
@@ -229,7 +214,7 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 	return nullptr;
 }
 
-void AccTextureCache::freeTexture(render::ISimpleTexture* texture)
+void AccTextureCache::freeTexture(render::ITexture* texture)
 {
 	if (!texture)
 		return;

@@ -10,7 +10,7 @@
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
-#include "Render/Vrfy/SimpleTextureVrfy.h"
+#include "Render/Vrfy/TextureVrfy.h"
 
 namespace traktor
 {
@@ -57,7 +57,7 @@ int32_t RenderTargetSetVrfy::getHeight() const
 	return m_renderTargetSet ? m_renderTargetSet->getHeight() : 0;
 }
 
-ISimpleTexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
+ITexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
@@ -66,17 +66,17 @@ ISimpleTexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 
 	if (!m_colorTextures[index])
 	{
-		Ref< ISimpleTexture > colorTexture = m_renderTargetSet->getColorTexture(index);
+		Ref< ITexture > colorTexture = m_renderTargetSet->getColorTexture(index);
 		if (!colorTexture)
 			return nullptr;
 
-		m_colorTextures[index] = new SimpleTextureVrfy(m_resourceTracker, colorTexture);
+		m_colorTextures[index] = new TextureVrfy(m_resourceTracker, colorTexture);
 	}
 
 	return m_colorTextures[index];
 }
 
-ISimpleTexture* RenderTargetSetVrfy::getDepthTexture() const
+ITexture* RenderTargetSetVrfy::getDepthTexture() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
@@ -85,11 +85,11 @@ ISimpleTexture* RenderTargetSetVrfy::getDepthTexture() const
 
 	if (!m_depthTexture)
 	{
-		Ref< ISimpleTexture > depthTexture = m_renderTargetSet->getDepthTexture();
+		Ref< ITexture > depthTexture = m_renderTargetSet->getDepthTexture();
 		if (!depthTexture)
 			return nullptr;
 
-		m_depthTexture = new SimpleTextureVrfy(m_resourceTracker, depthTexture);
+		m_depthTexture = new TextureVrfy(m_resourceTracker, depthTexture);
 	}
 
 	return m_depthTexture;

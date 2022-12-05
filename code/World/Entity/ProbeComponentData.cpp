@@ -9,7 +9,7 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
-#include "Render/ICubeTexture.h"
+#include "Render/ITexture.h"
 #include "Resource/Member.h"
 #include "World/Entity/ProbeComponentData.h"
 
@@ -24,7 +24,7 @@ void ProbeComponentData::setTransform(const EntityData* owner, const Transform& 
 
 void ProbeComponentData::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::ICubeTexture >(L"texture", m_texture);
+	s >> resource::Member< render::ITexture >(L"texture", m_texture);
 	s >> Member< float >(L"intensity", m_intensity, AttributeUnit(UnitType::Percent));
 	s >> Member< bool >(L"local", m_local);
 	s >> MemberAabb3(L"volume", m_volume);

@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class ISimpleTexture;
+class ITexture;
 
 	}
 
@@ -28,7 +28,7 @@ class ISimpleTexture;
 class AccBitmapRect : public RefCountImpl< IRefCount >
 {
 public:
-	resource::Proxy< render::ISimpleTexture > texture;
+	resource::Proxy< render::ITexture > texture;
 	float rect[4];
 
 	AccBitmapRect()
@@ -40,7 +40,7 @@ public:
 	}
 
 	AccBitmapRect(
-		const resource::Proxy< render::ISimpleTexture >& texture_,
+		const resource::Proxy< render::ITexture >& texture_,
 		float left,
 		float top,
 		float width,

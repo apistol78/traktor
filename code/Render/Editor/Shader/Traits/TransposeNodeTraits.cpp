@@ -81,11 +81,11 @@ bool TransposeNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType TransposeNodeTraits::evaluateOrder(
+PinOrder TransposeNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {

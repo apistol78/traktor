@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,10 +43,10 @@ public:
 	virtual int32_t getHeight() const = 0;
 
 	/*! Get color target texture. */
-	virtual ISimpleTexture* getColorTexture(int32_t index) const = 0;
+	virtual ITexture* getColorTexture(int32_t index) const = 0;
 
 	/*! Get depth target texture. */
-	virtual ISimpleTexture* getDepthTexture() const = 0;
+	virtual ITexture* getDepthTexture() const = 0;
 
 	/*! Check if target content is valid. */
 	virtual bool isContentValid() const = 0;
