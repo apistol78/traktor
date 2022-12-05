@@ -88,15 +88,15 @@ bool ComputeNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType ComputeNodeTraits::evaluateOrder(
+PinOrder ComputeNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
-	return PotLinear;
+	return PinOrder::Linear;
 }
 
 	}

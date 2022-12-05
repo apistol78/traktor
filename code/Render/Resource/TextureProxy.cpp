@@ -25,6 +25,21 @@ void TextureProxy::destroy()
 	m_texture.clear();
 }
 
+ITexture::Size TextureProxy::getSize() const
+{
+	return m_texture->getSize();
+}
+
+bool TextureProxy::lock(int32_t side, int32_t level, Lock& lock)
+{
+	return m_texture->lock(side, level, lock);
+}
+
+void TextureProxy::unlock(int32_t side, int32_t level)
+{
+	m_texture->unlock(side, level);
+}
+
 ITexture* TextureProxy::resolve()
 {
 	return m_texture->resolve();

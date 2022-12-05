@@ -168,11 +168,11 @@ bool MetaNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType MetaNodeTraits::evaluateOrder(
+PinOrder MetaNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {

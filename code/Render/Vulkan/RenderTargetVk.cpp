@@ -20,7 +20,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ITexture)
 
 RenderTargetVk::RenderTargetVk(Context* context)
 :	m_context(context)
@@ -130,38 +130,23 @@ void RenderTargetVk::destroy()
 	m_context = nullptr;
 }
 
-ITexture* RenderTargetVk::resolve()
+ITexture::Size RenderTargetVk::getSize() const
 {
-	return this;
+	return { m_width, m_height, 1, 1 };
 }
 
-int32_t RenderTargetVk::getWidth() const
-{
-	return m_width;
-}
-
-int32_t RenderTargetVk::getHeight() const
-{
-	return m_height;
-}
-
-int32_t RenderTargetVk::getMips() const
-{
-	return 1;
-}
-
-bool RenderTargetVk::lock(int32_t level, Lock& lock)
+bool RenderTargetVk::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetVk::unlock(int32_t level)
+void RenderTargetVk::unlock(int32_t side, int32_t level)
 {
 }
 
-void* RenderTargetVk::getInternalHandle()
+ITexture* RenderTargetVk::resolve()
 {
-	return nullptr;
+	return this;
 }
 
 void RenderTargetVk::prepareForPresentation(CommandBuffer* commandBuffer)

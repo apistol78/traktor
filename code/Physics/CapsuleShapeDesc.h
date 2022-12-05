@@ -29,8 +29,6 @@ class T_DLLCLASS CapsuleShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
-	CapsuleShapeDesc();
-
 	void setRadius(float radius);
 
 	float getRadius() const;
@@ -42,8 +40,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_radius;
-	float m_length;
+	float m_radius = 0.0f;
+	float m_length = 0.0f;
 };
 
 }

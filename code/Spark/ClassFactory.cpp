@@ -51,7 +51,7 @@
 #include "Spark/TextInstance.h"
 #include "Spark/Swf/SwfMovieFactory.h"
 #include "Spark/Swf/SwfReader.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -221,7 +221,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	// BitmapTexture
 	auto classBitmapTexture = new AutoRuntimeClass< BitmapTexture >();
-	classBitmapTexture->addConstructor< render::ISimpleTexture* >();
+	classBitmapTexture->addConstructor< render::ITexture* >();
 	classBitmapTexture->addProperty("texture", &BitmapTexture::getTexture);
 	registrar->registerClass(classBitmapTexture);
 

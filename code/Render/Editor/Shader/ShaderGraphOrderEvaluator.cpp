@@ -27,7 +27,7 @@ ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(
 {
 }
 
-PinOrderType ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName) const
+PinOrder ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName) const
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT(inputPin);
@@ -36,10 +36,10 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::ws
 	if (sourceOutputPin)
 		return evaluate(sourceOutputPin);
 	else
-		return PotConstant;
+		return PinOrder::Constant;
 }
 
-PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
+PinOrder ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
 {
 	auto it = m_evaluated.find(outputPin);
 	if (it != m_evaluated.end())
@@ -47,7 +47,7 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 
 	// Initialize entry to prevent infinite recursion; if we
 	// detect recursion we assume high order.
-	m_evaluated[outputPin] = PotNonLinear;
+	m_evaluated[outputPin] = PinOrder::NonLinear;
 
 	const Node* node = outputPin->getNode();
 	T_ASSERT(node);
@@ -55,7 +55,7 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 	int32_t inputPinCount = node->getInputPinCount();
 
 	// Evaluate order of input pins.
-	PinOrderType inputPinOrders[32];
+	PinOrder inputPinOrders[32];
 	T_ASSERT(inputPinCount < sizeof_array(inputPinOrders));
 
 	for (int32_t i = 0; i < inputPinCount; ++i)
@@ -67,10 +67,10 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 		if (sourceOutputPin)
 			inputPinOrders[i] = evaluate(sourceOutputPin);
 		else
-			inputPinOrders[i] = PotConstant;
+			inputPinOrders[i] = PinOrder::Constant;
 	}
 
-	PinOrderType order = PotNonLinear;
+	PinOrder order = PinOrder::NonLinear;
 
 	// Use node's traits to determine order of queried output pin.
 	const INodeTraits* nodeTraits = INodeTraits::find(node);

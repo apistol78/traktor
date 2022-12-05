@@ -10,7 +10,7 @@
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Render/Image2/ShadowProject.h"
 #include "Render/Image2/ShadowProjectData.h"
@@ -23,7 +23,7 @@ namespace traktor
 		namespace
 		{
 		
-Ref< ISimpleTexture > createRandomRotationTexture(IRenderSystem* renderSystem)
+Ref< ITexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 {
 	static Random random;
 
@@ -32,11 +32,11 @@ Ref< ISimpleTexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 	{
 		for (uint32_t x = 0; x < 128; ++x)
 		{
-			float angle = (random.nextFloat() * 2.0f - 1.0f) * PI;
-			float xa =  cosf(angle) * 127.5f + 127.5f;
-			float xb =  sinf(angle) * 127.5f + 127.5f;
-			float ya =  sinf(angle) * 127.5f + 127.5f;
-			float yb = -cosf(angle) * 127.5f + 127.5f;
+			const float angle = (random.nextFloat() * 2.0f - 1.0f) * PI;
+			const float xa =  cosf(angle) * 127.5f + 127.5f;
+			const float xb =  sinf(angle) * 127.5f + 127.5f;
+			const float ya =  sinf(angle) * 127.5f + 127.5f;
+			const float yb = -cosf(angle) * 127.5f + 127.5f;
 			data[(x + y * 128) * 4 + 0] = uint8_t(xa);
 			data[(x + y * 128) * 4 + 1] = uint8_t(xb);
 			data[(x + y * 128) * 4 + 2] = uint8_t(ya);

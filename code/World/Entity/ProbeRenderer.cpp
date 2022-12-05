@@ -10,7 +10,6 @@
 #include "Core/Math/Quasirandom.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
-#include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
@@ -256,7 +255,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		}
 	}
 
-	render::ICubeTexture* probeTexture = m_capture->getTexture();
+	render::ITexture* probeTexture = m_capture->getTexture();
 	if (!probeTexture)
 		return;
 
@@ -338,12 +337,14 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
+					const auto sz = probeTexture->getSize();
+
 					render::Region sr = {};
 					sr.x = 0;
 					sr.y = 0;
 					sr.mip = 0;
-					sr.width = probeTexture->getSide();
-					sr.height = probeTexture->getSide();
+					sr.width = sz.x;
+					sr.height = sz.y;
 
 					render::Region dr = {};
 					dr.x = 0;
@@ -453,12 +454,14 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
+					const auto sz = probeTexture->getSize();
+
 					render::Region sr = {};
 					sr.x = 0;
 					sr.y = 0;
 					sr.mip = 0;
-					sr.width = probeTexture->getSide() >> mip;
-					sr.height = probeTexture->getSide() >> mip;
+					sr.width = sz.x >> mip;
+					sr.height = sz.y >> mip;
 
 					render::Region dr = {};
 					dr.x = 0;
@@ -576,7 +579,7 @@ void ProbeRenderer::build(
 	}
 
 	rb->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
-	rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getMips() : 0.0f);
+	rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getSize().mips : 0.0f);
 	rb->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 	rb->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 	rb->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());

@@ -196,7 +196,7 @@ class MemberPinArray : public MemberArray
 {
 public:
 	typedef typename PinMember::value_type pin_type;
-	typedef std::vector< pin_type > value_type;
+	typedef AlignedVector< pin_type > value_type;
 
 	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, nullptr)

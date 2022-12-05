@@ -20,7 +20,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ISimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ITexture)
 
 RenderTargetDepthVk::RenderTargetDepthVk(Context* context)
 :	m_context(context)
@@ -94,38 +94,23 @@ void RenderTargetDepthVk::destroy()
 	m_context = nullptr;
 }
 
-ITexture* RenderTargetDepthVk::resolve()
+ITexture::Size RenderTargetDepthVk::getSize() const
 {
-	return this;
+	return { m_width, m_height, 1, 1 };
 }
 
-int32_t RenderTargetDepthVk::getMips() const
-{
-	return 1;
-}
-
-int32_t RenderTargetDepthVk::getWidth() const
-{
-	return m_width;
-}
-
-int32_t RenderTargetDepthVk::getHeight() const
-{
-	return m_height;
-}
-
-bool RenderTargetDepthVk::lock(int32_t level, Lock& lock)
+bool RenderTargetDepthVk::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDepthVk::unlock(int32_t level)
+void RenderTargetDepthVk::unlock(int32_t side, int32_t level)
 {
 }
 
-void* RenderTargetDepthVk::getInternalHandle()
+ITexture* RenderTargetDepthVk::resolve()
 {
-	return nullptr;
+	return this;
 }
 
 void RenderTargetDepthVk::prepareAsTarget(CommandBuffer* commandBuffer)

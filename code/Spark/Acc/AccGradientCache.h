@@ -18,7 +18,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class ISimpleTexture;
+class ITexture;
 
 	}
 
@@ -34,7 +34,7 @@ class FillStyle;
 class AccGradientCache : public Object
 {
 public:
-	AccGradientCache(render::IRenderSystem* renderSystem);
+	explicit AccGradientCache(render::IRenderSystem* renderSystem);
 
 	virtual ~AccGradientCache();
 
@@ -48,7 +48,7 @@ public:
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::ISimpleTexture > m_gradientsTexture;
+	Ref< render::ITexture > m_gradientsTexture;
 	SmallMap< uint64_t, Ref< AccBitmapRect > > m_cache;
 	AutoArrayPtr< uint8_t > m_gradientsData;
 	uint32_t m_currentGradientColumn = 0;

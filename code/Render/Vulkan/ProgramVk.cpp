@@ -12,13 +12,11 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Thread/Atomic.h"
 #include "Render/Vulkan/BufferViewVk.h"
-#include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
-#include "Render/Vulkan/SimpleTextureVk.h"
-#include "Render/Vulkan/VolumeTextureVk.h"
+#include "Render/Vulkan/TextureVk.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -682,14 +680,9 @@ bool ProgramVk::validateDescriptorSet()
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = 0;
 
-		if (is_a< SimpleTextureVk >(resolved))
+		if (is_a< TextureVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< SimpleTextureVk* >(resolved)->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< CubeTextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< CubeTextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 		else if (is_a< RenderTargetVk >(resolved))
@@ -701,11 +694,6 @@ bool ProgramVk::validateDescriptorSet()
 		{
 			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< VolumeTextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< VolumeTextureVk* >(resolved)->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		}
 
 		T_ASSERT (imageInfo.imageView != 0);

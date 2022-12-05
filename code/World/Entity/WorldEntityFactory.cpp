@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/DeepClone.h"
-#include "Render/ICubeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
@@ -218,7 +217,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (auto probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
-		resource::Proxy< render::ICubeTexture > texture;
+		resource::Proxy< render::ITexture > texture;
 		bool dirty = false;
 
 		if (probeComponentData->getTexture())
@@ -243,7 +242,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			ctcd.sRGB = false;
 			ctcd.immutable = false;
 
-			texture = resource::Proxy< render::ICubeTexture >(m_renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W));
+			texture = resource::Proxy< render::ITexture >(m_renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W));
 			if (!texture)
 				return nullptr;
 

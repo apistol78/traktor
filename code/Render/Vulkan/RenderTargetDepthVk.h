@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
@@ -22,7 +22,7 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup Vulkan
  */
-class RenderTargetDepthVk : public ISimpleTexture
+class RenderTargetDepthVk : public ITexture
 {
 	T_RTTI_CLASS;
 
@@ -45,19 +45,13 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual Size getSize() const override final;
+
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
+
 	virtual ITexture* resolve() override final;
-
-	virtual int32_t getMips() const override final;
-
-	virtual int32_t getWidth() const override final;
-
-	virtual int32_t getHeight() const override final;
-
-	virtual bool lock(int32_t level, Lock& lock) override final;
-
-	virtual void unlock(int32_t level) override final;
-
-	virtual void* getInternalHandle() override final;
 
 	VkFormat getVkFormat() const { return m_format; }
 

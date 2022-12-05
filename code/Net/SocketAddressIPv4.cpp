@@ -135,18 +135,17 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
 #if defined(_WIN32)
+	uint8_t buf[4096];
 
 	ULONG bufLen = 0;
-	GetAdaptersInfo(0, &bufLen);
-
-	AutoPtr< _IP_ADAPTER_INFO, AllocFreeAlign > info ((PIP_ADAPTER_INFO)Alloc::acquireAlign(bufLen, 16, T_FILE_LINE));
-	if (!info.ptr())
+	GetAdaptersInfo(nullptr, &bufLen);
+	if (bufLen > sizeof(buf))
 		return false;
 
-	if (GetAdaptersInfo(info.ptr(), &bufLen) != NO_ERROR)
+	if (GetAdaptersInfo((PIP_ADAPTER_INFO)buf, &bufLen) != NO_ERROR)
 		return false;
 
-	for (PIP_ADAPTER_INFO ii = info.ptr(); ii; ii = ii->Next)
+	for (PIP_ADAPTER_INFO ii = (PIP_ADAPTER_INFO)buf; ii; ii = ii->Next)
 	{
 		Interface itf;
 

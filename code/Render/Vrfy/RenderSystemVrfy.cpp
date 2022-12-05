@@ -12,7 +12,6 @@
 #include "Core/Library/Library.h"
 #include "Render/VertexElement.h"
 #include "Render/Vrfy/BufferVrfy.h"
-#include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
@@ -20,8 +19,7 @@
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
-#include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/VolumeTextureVrfy.h"
+#include "Render/Vrfy/TextureVrfy.h"
 
 namespace traktor
 {
@@ -146,7 +144,7 @@ Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVec
 	return m_renderSystem->createVertexLayout(vertexElements);
 }
 
-Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_TRACE(L"createSimpleTexture");
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid texture width.");
@@ -162,14 +160,14 @@ Ref< ISimpleTexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureC
 		}
 	}
 
-	Ref< ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc, tag);
+	Ref< ITexture > texture = m_renderSystem->createSimpleTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
-	return new SimpleTextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture);
 }
 
-Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_TRACE(L"createCubeTexture");
 	T_CAPTURE_ASSERT(desc.side > 0, L"Invalid cube texture size.");
@@ -184,14 +182,14 @@ Ref< ICubeTexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateD
 		}
 	}
 
-	Ref< ICubeTexture > texture = m_renderSystem->createCubeTexture(desc, tag);
+	Ref< ITexture > texture = m_renderSystem->createCubeTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
-	return new CubeTextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture);
 }
 
-Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
 	T_CAPTURE_TRACE(L"createVolumeTexture");
 	T_CAPTURE_ASSERT(desc.width > 0, L"Invalid volume texture width.");
@@ -208,11 +206,11 @@ Ref< IVolumeTexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureC
 		}
 	}
 
-	Ref< IVolumeTexture > texture = m_renderSystem->createVolumeTexture(desc, tag);
+	Ref< ITexture > texture = m_renderSystem->createVolumeTexture(desc, tag);
 	if (!texture)
 		return nullptr;
 
-	return new VolumeTextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture);
 }
 
 Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)

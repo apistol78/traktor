@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Spark/BitmapTexture.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -16,12 +16,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapTexture", 0, BitmapTexture, Bitmap)
 
-BitmapTexture::BitmapTexture(render::ISimpleTexture* texture)
+BitmapTexture::BitmapTexture(render::ITexture* texture)
 :	Bitmap()
 ,	m_texture(texture)
 {
-	m_width = uint32_t(m_texture->getWidth());
-	m_height = uint32_t(m_texture->getHeight());
+	const auto sz = m_texture->getSize();
+	m_width = (uint32_t)sz.x;
+	m_height = (uint32_t)sz.y;
 }
 
 	}

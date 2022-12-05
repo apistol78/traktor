@@ -28,7 +28,7 @@ class Job;
 	{
 
 class IRenderSystem;
-class ISimpleTexture;
+class ITexture;
 
 	}
 
@@ -59,11 +59,11 @@ public:
 
 	void rewind();
 
-	render::ISimpleTexture* getTexture();
+	render::ITexture* getTexture();
 
 private:
 	Ref< IVideoDecoder > m_decoder;
-	Ref< render::ISimpleTexture > m_textures[4];
+	Ref< render::ITexture > m_textures[4];
 	float m_time;
 	float m_rate;
 	AutoPtr< uint8_t, AllocFreeAlign > m_frameBuffer;

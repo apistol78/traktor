@@ -12,7 +12,6 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"

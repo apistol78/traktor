@@ -19,9 +19,6 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
-#include "Render/ICubeTexture.h"
-#include "Render/ISimpleTexture.h"
-#include "Render/IVolumeTexture.h"
 #include "Render/RenderClassFactory.h"
 #include "Render/Context/ProgramParameters.h"
 #include "Render/Image2/ImageGraphContext.h"
@@ -117,10 +114,10 @@ Ref< BoxedPointer > Buffer_lock(Buffer* self)
 		return nullptr;
 }
 
-Ref< BoxedPointer > ISimpleTexture_lock(ISimpleTexture* self, int32_t level)
+Ref< BoxedPointer > ITexture_lock(ITexture* self, int32_t side, int32_t level)
 {
 	ITexture::Lock lock;
-	if (self->lock(level, lock))
+	if (self->lock(side, level, lock))
 		return new BoxedPointer(lock.bits);
 	else
 		return nullptr;
@@ -152,7 +149,7 @@ Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32
 //	return self->createStructBuffer(se, bufferSize, dynamic);
 //}
 
-Ref< ISimpleTexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, const BoxedSimpleTextureCreateDesc* stcd)
+Ref< ITexture > IRenderSystem_createSimpleTexture(IRenderSystem* self, const BoxedSimpleTextureCreateDesc* stcd)
 {
 	return self->createSimpleTexture(stcd->unbox(), T_FILE_LINE_W);
 }
@@ -216,27 +213,9 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBuffer);
 
 	auto classITexture = new AutoRuntimeClass< ITexture >();
+	classITexture->addMethod("lock", &ITexture_lock);
+	classITexture->addMethod("unlock", &ITexture::unlock);
 	registrar->registerClass(classITexture);
-
-	auto classICubeTexture = new AutoRuntimeClass< ICubeTexture >();
-	classICubeTexture->addProperty("side", &ICubeTexture::getSide);
-	classICubeTexture->addProperty("mips", &ICubeTexture::getMips);
-	registrar->registerClass(classICubeTexture);
-
-	auto classISimpleTexture = new AutoRuntimeClass< ISimpleTexture >();
-	classISimpleTexture->addProperty("width", &ISimpleTexture::getWidth);
-	classISimpleTexture->addProperty("height", &ISimpleTexture::getHeight);
-	classISimpleTexture->addProperty("mips", &ISimpleTexture::getMips);
-	classISimpleTexture->addMethod("lock", &ISimpleTexture_lock);
-	classISimpleTexture->addMethod("unlock", &ISimpleTexture::unlock);
-	registrar->registerClass(classISimpleTexture);
-
-	auto classIVolumeTexture = new AutoRuntimeClass< IVolumeTexture >();
-	classIVolumeTexture->addProperty("width", &IVolumeTexture::getWidth);
-	classIVolumeTexture->addProperty("height", &IVolumeTexture::getHeight);
-	classIVolumeTexture->addProperty("depth", &IVolumeTexture::getDepth);
-	classIVolumeTexture->addProperty("mips", &IVolumeTexture::getMips);
-	registrar->registerClass(classIVolumeTexture);
 
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
 	classIRenderSystem->addStaticMethod("getParameterHandle", &IRenderSystem_getHandle);

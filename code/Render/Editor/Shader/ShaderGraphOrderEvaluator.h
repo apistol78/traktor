@@ -42,14 +42,14 @@ public:
 		bool frequentUniformsAsLinear
 	);
 
-	PinOrderType evaluate(const Node* node, const std::wstring& inputPinName) const;
+	PinOrder evaluate(const Node* node, const std::wstring& inputPinName) const;
 
-	PinOrderType evaluate(const OutputPin* outputPin) const;
+	PinOrder evaluate(const OutputPin* outputPin) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	bool m_frequentUniformsAsLinear;
-	mutable SmallMap< const OutputPin*, PinOrderType > m_evaluated;
+	mutable SmallMap< const OutputPin*, PinOrder > m_evaluated;
 };
 
 	}

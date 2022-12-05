@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-class ISimpleTexture;
+class ITexture;
 
 	}
 
@@ -41,12 +41,12 @@ class T_DLLCLASS BitmapTexture : public Bitmap
 public:
 	BitmapTexture() = default;
 
-	explicit BitmapTexture(render::ISimpleTexture* texture);
+	explicit BitmapTexture(render::ITexture* texture);
 
-	render::ISimpleTexture* getTexture() const { return m_texture; }
+	render::ITexture* getTexture() const { return m_texture; }
 
 private:
-	Ref< render::ISimpleTexture > m_texture;
+	Ref< render::ITexture > m_texture;
 };
 
 	}

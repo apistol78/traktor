@@ -35,9 +35,9 @@ public:
 
 private:
 	IAllocator* m_systemAllocator;
-	BlockAllocator* m_blockAlloc[5];
-	int32_t m_blockAllocLock[5];
-	int8_t m_blockAllocFull[5];
+	BlockAllocator* m_blockAlloc[6];
+	int32_t m_blockAllocLock[6];
+	int8_t m_blockAllocFull[6];
 };
 
 }

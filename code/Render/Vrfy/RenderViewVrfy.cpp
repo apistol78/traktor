@@ -16,12 +16,10 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/BufferVrfy.h"
-#include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/RenderViewVrfy.h"
-#include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/VolumeTextureVrfy.h"
+#include "Render/Vrfy/TextureVrfy.h"
 
 namespace traktor
 {
@@ -359,77 +357,13 @@ bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinatio
 	ITexture* destinationTextureUnwrapped = nullptr;
 	ITexture* sourceTextureUnwrapped = nullptr;
 
-	if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(destinationTexture))
-	{
-		T_CAPTURE_ASSERT(destinationRegion.mip >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.mip < cubeTexture->getMips(), L"Invalid arguments.");
-
-		int32_t side = cubeTexture->getSide() >> destinationRegion.mip;
-
-		T_CAPTURE_ASSERT(destinationRegion.x >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.x + destinationRegion.width <= side, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.y >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.y + destinationRegion.height <= side, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.z >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.z < 6, L"Invalid arguments.");
-
-		destinationTextureUnwrapped = cubeTexture->getTexture();
-	}
-	else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(destinationTexture))
-	{
-		T_CAPTURE_ASSERT(destinationRegion.mip >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.mip < simpleTexture->getMips(), L"Invalid arguments.");
-
-		int32_t width = simpleTexture->getWidth() >> destinationRegion.mip;
-		int32_t height = simpleTexture->getHeight() >> destinationRegion.mip;
-
-		T_CAPTURE_ASSERT(destinationRegion.x >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.x + destinationRegion.width <= width, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.y >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.y + destinationRegion.height <= height, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(destinationRegion.z == 0, L"Invalid arguments.");
-
-		destinationTextureUnwrapped = simpleTexture->getTexture();
-	}
-	else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(destinationTexture))
-		destinationTextureUnwrapped = volumeTexture->getTexture();
+	if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(destinationTexture))
+		destinationTextureUnwrapped = textureVrfy->getTexture();
 	else
 		T_FATAL_ERROR;
 
-	if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(sourceTexture))
-	{
-		T_CAPTURE_ASSERT(sourceRegion.mip >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.mip < cubeTexture->getMips(), L"Invalid arguments.");
-
-		int32_t side = cubeTexture->getSide() >> sourceRegion.mip;
-
-		T_CAPTURE_ASSERT(sourceRegion.x >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.x + sourceRegion.width <= side, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.y >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.y + sourceRegion.height <= side, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.z >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.z < 6, L"Invalid arguments.");
-
-		sourceTextureUnwrapped = cubeTexture->getTexture();
-	}
-	else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(sourceTexture))
-	{
-		T_CAPTURE_ASSERT(sourceRegion.mip >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.mip < simpleTexture->getMips(), L"Invalid arguments.");
-
-		int32_t width = simpleTexture->getWidth() >> sourceRegion.mip;
-		int32_t height = simpleTexture->getHeight() >> sourceRegion.mip;
-
-		T_CAPTURE_ASSERT(sourceRegion.x >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.x + sourceRegion.width <= width, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.y >= 0, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.y + sourceRegion.height <= height, L"Invalid arguments.");
-		T_CAPTURE_ASSERT(sourceRegion.z == 0, L"Invalid arguments.");
-
-		sourceTextureUnwrapped = simpleTexture->getTexture();
-	}
-	else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(sourceTexture))
-		sourceTextureUnwrapped = volumeTexture->getTexture();
+	if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(sourceTexture))
+		sourceTextureUnwrapped = textureVrfy->getTexture();
 	else
 		T_FATAL_ERROR;
 

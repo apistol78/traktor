@@ -15,7 +15,7 @@ namespace traktor::world
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityComponent)
 
 ProbeComponent::ProbeComponent(
-	const resource::Proxy< render::ICubeTexture >& texture,
+	const resource::Proxy< render::ITexture >& texture,
 	float intensity,
 	const Aabb3& volume,
 	bool local,

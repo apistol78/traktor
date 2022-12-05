@@ -45,7 +45,7 @@
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Script/Editor/Script.h"
@@ -1140,8 +1140,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
-			bool showRest = m_toolRest->isToggled();
-			bool showPose = m_toolPose->isToggled();
+			const bool showRest = m_toolRest->isToggled();
+			const bool showPose = m_toolPose->isToggled();
 			if (showRest || showPose)
 			{
 				AlignedVector< uint32_t > childJointIds;

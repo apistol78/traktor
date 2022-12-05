@@ -130,12 +130,12 @@ int32_t RenderTargetSetVk::getHeight() const
 	return m_setDesc.height;
 }
 
-ISimpleTexture* RenderTargetSetVk::getColorTexture(int32_t index) const
+ITexture* RenderTargetSetVk::getColorTexture(int32_t index) const
 {
 	return index < (int32_t)m_colorTargets.size() ? m_colorTargets[index] : nullptr;
 }
 
-ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
+ITexture* RenderTargetSetVk::getDepthTexture() const
 {
 	return m_depthTarget;
 }

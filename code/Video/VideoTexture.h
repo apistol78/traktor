@@ -10,7 +10,7 @@
 
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Timer/Timer.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +37,7 @@ class IRenderSystem;
 
 class IVideoDecoder;
 
-class T_DLLCLASS VideoTexture : public render::ISimpleTexture
+class T_DLLCLASS VideoTexture : public render::ITexture
 {
 	T_RTTI_CLASS;
 
@@ -50,23 +50,17 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual Size getSize() const override final;
+
+	virtual bool lock(int32_t side, int32_t level, render::ITexture::Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
+
 	virtual render::ITexture* resolve() override final;
-
-	virtual int32_t getWidth() const override final;
-
-	virtual int32_t getHeight() const override final;
-
-	virtual int32_t getMips() const override final;
-
-	virtual bool lock(int32_t level, render::ITexture::Lock& lock) override final;
-
-	virtual void unlock(int32_t level) override final;
-
-	virtual void* getInternalHandle() override final;
 
 private:
 	Ref< IVideoDecoder > m_decoder;
-	Ref< render::ISimpleTexture > m_textures[4];
+	Ref< render::ITexture > m_textures[4];
 	Timer m_timer;
 	float m_rate;
 	AutoPtr< uint8_t, AllocFreeAlign > m_frameBuffer;

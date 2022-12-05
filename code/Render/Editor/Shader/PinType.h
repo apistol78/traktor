@@ -18,7 +18,7 @@ namespace traktor::render
  *
  * \note Ordered in predecence; higher number is higher predecence.
  */
-enum class PinType
+enum class PinType : int32_t
 {
 	Void = 0,
 	Scalar1 = 1,
@@ -80,40 +80,40 @@ inline int32_t getPinTypeWidth(PinType pinType)
 /*! Pin order type.
  * \ingroup Render
  */
-enum PinOrderType
+enum class PinOrder : int32_t
 {
-	PotConstant = 0,	/*!< Constant order. */
-	PotLinear = 1,		/*!< Linear order. */
-	PotNonLinear = 2	/*!< Non-linear order, i.e. cubic or higher. */
+	Constant = 0,	/*!< Constant order. */
+	Linear = 1,		/*!< Linear order. */
+	NonLinear = 2	/*!< Non-linear order, i.e. cubic or higher. */
 };
 
-inline PinOrderType pinOrderAdd(PinOrderType pinOrder1, PinOrderType pinOrder2)
+inline PinOrder pinOrderAdd(PinOrder pinOrder1, PinOrder pinOrder2)
 {
-	PinOrderType pinOrder = (PinOrderType)(pinOrder1 + pinOrder2);
-	return pinOrder <= PotNonLinear ? pinOrder : PotNonLinear;
+	PinOrder pinOrder = (PinOrder)((int32_t)pinOrder1 + (int32_t)pinOrder2);
+	return pinOrder <= PinOrder::NonLinear ? pinOrder : PinOrder::NonLinear;
 }
 
-inline PinOrderType pinOrderMax(const PinOrderType* pinOrders, int32_t pinOrdersCount)
+inline PinOrder pinOrderMax(const PinOrder* pinOrders, int32_t pinOrdersCount)
 {
-	PinOrderType pinOrder = PotConstant;
+	PinOrder pinOrder = PinOrder::Constant;
 	for (int32_t i = 0; i < pinOrdersCount; ++i)
 		pinOrder = (pinOrders[i] > pinOrder) ? pinOrders[i] : pinOrder;
 	return pinOrder;
 }
 
-inline PinOrderType pinOrderMax(PinOrderType pinOrder1, PinOrderType pinOrder2)
+inline PinOrder pinOrderMax(PinOrder pinOrder1, PinOrder pinOrder2)
 {
 	return pinOrder1 > pinOrder2 ? pinOrder1 : pinOrder2;
 }
 
-inline PinOrderType pinOrderConstantOrNonLinear(const PinOrderType* pinOrders, int32_t pinOrdersCount)
+inline PinOrder pinOrderConstantOrNonLinear(const PinOrder* pinOrders, int32_t pinOrdersCount)
 {
 	for (int32_t i = 0; i < pinOrdersCount; ++i)
 	{
-		if (pinOrders[i] != PotConstant)
-			return PotNonLinear;
+		if (pinOrders[i] != PinOrder::Constant)
+			return PinOrder::NonLinear;
 	}
-	return PotConstant;
+	return PinOrder::Constant;
 }
 
 }

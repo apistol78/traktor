@@ -178,11 +178,11 @@ bool MixNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType MixNodeTraits::evaluateOrder(
+PinOrder MixNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {

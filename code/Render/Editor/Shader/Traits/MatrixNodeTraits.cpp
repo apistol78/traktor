@@ -108,11 +108,11 @@ bool MatrixNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType MatrixNodeTraits::evaluateOrder(
+PinOrder MatrixNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
@@ -121,7 +121,7 @@ PinOrderType MatrixNodeTraits::evaluateOrder(
 	else if (is_a< MatrixOut >(node))
 		return pinOrderMax(inputPinOrders, node->getInputPinCount());
 	else
-		return PotConstant;
+		return PinOrder::Constant;
 }
 
 	}

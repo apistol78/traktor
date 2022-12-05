@@ -14,7 +14,6 @@
 #include "Core/Math/Half.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
@@ -297,12 +296,12 @@ bool AccShape::createFromTriangles(
 			stcd.sRGB = false;
 			stcd.immutable = false;
 
-			Ref< render::ISimpleTexture > lineTexture = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+			Ref< render::ITexture > lineTexture = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 			if (!lineTexture)
 				return false;
 
 			render::ITexture::Lock lock;
-			if (!lineTexture->lock(0, lock))
+			if (!lineTexture->lock(0, 0, lock))
 				return false;
 
 			half_t* lineData = static_cast< half_t* >(lock.bits);
@@ -347,7 +346,7 @@ bool AccShape::createFromTriangles(
 
 			T_ASSERT(lineDataOffset == lineDataSize);
 
-			lineTexture->unlock(0);
+			lineTexture->unlock(0, 0);
 			vertexRange->unlock();
 		}
 

@@ -77,8 +77,7 @@ void ShadowProject::build(
 	ScreenRenderer* screenRenderer
 ) const
 {
-	// \tbd Assuming ISimpleTexture
-	auto shadowMap = (ISimpleTexture*)context.findTexture(renderGraph, s_handleShadowMap);
+	auto shadowMap = context.findTexture(renderGraph, s_handleShadowMap);
 	if (!shadowMap)
 		return;
 
@@ -87,7 +86,7 @@ void ShadowProject::build(
 	const float shadowFadeRate = 1.0f / (view.shadowFarZ - shadowFadeZ);
 
 	const Vector4 shadowMapSizeAndBias(
-		1.0f / (float)shadowMap->getWidth(),
+		1.0f / (float)shadowMap->getSize().x,
 		shadowMapBias / 1.0f,
 		shadowFadeZ,
 		shadowFadeRate

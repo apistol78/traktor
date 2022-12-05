@@ -44,18 +44,26 @@ IAllocator* getAllocator()
 	{
 		s_stdAllocator = allocConstruct< StdAllocator >();
 
-#if defined(__ANDROID__) || defined(__APPLE__)
+#if defined(__ANDROID__) || defined(__APPLE__) || defined(__RPI__)
 		s_allocator = s_stdAllocator;
-#elif !defined(_DEBUG) || defined(__LINUX__) || defined(__RPI__)
-		//s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
-		s_allocator = s_stdAllocator;
-#else
+
+#elif defined(__LINUX__)
+#	if !defined(_DEBUG)
+		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+#	else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
-		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
-		//s_allocator = s_stdAllocator;
+#	endif
+
+#elif defined(_WIN32)
+#	if !defined(_DEBUG)
+		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+#	else
+		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
+#	endif
+
 #endif
 
-#if !defined(__MAC__) && !defined(__IOS__)
+#if !defined(__APPLE__)
 		std::atexit(destroyAllocator);
 #endif
 	}

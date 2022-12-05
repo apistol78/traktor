@@ -7,12 +7,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Vrfy/CubeTextureVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ProgramVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
-#include "Render/Vrfy/SimpleTextureVrfy.h"
-#include "Render/Vrfy/VolumeTextureVrfy.h"
+#include "Render/Vrfy/TextureVrfy.h"
 
 namespace traktor
 {
@@ -172,38 +170,9 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 
 	if (texture)
 	{
-		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(texture->resolve()))
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(texture->resolve()))
 		{
-			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-			// if (it != m_shadow.end())
-			// {
-			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::TextureCube, L"Incorrect parameter type, not texture CUBE.");
-			// 	it->second.undefined = false;
-			// }
-		}
-		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(texture->resolve()))
-		{
-			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-			// if (it != m_shadow.end())
-			// {
-			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Texture2D, L"Incorrect parameter type, not texture 2D.");
-			// 	it->second.undefined = false;
-			// }
-		}
-		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(texture->resolve()))
-		{
-			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to set destroyed texture as shader parameter.");
-			// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-			// if (it != m_shadow.end())
-			// {
-			// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-			// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Texture3D, L"Incorrect parameter type, not texture 3D.");
-			// 	it->second.undefined = false;
-			// }
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to set destroyed texture as shader parameter.");
 		}
 		else
 			T_FATAL_ERROR;
@@ -260,20 +229,10 @@ void ProgramVrfy::verify()
 		if (!i->second)
 			continue;
 
-		if (CubeTextureVrfy* cubeTexture = dynamic_type_cast< CubeTextureVrfy* >(i->second->resolve()))
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(i->second->resolve()))
 		{
-			T_CAPTURE_ASSERT(cubeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
-			m_program->setTextureParameter(i->first, cubeTexture->getTexture());
-		}
-		else if (SimpleTextureVrfy* simpleTexture = dynamic_type_cast< SimpleTextureVrfy* >(i->second->resolve()))
-		{
-			T_CAPTURE_ASSERT(simpleTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
-			m_program->setTextureParameter(i->first, simpleTexture->getTexture());
-		}
-		else if (VolumeTextureVrfy* volumeTexture = dynamic_type_cast< VolumeTextureVrfy* >(i->second->resolve()))
-		{
-			T_CAPTURE_ASSERT(volumeTexture->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
-			m_program->setTextureParameter(i->first, volumeTexture->getTexture());
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
+			m_program->setTextureParameter(i->first, textureVrfy->getTexture());
 		}
 	}
 }

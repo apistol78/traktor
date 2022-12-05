@@ -19,7 +19,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
-#include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderSystemVk.h"
@@ -27,9 +26,8 @@
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
-#include "Render/Vulkan/SimpleTextureVk.h"
+#include "Render/Vulkan/TextureVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
-#include "Render/Vulkan/VolumeTextureVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
@@ -571,27 +569,27 @@ Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVecto
 	return new VertexLayoutVk(vibd, vads, cs.get());
 }
 
-Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< SimpleTextureVk > texture = new SimpleTextureVk(m_context, m_statistics.simpleTextures);
+	Ref< TextureVk > texture = new TextureVk(m_context, m_statistics.simpleTextures);
 	if (texture->create(desc, tag))
 		return texture;
 	else
 		return nullptr;
 }
 
-Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< CubeTextureVk > texture = new CubeTextureVk(m_context, desc, m_statistics.cubeTextures);
-	if (texture->create(tag))
+	Ref< TextureVk > texture = new TextureVk(m_context, m_statistics.cubeTextures);
+	if (texture->create(desc, tag))
 		return texture;
 	else
 		return nullptr;
 }
 
-Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
+Ref< ITexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
 {
-	Ref< VolumeTextureVk > texture = new VolumeTextureVk(m_context, m_statistics.volumeTextures);
+	Ref< TextureVk > texture = new TextureVk(m_context, m_statistics.volumeTextures);
 	if (texture->create(desc, tag))
 		return texture;
 	else

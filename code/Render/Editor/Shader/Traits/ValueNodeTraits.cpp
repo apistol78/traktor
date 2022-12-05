@@ -90,15 +90,15 @@ bool ValueNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType ValueNodeTraits::evaluateOrder(
+PinOrder ValueNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
-	return PotNonLinear;
+	return PinOrder::NonLinear;
 }
 
 	}

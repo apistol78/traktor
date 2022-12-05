@@ -184,11 +184,11 @@ bool IterativeNodeTraits::evaluatePartial(
 	return false;
 }
 
-PinOrderType IterativeNodeTraits::evaluateOrder(
+PinOrder IterativeNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrderType* inputPinOrders,
+	const PinOrder* inputPinOrders,
 	bool frequentAsLinear
 ) const
 {
@@ -197,7 +197,7 @@ PinOrderType IterativeNodeTraits::evaluateOrder(
 		nodeOutputPin->getName() == L"X" ||
 		nodeOutputPin->getName() == L"Y"
 	)
-		return PotConstant;
+		return PinOrder::Constant;
 	else if (
 		is_a< Iterate >(node) ||
 		is_a< Iterate2d >(node) ||
@@ -230,7 +230,7 @@ PinOrderType IterativeNodeTraits::evaluateOrder(
 				inputPinOrders[9]	// Initial3
 			);
 		else
-			return PotConstant;
+			return PinOrder::Constant;
 	}
 	else	// Sum
 		return inputPinOrders[0];

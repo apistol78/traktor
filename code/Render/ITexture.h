@@ -35,9 +35,49 @@ public:
 		void* bits;
 	};
 
+	struct Size
+	{
+		int32_t x;
+		int32_t y;
+		int32_t z;
+		int32_t mips;
+	};
+
+	enum Side : int32_t
+	{
+		PositiveX = 0,
+		NegativeX = 1,
+		PositiveY = 2,
+		NegativeY = 3,
+		PositiveZ = 4,
+		NegativeZ = 5
+	};
+
 	/*! Destroy texture.
 	 */
 	virtual void destroy() = 0;
+
+	/*! Get size of texture.
+	 *
+	 * \return Texture size in pixels.
+	 */
+	virtual Size getSize() const = 0;
+
+	/*! Lock access to texture data.
+	 *
+	 * \param side Cube map side (0 if not cube map).
+	 * \param level Mip level.
+	 * \param lock Information about locked region.
+	 * \return True if locked.
+	 */
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) = 0;
+
+	/*! Unlock access to texture data.
+	 *
+	 * \param side Cube map side (0 if not cube map).
+	 * \param level Mip level.
+	 */
+	virtual void unlock(int32_t side, int32_t level) = 0;
 
 	/*! Resolve render texture.
 	 *

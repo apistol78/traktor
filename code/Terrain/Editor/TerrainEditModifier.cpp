@@ -22,7 +22,6 @@
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -232,7 +231,7 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer heights to texture.
 		render::ITexture::Lock nl;
-		if (m_heightMap->lock(0, nl))
+		if (m_heightMap->lock(0, 0, nl))
 		{
 			float* ptr = (float*)nl.bits;
 			for (int32_t v = 0; v < size; ++v)
@@ -243,7 +242,7 @@ bool TerrainEditModifier::activate()
 					*ptr++ = height;
 				}
 			}
-			m_heightMap->unlock(0);
+			m_heightMap->unlock(0, 0);
 		}
 
 		// Replace height map in resource with our texture.
@@ -295,10 +294,10 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer splats to texture.
 		render::ITexture::Lock nl;
-		if (m_splatMap->lock(0, nl))
+		if (m_splatMap->lock(0, 0, nl))
 		{
 			std::memcpy(nl.bits, m_splatImage->getData(), size * size * 4);
-			m_splatMap->unlock(0);
+			m_splatMap->unlock(0, 0);
 		}
 
 		// Replace splat map in resource with our texture.
@@ -354,10 +353,10 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer colors to texture.
 		render::ITexture::Lock nl;
-		if (m_colorMap->lock(0, nl))
+		if (m_colorMap->lock(0, 0, nl))
 		{
 			std::memcpy(nl.bits, m_colorImageLowPrecision->getData(), size * size * 4);
-			m_colorMap->unlock(0);
+			m_colorMap->unlock(0, 0);
 		}
 
 		// Replace color map in resource with our texture.
@@ -396,10 +395,10 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer normals to texture.
 		render::ITexture::Lock nl;
-		if (m_normalMap->lock(0, nl))
+		if (m_normalMap->lock(0, 0, nl))
 		{
 			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
-			m_normalMap->unlock(0);
+			m_normalMap->unlock(0, 0);
 		}
 
 		// Replace normal map in resource with our texture.
@@ -429,10 +428,10 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer cuts to texture.
 		render::ITexture::Lock nl;
-		if (m_cutMap->lock(0, nl))
+		if (m_cutMap->lock(0, 0, nl))
 		{
 			std::memcpy(nl.bits, m_cutData.c_ptr(), size * size);
-			m_cutMap->unlock(0);
+			m_cutMap->unlock(0, 0);
 		}
 
 		// Replace cut map in resource with our texture.
@@ -462,10 +461,10 @@ bool TerrainEditModifier::activate()
 	{
 		// Transfer material mask to texture.
 		render::ITexture::Lock nl;
-		if (m_attributeMap->lock(0, nl))
+		if (m_attributeMap->lock(0, 0, nl))
 		{
 			std::memcpy(nl.bits, m_attributeData.c_ptr(), size * size);
-			m_attributeMap->unlock(0);
+			m_attributeMap->unlock(0, 0);
 		}
 
 		// Replace material mask map in resource with our texture.
@@ -800,7 +799,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	{
 		// Transfer heights to texture.
 		render::ITexture::Lock nl;
-		if (m_heightMap->lock(0, nl))
+		if (m_heightMap->lock(0, 0, nl))
 		{
 			float* ptr = (float*)nl.bits;
 			for (int32_t v = 0; v < size; ++v)
@@ -811,7 +810,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 					*ptr++ = height;
 				}
 			}
-			m_heightMap->unlock(0);
+			m_heightMap->unlock(0, 0);
 		}
 
 		// Replace height map in resource with our texture.
@@ -823,7 +822,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	{
 		// Transfer splats to texture.
 		render::ITexture::Lock cl;
-		if (m_splatMap->lock(0, cl))
+		if (m_splatMap->lock(0, 0, cl))
 		{
 			const uint8_t* src = static_cast< const uint8_t* >(m_splatImage->getData());
 			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
@@ -831,7 +830,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
 
-			m_splatMap->unlock(0);
+			m_splatMap->unlock(0, 0);
 		}
 	}
 
@@ -840,7 +839,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	{
 		// Transfer colors to texture.
 		render::ITexture::Lock cl;
-		if (m_colorMap->lock(0, cl))
+		if (m_colorMap->lock(0, 0, cl))
 		{
 			m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
 
@@ -850,7 +849,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
 
-			m_colorMap->unlock(0);
+			m_colorMap->unlock(0, 0);
 		}
 	}
 
@@ -875,7 +874,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 		// Transfer normals to texture.
 		render::ITexture::Lock nl;
-		if (m_normalMap->lock(0, nl))
+		if (m_normalMap->lock(0, 0, nl))
 		{
 			const uint8_t* src = static_cast< const uint8_t* >(m_normalData.c_ptr());
 			uint8_t* dst = static_cast< uint8_t* >(nl.bits);
@@ -883,7 +882,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * nl.pitch], &src[y * size * 4], size * 4);
 
-			m_normalMap->unlock(0);
+			m_normalMap->unlock(0, 0);
 		}
 
 		// Replace normal map in resource with our texture.
@@ -903,7 +902,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 		// Transfer cuts to texture.
 		render::ITexture::Lock cl;
-		if (m_cutMap->lock(0, cl))
+		if (m_cutMap->lock(0, 0, cl))
 		{
 			const uint8_t* src = static_cast< const uint8_t* >(m_cutData.c_ptr());
 			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
@@ -911,7 +910,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
 
-			m_cutMap->unlock(0);
+			m_cutMap->unlock(0, 0);
 		}
 
 		// Replace cut map in resource with our texture.
@@ -931,7 +930,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 		// Transfer cuts to texture.
 		render::ITexture::Lock cl;
-		if (m_attributeMap->lock(0, cl))
+		if (m_attributeMap->lock(0, 0, cl))
 		{
 			const uint8_t* src = static_cast< const uint8_t* >(m_attributeData.c_ptr());
 			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
@@ -939,7 +938,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			for (int32_t y = 0; y < size; ++y)
 				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
 
-			m_attributeMap->unlock(0);
+			m_attributeMap->unlock(0, 0);
 		}
 
 		// Replace material mask map in resource with our texture.

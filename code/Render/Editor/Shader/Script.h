@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/TypedOutputPin.h"
 
@@ -82,8 +82,8 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_technique;
-	std::vector< InputPin* > m_inputPins;
-	std::vector< TypedOutputPin* > m_outputPins;
+	AlignedVector< InputPin* > m_inputPins;
+	AlignedVector< TypedOutputPin* > m_outputPins;
 	std::wstring m_script;
 };
 
