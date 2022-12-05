@@ -20,10 +20,10 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 10, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 11, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
-:	m_lightType(LightType::LtDisabled)
+:	m_lightType(LightType::Disabled)
 ,	m_color(1.0f, 1.0f, 1.0f, 0.0f)
 ,	m_intensity(1000.0f)
 ,	m_castShadow(false)
@@ -41,16 +41,30 @@ void LightComponentData::setTransform(const EntityData* owner, const Transform& 
 
 void LightComponentData::serialize(ISerializer& s)
 {
-	const MemberEnum< LightType >::Key c_LightType_Keys[] =
+	if (s.getVersion< LightComponentData >() >= 11)
 	{
-		{ L"LtDisabled", LightType::LtDisabled },
-		{ L"LtDirectional", LightType::LtDirectional },
-		{ L"LtPoint", LightType::LtPoint },
-		{ L"LtSpot", LightType::LtSpot },
-		{ 0 }
-	};
-
-	s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
+		const MemberEnum< LightType >::Key c_LightType_Keys[] =
+		{
+			{ L"Disabled", LightType::Disabled },
+			{ L"Directional", LightType::Directional },
+			{ L"Point", LightType::Point },
+			{ L"Spot", LightType::Spot },
+			{ 0 }
+		};
+		s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
+	}
+	else
+	{
+		const MemberEnum< LightType >::Key c_LightType_Keys[] =
+		{
+			{ L"LtDisabled", LightType::Disabled },
+			{ L"LtDirectional", LightType::Directional },
+			{ L"LtPoint", LightType::Point },
+			{ L"LtSpot", LightType::Spot },
+			{ 0 }
+		};
+		s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
+	}
 
 	if (s.getVersion< LightComponentData >() >= 5)
 	{

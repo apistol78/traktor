@@ -46,10 +46,10 @@ enum class Projection
 
 enum class LightType
 {
-	LtDisabled = 0,
-	LtDirectional = 1,
-	LtPoint = 2,
-	LtSpot = 3
+	Disabled = 0,
+	Directional = 1,
+	Point = 2,
+	Spot = 3
 };
 
 /*! Update parameters. */

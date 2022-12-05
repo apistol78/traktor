@@ -344,7 +344,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_entity->update(up);
 
 		world::LightComponent lightComponent(
-			world::LightType::LtDirectional,
+			world::LightType::Directional,
 			Color4f(1.0f, 1.0f, 1.0f, 1.0f),
 			false,
 			1000.0f,

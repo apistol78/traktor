@@ -27,7 +27,7 @@ void LightRenderer::gather(
 )
 {
 	const LightComponent* lightComponent = static_cast< const LightComponent* >(renderable);
-	if (lightComponent->getLightType() != LightType::LtDisabled)
+	if (lightComponent->getLightType() != LightType::Disabled)
 		context.include(this, renderable);
 }
 
