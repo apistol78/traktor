@@ -6368,7 +6368,7 @@
 																	<targetProfile>TpDebug</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/3rdp/renderdoc</item>
+																		<item>$(RENDERDOC_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
@@ -6405,7 +6405,7 @@
 																	<targetProfile>TpRelease</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/3rdp/renderdoc</item>
+																		<item>$(RENDERDOC_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
@@ -6442,7 +6442,7 @@
 																	<targetProfile>TpDebug</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/3rdp/renderdoc</item>
+																		<item>$(RENDERDOC_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -6475,7 +6475,7 @@
 																	<targetProfile>TpRelease</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/3rdp/renderdoc</item>
+																		<item>$(RENDERDOC_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -20766,18 +20766,18 @@
 						<item>$(VULKAN_SDK)/Lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>MachineIndependent.lib</item>
-						<item>OSDependent.lib</item>
-						<item>OGLCompiler.lib</item>
-						<item>SPIRV.lib</item>
-						<item>SPIRV-Tools.lib</item>
-						<item>SPIRV-Tools-opt.lib</item>
-						<item>glslang.lib</item>
-						<item>spirv-cross-core.lib</item>
-						<item>spirv-cross-glsl.lib</item>
-						<item>spirv-cross-hlsl.lib</item>
-						<item>spirv-cross-msl.lib</item>
-						<item>shaderc_combined.lib</item>
+						<item>MachineIndependentd.lib</item>
+						<item>OSDependentd.lib</item>
+						<item>OGLCompilerd.lib</item>
+						<item>SPIRVd.lib</item>
+						<item>SPIRV-Toolsd.lib</item>
+						<item>SPIRV-Tools-optd.lib</item>
+						<item>glslangd.lib</item>
+						<item>spirv-cross-cored.lib</item>
+						<item>spirv-cross-glsld.lib</item>
+						<item>spirv-cross-hlsld.lib</item>
+						<item>spirv-cross-msld.lib</item>
+						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -20874,18 +20874,18 @@
 						<item>$(VULKAN_SDK)/Lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>MachineIndependent.lib</item>
-						<item>OSDependent.lib</item>
-						<item>OGLCompiler.lib</item>
-						<item>SPIRV.lib</item>
-						<item>SPIRV-Tools.lib</item>
-						<item>SPIRV-Tools-opt.lib</item>
-						<item>glslang.lib</item>
-						<item>spirv-cross-core.lib</item>
-						<item>spirv-cross-glsl.lib</item>
-						<item>spirv-cross-hlsl.lib</item>
-						<item>spirv-cross-msl.lib</item>
-						<item>shaderc_combined.lib</item>
+						<item>MachineIndependentd.lib</item>
+						<item>OSDependentd.lib</item>
+						<item>OGLCompilerd.lib</item>
+						<item>SPIRVd.lib</item>
+						<item>SPIRV-Toolsd.lib</item>
+						<item>SPIRV-Tools-optd.lib</item>
+						<item>glslangd.lib</item>
+						<item>spirv-cross-cored.lib</item>
+						<item>spirv-cross-glsld.lib</item>
+						<item>spirv-cross-hlsld.lib</item>
+						<item>spirv-cross-msld.lib</item>
+						<item>shaderc_combinedd.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>

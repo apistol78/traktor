@@ -457,6 +457,17 @@ local PACKAGES =
 			run:execute("unzip -qq wix311-binaries.zip")
 		end
 	},
+
+	-- RenderDoc
+	{
+		type = "GET",
+		name = "renderdoc",
+		os = "windows",
+		url = "https://renderdoc.org/stable/1.24/RenderDoc_1.24_64.zip",
+		patch = function()
+			run:execute("unzip -qq RenderDoc_1.24_64.zip")
+		end
+	},
 }
 
 --[[

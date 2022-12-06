@@ -217,6 +217,8 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 		optimizer.RegisterPass(spvtools::CreateConvertRelaxedToHalfPass());
 
 	spvtools::OptimizerOptions spvOptOptions;
+	spvOptOptions.set_run_validator(false);		// Validator seems to crash so we disable it for now.
+
 	std::vector< uint32_t > opted;
 	if (optimizer.Run(spirv.c_ptr(), spirv.size(), &opted, spvOptOptions))
 		spirv = AlignedVector< uint32_t >(opted.begin(), opted.end());

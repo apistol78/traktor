@@ -42,11 +42,13 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
+		const std::wstring renderDocDLL = Path(L"$(RENDERDOC_SDK)/renderdoc.dll").getPathNameOS();
+
 		m_libRenderDoc = new Library();
-		if (m_libRenderDoc->open(L"c:\\Program Files\\RenderDoc\\renderdoc.dll"))
+		if (m_libRenderDoc->open(renderDocDLL.c_str()))
 		{
 			pRENDERDOC_GetAPI RENDERDOC_GetAPI = (pRENDERDOC_GetAPI)m_libRenderDoc->find(L"RENDERDOC_GetAPI");
-			int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_4_1, (void **)&m_apiRenderDoc);
+			int ret = RENDERDOC_GetAPI(eRENDERDOC_API_Version_1_6_0, (void **)&m_apiRenderDoc);
 			if (ret != 1)
 				m_apiRenderDoc = nullptr;
 		}
