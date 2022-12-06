@@ -30,7 +30,7 @@ namespace traktor
 const uint32_t c_stripeLength = 64;
 const uint32_t c_trailCount = 16;
 
-render::handle_t s_handleTimeAndAge = 0;
+render::Handle s_handleTimeAndAge(L"TimeAndAge");
 
 		}
 
@@ -40,8 +40,6 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 :	m_count(0)
 ,	m_vertex(nullptr)
 {
-	s_handleTimeAndAge = render::getParameterHandle(L"TimeAndAge");
-
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(TrailVertex, position), 0));
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
@@ -111,8 +109,8 @@ void TrailRenderer::render(
 	Scalar tln = 0.0_simd;
 	for (int32_t i = pointCount - 1; i >= 1; --i)
 	{
-		Vector4 vp0 = points[i - 1];
-		Vector4 vp1 = points[i];
+		const Vector4 vp0 = points[i - 1];
+		const Vector4 vp1 = points[i];
 		tln += (vp1 - vp0).xyz0().length();
 	}
 
@@ -123,15 +121,15 @@ void TrailRenderer::render(
 
 	for (int32_t i = pointCount - 1; i > 1; --i)
 	{
-		Vector4 vp0 = points[i - 1];
-		Vector4 vp1 = points[i];
+		const Vector4 vp0 = points[i - 1];
+		const Vector4 vp1 = points[i];
 
-		Vector4 direction = (vp1 - vp0).xyz0();
-		Scalar ln = direction.length2();
+		const Vector4 direction = (vp1 - vp0).xyz0();
+		const Scalar ln = direction.length2();
 		if (ln <= FUZZY_EPSILON * FUZZY_EPSILON)
 			continue;
 
-		Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
+		const Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
 
 		vp1.storeAligned(vertex->position);
 		up.storeAligned(vertex->direction);
@@ -154,18 +152,18 @@ void TrailRenderer::render(
 
 	// Add tail.
 	{
-		Vector4 vp0 = points[0];
-		Vector4 vp1 = points[1];
+		const Vector4 vp0 = points[0];
+		const Vector4 vp1 = points[1];
 
 		Vector4 direction = (vp1 - vp0).xyz0();
-		Scalar ln = direction.length2();
+		const Scalar ln = direction.length2();
 		if (ln > FUZZY_EPSILON * FUZZY_EPSILON)
 		{
 			direction *= reciprocalSquareRoot(ln);
 
-			Scalar k = clamp(1.0_simd + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), 0.0_simd, 1.0_simd);
-			Vector4 vp = lerp(vp0, vp1, k);
-			Vector4 up = cross(direction, vp - cameraPosition).normalized() * www0;
+			const Scalar k = clamp(1.0_simd + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), 0.0_simd, 1.0_simd);
+			const Vector4 vp = lerp(vp0, vp1, k);
+			const Vector4 up = cross(direction, vp - cameraPosition).normalized() * www0;
 
 			vp.storeAligned(vertex->position);
 			up.storeAligned(vertex->direction);

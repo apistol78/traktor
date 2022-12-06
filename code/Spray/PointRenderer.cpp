@@ -119,7 +119,7 @@ void PointRenderer::render(
 	int32_t size = (int32_t)points.size();
 	T_ASSERT(size > 0);
 
-	int32_t avail = c_pointCount - m_pointOffset;
+	const int32_t avail = c_pointCount - m_pointOffset;
 	if (avail <= 0)
 		return;
 
@@ -149,21 +149,21 @@ void PointRenderer::render(
 		if (point.size < FUZZY_EPSILON)
 			continue;
 
-		float distance = cameraPlane.distance(point.position);
+		const float distance = cameraPlane.distance(point.position);
 
 		// Skip particles if closer than near cull distance.
 		if (distance < cullNearDistance)
 			continue;
 
 		// Calculate alpha based on point age and distance from near culling plane.
-		float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
-		float middle = age - middleAge;
+		const float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
+		const float middle = age - middleAge;
 		float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
 		alpha *= min((distance - cullNearDistance) / fadeNearRange, 1.0f);
 		if (alpha < FUZZY_EPSILON)
 			continue;
 
-		Vector4 position = point.position + cameraOffsetV;
+		const Vector4 position = point.position + cameraOffsetV;
 
 		// \note We're assuming locked vertex buffer is 16-aligned.
 		position.storeAligned(m_point->positionAndOrientation);

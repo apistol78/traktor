@@ -59,7 +59,7 @@ void MeshRenderer::flush(
 		m_instances.resize(i->second.first.size());
 		for (uint32_t j = 0; j < i->second.first.size(); ++j)
 		{
-			Quaternion R =
+			const Quaternion R =
 				i->second.second ? Quaternion::fromAxisAngle(
 					cross(i->second.first[j].velocity, Vector4(0.0f, 1.0f, 0.0f)).normalized(),
 					i->second.first[j].orientation
@@ -76,7 +76,7 @@ void MeshRenderer::flush(
 			renderContext,
 			worldRenderPass,
 			m_instances,
-			0
+			nullptr
 		);
 
 		i->second.first.resize(0);

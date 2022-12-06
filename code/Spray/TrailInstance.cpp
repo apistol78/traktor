@@ -54,7 +54,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 
 	if (enable)
 	{
-		Vector4 position = transform.translation().xyz1();
+		const Vector4 position = transform.translation().xyz1();
 
 		if (m_points.empty())
 		{
@@ -65,7 +65,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 
 		if (m_breakThreshold > FUZZY_EPSILON && m_lengthThreshold > FUZZY_EPSILON)	// Breakable
 		{
-			Scalar ln = (position - m_last).length2();
+			const Scalar ln = (position - m_last).length2();
 			if (ln >= m_lengthThreshold * m_lengthThreshold)
 			{
 				if (ln >= m_breakThreshold * m_breakThreshold)
@@ -81,10 +81,10 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 		}
 		else if (m_lengthThreshold > FUZZY_EPSILON)	// Segmented by distance
 		{
-			Vector4 direction = (position - m_last).xyz0();
+			const Vector4 direction = (position - m_last).xyz0();
 			Scalar ln = direction.length();
 
-			int32_t nsteps = int32_t(ln / m_lengthThreshold);
+			const int32_t nsteps = int32_t(ln / m_lengthThreshold);
 			if (nsteps > 0)
 			{
 				m_points.pop_back();
@@ -106,8 +106,8 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 		}
 		else // Always add points.
 		{
-			Vector4 direction = (position - m_last).xyz0();
-			Scalar ln = direction.length();
+			const Vector4 direction = (position - m_last).xyz0();
+			const Scalar ln = direction.length();
 
 			if (ln > FUZZY_EPSILON)
 				m_points.push_back(position.xyz0() + m_time);
