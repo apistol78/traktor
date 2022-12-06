@@ -132,15 +132,15 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		const Source* source = m_emitter->getSource();
 		if (source)
 		{
-			uint32_t avail = uint32_t(m_points.capacity() - size);
-			Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
+			const uint32_t avail = uint32_t(m_points.capacity() - size);
+			const Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 
 			if (!singleShot)
 			{
-				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
-				float emitConstant = source->getConstantRate() * context.deltaTime;
-				float emit = emitVelocity + emitConstant + m_emitFraction;
-				uint32_t emitCountFrame = uint32_t(emit);
+				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
+				const float emitConstant = source->getConstantRate() * context.deltaTime;
+				const float emit = emitVelocity + emitConstant + m_emitFraction;
+				const uint32_t emitCountFrame = uint32_t(emit);
 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)
@@ -164,7 +164,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 			else
 			{
 				// Single shot emit; emit all particles in one frame and then no more.
-				uint32_t emitCount = min< uint32_t >(uint32_t(source->getConstantRate()), avail, c_maxEmitSingleShot);
+				const uint32_t emitCount = min< uint32_t >(uint32_t(source->getConstantRate()), avail, c_maxEmitSingleShot);
 				if (emitCount > 0)
 				{
 					source->emit(
@@ -186,7 +186,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	if ((m_count & 15) == 0)
 	{
 		m_boundingBox = Aabb3();
-		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
+		const Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
 		for (const auto& point : m_points)
 		{
 			m_boundingBox.contain(point.position);
@@ -311,8 +311,8 @@ void EmitterInstance::synchronize() const
 
 void EmitterInstance::updateTask(float deltaTime)
 {
-	Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
-	Scalar deltaTimeScalar(deltaTime);
+	const Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
+	const Scalar deltaTimeScalar(deltaTime);
 
 	for (auto modifier : m_emitter->getModifiers())
 	{
@@ -354,7 +354,7 @@ void EmitterInstance::updateTask(float deltaTime)
 	if (m_emitter->getEffect())
 	{
 		// Create new effect instances for each new particle point.
-		uint32_t size = uint32_t(m_effectInstances.size());
+		const uint32_t size = uint32_t(m_effectInstances.size());
 		m_effectInstances.resize(m_renderPoints.size());
 		for (uint32_t i = size; i < m_renderPoints.size(); ++i)
 			m_effectInstances[i] = m_emitter->getEffect()->createInstance();
@@ -363,7 +363,7 @@ void EmitterInstance::updateTask(float deltaTime)
 		Context childContext;
 		childContext.deltaTime = deltaTime;
 
-		float duration = m_emitter->getEffect()->getDuration();
+		const float duration = m_emitter->getEffect()->getDuration();
 		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
 		{
 			if (!m_effectInstances[i])
