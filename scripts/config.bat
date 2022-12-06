@@ -26,6 +26,7 @@ set P4_SDK=%TRAKTOR_HOME%\3rdp\p4api-linux\p4api-2022.1.2305383
 set PNG_SDK=%TRAKTOR_HOME%\3rdp\libpng
 set RAPIDJSON_SDK=%TRAKTOR_HOME%\3rdp\rapidjson
 set RECAST_SDK=%TRAKTOR_HOME%\3rdp\recastnavigation
+set RENDERDOC_SDK=%TRAKTOR_HOME%\3rdp\renderdoc\RenderDoc_1.24_64
 set RG_ETC1_SDK=%TRAKTOR_HOME%\3rdp\rg-etc1
 set STB_SDK=%TRAKTOR_HOME%\3rdp\stb
 set STEAMWORKS_SDK=%TRAKTOR_HOME%\3rdp\steamworks\sdk

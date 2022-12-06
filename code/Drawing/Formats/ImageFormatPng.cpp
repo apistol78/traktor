@@ -12,6 +12,7 @@
 #include <cstring>
 #include <png.h>
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Drawing/Formats/ImageFormatPng.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"

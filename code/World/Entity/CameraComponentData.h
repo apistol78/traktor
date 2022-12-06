@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Const.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldTypes.h"
 
