@@ -295,8 +295,13 @@ void WorldRendererShared::setupTileDataPass(
 		// Calculate positions of lights in view space.
 		for (const auto& light : m_lights)
 		{
-			Vector4 lightPosition = light->getTransform().translation().xyz1();
-			lightPositions.push_back(worldRenderView.getView() * lightPosition);
+			if (light)
+			{
+				Vector4 lightPosition = light->getTransform().translation().xyz1();
+				lightPositions.push_back(worldRenderView.getView() * lightPosition);
+			}
+			else
+				lightPositions.push_back(Vector4::zero());
 		}
 
 		// Update tile data.
@@ -348,6 +353,9 @@ void WorldRendererShared::setupTileDataPass(
 			for (uint32_t i = 0; i < m_lights.size(); ++i)
 			{
 				const auto light = m_lights[i];
+				if (light == nullptr)
+					continue;
+
 				if (light->getLightType() == LightType::Directional)
 				{
 					sliceLights.push_back(i);
