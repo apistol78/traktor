@@ -27,6 +27,7 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	typeSet.insert< TargetSize >();
 	typeSet.insert< Texture >();
 	typeSet.insert< TextureSize >();
+	typeSet.insert< TextureState >();
 	typeSet.insert< Vector >();
 	return typeSet;
 }
@@ -77,6 +78,8 @@ PinType ConstantNodeTraits::getOutputPinType(
 		else
 			return PinType::Scalar3;
 	}
+	else if (is_a< TextureState >(node))
+		return PinType::State;
 	else
 		return PinType::Void;
 }

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Misc/ComRef.h"
-#include "Render/ISimpleTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -22,12 +22,12 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup DX11
  */
-class RenderTargetDepthDx11 : public ISimpleTexture
+class RenderTargetDepthDx11 : public ITexture
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetDepthDx11(ContextDx11* context);
+	explicit RenderTargetDepthDx11(ContextDx11* context);
 
 	virtual ~RenderTargetDepthDx11();
 
@@ -35,19 +35,13 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual Size getSize() const override final;
+
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
+
 	virtual ITexture* resolve() override final;
-
-	virtual int32_t getMips() const override final;
-
-	virtual int32_t getWidth() const override final;
-
-	virtual int32_t getHeight() const override final;
-
-	virtual bool lock(int32_t level, Lock& lock) override final;
-
-	virtual void unlock(int32_t level) override final;
-
-	virtual void* getInternalHandle() override final;
 
 	ID3D11DepthStencilView* getD3D11DepthTextureView() const {
 		return m_d3dDepthTextureView;

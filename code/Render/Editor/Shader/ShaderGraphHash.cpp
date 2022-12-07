@@ -80,7 +80,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 		nodeVisited.insert(top);
 
 		const Node* node = top.first;
-		int32_t order = top.second;
+		const int32_t order = top.second;
 
 		// Find node's traits; some nodes which doesn't have a trait
 		// (meta type nodes such as Branch, Type etc) we treat as each
@@ -91,7 +91,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 		hash += rotateLeft(calculate(node), order);
 
 		// Push all input nodes onto stack.
-		int32_t inputPinCount = node->getInputPinCount();
+		const int32_t inputPinCount = node->getInputPinCount();
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
@@ -102,7 +102,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 				continue;
 
 			const Node* childNode = sourcePin->getNode();
-			int32_t childOrder = nodeTraits ? nodeTraits->getInputPinGroup(shaderGraph, node, inputPin) : i;
+			const int32_t childOrder = nodeTraits ? nodeTraits->getInputPinGroup(shaderGraph, node, inputPin) : i;
 
 			nodeStack.push_back(std::make_pair(childNode, childOrder));
 		}

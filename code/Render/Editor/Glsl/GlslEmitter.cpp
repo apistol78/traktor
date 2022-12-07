@@ -1982,7 +1982,7 @@ bool emitSamplerVulkan(GlslContext& cx, Sampler* node)
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GlslType::Float4 : GlslType::Float);
 
-	bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
+	const bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
 	std::wstring samplerName;
 
 	// Check if we already have a suitable sampler in the layout.
@@ -2189,24 +2189,69 @@ bool emitScript(GlslContext& cx, Script* node)
 	RefArray< GlslVariable > ins(inputPinCount);
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		ins[i] = cx.emitInput(node->getInputPin(i));
-		if (!ins[i])
-			return false;
+		const InputPin* inputPin = node->getInputPin(i);
+		Node* inputNode = cx.getInputNode(inputPin);
+		if (auto state = dynamic_type_cast< TextureState* >(inputNode))
+		{
+			SamplerState samplerState = state->getSamplerState();
+			if (samplerState.ignoreMips)
+				samplerState.mipFilter = FtLinear;
+
+			std::wstring samplerName;
+
+			// Check if we already have a suitable sampler in the layout.
+			for (auto resource : cx.getLayout().get())
+			{
+				if (auto sampler = dynamic_type_cast< GlslSampler* >(resource))
+				{
+					if (std::memcmp(&sampler->getState(), &samplerState, sizeof(SamplerState)) == 0)
+					{
+						samplerName = sampler->getName();
+						sampler->addStage(getBindStage(cx));
+						break;
+					}
+				}
+			}
+
+			// Define new sampler in layout if no matching one was found.
+			if (samplerName.empty())
+			{
+				samplerName = str(L"_gl_sampler%d", cx.getLayout().count< GlslSampler >());
+				cx.getLayout().add(new GlslSampler(samplerName, getBindStage(cx), samplerState));
+			}
+
+			ins[i] = new GlslVariable(nullptr, samplerName, GlslType::Void);
+		}
+		else
+		{
+			ins[i] = cx.emitInput(node->getInputPin(i));
+			if (!ins[i])
+				return false;
+		}
 	}
 
-	// Replace all inputs.
+	typedef std::pair< std::wstring, std::wstring > repair_t;
+	AlignedVector< repair_t > reps;
+
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		std::wstring variableName = L"$" + node->getInputPin(i)->getName();
-		script = replaceAll(script, variableName, ins[i]->getName());
+		const std::wstring variableName = L"$" + node->getInputPin(i)->getName();
+		reps.push_back({ variableName, ins[i]->getName() });
 	}
 
-	// Replace all outputs.
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
-		std::wstring variableName = L"$" + node->getOutputPin(i)->getName();
-		script = replaceAll(script, variableName, outs[i]->getName());
+		const std::wstring variableName = L"$" + node->getOutputPin(i)->getName();
+		reps.push_back({ variableName, outs[i]->getName() });
 	}
+
+	// Sort to ensure longer names get replaced first.
+	std::sort(reps.begin(), reps.end(), [](const repair_t& lh, const repair_t& rh) {
+		return lh.first.length() > rh.first.length();
+	});
+
+	for (const auto& rep : reps)
+		script = replaceAll(script, rep.first, rep.second);
 
 	f << script << Endl;
 	return true;

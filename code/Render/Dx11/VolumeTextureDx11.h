@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Misc/ComRef.h"
-#include "Render/IVolumeTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -22,12 +22,12 @@ struct VolumeTextureCreateDesc;
 /*!
  * \ingroup DX11
  */
-class VolumeTextureDx11 : public IVolumeTexture
+class VolumeTextureDx11 : public ITexture
 {
 	T_RTTI_CLASS;
 
 public:
-	VolumeTextureDx11(ContextDx11* context);
+	explicit VolumeTextureDx11(ContextDx11* context);
 
 	virtual ~VolumeTextureDx11();
 
@@ -35,15 +35,13 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual Size getSize() const override final;
+
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
+
 	virtual ITexture* resolve() override final;
-
-	virtual int32_t getWidth() const override final;
-
-	virtual int32_t getHeight() const override final;
-
-	virtual int32_t getDepth() const override final;
-
-	virtual int32_t getMips() const override final;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 

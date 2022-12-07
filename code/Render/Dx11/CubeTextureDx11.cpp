@@ -8,7 +8,6 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/CubeTextureDx11.h"
@@ -20,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureDx11", CubeTextureDx11, ICubeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureDx11", CubeTextureDx11, ITexture)
 
 CubeTextureDx11::CubeTextureDx11(ContextDx11* context)
 :	m_context(context)
@@ -113,19 +112,9 @@ void CubeTextureDx11::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
-ITexture* CubeTextureDx11::resolve()
+ITexture::Size CubeTextureDx11::getSize() const
 {
-	return this;
-}
-
-int32_t CubeTextureDx11::getSide() const
-{
-	return m_side;
-}
-
-int32_t CubeTextureDx11::getMips() const
-{
-	return m_mipCount;
+	return { m_side, m_side, 1, m_mipCount };
 }
 
 bool CubeTextureDx11::lock(int32_t side, int32_t level, Lock& lock)
@@ -165,6 +154,11 @@ void CubeTextureDx11::unlock(int32_t side, int32_t level)
 		level,
 		&sr
 	);
+}
+
+ITexture* CubeTextureDx11::resolve()
+{
+	return this;
 }
 
 	}

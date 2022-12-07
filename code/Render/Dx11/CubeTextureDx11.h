@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Misc/ComRef.h"
-#include "Render/ICubeTexture.h"
+#include "Render/ITexture.h"
 
 namespace traktor
 {
@@ -22,12 +22,12 @@ struct CubeTextureCreateDesc;
 /*!
  * \ingroup DX11
  */
-class CubeTextureDx11 : public ICubeTexture
+class CubeTextureDx11 : public ITexture
 {
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureDx11(ContextDx11* context);
+	explicit CubeTextureDx11(ContextDx11* context);
 
 	virtual ~CubeTextureDx11();
 
@@ -35,15 +35,13 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual ITexture* resolve() override final;
-
-	virtual int32_t getSide() const override final;
-
-	virtual int32_t getMips() const override final;
+	virtual Size getSize() const override final;
 
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
+
+	virtual ITexture* resolve() override final;
 
 	ID3D11Texture2D* getD3D11Texture2D() const {
 		return m_d3dTexture;
