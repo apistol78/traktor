@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class AggregationItem;
 class Dependency;
@@ -76,6 +74,4 @@ private:
 	RefArray< Dependency > m_dependencies;
 };
 
-	}
 }
-

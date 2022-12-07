@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "SolutionBuilder/Dependency.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"Dependency", Dependency, ISerializable)
 
@@ -61,5 +59,4 @@ void Dependency::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

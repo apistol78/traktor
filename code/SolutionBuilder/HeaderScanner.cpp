@@ -14,10 +14,8 @@
 #include "Core/Misc/String.h"
 #include "SolutionBuilder/HeaderScanner.h"
 
-namespace traktor
+namespace traktor::sb
 {
-    namespace sb
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.HeaderScanner", HeaderScanner, Object)
 
@@ -46,7 +44,7 @@ bool HeaderScanner::get(const std::wstring& fileName, const std::wstring& projec
 
 	while (!fileNames.empty())
 	{
-		std::wstring fileName = fileNames.back();
+		const std::wstring fileName = fileNames.back();
 		fileNames.pop_back();
 
 		auto includes = scan(fileName);
@@ -58,7 +56,7 @@ bool HeaderScanner::get(const std::wstring& fileName, const std::wstring& projec
 			Path relativePath;
 			if (FileSystem::getInstance().getRelativePath(Path(includedFile), Path(projectPath), relativePath))
 			{
-				std::wstring pn = relativePath.getPathName();
+				const std::wstring pn = relativePath.getPathName();
 				if (outHeaderFiles.insert(pn))
 					fileNames.push_back(includedFile);
 			}
@@ -102,11 +100,11 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 		if (e == line.npos)
 			continue;
 
-		std::wstring dep = line.substr(s, e - s);
+		const std::wstring dep = line.substr(s, e - s);
 
 		if (!filePath.empty())
 		{
-			std::wstring dependencyName = Path(filePath + L"/" + dep).normalized().getPathNameOS();
+			const std::wstring dependencyName = Path(filePath + L"/" + dep).normalized().getPathNameOS();
 			if (FileSystem::getInstance().exist(dependencyName))
 			{
 				includes->files.insert(dependencyName);
@@ -116,7 +114,7 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
         for (auto includePath : m_includePaths)
 		{
-			std::wstring dependencyName = Path(includePath + L"/" + dep).normalized().getPathNameOS();
+			const std::wstring dependencyName = Path(includePath + L"/" + dep).normalized().getPathNameOS();
 			if (FileSystem::getInstance().exist(dependencyName))
 			{
 				includes->files.insert(dependencyName);
@@ -129,5 +127,4 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 	return includes;
 }
 
-    }
 }

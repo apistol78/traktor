@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Configuration;
 class ProjectItem;
@@ -103,6 +101,4 @@ private:
 	RefArray< Dependency > m_dependencies;
 };
 
-	}
 }
-

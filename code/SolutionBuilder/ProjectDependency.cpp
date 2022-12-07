@@ -11,10 +11,8 @@
 #include "ProjectDependency.h"
 #include "Project.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ProjectDependency", 3, ProjectDependency, Dependency)
 
@@ -61,5 +59,4 @@ void ProjectDependency::serialize(ISerializer& s)
 	s >> MemberRef< Project >(L"project", m_project);
 }
 
-	}
 }

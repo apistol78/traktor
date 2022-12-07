@@ -14,10 +14,8 @@
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Configuration.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 5, Configuration, ISerializable)
 
@@ -276,5 +274,4 @@ void Configuration::serialize(ISerializer& s)
 		s >> Member< std::wstring >(L"consumerLibraryPath", m_consumerLibraryPath);
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "SolutionBuilder/AggregationItem.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"AggregationItem", 0, AggregationItem, ISerializable)
 
@@ -43,5 +41,4 @@ void AggregationItem::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"targetPath", m_targetPath);
 }
 
-	}
 }

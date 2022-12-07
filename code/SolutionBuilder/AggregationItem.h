@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class T_DLLCLASS AggregationItem : public ISerializable
 {
@@ -59,6 +57,4 @@ private:
 	std::wstring m_targetPath;
 };
 
-	}
 }
-

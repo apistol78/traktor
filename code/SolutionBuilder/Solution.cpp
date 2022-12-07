@@ -15,10 +15,8 @@
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 5, Solution, ISerializable)
 
@@ -114,5 +112,4 @@ void Solution::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

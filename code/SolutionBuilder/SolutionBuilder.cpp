@@ -8,12 +8,9 @@
  */
 #include "SolutionBuilder/SolutionBuilder.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilder", SolutionBuilder, Object)
 
-	}
 }
