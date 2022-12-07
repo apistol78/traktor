@@ -1910,9 +1910,9 @@ const ImmutableNode::OutputPinDesc c_PixelState_o[] =
 };
 
 PixelState::PixelState()
-	: ImmutableNode(nullptr, c_PixelState_o)
-	, m_priority(0)
-	, m_precisionHint(PrecisionHint::Undefined)
+: ImmutableNode(nullptr, c_PixelState_o)
+, m_priority(0)
+, m_precisionHint(PrecisionHint::Undefined)
 {
 }
 
@@ -2197,6 +2197,7 @@ const ImmutableNode::InputPinDesc c_Sampler_i[] =
 	{ L"Texture", L"{32EB5230-1F0D-40B8-93F6-9C8E5469454E}", false },
 	{ L"TexCoord", L"{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}", false },
 	{ L"Mip", L"{A790CEB7-0729-490D-94B0-4D7982C139F9}", true },
+	{ L"State", L"{10F0235A-9174-4DB8-978C-FC55A07C94A2}", true },
 	{ 0 }
 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] =
@@ -2840,6 +2841,37 @@ void Texture::serialize(ISerializer& s)
 		};
 		s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
 	}
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureState", 0, TextureState, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_TextureState_o[] =
+{
+	{ L"Output", L"{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}" },
+	{ 0 }
+};
+
+TextureState::TextureState()
+:	ImmutableNode(nullptr, c_TextureState_o)
+{
+}
+
+void TextureState::setSamplerState(const SamplerState& state)
+{
+	m_samplerState = state;
+}
+
+const SamplerState& TextureState::getSamplerState() const
+{
+	return m_samplerState;
+}
+
+void TextureState::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+	s >> MemberSamplerState(m_samplerState);
 }
 
 /*---------------------------------------------------------------------------*/

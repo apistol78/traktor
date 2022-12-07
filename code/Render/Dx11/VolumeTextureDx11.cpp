@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx11", VolumeTextureDx11, IVolumeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx11", VolumeTextureDx11, ITexture)
 
 VolumeTextureDx11::VolumeTextureDx11(ContextDx11* context)
 :	m_context(context)
@@ -85,29 +85,23 @@ void VolumeTextureDx11::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
+ITexture::Size VolumeTextureDx11::getSize() const
+{
+	return { m_width, m_height, m_depth, 1 };
+}
+
+bool VolumeTextureDx11::lock(int32_t side, int32_t level, Lock& lock)
+{
+	return false;
+}
+
+void VolumeTextureDx11::unlock(int32_t side, int32_t level)
+{
+}
+
 ITexture* VolumeTextureDx11::resolve()
 {
 	return this;
-}
-
-int32_t VolumeTextureDx11::getWidth() const
-{
-	return m_width;
-}
-
-int32_t VolumeTextureDx11::getHeight() const
-{
-	return m_height;
-}
-
-int32_t VolumeTextureDx11::getDepth() const
-{
-	return m_depth;
-}
-
-int32_t VolumeTextureDx11::getMips() const
-{
-	return 1;
 }
 
 ID3D11ShaderResourceView* VolumeTextureDx11::getD3D11TextureResourceView() const

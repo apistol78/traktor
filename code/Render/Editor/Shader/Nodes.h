@@ -1094,6 +1094,23 @@ private:
 	ParameterType m_type;
 };
 
+/*! Texture state constant. */
+class T_DLLCLASS TextureState : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	TextureState();
+
+	void setSamplerState(const SamplerState& state);
+
+	const SamplerState& getSamplerState() const;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	SamplerState m_samplerState;
+};
 
 /*! Texture size. */
 class T_DLLCLASS TextureSize : public ImmutableNode

@@ -100,12 +100,12 @@ int32_t RenderTargetSetDx11::getHeight() const
 	return m_height;
 }
 
-ISimpleTexture* RenderTargetSetDx11::getColorTexture(int32_t index) const
+ITexture* RenderTargetSetDx11::getColorTexture(int32_t index) const
 {
 	return index < (int32_t)m_colorTextures.size() ? m_colorTextures[index] : 0;
 }
 
-ISimpleTexture* RenderTargetSetDx11::getDepthTexture() const
+ITexture* RenderTargetSetDx11::getDepthTexture() const
 {
 	return m_depthTexture;
 }

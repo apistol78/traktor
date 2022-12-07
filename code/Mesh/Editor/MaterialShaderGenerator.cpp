@@ -94,10 +94,9 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 {
 	AlignedVector< const render::InputPin* > destinationPins;
 	shaderGraph->findDestinationPins(textureNode->getOutputPin(0), destinationPins);
-	for ( auto destinationPin : destinationPins )
+	for (auto destinationPin : destinationPins)
 	{
-		render::Sampler* samplerNode = dynamic_type_cast< render::Sampler* >(destinationPin->getNode());
-		if (samplerNode)
+		if (auto samplerNode = dynamic_type_cast< render::Sampler* >(destinationPin->getNode()))
 		{
 			render::SamplerState samplerState = samplerNode->getSamplerState();
 			samplerState.useAnisotropic = anisotropic;
@@ -138,7 +137,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	const Guid& lightMapTexture = material.getLightMap().texture;
 
 	Guid lightMapDirectionalTexture;
-	std::wstring tmp = material.getProperty< std::wstring >(L"LightMapDirectionalId");
+	const std::wstring tmp = material.getProperty< std::wstring >(L"LightMapDirectionalId");
 	if (!tmp.empty())
 	{
 		if (normalTexture.isNotNull())
@@ -276,60 +275,60 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	// Determine texture channel fragments.
 	for (auto node : materialShaderGraph->getNodes())
 	{
-		std::wstring comment = node->getComment();
+		const std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getDiffuseMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getDiffuseMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_EmissiveTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getEmissiveMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getEmissiveMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_NormalTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getNormalMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getNormalMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_RoughnessTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getRoughnessMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getRoughnessMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_SpecularTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getSpecularMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getSpecularMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_MetalnessTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getMetalnessMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getMetalnessMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_TransparencyTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (comment == L"Tag_LightmapTexCoord")
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
+			const uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
@@ -344,7 +343,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	// Patch constant values, such as colors, from materials into shader.
 	for (auto node : materialShaderGraph->getNodes())
 	{
-		std::wstring comment = node->getComment();
+		const std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseColor")
 		{
 			render::Color* colorNode = mandatory_non_null_type_cast< render::Color* >(node);

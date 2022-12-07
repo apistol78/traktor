@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cmath>
+#include "Core/Math/Const.h"
 #include "Ui/Canvas.h"
 #include "Ui/Graph/GraphCanvas.h"
 
@@ -17,11 +18,21 @@ namespace traktor
 		namespace
 		{
 
+int32_t round(float f)
+{
+	if (f > -0.5f)
+		return (int32_t)std::floor(f + 0.5f);
+	else if (f < -0.5f)
+		return -(int32_t)std::floor(-f + 0.5f);
+	else
+		return 0;
+}
+
 Size operator * (const Size& sz, float scale)
 {
 	return Size(
-		(int32_t)std::floor(sz.cx * scale),
-		(int32_t)std::floor(sz.cy * scale)
+		round(sz.cx * scale),
+		round(sz.cy * scale)
 	);
 }
 
@@ -33,8 +44,8 @@ Size operator / (const Size& sz, float scale)
 Point operator * (const Point& pt, float scale)
 {
 	return Point(
-		(int32_t)std::floor(pt.x * scale),
-		(int32_t)std::floor(pt.y * scale)
+		round(pt.x * scale),
+		round(pt.y * scale)
 	);
 }
 
@@ -118,9 +129,17 @@ void GraphCanvas::fillPolygon(const Point* pnts, int count)
 
 void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
 {
+	const Point sdstAt(
+		std::floor(dstAt.x * m_scale),
+		std::floor(dstAt.y * m_scale)
+	);
+	const Size sdstSize(
+		std::floor(dstSize.cx * m_scale + 1.0f),
+		std::floor(dstSize.cy * m_scale + 1.0f)
+	);
 	m_canvas->drawBitmap(
-		(dstAt - Size(1, 1)) * m_scale,
-		(dstSize + Size(2, 2)) * m_scale,
+		sdstAt,
+		sdstSize,
 		srcAt,
 		srcSize,
 		bitmap,

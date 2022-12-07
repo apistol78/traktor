@@ -877,33 +877,33 @@ bool RenderViewDx11::copy(ITexture* destinationTexture, const Region& destinatio
 	if (auto sourceRenderTarget = dynamic_type_cast< RenderTargetDx11* >(sourceTexture))
 	{
 		d3dSourceTexture = sourceRenderTarget->getD3D11Texture2D();
-		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceRenderTarget->getMips());
+		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceRenderTarget->getSize().mips);
 	}
 	else if (auto sourceSimpleTexture = dynamic_type_cast< SimpleTextureDx11* >(sourceTexture))
 	{
 		d3dSourceTexture = sourceSimpleTexture->getD3D11Texture2D();
-		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceSimpleTexture->getMips());
+		ssr = D3D11CalcSubresource(sourceRegion.mip, 0, sourceSimpleTexture->getSize().mips);
 	}
 	else if (auto sourceCubeTexture = dynamic_type_cast< CubeTextureDx11* >(sourceTexture))
 	{
 		d3dSourceTexture = sourceCubeTexture->getD3D11Texture2D();
-		ssr = D3D11CalcSubresource(sourceRegion.mip, sourceRegion.z, sourceCubeTexture->getMips());
+		ssr = D3D11CalcSubresource(sourceRegion.mip, sourceRegion.z, sourceCubeTexture->getSize().mips);
 	}
 
 	if (auto destinationRenderTarget = dynamic_type_cast< RenderTargetDx11* >(destinationTexture))
 	{
 		d3dDestinationTexture = destinationRenderTarget->getD3D11Texture2D();
-		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationRenderTarget->getMips());
+		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationRenderTarget->getSize().mips);
 	}
 	else if (auto destinationSimpleTexture = dynamic_type_cast< SimpleTextureDx11* >(destinationTexture))
 	{
 		d3dDestinationTexture = destinationSimpleTexture->getD3D11Texture2D();
-		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationSimpleTexture->getMips());
+		dsr = D3D11CalcSubresource(destinationRegion.mip, 0, destinationSimpleTexture->getSize().mips);
 	}
 	else if (auto destinationCubeTexture = dynamic_type_cast< CubeTextureDx11* >(destinationTexture))
 	{
 		d3dDestinationTexture = destinationCubeTexture->getD3D11Texture2D();
-		dsr = D3D11CalcSubresource(destinationRegion.mip, destinationRegion.z, destinationCubeTexture->getMips());
+		dsr = D3D11CalcSubresource(destinationRegion.mip, destinationRegion.z, destinationCubeTexture->getSize().mips);
 	}
 
 	if (!d3dDestinationTexture || !d3dSourceTexture)

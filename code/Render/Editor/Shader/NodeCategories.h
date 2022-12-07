@@ -95,6 +95,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< TargetSize >(), L"SHADERGRAPH_VALUE", L"Target size in pixels" },
 	{ type_of< Texture >(), L"SHADERGRAPH_VALUE", L"Texture" },
 	{ type_of< TextureSize >(), L"SHADERGRAPH_VALUE", L"Texture size in pixels" },
+	{ type_of< TextureState >(), L"SHADERGRAPH_VALUE", L"Texture sampling state" },
 	{ type_of< Transform >(), L"SHADERGRAPH_ALGEBRA", L"Transform vector by a matrix" },
 	{ type_of< Transpose >(), L"SHADERGRAPH_ALGEBRA", L"Transpose matrix, swapping rows and columns" },
 	{ type_of< Truncate >(), L"SHADERGRAPH_MISCELLANEOUS", L"Truncate" },

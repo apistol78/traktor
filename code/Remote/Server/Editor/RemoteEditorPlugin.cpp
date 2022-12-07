@@ -9,9 +9,12 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Editor/IEditor.h"
 #include "Remote/Server/Server.h"
 #include "Remote/Server/Editor/RemoteEditorPlugin.h"
 
@@ -30,7 +33,10 @@ RemoteEditorPlugin::RemoteEditorPlugin(editor::IEditor* editor)
 
 bool RemoteEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
-    std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Remote";
+	if (!m_editor->getSettings()->getProperty< bool >(L"Editor.RemoteServer", true))
+		return true;
+
+    const std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Remote";
     FileSystem::getInstance().makeAllDirectories(writableFolder);
 
 	m_server = new Server();
@@ -47,7 +53,6 @@ bool RemoteEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 
 	m_threadServer = ThreadManager::getInstance().create([this](){ threadServer(); }, L"Remote server");
 	m_threadServer->start();
-
 	return true;
 }
 

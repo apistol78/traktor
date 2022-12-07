@@ -120,7 +120,7 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 
 	inputDialog.destroy();
 
-	std::wstring shaderName = fields[1].value;
+	const std::wstring shaderName = fields[1].value;
 
 	Ref< db::Instance > shaderInstance;
 	if (!fields[0].value.empty())

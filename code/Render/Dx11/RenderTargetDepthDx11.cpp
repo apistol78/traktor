@@ -20,7 +20,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthDx11", RenderTargetDepthDx11, ISimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthDx11", RenderTargetDepthDx11, ITexture)
 
 RenderTargetDepthDx11::RenderTargetDepthDx11(ContextDx11* context)
 :	m_context(context)
@@ -145,38 +145,23 @@ void RenderTargetDepthDx11::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
-ITexture* RenderTargetDepthDx11::resolve()
+ITexture::Size RenderTargetDepthDx11::getSize() const
 {
-	return this;
+	return { m_width, m_height, 1, 1 };
 }
 
-int32_t RenderTargetDepthDx11::getMips() const
-{
-	return 1;
-}
-
-int32_t RenderTargetDepthDx11::getWidth() const
-{
-	return m_width;
-}
-
-int32_t RenderTargetDepthDx11::getHeight() const
-{
-	return m_height;
-}
-
-bool RenderTargetDepthDx11::lock(int32_t level, Lock& lock)
+bool RenderTargetDepthDx11::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDepthDx11::unlock(int32_t level)
+void RenderTargetDepthDx11::unlock(int32_t side, int32_t level)
 {
 }
 
-void* RenderTargetDepthDx11::getInternalHandle()
+ITexture* RenderTargetDepthDx11::resolve()
 {
-	return m_d3dTexture;
+	return this;
 }
 
 	}

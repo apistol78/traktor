@@ -714,9 +714,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 		m_shaderGraph->getEdges()
 	);
 
+	// Pixel output state.
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
-
 	for (const auto pixelOutputNode : pixelOutputNodes)
 	{
 		Ref< Edge > edge = shaderGraph->findEdge(pixelOutputNode->findInputPin(L"State"));
@@ -737,6 +737,29 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 		shaderGraph->removeEdge(edge);
 		shaderGraph->removeNode(state);
 		shaderGraph->replace(pixelOutputNode, resolvedPixelOutput);
+
+		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
+	}
+
+	// Sampler state.
+	RefArray< Sampler > samplerNodes;
+	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+	for (const auto samplerNode : samplerNodes)
+	{
+		Ref< Edge > edge = shaderGraph->findEdge(samplerNode->findInputPin(L"State"));
+		if (!edge)
+			continue;
+
+		Ref< TextureState > state = dynamic_type_cast< TextureState* >(edge->getSource()->getNode());
+		if (!state)
+			continue;
+
+		Ref< Sampler > resolvedSampler = new Sampler();
+		resolvedSampler->setSamplerState(state->getSamplerState());
+
+		shaderGraph->removeEdge(edge);
+		shaderGraph->removeNode(state);
+		shaderGraph->replace(samplerNode, resolvedSampler);
 
 		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 	}

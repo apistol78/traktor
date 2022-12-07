@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx11", SimpleTextureDx11, ISimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx11", SimpleTextureDx11, ITexture)
 
 SimpleTextureDx11::SimpleTextureDx11(ContextDx11* context)
 :	m_context(context)
@@ -105,27 +105,12 @@ void SimpleTextureDx11::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
-ITexture* SimpleTextureDx11::resolve()
+ITexture::Size SimpleTextureDx11::getSize() const
 {
-	return this;
+	return { m_width, m_height, 1, m_mips };
 }
 
-int32_t SimpleTextureDx11::getWidth() const
-{
-	return m_width;
-}
-
-int32_t SimpleTextureDx11::getHeight() const
-{
-	return m_height;
-}
-
-int32_t SimpleTextureDx11::getMips() const
-{
-	return m_mips;
-}
-
-bool SimpleTextureDx11::lock(int32_t level, Lock& lock)
+bool SimpleTextureDx11::lock(int32_t side, int32_t level, Lock& lock)
 {
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
@@ -140,14 +125,14 @@ bool SimpleTextureDx11::lock(int32_t level, Lock& lock)
 	return true;
 }
 
-void SimpleTextureDx11::unlock(int32_t level)
+void SimpleTextureDx11::unlock(int32_t side, int32_t level)
 {
 	m_context->getD3DDeviceContext()->Unmap(m_d3dTexture, level);
 }
 
-void* SimpleTextureDx11::getInternalHandle()
+ITexture* SimpleTextureDx11::resolve()
 {
-	return m_d3dTexture;
+	return this;
 }
 
 	}

@@ -208,17 +208,17 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 	Ref< IStream > file;
 
 #if defined(_WIN32)
-    std::wstring system = L"win32";
+    const std::wstring system = L"win32";
 #elif defined(__APPLE__)
-    std::wstring system = L"osx";
+    const std::wstring system = L"osx";
 #elif defined(__LINUX__)
-    std::wstring system = L"linux";
+    const std::wstring system = L"linux";
 #elif defined(__RPI__)
-    std::wstring system = L"rpi";
+    const std::wstring system = L"rpi";
 #endif
 
-	std::wstring globalFile = pathName.getPathName();
-	std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
+	const std::wstring globalFile = pathName.getPathName();
+	const std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
 
     // Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != nullptr)
@@ -264,7 +264,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 
 	if (outSettings)
 	{
-		std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
+		const std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
 
 		*outSettings = DeepClone(outOriginalSettings).create< PropertyGroup >();
 		T_FATAL_ASSERT (*outSettings);
@@ -291,7 +291,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 
 bool saveGlobalSettings(const Path& pathName, const PropertyGroup* properties)
 {
-	std::wstring globalFile = pathName.getPathName();
+	const std::wstring globalFile = pathName.getPathName();
 
 	Ref< IStream > file = FileSystem::getInstance().open(globalFile, File::FmWrite);
 	if (!file)
@@ -300,7 +300,7 @@ bool saveGlobalSettings(const Path& pathName, const PropertyGroup* properties)
 		return false;
 	}
 
-	bool result = xml::XmlSerializer(file).writeObject(properties);
+	const bool result = xml::XmlSerializer(file).writeObject(properties);
 	file->close();
 
 	return result;
@@ -308,7 +308,7 @@ bool saveGlobalSettings(const Path& pathName, const PropertyGroup* properties)
 
 bool saveUserSettings(const Path& pathName, const PropertyGroup* properties)
 {
-	std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
+	const std::wstring userFile = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/" + pathName.getFileName();
 
 	Ref< IStream > file = FileSystem::getInstance().open(userFile, File::FmWrite);
 	if (!file)
@@ -317,7 +317,7 @@ bool saveUserSettings(const Path& pathName, const PropertyGroup* properties)
 		return false;
 	}
 
-	bool result = xml::XmlSerializer(file).writeObject(properties);
+	const bool result = xml::XmlSerializer(file).writeObject(properties);
 	file->close();
 
 	return result;
@@ -394,11 +394,11 @@ bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstrin
 	if (!shortcutGroup)
 		return false;
 
-	std::wstring keyDesc = shortcutGroup->getProperty< std::wstring >(command);
+	const std::wstring keyDesc = shortcutGroup->getProperty< std::wstring >(command);
 	if (keyDesc.empty())
 		return false;
 
-	std::pair< int, ui::VirtualKey > key = parseShortcut(keyDesc);
+	const std::pair< int, ui::VirtualKey > key = parseShortcut(keyDesc);
 	if (!key.first && key.second == ui::VkNull)
 		return false;
 
@@ -648,9 +648,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_buildProgress->setVisible(false);
 
 	// Create shared discovery manager.
-	m_discoveryManager = new net::DiscoveryManager();
-	m_discoveryManager->create(net::MdFindServices | net::MdPublishServices);
-	setStoreObject(L"DiscoveryManager", m_discoveryManager);
+	{
+		uint32_t mode = net::MdFindServices;
+		if (m_mergedSettings->getProperty< bool >(L"Editor.Discoverable", true))
+			mode |= net::MdPublishServices;
+
+		m_discoveryManager = new net::DiscoveryManager();
+		m_discoveryManager->create(mode);
+		setStoreObject(L"DiscoveryManager", m_discoveryManager);
+	}
 
 	// Create editor page factories.
 	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
