@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Solution;
 
@@ -43,6 +41,4 @@ public:
 	virtual void showOptions() const = 0;
 };
 
-	}
 }
-

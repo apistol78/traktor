@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class T_DLLCLASS File : public ProjectItem
 {
@@ -48,6 +46,4 @@ private:
 	std::wstring m_excludeFilter;
 };
 
-	}
 }
-

@@ -38,12 +38,10 @@
 #include "SolutionBuilder/ProjectItem.h"
 #include "SolutionBuilder/Solution.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 class ScriptProfilerListener : public script::IScriptProfiler::IListener
 {
@@ -169,7 +167,7 @@ Any HeaderScanner_get(HeaderScanner* self, const std::wstring& fileName, const s
 	));
 }
 
-			}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
 
@@ -332,7 +330,7 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 	file->close();
 
 	// Keep source from stream.
-	std::wstring source = ss.str();
+	const std::wstring source = ss.str();
 	ss.reset();
 
 	// Transform generator script into pure code script.
@@ -343,15 +341,15 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 	m_sections.resize(0);
 	for (;;)
 	{
-		size_t s = source.find(L"<?--", offset);
+		const size_t s = source.find(L"<?--", offset);
 		if (s == source.npos)
 			break;
 
-		size_t e = source.find(L"--?>", s);
+		const size_t e = source.find(L"--?>", s);
 		if (e == source.npos)
 			return false;
 
-		std::wstring section = source.substr(offset, s - offset);
+		const std::wstring section = source.substr(offset, s - offset);
 		m_sections.push_back(section);
 
 		ss << L"\toutput:printSection(" << (int32_t)(m_sections.size() - 1) << L")" << Endl;
@@ -360,7 +358,7 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 		offset = e + 4;
 	}
 
-	std::wstring section = source.substr(offset);
+	const std::wstring section = source.substr(offset);
 	m_sections.push_back(section);
 
 	ss << L"\toutput:printSection(" << (int32_t)(m_sections.size() - 1) << L")" << Endl;
@@ -418,5 +416,4 @@ bool ScriptProcessor::generate(const Solution* solution, const Project* project,
 	return true;
 }
 
-	}
 }

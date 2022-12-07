@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "SolutionBuilder/Filter.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Filter", 0, Filter, ProjectItem)
 
@@ -33,5 +31,4 @@ void Filter::serialize(ISerializer& s)
 	ProjectItem::serialize(s);
 }
 
-	}
 }

@@ -23,8 +23,10 @@ namespace traktor
 
 class Path;
 
-	namespace sb
-	{
+}
+
+namespace traktor::sb
+{
 
 class SolutionLoader;
 
@@ -61,6 +63,4 @@ private:
 	Link m_link = LnkYes;
 };
 
-	}
 }
-

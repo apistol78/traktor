@@ -15,10 +15,8 @@
 #include "Core/Serialization/Member.h"
 #include "SolutionBuilder/File.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"File", 1, File, ProjectItem)
 
@@ -89,5 +87,4 @@ void File::serialize(ISerializer& s)
 	ProjectItem::serialize(s);
 }
 
-	}
 }

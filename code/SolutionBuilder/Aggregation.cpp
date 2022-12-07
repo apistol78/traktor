@@ -15,10 +15,8 @@
 
 // !DEPRECATED!
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Aggregation", 1, Aggregation, ISerializable)
 
@@ -93,5 +91,4 @@ void Aggregation::serialize(ISerializer& s)
 	s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
 }
 
-	}
 }

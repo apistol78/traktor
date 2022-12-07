@@ -24,8 +24,10 @@ namespace traktor
 
 class Path;
 
-	namespace sb
-	{
+}
+
+namespace traktor::sb
+{
 
 class Solution;
 class Project;
@@ -63,6 +65,4 @@ private:
 	RefArray< ExternalDependency > m_dependencies;
 };
 
-	}
 }
-

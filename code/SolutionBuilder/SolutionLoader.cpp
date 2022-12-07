@@ -16,17 +16,15 @@
 #include "SolutionBuilder/Solution.h"
 #include "Xml/XmlDeserializer.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionLoader", SolutionLoader, Object)
 
 Solution* SolutionLoader::load(const std::wstring& fileName)
 {
 	// Resolve absolute path to use as key.
-	std::wstring pathName = toLower(FileSystem::getInstance().getAbsolutePath(fileName).getPathName());
+	const std::wstring pathName = toLower(FileSystem::getInstance().getAbsolutePath(fileName).getPathName());
 
 	// Have we already loaded the solution.
 	auto it = m_solutions.find(pathName);
@@ -62,5 +60,4 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 	return solution;
 }
 
-	}
 }

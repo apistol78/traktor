@@ -10,13 +10,9 @@
 
 #include "Core/Containers/AlignedVector.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint8_t >& data);
 
-	}
 }
-

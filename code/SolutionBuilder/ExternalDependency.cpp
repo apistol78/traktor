@@ -17,10 +17,8 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/SolutionLoader.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ExternalDependency", 3, ExternalDependency, Dependency)
 
@@ -130,5 +128,4 @@ void ExternalDependency::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"projectName", m_projectName);
 }
 
-	}
 }

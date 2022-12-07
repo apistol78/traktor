@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "SolutionBuilder/ProjectItem.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, ISerializable)
 
@@ -37,5 +35,4 @@ void ProjectItem::serialize(ISerializer& s)
 	s >> MemberRefArray< ProjectItem >(L"items", m_items);
 }
 
-	}
 }
