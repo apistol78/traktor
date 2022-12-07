@@ -132,11 +132,12 @@ void WorldRendererForward::setup(
 	// 	worldRenderView.setProjection(proj);
 	// }
 
+	StaticVector< const LightComponent*, c_maxLightCount > lights;
+
 	// Gather active renderables for this frame.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward gather");
 
-		m_lights.resize(0);
 		m_probes.resize(0);
 		m_gathered.resize(0);
 
@@ -144,16 +145,52 @@ void WorldRendererForward::setup(
 
 			// Gather lights and probes separately as we need them for shadows and lighting.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
-				m_lights.push_back(lightComponent);
+			{
+				if (!lights.full())
+					lights.push_back(lightComponent);
+			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
 				m_probes.push_back(probeComponent);
 
 			m_gathered.push_back({ entityRenderer, renderable });
 
 		}).gather(const_cast< Entity* >(rootEntity));
+	}
 
-		if (m_lights.size() > c_maxLightCount)
-			m_lights.resize(c_maxLightCount);
+	// Arrange lights.
+	{
+		const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+
+		m_lights.resize(4);
+		m_lights[0] = nullptr;
+		m_lights[1] = nullptr;
+		m_lights[2] = nullptr;
+		m_lights[3] = nullptr;
+
+		// Find cascade shadow light; must be first.
+		if (shadowsEnable)
+		{
+			for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+			{
+				auto& light = lights[i];
+				if (
+					light->getCastShadow() &&
+					light->getLightType() == LightType::Directional
+				)
+				{
+					m_lights[0] = light;
+					break;
+				}
+			}
+		}
+
+		// Add all other lights.
+		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+		{
+			auto& light = lights[i];
+			if (light != m_lights[0])
+				m_lights.push_back(light);
+		}
 	}
 
 	// Add additional passes by entity renderers.
@@ -278,20 +315,6 @@ void WorldRendererForward::setupLightPass(
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
-	
-	// Find cascade shadow light.
-	int32_t lightCascadeIndex = -1;
-	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
-		{
-			const auto& light = m_lights[i];
-			if (light->getCastShadow() && light->getLightType() == LightType::Directional)
-			{
-				lightCascadeIndex = i;
-				break;
-			}
-		}
-	}
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
@@ -300,7 +323,11 @@ void WorldRendererForward::setupLightPass(
 		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
 		{
 			const auto& light = m_lights[i];
-			if (light->getCastShadow() && light->getLightType() == LightType::Spot)
+			if (
+				light != nullptr &&
+				light->getCastShadow() &&
+				light->getLightType() == LightType::Spot
+			)
 				lightAtlasIndices.push_back(i);
 		}
 	}
@@ -308,9 +335,9 @@ void WorldRendererForward::setupLightPass(
 	// Write all lights to sbuffer; without shadow map information.
 	{
 		// First 4 entires are cascading shadow light.
-		if (lightCascadeIndex >= 0)
+		if (m_lights[0] != nullptr)
 		{
-			const auto& light = m_lights[lightCascadeIndex];
+			const auto& light = m_lights[0];
 			auto* lsd = lightShaderData;
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -334,11 +361,11 @@ void WorldRendererForward::setupLightPass(
 			}
 		}
 
-		// Append all other lights, \note we could ignore cascading shadow light.
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		// Append all other lights.
+		for (int32_t i = 4; i < (int32_t)m_lights.size(); ++i)
 		{
 			const auto& light = m_lights[i];
-			auto* lsd = &lightShaderData[i + 4];
+			auto* lsd = &lightShaderData[i];
 
 			lsd->typeRangeRadius[0] = (float)light->getLightType();
 			lsd->typeRangeRadius[1] = light->getRange();
@@ -361,7 +388,7 @@ void WorldRendererForward::setupLightPass(
 	// and update light sbuffer.
 	if (shadowsEnable)
 	{
-		const int32_t cascadingSlices = lightCascadeIndex >= 0 ? shadowSettings.cascadingSlices : 0;
+		const int32_t cascadingSlices = (m_lights[0] != nullptr) ? shadowSettings.cascadingSlices : 0;
 		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
@@ -386,9 +413,9 @@ void WorldRendererForward::setupLightPass(
 		clear.depth = 1.0f;
 		rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfNone, render::TfDepth);
 
-		if (lightCascadeIndex >= 0)
+		if (m_lights[0] != nullptr)
 		{
-			const auto& light = m_lights[lightCascadeIndex];
+			const auto& light = m_lights[0];
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -507,7 +534,7 @@ void WorldRendererForward::setupLightPass(
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
 
-			auto* lsd = &lightShaderData[lightAtlasIndex + 4];
+			auto* lsd = &lightShaderData[lightAtlasIndex];
 
 			// Calculate shadow map projection.
 			Matrix44 shadowLightView;
