@@ -8,10 +8,8 @@
  */
 #include "Resource/ExclusiveResourceHandle.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ExclusiveResourceHandle", ExclusiveResourceHandle, ResourceHandle)
 
@@ -30,5 +28,4 @@ void ExclusiveResourceHandle::release(void* owner) const
 	Object::release(owner);
 }
 
-	}
 }

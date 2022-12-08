@@ -19,10 +19,8 @@
 #include "Resource/ResourceManager.h"
 #include "Resource/ResidentResourceHandle.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
@@ -440,5 +438,4 @@ void ResourceManager::load(const db::Instance* instance, const IResourceFactory*
 		log::error << L"Unable to create resource \"" << instance->getGuid().format() << L"\" (" << productType.getName() << L") using factory \"" << type_name(factory) << L"\"." << Endl;
 }
 
-	}
 }

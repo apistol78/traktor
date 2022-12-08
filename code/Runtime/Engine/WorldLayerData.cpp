@@ -16,10 +16,8 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.WorldLayerData", 0, WorldLayerData, LayerData)
 
@@ -48,5 +46,4 @@ void WorldLayerData::serialize(ISerializer& s)
 	s >> resource::Member< scene::Scene >(L"scene", m_scene);
 }
 
-	}
 }

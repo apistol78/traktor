@@ -828,7 +828,7 @@ void PrimitiveRenderer::drawSolidPolygon(
 		Plane plane;
 		if (Winding3(vertices.c_ptr(), vertices.size()).getPlane(plane))
 		{
-			Triangulator().freeze(vertices, plane.normal(), Triangulator::TfSequential, [&](size_t i0, size_t i1, size_t i2) {
+			Triangulator().freeze(vertices, plane.normal(), Triangulator::Mode::Sequential, [&](size_t i0, size_t i1, size_t i2) {
 				drawSolidTriangle(
 					vertices[i0],
 					vertices[i1],

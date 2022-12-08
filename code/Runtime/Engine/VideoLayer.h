@@ -20,25 +20,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 class Video;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
@@ -50,7 +48,7 @@ class T_DLLCLASS VideoLayer : public Layer
 	T_RTTI_CLASS;
 
 public:
-	VideoLayer(
+	explicit VideoLayer(
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
@@ -116,6 +114,4 @@ private:
 	bool m_visible;
 };
 
-	}
 }
-

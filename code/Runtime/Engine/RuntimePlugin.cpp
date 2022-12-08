@@ -18,10 +18,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.RuntimePlugin", 0, RuntimePlugin, IRuntimePlugin)
 
@@ -61,5 +59,4 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 	return new StageState(environment, stage);
 }
 
-	}
 }

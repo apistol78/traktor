@@ -34,17 +34,15 @@
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-render::handle_t s_handleFeedback;
+render::Handle s_handleFeedback(L"Feedback");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldLayer", WorldLayer, Layer)
 
@@ -76,9 +74,6 @@ WorldLayer::WorldLayer(
 		feedbackManager->addListener(spray::FbtCamera, this);
 		feedbackManager->addListener(spray::FbtImageProcess, this);
 	}
-
-	// Get parameter handles.
-	s_handleFeedback = render::getParameterHandle(L"Feedback");
 }
 
 void WorldLayer::destroy()
@@ -561,5 +556,4 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	}
 }
 
-	}
 }

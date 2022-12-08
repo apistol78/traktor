@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class Sound;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Stage audio layer persistent data.
  * \ingroup Runtime
@@ -51,5 +49,4 @@ private:
 	bool m_repeat = true;
 };
 
-	}
 }

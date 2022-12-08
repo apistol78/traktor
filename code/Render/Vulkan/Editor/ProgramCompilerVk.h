@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Vulkan program compiler.
  * \ingroup Render
@@ -52,6 +50,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

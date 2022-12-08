@@ -33,6 +33,14 @@
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_REFLECTIONSOVERLAY</first>
 			<second>Reflections</second>
 		</item>
+    <item>
+      <first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_SLICEOVERLAY</first>
+      <second>Shadow Slices</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_SHADOWMAPOVERLAY</first>
+      <second>Shadow Map</second>
+    </item>
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_SHADOWMASKOVERLAY</first>
 			<second>Shadow Mask</second>

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! \brief
  * \ingroup Resource
@@ -37,9 +35,7 @@ public:
 		std::wstring sourceBase;
 		std::wstring outputBase;
 		std::wstring sourceMask;
-		bool recursive;
-
-		Pattern();
+		bool recursive = false;
 
 		void serialize(ISerializer& s);
 	};
@@ -52,6 +48,4 @@ private:
 	std::list< Pattern > m_patterns;
 };
 
-	}
 }
-

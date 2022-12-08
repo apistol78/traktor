@@ -20,19 +20,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class Scene;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
-/*! \brief
+/*! World stage layer data.
  * \ingroup Runtime
  */
 class T_DLLCLASS WorldLayerData : public LayerData
@@ -50,5 +48,4 @@ private:
 	resource::Id< scene::Scene > m_scene;
 };
 
-	}
 }

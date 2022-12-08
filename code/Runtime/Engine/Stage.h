@@ -27,17 +27,19 @@ namespace traktor
 
 class IRuntimeClass;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class RenderGraph;
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 class IStateManager;
@@ -190,6 +192,4 @@ private:
 	bool validateScriptContext();
 };
 
-	}
 }
-

@@ -184,7 +184,7 @@ void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) c
             Triangulator().freeze(
                 w.get(),
                 wp.normal(),
-                Triangulator::TfSequential,
+                Triangulator::Mode::Sequential,
                 [&](size_t i0, size_t i1, size_t i2) {
                     primitiveRenderer->drawSolidTriangle(
                         w[(uint32_t)i0],

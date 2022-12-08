@@ -31,24 +31,24 @@ namespace traktor
 class T_DLLCLASS Triangulator
 {
 public:
-	enum TriangulatorFlags
+	enum class Mode
 	{
-		TfSequential = 0,
-		TfSorted = 1
+		Sequential = 0,
+		Sorted = 1
 	};
 
 	typedef std::function< void(size_t index0, size_t index1, size_t index2) > fn_callback_t;
 
 	void freeze(
 		const AlignedVector< Vector2 >& points,
-		uint32_t flags,
+		Mode mode,
 		const fn_callback_t& callback
 	);
 
 	void freeze(
 		const AlignedVector< Vector4 >& points,
 		const Vector4& normal,
-		uint32_t flags,
+		Mode mode,
 		const fn_callback_t& callback
 	);
 };

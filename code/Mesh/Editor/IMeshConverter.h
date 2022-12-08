@@ -20,16 +20,18 @@ namespace traktor
 
 class IStream;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class IModelOperation;
 class Model;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class MeshResource;
 class MeshAsset;
@@ -39,7 +41,7 @@ class IMeshConverter : public Object
 public:
 	virtual Ref< MeshResource > createResource() const = 0;
 
-	virtual bool getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const = 0;
+	virtual bool getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const = 0;
 
 	virtual bool convert(
 		const MeshAsset* meshAsset,
@@ -53,6 +55,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

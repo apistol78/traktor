@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberType.h"
 #include "Resource/ResourceBundle.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.ResourceBundle", 0, ResourceBundle, ISerializable)
 
@@ -41,5 +39,4 @@ void ResourceBundle::serialize(ISerializer& s)
 	s >> Member< bool >(L"persistent", m_persistent);
 }
 
-	}
 }

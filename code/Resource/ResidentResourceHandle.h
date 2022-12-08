@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Cached resource handle.
  * \ingroup Resource
@@ -45,6 +43,4 @@ private:
 	bool m_persistent;
 };
 
-	}
 }
-

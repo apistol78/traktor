@@ -8,10 +8,8 @@
  */
 #include "Runtime/Events/ReconfigureEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ReconfigureEvent", ReconfigureEvent, Object)
 
@@ -31,5 +29,4 @@ int32_t ReconfigureEvent::getResult() const
 	return m_result;
 }
 
-	}
 }

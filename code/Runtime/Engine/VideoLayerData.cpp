@@ -17,10 +17,8 @@
 #include "Video/Video.h"
 #include "Video/VideoResource.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.VideoLayerData", 0, VideoLayerData, LayerData)
 
@@ -64,5 +62,4 @@ void VideoLayerData::serialize(ISerializer& s)
 	s >> Member< bool >(L"repeat", m_repeat);
 }
 
-	}
 }

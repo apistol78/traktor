@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Reconfigure event.
  * \ingroup Runtime
@@ -46,6 +44,4 @@ private:
 	int32_t m_result;
 };
 
-	}
 }
-

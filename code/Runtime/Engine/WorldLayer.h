@@ -24,33 +24,31 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ImageProcess;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class Scene;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class EntityData;
 class IWorldRenderer;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
@@ -64,7 +62,7 @@ class T_DLLCLASS WorldLayer
 	T_RTTI_CLASS;
 
 public:
-	WorldLayer(
+	explicit WorldLayer(
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
@@ -169,5 +167,4 @@ private:
 	bool m_controllerEnable = true;
 };
 
-	}
 }

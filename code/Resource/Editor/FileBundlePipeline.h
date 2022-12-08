@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Assets pipeline.
  * \ingroup Editor
@@ -72,6 +70,4 @@ private:
 	std::wstring m_assetPath;
 };
 
-	}
 }
-

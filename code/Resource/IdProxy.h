@@ -12,10 +12,8 @@
 #include "Core/Ref.h"
 #include "Resource/ExplicitResourceHandle.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Resource proxy with embedded identifier.
  * \ingroup Resource
@@ -158,6 +156,4 @@ private:
 	intptr_t m_tag = 0;
 };
 
-	}
 }
-

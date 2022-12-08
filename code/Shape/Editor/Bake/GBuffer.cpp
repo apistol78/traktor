@@ -43,15 +43,15 @@ public:
 
 	Vector4 factors(const Vector2& pt) const
 	{
-		float alpha = ((m_v1.y - m_v2.y) * (pt.x - m_v2.x) + (m_v2.x - m_v1.x) * (pt.y - m_v2.y)) / m_denom;
-		float beta = ((m_v2.y - m_v0.y) * (pt.x - m_v2.x) + (m_v0.x - m_v2.x) * (pt.y - m_v2.y)) / m_denom;
-		float gamma = 1.0f - alpha - beta;
+		const float alpha = ((m_v1.y - m_v2.y) * (pt.x - m_v2.x) + (m_v2.x - m_v1.x) * (pt.y - m_v2.y)) / m_denom;
+		const float beta = ((m_v2.y - m_v0.y) * (pt.x - m_v2.x) + (m_v0.x - m_v2.x) * (pt.y - m_v2.y)) / m_denom;
+		const float gamma = 1.0f - alpha - beta;
 		return Vector4(alpha, beta, gamma, 0.0f);
 	}
 
 	bool inside(const Vector2& pt) const
 	{
-		Vector4 f = factors(pt).xyz1();
+		const Vector4 f = factors(pt).xyz1();
 		return compareAllGreaterEqual(f, Vector4::zero());
 	}
 
@@ -79,7 +79,7 @@ public:
 
 	ValueType evaluate(const Barycentric& bary, const Vector2& pt) const
 	{
-		Vector4 f = bary.factors(pt);
+		const Vector4 f = bary.factors(pt);
 		return m_v0 * f.x() + m_v1 * f.y() + m_v2 * f.z();
 	}
 
@@ -105,7 +105,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	m_data.resize(width * height);
 	m_boundingBox = Aabb3();
 
-	for (uint32_t i = 0; i < width * height; ++i)
+	for (int32_t i = 0; i < width * height; ++i)
 	{
 		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
@@ -131,18 +131,18 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		{
 			const auto& vertex = model.getVertex(index);
 
-			uint32_t positionIndex = vertex.getPosition();
+			const uint32_t positionIndex = vertex.getPosition();
 			positions.push_back(transform * model.getPosition(positionIndex).xyz1());
 
-			uint32_t normalIndex = vertex.getNormal();
+			const uint32_t normalIndex = vertex.getNormal();
 			normals.push_back((transform * model.getNormal(normalIndex).xyz0()).normalized());
 
-			uint32_t tangentIndex = vertex.getTangent();
+			const uint32_t tangentIndex = vertex.getTangent();
 			tangents.push_back((transform * model.getNormal(tangentIndex).xyz0()).normalized());
 
-			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
+			const uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
 			texCoords.push(
-				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f)
+				model.getTexCoord(texCoordIndex) * Vector2((float)width, (float)height) - Vector2(0.5f, 0.5f)
 			);
 			texBounds.contain(texCoords.get().back());
 
@@ -150,7 +150,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		}
 
 		// Triangulate winding so we can easily traverse lightmap fragments.
-		Triangulator().freeze(texCoords.get(), Triangulator::TfSorted, [&](size_t i0, size_t i1, size_t i2) {
+		Triangulator().freeze(texCoords.get(), Triangulator::Mode::Sorted, [&](size_t i0, size_t i1, size_t i2) {
 			const Barycentric bary(
 				texCoords[i0],
 				texCoords[i1],
@@ -180,10 +180,10 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			bbox.contain(texCoords[i1]);
 			bbox.contain(texCoords[i2]);
 
-			int32_t sx = (int32_t)(bbox.mn.x - 4);
-			int32_t ex = (int32_t)(bbox.mx.x + 4);
-			int32_t sy = (int32_t)(bbox.mn.y - 4);
-			int32_t ey = (int32_t)(bbox.mx.y + 4);
+			const int32_t sx = (int32_t)(bbox.mn.x - 4);
+			const int32_t ex = (int32_t)(bbox.mx.x + 4);
+			const int32_t sy = (int32_t)(bbox.mn.y - 4);
+			const int32_t ey = (int32_t)(bbox.mx.y + 4);
 
 			for (int32_t x = sx; x <= ex; ++x)
 			{
@@ -192,15 +192,15 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					Vector2 pt(x, y);
+					const Vector2 pt((float)x, (float)y);
 
 					float distance = std::numeric_limits< float >::max();
 					if (bary.inside(pt))
 						distance = 0.0f;
 					else
 					{
-						Vector2 cpt = texCoords.closest(pt);
-						float fd = (pt - cpt).length();
+						const Vector2 cpt = texCoords.closest(pt);
+						const float fd = (pt - cpt).length();
 						if (fd < 4.0f)
 							distance = fd + 1.0f;
 						else
@@ -224,10 +224,10 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					elm.distance = distance;
 
 					// Evaluate delta magnitude of position in world space per texel offset.
-					Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
-					Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
-					Vector4 duv = max(ddx.absolute(), ddy.absolute());
-					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0));
+					const Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
+					const Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
+					const Vector4 duv = max(ddx.absolute(), ddy.absolute());
+					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0f));
 				}
 			}
 		});
@@ -251,9 +251,9 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 			if (e.polygon == model::c_InvalidIndex)
 				continue;
 
-			int32_t bx = int32_t(e.position.x() * 32.0f) & 1;
-			int32_t by = int32_t(e.position.y() * 32.0f) & 1;
-			int32_t bz = int32_t(e.position.z() * 32.0f) & 1;
+			const int32_t bx = int32_t(e.position.x() * 32.0f) & 1;
+			const int32_t by = int32_t(e.position.y() * 32.0f) & 1;
+			const int32_t bz = int32_t(e.position.z() * 32.0f) & 1;
 
 			image->setPixel(x, y, (bx ^ by ^ bz) ? Color4f(1.0f, 1.0f, 1.0f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f));
 		}
@@ -271,7 +271,7 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 			if (e.polygon == model::c_InvalidIndex)
 				continue;
 
-			Vector4 n = e.normal * Scalar(0.5f) + Scalar(0.5f);
+			const Vector4 n = e.normal * Scalar(0.5f) + Scalar(0.5f);
 			image->setPixel(x, y, Color4f(n.x(), n.y(), n.z(), 1.0f));
 		}
 	}
@@ -288,7 +288,7 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 			if (e.polygon == model::c_InvalidIndex)
 				continue;
 
-			float n = e.delta * 0.1f;
+			const float n = e.delta * 0.1f;
 			image->setPixel(x, y, Color4f(n, n, n, 1.0f));
 		}
 	}

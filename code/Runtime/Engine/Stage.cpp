@@ -28,16 +28,14 @@
 #include "Runtime/Engine/StageLoader.h"
 #include "Runtime/Engine/StageState.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle c_handleFade(L"Fade");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Stage", Stage, Object)
 
@@ -353,7 +351,7 @@ void Stage::postReconfigured()
 	{
 		const IRuntimeDispatch* methodReconfigured = findRuntimeClassMethod(m_class, "reconfigured");
 		if (methodReconfigured != nullptr)
-			methodReconfigured->invoke(m_object, 0, 0);
+			methodReconfigured->invoke(m_object, 0, nullptr);
 	}
 }
 
@@ -363,7 +361,7 @@ void Stage::suspend()
 	{
 		const IRuntimeDispatch* methodSuspend = findRuntimeClassMethod(m_class, "suspend");
 		if (methodSuspend != nullptr)
-			methodSuspend->invoke(m_object, 0, 0);
+			methodSuspend->invoke(m_object, 0, nullptr);
 	}
 
 	for (auto layer : m_layers)
@@ -379,7 +377,7 @@ void Stage::resume()
 	{
 		const IRuntimeDispatch* methodResume = findRuntimeClassMethod(m_class, "resume");
 		if (methodResume != nullptr)
-			methodResume->invoke(m_object, 0, 0);
+			methodResume->invoke(m_object, 0, nullptr);
 	}
 }
 
@@ -407,5 +405,4 @@ bool Stage::validateScriptContext()
 	return true;
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #include "Runtime/Engine/Layer.h"
 #include "Runtime/Engine/Stage.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Layer", Layer, Object)
 
@@ -40,5 +38,4 @@ void Layer::destroy()
 	m_stage = nullptr;
 }
 
-	}
 }

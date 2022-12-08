@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderGraph;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class Stage;
 class UpdateControl;
@@ -123,6 +121,4 @@ private:
 	bool m_permitTransition;
 };
 
-	}
 }
-
