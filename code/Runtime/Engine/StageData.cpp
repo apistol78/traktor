@@ -30,10 +30,8 @@
 #include "Resource/Member.h"
 #include "Resource/ResourceBundle.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.StageData", 11, StageData, ISerializable)
 
@@ -43,7 +41,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	resource::Proxy< IRuntimeClass > clazz;
 	resource::Proxy< render::Shader > shaderFade;
 
-	bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
+	const bool skipPreload = environment->getSettings()->getProperty< bool >(L"Runtime.SkipPreloadResources", false);
 	if (!skipPreload)
 	{
 		// Load explicit resources.
@@ -99,5 +97,4 @@ void StageData::serialize(ISerializer& s)
 	s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
 }
 
-	}
 }

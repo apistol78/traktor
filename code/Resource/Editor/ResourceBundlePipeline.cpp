@@ -19,12 +19,10 @@
 #include "Resource/Editor/ResourceBundleAsset.h"
 #include "Resource/Editor/ResourceBundlePipeline.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
+	namespace
 	{
-		namespace
-		{
 
 void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::PipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, AlignedVector< std::pair< const TypeInfo*, Guid > >& outResources, SmallSet< Guid >& inoutHistory)
 {
@@ -54,7 +52,7 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::P
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 6, ResourceBundlePipeline, editor::IPipeline)
 
@@ -170,5 +168,4 @@ Ref< ISerializable > ResourceBundlePipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

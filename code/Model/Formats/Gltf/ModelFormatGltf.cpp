@@ -242,7 +242,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto buffers = docobj->getMemberValue(L"buffers").getObject< json::JsonArray >();
 	if (buffers)
 	{
-		Path dirPath(filePath.getPathOnly());
+		const Path dirPath(filePath.getPathOnly());
 
 		bufferStreams.resize(buffers->size());
 		for (uint32_t i = 0; i < buffers->size(); ++i)
@@ -251,7 +251,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			if (!buffer)
 				return nullptr;
 
-			std::wstring uri = buffer->getMemberValue(L"uri").getWideString();
+			const std::wstring uri = buffer->getMemberValue(L"uri").getWideString();
 
 			if (startsWith(uri, L"data:application/octet-stream;base64,"))
 			{
@@ -289,43 +289,43 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			Material mt;
 
 			// Name
-			auto name = material->getMemberValue(L"name").getWideString();
+			const auto name = material->getMemberValue(L"name").getWideString();
 			mt.setName(name);
 
 			// Normal map
-			auto normalTexture = material->getMemberValue(L"normalTexture").getObject< json::JsonObject >();
+			const auto normalTexture = material->getMemberValue(L"normalTexture").getObject< json::JsonObject >();
 			if (normalTexture)
 			{
-				int32_t index = normalTexture->getMemberValue(L"index").getInt32();
+				const int32_t index = normalTexture->getMemberValue(L"index").getInt32();
 				if (!textures || index < 0 || index >= (int32_t)textures->size())
 					return nullptr;
 
-				auto texture = textures->get(index).getObject< json::JsonObject >();
-				int32_t source = texture->getMemberValue(L"source").getInt32();
+				const auto texture = textures->get(index).getObject< json::JsonObject >();
+				const int32_t source = texture->getMemberValue(L"source").getInt32();
 				if (!images || source < 0 || source >= (int32_t)images->size())
 					return nullptr;
 
-				auto image = images->get(source).getObject< json::JsonObject >();
-				auto uri = image->getMemberValue(L"uri").getWideString();
+				const auto image = images->get(source).getObject< json::JsonObject >();
+				const auto uri = image->getMemberValue(L"uri").getWideString();
 				mt.setNormalMap(Material::Map(uri, L"UV0", true));
 			}
 
-			auto pbrMetallicRoughness = material->getMemberValue(L"pbrMetallicRoughness").getObject< json::JsonObject >();
+			const auto pbrMetallicRoughness = material->getMemberValue(L"pbrMetallicRoughness").getObject< json::JsonObject >();
 			if (pbrMetallicRoughness)
 			{
-				auto baseColorTexture = pbrMetallicRoughness->getMemberValue(L"baseColorTexture").getObject< json::JsonObject >();
+				const auto baseColorTexture = pbrMetallicRoughness->getMemberValue(L"baseColorTexture").getObject< json::JsonObject >();
 				if (baseColorTexture)
 				{
-					int32_t index = baseColorTexture->getMemberValue(L"index").getInt32();
+					const int32_t index = baseColorTexture->getMemberValue(L"index").getInt32();
 					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
-					auto texture = textures->get(index).getObject< json::JsonObject >();
-					int32_t source = texture->getMemberValue(L"source").getInt32();
+					const auto texture = textures->get(index).getObject< json::JsonObject >();
+					const int32_t source = texture->getMemberValue(L"source").getInt32();
 					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
-					auto image = images->get(source).getObject< json::JsonObject >();
+					const auto image = images->get(source).getObject< json::JsonObject >();
 
 					std::wstring name;
 					if (image->getMember(L"uri") != nullptr)
@@ -338,19 +338,19 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					mt.setDiffuseMap(Material::Map(name, L"UV0", true));
 				}
 
-				auto metallicRoughnessTexture = pbrMetallicRoughness->getMemberValue(L"metallicRoughnessTexture").getObject< json::JsonObject >();
+				const auto metallicRoughnessTexture = pbrMetallicRoughness->getMemberValue(L"metallicRoughnessTexture").getObject< json::JsonObject >();
 				if (metallicRoughnessTexture)
 				{
-					int32_t index = metallicRoughnessTexture->getMemberValue(L"index").getInt32();
+					const int32_t index = metallicRoughnessTexture->getMemberValue(L"index").getInt32();
 					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
-					auto texture = textures->get(index).getObject< json::JsonObject >();
-					int32_t source = texture->getMemberValue(L"source").getInt32();
+					const auto texture = textures->get(index).getObject< json::JsonObject >();
+					const int32_t source = texture->getMemberValue(L"source").getInt32();
 					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
-					auto image = images->get(source).getObject< json::JsonObject >();
+					const auto image = images->get(source).getObject< json::JsonObject >();
 
 					std::wstring name;
 					if (image->getMember(L"uri") != nullptr)
@@ -364,13 +364,13 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					mt.setRoughnessMap(Material::Map(name, L"UV0", true));
 				}
 
-				float metallicFactor = pbrMetallicRoughness->getMember(L"metallicFactor") != nullptr ? pbrMetallicRoughness->getMemberValue(L"metallicFactor").getFloat() : 1.0f;
+				const float metallicFactor = pbrMetallicRoughness->getMember(L"metallicFactor") != nullptr ? pbrMetallicRoughness->getMemberValue(L"metallicFactor").getFloat() : 1.0f;
 				mt.setMetalness(metallicFactor);
 
-				float roughnessFactor = pbrMetallicRoughness->getMemberValue(L"roughnessFactor").getFloat();
+				const float roughnessFactor = pbrMetallicRoughness->getMemberValue(L"roughnessFactor").getFloat();
 				mt.setRoughness(roughnessFactor);
 
-				auto baseColorFactor = pbrMetallicRoughness->getMemberValue(L"baseColorFactor").getObject< json::JsonArray >();
+				const auto baseColorFactor = pbrMetallicRoughness->getMemberValue(L"baseColorFactor").getObject< json::JsonArray >();
 				if (baseColorFactor != nullptr && baseColorFactor->size() >= 4)
 				{
 					mt.setColor(Color4f(
@@ -396,22 +396,22 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto skins = docobj->getMemberValue(L"skins").getObject< json::JsonArray >();
 	if (skins && skins->size() > 0)
 	{
-		auto skin = skins->get(0).getObject< json::JsonObject >();
-		auto joints = skin->getMemberValue(L"joints").getObject< json::JsonArray >();
+		const auto skin = skins->get(0).getObject< json::JsonObject >();
+		const auto joints = skin->getMemberValue(L"joints").getObject< json::JsonArray >();
 
 		AlignedVector< Joint > modelJoints;
 		SmallMap< int32_t, int32_t > jointMap;
 
 		for (uint32_t i = 0; i < joints->size(); ++i)
 		{
-			int32_t jointIndex = joints->get(i).getInt32();
+			const int32_t jointIndex = joints->get(i).getInt32();
 
-			auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
+			const auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
 			if (!jointNode)
 				return nullptr;
 
-			std::wstring name = jointNode->getMemberValue(L"name").getWideString();
-			Matrix44 Tnode = Tpost * parseTransform(jointNode);
+			const std::wstring name = jointNode->getMemberValue(L"name").getWideString();
+			const Matrix44 Tnode = Tpost * parseTransform(jointNode);
 
 			Joint& jnt = modelJoints.push_back();
 			jnt.setName(name);
@@ -423,21 +423,21 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 		// Update relationship between joints.
 		for (uint32_t i = 0; i < joints->size(); ++i)
 		{
-			int32_t jointIndex = joints->get(i).getInt32();
+			const int32_t jointIndex = joints->get(i).getInt32();
 			T_ASSERT(jointMap[jointIndex] == (int32_t)i);
 
-			auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
+			const auto jointNode = nodes->get(jointIndex).getObject< json::JsonObject >();
 			if (!jointNode)
 				return nullptr;
 
-			auto children = jointNode->getMemberValue(L"children").getObject< json::JsonArray >();
+			const auto children = jointNode->getMemberValue(L"children").getObject< json::JsonArray >();
 			if (!children)
 				continue;
 
 			for (uint32_t j = 0; j < children->size(); ++j)
 			{
-				int32_t childIndex = children->get(j).getInt32();
-				int32_t childModelJoint = jointMap[childIndex];
+				const int32_t childIndex = children->get(j).getInt32();
+				const int32_t childModelJoint = jointMap[childIndex];
 				modelJoints[childModelJoint].setParent(i);
 			}
 		}
@@ -451,7 +451,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	{
 		for (uint32_t i = 0; i < nodes->size(); ++i)
 		{
-			auto node = nodes->get(i).getObject< json::JsonObject >();
+			const auto node = nodes->get(i).getObject< json::JsonObject >();
 			if (!node)
 				return nullptr;
 
@@ -462,34 +462,34 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			if (meshIndex < 0 || meshIndex >= (int32_t)meshes->size())
 				continue;
 
-			auto mesh = meshes->get(meshIndex).getObject< json::JsonObject >();
+			const auto mesh = meshes->get(meshIndex).getObject< json::JsonObject >();
 			if (!mesh)
 				return nullptr;
 
-			Matrix44 Tnode = Tpost * parseTransform(node);
+			const Matrix44 Tnode = Tpost * parseTransform(node);
 
-			auto primitives = mesh->getMemberValue(L"primitives").getObject< json::JsonArray >();
+			const auto primitives = mesh->getMemberValue(L"primitives").getObject< json::JsonArray >();
 			if (!primitives)
 				return nullptr;
 
 			for (uint32_t j = 0; j < primitives->size(); ++j)
 			{
-				auto prim = primitives->get(j).getObject< json::JsonObject >();
+				const auto prim = primitives->get(j).getObject< json::JsonObject >();
 				if (!prim)
 					return nullptr;
 
-				int32_t material = prim->getMemberValue(L"material").getInt32();
-				int32_t indices = prim->getMemberValue(L"indices").getInt32();
+				const int32_t material = prim->getMemberValue(L"material").getInt32();
+				const int32_t indices = prim->getMemberValue(L"indices").getInt32();
 
-				auto attributes = prim->getMemberValue(L"attributes").getObject< json::JsonObject >();
+				const auto attributes = prim->getMemberValue(L"attributes").getObject< json::JsonObject >();
 				if (!attributes)
 					return nullptr;
 
-				int32_t position = attributes->getMemberValue(L"POSITION").getInt32();
-				int32_t normal = attributes->getMemberValue(L"NORMAL").getInt32();
-				int32_t texCoord0 = attributes->getMemberValue(L"TEXCOORD_0").getInt32();
-				int32_t joints0 = attributes->getMemberValue(L"JOINTS_0").getInt32();
-				int32_t weights0 = attributes->getMemberValue(L"WEIGHTS_0").getInt32();
+				const int32_t position = attributes->getMemberValue(L"POSITION").getInt32();
+				const int32_t normal = attributes->getMemberValue(L"NORMAL").getInt32();
+				const int32_t texCoord0 = attributes->getMemberValue(L"TEXCOORD_0").getInt32();
+				const int32_t joints0 = attributes->getMemberValue(L"JOINTS_0").getInt32();
+				const int32_t weights0 = attributes->getMemberValue(L"WEIGHTS_0").getInt32();
 
 				AlignedVector< int32_t > dataIndices;
 				AlignedVector< Vector4 > dataPositions;

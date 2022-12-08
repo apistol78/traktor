@@ -20,19 +20,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ProgramParameters;
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
@@ -44,7 +42,7 @@ class T_DLLCLASS ScreenLayer : public Layer
 	T_RTTI_CLASS;
 
 public:
-	ScreenLayer(
+	explicit ScreenLayer(
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
@@ -83,5 +81,4 @@ private:
 	std::function< void(render::ProgramParameters*) > m_parameterCallback;
 };
 
-	}
 }

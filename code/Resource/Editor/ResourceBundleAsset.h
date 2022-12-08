@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*!
  * \ingroup Resource
@@ -47,6 +45,4 @@ private:
 	bool m_persistent = false;
 };
 
-	}
 }
-

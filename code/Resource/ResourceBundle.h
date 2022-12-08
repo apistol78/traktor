@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Bundle of resource identifiers.
  * \ingroup Resource
@@ -34,7 +32,7 @@ class T_DLLCLASS ResourceBundle : public ISerializable
 public:
 	ResourceBundle() = default;
 
-	ResourceBundle(const AlignedVector< std::pair< const TypeInfo*, Guid > >& resources, bool persistent);
+	explicit ResourceBundle(const AlignedVector< std::pair< const TypeInfo*, Guid > >& resources, bool persistent);
 
 	const AlignedVector< std::pair< const TypeInfo*, Guid > >& get() const;
 
@@ -47,6 +45,4 @@ private:
 	bool m_persistent = false;
 };
 
-	}
 }
-

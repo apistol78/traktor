@@ -46,12 +46,10 @@
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 TBuiltInResource getDefaultBuiltInResource()
 {
@@ -226,7 +224,7 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 		log::warning << L"SPIR-V optimizer failed; using unoptimized IL." << Endl;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
 
@@ -918,5 +916,4 @@ bool ProgramCompilerVk::generate(
 	return true;
 }
 
-	}
 }

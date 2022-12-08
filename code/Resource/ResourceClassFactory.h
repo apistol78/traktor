@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Resource system class factory.
  * \ingroup Resource
@@ -34,6 +32,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

@@ -486,7 +486,7 @@ void createSectors(
 			Triangulator().freeze(
 				winding.get(),
 				windingPlane.normal(),
-				Triangulator::TfSorted,
+				Triangulator::Mode::Sorted,
 				[&](size_t i0, size_t i1, size_t i2) {
 					triangles.push_back(Polygon());
 					triangles.back().material = polygon.material;
@@ -526,7 +526,7 @@ Ref< MeshResource > IndoorMeshConverter::createResource() const
 	return new IndoorMeshResource();
 }
 
-bool IndoorMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+bool IndoorMeshConverter::getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const
 {
 	return true;
 }

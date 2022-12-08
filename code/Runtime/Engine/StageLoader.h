@@ -16,19 +16,15 @@ namespace traktor
 
 class Job;
 
-	namespace runtime
-	{
+}
+
+namespace traktor::runtime
+{
 
 class IEnvironment;
-
-	}
-
-	namespace runtime
-	{
-
 class Stage;
 
-/*! \brief
+/*! Stage loader.
  * \ingroup Runtime
  */
 class StageLoader : public Object
@@ -57,6 +53,4 @@ private:
 	static Ref< StageLoader > create(IEnvironment* environment, const Guid& stageGuid, const Object* params);
 };
 
-	}
 }
-

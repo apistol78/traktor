@@ -25,9 +25,9 @@ Ref< MeshResource > AutoLodMeshConverter::createResource() const
 	return new AutoLodMeshResource();
 }
 
-bool AutoLodMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+bool AutoLodMeshConverter::getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const
 {
-	return StaticMeshConverter().getOperations(meshAsset, outOperations);
+	return StaticMeshConverter().getOperations(meshAsset, editor, outOperations);
 }
 
 bool AutoLodMeshConverter::convert(

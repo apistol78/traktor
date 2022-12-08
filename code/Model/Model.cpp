@@ -164,7 +164,7 @@ uint32_t Model::addVertex(const Vertex& vertex)
 
 uint32_t Model::addUniqueVertex(const Vertex& vertex)
 {
-	uint32_t id = m_vertices.find(vertex);
+	const uint32_t id = m_vertices.find(vertex);
 	return id != m_vertices.InvalidIndex ? id : m_vertices.add(vertex);
 }
 
@@ -190,7 +190,7 @@ uint32_t Model::addPosition(const Vector4& position)
 
 uint32_t Model::addUniquePosition(const Vector4& position, float distance)
 {
-	uint32_t id = m_positions.get(position, distance);
+	const uint32_t id = m_positions.get(position, distance);
 	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
 }
 
@@ -201,7 +201,7 @@ uint32_t Model::addColor(const Vector4& color)
 
 uint32_t Model::addUniqueColor(const Vector4& color)
 {
-	uint32_t id = m_colors.get(color, 1.0f / (4.0f * 256.0f));
+	const uint32_t id = m_colors.get(color, 1.0f / (4.0f * 256.0f));
 	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
 }
 
@@ -217,13 +217,8 @@ uint32_t Model::addNormal(const Vector4& normal)
 
 uint32_t Model::addUniqueNormal(const Vector4& normal)
 {
-	Vector4 quantizedNormal(
-		int(normal.x() * 128.0f) / 128.0f,
-		int(normal.y() * 128.0f) / 128.0f,
-		int(normal.z() * 128.0f) / 128.0f,
-		0.0f
-	);
-	uint32_t id = m_normals.get(quantizedNormal, 0.008f);
+	const Vector4 quantizedNormal = ((normal * 255.0_simd).floor() / 255.0_simd).xyz0();
+	const uint32_t id = m_normals.get(quantizedNormal, 0.1f / 255.0f);
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
 }
 
@@ -239,7 +234,7 @@ uint32_t Model::addTexCoord(const Vector2& texCoord)
 
 uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 {
-	uint32_t id = m_texCoords.get(texCoord, 1.0f / 2048.0f);
+	const uint32_t id = m_texCoords.get(texCoord, 1.0f / 2048.0f);
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 
@@ -356,7 +351,7 @@ void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
 
 uint32_t Model::addAnimation(Animation* animation)
 {
-	uint32_t id = (uint32_t)m_animations.size();
+	const uint32_t id = (uint32_t)m_animations.size();
 	m_animations.push_back(animation);
 	return id;
 }
@@ -376,7 +371,7 @@ uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)
 		return uint32_t(std::distance(m_blendTargets.begin(), i));
 
 	m_blendTargets.push_back(blendTargetName);
-	uint32_t id = uint32_t(m_blendTargets.size() - 1);
+	const uint32_t id = uint32_t(m_blendTargets.size() - 1);
 
 	m_blendTargetPositions[id] = m_positions.values();
 	return id;

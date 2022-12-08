@@ -113,7 +113,7 @@ void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callb
 		Ref< IRuntimeDelegate > rc = callback;
 		self->setParameterCallback([&, rc](render::ProgramParameters* programParameters) {
 			Ref< render::BoxedProgramParameters > b = new render::BoxedProgramParameters(programParameters);
-			Any argv[] = { CastAny< render::BoxedProgramParameters* >::set(b) };
+			const Any argv[] = { CastAny< render::BoxedProgramParameters* >::set(b) };
 			rc->call(sizeof_array(argv), argv);
 		 });
 	}

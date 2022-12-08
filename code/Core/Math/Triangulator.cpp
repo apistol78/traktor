@@ -46,9 +46,9 @@ bool pointInTriangle(
 	const Vector2& c
 )
 {
-	float a1 = triangleArea(a, b, p);
-	float a2 = triangleArea(b, c, p);
-	float a3 = triangleArea(c, a, p);
+	const float a1 = triangleArea(a, b, p);
+	const float a2 = triangleArea(b, c, p);
+	const float a3 = triangleArea(c, a, p);
 	return (a1 > 0 && a2 > 0 && a3 > 0) || (a1 < 0 && a2 < 0 && a3 < 0);
 }
 
@@ -78,17 +78,17 @@ struct SortInternalAngle
 		getAdjacent(m_points, a, pa, na);
 		getAdjacent(m_points, b, pb, nb);
 
-		float aa1 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
-		float aa2 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
-		float aa3 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
+		const float aa1 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
+		const float aa2 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
+		const float aa3 = acosf(dot(m_points[pa] - m_points[a], m_points[na] - m_points[a]));
 
-		float aa = abs(aa1 - PI / 3) + abs(aa2 - PI / 3) + abs(aa3 - PI / 3);
+		const float aa = abs(aa1 - PI / 3) + abs(aa2 - PI / 3) + abs(aa3 - PI / 3);
 
-		float ab1 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
-		float ab2 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
-		float ab3 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
+		const float ab1 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
+		const float ab2 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
+		const float ab3 = acosf(dot(m_points[pb] - m_points[b], m_points[nb] - m_points[b]));
 
-		float ab = abs(ab1 - PI / 3) + abs(ab2 - PI / 3) + abs(ab3 - PI / 3);
+		const float ab = abs(ab1 - PI / 3) + abs(ab2 - PI / 3) + abs(ab3 - PI / 3);
 
 		return aa < ab;
 	}
@@ -113,7 +113,7 @@ bool isClockWise(const AlignedVector< Vector2 >& points)
 
 void Triangulator::freeze(
 	const AlignedVector< Vector2 >& points,
-	uint32_t flags,
+	Mode mode,
 	const fn_callback_t& callback
 )
 {
@@ -147,7 +147,7 @@ void Triangulator::freeze(
 		// Collect polygon ears.
 		for (int32_t i = 0; i < int32_t(uncut.size()); ++i)
 		{
-			bool convex = isConvex(uncut, i);
+			const bool convex = isConvex(uncut, i);
 			if (!convex)
 				continue;
 
@@ -160,7 +160,7 @@ void Triangulator::freeze(
 				if (j == prev || j == i || j == next)
 					continue;
 
-				bool convex2 = isConvex(uncut, j);
+				const bool convex2 = isConvex(uncut, j);
 				if (convex2)
 					continue;
 
@@ -170,7 +170,7 @@ void Triangulator::freeze(
 			if (ear)
 			{
 				ears.push_back(i);
-				if (!(flags & TfSorted))
+				if (mode != Mode::Sorted)
 					break;
 			}
 		}
@@ -179,9 +179,9 @@ void Triangulator::freeze(
 			break;
 
 		// Sort ears by minimize internal angle differences.
-		if (flags & TfSorted)
+		if (mode == Mode::Sorted)
 			std::sort(ears.begin(), ears.end(), SortInternalAngle(uncut));
-		int32_t cut = ears.front();
+		const int32_t cut = ears.front();
 
 		// Cut the ear.
 		int32_t prev, next;
@@ -196,7 +196,7 @@ void Triangulator::freeze(
 void Triangulator::freeze(
 	const AlignedVector< Vector4 >& points,
 	const Vector4& normal,
-	uint32_t flags,
+	Mode mode,
 	const fn_callback_t& callback
 )
 {
@@ -238,7 +238,7 @@ void Triangulator::freeze(
 	}
 
 	// Freeze 2d polygon.
-	freeze(projected, flags, callback);
+	freeze(projected, mode, callback);
 }
 
 }

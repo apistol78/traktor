@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! File bundle
  *  A file bundle is a serialized instance with a collection of named data streams attached.
@@ -45,5 +43,4 @@ private:
 	std::map< std::wstring, std::wstring > m_dataIds;
 };
 
-	}
 }

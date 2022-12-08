@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Resource/Editor/FileBundleAsset.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.resource.FileBundleAsset", 0, FileBundleAsset, ISerializable)
 
@@ -28,11 +26,6 @@ void FileBundleAsset::serialize(ISerializer& s)
 	s >> MemberStlList< Pattern, MemberComposite< Pattern > >(L"patterns", m_patterns);
 }
 
-FileBundleAsset::Pattern::Pattern()
-:	recursive(false)
-{
-}
-
 void FileBundleAsset::Pattern::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"sourceBase", sourceBase);
@@ -41,5 +34,4 @@ void FileBundleAsset::Pattern::serialize(ISerializer& s)
 	s >> Member< bool >(L"recursive", recursive);
 }
 
-	}
 }

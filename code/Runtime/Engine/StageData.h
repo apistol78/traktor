@@ -28,23 +28,19 @@ namespace traktor
 class IRuntimeClass;
 class PropertyGroup;
 
-	namespace runtime
-	{
+}
 
-class IEnvironment;
-
-	}
-
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Shader;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
+class IEnvironment;
 class LayerData;
 class Stage;
 
@@ -111,6 +107,4 @@ private:
 	Ref< const PropertyGroup > m_properties;
 };
 
-	}
 }
-

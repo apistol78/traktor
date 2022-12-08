@@ -21,18 +21,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundHandle;
 class Sound;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
@@ -125,6 +123,4 @@ private:
 	SmallMap< sound::handle_t, Tween > m_tweens;
 };
 
-	}
 }
-

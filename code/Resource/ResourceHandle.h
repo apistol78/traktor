@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Resource handle base class.
  * \ingroup Resource
@@ -52,6 +50,4 @@ protected:
 	mutable Ref< Object > m_object;
 };
 
-	}
 }
-

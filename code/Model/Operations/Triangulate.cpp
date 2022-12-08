@@ -51,7 +51,7 @@ bool Triangulate::apply(Model& model) const
 			Triangulator().freeze(
 				polygonWinding.get(),
 				polygonNormal,
-				Triangulator::TfSorted,
+				Triangulator::Mode::Sorted,
 				[&](size_t i0, size_t i1, size_t i2) {
 					triangulatedPolygons.push_back(Polygon(
 						polygon.getMaterial(),

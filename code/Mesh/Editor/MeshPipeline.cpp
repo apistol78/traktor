@@ -323,7 +323,7 @@ bool MeshPipeline::buildOutput(
 
 	// Create list of model operations we need to perform on model before converting it.
 	RefArray< const model::IModelOperation > operations;
-	if (!converter->getOperations(asset, operations))
+	if (!converter->getOperations(asset, m_editor, operations))
 	{
 		log::error << L"Mesh pipeline failed; unable to create model operations." << Endl;
 		return false;

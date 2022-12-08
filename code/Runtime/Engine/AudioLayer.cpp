@@ -16,10 +16,8 @@
 #include "Sound/Player/ISoundHandle.h"
 #include "Sound/Player/ISoundPlayer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.AudioLayer", AudioLayer, Layer)
 
@@ -213,5 +211,4 @@ void AudioLayer::resume()
 {
 }
 
-	}
 }

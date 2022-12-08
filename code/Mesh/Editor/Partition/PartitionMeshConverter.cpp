@@ -388,10 +388,11 @@ Ref< MeshResource > PartitionMeshConverter::createResource() const
 	return new PartitionMeshResource();
 }
 
-bool PartitionMeshConverter::getOperations(const MeshAsset* meshAsset, RefArray< const model::IModelOperation >& outOperations) const
+bool PartitionMeshConverter::getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const
 {
 	outOperations.push_back(new model::Triangulate());
-	outOperations.push_back(new model::SortCacheCoherency());
+	if (!editor)
+		outOperations.push_back(new model::SortCacheCoherency());
 	outOperations.push_back(new model::CalculateTangents(false));
 	outOperations.push_back(new model::SortProjectedArea(false));
 	outOperations.push_back(new model::FlattenDoubleSided());

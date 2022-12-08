@@ -739,7 +739,7 @@ bool Application::update()
 
 			// Update in same rate as rendering.
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
-			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
+			m_updateInfo.m_simulationFrequency = 1.0f / m_updateInfo.m_frameDeltaTime;
 
 			const double updateTimeStart = m_timer.getElapsedTime();
 			IState::UpdateResult updateResult;
@@ -930,7 +930,7 @@ bool Application::update()
 				tp.renderCPU = m_renderCpuDurations[0];
 				tp.renderGPU = m_renderGpuDuration;
 				tp.garbageCollect = (float)gcDuration;
-				tp.steps = (float)updateCount;
+				tp.steps = updateCount;
 				tp.interval = updateInterval;
 				tp.collisions = m_renderCollisions;
 				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
@@ -1002,7 +1002,7 @@ void Application::suspend()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 	if (m_stateManager->getCurrent() != nullptr)
 	{
-		ActiveEvent activeEvent(false);
+		const ActiveEvent activeEvent(false);
 		m_stateManager->getCurrent()->take(&activeEvent);
 	}
 }
@@ -1012,7 +1012,7 @@ void Application::resume()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 	if (m_stateManager->getCurrent() != nullptr)
 	{
-		ActiveEvent activeEvent(true);
+		const ActiveEvent activeEvent(true);
 		m_stateManager->getCurrent()->take(&activeEvent);
 	}
 }

@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.LayerData", LayerData, ISerializable)
 
@@ -23,5 +21,4 @@ void LayerData::serialize(ISerializer& s)
 	s >> Member< bool >(L"permitTransition", m_permitTransition);
 }
 
-	}
 }

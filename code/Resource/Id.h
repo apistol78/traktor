@@ -10,10 +10,8 @@
 
 #include "Core/Guid.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Resource identity.
  * \ingroup Resource
@@ -86,6 +84,4 @@ private:
 	Guid m_id;
 };
 
-	}
 }
-

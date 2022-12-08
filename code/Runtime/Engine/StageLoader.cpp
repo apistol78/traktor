@@ -16,12 +16,10 @@
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/StageLoader.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 void jobLoader(IEnvironment* environment, Guid stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
 {
@@ -34,7 +32,7 @@ void jobLoader(IEnvironment* environment, Guid stageGuid, Ref< const Object > pa
 	log::info << L"Stage " << stageGuid.format() << L" loaded in " << formatDuration(timer.getElapsedTime()) << L"." << Endl;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.StageLoader", StageLoader, Object)
 
@@ -93,5 +91,4 @@ Ref< StageLoader > StageLoader::create(IEnvironment* environment, const Guid& st
 }
 
 
-	}
 }

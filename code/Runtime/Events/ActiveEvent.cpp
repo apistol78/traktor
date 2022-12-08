@@ -8,10 +8,8 @@
  */
 #include "Runtime/Events/ActiveEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ActiveEvent", ActiveEvent, Object)
 
@@ -25,5 +23,4 @@ bool ActiveEvent::becameActivated() const
 	return m_activated;
 }
 
-	}
 }

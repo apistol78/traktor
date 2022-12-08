@@ -19,10 +19,8 @@
 #include "Render/Shader.h"
 #include "Video/Video.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.VideoLayer", VideoLayer, Layer)
 
@@ -127,7 +125,7 @@ void VideoLayer::update(const UpdateInfo& info)
 	{
 		if (!m_video->update(info.getSimulationDeltaTime()))
 		{
-			getStage()->invokeScript("videoFinished", 0, 0);
+			getStage()->invokeScript("videoFinished", 0, nullptr);
 
 			if (!m_repeat)
 				m_playing = false;
@@ -189,5 +187,4 @@ void VideoLayer::resume()
 {
 }
 
-	}
 }

@@ -16,12 +16,10 @@
 #include "Resource/ResourceBundle.h"
 #include "Resource/ResourceClassFactory.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
+	namespace
 	{
-		namespace
-		{
 
 Ref< ResourceHandle > IResourceManager_bind(IResourceManager* self, const TypeInfo& type, const Any& id)
 {
@@ -43,7 +41,7 @@ void IResourceManager_reload(IResourceManager* self, const Any& guidOrType, bool
 		self->reload(Guid(guidOrType.getWideString()), flushedOnly);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.ResourceClassFactory", 0, ResourceClassFactory, IRuntimeClassFactory)
 
@@ -78,5 +76,4 @@ void ResourceClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	registrar->registerClass(classIResourceManager);
 }
 
-	}
 }

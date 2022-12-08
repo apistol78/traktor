@@ -16,16 +16,14 @@
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/ScreenLayer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleTime(L"Time");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ScreenLayer", ScreenLayer, Layer)
 
@@ -112,5 +110,4 @@ void ScreenLayer::resume()
 {
 }
 
-	}
 }

@@ -13,10 +13,8 @@
 #include "Resource/Member.h"
 #include "Sound/Sound.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.AudioLayerData", 0, AudioLayerData, LayerData)
 
@@ -50,5 +48,4 @@ void AudioLayerData::serialize(ISerializer& s)
 	s >> Member< bool >(L"repeat", m_repeat);
 }
 
-	}
 }

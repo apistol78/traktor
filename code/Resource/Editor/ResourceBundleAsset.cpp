@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Resource/Editor/ResourceBundleAsset.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.resource.ResourceBundleAsset", 0, ResourceBundleAsset, ISerializable)
 
@@ -43,5 +41,4 @@ void ResourceBundleAsset::serialize(ISerializer& s)
 	s >> Member< bool >(L"persistent", m_persistent);
 }
 
-	}
 }

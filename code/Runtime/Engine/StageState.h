@@ -19,23 +19,21 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class RenderContext;
 class RenderGraph;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 class Stage;
 
-/*! \brief
+/*! Stage state.
  * \ingroup Runtime
  */
 class T_DLLCLASS StageState : public IState
@@ -43,7 +41,7 @@ class T_DLLCLASS StageState : public IState
 	T_RTTI_CLASS;
 
 public:
-	StageState(IEnvironment* environment, Stage* stage);
+	explicit StageState(IEnvironment* environment, Stage* stage);
 
 	virtual ~StageState();
 
@@ -71,6 +69,4 @@ private:
 	Ref< render::RenderGraph > m_renderGraph;
 };
 
-	}
 }
-

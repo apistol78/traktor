@@ -20,22 +20,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IEnvironment;
-
-	}
-
-	namespace runtime
-	{
-
 class Layer;
 class Stage;
 
-/*! \brief
+/*! Abstract stage layer data.
  * \ingroup Runtime
  */
 class T_DLLCLASS LayerData : public ISerializable
@@ -54,5 +46,4 @@ protected:
 	bool m_permitTransition = true;
 };
 
-	}
 }

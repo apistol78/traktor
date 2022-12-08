@@ -24,12 +24,10 @@
 #include "Resource/Editor/FileBundleAsset.h"
 #include "Resource/Editor/FileBundlePipeline.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
+	namespace
 	{
-		namespace
-		{
 
 void collectFiles(const Path& mask, bool recursive, RefArray< File >& outFiles)
 {
@@ -57,7 +55,7 @@ void collectFiles(const Path& mask, bool recursive, RefArray< File >& outFiles)
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.FileBundlePipeline", 4, FileBundlePipeline, editor::IPipeline)
 
@@ -155,8 +153,8 @@ bool FileBundlePipeline::buildOutput(
 				return false;
 			}
 
-			Path outputPath = Path(pattern.outputBase) + fp;
-			Guid dataId = Guid::create();
+			const Path outputPath = Path(pattern.outputBase) + fp;
+			const Guid dataId = Guid::create();
 
 			Ref< IStream > is = FileSystem::getInstance().open(file->getPath(), File::FmRead);
 			if (!is)
@@ -209,5 +207,4 @@ Ref< ISerializable > FileBundlePipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

@@ -14,10 +14,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScreenLayerData", 0, ScreenLayerData, LayerData)
 
@@ -46,5 +44,4 @@ void ScreenLayerData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 
-	}
 }

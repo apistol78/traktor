@@ -20,24 +20,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 class Video;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Video playback layer.
  * \ingroup Runtime
@@ -62,5 +60,4 @@ private:
 	bool m_repeat = true;
 };
 
-	}
 }

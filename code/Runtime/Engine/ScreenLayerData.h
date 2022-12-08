@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*!
  * \ingroup Runtime
@@ -50,5 +48,4 @@ private:
 	resource::Id< render::Shader > m_shader;
 };
 
-	}
 }

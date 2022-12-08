@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceFactory;
 class ResourceBundle;
@@ -148,6 +146,4 @@ public:
 	}
 };
 
-	}
 }
-

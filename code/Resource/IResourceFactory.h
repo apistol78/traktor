@@ -20,18 +20,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 class Instance;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
@@ -96,6 +94,4 @@ public:
 	virtual Ref< Object > create(IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const = 0;
 };
 
-	}
 }
-

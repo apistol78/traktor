@@ -22,18 +22,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 class Instance;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class ExclusiveResourceHandle;
 class ResidentResourceHandle;
@@ -86,6 +84,4 @@ private:
 	void load(const db::Instance* instance, const IResourceFactory* factory, const TypeInfo& productType, ResourceHandle* handle);
 };
 
-	}
 }
-

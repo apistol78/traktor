@@ -11,10 +11,8 @@
 #include "Core/Ref.h"
 #include "Resource/ExplicitResourceHandle.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Resource proxy.
  * \ingroup Resource
@@ -158,6 +156,4 @@ typename IsPointer< T >::base_t* dynamic_type_cast(const Proxy< T0 >& obj)
 	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.getResource());
 }
 
-	}
 }
-

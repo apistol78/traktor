@@ -20,10 +20,8 @@
 #include "Runtime/Events/ReconfigureEvent.h"
 #include "Runtime/Target/CommandEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.StageState", StageState, IState)
 
@@ -165,5 +163,4 @@ bool StageState::take(const Object* event)
 	return true;
 }
 
-	}
 }

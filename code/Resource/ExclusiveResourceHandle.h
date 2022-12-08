@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 /*! Exclusive resource handle.
  * \ingroup Resource
@@ -46,6 +44,4 @@ private:
 	const TypeInfo& m_resourceType;
 };
 
-	}
 }
-
