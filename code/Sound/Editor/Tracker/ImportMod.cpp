@@ -20,6 +20,8 @@
 #include "Sound/Editor/Encoders/TssStreamEncoder.h"
 #include "Sound/Editor/Tracker/ImportMod.h"
 #include "Sound/Editor/Tracker/SongAsset.h"
+#include "Sound/Filters/LowPassFilter.h"
+#include "Sound/Filters/TimeStretchFilter.h"
 #include "Sound/Tracker/GotoEventData.h"
 #include "Sound/Tracker/TrackData.h"
 #include "Sound/Tracker/PatternData.h"
@@ -121,8 +123,8 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 		swap8in16(sampleHeaders[i].repeatLength);
 	}
 
-	uint8_t songLength = br.readUInt8();
-	uint8_t bpm = br.readUInt8();
+	const uint8_t songLength = br.readUInt8();
+	const uint8_t bpm = br.readUInt8();
 
 	uint8_t sequence[128];
 	fs->read(sequence, 128);
@@ -157,9 +159,13 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 		AlignedVector< float > fd(data.size());
 		for (uint32_t j = 0; j < data.size(); ++j)
 		{
-			int32_t v = data[j];
+			int32_t v = (int32_t)data[j];
 			fd[j] = (v / 128.0f) * sampleHeaders[i].volume / 64.0f;
 		}
+
+		// Clear first sample since it's been used for repeat information.
+		fd[0] = 0.0f;
+		fd[1] = 0.0f;
 
 		Ref< IStream > fos = FileSystem::getInstance().open(assetPath.getPathName() + L"/" + samplePath.getPathName() + L"/Instrument_" + toString(i) + L".tss", File::FmWrite);
 
@@ -171,8 +177,19 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 		sb.samplesCount = fd.size();
 		sb.sampleRate = uint32_t(8287 * 6.726800183);
 		sb.maxChannel = 1;
-		ose.putBlock(sb);
 
+		// Strech samples, to give room for some filtering.
+		TimeStretchFilter stretchFlter(4.0f);
+		Ref< IFilterInstance > stretchFilterInstance = stretchFlter.createInstance();
+		stretchFlter.apply(stretchFilterInstance, sb);
+		sb.sampleRate *= 4;
+
+		LowPassFilter lowPassFilter(8287.0f);
+		Ref< IFilterInstance > lowPassFilterInstance = lowPassFilter.createInstance();
+		lowPassFilter.apply(lowPassFilterInstance, sb);
+
+		// Encode sound block.
+		ose.putBlock(sb);
 		ose.destroy();
 
 		fos->close();
@@ -213,15 +230,15 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 				TrackData::Key k;
 				k.at = row;
 
-				uint8_t a = pattern[(row * 4 + chan) * 4 + 0];
-				uint8_t b = pattern[(row * 4 + chan) * 4 + 1];
-				uint8_t c = pattern[(row * 4 + chan) * 4 + 2];
-				uint8_t d = pattern[(row * 4 + chan) * 4 + 3];
+				const uint8_t a = pattern[(row * 4 + chan) * 4 + 0];
+				const uint8_t b = pattern[(row * 4 + chan) * 4 + 1];
+				const uint8_t c = pattern[(row * 4 + chan) * 4 + 2];
+				const uint8_t d = pattern[(row * 4 + chan) * 4 + 3];
 
-				uint8_t sample = (a & 0xf0) | ((c & 0xf0) >> 4);
+				const uint8_t sample = (a & 0xf0) | ((c & 0xf0) >> 4);
 				if (sample)
 				{
-					uint16_t period = ((a & 0x0f) << 8) | b;
+					const uint16_t period = ((a & 0x0f) << 8) | b;
 					for (uint32_t i = 0; c_periodNote[i][0] != 0; ++i)
 					{
 						if (c_periodNote[i][0] == period)
@@ -239,12 +256,14 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 						log::warning << L"Unable to find note for period " << int(period) << Endl;
 				}
 
-				uint16_t effect = ((c & 0x0f) << 8) | d;
+				const uint16_t effect = ((c & 0x0f) << 8) | d;
 				if (effect)
 				{
-					uint8_t f = effect >> 8;
-					uint16_t x = (effect >> 4) & 0x0f;
-					uint16_t y = effect & 0x0f;
+					const uint8_t f = effect >> 8;
+					const uint16_t x = (effect >> 4) & 0x0f;
+					const uint16_t y = effect & 0x0f;
+
+					log::info << L"Row " << row << L" | Channel " << chan << L"; effect " << int(f) << L", x " << int(x) << L", y " << int(y) << Endl;
 
 					switch (f)
 					{
@@ -267,23 +286,23 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 
 					case 12:
 						{
-							float volume = (x * 16 + y) / 64.0f;
+							const float volume = (x * 16 + y) / 64.0f;
 							k.events.push_back(new VolumeEventData(volume));
 						}
 						break;
 
 					case 15:
 						{
-							uint16_t speed = x * 16 + y;
+							const uint16_t speed = x * 16 + y;
 							if (speed >= 32)
 								k.events.push_back(new SetBpmEventData(speed));
 						}
 						break;
+
+					default:
+						log::warning << L"Effect " << f << L" not implemented." << Endl;
+						break;
 					}
-
-
-
-					log::info << L"Row " << row << L" | Channel " << chan << L"; effect " << int(f) << L", x " << int(x) << L", y " << int(y) << Endl;
 				}
 
 				if (k.play != nullptr || !k.events.empty())
@@ -299,9 +318,7 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 		pd->addTrack(td[3]);
 
 		songAsset->addPattern(pd);
-
 	}
-
 
 	Ref< db::Instance > songInstance = group->createInstance(L"Song", db::CifReplaceExisting | db::CifKeepExistingGuid);
 	songInstance->setObject(songAsset);

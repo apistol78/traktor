@@ -391,7 +391,7 @@ bool MeshPipeline::buildOutput(
 
 	if (models.empty())
 	{
-		log::error << L"Mesh pipeline failed; no model." << Endl;
+		log::error << L"Mesh pipeline failed; no models." << Endl;
 		return false;
 	}
 
@@ -400,7 +400,7 @@ bool MeshPipeline::buildOutput(
 	{
 		if (asset->getCenter())
 		{
-			Aabb3 boundingBox = model->getBoundingBox();
+			const Aabb3 boundingBox = model->getBoundingBox();
 			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
 		}
 
@@ -461,17 +461,17 @@ bool MeshPipeline::buildOutput(
 	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;		//< Collection of all material technique fragments; later merged into single shader.
 	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap;	//< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
 
-	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
+	const Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	T_ASSERT(vertexShaderGuid.isValid());
 
-	Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
+	const Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
 	T_ASSERT(materialGuid.isValid());
 
 	MaterialShaderGenerator generator;
 
+	const int32_t jointCount = models[0]->getJointCount();
+	const bool vertexColor = haveVertexColors(*models[0]);
 	int32_t maxInstanceCount = 0;
-	int32_t jointCount = models[0]->getJointCount();
-	bool vertexColor = haveVertexColors(*models[0]);
 
 	for (const auto& materialPair : materials)
 	{
@@ -605,7 +605,7 @@ bool MeshPipeline::buildOutput(
 				{
 					// Quantize joint count to reduce number of vertex shader permutations as it
 					// will cost more than excessive parameters.
-					int32_t uniformJointCount = alignUp(jointCount, 4);
+					const int32_t uniformJointCount = alignUp(jointCount, 4);
 					if (uniformJointCount * 2 != indexedUniform->getLength())
 						indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
 				}
@@ -641,8 +641,8 @@ bool MeshPipeline::buildOutput(
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
 
-			uint32_t hash = render::ShaderGraphHash(true).calculate(materialTechniqueShaderGraph);
-			std::wstring shaderTechniqueName = str(L"M/%s/%08x", materialTechniqueName.c_str(), hash);
+			const uint32_t hash = render::ShaderGraphHash(true).calculate(materialTechniqueShaderGraph);
+			const std::wstring shaderTechniqueName = str(L"M/%s/%08x", materialTechniqueName.c_str(), hash);
 
 			for (auto node : materialTechniqueShaderGraph->getNodes())
 			{
@@ -716,7 +716,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Build material shader.
-	std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
+	const std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
 	if (!pipelineBuilder->buildAdHocOutput(
 		materialShaderGraph,
 		materialPath,
