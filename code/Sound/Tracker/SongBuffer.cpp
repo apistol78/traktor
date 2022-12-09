@@ -93,7 +93,7 @@ Ref< ISoundBufferCursor > SongBuffer::createCursor() const
 		soundBufferCursor->m_channels[i] = new AudioChannel(
 			i,
 			44100,
-			1024
+			64
 		);
 
 	soundBufferCursor->m_bpm = m_bpm;
@@ -109,14 +109,11 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 	while (soundBufferCursor->m_currentPattern < m_patterns.size())
 	{
 		const Pattern* currentPattern = m_patterns[soundBufferCursor->m_currentPattern];
-
-		int32_t position = int32_t(4 * soundBufferCursor->m_bpm * soundBufferCursor->m_timer.getElapsedTime() / 60.0);
-		int32_t tick = int32_t(4 * soundBufferCursor->m_bpm * soundBufferCursor->m_timer.getElapsedTime() * 2.0 / 5.0);
+		const int32_t position = int32_t(3.5 * soundBufferCursor->m_bpm * soundBufferCursor->m_timer.getElapsedTime() / 60.0);
 
 		if (position < currentPattern->getDuration())
 		{
 			const auto& tracks = currentPattern->getTracks();
-
 			if (position != soundBufferCursor->m_currentRow)
 			{
 				soundBufferCursor->m_currentRow = position;
@@ -140,7 +137,7 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 							key->play->getRepeatFrom()
 						);
 
-						double pitch = std::pow(1.059463094, p->getNote() - 57);
+						const double pitch = std::pow(1.059463094, p->getNote() - 57);
 						ch->setPitch(pitch);
 
 						ch->setVolume(1.0f);
@@ -150,6 +147,10 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 						event->execute(ch, soundBufferCursor->m_bpm, soundBufferCursor->m_currentPattern, soundBufferCursor->m_currentRow);
 				}
 			}
+
+			outBlock.sampleRate = 0;
+			outBlock.samplesCount = 0;
+			outBlock.maxChannel = 0;
 
 			for (size_t i = 0; i < c_maxTrackCount; ++i)
 			{

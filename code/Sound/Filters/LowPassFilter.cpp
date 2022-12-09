@@ -56,8 +56,8 @@ void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
 	if (m_cutOff > FUZZY_EPSILON && m_cutOff <= 22050.0f)
 	{
-		float dt = 1.0f / outBlock.sampleRate;
-		Scalar alpha(dt / (dt + 1.0f / m_cutOff));
+		const float dt = 1.0f / outBlock.sampleRate;
+		const Scalar alpha(dt / (dt + 1.0f / m_cutOff));
 
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
@@ -66,15 +66,14 @@ void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 			for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
 			{
-				Vector4 s0123 = Vector4::loadAligned(&samples[i]);
+				const Vector4 s0123 = Vector4::loadAligned(&samples[i]);
 
-				Scalar s0 = (s0123.x() - history) * alpha + history;
-				Scalar s1 = (s0123.y() - s0) * alpha + s0;
-				Scalar s2 = (s0123.z() - s1) * alpha + s1;
-				Scalar s3 = (s0123.w() - s2) * alpha + s2;
+				const Scalar s0 = (s0123.x() - history) * alpha + history;
+				const Scalar s1 = (s0123.y() - s0) * alpha + s0;
+				const Scalar s2 = (s0123.z() - s1) * alpha + s1;
+				const Scalar s3 = (s0123.w() - s2) * alpha + s2;
 
 				Vector4(s0, s1, s2, s3).storeAligned(&samples[i]);
-
 				history = s3;
 			}
 

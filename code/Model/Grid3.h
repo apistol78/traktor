@@ -68,29 +68,37 @@ public:
 
 	void set(uint32_t index, const ValueType& v)
 	{
-		// Remove index from cell.
+		uint32_t fromHash, toHash;
+
+		// Calculate cell hashes.
 		{
 			const Vector4 p = PositionAccessor::get(m_values[index]) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-
-			auto& indices = m_indices[hash];
-			auto it = std::remove(indices.begin(), indices.end(), index);
-			indices.erase(it, indices.end());
+			fromHash = HashFunction::get(pe[0], pe[1], pe[2]);
 		}
-
-		// Add index to new cell.
 		{
 			const Vector4 p = PositionAccessor::get(v) / m_cellSize;
 
 			T_MATH_ALIGN16 int32_t pe[4];
 			p.storeIntegersAligned(pe);
 
-			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-			m_indices[hash].push_back(index);
+			toHash = HashFunction::get(pe[0], pe[1], pe[2]);
+		}
+
+		// Remove index from cell and add to new cell.
+		if (fromHash != toHash)
+		{
+			auto& indices = m_indices[fromHash];
+			if (!indices.empty())
+			{
+				auto it = std::remove(indices.begin(), indices.end(), index);
+				indices.erase(it, indices.end());
+			}
+
+			m_indices[toHash].push_back(index);
 		}
 
 		// Modify value.
@@ -101,10 +109,12 @@ public:
 	{
 		T_ASSERT(distance <= m_cellSize / 2.0f);
 
+		const Scalar sd(distance);
+		const Scalar sd2(distance * distance);
+
 		const Vector4 p = PositionAccessor::get(v);
 		const Vector4 pq = p / m_cellSize;
 
-		const Scalar sd(distance);
 		const Vector4 mnpq = pq - sd - 0.5_simd;
 		const Vector4 mxpq = pq + sd + 0.5_simd;
 
@@ -135,8 +145,8 @@ public:
 
 					for (auto index : it->second)
 					{
-						Vector4 pv = PositionAccessor::get(m_values[index]);
-						if ((pv - p).length2() <= distance * distance)
+						const Vector4 pv = PositionAccessor::get(m_values[index]);
+						if ((pv - p).length2() <= sd2)
 							return index;
 					}
 				}
@@ -164,35 +174,13 @@ public:
 	void swap(AlignedVector< ValueType >& values)
 	{
 		m_values.swap(values);
-		m_indices.reset();
-		m_indices.reserve(m_values.size());
-		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
-		{
-			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
-
-			T_MATH_ALIGN16 int32_t pe[4];
-			p.storeIntegersAligned(pe);
-
-			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-			m_indices[hash].push_back(i);
-		}
+		rehash();
 	}
 
 	void replace(const AlignedVector< ValueType >& values)
 	{
 		m_values = values;
-		m_indices.reset();
-		m_indices.reserve(m_values.size());
-		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
-		{
-			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
-
-			T_MATH_ALIGN16 int32_t pe[4];
-			p.storeIntegersAligned(pe);
-
-			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-			m_indices[hash].push_back(i);
-		}
+		rehash();
 	}
 
 	void clear()
@@ -208,7 +196,7 @@ public:
 
 	uint32_t size() const
 	{
-		return uint32_t(m_values.size());
+		return (uint32_t)m_values.size();
 	}
 
 	const AlignedVector< ValueType >& values() const
@@ -220,6 +208,22 @@ private:
 	Scalar m_cellSize;
 	SmallMap< uint32_t, AlignedVector< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;
+
+	void rehash()
+	{
+		m_indices.reset();
+		m_indices.reserve(m_values.size());
+		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
+		{
+			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
+
+			T_MATH_ALIGN16 int32_t pe[4];
+			p.storeIntegersAligned(pe);
+
+			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
+			m_indices[hash].push_back(i);
+		}
+	}
 };
 
 }

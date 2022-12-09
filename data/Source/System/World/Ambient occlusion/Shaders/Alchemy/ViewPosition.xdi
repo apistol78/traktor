@@ -5,8 +5,8 @@
 			<id>{06D1793E-E321-2F47-876F-F0E2F5DB880A}</id>
 			<comment/>
 			<position>
-				<first>803</first>
-				<second>587</second>
+				<first>781</first>
+				<second>607</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>Vector</type>
@@ -50,8 +50,8 @@
 			<id>{0D3DC7F3-DFFF-7B48-8B3B-3B74059CE51B}</id>
 			<comment/>
 			<position>
-				<first>1719</first>
-				<second>547</second>
+				<first>1779</first>
+				<second>548</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
@@ -82,8 +82,8 @@
 			<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 			<comment/>
 			<position>
-				<first>1945</first>
-				<second>596</second>
+				<first>2005</first>
+				<second>597</second>
 			</position>
 			<name>Output</name>
 		</item>

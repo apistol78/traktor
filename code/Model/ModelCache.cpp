@@ -49,7 +49,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
 	// Generate file name of cached model.
-	Path cachedFileName = m_cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
+	const Path cachedFileName = m_cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
@@ -74,7 +74,7 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	// Write cached copy of post-operation model.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
+		const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
 
 		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
 			return nullptr;

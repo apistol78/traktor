@@ -23,7 +23,8 @@ VolumeSlideEvent::VolumeSlideEvent(float amount)
 
 bool VolumeSlideEvent::execute(AudioChannel* audioChannel, int32_t& bpm, int32_t& pattern, int32_t& row) const
 {
-	audioChannel->setVolume(audioChannel->getVolume() + m_amount);
+	const int32_t c_ticksPerExecute = 4;
+	audioChannel->setVolume(audioChannel->getVolume() + m_amount * c_ticksPerExecute);
 	return true;
 }
 

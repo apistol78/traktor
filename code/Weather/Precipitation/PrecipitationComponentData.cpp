@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Mesh/Static/StaticMesh.h"
@@ -48,9 +49,9 @@ void PrecipitationComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::StaticMesh >(L"mesh", m_mesh);
 	s >> Member< float >(L"tiltRate", m_tiltRate, AttributeRange(0.0f));
-	s >> Member< float >(L"parallaxDistance", m_parallaxDistance, AttributeRange(0.0f));
-	s >> Member< float >(L"depthDistance", m_depthDistance, AttributeRange(0.0f));
-	s >> Member< float >(L"opacity", m_opacity, AttributeRange(0.0f));
+	s >> Member< float >(L"parallaxDistance", m_parallaxDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"depthDistance", m_depthDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	s >> Member< float >(L"opacity", m_opacity, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }

@@ -31,7 +31,7 @@ class T_DLLCLASS Pattern : public Object
 	T_RTTI_CLASS;
 
 public:
-	Pattern(int32_t duration, const RefArray< Track >& tracks);
+	explicit Pattern(int32_t duration, const RefArray< Track >& tracks);
 
 	int32_t getDuration() const { return m_duration; }
 
