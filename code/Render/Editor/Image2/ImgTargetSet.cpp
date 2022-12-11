@@ -75,8 +75,8 @@ ImgTargetSet::ImgTargetSet()
 ,	m_ignoreStencil(false)
 ,	m_generateMips(false)
 {
-	const Guid c_null;
-	m_inputPins.push_back(new InputPin(this, c_null, L"Input", false));
+	const Guid inputId(L"{e75f63fe-8cb0-4f01-b559-5b3bfb149271}");
+	m_inputPins.push_back(new InputPin(this, inputId, L"Input", false));
 }
 
 ImgTargetSet::~ImgTargetSet()
@@ -178,7 +178,7 @@ void ImgTargetSet::serialize(ISerializer& s)
 
 void ImgTargetSet::refresh()
 {
-	const Guid c_null;
+	Guid outputId(L"{0102ff98-a386-435e-82c7-f1e360e1cc22}");
 
 	for (auto& outputPin : m_outputPins)
 		delete outputPin;
@@ -186,7 +186,10 @@ void ImgTargetSet::refresh()
 	m_outputPins.clear();
 
 	for (const auto& target : m_targets)
-		m_outputPins.push_back(new OutputPin(this, c_null, target.textureId));
+	{
+		m_outputPins.push_back(new OutputPin(this, outputId, target.textureId));
+		outputId.permutate();
+	}
 }
 
 ImgTargetSet::TargetDesc::TargetDesc()

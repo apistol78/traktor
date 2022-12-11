@@ -65,8 +65,8 @@ ImgPass::ImgPass()
 	m_clear.stencil = 0;
 
 	// Create the output pin.
-	const Guid c_null;
-	m_outputPins.push_back(new OutputPin(this, c_null, L"Output"));
+	const Guid outputId(L"{745cf81d-d35f-437a-96ca-dc1fcdb24ce6}");
+	m_outputPins.push_back(new OutputPin(this, outputId, L"Output"));
 }
 
 ImgPass::~ImgPass()
@@ -131,7 +131,7 @@ void ImgPass::serialize(ISerializer& s)
 
 void ImgPass::refresh()
 {
-	const Guid c_null;
+	Guid inputId(L"{fdff30de-f467-419b-bb66-68ae2fe12fa1}");
 
 	for (auto& inputPin : m_inputPins)
 		delete inputPin;
@@ -142,7 +142,10 @@ void ImgPass::refresh()
 	for (auto step : m_steps)
 		step->getInputs(inputs);
 	for (const auto& input : inputs)
-		m_inputPins.push_back(new InputPin(this, c_null, input, false));
+	{
+		m_inputPins.push_back(new InputPin(this, inputId, input, false));
+		inputId.permutate();
+	}
 }
 
 	}
