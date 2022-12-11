@@ -2391,8 +2391,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Step", 0, Step, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Step_i[] =
 {
-	{ L"X", L"{7CEDA35F-46C0-465D-9C5D-EABAB3FF5838}", false },
-	{ L"Y", L"{4853FA43-A9C2-4427-9B87-9E372EC50182}", false },
+	{ L"Edge", L"{7CEDA35F-46C0-465D-9C5D-EABAB3FF5838}", false },
+	{ L"X", L"{4853FA43-A9C2-4427-9B87-9E372EC50182}", false },
 	{ 0 }
 };
 const ImmutableNode::OutputPinDesc c_Step_o[] =

@@ -471,8 +471,8 @@ render::handle_t WorldRendererShared::setupGBufferPass(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;	// Depth (R), Roughness (G)
-	rgtd.targets[1].colorFormat = render::TfR11G11B10F;	// Normals (RGB)
+	rgtd.targets[0].colorFormat = render::TfR16G16F;		// Depth (R), Roughness (G)
+	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.

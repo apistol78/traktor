@@ -403,7 +403,7 @@ void DockPane::draw(Canvas& canvas)
 		titleRect.left += dpi96(4);
 		titleRect.right -= closeWidth + dpi96(4);
 
-		const std::wstring title = m_widget->getText();
+		std::wstring title = m_widget->getText();
 
 		Size titleExtent = fm.getExtent(title);
 		if (titleExtent.cx > titleRect.getWidth())
