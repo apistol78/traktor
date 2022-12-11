@@ -2293,12 +2293,12 @@ bool emitStep(GlslContext& cx, Step* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > in1 = cx.emitInput(node, L"X");
-	Ref< GlslVariable > in2 = cx.emitInput(node, L"Y");
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Edge");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"X");
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
