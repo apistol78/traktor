@@ -28,9 +28,9 @@ class T_DLLCLASS ImageGraphAsset : public Graph
 	T_RTTI_CLASS;
 
 public:
-	ImageGraphAsset();
+	ImageGraphAsset() = default;
 
-	ImageGraphAsset(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+	explicit ImageGraphAsset(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 };
 
 	}
