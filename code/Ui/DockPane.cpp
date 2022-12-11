@@ -45,7 +45,7 @@ void removeEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventH
 
 int calculateRealSplit(const Rect& rc, int split, bool vertical)
 {
-	int dim = vertical ? rc.getHeight() : rc.getWidth();
+	const int dim = vertical ? rc.getHeight() : rc.getWidth();
 	int realSplit = split >= 0 ? split : dim + split;
 	if (realSplit <= c_minimumSplit)
 		realSplit = c_minimumSplit;
@@ -115,7 +115,7 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 		// Already contains a widget, split our node.
 
 		Ref< Widget > currentWidget = m_widget;
-		bool currentDetachable = m_detachable;
+		const bool currentDetachable = m_detachable;
 
 		Ref< DockPane > leftPane, rightPane;
 		DockPane::split(
@@ -319,21 +319,21 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 	}
 	else
 	{
-		bool childVisible1 = m_child[0] ? m_child[0]->isVisible() : false;
-		bool childVisible2 = m_child[1] ? m_child[1]->isVisible() : false;
+		const bool childVisible1 = m_child[0] ? m_child[0]->isVisible() : false;
+		const bool childVisible2 = m_child[1] ? m_child[1]->isVisible() : false;
 
 		if (childVisible1 && childVisible2)
 		{
 			Rect childRects[2] = { rect, rect };
 			if (m_vertical)
 			{
-				int split = calculateRealSplit(rect, m_split, true);
+				const int split = calculateRealSplit(rect, m_split, true);
 				childRects[0].bottom = split - c_splitterDim / 2;
 				childRects[1].top = split + c_splitterDim / 2;
 			}
 			else
 			{
-				int split = calculateRealSplit(rect, m_split, false);
+				const int split = calculateRealSplit(rect, m_split, false);
 				childRects[0].right = split - c_splitterDim / 2;
 				childRects[1].left = split + c_splitterDim / 2;
 			}
@@ -362,7 +362,7 @@ void DockPane::draw(Canvas& canvas)
 		Rect splitterRect = m_rect;
 		if (m_vertical)
 		{
-			int split = calculateRealSplit(m_rect, m_split, true);
+			const int split = calculateRealSplit(m_rect, m_split, true);
 			splitterRect.left += 2;
 			splitterRect.right -= 2;
 			splitterRect.top = split - c_splitterDim / 2;
@@ -372,25 +372,19 @@ void DockPane::draw(Canvas& canvas)
 		}
 		else
 		{
-			int split = calculateRealSplit(m_rect, m_split, false);
+			const int split = calculateRealSplit(m_rect, m_split, false);
 			splitterRect.left = split - 1;
 			splitterRect.right = split + 1;
 			splitterRect.top += 2;
 			splitterRect.bottom -= 2;
-
-			canvas.setForeground(ss->getColor(m_owner, L"background-color"));
 			canvas.setBackground(ss->getColor(m_owner, L"splitter-color"));
-			canvas.fillGradientRect(Rect(splitterRect.left, splitterRect.top, splitterRect.right, splitterRect.getCenter().y));
-
-			canvas.setForeground(ss->getColor(m_owner, L"splitter-color"));
-			canvas.setBackground(ss->getColor(m_owner, L"background-color"));
-			canvas.fillGradientRect(Rect(splitterRect.left,splitterRect.getCenter().y, splitterRect.right, splitterRect.bottom));
+			canvas.fillRect(splitterRect);
 		}
 	}
 
 	if (m_widget && m_detachable)
 	{
-		FontMetric fm = m_widget->getFontMetric();
+		const FontMetric fm = m_widget->getFontMetric();
 
 		Rect captionRect = m_rect;
 		captionRect.bottom = captionRect.top + dpi96(c_gripperDim);
@@ -403,13 +397,13 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.setForeground(ss->getColor(m_owner, m_focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 
-		int32_t closeWidth = m_bitmapClose->getSize().cx;
+		const int32_t closeWidth = m_bitmapClose->getSize().cx;
 
 		Rect titleRect = captionRect.offset(0, -1);
 		titleRect.left += dpi96(4);
 		titleRect.right -= closeWidth + dpi96(4);
 
-		std::wstring title = m_widget->getText();
+		const std::wstring title = m_widget->getText();
 
 		Size titleExtent = fm.getExtent(title);
 		if (titleExtent.cx > titleRect.getWidth())
@@ -426,11 +420,11 @@ void DockPane::draw(Canvas& canvas)
 
 		int32_t gx = titleRect.left + titleExtent.cx + dpi96(4);
 		int32_t gx1 = captionRect.right - closeWidth - dpi96(4);
-		int32_t gw = m_bitmapGripper->getSize().cx;
-		int32_t gh = m_bitmapGripper->getSize().cy;
+		const int32_t gw = m_bitmapGripper->getSize().cx;
+		const int32_t gh = m_bitmapGripper->getSize().cy;
 		while (gx < gx1)
 		{
-			int32_t w = min(gw, gx1 - gx);
+			const int32_t w = min(gw, gx1 - gx);
 			canvas.drawBitmap(
 				Point(gx, captionRect.getCenter().y - gh / 2),
 				Point(0, 0),
