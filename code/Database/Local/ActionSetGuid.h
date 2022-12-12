@@ -12,10 +12,8 @@
 #include "Core/Io/Path.h"
 #include "Core/Guid.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Transaction set guid action.
  * \ingroup Database
@@ -42,6 +40,4 @@ private:
 	bool m_editMeta;
 };
 
-	}
 }
-

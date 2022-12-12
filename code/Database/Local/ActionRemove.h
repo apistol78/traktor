@@ -12,10 +12,8 @@
 #include "Core/Io/Path.h"
 #include "Database/Local/Action.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Transaction remove action.
  * \ingroup Database
@@ -25,7 +23,7 @@ class ActionRemove : public Action
 	T_RTTI_CLASS;
 
 public:
-	ActionRemove(const Path& instancePath);
+	explicit ActionRemove(const Path& instancePath);
 
 	virtual bool execute(Context& context) override final;
 
@@ -40,6 +38,4 @@ private:
 	std::vector< std::wstring > m_renamedFiles;
 };
 
-	}
 }
-

@@ -16,8 +16,10 @@ namespace traktor
 
 class IStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 /*! Transaction remove all data action.
  * \ingroup Database
@@ -42,6 +44,4 @@ private:
 	std::vector< std::wstring > m_renamedFiles;
 };
 
-	}
 }
-

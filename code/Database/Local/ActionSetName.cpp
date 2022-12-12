@@ -13,10 +13,8 @@
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionSetName", ActionSetName, Action)
 
@@ -32,11 +30,11 @@ bool ActionSetName::execute(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
 
-	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
-	Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
 
-	Path newInstanceMetaPath = getInstanceMetaPath(m_instancePathNew);
-	Path newInstanceObjectPath = getInstanceObjectPath(m_instancePathNew);
+	const Path newInstanceMetaPath = getInstanceMetaPath(m_instancePathNew);
+	const Path newInstanceObjectPath = getInstanceObjectPath(m_instancePathNew);
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(oldInstanceMetaPath);
 	if (!instanceMeta)
@@ -56,8 +54,8 @@ bool ActionSetName::execute(Context& context)
 
 	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, blob);
-		Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, blob);
+		const Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, blob);
+		const Path newInstanceDataPath = getInstanceDataPath(m_instancePathNew, blob);
 
 		if (!FileSystem::getInstance().copy(newInstanceDataPath, oldInstanceDataPath))
 			return false;
@@ -75,11 +73,11 @@ bool ActionSetName::undo(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
 
-	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
 	if (m_removedMeta)
 		fileStore->rollback(oldInstanceMetaPath);
 
-	Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
 	if (m_removedObject)
 		fileStore->rollback(oldInstanceObjectPath);
 
@@ -88,7 +86,7 @@ bool ActionSetName::undo(Context& context)
 
 	for (std::map< std::wstring, bool >::const_iterator i = m_removedData.begin(); i != m_removedData.end(); ++i)
 	{
-		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, i->first);
+		const Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, i->first);
 		fileStore->rollback(oldInstanceDataPath);
 	}
 
@@ -101,8 +99,8 @@ void ActionSetName::clean(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
 
-	Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
-	Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path oldInstanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path oldInstanceObjectPath = getInstanceObjectPath(m_instancePath);
 
 	if (m_removedMeta)
 		fileStore->clean(oldInstanceMetaPath);
@@ -112,7 +110,7 @@ void ActionSetName::clean(Context& context)
 
 	for (std::map< std::wstring, bool >::const_iterator i = m_removedData.begin(); i != m_removedData.end(); ++i)
 	{
-		Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, i->first);
+		const Path oldInstanceDataPath = getInstanceDataPath(m_instancePath, i->first);
 		fileStore->clean(oldInstanceDataPath);
 	}
 }
@@ -125,5 +123,4 @@ bool ActionSetName::redundant(const Action* action) const
 		return false;
 }
 
-	}
 }

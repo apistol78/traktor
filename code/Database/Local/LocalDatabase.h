@@ -24,8 +24,10 @@ namespace traktor
 
 class Path;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Context;
 class LocalBus;
@@ -55,6 +57,4 @@ private:
 	Ref< LocalGroup > m_rootGroup;
 };
 
-	}
 }
-

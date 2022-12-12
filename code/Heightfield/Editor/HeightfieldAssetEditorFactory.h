@@ -6,8 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_hf_HeightfieldAssetEditorFactory_H
-#define traktor_hf_HeightfieldAssetEditorFactory_H
+#pragma once
 
 #include "Editor/IObjectEditorFactory.h"
 
@@ -19,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class T_DLLCLASS HeightfieldAssetEditorFactory : public editor::IObjectEditorFactory
 {
@@ -40,8 +37,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
-	}
 }
-
-#endif	// traktor_hf_HeightfieldAssetEditorFactory_H
-

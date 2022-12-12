@@ -27,21 +27,17 @@
 #include "Heightfield/Editor/ImportHeightfieldWizardTool.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
+	namespace
 	{
-		namespace
-		{
 
 Ref< drawing::Image > readRawTerrain(IStream* stream)
 {
-	uint32_t fileSize = stream->available();
-
+	const uint32_t fileSize = (uint32_t)stream->available();
 	const uint32_t heightByteSize = 2;
-
-	uint32_t heights = fileSize / heightByteSize;
-	uint32_t size = uint32_t(std::sqrt(float(heights)));
+	const uint32_t heights = fileSize / heightByteSize;
+	const uint32_t size = uint32_t(std::sqrt(float(heights)));
 
 	Ref< drawing::Image > image = new drawing::Image(
 		drawing::PixelFormat::getR16(),
@@ -55,7 +51,7 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 	for (uint32_t i = 0; i < fileSize / 2; ++i)
 	{
 		swap8in16(*d);
-		int32_t v = *(int16_t*)d + 32767;
+		const int32_t v = *(int16_t*)d + 32767;
 		*d = (uint16_t)v;
 	}
 
@@ -71,7 +67,7 @@ std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* grou
 
 	for (int32_t i = 2;; ++i)
 	{
-		std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
+		const std::wstring sequenceName = baseName + L" (" + toString(i) + L")";
 		if (!group->getInstance(sequenceName))
 			return sequenceName;
 	}
@@ -79,7 +75,7 @@ std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* grou
 	return L"";
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ImportHeightfieldWizardTool", 0, ImportHeightfieldWizardTool, editor::IWizardTool)
 
@@ -247,5 +243,4 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	return true;
 }
 
-	}
 }

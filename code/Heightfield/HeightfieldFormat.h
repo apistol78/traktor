@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
@@ -40,6 +38,4 @@ public:
 	bool write(IStream* stream, const Heightfield* heightfield) const;
 };
 
-	}
 }
-

@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-    namespace model
-    {
 
 class Model;
 
-    }
+}
 
-    namespace hf
-    {
+namespace traktor::hf
+{
 
 class T_DLLCLASS ConvertHeightfield : public Object
 {
@@ -46,5 +44,4 @@ public:
     Ref< model::Model > convert(const Heightfield* heightfield, int32_t step, float vistaDistance) const;
 };
 
-    }
 }

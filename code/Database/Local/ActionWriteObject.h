@@ -17,8 +17,10 @@ namespace traktor
 class ChunkMemory;
 class IStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 /*! Transaction write object action.
  * \ingroup Database
@@ -50,6 +52,4 @@ private:
 	bool m_editMeta;
 };
 
-	}
 }
-

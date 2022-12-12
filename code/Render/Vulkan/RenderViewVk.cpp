@@ -1527,7 +1527,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	{
 		if (std::strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
 		{
-			log::info << L"Found debug marker extension; debug markers enabled." << Endl;
+			T_DEBUG(L"Found debug marker extension; debug markers enabled.");
 			m_haveDebugMarkers = true;
 			break;
 		}

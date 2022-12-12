@@ -13,10 +13,8 @@
 #include "Core/Containers/SmallSet.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Local instance meta.
  * \ingroup Database
@@ -56,6 +54,4 @@ private:
 	SmallSet< std::wstring > m_blobs;
 };
 
-	}
 }
-

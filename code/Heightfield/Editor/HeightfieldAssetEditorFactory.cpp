@@ -11,18 +11,14 @@
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
 #include "Heightfield/Editor/HeightfieldAssetEditorFactory.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldAssetEditorFactory", 0, HeightfieldAssetEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet HeightfieldAssetEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< HeightfieldAsset >();
-	return typeSet;
+	return makeTypeInfoSet< HeightfieldAsset >();
 }
 
 bool HeightfieldAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -44,5 +40,4 @@ Ref< ISerializable > HeightfieldAssetEditorFactory::cloneAsset(const ISerializab
 	return DeepClone(asset).create();
 }
 
-	}
 }

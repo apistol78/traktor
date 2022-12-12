@@ -14,10 +14,8 @@
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 Path getInstanceObjectPath(const Path& instancePath)
 {
@@ -81,5 +79,4 @@ bool writePhysicalObject(const Path& objectPath, const ISerializable* object, bo
 	return result;
 }
 
-	}
 }

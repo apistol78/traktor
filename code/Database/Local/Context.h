@@ -12,10 +12,8 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class IFileStore;
 
@@ -43,5 +41,4 @@ private:
 	Ref< IFileStore > m_fileStore;
 };
 
-	}
 }

@@ -15,10 +15,8 @@
 #include "Database/Local/Context.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalGroup", LocalGroup, IProviderGroup)
 
@@ -49,7 +47,7 @@ bool LocalGroup::remove()
 
 Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 {
-	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
+	const Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
 	if (FileSystem::getInstance().exist(newGroupPath))
 		return nullptr;
@@ -62,7 +60,7 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 
 Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
-	Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
+	const Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
 
 	Ref< LocalInstance > instance = new LocalInstance(m_context, instancePath);
 	if (!instance->internalCreateNew(instanceGuid))
@@ -134,5 +132,4 @@ bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArra
 	return true;
 }
 
-	}
 }

@@ -16,12 +16,10 @@
 #include "Database/IEvent.h"
 #include "Database/Local/LocalBus.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_maxJournalSize = 16 * 1024 * 1024;
 
@@ -44,7 +42,7 @@ struct EntryHeader
 
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalBus", LocalBus, IProviderBus)
 
@@ -163,5 +161,4 @@ bool LocalBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool
 	return false;
 }
 
-	}
 }

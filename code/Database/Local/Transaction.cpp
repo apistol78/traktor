@@ -13,18 +13,16 @@
 
 #define T_USE_TRANSACTION_LOCK 0
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 #if T_USE_TRANSACTION_LOCK
 const int c_transactionTimeout = 100;
 #endif
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Transaction", Transaction, Object)
 
@@ -122,11 +120,11 @@ bool Transaction::commit(Context& context)
 	{
 		if (!m_actions[i]->execute(context))
 		{
-			log::error << L"Transaction action " << type_name(m_actions[i]) << L" failed; performing rollback" << Endl;
+			log::error << L"Transaction action " << type_name(m_actions[i]) << L" failed; performing rollback." << Endl;
 			for (int32_t j = i; j >= 0; --j)
 			{
 				if (!m_actions[j]->undo(context))
-					log::error << L"Unable to undo transaction step " << j << L"; data integrity might be corrupt" << Endl;
+					log::error << L"Unable to undo transaction step " << j << L"; data integrity might be corrupt." << Endl;
 			}
 			result = false;
 			break;
@@ -146,5 +144,4 @@ bool Transaction::commit(Context& context)
 	return result;
 }
 
-	}
 }

@@ -13,10 +13,8 @@
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
 
@@ -51,5 +49,4 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	return heightfield;
 }
 
-	}
 }

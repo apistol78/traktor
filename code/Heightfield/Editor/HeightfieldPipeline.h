@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class T_DLLCLASS HeightfieldPipeline : public editor::IPipeline
 {
@@ -69,6 +67,4 @@ private:
 	std::wstring m_assetPath;
 };
 
-	}
 }
-

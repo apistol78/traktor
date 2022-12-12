@@ -10,10 +10,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
@@ -33,5 +31,4 @@ private:
 	int32_t m_iterations;
 };
 
-	}
 }

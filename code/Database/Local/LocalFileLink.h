@@ -11,10 +11,8 @@
 #include <string>
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Virtual file link.
  * \ingroup Database
@@ -32,6 +30,4 @@ private:
 	std::wstring m_path;
 };
 
-	}
 }
-

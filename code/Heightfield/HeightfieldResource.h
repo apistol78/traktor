@@ -33,8 +33,6 @@ class T_DLLCLASS HeightfieldResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	HeightfieldResource();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
@@ -42,7 +40,7 @@ public:
 private:
 	friend class HeightfieldPipeline;
 
-	Vector4 m_worldExtent;
+	Vector4 m_worldExtent = Vector4::zero();
 };
 
 	}

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! No file store.
  * \ingroup Database
@@ -48,6 +46,4 @@ public:
 	virtual bool clean(const Path& filePath) override final;
 };
 
-	}
 }
-

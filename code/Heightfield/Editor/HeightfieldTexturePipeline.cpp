@@ -25,27 +25,19 @@
 #include "Heightfield/Editor/HeightfieldTexturePipeline.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
+	namespace
 	{
-		namespace
-		{
 
 float fract(float v)
 {
 	return v - std::floor(v);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 5, HeightfieldTexturePipeline, editor::DefaultPipeline)
-
-HeightfieldTexturePipeline::HeightfieldTexturePipeline()
-:	m_heightFormat(HfFloat16)
-,	m_compressNormals(false)
-{
-}
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -150,7 +142,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 	if (heightfieldAsset->getErosionEnable())
 		ErosionFilter(heightfieldAsset->getErodeIterations()).apply(heightfield);
 
-	int32_t size = heightfield->getSize();
+	const int32_t size = heightfield->getSize();
 
 	if (asset->m_output == HeightfieldTextureAsset::OtHeights)
 	{
@@ -160,7 +152,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
+				const float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
 				if (m_heightFormat == HfARGBEncoded)
 				{
 					Vector4 enc = Vector4(
@@ -217,7 +209,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				Vector4 normal = heightfield->normalAt(u, v);
+				Vector4 normal = heightfield->normalAt((float)u, (float)v);
 				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 				outputMap->setPixelUnsafe(u, v, Color4f(
 					normal.x(),
@@ -266,7 +258,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				float cut = heightfield->getGridCut(u, v) ? 1.0f : 0.0f;
+				const float cut = heightfield->getGridCut(u, v) ? 1.0f : 0.0f;
 				outputMap->setPixelUnsafe(u, v, Color4f(cut, cut, cut, cut));
 			}
 		}
@@ -308,9 +300,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				float h = heightfield->getGridHeightNearest(u, v) * worldExtent.y();
-				float hu = heightfield->getGridHeightNearest(u + 1, v) * worldExtent.y();
-				float hv = heightfield->getGridHeightNearest(u, v + 1) * worldExtent.y();
+				const float h = heightfield->getGridHeightNearest(u, v) * worldExtent.y();
+				const float hu = heightfield->getGridHeightNearest(u + 1, v) * worldExtent.y();
+				const float hv = heightfield->getGridHeightNearest(u, v + 1) * worldExtent.y();
 				outputMap->setPixelUnsafe(u, v, Color4f(abs(hu - h), abs(hv - h), 0.0f, 1.0f));
 			}
 		}
@@ -324,7 +316,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 			{
 				outputMap->getPixelUnsafe(u, v, ct);
 
-				Scalar du = ct.getRed();
+				const Scalar du = ct.getRed();
 
 				ct.setRed(total);
 				outputMap->setPixelUnsafe(u, v, ct);
@@ -346,7 +338,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 			{
 				outputMap->getPixelUnsafe(u, v, ct);
 
-				Scalar dv = ct.getGreen();
+				const Scalar dv = ct.getGreen();
 
 				ct.setGreen(total);
 				outputMap->setPixelUnsafe(u, v, ct);
@@ -393,5 +385,4 @@ bool HeightfieldTexturePipeline::buildOutput(
 		return false;
 }
 
-	}
 }

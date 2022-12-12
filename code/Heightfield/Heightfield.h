@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 /*!
  * \ingroup Heightfield
@@ -34,7 +32,7 @@ class T_DLLCLASS Heightfield : public Object
 	T_RTTI_CLASS;
 
 public:
-	Heightfield(
+	explicit Heightfield(
 		int32_t size,
 		const Vector4& worldExtent
 	);
@@ -102,6 +100,4 @@ private:
 	AutoArrayPtr< uint8_t > m_attributes;
 };
 
-	}
 }
-

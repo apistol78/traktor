@@ -14,10 +14,8 @@
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionRemoveAllData", ActionRemoveAllData, Action)
 
@@ -29,8 +27,8 @@ ActionRemoveAllData::ActionRemoveAllData(const Path& instancePath)
 bool ActionRemoveAllData::execute(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
@@ -41,7 +39,7 @@ bool ActionRemoveAllData::execute(Context& context)
 
 	for (const auto& blob : instanceMeta->getBlobs())
 	{
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, blob);
+		const Path instanceDataPath = getInstanceDataPath(m_instancePath, blob);
 		if (fileStore->remove(instanceDataPath))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
@@ -80,7 +78,7 @@ bool ActionRemoveAllData::undo(Context& context)
 	m_renamedFiles.clear();
 
 	// Rollback meta also since it contain named references to blobs.
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	fileStore->rollback(instanceMetaPath);
 	return true;
 }
@@ -100,5 +98,4 @@ bool ActionRemoveAllData::redundant(const Action* action) const
 		return false;
 }
 
-	}
 }

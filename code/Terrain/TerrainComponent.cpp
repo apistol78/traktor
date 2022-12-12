@@ -519,7 +519,7 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 	return true;
 }
 
-void TerrainComponent::updatePatches(const uint32_t* region)
+void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, bool flushPatchCache)
 {
 	const uint32_t patchDim = m_terrain->getPatchDim();
 	const uint32_t heightfieldSize = m_heightfield->getSize();
@@ -535,24 +535,25 @@ void TerrainComponent::updatePatches(const uint32_t* region)
 		{
 			const uint32_t patchId = px + pz * m_patchCount;
 
-			const int32_t pminX = (heightfieldSize * px) / m_patchCount;
-			const int32_t pminZ = (heightfieldSize * pz) / m_patchCount;
-			const int32_t pmaxX = (heightfieldSize * (px + 1)) / m_patchCount;
-			const int32_t pmaxZ = (heightfieldSize * (pz + 1)) / m_patchCount;
-
-			const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
-			Patch& patch = m_patches[patchId];
-			patch.minHeight = patchData.height[0];
-			patch.maxHeight = patchData.height[1];
-			patch.error[0] = 0.0f;
-			patch.error[1] = patchData.error[0];
-			patch.error[2] = patchData.error[1];
-			patch.error[3] = patchData.error[2];
-
-			for (int32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
+			if (updateErrors)
 			{
-				if (m_surfaceCache[i])
-					m_surfaceCache[i]->flush(patchId);
+				const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
+				Patch& patch = m_patches[patchId];
+				patch.minHeight = patchData.height[0];
+				patch.maxHeight = patchData.height[1];
+				patch.error[0] = 0.0f;
+				patch.error[1] = patchData.error[0];
+				patch.error[2] = patchData.error[1];
+				patch.error[3] = patchData.error[2];
+			}
+
+			if (flushPatchCache)
+			{
+				for (int32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
+				{
+					if (m_surfaceCache[i])
+						m_surfaceCache[i]->flush(patchId);
+				}
 			}
 		}
 	}
@@ -613,7 +614,7 @@ bool TerrainComponent::createPatches()
 		}
 	}
 
-	updatePatches(nullptr);
+	updatePatches(nullptr, true, true);
 
 	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)

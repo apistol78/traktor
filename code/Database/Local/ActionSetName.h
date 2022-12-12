@@ -12,10 +12,8 @@
 #include "Core/Io/Path.h"
 #include "Database/Local/Action.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Transaction set name action.
  * \ingroup Database
@@ -43,6 +41,4 @@ private:
 	std::map< std::wstring, bool > m_removedData;
 };
 
-	}
 }
-

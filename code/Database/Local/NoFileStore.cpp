@@ -10,10 +10,8 @@
 #include "Database/Types.h"
 #include "Database/Local/NoFileStore.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.NoFileStore", 0, NoFileStore, IFileStore)
 
@@ -67,5 +65,4 @@ bool NoFileStore::clean(const Path& filePath)
 	return true;
 }
 
-	}
 }

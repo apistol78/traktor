@@ -28,10 +28,8 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalInstance", LocalInstance, IProviderInstance)
 
@@ -54,13 +52,12 @@ bool LocalInstance::internalCreateNew(const Guid& instanceGuid)
 		instanceGuid,
 		true
 	));
-
 	return true;
 }
 
 std::wstring LocalInstance::getPrimaryTypeName() const
 {
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	return instanceMeta ? instanceMeta->getPrimaryType() : L"";
 }
@@ -108,7 +105,6 @@ bool LocalInstance::closeTransaction()
 
 	m_transaction->destroy();
 	m_transaction = nullptr;
-
 	return true;
 }
 
@@ -128,13 +124,12 @@ bool LocalInstance::setName(const std::wstring& name)
 	Ref< ActionSetName > action = new ActionSetName(m_instancePath, name);
 	m_transaction->add(action);
 	m_transactionName = name;
-
 	return true;
 }
 
 Guid LocalInstance::getGuid() const
 {
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	return instanceMeta ? instanceMeta->getGuid() : Guid();
 }
@@ -149,7 +144,6 @@ bool LocalInstance::setGuid(const Guid& guid)
 		guid,
 		false
 	));
-
 	return true;
 }
 
@@ -178,7 +172,6 @@ bool LocalInstance::remove()
 	m_transaction->add(new ActionRemove(
 		m_instancePath
 	));
-
 	return true;
 }
 
@@ -197,7 +190,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 	// Open physical stream if no transaction.
 	if (!objectStream)
 	{
-		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+		const Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 		objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead | File::FmMapped);
 	}
 
@@ -236,13 +229,12 @@ Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, c
 		primaryTypeName
 	);
 	m_transaction->add(action);
-
 	return action->getWriteStream();
 }
 
 uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
 {
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
@@ -274,7 +266,6 @@ bool LocalInstance::removeAllData()
 
 	Ref< ActionRemoveAllData > action = new ActionRemoveAllData(m_instancePath);
 	m_transaction->add(action);
-
 	return true;
 }
 
@@ -288,7 +279,7 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 			return actions.back()->getReadStream();
 	}
 
-	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
+	const Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
 	return FileSystem::getInstance().open(instanceDataPath, File::FmRead | File::FmMapped);
 }
 
@@ -299,9 +290,7 @@ Ref< IStream > LocalInstance::writeData(const std::wstring& dataName)
 
 	Ref< ActionWriteData > action = new ActionWriteData(m_instancePath, dataName);
 	m_transaction->add(action);
-
 	return action->getWriteStream();
 }
 
-	}
 }

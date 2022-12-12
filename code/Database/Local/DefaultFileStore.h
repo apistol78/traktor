@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Default file store.
  * \ingroup Database
@@ -31,8 +29,6 @@ class T_DLLCLASS DefaultFileStore : public IFileStore
 	T_RTTI_CLASS;
 
 public:
-	DefaultFileStore();
-
 	virtual bool create(const ConnectionString& connectionString) override final;
 
 	virtual void destroy() override final;
@@ -50,9 +46,7 @@ public:
 	virtual bool clean(const Path& filePath) override final;
 
 private:
-	bool m_editReadOnly;
+	bool m_editReadOnly = false;
 };
 
-	}
 }
-

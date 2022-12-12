@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class T_DLLCLASS OcclusionTexturePipeline : public editor::DefaultPipeline
 {
@@ -60,6 +58,4 @@ private:
 	bool m_build;
 };
 
-	}
 }
-

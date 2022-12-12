@@ -6,33 +6,30 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_hf_HeightfieldAssetEditor_H
-#define traktor_hf_HeightfieldAssetEditor_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Editor/IObjectEditor.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class Edit;
 class Image;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace hf
-	{
+namespace traktor::hf
+{
 
 class Heightfield;
 class HeightfieldAsset;
@@ -42,7 +39,7 @@ class HeightfieldAssetEditor : public editor::IObjectEditor
 	T_RTTI_CLASS;
 
 public:
-	HeightfieldAssetEditor(editor::IEditor* editor);
+	explicit HeightfieldAssetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -72,8 +69,4 @@ private:
 	void eventToolBar(ui::ToolBarButtonClickEvent* event);
 };
 
-	}
 }
-
-#endif	// traktor_hf_HeightfieldAssetEditor_H
-

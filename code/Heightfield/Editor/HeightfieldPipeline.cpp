@@ -22,10 +22,8 @@
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldPipeline.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 2, HeightfieldPipeline, editor::IPipeline)
 
@@ -148,5 +146,4 @@ Ref< ISerializable > HeightfieldPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

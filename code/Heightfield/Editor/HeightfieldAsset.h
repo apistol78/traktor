@@ -37,7 +37,7 @@ class T_DLLCLASS HeightfieldAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	HeightfieldAsset();
+	HeightfieldAsset() = default;
 
 	explicit HeightfieldAsset(const Vector4& worldExtent);
 
@@ -52,10 +52,10 @@ public:
 	int32_t getErodeIterations() const { return m_erodeIterations; }
 
 private:
-	Vector4 m_worldExtent;
-	float m_vistaDistance;
-	bool m_erosionEnable;
-	int32_t m_erodeIterations;
+	Vector4 m_worldExtent = Vector4::zero();
+	float m_vistaDistance = 0.0f;
+	bool m_erosionEnable = 0.0f;
+	int32_t m_erodeIterations = 100000;
 };
 
 	}

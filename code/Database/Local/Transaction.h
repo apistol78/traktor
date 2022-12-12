@@ -18,8 +18,10 @@ namespace traktor
 
 class Mutex;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Action;
 class Context;
@@ -61,6 +63,4 @@ private:
 #endif
 };
 
-	}
 }
-

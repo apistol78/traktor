@@ -11,18 +11,16 @@
 #include "Core/Math/Plane.h"
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Command;
 class Edit;
 
-	}
+}
 
-	namespace hf
-	{
+namespace traktor::hf
+{
 
 class NewHeightfieldDialog : public ui::ConfigDialog
 {
@@ -43,6 +41,4 @@ private:
 	Ref< ui::Edit > m_editPlane[3];
 };
 
-	}
 }
-

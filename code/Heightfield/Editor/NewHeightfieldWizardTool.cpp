@@ -18,10 +18,8 @@
 #include "Heightfield/Editor/NewHeightfieldWizardTool.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.NewHeightfieldWizardTool", 0, NewHeightfieldWizardTool, editor::IWizardTool)
 
@@ -90,5 +88,4 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 	return true;
 }
 
-	}
 }

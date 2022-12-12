@@ -11,10 +11,8 @@
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Model/Model.h"
 
-namespace traktor
+namespace traktor::hf
 {
-    namespace hf
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.ConvertHeightfield", ConvertHeightfield, Object)
 
@@ -45,13 +43,13 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 
     size = max(ix1 - ix0, iz1 - iz0);
 
-	int32_t outputSize = size / step;
+	const int32_t outputSize = size / step;
 
 	Ref< model::Model > model = new model::Model();
 
     // Add texcoord channels.
-    uint32_t baseChannel = model->addUniqueTexCoordChannel(L"Base");
-    uint32_t lightmapChannel = model->addUniqueTexCoordChannel(L"Lightmap");
+    const uint32_t baseChannel = model->addUniqueTexCoordChannel(L"Base");
+    const uint32_t lightmapChannel = model->addUniqueTexCoordChannel(L"Lightmap");
 
     // Add single material for entire heightfield.
     model::Material material;
@@ -70,14 +68,14 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			float wx, wz;
 			heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
 
-			uint32_t positionId = model->addPosition(Vector4(
+			const uint32_t positionId = model->addPosition(Vector4(
 				wx,
 				heightfield->getWorldHeight(wx, wz),
 				wz,
 				1.0f
 			));
 
-			uint32_t texCoordId = model->addTexCoord(Vector2(
+			const uint32_t texCoordId = model->addTexCoord(Vector2(
 				float(ix) / (outputSize - 1),
 				float(iz) / (outputSize - 1)
 			));
@@ -94,7 +92,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 	model::Polygon polygon;
 	for (int32_t iz = 0; iz < outputSize - 1; ++iz)
 	{
-		int32_t offset = iz * outputSize;
+		const int32_t offset = iz * outputSize;
 		for (int32_t ix = 0; ix < outputSize - 1; ++ix)
 		{
 			float wx, wz;
@@ -109,7 +107,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			if (!heightfield->getWorldCut(wx, wz + step))
 				continue;
 
-			int32_t indices[] =
+			const int32_t indices[] =
 			{
 				offset + ix,
 				offset + ix + 1,
@@ -136,5 +134,4 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
     return model;
 }
 
-    }
 }
