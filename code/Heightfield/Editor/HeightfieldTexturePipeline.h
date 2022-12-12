@@ -29,8 +29,6 @@ class T_DLLCLASS HeightfieldTexturePipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
-	HeightfieldTexturePipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
@@ -66,8 +64,8 @@ private:
 	};
 
 	std::wstring m_assetPath;
-	HeightFormatType m_heightFormat;
-	bool m_compressNormals;
+	HeightFormatType m_heightFormat = HfFloat16;
+	bool m_compressNormals = false;
 	mutable Semaphore m_lock;
 };
 

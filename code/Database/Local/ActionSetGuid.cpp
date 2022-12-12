@@ -14,10 +14,8 @@
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionSetGuid", ActionSetGuid, Action)
 
@@ -32,7 +30,7 @@ ActionSetGuid::ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool
 bool ActionSetGuid::execute(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Ref< LocalInstanceMeta > instanceMeta;
 
 	if (!m_create)
@@ -71,7 +69,7 @@ bool ActionSetGuid::execute(Context& context)
 bool ActionSetGuid::undo(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editMeta)
 	{
@@ -91,7 +89,7 @@ bool ActionSetGuid::undo(Context& context)
 void ActionSetGuid::clean(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editMeta)
 		fileStore->clean(instanceMetaPath);
@@ -102,5 +100,4 @@ bool ActionSetGuid::redundant(const Action* action) const
 	return false;
 }
 
-	}
 }

@@ -17,10 +17,8 @@
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionWriteObject", ActionWriteObject, Action)
 
@@ -36,8 +34,8 @@ ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstrin
 bool ActionWriteObject::execute(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	m_editObject = fileStore->edit(instanceObjectPath);
 	if (!m_editObject)
@@ -103,8 +101,8 @@ bool ActionWriteObject::execute(Context& context)
 bool ActionWriteObject::undo(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editObject)
 		fileStore->rollback(instanceObjectPath);
@@ -120,8 +118,8 @@ bool ActionWriteObject::undo(Context& context)
 void ActionWriteObject::clean(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
 	if (m_editObject)
 		fileStore->clean(instanceObjectPath);
@@ -148,5 +146,4 @@ Ref< IStream > ActionWriteObject::getReadStream() const
 	return new ChunkMemoryStream(m_objectMemory, true, false);
 }
 
-	}
 }

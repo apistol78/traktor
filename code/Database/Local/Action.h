@@ -10,10 +10,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Context;
 
@@ -34,6 +32,4 @@ public:
 	virtual bool redundant(const Action* action) const = 0;
 };
 
-	}
 }
-

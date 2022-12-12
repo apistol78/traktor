@@ -11,10 +11,8 @@
 #include "Core/Io/Path.h"
 #include "Database/Provider/IProviderInstance.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Context;
 class LocalGroup;
@@ -75,6 +73,4 @@ private:
 	std::wstring m_transactionName;
 };
 
-	}
 }
-

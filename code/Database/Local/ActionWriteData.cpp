@@ -19,10 +19,8 @@
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionWriteData", ActionWriteData, Action)
 
@@ -37,8 +35,8 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 bool ActionWriteData::execute(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
@@ -83,8 +81,8 @@ bool ActionWriteData::execute(Context& context)
 
 		while (write > 0)
 		{
-			int64_t written = writeStream->write(ptr, write);
-			if (written < 0 || written > write)
+			const int64_t written = writeStream->write(ptr, write);
+			if (written < 0 || written > (int64_t)write)
 			{
 				log::error << L"Unable to write " << (uint32_t)write << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 				safeClose(writeStream);
@@ -129,8 +127,8 @@ bool ActionWriteData::execute(Context& context)
 bool ActionWriteData::undo(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
 	if (m_existingBlob)
 		fileStore->rollback(instanceDataPath);
@@ -143,8 +141,8 @@ bool ActionWriteData::undo(Context& context)
 void ActionWriteData::clean(Context& context)
 {
 	IFileStore* fileStore = context.getFileStore();
-	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
+	const Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	const Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
 	if (m_existingBlob)
 		fileStore->clean(instanceDataPath);
@@ -175,5 +173,4 @@ Ref< IStream > ActionWriteData::getReadStream() const
 	return new ChunkMemoryStream(m_dataMemory, true, false);
 }
 
-	}
 }

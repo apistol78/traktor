@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class ConnectionString;
 
@@ -59,6 +57,4 @@ public:
 
 };
 
-	}
 }
-

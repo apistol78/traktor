@@ -756,11 +756,11 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 	m_center = center;
 
-	int32_t size = m_heightfield->getSize();
+	const int32_t size = m_heightfield->getSize();
 
 	// Calculate region which needs to be updated.
-	float worldRadius = m_context->getGuideSize();
-	int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+	const float worldRadius = m_context->getGuideSize();
+	const int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
 	int32_t mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius);
 	int32_t mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
@@ -772,13 +772,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 	mnz = clamp(mnz, 0, size - 1);
 	mxz = clamp(mxz, 0, size - 1);
 
-	uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
-	uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
-	uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
-	uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
+	const uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
+	const uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
+	const uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
+	const uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
 
-	uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
-	m_terrainComponent->updatePatches(region);
+	const uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
+	m_terrainComponent->updatePatches(region, false, true);
 
 	// Track entire updated region.
 	if (m_applied)
@@ -860,10 +860,10 @@ void TerrainEditModifier::apply(const Vector4& center)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-				uint8_t nx = uint8_t(normal.x() * 255);
-				uint8_t ny = uint8_t(normal.y() * 255);
-				uint8_t nz = uint8_t(normal.z() * 255);
+				const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				const uint8_t nx = uint8_t(normal.x() * 255);
+				const uint8_t ny = uint8_t(normal.y() * 255);
+				const uint8_t nz = uint8_t(normal.z() * 255);
 				uint8_t* ptr = &m_normalData[(u + v * size) * 4];
 				ptr[0] = nx;
 				ptr[1] = ny;
@@ -952,6 +952,9 @@ void TerrainEditModifier::end()
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
+
+	// Update errors metrics after modifier to prevent popping while drawing.
+	m_terrainComponent->updatePatches(nullptr, true, false);
 
 	// Only update layers's patches once editing ends since we cannot be sure
 	// how expensive this is as it's user configurable.

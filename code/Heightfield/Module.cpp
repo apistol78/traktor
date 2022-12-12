@@ -10,16 +10,13 @@
 
 #if defined(T_STATIC)
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 extern "C" void __module__Traktor_Heightfield()
 {
 }
 
-	}
 }
 
 #endif

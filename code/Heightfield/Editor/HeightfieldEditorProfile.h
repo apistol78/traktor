@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class T_DLLCLASS HeightfieldEditorProfile : public scene::ISceneEditorProfile
 {
@@ -80,6 +78,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

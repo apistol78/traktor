@@ -543,7 +543,7 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{ABC7D7C1-DECA-744F-879E-FD86C7B445B3}</id>
@@ -556,7 +556,7 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{D4E74FF1-6A49-3749-9C4E-A0ACE7037C72}</id>
@@ -569,7 +569,7 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{D20C18AF-3146-804C-8002-7096CCF185D5}</id>
@@ -582,7 +582,7 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{64E37C99-0E2F-304F-938A-7B048C129EE6}</id>
@@ -685,7 +685,7 @@
 				<first>640</first>
 				<second>534</second>
 			</position>
-			<value>0</value>
+			<value>0.8</value>
 		</item>
 	</nodes>
 	<edges>

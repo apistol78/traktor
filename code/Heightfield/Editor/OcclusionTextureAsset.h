@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
@@ -31,8 +29,6 @@ class T_DLLCLASS OcclusionTextureAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	OcclusionTextureAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -40,11 +36,9 @@ private:
 
 	resource::Id< Heightfield > m_heightfield;
 	resource::Id< ISerializable > m_occluderData;
-	uint32_t m_size;
-	float m_traceDistance;
-	int32_t m_blurRadius;
+	uint32_t m_size = 1024;
+	float m_traceDistance = 16.0f;
+	int32_t m_blurRadius = 0;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Heightfield/Editor/HeightfieldEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldEditorProfile", 0, HeightfieldEditorProfile, scene::ISceneEditorProfile)
 
@@ -90,5 +88,4 @@ Ref< world::EntityData > HeightfieldEditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

@@ -14,12 +14,10 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberSmallSet.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
+	namespace
 	{
-		namespace
-		{
 
 struct Blob
 {
@@ -33,7 +31,7 @@ struct Blob
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", 2, LocalInstanceMeta, ISerializable)
 
@@ -113,5 +111,4 @@ void LocalInstanceMeta::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

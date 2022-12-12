@@ -11,17 +11,10 @@
 #include "Database/Types.h"
 #include "Database/Local/DefaultFileStore.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.DefaultFileStore", DefaultFileStore, IFileStore)
-
-DefaultFileStore::DefaultFileStore()
-:	m_editReadOnly(false)
-{
-}
 
 bool DefaultFileStore::create(const ConnectionString& connectionString)
 {
@@ -60,7 +53,7 @@ bool DefaultFileStore::remove(const Path& filePath)
 {
 	if (FileSystem::getInstance().exist(filePath))
 	{
-		Path filePathAlt = filePath.getPathName() + L"~";
+		const Path filePathAlt = filePath.getPathName() + L"~";
 		return FileSystem::getInstance().move(
 			filePathAlt,
 			filePath,
@@ -98,21 +91,20 @@ bool DefaultFileStore::edit(const Path& filePath)
 		}
 	}
 
-	Path filePathAlt = filePath.getPathName() + L"~";
+	const Path filePathAlt = filePath.getPathName() + L"~";
 	return FileSystem::getInstance().copy(filePathAlt, filePath, true);
 }
 
 bool DefaultFileStore::rollback(const Path& filePath)
 {
-	Path filePathAlt = filePath.getPathName() + L"~";
+	const Path filePathAlt = filePath.getPathName() + L"~";
 	return FileSystem::getInstance().move(filePath, filePathAlt, true);
 }
 
 bool DefaultFileStore::clean(const Path& filePath)
 {
-	Path filePathAlt = filePath.getPathName() + L"~";
+	const Path filePathAlt = filePath.getPathName() + L"~";
 	return FileSystem::getInstance().remove(filePathAlt);
 }
 
-	}
 }

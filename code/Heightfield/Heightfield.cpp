@@ -13,10 +13,8 @@
 #include "Core/Math/Winding3.h"
 #include "Heightfield/Heightfield.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.Heightfield", Heightfield, Object)
 
@@ -49,7 +47,7 @@ void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 
-	int32_t offset = gridX + gridZ * m_size;
+	const int32_t offset = gridX + gridZ * m_size;
 	if (cut)
 		m_cuts[offset / 8] |= (1 << (offset & 7));
 	else
@@ -63,7 +61,7 @@ void Heightfield::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribu
 	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
 
-	int32_t offset = gridX + gridZ * m_size;
+	const int32_t offset = gridX + gridZ * m_size;
 	m_attributes[offset] = attribute;
 }
 
@@ -97,7 +95,7 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 	else if (igridZ >= (int32_t)m_size - 1)
 		igridZ = (int32_t)m_size - 2;
 
-	int32_t offset = igridX + igridZ * m_size;
+	const int32_t offset = igridX + igridZ * m_size;
 
 	height_t hts[] =
 	{
@@ -107,8 +105,8 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		m_heights[offset + 1 + m_size]
 	};
 
-	float fgridX = gridX - igridX;
-	float fgridZ = gridZ - igridZ;
+	const float fgridX = gridX - igridX;
+	const float fgridZ = gridZ - igridZ;
 
 #if 0
 /*
@@ -121,7 +119,7 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
    +----+
 0,0(0)  1,0(1)
 */
-	float k = 1.0f - (fgridX + fgridZ);
+	const float k = 1.0f - (fgridX + fgridZ);
 	if (k >= 0.0f)
 	{
 		// Left
@@ -143,7 +141,7 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
    +----+
 0,0(0)  1,0(1)
 */
-	float k = fgridX - fgridZ;
+	const float k = fgridX - fgridZ;
 	if (k < 0.0f)
 	{
 		// Left
@@ -156,8 +154,8 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 	}
 #endif
 
-	float hl = hts[0] + (hts[2] - hts[0]) * fgridZ;
-	float hr = hts[1] + (hts[3] - hts[1]) * fgridZ;
+	const float hl = hts[0] + (hts[2] - hts[0]) * fgridZ;
+	const float hr = hts[1] + (hts[3] - hts[1]) * fgridZ;
 
 	return (hl + (hr - hl) * fgridX) / 65535.0f;
 }
@@ -166,7 +164,7 @@ float Heightfield::getWorldHeight(float worldX, float worldZ) const
 {
 	float gridX, gridZ;
 	worldToGrid(worldX, worldZ, gridX, gridZ);
-	float gridY = getGridHeightBilinear(gridX, gridZ);
+	const float gridY = getGridHeightBilinear(gridX, gridZ);
 	return -m_worldExtentFloats[1] * 0.5f + gridY * m_worldExtentFloats[1];
 }
 
@@ -182,7 +180,7 @@ bool Heightfield::getGridCut(int32_t gridX, int32_t gridZ) const
 	else if (gridZ >= (int32_t)m_size)
 		gridZ = (int32_t)m_size - 1;
 
-	int32_t offset = gridX + gridZ * m_size;
+	const int32_t offset = gridX + gridZ * m_size;
 	return (m_cuts[offset / 8] & (1 << (offset & 7))) != 0;
 }
 
@@ -205,7 +203,7 @@ uint8_t Heightfield::getGridAttribute(int32_t gridX, int32_t gridZ) const
 	else if (gridZ >= (int32_t)m_size)
 		gridZ = (int32_t)m_size - 1;
 
-	int32_t offset = gridX + gridZ * m_size;
+	const int32_t offset = gridX + gridZ * m_size;
 	return m_attributes[offset];
 }
 
@@ -255,13 +253,13 @@ void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float
 
 float Heightfield::unitToWorld(float unitY) const
 {
-	float wexy = m_worldExtentFloats[1];
+	const float wexy = m_worldExtentFloats[1];
 	return -wexy * 0.5f + unitY * wexy;
 }
 
 float Heightfield::worldToUnit(float worldY) const
 {
-	float wexy = m_worldExtentFloats[1];
+	const float wexy = m_worldExtentFloats[1];
 	return (worldY + wexy * 0.5f) / wexy;
 }
 
@@ -280,32 +278,32 @@ Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 		{ -c_distance,        0.0f }
 	};
 
-	float h0 = getGridHeightBilinear(gridX, gridZ);
+	const float h0 = getGridHeightBilinear(gridX, gridZ);
 
 	float h[sizeof_array(directions)];
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
 		h[i] = getGridHeightBilinear(gridX + directions[i][0], gridZ + directions[i][1]);
 
 	const Vector4& worldExtent = getWorldExtent();
-	float sx = worldExtent.x() / getSize();
-	float sy = worldExtent.y();
-	float sz = worldExtent.z() / getSize();
+	const float sx = worldExtent.x() / getSize();
+	const float sy = worldExtent.y();
+	const float sz = worldExtent.z() / getSize();
 
 	Vector4 N = Vector4::zero();
 
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
 	{
-		uint32_t j = (i + 1) % sizeof_array(directions);
+		const uint32_t j = (i + 1) % sizeof_array(directions);
 
-		float dx1 = directions[i][0] * sx * c_distance;
-		float dy1 = (h[i] - h0) * sy;
-		float dz1 = directions[i][1] * sz * c_distance;
+		const float dx1 = directions[i][0] * sx * c_distance;
+		const float dy1 = (h[i] - h0) * sy;
+		const float dz1 = directions[i][1] * sz * c_distance;
 
-		float dx2 = directions[j][0] * sx * c_distance;
-		float dy2 = (h[j] - h0) * sy;
-		float dz2 = directions[j][1] * sz * c_distance;
+		const float dx2 = directions[j][0] * sx * c_distance;
+		const float dy2 = (h[j] - h0) * sy;
+		const float dz2 = directions[j][1] * sz * c_distance;
 
-		Vector4 n = cross(
+		const Vector4 n = cross(
 			Vector4(dx2, dy2, dz2),
 			Vector4(dx1, dy1, dz1)
 		);
@@ -324,7 +322,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	Scalar k;
 	Scalar kIn, kOut;
 
-	Aabb3 boundingBox(-m_worldExtent * Scalar(0.5f), m_worldExtent * Scalar(0.5f));
+	const Aabb3 boundingBox(-m_worldExtent * 0.5_simd, m_worldExtent * 0.5_simd);
 	if (!boundingBox.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
 		return false;
 
@@ -342,7 +340,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 			gridToWorld(float(cx), float(cz), cx1w, cz1w);
 			gridToWorld(float(cx + c_cellSize), float(cz + c_cellSize), cx2w, cz2w);
 
-			float cyw[] =
+			const float cyw[] =
 			{
 				unitToWorld(getGridHeightNearest(cx, cz)),
 				unitToWorld(getGridHeightNearest(cx + c_cellSize, cz)),
@@ -350,8 +348,8 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 				unitToWorld(getGridHeightNearest(cx + c_cellSize, cz + c_cellSize))
 			};
 
-			float cy1w = *std::min_element(cyw, cyw + sizeof_array(cyw));
-			float cy2w = *std::max_element(cyw, cyw + sizeof_array(cyw));
+			const float cy1w = *std::min_element(cyw, cyw + sizeof_array(cyw));
+			const float cy2w = *std::max_element(cyw, cyw + sizeof_array(cyw));
 
 			Aabb3 bb;
 			bb.mn = Vector4(cx1w, cy1w, cz1w, 1.0f);
@@ -378,7 +376,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 						unitToWorld(getGridHeightNearest(ix + c_skip, iz + c_skip))
 					};
 
-					Vector4 vw[] =
+					const Vector4 vw[] =
 					{
 						Vector4(x1w, yw[0], z1w, 1.0f),
 						Vector4(x2w, yw[1], z1w, 1.0f),
@@ -411,5 +409,4 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	return foundIntersection;
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Context;
 
@@ -45,6 +43,4 @@ private:
 	Path m_groupPath;
 };
 
-	}
 }
-

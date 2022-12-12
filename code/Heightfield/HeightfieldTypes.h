@@ -10,16 +10,12 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 /*!
  * \ingroup Heightfield
  */
 typedef uint16_t height_t;
 
-	}
 }
-

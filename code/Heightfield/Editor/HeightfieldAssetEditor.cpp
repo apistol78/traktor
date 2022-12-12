@@ -36,12 +36,10 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
+	namespace
 	{
-		namespace
-		{
 
 Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
 {
@@ -66,14 +64,14 @@ Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
 				rgb[2] = (uint8_t)(255 * h + 0.5f);
 			}
 
-			Color4f c = Color4f::fromColor4ub(Color4ub(rgb[0], rgb[1], rgb[2], 255));
+			const Color4f c = Color4f::fromColor4ub(Color4ub(rgb[0], rgb[1], rgb[2], 255));
 			img->setPixel(x, y, c);
 		}
 	}
 	return img;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldAssetEditor", HeightfieldAssetEditor, editor::IObjectEditor)
 
@@ -243,7 +241,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"HeightfieldAssetEditor.Clear")
 	{
-		int32_t size = m_heightfield->getSize();
+		const int32_t size = m_heightfield->getSize();
 		for (int32_t z = 0; z < size; ++z)
 		{
 			for (int32_t x = 0; x < size; ++x)
@@ -277,7 +275,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			return false;
 		}
 
-		int32_t size = parseString< int32_t >(fields[0].value);
+		const int32_t size = parseString< int32_t >(fields[0].value);
 
 		inputDialog.destroy();
 
@@ -302,8 +300,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 				sx = clamp(sx, 0.0f, (float)(m_heightfield->getSize() - 1));
 				sy = clamp(sy, 0.0f, (float)(m_heightfield->getSize() - 1));
 
-				float h = m_heightfield->getGridHeightBilinear(sx, sy);
-				bool c = m_heightfield->getGridCut((int32_t)sx, (int32_t)sy);
+				const float h = m_heightfield->getGridHeightBilinear(sx, sy);
+				const bool c = m_heightfield->getGridCut((int32_t)sx, (int32_t)sy);
 
 				resized->setGridHeight(ix, iy, h);
 				resized->setGridCut(ix, iy, c);
@@ -341,9 +339,9 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			return false;
 		}
 
-		int32_t x = parseString< int32_t >(fields[0].value);
-		int32_t y = parseString< int32_t >(fields[1].value);
-		int32_t size = parseString< int32_t >(fields[2].value);
+		const int32_t x = parseString< int32_t >(fields[0].value);
+		const int32_t y = parseString< int32_t >(fields[1].value);
+		const int32_t size = parseString< int32_t >(fields[2].value);
 
 		inputDialog.destroy();
 
@@ -368,8 +366,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 				sx = clamp(sx, 0, m_heightfield->getSize() - 1);
 				sy = clamp(sy, 0, m_heightfield->getSize() - 1);
 
-				float h = m_heightfield->getGridHeightNearest(sx, sy);
-				bool c = m_heightfield->getGridCut(sx, sy);
+				const float h = m_heightfield->getGridHeightNearest(sx, sy);
+				const bool c = m_heightfield->getGridCut(sx, sy);
 
 				cropped->setGridHeight(ix, iy, h);
 				cropped->setGridCut(ix, iy, c);
@@ -413,5 +411,4 @@ void HeightfieldAssetEditor::eventToolBar(ui::ToolBarButtonClickEvent* event)
 	handleCommand(event->getCommand());
 }
 
-	}
 }

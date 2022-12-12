@@ -18,8 +18,10 @@ namespace traktor
 class Path;
 class ISerializable;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 Path getInstanceObjectPath(const Path& instancePath);
 
@@ -37,6 +39,4 @@ Ref< ObjectType > readPhysicalObject(const Path& objectPath)
 	return dynamic_type_cast< ObjectType* >(readPhysicalObject(objectPath));
 }
 
-	}
 }
-

@@ -8,10 +8,8 @@
  */
 #include "Database/Local/Context.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Context", Context, Object)
 
@@ -37,5 +35,4 @@ IFileStore* Context::getFileStore() const
 	return m_fileStore;
 }
 
-	}
 }

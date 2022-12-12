@@ -82,18 +82,10 @@ typedef uint32_t handle_t;
 /*! Audio driver create description. */
 struct AudioDriverCreateDesc
 {
-	uint32_t sampleRate;	//!< Playback rate, ex. 44100.
-	uint8_t bitsPerSample;	//!< Bits per sample, ex. 8, 16 or 24.
-	uint16_t hwChannels;	//!< Number of hardware channels.
-	uint32_t frameSamples;	//!< Size of frames, i.e. size of mixed sound blocks passed to the driver.
-
-	AudioDriverCreateDesc()
-	:	sampleRate(0)
-	,	bitsPerSample(0)
-	,	hwChannels(0)
-	,	frameSamples(0)
-	{
-	}
+	uint32_t sampleRate = 0;	//!< Playback rate, ex. 44100.
+	uint8_t bitsPerSample = 0;	//!< Bits per sample, ex. 8, 16 or 24.
+	uint16_t hwChannels = 0;	//!< Number of hardware channels.
+	uint32_t frameSamples = 0;	//!< Size of frames, i.e. size of mixed sound blocks passed to the driver.
 };
 
 /*! Sound system create description. */

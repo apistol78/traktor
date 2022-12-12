@@ -44,12 +44,10 @@
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_margin = 12;
 
@@ -111,32 +109,32 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 		{ -c_distance,        0.0f }
 	};
 
-	float h0 = heightfield->getGridHeightNearest(u, v);
+	const float h0 = heightfield->getGridHeightNearest(u, v);
 
 	float h[sizeof_array(directions)];
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
 		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
 
 	const Vector4& worldExtent = heightfield->getWorldExtent();
-	float sx = worldExtent.x() / heightfield->getSize();
-	float sy = worldExtent.y();
-	float sz = worldExtent.z() / heightfield->getSize();
+	const float sx = worldExtent.x() / heightfield->getSize();
+	const float sy = worldExtent.y();
+	const float sz = worldExtent.z() / heightfield->getSize();
 
 	Vector4 N = Vector4::zero();
 
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
 	{
-		uint32_t j = (i + 1) % sizeof_array(directions);
+		const uint32_t j = (i + 1) % sizeof_array(directions);
 
-		float dx1 = directions[i][0] * sx;
-		float dy1 = (h[i] - h0) * sy;
-		float dz1 = directions[i][1] * sz;
+		const float dx1 = directions[i][0] * sx;
+		const float dy1 = (h[i] - h0) * sy;
+		const float dz1 = directions[i][1] * sz;
 
-		float dx2 = directions[j][0] * sx;
-		float dy2 = (h[j] - h0) * sy;
-		float dz2 = directions[j][1] * sz;
+		const float dx2 = directions[j][0] * sx;
+		const float dy2 = (h[j] - h0) * sy;
+		const float dz2 = directions[j][1] * sz;
 
-		Vector4 n = cross(
+		const Vector4 n = cross(
 			Vector4(dx2, dy2, dz2),
 			Vector4(dx1, dy1, dz1)
 		);
@@ -167,25 +165,25 @@ struct TraceTask : public Object
 
 		const Aabb3& aabb = tree->getBoundingBox();
 
-		Vector4 center = transform * aabb.getCenter().xyz1();
-		float extent = aabb.getExtent().length();
+		const Vector4 center = transform * aabb.getCenter().xyz1();
+		const float extent = aabb.getExtent().length();
 
-		Transform Tinv = transform.inverse();
+		const Transform Tinv = transform.inverse();
 
-		float fmnx = (center.x() - extent) / worldExtent.x() + 0.5f;
-		float fmnz = (center.z() - extent) / worldExtent.z() + 0.5f;
+		const float fmnx = (center.x() - extent) / worldExtent.x() + 0.5f;
+		const float fmnz = (center.z() - extent) / worldExtent.z() + 0.5f;
 
-		float fmxx = (center.x() + extent) / worldExtent.x() + 0.5f;
-		float fmxz = (center.z() + extent) / worldExtent.z() + 0.5f;
+		const float fmxx = (center.x() + extent) / worldExtent.x() + 0.5f;
+		const float fmxz = (center.z() + extent) / worldExtent.z() + 0.5f;
 
-		int32_t mnx = int32_t(fmnx * resolution);
-		int32_t mnz = int32_t(fmnz * resolution);
+		const int32_t mnx = int32_t(fmnx * resolution);
+		const int32_t mnz = int32_t(fmnz * resolution);
 
-		int32_t mxx = int32_t(fmxx * resolution);
-		int32_t mxz = int32_t(fmxz * resolution);
+		const int32_t mxx = int32_t(fmxx * resolution);
+		const int32_t mxz = int32_t(fmxz * resolution);
 
-		int32_t width = mxx - mnx + c_margin * 2 + 1;
-		int32_t height = mxz - mnz + c_margin * 2 + 1;
+		const int32_t width = mxx - mnx + c_margin * 2 + 1;
+		const int32_t height = mxz - mnz + c_margin * 2 + 1;
 
 		occlusion = new drawing::Image(drawing::PixelFormat::getR8(), width, height);
 
@@ -194,23 +192,23 @@ struct TraceTask : public Object
 
 		for (int32_t ix = mnx - c_margin; ix <= mxx + c_margin; ++ix)
 		{
-			float fx = (ix + 0.5f) / float(resolution);
-			float gx = fx * heightfield->getSize();
+			const float fx = (ix + 0.5f) / float(resolution);
+			const float gx = fx * heightfield->getSize();
 
 			for (int32_t iz = mnz - c_margin; iz <= mxz + c_margin; ++iz)
 			{
-				float fz = (iz + 0.5f) / float(resolution);
-				float gz = fz * heightfield->getSize();
+				const float fz = (iz + 0.5f) / float(resolution);
+				const float gz = fz * heightfield->getSize();
 
-				float gh = heightfield->getGridHeightBilinear(gx, gz);
-				float wy = heightfield->unitToWorld(gh);
+				const float gh = heightfield->getGridHeightBilinear(gx, gz);
+				const float wy = heightfield->unitToWorld(gh);
 
 				float wx, wz;
 				heightfield->gridToWorld(gx, gz, wx, wz);
 
-				Vector4 origin = Tinv * Vector4(wx, wy, wz, 1.0f);
-				Vector4 direction = Tinv * normalAt(heightfield, gx, gz);
-				Vector4 directionHalf = direction * Scalar(0.5f);
+				const Vector4 origin = Tinv * Vector4(wx, wy, wz, 1.0f);
+				const Vector4 direction = Tinv * normalAt(heightfield, (int32_t)gx, (int32_t)gz);
+				const Vector4 directionHalf = direction * Scalar(0.5f);
 
 				int32_t occluded = 0;
 				for (int32_t ii = 0; ii < rayCount; ++ii)
@@ -219,16 +217,16 @@ struct TraceTask : public Object
 						++occluded;
 				}
 
-				float o = 1.0f - occluded / float(rayCount);
+				const float o = 1.0f - occluded / float(rayCount);
 
-				Color4f c(o, o, o, 1.0f);
+				const Color4f c(o, o, o, 1.0f);
 				occlusion->setPixel(ix - (mnx - c_margin), iz - (mnz - c_margin), c);
 			}
 		}
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 3, OcclusionTexturePipeline, editor::DefaultPipeline)
 
@@ -242,9 +240,7 @@ bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet OcclusionTexturePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< OcclusionTextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< OcclusionTextureAsset >();
 }
 
 bool OcclusionTexturePipeline::shouldCache() const
@@ -320,7 +316,7 @@ bool OcclusionTexturePipeline::buildOutput(
 		sourceData->close();
 		sourceData = 0;
 
-		uint32_t size = heightfield->getSize();
+		const uint32_t size = heightfield->getSize();
 
 		// Extract occluder meshes.
 		Ref< const ISerializable > occluderData = pipelineBuilder->getObjectReadOnly(asset->m_occluderData);
@@ -366,7 +362,7 @@ bool OcclusionTexturePipeline::buildOutput(
 			{
 				log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
 
-				Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 				Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter());
 				if (!model)
 				{
@@ -390,7 +386,7 @@ bool OcclusionTexturePipeline::buildOutput(
 					for (auto index : vertexIndices)
 					{
 						const model::Vertex& polyVertex = vertices[index];
-						Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
+						const Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
 						w.push(polyVertexPosition);
 					}
 				}
@@ -440,9 +436,9 @@ bool OcclusionTexturePipeline::buildOutput(
 					tasks[i]->occlusion->getPixel(x, y, cs);
 					image->getPixel(x + tasks[i]->x, y + tasks[i]->y, cd);
 
-					float os = cs.getRed();
-					float od = cd.getRed();
-					float o = std::min(os, od);
+					const float os = cs.getRed();
+					const float od = cd.getRed();
+					const float o = std::min(os, od);
 
 					image->setPixel(x + tasks[i]->x, y + tasks[i]->y, Color4f(o, o, o, 1.0f));
 				}
@@ -479,5 +475,4 @@ bool OcclusionTexturePipeline::buildOutput(
 	);
 }
 
-	}
 }

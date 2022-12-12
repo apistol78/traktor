@@ -14,18 +14,10 @@
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldTextureAsset", 0, HeightfieldTextureAsset, ISerializable)
-
-HeightfieldTextureAsset::HeightfieldTextureAsset()
-:	m_output(OtHeights)
-,	m_scale(1.0f)
-{
-}
 
 void HeightfieldTextureAsset::serialize(ISerializer& s)
 {
@@ -43,5 +35,4 @@ void HeightfieldTextureAsset::serialize(ISerializer& s)
 	s >> Member< float >(L"scale", m_scale);
 }
 
-	}
 }

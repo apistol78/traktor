@@ -19,10 +19,8 @@
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.NewHeightfieldDialog", NewHeightfieldDialog, ui::ConfigDialog)
 
@@ -104,7 +102,7 @@ Plane NewHeightfieldDialog::getWorldPlane()
 	ax = std::sin(deg2rad(ax));
 	az = (1.0f - ax) * std::sin(deg2rad(az));
 
-	float ay = 1.0f - std::sqrt(ax * ax + az * az);
+	const float ay = 1.0f - std::sqrt(ax * ax + az * az);
 
 	return Plane(
 		Vector4(ax, ay, az, 0.0f),
@@ -112,5 +110,4 @@ Plane NewHeightfieldDialog::getWorldPlane()
 	);
 }
 
-	}
 }

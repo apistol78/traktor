@@ -19,10 +19,8 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalDatabase", 0, LocalDatabase, IProviderDatabase)
 
@@ -31,9 +29,8 @@ bool LocalDatabase::create(const ConnectionString& connectionString)
 	if (!connectionString.have(L"groupPath"))
 		return false;
 
-	std::wstring groupPath = connectionString.get(L"groupPath");
-
-	Path groupPathA = FileSystem::getInstance().getAbsolutePath(groupPath);
+	const std::wstring groupPath = connectionString.get(L"groupPath");
+	const Path groupPathA = FileSystem::getInstance().getAbsolutePath(groupPath);
 	if (!FileSystem::getInstance().makeAllDirectories(groupPathA))
 	{
 		log::error << L"Unable to create physical group at \"" << groupPath << L"\"" << Endl;
@@ -50,9 +47,9 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 	if (!connectionString.have(L"groupPath"))
 		return false;
 
-	Path groupPath = FileSystem::getInstance().getAbsolutePath(connectionString.get(L"groupPath"));
-	bool journal = connectionString.have(L"journal") ? parseString< bool >(connectionString.get(L"journal")) : true;
-	bool binary = connectionString.have(L"binary") ? parseString< bool >(connectionString.get(L"binary")) : false;
+	const Path groupPath = FileSystem::getInstance().getAbsolutePath(connectionString.get(L"groupPath"));
+	const bool journal = connectionString.have(L"journal") ? parseString< bool >(connectionString.get(L"journal")) : true;
+	const bool binary = connectionString.have(L"binary") ? parseString< bool >(connectionString.get(L"binary")) : false;
 
 	// Ensure group path exists.
 	if (!FileSystem::getInstance().makeAllDirectories(groupPath))
@@ -64,7 +61,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 	// Create file store.
 	if (connectionString.have(L"fileStore"))
 	{
-		std::wstring fileStoreTypeName = connectionString.get(L"fileStore");
+		const std::wstring fileStoreTypeName = connectionString.get(L"fileStore");
 
 		const TypeInfo* fileStoreType = TypeInfo::find(fileStoreTypeName.c_str());
 		if (fileStoreType)
@@ -103,7 +100,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 	// Create event journal file.
 	if (journal)
 	{
-		Path eventPath = groupPath.getPathName() + L"/Journal.bin";
+		const Path eventPath = groupPath.getPathName() + L"/Journal.bin";
 		if (!FileSystem::getInstance().makeAllDirectories(eventPath.getPathOnly()))
 		{
 			log::error << L"Unable to ensure event journal directory exist." << Endl;
@@ -145,5 +142,4 @@ IProviderGroup* LocalDatabase::getRootGroup()
 	return m_rootGroup;
 }
 
-	}
 }

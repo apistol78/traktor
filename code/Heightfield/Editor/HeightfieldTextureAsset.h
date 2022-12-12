@@ -40,10 +40,8 @@ public:
 	};
 
 	resource::Id< Heightfield > m_heightfield;
-	OutputType m_output;
-	float m_scale;
-
-	HeightfieldTextureAsset();
+	OutputType m_output = OtHeights;
+	float m_scale = 1.0f;
 
 	virtual void serialize(ISerializer& s) override final;
 };

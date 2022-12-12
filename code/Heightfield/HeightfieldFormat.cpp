@@ -13,16 +13,14 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_version = 2;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFormat", HeightfieldFormat, Object)
 
@@ -87,5 +85,4 @@ bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) c
 	return true;
 }
 
-	}
 }

@@ -13,10 +13,8 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/Editor/ErosionFilter.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.ErosionFilter", ErosionFilter, Object)
 
@@ -182,7 +180,7 @@ g is gravity that accelerates the flows.
 
 					for (int32_t x = xi - 1; x <= xi + 2; ++x)
 					{
-						float xo= x - xp;
+						float xo = x - xp;
 
 						float w = 1.0f - (xo * xo + zo2) * 0.25f;
 						if (w <= 0.0f)
@@ -190,7 +188,7 @@ g is gravity that accelerates the flows.
 
 						w *= 0.1591549430918953f;
 
-						float delta=ds * w;
+						float delta = ds * w;
 						hmap[HMAP_INDEX(x, z)] -= delta;
 						Vector2& e = erosion[HMAP_INDEX(x, z)];
 						float r = e.x, d = e.y;
@@ -238,5 +236,4 @@ g is gravity that accelerates the flows.
 	}
 }
 
-	}
 }

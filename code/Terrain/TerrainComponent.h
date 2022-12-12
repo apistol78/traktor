@@ -173,7 +173,7 @@ private:
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 
-	void updatePatches(const uint32_t* region);
+	void updatePatches(const uint32_t* region, bool updateErrors, bool flushPatchCache);
 
 	bool createPatches();
 };

@@ -12,19 +12,10 @@
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.OcclusionTextureAsset", 2, OcclusionTextureAsset, ISerializable)
-
-OcclusionTextureAsset::OcclusionTextureAsset()
-:	m_size(1024)
-,	m_traceDistance(16.0f)
-,	m_blurRadius(0)
-{
-}
 
 void OcclusionTextureAsset::serialize(ISerializer& s)
 {
@@ -41,5 +32,4 @@ void OcclusionTextureAsset::serialize(ISerializer& s)
 		s >> Member< int32_t >(L"blurRadius", m_blurRadius, AttributeRange(0));
 }
 
-	}
 }

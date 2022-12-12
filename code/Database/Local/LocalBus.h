@@ -16,8 +16,10 @@ namespace traktor
 
 class ISharedMemory;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 /*! Local database event bus.
  * \ingroup Database
@@ -46,6 +48,4 @@ private:
 	Ref< ISharedMemory > m_shm;
 };
 
-	}
 }
-
