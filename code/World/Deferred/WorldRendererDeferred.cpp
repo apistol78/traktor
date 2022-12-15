@@ -862,7 +862,6 @@ void WorldRendererDeferred::setupVisualPass(
 			// Analytical lights; resolve with gbuffer.
 			render::Shader::Permutation perm;
 			m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowMaskTargetSet != nullptr), perm);
-			m_lightShader->setCombination(s_handleReflectionsEnable, (bool)(reflectionsTargetSet != nullptr), perm);
 			m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
 			m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 

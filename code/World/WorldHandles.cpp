@@ -60,7 +60,6 @@ const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
 const render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
 const render::Handle s_handleProjection(L"World_Projection");
 const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
-const render::Handle s_handleReflectionsEnable(L"World_ReflectionsEnable");
 const render::Handle s_handleScreenMap(L"World_ScreenMap");
 const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
 const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");

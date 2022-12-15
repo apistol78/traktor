@@ -62,7 +62,6 @@ extern const render::Handle s_handleProbeVolumeCenter;
 extern const render::Handle s_handleProbeVolumeExtent;
 extern const render::Handle s_handleProjection;
 extern const render::Handle s_handleReflectionMap;
-extern const render::Handle s_handleReflectionsEnable;
 extern const render::Handle s_handleScreenMap;
 extern const render::Handle s_handleShadowEnable;
 extern const render::Handle s_handleShadowMapAtlas;

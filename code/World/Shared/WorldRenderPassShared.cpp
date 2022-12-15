@@ -25,8 +25,7 @@ WorldRenderPassShared::WorldRenderPassShared(
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
 	bool irradianceEnable,
-	bool shadowEnable,
-	bool reflectionsEnable
+	bool shadowEnable
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
@@ -34,7 +33,6 @@ WorldRenderPassShared::WorldRenderPassShared(
 ,	m_passFlags(passFlags)
 ,	m_irradianceEnable(irradianceEnable)
 ,	m_shadowEnable(shadowEnable)
-,	m_reflectionsEnable(reflectionsEnable)
 {
 }
 
@@ -66,7 +64,6 @@ render::Shader::Permutation WorldRenderPassShared::getPermutation(const render::
 	render::Shader::Permutation perm(m_technique);
 	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
 	shader->setCombination(s_handleShadowEnable, m_shadowEnable, perm);
-	shader->setCombination(s_handleReflectionsEnable, m_reflectionsEnable, perm);
 	return perm;
 }
 

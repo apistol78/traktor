@@ -32,6 +32,8 @@ const static Handle s_handleViewEdgeBottomRight(L"ViewEdgeBottomRight");
 const static Handle s_handleProjection(L"Projection");
 const static Handle s_handleView(L"View");
 const static Handle s_handleViewInverse(L"ViewInverse");
+const static Handle s_handleLastView(L"LastView");
+const static Handle s_handleLastViewInverse(L"LastViewInverse");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
 const static Handle s_handleNoiseOffset(L"NoiseOffset");
 
@@ -88,6 +90,8 @@ void Simple::build(
 	pp->setMatrixParameter(s_handleProjection, view.projection);
 	pp->setMatrixParameter(s_handleView, view.view);
 	pp->setMatrixParameter(s_handleViewInverse, view.view.inverse());
+	pp->setMatrixParameter(s_handleLastView, view.lastView);
+	pp->setMatrixParameter(s_handleLastViewInverse, view.lastView.inverse());
 
 	for (const auto& source : m_sources)
 	{
