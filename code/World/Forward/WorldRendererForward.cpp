@@ -655,7 +655,7 @@ void WorldRendererForward::setupVisualPass(
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
-	render::handle_t /*reflectionsTargetSetId*/,
+	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMapAtlasTargetSetId
 )
 {
@@ -682,8 +682,8 @@ void WorldRendererForward::setupVisualPass(
 	if (ambientOcclusionTargetSetId != 0)
 		rp->addInput(ambientOcclusionTargetSetId);
 
-	//if (reflectionsTargetSetId != 0)
-	//	rp->addInput(reflectionsTargetSetId);
+	if (reflectionsTargetSetId != 0)
+		rp->addInput(reflectionsTargetSetId);
 
 	if (shadowsEnable)
 		rp->addInput(shadowMapAtlasTargetSetId);
@@ -718,7 +718,7 @@ void WorldRendererForward::setupVisualPass(
 
 			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
  			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
-			//auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
+			auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
 			const float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
@@ -754,6 +754,12 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
 			}
+			else
+			{
+				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
+				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
+				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
+			}
 
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
@@ -771,8 +777,10 @@ void WorldRendererForward::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
 
-			//if (reflectionsTargetSet != nullptr)
-			//	sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+			if (reflectionsTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
+			else
+				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
 
 			sharedParams->endParameters(wc.getRenderContext());
 
@@ -782,8 +790,7 @@ void WorldRendererForward::setupVisualPass(
 				worldRenderView,
 				IWorldRenderPass::PfLast,
 				(bool)(m_irradianceGrid != nullptr),
-				(bool)(shadowAtlasTargetSet != nullptr),
-				(bool)(probe != nullptr) // (bool)(reflectionsTargetSet != nullptr)
+				(bool)(shadowAtlasTargetSet != nullptr)
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());

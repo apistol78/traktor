@@ -125,6 +125,7 @@ protected:
 
 	Ref< render::ITexture > m_blackTexture;
 	Ref< render::ITexture > m_whiteTexture;
+	Ref< render::ITexture > m_blackCubeTexture;
 
 	Ref< render::Buffer > m_lightSBuffer;
 	Ref< render::Buffer > m_lightIndexSBuffer;

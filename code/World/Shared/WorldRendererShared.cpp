@@ -110,6 +110,29 @@ Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, ui
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 }
 
+Ref< render::ITexture > createCubeTexture(render::IRenderSystem* renderSystem, uint32_t value)
+{
+	render::CubeTextureCreateDesc ctcd = {};
+	ctcd.side = 1;
+	ctcd.mipCount = 1;
+	ctcd.format = render::TfR8G8B8A8;
+	ctcd.sRGB = false;
+	ctcd.immutable = true;
+	ctcd.initialData[0].data = &value;
+	ctcd.initialData[0].pitch = 4;
+	ctcd.initialData[1].data = &value;
+	ctcd.initialData[1].pitch = 4;
+	ctcd.initialData[2].data = &value;
+	ctcd.initialData[2].pitch = 4;
+	ctcd.initialData[3].data = &value;
+	ctcd.initialData[3].pitch = 4;
+	ctcd.initialData[4].data = &value;
+	ctcd.initialData[4].pitch = 4;
+	ctcd.initialData[5].data = &value;
+	ctcd.initialData[0].pitch = 4;
+	return renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W);
+}
+
 Vector2 jitter(int32_t count)
 {
 	const Vector2 kernelSize(0.5f, 0.5f);
@@ -250,6 +273,7 @@ bool WorldRendererShared::create(
 	// Create default value textures.
 	m_blackTexture = create1x1Texture(renderSystem, 0x00000000);
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
+	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
 
 	return true;
 }
@@ -768,13 +792,14 @@ render::handle_t WorldRendererShared::setupReflectionsPass(
 	render::ImageGraphView view;
 	view.viewFrustum = worldRenderView.getViewFrustum();
 	view.view = worldRenderView.getView();
+	view.lastView = worldRenderView.getLastView();
 	view.projection = worldRenderView.getProjection();
 	view.deltaTime = worldRenderView.getDeltaTime();
 
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 1);
+	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
 
 	m_screenReflections->addPasses(
 		m_screenRenderer,

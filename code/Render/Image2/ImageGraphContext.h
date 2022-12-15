@@ -37,6 +37,7 @@ struct ImageGraphView
 {
     Frustum viewFrustum;
     Matrix44 view;
+    Matrix44 lastView;
     Matrix44 viewToLight;
     Matrix44 projection;
     Vector4 godRayDirection = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
