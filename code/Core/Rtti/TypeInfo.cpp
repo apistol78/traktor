@@ -171,11 +171,11 @@ const TypeInfo* TypeInfo::find(const wchar_t* name)
 
 	while (first < last)
 	{
-		uint32_t index = (last + first) >> 1;
+		const uint32_t index = (last + first) >> 1;
 		T_ASSERT(index >= first && index < last);
 
 		const wchar_t* typeName = s_typeInfoRegistry[index]->getName();
-		int32_t res = safeStringCompare(typeName, name);
+		const int32_t res = safeStringCompare(typeName, name);
 		if (res == 0)
 			return s_typeInfoRegistry[index];
 		else if (res > 0)
@@ -184,7 +184,7 @@ const TypeInfo* TypeInfo::find(const wchar_t* name)
 			first = index + 1;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 TypeInfoSet TypeInfo::findAllOf(bool inclusive) const
@@ -204,7 +204,7 @@ TypeInfoSet TypeInfo::findAllOf(bool inclusive) const
 ITypedObject* TypeInfo::createInstance(const wchar_t* name, void* memory)
 {
 	const TypeInfo* type = TypeInfo::find(name);
-	return type ? type->createInstance(memory) : 0;
+	return type ? type->createInstance(memory) : nullptr;
 }
 
 void TypeInfo::setTag(uint32_t tag) const
