@@ -141,15 +141,15 @@ bool Server::update()
 				continue;
 
 			// If I'm no master and peer is not a master then we ignore this peer.
-			bool peerMaster = settings->getProperty< bool >(L"Avalanche.Master", false);
+			const bool peerMaster = settings->getProperty< bool >(L"Avalanche.Master", false);
 			if (!m_master && !peerMaster)
 				continue;
 
-			Guid peerInstanceId = Guid(settings->getProperty< std::wstring >(L"Avalanche.InstanceID", L""));
+			const Guid peerInstanceId = Guid(settings->getProperty< std::wstring >(L"Avalanche.InstanceID", L""));
 			if (!peerInstanceId.isValid())
 				continue;
 
-			net::SocketAddressIPv4 peerAddress(
+			const net::SocketAddressIPv4 peerAddress(
 				settings->getProperty< std::wstring >(L"Avalanche.Host"),
 				settings->getProperty< int32_t >(L"Avalanche.Port")
 			);
@@ -163,16 +163,16 @@ bool Server::update()
 				peers.push_back(*it);
 			else
 			{
-				int32_t majorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Major", 0);
-				int32_t minorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Minor", 0);
+				const int32_t majorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Major", 0);
+				const int32_t minorVersion = settings->getProperty< int32_t >(L"Avalanche.Version.Minor", 0);
 				if (
 					majorVersion == c_majorVersion &&
 					minorVersion >= c_minorVersion
 				)
 				{
-					std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
-					std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
-					std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
+					const std::wstring peerName = settings->getProperty< std::wstring >(L"Avalanche.OS.Name", L"");
+					const std::wstring peerIdentifier = settings->getProperty< std::wstring >(L"Avalanche.OS.Identifier", L"");
+					const std::wstring peerComputerName = settings->getProperty< std::wstring >(L"Avalanche.OS.ComputerName", L"");
 
 					if (peerMaster)
 						log::info << L"Found master peer at " << peerAddress.getHostName() << L":" << peerAddress.getPort() << Endl;
@@ -185,7 +185,7 @@ bool Server::update()
 					log::info << L"  Instance ID   : " << peerInstanceId.format() << Endl;
 					log::info << L"  Protocol      : " << majorVersion << L"." << minorVersion << Endl;
 
-					std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
+					const std::wstring name = !peerComputerName.empty() ? peerComputerName : str(L"%s:%d", peerAddress.getHostName().c_str(), peerAddress.getPort());
 					peers.push_back(new Peer(peerAddress, peerInstanceId, peerMaster, name, m_dictionary));
 				}
 			}

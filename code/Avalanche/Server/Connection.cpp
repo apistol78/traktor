@@ -75,7 +75,7 @@ bool Connection::update()
 
 bool Connection::process()
 {
-	int32_t result = m_clientSocket->select(true, false, false, 500);
+	const int32_t result = m_clientSocket->select(true, false, false, 500);
 	if (result == 0)
 		return true;
 	else if (result < 0)
@@ -96,7 +96,7 @@ bool Connection::process()
 
 	case c_commandStat:
 		{
-			Key key = Key::read(m_clientStream);
+			const Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -109,7 +109,7 @@ bool Connection::process()
 				if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 					return false;
 
-				int64_t blobSize = blob->size();
+				const int64_t blobSize = blob->size();
 				if (m_clientStream->write(&blobSize, sizeof(int64_t)) != sizeof(int64_t))
 					return false;
 			}
@@ -123,7 +123,7 @@ bool Connection::process()
 
 	case c_commandGet:
 		{
-			Key key = Key::read(m_clientStream);
+			const Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -139,7 +139,7 @@ bool Connection::process()
 					if (m_clientStream->write(&c_replyOk, sizeof(uint8_t)) != sizeof(uint8_t))
 						return false;
 
-					int64_t blobSize = blob->size();
+					const int64_t blobSize = blob->size();
 					if (m_clientStream->write(&blobSize, sizeof(int64_t)) != sizeof(int64_t))
 						return false;
 
@@ -169,7 +169,7 @@ bool Connection::process()
 
 	case c_commandPut:
 		{
-			Key key = Key::read(m_clientStream);
+			const Key key = Key::read(m_clientStream);
 			if (!key.valid())
 			{
 				log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -193,7 +193,7 @@ bool Connection::process()
 
 				for (;;)
 				{
-					int32_t subcmd = m_clientSocket->recv();
+					const int32_t subcmd = m_clientSocket->recv();
 					if (subcmd == c_subCommandPutAppend)
 					{
 						int64_t chunkSize;
@@ -270,7 +270,7 @@ bool Connection::process()
 			AlignedVector< Key > keys;
 			m_dictionary->snapshotKeys(keys);
 
-			uint64_t nkeys = (uint64_t)keys.size();
+			const uint64_t nkeys = (uint64_t)keys.size();
 			if (m_clientStream->write(&nkeys, sizeof(uint64_t)) != sizeof(uint64_t))
 				return false;
 
@@ -291,7 +291,7 @@ bool Connection::process()
 			uint32_t ntouched = 0;
 			for (uint32_t i = 0; i < nkeys; ++i)
 			{
-				Key key = Key::read(m_clientStream);
+				const Key key = Key::read(m_clientStream);
 				if (!key.valid())
 				{
 					log::warning << L"Failed to read key; terminating connection." << Endl;
@@ -335,7 +335,7 @@ bool Connection::process()
 			uint32_t nremoved = 0;
 			for (uint32_t i = 0; i < nkeys; ++i)
 			{
-				Key key = Key::read(m_clientStream);
+				const Key key = Key::read(m_clientStream);
 				if (!key.valid())
 				{
 					log::warning << L"Failed to read key; terminating connection." << Endl;
