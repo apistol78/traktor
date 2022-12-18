@@ -68,7 +68,7 @@ bool Dock::create(Widget* parent)
 	m_hintBottom->setRect(Rect(xy[1], xy[2], xy[1] + 29, xy[2] + 32));
 	m_hintBottom->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
-	m_pane = new DockPane(this, (DockPane*)0);
+	m_pane = new DockPane(this, (DockPane*)nullptr);
 
 	addEventHandler< SizeEvent >(this, &Dock::eventSize);
 	addEventHandler< MouseButtonDownEvent >(this, &Dock::eventButtonDown);

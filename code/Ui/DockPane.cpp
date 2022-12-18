@@ -30,17 +30,17 @@ const int c_minimumSplit = c_gripperDim + 64;
 template < typename EventType >
 void addEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	//widget->addEventHandler< EventType >(eventHandler);
-	//for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-	//	addEventHandlers< EventType >(child, eventHandler);
+	widget->addEventHandler< EventType >(eventHandler);
+	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
+		addEventHandlers< EventType >(child, eventHandler);
 }
 
 template < typename EventType >
 void removeEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
 {
-	//widget->removeEventHandler< EventType >(eventHandler);
-	//for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
-	//	removeEventHandlers< EventType >(child, eventHandler);
+	widget->removeEventHandler< EventType >(eventHandler);
+	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
+		removeEventHandlers< EventType >(child, eventHandler);
 }
 
 int calculateRealSplit(const Rect& rc, int split, bool vertical)
@@ -76,6 +76,12 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
 }
 
+DockPane::~DockPane()
+{
+	if (m_widget)
+		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
+}
+
 void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
 {
 	outLeftPane = new DockPane(m_owner, this);
@@ -84,6 +90,8 @@ void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref
 	if (m_widget)
 		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 
+	m_focusEventHandler = nullptr;
+	
 	m_widget = nullptr;
 	m_split = split;
 	m_vertical = vertical;
@@ -578,14 +586,13 @@ bool DockPane::isVisible() const
 
 void DockPane::eventFocus(FocusEvent* event)
 {
-	bool focus = event->gotFocus();
+	const bool focus = event->gotFocus();
 	if (focus != m_focus)
 	{
 		m_focus = focus;
 		if (m_owner)
 			m_owner->update();
 	}
-	event->consume();
 }
 
 	}
