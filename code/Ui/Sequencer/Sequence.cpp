@@ -233,7 +233,8 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 				rcButton.getTopLeft() + offset,
 				Point(0, 0),
 				size,
-				image
+				image,
+				ui::BlendMode::Alpha
 			);
 		}
 
@@ -250,19 +251,19 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 
 	// Draw tickers.
 	canvas.setForeground(ss->getColor(this, L"tick-color"));
-	int32_t cy = (rc.top + rc.bottom) / 2;
+	const int32_t cy = (rc.top + rc.bottom) / 2;
 	for (int32_t i = 0; i < sequencer->getLength(); i += 100)
 	{
-		int32_t cx = separator + clientFromTime(i) - scrollOffset;
+		const int32_t cx = separator + clientFromTime(i) - scrollOffset;
 		if (cx > rc.right)
 			break;
-		int32_t cya = (i % 1000 == 0) ? 4 : 0;
+		const int32_t cya = (i % 1000 == 0) ? 4 : 0;
 		canvas.drawLine(cx, cy - dpi96(2 + cya), cx, cy + dpi96(2 + cya));
 	}
 
 	for (auto key : m_keys)
 	{
-		Rect rcClient(
+		const Rect rcClient(
 			rc.left + separator,
 			rc.top,
 			rc.right,
