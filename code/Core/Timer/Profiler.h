@@ -62,7 +62,7 @@ public:
 	struct Event
 	{
 		uint16_t name;
-		uint32_t threadId;
+		uint8_t threadId;
 		uint16_t depth;
 		double start;
 		double end;
