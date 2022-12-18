@@ -1462,7 +1462,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore);
+	if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS)
+		return false;
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	// Create time query pool.

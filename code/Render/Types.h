@@ -399,8 +399,8 @@ struct DisplayMode
 {
 	uint32_t width = 0;
 	uint32_t height = 0;
-	uint16_t refreshRate = 0;
 	uint16_t colorBits = 0;
+	float refreshRate = 0.0f;
 };
 
 /*! Vendor type. */

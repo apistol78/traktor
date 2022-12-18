@@ -10,12 +10,10 @@
 
 #include "Runtime/Impl/RenderServer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class RenderServerDefault : public RenderServer
@@ -49,12 +47,12 @@ public:
 
 	virtual int32_t getMultiSample() const override final;
 
+	virtual float getRefreshRate() const override final;
+
 private:
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewDefaultDesc m_renderViewDesc;
 	float m_screenAspectRatio = 1.0f;
 };
 
-	}
 }
-

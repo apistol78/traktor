@@ -49,6 +49,8 @@ public:
 
 	virtual int32_t getMultiSample() const override final;
 
+	virtual float getRefreshRate() const override final;
+
 private:
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewEmbeddedDesc m_renderViewDesc;

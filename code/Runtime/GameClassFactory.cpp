@@ -271,7 +271,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classUpdateInfo->addProperty< int32_t >("simulationFrequency", 0, &UpdateInfo::getSimulationFrequency);
 	classUpdateInfo->addProperty< float >("frameDeltaTime", 0, &UpdateInfo::getFrameDeltaTime);
 	classUpdateInfo->addProperty< float >("interval", 0, &UpdateInfo::getInterval);
-	classUpdateInfo->addProperty< bool >("isRunningSlow", 0, &UpdateInfo::isRunningSlow);
 	registrar->registerClass(classUpdateInfo);
 
 	auto classBoxedTransition = new AutoRuntimeClass< BoxedTransition >();

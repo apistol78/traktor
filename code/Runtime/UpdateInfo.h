@@ -92,12 +92,6 @@ public:
 	 */
 	float getInterval() const { return (m_stateTime - m_simulationTime) / m_simulationDeltaTime; }
 
-	/*! If system is detected as being too slow.
-	 *
-	 * \return True if system incapable of sustaining a stable frame rate.
-	 */
-	bool isRunningSlow() const { return m_runningSlow; }
-
 private:
 	friend class Application;
 
@@ -108,7 +102,6 @@ private:
 	float m_simulationFrequency = 0.0f;
 	float m_frameDeltaTime = 0.0f;
 	uint64_t m_frame = 0;
-	bool m_runningSlow = false;
 };
 
 }

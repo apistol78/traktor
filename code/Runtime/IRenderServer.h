@@ -64,6 +64,8 @@ public:
 
 	virtual int32_t getMultiSample() const = 0;
 
+	virtual float getRefreshRate() const = 0;
+
 	virtual int32_t getFrameRate() const = 0;
 
 	virtual int32_t getThreadFrameQueueCount() const = 0;
