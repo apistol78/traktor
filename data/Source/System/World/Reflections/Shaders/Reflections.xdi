@@ -286,31 +286,36 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-vec3 viewDirection = normalize($ViewPosition.xyz);
-vec3 viewTraceDirection = reflect(viewDirection, $ViewNormal.xyz);
+const vec3 viewDirection = normalize($ViewPosition.xyz);
+const vec3 viewTraceDirection = reflect(viewDirection, $ViewNormal.xyz);
 
 $Hit = vec4(0.0f);
 
 for (int i = 0; i < 64; ++i)
 {
-	float f = i / 64.0f;
-	vec3 viewStepPosition = $ViewPosition.xyz + viewTraceDirection * (f * 3.0f + 0.2f);
+	const float f = i / 64.0f;
+	const vec3 viewStepPosition = $ViewPosition.xyz + viewTraceDirection * (f * 2.0f + 0.15f);
 
 	vec4 t = $Projection * vec4(viewStepPosition, 1.0f);
 	t.xy /= t.w;
 	t.xy *= vec2(0.5f, -0.5f);
 	t.xy += vec2(0.5f, 0.5f);
-	vec2 screenStepPosition = t.xy;
 
-	float depth = texture(sampler2D($DepthMap, $DepthMapState), screenStepPosition).x;
+	const float depth = texture(sampler2D($DepthMap, $DepthMapState), t.xy).x;
 
-	float d = abs(depth - viewStepPosition.z);
-	if (d < 0.02f)
+	const float d = abs(depth - viewStepPosition.z);
+	if (d < 0.06f)
 	{
-		$Hit = vec4(screenStepPosition, 1.0f, 0.0f);
+		// Edge attenuation.
+		float a = t.x * (1.0f - t.x) * t.y * (1.0f - t.y);
+		a = clamp(a * 64.0f, 0.0f, 1.0f);
+
+		// Output UV coordinate of hit.
+		$Hit = vec4(t.xy, (1.0f - f) * a, 0.0f);
 		break;
 	}
 }
+
 			]]>
 			</script>
 		</item>
@@ -416,8 +421,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{B1F40F4A-B3F6-40FD-B295-8E87C0573303}</id>
 			<comment/>
 			<position>
-				<first>2306</first>
-				<second>-805</second>
+				<first>2329</first>
+				<second>-774</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -490,8 +495,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{3FCF8FB2-14D3-4238-85A4-72C8219D3150}</id>
 			<comment/>
 			<position>
-				<first>1625</first>
-				<second>-632</second>
+				<first>1731</first>
+				<second>-635</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -510,8 +515,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{9AF24C39-E70C-4964-9BEE-5D6D968C3626}</id>
 			<comment/>
 			<position>
-				<first>1644</first>
-				<second>-580</second>
+				<first>1750</first>
+				<second>-583</second>
 			</position>
 			<value>0.4</value>
 		</item>
@@ -519,8 +524,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{AD19B4B6-DAC0-47C9-A168-34B3AFA9F354}</id>
 			<comment/>
 			<position>
-				<first>1603</first>
-				<second>-532</second>
+				<first>1709</first>
+				<second>-535</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -898,16 +903,6 @@ for (int i = 0; i < 64; ++i)
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[31]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
@@ -924,6 +919,16 @@ for (int i = 0; i < 64; ++i)
 			<destination>
 				<node ref="/object/nodes/item[34]"/>
 				<id>{6BD21B41-32B3-4296-BE06-B5D7734CA0FB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>
