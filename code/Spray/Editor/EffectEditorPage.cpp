@@ -121,7 +121,6 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageS
 ,	m_document(document)
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
-,	m_moveEmitter(false)
 {
 }
 
@@ -161,16 +160,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolToggleGuide = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleMove = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), 7, ui::Command(L"Effect.Editor.ToggleMove"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT(settings);
 
 	m_guideVisible = settings->getProperty< bool >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
-
-	m_moveEmitter = settings->getProperty< bool >(L"EffectEditor.ToggleMove", m_moveEmitter);
-	m_toolToggleMove->setToggled(m_moveEmitter);
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
@@ -184,14 +179,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), 2, ui::Command(L"Effect.Editor.Stop")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
-	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), 11, ui::Command(L"Effect.Editor.RandomizeSeed")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
 	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
-	m_previewControl->setMoveEmitter(m_moveEmitter);
 
 	m_containerSequencer = new ui::Container();
 	m_containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -238,7 +231,6 @@ void EffectEditorPage::destroy()
 	T_ASSERT(settings);
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
-	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
 
 	m_editor->commitGlobalSettings();
 	m_audioSystem = nullptr;
@@ -297,13 +289,6 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_guideVisible = !m_guideVisible;
 		m_previewControl->showGuide(m_guideVisible);
 		m_toolToggleGuide->setToggled(m_guideVisible);
-	}
-	else if (command == L"Effect.Editor.ToggleMove")
-	{
-		m_moveEmitter = !m_moveEmitter;
-		m_previewControl->setMoveEmitter(m_moveEmitter);
-		m_previewControl->syncEffect();
-		m_toolToggleMove->setToggled(m_moveEmitter);
 	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
 	{
@@ -456,9 +441,21 @@ void EffectEditorPage::updateEffectPreview()
 			effectLayers
 		);
 
-		m_previewControl->setEffect(m_effectData, effect);
+		// Move emitter if it contain a trail.
+		bool moveEmitter = false;
+		for (auto layer : m_effectData->getLayers())
+		{
+			if (layer->getTrail() != nullptr)
+			{
+				moveEmitter = true;
+				break;
+			}
+		}
 
-		float time = m_sequencer->getCursor() / 1000.0f;
+		// Update effect preview.
+		const float time = m_sequencer->getCursor() / 1000.0f;
+		m_previewControl->setEffect(m_effectData, effect);
+		m_previewControl->setMoveEmitter(moveEmitter);
 		m_previewControl->setTotalTime(time);
 		m_previewControl->syncEffect();
 	}

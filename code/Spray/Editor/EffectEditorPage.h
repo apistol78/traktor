@@ -93,7 +93,6 @@ private:
 	Ref< EffectData > m_effectData;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
-	Ref< ui::ToolBarButton > m_toolToggleMove;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::Container > m_containerSequencer;
 	Ref< ui::ToolBar > m_toolBarLayers;
@@ -104,7 +103,6 @@ private:
 	Ref< sound::AudioSystem > m_audioSystem;
 	bool m_velocityVisible;
 	bool m_guideVisible;
-	bool m_moveEmitter;
 
 	void updateEffectPreview();
 
