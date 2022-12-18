@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+thread_local uint8_t s_threadIndex;
+uint8_t s_threadIndexNext = 0;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Profiler", Profiler, Object)
 
@@ -64,12 +71,13 @@ void Profiler::beginEvent(const std::wstring& name)
 		te = new ThreadEvents();
 		m_threadEvents.push_back(te);
 		m_localThreadEvents.set(te);
+		s_threadIndex = s_threadIndexNext++;
 	}
 
 	// Begin event.
 	Event& e = te->events.push_back();
 	e.name = id;
-	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
+	e.threadId = s_threadIndex;
 	e.depth = uint16_t(te->events.size() - 1);
 	e.start = m_timer.getElapsedTime();
 	e.end = 0.0;

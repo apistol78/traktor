@@ -16,12 +16,10 @@
 
 using namespace traktor;
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 class MemberRenderSystemStatistics : public MemberComplex
 {
@@ -68,7 +66,7 @@ private:
 	render::RenderViewStatistics& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPerfSet", TargetPerfSet, ISerializable)
 
@@ -185,18 +183,15 @@ void TpsAudio::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPerformance", TargetPerformance, Object)
 
-TargetPerformance::TargetPerformance()
-{
-}
-
 void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance)
 {
 	const TypeInfo& performanceType = type_of(&performance);
 
-	auto it = m_last.find(&performanceType);
+	// Check how long since last this performance set has been sent.
+	const auto it = m_last.find(&performanceType);
 	if (
 		it != m_last.end() &&
-		(m_timer.getElapsedTime() - it->second.sent) < 1.0 &&
+		(m_timer.getElapsedTime() - it->second.sent) < 4.0 &&
 		performance.check(*it->second.perfSet) == false
 	)
 		return;
@@ -204,10 +199,10 @@ void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, co
 	if (!transport->send(&performance))
 		return;
 
+	// Save time and copy of performance set as a reference.
 	auto& snapshot = m_last[&performanceType];
 	snapshot.sent = m_timer.getElapsedTime();
 	snapshot.perfSet = DeepClone(&performance).create< TargetPerfSet >();
 }
 
-	}
 }

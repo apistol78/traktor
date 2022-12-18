@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class BidirectionalObjectTransport;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class T_DLLCLASS TargetPerfSet : public ISerializable
 {
@@ -134,8 +132,6 @@ class T_DLLCLASS TargetPerformance : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetPerformance();
-
 	void publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance);
 
 private:
@@ -149,6 +145,4 @@ private:
 	SmallMap< const TypeInfo*, Snapshot > m_last;
 };
 
-	}
 }
-
