@@ -13,17 +13,15 @@
 #include <X11/extensions/XInput2.h>
 #include "Input/X11/InputDeviceX11.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class MouseDeviceX11 : public InputDeviceX11
 {
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceX11(Display* display, Window window, int deviceId);
+	explicit MouseDeviceX11(Display* display, Window window, int deviceId);
 
 	virtual ~MouseDeviceX11();
 
@@ -61,8 +59,6 @@ public:
 
 	virtual void consumeEvent(XEvent& evt) override final;
 
-	virtual void setFocus(bool focus) override final;
-
 private:
 	Display* m_display;
 	Window m_window;
@@ -78,8 +74,8 @@ private:
 	float m_button[3];
 	int m_width;
 	int m_height;
+
+	void setFocus(bool focus);
 };
 
-	}
 }
-

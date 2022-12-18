@@ -10,12 +10,10 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/X11/MouseDeviceX11.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct MouseControlMap
 {
@@ -40,7 +38,7 @@ const float c_mouseDeltaScale = 0.5f;
 const float c_mouseDeltaLimit = 200.0f;
 const float c_mouseWheelDelta = 1.0f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceX11", MouseDeviceX11, InputDeviceX11)
 
@@ -66,7 +64,15 @@ MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 	XISetMask(mask, XI_Motion);
 	XISetMask(mask, XI_ButtonPress);
 	XISetMask(mask, XI_ButtonRelease);
+	XISetMask(mask, XI_FocusIn);
+	XISetMask(mask, XI_FocusOut);
 	XISelectEvents(m_display, m_window, &evmask, 1);
+
+	// Get current size of window.
+	XWindowAttributes attr;
+	XGetWindowAttributes(m_display, m_window, &attr);
+	m_width = attr.width;
+	m_height = attr.height;
 
 	resetState();
 }
@@ -205,12 +211,6 @@ void MouseDeviceX11::readState()
 	if (!m_connected)
 		resetState();
 
-	XWindowAttributes attr;
-	XGetWindowAttributes(m_display, m_window, &attr);
-
-	m_width = attr.width;
-	m_height = attr.height;
-
 	// Update virtual position of pointer.
 	if (m_exclusive && m_focus)
 	{
@@ -258,7 +258,7 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 {
 	m_exclusive = exclusive;
 
-	bool shouldGrab = (exclusive && m_focus);
+	const bool shouldGrab = (exclusive && m_focus);
 	if (shouldGrab == m_haveGrab)
 		return;
 
@@ -274,6 +274,8 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 		XISetMask(mask, XI_Motion);
 		XISetMask(mask, XI_ButtonPress);
 		XISetMask(mask, XI_ButtonRelease);
+		XISetMask(mask, XI_FocusIn);
+		XISetMask(mask, XI_FocusOut);
 
 #if !defined(_DEBUG)
 		XIGrabDevice(
@@ -298,6 +300,16 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 
 	XFlush(m_display);
 	m_haveGrab = shouldGrab;
+
+	// Also update current size of window here; size is only
+	// used when in exclusive mode and we assume window size
+	// doesn't change after entering exclusive mode.
+	// We do this because it's too expensive to query window
+	// size frequently and we don't own the message loop.
+	XWindowAttributes attr;
+	XGetWindowAttributes(m_display, m_window, &attr);
+	m_width = attr.width;
+	m_height = attr.height;	
 }
 
 void MouseDeviceX11::consumeEvent(XEvent& evt)
@@ -316,21 +328,21 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			{
 				if (!m_exclusive || !m_focus)
 				{
-					int32_t dx = event->event_x - m_position[0];
-					int32_t dy = event->event_y - m_position[1];
+					const int32_t dx = event->event_x - m_position[0];
+					const int32_t dy = event->event_y - m_position[1];
 
 					m_raw[0] += dx;
 					m_raw[1] += dy;
 				}
 				else
 				{
-					int32_t cx = m_width / 2;
-					int32_t cy = m_height / 2;
+					const int32_t cx = m_width / 2;
+					const int32_t cy = m_height / 2;
 
 					// In exclusive mode the pointer is continiously warped back to center,
 					// thus the motion is relative center.
-					int32_t dx = event->event_x - cx;
-					int32_t dy = event->event_y - cy;
+					const int32_t dx = event->event_x - cx;
+					const int32_t dy = event->event_y - cy;
 
 					m_raw[0] += dx;
 					m_raw[1] += dy;
@@ -363,6 +375,14 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 		}
 		break;
 
+	case XI_FocusIn:
+		setFocus(true);
+		break;
+
+	case XI_FocusOut:
+		setFocus(false);
+		break;		
+
 	default:
 		break;
 	}
@@ -375,5 +395,4 @@ void MouseDeviceX11::setFocus(bool focus)
 	setExclusive(m_exclusive);
 }
 
-	}
 }

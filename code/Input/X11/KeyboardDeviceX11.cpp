@@ -12,10 +12,8 @@
 #include "Input/X11/KeyboardDeviceX11.h"
 #include "Input/X11/TypesX11.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceX11", KeyboardDeviceX11, InputDeviceX11)
 
@@ -38,7 +36,8 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 
 	XISetMask(mask, XI_KeyPress);
 	XISetMask(mask, XI_KeyRelease);
-
+	XISetMask(mask, XI_FocusIn);
+	XISetMask(mask, XI_FocusOut);
 	XISelectEvents(m_display, m_window, &evmask, 1);
 
 	if ((m_kbdesc = XkbGetMap(m_display, XkbAllComponentsMask, XkbUseCoreKbd)) == nullptr)
@@ -166,6 +165,8 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 
 		XISetMask(mask, XI_KeyPress);
 		XISetMask(mask, XI_KeyRelease);
+		XISetMask(mask, XI_FocusIn);
+		XISetMask(mask, XI_FocusOut);
 
 #if !defined(_DEBUG)
 		XIGrabDevice(
@@ -302,6 +303,14 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 		}
 		break;
 
+	case XI_FocusIn:
+		setFocus(true);
+		break;
+
+	case XI_FocusOut:
+		setFocus(false);
+		break;
+
 	default:
 		log::info << L"Unknown event in device " << m_deviceId << Endl;
 		break;
@@ -315,5 +324,4 @@ void KeyboardDeviceX11::setFocus(bool focus)
 	setExclusive(m_exclusive);
 }
 
-	}
 }

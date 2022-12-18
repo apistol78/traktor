@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputDeviceX11;
 
@@ -52,6 +50,4 @@ private:
 	RefArray< InputDeviceX11 > m_devices;
 };
 
-	}
 }
-
