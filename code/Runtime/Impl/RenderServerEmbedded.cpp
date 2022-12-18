@@ -281,5 +281,10 @@ int32_t RenderServerEmbedded::getMultiSample() const
 	return m_renderViewDesc.multiSample;
 }
 
+float RenderServerEmbedded::getRefreshRate() const
+{
+	return m_originalDisplayMode.refreshRate;
+}
+
 	}
 }

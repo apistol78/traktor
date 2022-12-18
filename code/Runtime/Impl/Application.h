@@ -111,7 +111,6 @@ private:
 	Thread* m_threadRender = nullptr;
 	Timer m_timer;
 	int32_t m_maxSimulationUpdates = 1;
-	int32_t m_deltaTimeError = 0;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive = true;

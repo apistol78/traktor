@@ -238,6 +238,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 
 	m_renderViewDesc.displayMode.colorBits = 24;
+	m_renderViewDesc.displayMode.refreshRate = m_originalDisplayMode.refreshRate;
 
 	// Ensure no invalid multi-sample configuration is entered.
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
@@ -474,6 +475,11 @@ float RenderServerDefault::getAspectRatio() const
 int32_t RenderServerDefault::getMultiSample() const
 {
 	return m_renderViewDesc.multiSample;
+}
+
+float RenderServerDefault::getRefreshRate() const
+{
+	return m_renderViewDesc.displayMode.refreshRate;
 }
 
 	}

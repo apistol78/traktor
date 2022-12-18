@@ -336,6 +336,18 @@ bool Application::create(
 		m_plugins.push_back(plugin);
 	}
 
+	// Use same simulation rate as close to a multiple of display rate as possible by default.
+	if (m_renderServer)
+	{
+		const float refreshRate = m_renderServer->getRefreshRate();
+		if (refreshRate > 0)
+		{
+			const int32_t k = (int32_t)(60.0f / refreshRate + 0.5f);
+			m_updateControl.m_simulationFrequency = refreshRate * k;
+			log::info << L"Display refresh rate " << refreshRate << L" Hz; using " << m_updateControl.m_simulationFrequency << L" Hz simulation rate." << Endl;
+		}
+	}
+
 	Ref< IState > state;
 	for (const auto plugin : m_plugins)
 	{
@@ -588,32 +600,7 @@ bool Application::update()
 			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
 		// Measure delta time.
-		float deltaTime = float(m_timer.getDeltaTime());
-#if !defined(_DEBUG)
-		const float c_maxDeltaTime = 1.0f / 5.0f;
-		const int32_t c_maxDeltaTimeErrors = 300;
-		if (deltaTime > c_maxDeltaTime)
-		{
-			deltaTime = c_maxDeltaTime;
-			if (m_renderViewActive && !m_updateControl.m_pause)
-			{
-				if (++m_deltaTimeError >= c_maxDeltaTimeErrors)
-					m_updateInfo.m_runningSlow = true;
-			}
-			else
-			{
-				// In case view isn't active this measurement cannot be fully trusted.
-				m_deltaTimeError = 0;
-				m_updateInfo.m_runningSlow = false;
-			}
-		}
-		else
-#endif
-		{
-			m_deltaTimeError = 0;
-			m_updateInfo.m_runningSlow = false;
-		}
-
+		const float deltaTime = float(m_timer.getDeltaTime());
 		m_updateInfo.m_frameDeltaTime = deltaTime;
 
 		// Update audio.
@@ -902,6 +889,7 @@ bool Application::update()
 		// Receive remote events from editor.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
+			T_PROFILER_SCOPE(L"Application remote events");
 			Ref< IRemoteEvent > remoteEvent;
 			if (
 				m_targetManagerConnection->getTransport()->recv< IRemoteEvent >(0, remoteEvent) == net::BidirectionalObjectTransport::Result::Success &&
@@ -916,6 +904,8 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection && m_targetManagerConnection->connected())
 		{
+			T_PROFILER_SCOPE(L"Application telemetry");
+
 			// Runtime
 			{
 				TpsRuntime tp;

@@ -455,7 +455,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
 	dm.height = dmgl.dmPelsHeight;
-	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
+	dm.refreshRate = dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
 #elif defined(__LINUX__) || defined(__RPI__)
@@ -463,21 +463,21 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	DisplayMode dm;
 	dm.width = DisplayWidth(m_display, screen);
 	dm.height = DisplayHeight(m_display, screen);
-	dm.refreshRate = 60;
+	dm.refreshRate = 59.98f;
 	dm.colorBits = 32;
 	return dm;
 #elif defined(__ANDROID__)
 	DisplayMode dm;
 	dm.width = m_screenWidth;
 	dm.height = m_screenHeight;
-	dm.refreshRate = 60;
+	dm.refreshRate = 60.0f;
 	dm.colorBits = 32;
 	return dm;
 #elif defined(__IOS__)
 	DisplayMode dm;
 	dm.width = getScreenWidth();
 	dm.height = getScreenHeight();
-	dm.refreshRate = 60;
+	dm.refreshRate = 60.0f;
 	dm.colorBits = 32;
 	return dm;
 #else
