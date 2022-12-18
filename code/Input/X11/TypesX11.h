@@ -11,10 +11,8 @@
 #include <X11/X.h>
 #include <X11/keysymdef.h>
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! InputDefaultControlType to X11 KeySym mapping. */
 const KeySym c_x11ControlKeys[] =
@@ -205,6 +203,4 @@ const KeySym c_x11ControlKeys[] =
 	0
 };
 
-	}
 }
-

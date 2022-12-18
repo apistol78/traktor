@@ -18,10 +18,8 @@
 #include "Core/Containers/CircularVector.h"
 #include "Input/X11/InputDeviceX11.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class KeyboardDeviceX11 : public InputDeviceX11
 {
@@ -66,8 +64,6 @@ public:
 
 	virtual void consumeEvent(XEvent& evt) override final;
 
-	virtual void setFocus(bool focus) override final;
-
 private:
 	Display* m_display;
 	Window m_window;
@@ -79,8 +75,8 @@ private:
 	bool m_haveGrab;
 	CircularVector< KeyEvent, 16 > m_keyEvents;
 	uint8_t m_keyStates[256];
+
+	void setFocus(bool focus);
 };
 
-	}
 }
-

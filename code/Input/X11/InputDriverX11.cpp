@@ -14,10 +14,8 @@
 #include "Input/X11/KeyboardDeviceX11.h"
 #include "Input/X11/MouseDeviceX11.h"
 
-namespace traktor
+namespace traktor::input
 {
-    namespace input
-    {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverX11", 0, InputDriverX11, IInputDriver)
 
@@ -108,20 +106,7 @@ InputDriverX11::UpdateResult InputDriverX11::update()
 		}
 	}
 
-	// Check so our window still has input focus; release exlusive if not in focus.
-	{
-		T_PROFILER_SCOPE(L"InputDriverX11 update - focus");
-		::Window focusWindow;
-		int focusState;
-
-		XGetInputFocus(m_display, &focusWindow, &focusState);
-
-		for (auto device : m_devices)
-			device->setFocus(focusWindow == m_window);
-	}
-	
 	return UrOk;
 }
 
-    }
 }
