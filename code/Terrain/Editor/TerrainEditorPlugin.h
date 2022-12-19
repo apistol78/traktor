@@ -43,7 +43,7 @@ class TerrainEditorPlugin : public scene::ISceneEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	TerrainEditorPlugin(scene::SceneEditorContext* context);
+	explicit TerrainEditorPlugin(scene::SceneEditorContext* context);
 
 	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) override final;
 

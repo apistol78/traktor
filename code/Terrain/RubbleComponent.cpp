@@ -33,6 +33,7 @@ namespace traktor::terrain
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle s_handleTerrain_Surface(L"Terrain_Surface");
+const render::Handle s_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleRubble_Eye(L"Rubble_Eye");
 const render::Handle s_handleRubble_MaxDistance(L"Rubble_MaxDistance");
@@ -121,7 +122,7 @@ void RubbleComponent::build(
 
 		if (
 			(eye - m_eye).length() >= m_clusterSize / 2.0f ||
-			dot3(fwd, m_fwd) < cos(deg2rad(10.0f))
+			dot3(fwd, m_fwd) < cos(deg2rad(2.0f))
 		)
 		{
 			m_eye = eye;
@@ -182,6 +183,7 @@ void RubbleComponent::build(
 	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
 	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
 	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldOrigin, -terrain->getHeightfield()->getWorldExtent() * 0.5_simd);
 	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
 	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_data.m_spreadDistance + m_clusterSize);
@@ -236,8 +238,8 @@ void RubbleComponent::updatePatches()
 	for (const auto& rubble : m_rubble)
 		um[rubble.attribute] = ++maxMaterialIndex;
 
-	int32_t size = heightfield->getSize();
-	Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
+	const int32_t size = heightfield->getSize();
+	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
 
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 

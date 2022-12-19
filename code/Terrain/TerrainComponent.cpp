@@ -49,7 +49,6 @@ const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
-const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -233,7 +232,7 @@ void TerrainComponent::setup(
 				const Vector4 e = mx - mn;
 
 				cp.distance = lodDistance;
-				cp.area = !clipped ? e.x() * e.y() : Scalar(1000.0f);
+				cp.area = !clipped ? e.x() * e.y() : 1000.0_simd;
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
 
@@ -301,7 +300,7 @@ void TerrainComponent::setup(
 			m_surfaceCache[viewIndex]->setupPatch(
 		 		context.getRenderGraph(),
 		 		m_terrain,
-		 		-worldExtent * Scalar(0.5f),
+		 		-worldExtent * 0.5_simd,
 		 		worldExtent,
 		 		patchOrigin,
 		 		patchExtent,
@@ -320,7 +319,7 @@ void TerrainComponent::setup(
 	m_surfaceCache[viewIndex]->setupBaseColor(
 		context.getRenderGraph(),
 		m_terrain,
-		-worldExtent * Scalar(0.5f),
+		-worldExtent * 0.5_simd,
 		worldExtent
 	);
 }
@@ -344,7 +343,6 @@ void TerrainComponent::build(
 	auto perm = worldRenderPass.getPermutation(shader);
 
 	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
-	shader->setCombination(c_handleTerrain_ColorEnable, m_terrain->getColorMap(), perm);
 
 	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
 	{
@@ -413,7 +411,7 @@ void TerrainComponent::build(
 
 	renderContext->enqueue(rb);
 
-	// Render each visible patch.
+	// Render visible patches.
 	for (const auto& visiblePatch : m_visiblePatches)
 	{
 		const Patch& patch = m_patches[visiblePatch.patchId];

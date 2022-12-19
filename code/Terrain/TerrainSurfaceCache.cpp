@@ -35,12 +35,12 @@ const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_TextureOffset(L"Terrain_TextureOffset");
 
-const uint32_t c_maxUpdatePerFrame = 1;
+const uint32_t c_maxUpdatePerFrame = 4;
 const int32_t c_margin = 2;
 
 Vector4 offsetFromTile(const TerrainSurfaceAlloc& alloc, const TerrainSurfaceAlloc::Tile& tile)
 {
-	float virtualSize = (float)alloc.getVirtualSize();
+	const float virtualSize = (float)alloc.getVirtualSize();
 	return Vector4(
 		(tile.x + c_margin) / virtualSize,
 		(tile.y + c_margin) / virtualSize,
@@ -81,7 +81,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		render::SimpleTextureCreateDesc desc = {};
 		desc.width = size;
 		desc.height = size;
-		desc.mipCount = mipCount;
+		desc.mipCount = 1; //mipCount;
 		desc.format = render::TfR8G8B8A8;
 		desc.sRGB = false;
 		desc.immutable = false;
@@ -95,7 +95,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		render::SimpleTextureCreateDesc desc = {};
 		desc.width = size;
 		desc.height = size;
-		desc.mipCount = mipCount;
+		desc.mipCount = 1; //mipCount;
 		desc.format = render::TfR11G11B10F;
 		desc.sRGB = false;
 		desc.immutable = false;
@@ -231,7 +231,7 @@ void TerrainSurfaceCache::setupPatch(
 	Vector4& outTextureOffset
 )
 {
-	const int32_t virtualMipCount = (int32_t)log2(m_alloc.getVirtualSize()) + 1;
+	const int32_t virtualMipCount = 1; // (int32_t)log2(m_alloc.getVirtualSize()) + 1;
 
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())

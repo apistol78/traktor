@@ -608,7 +608,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
 		return;
 
-	float radius = m_context->getGuideSize();
+	const float radius = m_context->getGuideSize();
 
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->pushDepthState(false, false, false);
@@ -621,9 +621,9 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	{
 		const float a = TWO_PI * i / 32.0f;
 
-		float x1 = m_center.x() + cosf(a) * radius;
-		float z1 = m_center.z() + sinf(a) * radius;
-		float y1 = m_heightfield->getWorldHeight(x1, z1);
+		const float x1 = m_center.x() + cosf(a) * radius;
+		const float z1 = m_center.z() + sinf(a) * radius;
+		const float y1 = m_heightfield->getWorldHeight(x1, z1);
 
 		primitiveRenderer->drawLine(
 			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
@@ -832,6 +832,9 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 			m_splatMap->unlock(0, 0);
 		}
+
+		// Replace splat map in resource with our texture.
+		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
 	}
 
 	// Update colors.
@@ -851,6 +854,9 @@ void TerrainEditModifier::apply(const Vector4& center)
 
 			m_colorMap->unlock(0, 0);
 		}
+
+		// Replace color map in resource with our texture.
+		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
 	}
 
 	// Update normals.

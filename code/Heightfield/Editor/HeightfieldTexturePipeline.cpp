@@ -43,8 +43,8 @@ bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* setting
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 
-	std::wstring hf = settings->getPropertyIncludeHash< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HtFloat16");
-	if (hf == L"HtFloat16")
+	const std::wstring hf = settings->getPropertyIncludeHash< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HfFloat32");
+	if (hf == L"HfFloat16")
 		m_heightFormat = HfFloat16;
 	else if (hf == L"HfFloat32")
 		m_heightFormat = HfFloat32;
@@ -146,7 +146,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 	if (asset->m_output == HeightfieldTextureAsset::OtHeights)
 	{
-		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR16F(), size, size);
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR32F(), size, size);
 
 		for (int32_t v = 0; v < size; ++v)
 		{
