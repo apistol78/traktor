@@ -1348,6 +1348,21 @@ void ShaderGraphEditorPage::updateGraph()
 				editorEdge->setThickness(4);
 				break;
 
+			case PinType::Image2D:
+				ss << L"Image2d";
+				editorEdge->setThickness(4);
+				break;
+
+			case PinType::Image3D:
+				ss << L"Image3d";
+				editorEdge->setThickness(4);
+				break;
+
+			case PinType::ImageCube:
+				ss << L"ImageCube";
+				editorEdge->setThickness(4);
+				break;
+
 			case PinType::State:
 				ss << L"State";
 				editorEdge->setThickness(4);
