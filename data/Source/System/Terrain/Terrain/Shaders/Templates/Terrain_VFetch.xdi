@@ -77,8 +77,8 @@
 			<id>{6D44EE25-CFC1-C248-987A-ADD3CDFE6D9B}</id>
 			<comment/>
 			<position>
-				<first>-392</first>
-				<second>403</second>
+				<first>-371</first>
+				<second>606</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -95,8 +95,8 @@
 			<id>{3C0FE29D-2A22-D248-A648-71705268F14B}</id>
 			<comment/>
 			<position>
-				<first>-623</first>
-				<second>404</second>
+				<first>-600</first>
+				<second>607</second>
 			</position>
 			<parameterName>Terrain_Heightfield</parameterName>
 			<type>Texture2D</type>
@@ -106,8 +106,8 @@
 			<id>{B9DB8A68-618B-6C42-AA01-550EEF5C38E7}</id>
 			<comment/>
 			<position>
-				<first>-849</first>
-				<second>498</second>
+				<first>-824</first>
+				<second>364</second>
 			</position>
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
@@ -387,8 +387,8 @@ Generated texture from surface cache.
 			<id>{93545739-C9A1-EC4C-B8EC-898A3C8F84AE}</id>
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>448</second>
+				<first>77</first>
+				<second>649</second>
 			</position>
 			<name>L_Height</name>
 			<global>false</global>
@@ -397,8 +397,8 @@ Generated texture from surface cache.
 			<id>{890D9CBA-1470-1448-BCE6-6D3DBC4044D3}</id>
 			<comment/>
 			<position>
-				<first>-96</first>
-				<second>438</second>
+				<first>-90</first>
+				<second>639</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -426,8 +426,8 @@ Generated texture from surface cache.
 			<id>{3BC1FCD1-BF39-F94C-8059-9BF410BC09B7}</id>
 			<comment/>
 			<position>
-				<first>-490</first>
-				<second>588</second>
+				<first>-502</first>
+				<second>407</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -648,8 +648,8 @@ Generated texture from surface cache.
 			<id>{E6C4DC02-E757-EB47-906B-1C0644E70028}</id>
 			<comment/>
 			<position>
-				<first>1849</first>
-				<second>-37</second>
+				<first>1561</first>
+				<second>43</second>
 			</position>
 			<name>L_SurfaceAlbedo</name>
 			<global>false</global>
@@ -960,6 +960,120 @@ Generated texture from surface cache.
 			</position>
 			<value>1</value>
 		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{C58E36CC-A50B-9D4E-A11B-252F9BE17A99}</id>
+			<comment/>
+			<position>
+				<first>-583</first>
+				<second>772</second>
+			</position>
+			<parameterName>Terrain_ColorMap</parameterName>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{F80182CB-D7C2-1C4C-9C94-2DFFA45AE72F}</id>
+			<comment/>
+			<position>
+				<first>-352</first>
+				<second>771</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{6E0FCF8A-70F3-8F40-BB5E-85A8708FD6C1}</id>
+			<comment/>
+			<position>
+				<first>-541</first>
+				<second>649</second>
+			</position>
+			<name>L_TexCoord</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{C75AB6F1-88B1-FC44-866B-C0712073315A}</id>
+			<comment/>
+			<position>
+				<first>-555</first>
+				<second>817</second>
+			</position>
+			<name>L_TexCoord</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{05B643E9-A27D-C349-B189-0ED9FC439D23}</id>
+			<comment/>
+			<position>
+				<first>86</first>
+				<second>831</second>
+			</position>
+			<name>L_Color</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{982B2938-A83A-7E41-8B23-3CBF453F6038}</id>
+			<comment/>
+			<position>
+				<first>-81</first>
+				<second>821</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{7FC63ED4-40FA-C640-818F-8C486BA46FF6}</id>
+			<comment/>
+			<position>
+				<first>1605</first>
+				<second>104</second>
+			</position>
+			<name>L_Color</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+			<id>{2BD768C2-6224-7F4E-84F5-2735B266A95E}</id>
+			<comment/>
+			<position>
+				<first>1782</first>
+				<second>50</second>
+			</position>
+			<name>Overlay</name>
+			<technique/>
+			<inputPins>
+				<item>
+					<id>{52A043E1-22B9-C742-A1A6-8341D043284F}</id>
+					<name>A</name>
+				</item>
+				<item>
+					<id>{51E30CE0-3C94-4668-AC3A-2CE903530D64}</id>
+					<name>B</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{4F792F72-F9F9-A945-8CAE-8F4EEEE77624}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+const vec3 f = step($B, vec3(0.5f));
+const vec3 t = 1.0f - 2.0f * (1.0f - $A) * (1.0f - $B);
+const vec3 b = 2.0f * $A * $B;
+$Output = vec4(mix(t, b, f), 0.0f);
+
+			]]>
+			</script>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1030,26 +1144,6 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1444,16 +1538,6 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[46]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -1740,6 +1824,96 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[44]"/>
 				<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[82]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[84]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{51E30CE0-3C94-4668-AC3A-2CE903530D64}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{52A043E1-22B9-C742-A1A6-8341D043284F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{4F792F72-F9F9-A945-8CAE-8F4EEEE77624}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 			</destination>
 		</item>
 	</edges>

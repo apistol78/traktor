@@ -64,10 +64,10 @@ void SplatBrush::apply(float x, float y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			float fx = float(ix) / m_radius;
-			float fy = float(iy) / m_radius;
+			const float fx = float(ix) / m_radius;
+			const float fy = float(iy) / m_radius;
 
-			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
 			/*
 			Vector4 normal = m_heightfield->normalAt(x + ix, y + iy);
@@ -89,7 +89,7 @@ void SplatBrush::apply(float x, float y)
 
 			targetColor.storeAligned(weights);
 
-			float w = clamp(weights[m_material] + a, 0.0f, 1.0f);
+			const float w = clamp(weights[m_material] + a, 0.0f, 1.0f);
 
 			weights[m_material] = w;
 

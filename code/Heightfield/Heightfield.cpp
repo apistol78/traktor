@@ -317,7 +317,7 @@ Vector4 Heightfield::normalAt(float gridX, float gridZ) const
 bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
 	const int32_t c_cellSize = 64;
-	const int32_t c_skip = 4;
+	const int32_t c_skip = 1;
 
 	Scalar k;
 	Scalar kIn, kOut;

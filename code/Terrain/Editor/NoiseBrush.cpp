@@ -47,14 +47,14 @@ void NoiseBrush::apply(float x, float y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			float fx = float(ix) / m_radius;
-			float fy = float(iy) / m_radius;
+			const float fx = float(ix) / m_radius;
+			const float fy = float(iy) / m_radius;
 
-			float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
+			const float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
 			m_heightfield->setGridHeight(x + ix, y + iy, h + (g_random.nextFloat() * 2.0f - 1.0f) * a);
 		}
 	}
