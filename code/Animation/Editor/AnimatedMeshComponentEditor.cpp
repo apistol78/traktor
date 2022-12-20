@@ -140,6 +140,8 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 
 			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Pose"))
 			{
+				const bool bindVisible = m_context->shouldDrawGuide(L"Animation.Skeleton.Bind");
+
 				// Draw current pose.
 				AlignedVector< Transform > poseTransforms = animatedMeshComponent->getPoseTransforms();
 				if (poseTransforms.size() == skeleton->getJointCount())
@@ -151,11 +153,14 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 					{
 						const Joint* joint = skeleton->getJoint(i);
 
-						primitiveRenderer->drawLine(
-							jointTransforms[i].translation(),
-							poseTransforms[i].translation(),
-							colorAlpha
-						);
+						if (bindVisible)
+						{
+							primitiveRenderer->drawLine(
+								jointTransforms[i].translation(),
+								poseTransforms[i].translation(),
+								colorAlpha
+							);
+						}
 
 						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
 
