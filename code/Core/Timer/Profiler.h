@@ -63,7 +63,7 @@ public:
 	{
 		uint16_t name;
 		uint8_t threadId;
-		uint16_t depth;
+		uint8_t depth;
 		double start;
 		double end;
 	};
