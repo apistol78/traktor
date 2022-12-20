@@ -11,17 +11,10 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.IKPoseControllerData", 0, IKPoseControllerData, IPoseControllerData)
-
-IKPoseControllerData::IKPoseControllerData()
-:	m_solverIterations(10)
-{
-}
 
 Ref< IPoseController > IKPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
@@ -42,7 +35,7 @@ Ref< IPoseController > IKPoseControllerData::createInstance(
 		if (!neutralPoseController)
 			return nullptr;
 	}
-	return new IKPoseController(neutralPoseController, m_solverIterations);
+	return new IKPoseController(physicsManager, neutralPoseController, m_solverIterations);
 }
 
 void IKPoseControllerData::serialize(ISerializer& s)
@@ -51,5 +44,4 @@ void IKPoseControllerData::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
 }
 
-	}
 }
