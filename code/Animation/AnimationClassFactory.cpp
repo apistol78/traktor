@@ -89,7 +89,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classPoseController);
 
 	auto classIKPoseController = new AutoRuntimeClass< IKPoseController >();
-	classIKPoseController->addConstructor< IPoseController*, uint32_t >();
+	classIKPoseController->addConstructor< physics::PhysicsManager*, IPoseController*, uint32_t >();
 	classIKPoseController->addProperty("neutralPoseController", &IKPoseController::getNeutralPoseController);
 	registrar->registerClass(classIKPoseController);
 
