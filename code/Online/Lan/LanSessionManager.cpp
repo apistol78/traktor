@@ -180,17 +180,16 @@ uint32_t LanSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& 
 
 	RefArray< net::NetworkService > userServices;
 	m_discoveryManager->findServices< net::NetworkService >(userServices);
-
-	for (RefArray< net::NetworkService >::const_iterator i = userServices.begin(); i != userServices.end(); ++i)
+	for (auto userService : userServices)
 	{
-		if ((*i)->getType() != c_keyServiceTypeUser)
+		if (userService->getType() != c_keyServiceTypeUser)
 			continue;
 
-		const PropertyGroup* propertyGroup = (*i)->getProperties();
+		const PropertyGroup* propertyGroup = userService->getProperties();
 		T_ASSERT(propertyGroup);
 
-		uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
-		uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
+		const uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
+		const uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
 
 		if (fromAddr.getAddr() == addr && fromAddr.getPort() == port)
 		{
@@ -239,7 +238,7 @@ IUserProvider* LanSessionManager::getUser() const
 
 IVideoSharingProvider* LanSessionManager::getVideoSharing() const
 {
-	return 0;
+	return nullptr;
 }
 
 IVoiceChatProvider* LanSessionManager::getVoiceChat() const
