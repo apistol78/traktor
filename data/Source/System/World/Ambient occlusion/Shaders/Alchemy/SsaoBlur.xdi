@@ -335,7 +335,7 @@ Shadow; adjusted for msaa.
 				<first>1040</first>
 				<second>412</second>
 			</position>
-			<value>2.5</value>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C72C5C23-4886-EF42-9291-C9D63BB0661E}</id>
