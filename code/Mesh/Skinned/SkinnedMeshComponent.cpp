@@ -54,8 +54,8 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

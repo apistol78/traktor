@@ -46,7 +46,7 @@ void AutoLodMeshComponent::build(const world::WorldBuildContext& context, const 
 	if (!m_mesh->supportTechnique(m_lodDistance, worldRenderPass.getTechnique()))
 		return;
 
-	Aabb3 boundingBox = m_mesh->getBoundingBox(m_lodDistance);
+	const Aabb3 boundingBox = m_mesh->getBoundingBox(m_lodDistance);
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

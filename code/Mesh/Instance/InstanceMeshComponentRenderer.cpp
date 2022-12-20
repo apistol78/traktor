@@ -66,8 +66,8 @@ void InstanceMeshComponentRenderer::build(
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Aabb3 boundingBox = meshComponent->getBoundingBox();
-	Transform transform = meshComponent->getTransform().get(worldRenderView.getInterval());
+	const Aabb3 boundingBox = meshComponent->getBoundingBox();
+	const Transform transform = meshComponent->getTransform().get(worldRenderView.getInterval());
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
@@ -80,7 +80,7 @@ void InstanceMeshComponentRenderer::build(
 	))
 		return;
 
-	Transform transformLast = meshComponent->getTransform().get(worldRenderView.getInterval() - 1.0f);
+	const Transform transformLast = meshComponent->getTransform().get(worldRenderView.getInterval() - 1.0f);
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

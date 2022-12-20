@@ -32,11 +32,11 @@ Aabb3 CompositeMeshComponent::getBoundingBox() const
 	Aabb3 boundingBox;
 	for (auto meshComponent : m_meshComponents)
 	{
-		Aabb3 childBoundingBox = meshComponent->getBoundingBox();
+		const Aabb3 childBoundingBox = meshComponent->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
-			Transform childTransform = meshComponent->getTransform().get();
-			Transform intoParentTransform = invTransform * childTransform;
+			const Transform childTransform = meshComponent->getTransform().get();
+			const Transform intoParentTransform = invTransform * childTransform;
 			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
 		}
 	}
@@ -49,9 +49,9 @@ void CompositeMeshComponent::setTransform(const Transform& transform)
 	Transform invTransform = m_transform.get().inverse();
 	for (auto meshComponent : m_meshComponents)
 	{
-		Transform currentTransform = meshComponent->getTransform().get();
-		Transform Tlocal = invTransform * currentTransform;
-		Transform Tworld = transform * Tlocal;
+		const Transform currentTransform = meshComponent->getTransform().get();
+		const Transform Tlocal = invTransform * currentTransform;
+		const Transform Tworld = transform * Tlocal;
 		meshComponent->setTransform(Tworld);
 	}
 	MeshComponent::setTransform(transform);
