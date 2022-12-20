@@ -78,7 +78,7 @@ void Profiler::beginEvent(const std::wstring& name)
 	Event& e = te->events.push_back();
 	e.name = id;
 	e.threadId = s_threadIndex;
-	e.depth = uint16_t(te->events.size() - 1);
+	e.depth = uint8_t(te->events.size() - 1);
 	e.start = m_timer.getElapsedTime();
 	e.end = 0.0;
 }
