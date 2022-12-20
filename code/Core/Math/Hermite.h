@@ -71,9 +71,9 @@ public:
 	{
 		T_ASSERT(m_nkeys >= 2);
 
-		float Tfirst = Accessor::time(m_keys, m_nkeys, m_keys[0]);
-		float Tlast = Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]);
-		float Tcurr = TimeControl::t(T, Tfirst, Tlast, m_Tend > 0.0f ? m_Tend : Tlast);
+		const float Tfirst = Accessor::time(m_keys, m_nkeys, m_keys[0]);
+		const float Tlast = Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]);
+		const float Tcurr = TimeControl::t(T, Tfirst, Tlast, m_Tend > 0.0f ? m_Tend : Tlast);
 
 		// Binary search for key.
 		int32_t index = 0;
@@ -85,8 +85,8 @@ public:
 			{
 				index = (index0 + index1) / 2;
 
-				float Tkey0 = Accessor::time(m_keys, m_nkeys, m_keys[index]);
-				float Tkey1 = Accessor::time(m_keys, m_nkeys, m_keys[index + 1]);
+				const float Tkey0 = Accessor::time(m_keys, m_nkeys, m_keys[index]);
+				const float Tkey1 = Accessor::time(m_keys, m_nkeys, m_keys[index + 1]);
 
 				if (Tcurr < Tkey0)
 					index1 = index - 1;
@@ -99,15 +99,15 @@ public:
 		else
 			index = int32_t(m_nkeys - 1);
 
-		int32_t index_n1 = TimeControl::index(index - 1, int32_t(m_nkeys - 1));
-		int32_t index_1 = TimeControl::index(index + 1, int32_t(m_nkeys - 1));
-		int32_t index_2 = TimeControl::index(index + 2, int32_t(m_nkeys - 1));
+		const int32_t index_n1 = TimeControl::index(index - 1, int32_t(m_nkeys - 1));
+		const int32_t index_1 = TimeControl::index(index + 1, int32_t(m_nkeys - 1));
+		const int32_t index_2 = TimeControl::index(index + 2, int32_t(m_nkeys - 1));
 
 		const Key& cp0 = m_keys[index];
 		const Key& cp1 = m_keys[index_1];
 
-		Value v0 = Accessor::value(cp0);
-		Value v1 = Accessor::value(cp1);
+		const Value v0 = Accessor::value(cp0);
+		const Value v1 = Accessor::value(cp1);
 
 		float t0 = Accessor::time(m_keys, m_nkeys, cp0);
 		float t1 = Accessor::time(m_keys, m_nkeys, cp1);
@@ -118,15 +118,15 @@ public:
 		const Key& cpp = m_keys[index_n1];
 		const Key& cpn = m_keys[index_2];
 
-		Value vp = Accessor::value(cpp);
-		Value vn = Accessor::value(cpn);
+		const Value vp = Accessor::value(cpp);
+		const Value vn = Accessor::value(cpn);
 
-		float t = (Tcurr - t0) / (t1 - t0);
-		float t2 = t * t;
-		float t3 = t2 * t;
+		const float t = (Tcurr - t0) / (t1 - t0);
+		const float t2 = t * t;
+		const float t3 = t2 * t;
 
-		float h2 = 3.0f * t2 - t3 - t3;
-		float h1 = 1.0f - h2;
+		const float h2 = 3.0f * t2 - t3 - t3;
+		const float h1 = 1.0f - h2;
 		float h4 = t3 - t2;
 		float h3 = h4 - t2 + t;
 

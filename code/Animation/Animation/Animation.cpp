@@ -137,7 +137,7 @@ const Animation::KeyPose& Animation::getLastKeyPose() const
 
 bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose) const
 {
-	size_t nposes = m_poses.size();
+	const size_t nposes = m_poses.size();
 	if (nposes > 2)
 	{
 		if (!linear)
@@ -148,8 +148,8 @@ bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose
 
 			if (indexHint >= 0 && indexHint < nposes - 1)
 			{
-				float Tkey0 = m_poses[indexHint].at;
-				float Tkey1 = m_poses[indexHint + 1].at;
+				const float Tkey0 = m_poses[indexHint].at;
+				const float Tkey1 = m_poses[indexHint + 1].at;
 				if (at >= Tkey0 && at <= Tkey1)
 					index = indexHint;
 				else if (at > Tkey1 && indexHint < nposes - 2)
@@ -177,12 +177,12 @@ bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose
 				}
 			}
 
-			Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
+			const Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
 
 			blendPoses(
 				&m_poses[index].pose,
 				&m_poses[index + 1].pose,
-				clamp(k, Scalar(0.0f), Scalar(1.0f)),
+				clamp(k, 0.0_simd, 1.0_simd),
 				&outPose
 			);
 
@@ -204,7 +204,12 @@ bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose
 		}
 		else
 		{
-			blendPoses(&m_poses[0].pose, &m_poses[1].pose, Scalar((at - m_poses[0].at) / (m_poses[1].at - m_poses[0].at)), &outPose);
+			blendPoses(
+				&m_poses[0].pose,
+				&m_poses[1].pose,
+				Scalar((at - m_poses[0].at) / (m_poses[1].at - m_poses[0].at)),
+				&outPose
+			);
 			return true;
 		}
 	}
