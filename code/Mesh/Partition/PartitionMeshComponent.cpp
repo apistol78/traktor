@@ -40,8 +40,8 @@ void PartitionMeshComponent::build(const world::WorldBuildContext& context, cons
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Transform transform = m_transform.get(worldRenderView.getInterval());
-	Aabb3 boundingBox = m_mesh->getBoundingBox();
+	const Transform transform = m_transform.get(worldRenderView.getInterval());
+	const Aabb3 boundingBox = m_mesh->getBoundingBox();
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

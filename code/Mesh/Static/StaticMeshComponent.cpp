@@ -56,7 +56,7 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 	if (!techniqueParts)
 		return;
 
-	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)

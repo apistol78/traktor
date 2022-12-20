@@ -62,7 +62,7 @@ void BlendMeshComponent::build(const world::WorldBuildContext& context, const wo
 		m_mesh.consume();
 	}
 
-	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
+	const uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
 	if (blendTargetCount != m_blendWeights.size())
 		m_blendWeights.resize(blendTargetCount, 0.0f);
 
