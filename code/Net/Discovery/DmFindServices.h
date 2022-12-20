@@ -12,10 +12,8 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/IDiscoveryMessage.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class DmFindServices : public IDiscoveryMessage
 {
@@ -37,6 +35,4 @@ private:
 	SocketAddressIPv4 m_replyTo;
 };
 
-	}
 }
-

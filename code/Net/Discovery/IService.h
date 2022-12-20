@@ -18,16 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class T_DLLCLASS IService : public ISerializable
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

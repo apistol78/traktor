@@ -8,12 +8,9 @@
  */
 #include "Net/Discovery/IService.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IService", IService, ISerializable)
 
-	}
 }

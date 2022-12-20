@@ -21,12 +21,10 @@
 #include "Net/Discovery/DmServiceInfo.h"
 #include "Net/Discovery/IService.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
 const uint16_t c_discoveryMulticastPort = 41100;
@@ -37,7 +35,7 @@ OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 	return os << addr.getHostName() << L":" << addr.getPort();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object)
 
@@ -289,7 +287,7 @@ int32_t DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4
 	if (!BinarySerializer(&ms).writeObject(message))
 		return 1;
 
-	uint32_t written = ms.tell();
+	const uint32_t written = ms.tell();
 	if (written >= 1024)
         return 2;
 
@@ -303,7 +301,7 @@ Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, Socket
 {
 	uint8_t buffer[1024];
 
-	int32_t nrecv = socket->recvFrom(buffer, sizeof(buffer), fromAddress);
+	const int32_t nrecv = socket->recvFrom(buffer, sizeof(buffer), fromAddress);
 	if (nrecv <= 0)
 		return nullptr;
 
@@ -311,5 +309,4 @@ Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, Socket
 	return BinarySerializer(&ms).readObject< IDiscoveryMessage >();
 }
 
-	}
 }

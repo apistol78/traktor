@@ -11,12 +11,10 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberType.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 class MemberSocketAddressIPv4 : public MemberComplex
 {
@@ -40,7 +38,7 @@ private:
 	SocketAddressIPv4& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", 0, DmFindServices, IDiscoveryMessage)
 
@@ -56,5 +54,4 @@ void DmFindServices::serialize(ISerializer& s)
 	s >> MemberSocketAddressIPv4(L"replyTo", m_replyTo);
 }
 
-	}
 }
