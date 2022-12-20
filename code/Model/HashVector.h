@@ -32,7 +32,7 @@ public:
 		m_indices.reset();		
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
-			uint32_t hash = HashFunction::get(m_values[i]);
+			const uint32_t hash = HashFunction::get(m_values[i]);
 			m_indices[hash].insert(i);
 		}
 	}
@@ -43,7 +43,7 @@ public:
 		m_indices.reset();
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
-			uint32_t hash = HashFunction::get(m_values[i]);
+			const uint32_t hash = HashFunction::get(m_values[i]);
 			m_indices[hash].insert(i);
 		}
 	}
@@ -61,8 +61,8 @@ public:
 
 	uint32_t add(const ValueType& v)
 	{
-		uint32_t hash = HashFunction::get(v);
-		uint32_t index = (uint32_t)m_values.size();
+		const uint32_t hash = HashFunction::get(v);
+		const uint32_t index = (uint32_t)m_values.size();
 		m_values.push_back(v);
 		m_indices[hash].insert(index);
 		return index;
@@ -72,7 +72,7 @@ public:
 	{
 		// Remove old index.
 		{
-			uint32_t hash = HashFunction::get(m_values[index]);
+			const uint32_t hash = HashFunction::get(m_values[index]);
 			m_indices[hash].erase(index);
 		}
 
@@ -81,14 +81,14 @@ public:
 
 		// Add new index.
 		{
-			uint32_t hash = HashFunction::get(v);
+			const uint32_t hash = HashFunction::get(v);
 			m_indices[hash].insert(index);
 		}
 	}
 
 	uint32_t find(const ValueType& v) const
 	{
-		uint32_t hash = HashFunction::get(v);
+		const uint32_t hash = HashFunction::get(v);
 		for (uint32_t index : m_indices[hash])
 		{
 			if (m_values[index] == v)
