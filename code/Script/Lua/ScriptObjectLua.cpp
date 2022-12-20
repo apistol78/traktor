@@ -10,10 +10,8 @@
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptObjectLua", ScriptObjectLua, IRuntimeObject)
 
@@ -38,5 +36,4 @@ Ref< const IRuntimeClass > ScriptObjectLua::getRuntimeClass() const
 	return ScriptClassLua::createFromStack(m_scriptManager, m_scriptContext, m_luaState);
 }
 
-	}
 }

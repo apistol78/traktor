@@ -14,10 +14,8 @@
 #include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptProfilerLua", ScriptProfilerLua, IScriptProfiler)
 
@@ -110,8 +108,8 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 
 		ProfileStack& ps = m_stack.back();
 
-		double inclusiveDuration = timeStamp - ps.timeStamp;
-		double exclusiveDuration = inclusiveDuration - ps.childDuration;
+		const double inclusiveDuration = timeStamp - ps.timeStamp;
+		const double exclusiveDuration = inclusiveDuration - ps.childDuration;
 
 		// Notify all listeners about new measurement.
 		for (auto listener : m_listeners)
@@ -125,5 +123,4 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 	}
 }
 
-	}
 }

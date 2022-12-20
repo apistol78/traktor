@@ -15,10 +15,8 @@
 struct lua_Debug;
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptManagerLua;
 
@@ -27,7 +25,7 @@ class ScriptProfilerLua : public IScriptProfiler
 	T_RTTI_CLASS;
 
 public:
-	ScriptProfilerLua(ScriptManagerLua* scriptManager, lua_State* luaState);
+	explicit ScriptProfilerLua(ScriptManagerLua* scriptManager, lua_State* luaState);
 
 	virtual ~ScriptProfilerLua();
 
@@ -57,6 +55,4 @@ private:
 	void hookCallback(lua_State* L, lua_Debug* ar);
 };
 
-	}
 }
-

@@ -33,8 +33,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 #if T_SCRIPT_LUA_FORCE_STACK_CHECK
 class CheckStack
@@ -99,6 +101,4 @@ int luaPrint(lua_State *L);
 
 int luaSleep(lua_State* L);
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IRuntimeDelegate)
 
@@ -42,5 +40,4 @@ Any ScriptDelegateLua::call(int32_t argc, const Any* argv)
 	return m_context->executeDelegate(this, argc, argv);
 }
 
-	}
 }

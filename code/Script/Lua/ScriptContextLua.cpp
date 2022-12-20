@@ -20,10 +20,8 @@
 #include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, IScriptContext)
 
@@ -235,7 +233,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushcclosure(m_luaState, runtimeError, 1);
-		int32_t errfunc = lua_gettop(m_luaState);
+		const int32_t errfunc = lua_gettop(m_luaState);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_pushstring(m_luaState, functionName.c_str());
@@ -271,7 +269,7 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 			if (m_scriptManager->m_profiler)
 				m_scriptManager->m_profiler->notifyCallEnter();
 
-			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
+			const int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
 				returnValue = m_scriptManager->toAny(-1);
 
@@ -299,7 +297,7 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 		// Push error function.
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushcclosure(m_luaState, runtimeError, 1);
-		int32_t errfunc = lua_gettop(m_luaState);
+		const int32_t errfunc = lua_gettop(m_luaState);
 
 		delegate->push();
 
@@ -332,7 +330,7 @@ Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc
 			m_scriptManager->m_profiler->notifyCallEnter();
 
 		// Call script method.
-		int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
+		const int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
 
@@ -357,7 +355,7 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 		// Push error function.
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushcclosure(m_luaState, runtimeError, 1);
-		int32_t errfunc = lua_gettop(m_luaState);
+		const int32_t errfunc = lua_gettop(m_luaState);
 
 		// Push LUA function to call.
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, methodRef);
@@ -417,7 +415,7 @@ ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* l
 ,	m_luaState(luaState)
 ,	m_environmentRef(environmentRef)
 ,	m_strict(strict)
-,	m_lastSelf(0)
+,	m_lastSelf(nullptr)
 {
 }
 
@@ -429,7 +427,7 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
 
-	std::wstring error = mbstows(lua_tostring(luaState, -1));
+	const std::wstring error = mbstows(lua_tostring(luaState, -1));
 	if (!error.empty())
 		log::error << error << Endl;
 
@@ -526,5 +524,4 @@ int32_t ScriptContextLua::restrictedAccessRead(lua_State* luaState)
 	return 0;
 }
 
-	}
 }

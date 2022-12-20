@@ -13,17 +13,15 @@
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 class ScriptClassConstructorDispatch : public IRuntimeDispatch
 {
 public:
-	ScriptClassConstructorDispatch(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t classRef, int32_t constructorRef)
+	explicit ScriptClassConstructorDispatch(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t classRef, int32_t constructorRef)
 	:	m_scriptManager(scriptManager)
 	,	m_scriptContext(scriptContext)
 	,	m_luaState(luaState)
@@ -59,7 +57,7 @@ public:
 		lua_setmetatable(m_luaState, -2);
 
 		// Create instance table.
-		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		const int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 		m_scriptManager->unlock();
 
@@ -91,7 +89,7 @@ private:
 class ScriptClassMethodDispatch : public IRuntimeDispatch
 {
 public:
-	ScriptClassMethodDispatch(ScriptContextLua* scriptContext, lua_State*& luaState, int32_t ref)
+	explicit ScriptClassMethodDispatch(ScriptContextLua* scriptContext, lua_State*& luaState, int32_t ref)
 	:	m_scriptContext(scriptContext)
 	,	m_luaState(luaState)
 	,	m_ref(ref)
@@ -124,7 +122,7 @@ private:
 	int32_t m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptClassLua", ScriptClassLua, IRuntimeClass)
 
@@ -260,5 +258,4 @@ ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua
 {
 }
 
-	}
 }

@@ -13,10 +13,8 @@
 
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptContextLua;
 class ScriptManagerLua;
@@ -78,6 +76,4 @@ private:
 	ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState);
 };
 
-	}
 }
-

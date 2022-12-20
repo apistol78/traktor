@@ -13,10 +13,8 @@
 
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptDelegateLua;
 class ScriptManagerLua;
@@ -75,6 +73,4 @@ private:
 	static int32_t restrictedAccessRead(lua_State* luaState);
 };
 
-	}
 }
-
