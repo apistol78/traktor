@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! Generic network service.
  * \ingroup Net
@@ -47,5 +45,4 @@ private:
 	Ref< const PropertyGroup > m_properties;
 };
 
-	}
 }

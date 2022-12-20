@@ -12,10 +12,8 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmServiceInfo", 0, DmServiceInfo, IDiscoveryMessage)
 
@@ -31,5 +29,4 @@ void DmServiceInfo::serialize(ISerializer& s)
 	s >> MemberRef< IService >(L"service", m_service);
 }
 
-	}
 }

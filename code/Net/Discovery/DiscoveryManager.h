@@ -25,10 +25,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class MulticastUdpSocket;
 class UdpSocket;
@@ -106,6 +104,4 @@ private:
 	Ref< IDiscoveryMessage > recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress);
 };
 
-	}
 }
-

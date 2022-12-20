@@ -10,16 +10,12 @@
 
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class IDiscoveryMessage : public ISerializable
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

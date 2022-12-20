@@ -12,10 +12,8 @@
 #include "Core/Ref.h"
 #include "Net/Discovery/IDiscoveryMessage.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class IService;
 
@@ -39,6 +37,4 @@ private:
 	Ref< IService > m_service;
 };
 
-	}
 }
-
