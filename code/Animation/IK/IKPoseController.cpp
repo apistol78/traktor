@@ -6,24 +6,26 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#pragma optimize( "", off )
-
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
+#include "Physics/PhysicsManager.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IKPoseController", IKPoseController, IPoseController)
 
-IKPoseController::IKPoseController(IPoseController* poseController, uint32_t solverIterations)
-:	m_poseController(poseController)
+IKPoseController::IKPoseController(
+	physics::PhysicsManager* physicsManager,
+	IPoseController* poseController,
+	uint32_t solverIterations
+)
+:	m_physicsManager(physicsManager)
+,	m_poseController(poseController)
 ,	m_solverIterations(solverIterations)
 {
 }
@@ -85,8 +87,8 @@ bool IKPoseController::evaluate(
 		const Joint* joint = skeleton->getJoint(i);
 		if (joint->getParent() >= 0)
 		{
-			Vector4 s = jointTransforms[joint->getParent()].translation();
-			Vector4 e = jointTransforms[i].translation();
+			const Vector4 s = jointTransforms[joint->getParent()].translation();
+			const Vector4 e = jointTransforms[i].translation();
 			lengths[i] = (e - s).length();
 		}
 	}
@@ -94,6 +96,22 @@ bool IKPoseController::evaluate(
 	// Solve IK by iteratively solving each constraint individually.
 	for (uint32_t i = 0; i < m_solverIterations; ++i)
 	{
+		// Constraint 2; always above ground.
+		for (uint32_t j = 0; j < jointCount; ++j)
+		{
+			const Vector4 n = worldTransform * nodes[j];
+
+			// Find intersection above node position.
+			const physics::QueryFilter filter(~0U);
+			physics::QueryResult result;
+			if (!m_physicsManager->queryRay(n, Vector4(0.0f, 1.0f, 0.0f, 0.0f), 4.0f, filter, false, result))
+				continue;
+
+			// Move node to intersection.
+			nodes[j] = worldTransform.inverse() * (result.position + Vector4(0.0f, 0.5f, 0.0f, 0.0f)).xyz1();
+		}
+
+		// Constraint 1; keep length.
 		for (uint32_t j = 0; j < jointCount; ++j)
 		{
 			const Joint* joint = skeleton->getJoint(j);
@@ -103,7 +121,6 @@ bool IKPoseController::evaluate(
 			Vector4& s = nodes[joint->getParent()];
 			Vector4& e = nodes[j];
 
-			// Constraint 1; keep length.
 			{
 				Vector4 d = e - s;
 				Scalar ln = d.length();
@@ -114,17 +131,6 @@ bool IKPoseController::evaluate(
 					e += err * d * 0.5_simd;
 					s -= err * d * 0.5_simd;
 				}
-			}
-		}
-
-		// Constraint 2; always above ground.
-		for (uint32_t j = 0; j < jointCount; ++j)
-		{
-			Vector4 n = worldTransform * nodes[j];
-			if (n.y() < 0.0_simd)
-			{
-				n *= Vector4(1.0f, 0.0f, 1.0f, 1.0f);
-				nodes[j] = worldTransform.inverse() * n;
 			}
 		}
 	}
@@ -138,7 +144,7 @@ bool IKPoseController::evaluate(
 			const Vector4& sref = outPoseTransforms[joint->getParent()].translation();
 			const Vector4& eref = outPoseTransforms[i].translation();
 
-			Vector4 axisZref = (eref - sref).normalized();
+			const Vector4 axisZref = (eref - sref).normalized();
 
 			const Vector4& sik = nodes[joint->getParent()];
 			const Vector4& eik = nodes[i];
@@ -147,11 +153,11 @@ bool IKPoseController::evaluate(
 			Vector4 axisXik, axisYik;
 			orthogonalFrame(axisZik, axisYik, axisXik);
 
-			Quaternion Qr(
+			const Quaternion Qr(
 				axisZref,
 				axisZik
 			);
-			Quaternion Qrr = outPoseTransforms[i].rotation() * Qr;
+			const Quaternion Qrr = outPoseTransforms[i].rotation() * Qr;
 
 			outPoseTransforms[i] = Transform(eik, Qrr);
 		}
@@ -180,5 +186,4 @@ void IKPoseController::estimateVelocities(
 		);
 }
 
-	}
 }

@@ -18,10 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace animation
-	{
+
+class PhysicsManager;
+
+}
+
+namespace traktor::animation
+{
 
 /*! IK pose evaluation controller.
  * \ingroup Animation
@@ -31,7 +36,11 @@ class T_DLLCLASS IKPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	IKPoseController(IPoseController* poseController, uint32_t solverIterations);
+	explicit IKPoseController(
+		physics::PhysicsManager* physicsManager,
+		IPoseController* poseController,
+		uint32_t solverIterations
+	);
 
 	virtual ~IKPoseController();
 
@@ -56,10 +65,9 @@ public:
 	IPoseController* getNeutralPoseController() const { return m_poseController; }
 
 private:
+	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< IPoseController > m_poseController;
 	uint32_t m_solverIterations;
 };
 
-	}
 }
-
