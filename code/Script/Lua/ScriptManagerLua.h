@@ -34,8 +34,10 @@ namespace traktor
 
 class Any;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class ScriptContextLua;
 class ScriptDebuggerLua;
@@ -169,6 +171,4 @@ private:
 	static int luaPanic(lua_State* luaState);
 };
 
-	}
 }
-

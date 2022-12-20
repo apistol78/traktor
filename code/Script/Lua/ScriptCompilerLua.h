@@ -21,10 +21,8 @@
 
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! LUA script compiler.
  * \ingroup LUA Script
@@ -45,5 +43,4 @@ private:
 	lua_State* m_luaState;
 };
 
-	}
 }

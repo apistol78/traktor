@@ -15,18 +15,16 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 {
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	for (int32_t i = base + 1; i <= top; ++i)
 	{
-		int32_t r = -1 - (top - i);
-		int32_t t = lua_type(luaState, i);
+		const int32_t r = -1 - (top - i);
+		const int32_t t = lua_type(luaState, i);
 		switch (t)
 		{
 		case LUA_TSTRING:
@@ -86,11 +84,10 @@ int luaPrint(lua_State* L)
 
 int luaSleep(lua_State* L)
 {
-	int32_t ms = (int32_t)lua_tointeger(L, -1);
+	const int32_t ms = (int32_t)lua_tointeger(L, -1);
 	if (ms >= 0)
 		ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 	return 0;
 }
 
-	}
 }

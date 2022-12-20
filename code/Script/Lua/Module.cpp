@@ -11,10 +11,8 @@
 #if defined(T_STATIC)
 #	include "Script/Lua/ScriptManagerLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 #	if defined(T_SCRIPT_LUAJIT_EXPORT)
 extern "C" void __module__Traktor_Script_LuaJIT()
@@ -25,7 +23,6 @@ extern "C" void __module__Traktor_Script_Lua()
 	T_FORCE_LINK_REF(ScriptManagerLua);
 }
 
-	}
 }
 
 #endif

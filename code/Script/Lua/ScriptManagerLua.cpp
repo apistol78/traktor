@@ -36,12 +36,10 @@
 
 #define T_LOG_OBJECT_GC 0
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 Timer s_timer;
 
@@ -87,7 +85,7 @@ inline void putObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* obj
 	lua_pop(L, 1);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
@@ -1374,5 +1372,4 @@ int ScriptManagerLua::luaPanic(lua_State* luaState)
 	return 0;
 }
 
-	}
 }

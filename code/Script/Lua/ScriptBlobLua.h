@@ -11,10 +11,8 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Script/IScriptBlob.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptBlobLua : public IScriptBlob
 {
@@ -32,6 +30,4 @@ private:
 	std::string m_script;
 };
 
-	}
 }
-

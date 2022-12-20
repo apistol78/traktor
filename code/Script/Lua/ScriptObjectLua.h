@@ -11,10 +11,8 @@
 #include "Core/Class/IRuntimeObject.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptObjectLua : public IRuntimeObject
 {
@@ -40,6 +38,4 @@ private:
 	int32_t m_tableRef;
 };
 
-	}
 }
-

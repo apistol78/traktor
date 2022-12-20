@@ -15,10 +15,8 @@
 #include "Script/Lua/ScriptCompilerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-    namespace script
-    {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptCompilerLua", 0, ScriptCompilerLua, IScriptCompiler)
 
@@ -37,10 +35,10 @@ Ref< IScriptBlob > ScriptCompilerLua::compile(const std::wstring& fileName, cons
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
-	std::string text = wstombs(Utf8Encoding(), script);
+	const std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
+	const std::string text = wstombs(Utf8Encoding(), script);
 
-	int32_t result = luaL_loadbuffer(
+	const int32_t result = luaL_loadbuffer(
 		m_luaState,
 		text.c_str(),
 		text.length(),
@@ -50,15 +48,15 @@ Ref< IScriptBlob > ScriptCompilerLua::compile(const std::wstring& fileName, cons
 	{
 		std::wstring error = mbstows(lua_tostring(m_luaState, -1));
 
-		size_t p0 = error.find(L':');
+		const size_t p0 = error.find(L':');
 		T_ASSERT(p0 != error.npos);
 
 		error = error.substr(p0 + 1);
 
-		size_t p1 = error.find(L':');
+		const size_t p1 = error.find(L':');
 		T_ASSERT(p1 != error.npos);
 
-		int32_t line = parseString< int32_t >(error.substr(0, p1));
+		const int32_t line = parseString< int32_t >(error.substr(0, p1));
 		error = trim(error.substr(p1 + 1));
 
 		if (errorCallback)
@@ -79,5 +77,4 @@ Ref< IScriptBlob > ScriptCompilerLua::compile(const std::wstring& fileName, cons
 	return blob;
 }
 
-    }
 }

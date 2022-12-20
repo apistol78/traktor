@@ -17,10 +17,8 @@
 struct lua_Debug;
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptManagerLua;
 
@@ -88,6 +86,4 @@ private:
 	void hookCallback(lua_State* L, lua_Debug* ar);
 };
 
-	}
 }
-

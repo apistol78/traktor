@@ -30,16 +30,14 @@
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_tableKey_instance = -2;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerLua", ScriptDebuggerLua, IScriptDebugger)
 
@@ -503,5 +501,4 @@ void ScriptDebuggerLua::hookCallback(lua_State* L, lua_Debug* ar)
 		analyzeState(L, ar);
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 
 struct lua_State;
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class ScriptContextLua;
 
@@ -39,6 +37,4 @@ private:
 	int32_t m_functionRef;
 };
 
-	}
 }
-
