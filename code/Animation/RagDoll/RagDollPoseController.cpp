@@ -24,16 +24,14 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/StaticBodyDesc.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 		
 uint32_t s_clusterId = 10000;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPoseController", RagDollPoseController, IPoseController)
 
@@ -425,5 +423,4 @@ const RefArray< physics::Joint >& RagDollPoseController::getJoints() const
 	return m_joints;
 }
 
-	}
 }

@@ -18,17 +18,15 @@
 #include "Physics/CollisionSpecification.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< physics::CollisionSpecification > c_defaultCollision(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
 const resource::Id< physics::CollisionSpecification > c_interactableCollision(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 6, RagDollPoseControllerData, IPoseControllerData)
 
@@ -141,5 +139,4 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 	s >> Member< float >(L"trackDuration", m_trackDuration, AttributeUnit(UnitType::Seconds) | AttributeRange(0.0f));
 }
 
-	}
 }

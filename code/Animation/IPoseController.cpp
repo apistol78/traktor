@@ -8,12 +8,9 @@
  */
 #include "Animation/IPoseController.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IPoseController", IPoseController, Object)
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class Animation;
 
@@ -36,7 +34,7 @@ class T_DLLCLASS StateNodeAnimation : public StateNode
 public:
 	StateNodeAnimation() = default;
 
-	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation);
+	explicit StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation);
 
 	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
@@ -55,6 +53,4 @@ private:
 	bool m_linearInterpolation = false;
 };
 
-	}
 }
-

@@ -24,7 +24,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS SkeletonAsset : public editor::Asset
@@ -32,8 +32,6 @@ class T_DLLCLASS SkeletonAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	SkeletonAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getOffset() const { return m_offset; }
@@ -47,11 +45,11 @@ public:
 	bool getInvertZ() const { return m_invertZ; }
 
 private:
-	Vector4 m_offset;
-	float m_scale;
-	float m_radius;
-	bool m_invertX;
-	bool m_invertZ;
+	Vector4 m_offset = Vector4::origo();
+	float m_scale = 1.0f;
+	float m_radius = 0.25f;
+	bool m_invertX = false;
+	bool m_invertZ = false;
 };
 
 	}

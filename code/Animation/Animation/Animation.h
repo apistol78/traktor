@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Key framed animation poses.
  * \ingroup Animation
@@ -102,5 +100,4 @@ private:
 	AlignedVector< KeyPose > m_poses;
 };
 
-	}
 }

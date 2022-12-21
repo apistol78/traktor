@@ -24,17 +24,15 @@
 
 #define T_USE_UPDATE_JOBS
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_handleWorld_ShadowWrite(L"World_ShadowWrite");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::MeshComponent)
 
@@ -122,7 +120,7 @@ Aabb3 AnimatedMeshComponent::getBoundingBox() const
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
-			float radius = joint->getRadius();
+			const float radius = joint->getRadius();
 			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), Scalar(radius));
 		}
 	}
@@ -151,7 +149,7 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	}
 
 	// Always ensure skin arrays are same size as mesh joints.
-	size_t skinJointCount = m_mesh->getJointCount();
+	const size_t skinJointCount = m_mesh->getJointCount();
 	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
 	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
 	m_index = 1 - m_index;
@@ -185,8 +183,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	const Scalar interval(worldRenderView.getInterval());
 
-	Transform worldTransform = m_transform.get(interval);
-	Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
+	const Transform worldTransform = m_transform.get(interval);
+	const Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
 
 	float distance = 0.0f;
 	if (!mesh::isMeshVisible(
@@ -282,7 +280,7 @@ bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transfo
 	if (index >= m_poseTransforms.size())
 		return false;
 
-	int skinIndex = m_jointRemap[index];
+	const int skinIndex = m_jointRemap[index];
 	if (skinIndex < 0)
 		return false;
 
@@ -314,7 +312,7 @@ bool AnimatedMeshComponent::setPoseTransform(render::handle_t jointName, const T
 
 	if (inclusive)
 	{
-		Transform delta = transform * m_jointTransforms[index].inverse();
+		const Transform delta = transform * m_jointTransforms[index].inverse();
 		m_skeleton->findAllChildren(index, [&](uint32_t child){
 			m_poseTransforms[child] = delta * m_jointTransforms[child];
 		});
@@ -351,8 +349,8 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 			m_poseTransforms
 		);
 
-		size_t skeletonJointCount = m_jointTransforms.size();
-		size_t skinJointCount = m_mesh->getJointCount();
+		const size_t skeletonJointCount = m_jointTransforms.size();
+		const size_t skinJointCount = m_mesh->getJointCount();
 
 		// Ensure we have same number of pose transforms as bones.
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
@@ -361,10 +359,10 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
-			int32_t jointIndex = m_jointRemap[i];
+			const int32_t jointIndex = m_jointRemap[i];
 			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
-				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
+				const Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
 				m_skinTransforms[index][jointIndex * 2 + 0] = skinTransform.rotation().e;
 				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
@@ -372,16 +370,16 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 	}
 	else if (!m_poseTransforms.empty())
 	{
-		size_t skeletonJointCount = m_jointTransforms.size();
-		size_t skinJointCount = m_mesh->getJointCount();
+		const size_t skeletonJointCount = m_jointTransforms.size();
+		const size_t skinJointCount = m_mesh->getJointCount();
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
-			int32_t jointIndex = m_jointRemap[i];
+			const int32_t jointIndex = m_jointRemap[i];
 			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
-				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
+				const Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
 				m_skinTransforms[index][jointIndex * 2 + 0] = skinTransform.rotation().e;
 				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
@@ -389,5 +387,4 @@ void AnimatedMeshComponent::updatePoseController(int32_t index, float time, floa
 	}
 }
 
-	}
 }

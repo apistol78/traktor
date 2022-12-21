@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class StateGraph;
 
@@ -53,6 +51,4 @@ private:
 	Range< float > m_randomTimeOffset;
 };
 
-	}
 }
-

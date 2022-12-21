@@ -14,10 +14,8 @@
 #include "Animation/Animation/Animation.h"
 #include "Database/Instance.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationResourceFactory", AnimationResourceFactory, resource::IResourceFactory)
 
@@ -57,5 +55,4 @@ Ref< Object > AnimationResourceFactory::create(resource::IResourceManager* resou
 	return object;
 }
 
-	}
 }

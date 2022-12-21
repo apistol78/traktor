@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class StateNode;
 class Transition;
@@ -60,6 +58,4 @@ private:
 	Ref< StateNode > m_rootState;
 };
 
-	}
 }
-

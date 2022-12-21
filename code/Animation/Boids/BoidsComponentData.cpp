@@ -14,10 +14,8 @@
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.BoidsComponentData", 0, BoidsComponentData, world::IEntityComponentData)
 
@@ -74,5 +72,4 @@ void BoidsComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"maxVelocity", m_maxVelocity);
 }
 
-	}
 }

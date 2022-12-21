@@ -99,7 +99,7 @@ bool AnimationPipeline::buildOutput(
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
 	// Read source model.
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + animationAsset->getFileName());
+	const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + animationAsset->getFileName());
 	Ref< model::Model > modelAnimation = model::ModelCache(m_modelCachePath).get(filePath, L"");
 	if (!modelAnimation)
 	{
@@ -118,7 +118,7 @@ bool AnimationPipeline::buildOutput(
 			return false;
 		}
 
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
+		const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
 		modelSkeleton = model::ModelCache(m_modelCachePath).get(filePath, L"");
 		if (!modelSkeleton)
 		{
@@ -138,14 +138,14 @@ bool AnimationPipeline::buildOutput(
 	{
 		const model::Joint& jointSkeleton = modelSkeleton->getJoint(i);
 
-		uint32_t jointIdx = modelAnimation->findJointIndex(jointSkeleton.getName());
+		const uint32_t jointIdx = modelAnimation->findJointIndex(jointSkeleton.getName());
 		if (jointIdx == model::c_InvalidIndex)
 		{
 			log::warning << L"No such joint \"" << jointSkeleton.getName() << L"\" in animation skeleton." << Endl;
 			continue;
 		}
 
-		Quaternion rotation = jointSkeleton.getTransform().rotation();
+		const Quaternion rotation = jointSkeleton.getTransform().rotation();
 		modelAnimation->setJointRotation(jointIdx, rotation);
 	}
 
@@ -169,7 +169,7 @@ bool AnimationPipeline::buildOutput(
 	const AlignedVector< model::Joint >& skeletonAnimJoints = modelAnimation->getJoints();
 	for (uint32_t i = 0; i < ma->getKeyFrameCount(); ++i)
 	{
-		float time = ma->getKeyFrameTime(i);
+		const float time = ma->getKeyFrameTime(i);
 		const model::Pose* mp = ma->getKeyFramePose(i);
 
 		Animation::KeyPose kp;
@@ -179,14 +179,14 @@ bool AnimationPipeline::buildOutput(
 		{
 			const std::wstring& name = skeletonMeshJoints[j].getName();
 
-			uint32_t k = modelAnimation->findJointIndex(name);
+			const uint32_t k = modelAnimation->findJointIndex(name);
 			if (k == model::c_InvalidIndex)
 			{
 				log::warning << L"No \"" << name << L"\" joint in animation skeleton." << Endl;
 				continue;
 			}
 
-			Transform TposeAnim = mp->getJointTransform(k);
+			const Transform TposeAnim = mp->getJointTransform(k);
 
 			kp.pose.setJointTransform(
 				j,
@@ -205,7 +205,7 @@ bool AnimationPipeline::buildOutput(
 	//
 	if (animationAsset->getRemoveLocomotion())
 	{
-		uint32_t keyPoseCount = anim->getKeyPoseCount();
+		const uint32_t keyPoseCount = anim->getKeyPoseCount();
 		if (keyPoseCount >= 2)
 		{
 			// Create skeleton from model.
@@ -234,8 +234,8 @@ bool AnimationPipeline::buildOutput(
 				AlignedVector< Transform > targetPoseTransforms;
 				calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
 
-				Transform target = targetPoseTransforms[0];
-				Vector4 locomotion = (target.translation() - origin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+				const Transform target = targetPoseTransforms[0];
+				const Vector4 locomotion = (target.translation() - origin.translation()) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 
 				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
 					targetPoseTransforms[i] = Transform(-locomotion) * targetPoseTransforms[i];
@@ -244,7 +244,7 @@ bool AnimationPipeline::buildOutput(
 				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
 				{
 					Transform parentTransform = Transform::identity();
-					int32_t parentIdx = skeleton->getJoint(i)->getParent();
+					const int32_t parentIdx = skeleton->getJoint(i)->getParent();
 					if (parentIdx >= 0)
 						parentTransform = targetPoseTransforms[parentIdx];
 					keyPose.pose.setJointTransform(i, parentTransform.inverse() * targetPoseTransforms[i]);
@@ -340,7 +340,7 @@ bool AnimationPipeline::buildOutput(
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)
 	{
-		log::error << L"Unable to build animation; unable to create output instance \"" << outputPath << L"\"" << Endl;
+		log::error << L"Unable to build animation; unable to create output instance \"" << outputPath << L"\"." << Endl;
 		return false;
 	}
 
@@ -348,7 +348,7 @@ bool AnimationPipeline::buildOutput(
 
 	if (!instance->commit())
 	{
-		log::error << L"Unable to build animation; unable to commit output instance \"" << outputPath << L"\"" << Endl;
+		log::error << L"Unable to build animation; unable to commit output instance \"" << outputPath << L"\"." << Endl;
 		return false;
 	}
 

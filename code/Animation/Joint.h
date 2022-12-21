@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Skeleton bone.
  * \ingroup Animation
@@ -97,6 +95,4 @@ private:
 	float m_radius;
 };
 
-	}
 }
-

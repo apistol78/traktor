@@ -17,10 +17,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*!
  * \ingroup Animation
@@ -50,5 +48,4 @@ private:
 	float m_rate;
 };
 
-	}
 }

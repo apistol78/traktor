@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathComponentData", 1, PathComponentData, world::IEntityComponentData)
 
@@ -64,5 +62,4 @@ void PathComponentData::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

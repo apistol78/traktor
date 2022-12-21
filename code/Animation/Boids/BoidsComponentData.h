@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class EntityData;
 class IEntityBuilder;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class BoidsComponent;
 
@@ -66,6 +64,4 @@ private:
 	float m_maxVelocity;
 };
 
-	}
 }
-

@@ -510,7 +510,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
 	{
 		if (!m_renderView->reset(sz.cx, sz.cy))
@@ -527,10 +527,10 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 view = getViewTransform();
+	const float deltaTime = float(m_timer.getDeltaTime());
+	const float scaledTime = m_context->getTime();
+	const Matrix44 projection = getProjectionTransform();
+	const Matrix44 view = getViewTransform();
 
 	// Build a root entity by gathering entities from containers.
 	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
@@ -580,13 +580,13 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			// Render XZ grid.
 			if (m_gridEnable)
 			{
-				Vector4 viewPosition = view.inverse().translation();
-				float vx = floorf(viewPosition.x());
-				float vz = floorf(viewPosition.z());
+				const Vector4 viewPosition = view.inverse().translation();
+				const float vx = floorf(viewPosition.x());
+				const float vz = floorf(viewPosition.z());
 
 				for (int32_t x = -20; x <= 20; ++x)
 				{
-					float fx = float(x);
+					const float fx = float(x);
 					m_primitiveRenderer->drawLine(
 						Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 						Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
@@ -605,8 +605,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 				const float c_arrowLength = 0.4f;
 				const float c_frameSize = 0.2f;
 
-				float w = 2.0f * float(sz.cx) / sz.cy;
-				float h = 2.0f;
+				const float w = 2.0f * float(sz.cx) / sz.cy;
+				const float h = 2.0f;
 
 				m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
 				m_primitiveRenderer->pushWorld(Matrix44::identity());
@@ -691,7 +691,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			// Draw selection rectangle if non-empty.
 			if (m_selectionRectangle.area() > 0)
 			{
-				ui::Rect innerRect = m_renderWidget->getInnerRect();
+				const ui::Rect innerRect = m_renderWidget->getInnerRect();
 
 				m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
 
@@ -731,15 +731,6 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	// Validate render graph.
 	if (!m_renderGraph->validate())
 		return;
-
-	// Debug render graph.
-	//for (auto pass : m_renderGraph->getPasses())
-	//{
-	//	log::info << pass->getName() << Endl;
-	//	for (auto input : pass->getInputs())
-	//		log::info << L"\tInput " << input.targetSetId << Endl;
-	//	log::info << L"\tOutput " << pass->getOutput().targetSetId << Endl;
-	//}
 
 	// Build render context.
 	m_renderContext->flush();

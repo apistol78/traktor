@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class StateContext;
 
@@ -65,6 +63,4 @@ private:
 	std::pair< int, int > m_position = { 0, 0 };
 };
 
-	}
 }
-

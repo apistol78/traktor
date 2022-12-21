@@ -303,7 +303,7 @@ void EffectPreviewControl::syncEffect()
 		Transform effectTransform = Transform::identity();
 		if (m_moveEmitter)
 		{
-			Vector4 effectPosition(
+			const Vector4 effectPosition(
 				std::sin(T) * 8.0f,
 				0.0f,
 				std::cos(T) * 8.0f,
@@ -312,7 +312,7 @@ void EffectPreviewControl::syncEffect()
 			effectTransform = Transform(effectPosition);
 		}
 
-		float deltaTime = min(c_deltaTime, currentTime - T);
+		const float deltaTime = min(c_deltaTime, currentTime - T);
 		context.deltaTime = deltaTime;
 
 		effectInstance->update(context, effectTransform, true);
@@ -417,15 +417,15 @@ void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 			if ((event->getKeyState() & ui::KsControl) == 0)
 			{
 				// Move X/Z direction.
-				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
 			}
 			else
 			{
 				// Move X/Y direction.
-				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
 			}
 		}
@@ -468,7 +468,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 			lost = true;
 	}
 
-	ui::Size sz = getInnerRect().getSize();
+	const ui::Size sz = getInnerRect().getSize();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
 	{
 		if (!m_renderView->reset(sz.cx, sz.cy))
@@ -476,13 +476,13 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_dirtySize = sz;
 	}
 
-	float time = (float)m_timer.getElapsedTime();
-	float deltaTime = (float)(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
+	const float time = (float)m_timer.getElapsedTime();
+	const float deltaTime = (float)(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
 
-	Matrix44 view = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
+	const Matrix44 view = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
 
 	// Update scene entities.
 	world::UpdateParams update;
@@ -497,17 +497,16 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	Ref< world::Entity > rootEntity = new world::Entity();
 	rootEntity->setComponent(rootGroup);
 
-	// m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootEntity.addEntity(entity); });
 	rootGroup->addEntity(m_sceneInstance->getRootEntity());
 
 	if (m_effectEntity)
 	{
-		float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
+		const float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
 
 		Transform effectTransform = Transform::identity();
 		if (m_moveEmitter)
 		{
-			Vector4 effectPosition(
+			const Vector4 effectPosition(
 				std::sin(T) * 8.0f,
 				0.0f,
 				std::cos(T) * 8.0f,
@@ -633,6 +632,10 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->endFrame();
 		m_renderView->present();
 	}
+
+	// Need to clear all entities from our root group since when our root entity
+	// goes out of scope it's automatically destroyed.
+	rootGroup->removeAllEntities();
 
 	event->consume();
 }

@@ -20,6 +20,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
+#include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/IRenderSystem.h"
@@ -32,15 +33,24 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneFactory.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
+#include "Weather/WeatherFactory.h"
+#include "Weather/Sky/SkyRenderer.h"
+#include "World/Entity.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity.h"
-#include "World/EntityRenderer.h"
+#include "World/WorldResourceFactory.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightRenderer.h"
+#include "World/Entity/ProbeRenderer.h"
+#include "World/Entity/WorldEntityFactory.h"
 #include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
@@ -49,6 +59,8 @@ namespace traktor
 	{
 		namespace
 		{
+
+const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
 const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
@@ -80,15 +92,23 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 		return false;
 
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
+
+	Ref< world::IEntityBuilder > entityBuilder = new world::EntityBuilder();
+	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, nullptr, true));
+	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, m_renderSystem));
+	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
+
 	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
 	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
-
+	m_resourceManager->addFactory(new scene::SceneFactory(entityBuilder));
+	m_resourceManager->addFactory(new world::WorldResourceFactory(m_renderSystem, nullptr));
+	
 	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 24;
+	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.waitVBlanks = 0;
@@ -104,6 +124,11 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
 		return false;
+
+	if (!m_resourceManager->bind(c_previewScene, m_sceneInstance))
+		return false;
+
+	m_sceneInstance.consume();
 
 	addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationPreviewControl::eventButtonDown);
 	addEventHandler< ui::MouseButtonUpEvent >(this, &AnimationPreviewControl::eventButtonUp);
@@ -126,6 +151,7 @@ void AnimationPreviewControl::destroy()
 
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
+	safeDestroy(m_renderGraph);
 	safeClose(m_renderView);
 
 	Widget::destroy();
@@ -206,15 +232,17 @@ void AnimationPreviewControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);
 
-	ui::Size sz = getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
-		return;
-
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
+	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
+	worldEntityRenderers->add(new weather::SkyRenderer());
 	worldEntityRenderers->add(new world::EntityRenderer());
 	worldEntityRenderers->add(new world::GroupRenderer());
 	worldEntityRenderers->add(new world::LightRenderer());
-	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
+	worldEntityRenderers->add(new world::ProbeRenderer(
+		m_resourceManager,
+		m_renderSystem,
+		type_of< world::WorldRendererForward >()
+	));
 
 	world::WorldRenderSettings wrs;
 	wrs.viewNearZ = 0.1f;
@@ -225,28 +253,14 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.entityRenderers = worldEntityRenderers;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
-	if (worldRenderer->create(
+	if (!worldRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
 		wcd
 	))
-	{
-		m_worldRenderer = worldRenderer;
-		updateWorldRenderView();
-	}
-}
+		return;
 
-void AnimationPreviewControl::updateWorldRenderView()
-{
-	ui::Size sz = getInnerRect().getSize();
-	m_worldRenderView.setPerspective(
-		float(sz.cx),
-		float(sz.cy),
-		float(sz.cx) / sz.cy,
-		deg2rad(65.0f),
-		0.1f,
-		1000.0f
-	);
+	m_worldRenderer = worldRenderer;
 }
 
 void AnimationPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -272,15 +286,15 @@ void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 			if ((event->getKeyState() & ui::KsControl) == 0)
 			{
 				// Move X/Z direction.
-				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_position += Vector4(dx, 0.0f, dz, 0.0f);
 			}
 			else
 			{
 				// Move X/Y direction.
-				float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+				const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
 				m_position += Vector4(dx, dy, 0.0f, 0.0f);
 			}
 		}
@@ -307,64 +321,133 @@ void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 
 void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 {
-	if (!m_renderView)
+	// Reload scene if changed.
+	if (m_sceneInstance.changed())
+	{
+		safeDestroy(m_worldRenderer);
+		m_sceneInstance.consume();
+	}
+
+	if (!m_sceneInstance || !m_renderView)
 		return;
 
-	ui::Size sz = getInnerRect().getSize();
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = float(m_timer.getElapsedTime());
+	// Lazy create world renderer.
+	if (!m_worldRenderer)
+	{
+		updateWorldRenderer();
+		if (!m_worldRenderer)
+			return;
+	}
+
+	// Render view events; reset view if it has become lost.
+	bool lost = false;
+	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
+	{
+		if (re.type == render::RenderEventType::Lost)
+			lost = true;
+	}
+
+	const ui::Size sz = getInnerRect().getSize();
+	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
+	{
+		if (!m_renderView->reset(sz.cx, sz.cy))
+			return;
+		m_dirtySize = sz;
+	}
+
+	const float time = (float)m_timer.getElapsedTime();
+	const float deltaTime = float(m_timer.getDeltaTime());
+	const float scaledTime = float(m_timer.getElapsedTime());
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
-	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
+	const Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
 
-	float aspect = float(sz.cx) / sz.cy;
+	const float aspect = float(sz.cx) / sz.cy;
 
-	Matrix44 viewTransform = translate(m_position) * rotateX(m_anglePitch) * rotateY(m_angleHead);
-	Matrix44 projectionTransform = perspectiveLh(
+	const Matrix44 viewTransform = translate(m_position) * rotateX(m_anglePitch) * rotateY(m_angleHead);
+	const Matrix44 projectionTransform = perspectiveLh(
 		65.0f * PI / 180.0f,
 		aspect,
 		0.1f,
 		1000.0f
 	);
 
-	Matrix44 viewInverse = viewTransform.inverse();
-	Plane cameraPlane(
+	const Matrix44 viewInverse = viewTransform.inverse();
+	const Plane cameraPlane(
 		viewInverse.axisZ(),
 		viewInverse.translation()
 	);
 
-	// Setup world render passes.
+	// Update scene entities.
+	world::UpdateParams update;
+	update.totalTime = time;
+	update.deltaTime = deltaTime;
+	update.alternateTime = time;
+	m_sceneInstance->updateController(update);
+	m_sceneInstance->updateEntity(update);
+
+	// Build a root entity by gathering entities from containers.
+	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	Ref< world::Entity > rootEntity = new world::Entity();
+	rootEntity->setComponent(rootGroup);
+
+	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+
+	// Update and add animated mesh entity.
 	if (m_entity)
 	{
-		world::UpdateParams up;
-		up.totalTime = scaledTime;
-		up.deltaTime = deltaTime;
-		up.alternateTime = scaledTime;
-		m_entity->update(up);
+		m_entity->update(update);
 
-		world::LightComponent lightComponent(
-			world::LightType::Directional,
-			Color4f(1.0f, 1.0f, 1.0f, 1.0f),
-			false,
-			1000.0f,
-			0.0f,
-			0.0f,
-			0.0f
-		);
-
-		world::Entity lightEntity;
-		lightEntity.setComponent(&lightComponent);
-		lightEntity.update(up);
-
-		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		m_worldRenderView.setView(viewTransform, viewTransform);
-
-		// \fixme
-		//m_worldRenderer->attach(&lightEntity);
-		//m_worldRenderer->attach(m_entity);
-		//m_worldRenderer->setup(m_worldRenderView, *m_renderGraph, 0);
+		rootGroup->addEntity(m_entity);
 	}
+
+	// Setup world render passes.
+	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
+	m_worldRenderView.setPerspective(
+		float(sz.cx),
+		float(sz.cy),
+		float(sz.cx) / sz.cy,
+		deg2rad(70.0f), // m_fieldOfView),
+		worldRenderSettings->viewNearZ,
+		worldRenderSettings->viewFarZ
+	);
+	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
+	m_worldRenderView.setView(m_worldRenderView.getView(), viewTransform);
+	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+
+	// Draw debug wires.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
+	rp->setOutput(0, render::TfAll, render::TfAll);
+	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
+		m_primitiveRenderer->begin(0, projectionTransform);
+		m_primitiveRenderer->pushView(viewTransform);
+
+		for (int x = -10; x <= 10; ++x)
+		{
+			m_primitiveRenderer->drawLine(
+				Vector4(float(x), 0.0f, -10.0f, 1.0f),
+				Vector4(float(x), 0.0f, 10.0f, 1.0f),
+				(x == 0) ? 1.0f : 0.0f,
+				m_colorGrid
+			);
+			m_primitiveRenderer->drawLine(
+				Vector4(-10.0f, 0.0f, float(x), 1.0f),
+				Vector4(10.0f, 0.0f, float(x), 1.0f),
+				(x == 0) ? 1.0f : 0.0f,
+				m_colorGrid
+			);
+		}
+
+		m_primitiveRenderer->end(0);
+
+		auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+		rb->lambda = [&](render::IRenderView* renderView) {
+			m_primitiveRenderer->render(m_renderView, 0);
+		};
+		renderContext->enqueue(rb);
+	});
+	m_renderGraph->addPass(rp);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -372,104 +455,19 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
+	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.
-	render::Clear cl = {};
-	cl.mask = render::CfColor | render::CfDepth;
-	cl.colors[0] = clearColor;
-	cl.depth = 1.0f;
-	if (m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
+	if (m_renderView->beginFrame())
 	{
-		// Render context.
 		m_renderContext->render(m_renderView);
-
-		// Render guide lines.
-		if (m_primitiveRenderer->begin(0, projectionTransform))
-		{
-			m_primitiveRenderer->pushView(viewTransform);
-
-			for (int x = -10; x <= 10; ++x)
-			{
-				m_primitiveRenderer->drawLine(
-					Vector4(float(x), 0.0f, -10.0f, 1.0f),
-					Vector4(float(x), 0.0f, 10.0f, 1.0f),
-					(x == 0) ? 1.0f : 0.0f,
-					m_colorGrid
-				);
-				m_primitiveRenderer->drawLine(
-					Vector4(-10.0f, 0.0f, float(x), 1.0f),
-					Vector4(10.0f, 0.0f, float(x), 1.0f),
-					(x == 0) ? 1.0f : 0.0f,
-					m_colorGrid
-				);
-			}
-
-			//if (m_entity && m_entity->getSkeleton())
-			//{
-			//	m_primitiveRenderer->pushDepthState(false, false, false);
-
-			//	const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
-
-			//	AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
-			//	if (poseTransforms.empty())
-			//		calculateJointTransforms(skeleton, poseTransforms);
-
-			//	if (poseTransforms.size() == skeleton->getJointCount())
-			//	{
-			//		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-			//		{
-			//			const Joint* joint = skeleton->getJoint(i);
-
-			//			Color4ub color = Color4ub(255, 255, 0, 128);
-
-			//			m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-
-			//			if (joint->getParent() >= 0)
-			//			{
-			//				const Joint* parent = skeleton->getJoint(joint->getParent());
-			//				T_ASSERT(parent);
-
-			//				Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
-			//				Vector4 end = poseTransforms[i].translation().xyz1();
-
-			//				Vector4 z = (end - start).normalized();
-			//				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-			//				Vector4 x = cross(y, z);
-
-			//				Scalar radius(parent->getRadius());
-			//				x *= radius;
-			//				y *= radius;
-			//				z *= radius;
-
-			//				m_primitiveRenderer->drawLine(start, start + z + x + y, color);
-			//				m_primitiveRenderer->drawLine(start, start + z - x + y, color);
-			//				m_primitiveRenderer->drawLine(start, start + z + x - y, color);
-			//				m_primitiveRenderer->drawLine(start, start + z - x - y, color);
-
-			//				m_primitiveRenderer->drawLine(start + z + x + y, end, color);
-			//				m_primitiveRenderer->drawLine(start + z - x + y, end, color);
-			//				m_primitiveRenderer->drawLine(start + z + x - y, end, color);
-			//				m_primitiveRenderer->drawLine(start + z - x - y, end, color);
-
-			//				m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
-			//				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
-			//				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
-			//				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
-			//			}
-			//		}
-			//	}
-
-			//	m_primitiveRenderer->popDepthState();
-			//}
-
-			m_primitiveRenderer->end(0);
-			m_primitiveRenderer->render(m_renderView, 0);
-		}
-
-		m_renderView->endPass();
+		m_renderView->endFrame();
 		m_renderView->present();
 	}
+
+	// Need to clear all entities from our root group since when our root entity
+	// goes out of scope it's automatically destroyed.
+	rootGroup->removeAllEntities();
 
 	event->consume();
 }

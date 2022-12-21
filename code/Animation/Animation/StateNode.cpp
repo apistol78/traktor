@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateNode", StateNode, ISerializable)
 
@@ -44,5 +42,4 @@ void StateNode::serialize(ISerializer& s)
 	s >> MemberStlPair< int, int >(L"position", m_position);
 }
 
-	}
 }

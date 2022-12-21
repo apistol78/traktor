@@ -18,11 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
+/*!
+ * \ingroup Animation
+ */
 class T_DLLCLASS AnimatedMeshComponentRenderer : public mesh::MeshComponentRenderer
 {
 	T_RTTI_CLASS;
@@ -36,6 +37,4 @@ public:
 	) override final;
 };
 
-	}
 }
-

@@ -14,10 +14,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/MemberIdProxy.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 1, StateNodeAnimation, StateNode)
 
@@ -38,11 +36,11 @@ bool StateNodeAnimation::prepareContext(StateContext& outContext)
 	if (!m_animation)
 		return false;
 
-	uint32_t poseCount = m_animation->getKeyPoseCount();
+	const uint32_t poseCount = m_animation->getKeyPoseCount();
 	if (poseCount < 1)
 		return false;
 
-	float duration = m_animation->getKeyPose(poseCount - 1).at;
+	const float duration = m_animation->getKeyPose(poseCount - 1).at;
 
 	outContext.setTime(0.0f);
 	outContext.setDuration(duration);
@@ -55,7 +53,7 @@ void StateNodeAnimation::evaluate(
 	Pose& outPose
 )
 {
-	float time = context.getTime();
+	const float time = context.getTime();
 	int32_t indexHint = context.getIndexHint();
 
 	if (m_animation)
@@ -74,5 +72,4 @@ void StateNodeAnimation::serialize(ISerializer& s)
 	s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Boids entity renderer.
  * \ingroup Animation
@@ -62,6 +60,4 @@ public:
 	) override final;
 };
 
-	}
 }
-

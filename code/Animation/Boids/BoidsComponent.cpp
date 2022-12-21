@@ -11,10 +11,8 @@
 #include "World/Entity.h"
 #include "World/WorldBuildContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::IEntityComponent)
 
@@ -70,7 +68,7 @@ void BoidsComponent::setTransform(const Transform& transform)
 
 Aabb3 BoidsComponent::getBoundingBox() const
 {
-	Transform transformInv = m_transform.inverse();
+	const Transform transformInv = m_transform.inverse();
 
 	Aabb3 aabb;
 	for (uint32_t i = 0; i < uint32_t(m_boids.size()); ++i)
@@ -81,8 +79,8 @@ Aabb3 BoidsComponent::getBoundingBox() const
 
 void BoidsComponent::update(const world::UpdateParams& update)
 {
-	Scalar deltaTime(min(update.deltaTime, 1.0f / 30.0f));
-	Vector4 attraction = m_transform.translation().xyz1();
+	const Scalar deltaTime(min(update.deltaTime, 1.0f / 30.0f));
+	const Vector4 attraction = m_transform.translation().xyz1();
 
 	// Calculate perceived center and velocity of all boids.
 	Vector4 center(0.0f, 0.0f, 0.0f, 0.0f);
@@ -93,9 +91,8 @@ void BoidsComponent::update(const world::UpdateParams& update)
 		velocity += m_boids[i].velocity;
 	}
 
-	Vector4 constrainAdd = attraction * (Vector4::one() - m_constrain);
-
-	Scalar invBoidsSize(1.0f / (float(m_boids.size()) - 1.0f));
+	const Vector4 constrainAdd = attraction * (Vector4::one() - m_constrain);
+	const Scalar invBoidsSize(1.0f / (float(m_boids.size()) - 1.0f));
 
 	// Update boids.
 	for (uint32_t i = 0; i < m_boids.size(); ++i)
@@ -147,5 +144,4 @@ void BoidsComponent::update(const world::UpdateParams& update)
 	}
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Bit set class.
  * \ingroup Animation
@@ -137,6 +135,4 @@ private:
 	uint32_t m_bits[8];
 };
 
-	}
 }
-

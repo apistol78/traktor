@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class StateNode;
 
@@ -35,10 +33,10 @@ class T_DLLCLASS Transition : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum Moment
+	enum class Moment
 	{
-		TmImmediatly,
-		TmEnd
+		Immediatly,
+		End
 	};
 
 	Transition() = default;
@@ -60,11 +58,9 @@ public:
 private:
 	Ref< StateNode > m_from;
 	Ref< StateNode > m_to;
-	Moment m_moment = TmEnd;
+	Moment m_moment = Moment::End;
 	float m_duration = 0.0f;
 	std::wstring m_condition;
 };
 
-	}
 }
-

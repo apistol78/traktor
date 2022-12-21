@@ -86,8 +86,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Create state graph editor control.
 	m_editorGraph = new ui::GraphControl();
-	m_editorGraph->setText(L"ANIMATION STATE");
 	m_editorGraph->create(container, ui::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
+	m_editorGraph->setText(L"ANIMATION STATE");
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &StateGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &StateGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &StateGraphEditorPage::eventNodeMoved);
@@ -625,7 +625,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	}
 	else
 	{
-		m_propertiesView->setPropertyObject(0);
+		m_propertiesView->setPropertyObject(nullptr);
 		m_previewControl->setPoseController(m_statePreviewController);
 	}
 }

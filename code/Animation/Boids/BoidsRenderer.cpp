@@ -11,10 +11,8 @@
 #include "World/Entity.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsRenderer", BoidsRenderer, world::IEntityRenderer)
 
@@ -64,5 +62,4 @@ void BoidsRenderer::build(
 {
 }
 
-	}
 }

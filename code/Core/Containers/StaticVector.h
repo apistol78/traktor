@@ -274,6 +274,12 @@ public:
 	{
 	}
 
+	explicit StaticVector(size_t size, const_reference init)
+	:	m_size(0)
+	{
+		resize(size, init);
+	}
+
 	template < typename IteratorType >
 	explicit StaticVector(const IteratorType& from, const IteratorType& to)
 	:	m_size(0)

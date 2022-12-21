@@ -15,12 +15,10 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 struct ClothVertex
 {
@@ -29,7 +27,7 @@ struct ClothVertex
 	float texCoord[2];
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, world::IEntityComponent)
 
@@ -387,5 +385,4 @@ void ClothComponent::setNodeInvMass(uint32_t x, uint32_t y, float invMass)
 		m_nodes[index].invMass = Scalar(invMass);
 }
 
-	}
 }

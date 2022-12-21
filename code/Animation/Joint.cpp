@@ -13,10 +13,8 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Joint", 1, Joint, ISerializable)
 
@@ -37,5 +35,4 @@ void Joint::serialize(ISerializer& s)
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
-	}
 }

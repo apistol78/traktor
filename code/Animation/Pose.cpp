@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Pose", 0, Pose, ISerializable)
 
@@ -56,12 +54,12 @@ void Pose::getIndexMask(BitSet& outIndices) const
 
 const Pose::Joint* Pose::getJoint(uint32_t jointIndex) const
 {
-	uint32_t s = 0;
-	uint32_t e = uint32_t(m_joints.size());
+	size_t s = 0;
+	size_t e = m_joints.size();
 
 	while (s < e)
 	{
-		uint32_t m = s + (e - s) / 2;
+		const size_t m = s + (e - s) / 2;
 		if (jointIndex == m_joints[m].index)
 			return &m_joints[m];
 		else if (jointIndex < m_joints[m].index)
@@ -80,7 +78,7 @@ Pose::Joint& Pose::getEditJoint(uint32_t jointIndex)
 
 	while (s < e)
 	{
-		size_t m = s + (e - s) / 2;
+		const size_t m = s + (e - s) / 2;
 		if (jointIndex == m_joints[m].index)
 			return m_joints[m];
 		else if (jointIndex < m_joints[m].index)
@@ -103,5 +101,4 @@ void Pose::Joint::serialize(ISerializer& s)
 	s >> MemberComposite< Transform  >(L"transform", transform);
 }
 
-	}
 }

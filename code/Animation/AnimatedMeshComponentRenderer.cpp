@@ -11,10 +11,8 @@
 #include "World/Entity.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", AnimatedMeshComponentRenderer, world::IEntityRenderer)
 
@@ -36,5 +34,4 @@ void AnimatedMeshComponentRenderer::gather(
 	context.include(this, animatedMeshComponent);
 }
 
-	}
 }

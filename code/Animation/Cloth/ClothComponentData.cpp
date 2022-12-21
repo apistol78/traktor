@@ -16,10 +16,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 0, ClothComponentData, world::IEntityComponentData)
 
@@ -81,5 +79,4 @@ void ClothComponentData::Anchor::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"y", y);
 }
 
-	}
 }

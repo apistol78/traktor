@@ -25,12 +25,10 @@
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 Transform AnimatedMeshComponent_getJointTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
 {
@@ -71,7 +69,7 @@ void AnimatedMeshComponent_setPoseTransform(AnimatedMeshComponent* self, const s
 	);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
 
@@ -127,5 +125,4 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classWobbleComponent);
 }
 
-	}
 }

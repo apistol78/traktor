@@ -14,12 +14,10 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 struct KeyPoseAccessor
 {
@@ -81,7 +79,7 @@ struct KeyPoseAccessor
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
 
@@ -233,5 +231,4 @@ void Animation::KeyPose::serialize(ISerializer& s)
 	s >> MemberComposite< Pose >(L"pose", pose);
 }
 
-	}
 }

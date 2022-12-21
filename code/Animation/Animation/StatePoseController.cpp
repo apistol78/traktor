@@ -14,11 +14,16 @@
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/Transition.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Random.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
+
+Random s_random;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StatePoseController", StatePoseController, IPoseController)
 
@@ -148,7 +153,7 @@ bool StatePoseController::evaluate(
 			);
 			m_nextStateContext.setTime(m_nextStateContext.getTime() + deltaTime * m_timeFactor);
 
-			Scalar blend = Scalar(sinf((m_blendState / m_blendDuration) * PI / 2.0f));
+			const Scalar blend = Scalar(sinf((m_blendState / m_blendDuration) * PI / 2.0f));
 
 			blendPoses(
 				&m_evaluatePose,
@@ -197,6 +202,7 @@ bool StatePoseController::evaluate(
 	if (!m_nextState)
 	{
 		const RefArray< Transition >& transitions = m_stateGraph->getTransitions();
+		Transition* selectedTransition = nullptr;
 
 		// First try all transitions with explicit condition.
 		for (auto transition : transitions)
@@ -208,11 +214,11 @@ bool StatePoseController::evaluate(
 			bool transitionPermitted = false;
 			switch (transition->getMoment())
 			{
-			case Transition::TmImmediatly:
+			case Transition::Moment::Immediatly:
 				transitionPermitted = true;
 				break;
 
-			case Transition::TmEnd:
+			case Transition::Moment::End:
 				{
 					float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 					if (timeLeft <= transition->getDuration())
@@ -251,45 +257,56 @@ bool StatePoseController::evaluate(
 			if (!value)
 				continue;
 
-			// Begin transition to found state.
-			m_nextState = transition->to();
-			m_nextState->prepareContext(m_nextStateContext);
-			m_blendState = 0.0f;
-			m_blendDuration = transition->getDuration();
+			selectedTransition = transition;
 			break;
 		}
 
 		// Still no transition state found, we try all transitions without explicit condition.
-		for (auto transition : transitions)
+		if (selectedTransition == nullptr)
 		{
-			if (transition->from() != m_currentState || !transition->getCondition().empty())
-				continue;
-
-			// Is transition permitted?
-			bool transitionPermitted = false;
-			switch (transition->getMoment())
+			RefArray< Transition > candidateTransitions;
+			for (auto transition : transitions)
 			{
-			case Transition::TmImmediatly:
-				transitionPermitted = true;
-				break;
+				if (transition->from() != m_currentState || !transition->getCondition().empty())
+					continue;
 
-			case Transition::TmEnd:
+				// Is transition permitted?
+				bool transitionPermitted = false;
+				switch (transition->getMoment())
 				{
-					float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
-					if (timeLeft <= transition->getDuration())
-						transitionPermitted = true;
-				}
-				break;
-			}
-			if (!transitionPermitted)
-				continue;
+				case Transition::Moment::Immediatly:
+					transitionPermitted = true;
+					break;
 
-			// Begin transition to found state.
-			m_nextState = transition->to();
+				case Transition::Moment::End:
+					{
+						const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+						if (timeLeft <= transition->getDuration())
+							transitionPermitted = true;
+					}
+					break;
+				}
+				if (!transitionPermitted)
+					continue;
+
+				candidateTransitions.push_back(transition);
+			}
+
+			// Randomly select one of the found, valid, transitions.
+			if (!candidateTransitions.empty())
+			{
+				const uint32_t i = s_random.next() % candidateTransitions.size();
+				selectedTransition = candidateTransitions[i];
+			}
+		}
+
+		// Begin transition to found state.
+		if (selectedTransition != nullptr)
+		{
+			m_nextState = selectedTransition->to();
 			m_nextState->prepareContext(m_nextStateContext);
 			m_blendState = 0.0f;
-			m_blendDuration = transition->getDuration();
-			break;
+			m_blendDuration = selectedTransition->getDuration();
 		}
 	}
 
@@ -303,5 +320,4 @@ void StatePoseController::estimateVelocities(
 {
 }
 
-	}
 }
