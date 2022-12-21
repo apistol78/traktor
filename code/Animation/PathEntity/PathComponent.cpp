@@ -10,10 +10,8 @@
 #include "Core/Math/Const.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathComponent", PathComponent, world::IEntityComponent)
 
@@ -97,7 +95,7 @@ void PathComponent::update(const world::UpdateParams& update)
 			m_time = std::max(m_time - update.deltaTime, m_timeTarget);
 	}
 
-	Transform transform = m_path.evaluate(m_time, m_timeMode == TimeMode::Loop).transform();
+	const Transform transform = m_path.evaluate(m_time, m_timeMode == TimeMode::Loop).transform();
 	m_owner->setTransform(m_transform * transform);
 }
 
@@ -107,5 +105,4 @@ void PathComponent::continueTo(float time)
 	m_timeMode = TimeMode::Manual;
 }
 
-	}
 }

@@ -48,6 +48,13 @@ class IResourceManager;
 
 	}
 
+	namespace scene
+	{
+
+class Scene;
+
+	}
+
 	namespace world
 	{
 
@@ -71,7 +78,7 @@ class AnimationPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	AnimationPreviewControl(editor::IEditor* editor);
+	explicit AnimationPreviewControl(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -98,6 +105,7 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
+	resource::Proxy< scene::Scene > m_sceneInstance;
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
@@ -109,12 +117,11 @@ private:
 	float m_angleHead;
 	float m_anglePitch;
 	ui::Point m_lastMousePosition;
+	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updatePreview();
 
 	void updateWorldRenderer();
-
-	void updateWorldRenderView();
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 

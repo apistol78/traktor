@@ -13,16 +13,14 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SimpleAnimationController", SimpleAnimationController, IPoseController)
 
@@ -55,7 +53,7 @@ bool SimpleAnimationController::evaluate(
 	if (!m_animation)
 		return false;
 
-	float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
+	const float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
 
 	m_animation->getPose(poseTime, m_linearInterpolation, m_indexHint, m_evaluationPose);
 	calculatePoseTransforms(
@@ -78,5 +76,4 @@ void SimpleAnimationController::estimateVelocities(
 {
 }
 
-	}
 }

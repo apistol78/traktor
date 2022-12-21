@@ -11,10 +11,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.WobbleComponentData", 0, WobbleComponentData, world::IEntityComponentData)
 
@@ -33,5 +31,4 @@ void WobbleComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"rate", m_rate, AttributeRange(0.0f));
 }
 
-	}
 }

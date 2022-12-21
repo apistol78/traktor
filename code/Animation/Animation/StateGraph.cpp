@@ -13,10 +13,8 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", 0, StateGraph, ISerializable)
 
@@ -67,5 +65,4 @@ void StateGraph::serialize(ISerializer& s)
 	s >> MemberRef< StateNode >(L"rootState", m_rootState);
 }
 
-	}
 }

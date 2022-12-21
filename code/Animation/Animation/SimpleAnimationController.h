@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class Animation;
 class StateContext;
@@ -37,7 +35,7 @@ class T_DLLCLASS SimpleAnimationController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation);
+	explicit SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation);
 
 	virtual void destroy() override final;
 
@@ -66,6 +64,4 @@ private:
 	Pose m_evaluationPose;
 };
 
-	}
 }
-

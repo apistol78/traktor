@@ -21,25 +21,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class ClothComponent;
 
@@ -82,6 +80,4 @@ private:
 	float m_damping;
 };
 
-	}
 }
-

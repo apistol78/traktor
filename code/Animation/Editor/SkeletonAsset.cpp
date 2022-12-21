@@ -19,15 +19,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 3, SkeletonAsset, editor::Asset)
 
-SkeletonAsset::SkeletonAsset()
-:	m_offset(Vector4::origo())
-,	m_scale(1.0f)
-,	m_radius(0.25f)
-,	m_invertX(false)
-,	m_invertZ(false)
-{
-}
-
 void SkeletonAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);

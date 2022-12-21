@@ -18,31 +18,29 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class PhysicsManager;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 /*! Animation entity factory.
  * \ingroup Animation
@@ -72,6 +70,4 @@ private:
 	physics::PhysicsManager* m_physicsManager;
 };
 
-	}
 }
-

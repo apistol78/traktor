@@ -59,13 +59,13 @@ void PathComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			}
 
 			// Draw evaluated curve.
-			bool loop = (pathComponent->getTimeMode() == PathComponent::TimeMode::Loop);
-			float st = keys.front().T;
-			float et = keys.back().T;
+			const bool loop = (pathComponent->getTimeMode() == PathComponent::TimeMode::Loop);
+			const float st = keys.front().T;
+			const float et = keys.back().T;
 			for (uint32_t i = 0; i < 40; ++i)
 			{
-				float t1 = st + (i * (et - st)) / 40.0f;
-				float t2 = st + ((i + 1) * (et - st)) / 40.0f;
+				const float t1 = st + (i * (et - st)) / 40.0f;
+				const float t2 = st + ((i + 1) * (et - st)) / 40.0f;
 				primitiveRenderer->drawLine(
 					path.evaluate(t1, loop).position,
 					path.evaluate(t2, loop).position,

@@ -10,10 +10,8 @@
 #include "Animation/Cloth/ClothRenderer.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothRenderer", ClothRenderer, world::IEntityRenderer)
 
@@ -63,5 +61,4 @@ void ClothRenderer::build(
 {
 }
 
-	}
 }

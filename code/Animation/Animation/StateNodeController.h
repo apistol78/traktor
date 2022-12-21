@@ -20,14 +20,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class StateNode;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS StateNodeController : public IPoseController
@@ -35,7 +33,7 @@ class T_DLLCLASS StateNodeController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	StateNodeController(StateNode* node);
+	explicit StateNodeController(StateNode* node);
 
 	virtual void destroy() override final;
 
@@ -58,9 +56,8 @@ public:
 private:
 	Ref< StateNode > m_node;
 	StateContext m_context;
-	bool m_initialized;
+	float m_until;
+	float m_first;
 };
 
-	}
 }
-

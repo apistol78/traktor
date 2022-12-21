@@ -24,21 +24,19 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS ClothComponent : public world::IEntityComponent
@@ -117,6 +115,4 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 };
 
-	}
 }
-

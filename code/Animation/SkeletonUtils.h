@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class Skeleton;
 class Pose;
@@ -67,6 +65,4 @@ void T_DLLCLASS blendPoses(
 
 //@}
 
-	}
 }
-

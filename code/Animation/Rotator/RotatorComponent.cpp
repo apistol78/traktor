@@ -10,10 +10,8 @@
 #include "Core/Math/Const.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RotatorComponent", RotatorComponent, world::IEntityComponent)
 
@@ -55,7 +53,7 @@ void RotatorComponent::update(const world::UpdateParams& update)
 		return;
 	}
 
-	float angle = m_rate * update.totalTime;
+	const float angle = m_rate * update.totalTime;
 
 	switch (m_axis)
 	{
@@ -79,5 +77,4 @@ void RotatorComponent::update(const world::UpdateParams& update)
 	m_owner->setTransform(m_transform * m_local);
 }
 
-	}
 }

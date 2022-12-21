@@ -10,16 +10,15 @@
 #include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/StateNodeController.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateNodeController", StateNodeController, IPoseController)
 
 StateNodeController::StateNodeController(StateNode* node)
 :	m_node(node)
-,	m_initialized(false)
+,	m_until(-1.0f)
+,	m_first(0.0f)
 {
 }
 
@@ -41,25 +40,22 @@ bool StateNodeController::evaluate(
 	AlignedVector< Transform >& outPoseTransforms
 )
 {
-	Pose currentPose;
-
-	if (!m_initialized)
+	if (m_until < 0.0f)
 	{
 		if (!m_node || !m_node->prepareContext(m_context))
 			return false;
-		m_initialized = true;
+		m_first = time;
+		m_until = m_context.getDuration();
 	}
+
+	m_context.setTime(time - m_first);
+
+	Pose currentPose;
 
 	m_node->evaluate(
 		m_context,
 		currentPose
 	);
-
-	m_context.setTime(time);
-
-	float timeLeft = m_context.getDuration() - m_context.getTime();
-	if (timeLeft <= 0.0f)
-		m_initialized = false;
 
 	calculatePoseTransforms(
 		skeleton,
@@ -67,6 +63,7 @@ bool StateNodeController::evaluate(
 		outPoseTransforms
 	);
 
+	m_until -= deltaTime;
 	return true;
 }
 
@@ -77,5 +74,4 @@ void StateNodeController::estimateVelocities(
 {
 }
 
-	}
 }

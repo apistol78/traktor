@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Skeleton pose.
  * \ingroup Animation
@@ -70,5 +68,4 @@ private:
 	Joint& getEditJoint(uint32_t jointIndex);
 };
 
-	}
 }

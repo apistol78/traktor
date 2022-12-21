@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! State evaluation context.
  * \ingroup Animation
@@ -49,6 +47,4 @@ private:
 	int32_t m_indexHint = -1;
 };
 
-	}
 }
-

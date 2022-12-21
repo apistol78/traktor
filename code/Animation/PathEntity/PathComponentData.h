@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class PathComponent;
 
@@ -46,6 +44,4 @@ private:
 	float m_timeOffset = 0.0f;
 };
 
-	}
 }
-

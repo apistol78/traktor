@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class CollisionSpecification;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 /*! Ragdoll pose evaluation controller data.
  * \ingroup Animation
@@ -77,6 +75,4 @@ private:
 	float m_trackDuration = 0.0f;
 };
 
-	}
 }
-

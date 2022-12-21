@@ -20,20 +20,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 /*!
  * \ingroup Animation
@@ -87,6 +85,4 @@ private:
 	float m_maxVelocity;
 };
 
-	}
 }
-

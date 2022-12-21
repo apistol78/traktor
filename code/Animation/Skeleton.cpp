@@ -12,16 +12,14 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Skeleton", 0, Skeleton, ISerializable)
 
 int32_t Skeleton::addJoint(Joint* joint)
 {
-	int32_t jointIndex = int32_t(m_joints.size());
+	const int32_t jointIndex = int32_t(m_joints.size());
 	m_joints.push_back(joint);
 	m_jointMap.clear();
 	return jointIndex;
@@ -29,8 +27,8 @@ int32_t Skeleton::addJoint(Joint* joint)
 
 void Skeleton::removeJoint(Joint* joint)
 {
-	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
-	m_joints.erase(i);
+	auto it = std::find(m_joints.begin(), m_joints.end(), joint);
+	m_joints.erase(it);
 	m_jointMap.clear();
 }
 
@@ -47,11 +45,11 @@ bool Skeleton::findJoint(render::handle_t name, uint32_t& outIndex) const
 		}
 	}
 
-	SmallMap< render::handle_t, uint32_t >::const_iterator i = m_jointMap.find(name);
-	if (i == m_jointMap.end())
+	auto it = m_jointMap.find(name);
+	if (it == m_jointMap.end())
 		return false;
 
-	outIndex = i->second;
+	outIndex = it->second;
 	return true;
 }
 
@@ -81,5 +79,4 @@ void Skeleton::serialize(ISerializer& s)
 	s >> MemberRefArray< Joint >(L"joints", m_joints);
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.RotatorComponentData", 0, RotatorComponentData, world::IEntityComponentData)
 
@@ -42,5 +40,4 @@ void RotatorComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"rate", m_rate, AttributeUnit(UnitType::Degrees, true));
 }
 
-	}
 }

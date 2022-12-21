@@ -10,12 +10,10 @@
 #include "Core/Math/Const.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 float convolve(float x, const float* k, int32_t nk)
 {
@@ -49,7 +47,7 @@ const float c_wobbleZ[] =
 	8.0f, 1.6f, 0.05f
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.WobbleComponent", WobbleComponent, world::IEntityComponent)
 
@@ -93,14 +91,13 @@ void WobbleComponent::update(const world::UpdateParams& update)
 	
 	if (m_magnitude > FUZZY_EPSILON && m_rate > FUZZY_EPSILON)
 	{
-		float dx = convolve(update.totalTime * m_rate, c_wobbleX, sizeof_array(c_wobbleX)) * m_magnitude;
-		float dy = convolve(update.totalTime * m_rate, c_wobbleY, sizeof_array(c_wobbleY)) * m_magnitude;
-		float dz = convolve(update.totalTime * m_rate, c_wobbleZ, sizeof_array(c_wobbleZ)) * m_magnitude;
+		const float dx = convolve(update.totalTime * m_rate, c_wobbleX, sizeof_array(c_wobbleX)) * m_magnitude;
+		const float dy = convolve(update.totalTime * m_rate, c_wobbleY, sizeof_array(c_wobbleY)) * m_magnitude;
+		const float dz = convolve(update.totalTime * m_rate, c_wobbleZ, sizeof_array(c_wobbleZ)) * m_magnitude;
 		m_local = Transform(Vector4(dx, dy, dz));
 	}
 
 	m_owner->setTransform(m_transform * m_local);
 }
 
-	}
 }

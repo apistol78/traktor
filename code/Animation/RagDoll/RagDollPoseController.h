@@ -20,26 +20,24 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class Body;
 class Joint;
 class PhysicsManager;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class RagDollPoseControllerData;
 
@@ -110,6 +108,4 @@ private:
 	bool m_enable;
 };
 
-	}
 }
-

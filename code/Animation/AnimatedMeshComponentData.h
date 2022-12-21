@@ -21,46 +21,44 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class SkinnedMesh;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class PhysicsManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityData;
 class IEntityBuilder;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class AnimatedMeshComponent;
 class Skeleton;
@@ -112,5 +110,4 @@ private:
 	AlignedVector< Binding > m_bindings;
 };
 
-	}
 }

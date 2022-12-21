@@ -13,10 +13,8 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 0, SimpleAnimationControllerData, IPoseControllerData)
 
@@ -40,5 +38,4 @@ void SimpleAnimationControllerData::serialize(ISerializer& s)
 	s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
 }
 
-	}
 }

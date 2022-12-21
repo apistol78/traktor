@@ -35,6 +35,8 @@ class IResourceManager;
 namespace traktor::world
 {
 
+class EntityEventManager;
+
 /*! World entity factory.
  * \ingroup World
  */

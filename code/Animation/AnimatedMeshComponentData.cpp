@@ -21,10 +21,8 @@
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 1, AnimatedMeshComponentData, world::IEntityComponentData)
 
@@ -124,5 +122,4 @@ void AnimatedMeshComponentData::Binding::serialize(ISerializer& s)
 	s >> MemberRef< const world::EntityData >(L"entityData", entityData);
 }
 
-	}
 }

@@ -16,17 +16,15 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 const float c_timeOffsetDeltaTime = 1.0f / 30.0f;
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePoseControllerData", 1, StatePoseControllerData, IPoseControllerData)
 
@@ -45,7 +43,7 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	Ref< StatePoseController > poseController = new StatePoseController(stateGraph);
 
 	// Randomize time offset; pre-evaluate controller until offset reached.
-	float timeOffset = m_randomTimeOffset.random(s_random);
+	const float timeOffset = m_randomTimeOffset.random(s_random);
 	for (float time = 0.0f; time < timeOffset; time += c_timeOffsetDeltaTime)
 	{
 		AlignedVector< Transform > dummyPose;
@@ -69,5 +67,4 @@ void StatePoseControllerData::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
 }
 
-	}
 }

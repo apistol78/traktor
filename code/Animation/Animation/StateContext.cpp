@@ -8,12 +8,9 @@
  */
 #include "Animation/Animation/StateContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateContext", StateContext, Object)
 
-	}
 }

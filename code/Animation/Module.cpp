@@ -16,10 +16,8 @@
 #	include "Animation/IK/IKPoseControllerData.h"
 #	include "Animation/RagDoll/RagDollPoseControllerData.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 extern "C" void __module__Traktor_Animation()
 {
@@ -31,7 +29,6 @@ extern "C" void __module__Traktor_Animation()
 	T_FORCE_LINK_REF(RagDollPoseControllerData);
 }
 
-	}
 }
 
 #endif

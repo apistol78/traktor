@@ -10,6 +10,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
 #include "Physics/PhysicsManager.h"
@@ -74,8 +75,8 @@ bool IKPoseController::evaluate(
 	else
 		outPoseTransforms = jointTransforms;
 
-	AlignedVector< Vector4 > nodes(jointCount);
-	AlignedVector< Scalar > lengths(jointCount, 0.0_simd);
+	StaticVector< Vector4, 64 > nodes(jointCount);
+	StaticVector< Scalar, 64 > lengths(jointCount, 0.0_simd);
 
 	// Calculate skeleton bone lengths.
 	for (uint32_t i = 0; i < jointCount; ++i)
@@ -96,10 +97,11 @@ bool IKPoseController::evaluate(
 	// Solve IK by iteratively solving each constraint individually.
 	for (uint32_t i = 0; i < m_solverIterations; ++i)
 	{
-		// Constraint 2; always above ground.
+		// Constraint; always above ground.
 		for (uint32_t j = 0; j < jointCount; ++j)
 		{
-			const Vector4 n = worldTransform * nodes[j];
+			const Vector4 offset(0.0f, 0.25f, 0.0f, 0.0f);
+			const Vector4 n = worldTransform * nodes[j] - offset;
 
 			// Find intersection above node position.
 			const physics::QueryFilter filter(~0U);
@@ -108,10 +110,10 @@ bool IKPoseController::evaluate(
 				continue;
 
 			// Move node to intersection.
-			nodes[j] = worldTransform.inverse() * (result.position + Vector4(0.0f, 0.5f, 0.0f, 0.0f)).xyz1();
+			nodes[j] = worldTransform.inverse() * (result.position + offset).xyz1();
 		}
 
-		// Constraint 1; keep length.
+		// Constraint; keep length.
 		for (uint32_t j = 0; j < jointCount; ++j)
 		{
 			const Joint* joint = skeleton->getJoint(j);
@@ -121,17 +123,25 @@ bool IKPoseController::evaluate(
 			Vector4& s = nodes[joint->getParent()];
 			Vector4& e = nodes[j];
 
+			Vector4 d = e - s;
+			const Scalar ln = d.length();
+			const Scalar err = lengths[j] - ln;
+			if (abs(err) > FUZZY_EPSILON)
 			{
-				Vector4 d = e - s;
-				Scalar ln = d.length();
-				Scalar err = lengths[j] - ln;
-				if (abs(err) > FUZZY_EPSILON)
-				{
-					d /= ln;
-					e += err * d * 0.5_simd;
-					s -= err * d * 0.5_simd;
-				}
+				d /= ln;
+				e += err * d * 0.25_simd;
+				s -= err * d * 0.25_simd;
 			}
+		}
+
+		// Constraint; move nodes back to pose X/Z positions.
+		for (uint32_t j = 0; j < jointCount; ++j)
+		{
+			const Vector4 p = outPoseTransforms[j].translation().xyz1();
+			Vector4& n = nodes[j];
+
+			const Vector4 d = (p - n) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+			n += d * 0.1_simd;
 		}
 	}
 
@@ -143,20 +153,13 @@ bool IKPoseController::evaluate(
 		{
 			const Vector4& sref = outPoseTransforms[joint->getParent()].translation();
 			const Vector4& eref = outPoseTransforms[i].translation();
-
 			const Vector4 axisZref = (eref - sref).normalized();
 
 			const Vector4& sik = nodes[joint->getParent()];
 			const Vector4& eik = nodes[i];
+			const Vector4 axisZik = (eik - sik).normalized();
 
-			Vector4 axisZik = (eik - sik).normalized();
-			Vector4 axisXik, axisYik;
-			orthogonalFrame(axisZik, axisYik, axisXik);
-
-			const Quaternion Qr(
-				axisZref,
-				axisZik
-			);
+			const Quaternion Qr(axisZref, axisZik);
 			const Quaternion Qrr = outPoseTransforms[i].rotation() * Qr;
 
 			outPoseTransforms[i] = Transform(eik, Qrr);

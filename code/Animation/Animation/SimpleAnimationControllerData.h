@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class Animation;
 
@@ -54,6 +52,4 @@ private:
 	bool m_linearInterpolation = true;
 };
 
-	}
 }
-

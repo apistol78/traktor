@@ -17,10 +17,8 @@
 #include "Animation/Rotator/RotatorComponentData.h"
 #include "Animation/Rotator/WobbleComponentData.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityFactory", AnimationEntityFactory, world::IEntityFactory)
 
@@ -81,5 +79,4 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return nullptr;
 }
 
-	}
 }

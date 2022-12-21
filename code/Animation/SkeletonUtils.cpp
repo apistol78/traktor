@@ -12,10 +12,8 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 void calculateJointLocalTransforms(
 	const Skeleton* skeleton,
@@ -94,8 +92,8 @@ Aabb3 calculateBoundingBox(const Skeleton* skeleton)
 		const Joint* joint = skeleton->getJoint(i);
 		float radius = joint->getRadius();
 
-		Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
-		Aabb3 jointAabb = jointLocalAabb.transform(jointTransforms[i]);
+		const Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		const Aabb3 jointAabb = jointLocalAabb.transform(jointTransforms[i]);
 
 		boundingBox.contain(jointAabb);
 	}
@@ -115,8 +113,8 @@ Aabb3 calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
 		const Joint* joint = skeleton->getJoint(i);
 		float radius = joint->getRadius();
 
-		Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
-		Aabb3 jointAabb = jointLocalAabb.transform(poseTransforms[i]);
+		const Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		const Aabb3 jointAabb = jointLocalAabb.transform(poseTransforms[i]);
 
 		boundingBox.contain(jointAabb);
 	}
@@ -150,11 +148,10 @@ void blendPoses(
 		if (!indices(i))
 			continue;
 
-		Transform t1 = pose1->getJointTransform(i);
-		Transform t2 = pose2->getJointTransform(i);
+		const Transform t1 = pose1->getJointTransform(i);
+		const Transform t2 = pose2->getJointTransform(i);
 		outPose->setJointTransform(i, lerp(t1, t2, blend));
 	}
 }
 
-	}
 }

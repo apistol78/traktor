@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class StateGraph;
 class StateNode;
@@ -40,7 +38,7 @@ class T_DLLCLASS StatePoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	StatePoseController(const resource::Proxy< StateGraph >& stateGraph);
+	explicit StatePoseController(const resource::Proxy< StateGraph >& stateGraph);
 
 	bool setState(const std::wstring& stateName);
 
@@ -85,6 +83,4 @@ private:
 	float m_timeFactor;
 };
 
-	}
 }
-

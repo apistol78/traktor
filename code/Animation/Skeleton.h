@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 class Joint;
 
@@ -58,6 +56,4 @@ private:
 	mutable SmallMap< render::handle_t, uint32_t > m_jointMap;
 };
 
-	}
 }
-

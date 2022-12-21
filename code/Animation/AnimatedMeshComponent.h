@@ -23,32 +23,30 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class SkinnedMesh;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Buffer;
 class IRenderSystem;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class Skeleton;
 class IPoseController;
@@ -140,6 +138,4 @@ private:
 	void updatePoseController(int32_t index, float time, float deltaTime);
 };
 
-	}
 }
-
