@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <limits>
 #include <string>
 #include "Core/Config.h"
@@ -178,10 +179,24 @@ template < >
 class Member< void* >
 {
 public:
-	explicit Member< void* >(const wchar_t* const name, void* blob, uint32_t& blobSize)
+	explicit Member< void* >(
+		const wchar_t* const name,
+		const std::function< size_t () >& fn_getSize,
+		const std::function< bool (size_t) >& fn_setSize,
+		const std::function< void* () >& fn_getPointer
+	)
 	:	m_name(name)
-	,	m_blob(blob)
-	,	m_blobSize(blobSize)
+	,	m_fn_getSize(fn_getSize)
+	,	m_fn_setSize(fn_setSize)
+	,	m_fn_getPointer(fn_getPointer)
+	{
+	}
+
+	explicit Member< void* >(const wchar_t* const name, void* blob, size_t& blobSize)
+	:	m_name(name)
+	,	m_fn_getSize([&](){ return blobSize; })
+	,	m_fn_setSize([&](size_t s){ blobSize = s; return true; })
+	,	m_fn_getPointer([&](){ return blob; })
 	{
 	}
 
@@ -195,24 +210,25 @@ public:
 	 *
 	 * \return Pointer to binary blob.
 	 */
-	void* getBlob() const { return m_blob; }
+	void* getBlob() const { return m_fn_getPointer(); }
 
 	/*! Get size of binary blob.
 	 *
 	 * \return Size of binary blob.
 	 */
-	uint32_t getBlobSize() const { return m_blobSize; }
+	size_t getBlobSize() const { return m_fn_getSize(); }
 
 	/*! Set size of binary blob.
 	 *
 	 * \param blobSize Size of binary blob.
 	 */
-	void setBlobSize(uint32_t blobSize) const { m_blobSize = blobSize; }
+	bool setBlobSize(size_t blobSize) const { return m_fn_setSize(blobSize); }
 
 private:
 	const wchar_t* const m_name;
-	void* m_blob;
-	uint32_t& m_blobSize;
+	const std::function< size_t () >& m_fn_getSize;
+	const std::function< bool (size_t) >& m_fn_setSize;
+	const std::function< void* () >& m_fn_getPointer;
 };
 
 //@}

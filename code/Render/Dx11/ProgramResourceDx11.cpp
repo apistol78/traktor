@@ -38,7 +38,12 @@ public:
 		if (s.getDirection() == ISerializer::Direction::Read)
 		{
 			blobSize = sizeof(blob);
-			s >> Member< void* >(getName(), blob, blobSize);
+			s >> Member< void* >(
+				getName(),
+				[&]() { return blobSize; },	// get blob size
+				[&](size_t size) { return true; },	// set blob size
+				[&]() { return blob; }
+			);
 
 			m_ref = Blob::create(blobSize);
 			if (!m_ref)
@@ -57,7 +62,12 @@ public:
 			if (m_ref)
 				std::memcpy(blob, m_ref->getData(), blobSize);
 
-			s >> Member< void* >(getName(), blob, blobSize);
+			s >> Member< void* >(
+				getName(),
+				[&]() { return blobSize; },	// get blob size
+				[&](size_t size) { return true; },	// set blob size
+				[&]() { return blob; }
+			);
 		}
 	}
 
@@ -76,7 +86,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint32_t size = sizeof(m_ref);
+		size_t size = sizeof(m_ref);
 		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
@@ -95,7 +105,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint32_t size = sizeof(m_ref);
+		size_t size = sizeof(m_ref);
 		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
@@ -114,7 +124,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint32_t size = sizeof(m_ref);
+		size_t size = sizeof(m_ref);
 		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
@@ -133,7 +143,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint32_t size = sizeof(m_ref);
+		size_t size = sizeof(m_ref);
 		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 

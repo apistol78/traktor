@@ -42,7 +42,7 @@ void Sound::serialize(ISerializer& s)
 			m_samples[i].reset(new int16_t [m_sampleCount]);
 
 		void* data = m_samples[i].ptr();
-		uint32_t size = m_sampleCount * sizeof(int16_t);
+		size_t size = m_sampleCount * sizeof(int16_t);
 
 		s >> Member< void* >(L"samples", data, size);
 	}

@@ -55,7 +55,7 @@ public:
 		std::wstring channel;
 		bool anisotropic = false;
 		Guid texture;
-		Ref< drawing::Image > image;	//!< Not serializable.
+		Ref< drawing::Image > image;
 
 		Map() = default;
 
