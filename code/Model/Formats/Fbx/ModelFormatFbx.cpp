@@ -17,6 +17,7 @@
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/Conversion.h"
@@ -53,7 +54,7 @@ bool include(FbxNode* node, const std::wstring& filter)
 		return true;
 
 	// Check if node's name match filter tag.
-	std::wstring name = mbstows(node->GetName());
+	const std::wstring name = mbstows(node->GetName());
 	for (auto s : StringSplit< std::wstring >(filter, L",;"))
 	{
 		if (s.front() != L'!')
@@ -79,7 +80,7 @@ FbxNode* search(FbxNode* node, const std::wstring& filter, const std::function< 
 	if (predicate(node))
 		return node;
 
-	int32_t childCount = node->GetChildCount();
+	const int32_t childCount = node->GetChildCount();
 	for (int32_t i = 0; i < childCount; ++i)
 	{
 		FbxNode* childNode = node->GetChild(i);
@@ -102,7 +103,7 @@ bool traverse(FbxNode* node, const std::wstring& filter, const std::function< bo
 	if (!visitor(node))
 		return false;
 
-	int32_t childCount = node->GetChildCount();
+	const int32_t childCount = node->GetChildCount();
 	for (int32_t i = 0; i < childCount; ++i)
 	{
 		FbxNode* childNode = node->GetChild(i);
@@ -131,7 +132,7 @@ void dump(FbxNode* node)
 
 			FbxMesh* mesh = static_cast< FbxMesh* >(node->GetNodeAttribute());
 
-			int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+			const int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 			log::info << L"Deformer count " << deformerCount << Endl;
 
 			for (int32_t i = 0; i < deformerCount; ++i)
@@ -140,7 +141,7 @@ void dump(FbxNode* node)
 				if (!skinDeformer)
 					continue;
 
-				int32_t clusterCount = skinDeformer->GetClusterCount();
+				const int32_t clusterCount = skinDeformer->GetClusterCount();
 				log::info << L"deformer[" << i << L"].cluserCount " << clusterCount << Endl;
 
 				for (int32_t j = 0; j < clusterCount; ++j)
@@ -163,7 +164,7 @@ void dump(FbxNode* node)
 	else
 		log::info << L"Hidden" << Endl;
 
-	int32_t childCount = node->GetChildCount();
+	const int32_t childCount = node->GetChildCount();
 	for (int32_t i = 0; i < childCount; ++i)
 	{
 		FbxNode* childNode = node->GetChild(i);
@@ -227,6 +228,11 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		log::error << L"Unable to import FBX model; failed to create FBX importer instance." << Endl;
 		return nullptr;
 	}
+
+	// Ensure embedded resources are extracted at a known location.
+	const Path embeddedPath(OS::getInstance().getWritableFolderPath() + L"/Traktor/Fbx");
+	FileSystem::getInstance().makeAllDirectories(embeddedPath);
+	importer->SetEmbeddingExtractionFolder(wstombs(embeddedPath.getPathNameOS()).c_str());
 
 	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)

@@ -879,9 +879,6 @@ void BinarySerializer::operator >> (const Member< void* >& m)
 		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
 			return;
 
-		if (!ensure(size <= m.getBlobSize()))
-			return;
-
 		if (!ensure(m.setBlobSize(size)))
 			return;
 
