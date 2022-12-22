@@ -38,9 +38,9 @@ public:
 
 	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
-	virtual bool prepareContext(StateContext& outContext) override final;
+	virtual bool prepareContext(StateContext& outContext) const override final;
 
-	virtual void evaluate(StateContext& context, Pose& outPose) override final;
+	virtual void evaluate(StateContext& context, Pose& outPose) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

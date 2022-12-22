@@ -31,7 +31,7 @@ bool StateNodeAnimation::bind(resource::IResourceManager* resourceManager)
 	return resourceManager->bind(m_animation);
 }
 
-bool StateNodeAnimation::prepareContext(StateContext& outContext)
+bool StateNodeAnimation::prepareContext(StateContext& outContext) const
 {
 	if (!m_animation)
 		return false;
@@ -51,7 +51,7 @@ bool StateNodeAnimation::prepareContext(StateContext& outContext)
 void StateNodeAnimation::evaluate(
 	StateContext& context,
 	Pose& outPose
-)
+) const
 {
 	const float time = context.getTime();
 	int32_t indexHint = context.getIndexHint();
