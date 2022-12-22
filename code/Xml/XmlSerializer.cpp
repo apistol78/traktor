@@ -315,7 +315,7 @@ void XmlSerializer::operator >> (const Member< void* >& m)
 {
 	T_CHECK_STATUS;
 
-	const uint32_t size = m.getBlobSize();
+	const size_t size = m.getBlobSize();
 	uint8_t* blob = reinterpret_cast< uint8_t* >(m.getBlob());
 
 	if (size > 0)
@@ -323,7 +323,7 @@ void XmlSerializer::operator >> (const Member< void* >& m)
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
 
 		enterElement(m.getName());
-		m_xml << Base64().encode(blob, size, true) << Endl;
+		m_xml << Base64().encode(blob, (uint32_t)size, true) << Endl;
 		leaveElement();
 
 		m_xml << m_indent << L"</" << m.getName() << L">" << Endl;

@@ -6,17 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Drawing/Formats/ImageFormatTri.h"
 #include "Model/Material.h"
 
 namespace traktor::model
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 1, Material, PropertyGroup)
 
 Material::Material(const std::wstring& name)
 :	m_name(name)
@@ -171,6 +173,39 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"channel", channel);
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
+
+	if (s.getVersion< Material >() >= 1)
+	{
+		AlignedVector< uint8_t > blob;
+		if (s.getDirection() == ISerializer::Direction::Read)
+		{
+			s >> Member< void* >(
+				L"image",
+				[&]() { return blob.size(); },	// get blob size
+				[&](size_t size) { blob.resize(size); return true; },	// set blob size
+				[&]() { return blob.ptr(); }
+			);
+			if (!blob.empty())
+			{
+				DynamicMemoryStream ms(blob, true, false);
+				image = drawing::ImageFormatTri().read(&ms);
+			}
+		}
+		else
+		{
+			if (image)
+			{
+				DynamicMemoryStream ms(blob, false, true);
+				drawing::ImageFormatTri().write(&ms, image);
+			}
+			s >> Member< void* >(
+				L"image",
+				[&]() { return blob.size(); },	// get blob size
+				[&](size_t size) { return false; },	// set blob size
+				[&]() { return blob.ptr(); }
+			);
+		}
+	}
 }
 
 }

@@ -381,7 +381,8 @@ void XmlDeserializer::operator >> (const Member< void* >& m)
 
 	if (!data.empty())
 	{
-		m.setBlobSize(uint32_t(data.size()));
+		if (!ensure(m.setBlobSize(data.size())))
+			return;
 		memcpy(m.getBlob(), &data[0], data.size());
 	}
 	else

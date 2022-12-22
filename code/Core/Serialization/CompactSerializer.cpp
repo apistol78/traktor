@@ -868,7 +868,8 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 		if (!ensure(size <= m.getBlobSize()))
 			return;
 
-		m.setBlobSize(size);
+		if (!ensure(m.setBlobSize(size)))
+			return;
 
 		if (size > 0)
 		{
@@ -879,7 +880,7 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 	}
 	else
 	{
-		uint32_t size = m.getBlobSize();
+		const uint32_t size = (uint32_t)m.getBlobSize();
 
 		if (!ensure(write_uint32(m_writer, size)))
 			return;

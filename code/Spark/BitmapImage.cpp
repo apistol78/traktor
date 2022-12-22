@@ -55,7 +55,7 @@ void BitmapImage::serialize(ISerializer& s)
 #endif
 
 	void* bits = nullptr;
-	uint32_t size = 0;
+	size_t size = 0;
 
 	if (m_image)
 	{

@@ -882,14 +882,15 @@ void BinarySerializer::operator >> (const Member< void* >& m)
 		if (!ensure(size <= m.getBlobSize()))
 			return;
 
-		m.setBlobSize(size);
+		if (!ensure(m.setBlobSize(size)))
+			return;
 
 		if (size > 0)
 			read_block(m_stream, m.getBlob(), size, 1);
 	}
 	else
 	{
-		uint32_t size = m.getBlobSize();
+		const uint32_t size = (uint32_t)m.getBlobSize();
 
 		if (!ensure(write_primitive< uint32_t >(m_stream, size)))
 			return;
