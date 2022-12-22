@@ -83,37 +83,55 @@ public:
 
 	void setDiffuseMap(const Map& diffuseMap);
 
+	Map& getDiffuseMap(){ return m_diffuseMap; }
+
 	const Map& getDiffuseMap() const { return m_diffuseMap; }
 
 	void setSpecularMap(const Map& specularMap);
+
+	Map& getSpecularMap(){ return m_specularMap; }
 
 	const Map& getSpecularMap() const { return m_specularMap; }
 
 	void setRoughnessMap(const Map& roughnessMap);
 
+	Map& getRoughnessMap() { return m_roughnessMap; }
+
 	const Map& getRoughnessMap() const { return m_roughnessMap; }
 
 	void setMetalnessMap(const Map& metalnessMap);
+
+	Map& getMetalnessMap() { return m_metalnessMap; }
 
 	const Map& getMetalnessMap() const { return m_metalnessMap; }
 
 	void setTransparencyMap(const Map& transparencyMap);
 
+	Map& getTransparencyMap() { return m_transparencyMap; }
+
 	const Map& getTransparencyMap() const { return m_transparencyMap; }
 
 	void setEmissiveMap(const Map& emissiveMap);
+
+	Map& getEmissiveMap() { return m_emissiveMap; }
 
 	const Map& getEmissiveMap() const { return m_emissiveMap; }
 
 	void setReflectiveMap(const Map& reflectiveMap);
 
+	Map& getReflectiveMap() { return m_reflectiveMap; }
+
 	const Map& getReflectiveMap() const { return m_reflectiveMap; }
 
 	void setNormalMap(const Map& normalMap);
 
+	Map& getNormalMap() { return m_normalMap; }
+
 	const Map& getNormalMap() const { return m_normalMap; }
 
 	void setLightMap(const Map& lightMap);
+
+	Map& getLightMap() { return m_lightMap; }
 
 	const Map& getLightMap() const { return m_lightMap; }
 

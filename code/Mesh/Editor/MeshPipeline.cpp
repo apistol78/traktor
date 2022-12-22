@@ -24,6 +24,7 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
@@ -56,6 +57,7 @@
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor
@@ -132,6 +134,28 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 	default:
 		return Guid();
 	}
+}
+
+bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& outputPath, const Guid& outputGuid, model::Material::Map& map, bool normalMap)
+{
+	if (map.image == nullptr)
+		return true;
+
+	Ref< render::TextureOutput > output = new render::TextureOutput();
+	output->m_textureType = render::Tt2D;
+	output->m_enableNormalMapCompression = normalMap;
+	output->m_linearGamma = normalMap;
+
+	if (!pipelineBuilder->buildAdHocOutput(
+		output,
+		outputPath + L"/" + map.name,
+		outputGuid,
+		map.image
+	))
+		return false;
+
+	map.texture = outputGuid;
+	return true;
 }
 
 		}
@@ -452,6 +476,22 @@ bool MeshPipeline::buildOutput(
 
 		boundingBox.contain(model->getBoundingBox());
 		polygonCount += model->getPolygonCount();
+	}
+
+	// Build embedded textures and assign generated id;s to materials.
+	Guid nextEmbeddedTextureId = outputGuid.permutation(Guid(L"{86EE187C-3DB8-4500-B4FD-35941AC953DE}"));
+	for (auto& materialPair : materials)
+	{
+		model::Material& m = materialPair.second;
+
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getDiffuseMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getSpecularMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getRoughnessMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getMetalnessMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getTransparencyMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getEmissiveMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getReflectiveMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getNormalMap(), true);
 	}
 
 	// Build materials.
