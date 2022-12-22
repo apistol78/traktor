@@ -52,9 +52,9 @@ public:
 
 	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
 
-	virtual bool prepareContext(StateContext& outContext) = 0;
+	virtual bool prepareContext(StateContext& outContext) const = 0;
 
-	virtual void evaluate(StateContext& context, Pose& outPose) = 0;
+	virtual void evaluate(StateContext& context, Pose& outPose) const = 0;
 
 	virtual void serialize(ISerializer& s) override;
 

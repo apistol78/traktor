@@ -9,7 +9,6 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StateNodeAnimation.h"
-#include "Animation/Animation/StateNodeController.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/Transition.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
@@ -612,8 +611,13 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT(state);
 
+		Ref< StateGraph > stateGraph = new StateGraph();
+		stateGraph->addState(state);
+		stateGraph->addTransition(new Transition(state, state));
+		stateGraph->setRootState(state);
+
 		m_propertiesView->setPropertyObject(state);
-		m_previewControl->setPoseController(new StateNodeController(state));
+		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(stateGraph)));
 	}
 	else if (m_editorGraph->getSelectedEdges(edges) == 1)
 	{
