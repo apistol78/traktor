@@ -494,7 +494,7 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			const float imageGamma = image->getImageInfo()->getGamma();
 			const bool is_sRGB = (bool)(std::abs(imageGamma - m_gamma) <= 0.1f);
-			if (is_sRGB)
+			if (is_sRGB && !isNormalMap)
 				sRGB = true;
 			else
 			{
@@ -506,7 +506,7 @@ bool TextureOutputPipeline::buildOutput(
 		else
 		{
 			// No image meta data; assume image is sRGB.
-			if (m_sRGB)
+			if (m_sRGB && !isNormalMap)
 				sRGB = true;
 			else
 			{
