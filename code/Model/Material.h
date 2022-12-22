@@ -59,11 +59,12 @@ public:
 
 		Map() = default;
 
-		Map(const std::wstring& name_, const std::wstring& channel_, bool anisotropic_ = true, const Guid& texture_ = Guid())
+		Map(const std::wstring& name_, const std::wstring& channel_, bool anisotropic_ = true, const Guid& texture_ = Guid(), drawing::Image* image_ = nullptr)
 		:	name(name_)
 		,	channel(channel_)
 		,	anisotropic(anisotropic_)
 		,	texture(texture_)
+		,	image(image_)
 		{
 		}
 

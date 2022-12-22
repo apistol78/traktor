@@ -865,9 +865,6 @@ void CompactSerializer::operator >> (const Member< void* >& m)
 		if (!ensure(read_uint32(m_reader, size)))
 			return;
 
-		if (!ensure(size <= m.getBlobSize()))
-			return;
-
 		if (!ensure(m.setBlobSize(size)))
 			return;
 

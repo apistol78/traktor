@@ -18,7 +18,7 @@
 namespace traktor::model
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 1, Material, PropertyGroup)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 
 Material::Material(const std::wstring& name)
 :	m_name(name)
@@ -174,37 +174,34 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
 
-	if (s.getVersion< Material >() >= 1)
+	AlignedVector< uint8_t > blob;
+	if (s.getDirection() == ISerializer::Direction::Read)
 	{
-		AlignedVector< uint8_t > blob;
-		if (s.getDirection() == ISerializer::Direction::Read)
+		s >> Member< void* >(
+			L"image",
+			[&]() { return blob.size(); },	// get blob size
+			[&](size_t size) { blob.resize(size); return true; },	// set blob size
+			[&]() { return blob.ptr(); }
+		);
+		if (!blob.empty())
 		{
-			s >> Member< void* >(
-				L"image",
-				[&]() { return blob.size(); },	// get blob size
-				[&](size_t size) { blob.resize(size); return true; },	// set blob size
-				[&]() { return blob.ptr(); }
-			);
-			if (!blob.empty())
-			{
-				DynamicMemoryStream ms(blob, true, false);
-				image = drawing::ImageFormatTri().read(&ms);
-			}
+			DynamicMemoryStream ms(blob, true, false);
+			image = drawing::ImageFormatTri().read(&ms);
 		}
-		else
+	}
+	else
+	{
+		if (image)
 		{
-			if (image)
-			{
-				DynamicMemoryStream ms(blob, false, true);
-				drawing::ImageFormatTri().write(&ms, image);
-			}
-			s >> Member< void* >(
-				L"image",
-				[&]() { return blob.size(); },	// get blob size
-				[&](size_t size) { return false; },	// set blob size
-				[&]() { return blob.ptr(); }
-			);
+			DynamicMemoryStream ms(blob, false, true);
+			drawing::ImageFormatTri().write(&ms, image);
 		}
+		s >> Member< void* >(
+			L"image",
+			[&]() { return blob.size(); },	// get blob size
+			[&](size_t size) { return true; },	// set blob size
+			[&]() { return blob.ptr(); }
+		);
 	}
 }
 

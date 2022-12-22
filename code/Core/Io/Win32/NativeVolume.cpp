@@ -227,9 +227,9 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 		creationDisposition = (mode & (File::FmRead | File::FmAppend)) ? OPEN_ALWAYS : CREATE_ALWAYS;
 	}
 
-	std::wstring systemPath = getSystemPath(fileName);
+	const std::wstring systemPath = getSystemPath(fileName);
 
-	HANDLE hFile = CreateFile(
+	const HANDLE hFile = CreateFile(
 		wstots(systemPath).c_str(),
 		desiredAccess,
 		FILE_SHARE_READ,
@@ -251,8 +251,8 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	// Try to map file if open for reading.
 	if ((mode & (File::FmRead | File::FmMapped)) == (File::FmRead | File::FmMapped))
 	{
-		int64_t fileSize = GetFileSize(hFile, NULL);
-		HANDLE hFileMapping = CreateFileMapping(
+		const int64_t fileSize = GetFileSize(hFile, NULL);
+		const HANDLE hFileMapping = CreateFileMapping(
 			hFile,
 			NULL,
 			PAGE_READONLY,
@@ -277,7 +277,7 @@ bool NativeVolume::exist(const Path& fileName)
 	WIN32_FIND_DATA ffd;
 	HANDLE ffh;
 
-	std::wstring systemPath = getSystemPath(fileName);
+	const std::wstring systemPath = getSystemPath(fileName);
 
 	if ((ffh = FindFirstFile(wstots(systemPath).c_str(), &ffd)) == INVALID_HANDLE_VALUE)
 		return false;
@@ -288,48 +288,44 @@ bool NativeVolume::exist(const Path& fileName)
 
 bool NativeVolume::remove(const Path& fileName)
 {
-	std::wstring systemPath = getSystemPath(fileName);
+	const std::wstring systemPath = getSystemPath(fileName);
 	return bool(DeleteFile(wstots(systemPath).c_str()) == TRUE);
 }
 
 bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
-	std::wstring sourceName = getSystemPath(fileName);
-	std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
+	const std::wstring sourceName = getSystemPath(fileName);
+	const std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
 	return bool(MoveFileEx(wstots(sourceName).c_str(), wstots(destinationName).c_str(), overwrite ? MOVEFILE_REPLACE_EXISTING : 0) == TRUE);
 }
 
 bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
-	std::wstring sourceName = getSystemPath(fileName);
-	std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
+	const std::wstring sourceName = getSystemPath(fileName);
+	const std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
 	return bool(CopyFile(wstots(sourceName).c_str(), wstots(destinationName).c_str(), !overwrite) == TRUE);
 }
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
-	std::wstring systemPath = getSystemPath(directory);
-
+	const std::wstring systemPath = getSystemPath(directory);
 	if (!CreateDirectory(wstots(systemPath).c_str(), NULL))
 		return bool(GetLastError() == ERROR_ALREADY_EXISTS);
-
 	return true;
 }
 
 bool NativeVolume::removeDirectory(const Path& directory)
 {
-	std::wstring systemPath = getSystemPath(directory);
-
+	const std::wstring systemPath = getSystemPath(directory);
 	if (!RemoveDirectory(wstots(systemPath).c_str()))
 		return false;
-
 	return true;
 }
 
 bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& newName)
 {
-	std::wstring sourceName = getSystemPath(directory);
-	std::wstring destinationName = getSystemPath(directory.getPathOnly() + L"/" + newName);
+	const std::wstring sourceName = getSystemPath(directory);
+	const std::wstring destinationName = getSystemPath(directory.getPathOnly() + L"/" + newName);
 	return bool(MoveFile(wstots(sourceName).c_str(), wstots(destinationName).c_str()) == TRUE);
 }
 
@@ -386,7 +382,7 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
 	std::wstringstream ss;
 
-	Path npath = path.normalized();
+	const Path npath = path.normalized();
 	if (npath.hasVolume())
 	{
 		T_ASSERT(npath.getVolume() == m_currentDirectory.getVolume());

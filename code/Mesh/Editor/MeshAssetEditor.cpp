@@ -471,29 +471,29 @@ void MeshAssetEditor::updateMaterialList()
 		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
 		for (const auto& material : materials)
 		{
-			std::wstring modelTextures[] =
+			struct { std::wstring name; bool embedded; } modelTextures[] =
 			{
-				material.getDiffuseMap().name,
-				material.getSpecularMap().name,
-				material.getRoughnessMap().name,
-				material.getMetalnessMap().name,
-				material.getTransparencyMap().name,
-				material.getEmissiveMap().name,
-				material.getReflectiveMap().name,
-				material.getNormalMap().name
+				{ material.getDiffuseMap().name,		material.getDiffuseMap().image != nullptr },
+				{ material.getSpecularMap().name,		material.getSpecularMap().image != nullptr },
+				{ material.getRoughnessMap().name,		material.getRoughnessMap().image != nullptr },
+				{ material.getMetalnessMap().name,		material.getMetalnessMap().image != nullptr },
+				{ material.getTransparencyMap().name,	material.getTransparencyMap().image != nullptr },
+				{ material.getEmissiveMap().name,		material.getEmissiveMap().image != nullptr },
+				{ material.getReflectiveMap().name,		material.getReflectiveMap().image != nullptr },
+				{ material.getNormalMap().name,			material.getNormalMap().image != nullptr }
 			};
 
 			for (uint32_t j = 0; j < sizeof_array(modelTextures); ++j)
 			{
-				if (modelTextures[j].empty() || textureNames.find(modelTextures[j]) != textureNames.end())
+				if (modelTextures[j].name.empty() || textureNames.find(modelTextures[j].name) != textureNames.end())
 					continue;
 
-				textureNames.insert(modelTextures[j]);
+				textureNames.insert(modelTextures[j].name);
 
 				Ref< db::Instance > materialTextureInstance;
-				std::wstring materialTexture = i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
+				std::wstring materialTexture = modelTextures[j].embedded ? i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") : i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
 
-				auto it = materialTextures.find(modelTextures[j]);
+				auto it = materialTextures.find(modelTextures[j].name);
 				if (it != materialTextures.end())
 				{
 					materialTextureInstance = m_editor->getSourceDatabase()->getInstance(it->second);
@@ -502,25 +502,25 @@ void MeshAssetEditor::updateMaterialList()
 				}
 
 				Ref< ui::GridRow > textureItem = new ui::GridRow();
-				textureItem->add(new ui::GridItem(modelTextures[j]));
+				textureItem->add(new ui::GridItem(modelTextures[j].name));
 				textureItem->add(new ui::GridItem(materialTexture));
 
 				StringOutputStream ss;
-				if (modelTextures[j] == material.getDiffuseMap().name)
+				if (modelTextures[j].name == material.getDiffuseMap().name)
 					ss << L" | Diffuse";
-				if (modelTextures[j] == material.getSpecularMap().name)
+				if (modelTextures[j].name == material.getSpecularMap().name)
 					ss << L" | Specular";
-				if (modelTextures[j] == material.getRoughnessMap().name)
+				if (modelTextures[j].name == material.getRoughnessMap().name)
 					ss << L" | Roughness";
-				if (modelTextures[j] == material.getMetalnessMap().name)
+				if (modelTextures[j].name == material.getMetalnessMap().name)
 					ss << L" | Metalness";
-				if (modelTextures[j] == material.getTransparencyMap().name)
+				if (modelTextures[j].name == material.getTransparencyMap().name)
 					ss << L" | Transparency";
-				if (modelTextures[j] == material.getEmissiveMap().name)
+				if (modelTextures[j].name == material.getEmissiveMap().name)
 					ss << L" | Emissive";
-				if (modelTextures[j] == material.getReflectiveMap().name)
+				if (modelTextures[j].name == material.getReflectiveMap().name)
 					ss << L" | Reflective (*)";
-				if (modelTextures[j] == material.getNormalMap().name)
+				if (modelTextures[j].name == material.getNormalMap().name)
 					ss << L" | Normal";
 				textureItem->add(new ui::GridItem(ss.str().substr(3)));
 

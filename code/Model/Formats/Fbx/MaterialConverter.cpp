@@ -10,6 +10,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Drawing/Image.h"
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/MaterialConverter.h"
 
@@ -113,6 +114,18 @@ std::wstring getTextureName(const FbxTexture* texture)
 		return std::wstring(mbstows(texture->GetName()));
 }
 
+Ref< drawing::Image > getEmbeddedTexture(const FbxTexture* texture)
+{
+	const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
+	if (fileTexture)
+	{
+		const Path texturePath(mbstows(fileTexture->GetFileName()));
+		return drawing::Image::load(texturePath);
+	}
+	else
+		return nullptr;
+}
+
 std::wstring uvChannel(Model& outModel, const std::string& name)
 {
 	return mbstows(name);
@@ -129,7 +142,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		if (!material)
 			continue;
 
-		std::wstring name = mbstows(material->GetName());
+		const std::wstring name = mbstows(material->GetName());
 
 		// Check if material has already been added.
 		const auto& materials = outModel.getMaterials();
@@ -148,60 +161,78 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
 		if (diffuseTexture)
 		{
+			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(diffuseTexture);
 			mm.setDiffuseMap(Material::Map(
 				getTextureName(diffuseTexture),
 				uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer()),
-				true
+				true,
+				Guid(),
+				diffuseImage
 			));
 		}
 
 		const FbxTexture* specularTexture = getTexture(material, FbxSurfaceMaterial::sSpecular);
 		if (specularTexture)
 		{
+			Ref< drawing::Image > specularImage = getEmbeddedTexture(specularTexture);
 			mm.setSpecularMap(Material::Map(
 				getTextureName(specularTexture),
 				uvChannel(outModel, specularTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				specularImage
 			));
 		}
 
 		const FbxTexture* shininessTexture = getTexture(material, FbxSurfaceMaterial::sShininess);
 		if (shininessTexture)
 		{
+			Ref< drawing::Image > shininessImage = getEmbeddedTexture(shininessTexture);
 			mm.setRoughnessMap(Material::Map(
 				getTextureName(shininessTexture),
 				uvChannel(outModel, shininessTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				shininessImage
 			));
 		}
 
 		const FbxTexture* reflectionFactorTexture = getTexture(material, FbxSurfaceMaterial::sReflectionFactor);
 		if (reflectionFactorTexture)
 		{
+			Ref< drawing::Image > reflectionFactorImage = getEmbeddedTexture(reflectionFactorTexture);
 			mm.setMetalnessMap(Material::Map(
 				getTextureName(reflectionFactorTexture),
 				uvChannel(outModel, reflectionFactorTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				reflectionFactorImage
 			));
 		}
 
 		const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
 		if (normalTexture)
 		{
+			Ref< drawing::Image > normalImage = getEmbeddedTexture(normalTexture);
 			mm.setNormalMap(Material::Map(
 				getTextureName(normalTexture),
 				uvChannel(outModel, normalTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				normalImage
 			));
 		}
 
 		const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
 		if (transparencyTexture)
 		{
+			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(transparencyTexture);
 			mm.setTransparencyMap(Material::Map(
 				getTextureName(transparencyTexture),
 				uvChannel(outModel, transparencyTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				transparencyImage
 			));
 			mm.setBlendOperator(Material::BoAlpha);
 		}
@@ -209,10 +240,13 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		const FbxTexture* transparencyFactorTexture = getTexture(material, FbxSurfaceMaterial::sTransparencyFactor);
 		if (transparencyFactorTexture)
 		{
+			Ref< drawing::Image > transparencyFactorImage = getEmbeddedTexture(transparencyFactorTexture);
 			mm.setTransparencyMap(Material::Map(
 				getTextureName(transparencyFactorTexture),
 				uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				transparencyFactorImage
 			));
 			mm.setBlendOperator(Material::BoAlphaTest);
 		}
@@ -220,10 +254,13 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		const FbxTexture* emissiveTexture = getTexture(material, /*mayaExported ? FbxSurfaceMaterial::sAmbient :*/ FbxSurfaceMaterial::sEmissive);
 		if (emissiveTexture)
 		{
+			Ref< drawing::Image > emissiveImage = getEmbeddedTexture(emissiveTexture);
 			mm.setEmissiveMap(Material::Map(
 				getTextureName(emissiveTexture),
 				uvChannel(outModel, emissiveTexture->UVSet.Get().Buffer()),
-				false
+				false,
+				Guid(),
+				emissiveImage
 			));
 		}
 
