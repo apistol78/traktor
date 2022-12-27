@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Animation/Rotator/RotatorComponent.h"
+#include "Animation/Rotator/PendulumComponent.h"
 #include "Core/Ref.h"
 #include "World/IEntityComponentData.h"
 
@@ -25,20 +25,22 @@ namespace traktor::animation
 /*!
  * \ingroup Animation
  */
-class T_DLLCLASS RotatorComponentData : public world::IEntityComponentData
+class T_DLLCLASS PendulumComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< RotatorComponent > createComponent() const;
+	Ref< PendulumComponent > createComponent() const;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	RotatorComponent::Axis m_axis = RotatorComponent::Axis::X;
-	float m_rate = 1.0f;
+	PendulumComponent::Axis m_axis = PendulumComponent::Axis::X;
+    Vector4 m_pivot = Vector4::zero();
+	float m_amplitude = 1.0f;
+    float m_rate = 1.0f;
 };
 
 }
