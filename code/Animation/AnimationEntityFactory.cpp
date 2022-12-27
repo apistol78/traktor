@@ -14,6 +14,7 @@
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
 #include "Animation/PathEntity/PathComponentData.h"
+#include "Animation/Rotator/PendulumComponentData.h"
 #include "Animation/Rotator/RotatorComponentData.h"
 #include "Animation/Rotator/WobbleComponentData.h"
 
@@ -46,6 +47,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< BoidsComponentData >();
 	typeSet.insert< ClothComponentData >();
 	typeSet.insert< PathComponentData >();
+	typeSet.insert< PendulumComponentData >();
 	typeSet.insert< RotatorComponentData >();
 	typeSet.insert< WobbleComponentData >();
 	return typeSet;
@@ -71,6 +73,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return clothComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
 		return pathComponentData->createComponent();
+	else if (auto pendulumComponentData = dynamic_type_cast< const PendulumComponentData* >(&entityComponentData))
+		return pendulumComponentData->createComponent();
 	else if (auto rotatorComponentData = dynamic_type_cast< const RotatorComponentData* >(&entityComponentData))
 		return rotatorComponentData->createComponent();
 	else if (auto wobbleComponentData = dynamic_type_cast< const WobbleComponentData* >(&entityComponentData))
