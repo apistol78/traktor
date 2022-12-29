@@ -1,4 +1,9 @@
 # Traktor
+Welcome to the Traktor git repository.
+Traktor is a game (all batteries) engine which has
+been used in a couple of commercial games across
+different platforms. 
+
 
 ## How to build
 
