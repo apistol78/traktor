@@ -539,8 +539,8 @@ void ProbeRenderer::build(
 
 	const Transform& transform = probeComponent->getTransform();
 
-	Matrix44 worldView = view * transform.toMatrix44();
-	Matrix44 worldViewInv = worldView.inverse();
+	const Matrix44 worldView = view * transform.toMatrix44();
+	const Matrix44 worldViewInv = worldView.inverse();
 
 	auto rb = renderContext->alloc< render::IndexedRenderBlock >(L"Probe");
 
