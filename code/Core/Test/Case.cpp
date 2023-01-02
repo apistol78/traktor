@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Test/Case.h"
 
 namespace traktor::test
