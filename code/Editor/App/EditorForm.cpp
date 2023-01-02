@@ -12,6 +12,7 @@
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Log/LogRedirectTarget.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"

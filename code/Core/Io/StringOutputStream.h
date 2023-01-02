@@ -10,7 +10,6 @@
 
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/OutputStreamBuffer.h"
-#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +30,8 @@ class StringOutputStreamBuffer : public OutputStreamBuffer
 public:
 	StringOutputStreamBuffer(size_t initialCapacity = 1024);
 
+	virtual ~StringOutputStreamBuffer();
+
 	bool empty() const;
 
 	std::wstring str() const;
@@ -44,7 +45,9 @@ public:
 private:
 	friend class StringOutputStream;
 
-	AutoArrayPtr< wchar_t, AllocatorFree > m_buffer;
+	wchar_t m_internal[128];
+	wchar_t* m_buffer;
+	size_t m_initialCapacity;
 	size_t m_capacity;
 	size_t m_tail;
 };
