@@ -63,7 +63,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		auto& r = staticMesh->m_techniqueParts[worldTechnique];
 		r.first = (uint32_t)staticMesh->m_parts.size();
 
-		staticMesh->m_parts.reserve(tp.second.size());
+		staticMesh->m_parts.reserve(r.first + tp.second.size());
 		for (const auto& p : tp.second)
 		{
 			StaticMesh::Part& part = staticMesh->m_parts.push_back();

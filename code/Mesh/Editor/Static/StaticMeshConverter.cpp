@@ -63,15 +63,15 @@ bool StaticMeshConverter::convert(
 	T_FATAL_ASSERT(model != nullptr);
 
 	// Create render mesh.
-	uint32_t vertexSize = render::getVertexSize(vertexElements);
+	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
-	bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
-	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
 	// Create render mesh.
-	uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
+	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
+	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -147,7 +147,7 @@ bool StaticMeshConverter::convert(
 
 		for (const auto& mtt : mt.second)
 		{
-			std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
+			const std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -176,22 +176,22 @@ bool StaticMeshConverter::convert(
 	AlignedVector< render::Mesh::Part > meshParts;
 	SmallMap< std::wstring, StaticMeshResource::parts_t > parts;
 
-	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	for (const auto& techniqueRange : techniqueRanges)
 	{
 		std::wstring worldTechnique, shaderTechnique;
-		split(i->first, L'/', worldTechnique, shaderTechnique);
+		split(techniqueRange.first, L'/', worldTechnique, shaderTechnique);
 
-		for (AlignedVector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (const auto& range : techniqueRange.second)
 		{
 			StaticMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
 			part.meshPart = uint32_t(meshParts.size());
 
-			for (uint32_t k = 0; k < uint32_t(meshParts.size()); ++k)
+			for (uint32_t k = 0; k < (uint32_t)meshParts.size(); ++k)
 			{
 				if (
-					meshParts[k].primitives.offset == j->offsetFirst &&
-					meshParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3
+					meshParts[k].primitives.offset == range.offsetFirst &&
+					meshParts[k].primitives.count == (range.offsetLast - range.offsetFirst) / 3
 				)
 				{
 					part.meshPart = k;
@@ -204,10 +204,10 @@ bool StaticMeshConverter::convert(
 				render::Mesh::Part meshPart;
 				meshPart.primitives.setIndexed(
 					render::PrimitiveType::Triangles,
-					j->offsetFirst,
-					(j->offsetLast - j->offsetFirst) / 3,
-					j->minIndex,
-					j->maxIndex
+					range.offsetFirst,
+					(range.offsetLast - range.offsetFirst) / 3,
+					range.minIndex,
+					range.maxIndex
 				);
 				meshParts.push_back(meshPart);
 			}
