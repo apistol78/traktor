@@ -58,12 +58,10 @@
 #include "World/Editor/IDebugOverlay.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -85,7 +83,7 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 	);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
@@ -125,7 +123,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	desc.stencilBits = 0;
 	desc.multiSample = m_multiSample;
 	desc.multiSampleShading = settings->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
@@ -252,7 +250,7 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 		if (!sceneInstance)
 			return false;
 
-		uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
+		const uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
 		if (m_worldRendererHash == hash)
 			return false;
 
@@ -279,11 +277,11 @@ void PerspectiveRenderControl::update()
 
 bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
 {
-	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
-	ui::Rect innerRect = m_renderWidget->getInnerRect();
+	const Frustum viewFrustum = m_worldRenderView.getViewFrustum();
+	const ui::Rect innerRect = m_renderWidget->getInnerRect();
 
-	Scalar fx(float(position.x) / innerRect.getWidth());
-	Scalar fy(float(position.y) / innerRect.getHeight());
+	const Scalar fx(float(position.x) / innerRect.getWidth());
+	const Scalar fy(float(position.y) / innerRect.getHeight());
 
 	// Interpolate frustum edges to find view pick-ray.
 	const Vector4& viewEdgeTopLeft = viewFrustum.corners[4];
@@ -291,12 +289,12 @@ bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& 
 	const Vector4& viewEdgeBottomLeft = viewFrustum.corners[7];
 	const Vector4& viewEdgeBottomRight = viewFrustum.corners[6];
 
-	Vector4 viewEdgeTop = lerp(viewEdgeTopLeft, viewEdgeTopRight, fx);
-	Vector4 viewEdgeBottom = lerp(viewEdgeBottomLeft, viewEdgeBottomRight, fx);
-	Vector4 viewRayDirection = lerp(viewEdgeTop, viewEdgeBottom, fy).normalized().xyz0();
+	const Vector4 viewEdgeTop = lerp(viewEdgeTopLeft, viewEdgeTopRight, fx);
+	const Vector4 viewEdgeBottom = lerp(viewEdgeBottomLeft, viewEdgeBottomRight, fx);
+	const Vector4 viewRayDirection = lerp(viewEdgeTop, viewEdgeBottom, fy).normalized().xyz0();
 
 	// Transform ray into world space.
-	Matrix44 viewInv = m_worldRenderView.getView().inverse();
+	const Matrix44 viewInv = m_worldRenderView.getView().inverse();
 	outWorldRayOrigin = viewInv.translation().xyz1();
 	outWorldRayDirection = viewInv * viewRayDirection;
 
@@ -311,11 +309,11 @@ bool PerspectiveRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& out
 	calculateRay(rc.getBottomLeft(), origin[2], direction[2]);
 	calculateRay(rc.getBottomRight(), origin[3], direction[3]);
 
-	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
-	Scalar nz = viewFrustum.getNearZ();
-	Scalar fz = viewFrustum.getFarZ();
+	const Frustum viewFrustum = m_worldRenderView.getViewFrustum();
+	const Scalar nz = viewFrustum.getNearZ();
+	const Scalar fz = viewFrustum.getFarZ();
 
-	Vector4 corners[8] =
+	const Vector4 corners[8] =
 	{
 		origin[0] + direction[0] * nz,
 		origin[0] + direction[1] * nz,
@@ -327,7 +325,7 @@ bool PerspectiveRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& out
 		origin[0] + direction[3] * fz,
 	};
 
-	Plane planes[6] =
+	const Plane planes[6] =
 	{
 		Plane(corners[1], corners[6], corners[5]),
 		Plane(corners[3], corners[4], corners[7]),
@@ -751,5 +749,4 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

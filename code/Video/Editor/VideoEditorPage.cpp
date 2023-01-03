@@ -82,7 +82,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);

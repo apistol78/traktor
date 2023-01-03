@@ -42,7 +42,7 @@ bool RenderControl::create(ui::Widget* parent, IRenderSystem* renderSystem, db::
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);

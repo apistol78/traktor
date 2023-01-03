@@ -295,7 +295,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);
