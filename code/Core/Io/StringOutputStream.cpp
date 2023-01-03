@@ -46,13 +46,8 @@ const wchar_t* StringOutputStreamBuffer::c_str() const
 
 void StringOutputStreamBuffer::reset()
 {
-	m_tail = 0;
-
-	if (m_buffer != m_internal)
-		getAllocator()->free(m_buffer);
-
-	m_buffer = m_internal;
 	m_buffer[0] = L'\0';
+	m_tail = 0;
 }
 
 int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
@@ -60,7 +55,7 @@ int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 	if (count <= 0)
 		return 0;
 
-	size_t newTail = m_tail + count;
+	const size_t newTail = m_tail + count;
 	if (newTail + 1 >= m_capacity)
 	{
 		size_t newCapacity = std::max(m_initialCapacity, m_capacity) * 2;
