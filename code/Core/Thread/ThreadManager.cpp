@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include "Core/System.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
@@ -46,6 +47,18 @@ Thread* ThreadManager::getCurrentThread()
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 
 	Thread* current = nullptr;
+
+#if defined(_WIN32)
+	const uint32_t currentId = GetCurrentThreadId();
+	for (auto thread : m_threads)
+	{
+		if (thread->id() == currentId)
+		{
+			current = thread;
+			break;
+		}
+	}
+#else
 	for (auto thread : m_threads)
 	{
 		if (thread->current())
@@ -54,6 +67,7 @@ Thread* ThreadManager::getCurrentThread()
 			break;
 		}
 	}
+#endif
 
 	if (!current)
 		current = m_threadBase;
