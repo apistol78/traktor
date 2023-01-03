@@ -68,7 +68,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		D2D1_SIZE_U size = D2D1::SizeU(width, height);
 		hr = s_d2dFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(hWnd, size),
+			D2D1::HwndRenderTargetProperties(hWnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
 			&m_d2dRenderTarget.getAssign()
 		);
 		if (FAILED(hr))

@@ -173,7 +173,7 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 	{
 		m_splittingPane->setSplitterPosition(position);
 		cursor = m_splittingPane->m_vertical ? CrSizeNS : CrSizeWE;
-		update();
+		update(nullptr, true);
 	}
 
 	setCursor(cursor);
