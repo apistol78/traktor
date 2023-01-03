@@ -6,13 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/Editor/AnimatedMeshComponentEditor.h"
-#include "Animation/AnimatedMeshComponentData.h"
-#include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Skeleton.h"
+#include "Animation/SkeletonComponent.h"
+#include "Animation/SkeletonComponentData.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
+#include "Animation/Editor/AnimationComponentEditor.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Physics/BallJoint.h"
 #include "Physics/Body.h"
@@ -27,33 +27,33 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentEditor", AnimatedMeshComponentEditor, scene::DefaultComponentEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationComponentEditor", AnimationComponentEditor, scene::DefaultComponentEditor)
 
-AnimatedMeshComponentEditor::AnimatedMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData)
+AnimationComponentEditor::AnimationComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData)
 :	scene::DefaultComponentEditor(context, entityAdapter, componentData)
 {
 }
 
-void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	const AnimatedMeshComponentData* animatedMeshComponentData = checked_type_cast< const AnimatedMeshComponentData* >(m_componentData);
-	const AnimatedMeshComponent* animatedMeshComponent = dynamic_type_cast< const AnimatedMeshComponent* >(m_entityAdapter->getComponent< AnimatedMeshComponent >());
+	const SkeletonComponentData* skeletonComponentData = checked_type_cast< const SkeletonComponentData* >(m_componentData);
+	const SkeletonComponent* skeletonComponent = dynamic_type_cast< const SkeletonComponent* >(m_entityAdapter->getComponent< SkeletonComponent >());
 
 	if (
 		m_context->shouldDrawGuide(L"Animation.Skeleton.Bind") ||
 		m_context->shouldDrawGuide(L"Animation.Skeleton.Pose")
 	)
 	{
-		if (animatedMeshComponent)
+		if (skeletonComponent)
 		{
-			const resource::Proxy< Skeleton >& skeleton = animatedMeshComponent->getSkeleton();
-			const auto& jointTransforms = animatedMeshComponent->getJointTransforms();
+			const resource::Proxy< Skeleton >& skeleton = skeletonComponent->getSkeleton();
+			const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
 			// Draw pose controllers.
 			primitiveRenderer->pushWorld(Matrix44::identity());
 			primitiveRenderer->pushDepthState(false, false, false);
 
-			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(animatedMeshComponent->getPoseController()))
+			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(skeletonComponent->getPoseController()))
 			{
 				const auto& limbs = ragDollPoseController->getLimbs();
 
@@ -114,7 +114,7 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Bind"))
 			{
 				// Draw bind skeleton.
-				const auto& jointTransforms = animatedMeshComponent->getJointTransforms();
+				const auto& jointTransforms = skeletonComponent->getJointTransforms();
 				if (jointTransforms.size() == skeleton->getJointCount())
 				{
 					const Color4ub color(0, 255, 0, 255);
@@ -143,7 +143,7 @@ void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 				const bool bindVisible = m_context->shouldDrawGuide(L"Animation.Skeleton.Bind");
 
 				// Draw current pose.
-				AlignedVector< Transform > poseTransforms = animatedMeshComponent->getPoseTransforms();
+				AlignedVector< Transform > poseTransforms = skeletonComponent->getPoseTransforms();
 				if (poseTransforms.size() == skeleton->getJointCount())
 				{
 					const Color4ub color(255, 255, 0, 255);

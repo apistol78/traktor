@@ -24,15 +24,15 @@ namespace traktor
 	namespace animation
 	{
 
-/*! Animation mesh component editor.
+/*! Animation component editor.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshComponentEditor : public scene::DefaultComponentEditor
+class T_DLLCLASS AnimationComponentEditor : public scene::DefaultComponentEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	AnimatedMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
+	explicit AnimationComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 

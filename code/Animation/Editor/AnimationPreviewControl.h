@@ -14,24 +14,22 @@
 #include "Ui/Widget.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class SkinnedMesh;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderView;
@@ -39,38 +37,38 @@ class PrimitiveRenderer;
 class RenderContext;
 class RenderGraph;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class Scene;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class IWorldRenderer;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class AnimatedMeshComponent;
 class IPoseController;
 class Skeleton;
 
-/*! \brief
+/*! Animation 3d preview control.
  * \ingroup Animation
  */
 class AnimationPreviewControl : public ui::Widget
@@ -136,6 +134,4 @@ private:
 	void eventIdle(ui::IdleEvent* event);
 };
 
-	}
 }
-

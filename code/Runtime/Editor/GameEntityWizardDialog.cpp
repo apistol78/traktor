@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/AnimatedMeshComponentData.h"
+#include "Animation/SkeletonComponentData.h"
 #include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/SkeletonAsset.h"
@@ -468,12 +469,14 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			if (entityType == 3)
 			{
-				entityData->setComponent(new animation::AnimatedMeshComponentData(
-					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid()),
+				entityData->setComponent(new animation::SkeletonComponentData(
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
 					new animation::SimpleAnimationControllerData(
 						resource::Id< animation::Animation >(animationAssetInstance->getGuid())
 					)
+				));
+				entityData->setComponent(new animation::AnimatedMeshComponentData(
+					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())
 				));
 			}
 			else if (entityType == 4)
@@ -494,10 +497,12 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 						mask.insert(resource::Id< physics::CollisionSpecification >(maskInstance->getGuid()));
 				}
 				
-				entityData->setComponent(new animation::AnimatedMeshComponentData(
-					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid()),
+				entityData->setComponent(new animation::SkeletonComponentData(
 					resource::Id< animation::Skeleton >(skeletonAssetInstance->getGuid()),
 					new animation::RagDollPoseControllerData(group, mask)
+				));
+				entityData->setComponent(new animation::AnimatedMeshComponentData(
+					resource::Id< mesh::SkinnedMesh >(meshAssetInstance->getGuid())
 				));
 			}
 			else

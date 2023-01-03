@@ -28,8 +28,8 @@ void AnimatedMeshComponentRenderer::gather(
 {
 	auto animatedMeshComponent = static_cast< AnimatedMeshComponent* >(renderable);
 
-	for (const auto& binding : animatedMeshComponent->getBindings())
-		context.gather(binding.entity);
+	//for (const auto& binding : animatedMeshComponent->getBindings())
+	//	context.gather(binding.entity);
 
 	context.include(this, animatedMeshComponent);
 }

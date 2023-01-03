@@ -23,10 +23,10 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshComponentPipeline : public editor::IPipeline
+class T_DLLCLASS AnimationComponentPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
 

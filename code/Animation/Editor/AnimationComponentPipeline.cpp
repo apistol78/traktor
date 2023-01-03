@@ -6,11 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Animation/Editor/AnimatedMeshComponentPipeline.h"
 #include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/IPoseControllerData.h"
+#include "Animation/SkeletonComponentData.h"
+#include "Animation/Editor/AnimationComponentPipeline.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
 
@@ -19,33 +20,36 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshComponentPipeline", 0, AnimatedMeshComponentPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationComponentPipeline", 0, AnimationComponentPipeline, editor::IPipeline)
 
-bool AnimatedMeshComponentPipeline::create(const editor::IPipelineSettings* settings)
+bool AnimationComponentPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }
 
-void AnimatedMeshComponentPipeline::destroy()
+void AnimationComponentPipeline::destroy()
 {
 }
 
-TypeInfoSet AnimatedMeshComponentPipeline::getAssetTypes() const
+TypeInfoSet AnimationComponentPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< AnimatedMeshComponentData >();
+	return makeTypeInfoSet<
+		AnimatedMeshComponentData,
+		SkeletonComponentData
+	>();
 }
 
-uint32_t AnimatedMeshComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
+uint32_t AnimationComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
 }
 
-bool AnimatedMeshComponentPipeline::shouldCache() const
+bool AnimationComponentPipeline::shouldCache() const
 {
 	return false;
 }
 
-bool AnimatedMeshComponentPipeline::buildDependencies(
+bool AnimationComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -56,16 +60,19 @@ bool AnimatedMeshComponentPipeline::buildDependencies(
 	if (const AnimatedMeshComponentData* meshComponentData = dynamic_type_cast< const AnimatedMeshComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(meshComponentData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(meshComponentData->getPoseControllerData());
+	}
+	else if (const SkeletonComponentData* skeletonComponentData = dynamic_type_cast< const SkeletonComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(skeletonComponentData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(skeletonComponentData->getPoseControllerData());
 
-		for (auto binding : meshComponentData->getBindings())
+		for (auto binding : skeletonComponentData->getBindings())
 			pipelineDepends->addDependency(binding.entityData);
 	}
 	return true;
 }
 
-bool AnimatedMeshComponentPipeline::buildOutput(
+bool AnimationComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -81,7 +88,7 @@ bool AnimatedMeshComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > AnimatedMeshComponentPipeline::buildProduct(
+Ref< ISerializable > AnimationComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
