@@ -101,7 +101,7 @@ bool PreviewControl::create(ui::Widget* parent)
 	desc.stencilBits = 8;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);

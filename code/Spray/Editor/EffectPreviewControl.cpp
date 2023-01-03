@@ -135,7 +135,7 @@ bool EffectPreviewControl::create(
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
 	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = renderSystem->createRenderView(desc);
