@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/AnimatedMeshComponentData.h"
-#include "Animation/Editor/AnimatedMeshComponentEditor.h"
+#include "Animation/SkeletonComponentData.h"
+#include "Animation/Editor/AnimationComponentEditor.h"
 #include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
 
 namespace traktor
@@ -19,12 +19,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentEditorFactory", 
 
 const TypeInfoSet AnimatedMeshComponentEditorFactory::getComponentDataTypes() const
 {
-	return makeTypeInfoSet< AnimatedMeshComponentData >();
+	return makeTypeInfoSet< SkeletonComponentData >();
 }
 
 Ref< scene::IComponentEditor > AnimatedMeshComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
-	return new AnimatedMeshComponentEditor(context, entityAdapter, componentData);
+	return new AnimationComponentEditor(context, entityAdapter, componentData);
 }
 
 	}

@@ -8,6 +8,7 @@
  */
 #include "Animation/AnimationClassFactory.h"
 #include "Animation/AnimatedMeshComponent.h"
+#include "Animation/SkeletonComponent.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
@@ -30,7 +31,7 @@ namespace traktor::animation
 	namespace
 	{
 
-Transform AnimatedMeshComponent_getJointTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
+Transform SkeletonComponent_getJointTransform(SkeletonComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
 	self->getJointTransform(
@@ -40,7 +41,7 @@ Transform AnimatedMeshComponent_getJointTransform(AnimatedMeshComponent* self, c
 	return transform;
 }
 
-Transform AnimatedMeshComponent_getPoseTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
+Transform SkeletonComponent_getPoseTransform(SkeletonComponent* self, const std::wstring& jointName)
 {
 	Transform transform;
 	self->getPoseTransform(
@@ -48,6 +49,15 @@ Transform AnimatedMeshComponent_getPoseTransform(AnimatedMeshComponent* self, co
 		transform
 	);
 	return transform;
+}
+
+void SkeletonComponent_setPoseTransform(SkeletonComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
+{
+	self->setPoseTransform(
+		render::getParameterHandle(jointName),
+		transform,
+		inclusive
+	);
 }
 
 Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, const std::wstring& jointName)
@@ -60,27 +70,21 @@ Transform AnimatedMeshComponent_getSkinTransform(AnimatedMeshComponent* self, co
 	return transform;
 }
 
-void AnimatedMeshComponent_setPoseTransform(AnimatedMeshComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
-{
-	self->setPoseTransform(
-		render::getParameterHandle(jointName),
-		transform,
-		inclusive
-	);
-}
-
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
 
 void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	auto classSkeletonComponent = new AutoRuntimeClass< SkeletonComponent >();
+	classSkeletonComponent->addProperty("poseController", &SkeletonComponent::setPoseController, &SkeletonComponent::getPoseController);
+	classSkeletonComponent->addMethod("getJointTransform", &SkeletonComponent_getJointTransform);
+	classSkeletonComponent->addMethod("getPoseTransform", &SkeletonComponent_getPoseTransform);
+	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);
+	registrar->registerClass(classSkeletonComponent);
+
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();
-	classAnimatedMeshComponent->addProperty("poseController", &AnimatedMeshComponent::setPoseController, &AnimatedMeshComponent::getPoseController);
-	classAnimatedMeshComponent->addMethod("getJointTransform", &AnimatedMeshComponent_getJointTransform);
-	classAnimatedMeshComponent->addMethod("getPoseTransform", &AnimatedMeshComponent_getPoseTransform);
 	classAnimatedMeshComponent->addMethod("getSkinTransform", &AnimatedMeshComponent_getSkinTransform);
-	classAnimatedMeshComponent->addMethod("setPoseTransform", &AnimatedMeshComponent_setPoseTransform);
 	registrar->registerClass(classAnimatedMeshComponent);
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();

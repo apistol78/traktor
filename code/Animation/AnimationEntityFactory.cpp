@@ -9,6 +9,8 @@
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/AnimationEntityFactory.h"
+#include "Animation/SkeletonComponent.h"
+#include "Animation/SkeletonComponentData.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Boids/BoidsComponentData.h"
 #include "Animation/Cloth/ClothComponent.h"
@@ -49,6 +51,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< PathComponentData >();
 	typeSet.insert< PendulumComponentData >();
 	typeSet.insert< RotatorComponentData >();
+	typeSet.insert< SkeletonComponentData >();
 	typeSet.insert< WobbleComponentData >();
 	return typeSet;
 }
@@ -77,6 +80,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return pendulumComponentData->createComponent();
 	else if (auto rotatorComponentData = dynamic_type_cast< const RotatorComponentData* >(&entityComponentData))
 		return rotatorComponentData->createComponent();
+	else if (auto skeletonComponentData = dynamic_type_cast< const SkeletonComponentData* >(&entityComponentData))
+		return skeletonComponentData->createComponent(m_resourceManager, m_physicsManager, builder);
 	else if (auto wobbleComponentData = dynamic_type_cast< const WobbleComponentData* >(&entityComponentData))
 		return wobbleComponentData->createComponent();
 	else

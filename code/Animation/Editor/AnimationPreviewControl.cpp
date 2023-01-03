@@ -10,6 +10,7 @@
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
+#include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
@@ -111,7 +112,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
-	desc.waitVBlanks = 0;
+	desc.waitVBlanks = 1;
 	desc.syswin = getIWidget()->getSystemWindow();
 
 	m_renderView = m_renderSystem->createRenderView(desc);
@@ -149,10 +150,19 @@ void AnimationPreviewControl::destroy()
 {
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
+	m_sceneInstance.clear();
+	m_mesh.clear();
+	m_skeleton.clear();
+
+	m_poseController = nullptr;
+	m_entity = nullptr;
+
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_renderGraph);
+	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
+	safeDestroy(m_renderSystem);
 
 	Widget::destroy();
 }
@@ -211,20 +221,24 @@ void AnimationPreviewControl::updatePreview()
 		}
 	}
 
-	AlignedVector< AnimatedMeshComponent::Binding > noBindings;
+	AlignedVector< SkeletonComponent::Binding > noBindings;
+
+	Ref< SkeletonComponent > skeletonComponent = new SkeletonComponent(
+		Transform::identity(),
+		m_skeleton,
+		m_poseController,
+		noBindings
+	);
 
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),
 		m_mesh,
-		m_skeleton,
-		m_poseController,
-		jointRemap,
-		noBindings,
 		m_renderSystem,
 		false
 	);
 
 	m_entity = new world::Entity();
+	m_entity->setComponent(skeletonComponent);
 	m_entity->setComponent(meshComponent);
 }
 
