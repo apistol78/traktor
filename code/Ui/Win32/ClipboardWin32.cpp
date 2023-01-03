@@ -170,20 +170,20 @@ ClipboardContent ClipboardWin32::getContentType() const
 Ref< ISerializable > ClipboardWin32::getObject() const
 {
 	if (!OpenClipboard(NULL))
-		return 0;
+		return nullptr;
 
 	HANDLE handle = GetClipboardData(m_objectFormat);
 	if (!handle)
 	{
 		CloseClipboard();
-		return 0;
+		return nullptr;
 	}
 
 	uint32_t* ptr = (uint32_t*)GlobalLock(handle);
 	if (!ptr)
 	{
 		CloseClipboard();
-		return 0;
+		return nullptr;
 	}
 
 	MemoryStream ms(&ptr[1], *ptr);
@@ -222,7 +222,7 @@ std::wstring ClipboardWin32::getText() const
 
 Ref< const drawing::Image > ClipboardWin32::getImage() const
 {
-	return 0;
+	return nullptr;
 }
 
 	}

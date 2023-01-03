@@ -84,7 +84,7 @@ bool EventLoopWin32::process(EventSubject* owner)
 	MSG msg;
 	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-		bool dispatch = !preTranslateMessage(owner, msg);
+		const bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
 			TranslateMessage(&msg);
@@ -102,7 +102,7 @@ int32_t EventLoopWin32::execute(EventSubject* owner)
 		MSG msg = { 0 };
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			bool dispatch = !preTranslateMessage(owner, msg);
+			const bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{
 				TranslateMessage(&msg);
@@ -148,7 +148,7 @@ int32_t EventLoopWin32::getAsyncKeyState() const
 
 bool EventLoopWin32::isKeyDown(VirtualKey vk) const
 {
-	uint32_t keyCode = translateToKeyCode(vk);
+	const uint32_t keyCode = translateToKeyCode(vk);
 	if (keyCode)
 		return (GetAsyncKeyState(keyCode) & 0x8000) != 0;
 	else
