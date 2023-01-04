@@ -12,18 +12,14 @@
 #include "Render/Editor/SH/SHStage.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHEditorPageFactory", 0, SHEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet SHEditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< SHStage >();
-	return typeSet;
+	return makeTypeInfoSet< SHStage >();
 }
 
 bool SHEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -48,5 +44,4 @@ Ref< ISerializable > SHEditorPageFactory::cloneAsset(const ISerializable* asset)
 	return DeepClone(asset).create();
 }
 
-	}
 }

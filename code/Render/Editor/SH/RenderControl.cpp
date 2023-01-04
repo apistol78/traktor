@@ -18,10 +18,8 @@
 #include "Resource/ResourceManager.h"
 #include "Ui/Itf/IWidget.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderControl", RenderControl, ui::Widget)
 
@@ -89,9 +87,9 @@ void RenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	ui::Point mousePosition = event->getPosition();
+	const ui::Point mousePosition = event->getPosition();
 
-	Vector2 mouseDelta(
+	const Vector2 mouseDelta(
 		float(m_lastMousePosition.x - mousePosition.x),
 		float(m_lastMousePosition.y - mousePosition.y)
 	);
@@ -114,6 +112,9 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
+	if (!m_renderView->beginFrame())
+		return;
+
 	Clear cl;
 	cl.mask = CfColor | CfDepth;
 	cl.colors[0] = Color4f(0.25f, 0.25f, 0.25f, 1.0f);
@@ -122,11 +123,11 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
 		return;
 
-	ui::Rect innerRect = getInnerRect();
-	float aspect = float(innerRect.getSize().cx) / innerRect.getSize().cy;
+	const ui::Rect innerRect = getInnerRect();
+	const float aspect = float(innerRect.getSize().cx) / innerRect.getSize().cy;
 
-	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
-	Matrix44 projectionTransform = perspectiveLh(
+	const Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
+	const Matrix44 projectionTransform = perspectiveLh(
 		80.0f * PI / 180.0f,
 		aspect,
 		0.1f,
@@ -144,6 +145,7 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	m_primitiveRenderer->render(m_renderView, 0);
 
 	m_renderView->endPass();
+	m_renderView->endFrame();
 	m_renderView->present();
 
 	event->consume();
@@ -154,9 +156,8 @@ void RenderControl::eventSize(ui::SizeEvent* event)
 	if (!m_renderView)
 		return;
 
-	ui::Size sz = event->getSize();
+	const ui::Size sz = event->getSize();
 	m_renderView->reset(sz.cx, sz.cy);
 }
 
-	}
 }

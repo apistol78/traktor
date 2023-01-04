@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 /*!
  * "Image based lighting" probe.
@@ -38,7 +36,7 @@ class T_DLLCLASS IBLProbe : public SHFunction
 	T_RTTI_CLASS;
 
 public:
-	IBLProbe(drawing::Image* image);
+	explicit IBLProbe(drawing::Image* image);
 
 	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
 
@@ -46,5 +44,4 @@ private:
 	Ref< drawing::Image > m_image;
 };
 
-	}
 }

@@ -18,24 +18,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderView;
@@ -72,6 +70,4 @@ private:
 	void eventSize(ui::SizeEvent* event);
 };
 
-	}
 }
-

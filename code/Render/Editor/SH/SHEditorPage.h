@@ -21,24 +21,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class RenderControl;
 class RenderControlEvent;
@@ -50,7 +48,7 @@ class T_DLLCLASS SHEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	SHEditorPage(editor::IEditor* editor);
+	explicit SHEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -79,5 +77,4 @@ private:
 	void eventRender2(RenderControlEvent* event);
 };
 
-	}
 }

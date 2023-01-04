@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*!
  * Ray-Leigh scattering phase function.
@@ -34,5 +32,4 @@ public:
 	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
 };
 
-	}
 }
