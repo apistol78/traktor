@@ -60,6 +60,8 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void synchronize() const;
+
 	/*! Get base transform of joint. */
 	bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;
 
@@ -95,8 +97,6 @@ private:
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	mutable Ref< Job > m_updatePoseControllerJob;
-
-	void synchronize() const;
 
 	void updatePoseController(float time, float deltaTime);
 };

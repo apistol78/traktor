@@ -112,7 +112,6 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 
 	auto classClothComponent = new AutoRuntimeClass< ClothComponent >();
 	classClothComponent->addMethod("reset", &ClothComponent::reset);
-	classClothComponent->addMethod("setNodeInvMass", &ClothComponent::setNodeInvMass);
 	registrar->registerClass(classClothComponent);
 
 	auto classPathComponent = new AutoRuntimeClass< PathComponent >();

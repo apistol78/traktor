@@ -10,7 +10,7 @@
 #include "Animation/Cloth/ClothComponentData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
@@ -20,15 +20,6 @@ namespace traktor::animation
 {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 0, ClothComponentData, world::IEntityComponentData)
-
-ClothComponentData::ClothComponentData()
-:	m_resolutionX(10)
-,	m_resolutionY(10)
-,	m_scale(1.0f)
-,	m_solverIterations(4)
-,	m_damping(0.01f)
-{
-}
 
 Ref< ClothComponent > ClothComponentData::createComponent(
 	resource::IResourceManager* resourceManager,
@@ -52,8 +43,15 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 		return nullptr;
 
 	// Fixate nodes by setting infinite mass.
-	for (std::vector< Anchor >::const_iterator i = m_anchors.begin(); i != m_anchors.end(); ++i)
-		clothEntity->setNodeInvMass(i->x, i->y, 0.0f);
+	for (const auto& anchor : m_anchors)
+	{
+		clothEntity->setNodeAnchor(
+			render::getParameterHandle(anchor.jointName),
+			anchor.jointOffset,
+			anchor.x,
+			anchor.y
+		);
+	}
 
 	return clothEntity;
 }
@@ -68,13 +66,15 @@ void ClothComponentData::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
 	s >> Member< uint32_t >(L"resolutionY", m_resolutionY);
 	s >> Member< float >(L"scale", m_scale);
-	s >> MemberStlVector< Anchor, MemberComposite< Anchor > >(L"anchors", m_anchors);
+	s >> MemberAlignedVector< Anchor, MemberComposite< Anchor > >(L"anchors", m_anchors);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
 	s >> Member< float >(L"damping", m_damping);
 }
 
 void ClothComponentData::Anchor::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"jointName", jointName);
+	s >> Member< Vector4 >(L"jointOffset", jointOffset);
 	s >> Member< uint32_t >(L"x", x);
 	s >> Member< uint32_t >(L"y", y);
 }

@@ -66,9 +66,9 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					if (parent < 0)
 						continue;
 
-					Vector4 start = jointTransforms[parent].translation();
-					Vector4 end = jointTransforms[i].translation();
-					Scalar length = (end - start).length();
+					const Vector4 start = jointTransforms[parent].translation();
+					const Vector4 end = jointTransforms[i].translation();
+					const Scalar length = (end - start).length();
 
 					if (length < joint->getRadius() * 2.0f)
 						continue;
@@ -76,7 +76,7 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					if (!limbs[i])
 						continue;
 
-					Transform limbTransform[] { limbs[i]->getTransform(), limbs[i]->getTransform() };
+					const Transform limbTransform[] { limbs[i]->getTransform(), limbs[i]->getTransform() };
 
 					physics::CapsuleShapeDesc shapeDesc;
 					shapeDesc.setRadius(joint->getRadius());
@@ -176,16 +176,6 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 								color
 							);
 						}
-
-						primitiveRenderer->pushWorld(Matrix44::identity());
-						primitiveRenderer->drawText(
-							m_entityAdapter->getTransform() * poseTransforms[i].translation().xyz1(),
-							0.4f,
-							0.4f,
-							joint->getName(),
-							Color4ub(255, 255, 255, 255)
-						);
-						primitiveRenderer->popWorld();
 					}
 				}
 			}

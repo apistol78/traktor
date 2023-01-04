@@ -6,12 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/SkeletonComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 
@@ -32,7 +34,7 @@ struct ClothVertex
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, world::IEntityComponent)
 
 ClothComponent::ClothComponent()
-:	m_time(0.0f)
+:	m_time(1.0f)
 ,	m_updateTime(0.0f)
 ,	m_scale(0.0f)
 ,	m_damping(1.0f)
@@ -58,18 +60,19 @@ bool ClothComponent::create(
 	uint32_t solverIterations
 )
 {
-	Vector4 positionBase(-scale / 2.0f, scale / 2.0f, 0.0f, 1.0f);
-	Vector4 positionScale(scale / resolutionX, -scale / resolutionX, 0.0f, 0.0f);
+	const Vector4 positionBase(-scale / 2.0f, scale / 2.0f, 0.0f, 1.0f);
+	const Vector4 positionScale(scale / resolutionX, -scale / resolutionX, 0.0f, 0.0f);
 
 	m_nodes.resize(resolutionX * resolutionY);
 	for (uint32_t y = 0; y < resolutionY; ++y)
 	{
 		for (uint32_t x = 0; x < resolutionX; ++x)
 		{
+			m_nodes[x + y * resolutionX].jointName = 0;
 			m_nodes[x + y * resolutionX].position[0] =
 			m_nodes[x + y * resolutionX].position[1] = Vector4(float(x), float(y), 0.0f, 0.0f) * positionScale + positionBase;
 			m_nodes[x + y * resolutionX].texCoord = Vector2(float(x) / (resolutionX - 1), float(y) / (resolutionY - 1));
-			m_nodes[x + y * resolutionX].invMass = Scalar(1.0f);
+			m_nodes[x + y * resolutionX].invMass = 1.0_simd;
 		}
 	}
 
@@ -122,13 +125,13 @@ bool ClothComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, /*2 * */resolutionX * resolutionY, sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 2 * resolutionX * resolutionY, sizeof(ClothVertex), true);
 	if (!m_vertexBuffer)
 		return false;
 
 	m_resolutionX = resolutionX;
 	m_resolutionY = resolutionY;
-	m_triangleCount = quadsX * quadsY * 2/* * 2*/;
+	m_triangleCount = quadsX * quadsY * 2 * 2;
 
 	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, m_triangleCount * 3, sizeof(uint16_t), false);
 	if (!m_indexBuffer)
@@ -137,10 +140,13 @@ bool ClothComponent::create(
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
 	T_ASSERT(index);
 
+	const uint16_t back = (uint16_t)(resolutionX * resolutionY);
+
 	for (uint32_t y = 0; y < quadsY; ++y)
 	{
 		for (uint32_t x = 0; x < quadsX; ++x)
 		{
+			// Front face
 			*index++ = x + y * resolutionX;
 			*index++ = x + y * resolutionX + 1;
 			*index++ = x + y * resolutionX + resolutionX;
@@ -148,6 +154,15 @@ bool ClothComponent::create(
 			*index++ = x + y * resolutionX + 1;
 			*index++ = x + y * resolutionX + 1 + resolutionX;
 			*index++ = x + y * resolutionX + resolutionX;
+
+			// Back face
+			*index++ = back + x + y * resolutionX + resolutionX;
+			*index++ = back + x + y * resolutionX + 1;
+			*index++ = back + x + y * resolutionX;
+
+			*index++ = back + x + y * resolutionX + resolutionX;
+			*index++ = back + x + y * resolutionX + 1 + resolutionX;
+			*index++ = back + x + y * resolutionX + 1;
 		}
 	}
 
@@ -176,27 +191,35 @@ void ClothComponent::build(
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT(vertexFront);
 
+		ClothVertex* vertexBack = vertexFront + (m_resolutionX * m_resolutionY);
+
 		for (uint32_t y = 0; y < m_resolutionY; ++y)
 		{
 			for (uint32_t x = 0; x < m_resolutionX; ++x)
 			{
-				uint32_t offset = x + y * m_resolutionX;
+				const uint32_t offset = x + y * m_resolutionX;
 				const Node& node = m_nodes[offset];
 				const Vector4& p = node.position[0];
 
-				Vector4 nx = x < (m_resolutionX - 1) ? m_nodes[offset + 1].position[0] : p;
-				Vector4 px = x > 0 ? m_nodes[offset - 1].position[0] : p;
+				const Vector4 nx = x < (m_resolutionX - 1) ? m_nodes[offset + 1].position[0] : p;
+				const Vector4 px = x > 0 ? m_nodes[offset - 1].position[0] : p;
 
-				Vector4 ny = y < (m_resolutionY - 1) ? m_nodes[offset + m_resolutionX].position[0] : p;
-				Vector4 py = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p;
+				const Vector4 ny = y < (m_resolutionY - 1) ? m_nodes[offset + m_resolutionX].position[0] : p;
+				const Vector4 py = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p;
 
-				Vector4 nf = cross(ny - py, nx - px).normalized();
+				const Vector4 nf = cross(ny - py, nx - px).normalized();
 
 				p.storeUnaligned(vertexFront->position);
 				nf.storeUnaligned(vertexFront->normal);
 				vertexFront->texCoord[0] = node.texCoord.x;
 				vertexFront->texCoord[1] = node.texCoord.y;
 				vertexFront++;
+
+				p.storeUnaligned(vertexBack->position);
+				(-nf).storeUnaligned(vertexBack->normal);
+				vertexBack->texCoord[0] = node.texCoord.x;
+				vertexBack->texCoord[1] = node.texCoord.y;
+				vertexBack++;
 			}
 		}
 
@@ -223,7 +246,7 @@ void ClothComponent::build(
 	renderBlock->offset = 0;
 	renderBlock->count = m_triangleCount;
 	renderBlock->minIndex = 0;
-	renderBlock->maxIndex = uint32_t(m_nodes.size() * 2 - 1);
+	renderBlock->maxIndex = (uint32_t)(m_nodes.size() * 2 - 1);
 
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
@@ -247,6 +270,7 @@ void ClothComponent::destroy()
 
 void ClothComponent::setOwner(world::Entity* owner)
 {
+	m_owner = owner;
 }
 
 void ClothComponent::setTransform(const Transform& transform)
@@ -262,34 +286,31 @@ Aabb3 ClothComponent::getBoundingBox() const
 void ClothComponent::update(const world::UpdateParams& update)
 {
 #if !defined(__IOS__)
-	const float c_updateDeltaTime = 1.0f / 30.0f;
+	const float c_updateDeltaTime = 1.0f / 60.0f;
 #else
 	const float c_updateDeltaTime = 1.0f / 10.0f;
 #endif
-	const float c_timeScale = 2.0f;
-	const Scalar c_stiffness(0.0025f);
+	const float c_timeScale = 4.0f;
+	const Scalar c_stiffness = 0.001_simd;
 
-	Transform transformInv = m_transform.inverse();
-	Vector4 gravity = transformInv * Vector4(0.0f, -0.5f, 0.0f, 0.0f);
-	Vector4 wind = transformInv * Vector4(1.0f, 0.0f, Scalar(traktor::cosf(m_time * 0.25f) * 0.5f + 0.5f), 0.0f).normalized();
+	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+
+	const Transform transformInv = m_transform.inverse();
+	const Vector4 gravity = transformInv * Vector4(0.0f, -1.0f, 0.0f, 0.0f);
 
 	for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 	{
 		m_aabb = Aabb3();
 		for (auto& node : m_nodes)
 		{
-			if (node.invMass < Scalar(FUZZY_EPSILON))
+			if (node.jointName != 0 || node.invMass < Scalar(FUZZY_EPSILON))
 				continue;
 
-			Vector4 force = gravity + wind + Vector4(
-				traktor::sinf(node.position[0].x() * 2.0f * PI + m_time * 0.2f) * 0.2f,
-				traktor::cosf(node.position[0].y() * 2.0f * PI + m_time * 0.2f) * 0.2f,
-				0.0f,
-				0.0f
-			);
+			const Vector4 force = gravity;
+			const Vector4 current = node.position[0];
+			const Vector4 velocity = current - node.position[1];
 
-			Vector4 current = node.position[0];
-			node.position[0] += (current - node.position[1]) * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
+			node.position[0] += velocity * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
 			node.position[1] = current;
 
 			m_aabb.contain(node.position[0]);
@@ -300,61 +321,130 @@ void ClothComponent::update(const world::UpdateParams& update)
 			// Satisfy edge lengths.
 			for (const auto& edge : m_edges)
 			{
-				Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
-				Scalar deltaLength = delta.length();
+				const Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
+				const Scalar deltaLength = delta.length();
 				if (deltaLength > FUZZY_EPSILON)
 				{
-					Scalar diff = (deltaLength - edge.length) / deltaLength;
-					m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * Scalar(0.5f);
-					m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * Scalar(0.5f);
+					const Scalar diff = (deltaLength - edge.length) / deltaLength;
+					m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * 0.5_simd;
+					m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * 0.5_simd;
 				}
 			}
 
+			// Self collision.
+			//if (m_resolutionX >= 3 && m_resolutionY >= 3)
+			//{
+			//	const Scalar nodeRadius(0.05_simd);
+			//	for (uint32_t y = 1; y < m_resolutionY - 1; ++y)
+			//	{
+			//		for (uint32_t x = 1; x < m_resolutionX - 1; ++x)
+			//		{
+			//			// X axis
+			//			{
+			//				Vector4& xn = m_nodes[x - 1 + y * m_resolutionX].position[0];
+			//				Vector4& xp = m_nodes[x + 1 + y * m_resolutionX].position[0];
+
+			//				const Scalar dx = (xp - xn).length();
+			//				if (dx < nodeRadius)
+			//				{
+			//					const Vector4 d = ((xp - xn) / dx) * (nodeRadius - dx);
+			//					xn -= d * 0.5_simd;
+			//					xp += d * 0.5_simd;
+			//				}
+			//			}
+
+			//			// Y axis
+			//			{
+			//				Vector4& yn = m_nodes[x + (y - 1) * m_resolutionX].position[0];
+			//				Vector4& yp = m_nodes[x + (y + 1) * m_resolutionX].position[0];
+
+			//				const Scalar dy = (yp - yn).length();
+			//				if (dy < nodeRadius)
+			//				{
+			//					const Vector4 d = ((yp - yn) / dy) * (nodeRadius - dy);
+			//					yn -= d * 0.5_simd;
+			//					yp += d * 0.5_simd;
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+
 			// Satisfy cloth stiffness.
-			if (m_resolutionX >= 3 && m_resolutionY >= 3)
+			//if (m_resolutionX >= 3 && m_resolutionY >= 3)
+			//{
+			//	for (uint32_t y = 1; y < m_resolutionY - 1; ++y)
+			//	{
+			//		for (uint32_t x = 1; x < m_resolutionX - 1; ++x)
+			//		{
+			//			Vector4& center = m_nodes[x + y * m_resolutionX].position[0];
+
+			//			// X axis
+			//			{
+			//				const Vector4& xn = m_nodes[x - 1 + y * m_resolutionX].position[0];
+			//				const Vector4& xp = m_nodes[x + 1 + y * m_resolutionX].position[0];
+
+			//				const Vector4 v1 = (xp - center).normalized();
+			//				const Vector4 v2 = (xn - center).normalized();
+
+			//				const Scalar phi = dot3(v1, v2);
+			//				if (phi > -1.0f + FUZZY_EPSILON)
+			//				{
+			//					const Vector4 v = (v1 + v2).normalized();
+			//					const Vector4 xc = (xp + xn) / 2.0_simd;
+			//					const Scalar distance = Plane(v, xc).distance(center);
+			//					center -= v * distance * c_stiffness;
+			//				}
+			//			}
+
+			//			// Y axis
+			//			{
+			//				const Vector4& yn = m_nodes[x + (y - 1) * m_resolutionX].position[0];
+			//				const Vector4& yp = m_nodes[x + (y + 1) * m_resolutionX].position[0];
+
+			//				const Vector4 v1 = (yp - center).normalized();
+			//				const Vector4 v2 = (yn - center).normalized();
+
+			//				const Scalar phi = dot3(v1, v2);
+			//				if (phi > -1.0f + FUZZY_EPSILON)
+			//				{
+			//					const Vector4 v = (v1 + v2).normalized();
+			//					const Vector4 yc = (yp + yn) / 2.0_simd;
+			//					const Scalar distance = Plane(v, yc).distance(center);
+			//					center -= v * distance * c_stiffness;
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+
+			// Ensure nodes are not inside joint spheres.
+			const auto& poseTransforms = skeletonComponent->getPoseTransforms();
+			for (auto& node : m_nodes)
 			{
-				for (uint32_t y = 1; y < m_resolutionY - 1; ++y)
+				for (const auto& poseTransform : poseTransforms)
 				{
-					for (uint32_t x = 1; x < m_resolutionX - 1; ++x)
+					const Vector4 sphereCenter = poseTransform.translation();
+					const Scalar sphereRadius = 0.4_simd;
+					const Vector4 d = (node.position[0] - sphereCenter).xyz0();
+					if (dot3(d, d) <= sphereRadius * sphereRadius)
 					{
-						Vector4& center = m_nodes[x + y * m_resolutionX].position[0];
-
-						// X axis
-						{
-							const Vector4& xn = m_nodes[x - 1 + y * m_resolutionX].position[0];
-							const Vector4& xp = m_nodes[x + 1 + y * m_resolutionX].position[0];
-
-							Vector4 v1 = (xp - center).normalized();
-							Vector4 v2 = (xn - center).normalized();
-
-							Scalar phi = dot3(v1, v2);
-							if (phi > -1.0f + FUZZY_EPSILON)
-							{
-								Vector4 v = (v1 + v2).normalized();
-								Vector4 xc = (xp + xn) / Scalar(2.0f);
-								Scalar distance = Plane(v, xc).distance(center);
-								center -= v * distance * c_stiffness;
-							}
-						}
-
-						// Y axis
-						{
-							const Vector4& yn = m_nodes[x + (y - 1) * m_resolutionX].position[0];
-							const Vector4& yp = m_nodes[x + (y + 1) * m_resolutionX].position[0];
-
-							Vector4 v1 = (yp - center).normalized();
-							Vector4 v2 = (yn - center).normalized();
-
-							Scalar phi = dot3(v1, v2);
-							if (phi > -1.0f + FUZZY_EPSILON)
-							{
-								Vector4 v = (v1 + v2).normalized();
-								Vector4 yc = (yp + yn) / Scalar(2.0f);
-								Scalar distance = Plane(v, yc).distance(center);
-								center -= v * distance * c_stiffness;
-							}
-						}
+						const Scalar depth = sphereRadius / d.length() - 1.0_simd;
+						node.position[0] += d * depth;
 					}
+				}
+			}
+
+			// Ensure nodes are anchored.
+			for (auto& node : m_nodes)
+			{
+				if (node.jointName == 0)
+					continue;
+
+				Transform poseTransform;
+				if (skeletonComponent->getPoseTransform(node.jointName, poseTransform))
+				{
+					node.position[0] = (poseTransform.translation() + node.jointOffset).xyz1();
 				}
 			}
 		}
@@ -365,8 +455,8 @@ void ClothComponent::update(const world::UpdateParams& update)
 
 void ClothComponent::reset()
 {
-	Vector4 positionBase(-m_scale / 2.0f, m_scale / 2.0f, 0.0f, 1.0f);
-	Vector4 positionScale(m_scale / m_resolutionX, -m_scale / m_resolutionY, 0.0f, 0.0f);
+	const Vector4 positionBase(-m_scale / 2.0f, m_scale / 2.0f, 0.0f, 1.0f);
+	const Vector4 positionScale(m_scale / m_resolutionX, -m_scale / m_resolutionY, 0.0f, 0.0f);
 
 	for (uint32_t y = 0; y < m_resolutionY; ++y)
 	{
@@ -378,11 +468,14 @@ void ClothComponent::reset()
 	}
 }
 
-void ClothComponent::setNodeInvMass(uint32_t x, uint32_t y, float invMass)
+void ClothComponent::setNodeAnchor(render::handle_t jointName, const Vector4& jointOffset, uint32_t x, uint32_t y)
 {
-	uint32_t index = x + y * m_resolutionX;
+	const uint32_t index = x + y * m_resolutionX;
 	if (index < m_resolutionX * m_resolutionY)
-		m_nodes[index].invMass = Scalar(invMass);
+	{
+		m_nodes[index].jointName = jointName;
+		m_nodes[index].jointOffset = jointOffset;
+	}
 }
 
 }

@@ -38,13 +38,6 @@ class IRenderSystem;
 
 }
 
-//namespace traktor::world
-//{
-//
-//class Entity;
-//
-//}
-
 namespace traktor::animation
 {
 
@@ -66,8 +59,6 @@ public:
 		bool screenSpaceCulling
 	);
 
-	virtual ~AnimatedMeshComponent();
-
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;
@@ -78,44 +69,12 @@ public:
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
-	/*! Get base transform of joint. */
-	//bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;
-
-	/*! Get transform of current pose. */
-	//bool getPoseTransform(render::handle_t jointName, Transform& outTransform) const;
-
 	/*! Get skin transform of joint in delta space. */
 	bool getSkinTransform(render::handle_t jointName, Transform& outTransform) const;
 
-	/*! Set pose transform of joint. */
-	//bool setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive);
-
-	/*! Get skeleton. */
-	//const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
-
-	/*! Set pose evaluation controller. */
-	//void setPoseController(IPoseController* poseController) { m_poseController = poseController; }
-
-	/*! Get pose evaluation controller. */
-	//IPoseController* getPoseController() const { return m_poseController; }
-
-	/*! Get all joint entity bindings. */
-	//const AlignedVector< Binding >& getBindings() const { return m_bindings; }
-
-	/*! Get all joint base transforms. */
-	//const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }
-
-	/*! Get all joint pose transforms. */
-	//const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
-
 private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
-	//resource::Proxy< Skeleton > m_skeleton;
-	//Ref< IPoseController > m_poseController;
 	AlignedVector< int32_t > m_jointRemap;
-	//AlignedVector< Binding > m_bindings;
-	//AlignedVector< Transform > m_jointTransforms;
-	//AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms[2];
 	Ref< render::Buffer > m_jointBuffers[2];
 	int32_t m_index;

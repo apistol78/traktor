@@ -74,7 +74,6 @@ Aabb3 SkeletonComponent::getBoundingBox() const
 	synchronize();
 
 	Aabb3 boundingBox;
-
 	if (!m_poseTransforms.empty())
 	{
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
@@ -124,6 +123,17 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 			binding.entity->setTransform(m_transform * T);
 		binding.entity->update(update);
 	}
+}
+
+void SkeletonComponent::synchronize() const
+{
+#if defined(T_USE_UPDATE_JOBS)
+	if (m_updatePoseControllerJob)
+	{
+		m_updatePoseControllerJob->wait();
+		m_updatePoseControllerJob = nullptr;
+	}
+#endif
 }
 
 bool SkeletonComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const
@@ -183,17 +193,6 @@ bool SkeletonComponent::setPoseTransform(render::handle_t jointName, const Trans
 	return true;
 }
 
-void SkeletonComponent::synchronize() const
-{
-#if defined(T_USE_UPDATE_JOBS)
-	if (m_updatePoseControllerJob)
-	{
-		m_updatePoseControllerJob->wait();
-		m_updatePoseControllerJob = nullptr;
-	}
-#endif
-}
-
 void SkeletonComponent::updatePoseController(float time, float deltaTime)
 {
 	// Calculate pose transforms and skinning transforms.
@@ -211,9 +210,8 @@ void SkeletonComponent::updatePoseController(float time, float deltaTime)
 			m_poseTransforms
 		);
 
-		const size_t skeletonJointCount = m_jointTransforms.size();
-
 		// Ensure we have same number of pose transforms as bones.
+		const size_t skeletonJointCount = m_jointTransforms.size();
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 			m_poseTransforms.push_back(m_jointTransforms[i]);
 	}
