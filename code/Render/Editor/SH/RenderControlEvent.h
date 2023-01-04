@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderView;
 class PrimitiveRenderer;
@@ -31,7 +29,7 @@ class T_DLLCLASS RenderControlEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	RenderControlEvent(
+	explicit RenderControlEvent(
 		ui::EventSubject* sender,
 		IRenderView* renderView,
 		PrimitiveRenderer* primitiveRenderer
@@ -46,5 +44,4 @@ private:
 	Ref< PrimitiveRenderer > m_primitiveRenderer;
 };
 
-	}
 }

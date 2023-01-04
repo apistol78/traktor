@@ -10,10 +10,8 @@
 #include "Drawing/Image.h"
 #include "Render/Editor/SH/IBLProbe.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"IBLProbe", IBLProbe, SHFunction)
 
@@ -27,10 +25,10 @@ Vector4 IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 	float T_MATH_ALIGN16 u[4];
 	unit.storeAligned(u);
 
-	float r = float((1.0f / PI) * acos(u[2]) / sqrt(u[0] * u[0] + u[1] * u[1]));
+	const float r = (float)((1.0f / PI) * acos(u[2]) / sqrt(u[0] * u[0] + u[1] * u[1]));
 
-	int x = int(m_image->getWidth() * (u[0] * r * 0.5f + 0.5f));
-	int y = int(m_image->getHeight() * (-u[1] * r * 0.5f + 0.5f));
+	const int32_t x = (int32_t)(m_image->getWidth() * (u[0] * r * 0.5f + 0.5f));
+	const int32_t y = (int32_t)(m_image->getHeight() * (-u[1] * r * 0.5f + 0.5f));
 
 	if (x < 0 || y < 0)
 		return Vector4::zero();
@@ -42,5 +40,4 @@ Vector4 IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 	return color;
 }
 
-	}
 }

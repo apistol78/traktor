@@ -23,12 +23,10 @@
 #include "Ui/Splitter.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 RandomGeometry s_random;
 
@@ -44,20 +42,20 @@ Vector4 polarToCartesian(float phi, float theta)
 // Evaluate point directly using source function.
 Vector4 Pfs(const SHFunction* function, float phi, float theta)
 {
-	Vector4 p = polarToCartesian(phi, theta);
+	const Vector4 p = polarToCartesian(phi, theta);
 	return p * function->evaluate(phi, theta, p);
 }
 
 // Evaluate point using SH.
 Vector4 Psh(const SHCoeffs& coefficients, float phi, float theta)
 {
-	Vector4 p = polarToCartesian(phi, theta);
+	const Vector4 p = polarToCartesian(phi, theta);
 	return p * coefficients.evaluate3(phi, theta);
 }
 
 SHMatrix concate(const SHMatrix& m1, const SHMatrix& m2)
 {
-	int dim = m1.getRows();
+	const int dim = m1.getRows();
 
 	SHMatrix m(dim, dim);
 	for (int c = 0; c < dim; ++c)
@@ -73,7 +71,7 @@ SHMatrix concate(const SHMatrix& m1, const SHMatrix& m2)
 	return m;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SHEditorPage", SHEditorPage, editor::IEditorPage)
 
@@ -125,7 +123,7 @@ void SHEditorPage::destroy()
 	if (m_container)
 	{
 		m_container->destroy();
-		m_container = 0;
+		m_container = nullptr;
 	}
 }
 
@@ -211,7 +209,7 @@ void SHEditorPage::eventRender1(RenderControlEvent* event)
 			//		2.0f * PI * j / float(zenithSteps)
 			//	)
 			//};
-			Vector4 v[] =
+			const Vector4 v[] =
 			{
 				Pfs(
 					m_lightFunction,
@@ -256,7 +254,7 @@ void SHEditorPage::eventRender2(RenderControlEvent* event)
 
 	for (int32_t x = -4; x <= 4; ++x)
 	{
-		float fx = float(x * unit);
+		const float fx = float(x * unit);
 		primitiveRenderer->drawLine(
 			Vector4(fx, 0.0f, -4.0f * unit, 1.0f),
 			Vector4(fx, 0.0f, 4.0f * unit, 1.0f),
@@ -280,7 +278,7 @@ void SHEditorPage::eventRender2(RenderControlEvent* event)
 	{
 		for (int32_t j = 0; j < zenithSteps; ++j)
 		{
-			Vector4 v[] =
+			const Vector4 v[] =
 			{
 				Psh(
 					m_lightCoefficients,
@@ -474,5 +472,4 @@ void SHEditorPage::eventRender2(RenderControlEvent* event)
 //	// primitiveRenderer->drawWireAabb(Vector4(0.0f, 0.0f, 0.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 0.0f), 0xffff00);
 //}
 
-	}
 }

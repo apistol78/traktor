@@ -10,10 +10,8 @@
 #include "Core/Math/SahTree.h"
 #include "Render/Editor/SH/ModelFunction.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"ModelFunction", ModelFunction, render::SHFunction)
 
@@ -49,5 +47,4 @@ Vector4 ModelFunction::evaluate(float phi, float theta, const Vector4& unit) con
 	return Vector4::zero();
 }
 
-	}
 }

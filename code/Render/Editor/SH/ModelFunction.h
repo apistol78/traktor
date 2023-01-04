@@ -23,22 +23,24 @@ namespace traktor
 
 class SahTree;
 
-	namespace model
-	{
+}
+
+namespace traktor::model
+{
 
 class Model;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class T_DLLCLASS ModelFunction : public SHFunction
 {
 	T_RTTI_CLASS;
 
 public:
-	ModelFunction(model::Model* model);
+	explicit ModelFunction(model::Model* model);
 
 	void setEvaluationPoint(const Vector4& position, const Vector4& normal);
 
@@ -51,5 +53,4 @@ private:
 	Vector4 m_normal;
 };
 
-	}
 }
