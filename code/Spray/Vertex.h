@@ -8,10 +8,8 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 /*! Emitter vertex.
  * \ingroup Spray
@@ -45,6 +43,4 @@ struct TrailVertex
 };
 #pragma pack()
 
-	}
 }
-

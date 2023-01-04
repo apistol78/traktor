@@ -10,10 +10,8 @@
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEvent", SpawnEffectEvent, world::IEntityEvent)
 
@@ -42,5 +40,4 @@ Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::Entit
 	return new SpawnEffectEventInstance(this, sender, Toffset * m_transform, effectComponent);
 }
 
-	}
 }

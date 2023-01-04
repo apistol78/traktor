@@ -32,8 +32,10 @@ namespace traktor
 
 class Job;
 
-	namespace spray
-	{
+}
+
+namespace traktor::spray
+{
 
 class EffectInstance;
 class Emitter;
@@ -102,6 +104,4 @@ private:
 	void updateTask(float deltaTime);
 };
 
-	}
 }
-

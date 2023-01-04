@@ -28,10 +28,8 @@
 #	include "Spray/Sources/SphereSourceData.h"
 #	include "Spray/Sources/VirtualSourceData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 extern "C" void __module__Traktor_Spray()
 {
@@ -55,7 +53,6 @@ extern "C" void __module__Traktor_Spray()
 	T_FORCE_LINK_REF(VirtualSourceData);
 }
 
-	}
 }
 
 #endif

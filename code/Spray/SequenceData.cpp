@@ -15,10 +15,8 @@
 #include "World/IEntityBuilder.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SequenceData", 0, SequenceData, ISerializable)
 
@@ -45,5 +43,4 @@ void SequenceData::Key::serialize(ISerializer& s)
 	s >> MemberRef< world::IEntityEventData >(L"event", event);
 }
 
-	}
 }

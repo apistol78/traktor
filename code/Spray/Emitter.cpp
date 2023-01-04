@@ -12,10 +12,8 @@
 #include "Spray/Modifier.h"
 #include "Spray/Source.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Emitter", Emitter, Object)
 
@@ -57,5 +55,4 @@ Ref< EmitterInstance > Emitter::createInstance(float duration) const
 	return new EmitterInstance(this, duration);
 }
 
-	}
 }

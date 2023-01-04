@@ -8,10 +8,8 @@
  */
 #include "Spray/Source.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Source", Source, Object)
 
@@ -24,5 +22,4 @@ Source::Source(
 {
 }
 
-	}
 }

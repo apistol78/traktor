@@ -13,10 +13,8 @@
 #include "World/IWorldRenderer.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEventInstance", SpawnEffectEventInstance, world::IEntityEventInstance)
 
@@ -86,5 +84,4 @@ void SpawnEffectEventInstance::cancel(world::Cancel when)
 	}
 }
 
-	}
 }

@@ -16,17 +16,15 @@
 #include "Resource/Proxy.h"
 #include "Spray/Types.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class TrailRenderer;
 
@@ -64,6 +62,4 @@ private:
 	Aabb3 m_boundingBox;
 };
 
-	}
 }
-

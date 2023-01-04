@@ -12,10 +12,8 @@
 #include "Spray/Sequence.h"
 #include "Spray/Trail.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectLayer", EffectLayer, Object)
 
@@ -73,5 +71,4 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 	);
 }
 
-	}
 }

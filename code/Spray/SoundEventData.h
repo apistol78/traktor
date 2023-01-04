@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class Sound;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Sound event persistent data.
  * \ingroup Spray
@@ -51,6 +49,4 @@ private:
 	bool m_autoStopFar = true;
 };
 
-	}
 }
-

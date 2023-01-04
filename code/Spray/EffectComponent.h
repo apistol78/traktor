@@ -22,24 +22,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundPlayer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityEventManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 class EffectInstance;
@@ -112,6 +110,4 @@ private:
 	void updateTechniques();
 };
 
-	}
 }
-

@@ -12,26 +12,24 @@
 #include "Resource/Proxy.h"
 #include "World/IEntityEventInstance.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundHandle;
 class ISoundPlayer;
 class Sound;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Sound event instance.
  * \ingroup Spray
@@ -68,6 +66,4 @@ private:
 	Ref< sound::ISoundHandle > m_handle;
 };
 
-	}
 }
-

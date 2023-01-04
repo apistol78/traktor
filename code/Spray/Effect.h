@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class EffectInstance;
 class EffectLayer;
@@ -60,6 +58,4 @@ private:
 	RefArray< EffectLayer > m_layers;
 };
 
-	}
 }
-

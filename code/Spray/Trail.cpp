@@ -9,10 +9,8 @@
 #include "Spray/Trail.h"
 #include "Spray/TrailInstance.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Trail", Trail, Object)
 
@@ -36,5 +34,4 @@ Ref< TrailInstance > Trail::createInstance() const
 	return new TrailInstance(m_shader, m_width, m_age, m_lengthThreshold, m_breakThreshold);
 }
 
-	}
 }

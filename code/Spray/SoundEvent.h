@@ -11,18 +11,16 @@
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundPlayer;
 class Sound;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Sound event.
  * \ingroup Spray
@@ -50,6 +48,4 @@ private:
 	bool m_autoStopFar;
 };
 
-	}
 }
-

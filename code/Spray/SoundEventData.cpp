@@ -12,10 +12,8 @@
 #include "Sound/Sound.h"
 #include "Spray/SoundEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SoundEventData", 1, SoundEventData, world::IEntityEventData)
 
@@ -29,5 +27,4 @@ void SoundEventData::serialize(ISerializer& s)
 	s >> Member< bool >(L"autoStopFar", m_autoStopFar);
 }
 
-	}
 }

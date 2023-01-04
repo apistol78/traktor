@@ -17,10 +17,8 @@
 #include "World/IEntityBuilder.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 4, EffectLayerData, ISerializable)
 
@@ -92,5 +90,4 @@ void EffectLayerData::serialize(ISerializer& s)
 	s >> MemberRef< world::IEntityEventData >(L"triggerDisable", m_triggerDisable);
 }
 
-	}
 }

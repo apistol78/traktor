@@ -9,10 +9,8 @@
 #include "Spray/SoundEvent.h"
 #include "Spray/SoundEventInstance.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundEvent", SoundEvent, world::IEntityEvent)
 
@@ -39,5 +37,4 @@ Ref< world::IEntityEventInstance > SoundEvent::createInstance(world::EntityEvent
 		return nullptr;
 }
 
-	}
 }

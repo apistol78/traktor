@@ -15,16 +15,14 @@
 #include "World/IEntityEventInstance.h"
 #include "World/EntityEventManager.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const float c_singleShotThreshold = 0.01f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectLayerInstance", EffectLayerInstance, Object)
 
@@ -50,7 +48,7 @@ EffectLayerInstance::~EffectLayerInstance()
 	if (m_triggerInstance)
 	{
 		m_triggerInstance->cancel(world::Cancel::Immediate);
-		m_triggerInstance = 0;
+		m_triggerInstance = nullptr;
 	}
 }
 
@@ -139,5 +137,4 @@ Aabb3 EffectLayerInstance::getBoundingBox() const
 	return boundingBox;
 }
 
-	}
 }

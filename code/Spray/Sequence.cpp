@@ -9,10 +9,8 @@
 #include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Sequence", Sequence, Object)
 
@@ -26,5 +24,4 @@ Ref< SequenceInstance > Sequence::createInstance() const
 	return new SequenceInstance(this);
 }
 
-	}
 }

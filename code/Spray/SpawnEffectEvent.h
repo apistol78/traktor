@@ -12,17 +12,15 @@
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundPlayer;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 
@@ -54,6 +52,4 @@ private:
 	bool m_useRotation;
 };
 
-	}
 }
-

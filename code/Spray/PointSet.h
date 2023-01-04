@@ -25,8 +25,10 @@ namespace traktor
 
 class IStream;
 
-	namespace spray
-	{
+}
+
+namespace traktor::spray
+{
 
 /*! Point set
  * \ingroup Spray
@@ -55,6 +57,4 @@ private:
 	AlignedVector< Point > m_points;
 };
 
-	}
 }
-

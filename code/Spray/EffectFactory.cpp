@@ -14,10 +14,8 @@
 #include "Spray/PointSet.h"
 #include "Spray/PointSetResource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
 
@@ -72,5 +70,4 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 		return nullptr;
 }
 
-	}
 }

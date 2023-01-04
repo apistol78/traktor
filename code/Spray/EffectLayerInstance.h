@@ -22,17 +22,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityEventInstance;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 struct Context;
 class EffectLayer;
@@ -94,6 +92,4 @@ private:
 	bool m_enable;
 };
 
-	}
 }
-

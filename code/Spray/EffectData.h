@@ -20,24 +20,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IEntityBuilder;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 class EffectLayerData;
@@ -82,6 +80,4 @@ private:
 	RefArray< EffectLayerData > m_layers;
 };
 
-	}
 }
-

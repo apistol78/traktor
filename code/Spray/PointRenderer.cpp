@@ -19,12 +19,10 @@
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 #if defined(__IOS__) || defined(__ANDROID__)
 const uint32_t c_pointCount = 1000;
@@ -43,7 +41,7 @@ const static float c_extents[4][2] =
 const render::Handle s_handlePoints(L"Spray_Points");
 const render::Handle s_handlePointsOffset(L"Spray_PointsOffset");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 
@@ -236,5 +234,4 @@ void PointRenderer::flush(
 	m_batches.resize(0);
 }
 
-	}
 }

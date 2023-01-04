@@ -13,10 +13,8 @@
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectComponentData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectComponentData", 0, EffectComponentData, world::IEntityComponentData)
 
@@ -42,5 +40,4 @@ void EffectComponentData::serialize(ISerializer& s)
 	s >> resource::Member< Effect >(L"effect", m_effect);
 }
 
-	}
 }

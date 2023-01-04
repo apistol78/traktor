@@ -17,10 +17,8 @@
 #include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectRenderer", EffectRenderer, world::IEntityRenderer)
 
@@ -110,5 +108,4 @@ void EffectRenderer::build(
 	m_trailRenderer->flush(context.getRenderContext(), worldRenderPass);
 }
 
-	}
 }

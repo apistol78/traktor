@@ -14,10 +14,8 @@
 #include "Spray/EffectData.h"
 #include "Spray/EffectLayerData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectData", 0, EffectData, ISerializable)
 
@@ -67,5 +65,4 @@ void EffectData::serialize(ISerializer& s)
 	s >> MemberRefArray< EffectLayerData >(L"layers", m_layers, AttributePrivate());
 }
 
-	}
 }

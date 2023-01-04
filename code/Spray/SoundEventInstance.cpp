@@ -12,10 +12,8 @@
 #include "Spray/SoundEventInstance.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundEventInstance", SoundEventInstance, world::IEntityEventInstance)
 
@@ -79,5 +77,4 @@ void SoundEventInstance::cancel(world::Cancel when)
 	}
 }
 
-	}
 }

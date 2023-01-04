@@ -12,15 +12,8 @@
 #include "Core/Object.h"
 #include "Spray/Point.h"
 
-namespace traktor
+namespace traktor::spray
 {
-
-#if defined(T_MODIFIER_USE_PS3_SPURS)
-class SpursJobQueue;
-#endif
-
-	namespace spray
-	{
 
 /*! Emitter modifier.
  * \ingroup Spray
@@ -33,6 +26,4 @@ public:
 	virtual void update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const = 0;
 };
 
-	}
 }
-

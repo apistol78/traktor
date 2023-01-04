@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Source;
 
@@ -54,6 +52,4 @@ private:
 	float m_velocityRate = 0.0f;
 };
 
-	}
 }
-

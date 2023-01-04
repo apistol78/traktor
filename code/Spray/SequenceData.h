@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityBuilder;
 class IEntityEventData;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Sequence;
 
@@ -62,6 +60,4 @@ private:
 	AlignedVector< Key > m_keys;
 };
 
-	}
 }
-

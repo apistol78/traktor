@@ -9,16 +9,14 @@
 #include "Spray/MeshRenderer.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_maxInstances = 16;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.MeshRenderer", MeshRenderer, Object)
 
@@ -83,5 +81,4 @@ void MeshRenderer::flush(
 	}
 }
 
-	}
 }

@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -32,17 +30,17 @@ class IVertexLayout;
 class RenderContext;
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 struct TrailVertex;
 
@@ -91,6 +89,4 @@ private:
 	AlignedVector< Batch > m_batches;
 };
 
-	}
 }
-

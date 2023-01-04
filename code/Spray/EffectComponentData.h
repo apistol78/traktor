@@ -19,31 +19,29 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class ISoundPlayer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityEventManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 class EffectComponent;
@@ -68,6 +66,4 @@ private:
 	resource::Id< Effect > m_effect;
 };
 
-	}
 }
-

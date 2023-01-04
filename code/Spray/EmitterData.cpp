@@ -20,10 +20,8 @@
 #include "Spray/SourceData.h"
 #include "Spray/ModifierData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 7, EmitterData, ISerializable)
 
@@ -96,5 +94,4 @@ void EmitterData::serialize(ISerializer& s)
 	s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
 }
 
-	}
 }

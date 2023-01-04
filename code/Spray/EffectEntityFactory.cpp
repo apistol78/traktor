@@ -22,10 +22,8 @@
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::IEntityFactory)
 
@@ -111,5 +109,4 @@ Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const 
 		return nullptr;
 }
 
-	}
 }
