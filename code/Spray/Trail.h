@@ -11,17 +11,15 @@
 #include "Core/Object.h"
 #include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class TrailInstance;
 
@@ -53,6 +51,4 @@ private:
 	float m_breakThreshold;
 };
 
-	}
 }
-

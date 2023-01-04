@@ -11,17 +11,15 @@
 #include "Spray/TrailInstance.h"
 #include "Spray/TrailRenderer.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const Scalar c_lengthThreshold(0.1f);
 const Scalar c_breakThreshold(10.0f);
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.TrailInstance", TrailInstance, Object)
 
@@ -135,5 +133,4 @@ void TrailInstance::render(render::handle_t technique, TrailRenderer* trailRende
 		);
 }
 
-	}
 }

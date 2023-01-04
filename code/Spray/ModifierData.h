@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Modifier;
 
@@ -44,6 +42,4 @@ public:
 	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const = 0;
 };
 
-	}
 }
-

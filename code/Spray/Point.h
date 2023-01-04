@@ -11,10 +11,8 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 /*! Particle point.
  * \ingroup Spray
@@ -38,6 +36,4 @@ struct T_MATH_ALIGN16 Point
  */
 typedef AlignedVector< Point > pointVector_t;
 
-	}
 }
-

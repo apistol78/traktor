@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityBuilder;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Emitter resource factory.
  * \ingroup Spray
@@ -52,6 +50,4 @@ private:
 	Ref< const world::IEntityBuilder > m_entityBuilder;
 };
 
-	}
 }
-

@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class MeshRenderer;
 class PointRenderer;
@@ -82,6 +80,4 @@ private:
 	Ref< TrailRenderer > m_trailRenderer;
 };
 
-	}
 }
-

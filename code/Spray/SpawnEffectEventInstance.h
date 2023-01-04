@@ -11,18 +11,16 @@
 #include "Core/Math/Transform.h"
 #include "World/IEntityEventInstance.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 class Entity;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class EffectComponent;
 class SpawnEffectEvent;
@@ -56,6 +54,4 @@ private:
 	Ref< world::Entity > m_effectEntity;
 };
 
-	}
 }
-

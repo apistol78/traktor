@@ -20,24 +20,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class InstanceMesh;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Shader;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 class EmitterInstance;
@@ -116,6 +114,4 @@ private:
 	bool m_meshOrientationFromVelocity;
 };
 
-	}
 }
-

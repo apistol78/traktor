@@ -11,25 +11,23 @@
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Transform.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundPlayer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class EntityEventManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Virtual source callback.
  * \ingroup Spray
@@ -61,6 +59,4 @@ struct Context
 	VirtualSourceCallback* virtualSourceCallback = nullptr;
 };
 
-	}
 }
-

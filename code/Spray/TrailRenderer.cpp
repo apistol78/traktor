@@ -20,19 +20,17 @@
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_stripeLength = 64;
 const uint32_t c_trailCount = 16;
 
 render::Handle s_handleTimeAndAge(L"TimeAndAge");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.TrailRenderer", TrailRenderer, Object)
 
@@ -237,5 +235,4 @@ void TrailRenderer::flush(
 	m_batches.resize(0);
 }
 
-	}
 }

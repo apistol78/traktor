@@ -16,18 +16,16 @@
 #include "Spray/Trail.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
 const uint32_t c_updateDenom = 1;
 Random g_randomSeed;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectComponent", EffectComponent, world::IEntityComponent)
 
@@ -205,5 +203,4 @@ void EffectComponent::updateTechniques()
 	}
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Effect", Effect, Object)
 
@@ -42,5 +40,4 @@ Ref< EffectInstance > Effect::createInstance() const
 	return effectInstance;
 }
 
-	}
 }

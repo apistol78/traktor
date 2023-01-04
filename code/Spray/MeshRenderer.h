@@ -21,31 +21,29 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class InstanceMesh;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class RenderContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 /*! Mesh particle renderer.
  * \ingroup Spray
@@ -71,6 +69,4 @@ private:
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instances;
 };
 
-	}
 }
-

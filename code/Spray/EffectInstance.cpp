@@ -12,10 +12,8 @@
 #include "Spray/EffectLayerInstance.h"
 #include "Spray/Types.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectInstance", EffectInstance, Object)
 
@@ -74,5 +72,4 @@ void EffectInstance::render(
 	}
 }
 
-	}
 }

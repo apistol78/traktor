@@ -14,10 +14,8 @@
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SpawnEffectEventData", 3, SpawnEffectEventData, world::IEntityEventData)
 
@@ -31,5 +29,4 @@ void SpawnEffectEventData::serialize(ISerializer& s)
 	s >> Member< bool >(L"useRotation", m_useRotation);
 }
 
-	}
 }

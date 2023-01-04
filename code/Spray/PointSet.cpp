@@ -10,10 +10,8 @@
 #include "Core/Io/Writer.h"
 #include "Spray/PointSet.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSet", PointSet, Object)
 
@@ -62,5 +60,4 @@ bool PointSet::write(IStream* stream) const
 	return true;
 }
 
-	}
 }

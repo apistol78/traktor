@@ -11,10 +11,8 @@
 #include "Spray/EffectComponent.h"
 #include "Spray/SprayClassFactory.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SprayClassFactory", 0, SprayClassFactory, IRuntimeClassFactory)
 
@@ -28,5 +26,4 @@ void SprayClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEffectComponent);
 }
 
-	}
 }

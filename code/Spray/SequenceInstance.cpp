@@ -10,10 +10,8 @@
 #include "Spray/SequenceInstance.h"
 #include "World/EntityEventManager.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceInstance", SequenceInstance, Object)
 
@@ -47,5 +45,4 @@ SequenceInstance::SequenceInstance(const Sequence* sequence)
 {
 }
 
-	}
 }

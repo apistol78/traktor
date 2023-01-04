@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 struct Context;
 class Effect;
@@ -81,6 +79,4 @@ private:
 	RefArray< EffectLayerInstance > m_layerInstances;
 };
 
-	}
 }
-

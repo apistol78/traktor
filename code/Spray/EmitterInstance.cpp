@@ -25,12 +25,10 @@
 #	define T_USE_UPDATE_JOBS
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const float c_warmUpDeltaTime = 1.0f / 5.0f;
 #if defined(__IOS__) || defined(__ANDROID__)
@@ -43,7 +41,7 @@ const uint32_t c_maxEmitSingleShot = 400;
 
 const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
 
@@ -92,7 +90,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		}
 	}
 
-	Vector4 lastPosition = m_transform.translation();
+	const Vector4 lastPosition = m_transform.translation();
 	m_transform = transform;
 
 	// Erase dead particles.
@@ -132,7 +130,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		const Source* source = m_emitter->getSource();
 		if (source)
 		{
-			const uint32_t avail = uint32_t(m_points.capacity() - size);
+			const uint32_t avail = (uint32_t)(m_points.capacity() - size);
 			const Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 
 			if (!singleShot)
@@ -145,7 +143,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)
 				{
-					uint32_t emitCount = min< uint32_t >(emitCountFrame, avail, c_maxEmitPerUpdate);
+					const uint32_t emitCount = min< uint32_t >(emitCountFrame, avail, c_maxEmitPerUpdate);
 					if (emitCount > 0)
 					{
 						source->emit(
@@ -231,7 +229,7 @@ void EmitterInstance::render(
 
 	m_sortPlane = cameraPlane;
 
-	float distance = cameraPlane.distance(transform.translation());
+	const float distance = cameraPlane.distance(transform.translation());
 	if (distance > pointRenderer->getLod2Distance())
 		m_skip = 4;
 	else if (distance > pointRenderer->getLod1Distance())
@@ -346,7 +344,7 @@ void EmitterInstance::updateTask(float deltaTime)
 		m_skip < 4
 	)
 	{
-		std::sort(m_renderPoints.begin(), m_renderPoints.end(), [=](const Point& lh, const Point& rh) {
+		std::sort(m_renderPoints.begin(), m_renderPoints.end(), [this](const Point& lh, const Point& rh) {
 			return (bool)(m_sortPlane.distance(lh.position) > m_sortPlane.distance(rh.position));
 		});
 	}
@@ -385,5 +383,4 @@ void EmitterInstance::updateTask(float deltaTime)
 	m_count++;
 }
 
-	}
 }

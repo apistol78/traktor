@@ -13,10 +13,8 @@
 #include "Spray/Trail.h"
 #include "Spray/TrailData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.TrailData", 1, TrailData, ISerializable)
 
@@ -40,5 +38,4 @@ void TrailData::serialize(ISerializer& s)
 	s >> Member< float >(L"breakThreshold", m_breakThreshold);
 }
 
-	}
 }

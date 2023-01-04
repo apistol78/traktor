@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 struct Context;
 
@@ -47,6 +45,4 @@ private:
 	explicit SequenceInstance(const Sequence* sequence);
 };
 
-	}
 }
-

@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityEvent;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class EffectLayerInstance;
 class Emitter;
@@ -80,6 +78,4 @@ private:
 	Ref< const world::IEntityEvent > m_triggerDisable;
 };
 
-	}
 }
-

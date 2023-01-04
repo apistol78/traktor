@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 /*! PointSet persistent resource.
  * \ingroup Spray
@@ -34,6 +32,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }
-

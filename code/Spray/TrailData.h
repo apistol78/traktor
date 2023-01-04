@@ -19,24 +19,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Trail;
 
@@ -62,6 +60,4 @@ private:
 	float m_breakThreshold = 0.0f;
 };
 
-	}
 }
-

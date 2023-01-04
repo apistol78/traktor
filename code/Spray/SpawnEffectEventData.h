@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class Effect;
 
@@ -52,6 +50,4 @@ private:
 	bool m_useRotation = true;
 };
 
-	}
 }
-
