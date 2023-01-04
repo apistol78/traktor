@@ -18,10 +18,8 @@
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidBodyComponentData", 0, RigidBodyComponentData, world::IEntityComponentData)
 
@@ -45,7 +43,7 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 {
 	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
 	if (!body)
-		return 0;
+		return nullptr;
 
 	body->setEnable(false);
 
@@ -54,7 +52,7 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	{
 		eventCollide = entityBuilder->create(m_eventCollide);
 		if (!eventCollide)
-			return 0;
+			return nullptr;
 	}
 
 	return new RigidBodyComponent(body, eventManager, eventCollide);
@@ -70,5 +68,4 @@ void RigidBodyComponentData::serialize(ISerializer& s)
 	s >> MemberRef< world::IEntityEventData >(L"eventCollide", m_eventCollide);
 }
 
-	}
 }

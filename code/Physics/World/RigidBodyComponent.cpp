@@ -13,10 +13,8 @@
 #include "World/Entity.h"
 #include "World/EntityEventManager.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidBodyComponent", RigidBodyComponent, world::IEntityComponent)
 
@@ -46,7 +44,7 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{
-		Transform transform = m_owner->getTransform();
+		const Transform transform = m_owner->getTransform();
 		m_body->setTransform(transform);
 		m_body->setEnable(true);
 	}
@@ -85,14 +83,13 @@ void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisi
 	position = position / Scalar(float(collisionInfo.contacts.size()));
 	normal = normal.normalized();
 
-	Transform Tworld(
+	const Transform Tworld(
 		position,
 		Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal)
 	);
 
-	Transform T = m_body->getTransform();
+	const Transform T = m_body->getTransform();
 	m_eventManager->raise(m_eventCollide, m_owner, T.inverse() * Tworld);
 }
 
-	}
 }

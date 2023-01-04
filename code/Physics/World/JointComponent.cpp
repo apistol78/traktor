@@ -15,10 +15,8 @@
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.JointComponent", JointComponent, world::IEntityComponent)
 
@@ -86,5 +84,4 @@ void JointComponent::update(const world::UpdateParams& update)
 	}
 }
 
-	}
 }

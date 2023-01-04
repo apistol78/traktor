@@ -17,23 +17,21 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityEvent;
 class EntityEventManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class Body;
 struct CollisionInfo;
 
-/*! \brief
+/*!
  * \ingroup Physics
  */
 class T_DLLCLASS RigidBodyComponent : public world::IEntityComponent
@@ -41,7 +39,7 @@ class T_DLLCLASS RigidBodyComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	RigidBodyComponent(
+	explicit RigidBodyComponent(
 		Body* body,
 		world::EntityEventManager* eventManager,
 		world::IEntityEvent* eventCollide
@@ -68,6 +66,4 @@ private:
 	void collisionListener(const physics::CollisionInfo& collisionInfo);
 };
 
-	}
 }
-

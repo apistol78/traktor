@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class PhysicsManager;
 class JointComponent;
@@ -51,6 +49,4 @@ private:
 	Ref< JointDesc > m_jointDesc;
 };
 
-	}
 }
-

@@ -16,10 +16,8 @@
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::IEntityFactory)
 
@@ -46,12 +44,12 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< CharacterComponentData >();
-	typeSet.insert< JointComponentData >();
-	typeSet.insert< RigidBodyComponentData >();
-	typeSet.insert< VehicleComponentData >();
-	return typeSet;
+	return makeTypeInfoSet<
+		CharacterComponentData,
+		JointComponentData,
+		RigidBodyComponentData,
+		VehicleComponentData
+	>();
 }
 
 Ref< world::Entity > EntityFactory::createEntity(
@@ -81,5 +79,4 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 		return nullptr;
 }
 
-	}
 }
