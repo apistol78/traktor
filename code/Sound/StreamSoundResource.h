@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Stream sound resource.
  * \ingroup Sound
@@ -45,6 +43,4 @@ private:
 	bool m_preload = false;
 };
 
-	}
 }
-

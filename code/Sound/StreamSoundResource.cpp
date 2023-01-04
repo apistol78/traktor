@@ -18,10 +18,8 @@
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/StreamSoundResource.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 8, StreamSoundResource, ISoundResource)
 
@@ -39,12 +37,12 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 
 	if (m_preload)
 	{
-		int64_t size = stream->available();
+		const int64_t size = stream->available();
 
 		uint8_t* buffer = new uint8_t [size];
 		for (int64_t i = 0; i < size; )
 		{
-			int64_t res = stream->read(&buffer[i], size - i);
+			const int64_t res = stream->read(&buffer[i], size - i);
 			if (res <= 0)
 				return nullptr;
 			i += res;
@@ -85,5 +83,4 @@ void StreamSoundResource::serialize(ISerializer& s)
 	s >> Member< bool >(L"preload", m_preload);
 }
 
-	}
 }

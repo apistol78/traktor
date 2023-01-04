@@ -11,10 +11,8 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverNull", 0, AudioDriverNull, IAudioDriver)
 
@@ -38,5 +36,4 @@ void AudioDriverNull::submit(const SoundBlock& soundBlock)
 {
 }
 
-	}
 }

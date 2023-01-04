@@ -19,24 +19,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class Sound;
 
@@ -51,6 +49,4 @@ public:
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const = 0;
 };
 
-	}
 }
-

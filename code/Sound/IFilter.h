@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Filter instance data.
 * \ingroup Sound
@@ -45,6 +43,4 @@ public:
 	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const = 0;
 };
 
-	}
 }
-

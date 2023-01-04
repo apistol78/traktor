@@ -11,12 +11,10 @@
 #include "Sound/IStreamDecoder.h"
 #include "Sound/StreamSoundBuffer.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
@@ -41,7 +39,7 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
@@ -71,7 +69,7 @@ Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
 bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
 {
 	StreamSoundBufferCursor* ssbc = static_cast< StreamSoundBufferCursor* >(cursor);
-	uint64_t position = ssbc->m_position;
+	const uint64_t position = ssbc->m_position;
 
 	if (m_position > position)
 	{
@@ -80,7 +78,7 @@ bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* 
 		m_position = 0;
 	}
 
-	uint32_t samplesCount = outBlock.samplesCount;
+	const uint32_t samplesCount = outBlock.samplesCount;
 	while (m_position <= position)
 	{
 		outBlock.samplesCount = samplesCount;
@@ -94,5 +92,4 @@ bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* 
 	return true;
 }
 
-	}
 }

@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! \ingroup Sound */
 //@{
@@ -134,6 +132,4 @@ inline float decibelToLinear(float db) {
 
 //@}
 
-	}
 }
-

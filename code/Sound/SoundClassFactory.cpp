@@ -52,10 +52,8 @@
 #include "Sound/Resound/TriggerGrain.h"
 #include "Sound/Resound/TriggerGrainData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundClassFactory", 0, SoundClassFactory, IRuntimeClassFactory)
 
@@ -254,5 +252,4 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classTriggerGrainData);
 }
 
-	}
 }

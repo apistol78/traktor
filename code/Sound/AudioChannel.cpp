@@ -19,12 +19,10 @@
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_outputSamplesBlockCount = 16;
 
@@ -51,7 +49,7 @@ inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t 
 		Vector4::loadAligned(&sourceSamples[i]).storeAligned(&destSamples[i]);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioChannel", AudioChannel, Object)
 
@@ -344,5 +342,4 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 	return true;
 }
 
-	}
 }

@@ -28,12 +28,10 @@
 #	include "Sound/Avx/AudioMixerAvx.h"
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 inline void clearSamples(float* samples, int32_t samplesCount)
 {
@@ -54,7 +52,7 @@ inline void clearSamples(float* samples, int32_t samplesCount)
 		c_zero4.storeAligned(&samples[i]);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioSystem", AudioSystem, Object)
 
@@ -379,5 +377,4 @@ void AudioSystem::threadMixer()
 	}
 }
 
-	}
 }

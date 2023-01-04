@@ -17,10 +17,8 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Sound/AudioDriverWriteOut.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverWriteOut", 0, AudioDriverWriteOut, IAudioDriver)
 
@@ -113,5 +111,4 @@ void AudioDriverWriteOut::submit(const SoundBlock& soundBlock)
 	);
 }
 
-	}
 }

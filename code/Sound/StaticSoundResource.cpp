@@ -24,10 +24,8 @@
 #undef min
 #undef max
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 7, StaticSoundResource, ISoundResource)
 
@@ -136,5 +134,4 @@ void StaticSoundResource::serialize(ISerializer& s)
 	s >> MemberType(L"decoderType", m_decoderType);
 }
 
-	}
 }

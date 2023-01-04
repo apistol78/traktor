@@ -24,8 +24,10 @@ namespace traktor
 
 class IStream;
 
-	namespace sound
-	{
+}
+
+namespace traktor::sound
+{
 
 /*! Sound stream decoder.
  * \ingroup Sound
@@ -51,6 +53,4 @@ public:
 	virtual void rewind() = 0;
 };
 
-	}
 }
-

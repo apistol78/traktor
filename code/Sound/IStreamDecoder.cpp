@@ -8,12 +8,9 @@
  */
 #include "Sound/IStreamDecoder.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.IStreamDecoder", IStreamDecoder, Object)
 
-	}
 }

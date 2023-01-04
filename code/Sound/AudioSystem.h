@@ -26,10 +26,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class AudioChannel;
 class IAudioDriver;
@@ -159,6 +157,4 @@ private:
 	void threadMixer();
 };
 
-	}
 }
-

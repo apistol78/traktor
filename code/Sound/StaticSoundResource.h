@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Static sound resource.
  * \ingroup Sound
@@ -50,6 +48,4 @@ private:
 	const TypeInfo* m_decoderType;
 };
 
-	}
 }
-

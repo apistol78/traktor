@@ -12,12 +12,10 @@
 #include "Core/Thread/CriticalSection.h"
 #include "Sound/Types.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 class HandleRegistry
 {
@@ -38,7 +36,7 @@ public:
 			return i->second;
 		}
 
-		handle_t handle = m_nextUnusedHandle++;
+		const handle_t handle = m_nextUnusedHandle++;
 		m_handles.insert(std::make_pair(name, handle));
 
 		return handle;
@@ -52,12 +50,11 @@ private:
 
 HandleRegistry s_handleRegistry;
 
-		}
+	}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
 	return s_handleRegistry.getHandle(name);
 }
 
-	}
 }

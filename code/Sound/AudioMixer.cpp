@@ -10,10 +10,8 @@
 #include "Core/Misc/Align.h"
 #include "Sound/AudioMixer.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioMixer", AudioMixer, IAudioMixer)
 
@@ -192,5 +190,4 @@ void AudioMixer::synchronize() const
 {
 }
 
-	}
 }

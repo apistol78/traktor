@@ -66,10 +66,8 @@
 #	include "Sound/Filters/SurroundFilter.h"
 #	include "Sound/Filters/TimeStretchFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 extern "C" void __module__Traktor_Sound()
 {
@@ -131,7 +129,6 @@ extern "C" void __module__Traktor_Sound()
 	T_FORCE_LINK_REF(TimeStretchFilter);
 }
 
-	}
 }
 
 #endif

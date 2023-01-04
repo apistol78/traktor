@@ -27,12 +27,10 @@
 #include "Core/Thread/Semaphore.h"
 #include "Sound/StaticSoundBuffer.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_blockSize = sizeof(float) * (4096 + 16);
 const uint32_t c_blockCount = 512;
@@ -126,7 +124,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StaticSoundBuffer", StaticSoundBuffer, ISoundBuffer)
 
@@ -227,5 +225,4 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* 
 	return true;
 }
 
-	}
 }
