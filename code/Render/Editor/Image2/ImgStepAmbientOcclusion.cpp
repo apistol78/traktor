@@ -14,10 +14,8 @@
 #include "Render/Editor/Image2/ImgStepAmbientOcclusion.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepAmbientOcclusion", 0, ImgStepAmbientOcclusion, IImgStep)
 
@@ -38,5 +36,4 @@ void ImgStepAmbientOcclusion::serialize(ISerializer& s)
 	s >> MemberStlList< std::wstring >(L"parameters", m_parameters);
 }
 
-    }
 }

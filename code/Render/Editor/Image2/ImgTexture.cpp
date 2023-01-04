@@ -11,16 +11,14 @@
 #include "Render/Editor/Image2/ImgTexture.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const ImmutableNode::OutputPinDesc c_ImgTexture_o[] = { { L"Output", L"{42CDF5D7-B6EF-43C2-B889-0D5621AB4DFF}" }, { 0 } };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTexture", 0, ImgTexture, ImmutableNode)
 
@@ -40,5 +38,4 @@ void ImgTexture::serialize(ISerializer& s)
 	s >> resource::Member< ITexture >(L"texture", m_texture);
 }
 
-	}
 }

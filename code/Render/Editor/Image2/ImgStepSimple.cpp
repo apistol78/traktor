@@ -14,10 +14,8 @@
 #include "Render/Editor/Image2/ImgStepSimple.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepSimple", 0, ImgStepSimple, IImgStep)
 
@@ -38,5 +36,4 @@ void ImgStepSimple::serialize(ISerializer& s)
 	s >> MemberStlList< std::wstring >(L"parameters", m_parameters);
 }
 
-    }
 }

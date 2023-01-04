@@ -8,16 +8,14 @@
  */
 #include "Render/Editor/Image2/ImgOutput.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const ImmutableNode::InputPinDesc c_ImgOutput_i[] = { { L"Input", L"{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}", false }, { 0 } };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgOutput", 0, ImgOutput, ImmutableNode)
 
@@ -31,5 +29,4 @@ void ImgOutput::serialize(ISerializer& s)
 	Node::serialize(s);
 }
 
-	}
 }

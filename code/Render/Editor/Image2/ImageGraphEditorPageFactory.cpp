@@ -13,10 +13,8 @@
 #include "Render/Editor/Image2/ImageGraphEditorPageFactory.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphEditorPageFactory", 0, ImageGraphEditorPageFactory, editor::IEditorPageFactory)
 
@@ -60,5 +58,4 @@ Ref< ISerializable > ImageGraphEditorPageFactory::cloneAsset(const ISerializable
 	return imageGraph;
 }
 
-	}
 }

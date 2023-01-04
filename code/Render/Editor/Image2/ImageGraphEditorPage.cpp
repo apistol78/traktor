@@ -50,10 +50,8 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphEditorPage", ImageGraphEditorPage, editor::IEditorPage)
 
@@ -155,7 +153,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		 		if (i != selectedNodes.begin())
 		 		{
-		 			ui::Rect rc = (*i)->calculateRect();
+		 			const ui::Rect rc = (*i)->calculateRect();
 		 			bounds.left = std::min(bounds.left, rc.left);
 		 			bounds.top = std::min(bounds.top, rc.top);
 		 			bounds.right = std::max(bounds.right, rc.right);
@@ -608,8 +606,8 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	T_ASSERT(destinationNode);
 
 	// Ensure compatible types of nodes are connected.
-	bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
-	bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
+	const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
+	const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
 	if (sourceTarget == destinationTarget)
 	{
 		log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;
@@ -693,5 +691,4 @@ void ImageGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	}
 }
 
-	}
 }

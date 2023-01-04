@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class Shader;
 
@@ -45,5 +43,4 @@ private:
     std::list< std::wstring > m_parameters;
 };
 
-    }
 }

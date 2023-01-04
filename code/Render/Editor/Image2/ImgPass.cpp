@@ -15,12 +15,10 @@
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Render/Editor/Image2/ImgPass.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class MemberClear : public MemberComplex
 {
@@ -51,7 +49,7 @@ private:
 	Clear& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgPass", 1, ImgPass, Node)
 
@@ -148,5 +146,4 @@ void ImgPass::refresh()
 	}
 }
 
-	}
 }
