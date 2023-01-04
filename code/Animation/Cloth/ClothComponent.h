@@ -46,6 +46,8 @@ class T_DLLCLASS ClothComponent : public world::IEntityComponent
 public:
 	struct Node
 	{
+		render::handle_t jointName;
+		Vector4 jointOffset;
 		Vector4 position[2];
 		Vector2 texCoord;
 		Scalar invMass;
@@ -89,13 +91,14 @@ public:
 
 	void reset();
 
-	void setNodeInvMass(uint32_t x, uint32_t y, float invMass);
+	void setNodeAnchor(render::handle_t jointName, const Vector4& jointOffset, uint32_t x, uint32_t y);
 
 	const AlignedVector< Node >& getNodes() const { return m_nodes; }
 
 	const AlignedVector< Edge >& getEdges() const { return m_edges; }
 
 private:
+	world::Entity* m_owner = nullptr;
 	AlignedVector< Node > m_nodes;
 	AlignedVector< Edge > m_edges;
 	Transform m_transform;

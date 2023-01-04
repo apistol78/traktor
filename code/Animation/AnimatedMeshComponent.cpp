@@ -23,8 +23,6 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
-#define T_USE_UPDATE_JOBS
-
 namespace traktor::animation
 {
 	namespace
@@ -54,26 +52,6 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 
 	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
 	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-
-	//if (m_skeleton)
-	//{
-	//	calculateJointTransforms(
-	//		m_skeleton,
-	//		m_jointTransforms
-	//	);
-
-	//	m_poseTransforms.reserve(m_jointTransforms.size());
-
-	//	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-	//	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-
-	//	updatePoseController(m_index, 0.0f, 0.0f);
-	//	m_index = 1 - m_index;
-	//}
-}
-
-AnimatedMeshComponent::~AnimatedMeshComponent()
-{
 }
 
 void AnimatedMeshComponent::destroy()
@@ -110,20 +88,6 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 			m_jointRemap[i] = it->second;
 		}
 	}
-
-	//auto skeletonComponent = owner->getComponent< SkeletonComponent >();
-	//if (skeletonComponent && skeletonComponent->getSkeleton())
-	//{
-	//	calculateJointTransforms(
-	//		m_skeleton,
-	//		m_jointTransforms
-	//	);
-
-	//	m_poseTransforms.reserve(m_jointTransforms.size());
-
-	//	updatePoseController(m_index, 0.0f, 0.0f);
-	//	m_index = 1 - m_index;
-	//}
 }
 
 Aabb3 AnimatedMeshComponent::getBoundingBox() const
@@ -141,25 +105,31 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 
 	// Calculate skinning transforms.
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
-	auto skeleton = skeletonComponent->getSkeleton();
-
-	const auto& jointTransforms = skeletonComponent->getJointTransforms();
-	const auto& poseTransforms = skeletonComponent->getPoseTransforms();
-
-	if (!poseTransforms.empty())
+	if (skeletonComponent && skeletonComponent->getSkeleton())
 	{
-		const size_t skeletonJointCount = jointTransforms.size();
-		const size_t skinJointCount = m_mesh->getJointCount();
+		// Ensure all transforms are calculated.
+		skeletonComponent->synchronize();
 
-		// Calculate skin transforms in delta space.
-		for (size_t i = 0; i < skeletonJointCount; ++i)
+		auto skeleton = skeletonComponent->getSkeleton();
+
+		const auto& jointTransforms = skeletonComponent->getJointTransforms();
+		const auto& poseTransforms = skeletonComponent->getPoseTransforms();
+
+		if (!poseTransforms.empty())
 		{
-			const int32_t jointIndex = m_jointRemap[i];
-			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
+			const size_t skeletonJointCount = jointTransforms.size();
+			const size_t skinJointCount = m_mesh->getJointCount();
+
+			// Calculate skin transforms in delta space.
+			for (size_t i = 0; i < skeletonJointCount; ++i)
 			{
-				const Transform skinTransform = poseTransforms[i] * jointTransforms[i].inverse();
-				m_skinTransforms[m_index][jointIndex * 2 + 0] = skinTransform.rotation().e;
-				m_skinTransforms[m_index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
+				const int32_t jointIndex = m_jointRemap[i];
+				if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
+				{
+					const Transform skinTransform = poseTransforms[i] * jointTransforms[i].inverse();
+					m_skinTransforms[m_index][jointIndex * 2 + 0] = skinTransform.rotation().e;
+					m_skinTransforms[m_index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
+				}
 			}
 		}
 	}
@@ -173,7 +143,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		return;
 
 	const Scalar interval(worldRenderView.getInterval());
-
 	const Transform worldTransform = m_transform.get(interval);
 	const Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
 
@@ -232,29 +201,33 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transform& outTransform) const
 {
-	//uint32_t index;
-	//if (!m_skeleton->findJoint(jointName, index))
-	//	return false;
+	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+	if (!skeletonComponent)
+		return false;
 
-	//synchronize();
+	auto skeleton = skeletonComponent->getSkeleton();
+	if (!skeleton)
+		return false;
 
-	//if (index >= m_poseTransforms.size())
-	//	return false;
+	uint32_t index;
+	if (!skeleton->findJoint(jointName, index))
+		return false;
 
-	//const int skinIndex = m_jointRemap[index];
-	//if (skinIndex < 0)
-	//	return false;
+	if (index >= m_jointRemap.size())
+		return false;
 
-	//Quaternion tmp;
-	//m_skinTransforms[m_index][skinIndex * 2 + 0].storeAligned((float*)&tmp);
+	const int skinIndex = m_jointRemap[index];
+	if (skinIndex < 0)
+		return false;
 
-	//outTransform = Transform(
-	//	m_skinTransforms[m_index][skinIndex * 2 + 1],
-	//	tmp
-	//);
-	//return true;
+	Quaternion tmp;
+	m_skinTransforms[m_index][skinIndex * 2 + 0].storeAligned((float*)&tmp);
 
-	return false;
+	outTransform = Transform(
+		m_skinTransforms[m_index][skinIndex * 2 + 1],
+		tmp
+	);
+	return true;
 }
 
 }
