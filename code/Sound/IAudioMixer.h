@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Audio mixer interface.
  * \ingroup Sound
@@ -48,6 +46,4 @@ public:
 	virtual void synchronize() const = 0;
 };
 
-	}
 }
-

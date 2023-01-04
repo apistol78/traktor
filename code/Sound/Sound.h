@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class ISoundBuffer;
 
@@ -35,7 +33,7 @@ class T_DLLCLASS Sound : public Object
 	T_RTTI_CLASS;
 
 public:
-	Sound(
+	explicit Sound(
 		ISoundBuffer* buffer,
 		handle_t category,
 		float gain,
@@ -57,6 +55,4 @@ private:
 	float m_range;
 };
 
-	}
 }
-

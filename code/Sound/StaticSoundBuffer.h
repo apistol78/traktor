@@ -19,11 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-
-	namespace sound
-	{
 
 /*! Static sound buffer.
  * \ingroup Sound
@@ -52,6 +49,4 @@ private:
 	AutoArrayPtr< int16_t, AllocFreeAlign > m_samples[SbcMaxChannelCount];
 };
 
-	}
 }
-

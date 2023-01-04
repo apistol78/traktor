@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IStreamDecoder;
 
@@ -48,6 +46,4 @@ private:
 	mutable uint64_t m_position = 0;
 };
 
-	}
 }
-

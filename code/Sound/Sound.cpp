@@ -8,10 +8,8 @@
  */
 #include "Sound/Sound.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.Sound", Sound, Object)
 
@@ -28,5 +26,4 @@ Sound::Sound(
 {
 }
 
-	}
 }

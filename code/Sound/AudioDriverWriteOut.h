@@ -24,8 +24,10 @@ namespace traktor
 
 class IStream;
 
-	namespace sound
-	{
+}
+
+namespace traktor::sound
+{
 
 /*! Write-out device audio driver.
  * \ingroup Sound
@@ -35,7 +37,7 @@ class T_DLLCLASS AudioDriverWriteOut : public IAudioDriver
 	T_RTTI_CLASS;
 
 public:
-	AudioDriverWriteOut(IAudioDriver* childDriver = 0);
+	AudioDriverWriteOut(IAudioDriver* childDriver = nullptr);
 
 	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
@@ -53,6 +55,4 @@ private:
 	bool m_wait;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IAudioMixer;
 
@@ -64,6 +62,4 @@ public:
 	virtual void submit(const SoundBlock& soundBlock) = 0;
 };
 
-	}
 }
-

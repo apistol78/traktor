@@ -11,10 +11,8 @@
 #include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundFactory", SoundFactory, resource::IResourceFactory)
 
@@ -42,5 +40,4 @@ Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, 
 		return nullptr;
 }
 
-	}
 }
