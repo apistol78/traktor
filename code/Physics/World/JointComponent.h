@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class Joint;
 class JointDesc;
@@ -35,7 +33,7 @@ class T_DLLCLASS JointComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	JointComponent(PhysicsManager* physicsManager, const JointDesc* jointDesc);
+	explicit JointComponent(PhysicsManager* physicsManager, const JointDesc* jointDesc);
 
 	virtual void destroy() override final;
 
@@ -54,6 +52,4 @@ private:
 	Ref< Joint > m_joint;
 };
 
-	}
 }
-

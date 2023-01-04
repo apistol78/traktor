@@ -17,24 +17,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class EntityEventManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class PhysicsManager;
 
@@ -46,7 +44,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(
+	explicit EntityFactory(
 		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
@@ -70,6 +68,4 @@ private:
 	Ref< PhysicsManager > m_physicsManager;
 };
 
-	}
 }
-

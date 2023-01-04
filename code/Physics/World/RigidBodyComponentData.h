@@ -17,27 +17,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class IEntityBuilder;
 class IEntityEventData;
 class EntityEventManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class BodyDesc;
 class PhysicsManager;
@@ -77,6 +75,4 @@ private:
 	Ref< world::IEntityEventData > m_eventCollide;
 };
 
-	}
 }
-

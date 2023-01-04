@@ -13,10 +13,8 @@
 #include "Physics/World/JointComponent.h"
 #include "Physics/World/JointComponentData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.JointComponentData", 0, JointComponentData, world::IEntityComponentData)
 
@@ -39,5 +37,4 @@ void JointComponentData::serialize(ISerializer& s)
 	s >> MemberRef< JointDesc >(L"jointDesc", m_jointDesc);
 }
 
-	}
 }
