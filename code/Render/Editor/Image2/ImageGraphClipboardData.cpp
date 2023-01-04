@@ -12,10 +12,8 @@
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Image2/ImageGraphClipboardData.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphClipboardData", 0, ImageGraphClipboardData, ISerializable)
 
@@ -59,5 +57,4 @@ void ImageGraphClipboardData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"boundsBottom", m_bounds.bottom);
 }
 
-	}
 }

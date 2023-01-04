@@ -32,10 +32,8 @@
 #include "Render/Image2/ShadowProjectData.h"
 #include "Render/Image2/SimpleData.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 5, ImageGraphPipeline, editor::IPipeline)
 
@@ -388,5 +386,4 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 	return true;
 }
 
-	}
 }

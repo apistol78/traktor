@@ -20,20 +20,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ContentChangeEvent;
 class ContentChangingEvent;
@@ -47,10 +45,10 @@ class SelectEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IgaPass;
 class IgaTarget;
@@ -62,7 +60,7 @@ class T_DLLEXPORT ImageGraphEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	ImageGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit ImageGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -106,6 +104,4 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-

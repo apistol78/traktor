@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ImageGraphAsset;
 class ImagePassOpData;
@@ -74,6 +72,4 @@ private:
 	bool convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassOpData >& outSteps) const;
 };
 
-	}
 }
-

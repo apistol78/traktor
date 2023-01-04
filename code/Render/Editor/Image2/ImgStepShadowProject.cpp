@@ -14,10 +14,8 @@
 #include "Render/Editor/Image2/ImgStepShadowProject.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepShadowProject", 0, ImgStepShadowProject, IImgStep)
 
@@ -39,5 +37,4 @@ void ImgStepShadowProject::serialize(ISerializer& s)
 	s >> MemberStlList< std::wstring >(L"parameters", m_parameters);
 }
 
-    }
 }

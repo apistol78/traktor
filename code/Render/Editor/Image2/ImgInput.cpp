@@ -10,16 +10,14 @@
 #include "Core/Serialization/Member.h"
 #include "Render/Editor/Image2/ImgInput.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const ImmutableNode::OutputPinDesc c_ImgInput_o[] = { { L"Output", L"{CADCA675-68AF-45C9-8713-017957DE6968}" }, { 0 } };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgInput", 0, ImgInput, ImmutableNode)
 
@@ -39,5 +37,4 @@ void ImgInput::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"textureId", m_textureId);
 }
 
-	}
 }

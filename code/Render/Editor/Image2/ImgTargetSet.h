@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS ImgTargetSet : public Node
 {
@@ -58,9 +56,7 @@ private:
 	struct TargetDesc
 	{
 		std::wstring textureId;
-		render::TextureFormat colorFormat;
-
-		TargetDesc();
+		render::TextureFormat colorFormat = TfInvalid;
 
 		void serialize(ISerializer& s);
 	};
@@ -84,5 +80,4 @@ private:
 	void refresh();
 };
 
-	}   
 }

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class T_DLLCLASS IImgStep : public ISerializable
 {
@@ -35,5 +33,4 @@ public:
     virtual void getInputs(std::set< std::wstring >& outInputs) const = 0;
 };
 
-    }
 }

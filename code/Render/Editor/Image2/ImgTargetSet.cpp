@@ -15,12 +15,10 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 constexpr static MemberEnum< TextureFormat >::Key c_TextureFormat_Keys[] =
 {
@@ -59,7 +57,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImgTargetSet", 1, ImgTargetSet, Node)
 
@@ -192,16 +190,10 @@ void ImgTargetSet::refresh()
 	}
 }
 
-ImgTargetSet::TargetDesc::TargetDesc()
-:	colorFormat(TfInvalid)
-{
-}
-
 void ImgTargetSet::TargetDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"textureId", textureId);
 	s >> MemberTextureFormat(L"colorFormat", colorFormat);
 }
 
-	}
 }

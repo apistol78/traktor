@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS ImageGraphAsset : public Graph
 {
@@ -33,5 +31,4 @@ public:
 	explicit ImageGraphAsset(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 };
 
-	}
 }
