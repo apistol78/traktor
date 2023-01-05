@@ -12,10 +12,8 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.MoveQuery", MoveQuery, Object)
 
@@ -42,7 +40,7 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 	while (m_steerIndex < m_steerPath.size())
 	{
 		const Vector4& steerTo = m_steerPath[m_steerIndex];
-		Scalar d2 = ((steerTo - currentPosition) * c_101).length2();
+		const Scalar d2 = ((steerTo - currentPosition) * c_101).length2();
 		if (d2 >= ndt2)
 		{
 			outMoveToPosition = steerTo;
@@ -54,5 +52,4 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 	return false;
 }
 
-	}
 }

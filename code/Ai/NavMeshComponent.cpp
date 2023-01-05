@@ -8,10 +8,8 @@
  */
 #include "Ai/NavMeshComponent.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponent", NavMeshComponent, world::IEntityComponent)
 
@@ -41,5 +39,4 @@ void NavMeshComponent::update(const world::UpdateParams& update)
 {
 }
 
-	}
 }

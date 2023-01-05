@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ai
-	{
+namespace traktor::ai
+{
 
 /*! Navigation mesh entity factory.
  * \ingroup AI
@@ -38,7 +36,7 @@ class T_DLLCLASS NavMeshEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress);
+	explicit NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress);
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -57,6 +55,4 @@ private:
 	bool m_suppress;
 };
 
-	}
 }
-

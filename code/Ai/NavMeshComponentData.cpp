@@ -11,10 +11,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshComponentData", 0, NavMeshComponentData, world::IEntityComponentData)
 
@@ -27,5 +25,4 @@ void NavMeshComponentData::serialize(ISerializer& s)
 	s >> resource::Member< NavMesh >(L"navMesh", m_navMesh);
 }
 
-	}
 }

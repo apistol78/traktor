@@ -15,12 +15,10 @@
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
+	namespace
 	{
-		namespace
-		{
 
 Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosition, float nodeDistanceThreshold)
 {
@@ -63,7 +61,7 @@ const NavMesh* NavMeshComponent_get(NavMeshComponent* self)
 	return self->get();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.AiClassFactory", 0, AiClassFactory, IRuntimeClassFactory)
 
@@ -89,5 +87,4 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classNavMeshComponent);
 }
 
-	}
 }

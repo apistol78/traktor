@@ -12,10 +12,8 @@
 #include "Ai/NavMeshEntityFactory.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityFactory", NavMeshEntityFactory, world::IEntityFactory)
 
@@ -69,5 +67,4 @@ Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const
 		return new NavMeshComponent();
 }
 
-	}
 }

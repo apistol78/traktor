@@ -16,12 +16,10 @@
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
+	namespace
 	{
-		namespace
-		{
 
 const float c_searchExtents[3] = { 32.0f, 32.0f, 32.0f };
 
@@ -31,7 +29,7 @@ float random()
 	return s_rnd.nextFloat();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMesh", NavMesh, Object)
 
@@ -273,5 +271,4 @@ bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outP
 	return true;
 }
 
-	}
 }

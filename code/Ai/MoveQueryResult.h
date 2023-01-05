@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 class MoveQuery;
 
@@ -38,6 +36,4 @@ private:
 	Ref< MoveQuery > m_moveQuery;
 };
 
-	}
 }
-

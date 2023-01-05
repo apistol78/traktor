@@ -8,10 +8,8 @@
  */
 #include "Ai/MoveQueryResult.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.MoveQueryResult", MoveQueryResult, Result)
 
@@ -27,5 +25,4 @@ MoveQuery* MoveQueryResult::get() const
 	return m_moveQuery;
 }
 
-	}
 }
