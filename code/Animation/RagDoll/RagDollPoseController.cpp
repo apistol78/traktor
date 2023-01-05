@@ -90,15 +90,15 @@ bool RagDollPoseController::create(
 			continue;
 		}
 
-		Vector4 start = jointTransforms[parent].translation();
-		Vector4 end = jointTransforms[i].translation();
+		const Vector4 start = jointTransforms[parent].translation();
+		const Vector4 end = jointTransforms[i].translation();
 
 		float length = (end - start).length();
 		float radius = joint->getRadius();
 		if (radius > length / 2.0f)
 			radius = length / 2.0f;
 
-		Vector4 centerOfMass = (start + end) * Scalar(0.5f);
+		const Vector4 centerOfMass = (start + end) * Scalar(0.5f);
 
 		physics::CapsuleShapeDesc shapeDesc;
 		shapeDesc.setCollisionGroup(data->m_collisionGroup);
@@ -124,9 +124,9 @@ bool RagDollPoseController::create(
 		Vector4 axisX, axisY;
 		orthogonalFrame(axisZ, axisY, axisX);
 
-		Matrix44 m1(axisX, axisY, axisZ, Vector4::origo());
-		Matrix44 m2 = translate(centerOfMass);
-		Transform limbTransform(m2 * m1);
+		const Matrix44 m1(axisX, axisY, axisZ, Vector4::origo());
+		const Matrix44 m2 = translate(centerOfMass);
+		const Transform limbTransform(m2 * m1);
 
 		limb->setTransform(worldTransform * limbTransform);
 		if (!velocities.empty())
@@ -326,60 +326,7 @@ bool RagDollPoseController::evaluate(
 		Joint* joint = skeleton->getJoint(i);
 		T_ASSERT(joint);
 
-		// if (m_trackPoseController)
-		// {
-		// 	const Scalar c_maxTension(10.0f);
-
-		// 	Transform trackT = worldTransform * outPoseTransforms[i];
-		// 	Transform limbT = m_limbs[i]->getTransform() * Transform(halfBoneN);
-
-		// 	{
-		// 		Vector4 Tl = (limbT).translation().xyz1();
-		// 		Vector4 Tt = (trackT).translation().xyz1();
-
-		// 		Vector4 Fl = Tt - Tl;
-		// 		Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
-
-		// 		Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
-		// 		Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
-
-		// 		m_limbs[i]->addForceAt(
-		// 			Tl,
-		// 			Fl * tension,
-		// 			false
-		// 		);
-		// 	}
-
-		// 	{
-		// 		Vector4 Tl = (limbT * boneP).translation().xyz1();
-		// 		Vector4 Tt = (trackT * boneP).translation().xyz1();
-
-		// 		Vector4 Fl = Tt - Tl;
-		// 		Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
-
-		// 		Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
-		// 		Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
-
-		// 		m_limbs[i]->addForceAt(
-		// 			Tl,
-		// 			Fl * tension,
-		// 			false
-		// 		);
-		// 	}
-
-		// 	if (abs(dot3(limbT.axisX(), trackT.axisX())) < 1.0f - FUZZY_EPSILON)
-		// 	{
-		// 		Vector4 vR = cross(limbT.axisX(), trackT.axisX());
-		// 		Scalar lnR = vR.length();
-		// 		if (lnR > FUZZY_EPSILON)
-		// 		{
-		// 			Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
-		// 			m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
-		// 		}
-		// 	}
-		// }
-
-		Transform limbTransform = worldTransformInv * m_deltaLimbs[i]->getTransform();
+		const Transform limbTransform = worldTransformInv * m_deltaLimbs[i]->getTransform();
 		outPoseTransforms[i] = limbTransform * m_deltaTransforms[i];
 	}
 

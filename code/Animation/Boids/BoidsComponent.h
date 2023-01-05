@@ -77,12 +77,12 @@ private:
 	AlignedVector< Boid > m_boids;
 	Transform m_transform;
 	Vector4 m_constrain;
-	float m_followForce;
-	float m_repelDistance;
-	float m_repelForce;
-	float m_matchVelocityStrength;
-	float m_centerForce;
-	float m_maxVelocity;
+	Scalar m_followForce;
+	Scalar m_repelDistance;
+	Scalar m_repelForce;
+	Scalar m_matchVelocityStrength;
+	Scalar m_centerForce;
+	Scalar m_maxVelocity;
 };
 
 }

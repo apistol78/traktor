@@ -41,7 +41,13 @@ bool PoseControllerPipeline::buildDependencies(
 	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());
 	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
+	{
 		pipelineDepends->addDependency(ragDollPoseContollerData->getTrackPoseController());
+		for (auto id : ragDollPoseContollerData->getCollisionGroup())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : ragDollPoseContollerData->getCollisionMask())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+	}
 	return true;
 }
 

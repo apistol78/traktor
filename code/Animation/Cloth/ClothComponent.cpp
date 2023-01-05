@@ -34,7 +34,7 @@ struct ClothVertex
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, world::IEntityComponent)
 
 ClothComponent::ClothComponent()
-:	m_time(1.0f)
+:	m_time(4.0f)
 ,	m_updateTime(0.0f)
 ,	m_scale(0.0f)
 ,	m_damping(1.0f)

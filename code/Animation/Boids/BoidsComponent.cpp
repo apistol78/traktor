@@ -13,6 +13,12 @@
 
 namespace traktor::animation
 {
+	namespace
+	{
+
+RandomGeometry s_random;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::IEntityComponent)
 
@@ -37,13 +43,11 @@ BoidsComponent::BoidsComponent(
 ,	m_centerForce(centerForce)
 ,	m_maxVelocity(maxVelocity)
 {
-	RandomGeometry random;
-
 	m_boids.resize(m_boidEntities.size());
 	for (auto& boid : m_boids)
 	{
-		boid.position = m_transform * (random.nextUnit() * spawnPositionDiagonal + Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-		boid.velocity = random.nextUnit() * spawnVelocityDiagonal;
+		boid.position = m_transform * (s_random.nextUnit() * spawnPositionDiagonal).xyz1();
+		boid.velocity = s_random.nextUnit() * spawnVelocityDiagonal;
 	}
 }
 
@@ -104,7 +108,7 @@ void BoidsComponent::update(const world::UpdateParams& update)
 		otherVelocity *= invBoidsSize;
 
 		// 1: Follow perceived center.
-		m_boids[i].velocity += (otherCenter - m_boids[i].position) * Scalar(m_followForce);
+		m_boids[i].velocity += (otherCenter - m_boids[i].position) * m_followForce;
 
 		// 2: Keep distance from other boids.
 		for (uint32_t j = 0; j < uint32_t(m_boids.size()); ++j)
@@ -113,19 +117,19 @@ void BoidsComponent::update(const world::UpdateParams& update)
 			{
 				Vector4 d = m_boids[j].position - m_boids[i].position;
 				if (d.normalize() < m_repelDistance)
-					m_boids[i].velocity -= d * Scalar(m_repelForce);
+					m_boids[i].velocity -= d * m_repelForce;
 			}
 		}
 
 		// 3: Try to match velocity with other boids.
-		m_boids[i].velocity += (otherVelocity - m_boids[i].velocity) * Scalar(m_matchVelocityStrength);
+		m_boids[i].velocity += (otherVelocity - m_boids[i].velocity) * m_matchVelocityStrength;
 
 		// 4: Always try to be circulating around center.
-		m_boids[i].velocity += (attraction - m_boids[i].position).xyz0() * Scalar(m_centerForce);
+		m_boids[i].velocity += (attraction - m_boids[i].position).xyz0() * m_centerForce;
 
 		// 5: Clamp velocity.
-		Scalar ln = m_boids[i].velocity.length();
-		m_boids[i].velocity = m_boids[i].velocity.normalized() * min(ln, Scalar(m_maxVelocity));
+		const Scalar ln = m_boids[i].velocity.length();
+		m_boids[i].velocity = m_boids[i].velocity.normalized() * min(ln, m_maxVelocity);
 
 		// Integrate position.
 		m_boids[i].position += m_boids[i].velocity * deltaTime;

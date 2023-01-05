@@ -54,6 +54,10 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
+
+	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const { return m_collisionMask; }
+
 	const IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
 
 private:
