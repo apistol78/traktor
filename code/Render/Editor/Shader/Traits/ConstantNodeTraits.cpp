@@ -37,6 +37,16 @@ bool ConstantNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node
 	return false;
 }
 
+bool ConstantNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return false;
+}
+
 PinType ConstantNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

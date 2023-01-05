@@ -30,6 +30,16 @@ bool ValueNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) c
 	return false;
 }
 
+bool ValueNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return false;
+}
+
 PinType ValueNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

@@ -18,7 +18,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -34,15 +34,28 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.UniformNodeTraits", 0, UniformNo
 
 TypeInfoSet UniformNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< IndexedUniform >();
-	typeSet.insert< Uniform >();
-	return typeSet;
+	return makeTypeInfoSet<
+		IndexedUniform,
+		Uniform
+	>();
 }
 
 bool UniformNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool UniformNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (is_a< IndexedUniform >(node))
+		return isPinTypeScalar(pinType);
+	else
+		return false;
 }
 
 PinType UniformNodeTraits::getOutputPinType(

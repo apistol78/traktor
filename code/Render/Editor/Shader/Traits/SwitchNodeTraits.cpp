@@ -55,6 +55,16 @@ bool SwitchNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) 
 	return false;
 }
 
+bool SwitchNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return true;
+}
+
 PinType SwitchNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
@@ -91,7 +101,7 @@ PinType SwitchNodeTraits::getInputPinType(
 	}
 	else
 	{
-		int32_t output = (index - 1) % switchNode->getWidth();
+		const int32_t output = (index - 1) % switchNode->getWidth();
 		return outputPinTypes[output];
 	}
 }

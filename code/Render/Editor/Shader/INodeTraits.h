@@ -43,6 +43,15 @@ public:
 	 */
 	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const = 0;
 
+	/*! Check if type is valid as an input.
+	 */
+	virtual bool isInputTypeValid(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const InputPin* inputPin,
+		const PinType pinType
+	) const = 0;
+
 	/*! Determine type of output pin from given types of all input pins.
 	 */
 	virtual PinType getOutputPinType(

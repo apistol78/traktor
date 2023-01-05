@@ -51,7 +51,7 @@ public:
 		UpdateFrequency frequency;
 	};
 
-	explicit GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, GlslDialect dialect);
+	explicit GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings);
 
 	Node* getInputNode(const InputPin* inputPin);
 

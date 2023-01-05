@@ -24,6 +24,13 @@ public:
 
 	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const override final;
 
+	virtual bool isInputTypeValid(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const InputPin* inputPin,
+		const PinType pinType
+	) const override final;
+
 	virtual PinType getOutputPinType(
 		const ShaderGraph* shaderGraph,
 		const Node* node,

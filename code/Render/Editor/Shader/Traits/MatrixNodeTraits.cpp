@@ -18,7 +18,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -34,15 +34,30 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixNodeTraits", 0, MatrixNode
 
 TypeInfoSet MatrixNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MatrixIn >();
-	typeSet.insert< MatrixOut >();
-	return typeSet;
+	return makeTypeInfoSet<
+		MatrixIn,
+		MatrixOut
+	>();
 }
 
 bool MatrixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool MatrixNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (is_a< MatrixIn >(node))
+		return isPinTypeScalar(pinType);
+	else if (is_a< MatrixOut >(node))
+		return pinType == PinType::Matrix;
+	else
+		return false;
 }
 
 PinType MatrixNodeTraits::getOutputPinType(

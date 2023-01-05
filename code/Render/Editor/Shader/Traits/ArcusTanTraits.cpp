@@ -18,14 +18,22 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTanTraits", 0, ArcusTanTrai
 
 TypeInfoSet ArcusTanTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ArcusTan >();
-	return typeSet;
+	return makeTypeInfoSet< ArcusTan >();
 }
 
 bool ArcusTanTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool ArcusTanTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return isPinTypeScalar(pinType);
 }
 
 PinType ArcusTanTraits::getOutputPinType(

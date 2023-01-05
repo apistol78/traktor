@@ -18,14 +18,22 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.LengthNodeTraits", 0, LengthNode
 
 TypeInfoSet LengthNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Length >();
-	return typeSet;
+	return makeTypeInfoSet< Length >();
 }
 
 bool LengthNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool LengthNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return isPinTypeScalar(pinType);
 }
 
 PinType LengthNodeTraits::getOutputPinType(
