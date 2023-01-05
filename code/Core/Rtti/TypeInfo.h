@@ -191,6 +191,11 @@ TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, c
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3, const TypeInfo& t4);
 
+/*! Create type info set from five types.
+ * \ingroup Core
+ */
+TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3, const TypeInfo& t4, const TypeInfo& t5);
+
 /*! Check if type is identical.
  * \ingroup Core
  */

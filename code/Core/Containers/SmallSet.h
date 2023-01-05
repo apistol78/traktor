@@ -28,9 +28,7 @@ public:
 	typedef typename AlignedVector< Key >::iterator iterator;
 	typedef typename AlignedVector< Key >::const_iterator const_iterator;
 
-	SmallSet()
-	{
-	}
+	SmallSet() = default;
 
 	SmallSet(const SmallSet& src)
 	:	m_data(src.m_data)
