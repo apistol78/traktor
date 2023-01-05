@@ -32,14 +32,13 @@ std::wstring getClassNameOnly(const Object* o)
 
 	}
 
-GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings, GlslDialect dialect)
+GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
 :	m_shaderGraph(shaderGraph)
 ,	m_settings(settings)
-,	m_vertexShader(GlslShader::StVertex, dialect)
-,	m_fragmentShader(GlslShader::StFragment, dialect)
-,	m_computeShader(GlslShader::StCompute, dialect)
+,	m_vertexShader(GlslShader::StVertex)
+,	m_fragmentShader(GlslShader::StFragment)
+,	m_computeShader(GlslShader::StCompute)
 ,	m_currentShader(nullptr)
-,	m_emitter(dialect)
 {
 	m_layout.add(new GlslUniformBuffer(L"UbOnce", 0, 0));
 	m_layout.add(new GlslUniformBuffer(L"UbFrame", 0, 1));

@@ -27,6 +27,16 @@ bool StructNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) 
 	return false;
 }
 
+bool StructNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return false;
+}
+
 PinType StructNodeTraits::getOutputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

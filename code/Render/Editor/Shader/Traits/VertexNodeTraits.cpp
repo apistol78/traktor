@@ -18,15 +18,28 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexNodeTraits", 0, VertexNode
 
 TypeInfoSet VertexNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< VertexInput >();
-	typeSet.insert< VertexOutput >();
-	return typeSet;
+	return makeTypeInfoSet<
+		VertexInput,
+		VertexOutput
+	>();
 }
 
 bool VertexNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return is_a< VertexOutput >(node);
+}
+
+bool VertexNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (is_a< VertexOutput >(node))
+		return isPinTypeScalar(pinType);
+	else
+		return false;
 }
 
 PinType VertexNodeTraits::getOutputPinType(

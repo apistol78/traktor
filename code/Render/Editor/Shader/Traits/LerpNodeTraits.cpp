@@ -19,7 +19,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -35,14 +35,22 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.LerpNodeTraits", 0, LerpNodeTrai
 
 TypeInfoSet LerpNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Lerp >();
-	return typeSet;
+	return makeTypeInfoSet< Lerp >();
 }
 
 bool LerpNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool LerpNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return isPinTypeScalar(pinType);
 }
 
 PinType LerpNodeTraits::getOutputPinType(

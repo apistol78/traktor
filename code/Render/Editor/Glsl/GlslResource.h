@@ -37,7 +37,7 @@ public:
 		BsCompute = 4
 	};
 
-	int32_t getBinding(GlslDialect dialect) const;
+	int32_t getBinding() const;
 
 	void addStage(uint8_t stage) { m_stages |= stage; }
 

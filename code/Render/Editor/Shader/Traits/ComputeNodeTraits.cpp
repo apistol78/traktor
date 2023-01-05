@@ -18,14 +18,25 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeNodeTraits", 0, ComputeNo
 
 TypeInfoSet ComputeNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ComputeOutput >();
-	return typeSet;
+	return makeTypeInfoSet< ComputeOutput >();
 }
 
 bool ComputeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return is_a< ComputeOutput >(node);
+}
+
+bool ComputeNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (inputPin->getName() == L"Storage")
+		return isPinTypeStructBuffer(pinType) || isPinTypeTexture(pinType);
+	else
+		return isPinTypeScalar(pinType);
 }
 
 PinType ComputeNodeTraits::getOutputPinType(

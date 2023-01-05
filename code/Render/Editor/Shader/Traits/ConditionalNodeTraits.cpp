@@ -19,7 +19,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -45,6 +45,19 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 bool ConditionalNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool ConditionalNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (inputPin->getName() == L"Input" || inputPin->getName() == L"Reference")
+		return isPinTypeScalar(pinType);
+	else
+		return true;
 }
 
 PinType ConditionalNodeTraits::getOutputPinType(

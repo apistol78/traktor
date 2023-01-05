@@ -40,7 +40,7 @@ struct Emitter;
 class T_DLLCLASS GlslEmitter
 {
 public:
-	explicit GlslEmitter(GlslDialect dialect);
+	GlslEmitter();
 
 	virtual ~GlslEmitter();
 

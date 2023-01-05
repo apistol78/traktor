@@ -21,9 +21,8 @@
 namespace traktor::render
 {
 
-GlslShader::GlslShader(ShaderType shaderType, GlslDialect dialect)
+GlslShader::GlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_dialect(dialect)
 ,	m_temporaryVariableAlloc(0, 65535)
 {
 	pushScope();
@@ -155,40 +154,31 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	StringOutputStream ss;
 
 	ss << L"#version 450" << Endl;
+	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
+	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
+	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 
-	if (m_dialect == GlslDialect::OpenGL)
+	const bool supportControlFlowAttributes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
+	if (supportControlFlowAttributes)
+		ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
+
+	const bool supportBallot = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
+	if (supportBallot)
+		ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
+
+	const bool supportStorageTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.StorageTypes", true) : true);
+	if (supportStorageTypes)
 	{
 		ss << L"#extension GL_EXT_shader_8bit_storage : enable" << Endl;
 		ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
 	}
-	else if (m_dialect == GlslDialect::Vulkan)
+
+	const bool supportExplicitArithmeticTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ExplicitArithmeticTypes", true) : true);
+	if (supportExplicitArithmeticTypes)
 	{
-		ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
-		ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
-		ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-
-		const bool supportControlFlowAttributes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
-		if (supportControlFlowAttributes)
-			ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
-
-		const bool supportBallot = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.Ballot", true) : true);
-		if (supportBallot)
-			ss << L"#extension GL_ARB_shader_ballot : enable" << Endl;
-
-		const bool supportStorageTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.StorageTypes", true) : true);
-		if (supportStorageTypes)
-		{
-			ss << L"#extension GL_EXT_shader_8bit_storage : enable" << Endl;
-			ss << L"#extension GL_EXT_shader_16bit_storage : enable" << Endl;
-		}
-
-		const bool supportExplicitArithmeticTypes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ExplicitArithmeticTypes", true) : true);
-		if (supportExplicitArithmeticTypes)
-		{
-			ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int8 : enable" << Endl;
-			ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int16 : enable" << Endl;
-			ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
-		}
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int8 : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_int16 : enable" << Endl;
+		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 	}
 
 	ss << Endl;
@@ -249,7 +239,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			{
 				if (!uniformBuffer->get().empty())
 				{
-					ss << L"layout (std140, binding = " << uniformBuffer->getBinding(m_dialect) << L") uniform " << uniformBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L") uniform " << uniformBuffer->getName() << Endl;
 					ss << L"{" << Endl;
 					ss << IncreaseIndent;
 					for (auto uniform : uniformBuffer->get())
@@ -270,113 +260,49 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		}
 	}
 
-	if (m_dialect == GlslDialect::OpenGL)
+	if (layout.count< GlslTexture >(stageMask) > 0)
 	{
-		if (layout.count< GlslSampler >(stageMask) > 0)
+		ss << L"// Textures" << Endl;
+		for (auto resource : layout.get(stageMask))
 		{
-			ss << L"// Samplers" << Endl;
-			for (auto resource : layout.get(stageMask))
+			if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 			{
-				if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+				switch (texture->getUniformType())
 				{
-					const auto texture = dynamic_type_cast< const GlslTexture* >(layout.get(sampler->getTextureName()));
- 					if (!texture)
-						return L"";
+				case GlslType::Texture2D:
+					ss << L"layout(binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+					break;
 
-					int32_t textureUnit = layout.getLocalIndex(sampler);
-					T_FATAL_ASSERT(textureUnit >= 0);
+				case GlslType::Texture3D:
+					ss << L"layout(binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
+					break;
 
-					if (sampler->getState().compare == CfNone)
-					{
-						switch (texture->getUniformType())
-						{
-						case GlslType::Texture2D:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler2D " << sampler->getName() << L";" << Endl;
-							break;
+				case GlslType::TextureCube:
+					ss << L"layout(binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
+					break;
 
-						case GlslType::Texture3D:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler3D " << sampler->getName() << L";" << Endl;
-							break;
-
-						case GlslType::TextureCube:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCube " << sampler->getName() << L";" << Endl;
-							break;
-
-						default:
-							break;
-						}
-					}
-					else
-					{
-						switch (texture->getUniformType())
-						{
-						case GlslType::Texture2D:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler2DShadow " << sampler->getName() << L";" << Endl;
-							break;
-
-						case GlslType::Texture3D:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform sampler3DShadow " << sampler->getName() << L";" << Endl;
-							break;
-
-						case GlslType::TextureCube:
-							ss << L"layout (binding = " << sampler->getBinding(GlslDialect::OpenGL) << L") uniform samplerCubeShadow " << sampler->getName() << L";" << Endl;
-							break;
-
-						default:
-							break;
-						}				
-					}
+				default:
+					break;
 				}
 			}
-			ss << Endl;
 		}
+		ss << Endl;
 	}
-	else if (m_dialect == GlslDialect::Vulkan)
+
+	if (layout.count< GlslSampler >(stageMask) > 0)
 	{
-		if (layout.count< GlslTexture >(stageMask) > 0)
+		ss << L"// Samplers" << Endl;
+		for (auto resource : layout.get(stageMask))
 		{
-			ss << L"// Textures" << Endl;
-			for (auto resource : layout.get(stageMask))
+			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
-				if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-				{
-					switch (texture->getUniformType())
-					{
-					case GlslType::Texture2D:
-						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform texture2D " << texture->getName() << L";" << Endl;
-						break;
-
-					case GlslType::Texture3D:
-						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform texture3D " << texture->getName() << L";" << Endl;
-						break;
-
-					case GlslType::TextureCube:
-						ss << L"layout(binding = " << texture->getBinding(GlslDialect::Vulkan) << L") uniform textureCube " << texture->getName() << L";" << Endl;
-						break;
-
-					default:
-						break;
-					}
-				}
+				if (sampler->getState().compare == CfNone)
+					ss << L"layout(binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+				else
+					ss << L"layout(binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
 			}
-			ss << Endl;
 		}
-
-		if (layout.count< GlslSampler >(stageMask) > 0)
-		{
-			ss << L"// Samplers" << Endl;
-			for (auto resource : layout.get(stageMask))
-			{
-				if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
-				{
-					if (sampler->getState().compare == CfNone)
-						ss << L"layout(binding = " << sampler->getBinding(GlslDialect::Vulkan) << L") uniform sampler " << sampler->getName() << L";" << Endl;
-					else
-						ss << L"layout(binding = " << sampler->getBinding(GlslDialect::Vulkan) << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
-				}
-			}
-			ss << Endl;
-		}
+		ss << Endl;
 	}
 
 	if (layout.count< GlslImage >(stageMask) > 0)
@@ -385,7 +311,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-				ss << L"layout(binding = " << image->getBinding(m_dialect) << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+				ss << L"layout(binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
 		}
 		ss << Endl;
 	}
@@ -411,9 +337,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				ss << L"};" << Endl;
 				ss << Endl;
 				if (m_shaderType != StCompute)
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding(m_dialect) << L") readonly buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") readonly buffer " << storageBuffer->getName() << Endl;
 				else
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding(m_dialect) << L") buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
 				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
@@ -424,21 +350,21 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		}
 	}
 
-	std::wstring inputText = getOutputStream(BtInput).str();
+	const std::wstring inputText = getOutputStream(BtInput).str();
 	if (!inputText.empty())
 	{
 		ss << inputText;
 		ss << Endl;
 	}
 
-	std::wstring outputText = getOutputStream(BtOutput).str();
+	const std::wstring outputText = getOutputStream(BtOutput).str();
 	if (!outputText.empty())
 	{
 		ss << outputText;
 		ss << Endl;
 	}
 
-	std::wstring scriptText = getOutputStream(BtScript).str();
+	const std::wstring scriptText = getOutputStream(BtScript).str();
 	if (!scriptText.empty())
 	{
 		ss << scriptText;

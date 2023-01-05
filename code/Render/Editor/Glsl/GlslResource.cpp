@@ -20,14 +20,9 @@ GlslResource::GlslResource(const std::wstring& name, uint8_t stages)
 {
 }
 
-int32_t GlslResource::getBinding(GlslDialect dialect) const
+int32_t GlslResource::getBinding() const
 {
-	if (dialect == GlslDialect::OpenGL)
-		return m_layout->getLocalIndex(this);
-	else if (dialect == GlslDialect::Vulkan)
-		return m_layout->getGlobalIndex(this);
-	else
-		return -1;
+	return m_layout->getGlobalIndex(this);
 }
 
 }

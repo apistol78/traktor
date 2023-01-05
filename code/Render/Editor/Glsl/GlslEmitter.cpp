@@ -717,19 +717,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	return true;
 }
 
-bool emitInstanceOpenGL(GlslContext& cx, Instance* node)
-{
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
-
-	comment(f, node);
-	assign(f, out) << L"float(gl_InstanceID);" << Endl;
-
-	return true;
-}
-
-bool emitInstanceVulkan(GlslContext& cx, Instance* node)
+bool emitInstance(GlslContext& cx, Instance* node)
 {
 	if (cx.inVertex())
 	{
@@ -1823,144 +1811,7 @@ bool emitRound(GlslContext& cx, Round* node)
 	return true;
 }
 
-bool emitSamplerOpenGL(GlslContext& cx, Sampler* node)
-{
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	Ref< GlslVariable > texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() < GlslType::Texture2D)
-		return false;
-
-	const bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
-
-	Ref< GlslVariable > texCoord = cx.emitInput(node, L"TexCoord");
-	if (!texCoord)
-		return false;
-
-	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
-
-	SamplerState samplerState = node->getSamplerState();
-	if (samplerState.ignoreMips)
-		samplerState.mipFilter = FtLinear;
-	if (texture->getType() == GlslType::Texture2D)
-		samplerState.addressW = AdWrap;
-
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GlslType::Float4 : GlslType::Float);
-
-	uint32_t samplerUnit = cx.getLayout().count< GlslSampler >();
-	std::wstring samplerName = str(L"_gl_sampler%d", samplerUnit);
-
-	cx.getLayout().add(new GlslSampler(
-		samplerName,
-		getBindStage(cx),
-		samplerState,
-		texture->getName()
-	));
-
-	if (cx.inFragment())
-	{
-		if (samplerState.compare == CfNone)
-		{
-			if (!mip && !samplerState.ignoreMips)
-			{
-				float bias = samplerState.mipBias;
-				switch (texture->getType())
-				{
-				case GlslType::Texture2D:
-					if (std::abs(bias) < FUZZY_EPSILON)
-						assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float2) << L");" << Endl;
-					else
-						assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float2) << L", " << formatFloat(bias) << L");" << Endl;
-					break;
-
-				case GlslType::Texture3D:
-				case GlslType::TextureCube:
-					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float3) << L");" << Endl;
-					break;
-
-				default:
-					return false;
-				}
-			}
-			else
-			{
-				switch (texture->getType())
-				{
-				case GlslType::Texture2D:
-					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GlslType::Float2) << L", " << (mip ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
-					break;
-
-				case GlslType::Texture3D:
-				case GlslType::TextureCube:
-					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GlslType::Float3) << L", " << (mip ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
-					break;
-
-				default:
-					return false;
-				}
-			}
-		}
-		else	// Compare
-		{
-			if (!samplerState.ignoreMips)
-			{
-				switch (texture->getType())
-				{
-				case GlslType::Texture2D:
-					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
-					break;
-
-				case GlslType::Texture3D:
-				case GlslType::TextureCube:
-					assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
-					break;
-
-				default:
-					return false;
-				}
-			}
-			else
-			{
-				switch (texture->getType())
-				{
-				case GlslType::Texture2D:
-					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GlslType::Float3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5), 0.0);" << Endl;
-					break;
-
-				case GlslType::Texture3D:
-				case GlslType::TextureCube:
-					assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
-					break;
-
-				default:
-					return false;
-				}
-			}
-		}
-	}
-
-	if (cx.inVertex())
-	{
-		switch (texture->getType())
-		{
-		case GlslType::Texture2D:
-			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float2) << L");" << Endl;
-			break;
-
-		case GlslType::Texture3D:
-		case GlslType::TextureCube:
-			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GlslType::Float3) << L", 0.0);" << Endl;
-			break;
-
-		default:
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool emitSamplerVulkan(GlslContext& cx, Sampler* node)
+bool emitSampler(GlslContext& cx, Sampler* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -1969,7 +1820,7 @@ bool emitSamplerVulkan(GlslContext& cx, Sampler* node)
 		return false;
 
 	Ref< GlslVariable > texCoord = cx.emitInput(node, L"TexCoord");
-	if (!texCoord)
+	if (!texCoord || texCoord->getType() < GlslType::Integer || texCoord->getType() > GlslType::Float4)
 		return false;
 
 	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
@@ -2703,29 +2554,7 @@ bool emitTan(GlslContext& cx, Tan* node)
 	return true;
 }
 
-bool emitTargetSizeOpenGL(GlslContext& cx, TargetSize* node)
-{
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float2);
-
-	auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Once);
-	ub->addStage(getBindStage(cx));
-	if (!ub->add(
-		L"_gl_targetSize",
-		GlslType::Float4,
-		1
-	))
-		return false;
-
-	cx.addParameter(L"_gl_targetSize", ParameterType::Vector, 1, UpdateFrequency::Once);
-
-	comment(f, node);
-	assign(f, out) << L"_gl_targetSize.xy;" << Endl;
-
-	return true;
-}
-
-bool emitTargetSizeVulkan(GlslContext& cx, TargetSize* node)
+bool emitTargetSize(GlslContext& cx, TargetSize* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float2);
@@ -2747,54 +2576,7 @@ bool emitTargetSizeVulkan(GlslContext& cx, TargetSize* node)
 	return true;
 }
 
-bool emitTextureSizeOpenGL(GlslContext& cx, TextureSize* node)
-{
-	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	if (!in || in->getType() < GlslType::Texture2D)
-		return false;
-
-	std::wstring textureName = in->getName();
-	const SamplerState samplerState;
-	int32_t samplerUnit = (int32_t)cx.getLayout().count< GlslSampler >();
-	std::wstring samplerName = L"_gl_sampler" + toString(samplerUnit);
-
-	cx.getLayout().add(new GlslSampler(
-		samplerName,
-		samplerUnit,
-		samplerState,
-		textureName
-	));
-
-	Ref< GlslVariable > out;
-
-	comment(f, node);
-	switch (in->getType())
-	{
-	case GlslType::Texture2D:
-		out = cx.emitOutput(node, L"Output", GlslType::Float2);
-		f << L"vec2 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
-		break;
-
-	case GlslType::Texture3D:
-		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
-		break;
-
-	case GlslType::TextureCube:
-		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
-		break;
-
-	default:
-		return false;
-	}
-
-	return true;
-}
-
-bool emitTextureSizeVulkan(GlslContext& cx, TextureSize* node)
+bool emitTextureSize(GlslContext& cx, TextureSize* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -3182,7 +2964,7 @@ struct EmitterCast : public Emitter
 	}
 };
 
-GlslEmitter::GlslEmitter(GlslDialect dialect)
+GlslEmitter::GlslEmitter()
 {
 	m_emitters[&type_of< Abs >()] = new EmitterCast< Abs >(emitAbs);
 	m_emitters[&type_of< Add >()] = new EmitterCast< Add >(emitAdd);
@@ -3204,12 +2986,7 @@ GlslEmitter::GlslEmitter(GlslDialect dialect)
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< FrontFace >()] = new EmitterCast< FrontFace >(emitFrontFace);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
-
-	if (dialect == GlslDialect::OpenGL)
-		m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstanceOpenGL);
-	else if (dialect == GlslDialect::Vulkan)
-		m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstanceVulkan);
-
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
 	m_emitters[&type_of< Iterate2 >()] = new EmitterCast< Iterate2 >(emitIterate2);
@@ -3235,12 +3012,7 @@ GlslEmitter::GlslEmitter(GlslDialect dialect)
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
-
-	if (dialect == GlslDialect::OpenGL)
-		m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSamplerOpenGL);
-	else if (dialect == GlslDialect::Vulkan)
-		m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSamplerVulkan);
-
+	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
@@ -3253,17 +3025,8 @@ GlslEmitter::GlslEmitter(GlslDialect dialect)
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
-
-	if (dialect == GlslDialect::OpenGL)
-		m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSizeOpenGL);
-	else if (dialect == GlslDialect::Vulkan)
-		m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSizeVulkan);
-
-	if (dialect == GlslDialect::OpenGL)
-		m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSizeOpenGL);
-	else if (dialect == GlslDialect::Vulkan)
-		m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSizeVulkan);
-
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);

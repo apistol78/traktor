@@ -273,7 +273,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 	}
 
-	GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
+	GlslContext cx(shaderGraph, settings);
 
 	glslang::TProgram* program = new glslang::TProgram();
 	glslang::TShader* vertexShader = nullptr;
@@ -423,7 +423,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
 			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
-				sampler->getBinding(GlslDialect::Vulkan),
+				sampler->getBinding(),
 				sampler->getStages(),
 				sampler->getState()
 			));
@@ -431,26 +431,26 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
 			auto& pm = parameterMapping[texture->getName()];
-			pm.buffer = texture->getBinding(GlslDialect::Vulkan);
+			pm.buffer = texture->getBinding();
 			pm.offset = (uint32_t)programResource->m_textures.size();
 			pm.length = 0;
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				texture->getName(),
-				texture->getBinding(GlslDialect::Vulkan),
+				texture->getBinding(),
 				texture->getStages()
 			));
 		}
 		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 		{
 			auto& pm = parameterMapping[image->getName()];
-			pm.buffer = image->getBinding(GlslDialect::Vulkan);
+			pm.buffer = image->getBinding();
 			pm.offset = (uint32_t)programResource->m_images.size();
 			pm.length = 0;
 
 			programResource->m_images.push_back(ProgramResourceVk::ImageDesc(
 				image->getName(),
-				image->getBinding(GlslDialect::Vulkan),
+				image->getBinding(),
 				image->getStages()
 			));
 		}
@@ -463,24 +463,24 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 					size = alignUp(size, 4);
 
 				auto& pm = parameterMapping[uniform.name];
-				pm.buffer = uniformBuffer->getBinding(GlslDialect::Vulkan);
+				pm.buffer = uniformBuffer->getBinding();
 				pm.offset = size;
 				pm.length = glsl_type_width(uniform.type) * uniform.length;
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
-			programResource->m_uniformBufferSizes[uniformBuffer->getBinding(GlslDialect::Vulkan)] = size;
+			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
 			auto& pm = parameterMapping[storageBuffer->getName()];
-			pm.buffer = storageBuffer->getBinding(GlslDialect::Vulkan);
+			pm.buffer = storageBuffer->getBinding();
 			pm.offset = (uint32_t)programResource->m_sbuffers.size();
 			pm.length = 0;
 
 			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
 				storageBuffer->getName(),
-				storageBuffer->getBinding(GlslDialect::Vulkan),
+				storageBuffer->getBinding(),
 				storageBuffer->getStages()
 			));
 		}
@@ -653,7 +653,7 @@ bool ProgramCompilerVk::generate(
 			}
 		}
 
-		GlslContext cx(shaderGraph, settings, GlslDialect::Vulkan);
+		GlslContext cx(shaderGraph, settings);
 
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{

@@ -16,8 +16,10 @@
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/OutputPin.h"
+#include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor
@@ -329,6 +331,38 @@ public:
 	}
 };
 
+class CheckTypes : public Specification
+{
+public:
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
+	{
+		for (auto activeNode : activeNodes)
+		{
+			const int inputPinCount = activeNode->getInputPinCount();
+			for (int i = 0; i < inputPinCount; ++i)
+			{
+				const Edge* edge = shaderGraph->findEdge(activeNode->getInputPin(i));
+				if (!edge)
+					continue;
+
+				const Constant value = ShaderGraphEvaluator(shaderGraph).evaluate(edge->getSource());
+				if (value.getType() == PinType::Void)
+					continue;
+
+				const INodeTraits* traits = INodeTraits::find(activeNode);
+				if (!traits)
+					continue;
+
+				if (!traits->isInputTypeValid(shaderGraph, activeNode, edge->getDestination(), value.getType()))
+					outReport.addError(
+						L"Invalid data type into \"" + edge->getDestination()->getName() + L"\".",
+						activeNode
+					);
+			}
+		}
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphValidator", ShaderGraphValidator, Object)
@@ -369,6 +403,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
 	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);
 	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
+	CheckTypes().check(report, m_shaderGraph, visitor.m_nodes);
 
 	if (type == SgtFragment)
 		PortNames().check(report, m_shaderGraph, visitor.m_nodes);

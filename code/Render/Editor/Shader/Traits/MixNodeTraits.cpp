@@ -19,7 +19,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -35,15 +35,25 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixNodeTraits", 0, MixNodeTraits
 
 TypeInfoSet MixNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MixIn >();
-	typeSet.insert< MixOut >();
-	return typeSet;
+	return makeTypeInfoSet<
+		MixIn,
+		MixOut
+	>();
 }
 
 bool MixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool MixNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return isPinTypeScalar(pinType);
 }
 
 PinType MixNodeTraits::getOutputPinType(

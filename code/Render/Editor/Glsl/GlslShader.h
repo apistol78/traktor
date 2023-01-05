@@ -61,7 +61,7 @@ public:
 		BtLast
 	};
 
-	explicit GlslShader(ShaderType shaderType, GlslDialect dialect);
+	explicit GlslShader(ShaderType shaderType);
 
 	virtual ~GlslShader();
 
@@ -111,7 +111,6 @@ private:
 	};
 
 	ShaderType m_shaderType;
-	GlslDialect m_dialect;
 	std::map< std::wstring, Ref< GlslVariable > > m_inputVariables;
 	AlignedVector< OutputPinVariable > m_variables;
 	AlignedVector< uint32_t > m_variableScopes;

@@ -18,14 +18,22 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TransposeNodeTraits", 0, Transpo
 
 TypeInfoSet TransposeNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Transpose >();
-	return typeSet;
+	return makeTypeInfoSet< Transpose >();
 }
 
 bool TransposeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool TransposeNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	return pinType == PinType::Matrix;
 }
 
 PinType TransposeNodeTraits::getOutputPinType(

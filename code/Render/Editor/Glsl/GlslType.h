@@ -25,12 +25,6 @@ namespace traktor::render
 /*! \ingroup Render */
 //@{
 
-enum class GlslDialect
-{
-	OpenGL,
-	Vulkan
-};
-
 enum class GlslType
 {
 	Void = 0,

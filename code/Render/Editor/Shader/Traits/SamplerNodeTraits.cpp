@@ -35,14 +35,27 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SamplerNodeTraits", 0, SamplerNo
 
 TypeInfoSet SamplerNodeTraits::getNodeTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Sampler >();
-	return typeSet;
+	return makeTypeInfoSet< Sampler >();
 }
 
 bool SamplerNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool SamplerNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (inputPin->getName() == L"Texture")
+		return isPinTypeTexture(pinType);
+	else if (inputPin->getName() == L"State")
+		return isPinTypeState(pinType);
+	else
+		return isPinTypeScalar(pinType);
 }
 
 PinType SamplerNodeTraits::getOutputPinType(

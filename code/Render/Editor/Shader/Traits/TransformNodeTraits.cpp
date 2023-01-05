@@ -18,7 +18,7 @@ namespace traktor
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		if (node->getInputPin(i) == inputPin)
@@ -42,6 +42,19 @@ TypeInfoSet TransformNodeTraits::getNodeTypes() const
 bool TransformNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
 {
 	return false;
+}
+
+bool TransformNodeTraits::isInputTypeValid(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType pinType
+) const
+{
+	if (inputPin->getName() == L"Input")
+		return isPinTypeScalar(pinType);
+	else
+		return pinType == PinType::Matrix;
 }
 
 PinType TransformNodeTraits::getOutputPinType(
