@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 class NavMesh;
 
@@ -44,5 +42,4 @@ private:
 	resource::Id< NavMesh > m_navMesh;
 };
 
-	}
 }

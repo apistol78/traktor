@@ -15,10 +15,8 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshFactory", NavMeshFactory, resource::IResourceFactory)
 
@@ -120,5 +118,4 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 	return outputNavMesh;
 }
 
-	}
 }

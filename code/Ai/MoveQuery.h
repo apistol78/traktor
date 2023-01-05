@@ -23,10 +23,8 @@
 class dtNavMeshQuery;
 class dtQueryFilter;
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 /*! Continuous movement query.
  * \ingroup AI
@@ -67,6 +65,4 @@ private:
 	int32_t m_steerIndex;
 };
 
-	}
 }
-

@@ -23,10 +23,8 @@
 
 class dtNavMesh;
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 class MoveQueryResult;
 
@@ -86,6 +84,4 @@ private:
 	AlignedVector< uint16_t > m_navMeshPolygons;
 };
 
-	}
 }
-
