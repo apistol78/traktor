@@ -248,7 +248,7 @@ bool Pipeline::buildOutput(
 						uint16_t fillStyle = 0;
 						uint16_t lineStyle = 0;
 
-						auto style = ps->getStyle();
+						const auto style = ps->getStyle();
 						if (style)
 						{
 							if (style->getFillEnable())
@@ -266,12 +266,12 @@ bool Pipeline::buildOutput(
 							for (auto& pnt : pnts)
 								pnt = (size * (transform * pnt)) / viewBox.getSize();
 
-							size_t ln = pnts.size();
+							const size_t ln = pnts.size();
 							switch (sp.type)
 							{
 							case svg::SptLinear:
 								{
-									log::info << L"linear" << Endl;
+									log::info << L"linear " << ln << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; ++i)
 										path.lineTo((int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f), Path::CmAbsolute);
@@ -284,7 +284,7 @@ bool Pipeline::buildOutput(
 
 							case svg::SptQuadric:
 								{
-									log::info << L"quadric" << Endl;
+									log::info << L"quadric " << ln << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 2)
 										path.quadraticTo(
@@ -305,7 +305,7 @@ bool Pipeline::buildOutput(
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 3)
 									{
-										Bezier3rd b(
+										const Bezier3rd b(
 											pnts[i - 1],
 											pnts[i],
 											pnts[i + 1],
@@ -351,7 +351,7 @@ bool Pipeline::buildOutput(
 
 						movie->defineBitmap(fillBitmap, new BitmapImage(image));
 
-						uint16_t fillStyle = outputShape->defineFillStyle(fillBitmap, Matrix33(
+						const uint16_t fillStyle = outputShape->defineFillStyle(fillBitmap, Matrix33(
 							20.0f, 0.0f, 0.0f,
 							0.0f, 20.0f, 0.0f,
 							0.0f, 0.0f, 1.0f
