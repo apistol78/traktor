@@ -328,12 +328,12 @@
 					<second>70, 70, 74, 255</second>
 				</item>
 				<item>
-					<first>color-hot</first>
-					<second>20, 20, 20, 255</second>
-				</item>
-				<item>
 					<first>color-comment</first>
 					<second>81, 82, 80, 255</second>
+				</item>
+				<item>
+					<first>color-hot</first>
+					<second>20, 20, 20, 255</second>
 				</item>
 				<item>
 					<first>color-info</first>
@@ -722,7 +722,7 @@
 				</item>
 				<item>
 					<first>color-keyword</first>
-					<second>65, 67, 57, 255</second>
+					<second>246, 37, 88, 255</second>
 				</item>
 				<item>
 					<first>color-number</first>
