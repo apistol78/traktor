@@ -104,7 +104,7 @@ void WireDisplayRenderer::begin(
 
 void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
-	bool parentWireEnable = m_wireEnable.top();
+	const bool parentWireEnable = m_wireEnable.top();
 	m_wireEnable.push(sprite.getWireOutline());
 
 	if (parentWireEnable || m_wireEnable.top())
@@ -190,8 +190,8 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 			T_ASSERT(layout);
 
 			const auto& attribs = layout->getAttributes();
-			float textOffsetX = 0.0f;
-			float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * edit.getScroll();
+			const float textOffsetX = 0.0f;
+			const float textOffsetY = -(layout->getFontHeight() + layout->getLeading()) * edit.getScroll();
 
 			for (const auto& line : layout->getLines())
 			{
@@ -200,20 +200,19 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 					const TextLayout::Attribute& attrib = attribs[word.a];
 					const AlignedVector< TextLayout::Character >& chars = word.chars;
 
-					float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-					float fontScale = coordScale * layout->getFontHeight();
+					const float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+					const float fontScale = coordScale * layout->getFontHeight();
 
 					for (uint32_t k = 0; k < chars.size(); ++k)
 					{
 						if (chars[k].ch != 0)
 						{
-							uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
-
+							const uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
 							const Shape* glyphShape = attrib.font->getShape(glyphIndex);
 							if (!glyphShape)
 								continue;
 
-							Matrix33 glyphTransform = transform * translate(textOffsetX + line.offset + line.x + chars[k].x, textOffsetY + line.y) * scale(fontScale, fontScale);
+							const Matrix33 glyphTransform = transform * translate(textOffsetX + line.offset + line.x + chars[k].x, textOffsetY + line.y) * scale(fontScale, fontScale);
 
 							const Aabb2& shapeBounds = glyphShape->getShapeBounds();
 

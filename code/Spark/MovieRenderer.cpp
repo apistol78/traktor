@@ -96,7 +96,7 @@ void MovieRenderer::renderSprite(
 
 	const Sprite* sprite = spriteInstance->getSprite();
 	const Aabb2& scalingGrid = sprite->getScalingGrid();
-	uint8_t blendMode = spriteInstance->getBlendMode();
+	const uint8_t blendMode = spriteInstance->getBlendMode();
 
 	if (blendMode == SbmLayer)
 		renderSpriteLayered(spriteInstance, transform, clipBounds, cxTransform, renderAsMask);
@@ -116,8 +116,7 @@ void MovieRenderer::renderSpriteDefault(
 {
 	const DisplayList& displayList = spriteInstance->getDisplayList();
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
-
-	uint8_t blendMode = spriteInstance->getBlendMode();
+	const uint8_t blendMode = spriteInstance->getBlendMode();
 
 	m_displayRenderer->beginSprite(
 		*spriteInstance,
@@ -218,7 +217,7 @@ void MovieRenderer::renderSpriteLayered(
 {
 	const DisplayList& displayList = spriteInstance->getDisplayList();
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
-	uint8_t blendMode = spriteInstance->getBlendMode();
+	const uint8_t blendMode = spriteInstance->getBlendMode();
 
 	m_displayRenderer->beginSprite(
 		*spriteInstance,
@@ -352,23 +351,23 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 	const DisplayList& displayList = spriteInstance->getDisplayList();
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
 	const Aabb2& scalingGrid = sprite->getScalingGrid();
-	uint8_t blendMode = spriteInstance->getBlendMode();
+	const uint8_t blendMode = spriteInstance->getBlendMode();
 
-	Aabb2 localBounds = spriteInstance->getLocalBounds();
-	Aabb2 globalBounds = spriteInstance->getBounds();
+	const Aabb2 localBounds = spriteInstance->getLocalBounds();
+	const Aabb2 globalBounds = spriteInstance->getBounds();
 
-	float w0 = scalingGrid.mn.x - localBounds.mn.x;
-	float w1 = localBounds.mx.x - scalingGrid.mx.x;
+	const float w0 = scalingGrid.mn.x - localBounds.mn.x;
+	const float w1 = localBounds.mx.x - scalingGrid.mx.x;
 
-	float h0 = scalingGrid.mn.y - localBounds.mn.y;
-	float h1 = localBounds.mx.y - scalingGrid.mx.y;
+	const float h0 = scalingGrid.mn.y - localBounds.mn.y;
+	const float h1 = localBounds.mx.y - scalingGrid.mx.y;
 
-	float sfx0 = w0 / (localBounds.mx.x - localBounds.mn.x);
-	float sfx1 = ((localBounds.mx.x - localBounds.mn.x) - w1) / (localBounds.mx.x - localBounds.mn.x);
-	float sfy0 = h0 / (localBounds.mx.y - localBounds.mn.y);
-	float sfy1 = ((localBounds.mx.y - localBounds.mn.y) - h1) / (localBounds.mx.y - localBounds.mn.y);
+	const float sfx0 = w0 / (localBounds.mx.x - localBounds.mn.x);
+	const float sfx1 = ((localBounds.mx.x - localBounds.mn.x) - w1) / (localBounds.mx.x - localBounds.mn.x);
+	const float sfy0 = h0 / (localBounds.mx.y - localBounds.mn.y);
+	const float sfy1 = ((localBounds.mx.y - localBounds.mn.y) - h1) / (localBounds.mx.y - localBounds.mn.y);
 
-	Vector2 sourceGrid[][2] =
+	const Vector2 sourceGrid[][2] =
 	{
 		{ Vector2(0.0f, 0.0f), Vector2(sfx0, sfy0) },
 		{ Vector2(sfx0, 0.0f), Vector2(sfx1, sfy0) },
@@ -381,12 +380,12 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 		{ Vector2(sfx1, sfy1), Vector2(1.0f, 1.0f) }
 	};
 
-	float dfx0 = w0 / (globalBounds.mx.x - globalBounds.mn.x);
-	float dfx1 = ((globalBounds.mx.x - globalBounds.mn.x) - w1) / (globalBounds.mx.x - globalBounds.mn.x);
-	float dfy0 = h0 / (globalBounds.mx.y - globalBounds.mn.y);
-	float dfy1 = ((globalBounds.mx.y - globalBounds.mn.y) - h1) / (globalBounds.mx.y - globalBounds.mn.y);
+	const float dfx0 = w0 / (globalBounds.mx.x - globalBounds.mn.x);
+	const float dfx1 = ((globalBounds.mx.x - globalBounds.mn.x) - w1) / (globalBounds.mx.x - globalBounds.mn.x);
+	const float dfy0 = h0 / (globalBounds.mx.y - globalBounds.mn.y);
+	const float dfy1 = ((globalBounds.mx.y - globalBounds.mn.y) - h1) / (globalBounds.mx.y - globalBounds.mn.y);
 
-	Vector2 destinationGrid[][2] =
+	const Vector2 destinationGrid[][2] =
 	{
 		{ Vector2(0.0f, 0.0f), Vector2(dfx0, dfy0) },
 		{ Vector2(dfx0, 0.0f), Vector2(dfx1, dfy0) },
@@ -406,23 +405,23 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 
 	for (int32_t i = 0; i < sizeof_array(destinationGrid); ++i)
 	{
-		Aabb2 sourceBounds(
+		const Aabb2 sourceBounds(
 			lerp(localBounds.mn, localBounds.mx, sourceGrid[i][0]),
 			lerp(localBounds.mn, localBounds.mx, sourceGrid[i][1])
 		);
 
-		Aabb2 destinationBounds(
+		const Aabb2 destinationBounds(
 			lerp(localBounds.mn, localBounds.mx, destinationGrid[i][0]),
 			lerp(localBounds.mn, localBounds.mx, destinationGrid[i][1])
 		);
 
 		// Calculate local scale transformation.
-		Matrix33 Ts = scale((destinationBounds.mx - destinationBounds.mn) / (sourceBounds.mx - sourceBounds.mn));
-		Matrix33 Tt0Inv = translate(-sourceBounds.mn);
-		Matrix33 Tt1 = translate(destinationBounds.mn);
-		Matrix33 T = transform * Tt1 * Ts * Tt0Inv;
+		const Matrix33 Ts = scale((destinationBounds.mx - destinationBounds.mn) / (sourceBounds.mx - sourceBounds.mn));
+		const Matrix33 Tt0Inv = translate(-sourceBounds.mn);
+		const Matrix33 Tt1 = translate(destinationBounds.mn);
+		const Matrix33 T = transform * Tt1 * Ts * Tt0Inv;
 
-		Aabb2 subClipBounds(
+		const Aabb2 subClipBounds(
 			sourceBounds.mn,
 			sourceBounds.mx
 		);
@@ -621,28 +620,27 @@ void MovieRenderer::renderCharacter(
 			return;
 
 		const Text* text = textInstance->getText();
-		Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
+		const Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
 
-		const AlignedVector< Text::Char >& characters = text->getCharacters();
-		for (AlignedVector< Text::Char >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+		for (const auto& character : text->getCharacters())
 		{
-			const Font* font = dictionary->getFont(i->fontId);
+			const Font* font = dictionary->getFont(character.fontId);
 			if (!font)
 				continue;
 
-			const Shape* glyph = font->getShape(i->glyphIndex);
+			const Shape* glyph = font->getShape(character.glyphIndex);
 			if (!glyph)
 				continue;
 
 			m_displayRenderer->renderGlyph(
 				*dictionary,
-				textTransform * translate(i->offsetX, i->offsetY),
+				textTransform * translate(character.offsetX, character.offsetY),
 				clipBounds,
 				font,
 				glyph,
-				i->height,
+				character.height,
 				0,
-				i->color,
+				character.color,
 				cxTransform2,
 				textInstance->getFilter(),
 				textInstance->getFilterColor()
@@ -673,8 +671,8 @@ void MovieRenderer::renderCharacter(
 		Context* context = editInstance->getContext();
 		T_ASSERT(context);
 
-		bool haveFocus = bool(context->getFocus() == editInstance);
-		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
+		const bool haveFocus = bool(context->getFocus() == editInstance);
+		const bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
 
 		int32_t caret = editInstance->getCaret();
 		Aabb2 caretBounds(Vector2::zero(), Vector2(100.0f, layout->getFontHeight()));
@@ -770,8 +768,8 @@ void MovieRenderer::renderCharacter(
 		ButtonInstance* buttonInstance = static_cast< ButtonInstance* >(characterInstance);
 		const Button* button = buttonInstance->getButton();
 
-		Matrix33 buttonTransform = transform * buttonInstance->getTransform();
-		uint8_t buttonState = buttonInstance->getState();
+		const Matrix33 buttonTransform = transform * buttonInstance->getTransform();
+		const uint8_t buttonState = buttonInstance->getState();
 
 		const Button::button_layers_t& layers = button->getButtonLayers();
 		for (int32_t j = 0; j < int32_t(layers.size()); ++j)

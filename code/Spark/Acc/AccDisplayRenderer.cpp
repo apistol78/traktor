@@ -384,8 +384,8 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 		return;
 
 	// Get accelerated shape.
-	int32_t tag = shape.getCacheTag();
-	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
+	const int32_t tag = shape.getCacheTag();
+	auto it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape(m_renderSystem, m_shapeResources, m_fillVertexPool, m_lineVertexPool);
@@ -462,7 +462,7 @@ void AccDisplayRenderer::renderGlyph(
 		m_glyphFilterColor = filterColor;
 	}
 
-	uint32_t tag = glyph->getCacheTag();
+	const uint32_t tag = glyph->getCacheTag();
 
 	auto it1 = m_glyphCache.find(tag);
 	if (it1 == m_glyphCache.end())
@@ -486,8 +486,8 @@ void AccDisplayRenderer::renderGlyph(
 	AccShape* accShape = it1->second.shape;
 	T_ASSERT(accShape);
 
-	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
-	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
+	const float cachePixelDx = 1.0f / c_cacheGlyphDimX;
+	const float cachePixelDy = 1.0f / c_cacheGlyphDimY;
 
 	// Calculate square bounds of glyph.
 	Aabb2 bounds = accShape->getBounds();
@@ -499,7 +499,7 @@ void AccDisplayRenderer::renderGlyph(
 	if (it1->second.index < 0)
 	{
 		// Glyph not cached; pick index by cycling which means oldest glyph get discarded.
-		int32_t index = m_nextIndex++;
+		const int32_t index = m_nextIndex++;
 		if (m_nextIndex >= c_cacheGlyphCount)
 			m_nextIndex = 0;
 
@@ -509,17 +509,17 @@ void AccDisplayRenderer::renderGlyph(
 				cache.second.index = -1;
 		}
 
-		int32_t column = index & (c_cacheGlyphCountX - 1);
-		int32_t row = index / c_cacheGlyphCountX;
+		const int32_t column = index & (c_cacheGlyphCountX - 1);
+		const int32_t row = index / c_cacheGlyphCountX;
 
-		Vector4 frameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
-		Vector4 viewOffset(
+		const Vector4 frameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
+		const Vector4 viewOffset(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
 			1.0f / c_cacheGlyphCountX,
 			1.0f / c_cacheGlyphCountY
 		);
-		Vector4 viewOffsetWithMargin = viewOffset + Vector4(
+		const Vector4 viewOffsetWithMargin = viewOffset + Vector4(
 			cachePixelDx * c_cacheGlyphMargin,
 			cachePixelDy * c_cacheGlyphMargin,
 			-cachePixelDx * c_cacheGlyphMargin * 2.0f,
@@ -557,8 +557,8 @@ void AccDisplayRenderer::renderGlyph(
 		it1->second.index = index;
 	}
 
-	int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
-	int32_t row = it1->second.index / c_cacheGlyphCountX;
+	const int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
+	const int32_t row = it1->second.index / c_cacheGlyphCountX;
 
 	m_glyph->add(
 		bounds,
@@ -596,7 +596,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 {
 	Ref< AccShape > accShape;
 
-	int32_t tag = canvas.getCacheTag();
+	const int32_t tag = canvas.getCacheTag();
 	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end() || it->second.tag != canvas.getDirtyTag())
 	{
