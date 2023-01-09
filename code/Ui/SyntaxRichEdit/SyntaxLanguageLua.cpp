@@ -24,7 +24,7 @@ std::wstring SyntaxLanguageLua::lineComment() const
 
 bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
-	int ln = int(text.length());
+	const int32_t ln = (int32_t)text.length();
 	T_ASSERT(ln > 0);
 
 	// Line comment.
@@ -105,10 +105,10 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	}
 
 	// Special numbers or keywords.
-	size_t i = text.find_first_of(L" .,:;()[]{}+-*/%~=<>\t\n\r");
-	size_t ws = (i != text.npos) ? i : ln;
+	const size_t i = text.find_first_of(L" .,:;()[]{}+-*/%~=<>\t\n\r");
+	const size_t ws = (i != text.npos) ? i : ln;
 
-	std::wstring word = text.substr(0, ws);
+	const std::wstring word = text.substr(0, ws);
 	if (
 		word == L"true" ||
 		word == L"false" ||
@@ -171,22 +171,22 @@ void SyntaxLanguageLua::outline(int32_t line, const std::wstring& text, std::lis
 {
 	T_ASSERT(text.length() > 0);
 
-	size_t i = text.find_first_of(L" \t\n\r");
+	const size_t i = text.find_first_of(L" \t\n\r");
 	if (i != text.npos)
 	{
-		std::wstring word = text.substr(0, i);
+		const std::wstring word = text.substr(0, i);
 		if (word == L"function")
 		{
-			size_t j = text.find(L'(', i + 1);
+			const size_t j = text.find(L'(', i + 1);
 			if (j != text.npos)
 			{
-				SyntaxOutline so(SotFunction, line, text.substr(i + 1, j - i - 1));
+				const SyntaxOutline so(SotFunction, line, text.substr(i + 1, j - i - 1));
 				outOutline.push_back(so);
 			}
 		}
 		else if (word == L"local")
 		{
-			SyntaxOutline so(SotVariable, line, text.substr(i + 1));
+			const SyntaxOutline so(SotVariable, line, text.substr(i + 1));
 			outOutline.push_back(so);
 		}
 	}
