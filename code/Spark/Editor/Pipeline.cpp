@@ -257,6 +257,14 @@ bool Pipeline::buildOutput(
 								lineStyle = outputShape->defineLineStyle(style->getStroke() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()), (uint16_t)(style->getStrokeWidth() * 20.0f));
 						}
 
+						const auto& subPaths = ps->getPath().getSubPaths();
+						if (subPaths.empty())
+							return;
+
+						// Get close position; when path is closed.
+						Vector2 closePosition = subPaths.front().points.front();
+						closePosition = (size * (transform * closePosition)) / viewBox.getSize();
+
 						Path path;
 						for (const auto& sp : ps->getPath().getSubPaths())
 						{
@@ -271,20 +279,16 @@ bool Pipeline::buildOutput(
 							{
 							case svg::SptLinear:
 								{
-									log::info << L"linear " << ln << Endl;
+									log::info << L"linear " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; ++i)
 										path.lineTo((int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f), Path::CmAbsolute);
-									if (sp.closed)
-										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
-
-									path.end(fillStyle, fillStyle, lineStyle);
 								}
 								break;
 
 							case svg::SptQuadric:
 								{
-									log::info << L"quadric " << ln << Endl;
+									log::info << L"quadric " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 2)
 										path.quadraticTo(
@@ -292,16 +296,12 @@ bool Pipeline::buildOutput(
 											(int32_t)(pnts[i + 1].x * 20.0f), (int32_t)(pnts[i + 1].y * 20.0f),
 											Path::CmAbsolute
 										);
-									if (sp.closed)
-										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
-
-									path.end(fillStyle, fillStyle, lineStyle);
 								}
 								break;
 
 							case svg::SptCubic:
 								{
-									log::info << L"cubic " << ln << Endl;
+									log::info << L"cubic " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 									path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
 									for (size_t i = 1; i < ln; i += 3)
 									{
@@ -327,16 +327,17 @@ bool Pipeline::buildOutput(
 											);
 										}
 									}
-									if (sp.closed)
-										path.lineTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
-
-									path.end(fillStyle, fillStyle, lineStyle);
 								}
 								break;
 
 							default:
 								break;
 							}
+
+							if (sp.closed)
+								path.lineTo((int32_t)(closePosition.x * 20.0f), (int32_t)(closePosition.y * 20.0f), Path::CmAbsolute);
+
+							path.end(0, fillStyle, lineStyle);
 						}
 						outputShape->addPath(path);
 					}
