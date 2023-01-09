@@ -90,7 +90,7 @@ void VehicleComponent::update(const world::UpdateParams& update)
 	if (!body)
 		return;
 
-	float dT = update.deltaTime;
+	const float dT = update.deltaTime;
 
 	updateSteering(body, dT);
 	updateSuspension(body, dT);
@@ -139,18 +139,18 @@ void VehicleComponent::updateSteering(Body* body, float dT)
 	// Update steer angle, aiming for target angle.
 	if (m_steerAngle < m_steerAngleTarget)
 	{
-		float dA = min(m_steerAngleTarget - m_steerAngle, m_data->getSteerAngleVelocity() * dT);
+		const float dA = min(m_steerAngleTarget - m_steerAngle, m_data->getSteerAngleVelocity() * dT);
 		m_steerAngle += dA;
 	}
 	else
 	{
-		float dA = min(m_steerAngle - m_steerAngleTarget, m_data->getSteerAngleVelocity() * dT);
+		const float dA = min(m_steerAngle - m_steerAngleTarget, m_data->getSteerAngleVelocity() * dT);
 		m_steerAngle -= dA;
 	}
 
 	// Update wheel direction from steering.
-	Vector4 direction(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
-	Vector4 directionPerp(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
+	const Vector4 direction(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
+	const Vector4 directionPerp(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
 	for (auto wheel : m_wheels)
 	{
 		if (wheel->data->getSteer())
@@ -165,8 +165,8 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 {
 	physics::QueryResult result;
 
-	Transform bodyT = body->getTransform();
-	Transform bodyTinv = bodyT.inverse();
+	const Transform bodyT = body->getTransform();
+	const Transform bodyTinv = bodyT.inverse();
 
 	m_airBorn = true;
 
@@ -175,8 +175,8 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 		const WheelData* data = wheel->data;
 		T_ASSERT(data != nullptr);
 
-		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
-		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
+		const Vector4 anchorW = bodyT * data->getAnchor().xyz1();
+		const Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
 
 		float contactFudge = 0.0f;
 
@@ -197,7 +197,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 
 		if (contactFudge >= FUZZY_EPSILON)
 		{
-			Vector4 normal = result.normal.normalized();
+			const Vector4 normal = result.normal.normalized();
 
 			// Suspension current length.
 			float suspensionLength = result.distance - data->getRadius();
@@ -209,12 +209,12 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 				suspensionLength = data->getSuspensionLength().max;
 
 			// Suspension velocity.
-			float suspensionVelocity = (wheel->suspensionLength - suspensionLength) / dT;
+			const float suspensionVelocity = (wheel->suspensionLength - suspensionLength) / dT;
 
 			// Suspension forces.
-			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
-			float springForce = clamp(t * data->getSuspensionSpring(), 0.0f, c_maxSuspensionForce);
-			float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
+			const float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
+			const float springForce = clamp(t * data->getSuspensionSpring(), 0.0f, c_maxSuspensionForce);
+			const float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
 
 			// Apply forces.
 			body->addForceAt(
@@ -238,17 +238,17 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 			if (!wheel->contact)
 			{
 				// If no previous contact then we estimate velocity by projecting onto ground.
-				Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
-				Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
-				Vector4 velocity = wheelVelocity - groundVelocity;
-				Scalar k = dot3(normal, velocity);
+				const Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
+				const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+				const Vector4 velocity = wheelVelocity - groundVelocity;
+				const Scalar k = dot3(normal, velocity);
 				contactVelocity = velocity - normal * (-k);
 			}
 			else
 			{
 				// Calculate explicit velocity based on contact movement.
-				Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
-				Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
+				const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+				const Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
 				contactVelocity = contactMovement / Scalar(dT);
 			}
 			
@@ -277,13 +277,13 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 
 void VehicleComponent::updateFriction(Body* body, float dT)
 {
-	Transform bodyT = body->getTransform();
-	Transform bodyTinv = bodyT.inverse();
+	const Transform bodyT = body->getTransform();
+	const Transform bodyTinv = bodyT.inverse();
 
 	Scalar rollingFriction = 0.0_simd;
-	Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
-	Scalar massPerWheel = totalMass / Scalar(m_wheels.size());
-	Scalar breakingForce(m_data->getBreakingForce());
+	const Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
+	const Scalar massPerWheel = totalMass / Scalar(m_wheels.size());
+	const Scalar breakingForce(m_data->getBreakingForce());
 
 	for (auto wheel : m_wheels)
 	{
@@ -297,7 +297,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		T_ASSERT(data != nullptr);
 
 		// Get suspension axis in world space.
-		Vector4 axisW = bodyT * data->getAxis();
+		const Vector4 axisW = bodyT * data->getAxis();
 
 		// Wheel directions in world space.
 		Vector4 directionW = bodyT * wheel->direction;
@@ -317,16 +317,16 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		grip *= Scalar(wheel->contactFudge);
 
 		// Determine velocities and percent of maximum velocity.
-		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
-		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
+		const Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
+		const Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
 
 		// Method factor lerps between slip angle based friction and purely perpendicular friction.
 		const Scalar c_methodLimit = 4.0_simd;
-		Scalar method = clamp(1.0_simd - abs(forwardVelocity) / c_methodLimit, 0.0_simd, 1.0_simd);
+		const Scalar method = clamp(1.0_simd - abs(forwardVelocity) / c_methodLimit, 0.0_simd, 1.0_simd);
 
 		// Calculate slip angle.
-		float k = std::atan2(sideVelocity, forwardVelocity);
-		float slipAngle = abs(k);
+		const float k = std::atan2(sideVelocity, forwardVelocity);
+		const float slipAngle = abs(k);
 
 		// Calculate amount of force from slip angle. \fixme Should use curves.
 		const float peakSlipFriction = data->getSlipCornerForce();
@@ -338,7 +338,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		else
 		{
 			const float c_fallOff = 2.0f;
-			float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
+			const float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
 			force = peakSlipFriction * f;
 
 			// Do not tag sliding if going too slow.
@@ -366,8 +366,8 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		// Calculate breaking force.
 		if (m_breaking > FUZZY_EPSILON)
 		{
-			Scalar f = Scalar(m_breaking * data->getBreakFactor());
-			Scalar mag = sign(forwardVelocity) * breakingForce * f * grip;
+			const Scalar f = Scalar(m_breaking * data->getBreakFactor());
+			const Scalar mag = sign(forwardVelocity) * breakingForce * f * grip;
 			body->addForceAt(
 				wheel->contactPosition,
 				directionW * -mag,
@@ -388,11 +388,11 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 {
-	Transform bodyT = body->getTransform();
-	Transform bodyTinv = bodyT.inverse();
+	const Transform bodyT = body->getTransform();
+	const Transform bodyTinv = bodyT.inverse();
 
-	Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
-	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
+	const Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
+	const Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
 
 	for (auto wheel : m_wheels)
 	{
@@ -405,10 +405,8 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 		if (!data->getDrive())
 			continue;
 
-		Vector4 direction = wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
-		direction.normalize();
-
-		Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
+		const Vector4 direction = (wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).normalized();
+		const Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
 
 		body->addForceAt(
 			bodyTinv * wheel->contactPosition,
@@ -420,7 +418,7 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 
 void VehicleComponent::updateWheels(Body* body, float dT)
 {
-	Transform bodyT = body->getTransform();
+	const Transform bodyT = body->getTransform();
 
 	for (auto wheel : m_wheels)
 	{

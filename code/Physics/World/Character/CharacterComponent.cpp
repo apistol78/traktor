@@ -78,8 +78,8 @@ Aabb3 CharacterComponent::getBoundingBox() const
 
 void CharacterComponent::update(const world::UpdateParams& update)
 {
-	Scalar dT(update.deltaTime);
-	Vector4 movement = m_velocity * dT;
+	const Scalar dT(update.deltaTime);
+	const Vector4 movement = m_velocity * dT;
 	Vector4 position = m_bodyWide->getTransform().translation();
 	QueryResult result;
 
@@ -87,8 +87,8 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	m_velocity += m_impulse;
 	
 	// Clamp X/Z velocity.
-	Scalar maxVelocity(m_data->getMaxVelocity());
-	Scalar currentVelocity = (m_velocity * c_101).length();
+	const Scalar maxVelocity(m_data->getMaxVelocity());
+	const Scalar currentVelocity = (m_velocity * c_101).length();
 	if (currentVelocity > maxVelocity)
 		m_velocity *= (c_101 * maxVelocity / currentVelocity + c_010);
 
@@ -119,7 +119,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	}
 
 	// Step forward.
-	Vector4 movementXZ = movement * c_101;
+	const Vector4 movementXZ = movement * c_101;
 	step(movementXZ, position);
 
 	// Step down, step further down to simulate falling.
@@ -136,7 +136,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	else
 		m_grounded = false;
 
-	Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
+	const Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 
 	m_bodyWide->setTransform(Transform(
 		position,
@@ -203,7 +203,7 @@ bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) cons
 	if (std::abs(motion) <= FUZZY_EPSILON)
 		return false;
 
-	float direction = (motion > 0.0f) ? 1.0f : -1.0f;
+	const float direction = (motion > 0.0f) ? 1.0f : -1.0f;
 	bool anyCollision = false;
 	QueryResult result;
 
@@ -230,7 +230,7 @@ bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition) cons
 
 bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 {
-	Scalar totalMotionLength = motion.length();
+	const Scalar totalMotionLength = motion.length();
 	if (totalMotionLength <= FUZZY_EPSILON)
 		return false;
 
@@ -262,7 +262,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			inoutPosition += motion * move;
 
 			// Adjust movement vector.
-			Scalar k = dot3(-motion, result.normal);
+			const Scalar k = dot3(-motion, result.normal);
 			motion += result.normal * k;
 			if (motion.normalize() <= FUZZY_EPSILON)
 				break;
