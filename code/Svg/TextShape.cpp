@@ -15,14 +15,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.TextShape", TextShape, Shape)
 
-TextShape::TextShape(const Vector2& position)
+TextShape::TextShape(const Vector2& position, const std::wstring& text)
 :	m_position(position)
+,	m_text(text)
 {
 }
 
 const Vector2& TextShape::getPosition() const
 {
 	return m_position;
+}
+
+const std::wstring& TextShape::getText() const
+{
+	return m_text;
 }
 
 	}

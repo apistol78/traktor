@@ -34,7 +34,10 @@ bool StructNodeTraits::isInputTypeValid(
 	const PinType pinType
 ) const
 {
-	return false;
+	if (inputPin->getName() == L"Struct")
+		return isPinTypeStructBuffer(pinType);
+	else
+		return isPinTypeScalar(pinType);
 }
 
 PinType StructNodeTraits::getOutputPinType(

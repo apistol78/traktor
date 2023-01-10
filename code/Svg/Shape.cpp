@@ -16,6 +16,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Shape", Shape, Object)
 
+void Shape::setId(const std::wstring& id)
+{
+	m_id = id;
+}
+
+const std::wstring& Shape::getId() const
+{
+	return m_id;
+}
+
 void Shape::setStyle(const Style* style)
 {
 	m_style = style;

@@ -32,6 +32,7 @@
 #include "Resource/Id.h"
 #include "Spark/BitmapImage.h"
 #include "Spark/BitmapResource.h"
+#include "Spark/Edit.h"
 #include "Spark/Font.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
@@ -50,6 +51,7 @@
 #include "Svg/Parser.h"
 #include "Svg/PathShape.h"
 #include "Svg/Style.h"
+#include "Svg/TextShape.h"
 #include "Xml/Document.h"
 
 namespace traktor
@@ -226,6 +228,8 @@ bool Pipeline::buildOutput(
 
 			// Create sprite for movie clip.
 			Ref< Frame > movieFrame = new Frame();
+			movieFrame->changeBackgroundColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+
 			Ref< Sprite > movieSprite = new Sprite();
 			movieSprite->addFrame(movieFrame);
 
@@ -368,18 +372,60 @@ bool Pipeline::buildOutput(
 
 						outputShape->addPath(path);
 					}
+					else if (const auto ts = dynamic_type_cast< const svg::TextShape* >(svg))
+					{
+						// Create an edit field; most likely since text fields are static.
+						Ref< Edit > edit = new Edit(
+							0,	// font id
+							ts->getStyle()->getFontSize(),	// font height
+							Aabb2(),	// textBounds
+							ts->getStyle()->getFill(),
+							0,		// maxLength
+							ts->getText(),	// initialText
+							StaLeft,
+							0,	// leftMargin
+							0,	// rightMargin
+							0,	// indent
+							0,	// leading
+							false,	// readOnly
+							false,	// wordWrap
+							false,	// multiLine
+							false,	// password
+							false	// renderHtml
+						);
+						movie->defineCharacter(3, edit);
+
+						// Place edit field on sprite.
+						Frame::PlaceObject p;
+						p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId;
+						p.depth = 2;
+						p.name = wstombs(ts->getId());
+						p.characterId = 3;
+						shapeFrame->placeObject(p);
+					}
 				},
 				[&](svg::Shape*) {
 				}
 			);
 			shape->visit(&visitor);
 
-			// Place shape character on first frame.
-			Frame::PlaceObject p;
-			p.hasFlags = Frame::PfHasCharacterId;
-			p.depth = 1;
-			p.characterId = 1;
-			shapeFrame->placeObject(p);
+			// Place shape character on first frame of the sprite.
+			{
+				Frame::PlaceObject p;
+				p.hasFlags = Frame::PfHasCharacterId;
+				p.depth = 1;
+				p.characterId = 1;
+				shapeFrame->placeObject(p);
+			}
+
+			// Place sprite character on first frame of the root.
+			{
+				Frame::PlaceObject p;
+				p.hasFlags = Frame::PfHasCharacterId;
+				p.depth = 1;
+				p.characterId = 2;
+				movieFrame->placeObject(p);
+			}
 
 			// Add sprite to dictionary.
 			movie->defineCharacter(1, outputShape);
@@ -707,7 +753,7 @@ bool Pipeline::buildOutput(
 			output->m_scaleHeight = bitmapImage->getHeight() / m_textureSizeDenom;
 		}
 
-		std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
+		const std::wstring bitmapOutputPath = traktor::Path(outputPath).getPathOnly() + L"/Textures/" + bitmapOutputGuid.format();
 		if (!pipelineBuilder->buildAdHocOutput(
 			output,
 			bitmapOutputPath,

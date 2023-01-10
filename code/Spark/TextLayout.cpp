@@ -204,14 +204,16 @@ void TextLayout::insertText(const std::wstring& text)
 		return;
 
 	const Attribute& attrib = m_attribs[m_currentAttrib];
+	if (!attrib.font)
+		return;
 
-	float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-	float fontScale = coordScale * m_fontHeight;
-	float letterSpacing = m_letterSpacing * 200.0f * 2000.0f / m_fontHeight;
-	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
+	const float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+	const float fontScale = coordScale * m_fontHeight;
+	const float letterSpacing = m_letterSpacing * 200.0f * 2000.0f / m_fontHeight;
+	const float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
 
-	uint16_t spaceGlyphIndex = attrib.font->lookupIndex(L' ');
-	int16_t spaceWidth = attrib.font->getAdvance(spaceGlyphIndex);
+	const uint16_t spaceGlyphIndex = attrib.font->lookupIndex(L' ');
+	const int16_t spaceWidth = attrib.font->getAdvance(spaceGlyphIndex);
 	bool spaceInsert = false;
 
 	if (m_wordWrap)
@@ -225,7 +227,7 @@ void TextLayout::insertText(const std::wstring& text)
 			end += 1;
 			if (end < text.length())
 			{
-				int32_t nextBreakable = isBreakableUnicode(text[end]);
+				const int32_t nextBreakable = isBreakableUnicode(text[end]);
 				bool lineBreak = true;
 				if (nextBreakable == BreakAfter)
 					lineBreak = false;
@@ -245,7 +247,7 @@ void TextLayout::insertText(const std::wstring& text)
 					len = end - start;
 			}
 
-			std::wstring word = text.substr(start, len);
+			const std::wstring word = text.substr(start, len);
 
 			if (end < text.length() && isWhiteSpace(text[end]))
 				end += 1;
@@ -258,7 +260,7 @@ void TextLayout::insertText(const std::wstring& text)
 			float wordWidth = 0.0f;
 			for (uint32_t j = 0; j < word.length(); ++j)
 			{
-				uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
+				const uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
 				int16_t glyphAdvance = attrib.font->getAdvance(glyphIndex);
 
 				if (j < word.length() - 1)
@@ -284,7 +286,7 @@ void TextLayout::insertText(const std::wstring& text)
 			float tailAdjust = 0.0f;
 			for (uint32_t j = 0; j < word.length(); ++j)
 			{
-				uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
+				const uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
 				int16_t glyphAdvance = attrib.font->getAdvance(glyphIndex);
 
 				if (j < word.length() - 1)
@@ -330,7 +332,7 @@ void TextLayout::insertText(const std::wstring& text)
 		float tail = 0.0f;
 		for (uint32_t j = 0; j < word.length(); ++j)
 		{
-			uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
+			const uint16_t glyphIndex = attrib.font->lookupIndex(word[j]);
 			int16_t glyphAdvance = attrib.font->getAdvance(glyphIndex);
 
 			if (j < word.length() - 1)
@@ -386,7 +388,7 @@ void TextLayout::insertBlank(int32_t width)
 
 void TextLayout::newLine()
 {
-	float lineHeight = m_fontHeight + m_leading;
+	const float lineHeight = m_fontHeight + m_leading;
 
 	m_cursorX = 0.0f;
 	m_cursorY += lineHeight;
@@ -405,13 +407,13 @@ void TextLayout::end()
 		const Attribute& attrib = m_attribs[m_currentAttrib];
 		if (attrib.font)
 		{
-			float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
-			float fontScale = coordScale * m_fontHeight;
+			const float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+			const float fontScale = coordScale * m_fontHeight;
 			lineHeight = attrib.font->getDescent() * fontScale;
 		}
 	}
 
-	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
+	const float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
 	for (auto& line : m_lines)
 	{
 		line.x = m_bounds.mn.x;

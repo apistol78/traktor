@@ -60,6 +60,8 @@ private:
 
 	Ref< Shape > parseCircle(xml::Element* elm);
 
+	Ref< Shape > parseEllipse(xml::Element* elm);
+
 	Ref< Shape > parseRect(xml::Element* elm);
 
 	Ref< Shape > parsePolygon(xml::Element* elm);
