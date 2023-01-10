@@ -32,12 +32,15 @@ class T_DLLCLASS TextShape : public Shape
 	T_RTTI_CLASS;
 
 public:
-	explicit TextShape(const Vector2& position);
+	explicit TextShape(const Vector2& position, const std::wstring& text);
 
 	const Vector2& getPosition() const;
 
+	const std::wstring& getText() const;
+
 private:
 	Vector2 m_position;
+	std::wstring m_text;
 };
 
 	}

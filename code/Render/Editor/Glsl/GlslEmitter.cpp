@@ -794,16 +794,16 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	cx.enterFragment();
 
-	int32_t interpolatorWidth = glsl_type_width(in->getType());
+	const int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
 		return false;
 
 	int32_t interpolatorId;
 	int32_t interpolatorOffset;
-	bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
+	const bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
 
-	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
-	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
+	const std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+	const std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
 
 	auto& f = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 
@@ -813,7 +813,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	cx.getFragmentShader().createOuterVariable(
 		node->findOutputPin(L"Output"),
 		interpolatorMask,
-		in->getType()
+		glsl_promote_to_float(in->getType())
 	);
 
 	if (declare)

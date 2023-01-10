@@ -22,6 +22,7 @@ Style::Style()
 ,	m_strokeWidth(1.0f)
 ,	m_stroke(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_opacity(1.0f)
+,	m_fontSize(8.0f)
 {
 }
 
@@ -105,6 +106,26 @@ float Style::getOpacity() const
 	return m_opacity;
 }
 
+void Style::setFontFamily(const std::wstring& fontFamily)
+{
+	m_fontFamily = fontFamily;
+}
+
+const std::wstring& Style::getFontFamily() const
+{
+	return m_fontFamily;
+}
+
+void Style::setFontSize(float fontSize)
+{
+	m_fontSize = fontSize;
+}
+
+float Style::getFontSize() const
+{
+	return m_fontSize;
+}
+
 bool Style::operator == (const Style& other) const
 {
 	if (m_fillEnable != other.m_fillEnable)
@@ -132,6 +153,11 @@ bool Style::operator == (const Style& other) const
 	}
 
 	if (m_opacity != other.m_opacity)
+		return false;
+
+	if (m_fontSize != other.m_fontSize)
+		return false;
+	if (m_fontFamily != other.m_fontFamily)
 		return false;
 
 	return true;

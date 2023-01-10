@@ -135,9 +135,10 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	AlignedVector< render::VertexElement > lineVertexElements(2);
+	AlignedVector< render::VertexElement > lineVertexElements(3);
 	lineVertexElements[0] = render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(AccShape::LineVertex, pos));
-	lineVertexElements[1] = render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(AccShape::LineVertex, lineOffset), 0);
+	lineVertexElements[1] = render::VertexElement(render::DataUsage::Custom, render::DtInteger1, offsetof(AccShape::LineVertex, lineOffset), 0);
+	lineVertexElements[2] = render::VertexElement(render::DataUsage::Custom, render::DtInteger1, offsetof(AccShape::LineVertex, lineCount), 1);
 	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));
 
 	m_lineVertexPool = new AccShapeVertexPool(renderSystem);
@@ -380,8 +381,8 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	Ref< AccShape > accShape;
 
 	// Check if shape is within frame bounds.
-	if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
-		return;
+	//if (!rectangleVisible(m_dirtyRegion, transform * shape.getShapeBounds()))
+	//	return;
 
 	// Get accelerated shape.
 	const int32_t tag = shape.getCacheTag();

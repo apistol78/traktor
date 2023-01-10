@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -37,7 +38,9 @@ class T_DLLCLASS Shape : public Object
 	T_RTTI_CLASS;
 
 public:
-	Shape() = default;
+	void setId(const std::wstring& id);
+
+	const std::wstring& getId() const;
 
 	void setStyle(const Style* style);
 
@@ -56,6 +59,7 @@ public:
 	virtual void visit(IShapeVisitor* shapeVisitor);
 
 private:
+	std::wstring m_id;
 	Ref< const Style > m_style;
 	Matrix33 m_transform = Matrix33::identity();
 	Shape* m_parent = nullptr;

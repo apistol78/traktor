@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/RefSet.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticVector.h"
 #include "Core/Math/Aabb2.h"
@@ -67,7 +68,8 @@ public:
 	struct LineVertex
 	{
 		float pos[2];
-		float lineOffset;
+		int32_t lineOffset;
+		int32_t lineCount;
 	};
 #pragma pack()
 
@@ -81,7 +83,7 @@ public:
 	struct LineRenderBatch
 	{
 		Ref< render::Buffer > vertexRange;
-		Ref< render::ITexture > lineTexture;
+		Ref< render::Buffer > lineBuffer;
 		render::Primitives primitives;
 		Color4f color;
 		float width;
@@ -149,6 +151,7 @@ private:
 	AccShapeVertexPool* m_fillVertexPool;
 	AccShapeVertexPool* m_lineVertexPool;
 	Ref< render::Buffer > m_fillVertexRange;
+	RefSet< render::Buffer > m_lineVertexRanges;
 	AlignedVector< FillRenderBatch > m_fillRenderBatches;
 	AlignedVector< LineRenderBatch > m_lineRenderBatches;
 	Aabb2 m_bounds;

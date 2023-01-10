@@ -22,7 +22,7 @@ VertexElement::VertexElement(DataUsage usage, DataType type, uint32_t offset, ui
 
 uint32_t VertexElement::getSize() const
 {
-	uint32_t c_typeSize[] =
+	const uint32_t c_typeSize[] =
 	{
 		1 * sizeof(float),
 		2 * sizeof(float),
@@ -54,7 +54,7 @@ uint32_t getVertexSize(const VertexElement* vertexElements, uint32_t count)
 	uint32_t size = 0;
 	for (uint32_t i = 0; i < count; ++i)
 	{
-		uint32_t next = vertexElements[i].getOffset() + vertexElements[i].getSize();
+		const uint32_t next = vertexElements[i].getOffset() + vertexElements[i].getSize();
 		size = std::max< uint32_t >(size, next);
 	}
 	return size;

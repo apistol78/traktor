@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Math/Color4f.h"
@@ -69,6 +70,14 @@ public:
 
 	float getOpacity() const;
 
+	void setFontFamily(const std::wstring& fontFamily);
+
+	const std::wstring& getFontFamily() const;
+
+	void setFontSize(float fontSize);
+
+	float getFontSize() const;
+
 	bool operator == (const Style& other) const;
 
 private:
@@ -80,6 +89,8 @@ private:
 	float m_strokeWidth;
 	Color4f m_stroke;
 	float m_opacity;
+	std::wstring m_fontFamily;
+	float m_fontSize;
 };
 
 	}

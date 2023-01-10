@@ -88,6 +88,14 @@ const render::Handle s_handleTechniques[] =
 
 const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
 
+#pragma pack(1)
+struct LineData
+{
+	float start[4];
+	float end[4];
+};
+#pragma pack()
+
 		}
 
 AccShape::AccShape(
@@ -131,7 +139,7 @@ bool AccShape::createFromTriangles(
 	for (const auto& line : lines)
 	{
 		const LineStyle& lineStyle = lineStyles[line.lineStyle - 1];
-		float width = lineStyle.getLineWidth() / 2.0f;
+		const float width = lineStyle.getLineWidth() / 2.0f;
 
 		for (int32_t k = 0; k < 2; ++k)
 		{
@@ -167,7 +175,7 @@ bool AccShape::createFromTriangles(
 		for (const auto uniqueLineStyle : uniqueLineStyles)
 		{
 			const LineStyle& lineStyle = lineStyles[uniqueLineStyle - 1];
-			float width = lineStyle.getLineWidth() / 2.0f;
+			const float width = lineStyle.getLineWidth() / 2.0f + 0.5f;
 
 			// Create root clusters.
 			AlignedVector< LineCluster > clusters;
@@ -195,8 +203,8 @@ bool AccShape::createFromTriangles(
 						{
 							for (int32_t ix = 0; ix < c_subSize; ++ix)
 							{
-								Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
-								Vector2 fxy = Vector2(ix, iy) * dxy;
+								const Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
+								const Vector2 fxy = Vector2(ix, iy) * dxy;
 
 								Aabb2 cell;
 								cell.mn = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * fxy;
@@ -251,16 +259,6 @@ bool AccShape::createFromTriangles(
 				for (int32_t j = 0; j < c.lines.size(); ++j)
 				{
 					const Line& line = lines[c.lines[j]];
-
-					//Aabb2 clip = c.bounds;
-					//clip.mn -= Vector2(width, width);
-					//clip.mx += Vector2(width, width);
-
-					//float d;
-					//if (clip.intersectSegment(line.v[0], line.v[1], d))
-					//{
-					//}
-
 					b.contain(line.v[0], width);
 					b.contain(line.v[1], width);
 				}
@@ -284,39 +282,30 @@ bool AccShape::createFromTriangles(
 			if (!vertex)
 				return false;
 
+			// Calculate size of buffer.
 			int32_t lineDataSize = 0;
 			for (auto c : clusters)
-				lineDataSize += min< int32_t >(c.lines.size(), c_maxLinesPerCluster);
+				lineDataSize += c.lines.size();
 
-			render::SimpleTextureCreateDesc stcd;
-			stcd.width = lineDataSize;
-			stcd.height = 1;
-			stcd.mipCount = 1;
-			stcd.format = render::TfR16G16B16A16F;
-			stcd.sRGB = false;
-			stcd.immutable = false;
-
-			Ref< render::ITexture > lineTexture = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
-			if (!lineTexture)
+			Ref< render::Buffer > lineBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, lineDataSize, sizeof(LineData), false);
+			if (!lineBuffer)
 				return false;
 
-			render::ITexture::Lock lock;
-			if (!lineTexture->lock(0, 0, lock))
-				return false;
-
-			half_t* lineData = static_cast< half_t* >(lock.bits);
+			LineData* lineData = static_cast< LineData* >(lineBuffer->lock());
 			int32_t lineDataOffset = 0;
 
 			m_lineRenderBatches.push_back();
 			m_lineRenderBatches.back().vertexRange = vertexRange;
-			m_lineRenderBatches.back().lineTexture = lineTexture;
+			m_lineRenderBatches.back().lineBuffer = lineBuffer;
 			m_lineRenderBatches.back().primitives.setNonIndexed(render::PrimitiveType::Triangles, 0, clusters.size() * 2);
 			m_lineRenderBatches.back().color = lineStyle.getLineColor();
-			m_lineRenderBatches.back().width = width;
+			m_lineRenderBatches.back().width = width - 0.5f;
 
 			for (int32_t i = 0; i < clusters.size(); ++i)
 			{
 				const LineCluster& c = clusters[i];
+				if (c.lines.empty())
+					continue;
 
 				Vector2 q[4];
 				c.bounds.getExtents(q);
@@ -326,28 +315,29 @@ bool AccShape::createFromTriangles(
 				{
 					vertex->pos[0] = q[t[j]].x;
 					vertex->pos[1] = q[t[j]].y;
-					vertex->lineOffset = float(lineDataOffset);
+					vertex->lineOffset = (int32_t)lineDataOffset;
+					vertex->lineCount = (int32_t)c.lines.size();
 					vertex++;
 				}
 
-				for (int32_t j = 0; j < min< int32_t >(c.lines.size(), c_maxLinesPerCluster); ++j)
+				for (int32_t j = 0; j < c.lines.size(); ++j)
 				{
 					const Line& line = lines[c.lines[j]];
-					half_t* p = &lineData[lineDataOffset * 4];
-
-					*p++ = floatToHalf(line.v[0].x);
-					*p++ = floatToHalf(line.v[0].y);
-					*p++ = floatToHalf(line.v[1].x);
-					*p++ = floatToHalf(line.v[1].y);
-
-					lineDataOffset++;
+					LineData* p = &lineData[lineDataOffset];
+					p->start[0] = line.v[0].x;
+					p->start[1] = line.v[0].y;
+					p->end[0] = line.v[1].x;
+					p->end[1] = line.v[1].y;
+					++lineDataOffset;
 				}
 			}
 
 			T_ASSERT(lineDataOffset == lineDataSize);
 
-			lineTexture->unlock(0, 0);
+			lineBuffer->unlock();
 			vertexRange->unlock();
+
+			m_lineVertexRanges.insert(vertexRange);
 		}
 
 		m_batchFlags |= BfHaveLines;
@@ -588,6 +578,13 @@ void AccShape::destroy()
 		m_fillVertexPool = nullptr;
 	}
 
+	if (m_lineVertexPool)
+	{
+		for (auto lineVertexRange : m_lineVertexRanges)
+			m_lineVertexPool->release(lineVertexRange);
+		m_lineVertexRanges.clear();
+	}
+
 	m_fillRenderBatches.clear();
 }
 
@@ -743,13 +740,13 @@ void AccShape::render(
 				auto rb = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 				rb->program = programLine;
 				rb->vertexBuffer = batch.vertexRange->getBufferView();
-				rb->vertexLayout = m_fillVertexPool->getVertexLayout();
+				rb->vertexLayout = m_lineVertexPool->getVertexLayout();
 				rb->primitive = batch.primitives.type;
 				rb->offset = batch.primitives.offset;
 				rb->count = batch.primitives.count;
 				rb->programParams = renderContext->alloc< render::ProgramParameters >();
 				rb->programParams->beginParameters(renderContext);
-				rb->programParams->setTextureParameter(s_handleLineData, batch.lineTexture);
+				rb->programParams->setBufferViewParameter(s_handleLineData, batch.lineBuffer->getBufferView());
 				rb->programParams->setVectorParameter(s_handleLineColor, batch.color);
 				rb->programParams->setFloatParameter(s_handleLineWidth, batch.width);
 				rb->programParams->endParameters(renderContext);
