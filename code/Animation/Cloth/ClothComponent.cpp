@@ -11,6 +11,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "World/Entity.h"
@@ -183,6 +184,8 @@ void ClothComponent::build(
 	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
 
+	synchronize();
+
 	if (
 		m_updateRequired &&
 		(worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0
@@ -285,172 +288,87 @@ Aabb3 ClothComponent::getBoundingBox() const
 
 void ClothComponent::update(const world::UpdateParams& update)
 {
+	m_updateClothJob = JobManager::getInstance().add([=](){
 #if !defined(__IOS__)
-	const float c_updateDeltaTime = 1.0f / 60.0f;
+		const float c_updateDeltaTime = 1.0f / 60.0f;
 #else
-	const float c_updateDeltaTime = 1.0f / 10.0f;
+		const float c_updateDeltaTime = 1.0f / 10.0f;
 #endif
-	const float c_timeScale = 4.0f;
-	const Scalar c_stiffness = 0.001_simd;
+		const float c_timeScale = 4.0f;
+		const Scalar c_stiffness = 0.001_simd;
 
-	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
 
-	const Transform transformInv = m_transform.inverse();
-	const Vector4 gravity = transformInv * Vector4(0.0f, -1.0f, 0.0f, 0.0f);
+		const Transform transformInv = m_transform.inverse();
+		const Vector4 gravity = transformInv * Vector4(0.0f, -1.0f, 0.0f, 0.0f);
 
-	for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
-	{
-		m_aabb = Aabb3();
-		for (auto& node : m_nodes)
+		for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 		{
-			if (node.jointName != 0 || node.invMass < Scalar(FUZZY_EPSILON))
-				continue;
-
-			const Vector4 force = gravity;
-			const Vector4 current = node.position[0];
-			const Vector4 velocity = current - node.position[1];
-
-			node.position[0] += velocity * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
-			node.position[1] = current;
-
-			m_aabb.contain(node.position[0]);
-		}
-
-		for (uint32_t i = 0; i < m_solverIterations; ++i)
-		{
-			// Satisfy edge lengths.
-			for (const auto& edge : m_edges)
-			{
-				const Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
-				const Scalar deltaLength = delta.length();
-				if (deltaLength > FUZZY_EPSILON)
-				{
-					const Scalar diff = (deltaLength - edge.length) / deltaLength;
-					m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * 0.5_simd;
-					m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * 0.5_simd;
-				}
-			}
-
-			// Self collision.
-			//if (m_resolutionX >= 3 && m_resolutionY >= 3)
-			//{
-			//	const Scalar nodeRadius(0.05_simd);
-			//	for (uint32_t y = 1; y < m_resolutionY - 1; ++y)
-			//	{
-			//		for (uint32_t x = 1; x < m_resolutionX - 1; ++x)
-			//		{
-			//			// X axis
-			//			{
-			//				Vector4& xn = m_nodes[x - 1 + y * m_resolutionX].position[0];
-			//				Vector4& xp = m_nodes[x + 1 + y * m_resolutionX].position[0];
-
-			//				const Scalar dx = (xp - xn).length();
-			//				if (dx < nodeRadius)
-			//				{
-			//					const Vector4 d = ((xp - xn) / dx) * (nodeRadius - dx);
-			//					xn -= d * 0.5_simd;
-			//					xp += d * 0.5_simd;
-			//				}
-			//			}
-
-			//			// Y axis
-			//			{
-			//				Vector4& yn = m_nodes[x + (y - 1) * m_resolutionX].position[0];
-			//				Vector4& yp = m_nodes[x + (y + 1) * m_resolutionX].position[0];
-
-			//				const Scalar dy = (yp - yn).length();
-			//				if (dy < nodeRadius)
-			//				{
-			//					const Vector4 d = ((yp - yn) / dy) * (nodeRadius - dy);
-			//					yn -= d * 0.5_simd;
-			//					yp += d * 0.5_simd;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
-			// Satisfy cloth stiffness.
-			//if (m_resolutionX >= 3 && m_resolutionY >= 3)
-			//{
-			//	for (uint32_t y = 1; y < m_resolutionY - 1; ++y)
-			//	{
-			//		for (uint32_t x = 1; x < m_resolutionX - 1; ++x)
-			//		{
-			//			Vector4& center = m_nodes[x + y * m_resolutionX].position[0];
-
-			//			// X axis
-			//			{
-			//				const Vector4& xn = m_nodes[x - 1 + y * m_resolutionX].position[0];
-			//				const Vector4& xp = m_nodes[x + 1 + y * m_resolutionX].position[0];
-
-			//				const Vector4 v1 = (xp - center).normalized();
-			//				const Vector4 v2 = (xn - center).normalized();
-
-			//				const Scalar phi = dot3(v1, v2);
-			//				if (phi > -1.0f + FUZZY_EPSILON)
-			//				{
-			//					const Vector4 v = (v1 + v2).normalized();
-			//					const Vector4 xc = (xp + xn) / 2.0_simd;
-			//					const Scalar distance = Plane(v, xc).distance(center);
-			//					center -= v * distance * c_stiffness;
-			//				}
-			//			}
-
-			//			// Y axis
-			//			{
-			//				const Vector4& yn = m_nodes[x + (y - 1) * m_resolutionX].position[0];
-			//				const Vector4& yp = m_nodes[x + (y + 1) * m_resolutionX].position[0];
-
-			//				const Vector4 v1 = (yp - center).normalized();
-			//				const Vector4 v2 = (yn - center).normalized();
-
-			//				const Scalar phi = dot3(v1, v2);
-			//				if (phi > -1.0f + FUZZY_EPSILON)
-			//				{
-			//					const Vector4 v = (v1 + v2).normalized();
-			//					const Vector4 yc = (yp + yn) / 2.0_simd;
-			//					const Scalar distance = Plane(v, yc).distance(center);
-			//					center -= v * distance * c_stiffness;
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
-			// Ensure nodes are not inside joint spheres.
-			const auto& poseTransforms = skeletonComponent->getPoseTransforms();
+			m_aabb = Aabb3();
 			for (auto& node : m_nodes)
 			{
-				for (const auto& poseTransform : poseTransforms)
+				if (node.jointName != 0 || node.invMass < Scalar(FUZZY_EPSILON))
+					continue;
+
+				const Vector4 force = gravity;
+				const Vector4 current = node.position[0];
+				const Vector4 velocity = current - node.position[1];
+
+				node.position[0] += velocity * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
+				node.position[1] = current;
+
+				m_aabb.contain(node.position[0]);
+			}
+
+			for (uint32_t i = 0; i < m_solverIterations; ++i)
+			{
+				// Satisfy edge lengths.
+				for (const auto& edge : m_edges)
 				{
-					const Vector4 sphereCenter = poseTransform.translation();
-					const Scalar sphereRadius = 0.4_simd;
-					const Vector4 d = (node.position[0] - sphereCenter).xyz0();
-					if (dot3(d, d) <= sphereRadius * sphereRadius)
+					const Vector4 delta = m_nodes[edge.index[1]].position[0] - m_nodes[edge.index[0]].position[0];
+					const Scalar deltaLength = delta.length();
+					if (deltaLength > FUZZY_EPSILON)
 					{
-						const Scalar depth = sphereRadius / d.length() - 1.0_simd;
-						node.position[0] += d * depth;
+						const Scalar diff = (deltaLength - edge.length) / deltaLength;
+						m_nodes[edge.index[0]].position[0] += delta * diff * m_nodes[edge.index[0]].invMass * 0.5_simd;
+						m_nodes[edge.index[1]].position[0] -= delta * diff * m_nodes[edge.index[1]].invMass * 0.5_simd;
+					}
+				}
+
+				// Ensure nodes are not inside joint spheres.
+				const auto& poseTransforms = skeletonComponent->getPoseTransforms();
+				for (auto& node : m_nodes)
+				{
+					for (const auto& poseTransform : poseTransforms)
+					{
+						const Vector4 sphereCenter = poseTransform.translation();
+						const Scalar sphereRadius = 0.4_simd;
+						const Vector4 d = (node.position[0] - sphereCenter).xyz0();
+						if (dot3(d, d) <= sphereRadius * sphereRadius)
+						{
+							const Scalar depth = sphereRadius / d.length() - 1.0_simd;
+							node.position[0] += d * depth;
+						}
+					}
+				}
+
+				// Ensure nodes are anchored.
+				for (auto& node : m_nodes)
+				{
+					if (node.jointName == 0)
+						continue;
+
+					Transform poseTransform;
+					if (skeletonComponent->getPoseTransform(node.jointName, poseTransform))
+					{
+						node.position[0] = (poseTransform.translation() + node.jointOffset).xyz1();
 					}
 				}
 			}
 
-			// Ensure nodes are anchored.
-			for (auto& node : m_nodes)
-			{
-				if (node.jointName == 0)
-					continue;
-
-				Transform poseTransform;
-				if (skeletonComponent->getPoseTransform(node.jointName, poseTransform))
-				{
-					node.position[0] = (poseTransform.translation() + node.jointOffset).xyz1();
-				}
-			}
+			m_updateRequired = true;
 		}
-
-		m_updateRequired = true;
-	}
+	});
 }
 
 void ClothComponent::reset()
@@ -475,6 +393,15 @@ void ClothComponent::setNodeAnchor(render::handle_t jointName, const Vector4& jo
 	{
 		m_nodes[index].jointName = jointName;
 		m_nodes[index].jointOffset = jointOffset;
+	}
+}
+
+void ClothComponent::synchronize() const
+{
+	if (m_updateClothJob)
+	{
+		m_updateClothJob->wait();
+		m_updateClothJob = nullptr;
 	}
 }
 

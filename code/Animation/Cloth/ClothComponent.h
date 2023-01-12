@@ -24,6 +24,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class Job;
+
+}
+
 namespace traktor::world
 {
 
@@ -116,6 +123,9 @@ private:
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
+	mutable Ref< Job > m_updateClothJob;
+
+	void synchronize() const;
 };
 
 }
