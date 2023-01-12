@@ -21,10 +21,8 @@
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/MessageBox.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderEditorPlugin", RenderEditorPlugin, editor::IEditorPlugin)
 
@@ -112,7 +110,7 @@ bool RenderEditorPlugin::createRenderSystem()
 	auto settings = m_editor->getSettings();
 
 	// Create render system.
-	std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
+	const std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	// Check if render system is already instantiated.
 	auto renderSystemUnsafe = m_editor->getStoreObject< IRenderSystem >(L"RenderSystemUnsafe");
@@ -152,5 +150,4 @@ bool RenderEditorPlugin::createRenderSystem()
 	return true;
 }
 
-	}
 }

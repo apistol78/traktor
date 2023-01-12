@@ -25,8 +25,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IProgramHints;
 class ProgramResource;
@@ -43,18 +45,10 @@ public:
 	/*! Compiled stats. */
 	struct Stats
 	{
-		uint32_t vertexCost;
-		uint32_t pixelCost;
-		uint32_t vertexSize;
-		uint32_t pixelSize;
-
-		Stats()
-		:	vertexCost(0)
-		,	pixelCost(0)
-		,	vertexSize(0)
-		,	pixelSize(0)
-		{
-		}
+		uint32_t vertexCost = 0;
+		uint32_t pixelCost = 0;
+		uint32_t vertexSize = 0;
+		uint32_t pixelSize = 0;
 	};
 
 	/*! Get renderer signature.
@@ -101,6 +95,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

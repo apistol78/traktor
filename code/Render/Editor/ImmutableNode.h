@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Immutable graph node.
  * \ingroup Render
@@ -71,6 +69,4 @@ private:
 	ImmutableNode& operator = (const ImmutableNode&) { T_FATAL_ERROR; return *this; }
 };
 
-	}
 }
-

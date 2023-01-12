@@ -9,10 +9,8 @@
 #include "Render/Editor/RenderEditorPlugin.h"
 #include "Render/Editor/RenderEditorPluginFactory.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderEditorPluginFactory", 0, RenderEditorPluginFactory, editor::IEditorPluginFactory)
 
@@ -26,5 +24,4 @@ Ref< editor::IEditorPlugin > RenderEditorPluginFactory::createEditorPlugin(edito
 	return new RenderEditorPlugin(editor);
 }
 
-	}
 }

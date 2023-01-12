@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class InputPin;
 class OutputPin;
@@ -148,5 +146,4 @@ private:
 	std::pair< int, int > m_position = { 0, 0 };
 };
 
-	}
 }

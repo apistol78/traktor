@@ -10,10 +10,8 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 OutputPin::OutputPin(Node* node, const Guid& id, const std::wstring& name)
 :	m_node(node)
@@ -37,5 +35,4 @@ const std::wstring& OutputPin::getName() const
 	return m_name;
 }
 
-	}
 }
