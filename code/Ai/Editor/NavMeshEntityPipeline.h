@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 /*! Navigation mesh entity pipeline.
  * \ingroup AI
@@ -42,6 +40,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

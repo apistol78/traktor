@@ -15,10 +15,8 @@
 #include "Editor/IEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.AiEditorProfile", 0, AiEditorProfile, scene::ISceneEditorProfile)
 
@@ -99,5 +97,4 @@ Ref< world::EntityData > AiEditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

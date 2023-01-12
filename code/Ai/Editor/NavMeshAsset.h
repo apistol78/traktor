@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 /*! Navigation mesh asset.
  * \ingroup AI
@@ -32,28 +30,24 @@ class T_DLLCLASS NavMeshAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	NavMeshAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class NavMeshPipeline;
 
 	Guid m_source;
-	float m_cellSize;
-	float m_cellHeight;
-	float m_agentSlope;
-	float m_agentHeight;
-	float m_agentClimb;
-	float m_agentRadius;
-	float m_maxEdgeLength;
-	float m_maxSimplificationError;
-	float m_minRegionSize;
-	float m_mergeRegionSize;
-	float m_detailSampleDistance;
-	float m_detailSampleMaxError;
+	float m_cellSize = 0.3f;
+	float m_cellHeight = 0.2f;
+	float m_agentSlope = 45.0f;
+	float m_agentHeight = 2.0f;
+	float m_agentClimb = 0.9f;
+	float m_agentRadius = 0.6f;
+	float m_maxEdgeLength = 12.0f;
+	float m_maxSimplificationError = 1.3f;
+	float m_minRegionSize = 8.0f;
+	float m_mergeRegionSize = 20.0f;
+	float m_detailSampleDistance = 6.0f;
+	float m_detailSampleMaxError = 1.0f;
 };
 
-	}
 }
-

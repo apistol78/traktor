@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 /*! AI scene editor profile.
  * \ingroup AI
@@ -83,6 +81,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-
