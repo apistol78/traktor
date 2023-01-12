@@ -9,10 +9,8 @@
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 InputPin::InputPin(Node* node, const Guid& id, const std::wstring& name, bool optional)
 :	m_node(node)
@@ -42,5 +40,4 @@ bool InputPin::isOptional() const
 	return m_optional;
 }
 
-	}
 }

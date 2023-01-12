@@ -18,19 +18,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class CheckBox;
 class DropDown;
 class Edit;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 /*! Editor render settings page.
  * \ingroup Render
@@ -59,6 +57,4 @@ private:
 	Ref< ui::CheckBox > m_checkBoxRenderDoc;
 };
 
-	}
 }
-

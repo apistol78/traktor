@@ -11,17 +11,15 @@
 #include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ShaderDependencyTracker;
 
@@ -54,6 +52,4 @@ private:
 	bool createRenderSystem();
 };
 
-	}
 }
-

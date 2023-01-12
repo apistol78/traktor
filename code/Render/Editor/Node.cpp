@@ -14,10 +14,8 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_VERSION_CLASS(L"traktor.render.Node", 1, Node, ISerializable)
 
@@ -61,7 +59,7 @@ const InputPin* Node::findInputPin(const Guid& id) const
 	if (id.isNull() || !id.isValid())
 		return nullptr;
 
-	int count = getInputPinCount();
+	const int count = getInputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const InputPin* inputPin = getInputPin(i);
@@ -76,7 +74,7 @@ const InputPin* Node::findInputPin(const Guid& id) const
 
 const InputPin* Node::findInputPin(const std::wstring& name) const
 {
-	int count = getInputPinCount();
+	const int count = getInputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const InputPin* inputPin = getInputPin(i);
@@ -93,7 +91,7 @@ const OutputPin* Node::findOutputPin(const Guid& id) const
 	if (id.isNull() || !id.isValid())
 		return nullptr;
 
-	int count = getOutputPinCount();
+	const int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const OutputPin* outputPin = getOutputPin(i);
@@ -108,7 +106,7 @@ const OutputPin* Node::findOutputPin(const Guid& id) const
 
 const OutputPin* Node::findOutputPin(const std::wstring& name) const
 {
-	int count = getOutputPinCount();
+	const int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
 		const OutputPin* outputPin = getOutputPin(i);
@@ -131,5 +129,4 @@ void Node::serialize(ISerializer& s)
 	s >> MemberStlPair< int, int >(L"position", m_position, AttributePrivate());
 }
 
-	}
 }

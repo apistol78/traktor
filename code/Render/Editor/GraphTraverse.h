@@ -26,10 +26,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Graph traversal helper.
  * \ingroup Render
@@ -234,5 +232,4 @@ void T_DLLCLASS getMergingOutputs(const Graph* graph, const AlignedVector< const
  */
 void T_DLLCLASS getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins);
 
-	}
 }

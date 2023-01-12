@@ -8,12 +8,9 @@
  */
 #include "Render/Editor/IProgramCompiler.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IProgramCompiler", IProgramCompiler, Object)
 
-	}
 }

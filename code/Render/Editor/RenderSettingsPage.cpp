@@ -24,10 +24,8 @@
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSettingsPage", 0, RenderSettingsPage, editor::ISettingsPage)
 
@@ -94,20 +92,20 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkBoxRenderDoc = new ui::CheckBox();
 	m_checkBoxRenderDoc->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_RENDERDOC"), false);
 
-	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
+	const std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 	for (auto type : type_of< render::IRenderSystem >().findAllOf(false))
 	{
-		std::wstring name = type->getName();
-		int32_t index = m_dropRenderSystem->add(name);
+		const std::wstring name = type->getName();
+		const int32_t index = m_dropRenderSystem->add(name);
 		if (name == renderSystemType)
 			m_dropRenderSystem->select(index);
 	}
 
-	std::wstring compilerType = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	const std::wstring compilerType = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	for (auto type : type_of< render::IProgramCompiler >().findAllOf(false))
 	{
-		std::wstring name = type->getName();
-		int32_t index = m_dropCompiler->add(name);
+		const std::wstring name = type->getName();
+		const int32_t index = m_dropCompiler->add(name);
 		if (name == compilerType)
 			m_dropCompiler->select(index);
 	}
@@ -144,5 +142,4 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-	}
 }

@@ -8,16 +8,14 @@
  */
 #include "Render/Editor/ImmutableNode.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const static Guid c_null;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImmutableNode", ImmutableNode, Node)
 
@@ -86,5 +84,4 @@ const OutputPin* ImmutableNode::getOutputPin(int index) const
 	return &m_outputPins[index];
 }
 
-	}
 }
