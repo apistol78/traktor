@@ -16,28 +16,10 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Physics/World/Vehicle/WheelData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.WheelData", 2, WheelData, ISerializable)
-
-WheelData::WheelData()
-:	m_steer(false)
-,	m_drive(false)
-,	m_radius(1.0f)
-,	m_breakFactor(0.0f)
-,	m_anchor(0.0f, 1.0f, 0.0f, 1.0f)
-,	m_axis(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_suspensionLength(0.1f, 1.0f)
-,	m_suspensionSpring(5.0f)
-,	m_suspensionDamping(5.0f)
-,	m_rollingFriction(1.0f)
-,	m_slipCornerForce(4.0f)
-,	m_peakSlipAngle(deg2rad(8.0f))
-{
-}
 
 void WheelData::serialize(ISerializer& s)
 {
@@ -67,5 +49,4 @@ void WheelData::serialize(ISerializer& s)
 		s >> Member< float >(L"peakSlipAngle", m_peakSlipAngle, AttributeUnit(UnitType::Radians) | AttributeRange(0.0f));
 }
 
-	}
 }

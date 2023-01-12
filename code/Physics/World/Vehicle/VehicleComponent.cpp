@@ -19,12 +19,10 @@
 
 #include "Core/Log/Log.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 const float c_maxSuspensionForce = 250.0f;
 const float c_maxDampingForce = 250.0f;
@@ -34,7 +32,7 @@ const float c_throttleThreshold = 0.01f;
 const Scalar c_linearVelocityThreshold = 4.0_simd;
 const float c_suspensionTraceRadius = 0.25f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.VehicleComponent", VehicleComponent, world::IEntityComponent)
 
@@ -444,5 +442,4 @@ void VehicleComponent::updateWheels(Body* body, float dT)
 	}
 }
 
-	}
 }

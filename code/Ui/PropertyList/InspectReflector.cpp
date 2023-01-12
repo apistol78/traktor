@@ -110,6 +110,10 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 			return NumericPropertyItem::RpHerz;
 		else if (unit->getUnit() == UnitType::EV)
 			return NumericPropertyItem::RpEV;
+		else if (unit->getUnit() == UnitType::Newton)
+			return NumericPropertyItem::RpNewton;
+		else if (unit->getUnit() == UnitType::NewtonSecond)
+			return NumericPropertyItem::RpNewtonSecond;
 	}
 	return NumericPropertyItem::RpNormal;
 }

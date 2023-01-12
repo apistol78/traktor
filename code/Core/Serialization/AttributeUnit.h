@@ -34,6 +34,7 @@ enum class UnitType
 	Lumens,
 	Decibel,
 	Newton,
+	NewtonSecond,
 	Kilograms,
 	Percent,
 	Pixels,

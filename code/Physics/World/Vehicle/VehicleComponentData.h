@@ -20,25 +20,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class IEntityBuilder;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class CollisionSpecification;
 class PhysicsManager;
@@ -95,6 +93,4 @@ private:
 	float m_breakingForce;
 };
 
-	}
 }
-

@@ -17,10 +17,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class Body;
 class CharacterComponentData;
@@ -34,7 +32,7 @@ class T_DLLCLASS CharacterComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	CharacterComponent(
+	explicit CharacterComponent(
 		PhysicsManager* physicsManager,
 		const CharacterComponentData* data,
 		Body* bodyWide,
@@ -109,5 +107,4 @@ private:
 	bool step(Vector4 motion, Vector4& inoutPosition) const;
 };
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*! Wheel persistent data.
  * \ingroup Physics
@@ -32,8 +30,6 @@ class T_DLLCLASS WheelData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	WheelData();
-
 	bool getSteer() const { return m_steer; }
 
 	bool getDrive() const { return m_drive; }
@@ -63,20 +59,18 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	bool m_steer;
-	bool m_drive;
-	float m_radius;
-	float m_breakFactor;
-	Vector4 m_anchor;
-	Vector4 m_axis;
-	Range< float > m_suspensionLength;
-	float m_suspensionSpring;
-	float m_suspensionDamping;
-	float m_rollingFriction;
-	float m_slipCornerForce;
-	float m_peakSlipAngle;
+	bool m_steer = false;
+	bool m_drive = false;
+	float m_radius = 1.0f;
+	float m_breakFactor = 0.0f;
+	Vector4 m_anchor = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+	Vector4 m_axis = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+	Range< float > m_suspensionLength = Range< float >(0.1f, 1.0f);
+	float m_suspensionSpring = 5.0f;
+	float m_suspensionDamping = 5.0f;
+	float m_rollingFriction = 1.0f;
+	float m_slipCornerForce = 4.0f;
+	float m_peakSlipAngle = deg2rad(8.0f);
 };
 
-	}
 }
-

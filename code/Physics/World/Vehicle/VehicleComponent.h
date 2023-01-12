@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class Entity;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class Body;
 struct CollisionInfo;
@@ -44,7 +42,7 @@ class T_DLLCLASS VehicleComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	VehicleComponent(
+	explicit VehicleComponent(
 		PhysicsManager* physicsManager,
 		const VehicleComponentData* data,
 		const RefArray< Wheel >& wheels,
@@ -102,6 +100,4 @@ private:
 	void updateWheels(Body* body, float dT);
 };
 
-	}
 }
-
