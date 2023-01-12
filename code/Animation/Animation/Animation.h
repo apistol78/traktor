@@ -87,12 +87,11 @@ public:
 	/*! Get key pose from time.
 	 *
 	 * \param at Time
-	 * \param linear Use linear interpolation.
 	 * \param indexHint Key frame index hint.
 	 * \param outPose Output key pose.
 	 * \return True if found key pose.
 	 */
-	bool getPose(float at, bool linear, int32_t& indexHint, Pose& outPose) const;
+	bool getPose(float at, int32_t& indexHint, Pose& outPose) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

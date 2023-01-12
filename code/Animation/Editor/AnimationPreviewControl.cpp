@@ -162,7 +162,6 @@ void AnimationPreviewControl::destroy()
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
-	safeDestroy(m_renderSystem);
 
 	Widget::destroy();
 }

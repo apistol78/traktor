@@ -17,12 +17,11 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 1, StateNodeAnimation, StateNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateNodeAnimation", 2, StateNodeAnimation, StateNode)
 
-StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation)
+StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation)
 :	StateNode(name)
 ,	m_animation(animation)
-,	m_linearInterpolation(linearInterpolation)
 {
 }
 
@@ -57,7 +56,7 @@ void StateNodeAnimation::evaluate(
 	int32_t indexHint = context.getIndexHint();
 
 	if (m_animation)
-		m_animation->getPose(time, m_linearInterpolation, indexHint, outPose);
+		m_animation->getPose(time, indexHint, outPose);
 
 	context.setIndexHint(indexHint);
 }
@@ -69,7 +68,12 @@ void StateNodeAnimation::serialize(ISerializer& s)
 	StateNode::serialize(s);
 
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
-	s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
+
+	if (s.getVersion< StateNodeAnimation >() < 2)
+	{
+		bool linearInterpolation;
+		s >> Member< bool >(L"linearInterpolation", linearInterpolation);
+	}
 }
 
 }

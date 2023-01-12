@@ -24,9 +24,8 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SimpleAnimationController", SimpleAnimationController, IPoseController)
 
-SimpleAnimationController::SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation)
+SimpleAnimationController::SimpleAnimationController(const resource::Proxy< Animation >& animation)
 :	m_animation(animation)
-,	m_linearInterpolation(linearInterpolation)
 ,	m_indexHint(-1)
 ,	m_lastTime(std::numeric_limits< float >::max())
 {
@@ -55,7 +54,7 @@ bool SimpleAnimationController::evaluate(
 
 	const float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
 
-	m_animation->getPose(poseTime, m_linearInterpolation, m_indexHint, m_evaluationPose);
+	m_animation->getPose(poseTime, m_indexHint, m_evaluationPose);
 	calculatePoseTransforms(
 		skeleton,
 		&m_evaluationPose,

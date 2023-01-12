@@ -22,6 +22,7 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
@@ -157,7 +158,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< StateNode > state = new StateNodeAnimation(instance->getName(), resource::IdProxy< Animation >(instance->getGuid()), false);
+		Ref< StateNode > state = new StateNodeAnimation(instance->getName(), resource::IdProxy< Animation >(instance->getGuid()));
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
@@ -451,6 +452,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 
 void StateGraphEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	m_previewControl->getResourceManager()->reload(eventId, false);
 }
 
 void StateGraphEditorPage::bindStateNodes()
@@ -518,7 +520,7 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 
 void StateGraphEditorPage::createState(const ui::Point& at)
 {
-	Ref< StateNode > state = new StateNodeAnimation(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >(), false);
+	Ref< StateNode > state = new StateNodeAnimation(i18n::Text(L"STATEGRAPH_UNNAMED"), resource::IdProxy< Animation >());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 

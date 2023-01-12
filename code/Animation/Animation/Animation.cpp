@@ -16,70 +16,6 @@
 
 namespace traktor::animation
 {
-	namespace
-	{
-
-struct KeyPoseAccessor
-{
-	static inline float time(const Animation::KeyPose* keys, size_t nkeys, const Animation::KeyPose& key)
-	{
-		return key.at;
-	}
-
-	static inline Pose value(const Animation::KeyPose& key)
-	{
-		return key.pose;
-	}
-
-	static inline Pose combine(
-		float t,
-		const Pose& v0, float w0,
-		const Pose& v1, float w1,
-		const Pose& v2, float w2,
-		const Pose& v3, float w3
-	)
-	{
-		Pose pose;
-
-		// Build mask of all used joint indices.
-		BitSet indices;
-		v0.getIndexMask(indices);
-		v1.getIndexMask(indices);
-		v2.getIndexMask(indices);
-		v3.getIndexMask(indices);
-
-		int minRange, maxRange;
-		indices.range(minRange, maxRange);
-
-		const Scalar sw0(w0);
-		const Scalar sw1(w1);
-		const Scalar sw2(w2);
-		const Scalar sw3(w3);
-
-		for (int i = minRange; i < maxRange; ++i)
-		{
-			if (!indices(i))
-				continue;
-
-			const auto& t0 = v0.getJointTransform(i);
-			const auto& t1 = v1.getJointTransform(i);
-			const auto& t2 = v2.getJointTransform(i);
-			const auto& t3 = v3.getJointTransform(i);
-
-			pose.setJointTransform(
-				i,
-				Transform(
-					t0.translation() * sw0 + t1.translation() * sw1 + t2.translation() * sw2 + t3.translation() * sw3,
-					(t0.rotation() * sw0 + t1.rotation() * sw1 + t2.rotation() * sw2 + t3.rotation() * sw3).normalized()
-				)
-			);
-		}
-
-		return pose;
-	}
-};
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
 
@@ -133,59 +69,54 @@ const Animation::KeyPose& Animation::getLastKeyPose() const
 	return m_poses.back();
 }
 
-bool Animation::getPose(float at, bool linear, int32_t& indexHint, Pose& outPose) const
+bool Animation::getPose(float at, int32_t& indexHint, Pose& outPose) const
 {
 	const size_t nposes = m_poses.size();
 	if (nposes > 2)
 	{
-		if (!linear)
-			outPose = Hermite< KeyPose, Pose, KeyPoseAccessor, ClampTime >(&m_poses[0], nposes).evaluate(at);
-		else
+		int32_t index = -1;
+
+		if (indexHint >= 0 && indexHint < nposes - 1)
 		{
-			int32_t index = -1;
-
-			if (indexHint >= 0 && indexHint < nposes - 1)
-			{
-				const float Tkey0 = m_poses[indexHint].at;
-				const float Tkey1 = m_poses[indexHint + 1].at;
-				if (at >= Tkey0 && at <= Tkey1)
-					index = indexHint;
-				else if (at > Tkey1 && indexHint < nposes - 2)
-					index = indexHint + 1;
-			}
-
-			if (index < 0)
-			{
-				int32_t index0 = 0;
-				int32_t index1 = int32_t(nposes - 2);
-
-				while (index0 < index1)
-				{
-					index = (index0 + index1) / 2;
-
-					float Tkey0 = m_poses[index].at;
-					float Tkey1 = m_poses[index + 1].at;
-
-					if (at < Tkey0)
-						index1 = index - 1;
-					else if (at > Tkey1)
-						index0 = index + 1;
-					else
-						break;
-				}
-			}
-
-			const Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
-
-			blendPoses(
-				&m_poses[index].pose,
-				&m_poses[index + 1].pose,
-				clamp(k, 0.0_simd, 1.0_simd),
-				&outPose
-			);
-
-			indexHint = index;
+			const float Tkey0 = m_poses[indexHint].at;
+			const float Tkey1 = m_poses[indexHint + 1].at;
+			if (at >= Tkey0 && at <= Tkey1)
+				index = indexHint;
+			else if (at > Tkey1 && indexHint < nposes - 2)
+				index = indexHint + 1;
 		}
+
+		if (index < 0)
+		{
+			int32_t index0 = 0;
+			int32_t index1 = int32_t(nposes - 2);
+
+			while (index0 < index1)
+			{
+				index = (index0 + index1) / 2;
+
+				const float Tkey0 = m_poses[index].at;
+				const float Tkey1 = m_poses[index + 1].at;
+
+				if (at < Tkey0)
+					index1 = index - 1;
+				else if (at > Tkey1)
+					index0 = index + 1;
+				else
+					break;
+			}
+		}
+
+		const Scalar k((at - m_poses[index].at) / (m_poses[index + 1].at - m_poses[index].at));
+
+		blendPoses(
+			&m_poses[index].pose,
+			&m_poses[index + 1].pose,
+			clamp(k, 0.0_simd, 1.0_simd),
+			&outPose
+		);
+
+		indexHint = index;
 		return true;
 	}
 	else if (nposes > 1)
