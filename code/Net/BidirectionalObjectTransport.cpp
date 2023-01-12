@@ -14,22 +14,16 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Net/Socket.h"
 #include "Net/SocketStream.h"
-#include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", BidirectionalObjectTransport, Object)
 
-BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
+BidirectionalObjectTransport::BidirectionalObjectTransport(Socket* socket)
 :	m_socket(socket)
-{
-}
-
-BidirectionalObjectTransport::~BidirectionalObjectTransport()
 {
 }
 
@@ -59,7 +53,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 			if (!chunk.ptr)
 				break;
 
-			int32_t nsent = m_socket->send(chunk.ptr, (int)chunk.size);
+			const int32_t nsent = m_socket->send(chunk.ptr, (int)chunk.size);
 			if (nsent < 0)
 				return false;
 
@@ -132,7 +126,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 				}
 			}
 
-			// Received a object which we don't wait for; enqueue for later.
+			// Received an object by which type we don't wait for; enqueue for later.
 			m_inQueue[&type_of(object)].push_back(object);
 		}
 		while (timeout > 0);
@@ -156,11 +150,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 void BidirectionalObjectTransport::flush(const TypeInfo& objectType)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	{
-		RefArray< ISerializable >& typeInQueue = m_inQueue[&objectType];
-		typeInQueue.clear();
-	}
+	m_inQueue[&objectType].resize(0);
 }
 
-	}
 }

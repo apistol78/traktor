@@ -12,7 +12,6 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
@@ -25,14 +24,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
-class TcpSocket;
+class Socket;
 
-/*! \brief
+/*!
  * \ingroup Net
  */
 class T_DLLCLASS BidirectionalObjectTransport : public Object
@@ -47,9 +44,7 @@ public:
 		Disconnected
 	};
 
-	BidirectionalObjectTransport(TcpSocket* socket);
-
-	virtual ~BidirectionalObjectTransport();
+	explicit BidirectionalObjectTransport(Socket* socket);
 
 	void close();
 
@@ -61,7 +56,7 @@ public:
 
 	bool connected() const { return m_socket != 0; }
 
-	TcpSocket* getSocket() const { return m_socket; }
+	Socket* getSocket() const { return m_socket; }
 
 	template < typename ObjectType >
 	Result recv(int32_t timeout, Ref< ObjectType >& outObject)
@@ -84,12 +79,10 @@ public:
 	}
 
 private:
-	Ref< TcpSocket > m_socket;
+	Ref< Socket > m_socket;
 	SmallMap< const TypeInfo*, RefArray< ISerializable > > m_inQueue;
 	ThreadLocal m_threadBuffer;
 	Semaphore m_lock;
 };
 
-	}
 }
-
