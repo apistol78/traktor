@@ -120,7 +120,7 @@ private:
 		if (!visitor(node))
 			return;
 
-		uint32_t inputPinCount = node->getInputPinCount();
+		const uint32_t inputPinCount = node->getInputPinCount();
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
@@ -145,7 +145,7 @@ private:
 			return;
 		visited.insert(node);
 
-		uint32_t inputPinCount = node->getInputPinCount();
+		const uint32_t inputPinCount = node->getInputPinCount();
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
@@ -179,7 +179,7 @@ private:
 			if (!visitor(node))
 				continue;
 
-			uint32_t inputPinCount = node->getInputPinCount();
+			const uint32_t inputPinCount = node->getInputPinCount();
 			for (uint32_t j = 0; j < inputPinCount; ++j)
 			{
 				const InputPin* inputPin = node->getInputPin(j);
@@ -198,72 +198,6 @@ private:
 		}
 		if (!children.empty())
 			breadthFirstImpl(children, visitor, visited);
-	}
-};
-
-struct FindInputPin
-{
-	const InputPin* inputPin = nullptr;
-	bool found = false;
-
-	bool operator () (Node* node)
-	{
-		found |= bool(inputPin->getNode() == node);
-		return !found;
-	}
-
-	bool operator () (Edge* edge)
-	{
-		return !found;
-	}
-};
-
-struct PinsConnected
-{
-	const InputPin* inputPin = nullptr;
-	const OutputPin* outputPin = nullptr;
-	bool connected = false;
-
-	bool operator () (Node* node)
-	{
-		return !connected;
-	}
-
-	bool operator () (Edge* edge)
-	{
-		// Don't traverse paths from source node from wrong input pin.
-		if (
-			edge->getDestination()->getNode() == inputPin->getNode() &&
-			edge->getDestination() != inputPin
-		)
-			return false;
-
-		connected |= bool(outputPin == edge->getSource());
-		return true;
-	}
-};
-
-struct CollectOutputs
-{
-	const InputPin* inputPin = nullptr;
-	AlignedVector< const OutputPin* > outputPins;
-
-	bool operator () (Node* node)
-	{
-		return true;
-	}
-
-	bool operator () (Edge* edge)
-	{
-		// Don't traverse paths from source node from wrong input pin.
-		if (
-			edge->getDestination()->getNode() == inputPin->getNode() &&
-			edge->getDestination() != inputPin
-		)
-			return false;
-
-		outputPins.push_back(edge->getSource());
-		return true;
 	}
 };
 

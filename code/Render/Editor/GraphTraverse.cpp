@@ -8,10 +8,78 @@
  */
 #include "Render/Editor/GraphTraverse.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
+	namespace
+	{
+
+struct FindInputPin
+{
+	const InputPin* inputPin = nullptr;
+	bool found = false;
+
+	bool operator () (Node* node)
+	{
+		found |= bool(inputPin->getNode() == node);
+		return !found;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		return !found;
+	}
+};
+
+struct PinsConnected
+{
+	const InputPin* inputPin = nullptr;
+	const OutputPin* outputPin = nullptr;
+	bool connected = false;
+
+	bool operator () (Node* node)
+	{
+		return !connected;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		// Don't traverse paths from source node from wrong input pin.
+		if (
+			edge->getDestination()->getNode() == inputPin->getNode() &&
+			edge->getDestination() != inputPin
+		)
+			return false;
+
+		connected |= bool(outputPin == edge->getSource());
+		return true;
+	}
+};
+
+struct CollectOutputs
+{
+	const InputPin* inputPin = nullptr;
+	AlignedVector< const OutputPin* > outputPins;
+
+	bool operator () (Node* node)
+	{
+		return true;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		// Don't traverse paths from source node from wrong input pin.
+		if (
+			edge->getDestination()->getNode() == inputPin->getNode() &&
+			edge->getDestination() != inputPin
+		)
+			return false;
+
+		outputPins.push_back(edge->getSource());
+		return true;
+	}
+};
+
+	}
 
 bool doesInputPropagateToNode(const Graph* graph, const InputPin* inputPin, Node* targetNode)
 {
@@ -68,7 +136,7 @@ void getMergingOutputs(const Graph* graph, const AlignedVector< const InputPin* 
 				continue;
 
 			const Node* checkNode = commonOutputPins[j]->getNode();
-			int32_t checkInputPinCount = checkNode->getInputPinCount();
+			const int32_t checkInputPinCount = checkNode->getInputPinCount();
 			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
 			{
 				const InputPin* checkInputPin = checkNode->getInputPin(k);
@@ -94,7 +162,7 @@ void getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const 
 		bool outputNodeDependent = false;
 
 		Node* outputNode = outputPin->getNode();
-		int32_t outputNodeInputPinCount = outputNode->getInputPinCount();
+		const int32_t outputNodeInputPinCount = outputNode->getInputPinCount();
 		for (int32_t j = 0; j < outputNodeInputPinCount && !outputNodeDependent; ++j)
 		{
 			const InputPin* outputNodeInputPin = outputNode->getInputPin(j);
@@ -120,7 +188,7 @@ void getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const 
 				continue;
 
 			const Node* checkNode = nonDependentOutputPins[j]->getNode();
-			int32_t checkInputPinCount = checkNode->getInputPinCount();
+			const int32_t checkInputPinCount = checkNode->getInputPinCount();
 			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
 			{
 				const InputPin* checkInputPin = checkNode->getInputPin(k);
@@ -133,5 +201,4 @@ void getNonDependentOutputs(const Graph* graph, const InputPin* inputPin, const 
 	}
 }
 
-    }
 }
