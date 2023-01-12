@@ -17,10 +17,8 @@
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureAssetPipeline.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetPipeline", 7, TextureAssetPipeline, editor::DefaultPipeline)
 
@@ -95,5 +93,4 @@ bool TextureAssetPipeline::buildOutput(
 	);
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/UnCompressor.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UnCompressor", UnCompressor, ICompressor)
 
@@ -21,10 +19,10 @@ bool UnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mi
 {
 	for (RefArray< drawing::Image >::const_iterator i = mipImages.begin(); i != mipImages.end(); ++i)
 	{
-		int32_t width = (*i)->getWidth();
-		int32_t height = (*i)->getHeight();
+		const int32_t width = (*i)->getWidth();
+		const int32_t height = (*i)->getHeight();
 
-		uint32_t outputSize = getTextureMipPitch(
+		const uint32_t outputSize = getTextureMipPitch(
 			textureFormat,
 			width,
 			height
@@ -37,5 +35,4 @@ bool UnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mi
 	return true;
 }
 
-	}
 }

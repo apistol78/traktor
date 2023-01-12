@@ -10,10 +10,8 @@
 #include "Render/Editor/Texture/TextureSet.h"
 #include "Render/Editor/Texture/TextureSetPipeline.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureSetPipeline", 0, TextureSetPipeline, editor::DefaultPipeline)
 
@@ -62,5 +60,4 @@ Ref< ISerializable > TextureSetPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

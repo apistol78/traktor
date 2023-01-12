@@ -14,10 +14,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.EtcCompressor", EtcCompressor, ICompressor)
 
@@ -79,5 +77,4 @@ bool EtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& m
 	return true;
 }
 
-	}
 }

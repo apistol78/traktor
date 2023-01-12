@@ -25,10 +25,8 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureBatchDialog", TextureBatchDialog, ui::ConfigDialog)
 
@@ -157,5 +155,4 @@ void TextureBatchDialog::eventTextureListSelect(ui::SelectionChangeEvent* event)
 	m_texturePropertyList->update();
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS BfnTexturePipeline : public editor::DefaultPipeline
 {
@@ -53,6 +51,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

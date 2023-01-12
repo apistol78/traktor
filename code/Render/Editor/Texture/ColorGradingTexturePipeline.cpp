@@ -15,10 +15,8 @@
 #include "Render/Editor/Texture/ColorGradingTexturePipeline.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ColorGradingTexturePipeline", 4, ColorGradingTexturePipeline, editor::DefaultPipeline)
 
@@ -61,16 +59,16 @@ bool ColorGradingTexturePipeline::buildOutput(
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 64 * 64, 64);
 	for (int32_t r = 0; r < 64; ++r)
 	{
-		float fr = float(r) / 63.0f;
-		float gr = std::pow(fr, asset->getGamma());
+		const float fr = float(r) / 63.0f;
+		const float gr = std::pow(fr, asset->getGamma());
 		for (int32_t g = 0; g < 64; ++g)
 		{
-			float fg = float(g) / 63.0f;
-			float gg = std::pow(fg, asset->getGamma());
+			const float fg = float(g) / 63.0f;
+			const float gg = std::pow(fg, asset->getGamma());
 			for (int32_t b = 0; b < 64; ++b)
 			{
-				float fb = float(b) / 63.0f;
-				float gb = std::pow(fb, asset->getGamma());
+				const float fb = float(b) / 63.0f;
+				const float gb = std::pow(fb, asset->getGamma());
 				image->setPixel(r + b * 64, g, Color4f(gr, gg, gb, 0.0f));
 			}
 		}
@@ -94,5 +92,4 @@ bool ColorGradingTexturePipeline::buildOutput(
 	);
 }
 
-	}
 }

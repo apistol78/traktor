@@ -23,12 +23,10 @@
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 struct CompressTextureTask
 {
@@ -139,7 +137,7 @@ struct CompressTextureTask
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DxtnCompressor", DxtnCompressor, ICompressor)
 
@@ -160,5 +158,4 @@ bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	return true;
 }
 
-	}
 }

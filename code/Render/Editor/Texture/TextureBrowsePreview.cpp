@@ -17,10 +17,8 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureBrowsePreview", 0, TextureBrowsePreview, editor::IBrowsePreview)
 
@@ -55,5 +53,4 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 	return textureThumb ? new ui::Bitmap(textureThumb) : nullptr;
 }
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS TextureAsset : public editor::Asset
 {
@@ -34,6 +32,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }
-
