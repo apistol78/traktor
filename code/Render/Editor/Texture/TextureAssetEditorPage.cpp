@@ -28,6 +28,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
+#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 
@@ -62,10 +63,14 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	toolBar->addItem(new ui::ToolBarButton(L"A", ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled));
 
 	Ref< ui::Container > imageContainer = new ui::Container();
-	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
 
 	m_textureControl = new TextureControl();
 	m_textureControl->create(imageContainer);
+
+	m_statusBar = new ui::StatusBar();
+	m_statusBar->create(imageContainer);
+	m_statusBar->addColumn(ui::dpi96(1000));
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
@@ -110,11 +115,32 @@ void TextureAssetEditorPage::updatePreview()
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
-
 	if (image)
+	{
 		m_textureControl->setImage(image, m_asset->m_output);
+
+		StringOutputStream ss;
+		ss << image->getWidth() << L" * " << image->getHeight();
+
+		const auto& pf = image->getPixelFormat();
+		if (pf.isFloatPoint())
+			ss << L", fp";
+		ss << L", " << pf.getColorBits() << L" bpp";
+		ss << L", " << pf.getRedBits() << L" red";
+		ss << L", " << pf.getGreenBits() << L" green";
+		ss << L", " << pf.getBlueBits() << L" blue";
+		ss << L", " << pf.getAlphaBits() << L" alpha";
+
+		const auto& imf = image->getImageInfo();
+		ss << L", gamma " << imf->getGamma() << L" ";
+
+		m_statusBar->setText(0, ss.str());
+	}
 	else
+	{
 		m_textureControl->setImage(nullptr, m_asset->m_output);
+		m_statusBar->setText(0, L"");
+	}
 }
 
 void TextureAssetEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)

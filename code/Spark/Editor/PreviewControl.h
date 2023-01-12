@@ -82,7 +82,7 @@ class T_DLLCLASS PreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	PreviewControl(editor::IEditor* editor);
+	explicit PreviewControl(editor::IEditor* editor);
 
 	bool create(
 		ui::Widget* parent,

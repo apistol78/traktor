@@ -13,10 +13,6 @@
 namespace traktor
 {
 
-T_MATH_INLINE Line2::Line2()
-{
-}
-
 T_MATH_INLINE Line2::Line2(const Vector2& p0, const Vector2& p1)
 {
 	p[0] = p0;

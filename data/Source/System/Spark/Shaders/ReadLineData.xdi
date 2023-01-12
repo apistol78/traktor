@@ -74,11 +74,11 @@
 			<elements>
 				<item>
 					<name>Start</name>
-					<type>DtFloat4</type>
+					<type>DtFloat2</type>
 				</item>
 				<item>
 					<name>End</name>
-					<type>DtFloat4</type>
+					<type>DtFloat2</type>
 				</item>
 			</elements>
 		</item>

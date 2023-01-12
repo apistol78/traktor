@@ -56,7 +56,6 @@ class IResourceManager;
 	{
 
 class CharacterInstance;
-class PathControl;
 class PreviewControl;
 class Movie;
 
@@ -82,7 +81,6 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< ui::TreeView > m_treeMovie;
-	Ref< PathControl > m_pathControl;
 	Ref< PreviewControl > m_previewControl;
 	Ref< ui::ToolBar > m_toolBarPlay;
 	Ref< resource::IResourceManager > m_resourceManager;

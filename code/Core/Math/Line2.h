@@ -29,7 +29,7 @@ class T_DLLCLASS Line2
 public:
 	Vector2 p[2];
 
-	T_MATH_INLINE Line2();
+	T_MATH_INLINE Line2() = default;
 
 	T_MATH_INLINE Line2(const Vector2& p0, const Vector2& p1);
 

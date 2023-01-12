@@ -91,8 +91,8 @@ const static Matrix33 c_textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0
 #pragma pack(1)
 struct LineData
 {
-	float start[4];
-	float end[4];
+	float start[2];
+	float end[2];
 };
 #pragma pack()
 

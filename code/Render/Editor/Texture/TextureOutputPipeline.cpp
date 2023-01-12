@@ -239,7 +239,7 @@ bool TextureOutputPipeline::buildOutput(
 	// warning and rest of pipeline still expect image to be linear is explicitly tagged as such.
 	if (image->getImageInfo() != nullptr && image->getImageInfo()->getGamma() >= 0.001f)
 	{
-		const bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.001f);
+		const bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.1f);
 		if (explicitLinear != textureOutput->m_linearGamma)
 		{
 			log::warning << L"Image linear gamma mismatch in texture \"" << outputGuid.format() << L"\";" << Endl;
@@ -493,7 +493,7 @@ bool TextureOutputPipeline::buildOutput(
 		if (image->getImageInfo() != nullptr)
 		{
 			const float imageGamma = image->getImageInfo()->getGamma();
-			const bool is_sRGB = (bool)(std::abs(imageGamma - m_gamma) <= 0.1f);
+			const bool is_sRGB = (bool)(std::abs(imageGamma - m_gamma) < 0.1f);
 			if (is_sRGB && !isNormalMap)
 				sRGB = true;
 			else

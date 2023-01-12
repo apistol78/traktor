@@ -24,9 +24,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ColorGradingTexturePipeline", 4,
 
 TypeInfoSet ColorGradingTexturePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ColorGradingTextureAsset >();
-	return typeSet;
+	return makeTypeInfoSet< ColorGradingTextureAsset >();
 }
 
 bool ColorGradingTexturePipeline::shouldCache() const
