@@ -188,9 +188,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			if (!meshShape)
 				return scene::Traverser::VrContinue;
 
-			Ref< const physics::MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< physics::MeshAsset >(
-				meshShape->getMesh()
-			);
+			Ref< const physics::MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< physics::MeshAsset >(meshShape->getMesh());
 			if (!meshAsset)
 			{
 				log::error << L"Prefab failed; unable to read collision mesh \"" << Guid(meshShape->getMesh()).format() << L"\"." << Endl;
@@ -198,8 +196,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			}
 
 			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-
-			Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, L"");
+			Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 			if (!shapeModel)
 			{
 				log::error << L"Prefab failed; unable to read collision model \"" << filePath.getPathName() << L"\"." << Endl;
