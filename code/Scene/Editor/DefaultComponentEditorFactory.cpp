@@ -20,6 +20,11 @@ const TypeInfoSet DefaultComponentEditorFactory::getComponentDataTypes() const
 	return makeTypeInfoSet< world::IEntityComponentData >();
 }
 
+bool DefaultComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+{
+	return false;
+}
+
 Ref< IComponentEditor > DefaultComponentEditorFactory::createComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
 	return new DefaultComponentEditor(context, entityAdapter, componentData);

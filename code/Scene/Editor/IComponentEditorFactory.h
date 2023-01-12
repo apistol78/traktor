@@ -47,6 +47,13 @@ public:
 	 */
 	virtual const TypeInfoSet getComponentDataTypes() const = 0;
 
+	/*! Always rebuild entity when rewinding etc.
+	 *
+	 * Useful for simulated entities such as ragdolls, vehicles etc.
+	 * \return True if entity always should be rebuilt.
+	 */
+	virtual bool alwaysRebuild(const world::IEntityComponentData* componentData) const = 0;
+
 	/*! Create component editor.
 	 *
 	 * \param context Scene editor context.

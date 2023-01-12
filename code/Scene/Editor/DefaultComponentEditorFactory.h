@@ -31,6 +31,8 @@ class T_DLLCLASS DefaultComponentEditorFactory : public IComponentEditorFactory
 public:
 	virtual const TypeInfoSet getComponentDataTypes() const override final;
 
+	virtual bool alwaysRebuild(const world::IEntityComponentData* componentData) const override final;
+
 	virtual Ref< IComponentEditor > createComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
 };
 

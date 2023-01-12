@@ -98,7 +98,7 @@ bool RagDollPoseController::create(
 		if (radius > length / 2.0f)
 			radius = length / 2.0f;
 
-		const Vector4 centerOfMass = (start + end) * Scalar(0.5f);
+		const Vector4 centerOfMass = (start + end) * 0.5_simd;
 
 		physics::CapsuleShapeDesc shapeDesc;
 		shapeDesc.setCollisionGroup(data->m_collisionGroup);
