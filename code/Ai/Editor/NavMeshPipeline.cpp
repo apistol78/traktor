@@ -39,12 +39,10 @@
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
+	namespace
 	{
-		namespace
-		{
 
 const float c_oceanThreshold = 0.25f;
 
@@ -78,23 +76,15 @@ void copyUnaligned3(float out[3], const Vector4& source)
 	out[2] = source.z();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 13, NavMeshPipeline, editor::DefaultPipeline)
-
-NavMeshPipeline::NavMeshPipeline()
-:	m_editor(false)
-,	m_build(true)
-,	m_terrainStepSize(16)
-{
-}
 
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	m_build = settings->getPropertyIncludeHash< bool >(L"NavMeshPipeline.Build", true);
-	m_terrainStepSize = settings->getPropertyIncludeHash< int32_t >(L"NavMeshPipeline.TerrainStepSize", 16);
 
 	// Create entity replicators.
 	for (const auto& entityReplicatorType : type_of< scene::IEntityReplicator >().findAllOf(false))
@@ -643,5 +633,4 @@ bool NavMeshPipeline::buildOutput(
 	return true;
 }
 
-	}
 }

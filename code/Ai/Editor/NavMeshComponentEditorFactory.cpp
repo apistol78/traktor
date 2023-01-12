@@ -10,10 +10,8 @@
 #include "Ai/Editor/NavMeshComponentEditor.h"
 #include "Ai/Editor/NavMeshComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditorFactory", NavMeshComponentEditorFactory, scene::IComponentEditorFactory)
 
@@ -32,5 +30,4 @@ Ref< scene::IComponentEditor > NavMeshComponentEditorFactory::createComponentEdi
 	return new NavMeshComponentEditor(context, entityAdapter, componentData);
 }
 
-	}
 }

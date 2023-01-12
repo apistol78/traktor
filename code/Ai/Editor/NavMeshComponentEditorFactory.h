@@ -10,10 +10,8 @@
 
 #include "Scene/Editor/IComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 /*! Navigation mesh entity scene editor factory.
  * \ingroup AI
@@ -30,6 +28,4 @@ public:
 	virtual Ref< scene::IComponentEditor > createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
 };
 
-	}
 }
-

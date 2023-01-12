@@ -10,10 +10,8 @@
 #include "Ai/Editor/NavMeshEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityPipeline", 1, NavMeshEntityPipeline, world::EntityPipeline)
 
@@ -39,5 +37,4 @@ bool NavMeshEntityPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

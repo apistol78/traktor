@@ -14,10 +14,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
-namespace traktor
+namespace traktor::ai
 {
-	namespace ai
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditor", NavMeshComponentEditor, scene::DefaultComponentEditor)
 
@@ -39,7 +37,7 @@ void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 		if (navMesh->m_navMeshPolygons.empty())
 			return;
 
-		primitiveRenderer->pushWorld(/*getEntityAdapter()->getTransform().toMatrix44()*/ Matrix44::identity());
+		primitiveRenderer->pushWorld(Matrix44::identity());
 		primitiveRenderer->pushDepthState(true, false, false);
 
 		const uint16_t* nmp = navMesh->m_navMeshPolygons.c_ptr();
@@ -47,14 +45,12 @@ void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
 		{
-			uint16_t npv = nmp[i++];
-
+			const uint16_t npv = nmp[i++];
 			for (uint16_t j = 0; j < npv - 2; ++j)
 			{
-				uint16_t i0 = nmp[i];
-				uint16_t i1 = nmp[i + j + 1];
-				uint16_t i2 = nmp[i + j + 2];
-
+				const uint16_t i0 = nmp[i];
+				const uint16_t i1 = nmp[i + j + 1];
+				const uint16_t i2 = nmp[i + j + 2];
 				primitiveRenderer->drawSolidTriangle(
 					navMesh->m_navMeshVertices[i0],
 					navMesh->m_navMeshVertices[i1],
@@ -62,29 +58,22 @@ void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 					Color4ub(0, 255, 255, 64)
 				);
 			}
-
 			i += npv;
 		}
 
-		primitiveRenderer->popDepthState();
-		primitiveRenderer->pushDepthState(false, false, false);
-
 		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
 		{
-			uint16_t npv = nmp[i++];
-
+			const uint16_t npv = nmp[i++];
 			for (uint16_t j = 0; j < npv; ++j)
 			{
-				uint16_t i0 = nmp[i + j];
-				uint16_t i1 = nmp[i + (j + 1) % npv];
-
+				const uint16_t i0 = nmp[i + j];
+				const uint16_t i1 = nmp[i + (j + 1) % npv];
 				primitiveRenderer->drawLine(
 					navMesh->m_navMeshVertices[i0],
 					navMesh->m_navMeshVertices[i1],
 					Color4ub(0, 255, 255, 255)
 				);
 			}
-
 			i += npv;
 		}
 
@@ -95,5 +84,4 @@ void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
 }
 
-	}
 }

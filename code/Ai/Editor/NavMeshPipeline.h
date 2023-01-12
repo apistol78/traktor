@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class IEntityReplicator;
 
-	}
+}
 
-	namespace ai
-	{
+namespace traktor::ai
+{
 
 /*! Navigation mesh pipeline.
  * \ingroup AI
@@ -39,8 +37,6 @@ class T_DLLCLASS NavMeshPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
-	NavMeshPipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
@@ -69,12 +65,9 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	bool m_editor;
-	bool m_build;
-	int32_t m_terrainStepSize;
+	bool m_editor = false;
+	bool m_build = true;
 	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
 };
 
-	}
 }
-
