@@ -12,10 +12,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 6, AnimationAsset, editor::Asset)
 
@@ -38,5 +36,4 @@ void AnimationAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"removeLocomotion", m_removeLocomotion);
 }
 
-	}
 }

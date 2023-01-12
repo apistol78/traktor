@@ -21,14 +21,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateGraphEditorPageFactory",
 
 const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< StateGraph >();
-	return typeSet;
+	return makeTypeInfoSet< StateGraph >();
 }
 
 bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	return false;
+	return true;
 }
 
 Ref< editor::IEditorPage > StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Animation asset.
  * \ingroup Animation
@@ -33,8 +31,6 @@ class T_DLLCLASS AnimationAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	AnimationAsset() = default;
-
 	virtual void serialize(ISerializer& s) override final;
 
 	const Guid& getSkeleton() const { return m_skeleton; }
@@ -55,5 +51,4 @@ private:
 	bool m_removeLocomotion = true;
 };
 
-	}
 }

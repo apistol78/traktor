@@ -27,7 +27,7 @@ namespace traktor::animation
 class Animation;
 class StateContext;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS SimpleAnimationController : public IPoseController
@@ -35,7 +35,7 @@ class T_DLLCLASS SimpleAnimationController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation);
+	explicit SimpleAnimationController(const resource::Proxy< Animation >& animation);
 
 	virtual void destroy() override final;
 
@@ -57,7 +57,6 @@ public:
 
 private:
 	resource::Proxy< Animation > m_animation;
-	bool m_linearInterpolation;
 	int32_t m_indexHint;
 	float m_timeOffset;
 	float m_lastTime;

@@ -16,7 +16,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 0, SimpleAnimationControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 1, SimpleAnimationControllerData, IPoseControllerData)
 
 SimpleAnimationControllerData::SimpleAnimationControllerData(const resource::Id< Animation >& animation)
 :	m_animation(animation)
@@ -27,7 +27,7 @@ Ref< IPoseController > SimpleAnimationControllerData::createInstance(resource::I
 {
 	resource::Proxy< Animation > animation;
 	if (resourceManager->bind(m_animation, animation))
-		return new SimpleAnimationController(animation, m_linearInterpolation);
+		return new SimpleAnimationController(animation);
 	else
 		return nullptr;
 }
@@ -35,7 +35,12 @@ Ref< IPoseController > SimpleAnimationControllerData::createInstance(resource::I
 void SimpleAnimationControllerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Animation >(L"animation", m_animation);
-	s >> Member< bool >(L"linearInterpolation", m_linearInterpolation);
+
+	if (s.getVersion< SimpleAnimationControllerData >() < 1)
+	{
+		bool linearInterpolation;
+		s >> Member< bool >(L"linearInterpolation", linearInterpolation);
+	}
 }
 
 }
