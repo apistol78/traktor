@@ -230,6 +230,12 @@ bool NavMeshPipeline::buildOutput(
 		navModelsTriangleCount += navModel->getPolygonCount();
 	}
 
+	if (navModelsTriangleCount == 0)
+	{
+		log::error << L"No models for navigation mesh generation found!" << Endl;
+		return false;
+	}
+
 	log::info << L"\t" << navModelsTriangleCount << L" triangle(s) loaded." << Endl;
 	log::info << L"Generating navigation mesh..." << Endl;
 

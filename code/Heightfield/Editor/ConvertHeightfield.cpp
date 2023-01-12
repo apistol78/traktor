@@ -43,7 +43,7 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 
     size = max(ix1 - ix0, iz1 - iz0);
 
-	const int32_t outputSize = size / step;
+	const int32_t outputSize = max(size / step, 1);
 
 	Ref< model::Model > model = new model::Model();
 
