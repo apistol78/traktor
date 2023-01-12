@@ -13,17 +13,15 @@
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "World/Entity.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 const Vector4 c_101(1.0f, 0.0f, 1.0f);
 const Vector4 c_010(0.0f, 1.0f, 0.0f);
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CharacterComponent", CharacterComponent, world::IEntityComponent)
 
@@ -255,7 +253,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			Scalar move = Scalar(motionLength * result.fraction);
 
 			// Don't move entire distance to prevent stability issues.
-			const Scalar c_fudge(0.01f);
+			const Scalar c_fudge = 0.01_simd;
 			if (move > c_fudge)
 				move -= c_fudge;
 
@@ -273,12 +271,11 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 		else
 		{
 			inoutPosition += motion * motionLength;
-			motionLength = Scalar(0.0f);
+			motionLength = 0.0_simd;
 		}
 	}
 
 	return anyCollision;
 }
 
-	}
 }

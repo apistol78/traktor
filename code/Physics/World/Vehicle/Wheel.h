@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class WheelData;
 
@@ -70,6 +68,4 @@ public:
 	bool getSliding() const { return sliding; }
 };
 
-	}
 }
-

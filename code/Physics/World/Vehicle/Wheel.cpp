@@ -9,10 +9,8 @@
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Wheel", Wheel, Object)
 
@@ -33,5 +31,4 @@ Wheel::Wheel(const WheelData* data)
 {
 }
 
-	}
 }

@@ -22,10 +22,8 @@
 #include "World/Entity.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 1, VehicleComponentData, world::IEntityComponentData)
 
@@ -94,5 +92,4 @@ void VehicleComponentData::serialize(ISerializer& s)
 		s >> Member< float >(L"breakingForce", m_breakingForce);
 }
 
-	}
 }

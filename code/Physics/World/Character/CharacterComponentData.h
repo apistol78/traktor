@@ -19,25 +19,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 class IEntityBuilder;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class CharacterComponent;
 class CollisionSpecification;
@@ -52,8 +50,6 @@ class T_DLLCLASS CharacterComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	CharacterComponentData();
-
 	/*! Create instance of character component. */
 	Ref< CharacterComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
@@ -92,14 +88,12 @@ public:
 private:
 	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
 	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
-	float m_radius;
-	float m_height;
-	float m_step;
-	float m_jumpImpulse;
-	float m_maxVelocity;
-	float m_velocityDamping;
+	float m_radius = 1.0f;
+	float m_height = 2.0f;
+	float m_step = 0.5f;
+	float m_jumpImpulse = 1.0f;
+	float m_maxVelocity = 2.0f;
+	float m_velocityDamping = 1.0f;
 };
 
-	}
 }
-

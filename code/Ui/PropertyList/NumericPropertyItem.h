@@ -46,10 +46,12 @@ public:
 		RpKilograms,
 		RpPercent,
 		RpHerz,
-		RpEV
+		RpEV,
+		RpNewton,
+		RpNewtonSecond
 	};
 
-	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);
+	explicit NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);
 
 	void setValue(double value);
 

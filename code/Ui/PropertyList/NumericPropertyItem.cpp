@@ -200,6 +200,10 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			ss << value << L" Hz";
 		else if (m_representation == RpEV)
 			ss << value << L" EV";
+		else if (m_representation == RpNewton)
+			ss << value << L" N";
+		else if (m_representation == RpNewtonSecond)
+			ss << value << L" Ns";
 		else
 			ss << value;
 	}
