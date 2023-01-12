@@ -15,7 +15,7 @@ namespace traktor
 	namespace animation
 	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class AnimatedMeshComponentEditorFactory : public scene::IComponentEditorFactory
@@ -24,6 +24,8 @@ class AnimatedMeshComponentEditorFactory : public scene::IComponentEditorFactory
 
 public:
 	virtual const TypeInfoSet getComponentDataTypes() const override final;
+
+	virtual bool alwaysRebuild(const world::IEntityComponentData* componentData) const override final;
 
 	virtual Ref< scene::IComponentEditor > createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
 };

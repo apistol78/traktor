@@ -22,6 +22,12 @@ const TypeInfoSet AnimatedMeshComponentEditorFactory::getComponentDataTypes() co
 	return makeTypeInfoSet< SkeletonComponentData >();
 }
 
+
+bool AnimatedMeshComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+{
+	return true;
+}
+
 Ref< scene::IComponentEditor > AnimatedMeshComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
 	return new AnimationComponentEditor(context, entityAdapter, componentData);

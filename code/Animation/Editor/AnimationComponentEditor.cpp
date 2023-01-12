@@ -68,10 +68,11 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 					const Vector4 start = jointTransforms[parent].translation();
 					const Vector4 end = jointTransforms[i].translation();
-					const Scalar length = (end - start).length();
 
-					if (length < joint->getRadius() * 2.0f)
-						continue;
+					float length = (end - start).length();
+					float radius = joint->getRadius();
+					if (radius > length / 2.0f)
+						radius = length / 2.0f;
 
 					if (!limbs[i])
 						continue;
@@ -79,7 +80,7 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					const Transform limbTransform[] { limbs[i]->getTransform(), limbs[i]->getTransform() };
 
 					physics::CapsuleShapeDesc shapeDesc;
-					shapeDesc.setRadius(joint->getRadius());
+					shapeDesc.setRadius(radius);
 					shapeDesc.setLength(length);
 
 					m_physicsRenderer.draw(

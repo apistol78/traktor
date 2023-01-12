@@ -22,6 +22,11 @@ const TypeInfoSet PathComponentEditorFactory::getComponentDataTypes() const
 	return makeTypeInfoSet< PathComponentData >();
 }
 
+bool PathComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+{
+	return false;
+}
+
 Ref< scene::IComponentEditor > PathComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
 	return new PathComponentEditor(context, entityAdapter, componentData);

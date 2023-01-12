@@ -22,6 +22,11 @@ const TypeInfoSet NavMeshComponentEditorFactory::getComponentDataTypes() const
 	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
+bool NavMeshComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+{
+	return false;
+}
+
 Ref< scene::IComponentEditor > NavMeshComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
 	return new NavMeshComponentEditor(context, entityAdapter, componentData);

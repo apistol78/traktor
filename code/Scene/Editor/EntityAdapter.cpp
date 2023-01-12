@@ -73,6 +73,10 @@ void EntityAdapter::prepare(
 		const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
 		T_FATAL_ASSERT (factory);
 
+		// Some cases entities need to always be rebuilt, ie not cached, when rewinding etc.
+		if (factory->alwaysRebuild(componentData))
+			m_hash = 0;
+
 		Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
 		T_FATAL_ASSERT (componentEditor);
 

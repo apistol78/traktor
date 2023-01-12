@@ -22,6 +22,11 @@ const TypeInfoSet ControlPointComponentEditorFactory::getComponentDataTypes() co
 	return makeTypeInfoSet< ControlPointComponentData >();
 }
 
+bool ControlPointComponentEditorFactory::alwaysRebuild(const world::IEntityComponentData* componentData) const
+{
+	return false;
+}
+
 Ref< scene::IComponentEditor > ControlPointComponentEditorFactory::createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const
 {
 	return new ControlPointComponentEditor(context, entityAdapter, componentData);
