@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Texture asset preview generator.
  * \ingroup Render
@@ -36,6 +34,4 @@ public:
 	virtual Ref< ui::Bitmap > generate(const editor::IEditor* editor, db::Instance* instance) const override final;
 };
 
-	}
 }
-

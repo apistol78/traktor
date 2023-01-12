@@ -6,8 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#pragma optimize( "", off )
-
 #include <astcenc.h>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -15,10 +13,8 @@
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AstcCompressor", AstcCompressor, ICompressor)
 
@@ -173,5 +169,4 @@ bool AstcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
     return true;
 }
 
-	}
 }

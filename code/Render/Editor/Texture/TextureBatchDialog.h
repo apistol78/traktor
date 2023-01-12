@@ -11,26 +11,24 @@
 #include "Core/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class AutoPropertyList;
 class ListBox;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class TextureAsset;
 
@@ -39,7 +37,7 @@ class TextureBatchDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	TextureBatchDialog(editor::IEditor* editor);
+	explicit TextureBatchDialog(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -61,6 +59,4 @@ private:
 	void eventTextureListSelect(ui::SelectionChangeEvent* event);
 };
 
-	}
 }
-

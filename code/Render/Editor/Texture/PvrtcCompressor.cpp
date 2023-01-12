@@ -17,10 +17,8 @@
 #	include "pvrtc_dll.h"
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PvrtcCompressor", PvrtcCompressor, ICompressor)
 
@@ -62,5 +60,4 @@ bool PvrtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >&
 #endif
 }
 
-	}
 }

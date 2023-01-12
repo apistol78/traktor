@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 17, TextureOutput, ISerializable)
 
@@ -147,5 +145,4 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"systemTexture", m_systemTexture);
 }
 
-	}
 }

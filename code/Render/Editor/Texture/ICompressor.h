@@ -25,15 +25,17 @@ namespace traktor
 
 class Writer;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 /*! Texture compressor interface.
  * \ingroup Render
@@ -46,6 +48,4 @@ public:
 	virtual bool compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const = 0;
 };
 
-	}
 }
-

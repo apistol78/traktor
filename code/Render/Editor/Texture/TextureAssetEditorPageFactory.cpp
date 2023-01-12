@@ -11,10 +11,8 @@
 #include "Render/Editor/Texture/TextureAssetEditorPage.h"
 #include "Render/Editor/Texture/TextureAssetEditorPageFactory.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetEditorPageFactory", 0, TextureAssetEditorPageFactory, editor::IEditorPageFactory)
 
@@ -42,5 +40,4 @@ Ref< ISerializable > TextureAssetEditorPageFactory::cloneAsset(const ISerializab
 	return DeepClone(asset).create();
 }
 
-	}
 }

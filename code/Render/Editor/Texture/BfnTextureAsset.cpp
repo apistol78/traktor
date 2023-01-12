@@ -10,19 +10,10 @@
 #include "Core/Serialization/Member.h"
 #include "Render/Editor/Texture/BfnTextureAsset.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.BfnTextureAsset", 1, BfnTextureAsset, ISerializable)
-
-BfnTextureAsset::BfnTextureAsset()
-:	m_bestFitFactorOnly(true)
-,	m_collapseSymmetry(true)
-,	m_size(512)
-{
-}
 
 void BfnTextureAsset::serialize(ISerializer& s)
 {
@@ -34,5 +25,4 @@ void BfnTextureAsset::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

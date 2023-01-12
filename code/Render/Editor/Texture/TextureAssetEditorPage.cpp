@@ -32,10 +32,8 @@
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureAssetEditorPage", TextureAssetEditorPage, editor::IEditorPage)
 
@@ -148,5 +146,4 @@ void TextureAssetEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* even
 	updatePreview();
 }
 
-	}
 }

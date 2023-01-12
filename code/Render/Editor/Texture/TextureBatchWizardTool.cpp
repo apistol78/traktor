@@ -16,10 +16,8 @@
 #include "Render/Editor/Texture/TextureBatchDialog.h"
 #include "Render/Editor/Texture/TextureBatchWizardTool.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureBatchWizardTool", 0, TextureBatchWizardTool, editor::IWizardTool)
 
@@ -61,5 +59,4 @@ bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor,
 	return true;
 }
 
-	}
 }

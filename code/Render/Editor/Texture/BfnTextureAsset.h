@@ -18,28 +18,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS BfnTextureAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	BfnTextureAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class BfnTexturePipeline;
 
-	bool m_bestFitFactorOnly;
-	bool m_collapseSymmetry;
-	int32_t m_size;
+	bool m_bestFitFactorOnly = true;
+	bool m_collapseSymmetry = true;
+	int32_t m_size = 512;
 };
 
-	}
 }
-

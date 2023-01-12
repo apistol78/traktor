@@ -18,25 +18,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class T_DLLCLASS ColorGradingTextureAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	ColorGradingTextureAsset();
-
 	float getGamma() const { return m_gamma; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_gamma;
+	float m_gamma = 1.0f;
 };
 
-	}
 }

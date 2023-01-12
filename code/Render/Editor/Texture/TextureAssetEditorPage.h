@@ -11,35 +11,33 @@
 #include "Core/Ref.h"
 #include "Editor/IEditorPage.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ContentChangeEvent;
 class StatusBar;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class TextureAsset;
 class TextureControl;
@@ -75,6 +73,4 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-

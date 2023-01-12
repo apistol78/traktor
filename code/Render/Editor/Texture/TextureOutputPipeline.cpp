@@ -62,12 +62,10 @@
 // net result might be that it takes longer time to complete.
 // #define T_USE_MIP_SCALE_TASKS
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 float estimateAlphaCoverage(const drawing::Image* image, float alphaCoverageRef)
 {
@@ -920,9 +918,9 @@ bool TextureOutputPipeline::buildOutput(
 	}
 	else if (textureOutput->m_textureType == Tt3D)
 	{
-		int32_t sliceWidth = height;
-		int32_t sliceHeight = height;
-		int32_t sliceDepth = height;
+		const int32_t sliceWidth = height;
+		const int32_t sliceHeight = height;
+		const int32_t sliceDepth = height;
 
 		if (width / sliceWidth != sliceDepth)
 		{
@@ -973,7 +971,7 @@ bool TextureOutputPipeline::buildOutput(
 
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int32_t mipSize = sliceHeight >> i;
+				const int32_t mipSize = sliceHeight >> i;
 
 				drawing::ScaleFilter mipScaleFilter(
 					mipSize,
@@ -1011,7 +1009,7 @@ bool TextureOutputPipeline::buildOutput(
 			return false;
 		}
 
-		int32_t sideSize = cubeMap->getSize();
+		const int32_t sideSize = cubeMap->getSize();
 
 		mipCount = textureOutput->m_generateMips ? log2(sideSize) + 1 : 1;
 		T_ASSERT(mipCount >= 1);
@@ -1051,7 +1049,7 @@ bool TextureOutputPipeline::buildOutput(
 			// Generate mip levels.
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int32_t mipSize = sideSize >> i;
+				const int32_t mipSize = sideSize >> i;
 
 				drawing::ScaleFilter mipScaleFilter(
 					mipSize,
@@ -1110,5 +1108,4 @@ Ref< ISerializable > TextureOutputPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }
