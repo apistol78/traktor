@@ -33,7 +33,6 @@
 #include "Spark/Swf/SwfTypes.h"
 #include "Spark/Editor/EditorPage.h"
 #include "Spark/Editor/MovieAsset.h"
-#include "Spark/Editor/PathControl.h"
 #include "Spark/Editor/PreviewControl.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
@@ -75,49 +74,12 @@ bool EditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getStoreObject< sound::ISoundPlayer >(L"SoundPlayer");
-
-	/*
-	Ref< MovieAsset > asset = m_document->getObject< MovieAsset >(0);
-	if (!asset)
-		return false;
-
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	traktor::Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!stream)
-		return false;
-
-	uint32_t assetSize = stream->available();
-	std::vector< uint8_t > assetBlob(assetSize);
-
-	uint32_t offset = 0;
-	while (offset < assetSize)
-	{
-		int nread = stream->read(&assetBlob[offset], assetSize - offset);
-		if (nread < 0)
-			return false;
-		offset += nread;
-	}
-
-	stream->close();
-
-	Ref< MemoryStream > memoryStream = new MemoryStream(&assetBlob[0], int(assetSize), true, false);
-	Ref< SwfReader > swf = new SwfReader(memoryStream);
-
-	m_movie = MovieFactory(true).createMovie(swf);
-	if (!m_movie)
-		return false;
-	*/
-
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	// Read movie from output database.
-	m_movie = database->getObjectReadOnly< Movie >(
-		m_document->getInstance(0)->getGuid()
-	);
+	m_movie = database->getObjectReadOnly< Movie >(m_document->getInstance(0)->getGuid());
 	if (!m_movie)
 		return false;
-
 
 	m_resourceManager = new resource::ResourceManager(database, true);
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
@@ -139,15 +101,9 @@ bool EditorPage::create(ui::Container* parent)
 	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(container, true, ui::dpi96(300));
 
-	Ref< ui::Splitter > splitterV = new ui::Splitter();
-	splitterV->create(splitter, false, ui::dpi96(-200));
-
 	m_treeMovie = new ui::TreeView();
-	m_treeMovie->create(splitterV, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsDoubleBuffer);
+	m_treeMovie->create(splitter, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsDoubleBuffer);
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &EditorPage::eventTreeMovieSelect);
-
-	m_pathControl = new PathControl();
-	m_pathControl->create(splitterV, ui::WsAccelerated | ui::WsDoubleBuffer);
 
 	m_previewControl = new PreviewControl(m_editor);
 	if (!m_previewControl->create(splitter, ui::WsNone, database, m_resourceManager, renderSystem, soundPlayer))
@@ -201,8 +157,26 @@ bool EditorPage::handleCommand(const ui::Command& command)
 
 void EditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	bool shouldRedraw = false;
+
 	if (m_resourceManager)
-		m_resourceManager->reload(eventId, false);
+		shouldRedraw |= m_resourceManager->reload(eventId, false);
+
+	if (eventId == m_document->getInstance(0)->getGuid())
+	{
+		Ref< Movie > movie = database->getObjectReadOnly< Movie >(m_document->getInstance(0)->getGuid());
+		if (movie)
+		{
+			m_selectedCharacterInstance = nullptr;
+			m_movie = movie;
+
+			m_previewControl->setMovie(m_movie);
+			shouldRedraw |= true;
+		}
+	}
+
+	if (shouldRedraw)
+		m_previewControl->update();
 }
 
 void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
@@ -227,59 +201,62 @@ void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInst
 	switch (characterInstance->getBlendMode())
 	{
 	case SbmDefault:
-		ss << L"Default" << Endl;
+		ss << L"Default";
 		break;
 	case SbmNormal:
-		ss << L"Normal" << Endl;
+		ss << L"Normal";
 		break;
 	case SbmLayer:
-		ss << L"Layer" << Endl;
+		ss << L"Layer";
 		break;
 	case SbmMultiply:
-		ss << L"Multiply" << Endl;
+		ss << L"Multiply";
 		break;
 	case SbmScreen:
-		ss << L"Screen" << Endl;
+		ss << L"Screen";
 		break;
 	case SbmLighten:
-		ss << L"Lighten" << Endl;
+		ss << L"Lighten";
 		break;
 	case SbmDarken:
-		ss << L"Darken" << Endl;
+		ss << L"Darken";
 		break;
 	case SbmDifference:
-		ss << L"Difference" << Endl;
+		ss << L"Difference";
 		break;
 	case SbmAdd:
-		ss << L"Add" << Endl;
+		ss << L"Add";
 		break;
 	case SbmSubtract:
-		ss << L"Subtract" << Endl;
+		ss << L"Subtract";
 		break;
 	case SbmInvert:
-		ss << L"Invert" << Endl;
+		ss << L"Invert";
 		break;
 	case SbmAlpha:
-		ss << L"Alpha" << Endl;
+		ss << L"Alpha";
 		break;
 	case SbmErase:
-		ss << L"Erase" << Endl;
+		ss << L"Erase";
 		break;
 	case SbmOverlay:
-		ss << L"Overlay" << Endl;
+		ss << L"Overlay";
 		break;
 	case SbmHardlight:
-		ss << L"Hard light" << Endl;
+		ss << L"Hard light";
 		break;
 	default:
-		ss << L"UNKNOWN" << Endl;
+		ss << L"[Invalid]";
 		break;
 	}
 	m_treeMovie->createItem(characterItem, ss.str(), 1);
 
 	const Aabb2& bounds = characterInstance->getBounds();
 	ss.reset();
-	ss << L"Bounds: " << bounds.mn << L" - " << bounds.mx << IncreaseIndent;
+	if (!bounds.empty())
+		ss << L"Bounds: " << bounds.mn << L" - " << bounds.mx << IncreaseIndent;
+	else
+		ss << L"Bounds: [Empty]" << IncreaseIndent;
 	m_treeMovie->createItem(characterItem, ss.str(), 1);
 
 	if (SpriteInstance* spriteInstance = dynamic_type_cast< SpriteInstance* >(characterInstance))
@@ -287,7 +264,7 @@ void EditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInst
 		const Sprite* sprite = spriteInstance->getSprite();
 		if (sprite)
 		{
-			uint32_t frameCount = sprite->getFrameCount();
+			const uint32_t frameCount = sprite->getFrameCount();
 			m_treeMovie->createItem(characterItem, toString(frameCount) + L" frame(s)", 1);
 
 			Ref< ui::TreeViewItem > labelsItem = m_treeMovie->createItem(characterItem, L"Label(s)", 1);
@@ -424,7 +401,7 @@ void EditorPage::updateTreeMovie()
 	else if (m_selectedCharacterInstance)
 	{
 		m_selectedCharacterInstance->setColorTransform(m_selectedCharacterInstanceCxForm);
-		m_selectedCharacterInstance = 0;
+		m_selectedCharacterInstance = nullptr;
 		m_previewControl->update();
 	}
 }
@@ -444,7 +421,7 @@ void EditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 	{
 		m_selectedCharacterInstance->setColorTransform(m_selectedCharacterInstanceCxForm);
 		m_selectedCharacterInstance->setBlendMode(m_selectedCharacterInstanceBlendMode);
-		m_selectedCharacterInstance = 0;
+		m_selectedCharacterInstance = nullptr;
 	}
 
 	if (selectedItems.size() == 1)
@@ -461,14 +438,6 @@ void EditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 
 			m_selectedCharacterInstance->setColorTransform(cxform);
 			m_selectedCharacterInstance->setBlendMode(SbmDefault);
-
-			const PropertyInteger* pathIndex = selectedItems[0]->getData< PropertyInteger >(L"PATH");
-			if (pathIndex)
-			{
-				ShapeInstance* shapeInstance = checked_type_cast< ShapeInstance*, false >(m_selectedCharacterInstance);
-				const AlignedVector< Path >& paths = shapeInstance->getShape()->getPaths();
-				m_pathControl->setPath(paths[PropertyInteger::get(pathIndex)]);
-			}
 		}
 	}
 

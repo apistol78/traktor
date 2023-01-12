@@ -72,7 +72,7 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		if (image->getImageInfo() != nullptr)
 		{
 			gamma = image->getImageInfo()->getGamma();
-			sRGB = (bool)(std::abs(gamma - 2.2f) <= FUZZY_EPSILON);
+			sRGB = (bool)(std::abs(gamma - 2.2f) <= 0.1f);
 		}
 
 		// Create source image.
@@ -89,11 +89,11 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		Ref< drawing::Image > imageOutput = image->clone();
 
 		// Convert image into linear space to ensure all filters are applied in linear space.
-		if (!output.m_linearGamma)
+		if (sRGB && !output.m_linearGamma)
 		{
 			const drawing::GammaFilter gammaFilter(gamma, 1.0f);
 			imageOutput->apply(&gammaFilter);
-		}	
+		}
 
 		if (output.m_flipX || output.m_flipY)
 		{

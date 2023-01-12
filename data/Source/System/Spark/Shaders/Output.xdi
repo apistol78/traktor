@@ -47,7 +47,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{9559DE93-DAB7-6C4F-A33A-E22B0214ABAB}</id>
@@ -95,7 +95,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{913E4CC8-4EF7-2243-9D2B-8EA0D5A21DAC}</id>
@@ -143,7 +143,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{FFCFA907-0A3F-144C-9A01-CACA7225B953}</id>
@@ -191,7 +191,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{F3D89B92-111A-0247-82E5-08C915CE9A40}</id>
@@ -239,7 +239,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{FBFB5100-0D5B-2644-9801-D09A4F77DC75}</id>
@@ -287,7 +287,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{3585A165-B2AC-8C46-B0A4-32DFBA51C639}</id>
@@ -335,7 +335,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{90DBA52C-CE1F-174A-949B-180E3858C99C}</id>
@@ -383,7 +383,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{688193BA-8AB9-5046-9F3E-B698BF880547}</id>
@@ -431,7 +431,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{B10E53B8-615E-3348-B110-15C8FF7EB7CF}</id>
@@ -479,7 +479,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{37F5AABC-7302-2F4A-8554-9D0A7E71EBF5}</id>
@@ -527,7 +527,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{20D2911D-38A3-D94B-B1EF-9DB212818EA0}</id>
@@ -575,7 +575,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{9DBA177A-0C6F-7A46-81B8-0DE595922D1E}</id>
@@ -623,7 +623,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{F6EA8A67-1DC7-7B49-A831-AC11EA6E30F0}</id>
@@ -671,7 +671,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{0536060B-3D70-234E-9AC5-B7077195C2A4}</id>
@@ -1002,7 +1002,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Low</precisionHint>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{39122197-B72A-344A-86F6-8946CFDD418D}</id>

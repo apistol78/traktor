@@ -213,6 +213,9 @@ void SongEditor::updateGrid()
 						ss << c_notes[key->play->getNote() % sizeof_array(c_notes)] << (key->play->getNote() / sizeof_array(c_notes));
 					}
 
+					if (!key->events.empty())
+						ss << L" *";
+
 					if (!ss.empty())
 						patternRow->set(1 + i, new ui::GridItem(ss.str()));
 				}

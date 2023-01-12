@@ -60,8 +60,6 @@ public:
 	float m_noiseStrength = 0.0f;
 	bool m_systemTexture = false;
 
-	TextureOutput() = default;
-
 	virtual void serialize(ISerializer& s) override;
 };
 

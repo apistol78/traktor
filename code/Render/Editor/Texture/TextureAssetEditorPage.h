@@ -34,6 +34,7 @@ class PropertiesView;
 	{
 
 class ContentChangeEvent;
+class StatusBar;
 
 	}
 
@@ -66,6 +67,7 @@ private:
 	editor::IDocument* m_document;
 	Ref< TextureAsset > m_asset;
 	Ref< TextureControl > m_textureControl;
+	Ref< ui::StatusBar > m_statusBar;
 	Ref< editor::PropertiesView > m_propertiesView;
 
 	void updatePreview();

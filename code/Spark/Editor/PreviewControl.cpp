@@ -181,7 +181,7 @@ void PreviewControl::setMovie(Movie* movie)
 	if (m_moviePlayer)
 		m_moviePlayer->destroy();
 
-	ui::Size sz = getInnerRect().getSize();
+	const ui::Size sz = getInnerRect().getSize();
 
 	m_moviePlayer = new MoviePlayer(
 		new DefaultCharacterFactory(),

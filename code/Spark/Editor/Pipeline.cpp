@@ -246,7 +246,7 @@ bool Pipeline::buildOutput(
 			ShapeVisitor visitor(
 				[&](svg::Shape* svg) {
 
-					Matrix33 transform = svg->getGlobalTransform();
+					const Matrix33 transform = svg->getGlobalTransform();
 					if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
 					{
 						uint16_t fillStyle = 0;
