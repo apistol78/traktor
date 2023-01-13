@@ -41,8 +41,8 @@ void SimpleAnimationController::setTransform(const Transform& transform)
 }
 
 bool SimpleAnimationController::evaluate(
-	float time,
-	float deltaTime,
+	float /*time*/,
+	float /*deltaTime*/,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
@@ -52,6 +52,14 @@ bool SimpleAnimationController::evaluate(
 	if (!m_animation)
 		return false;
 
+	// Experiment, calculate animation from distance traveled.
+	const float distance = ((worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f)).length();
+	m_transform = worldTransform;
+
+	m_tick += m_animation->getTimePerDistance() * distance;
+	const float time = m_tick;
+
+	// Calculate pose from animation.
 	const float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
 
 	m_animation->getPose(poseTime, m_indexHint, m_evaluationPose);

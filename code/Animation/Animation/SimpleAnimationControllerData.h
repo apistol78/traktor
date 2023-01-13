@@ -49,7 +49,6 @@ public:
 
 private:
 	resource::Id< Animation > m_animation;
-	bool m_linearInterpolation = true;
 };
 
 }

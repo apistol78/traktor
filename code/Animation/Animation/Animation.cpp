@@ -154,6 +154,7 @@ bool Animation::getPose(float at, int32_t& indexHint, Pose& outPose) const
 void Animation::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
+	s >> Member< float >(L"timePerDistance", m_timePerDistance);
 }
 
 void Animation::KeyPose::serialize(ISerializer& s)
