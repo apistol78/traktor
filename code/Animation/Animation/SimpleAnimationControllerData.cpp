@@ -7,16 +7,18 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/ITransformTimeData.h"
 #include "Animation/Animation/SimpleAnimationController.h"
 #include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 1, SimpleAnimationControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SimpleAnimationControllerData", 2, SimpleAnimationControllerData, IPoseControllerData)
 
 SimpleAnimationControllerData::SimpleAnimationControllerData(const resource::Id< Animation >& animation)
 :	m_animation(animation)
@@ -26,10 +28,17 @@ SimpleAnimationControllerData::SimpleAnimationControllerData(const resource::Id<
 Ref< IPoseController > SimpleAnimationControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
 	resource::Proxy< Animation > animation;
-	if (resourceManager->bind(m_animation, animation))
-		return new SimpleAnimationController(animation);
-	else
+	if (!resourceManager->bind(m_animation, animation))
 		return nullptr;
+
+	Ref< ITransformTime > transformTime;
+	if (m_transformTime)
+	{
+		if ((transformTime = m_transformTime->createInstance()) == nullptr)
+			return nullptr;
+	}
+
+	return new SimpleAnimationController(animation, transformTime);
 }
 
 void SimpleAnimationControllerData::serialize(ISerializer& s)
@@ -41,6 +50,9 @@ void SimpleAnimationControllerData::serialize(ISerializer& s)
 		bool linearInterpolation;
 		s >> Member< bool >(L"linearInterpolation", linearInterpolation);
 	}
+
+	if (s.getVersion< SimpleAnimationControllerData >() >= 2)
+		s >> MemberRef< const ITransformTimeData >(L"transformTime", m_transformTime);
 }
 
 }
