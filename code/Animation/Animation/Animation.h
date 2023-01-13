@@ -93,10 +93,20 @@ public:
 	 */
 	bool getPose(float at, int32_t& indexHint, Pose& outPose) const;
 
+	/*!
+	 */
+	void setTimePerDistance(float timePerDistance) { m_timePerDistance = timePerDistance; }
+
+	/*! Get time over distance, used to calculate animation time from
+	 *  distance traveled.
+	 */
+	float getTimePerDistance() const { return m_timePerDistance; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< KeyPose > m_poses;
+	float m_timePerDistance = 0.0f;
 };
 
 }

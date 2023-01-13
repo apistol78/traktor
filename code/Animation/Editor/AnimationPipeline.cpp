@@ -36,7 +36,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 9, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 13, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -226,7 +226,10 @@ bool AnimationPipeline::buildOutput(
 			AlignedVector< Transform > poseTransforms;
 			calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
 
-			Transform origin = poseTransforms[0];
+			float locomotionDistance = 0.0f;
+
+			const Transform origin = poseTransforms[0];
+			Vector4 previousTarget = origin.translation();
 			for (uint32_t i = 1; i < keyPoseCount; ++i)
 			{
 				auto& keyPose = anim->getKeyPose(i);
@@ -243,13 +246,18 @@ bool AnimationPipeline::buildOutput(
 				// Convert back from absolute to relative pose transforms.
 				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
 				{
-					Transform parentTransform = Transform::identity();
 					const int32_t parentIdx = skeleton->getJoint(i)->getParent();
-					if (parentIdx >= 0)
-						parentTransform = targetPoseTransforms[parentIdx];
+					const Transform parentTransform = (parentIdx >= 0) ? targetPoseTransforms[parentIdx] : Transform::identity();
 					keyPose.pose.setJointTransform(i, parentTransform.inverse() * targetPoseTransforms[i]);
 				}
+
+				// Accumulate locomotion distance.
+				locomotionDistance += ((target.translation() - previousTarget) * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).length();
+				previousTarget = target.translation();
 			}
+
+			const float duration = anim->getLastKeyPose().at - anim->getKeyPose(0).at;
+			anim->setTimePerDistance(duration / locomotionDistance);
 		}
 	}
 
