@@ -23,6 +23,7 @@ namespace traktor::animation
 {
 
 class Animation;
+class ITransformTimeData;
 
 /*! Simple animation pose controller data.
  * \ingroup Animation
@@ -49,6 +50,7 @@ public:
 
 private:
 	resource::Id< Animation > m_animation;
+	Ref< const ITransformTimeData > m_transformTime;
 };
 
 }

@@ -9,6 +9,7 @@
 #include <limits>
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/ITransformTime.h"
 #include "Animation/Animation/SimpleAnimationController.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
@@ -24,8 +25,12 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SimpleAnimationController", SimpleAnimationController, IPoseController)
 
-SimpleAnimationController::SimpleAnimationController(const resource::Proxy< Animation >& animation)
+SimpleAnimationController::SimpleAnimationController(
+	const resource::Proxy< Animation >& animation,
+	ITransformTime* transformTime
+)
 :	m_animation(animation)
+,	m_transformTime(transformTime)
 ,	m_indexHint(-1)
 ,	m_lastTime(std::numeric_limits< float >::max())
 {
@@ -41,8 +46,8 @@ void SimpleAnimationController::setTransform(const Transform& transform)
 }
 
 bool SimpleAnimationController::evaluate(
-	float /*time*/,
-	float /*deltaTime*/,
+	float time,
+	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
@@ -52,12 +57,8 @@ bool SimpleAnimationController::evaluate(
 	if (!m_animation)
 		return false;
 
-	// Experiment, calculate animation from distance traveled.
-	const float distance = ((worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f)).length();
-	m_transform = worldTransform;
-
-	m_tick += m_animation->getTimePerDistance() * distance;
-	const float time = m_tick;
+	if (m_transformTime)
+		m_transformTime->calculateTime(m_animation, worldTransform, time, deltaTime);
 
 	// Calculate pose from animation.
 	const float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);

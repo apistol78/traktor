@@ -25,6 +25,7 @@ namespace traktor::animation
 {
 
 class Animation;
+class ITransformTime;
 class StateContext;
 
 /*!
@@ -35,7 +36,10 @@ class T_DLLCLASS SimpleAnimationController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit SimpleAnimationController(const resource::Proxy< Animation >& animation);
+	explicit SimpleAnimationController(
+		const resource::Proxy< Animation >& animation,
+		ITransformTime* transformTime
+	);
 
 	virtual void destroy() override final;
 
@@ -57,12 +61,13 @@ public:
 
 private:
 	resource::Proxy< Animation > m_animation;
+	Ref< ITransformTime > m_transformTime;
 	int32_t m_indexHint;
 	float m_timeOffset;
 	float m_lastTime;
 	Pose m_evaluationPose;
-	Transform m_transform;
-	float m_tick = 0.0f;
+	//Transform m_transform;
+	//float m_tick = 0.0f;
 
 };
 
