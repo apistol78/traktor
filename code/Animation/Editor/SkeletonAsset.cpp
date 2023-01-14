@@ -12,10 +12,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.SkeletonAsset", 3, SkeletonAsset, editor::Asset)
 
@@ -41,5 +39,4 @@ void SkeletonAsset::serialize(ISerializer& s)
 }
 
 
-	}
 }

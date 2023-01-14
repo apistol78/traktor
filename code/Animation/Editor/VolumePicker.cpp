@@ -9,10 +9,8 @@
 #include <limits>
 #include "Animation/Editor/VolumePicker.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.VolumePicker", VolumePicker, Object)
 
@@ -50,13 +48,13 @@ int VolumePicker::traceVolume(const Vector4& clipPosition) const
 
 	for (AlignedVector< Volume >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)
 	{
-		Vector4 localOrigin = i->worldTransform.inverse() * origin;
-		Vector4 localDirection = i->worldTransform.inverse() * direction;
+		const Vector4 localOrigin = i->worldTransform.inverse() * origin;
+		const Vector4 localDirection = i->worldTransform.inverse() * direction;
 		Scalar distance;
 
 		if (i->volume.intersectSegment(localOrigin, localDirection.normalized() * Scalar(1000.0f), distance))
 		{
-			Scalar volumeDistance = (i->volume.getCenter() - localOrigin).length();
+			const Scalar volumeDistance = (i->volume.getCenter() - localOrigin).length();
 			if (volumeDistance < distance)
 			{
 				distance = volumeDistance;
@@ -68,5 +66,4 @@ int VolumePicker::traceVolume(const Vector4& clipPosition) const
 	return id;
 }
 
-	}
 }

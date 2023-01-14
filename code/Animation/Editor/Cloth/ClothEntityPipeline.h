@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLEXPORT ClothEntityPipeline : public world::EntityPipeline
@@ -42,6 +40,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

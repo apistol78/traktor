@@ -18,10 +18,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEditorProfile", 0, AnimationEditorProfile, scene::ISceneEditorProfile)
 
@@ -108,5 +106,4 @@ Ref< world::EntityData > AnimationEditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

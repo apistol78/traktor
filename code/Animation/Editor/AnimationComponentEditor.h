@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Animation component editor.
  * \ingroup Animation
@@ -40,6 +38,4 @@ private:
 	physics::PhysicsRenderer m_physicsRenderer;
 };
 
-	}
 }
-

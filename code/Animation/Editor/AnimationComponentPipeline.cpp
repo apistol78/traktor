@@ -15,10 +15,8 @@
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationComponentPipeline", 0, AnimationComponentPipeline, editor::IPipeline)
 
@@ -98,5 +96,4 @@ Ref< ISerializable > AnimationComponentPipeline::buildProduct(
 	return DeepClone(sourceAsset).create();
 }
 
-	}
 }

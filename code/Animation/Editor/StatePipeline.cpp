@@ -13,10 +13,8 @@
 #include "Animation/Editor/StatePipeline.h"
 #include "Editor/IPipelineDepends.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipeline, editor::DefaultPipeline)
 
@@ -55,5 +53,4 @@ bool StatePipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

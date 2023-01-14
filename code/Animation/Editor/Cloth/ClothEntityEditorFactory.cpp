@@ -10,10 +10,8 @@
 #include "Animation/Editor/Cloth/ClothEntityEditor.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityEditorFactory", ClothEntityEditorFactory, scene::IEntityEditorFactory)
 
@@ -27,5 +25,4 @@ Ref< scene::IEntityEditor > ClothEntityEditorFactory::createEntityEditor(scene::
 	return new ClothEntityEditor(context, entityAdapter);
 }
 
-	}
 }

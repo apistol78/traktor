@@ -12,10 +12,8 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateGraphEditorPageFactory", 0, StateGraphEditorPageFactory, editor::IEditorPageFactory)
 
@@ -51,5 +49,4 @@ Ref< ISerializable > StateGraphEditorPageFactory::cloneAsset(const ISerializable
 	return DeepClone(asset).create();
 }
 
-	}
 }

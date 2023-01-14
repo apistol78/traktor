@@ -20,20 +20,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ButtonClickEvent;
 class Container;
@@ -50,10 +48,10 @@ class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace animation
-	{
+namespace traktor::animation
+{
 
 class AnimationPreviewControl;
 class StateGraph;
@@ -61,7 +59,7 @@ class StateNode;
 class StatePoseController;
 class Transition;
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
@@ -69,7 +67,7 @@ class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -127,6 +125,4 @@ private:
 	void eventPreviewConditionClick(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-

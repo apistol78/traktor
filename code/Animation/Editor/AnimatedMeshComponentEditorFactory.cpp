@@ -10,10 +10,8 @@
 #include "Animation/Editor/AnimationComponentEditor.h"
 #include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentEditorFactory", AnimatedMeshComponentEditorFactory, scene::IComponentEditorFactory)
 
@@ -33,5 +31,4 @@ Ref< scene::IComponentEditor > AnimatedMeshComponentEditorFactory::createCompone
 	return new AnimationComponentEditor(context, entityAdapter, componentData);
 }
 
-	}
 }

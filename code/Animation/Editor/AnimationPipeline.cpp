@@ -31,10 +31,8 @@
 #include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 13, AnimationPipeline, editor::IPipeline)
 
@@ -374,5 +372,4 @@ Ref< ISerializable > AnimationPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }
