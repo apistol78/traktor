@@ -22,7 +22,7 @@ BlockAllocator::BlockAllocator(void* top, int32_t count, size_t size)
 #endif
 {
 	T_ASSERT((size % sizeof(intptr_t)) == 0);
-	size_t blockSize = size / sizeof(intptr_t);
+	const size_t blockSize = size / sizeof(intptr_t);
 
 	m_top = (intptr_t*)top;
 	m_end = m_top + count * blockSize;

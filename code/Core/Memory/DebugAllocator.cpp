@@ -33,9 +33,8 @@ DebugAllocator::DebugAllocator(IAllocator* systemAllocator)
 DebugAllocator::~DebugAllocator()
 {
 	T_FATAL_ASSERT (m_aliveBlocks.empty());
-
-	for (std::list< Block >::iterator i = m_freedBlocks.begin(); i != m_freedBlocks.end(); ++i)
-		m_systemAllocator->free(i->top);
+	for (auto& block : m_freedBlocks)
+		m_systemAllocator->free(block.top);
 }
 
 void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
@@ -59,11 +58,10 @@ void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 	m_aliveBlocks.push_front(Block());
 
 	Block& block = m_aliveBlocks.front();
-
 	block.top = ptr;
 	block.size = size + c_wallSize * 2;
 
-	for (int i = 0; i < sizeof_array(block.at); ++i)
+	for (size_t i = 0; i < sizeof_array(block.at); ++i)
 		block.at[i] = nullptr;
 
 	getCallStack(sizeof_array(block.at), block.at, 1);

@@ -30,7 +30,7 @@ void Adler32::feed(const void* buffer, uint64_t bufferSize)
 {
 	for (uint32_t i = 0; i < bufferSize; ++i)
 	{
-		uint8_t byte = static_cast< const uint8_t* >(buffer)[i];
+		const uint8_t byte = static_cast< const uint8_t* >(buffer)[i];
 
 		m_A += byte;
 		m_B += m_A;

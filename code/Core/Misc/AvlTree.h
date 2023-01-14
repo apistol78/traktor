@@ -49,8 +49,8 @@ class AvlTree
 
 		int32_t depth() const
 		{
-			int32_t ld = left ? left->depth() + 1 : 0;
-			int32_t rd = right ? right->depth() + 1 : 0;
+			const int32_t ld = left ? left->depth() + 1 : 0;
+			const int32_t rd = right ? right->depth() + 1 : 0;
 			return std::max< int32_t >(ld, rd);
 		}
 	};
@@ -110,7 +110,7 @@ private:
 
 	Node* _insert(Node* node, const KeyType& key, const ItemType& item) const
 	{
-		int32_t cmp = KeyCompare::compare(key, node->key);
+		const int32_t cmp = KeyCompare::compare(key, node->key);
 		if (cmp < 0)
 		{
 			if (node->left)
@@ -140,8 +140,8 @@ private:
 
 	Node* _balance(Node* node) const
 	{
-		int32_t ld = node->left ? node->left->depth() : 0;
-		int32_t rd = node->right ? node->right->depth() : 0;
+		const int32_t ld = node->left ? node->left->depth() : 0;
+		const int32_t rd = node->right ? node->right->depth() : 0;
 
 		if (abs(ld - rd) < 2)
 			return node;
@@ -153,8 +153,8 @@ private:
 			Node* lc = r->left;
 			Node* rc = r->right;
 
-			int32_t lcd = lc ? lc->depth() : 0;
-			int32_t rcd = rc ? rc->depth() : 0;
+			const int32_t lcd = lc ? lc->depth() : 0;
+			const int32_t rcd = rc ? rc->depth() : 0;
 
 			if (lcd < rcd)
 			{
@@ -178,8 +178,8 @@ private:
 			Node* lc = l->left;
 			Node* rc = l->right;
 
-			int32_t lcd = lc ? lc->depth() : 0;
-			int32_t rcd = rc ? rc->depth() : 0;
+			const int32_t lcd = lc ? lc->depth() : 0;
+			const int32_t rcd = rc ? rc->depth() : 0;
 
 			if (lcd > rcd)
 			{
@@ -204,7 +204,7 @@ private:
 	{
 		if (node)
 		{
-			int32_t cmp = KeyCompare::compare(key, node->key);
+			const int32_t cmp = KeyCompare::compare(key, node->key);
 			if (cmp < 0)
 				return _find(node->left, key);
 			else if (cmp > 0)

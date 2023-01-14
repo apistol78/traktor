@@ -45,16 +45,9 @@ private:
 
 	struct Stats
 	{
-		const char* tag;
-		uint32_t count;
-		size_t memory;
-
-		Stats()
-		:	tag(0)
-		,	count(0)
-		,	memory(0)
-		{
-		}
+		const char* tag = nullptr;
+		uint32_t count = 0;
+		size_t memory = 0;
 	};
 
 	mutable Semaphore m_lock;
