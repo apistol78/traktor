@@ -13,11 +13,6 @@
 namespace traktor
 {
 
-Key::Key()
-:	m_kv(0, 0, 0, 0)
-{
-}
-
 Key::Key(uint32_t k0, uint32_t k1, uint32_t k2, uint32_t k3)
 :	m_kv(k0, k1, k2, k3)
 {
@@ -28,15 +23,15 @@ Key Key::parse(const std::wstring& kf)
 	if (kf.length() != 8 + 8 + 8 + 8 + 3)
 		return Key();
 
-	std::wstring s0 = kf.substr(0, 8);
-	std::wstring s1 = kf.substr(9, 8);
-	std::wstring s2 = kf.substr(18, 8);
-	std::wstring s3 = kf.substr(27, 8);
+	const std::wstring s0 = kf.substr(0, 8);
+	const std::wstring s1 = kf.substr(9, 8);
+	const std::wstring s2 = kf.substr(18, 8);
+	const std::wstring s3 = kf.substr(27, 8);
 
-	uint32_t k0 = std::wcstoul(s0.c_str(), nullptr, 16);
-	uint32_t k1 = std::wcstoul(s1.c_str(), nullptr, 16);
-	uint32_t k2 = std::wcstoul(s2.c_str(), nullptr, 16);
-	uint32_t k3 = std::wcstoul(s3.c_str(), nullptr, 16);
+	const uint32_t k0 = std::wcstoul(s0.c_str(), nullptr, 16);
+	const uint32_t k1 = std::wcstoul(s1.c_str(), nullptr, 16);
+	const uint32_t k2 = std::wcstoul(s2.c_str(), nullptr, 16);
+	const uint32_t k3 = std::wcstoul(s3.c_str(), nullptr, 16);
 	return Key(k0, k1, k2, k3);
 }
 

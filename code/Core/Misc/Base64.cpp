@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <sstream>
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Base64.h"
 
 namespace traktor
@@ -71,7 +71,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Base64", Base64, Object)
 
 std::wstring Base64::encode(const uint8_t* data, uint32_t size, bool insertCrLf) const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 	for (size_t i = 0; i < size; i += 3)
 	{
 		uint8_t c1 = 0, c2 = 0, c3 = 0;
@@ -101,7 +101,7 @@ std::wstring Base64::encode(const uint8_t* data, uint32_t size, bool insertCrLf)
 			ss << L'=';
 
 		if (insertCrLf && i % (76 / 4 * 3) == 0)
-			ss << std::endl;
+			ss << Endl;
 	}
 	return ss.str();
 }

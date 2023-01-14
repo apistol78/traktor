@@ -33,13 +33,13 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 	if (!m_nowild.size())
 		return m_beginWild;
 
-	std::wstring chk = (mode == CmIgnoreCase) ? toLower(str) : str;
+	const std::wstring chk = (mode == CmIgnoreCase) ? toLower(str) : str;
 
 	if (!m_beginWild)
 	{
-		size_t ln = m_nowild[0].length();
+		const size_t ln = m_nowild[0].length();
 
-		int res = (mode == CmIgnoreCase) ? chk.compare(0, ln, toLower(m_nowild[0])) : chk.compare(0, ln, m_nowild[0]);
+		const int res = (mode == CmIgnoreCase) ? chk.compare(0, ln, toLower(m_nowild[0])) : chk.compare(0, ln, m_nowild[0]);
 		if (res != 0)
 			return false;
 
@@ -49,7 +49,7 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 
 	for (; i < m_nowild.size(); ++i)
 	{
-		size_t f = (mode == CmIgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
+		const size_t f = (mode == CmIgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
 		if (f == std::wstring::npos)
 			return false;
 

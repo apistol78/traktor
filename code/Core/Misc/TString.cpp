@@ -24,7 +24,7 @@ std::wstring mbstows(const IEncoding& encoding, const std::string& s)
 	const uint8_t* cs = reinterpret_cast< const uint8_t* >(s.c_str());
 	for (uint32_t i = 0; i < s.length(); )
 	{
-		uint32_t nb = std::min< uint32_t >(IEncoding::MaxEncodingSize, uint32_t(s.length() - i));
+		const uint32_t nb = std::min< uint32_t >(IEncoding::MaxEncodingSize, uint32_t(s.length() - i));
 		if ((r = encoding.translate(&cs[i], nb, ec)) < 0)
 			break;
 
@@ -42,7 +42,7 @@ std::string wstombs(const IEncoding& encoding, const std::wstring& s)
 
 	for (uint32_t i = 0; i < s.length(); ++i)
 	{
-		int nbuf = encoding.translate(&s[i], 1, buf);
+		const int32_t nbuf = encoding.translate(&s[i], 1, buf);
 		if (nbuf <= 0)
 			continue;
 

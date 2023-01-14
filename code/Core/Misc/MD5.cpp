@@ -158,7 +158,7 @@ void FF(
 	uint32_t t
 )
 {
-	uint32_t f = (b & c) | (~b & d);
+	const int32_t f = (b & c) | (~b & d);
 	a += f + x + t;
 	a = rotate(a, s);
 	a += b;
@@ -174,7 +174,7 @@ void GG(
 	uint32_t t
 )
 {
-	uint32_t g = (b & d) | (c & ~d);
+	const uint32_t g = (b & d) | (c & ~d);
 	a += g + x + t;
 	a = rotate(a, s);
 	a += b;
@@ -190,7 +190,7 @@ void HH(
 	uint32_t t
 )
 {
-	uint32_t h = (b ^ c ^ d);
+	const uint32_t h = (b ^ c ^ d);
 	a += h + x + t;
 	a = rotate(a, s);
 	a += b;
@@ -206,13 +206,13 @@ void II(
 	uint32_t t
 )
 {
-	uint32_t i = (c ^ (b | ~d));
+	const uint32_t i = (c ^ (b | ~d));
 	a += i + x + t;
 	a = rotate(a, s);
 	a += b;
 }
 
-uint8_t PADDING[64] =
+const uint8_t PADDING[64] =
 {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -248,8 +248,8 @@ bool MD5::create(const std::wstring& md5)
 
 	for (int i = 0; i < MD5_SIZE; ++i)
 	{
-		wchar_t hn = md5[i * 2];
-		wchar_t ln = md5[i * 2 + 1];
+		const wchar_t hn = md5[i * 2];
+		const wchar_t ln = md5[i * 2 + 1];
 		md5b[i] = (fromHex(hn) << 4) | fromHex(ln);
 	}
 
@@ -259,7 +259,7 @@ bool MD5::create(const std::wstring& md5)
 
 bool MD5::createFromString(const std::wstring& str)
 {
-	std::string s = wstombs(str);
+	const std::string s = wstombs(str);
 	feed(s.c_str(), uint32_t(s.length()));
 	end();
 	return true;
@@ -282,13 +282,13 @@ void MD5::feed(const void* buffer, uint64_t bufferSize)
 {
 	uint32_t index = (m_count[0] >> 3) & 0x3f;
 
-	uint32_t bs = uint32_t(bufferSize);
+	const uint32_t bs = uint32_t(bufferSize);
 	if ((m_count[0] += bs << 3) < (bs << 3))
 		m_count[1]++;
 	m_count[1] += uint32_t(bs >> 29);
 
+	const uint32_t partSize = 64 - index;
 	uint32_t i = 0;
-	uint32_t partSize = 64 - index;
 
 	if (bufferSize >= partSize)
 	{
@@ -307,8 +307,8 @@ void MD5::end()
 	uint8_t bits[8];
 	dwordToByte(bits, m_count, 8);
 
-	uint32_t index = (m_count[0] >> 3) & 0x3f;
-	uint32_t padSize = (index < 56) ? (56 - index) : (120 - index);
+	const uint32_t index = (m_count[0] >> 3) & 0x3f;
+	const uint32_t padSize = (index < 56) ? (56 - index) : (120 - index);
 	feed(PADDING, padSize);
 
 	feed(bits, 8);

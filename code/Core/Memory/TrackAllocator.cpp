@@ -50,7 +50,7 @@ TrackAllocator::~TrackAllocator()
 		{
 			wsprintf(buf, L"0x%p, %d byte(s), tag \"%S\"\n", i->first, i->second.size, i->second.tag);
 			OutputDebugString(buf);
-			for (int j = 0; j < sizeof_array(i->second.at); ++j)
+			for (size_t j = 0; j < sizeof_array(i->second.at); ++j)
 			{
 				wsprintf(buf, L"   %d: 0x%p\n", j, i->second.at[j]);
 				OutputDebugString(buf);
@@ -65,7 +65,7 @@ TrackAllocator::~TrackAllocator()
 			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first.at[0], i->second);
 			OutputDebugString(buf);
 
-			for (int j = 0; j < sizeof_array(i->first.at); ++j)
+			for (size_t j = 0; j < sizeof_array(i->first.at); ++j)
 			{
 				wsprintf(buf, L"   %d: 0x%p\n", j, i->first.at[j]);
 				OutputDebugString(buf);
@@ -77,7 +77,7 @@ TrackAllocator::~TrackAllocator()
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
 			std::wcout << L"0x" << i->first << L", " << i->second.size << L" byte(s), tag \"" << i->second.tag << L"\"" << std::endl;
-			for (int j = 0; j < sizeof_array(i->second.at); ++j)
+			for (size_t j = 0; j < sizeof_array(i->second.at); ++j)
 				std::wcout << L"   " << j << L": 0x" << i->second.at[j] << std::endl;
 		}
 #endif
@@ -92,14 +92,14 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 	void* ptr = m_systemAllocator->alloc(size, align, tag);
 	if (!ptr)
-		return 0;
+		return nullptr;
 
 	Block& block = m_aliveBlocks[ptr];
 	block.tag = tag;
 	block.size = size;
 
-	for (int i = 0; i < sizeof_array(block.at); ++i)
-		block.at[i] = 0;
+	for (size_t i = 0; i < sizeof_array(block.at); ++i)
+		block.at[i] = nullptr;
 
 	getCallStack(sizeof_array(block.at), block.at, 1);
 
@@ -131,7 +131,7 @@ void TrackAllocator::free(void* ptr)
 
 bool TrackAllocator::Block::operator < (const Block& rh) const
 {
-	for (int32_t i = 0; i < sizeof_array(at); ++i)
+	for (size_t i = 0; i < sizeof_array(at); ++i)
 	{
 		if (at[i] < rh.at[i])
 			return true;

@@ -31,7 +31,7 @@ class IStream;
 class T_DLLCLASS Key
 {
 public:
-	Key();
+	Key() = default;
 
 	Key(uint32_t k0, uint32_t k1, uint32_t k2, uint32_t k3);
 
@@ -52,7 +52,7 @@ public:
 	bool operator > (const Key& rh) const;
 
 private:
-	std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > m_kv;
+	std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > m_kv = { 0, 0, 0, 0 };
 };
 
 }
