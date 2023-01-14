@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS StatePipeline : public editor::DefaultPipeline
@@ -42,6 +40,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

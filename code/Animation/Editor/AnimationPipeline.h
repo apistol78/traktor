@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*! Animation pipeline.
  * \ingroup Animation
@@ -73,6 +71,4 @@ private:
 	std::wstring m_modelCachePath;
 };
 
-	}
 }
-

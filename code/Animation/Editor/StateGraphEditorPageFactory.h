@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS StateGraphEditorPageFactory : public editor::IEditorPageFactory
@@ -42,6 +40,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
-	}
 }
-

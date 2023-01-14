@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS AnimationEditorProfile : public scene::ISceneEditorProfile
@@ -83,6 +81,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

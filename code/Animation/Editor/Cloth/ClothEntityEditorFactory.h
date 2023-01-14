@@ -10,12 +10,10 @@
 
 #include "Scene/Editor/IEntityEditorFactory.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class ClothEntityEditorFactory : public scene::IEntityEditorFactory
@@ -28,5 +26,4 @@ public:
 	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const override final;
 };
 
-	}
 }

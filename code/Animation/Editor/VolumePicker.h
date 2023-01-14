@@ -13,12 +13,10 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Aabb3.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class VolumePicker : public Object
@@ -49,6 +47,4 @@ private:
 	AlignedVector< Volume > m_volumes;
 };
 
-	}
 }
-

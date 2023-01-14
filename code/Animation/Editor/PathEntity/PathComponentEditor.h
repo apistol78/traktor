@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLCLASS PathComponentEditor : public scene::DefaultComponentEditor
@@ -31,11 +29,9 @@ class T_DLLCLASS PathComponentEditor : public scene::DefaultComponentEditor
 	T_RTTI_CLASS;
 
 public:
-	PathComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
+	explicit PathComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
-	}
 }
-

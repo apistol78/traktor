@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
-/*! \brief
+/*!
  * \ingroup Animation
  */
 class T_DLLEXPORT ClothEntityEditor : public scene::DefaultEntityEditor
@@ -31,13 +29,11 @@ class T_DLLEXPORT ClothEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	ClothEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
+	explicit ClothEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
-	}
 }
-

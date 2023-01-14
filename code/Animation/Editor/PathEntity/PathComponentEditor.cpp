@@ -13,10 +13,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathComponentEditor", PathComponentEditor, scene::DefaultComponentEditor)
 
@@ -76,5 +74,4 @@ void PathComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	}
 }
 
-	}
 }

@@ -22,10 +22,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationComponentEditor", AnimationComponentEditor, scene::DefaultComponentEditor)
 
@@ -189,5 +187,4 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
 }
 
-	}
 }

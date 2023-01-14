@@ -54,12 +54,10 @@
 #include "World/Entity/WorldEntityFactory.h"
 #include "World/Forward/WorldRendererForward.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
@@ -67,7 +65,7 @@ const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, ui::Widget)
 
@@ -411,7 +409,6 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (m_entity)
 	{
 		m_entity->update(update);
-
 		rootGroup->addEntity(m_entity);
 	}
 
@@ -494,5 +491,4 @@ void AnimationPreviewControl::eventIdle(ui::IdleEvent* event)
 	}
 }
 
-	}
 }

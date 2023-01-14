@@ -10,10 +10,8 @@
 #include "Animation/Editor/Cloth/ClothEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.ClothEntityPipeline", 0, ClothEntityPipeline, world::EntityPipeline)
 
@@ -35,5 +33,4 @@ bool ClothEntityPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

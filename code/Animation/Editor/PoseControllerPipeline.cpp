@@ -12,10 +12,8 @@
 #include "Animation/Editor/PoseControllerPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PoseControllerPipeline", 0, PoseControllerPipeline, editor::DefaultPipeline)
 
@@ -51,5 +49,4 @@ bool PoseControllerPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

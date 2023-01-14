@@ -23,10 +23,8 @@
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 5, SkeletonPipeline, editor::IPipeline)
 
@@ -83,7 +81,7 @@ bool SkeletonPipeline::buildOutput(
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
 
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
+	const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
 	Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, L"");
 	if (!model)
 	{
@@ -145,5 +143,4 @@ Ref< ISerializable > SkeletonPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

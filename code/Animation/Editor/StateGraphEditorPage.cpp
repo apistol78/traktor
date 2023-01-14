@@ -45,10 +45,8 @@
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::IEditorPage)
 
@@ -719,5 +717,4 @@ void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* even
 	m_statePreviewController->setCondition(cb->getText(), cb->isChecked(), false);
 }
 
-	}
 }

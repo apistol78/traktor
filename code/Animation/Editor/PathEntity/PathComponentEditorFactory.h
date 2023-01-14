@@ -10,10 +10,8 @@
 
 #include "Scene/Editor/IComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 /*!
  * \ingroup Animation
@@ -30,6 +28,4 @@ public:
 	virtual Ref< scene::IComponentEditor > createComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
 };
 
-	}
 }
-

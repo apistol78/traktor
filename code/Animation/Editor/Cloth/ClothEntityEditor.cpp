@@ -14,10 +14,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityEditor", ClothEntityEditor, scene::DefaultEntityEditor)
 
@@ -43,8 +41,8 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	{
 		Ref< ClothComponent > clothComponent = getEntityAdapter()->getComponent< ClothComponent >();
 
-		Transform transform = getEntityAdapter()->getTransform();
-		Aabb3 boundingBox = getEntityAdapter()->getBoundingBox();
+		const Transform transform = getEntityAdapter()->getTransform();
+		const Aabb3 boundingBox = getEntityAdapter()->getBoundingBox();
 		
 		primitiveRenderer->pushWorld(transform.toMatrix44());
 		primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(255, 255, 0, 200));
@@ -79,5 +77,4 @@ void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	}
 }
 
-	}
 }

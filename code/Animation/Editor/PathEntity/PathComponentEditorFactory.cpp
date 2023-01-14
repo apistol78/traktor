@@ -10,10 +10,8 @@
 #include "Animation/Editor/PathEntity/PathComponentEditor.h"
 #include "Animation/Editor/PathEntity/PathComponentEditorFactory.h"
 
-namespace traktor
+namespace traktor::animation
 {
-	namespace animation
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathComponentEditorFactory", PathComponentEditorFactory, scene::IComponentEditorFactory)
 
@@ -32,5 +30,4 @@ Ref< scene::IComponentEditor > PathComponentEditorFactory::createComponentEditor
 	return new PathComponentEditor(context, entityAdapter, componentData);
 }
 
-	}
 }
