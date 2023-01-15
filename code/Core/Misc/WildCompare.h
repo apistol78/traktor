@@ -31,14 +31,14 @@ class T_DLLCLASS WildCompare
 public:
 	enum CompareMode
 	{
-		CmIgnoreCase,
-		CmCaseSensitive
+		IgnoreCase,
+		CaseSensitive
 	};
 
 	WildCompare(const std::wstring& mask);
 
 	/*! Match string with wild-card pattern. */
-	bool match(const std::wstring& str, CompareMode mode = CmIgnoreCase, std::vector< std::wstring >* outPieces = 0) const;
+	bool match(const std::wstring& str, CompareMode mode = IgnoreCase, std::vector< std::wstring >* outPieces = 0) const;
 
 	/*! Insert string pieces at wild-card tokens */
 	std::wstring merge(const std::vector< std::wstring >& pieces) const;

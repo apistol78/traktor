@@ -33,13 +33,13 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 	if (!m_nowild.size())
 		return m_beginWild;
 
-	const std::wstring chk = (mode == CmIgnoreCase) ? toLower(str) : str;
+	const std::wstring chk = (mode == IgnoreCase) ? toLower(str) : str;
 
 	if (!m_beginWild)
 	{
 		const size_t ln = m_nowild[0].length();
 
-		const int res = (mode == CmIgnoreCase) ? chk.compare(0, ln, toLower(m_nowild[0])) : chk.compare(0, ln, m_nowild[0]);
+		const int res = (mode == IgnoreCase) ? chk.compare(0, ln, toLower(m_nowild[0])) : chk.compare(0, ln, m_nowild[0]);
 		if (res != 0)
 			return false;
 
@@ -49,7 +49,7 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 
 	for (; i < m_nowild.size(); ++i)
 	{
-		const size_t f = (mode == CmIgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
+		const size_t f = (mode == IgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
 		if (f == std::wstring::npos)
 			return false;
 
@@ -72,27 +72,27 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 
 std::wstring WildCompare::merge(const std::vector< std::wstring >& pieces) const
 {
-	std::vector< std::wstring >::const_iterator i = pieces.begin();
+	auto it = pieces.begin();
 	std::wstring merged;
 
-	if (m_beginWild && i != pieces.end())
+	if (m_beginWild && it != pieces.end())
 	{
-		merged += *i;
-		++i;
+		merged += *it;
+		++it;
 	}
 
-	for (std::vector< std::wstring >::const_iterator j = m_nowild.begin(); j != m_nowild.end(); ++j)
+	for (const auto& nowild : m_nowild)
 	{
-		merged += *j;
-		if (i != pieces.end())
+		merged += nowild;
+		if (it != pieces.end())
 		{
-			merged += *i;
-			++i;
+			merged += *it;
+			++it;
 		}
 	}
 
-	if (m_endWild && i != pieces.end())
-		merged += *i;
+	if (m_endWild && it != pieces.end())
+		merged += *it;
 
 	return merged;
 }

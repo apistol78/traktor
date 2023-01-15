@@ -69,7 +69,7 @@ void File::getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) co
 			bool include = true;
 			for (const auto& wc : wcs)
 			{
-				include &= (wc.match(fn, WildCompare::CmCaseSensitive) == 0);
+				include &= (wc.match(fn, WildCompare::CaseSensitive) == 0);
 				if (!include)
 					break;
 			}
