@@ -70,6 +70,11 @@ Ref< SkeletonComponent > SkeletonComponentData::createComponent(resource::IResou
 	);
 }
 
+int32_t SkeletonComponentData::getOrdinal() const
+{
+	return -100;
+}
+
 void SkeletonComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

@@ -75,6 +75,11 @@ Ref< CloudComponent > CloudComponentData::createComponent(resource::IResourceMan
 	return cloudComponent;
 }
 
+int32_t CloudComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void CloudComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

@@ -13,6 +13,11 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainLayerComponentData", TerrainLayerComponentData, world::IEntityComponentData)
 
+int32_t TerrainLayerComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void TerrainLayerComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

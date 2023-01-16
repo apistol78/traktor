@@ -22,6 +22,11 @@ Ref< RotatorComponent > RotatorComponentData::createComponent() const
 	return new RotatorComponent(m_axis, m_rate);
 }
 
+int32_t RotatorComponentData::getOrdinal() const
+{
+	return -1000;
+}
+
 void RotatorComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

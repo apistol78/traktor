@@ -7,12 +7,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/ITransformTimeData.h"
 #include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/StatePoseControllerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -26,7 +28,7 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePoseControllerData", 1, StatePoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePoseControllerData", 2, StatePoseControllerData, IPoseControllerData)
 
 StatePoseControllerData::StatePoseControllerData()
 :	m_randomTimeOffset(0.0f, 0.0f)
@@ -40,7 +42,14 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	if (!resourceManager->bind(m_stateGraph, stateGraph))
 		return nullptr;
 
-	Ref< StatePoseController > poseController = new StatePoseController(stateGraph);
+	Ref< ITransformTime > transformTime;
+	if (m_transformTime)
+	{
+		if ((transformTime = m_transformTime->createInstance()) == nullptr)
+			return nullptr;
+	}
+
+	Ref< StatePoseController > poseController = new StatePoseController(stateGraph, transformTime);
 
 	// Randomize time offset; pre-evaluate controller until offset reached.
 	const float timeOffset = m_randomTimeOffset.random(s_random);
@@ -65,6 +74,8 @@ void StatePoseControllerData::serialize(ISerializer& s)
 	T_FATAL_ASSERT(s.getVersion< StatePoseControllerData >() >= 1);
 	s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
 	s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
+	if (s.getVersion< StatePoseControllerData >() >= 2)
+		s >> MemberRef< const ITransformTimeData >(L"transformTime", m_transformTime);
 }
 
 }

@@ -39,6 +39,11 @@ Ref< EventSetComponent > EventSetComponentData::createComponent(EntityEventManag
 	return eventSet;
 }
 
+int32_t EventSetComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void EventSetComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

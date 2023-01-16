@@ -35,6 +35,11 @@ LightComponentData::LightComponentData()
 {
 }
 
+int32_t LightComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void LightComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

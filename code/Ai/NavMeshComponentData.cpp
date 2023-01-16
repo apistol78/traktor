@@ -20,6 +20,11 @@ void NavMeshComponentData::setTransform(const world::EntityData* owner, const Tr
 {
 }
 
+int32_t NavMeshComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void NavMeshComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< NavMesh >(L"navMesh", m_navMesh);

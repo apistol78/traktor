@@ -38,6 +38,8 @@ class T_DLLCLASS ProbeComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

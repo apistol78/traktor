@@ -55,6 +55,11 @@ const RefArray< EntityData >& GroupComponentData::getEntityData() const
 	return m_entityData;
 }
 
+int32_t GroupComponentData::getOrdinal() const
+{
+	return 500;
+}
+
 void GroupComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 	Transform invTransform = owner->getTransform().inverse();

@@ -17,6 +17,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EditorAttributesComponentData", 0, EditorAttributesComponentData, IEntityComponentData)
 
+int32_t EditorAttributesComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void EditorAttributesComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

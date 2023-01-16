@@ -18,6 +18,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ProbeComponentData", 0, ProbeComponentData, IEntityComponentData)
 
+int32_t ProbeComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void ProbeComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

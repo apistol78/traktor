@@ -20,6 +20,11 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RiverComponentData", 0, RiverComponentData, world::IEntityComponentData)
 
+int32_t RiverComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void RiverComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

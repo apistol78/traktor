@@ -36,6 +36,8 @@ public:
 	bool include = true;	//!< If entity is included in build.
 	bool dynamic = true;	//!< If entity is dynamic, cannot be part of any baking process etc.
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

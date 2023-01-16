@@ -16,6 +16,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumeComponentData", 0, VolumeComponentData, IEntityComponentData)
 
+int32_t VolumeComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void VolumeComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

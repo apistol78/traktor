@@ -53,6 +53,11 @@ Ref< BoidsComponent > BoidsComponentData::createComponent(const world::IEntityBu
 	);
 }
 
+int32_t BoidsComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void BoidsComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

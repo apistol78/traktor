@@ -37,6 +37,11 @@ OceanComponentData::OceanComponentData()
 {
 }
 
+int32_t OceanComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void OceanComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

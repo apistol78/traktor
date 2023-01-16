@@ -34,6 +34,11 @@ Ref< ScriptComponent > ScriptComponentData::createComponent(resource::IResourceM
 		return nullptr;
 }
 
+int32_t ScriptComponentData::getOrdinal() const
+{
+	return 1000;
+}
+
 void ScriptComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

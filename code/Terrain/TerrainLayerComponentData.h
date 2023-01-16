@@ -26,6 +26,8 @@ class T_DLLCLASS TerrainLayerComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override;
 };
 

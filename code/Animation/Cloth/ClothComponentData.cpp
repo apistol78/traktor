@@ -56,6 +56,11 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 	return clothEntity;
 }
 
+int32_t ClothComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void ClothComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }
