@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 /*! Automatic text localization with formating.
  * \ingroup I18N
@@ -104,6 +102,4 @@ private:
 	std::wstring m_text;
 };
 
-	}
 }
-

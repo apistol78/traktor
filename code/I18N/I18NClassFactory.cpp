@@ -14,12 +14,10 @@
 #include "I18N/I18NClassFactory.h"
 #include "I18N/Text.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
+	namespace
 	{
-		namespace
-		{
 
 Format::Argument convertArgument(const Any& value)
 {
@@ -84,7 +82,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.I18N", I18NWrapper, Object)
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.I18NClassFactory", 0, I18NClassFactory, IRuntimeClassFactory)
 
@@ -107,5 +105,4 @@ void I18NClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classI18N);
 }
 
-	}
 }

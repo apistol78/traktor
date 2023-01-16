@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class T_DLLCLASS I18NClassFactory : public IRuntimeClassFactory
 {
@@ -31,6 +29,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

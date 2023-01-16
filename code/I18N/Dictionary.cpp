@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.i18n.Dictionary", 0, Dictionary, ISerializable)
 
@@ -54,5 +52,4 @@ void Dictionary::serialize(ISerializer& s)
 	s >> MemberStlMap< std::wstring, std::wstring >(L"map", m_map);
 }
 
-	}
 }
