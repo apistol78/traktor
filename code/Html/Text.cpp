@@ -11,12 +11,10 @@
 #include "Core/Misc/String.h"
 #include "Html/Text.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
+	namespace
 	{
-		namespace
-		{
 
 std::wstring decodeCharacterEntities(const std::wstring& text)
 {
@@ -67,7 +65,7 @@ std::wstring encodeCharacterEntities(const std::wstring& text)
 	return text;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Text", Text, Node)
 
@@ -91,5 +89,4 @@ void Text::toString(OutputStream& os) const
 	os << encodeCharacterEntities(m_text);
 }
 
-	}
 }

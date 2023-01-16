@@ -10,10 +10,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Html/Comment.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Comment", Comment, Node)
 
@@ -37,5 +35,4 @@ void Comment::toString(OutputStream& os) const
 	os << L"<!-- " << m_text << L" -->" << Endl;
 }
 
-	}
 }

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 /*! HTML DOM Attribute.
  * \ingroup HTML
@@ -54,6 +52,4 @@ private:
 	Ref< Attribute > m_next;
 };
 
-	}
 }
-

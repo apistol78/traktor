@@ -8,10 +8,8 @@
  */
 #include "Html/Attribute.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Attribute", Attribute, Object)
 
@@ -47,5 +45,4 @@ Attribute* Attribute::getNext() const
 	return m_next;
 }
 
-	}
 }

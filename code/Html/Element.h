@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 class Attribute;
 
@@ -67,6 +65,4 @@ private:
 	Ref< Attribute > m_lastAttribute;
 };
 
-	}
 }
-

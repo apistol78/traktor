@@ -26,8 +26,10 @@ namespace traktor
 
 class IEncoding;
 
-	namespace html
-	{
+}
+
+namespace traktor::html
+{
 
 class Element;
 
@@ -64,6 +66,4 @@ private:
 	Ref< Element > m_docElement;
 };
 
-	}
 }
-

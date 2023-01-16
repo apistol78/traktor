@@ -16,10 +16,8 @@
 #include "Html/Element.h"
 #include "Html/Text.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.html.HtmlClassFactory", 0, HtmlClassFactory, IRuntimeClassFactory)
 
@@ -73,5 +71,4 @@ void HtmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classText);
 }
 
-	}
 }
