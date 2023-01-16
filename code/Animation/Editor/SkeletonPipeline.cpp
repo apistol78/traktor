@@ -92,8 +92,8 @@ bool SkeletonPipeline::buildOutput(
 	// Scale model according to scale factor in asset.
 	model::Transform(scale(skeletonAsset->getScale(), skeletonAsset->getScale(), skeletonAsset->getScale())).apply(*model);
 
+	// Convert model's skeleton to an animation skeleton.
 	Ref< Skeleton > skeleton = new Skeleton();
-
 	for (const auto& modelJoint : model->getJoints())
 	{
 		Ref< Joint > joint = new Joint();
@@ -106,12 +106,6 @@ bool SkeletonPipeline::buildOutput(
 		joint->setRadius(skeletonAsset->getRadius());
 
 		skeleton->addJoint(joint);
-	}
-
-	if (!skeleton)
-	{
-		log::error << L"Unable to build skeleton; import failed." << Endl;
-		return false;
 	}
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
