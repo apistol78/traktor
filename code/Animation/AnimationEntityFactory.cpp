@@ -9,6 +9,8 @@
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/AnimationEntityFactory.h"
+#include "Animation/JointBindingComponent.h"
+#include "Animation/JointBindingComponentData.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonComponentData.h"
 #include "Animation/Boids/BoidsComponent.h"
@@ -50,6 +52,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< AnimatedMeshComponentData >();
 	typeSet.insert< BoidsComponentData >();
 	typeSet.insert< ClothComponentData >();
+	typeSet.insert< JointBindingComponentData >();
 	typeSet.insert< OrientateComponentData >();
 	typeSet.insert< PathComponentData >();
 	typeSet.insert< PendulumComponentData >();
@@ -77,6 +80,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return boidsComponentData->createComponent(builder);
 	else if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(&entityComponentData))
 		return clothComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (auto jointBindingComponentData = dynamic_type_cast< const JointBindingComponentData* >(&entityComponentData))
+		return jointBindingComponentData->createComponent(builder);
 	else if (auto orientateComponentData = dynamic_type_cast< const OrientateComponentData* >(&entityComponentData))
 		return orientateComponentData->createComponent();
 	else if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
@@ -86,7 +91,7 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 	else if (auto rotatorComponentData = dynamic_type_cast< const RotatorComponentData* >(&entityComponentData))
 		return rotatorComponentData->createComponent();
 	else if (auto skeletonComponentData = dynamic_type_cast< const SkeletonComponentData* >(&entityComponentData))
-		return skeletonComponentData->createComponent(m_resourceManager, m_physicsManager, builder);
+		return skeletonComponentData->createComponent(m_resourceManager, m_physicsManager);
 	else if (auto wobbleComponentData = dynamic_type_cast< const WobbleComponentData* >(&entityComponentData))
 		return wobbleComponentData->createComponent();
 	else

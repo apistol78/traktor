@@ -8,9 +8,9 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
 // import/export mechanism.
@@ -21,43 +21,36 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::physics
+namespace traktor::world
 {
 
-class PhysicsManager;
-
-}
-
-namespace traktor::resource
-{
-
-class IResourceManager;
+class EntityData;
+class IEntityBuilder;
 
 }
 
 namespace traktor::animation
 {
 
-class SkeletonComponent;
-class Skeleton;
-class IPoseControllerData;
+class JointBindingComponent;
 
-/*! Skeleton component data.
+/*!
  * \ingroup Animation
  */
-class T_DLLCLASS SkeletonComponentData : public world::IEntityComponentData
+class T_DLLCLASS JointBindingComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	SkeletonComponentData() = default;
+	struct Binding
+	{
+		std::wstring jointName;
+		Ref< const world::EntityData > entityData;
 
-	SkeletonComponentData(
-		const resource::Id< Skeleton >& skeleton,
-		const IPoseControllerData* poseController
-	);
+		void serialize(ISerializer& s);
+	};
 
-	Ref< SkeletonComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
+	Ref< JointBindingComponent > createComponent(const world::IEntityBuilder* entityBuilder) const;
 
 	virtual int32_t getOrdinal() const override final;
 
@@ -65,13 +58,10 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< Skeleton >& getSkeleton() const { return m_skeleton; }
-
-	const IPoseControllerData* getPoseControllerData() const { return m_poseController; }
+	const AlignedVector< Binding >& getBindings() const { return m_bindings; }
 
 private:
-	resource::Id< Skeleton > m_skeleton;
-	Ref< const IPoseControllerData > m_poseController;
+	AlignedVector< Binding > m_bindings;
 };
 
 }

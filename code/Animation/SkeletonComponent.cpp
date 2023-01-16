@@ -26,13 +26,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonComponent", SkeletonComponent
 SkeletonComponent::SkeletonComponent(
 	const Transform& transform,
 	const resource::Proxy< Skeleton >& skeleton,
-	IPoseController* poseController,
-	const AlignedVector< Binding >& bindings
+	IPoseController* poseController
 )
 :	m_transform(transform)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
-,	m_bindings(bindings)
 {
 	if (m_skeleton)
 	{
@@ -48,12 +46,7 @@ SkeletonComponent::SkeletonComponent(
 void SkeletonComponent::destroy()
 {
 	synchronize();
-
 	safeDestroy(m_poseController);
-
-	for (auto binding : m_bindings)
-		safeDestroy(binding.entity);
-	m_bindings.clear();
 }
 
 void SkeletonComponent::setOwner(world::Entity* owner)
@@ -114,15 +107,6 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 #else
 	updatePoseController(update.alternateTime, update.deltaTime);
 #endif
-
-	// Update entity to joint bindings.
-	for (const auto& binding : m_bindings)
-	{
-		Transform T;
-		if (getPoseTransform(binding.jointHandle, T))
-			binding.entity->setTransform(m_transform * T);
-		binding.entity->update(update);
-	}
 }
 
 void SkeletonComponent::synchronize() const

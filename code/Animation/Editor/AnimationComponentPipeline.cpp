@@ -8,6 +8,7 @@
  */
 #include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/IPoseControllerData.h"
+#include "Animation/JointBindingComponentData.h"
 #include "Animation/SkeletonComponentData.h"
 #include "Animation/Editor/AnimationComponentPipeline.h"
 #include "Core/Serialization/DeepClone.h"
@@ -33,6 +34,7 @@ TypeInfoSet AnimationComponentPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		AnimatedMeshComponentData,
+		JointBindingComponentData,
 		SkeletonComponentData
 	>();
 }
@@ -55,17 +57,19 @@ bool AnimationComponentPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const AnimatedMeshComponentData* meshComponentData = dynamic_type_cast< const AnimatedMeshComponentData* >(sourceAsset))
+	if (auto meshComponentData = dynamic_type_cast< const AnimatedMeshComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(meshComponentData->getMesh(), editor::PdfBuild | editor::PdfResource);
 	}
-	else if (const SkeletonComponentData* skeletonComponentData = dynamic_type_cast< const SkeletonComponentData* >(sourceAsset))
+	else if (auto jointBindingComponentData = dynamic_type_cast< const JointBindingComponentData* >(sourceAsset))
+	{
+		for (auto binding : jointBindingComponentData->getBindings())
+			pipelineDepends->addDependency(binding.entityData);
+	}
+	else if (auto skeletonComponentData = dynamic_type_cast< const SkeletonComponentData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(skeletonComponentData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(skeletonComponentData->getPoseControllerData());
-
-		for (auto binding : skeletonComponentData->getBindings())
-			pipelineDepends->addDependency(binding.entityData);
 	}
 	return true;
 }
