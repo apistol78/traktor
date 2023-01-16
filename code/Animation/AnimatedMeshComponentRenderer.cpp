@@ -8,6 +8,7 @@
  */
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/AnimatedMeshComponentRenderer.h"
+#include "Animation/JointBindingComponent.h"
 #include "World/Entity.h"
 #include "World/WorldGatherContext.h"
 
@@ -18,7 +19,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", Anima
 
 const TypeInfoSet AnimatedMeshComponentRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< AnimatedMeshComponent >();
+	return makeTypeInfoSet<
+		AnimatedMeshComponent,
+		JointBindingComponent
+	>();
 }
 
 void AnimatedMeshComponentRenderer::gather(
@@ -26,12 +30,13 @@ void AnimatedMeshComponentRenderer::gather(
 	Object* renderable
 )
 {
-	auto animatedMeshComponent = static_cast< AnimatedMeshComponent* >(renderable);
-
-	//for (const auto& binding : animatedMeshComponent->getBindings())
-	//	context.gather(binding.entity);
-
-	context.include(this, animatedMeshComponent);
+	if (auto animatedMeshComponent = dynamic_type_cast< AnimatedMeshComponent* >(renderable))
+		context.include(this, animatedMeshComponent);
+	else if (auto jointBindingComponent = dynamic_type_cast< JointBindingComponent* >(renderable))
+	{
+		for (const auto& binding : jointBindingComponent->getBindings())
+			context.gather(binding.entity);
+	}
 }
 
 }

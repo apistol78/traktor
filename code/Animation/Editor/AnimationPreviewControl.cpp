@@ -218,13 +218,10 @@ void AnimationPreviewControl::updatePreview()
 		}
 	}
 
-	AlignedVector< SkeletonComponent::Binding > noBindings;
-
 	Ref< SkeletonComponent > skeletonComponent = new SkeletonComponent(
 		Transform::identity(),
 		m_skeleton,
-		m_poseController,
-		noBindings
+		m_poseController
 	);
 
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
