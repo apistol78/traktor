@@ -101,11 +101,8 @@ void BoidsComponent::update(const world::UpdateParams& update)
 	// Update boids.
 	for (uint32_t i = 0; i < m_boids.size(); ++i)
 	{
-		Vector4 otherCenter = center - m_boids[i].position;
-		Vector4 otherVelocity = velocity - m_boids[i].velocity;
-
-		otherCenter *= invBoidsSize;
-		otherVelocity *= invBoidsSize;
+		const Vector4 otherCenter = (center - m_boids[i].position) * invBoidsSize;
+		const Vector4 otherVelocity = (velocity - m_boids[i].velocity) * invBoidsSize;
 
 		// 1: Follow perceived center.
 		m_boids[i].velocity += (otherCenter - m_boids[i].position) * m_followForce;

@@ -21,36 +21,32 @@ int32_t Skeleton::addJoint(Joint* joint)
 {
 	const int32_t jointIndex = int32_t(m_joints.size());
 	m_joints.push_back(joint);
-	m_jointMap.clear();
+	m_jointMap.insert(
+		render::getParameterHandle(joint->getName()),
+		jointIndex
+	);
 	return jointIndex;
 }
 
 void Skeleton::removeJoint(Joint* joint)
 {
-	auto it = std::find(m_joints.begin(), m_joints.end(), joint);
-	m_joints.erase(it);
-	m_jointMap.clear();
+	auto itj = std::find(m_joints.begin(), m_joints.end(), joint);
+	m_joints.erase(itj);
+
+	auto itm = m_jointMap.find(render::getParameterHandle(joint->getName()));
+	m_jointMap.erase(itm);
 }
 
 bool Skeleton::findJoint(render::handle_t name, uint32_t& outIndex) const
 {
-	if (m_jointMap.empty())
+	const auto it = m_jointMap.find(name);
+	if (it != m_jointMap.end())
 	{
-		for (uint32_t i = 0; i < uint32_t(m_joints.size()); ++i)
-		{
-			m_jointMap.insert(
-				render::getParameterHandle(m_joints[i]->getName()),
-				i
-			);
-		}
+		outIndex = it->second;
+		return true;
 	}
-
-	auto it = m_jointMap.find(name);
-	if (it == m_jointMap.end())
+	else
 		return false;
-
-	outIndex = it->second;
-	return true;
 }
 
 void Skeleton::findChildren(uint32_t index, const std::function< void(uint32_t) >& fn) const
@@ -77,6 +73,15 @@ void Skeleton::findAllChildren(uint32_t index, const std::function< void(uint32_
 void Skeleton::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Joint >(L"joints", m_joints);
+	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		for (uint32_t i = 0; i < (uint32_t)m_joints.size(); ++i)
+		{
+			const Joint* joint = m_joints[i];
+			if (joint)
+				m_jointMap.insert(render::getParameterHandle(joint->getName()), i);
+		}
+	}
 }
 
 }
