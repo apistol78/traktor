@@ -34,6 +34,7 @@ public:
 
 private:
     Transform m_transform = Transform::identity();
+    float m_time = 0.0f;
 };
 
 }
