@@ -53,7 +53,7 @@ public:
 
 private:
 	RefArray< Joint > m_joints;
-	mutable SmallMap< render::handle_t, uint32_t > m_jointMap;
+	SmallMap< render::handle_t, uint32_t > m_jointMap;
 };
 
 }

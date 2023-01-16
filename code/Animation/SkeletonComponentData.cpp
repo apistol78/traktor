@@ -15,7 +15,6 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-//#include "World/EntityData.h"
 
 namespace traktor::animation
 {
