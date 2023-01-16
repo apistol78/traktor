@@ -20,14 +20,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class IScriptBlob;
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS ScriptResource : public ISerializable
@@ -48,6 +46,4 @@ private:
 	Ref< const IScriptBlob > m_blob;
 };
 
-	}
 }
-

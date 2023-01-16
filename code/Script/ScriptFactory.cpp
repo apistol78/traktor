@@ -17,10 +17,8 @@
 #include "Script/ScriptFactory.h"
 #include "Script/ScriptResource.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptFactory", ScriptFactory, resource::IResourceFactory)
 
@@ -94,5 +92,4 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 		return nullptr;
 }
 
-	}
 }

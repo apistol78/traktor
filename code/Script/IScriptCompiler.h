@@ -25,8 +25,10 @@ namespace traktor
 
 class IRuntimeClass;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class IErrorCallback;
 class IScriptBlob;
@@ -50,6 +52,4 @@ public:
 	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const = 0;
 };
 
-	}
 }
-

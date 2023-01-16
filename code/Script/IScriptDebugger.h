@@ -25,8 +25,10 @@ namespace traktor
 
 class Guid;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class Variable;
 class StackFrame;
@@ -73,6 +75,4 @@ public:
 	virtual void removeListener(IListener* listener) = 0;
 };
 
-	}
 }
-

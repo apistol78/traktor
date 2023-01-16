@@ -26,8 +26,10 @@ namespace traktor
 
 class IRuntimeClass;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class IErrorCallback;
 class IScriptBlob;
@@ -100,6 +102,4 @@ public:
 	virtual void getStatistics(ScriptStatistics& outStatistics) const = 0;
 };
 
-	}
 }
-

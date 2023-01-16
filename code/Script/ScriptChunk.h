@@ -10,12 +10,10 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class ScriptChunk : public Object
@@ -23,6 +21,4 @@ class ScriptChunk : public Object
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

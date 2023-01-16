@@ -10,17 +10,10 @@
 #include "Core/Serialization/Member.h"
 #include "Script/StackFrame.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.StackFrame", 0, StackFrame, ISerializable)
-
-StackFrame::StackFrame()
-:	m_line(0)
-{
-}
 
 void StackFrame::setScriptId(const Guid& scriptId)
 {
@@ -59,5 +52,4 @@ void StackFrame::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"line", m_line);
 }
 
-	}
 }

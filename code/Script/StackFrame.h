@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! Call stack debug information.
  * \ingroup Script
@@ -32,8 +30,6 @@ class T_DLLCLASS StackFrame : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	StackFrame();
-
 	void setScriptId(const Guid& scriptId);
 
 	const Guid& getScriptId() const;
@@ -51,9 +47,7 @@ public:
 private:
 	Guid m_scriptId;
 	std::wstring m_functionName;
-	uint32_t m_line;
+	uint32_t m_line = 0;
 };
 
-	}
 }
-

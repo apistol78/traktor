@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS IValue : public ISerializable
@@ -31,6 +29,4 @@ class T_DLLCLASS IValue : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

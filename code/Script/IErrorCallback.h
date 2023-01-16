@@ -10,10 +10,8 @@
 
 #include <string>
 
-namespace traktor
+namespace traktor::script
 {
-    namespace script
-    {
 
 /*! Script error callback.
  * \ingroup Script
@@ -30,5 +28,4 @@ public:
 	virtual void otherError(const std::wstring& message) = 0;
 };
 
-    }
 }

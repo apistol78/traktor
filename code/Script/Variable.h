@@ -18,14 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class IValue;
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS Variable : public ISerializable
@@ -57,6 +55,4 @@ private:
 	Ref< const IValue > m_value;
 };
 
-	}
 }
-

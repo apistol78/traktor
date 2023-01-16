@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! Pre-compiled script blob.
  * \ingroup Script
@@ -31,6 +29,4 @@ class T_DLLCLASS IScriptBlob : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

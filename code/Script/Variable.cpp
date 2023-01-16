@@ -12,10 +12,8 @@
 #include "Script/IValue.h"
 #include "Script/Variable.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.Variable", 0, Variable, ISerializable)
 
@@ -63,5 +61,4 @@ void Variable::serialize(ISerializer& s)
 	s >> MemberRef< const IValue >(L"value", m_value);
 }
 
-	}
 }

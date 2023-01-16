@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Script/Value.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.Value", 0, Value, IValue)
 
@@ -37,5 +35,4 @@ void Value::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"literal", m_literal);
 }
 
-	}
 }

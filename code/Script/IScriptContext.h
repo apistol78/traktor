@@ -26,8 +26,10 @@ namespace traktor
 
 class IRuntimeClass;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class IScriptBlob;
 
@@ -93,6 +95,4 @@ public:
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc = 0, const Any* argv = 0) = 0;
 };
 
-	}
 }
-

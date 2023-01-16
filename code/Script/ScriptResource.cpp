@@ -12,10 +12,8 @@
 #include "Script/IScriptBlob.h"
 #include "Script/ScriptResource.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptResource", 0, ScriptResource, ISerializable)
 
@@ -25,5 +23,4 @@ void ScriptResource::serialize(ISerializer& s)
 	s >> MemberRef< const IScriptBlob >(L"blob", m_blob);
 }
 
-	}
 }

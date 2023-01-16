@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! Script profiler interface.
  * \ingroup Script
@@ -51,6 +49,4 @@ public:
 	virtual void removeListener(IListener* listener) = 0;
 };
 
-	}
 }
-
