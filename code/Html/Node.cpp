@@ -8,10 +8,8 @@
  */
 #include "Html/Node.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Node", Node, Object)
 
@@ -80,5 +78,4 @@ void Node::toString(OutputStream& os) const
 		child->toString(os);
 }
 
-	}
 }

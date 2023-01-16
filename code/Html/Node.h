@@ -25,8 +25,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace html
-	{
+}
+
+namespace traktor::html
+{
 
 /*! HTML DOM Node.
  * \ingroup HTML
@@ -66,6 +68,4 @@ private:
 	Ref< Node > m_lastChild;
 };
 
-	}
 }
-

@@ -24,12 +24,10 @@
 #include "Html/Element.h"
 #include "Html/Text.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
+	namespace
 	{
-		namespace
-		{
 
 template < int >
 struct CreateEncoding {};
@@ -65,14 +63,14 @@ public:
 	{
 		if (m_count < IEncoding::MaxEncodingSize)
 		{
-			int64_t nread = m_stream->read(&m_buffer[m_count], IEncoding::MaxEncodingSize - m_count);
+			const int64_t nread = m_stream->read(&m_buffer[m_count], IEncoding::MaxEncodingSize - m_count);
 			if (nread <= 0 && m_count <= 0)
 				return false;
 
 			m_count += nread;
 		}
 
-		int used = m_encoding->translate(m_buffer, m_count, outChar);
+		const int used = m_encoding->translate(m_buffer, m_count, outChar);
 		std::memmove(m_buffer, &m_buffer[used], m_count - used);
 		m_count -= used;
 
@@ -86,7 +84,7 @@ private:
 	int32_t m_count;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Document", Document, Object)
 
@@ -373,5 +371,4 @@ void Document::toString(OutputStream& os) const
 	}
 }
 
-	}
 }

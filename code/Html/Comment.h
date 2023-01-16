@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 /*! HTML DOM Comment.
  * \ingroup HTML
@@ -43,6 +41,4 @@ private:
 	std::wstring m_text;
 };
 
-	}
 }
-

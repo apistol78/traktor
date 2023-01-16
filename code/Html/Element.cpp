@@ -11,10 +11,8 @@
 #include "Html/Attribute.h"
 #include "Html/Element.h"
 
-namespace traktor
+namespace traktor::html
 {
-	namespace html
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Element", Element, Node)
 
@@ -172,5 +170,4 @@ void Element::toString(OutputStream& os) const
 	}
 }
 
-	}
 }
