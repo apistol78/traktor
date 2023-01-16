@@ -37,17 +37,16 @@ bool StatePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const SimpleAnimationControllerData* simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
+	if (auto simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
-	else if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
+	else if (auto state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild | editor::PdfResource);
-	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
+	else if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
-		const RefArray< StateNode >& states = stateGraph->getStates();
-		for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
-			pipelineDepends->addDependency(*i);
+		for (auto state : stateGraph->getStates())
+			pipelineDepends->addDependency(state);
 	}
-	else if (const StatePoseControllerData* controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
+	else if (auto controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(controllerData->getStateGraph(), editor::PdfBuild);
 
 	return true;

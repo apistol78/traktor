@@ -107,6 +107,7 @@ bool StatePoseController::evaluate(
 	AlignedVector< Transform >& outPoseTransforms
 )
 {
+	const float wallDeltaTime = deltaTime;
 	bool continous = true;
 
 	if (!skeleton)
@@ -158,6 +159,14 @@ bool StatePoseController::evaluate(
 		{
 			Pose nextPose, blendPose;
 
+			// Transform, or remap, time.
+			if (m_transformTime && is_a< StateNodeAnimation >(m_nextState))
+			{
+				const Animation* animation = static_cast< const StateNodeAnimation* >(m_nextState.c_ptr())->getAnimation();
+				if (animation)
+					m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
+			}
+
 			m_nextState->evaluate(
 				m_nextStateContext,
 				nextPose
@@ -189,7 +198,7 @@ bool StatePoseController::evaluate(
 		}
 
 		// Swap in next state when we've completely blended into it.
-		m_blendState += deltaTime;
+		m_blendState += wallDeltaTime;
 		if (m_blendState >= m_blendDuration)
 		{
 			m_currentState = m_nextState;
@@ -231,7 +240,7 @@ bool StatePoseController::evaluate(
 
 			case Transition::Moment::End:
 				{
-					float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+					const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 					if (timeLeft <= transition->getDuration())
 						transitionPermitted = true;
 				}
@@ -242,9 +251,8 @@ bool StatePoseController::evaluate(
 
 			// Is condition satisfied?
 			bool value = false;
-
 			const std::wstring& condition = transition->getCondition();
-			if (!condition.empty() && condition[0] == L'!')
+			if (condition[0] == L'!')
 			{
 				std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
 				value = !cv.first;
@@ -264,10 +272,10 @@ bool StatePoseController::evaluate(
 					cv.second = false;
 				}
 			}
-
 			if (!value)
 				continue;
 
+			// Found valid transition.
 			selectedTransition = transition;
 			break;
 		}
