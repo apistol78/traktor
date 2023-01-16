@@ -60,6 +60,8 @@ public:
 
 	Ref< CloudComponent > createComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

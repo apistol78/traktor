@@ -75,6 +75,8 @@ public:
 
 	Ref< SkeletonComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

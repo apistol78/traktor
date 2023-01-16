@@ -22,6 +22,11 @@ Ref< PathComponent > PathComponentData::createComponent() const
 	return new PathComponent(m_path, m_timeMode);
 }
 
+int32_t PathComponentData::getOrdinal() const
+{
+	return -2000;
+}
+
 void PathComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

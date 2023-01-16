@@ -17,6 +17,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DecalComponentData", 0, DecalComponentData, IEntityComponentData)
 
+int32_t DecalComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void DecalComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

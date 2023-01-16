@@ -133,6 +133,11 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	);
 }
 
+int32_t SkyComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void SkyComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

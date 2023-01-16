@@ -66,6 +66,11 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 	return component;
 }
 
+int32_t MeshComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void MeshComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

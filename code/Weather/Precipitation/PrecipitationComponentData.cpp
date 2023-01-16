@@ -41,6 +41,11 @@ Ref< PrecipitationComponent > PrecipitationComponentData::createComponent(resour
 		return nullptr;
 }
 
+int32_t PrecipitationComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void PrecipitationComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

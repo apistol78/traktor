@@ -23,6 +23,11 @@ Ref< PendulumComponent > PendulumComponentData::createComponent() const
 	return new PendulumComponent(m_axis, m_pivot, m_amplitude, m_rate);
 }
 
+int32_t PendulumComponentData::getOrdinal() const
+{
+	return -1000;
+}
+
 void PendulumComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

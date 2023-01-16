@@ -57,6 +57,11 @@ float CameraComponentData::getHeight() const
 	return m_height;
 }
 
+int32_t CameraComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void CameraComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }

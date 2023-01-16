@@ -28,6 +28,11 @@ Ref< JointComponent > JointComponentData::createComponent(PhysicsManager* physic
 	return new JointComponent(physicsManager, m_jointDesc);
 }
 
+int32_t JointComponentData::getOrdinal() const
+{
+	return -100;
+}
+
 void JointComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

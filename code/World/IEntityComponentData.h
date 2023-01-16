@@ -38,6 +38,8 @@ class T_DLLCLASS IEntityComponentData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const = 0;
+
 	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 

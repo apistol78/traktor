@@ -31,6 +31,11 @@ Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceM
 	);
 }
 
+int32_t EffectComponentData::getOrdinal() const
+{
+	return 0;
+}
+
 void EffectComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

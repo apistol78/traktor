@@ -58,6 +58,11 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	return new RigidBodyComponent(body, eventManager, eventCollide);
 }
 
+int32_t RigidBodyComponentData::getOrdinal() const
+{
+	return -100;
+}
+
 void RigidBodyComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

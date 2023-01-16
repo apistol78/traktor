@@ -48,6 +48,8 @@ public:
 		void serialize(ISerializer& s);
 	};
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

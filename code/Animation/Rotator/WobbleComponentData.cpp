@@ -21,6 +21,11 @@ Ref< WobbleComponent > WobbleComponentData::createComponent() const
 	return new WobbleComponent(m_magnitude, m_rate);
 }
 
+int32_t WobbleComponentData::getOrdinal() const
+{
+	return -1000;
+}
+
 void WobbleComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

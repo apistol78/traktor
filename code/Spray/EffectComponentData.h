@@ -56,6 +56,8 @@ class T_DLLCLASS EffectComponentData : public world::IEntityComponentData
 public:
 	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

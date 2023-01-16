@@ -63,7 +63,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	if (!m_stateGraph)
 		return false;
 
-	m_statePreviewController = new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph));
+	m_statePreviewController = new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph), nullptr);
 
 	// Create state graph container.
 	Ref< ui::Container > container = new ui::Container();
@@ -617,7 +617,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		stateGraph->setRootState(state);
 
 		m_propertiesView->setPropertyObject(state);
-		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(stateGraph)));
+		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
 	}
 	else if (m_editorGraph->getSelectedEdges(edges) == 1)
 	{

@@ -48,6 +48,8 @@ public:
 
 	const RefArray< EntityData >& getEntityData() const;
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override;
 
 	virtual void serialize(ISerializer& s) override;

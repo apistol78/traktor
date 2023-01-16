@@ -48,6 +48,8 @@ public:
 
 	LightComponentData();
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;

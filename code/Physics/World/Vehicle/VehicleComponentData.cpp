@@ -74,6 +74,11 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 	);
 }
 
+int32_t VehicleComponentData::getOrdinal() const
+{
+	return -100;
+}
+
 void VehicleComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

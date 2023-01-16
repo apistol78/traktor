@@ -9,7 +9,9 @@
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Animation/StateNode.h"
+#include "Animation/Animation/Animation.h"
+#include "Animation/Animation/ITransformTime.h"
+#include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/Transition.h"
@@ -27,8 +29,9 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StatePoseController", StatePoseController, IPoseController)
 
-StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& stateGraph)
+StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& stateGraph, ITransformTime* transformTime)
 :	m_stateGraph(stateGraph)
+,	m_transformTime(transformTime)
 ,	m_blendState(0.0f)
 ,	m_blendDuration(0.0f)
 ,	m_timeFactor(1.0f)
@@ -131,6 +134,14 @@ bool StatePoseController::evaluate(
 
 	if (!m_currentState)
 		return false;
+
+	// Transform, or remap, time.
+	if (m_transformTime && is_a< StateNodeAnimation >(m_currentState))
+	{
+		const Animation* animation = static_cast< const StateNodeAnimation* >(m_currentState.c_ptr())->getAnimation();
+		if (animation)
+			m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
+	}
 
 	// Evaluate current state.
 	m_currentState->evaluate(

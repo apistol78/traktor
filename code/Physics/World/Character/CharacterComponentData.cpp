@@ -94,6 +94,11 @@ Ref< ShapeDesc > CharacterComponentData::getShapeDesc(float epsilon) const
 	return shapeDesc;
 }
 
+int32_t CharacterComponentData::getOrdinal() const
+{
+	return -100;
+}
+
 void CharacterComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
 }

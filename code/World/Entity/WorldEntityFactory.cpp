@@ -111,9 +111,15 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	}
 	else
 	{
+		// Sort component data so they get added in expected order.
+		RefArray< IEntityComponentData > componentDatas = entityData.getComponents();
+		componentDatas.sort([](IEntityComponentData* lh, IEntityComponentData* rh) {
+			return lh->getOrdinal() < rh->getOrdinal();
+		});
+
 		// Instantiate all components.
 		RefArray< IEntityComponent > components;
-		for (auto componentData : entityData.getComponents())
+		for (auto componentData : componentDatas)
 		{
 			Ref< IEntityComponent > component = builder->create(componentData);
 			if (!component)

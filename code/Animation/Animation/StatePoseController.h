@@ -26,6 +26,7 @@
 namespace traktor::animation
 {
 
+class ITransformTime;
 class StateGraph;
 class StateNode;
 class StateContext;
@@ -38,7 +39,7 @@ class T_DLLCLASS StatePoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
-	explicit StatePoseController(const resource::Proxy< StateGraph >& stateGraph);
+	explicit StatePoseController(const resource::Proxy< StateGraph >& stateGraph, ITransformTime* transformTime);
 
 	bool setState(const std::wstring& stateName);
 
@@ -72,6 +73,7 @@ public:
 
 private:
 	resource::Proxy< StateGraph > m_stateGraph;
+	Ref< ITransformTime > m_transformTime;
 	Ref< StateNode > m_currentState;
 	StateContext m_currentStateContext;
 	Ref< StateNode > m_nextState;

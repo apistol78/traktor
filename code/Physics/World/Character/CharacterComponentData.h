@@ -81,6 +81,8 @@ public:
 	/*! Get velocity damping coefficient. */
 	float getVelocityDamping() const { return m_velocityDamping; }
 
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
