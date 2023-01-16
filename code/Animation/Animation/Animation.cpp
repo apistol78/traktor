@@ -155,6 +155,7 @@ void Animation::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
 	s >> Member< float >(L"timePerDistance", m_timePerDistance);
+	s >> Member< Vector4 >(L"totalLocomotion", m_totalLocomotion);
 }
 
 void Animation::KeyPose::serialize(ISerializer& s)

@@ -16,12 +16,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.TimeFromLocomotion", TimeFromLocomoti
 
 void TimeFromLocomotion::calculateTime(const Animation* animation, const Transform& worldTransform, float& inoutTime, float& outDeltaTime)
 {
-	const float distance = ((worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f)).length();
+	const Vector4 locomotionDirection = (worldTransform * animation->getTotalLocomotion().xyz0()).normalized();
+	const float distance = dot3(locomotionDirection, (worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f));
 
 	outDeltaTime = animation->getTimePerDistance() * distance;
-    inoutTime += outDeltaTime;
+    inoutTime = m_time;
 
 	m_transform = worldTransform;
+	m_time += outDeltaTime;
+
+	// Ensure time is always positive.
+	const float duration = animation->getLastKeyPose().at - animation->getKeyPose(0).at;
+	while (m_time < 0.0f)
+		m_time += duration;
+
+	// We should probably not return a negative delta time.
+	outDeltaTime = abs(outDeltaTime);
 }
 
 }

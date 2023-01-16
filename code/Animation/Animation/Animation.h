@@ -102,11 +102,20 @@ public:
 	 */
 	float getTimePerDistance() const { return m_timePerDistance; }
 
+	/*!
+	 */
+	void setTotalLocomotion(const Vector4& totalLocomotion) { m_totalLocomotion = totalLocomotion; }
+
+	/*!
+	 */
+	const Vector4& getTotalLocomotion() const { return m_totalLocomotion; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< KeyPose > m_poses;
 	float m_timePerDistance = 0.0f;
+	Vector4 m_totalLocomotion = Vector4::zero();
 };
 
 }

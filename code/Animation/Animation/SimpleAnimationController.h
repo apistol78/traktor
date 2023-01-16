@@ -66,9 +66,6 @@ private:
 	float m_timeOffset;
 	float m_lastTime;
 	Pose m_evaluationPose;
-	//Transform m_transform;
-	//float m_tick = 0.0f;
-
 };
 
 }

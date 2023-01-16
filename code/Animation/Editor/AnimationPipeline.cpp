@@ -34,7 +34,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 13, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 14, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -224,6 +224,7 @@ bool AnimationPipeline::buildOutput(
 			AlignedVector< Transform > poseTransforms;
 			calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
 
+			Vector4 totalLocomotion = Vector4::zero();
 			float locomotionDistance = 0.0f;
 
 			const Transform origin = poseTransforms[0];
@@ -250,12 +251,15 @@ bool AnimationPipeline::buildOutput(
 				}
 
 				// Accumulate locomotion distance.
-				locomotionDistance += ((target.translation() - previousTarget) * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).length();
+				const Vector4 deltaLocomotion = (target.translation() - previousTarget) * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+				locomotionDistance += deltaLocomotion.length();
+				totalLocomotion += deltaLocomotion;
 				previousTarget = target.translation();
 			}
 
 			const float duration = anim->getLastKeyPose().at - anim->getKeyPose(0).at;
 			anim->setTimePerDistance(duration / locomotionDistance);
+			anim->setTotalLocomotion(totalLocomotion);
 		}
 	}
 
