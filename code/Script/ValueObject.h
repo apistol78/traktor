@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class Variable;
 
@@ -54,6 +52,4 @@ private:
 	std::wstring m_valueOf;
 };
 
-	}
 }
-

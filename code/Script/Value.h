@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*!
  * \ingroup Script
@@ -45,6 +43,4 @@ private:
 	std::wstring m_literal;
 };
 
-	}
 }
-

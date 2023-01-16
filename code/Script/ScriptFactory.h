@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class IScriptContext;
 
@@ -33,7 +31,7 @@ class T_DLLCLASS ScriptFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	ScriptFactory(IScriptContext* scriptContext);
+	explicit ScriptFactory(IScriptContext* scriptContext);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -47,6 +45,4 @@ private:
 	Ref< IScriptContext > m_scriptContext;
 };
 
-	}
 }
-
