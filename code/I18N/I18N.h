@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class Dictionary;
 
@@ -50,6 +48,4 @@ private:
 	I18N();
 };
 
-	}
 }
-

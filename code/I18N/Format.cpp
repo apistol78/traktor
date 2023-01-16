@@ -13,12 +13,10 @@
 #include "I18N/Format.h"
 #include "I18N/I18N.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
+	namespace
 	{
-		namespace
-		{
 
 wchar_t* refStringCreate(const wchar_t* s)
 {
@@ -57,7 +55,7 @@ wchar_t* refStringDec(wchar_t* s)
 	return s;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.Format", Format, Object)
 
@@ -211,5 +209,4 @@ Format::operator const std::wstring& () const
 	return m_text;
 }
 
-	}
 }

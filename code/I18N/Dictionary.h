@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 /*! Dictionary
  * \ingroup I18N
@@ -49,6 +47,4 @@ private:
 	std::map< std::wstring, std::wstring > m_map;
 };
 
-	}
 }
-

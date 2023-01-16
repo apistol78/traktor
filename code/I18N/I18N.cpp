@@ -10,14 +10,12 @@
 #include "I18N/Dictionary.h"
 #include "Core/Singleton/SingletonManager.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 I18N& I18N::getInstance()
 {
-	static I18N* s_instance = 0;
+	static I18N* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new I18N();
@@ -56,5 +54,4 @@ I18N::I18N()
 {
 }
 
-	}
 }
