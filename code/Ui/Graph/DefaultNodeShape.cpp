@@ -35,7 +35,7 @@ const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
-	int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	const int32_t x = widget->getFontMetric().getExtent(txt).cx;
 	return alignUp(x, dpi96(16));
 }
 
@@ -49,37 +49,37 @@ DefaultNodeShape::DefaultNodeShape(Style style)
 	{
 	default:
 	case StDefault:
-		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Node");
-		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.NodeSelected");
-		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.NodeError");
-		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.NodeErrorSelected");
+		m_imageNode[0] = new StyleBitmap(L"UI.Graph.Node");
+		m_imageNode[1] = new StyleBitmap(L"UI.Graph.NodeSelected");
+		m_imageNode[2] = new StyleBitmap(L"UI.Graph.NodeError");
+		m_imageNode[3] = new StyleBitmap(L"UI.Graph.NodeErrorSelected");
 		break;
 
 	case StExternal:
-		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.External");
-		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.ExternalSelected");
-		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.ExternalError");
-		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.ExternalErrorSelected");
+		m_imageNode[0] = new StyleBitmap(L"UI.Graph.External");
+		m_imageNode[1] = new StyleBitmap(L"UI.Graph.ExternalSelected");
+		m_imageNode[2] = new StyleBitmap(L"UI.Graph.ExternalError");
+		m_imageNode[3] = new StyleBitmap(L"UI.Graph.ExternalErrorSelected");
 		break;
 
 	case StScript:
-		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Script");
-		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.ScriptSelected");
-		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.ScriptError");
-		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.ScriptErrorSelected");
+		m_imageNode[0] = new StyleBitmap(L"UI.Graph.Script");
+		m_imageNode[1] = new StyleBitmap(L"UI.Graph.ScriptSelected");
+		m_imageNode[2] = new StyleBitmap(L"UI.Graph.ScriptError");
+		m_imageNode[3] = new StyleBitmap(L"UI.Graph.ScriptErrorSelected");
 		break;
 	}
 
-	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
-	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
+	m_imagePin = new StyleBitmap(L"UI.Graph.Pin");
+	m_imagePinHot = new StyleBitmap(L"UI.Graph.PinHot");
 }
 
 Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	Rect rc = node->calculateRect();
+	const Rect rc = node->calculateRect();
 
-	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
-	int32_t top = ui::dpi96(c_marginHeight + c_topMargin + c_titlePad);
+	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	int32_t top = dpi96(c_marginHeight + c_topMargin + c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -87,9 +87,9 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 	if (node->getImage())
 		top += node->getImage()->getSize().cy;
 
-	int32_t x = pin->getDirection() == Pin::DrInput ?
-		rc.left + ui::dpi96(c_marginWidth) - 1 :
-		rc.right - ui::dpi96(c_marginWidth);
+	const int32_t x = pin->getDirection() == Pin::DrInput ?
+		rc.left + dpi96(c_marginWidth) - 1 :
+		rc.right - dpi96(c_marginWidth);
 
 	const RefArray< Pin >& pins = (pin->getDirection() == Pin::DrInput) ? node->getInputPins() : node->getOutputPins();
 	const auto i = std::find(pins.begin(), pins.end(), pin);
@@ -101,14 +101,14 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 
 Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
-	Rect rc = node->calculateRect();
+	const Rect rc = node->calculateRect();
 	if (!rc.inside(pt))
 		return 0;
 
-	Point ptn(pt.x - rc.left, pt.y - rc.top);
+	const Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
-	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
+	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	int32_t top = dpi96(c_marginHeight) + dpi96(c_topMargin) + dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -117,9 +117,9 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 		top += node->getImage()->getSize().cy;
 
 	const RefArray< Pin >* pins = nullptr;
-	if (ptn.x <= ui::dpi96(c_pinHitWidth) + ui::dpi96(c_marginWidth))
+	if (ptn.x <= dpi96(c_pinHitWidth) + dpi96(c_marginWidth))
 		pins = &node->getInputPins();
-	else if (ptn.x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) - ui::dpi96(c_marginWidth))
+	else if (ptn.x >= rc.getWidth() - dpi96(c_pinHitWidth) - dpi96(c_marginWidth))
 		pins = &node->getOutputPins();
 
 	if (!pins)
@@ -139,8 +139,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings* settings = canvas->getPaintSettings();
 
-	Rect rc = node->calculateRect().offset(offset);
-	int32_t textHeight = settings->getFont().getPixelSize() + ui::dpi96(4);
+	const Rect rc = node->calculateRect().offset(offset);
+	const int32_t textHeight = settings->getFont().getPixelSize() + dpi96(4);
 
 	// Draw node shape.
 	{
@@ -153,7 +153,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
 		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
 
-		const int32_t dw = rc.getWidth() - ui::dpi96(c_marginWidth) * 2;
+		const int32_t dw = rc.getWidth() - dpi96(c_marginWidth) * 2;
 		const int32_t dh = rc.getHeight();
 
 		const int32_t dx[] = { 0, tw, dw - tw, dw };
@@ -164,18 +164,18 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			for (int32_t ix = 0; ix < 3; ++ix)
 			{
 				canvas->drawBitmap(
-					rc.getTopLeft() + Size(ui::dpi96(c_marginWidth), 0) + Size(dx[ix], dy[iy]),
+					rc.getTopLeft() + Size(dpi96(c_marginWidth), 0) + Size(dx[ix], dy[iy]),
 					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
 					Point(sx[ix], sy[iy]),
 					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
 					m_imageNode[imageIndex],
-					ui::BlendMode::Alpha
+					BlendMode::Alpha
 				);
 			}
 		}
 	}
 
-	int32_t top = rc.top + ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin);
+	int32_t top = rc.top + dpi96(c_marginHeight) + dpi96(c_topMargin);
 
 	const std::wstring& title = node->getTitle();
 	if (!title.empty())
@@ -217,7 +217,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		top += node->getImage()->getSize().cy;
 	}
 
-	top += ui::dpi96(c_titlePad);
+	top += dpi96(c_titlePad);
 
 	const RefArray< Pin >& inputPins = node->getInputPins();
 	const RefArray< Pin >& outputPins = node->getOutputPins();
@@ -226,7 +226,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
-		Point pos(
+		const Point pos(
 			rc.left,
 			top + i * textHeight - pinSize.cy / 2
 		);
@@ -237,13 +237,13 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			Point(0, 0),
 			pinSize,
 			hotPin == inputPins[i] ? m_imagePinHot : m_imagePin,
-			ui::BlendMode::Alpha
+			BlendMode::Alpha
 		);
 	}
 
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
 	{
-		Point pos(
+		const Point pos(
 			rc.right - pinSize.cx,
 			top + i * textHeight - pinSize.cy / 2
 		);
@@ -254,7 +254,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			Point(0, 0),
 			pinSize,
 			hotPin == outputPins[i] ? m_imagePinHot : m_imagePin,
-			ui::BlendMode::Alpha
+			BlendMode::Alpha
 		);
 	}
 
@@ -278,7 +278,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
-				Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				Point(pos.x + dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 				extent
 			),
 			label,
@@ -303,7 +303,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
-				Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				Point(pos.x - extent.cx - dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 				extent
 			),
 			label,
@@ -315,8 +315,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
-	int32_t height = ui::dpi96(c_marginHeight * 2 + c_topMargin + c_titlePad);
+	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	int32_t height = dpi96(c_marginHeight * 2 + c_topMargin + c_titlePad);
 
 	if (!node->getTitle().empty())
 		height += textHeight;
@@ -326,7 +326,7 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	if (node->getImage())
 		height += node->getImage()->getSize().cy;
 
-	int32_t pins = std::max< int32_t >(
+	const int32_t pins = std::max< int32_t >(
 		int32_t(node->getInputPins().size()),
 		int32_t(node->getOutputPins().size())
 	);
@@ -335,12 +335,12 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	int32_t maxWidthPins[2] = { 0, 0 };
 	for (auto inputPin : node->getInputPins())
 	{
-		int32_t labelExtent = getQuantizedTextWidth(graph, inputPin->getLabel());
+		const int32_t labelExtent = getQuantizedTextWidth(graph, inputPin->getLabel());
 		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 	for (auto outputPin : node->getOutputPins())
 	{
-		int32_t labelExtent = getQuantizedTextWidth(graph, outputPin->getLabel());
+		const int32_t labelExtent = getQuantizedTextWidth(graph, outputPin->getLabel());
 		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 
@@ -349,22 +349,22 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	if (!node->getTitle().empty())
 	{
 		graph->setFont(graph->getPaintSettings()->getFontBold());
-		int32_t titleExtent = getQuantizedTextWidth(graph, node->getTitle());
+		const int32_t titleExtent = getQuantizedTextWidth(graph, node->getTitle());
 		width = std::max(width, titleExtent);
 		graph->setFont(graph->getPaintSettings()->getFont());
 	}
 	if (!node->getInfo().empty())
 	{
-		int32_t infoExtent = getQuantizedTextWidth(graph, node->getInfo());
+		const int32_t infoExtent = getQuantizedTextWidth(graph, node->getInfo());
 		width = std::max(width, infoExtent);
 	}
 	if (node->getImage())
 	{
-		int32_t imageExtent = node->getImage()->getSize().cx;
+		const int32_t imageExtent = node->getImage()->getSize().cx;
 		width = std::max(width, imageExtent);
 	}
 
-	width += ui::dpi96(c_marginWidth * 2 + c_pinCenterPad + c_pinNamePad * 2);
+	width += dpi96(c_marginWidth * 2 + c_pinCenterPad + c_pinNamePad * 2);
 
 	return Size(width, height);
 }

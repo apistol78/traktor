@@ -33,7 +33,7 @@ class GraphCanvas : public Object
 	T_RTTI_CLASS;
 
 public:
-	GraphCanvas(Canvas* canvas, const PaintSettings* paintSettings, float scale);
+	explicit GraphCanvas(Canvas* canvas, const PaintSettings* paintSettings, float scale);
 
 	void setForeground(const Color4ub& foreground);
 
@@ -41,9 +41,11 @@ public:
 
 	void setFont(const Font& font);
 
-	void drawLine(const Point& start, const Point& end);
+	void drawLine(const Point& start, const Point& end, int32_t thickness);
 
 	void drawLines(const AlignedVector< Point >& pnts, int32_t thickness);
+
+	void drawCurve(const Point& start, const Point& control, const Point& end, int32_t thickness);
 
 	void drawRect(const Rect& rc);
 

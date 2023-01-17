@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Const.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"

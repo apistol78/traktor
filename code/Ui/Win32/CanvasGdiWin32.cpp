@@ -345,6 +345,10 @@ void CanvasGdiWin32::drawLines(const Point* pnts, int npnts)
 		LineTo(m_hDC, pnts[i].x, pnts[i].y);
 }
 
+void CanvasGdiWin32::drawCurve(const Point& start, const Point& control, const Point& end)
+{
+}
+
 void CanvasGdiWin32::fillCircle(int x, int y, float radius)
 {
 	HGDIOBJ hCurrentPen = SelectObject(m_hDC, (HPEN)GetStockObject(NULL_PEN));

@@ -34,9 +34,9 @@ bool Dictionary::create(const Path& blobsPath)
 		log::info << L"Loading " << blobFiles.size() << L" blobs..." << Endl;
 		for (auto blobFile : blobFiles)
 		{
-			std::wstring blobFileName = blobFile->getPath().getFileNameNoExtension();
+			const std::wstring blobFileName = blobFile->getPath().getFileNameNoExtension();
 
-			Key blobKey = Key::parse(blobFileName);
+			const Key blobKey = Key::parse(blobFileName);
 			if (!blobKey.valid())
 				continue;
 
@@ -118,7 +118,7 @@ bool Dictionary::remove(const Key& key)
 		if (it == m_blobs.end())
 			return false;
 
-		uint64_t size = it->second->size();
+		const uint64_t size = it->second->size();
 
 		if (!it->second->remove())
 			return false;

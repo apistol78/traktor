@@ -464,7 +464,7 @@ void CanvasDirect2DWin32::drawPixel(int x, int y, const Color4ub& c)
 
 void CanvasDirect2DWin32::drawLine(int x1, int y1, int x2, int y2)
 {
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawLine(
 		D2D1::Point2F(x1 + 0.5f, y1 + 0.5f),
 		D2D1::Point2F(x2 + 0.5f, y2 + 0.5f),
@@ -505,7 +505,43 @@ void CanvasDirect2DWin32::drawLines(const Point* pnts, int npnts)
 	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
 	d2dGeometrySink->Close();
 
-	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	m_d2dRenderTarget->DrawGeometry(
+		d2dPathGeometry,
+		m_d2dForegroundBrush,
+		m_strokeWidth
+	);
+}
+
+void CanvasDirect2DWin32::drawCurve(const Point& start, const Point& control, const Point& end)
+{
+	HRESULT hr;
+
+	ComRef< ID2D1PathGeometry > d2dPathGeometry;
+	hr = s_d2dFactory->CreatePathGeometry(&d2dPathGeometry.getAssign());
+	if (FAILED(hr))
+		return;
+
+	ComRef< ID2D1GeometrySink > d2dGeometrySink;
+	hr = d2dPathGeometry->Open(&d2dGeometrySink.getAssign());
+	if (FAILED(hr))
+		return;
+
+	d2dGeometrySink->BeginFigure(
+		D2D1::Point2F(start.x + 0.5f, start.y + 0.5f),
+		D2D1_FIGURE_BEGIN_HOLLOW
+	);
+
+	D2D1_BEZIER_SEGMENT segment;
+	segment.point1 = D2D1::Point2F(start.x + 0.5f, start.y + 0.5f);
+	segment.point2 = D2D1::Point2F(control.x + 0.5f, control.y + 0.5f);
+	segment.point3 = D2D1::Point2F(end.x + 0.5f, end.y + 0.5f);
+	d2dGeometrySink->AddBezier(segment);
+
+	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
+	d2dGeometrySink->Close();
+
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawGeometry(
 		d2dPathGeometry,
 		m_d2dForegroundBrush,
@@ -542,7 +578,7 @@ void CanvasDirect2DWin32::drawSpline(const Point* pnts, int npnts)
 
 void CanvasDirect2DWin32::fillRect(const Rect& rc)
 {
-	Rect rc2 = rc.getUnified();
+	const Rect rc2 = rc.getUnified();
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 

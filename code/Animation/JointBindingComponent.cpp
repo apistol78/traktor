@@ -53,12 +53,12 @@ void JointBindingComponent::setTransform(const Transform& transform)
 
 Aabb3 JointBindingComponent::getBoundingBox() const
 {
-	Transform invTransform = m_transform.inverse();
+	const Transform invTransform = m_transform.inverse();
 
 	Aabb3 boundingBox;
 	for (auto& binding : m_bindings)
 	{
-		Aabb3 childBoundingBox = binding.entity->getBoundingBox();
+		const Aabb3 childBoundingBox = binding.entity->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
 			const Transform childTransform = binding.entity->getTransform();

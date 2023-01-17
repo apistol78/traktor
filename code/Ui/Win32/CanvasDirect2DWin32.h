@@ -77,6 +77,8 @@ public:
 
 	virtual void drawLines(const Point* pnts, int npnts) override final;
 
+	virtual void drawCurve(const Point& start, const Point& control, const Point& end) override final;
+
 	virtual void fillCircle(int x, int y, float radius) override final;
 
 	virtual void drawCircle(int x, int y, float radius) override final;

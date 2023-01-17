@@ -53,6 +53,8 @@ public:
 
 	virtual void drawLines(const Point* pnts, int npnts) = 0;
 
+	virtual void drawCurve(const Point& start, const Point& control, const Point& end) = 0;
+
 	virtual void fillCircle(int x, int y, float radius) = 0;
 
 	virtual void drawCircle(int x, int y, float radius) = 0;

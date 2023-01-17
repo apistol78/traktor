@@ -39,9 +39,9 @@ void calculateLinearSpline(Point s1, Point d1, AlignedVector< Point >& outSpline
 	s.x += dpi96(c_sourcePinOffset);
 	d.x -= dpi96(c_destPinOffset);
 
-	Point r(d.x - s.x, d.y - s.y);
-	Point ar(traktor::abs(r.x), traktor::abs(r.y));
-	Point c((s.x + d.x) / 2, (s.y + d.y) / 2);
+	const Point r(d.x - s.x, d.y - s.y);
+	const Point ar(traktor::abs(r.x), traktor::abs(r.y));
+	const Point c((s.x + d.x) / 2, (s.y + d.y) / 2);
 
 	Point m1, m2;
 
@@ -170,19 +170,19 @@ bool Edge::hit(const Point& p) const
 		const Point& s = m_spline[i];
 		const Point& d = m_spline[i + 1];
 
-		Vector2 v(float(d.x - s.x), float(d.y - s.y));
+		const Vector2 v(float(d.x - s.x), float(d.y - s.y));
 		if (v.length() <= FUZZY_EPSILON)
 			continue;
 
-		Vector2 V = v.perpendicular();
-		Vector2 R = Vector2(float(s.x), float(s.y)) - P;
+		const Vector2 V = v.perpendicular();
+		const Vector2 R = Vector2(float(s.x), float(s.y)) - P;
 
-		float D = traktor::abs(dot(V, R) / V.length());
+		const float D = traktor::abs(dot(V, R) / V.length());
 		if (D > c_hitWidth)
 			continue;
 
-		Vector2 Pr = P + V * D;
-		float Dr = dot(Pr - Vector2(float(s.x), float(s.y)), v) / (v.length() * v.length());
+		const Vector2 Pr = P + V * D;
+		const float Dr = dot(Pr - Vector2(float(s.x), float(s.y)), v) / (v.length() * v.length());
 		if (Dr < 0.0f || Dr > 1.0f)
 			continue;
 
@@ -204,14 +204,43 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setForeground(color);
 	canvas->setBackground(color);
 
-	Point s = m_source->getPosition() + offset;
-	Point d = m_destination->getPosition() + offset;
+	const Point s = m_source->getPosition() + offset;
+	const Point d = m_destination->getPosition() + offset;
 
 	calculateLinearSpline(s, d, m_spline);
-	canvas->drawLines(m_spline, dpi96(m_thickness));
 
-	Point at = m_destination->getPosition() + offset;
-	Point arrow[] =
+#if defined(_DEBUG)
+	canvas->setBackground(Color4ub(255, 255, 255, 255));
+	for (const auto& p : m_spline)
+	{
+		canvas->fillRect(
+			Rect(
+				Point(p.x - 1, p.y - 1),
+				Size(2, 2)
+			)
+		);
+	}
+	canvas->setBackground(color);
+#endif
+
+	canvas->drawLines(m_spline, dpi96(m_thickness));
+	//canvas->drawLine(m_spline[0], m_spline[1], dpi96(m_thickness));
+	//canvas->drawCurve(
+	//	m_spline[1],
+	//	m_spline[2],
+	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
+	//	dpi96(m_thickness)
+	//);
+	//canvas->drawCurve(
+	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
+	//	m_spline[3],
+	//	m_spline[4],
+	//	dpi96(m_thickness)
+	//);
+	//canvas->drawLine(m_spline[4], m_spline[5], dpi96(m_thickness));
+
+	const Point at = m_destination->getPosition() + offset;
+	const Point arrow[] =
 	{
 		Point(at.x - dpi96(12), at.y - dpi96(5)),
 		Point(at.x - dpi96(2) , at.y),
@@ -225,9 +254,9 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 		canvas->setFont(settings->getFontLabel());
 
 		const auto sz = imageLabel->getSize();
-		Size szLabel = canvas->getTextExtent(m_text);
+		const Size szLabel = canvas->getTextExtent(m_text);
 
-		Point lpt(
+		const Point lpt(
 			s.x + dpi96(c_sourceLabelOffset),
 			s.y - sz.cy / 2
 		);

@@ -35,7 +35,7 @@ class T_DLLCLASS Canvas : public Object
 	T_RTTI_CLASS;
 
 public:
-	Canvas(ICanvas* canvas);
+	explicit Canvas(ICanvas* canvas);
 
 	void setForeground(const Color4ub& foreground);
 
@@ -72,6 +72,8 @@ public:
 	void drawLines(const std::vector< Point >& pnts);
 
 	void drawLines(const Point* pnts, int npnts);
+
+	void drawCurve(const Point& start, const Point& control, const Point& end);
 
 	void fillCircle(const Point& p, float radius);
 

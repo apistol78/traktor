@@ -114,6 +114,11 @@ void Canvas::drawLines(const Point* pnts, int npnts)
 	m_canvas->drawLines(pnts, npnts);
 }
 
+void Canvas::drawCurve(const Point& start, const Point& control, const Point& end)
+{
+	m_canvas->drawCurve(start, control, end);
+}
+
 void Canvas::fillCircle(const Point& p, float radius)
 {
 	m_canvas->fillCircle(p.x, p.y, radius);

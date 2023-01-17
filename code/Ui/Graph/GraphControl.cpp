@@ -1035,7 +1035,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)
 	{
 		graphCanvas.setForeground(ss->getColor(this, L"color-edge-hint"));
-		graphCanvas.drawLine(m_edgeOrigin, m_cursor);
+		graphCanvas.drawLine(m_edgeOrigin, m_cursor, 1);
 	}
 
 	// Selection rectangle.
