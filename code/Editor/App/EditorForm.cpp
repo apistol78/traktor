@@ -432,6 +432,7 @@ EditorForm::EditorForm()
 :	m_threadAssetMonitor(nullptr)
 ,	m_threadBuild(nullptr)
 ,	m_buildStep(0)
+,	m_suppressTabFocusEvent(false)
 {
 }
 
@@ -2204,6 +2205,13 @@ void EditorForm::saveAllDocuments()
 
 bool EditorForm::closeEditor(ui::TabPage* tabPage)
 {
+	// Prevent focus events being fired while we're shutting down editor,
+	// focus events are designed to swap active page which we don't want atm.
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[&](){ m_suppressTabFocusEvent = true; },
+		[&](){ m_suppressTabFocusEvent = false; }
+	);
+
 	Ref< ui::Tab > tab = tabPage->getTab();
 
 	// Get associated objects from closing tab page.
@@ -2245,6 +2253,8 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 
 	if (m_activeEditorPage == editorPage)
 	{
+		T_FATAL_ASSERT(document == m_activeDocument);
+
 		safeDestroy(m_activeEditorPage);
 		safeClose(m_activeDocument);
 		safeDestroy(tabPage);
@@ -2793,7 +2803,7 @@ void EditorForm::eventTabChild(ui::ChildEvent* event)
 
 void EditorForm::eventTabFocus(ui::FocusEvent* event)
 {
-	if (!event->gotFocus())
+	if (!event->gotFocus() || m_suppressTabFocusEvent)
 		return;
 
 	// Check which tab group contain active editor, determined by focus.

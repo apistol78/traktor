@@ -226,6 +226,7 @@ private:
 	std::wstring m_buildStepMessage;
 	Semaphore m_buildStepMessageLock;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
+	bool m_suppressTabFocusEvent;
 
 	ui::TabPage* getActiveTabPage() const;
 

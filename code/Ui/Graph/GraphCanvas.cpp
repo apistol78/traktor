@@ -88,12 +88,14 @@ void GraphCanvas::setFont(const Font& font)
 	m_canvas->setFont(m_scaledFont);
 }
 
-void GraphCanvas::drawLine(const Point& start, const Point& end)
+void GraphCanvas::drawLine(const Point& start, const Point& end, int32_t thickness)
 {
+	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
 	m_canvas->drawLine(
 		start * m_scale,
 		end * m_scale
 	);
+	m_canvas->setPenThickness(1);
 }
 
 void GraphCanvas::drawLines(const AlignedVector< Point >& pnts, int32_t thickness)
@@ -106,6 +108,13 @@ void GraphCanvas::drawLines(const AlignedVector< Point >& pnts, int32_t thicknes
 
 	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
 	m_canvas->drawLines(tpnts);
+	m_canvas->setPenThickness(1);
+}
+
+void GraphCanvas::drawCurve(const Point& start, const Point& control, const Point& end, int32_t thickness)
+{
+	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->drawCurve(start * m_scale, control * m_scale, end * m_scale);
 	m_canvas->setPenThickness(1);
 }
 

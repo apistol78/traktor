@@ -411,6 +411,10 @@ void CanvasGdiPlusWin32::drawLines(const Point* pnts, int npnts)
 	}
 }
 
+void CanvasGdiWin32::drawCurve(const Point& start, const Point& control, const Point& end)
+{
+}
+
 void CanvasGdiPlusWin32::fillCircle(int x, int y, float radius)
 {
 	m_graphics->FillEllipse(
