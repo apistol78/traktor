@@ -211,7 +211,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 {
 	const StyleSheet* ss = shell->getStyleSheet();
 
-	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
+	const Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 
 	canvas.setBackground(ss->getColor(this, tracking ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rc);
@@ -229,7 +229,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 	if (m_checkBox)
 	{
 		IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
-		Size sz = image->getSize();
+		const Size sz = image->getSize();
 
 		canvas.drawBitmap(
 			Point(rcLabel.right - sz.cx, rcLabel.top + (rcLabel.getHeight() - sz.cy) / 2),

@@ -67,7 +67,7 @@ bool FlowLayout::calculateRects(Widget* widget, const Size& bounds, std::vector<
 		if (!child->acceptLayout())
 			continue;
 
-		Size pref = child->getPreferredSize(bounds);
+		const Size pref = child->getPreferredSize(bounds);
 		Point ext = pos + pref;
 
 		if (ext.x > bounds.cx - m_margin.cx && max > 0)

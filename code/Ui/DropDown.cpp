@@ -155,7 +155,7 @@ int32_t DropDown::getSelected(std::vector< int32_t >& selected) const
 
 std::wstring DropDown::getSelectedItem() const
 {
-	int32_t s = getSelected();
+	const int32_t s = getSelected();
 	if (s >= 0)
 		return getItem(s);
 	else
@@ -164,7 +164,7 @@ std::wstring DropDown::getSelectedItem() const
 
 Object* DropDown::getSelectedData() const
 {
-	int32_t s = getSelected();
+	const int32_t s = getSelected();
 	if (s >= 0)
 		return getData(s);
 	else
@@ -186,7 +186,7 @@ void DropDown::updatePreferedSize()
 	const int32_t marginX = dpi96(16);
 	const int32_t marginY = dpi96(4);
 
-	FontMetric fm = getFontMetric();
+	const FontMetric fm = getFontMetric();
 
 	int32_t h = fm.getHeight();
 	int32_t w = 0;
@@ -232,7 +232,7 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 	if (!selectedItem)
 		return;
 
-	int32_t index = selectedItem->getCommand().getId();
+	const int32_t index = selectedItem->getCommand().getId();
 
 	if (!m_multiple)
 	{
@@ -272,19 +272,19 @@ void DropDown::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	const StyleSheet* ss = getStyleSheet();
 
-	Rect rcInner = getInnerRect();
-	Point at = rcInner.getTopLeft();
-	Size size = rcInner.getSize();
-	int32_t sep = ui::dpi96(14);
+	const Rect rcInner = getInnerRect();
+	const Point at = rcInner.getTopLeft();
+	const Size size = rcInner.getSize();
+	const int32_t sep = ui::dpi96(14);
 	bool hover = isEnable() && m_hover;
 
-	Rect rcText(
+	const Rect rcText(
 		at.x + dpi96(4),
 		at.y + 2,
 		at.x + size.cx - sep - 2,
 		at.y + size.cy - 2
 	);
-	Rect rcButton(
+	const Rect rcButton(
 		at.x + size.cx - sep,
 		at.y + 1,
 		at.x + size.cx - 1,
@@ -304,12 +304,12 @@ void DropDown::eventPaint(PaintEvent* event)
 		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
 	}
 
-	Point center = rcButton.getCenter();
-	ui::Point pnts[] =
+	const Point center = rcButton.getCenter();
+	const Point pnts[] =
 	{
-		ui::Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
-		ui::Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
-		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
+		Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
+		Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
+		Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
 	};
 
 	canvas.setBackground(ss->getColor(this, L"color-arrow"));

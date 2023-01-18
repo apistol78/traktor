@@ -80,11 +80,11 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	auto sz = getInnerRect().getSize();
 	const auto& pt = event->getPosition();
 
-	int32_t value = m_range.clamp(m_value);
-	int32_t dist = sz.cx - dpi96(c_margin) * 2;
-	int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
-	int32_t knobL = knob - dpi96(c_knobWidth) / 2;
-	int32_t knobR = knob + dpi96(c_knobWidth) / 2;
+	const int32_t value = m_range.clamp(m_value);
+	const int32_t dist = sz.cx - dpi96(c_margin) * 2;
+	const int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knobL = knob - dpi96(c_knobWidth) / 2;
+	const int32_t knobR = knob + dpi96(c_knobWidth) / 2;
 
 	if (pt.x >= knobL && pt.x <= knobR)
 	{
@@ -114,9 +114,9 @@ void Slider::eventMouseMove(MouseMoveEvent* event)
 	auto sz = getInnerRect().getSize();
 	const auto& pt = event->getPosition();
 
-	int32_t x = pt.x - dpi96(c_margin);
-	int32_t dist = sz.cx - dpi96(c_margin) * 2;
-	int32_t value = int32_t(m_range.delta() * float(x) / dist);
+	const int32_t x = pt.x - dpi96(c_margin);
+	const int32_t dist = sz.cx - dpi96(c_margin) * 2;
+	const int32_t value = int32_t(m_range.delta() * float(x) / dist);
 
 	m_value = m_range.clamp(value);
 	update();
@@ -140,13 +140,13 @@ void Slider::eventPaint(PaintEvent* event)
 		Point(rcInner.right - dpi96(c_margin), rcInner.getCenter().y)
 	);
 
-	int32_t value = m_range.clamp(m_value);
-	int32_t dist = rcInner.getSize().cx - dpi96(c_margin) * 2;
-	int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
-	int32_t knobL = knob - dpi96(c_knobWidth) / 2;
-	int32_t knobR = knob + dpi96(c_knobWidth) / 2;
+	const int32_t value = m_range.clamp(m_value);
+	const int32_t dist = rcInner.getSize().cx - dpi96(c_margin) * 2;
+	const int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knobL = knob - dpi96(c_knobWidth) / 2;
+	const int32_t knobR = knob + dpi96(c_knobWidth) / 2;
 
-	Rect rcKnob(
+	const Rect rcKnob(
 		Point(knobL, rcInner.top + dpi96(c_knobMarginY)),
 		Point(knobR, rcInner.bottom - dpi96(c_knobMarginY))
 	);

@@ -79,10 +79,10 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(rc);
 
-	int32_t range = m_maxProgress - m_minProgress;
+	const int32_t range = m_maxProgress - m_minProgress;
 	if (range > 0)
 	{
-		int32_t x = rc.left + rc.getWidth() * (m_progress - m_minProgress) / (m_maxProgress - m_minProgress);
+		const int32_t x = rc.left + rc.getWidth() * (m_progress - m_minProgress) / (m_maxProgress - m_minProgress);
 		if (x > 0)
 		{
 			Rect rc2 = rc; rc2.right = rc2.left + x;
@@ -93,9 +93,9 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	}
 	else	// No range; looping progressbar.
 	{
-		int32_t w = rc.getWidth() / 4;
-		int32_t x1 = std::max< int32_t >(m_loop - w, 0);
-		int32_t x2 = std::min< int32_t >(m_loop, rc.getWidth());
+		const int32_t w = rc.getWidth() / 4;
+		const int32_t x1 = std::max< int32_t >(m_loop - w, 0);
+		const int32_t x2 = std::min< int32_t >(m_loop, rc.getWidth());
 
 		Rect rc2 = rc;
 		rc2.left = x1;
@@ -110,7 +110,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	}
 
 	// Draw text centered over progress bar.
-	std::wstring text = getText();
+	const std::wstring text = getText();
 	if (!text.empty())
 	{
 		canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));

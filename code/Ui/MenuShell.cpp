@@ -74,7 +74,7 @@ void MenuShell::add(MenuItem* item)
 
 MenuItem* MenuShell::getItem(const Point& at) const
 {
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
 	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
@@ -87,7 +87,7 @@ MenuItem* MenuShell::getItem(const Point& at) const
 
 	for (auto item : m_items)
 	{
-		Size itemSize(itemWidth, item->getSize(this).cy);
+		const Size itemSize(itemWidth, item->getSize(this).cy);
 		if (Rect(itemTopLeft, itemSize).inside(at))
 			return item;
 		itemTopLeft.y += itemSize.cy;
@@ -98,7 +98,7 @@ MenuItem* MenuShell::getItem(const Point& at) const
 
 bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 {
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
 	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
@@ -111,7 +111,7 @@ bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 
 	for (auto it : m_items)
 	{
-		Size itemSize(itemWidth, item->getSize(this).cy);
+		const Size itemSize(itemWidth, item->getSize(this).cy);
 		if (it == item)
 		{
 			outItemRect = Rect(itemTopLeft, itemSize);
@@ -125,12 +125,12 @@ bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 
 Size MenuShell::getMinimumSize() const
 {
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
 	Size minimumSize(0, 0);
 	for (auto item : m_items)
 	{
-		Size itemSize = item->getSize(this);
+		const Size itemSize = item->getSize(this);
 		minimumSize.cx = std::max(minimumSize.cx, itemSize.cx);
 		minimumSize.cy += itemSize.cy;
 	}
@@ -205,7 +205,7 @@ void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 		return;
 
 	// Get active item from mouse position.
-	Point clientPosition = screenToClient(event->getPosition());
+	const Point clientPosition = screenToClient(event->getPosition());
 	MenuItem* item = getItem(clientPosition);
 	if (item != nullptr)
 	{
@@ -233,7 +233,7 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 	)
 		return;
 
-	Point clientPosition = screenToClient(event->getPosition());
+	const Point clientPosition = screenToClient(event->getPosition());
 	MenuItem* item = getItem(clientPosition);
 	if (item == m_activeItem)
 	{
@@ -281,8 +281,8 @@ void MenuShell::eventSize(SizeEvent* e)
 {
 	if (m_scrollBar != nullptr)
 	{
-		Rect rcInner = getInnerRect();
-		Size szPreferred = m_scrollBar->getPreferredSize(rcInner.getSize());
+		const Rect rcInner = getInnerRect();
+		const Size szPreferred = m_scrollBar->getPreferredSize(rcInner.getSize());
 
 		m_scrollBar->setRect(Rect(
 			rcInner.right - szPreferred.cx - 1, rcInner.top + 1,

@@ -43,7 +43,7 @@ void FloodLayout::update(Widget* widget)
 	if (!child)
 		return;
 
-	Rect rc = widget->getInnerRect().inflate(-m_margin.cx, -m_margin.cy);
+	const Rect rc = widget->getInnerRect().inflate(-m_margin.cx, -m_margin.cy);
 	child->setRect(rc);
 }
 

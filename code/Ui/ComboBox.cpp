@@ -78,7 +78,7 @@ std::wstring ComboBox::getSelectedItem() const
 
 void ComboBox::eventSize(SizeEvent* event)
 {
-	Size sz = event->getSize();
+	const Size sz = event->getSize();
 	m_edit->setRect(Rect(Point(0, 0), Size(sz.cx - 16, 16)));
 	m_buttonArrow->setRect(Rect(Point(sz.cx - 16, 0), Size(16, 16)));
 	m_listBox->setRect(Rect(Point(0, 16), Size(sz.cx, sz.cy - 16)));

@@ -63,12 +63,12 @@ void ConfigDialog::destroy()
 
 void ConfigDialog::update(const Rect* rc, bool immediate)
 {
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
-	Size ok = m_ok->getPreferredSize(rcInner.getSize());
-	Size cancel = m_cancel->getPreferredSize(rcInner.getSize());
+	const Size ok = m_ok->getPreferredSize(rcInner.getSize());
+	const Size cancel = m_cancel->getPreferredSize(rcInner.getSize());
 
-	int32_t four = dpi96(4);
+	const int32_t four = dpi96(4);
 	if (m_apply)
 	{
 		Size apply = m_apply->getPreferredSize(rcInner.getSize());
@@ -91,7 +91,7 @@ Rect ConfigDialog::getInnerRect() const
 	Rect rc = Dialog::getInnerRect();
 	if (m_ok)
 	{
-		int32_t four = dpi96(4);
+		const int32_t four = dpi96(4);
 		rc.bottom -= m_ok->getPreferredSize(rc.getSize()).cy + 2 * four + four;
 	}
 	return rc;

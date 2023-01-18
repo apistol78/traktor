@@ -116,8 +116,8 @@ void Image::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
-	Size imageSize = m_image->getSize();
-	Size clientSize = getInnerRect().getSize();
+	const Size imageSize = m_image->getSize();
+	const Size clientSize = getInnerRect().getSize();
 	Size drawSize = clientSize;
 
 	if (m_transparent || m_keepAspect)
@@ -143,8 +143,8 @@ void Image::eventPaint(PaintEvent* event)
 
 		if (m_keepAspect)
 		{
-			float imageAspect = (float)imageSize.cx / imageSize.cy;
-			float drawAspect = (float)drawSize.cx / drawSize.cy;
+			const float imageAspect = (float)imageSize.cx / imageSize.cy;
+			const float drawAspect = (float)drawSize.cx / drawSize.cy;
 			if (drawAspect > imageAspect)
 				drawSize.cx = (int32_t)(drawSize.cy * imageAspect);
 			else

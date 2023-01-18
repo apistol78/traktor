@@ -34,7 +34,7 @@ EditValidator::Result NumericEditValidator::validate(const std::wstring& text) c
 
 	while (state >= 0 && pos < int(text.length()))
 	{
-		wchar_t ch = text[pos];
+		const wchar_t ch = text[pos];
 		switch (state)
 		{
 		// Trim leading whitespace.
@@ -112,7 +112,7 @@ EditValidator::Result NumericEditValidator::validate(const std::wstring& text) c
 	{
 		if (!text.empty())
 		{
-			float v = parseString< float >(text);
+			const float v = parseString< float >(text);
 			if (v < m_min || v > m_max)
 				result = EditValidator::VrInvalid;
 		}

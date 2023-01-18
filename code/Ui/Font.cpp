@@ -68,15 +68,15 @@ int32_t Font::getSize() const
 void Font::setPixelSize(int32_t size)
 {
 	T_FATAL_ASSERT (size >= 0);
-	int32_t dpi = getSystemDPI();
-	float inches = float(size) / dpi;
+	const int32_t dpi = getSystemDPI();
+	const float inches = float(size) / dpi;
 	m_params.size = int32_t(inches * 96.0f);
 }
 
 int32_t Font::getPixelSize() const
 {
-	int32_t dpi = getSystemDPI();
-	float inches = m_params.size / 96.0f;
+	const int32_t dpi = getSystemDPI();
+	const float inches = m_params.size / 96.0f;
 	return int32_t(inches * dpi + 0.5f);
 }
 

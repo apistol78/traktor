@@ -54,7 +54,7 @@ void EditList::eventDoubleClick(MouseDoubleClickEvent* event)
 
 	for (int i = 0; i < count(); ++i)
 	{
-		Rect rc = getItemRect(i);
+		const Rect rc = getItemRect(i);
 		if (rc.inside(pt))
 		{
 			m_editId = i;

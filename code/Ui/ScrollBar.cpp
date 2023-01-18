@@ -124,9 +124,9 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 
 	if (m_range > 0)
 	{
-		int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
-		int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-		int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
+		const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
+		const int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+		const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 		if (
 			getPrimaryPosition(event->getPosition(), m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + dpi96(16) + sliderTop &&
@@ -171,12 +171,11 @@ void ScrollBar::eventMouseMove(MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
-	int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
-	int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-
-	int32_t position0 = m_position;
+	const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - dpi96(16) * 2;
+	const int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+	const int32_t position0 = m_position;
 
 	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - dpi96(16) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
 	m_position = clamp(m_position, 0, m_range - (m_page - 1));
@@ -202,14 +201,14 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t dh = m_range - (m_page - 1);
+			const int32_t dh = m_range - (m_page - 1);
 			if (dh > 0)
 			{
-				int32_t sliderRange = rcInner.getHeight() - dpi96(16) * 2;
-				int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-				int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
+				const int32_t sliderRange = rcInner.getHeight() - dpi96(16) * 2;
+				const int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+				const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
-				Rect rcSlider(
+				const Rect rcSlider(
 					rcInner.left + dpi96(4),
 					rcInner.top + dpi96(16) + sliderTop,
 					rcInner.right - dpi96(4),
@@ -221,37 +220,37 @@ void ScrollBar::eventPaint(PaintEvent* event)
 			}
 		}
 
-		Rect rcButtonUp(
+		const Rect rcButtonUp(
 			rcInner.left,
 			rcInner.top,
 			rcInner.right,
 			rcInner.top + dpi96(16)
 		);
 
-		Point centerUp = rcButtonUp.getCenter();
-		ui::Point arrowUp[] =
+		const Point centerUp = rcButtonUp.getCenter();
+		const Point arrowUp[] =
 		{
-			ui::Point(centerUp.x - dpi96(4), centerUp.y + dpi96(2)),
-			ui::Point(centerUp.x + dpi96(4), centerUp.y + dpi96(2)),
-			ui::Point(centerUp.x, centerUp.y - dpi96(2))
+			Point(centerUp.x - dpi96(4), centerUp.y + dpi96(2)),
+			Point(centerUp.x + dpi96(4), centerUp.y + dpi96(2)),
+			Point(centerUp.x, centerUp.y - dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
 		canvas.fillPolygon(arrowUp, 3);
 
-		Rect rcButtonDown(
+		const Rect rcButtonDown(
 			rcInner.left,
 			rcInner.bottom - dpi96(16),
 			rcInner.right,
 			rcInner.bottom
 		);
 
-		Point centerDown = rcButtonDown.getCenter();
-		ui::Point arrowDown[] =
+		const Point centerDown = rcButtonDown.getCenter();
+		const Point arrowDown[] =
 		{
-			ui::Point(centerDown.x - dpi96(4), centerDown.y - dpi96(2)),
-			ui::Point(centerDown.x + dpi96(4), centerDown.y - dpi96(2)),
-			ui::Point(centerDown.x, centerDown.y + dpi96(2))
+			Point(centerDown.x - dpi96(4), centerDown.y - dpi96(2)),
+			Point(centerDown.x + dpi96(4), centerDown.y - dpi96(2)),
+			Point(centerDown.x, centerDown.y + dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -261,14 +260,14 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t dh = m_range - (m_page - 1);
+			const int32_t dh = m_range - (m_page - 1);
 			if (dh > 0)
 			{
-				int32_t sliderRange = rcInner.getWidth() - dpi96(16) * 2;
-				int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-				int32_t sliderTop = m_position * (sliderRange - sliderHeight) / dh;
+				const int32_t sliderRange = rcInner.getWidth() - dpi96(16) * 2;
+				const int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+				const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / dh;
 
-				Rect rcSlider(
+				const Rect rcSlider(
 					rcInner.left + dpi96(16) + sliderTop,
 					rcInner.top + dpi96(4),
 					rcInner.left + dpi96(16) + sliderTop + sliderHeight,
@@ -280,37 +279,37 @@ void ScrollBar::eventPaint(PaintEvent* event)
 			}
 		}
 
-		Rect rcButtonUp(
+		const Rect rcButtonUp(
 			rcInner.left,
 			rcInner.top,
 			rcInner.left + dpi96(16),
 			rcInner.bottom
 		);
 
-		Point centerUp = rcButtonUp.getCenter();
-		ui::Point arrowUp[] =
+		const Point centerUp = rcButtonUp.getCenter();
+		const Point arrowUp[] =
 		{
-			ui::Point(centerUp.x + dpi96(2), centerUp.y - dpi96(4)),
-			ui::Point(centerUp.x + dpi96(2), centerUp.y + dpi96(4)),
-			ui::Point(centerUp.x - dpi96(2), centerUp.y)
+			Point(centerUp.x + dpi96(2), centerUp.y - dpi96(4)),
+			Point(centerUp.x + dpi96(2), centerUp.y + dpi96(4)),
+			Point(centerUp.x - dpi96(2), centerUp.y)
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
 		canvas.fillPolygon(arrowUp, 3);
 
-		Rect rcButtonDown(
+		const Rect rcButtonDown(
 			rcInner.right - dpi96(16),
 			rcInner.top,
 			rcInner.right,
 			rcInner.bottom
 		);
 
-		Point centerDown = rcButtonDown.getCenter();
-		ui::Point arrowDown[] =
+		const Point centerDown = rcButtonDown.getCenter();
+		const Point arrowDown[] =
 		{
-			ui::Point(centerDown.x - dpi96(2), centerDown.y - dpi96(4)),
-			ui::Point(centerDown.x - dpi96(2), centerDown.y + dpi96(4)),
-			ui::Point(centerDown.x + dpi96(2), centerDown.y)
+			Point(centerDown.x - dpi96(2), centerDown.y - dpi96(4)),
+			Point(centerDown.x - dpi96(2), centerDown.y + dpi96(4)),
+			Point(centerDown.x + dpi96(2), centerDown.y)
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));

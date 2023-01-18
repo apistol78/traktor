@@ -70,36 +70,40 @@ Size Splitter::getMinimumSize() const
 	{
 		size.cx = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx += left->getMinimumSize().cx;
-			size.cy = std::max< int >(size.cy, left->getMinimumSize().cy);
+			const auto mnsz = left->getMinimumSize();
+			size.cx += mnsz.cx;
+			size.cy = std::max< int >(size.cy, mnsz.cy);
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx += right->getMinimumSize().cx;
-			size.cy = std::max< int >(size.cy, right->getMinimumSize().cy);
+			const auto mnsz = right->getMinimumSize();
+			size.cx += mnsz.cx;
+			size.cy = std::max< int >(size.cy, mnsz.cy);
 		}
 	}
 	else
 	{
 		size.cy = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, left->getMinimumSize().cx);
-			size.cy += left->getMinimumSize().cy;
+			const auto mnsz = left->getMinimumSize();
+			size.cx = std::max< int >(size.cx, mnsz.cx);
+			size.cy += mnsz.cy;
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, right->getMinimumSize().cx);
-			size.cy += right->getMinimumSize().cy;
+			const auto mnsz = right->getMinimumSize();
+			size.cx = std::max< int >(size.cx, mnsz.cx);
+			size.cy += mnsz.cy;
 		}
 	}
 	return size;
@@ -112,36 +116,40 @@ Size Splitter::getPreferredSize(const Size& hint) const
 	{
 		size.cx = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx += left->getPreferredSize(hint).cx;
-			size.cy = std::max< int >(size.cy, left->getPreferredSize(hint).cy);
+			const auto pfsz = left->getPreferredSize(hint);
+			size.cx += pfsz.cx;
+			size.cy = std::max< int >(size.cy, pfsz.cy);
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx += right->getPreferredSize(hint).cx;
-			size.cy = std::max< int >(size.cy, right->getPreferredSize(hint).cy);
+			const auto pfsz = right->getPreferredSize(hint);
+			size.cx += pfsz.cx;
+			size.cy = std::max< int >(size.cy, pfsz.cy);
 		}
 	}
 	else
 	{
 		size.cy = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, left->getPreferredSize(hint).cx);
-			size.cy += left->getPreferredSize(hint).cy;
+			const auto pfsz = left->getPreferredSize(hint);
+			size.cx = std::max< int >(size.cx, pfsz.cx);
+			size.cy += pfsz.cy;
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, right->getPreferredSize(hint).cx);
-			size.cy += right->getPreferredSize(hint).cy;
+			const auto pfsz = right->getPreferredSize(hint);
+			size.cx = std::max< int >(size.cx, pfsz.cx);
+			size.cy += pfsz.cy;
 		}
 	}
 	return size;
@@ -154,36 +162,40 @@ Size Splitter::getMaximumSize() const
 	{
 		size.cx = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx += left->getMaximumSize().cx;
-			size.cy = std::max< int >(size.cy, left->getMaximumSize().cy);
+			const auto mxsz = left->getMaximumSize();
+			size.cx += mxsz.cx;
+			size.cy = std::max< int >(size.cy, mxsz.cy);
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx += right->getMaximumSize().cx;
-			size.cy = std::max< int >(size.cy, right->getMaximumSize().cy);
+			const auto mxsz = right->getMaximumSize();
+			size.cx += mxsz.cx;
+			size.cy = std::max< int >(size.cy, mxsz.cy);
 		}
 	}
 	else
 	{
 		size.cy = ui::dpi96(c_splitterSize);
 
-		Widget* left = getLeftWidget();
+		const Widget* left = getLeftWidget();
 		if (left != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, left->getMaximumSize().cx);
-			size.cy += left->getMaximumSize().cy;
+			const auto mxsz = left->getMaximumSize();
+			size.cx = std::max< int >(size.cx, mxsz.cx);
+			size.cy += mxsz.cy;
 		}
 
-		Widget* right = getRightWidget();
+		const Widget* right = getRightWidget();
 		if (right != nullptr)
 		{
-			size.cx = std::max< int >(size.cx, right->getMaximumSize().cx);
-			size.cy += right->getMaximumSize().cy;
+			const auto mxsz = right->getMaximumSize();
+			size.cx = std::max< int >(size.cx, mxsz.cx);
+			size.cy += mxsz.cy;
 		}
 	}
 	return size;
@@ -194,10 +206,10 @@ void Splitter::update(const Rect* rc, bool immediate)
 	Widget* left = getLeftWidget();
 	Widget* right = getRightWidget();
 
-	Rect inner = getInnerRect();
+	const Rect inner = getInnerRect();
 	if (left != nullptr && right != nullptr)
 	{
-		int position = getAbsolutePosition();
+		const int position = getAbsolutePosition();
 
 		Rect rcLeft(0, 0, 0, 0);
 		if (m_vertical == true)
@@ -276,9 +288,9 @@ void Splitter::setAbsolutePosition(int position)
 
 void Splitter::eventMouseMove(MouseMoveEvent* event)
 {
-	Point mousePosition = event->getPosition();
-	int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
-	int32_t position = getAbsolutePosition();
+	const Point mousePosition = event->getPosition();
+	const int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
+	const int32_t position = getAbsolutePosition();
 
 	if (m_drag)
 	{
@@ -305,9 +317,9 @@ void Splitter::eventMouseMove(MouseMoveEvent* event)
 
 void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point mousePosition = event->getPosition();
-	int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
-	int32_t position = getAbsolutePosition();
+	const Point mousePosition = event->getPosition();
+	const int32_t pos = m_vertical ? mousePosition.x : mousePosition.y;
+	const int32_t position = getAbsolutePosition();
 
 	if (
 		pos >= position - ui::dpi96(c_splitterSize) / 2 &&
