@@ -24,20 +24,22 @@ namespace traktor
 
 class Job;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IRenderSystem;
 class ITexture;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 class IVideoDecoder;
 
-/*! \brief
+/*!
  * \ingroup Video
  */
 class T_DLLCLASS Video : public Object
@@ -78,5 +80,4 @@ private:
 	void decodeFrame(uint32_t frame);
 };
 
-	}
 }

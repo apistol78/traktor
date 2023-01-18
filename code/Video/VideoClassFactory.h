@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 class T_DLLCLASS VideoClassFactory : public IRuntimeClassFactory
 {
@@ -31,5 +29,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }

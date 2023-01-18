@@ -11,10 +11,8 @@
 #include "Video/VideoClassFactory.h"
 #include "Video/VideoTexture.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.video.VideoClassFactory", 0, VideoClassFactory, IRuntimeClassFactory)
 
@@ -24,5 +22,4 @@ void VideoClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classVideoTexture);
 }
 
-	}
 }

@@ -18,14 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 class VideoDecoderTheoraImpl;
 
-/*! \brief
+/*!
  * \ingroup Video
  */
 class T_DLLCLASS VideoDecoderTheora : public IVideoDecoder
@@ -48,5 +46,4 @@ private:
 	Ref< VideoDecoderTheoraImpl > m_impl;
 };
 
-	}
 }

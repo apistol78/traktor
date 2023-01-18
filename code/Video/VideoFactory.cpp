@@ -13,10 +13,8 @@
 #include "Video/VideoTexture.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoFactory", VideoFactory, resource::IResourceFactory)
 
@@ -44,11 +42,11 @@ Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, 
 {
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	Ref< VideoDecoderTheora > decoder = new VideoDecoderTheora();
 	if (!decoder->create(stream))
-		return 0;
+		return nullptr;
 
 	if (is_type_of< Video >(productType))
 	{
@@ -63,8 +61,7 @@ Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, 
 			return videoTexture;
 	}
 
-	return 0;
+	return nullptr;
 }
 
-	}
 }

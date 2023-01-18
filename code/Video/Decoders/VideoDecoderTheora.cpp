@@ -14,18 +14,16 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
+	namespace
 	{
-		namespace
-		{
 
 uint32_t YCbCr2RGB8(uint8_t Y, uint8_t Cb, uint8_t Cr)
 {
-	float r = Y * 298.082f / 256.0f + Cr * 408.583f / 256.0f - 222.921f;
-	float g = Y * 298.082f / 256.0f - Cb * 100.291f / 256.0f - Cr * 208.120f / 256.0f + 135.576f;
-	float b = Y * 298.082f / 256.0f + Cb * 516.412f / 256.0f - 276.836f;
+	const float r = Y * 298.082f / 256.0f + Cr * 408.583f / 256.0f - 222.921f;
+	const float g = Y * 298.082f / 256.0f - Cb * 100.291f / 256.0f - Cr * 208.120f / 256.0f + 135.576f;
+	const float b = Y * 298.082f / 256.0f + Cb * 516.412f / 256.0f - 276.836f;
 
 	return
 		(uint32_t(clamp(r, 0.0f, 255.0f))) |
@@ -34,19 +32,11 @@ uint32_t YCbCr2RGB8(uint8_t Y, uint8_t Cb, uint8_t Cr)
 		0xff000000;
 }
 
-		}
+	}
 
 class VideoDecoderTheoraImpl : public Object
 {
 public:
-	VideoDecoderTheoraImpl()
-	:	m_ts(nullptr)
-	,	m_td(nullptr)
-	,	m_stateflag(0)
-	,	m_theora_p(0)
-	{
-	}
-
 	bool create(IStream* stream)
 	{
 		m_stream = stream;
@@ -65,7 +55,7 @@ public:
 		// Only interested in Theora streams.
 		while (!m_stateflag)
 		{
-			int32_t ret = bufferData();
+			int64_t ret = bufferData();
 			if (ret <= 0)
 				break;
 
@@ -137,7 +127,7 @@ public:
 			else
 			{
 				// Someone needs more data.
-				int32_t ret = bufferData();
+				int64_t ret = bufferData();
 				if (ret <= 0)
 				{
 					log::error << L"End of file while searching for codec headers." << Endl;
@@ -258,9 +248,9 @@ public:
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
-					uint8_t Y = inY[x];
-					uint8_t Cb = inU[x >> 1];
-					uint8_t Cr = inV[x >> 1];
+					const uint8_t Y = inY[x];
+					const uint8_t Cb = inU[x >> 1];
+					const uint8_t Cr = inV[x >> 1];
 					*rgba++ = YCbCr2RGB8(Y, Cb, Cr);
 				}
 			}
@@ -277,9 +267,9 @@ public:
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
-					uint8_t Y = inY[x];
-					uint8_t Cb = inU[x];
-					uint8_t Cr = inV[x];
+					const uint8_t Y = inY[x];
+					const uint8_t Cb = inU[x];
+					const uint8_t Cr = inV[x];
 					*rgba++ = YCbCr2RGB8(Y, Cb, Cr);
 				}
 			}
@@ -296,9 +286,9 @@ public:
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
-					uint8_t Y = inY[x];
-					uint8_t Cb = inU[x];
-					uint8_t Cr = inV[x];
+					const uint8_t Y = inY[x];
+					const uint8_t Cb = inU[x];
+					const uint8_t Cr = inV[x];
 					*rgba++ = YCbCr2RGB8(Y, Cb, Cr);
 				}
 			}
@@ -315,16 +305,16 @@ private:
 	ogg_packet m_op;
 	th_info m_ti;
 	th_comment m_tc;
-	th_setup_info* m_ts;
-	th_dec_ctx* m_td;
-	int m_stateflag;
-	int m_theora_p;
+	th_setup_info* m_ts = nullptr;
+	th_dec_ctx* m_td = nullptr;
+	int m_stateflag = 0;
+	int m_theora_p = 0;
 
-	int32_t bufferData()
+	int64_t bufferData()
 	{
 		char* buffer = ogg_sync_buffer(&m_oy, 4096);
-		int32_t bytes = m_stream->read(buffer, 4096);
-		ogg_sync_wrote(&m_oy, bytes);
+		const int64_t bytes = m_stream->read(buffer, 4096);
+		ogg_sync_wrote(&m_oy, (long)bytes);
 		return bytes;
 	}
 };
@@ -338,7 +328,7 @@ bool VideoDecoderTheora::create(IStream* stream)
 	m_impl = new VideoDecoderTheoraImpl();
 	if (!m_impl->create(stream))
 	{
-		m_impl = 0;
+		m_impl = nullptr;
 		return false;
 	}
 
@@ -363,7 +353,7 @@ void VideoDecoderTheora::rewind()
 
 	m_impl = new VideoDecoderTheoraImpl();
 	if (!m_impl->create(m_stream))
-		m_impl = 0;
+		m_impl = nullptr;
 }
 
 bool VideoDecoderTheora::decode(uint32_t frame, void* bits, uint32_t pitch)
@@ -371,5 +361,4 @@ bool VideoDecoderTheora::decode(uint32_t frame, void* bits, uint32_t pitch)
 	return m_impl ? m_impl->decode(frame, bits, pitch) : false;
 }
 
-	}
 }

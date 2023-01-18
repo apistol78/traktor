@@ -83,7 +83,7 @@ bool VideoPipeline::buildOutput(
 	Ref< IStream > sourceStream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!sourceStream)
 	{
-		log::error << L"Failed to build video asset, unable to open source" << Endl;
+		log::error << L"Failed to build video asset, unable to open source." << Endl;
 		return false;
 	}
 
@@ -95,7 +95,7 @@ bool VideoPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build video asset, unable to create instance" << Endl;
+		log::error << L"Failed to build video asset, unable to create instance." << Endl;
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool VideoPipeline::buildOutput(
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Failed to build video asset, unable to create data stream" << Endl;
+		log::error << L"Failed to build video asset, unable to create data stream." << Endl;
 		instance->revert();
 		return false;
 	}
@@ -116,12 +116,12 @@ bool VideoPipeline::buildOutput(
 
 	if (result && !instance->commit())
 	{
-		log::error << L"Failed to build video asset, unable to commit instance" << Endl;
+		log::error << L"Failed to build video asset, unable to commit instance." << Endl;
 		return false;
 	}
 	else if (!result)
 	{
-		log::error << L"Failed to build video asset, unable to copy source data" << Endl;
+		log::error << L"Failed to build video asset, unable to copy source data." << Endl;
 		instance->revert();
 		return false;
 	}

@@ -23,8 +23,10 @@ namespace traktor
 
 class IStream;
 
-	namespace video
-	{
+}
+
+namespace traktor::video
+{
 
 /*! Video decoder information.
  * \ingroup Video
@@ -55,5 +57,4 @@ public:
 	virtual bool decode(uint32_t frame, void* bits, uint32_t pitch) = 0;
 };
 
-	}
 }

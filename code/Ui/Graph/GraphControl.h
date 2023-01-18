@@ -157,9 +157,7 @@ private:
 	Point m_cursor;
 	Point m_moveOrigin;
 	Point m_edgeOrigin;
-	int m_mode;
-	bool m_moveAll;
-	bool m_moveSelected;
+	int32_t m_mode;
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
 	Ref< Node > m_selectedNode;

@@ -14,10 +14,8 @@
 #include "Video/IVideoDecoder.h"
 #include "Video/VideoTexture.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoTexture", VideoTexture, render::ITexture)
 
@@ -135,10 +133,10 @@ void VideoTexture::decodeThread()
 {
 	while (!m_thread->stopped())
 	{
-		uint32_t frame = uint32_t(m_rate * m_timer.getElapsedTime());
+		const uint32_t frame = uint32_t(m_rate * m_timer.getElapsedTime());
 		if (frame != m_lastDecodedFrame)
 		{
-			bool playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
+			const bool playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
 			if (!playing)
 			{
 				m_decoder->rewind();
@@ -151,5 +149,4 @@ void VideoTexture::decodeThread()
 	}
 }
 
-	}
 }

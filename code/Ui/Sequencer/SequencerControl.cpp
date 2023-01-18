@@ -508,13 +508,13 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
 
 	// Get component sizes.
-	Rect rc = getInnerRect();
-	int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
-	int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
+	const Rect rc = getInnerRect();
+	const int32_t scrollWidth = m_scrollBarV->getPreferredSize(rc.getSize()).cx;
+	const int32_t scrollHeight = m_scrollBarH->getPreferredSize(rc.getSize()).cy;
 
 	// Get scroll offsets.
-	int32_t scrollOffsetX = m_scrollBarH->getPosition();
-	int32_t scrollOffsetY = m_scrollBarV->getPosition();
+	const int32_t scrollOffsetX = m_scrollBarH->getPosition();
+	const int32_t scrollOffsetY = m_scrollBarV->getPosition();
 
 	// Clear background.
 	canvas.setBackground(ss->getColor(this, L"control-background-color"));
@@ -525,7 +525,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
 	// Right sequence edge.
-	int32_t end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
+	const int32_t end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
 
 	// Draw sequences.
 	Rect rcSequence(
@@ -549,41 +549,41 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.resetClipRect();
 
 	// Draw cursor.
-	int32_t x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
+	const int32_t x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
 	if (x >= m_separator && x < rc.right)
 	{
-		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.setForeground(ss->getColor(this, L"cursor-color"));
 		canvas.drawLine(x, rc.top, x, rc.bottom - scrollHeight - 1);
 	}
 
 	// Draw drop position.
 	if (m_dropIndex >= 0)
 	{
-		int32_t y = rc.top - scrollOffsetY + m_dropIndex * sequenceHeight;
-		canvas.setForeground(Color4ub(0, 0, 0));
+		const int32_t y = rc.top - scrollOffsetY + m_dropIndex * sequenceHeight;
+		canvas.setForeground(ss->getColor(this, L"drop-line-color"));
 		canvas.drawLine(rc.left, y - 1, rc.right, y - 1);
 		canvas.drawLine(rc.left, y, rc.right, y);
 		canvas.drawLine(rc.left, y + 1, rc.right, y + 1);
 	}
 
 	// Draw time information.
-	Rect rcTime(
+	const Rect rcTime(
 		rc.left,
-		rc.bottom - scrollHeight,
+		rc.bottom - dpi96(23),
 		rc.left + m_separator,
 		rc.bottom
 	);
 
-	canvas.setBackground(Color4ub(255, 255, 255));
+	canvas.setBackground(ss->getColor(this, L"info-background-color"));
 	canvas.fillRect(rcTime);
 
-	std::wstring ws = str(L"%d ms", m_cursor);
-	Size ext = canvas.getFontMetric().getExtent(ws);
+	const std::wstring ws = str(L"%d ms", m_cursor);
+	const Size ext = canvas.getFontMetric().getExtent(ws);
 
-	canvas.setForeground(Color4ub(0, 0, 0));
+	canvas.setForeground(ss->getColor(this, L"info-color"));
 	canvas.drawText(
 		Point(
-			rcTime.left + 4,
+			rcTime.left + dpi96(8),
 			rcTime.top + (rcTime.getHeight() - ext.cy) / 2
 		),
 		ws
