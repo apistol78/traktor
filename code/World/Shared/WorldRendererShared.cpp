@@ -39,6 +39,7 @@ const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-
 const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
 const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711D-094F-A764-75F76553E81B}");
+const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
 const resource::Id< render::ImageGraph > c_antiAliasLow(L"{71D385F1-8364-C849-927F-5F1249F5DF92}");
 const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}");
 const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
@@ -184,6 +185,14 @@ bool WorldRendererShared::create(
 		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
 			log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
+	}
+
+	// Create motion blur processing.
+	if (m_motionBlurQuality > Quality::Disabled)
+	{
+		resource::Id< render::ImageGraph > motionBlur = c_motionBlurMedium;
+		if (!resourceManager->bind(motionBlur, m_motionBlur))
+			log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
 	}
 
 	// Create antialias processing.
@@ -850,9 +859,11 @@ void WorldRendererShared::setupProcessPass(
 	const Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
 	m_imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
-	StaticVector< render::ImageGraph*, 4 > processes;
+	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
+	if (m_motionBlur)
+		processes.push_back(m_motionBlur);
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
 	if (m_visual)
