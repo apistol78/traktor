@@ -15,10 +15,8 @@
 #include "Render/Image2/AmbientOcclusionData.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AmbientOcclusionData", 0, AmbientOcclusionData, ImagePassOpData)
 
@@ -50,9 +48,9 @@ Ref< const ImagePassOp > AmbientOcclusionData::createInstance(resource::IResourc
 	// Create directions.
 	for (int i = 0; i < sizeof_array(instance->m_directions); ++i)
 	{
-		float a =  TWO_PI * float(i) / sizeof_array(instance->m_directions);
-		float c = std::cos(a);
-		float s = std::sin(a);
+		const float a =  TWO_PI * float(i) / sizeof_array(instance->m_directions);
+		const float c = std::cos(a);
+		const float s = std::sin(a);
 		instance->m_directions[i] = Vector4(c, s, 0.0f, 0.0f);
 	}
 
@@ -91,10 +89,10 @@ Ref< const ImagePassOp > AmbientOcclusionData::createInstance(resource::IResourc
 	{
 		for (uint32_t x = 0; x < 256; ++x)
 		{
-			float a = random.nextFloat() * TWO_PI;
-			float c = std::cos(a);
-			float s = std::sin(a);
-			float j = random.nextFloat();
+			const float a = random.nextFloat() * TWO_PI;
+			const float c = std::cos(a);
+			const float s = std::sin(a);
+			const float j = random.nextFloat();
 
 			data[(x + y * 256) * 4 + 0] = (uint8_t)((c * 0.5f + 0.5f) * 255);
 			data[(x + y * 256) * 4 + 1] = (uint8_t)((s * 0.5f + 0.5f) * 255);
@@ -119,5 +117,4 @@ Ref< const ImagePassOp > AmbientOcclusionData::createInstance(resource::IResourc
 	return instance; 
 }
 
-	}
 }

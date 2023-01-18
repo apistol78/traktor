@@ -16,12 +16,10 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/DirectionalBlur.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 
 const static Handle s_handleTime(L"Time");
 const static Handle s_handleDeltaTime(L"DeltaTime");
@@ -40,7 +38,7 @@ const static Handle s_handleViewInverse(L"ViewInverse");
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DirectionalBlur", DirectionalBlur, ImagePassOp)
 
@@ -107,5 +105,4 @@ void DirectionalBlur::build(
 	screenRenderer->draw(renderContext, m_shader, Shader::Permutation(), pp);
 }
 
-    }
 }

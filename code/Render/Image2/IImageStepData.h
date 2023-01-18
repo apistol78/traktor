@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-    namespace resource
-    {
 
 class IResourceManager;
 
-    }
+}
 
-    namespace render
-    {
+namespace traktor::render
+{
 
 class IImageStep;
 class IRenderSystem;
@@ -44,5 +42,4 @@ public:
     virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
 };
 
-    }
 }

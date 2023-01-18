@@ -15,10 +15,8 @@
 #include "Render/Image2/ImageTargetSetData.h"
 #include "Render/Image2/ImageTextureData.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 1, ImageGraphData, ISerializable)
 
@@ -72,5 +70,4 @@ void ImageGraphData::serialize(ISerializer& s)
     s >> MemberRefArray< ImagePassOpData >(L"ops", m_ops);
 }
 
-    }
 }

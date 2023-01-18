@@ -14,12 +14,10 @@
 #include "Render/Image2/ImagePassData.h"
 #include "Render/Image2/ImagePassOpData.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
+    namespace
     {
-        namespace
-        {
 
 class MemberClear : public MemberComplex
 {
@@ -42,7 +40,7 @@ private:
 	Clear& m_ref;
 };
 
-        }
+       }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 0, ImagePassData, IImageStepData)
 
@@ -73,5 +71,4 @@ void ImagePassData::serialize(ISerializer& s)
     s >> MemberRefArray< ImagePassOpData >(L"ops", m_ops);
 }
 
-    }
 }

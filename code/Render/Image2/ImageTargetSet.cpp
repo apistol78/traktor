@@ -8,10 +8,8 @@
  */
 #include "Render/Image2/ImageTargetSet.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageTargetSet", ImageTargetSet, Object)
 
@@ -44,5 +42,4 @@ const RenderGraphTargetSetDesc& ImageTargetSet::getTargetSetDesc() const
     return m_targetSetDesc;
 }
 
-	}
 }

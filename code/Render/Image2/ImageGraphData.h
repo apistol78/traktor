@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-    namespace resource
-    {
 
 class IResourceManager;
 
-    }
+}
 
-    namespace render
-    {
+namespace traktor::render
+{
 
 class IImageStepData;
 class ImageGraph;
@@ -61,5 +59,4 @@ private:
     RefArray< ImagePassOpData > m_ops;
 };
 
-    }
 }

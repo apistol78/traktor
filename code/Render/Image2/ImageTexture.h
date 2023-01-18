@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 
@@ -35,16 +33,15 @@ class T_DLLCLASS ImageTexture : public Object
 	T_RTTI_CLASS;
 
 public:
-    ImageTexture(handle_t textureId, const resource::Proxy< ITexture >& texture);
+	ImageTexture(handle_t textureId, const resource::Proxy< ITexture >& texture);
 
 	handle_t getTextureId() const;
 
-    const resource::Proxy< ITexture >& getTexture() const;
+	const resource::Proxy< ITexture >& getTexture() const;
 
 private:
 	handle_t m_textureId;
-    resource::Proxy< ITexture > m_texture;
+	resource::Proxy< ITexture > m_texture;
 };
 
-	}
 }

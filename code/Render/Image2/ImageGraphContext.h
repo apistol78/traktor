@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 class RenderGraph;
@@ -92,5 +90,4 @@ private:
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
 };
 
-	}
 }

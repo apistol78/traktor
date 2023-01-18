@@ -8,10 +8,8 @@
  */
 #include "Render/Image2/ImageTexture.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageTexture", ImageTexture, Object)
 
@@ -31,5 +29,4 @@ const resource::Proxy< ITexture >& ImageTexture::getTexture() const
     return m_texture;
 }
 
-	}
 }
