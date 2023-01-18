@@ -23,12 +23,11 @@ class PostFrameEvent;
 	{
 
 class CursorMoveEvent;
-class EditList;
-class EditListEditEvent;
 class KeyMoveEvent;
 class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
+class ToolBarDropDown;
 class SequencerControl;
 
 	}
@@ -58,12 +57,10 @@ public:
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) override final;
 
 private:
-	Ref< ui::ToolBar > m_toolBarActs;
-	Ref< ui::EditList > m_listActs;
+	Ref< ui::ToolBarDropDown > m_dropDownActs;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
-	//float m_timeOffset;
 
 	void updateView();
 
@@ -82,10 +79,6 @@ private:
 	void splitAct();
 
 	void timeScaleAct();
-
-	void eventActSelected(ui::SelectionChangeEvent* event);
-
-	void eventActEdit(ui::EditListEditEvent* event);
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 

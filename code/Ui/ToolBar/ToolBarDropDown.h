@@ -33,9 +33,9 @@ class T_DLLCLASS ToolBarDropDown : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip);
+	explicit ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip);
 
-	int32_t add(const std::wstring& item);
+	int32_t add(const std::wstring& item, Object* data = nullptr);
 
 	bool remove(int32_t index);
 
@@ -43,13 +43,17 @@ public:
 
 	int32_t count() const;
 
-	std::wstring get(int32_t index) const;
+	std::wstring getItem(int32_t index) const;
+
+	Object* getData(int32_t index) const;
 
 	void select(int32_t index);
 
 	int32_t getSelected() const;
 
 	std::wstring getSelectedItem() const;
+
+	Object* getSelectedData() const;
 
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const override final;
@@ -67,10 +71,16 @@ protected:
 	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) override final;
 
 private:
+	struct Item
+	{
+		std::wstring text;
+		Ref< Object > data;
+	};
+
 	Command m_command;
 	int32_t m_width;
 	std::wstring m_toolTip;
-	std::vector< std::wstring > m_items;
+	std::vector< Item > m_items;
 	int32_t m_selected;
 	bool m_hover;
 	int32_t m_dropPosition;

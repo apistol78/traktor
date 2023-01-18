@@ -42,6 +42,9 @@
 #include "Ui/PropertyList/NumericPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 #include "Ui/RichEdit/RichEdit.h"
+#include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/SequenceGroup.h"
+#include "Ui/Sequencer/SequencerControl.h"
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -260,6 +263,19 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		richEdit->setStyleSheet(styleSheet);
 		richEdit->create(parent, lorem);
 		return richEdit;
+	}
+	else if (typeName == L"traktor.ui.Sequence" || typeName == L"traktor.ui.SequenceGroup" || typeName == L"traktor.ui.SequencerControl" || typeName == L"traktor.ui.Tick" || typeName == L"traktor.ui.Track")
+	{
+		Ref< Sequence > item = new Sequence(L"Item");
+		item->addKey(new Tick(100, true));
+		item->addKey(new Track(500, 2000, true));
+
+		Ref< SequencerControl > sequencer = new SequencerControl();
+		sequencer->setStyleSheet(styleSheet);
+		sequencer->create(parent);
+		sequencer->addSequenceItem(item);
+		sequencer->addSequenceItem(new SequenceGroup(L"Group"));
+		return sequencer;
 	}
 	else if (typeName == L"traktor.ui.ScrollBar")
 	{

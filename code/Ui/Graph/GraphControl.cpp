@@ -35,9 +35,12 @@ namespace traktor
 enum Modes
 {
 	MdNothing,
+	MdMoveSelected,
+	MdMoveGraph,
 	MdDrawEdge,
 	MdConnectEdge,
-	MdDrawSelectionRectangle
+	MdDrawSelectionRectangle,
+	MdDrawGroupRectangle
 };
 
 struct SortNodePred
@@ -51,8 +54,8 @@ struct SortNodePred
 
 	bool operator () (const Node* n1, const Node* n2) const
 	{
-		Point pt1 = n1->calculateRect().getTopLeft();
-		Point pt2 = n2->calculateRect().getTopLeft();
+		const Point pt1 = n1->calculateRect().getTopLeft();
+		const Point pt2 = n2->calculateRect().getTopLeft();
 		return m_space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
 	}
 };
@@ -90,8 +93,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphControl", GraphControl, Widget)
 GraphControl::GraphControl()
 :	m_scale(1.0f)
 ,	m_mode(MdNothing)
-,	m_moveAll(false)
-,	m_moveSelected(false)
 ,	m_edgeSelectable(false)
 ,	m_hotPin(nullptr)
 {
@@ -531,9 +532,6 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 {
 	setFocus();
 
-	m_moveAll = false;
-	m_moveSelected = false;
-
 	m_selectedEdge = nullptr;
 	m_selectedNode = nullptr;
 
@@ -549,7 +547,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	// If user holds down ALT we should move entire graph.
 	if ((event->getKeyState() & KsMenu) != 0 || event->getButton() == MbtMiddle)
 	{
-		m_moveAll = true;
+		m_mode = MdMoveGraph;
 		setCapture();
 		return;
 	}
@@ -659,7 +657,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			}
 
 			// No pin selected, move the selected node(s).
-			m_moveSelected = true;
+			m_mode = MdMoveSelected;
 			setCapture();
 		}
 	}
@@ -710,7 +708,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				update();
 		}
 
-		m_mode = MdDrawSelectionRectangle;
+		m_mode = (event->getKeyState() & KsControl) ? MdDrawGroupRectangle : MdDrawSelectionRectangle;
 
 		setCapture();
 	}
@@ -720,7 +718,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 {
 	m_cursor = event->getPosition() / m_scale;
 
-	if (m_moveAll || m_moveSelected)
+	if (m_mode == MdMoveSelected || m_mode == MdMoveGraph)
 	{
 		T_ASSERT(m_nodes.size() == m_nodePositions.size());
 		for (uint32_t i = 0; i < m_nodes.size(); ++i)
@@ -764,7 +762,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 		}
 
 		// Select nodes which are within selection rectangle.
-		if (m_mode == MdDrawSelectionRectangle)
+		else if (m_mode == MdDrawSelectionRectangle)
 		{
 			Point tl = m_moveOrigin;
 			Point br = m_cursor;
@@ -776,10 +774,10 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 
 			beginSelectModification();
 
-			Rect selection(tl, br);
+			const Rect selection(tl, br);
 			for (auto node : m_nodes)
 			{
-				Rect rect = node->calculateRect().offset(m_offset);
+				const Rect rect = node->calculateRect().offset(m_offset);
 				if (selection.intersect(rect))
 					node->setSelected(true);
 			}
@@ -787,7 +785,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 			// Update edge selection states.
 			for (auto edge : m_edges)
 			{
-				bool selected =
+				const bool selected =
 					edge->getSourcePin()->getNode()->isSelected() ||
 					edge->getDestinationPin()->getNode()->isSelected();
 
@@ -805,9 +803,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 		}
 	}
 
-	m_moveAll = false;
-	m_moveSelected = false;
-
+	m_mode = MdNothing;
 	update();
 
 	event->consume();
@@ -815,9 +811,9 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 
 void GraphControl::eventMouseMove(MouseMoveEvent* event)
 {
-	if (m_moveAll)
+	if (m_mode == MdMoveGraph)
 	{
-		Size delta = event->getPosition() / m_scale - m_moveOrigin;
+		const Size delta = event->getPosition() / m_scale - m_moveOrigin;
 		m_offset += delta;
 		m_cursor += delta;
 		m_edgeOrigin += delta;
@@ -825,9 +821,9 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		update();
 		event->consume();
 	}
-	else if (m_moveSelected)
+	else if (m_mode == MdMoveSelected)
 	{
-		Size offset = event->getPosition() / m_scale - m_moveOrigin;
+		const Size offset = event->getPosition() / m_scale - m_moveOrigin;
 		for (auto node : m_nodes)
 		{
 			if (!node->isSelected())
@@ -841,7 +837,7 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		update();
 		event->consume();
 	}
-	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
+	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle || m_mode == MdDrawGroupRectangle)
 	{
 		Rect updateRect(
 			m_moveOrigin * m_scale,
@@ -870,8 +866,7 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 	if (event->getButton() != MbtLeft || !m_selectedNode)
 		return;
 
-	m_moveAll = false;
-	m_moveSelected = false;
+	m_mode = MdNothing;
 
 	NodeActivateEvent activateEvent(this, m_selectedNode);
 	raiseEvent(&activateEvent);
@@ -882,14 +877,14 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 void GraphControl::eventMouseWheel(MouseWheelEvent* event)
 {
 	auto pos = screenToClient(event->getPosition());
-	Point p0 = clientToVirtual(pos);
+	const Point p0 = clientToVirtual(pos);
 
 	if (event->getRotation() < 0)
 		m_scale *= 0.9f;
 	else if (event->getRotation() > 0)
 		m_scale /= 0.9f;
 
-	Point p1 = clientToVirtual(pos);
+	const Point p1 = clientToVirtual(pos);
 	m_offset += (p1 - p0);
 
 	update();
@@ -1043,6 +1038,13 @@ void GraphControl::eventPaint(PaintEvent* event)
 	{
 		graphCanvas.setForeground(Color4ub(220, 220, 255, 200));
 		graphCanvas.setBackground(Color4ub(90, 90, 120, 80));
+		graphCanvas.fillRect(Rect(m_moveOrigin, m_cursor));
+		graphCanvas.drawRect(Rect(m_moveOrigin, m_cursor));
+	}
+	else if (m_mode == MdDrawGroupRectangle)
+	{
+		graphCanvas.setForeground(Color4ub(220, 255, 220, 200));
+		graphCanvas.setBackground(Color4ub(90, 120, 90, 80));
 		graphCanvas.fillRect(Rect(m_moveOrigin, m_cursor));
 		graphCanvas.drawRect(Rect(m_moveOrigin, m_cursor));
 	}

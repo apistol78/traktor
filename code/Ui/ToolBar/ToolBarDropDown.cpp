@@ -33,9 +33,9 @@ ToolBarDropDown::ToolBarDropDown(const Command& command, int32_t width, const st
 {
 }
 
-int32_t ToolBarDropDown::add(const std::wstring& item)
+int32_t ToolBarDropDown::add(const std::wstring& item, Object* data)
 {
-	m_items.push_back(item);
+	m_items.push_back({ item, data });
 	return int32_t(m_items.size() - 1);
 }
 
@@ -44,8 +44,8 @@ bool ToolBarDropDown::remove(int32_t index)
 	if (index >= int32_t(m_items.size()))
 		return false;
 
-	std::vector< std::wstring >::iterator i = m_items.begin() + index;
-	m_items.erase(i);
+	auto it = m_items.begin() + index;
+	m_items.erase(it);
 
 	if (index >= m_selected)
 		m_selected = -1;
@@ -61,12 +61,23 @@ void ToolBarDropDown::removeAll()
 
 int32_t ToolBarDropDown::count() const
 {
-	return int32_t(m_items.size());
+	return (int32_t)m_items.size();
 }
 
-std::wstring ToolBarDropDown::get(int32_t index) const
+std::wstring ToolBarDropDown::getItem(int32_t index) const
 {
-	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index] : L"";
+	if (index < 0 || index >= (int32_t)m_items.size())
+		return L"";
+
+	return m_items[index].text;
+}
+
+Object* ToolBarDropDown::getData(int32_t index) const
+{
+	if (index < 0 || index >= (int32_t)m_items.size())
+		return nullptr;
+
+	return m_items[index].data;
 }
 
 void ToolBarDropDown::select(int32_t index)
@@ -81,7 +92,12 @@ int32_t ToolBarDropDown::getSelected() const
 
 std::wstring ToolBarDropDown::getSelectedItem() const
 {
-	return get(m_selected);
+	return getItem(m_selected);
+}
+
+Object* ToolBarDropDown::getSelectedData() const
+{
+	return getData(m_selected);
 }
 
 bool ToolBarDropDown::getToolTip(std::wstring& outToolTip) const
@@ -100,15 +116,15 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	int32_t sep = ui::dpi96(14);
+	const int32_t sep = ui::dpi96(14);
 
-	Rect rcText(
+	const Rect rcText(
 		at.x + 4,
 		at.y + 2,
 		at.x + size.cx - sep - 2,
 		at.y + size.cy - 2
 	);
-	Rect rcButton(
+	const Rect rcButton(
 		at.x + size.cx - sep,
 		at.y + 1,
 		at.x + size.cx - 1,
@@ -128,12 +144,12 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
 	}
 
-	Point center = rcButton.getCenter();
-	ui::Point pnts[] =
+	const Point center = rcButton.getCenter();
+	const Point pnts[] =
 	{
-		ui::Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
-		ui::Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
-		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
+		Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
+		Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
+		Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
 	};
 
 	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
@@ -165,7 +181,7 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 
 	Menu menu;
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
-		menu.add(new MenuItem(Command(i), m_items[i]));
+		menu.add(new MenuItem(Command(i), m_items[i].text));
 
 	const MenuItem* selectedItem = menu.showModal(toolBar, m_menuPosition, m_menuWidth);
 	if (selectedItem != nullptr)

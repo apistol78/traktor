@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 /*! Video resource factory.
  * \ingroup Video
@@ -38,7 +36,7 @@ class T_DLLCLASS VideoFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	VideoFactory(render::IRenderSystem* renderSystem);
+	explicit VideoFactory(render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -52,5 +50,4 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 };
 
-	}
 }

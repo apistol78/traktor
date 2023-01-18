@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 /*! Video resource.
  * \ingroup Video
@@ -34,5 +32,4 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 };
 
-	}
 }

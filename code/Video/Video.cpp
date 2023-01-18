@@ -14,10 +14,8 @@
 #include "Video/IVideoDecoder.h"
 #include "Video/Video.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.Video", Video, Object)
 
@@ -164,5 +162,4 @@ void Video::decodeFrame(uint32_t frame)
 	m_playing = m_decoder->decode(frame, m_frameBuffer.ptr(), m_frameBufferPitch);
 }
 
-	}
 }

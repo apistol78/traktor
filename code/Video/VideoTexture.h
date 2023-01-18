@@ -25,15 +25,17 @@ namespace traktor
 
 class Thread;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 class IVideoDecoder;
 
@@ -74,5 +76,4 @@ private:
 	void decodeThread();
 };
 
-	}
 }
