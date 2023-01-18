@@ -22,17 +22,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-    namespace resource
-    {
 
 class IResourceManager;
 
-    }
+}
 
-    namespace render
-    {
+namespace traktor::render
+{
 
 class ImagePassOp;
 class IRenderSystem;
@@ -65,5 +63,4 @@ protected:
 	AlignedVector< Source > m_sources;    
 };
 
-    }
 }

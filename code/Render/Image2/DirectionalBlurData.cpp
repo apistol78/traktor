@@ -16,16 +16,14 @@
 #include "Render/Image2/DirectionalBlurData.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 		
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImagePassOpData)
 
@@ -158,7 +156,7 @@ Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResource
 
 	if (totalWeight > FUZZY_EPSILON)
 	{
-		Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
+		const Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
 		for (int32_t i = 0; i < m_taps; ++i)
 			instance->m_gaussianOffsetWeights[i] *= invWeight;
 	}
@@ -192,5 +190,4 @@ void DirectionalBlurData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"taps", m_taps);
 }
 
-    }
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*!
  * \ingroup Render
@@ -32,7 +30,7 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-    ImageTargetSet(const std::wstring& name, handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
+	explicit ImageTargetSet(const std::wstring& name, handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
 
 	const std::wstring& getName() const;
 
@@ -40,7 +38,7 @@ public:
 
 	handle_t getTextureId(int32_t colorIndex) const;
 
-    const RenderGraphTargetSetDesc& getTargetSetDesc() const;
+	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 private:
 	std::wstring m_name;
@@ -49,5 +47,4 @@ private:
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 
-	}
 }

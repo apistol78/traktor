@@ -15,12 +15,10 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ShadowProject.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 
 const float c_sliceBias = 0.0001f;	//!< Extra slice dimension bias; slight overlap over slices.
 
@@ -49,7 +47,7 @@ const static Handle s_handleViewToLight(L"ViewToLight");
 const static Handle s_handleShadowMap(L"InputShadowMap");	// \tbd Check name convention...
 const static Handle s_handleShadowMapDiscRotation(L"ShadowMapDiscRotation");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShadowProject", ShadowProject, ImagePassOp)
 
@@ -133,5 +131,4 @@ void ShadowProject::build(
 	screenRenderer->draw(renderContext, m_shader, perm, pp);
 }
 
-    }
 }

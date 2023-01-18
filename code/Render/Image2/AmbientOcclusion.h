@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 class Shader;
@@ -69,5 +67,4 @@ private:
 	Ref< ITexture > m_randomRotations;
 };
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphContext", ImageGraphContext, Object)
 
@@ -79,5 +77,4 @@ void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value
 	m_vectorParameters[handle] = value;
 }
 
-	}
 }

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ImageTargetSet;
 
@@ -48,5 +46,4 @@ private:
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 
-	}
 }

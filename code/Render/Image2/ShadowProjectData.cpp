@@ -16,12 +16,10 @@
 #include "Render/Image2/ShadowProjectData.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 		
 Ref< ITexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 {
@@ -57,7 +55,7 @@ Ref< ITexture > createRandomRotationTexture(IRenderSystem* renderSystem)
 	return renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
 }
 		
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShadowProjectData", 0, ShadowProjectData, ImagePassOpData)
 
@@ -87,5 +85,4 @@ Ref< const ImagePassOp > ShadowProjectData::createInstance(resource::IResourceMa
 	return instance; 
 }
 
-    }
 }

@@ -14,10 +14,8 @@
 #include "Render/Image2/ImagePassOpData.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePassOpData", ImagePassOpData, ISerializable)
 
@@ -33,5 +31,4 @@ void ImagePassOpData::Source::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"parameter", parameter);
 }
 
-    }
 }

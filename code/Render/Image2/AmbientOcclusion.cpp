@@ -16,12 +16,10 @@
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 
 const static Handle s_handleTime(L"Time");
 const static Handle s_handleDeltaTime(L"DeltaTime");
@@ -41,7 +39,7 @@ const static Handle s_handleRandomRotations(L"RandomRotations");
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AmbientOcclusion", AmbientOcclusion, ImagePassOp)
 
@@ -109,5 +107,4 @@ void AmbientOcclusion::build(
 	screenRenderer->draw(renderContext, m_shader, Shader::Permutation(), pp);
 }
 
-    }
 }

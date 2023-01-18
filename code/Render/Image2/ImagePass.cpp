@@ -14,10 +14,8 @@
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassOp.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, IImageStep)
 
@@ -72,5 +70,4 @@ void ImagePass::addPasses(
 	renderGraph.addPass(rp);
 }
 
-	}
 }

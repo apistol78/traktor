@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class ImagePassOpData;
 
@@ -49,5 +47,4 @@ private:
     RefArray< ImagePassOpData > m_ops;
 };
 
-    }
 }

@@ -16,12 +16,10 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/Simple.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-		namespace
-		{
+	namespace
+	{
 
 const static Handle s_handleTime(L"Time");
 const static Handle s_handleDeltaTime(L"DeltaTime");
@@ -39,7 +37,7 @@ const static Handle s_handleNoiseOffset(L"NoiseOffset");
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Simple", Simple, ImagePassOp)
 
@@ -105,5 +103,4 @@ void Simple::build(
 	screenRenderer->draw(renderContext, m_shader, Shader::Permutation(), pp);
 }
 
-    }
 }

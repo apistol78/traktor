@@ -14,12 +14,10 @@
 #include "Render/Image2/ImageTargetSet.h"
 #include "Render/Image2/ImageTargetSetData.h"
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
-        namespace
-        {
+	namespace
+	{
 
 constexpr static MemberEnum< TextureFormat >::Key c_TextureFormat_Keys[] =
 {
@@ -116,7 +114,7 @@ private:
 	value_type& m_ref;
 };
 
-        }
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 2, ImageTargetSetData, ISerializable)
 
@@ -126,12 +124,12 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
 		textureIds[i] = getParameterHandle(m_textureIds[i]);
 
-    return new ImageTargetSet(
+	return new ImageTargetSet(
 		m_targetSetId,
 		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle) : 0,
 		textureIds,
-        m_targetSetDesc
-    );
+		m_targetSetDesc
+	);
 }
 
 void ImageTargetSetData::serialize(ISerializer& s)
@@ -145,5 +143,4 @@ void ImageTargetSetData::serialize(ISerializer& s)
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }
 
-    }
 }
