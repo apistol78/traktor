@@ -32,7 +32,7 @@ bool GridLayout::fit(Widget* widget, const Size& bounds, Size& result)
 void GridLayout::update(Widget* widget)
 {
 	AlignedVector< WidgetRect > widgetRects;
-	Rect inner = widget->getInnerRect();
+	const Rect inner = widget->getInnerRect();
 
 	int32_t i = 0;
 	for (Ref< Widget > child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
@@ -40,13 +40,13 @@ void GridLayout::update(Widget* widget)
 		if (!child->acceptLayout())
 			continue;
 
-		int32_t c = i % m_columns;
-		int32_t r = i / m_columns;
+		const int32_t c = i % m_columns;
+		const int32_t r = i / m_columns;
 		if (r >= m_rows)
 			break;
 
-		Point tl = inner.getTopLeft();
-		Rect rc(
+		const Point tl = inner.getTopLeft();
+		const Rect rc(
 			tl.x + (c * inner.getWidth()) / m_columns,
 			tl.y + (r * inner.getHeight()) / m_rows,
 			tl.x + ((c + 1) * inner.getWidth()) / m_columns,

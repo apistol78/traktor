@@ -85,7 +85,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);
 
-	int32_t y = (rcInner.getHeight() - image->getSize().cy) / 2;
+	const int32_t y = (rcInner.getHeight() - image->getSize().cy) / 2;
 
 	canvas.drawBitmap(
 		Point(0, y),

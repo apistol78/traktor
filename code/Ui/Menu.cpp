@@ -68,7 +68,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 	form->fit(Container::Both);
 
 	// Place form at given position.
-	auto rc = form->getRect();
+	const auto rc = form->getRect();
 	Rect rcForm(
 		parent->clientToScreen(at),
 		rc.getSize()

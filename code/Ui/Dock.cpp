@@ -93,7 +93,7 @@ DockPane* Dock::getPane() const
 
 void Dock::update(const Rect* rc, bool immediate)
 {
-	Rect innerRect = getInnerRect();
+	const Rect innerRect = getInnerRect();
 
 	// Update chains, calculate deferred child widget rectangles.
 	std::vector< WidgetRect > widgetRects;
@@ -113,7 +113,7 @@ void Dock::eventSize(SizeEvent* event)
 
 void Dock::eventButtonDown(MouseButtonDownEvent* event)
 {
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 	Ref< DockPane > pane;
 
 	if ((pane = m_pane->getPaneFromPosition(position)) != nullptr)
@@ -155,7 +155,7 @@ void Dock::eventButtonUp(MouseButtonUpEvent* event)
 
 void Dock::eventMouseMove(MouseMoveEvent* event)
 {
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 	Cursor cursor = CrArrow;
 
 	if (!hasCapture())
@@ -181,7 +181,7 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 
 void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 {
-	Point position = event->getPosition();
+	const Point position = event->getPosition();
 
 	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
 	if (!pane)
@@ -199,9 +199,9 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 		pane->detach();
 
 		// Determine size of form.
-		Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
-		Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
-		Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
+		const Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
+		const Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
+		const Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
 
 		// Create floating form.
 		Ref< ToolForm > form = new ToolForm();
@@ -250,7 +250,7 @@ void Dock::eventPaint(PaintEvent* event)
 
 void Dock::eventFormMove(MoveEvent* event)
 {
-	Point position = getMousePosition();
+	const Point position = getMousePosition();
 	DockPane* pane = m_pane->getPaneFromPosition(position);
 	if (pane)
 	{
@@ -260,14 +260,14 @@ void Dock::eventFormMove(MoveEvent* event)
 		else
 			m_hint->hide();
 
-		Rect rc = pane->getPaneRect();
+		const Rect rc = pane->getPaneRect();
 
 		// Convert pane rectangle from client to screen space.
-		Point tl = clientToScreen(rc.getTopLeft());
-		Point br = clientToScreen(rc.getBottomRight());
+		const Point tl = clientToScreen(rc.getTopLeft());
+		const Point br = clientToScreen(rc.getBottomRight());
 
 		// Show hint at center of hovering pane.
-		Point center = tl + Size((br.x - tl.x) / 2, (br.y - tl.y) / 2);
+		const Point center = tl + Size((br.x - tl.x) / 2, (br.y - tl.y) / 2);
 		m_hint->setRect(Rect(
 			center - Size(c_hintSize / 2, c_hintSize / 2),
 			Size(c_hintSize, c_hintSize)
@@ -287,7 +287,7 @@ void Dock::eventFormMove(MoveEvent* event)
 
 void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 {
-	Point position = screenToClient(event->getPosition());
+	const Point position = screenToClient(event->getPosition());
 
 	// Ensure hint form isn't visible.
 	if (m_hint)
@@ -302,7 +302,7 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 	{
 		Ref< ToolForm > form = mandatory_non_null_type_cast< ToolForm* >(event->getSender());
 		Ref< Widget > widget = form->getData< Widget >(L"WIDGET");
-		Size widgetSize = widget->getRect().getSize();
+		const Size widgetSize = widget->getRect().getSize();
 
 		// Reparent widget back to dock.
 		if (widget)
@@ -312,8 +312,8 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 		form = nullptr;
 
 		// Calculate docking direction.
-		int dx = position.x - pane->m_rect.getCenter().x;
-		int dy = position.y - pane->m_rect.getCenter().y;
+		const int dx = position.x - pane->m_rect.getCenter().x;
+		const int dy = position.y - pane->m_rect.getCenter().y;
 
 		DockPane::Direction direction;
 		int32_t size;
@@ -352,7 +352,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 	T_ASSERT(m_hintDockPane);
 
 	Ref< Widget > widget = m_hintDockForm->getData< Widget >(L"WIDGET");
-	Size widgetSize = widget->getRect().getSize();
+	const Size widgetSize = widget->getRect().getSize();
 
 	// Reparent widget back to dock.
 	if (widget)

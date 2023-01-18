@@ -130,7 +130,7 @@ void FileDialog::destroy()
 
 DialogResult FileDialog::showModal(Path& outPath)
 {
-	std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
+	const std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
 		m_currentPath = path;
 	else if (!outPath.empty())
@@ -177,7 +177,7 @@ DialogResult FileDialog::showModal(Path& outPath)
 
 DialogResult FileDialog::showModal(std::vector< Path >& outPaths)
 {
-	std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
+	const std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
 		m_currentPath = path;
 	else
@@ -222,8 +222,8 @@ void FileDialog::updatePath()
 
 		for (int32_t i = 0; i < FileSystem::getInstance().getVolumeCount(); ++i)
 		{
-			std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
-			int32_t index = dropVolume->add(volumeId + L":");
+			const std::wstring volumeId = FileSystem::getInstance().getVolumeId(i);
+			const int32_t index = dropVolume->add(volumeId + L":");
 			if (compareIgnoreCase(volumeId, m_currentPath.getVolume()) == 0)
 				dropVolume->select(index);
 		}

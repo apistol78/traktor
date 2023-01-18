@@ -110,7 +110,7 @@ void Dialog::eventChild(ChildEvent* event)
 	if (event->getParent() != this || getLayout() == nullptr)
 		return;
 
-	Size bounds = getInnerRect().getSize();
+	const Size bounds = getInnerRect().getSize();
 	Size result;
 	if (!getLayout()->fit(this, bounds, result))
 		return;

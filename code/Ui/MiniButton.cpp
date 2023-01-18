@@ -119,10 +119,9 @@ void MiniButton::eventPaint(PaintEvent* event)
 
 	if (m_image)
 	{
-		Size size = m_image->getSize();
-
-		Size margin = rcInner.getSize() - size;
-		Point at(rcInner.left + margin.cx / 2, rcInner.top + margin.cy / 2);
+		const Size size = m_image->getSize();
+		const Size margin = rcInner.getSize() - size;
+		const Point at(rcInner.left + margin.cx / 2, rcInner.top + margin.cy / 2);
 
 		canvas.drawBitmap(
 			at,

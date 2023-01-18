@@ -23,12 +23,12 @@ AspectLayout::AspectLayout(float ratio)
 
 bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
-	Widget* child = widget->getFirstChild();
+	const Widget* child = widget->getFirstChild();
 	if (!child)
 		return false;
 
-	Size sz = child->getPreferredSize(bounds);
-	float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
+	const Size sz = child->getPreferredSize(bounds);
+	const float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 	int32_t width = bounds.cx;
 	int32_t height = (int32_t)(width / ratio);
@@ -48,10 +48,10 @@ void AspectLayout::update(Widget* widget)
 	Widget* child = widget->getFirstChild();
 	if (child != nullptr)
 	{
-		Rect rc = widget->getInnerRect();
+		const Rect rc = widget->getInnerRect();
 
-		Size sz = child->getPreferredSize(rc.getSize());
-		float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
+		const Size sz = child->getPreferredSize(rc.getSize());
+		const float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 		int32_t width = rc.getWidth();
 		int32_t height = (int32_t)(width / ratio);
@@ -61,8 +61,8 @@ void AspectLayout::update(Widget* widget)
 			width = (int32_t)(height * ratio);
 		}
 
-		int32_t x = rc.left + (rc.getWidth() - width) / 2;
-		int32_t y = rc.top + (rc.getHeight() - height) / 2;
+		const int32_t x = rc.left + (rc.getWidth() - width) / 2;
+		const int32_t y = rc.top + (rc.getHeight() - height) / 2;
 
 		child->setRect(Rect(x, y, x + width, y + height));
 	}

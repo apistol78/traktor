@@ -117,7 +117,7 @@ void Edit::select(int from, int to)
 
 void Edit::selectAll()
 {
-	std::wstring text = getText();
+	const std::wstring text = getText();
 	if (!text.empty())
 	{
 		m_selectionStart = 0;
@@ -279,7 +279,7 @@ void Edit::eventMouseTrack(MouseTrackEvent* event)
 
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
 {
-	int32_t mx = event->getPosition().x;
+	const int32_t mx = event->getPosition().x;
 	int32_t x = dpi96(4);
 
 	int32_t caret = m_caret;
@@ -352,7 +352,7 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 				--caret;
 			else
 			{
-				std::wstring text = getText();
+				const std::wstring text = getText();
 				for (--caret; caret > 0 && isWord(text[caret - 1]); --caret)
 					;
 			}
@@ -363,7 +363,7 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 
 	case VkRight:
 		{
-			std::wstring text = getText();
+			const std::wstring text = getText();
 			if ((event->getKeyState() & KsControl) == 0)
 				++caret;
 			else
@@ -385,7 +385,7 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 
 	case VkEnd:
 		{
-			std::wstring text = getText();
+			const std::wstring text = getText();
 			caret = (int32_t)text.length();
 			modified = true;
 		}
@@ -446,7 +446,7 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 
 void Edit::eventKey(KeyEvent* event)
 {
-	wchar_t ch = event->getCharacter();
+	const wchar_t ch = event->getCharacter();
 	if ((event->getKeyState() & KsControl) == 0)
 	{
 		std::wstring text = getText();
@@ -538,7 +538,7 @@ void Edit::eventPaint(PaintEvent* event)
 		canvas.setForeground(ss->getColor(this, L"border-color"));
 	canvas.drawRect(rcInner);
 
-	std::wstring text = getText();
+	const std::wstring text = getText();
 
 	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 
