@@ -8,6 +8,8 @@
  */
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
@@ -107,6 +109,26 @@ void CanvasX11::drawLines(const Point* pnts, int npnts)
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < npnts; ++i)
 		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
+	cairo_stroke(m_cr);
+}
+
+void CanvasX11::drawCurve(const Point& start, const Point& control, const Point& end)
+{
+	const Bezier2nd b2(
+		Vector2(start.x, start.y),
+		Vector2(control.x, control.y),
+		Vector2(end.x, end.y)
+	);
+	
+	Bezier3rd b3;
+	b2.toBezier3rd(b3);
+
+	const Point cp0(b3.cp1.x, b3.cp1.y);
+	const Point cp1(b3.cp2.x, b3.cp2.y);
+
+	setSourceColor(m_foreground);
+	cairo_move_to(m_cr, start.x, start.y);
+	cairo_curve_to(m_cr, cp0.x, cp0.y, cp1.x, cp1.y, end.x, end.y);
 	cairo_stroke(m_cr);
 }
 

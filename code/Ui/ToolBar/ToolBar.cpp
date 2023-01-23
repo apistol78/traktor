@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/SafeDestroy.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/GrayscaleFilter.h"
@@ -65,6 +66,7 @@ bool ToolBar::create(Widget* parent, int32_t style)
 
 void ToolBar::destroy()
 {
+	safeDestroy(m_toolTip);
 	Widget::destroy();
 }
 
@@ -75,7 +77,7 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 	T_ASSERT(image);
 	T_ASSERT(imageCount > 0);
 
-	Size imageSize = image->getSize();
+	const Size imageSize = image->getSize();
 	if (imageSize.cx <= 0 || imageSize.cy <= 0)
 		return 0;
 
@@ -96,7 +98,7 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 		m_imageHeight = m_imageEnabled->getSize().cy;
 	}
 
-	uint32_t imageBase = m_imageCount;
+	const uint32_t imageBase = m_imageCount;
 	m_imageCount += imageCount;
 
 	// Create disabled image
@@ -138,18 +140,18 @@ Ref< ToolBarItem > ToolBar::getItem(uint32_t id)
 
 Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
-	Rect rc = getInnerRect();
+	const Rect rc = getInnerRect();
 
 	int32_t x = dpi96(c_marginWidth) + m_offsetX;
 	int32_t y = dpi96(c_marginHeight);
 
 	for (auto item : m_items)
 	{
-		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		const Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate item rectangle.
-		int32_t offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
-		Rect rc(
+		const int32_t offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
+		const Rect rc(
 			Point(x, y + offset),
 			size
 		);
@@ -170,7 +172,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 
 	for (auto item : m_items)
 	{
-		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		const Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 		width += size.cx + c_itemPad;
 		height = std::max(height, size.cy);
 	}
@@ -180,7 +182,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 
 Size ToolBar::getMaximumSize() const
 {
-	Size preferredSize = getPreferredSize(Size(0, 0));
+	const Size preferredSize = getPreferredSize(Size(0, 0));
 	return Size(65535, preferredSize.cy);
 }
 
@@ -189,11 +191,11 @@ void ToolBar::clampOffset()
 	if (m_offsetX > 0)
 		m_offsetX = 0;
 
-	Size clientSize = getInnerRect().getSize();
-	int32_t preferedWidth = getPreferredSize(clientSize).cx;
+	const Size clientSize = getInnerRect().getSize();
+	const int32_t preferedWidth = getPreferredSize(clientSize).cx;
 	if (preferedWidth > clientSize.cx)
 	{
-		int32_t over = preferedWidth - clientSize.cx;
+		const int32_t over = preferedWidth - clientSize.cx;
 		m_offsetX = std::max(m_offsetX, -over);
 	}
 	else
