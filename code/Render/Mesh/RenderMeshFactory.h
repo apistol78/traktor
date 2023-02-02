@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
@@ -33,7 +31,7 @@ class T_DLLCLASS RenderMeshFactory : public MeshFactory
 	T_RTTI_CLASS;
 
 public:
-	RenderMeshFactory(IRenderSystem* renderSystem);
+	explicit RenderMeshFactory(IRenderSystem* renderSystem);
 
 	virtual Ref< Mesh > createMesh(
 		const AlignedVector< VertexElement >& vertexElements,
@@ -46,6 +44,4 @@ private:
 	Ref< IRenderSystem > m_renderSystem;
 };
 
-	}
 }
-

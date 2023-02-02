@@ -10,12 +10,10 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class InternalBuffer : public Buffer
 {
@@ -35,7 +33,7 @@ private:
 	AlignedVector< uint8_t > m_data;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SystemMeshFactory", SystemMeshFactory, MeshFactory)
 
@@ -72,5 +70,4 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	return mesh;
 }
 
-	}
 }

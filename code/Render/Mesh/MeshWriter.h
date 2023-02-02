@@ -23,8 +23,10 @@ namespace traktor
 
 class IStream;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class Mesh;
 
@@ -39,6 +41,4 @@ public:
 	bool write(IStream* stream, const Mesh* mesh) const;
 };
 
-	}
 }
-

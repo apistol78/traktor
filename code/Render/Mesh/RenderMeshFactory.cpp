@@ -10,10 +10,8 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/IRenderSystem.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderMeshFactory", RenderMeshFactory, MeshFactory)
 
@@ -65,5 +63,4 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	return mesh;
 }
 
-	}
 }
