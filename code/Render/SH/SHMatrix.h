@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Spherical harmonics matrix class.
  * \ingroup Render
@@ -35,7 +33,7 @@ class T_DLLCLASS SHMatrix : public ISerializable
 public:
 	SHMatrix() = default;
 
-	SHMatrix(int32_t rows, int32_t columns);
+	explicit SHMatrix(int32_t rows, int32_t columns);
 
 	int32_t getRows() const { return m_rows; }
 
@@ -59,6 +57,4 @@ private:
 	AlignedVector< float > m_elements;
 };
 
-	}
 }
-

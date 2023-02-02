@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Generate rotation SH matrix.
  * \ingroup Render
@@ -31,5 +29,4 @@ namespace traktor
  */
 SHMatrix T_DLLCLASS generateRotationSHMatrix(const Matrix44& matrix, int order);
 
-	}
 }

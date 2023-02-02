@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Render/SH/SHMatrix.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHMatrix", 0, SHMatrix, ISerializable)
 
@@ -31,5 +29,4 @@ void SHMatrix::serialize(ISerializer& s)
 	s >> MemberAlignedVector< float >(L"elements", m_elements);
 }
 
-	}
 }

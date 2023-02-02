@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class SHFunction;
 class SHMatrix;
@@ -61,5 +59,4 @@ private:
 	void generateCoefficientsJob(SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult);
 };
 
-	}
 }
