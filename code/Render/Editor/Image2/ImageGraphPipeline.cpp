@@ -18,12 +18,14 @@
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
 #include "Render/Editor/Image2/ImgStepAmbientOcclusion.h"
+#include "Render/Editor/Image2/ImgStepCompute.h"
 #include "Render/Editor/Image2/ImgStepDirectionalBlur.h"
 #include "Render/Editor/Image2/ImgStepShadowProject.h"
 #include "Render/Editor/Image2/ImgStepSimple.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
 #include "Render/Image2/AmbientOcclusionData.h"
+#include "Render/Image2/ComputeData.h"
 #include "Render/Image2/DirectionalBlurData.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImagePassData.h"
@@ -90,6 +92,8 @@ bool ImageGraphPipeline::buildDependencies(
 			{
 				if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))
 					pipelineDepends->addDependency(ambientOcclusionStep->m_shader, editor::PdfBuild | editor::PdfResource);
+				else if (auto computeStep = dynamic_type_cast< const ImgStepCompute* >(step))
+					pipelineDepends->addDependency(computeStep->m_shader, editor::PdfBuild | editor::PdfResource);
 				else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
 					pipelineDepends->addDependency(directionalBlurStep->m_shader, editor::PdfBuild | editor::PdfResource);
 				else if (auto shadowProjectStep = dynamic_type_cast< const ImgStepShadowProject* >(step))
@@ -269,6 +273,12 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			Ref< AmbientOcclusionData > ao = new AmbientOcclusionData();
 			ao->m_shader = ambientOcclusionStep->m_shader;
 			opData = ao;
+		}
+		else if (auto computeStep = dynamic_type_cast< const ImgStepCompute* >(step))
+		{
+			Ref< ComputeData > c = new ComputeData();
+			c->m_shader = computeStep->m_shader;
+			opData = c;
 		}
 		else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
 		{
