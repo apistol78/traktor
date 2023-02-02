@@ -52,10 +52,7 @@ bool UniformNodeTraits::isInputTypeValid(
 	const PinType pinType
 ) const
 {
-	if (is_a< IndexedUniform >(node))
-		return isPinTypeScalar(pinType);
-	else
-		return false;
+	return isPinTypeScalar(pinType);
 }
 
 PinType UniformNodeTraits::getOutputPinType(

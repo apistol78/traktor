@@ -536,7 +536,7 @@ bool ShaderPipeline::buildOutput(
 					},
 					[&]() {
 						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
-						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path, nullptr);
+						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path);
 						pipelineBuilder->getProfiler()->end(type_of(programCompiler));
 						return programResource;
 					}

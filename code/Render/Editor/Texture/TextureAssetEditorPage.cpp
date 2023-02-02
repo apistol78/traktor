@@ -105,6 +105,10 @@ bool TextureAssetEditorPage::handleCommand(const ui::Command& command)
 
 void TextureAssetEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	if (m_document->getInstance(0)->getGuid() != eventId)
+		return;
+
+	updatePreview();
 }
 
 void TextureAssetEditorPage::updatePreview()
