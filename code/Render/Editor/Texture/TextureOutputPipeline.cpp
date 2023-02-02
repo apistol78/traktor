@@ -91,19 +91,7 @@ void adjustAlphaCoverage(drawing::Image* image, float alphaCoverageRef, float al
 
 	for (int32_t i = 0; i < 10; ++i)
 	{
-		float alphaCoverageMip = 0.0f;
-
-		for (int32_t y = 0; y < image->getHeight(); ++y)
-		{
-			for (int32_t x = 0; x < image->getWidth(); ++x)
-			{
-				Color4f color;
-				image->getPixelUnsafe(x, y, color);
-				alphaCoverageMip += (color.getAlpha() > alphaRefMid) ? 1.0f : 0.0f;
-			}
-		}
-
-		alphaCoverageMip /= float(image->getWidth() * image->getHeight());
+		const float alphaCoverageMip = estimateAlphaCoverage(image, alphaRefMid);
 
 		if (alphaCoverageMip > alphaCoverageDesired + FUZZY_EPSILON)
 			alphaRefMin = alphaRefMid;
@@ -115,7 +103,7 @@ void adjustAlphaCoverage(drawing::Image* image, float alphaCoverageRef, float al
 		alphaRefMid = (alphaRefMin + alphaRefMax) / 2.0f;
 	}
 
-	float alphaScale = alphaCoverageRef / alphaRefMid;
+	const float alphaScale = alphaCoverageRef / alphaRefMid;
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
