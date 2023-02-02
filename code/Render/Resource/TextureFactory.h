@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
@@ -33,7 +31,7 @@ class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	TextureFactory(IRenderSystem* renderSystem, int32_t skipMips);
+	explicit TextureFactory(IRenderSystem* renderSystem, int32_t skipMips);
 
 	void setSkipMips(int32_t skipMips);
 
@@ -52,6 +50,4 @@ private:
 	int32_t m_skipMips;
 };
 
-	}
 }
-

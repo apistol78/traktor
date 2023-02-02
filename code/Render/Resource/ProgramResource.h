@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Program resource base class.
  * \ingroup Render
@@ -31,6 +29,4 @@ class T_DLLCLASS ProgramResource : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

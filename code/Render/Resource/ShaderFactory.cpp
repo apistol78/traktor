@@ -18,17 +18,15 @@
 #include "Render/Resource/TextureProxy.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 class TextureReaderAdapter : public TextureLinker::TextureReader
 {
 public:
-	TextureReaderAdapter(resource::IResourceManager* resourceManager, const Guid& shaderId)
+	explicit TextureReaderAdapter(resource::IResourceManager* resourceManager, const Guid& shaderId)
 	:	m_resourceManager(resourceManager)
 	,	m_shaderId(shaderId)
 	{
@@ -51,7 +49,7 @@ private:
 	const Guid& m_shaderId;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::IResourceFactory)
 
@@ -77,12 +75,12 @@ bool ShaderFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< ShaderResource > shaderResource = instance->getObject< ShaderResource >();
+	Ref< const ShaderResource > shaderResource = instance->getObject< const ShaderResource >();
 	if (!shaderResource)
 		return nullptr;
 
-	Guid shaderId = instance->getGuid();
-	std::wstring shaderName = instance->getPath();
+	const Guid shaderId = instance->getGuid();
+	const std::wstring shaderName = instance->getPath();
 	Ref< Shader > shader = new Shader();
 
 	// Create combination parameter mapping.
@@ -92,7 +90,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	// Create shader techniques.
 	for (auto resourceTechnique : shaderResource->getTechniques())
 	{
-		std::wstring programName = shaderName + L"[" + resourceTechnique.name + L"]";
+		const std::wstring programName = shaderName + L"[" + resourceTechnique.name + L"]";
 
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(resourceTechnique.name)];
 		technique.mask = resourceTechnique.mask;
@@ -102,7 +100,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!resourceCombination.program)
 				continue;
 
-			Ref< ProgramResource > programResource = checked_type_cast< ProgramResource* >(resourceCombination.program);
+			const ProgramResource* programResource = checked_type_cast< const ProgramResource* >(resourceCombination.program);
 			if (!programResource)
 				return nullptr;
 
@@ -132,5 +130,4 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	return shader;
 }
 
-	}
 }

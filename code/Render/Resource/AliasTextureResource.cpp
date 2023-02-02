@@ -11,10 +11,8 @@
 #include "Render/Resource/AliasTextureResource.h"
 #include "Resource/Member.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AliasTextureResource", 0, AliasTextureResource, ISerializable)
 
@@ -28,5 +26,4 @@ void AliasTextureResource::serialize(ISerializer& s)
 	s >> resource::Member< ITexture >(L"texture", m_texture);
 }
 
-	}
 }

@@ -20,12 +20,10 @@
 #undef min
 #undef max
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 {
@@ -35,7 +33,7 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 	return totalSize;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
 
@@ -310,5 +308,4 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	return texture;
 }
 
-	}
 }
