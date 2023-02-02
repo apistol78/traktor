@@ -42,15 +42,6 @@ class T_DLLCLASS IProgramCompiler : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Compiled stats. */
-	struct Stats
-	{
-		uint32_t vertexCost = 0;
-		uint32_t pixelCost = 0;
-		uint32_t vertexSize = 0;
-		uint32_t pixelSize = 0;
-	};
-
 	/*! Get renderer signature.
 	 *
 	 * \return Renderer signature.
@@ -62,14 +53,12 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
 	 * \param name Program name, useful for debugging.
-	 * \param outStats Optional stats.
 	 * \return Compiled program resource.
 	 */
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
-		const std::wstring& name,
-		Stats* outStats
+		const std::wstring& name
 	) const = 0;
 
 	/*! Generate render specific shader if possible.

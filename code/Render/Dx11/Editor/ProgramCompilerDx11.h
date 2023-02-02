@@ -38,8 +38,7 @@ public:
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
-		const std::wstring& name,
-		Stats* outStats
+		const std::wstring& name
 	) const override final;
 
 	virtual bool generate(
