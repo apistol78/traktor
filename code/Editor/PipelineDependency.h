@@ -72,6 +72,8 @@ public:
 	uint32_t flags = 0;							/*!< Dependency flags. \sa PipelineDependencyFlags */
 	SmallSet< uint32_t > children;				/*!< Child dependencies. */
 
+	std::wstring information() const;
+
 	void dump(OutputStream& os) const;
 
 	virtual void serialize(ISerializer& s) override final;

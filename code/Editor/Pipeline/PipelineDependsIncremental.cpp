@@ -198,7 +198,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
 		{
 			if (m_currentDependency)
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->information() << L"\")." << Endl;
 			else
 				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
 			m_result = false;
@@ -211,7 +211,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	if (!sourceAsset)
 	{
 		if (m_currentDependency)
-			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")." << Endl;
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance (referenced by \"" << m_currentDependency->information() << L"\")." << Endl;
 		else
 			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance." << Endl;
 		m_result = false;

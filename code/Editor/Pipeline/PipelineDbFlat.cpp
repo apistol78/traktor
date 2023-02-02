@@ -146,6 +146,7 @@ void PipelineDbFlat::close()
 
 void PipelineDbFlat::beginTransaction()
 {
+	T_FATAL_ASSERT(m_changes == 0);
 }
 
 void PipelineDbFlat::endTransaction()
