@@ -29,12 +29,6 @@ using namespace traktor;
 namespace
 {
 
-std::wstring getChildElementValue(xml::Element* elm, const std::wstring& name, const std::wstring& defaultValue)
-{
-    auto child = elm->getChildElementByName(name);
-    return (child != nullptr) ? child->getValue() : defaultValue;
-}
-
 class StoreHttpRequestListener : public net::HttpServer::IRequestListener
 {
 public:
@@ -54,28 +48,28 @@ public:
 	) override final
 	{
 		std::wstring resource = net::Url::decodeString(request->getResource());
-        std::map< std::wstring, std::wstring > params;
+		std::map< std::wstring, std::wstring > params;
 
-        // Extract url parameters.
-        auto p = resource.find(L'?');
-        if (p != resource.npos)
-        {
-            for (auto kv : StringSplit< std::wstring >(resource.substr(p + 1), L"&"))
-            {
-                auto p2 = kv.find(L'=');
-                if (p2 != kv.npos)
-                {
-                    auto k = kv.substr(0, p2);
-                    auto v = kv.substr(p2 + 1);
-                    params.insert(std::make_pair(k, v));
-                }
-            }
-            resource = resource.substr(0, p);
-        }
+		// Extract url parameters.
+		auto p = resource.find(L'?');
+		if (p != resource.npos)
+		{
+			for (auto kv : StringSplit< std::wstring >(resource.substr(p + 1), L"&"))
+			{
+				auto p2 = kv.find(L'=');
+				if (p2 != kv.npos)
+				{
+					auto k = kv.substr(0, p2);
+					auto v = kv.substr(p2 + 1);
+					params.insert(std::make_pair(k, v));
+				}
+			}
+			resource = resource.substr(0, p);
+		}
 
-        if (request->getMethod() == net::HttpRequest::MtGet)
-        {
-            log::info << L"GET " << resource << Endl;
+		if (request->getMethod() == net::HttpRequest::MtGet)
+		{
+			log::info << L"GET " << resource << Endl;
 			if (resource == L"/tags")
 			{
 				std::set< std::wstring > tags;
@@ -109,8 +103,8 @@ public:
 				os << L"</tags>" << Endl;
 				return 200;
 			}
-            else if (resource == L"/catalogue")
-            {
+			else if (resource == L"/catalogue")
+			{
 				std::set< std::wstring > tags;
 				for (auto s : StringSplit< std::wstring >(params[L"tags"], L";"))
 					tags.insert(s);
@@ -153,7 +147,7 @@ public:
 
 					if (containTag)
 					{
-						Path manifestPath = FileSystem::getInstance().getAbsolutePath(p.getPathName() + L"/Manifest.xml");
+						const Path manifestPath = FileSystem::getInstance().getAbsolutePath(p.getPathName() + L"/Manifest.xml");
 
 						Path manifestPathRel;
 						FileSystem::getInstance().getRelativePath(
@@ -165,47 +159,47 @@ public:
 						os << L"\t<package id=\"" << p.getFileName() << L"\"/>" << Endl;
 					}
 				}
-                
+				
 				os << L"</catalogue>" << Endl;
-                return 200;
-            }
-            else
-            {
-                if ((outStream = FileSystem::getInstance().open(m_dataPath.getPathName() + resource, File::FmRead)) != nullptr)
-                    return 200;
-            }
-        }
-        else if (request->getMethod() == net::HttpRequest::MtPut)
-        {
-            log::info << L"PUT " << resource << Endl;
+				return 200;
+			}
+			else
+			{
+				if ((outStream = FileSystem::getInstance().open(m_dataPath.getPathName() + resource, File::FmRead)) != nullptr)
+					return 200;
+			}
+		}
+		else if (request->getMethod() == net::HttpRequest::MtPut)
+		{
+			log::info << L"PUT " << resource << Endl;
 
-            Path filePath(m_dataPath.getPathName() + resource);
+			const Path filePath(m_dataPath.getPathName() + resource);
 
-            if (!FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly()))
-            {
-                log::error << L"Failed to create path \"" << filePath.getPathOnly() << L"\"." << Endl;
-                return 404;
-            }
+			if (!FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly()))
+			{
+				log::error << L"Failed to create path \"" << filePath.getPathOnly() << L"\"." << Endl;
+				return 404;
+			}
 
-            Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmWrite);
-            if (!fileStream)
-            {
-                log::error << L"Failed to create file \"" << filePath.getPathName() << L"\"." << Endl;
-                return 404;
-            }
+			Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmWrite);
+			if (!fileStream)
+			{
+				log::error << L"Failed to create file \"" << filePath.getPathName() << L"\"." << Endl;
+				return 404;
+			}
 
-            if (!StreamCopy(fileStream, clientStream).execute(
-                clientStream->available()
-            ))
-            {
-                log::error << L"Failed to receive content into file \"" << filePath.getPathName() << L"\"." << Endl;
-                return 404;
-            }
-            
-            fileStream->close();
-            fileStream = nullptr;
-            return 200;
-        }
+			if (!StreamCopy(fileStream, clientStream).execute(
+				clientStream->available()
+			))
+			{
+				log::error << L"Failed to receive content into file \"" << filePath.getPathName() << L"\"." << Endl;
+				return 404;
+			}
+			
+			fileStream->close();
+			fileStream = nullptr;
+			return 200;
+		}
 		log::error << L"Unhandled method." << Endl;        
 		return 404;
 	}
@@ -220,7 +214,7 @@ int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
 
-   	log::info << L"Traktor.Store.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+	log::info << L"Traktor.Store.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
  
 	if (!cmdLine.hasOption(L's', L"store-path"))
 	{
@@ -233,34 +227,34 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-    const Path dataPath = FileSystem::getInstance().getAbsolutePath(cmdLine.getOption(L's', L"store-path").getString());
-    if (!FileSystem::getInstance().exist(dataPath))
-    {
-        log::error << L"Store data path \"" << dataPath.getPathName() << L"\" do not exist." << Endl;
-        return 1;
-    }
+	const Path dataPath = FileSystem::getInstance().getAbsolutePath(cmdLine.getOption(L's', L"store-path").getString());
+	if (!FileSystem::getInstance().exist(dataPath))
+	{
+		log::error << L"Store data path \"" << dataPath.getPathName() << L"\" do not exist." << Endl;
+		return 1;
+	}
 
 	net::Network::initialize();
 
 	Ref< net::HttpServer > httpServer = new net::HttpServer();
 	if (!httpServer->create(net::SocketAddressIPv4(cmdLine.getOption(L'p', L"listen-port").getInteger())))
-    {
-        log::error << L"Unable to create HTTP server." << Endl;
-        return 1;
-    }
+	{
+		log::error << L"Unable to create HTTP server." << Endl;
+		return 1;
+	}
 
 	httpServer->setRequestListener(new StoreHttpRequestListener(
-        dataPath
-    ));
+		dataPath
+	));
 
-    log::info << L"Waiting for client(s)..." << Endl;
-    for (;;)
-    {
-        httpServer->update(200);
-    }
+	log::info << L"Waiting for client(s)..." << Endl;
+	for (;;)
+	{
+		httpServer->update(200);
+	}
 
-    safeDestroy(httpServer);
+	safeDestroy(httpServer);
 
-    net::Network::finalize();
-    return 0;
+	net::Network::finalize();
+	return 0;
 }
