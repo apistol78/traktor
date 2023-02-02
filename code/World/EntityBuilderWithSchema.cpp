@@ -57,7 +57,7 @@ const IEntityFactory* EntityBuilderWithSchema::getFactory(const IEntityComponent
 
 Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) const
 {
-	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityData);
+	const IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityData);
 	if (!entityFactory)
 		return nullptr;
 
@@ -65,11 +65,14 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 
 	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 
-	const scope_t& scope = m_entityScope.top();
-	for (scope_t::const_iterator i = scope.begin(); i != scope.end(); ++i)
+	if (m_entitySchema)
 	{
-		if (i->second != entity)
-			m_entitySchema->insertEntity(entity, i->first, i->second);
+		const scope_t& scope = m_entityScope.top();
+		for (scope_t::const_iterator i = scope.begin(); i != scope.end(); ++i)
+		{
+			if (i->second != entity)
+				m_entitySchema->insertEntity(entity, i->first, i->second);
+		}
 	}
 
 	m_entityScope.pop();
@@ -79,7 +82,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 		scope_t& scopeTop = m_entityScope.top();
 		scopeTop.push_back(std::make_pair(entityData->getName(), entity));
 	}
-	else
+	else if (m_entitySchema)
 		m_entitySchema->insertEntity(nullptr, entityData->getName(), entity);
 
 	if (m_outEntityProducts && entityData->getId().isNotNull())
@@ -90,7 +93,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 
 Ref< IEntityEvent > EntityBuilderWithSchema::create(const IEntityEventData* entityEventData) const
 {
-	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityEventData);
+	const IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityEventData);
 	if (entityFactory)
 		return entityFactory->createEntityEvent(this, *entityEventData);
 	else
@@ -99,7 +102,7 @@ Ref< IEntityEvent > EntityBuilderWithSchema::create(const IEntityEventData* enti
 
 Ref< IEntityComponent > EntityBuilderWithSchema::create(const IEntityComponentData* entityComponentData) const
 {
-	Ref< const IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityComponentData);
+	const IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityComponentData);
 	if (entityFactory)
 		return entityFactory->createEntityComponent(this, *entityComponentData);
 	else

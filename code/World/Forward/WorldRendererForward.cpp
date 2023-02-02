@@ -510,7 +510,7 @@ void WorldRendererForward::setupLightPass(
 							s_techniqueShadow,
 							sharedParams,
 							shadowRenderView,
-							IWorldRenderPass::PfNone
+							IWorldRenderPass::None
 						);
 
 						T_ASSERT(!renderContext->havePendingDraws());
@@ -626,7 +626,7 @@ void WorldRendererForward::setupLightPass(
 						s_techniqueShadow,
 						sharedParams,
 						shadowRenderView,
-						IWorldRenderPass::PfNone
+						IWorldRenderPass::None
 					);
 
 					T_ASSERT(!renderContext->havePendingDraws());
@@ -788,7 +788,7 @@ void WorldRendererForward::setupVisualPass(
 				s_techniqueForwardColor,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::PfLast,
+				IWorldRenderPass::Last,
 				(bool)(m_irradianceGrid != nullptr),
 				(bool)(shadowAtlasTargetSet != nullptr)
 			);

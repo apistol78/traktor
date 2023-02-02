@@ -31,7 +31,7 @@ class T_DLLCLASS CameraComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	CameraComponent(const CameraComponentData* cameraData);
+	explicit CameraComponent(const CameraComponentData* cameraData);
 
 	virtual void destroy() override final;
 

@@ -41,9 +41,9 @@ class T_DLLCLASS IWorldRenderPass : public Object
 public:
 	enum PassFlag
 	{
-		PfNone = 0,
-		PfFirst = 1 << 0,	//!< First pass for this frame.
-		PfLast = 1 << 1		//!< Last pass for this frame.
+		None = 0,
+		First = 1 << 0,		//!< First pass for this frame.
+		Last = 1 << 1		//!< Last pass for this frame.
 	};
 
 	/*! Get shader technique. */

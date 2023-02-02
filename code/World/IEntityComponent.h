@@ -35,12 +35,24 @@ class T_DLLCLASS IEntityComponent : public Object
 public:
 	virtual void destroy() = 0;
 
+	/*! Set owner entity of component.
+	 * \param owner New component owner.
+	 */
 	virtual void setOwner(Entity* owner) = 0;
 
+	/*! Called when entity's transform is modified.
+	 * \param transform New transform.
+	 */
 	virtual void setTransform(const Transform& transform) = 0;
 
+	/*! Calculate bounding box of this component.
+	 * \return Bounding box.
+	 */
 	virtual Aabb3 getBoundingBox() const = 0;
 
+	/*! Update component
+	 * \param update Update information.
+	 */
 	virtual void update(const UpdateParams& update) = 0;
 };
 

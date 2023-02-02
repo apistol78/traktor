@@ -22,7 +22,7 @@ class Shader;
 namespace traktor::world
 {
 
-/*!
+/*! Decal component.
  * \ingroup World
  */
 class T_DLLCLASS DecalComponent : public IEntityComponent
@@ -30,7 +30,7 @@ class T_DLLCLASS DecalComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	DecalComponent(
+	explicit DecalComponent(
 		float size,
 		float thickness,
 		float alpha,
