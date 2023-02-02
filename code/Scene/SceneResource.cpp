@@ -13,7 +13,6 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "World/EntityData.h"
-#include "World/EntitySchema.h"
 #include "World/EntityBuilderWithSchema.h"
 #include "World/IEntityFactory.h"
 #include "World/WorldRenderSettings.h"
@@ -30,10 +29,9 @@ SceneResource::SceneResource()
 
 Ref< Scene > SceneResource::createScene(world::IEntityBuilder* entityBuilder) const
 {
-	Ref< world::EntitySchema > entitySchema = new world::EntitySchema();
 	SmallMap< Guid, Ref< world::Entity > > entityProducts;
 
-	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema, entityProducts);
+	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, nullptr, entityProducts);
 	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
 
 	Ref< ISceneController > controller;
