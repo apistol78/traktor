@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 /*! Shader resource base class.
  * \ingroup Render
@@ -74,7 +72,7 @@ public:
 		uint32_t mask = 0;
 		uint32_t value = 0;
 		uint32_t priority = 0;
-		Ref< ISerializable > program;
+		Ref< const ISerializable > program;
 		AlignedVector< Guid > textures;
 		AlignedVector< InitializeUniformScalar > initializeUniformScalar;
 		AlignedVector< InitializeUniformVector > initializeUniformVector;
@@ -104,6 +102,4 @@ private:
 	AlignedVector< Technique > m_techniques;
 };
 
-	}
 }
-

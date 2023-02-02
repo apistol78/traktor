@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 
@@ -40,7 +38,7 @@ public:
 		virtual Ref< ITexture > read(const Guid& textureGuid) const = 0;
 	};
 
-	TextureLinker(const TextureReader& textureReader);
+	explicit TextureLinker(const TextureReader& textureReader);
 
 	bool link(const ShaderResource::Combination& shaderCombination, IProgram* program) const;
 
@@ -48,6 +46,4 @@ private:
 	const TextureReader& m_textureReader;
 };
 
-	}
 }
-

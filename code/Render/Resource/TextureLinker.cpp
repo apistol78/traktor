@@ -9,10 +9,8 @@
 #include "Render/IProgram.h"
 #include "Render/Resource/TextureLinker.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureLinker", TextureLinker, Object)
 
@@ -30,11 +28,10 @@ bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, I
 		if (!texture)
 			return false;
 
-		handle_t parameterHandle = getParameterHandleFromTextureReferenceIndex(i);
+		const handle_t parameterHandle = getParameterHandleFromTextureReferenceIndex(i);
 		program->setTextureParameter(parameterHandle, texture);
 	}
 	return true;
 }
 
-	}
 }

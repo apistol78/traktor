@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class IRenderSystem;
 
@@ -33,7 +31,7 @@ class T_DLLCLASS ShaderFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	ShaderFactory(IRenderSystem* renderSystem);
+	explicit ShaderFactory(IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -47,6 +45,4 @@ private:
 	Ref< IRenderSystem > m_renderSystem;
 };
 
-	}
 }
-

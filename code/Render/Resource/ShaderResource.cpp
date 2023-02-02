@@ -13,10 +13,8 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Render/Resource/ShaderResource.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 3, ShaderResource, ISerializable)
 
@@ -54,7 +52,7 @@ void ShaderResource::Combination::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"mask", mask);
 	s >> Member< uint32_t >(L"value", value);
 	s >> Member< uint32_t >(L"priority", priority);
-	s >> MemberRef< ISerializable >(L"program", program);
+	s >> MemberRef< const ISerializable >(L"program", program);
 	s >> MemberAlignedVector< Guid >(L"textures", textures);
 	s >> MemberAlignedVector< InitializeUniformScalar, MemberComposite< InitializeUniformScalar > >(L"initializeUniformScalar", initializeUniformScalar);
 	s >> MemberAlignedVector< InitializeUniformVector, MemberComposite< InitializeUniformVector > >(L"initializeUniformVector", initializeUniformVector);
@@ -67,5 +65,4 @@ void ShaderResource::Technique::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Combination, MemberComposite< Combination > >(L"combinations", combinations);
 }
 
-	}
 }

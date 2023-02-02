@@ -11,10 +11,8 @@
 #include "Render/ITexture.h"
 #include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class TextureProxy : public ITexture
 {
@@ -37,5 +35,4 @@ private:
 	resource::Proxy< ITexture > m_texture;
 };
 
-	}
 }

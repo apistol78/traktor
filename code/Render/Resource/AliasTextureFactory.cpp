@@ -12,10 +12,8 @@
 #include "Render/Resource/TextureProxy.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AliasTextureFactory", AliasTextureFactory, resource::IResourceFactory)
 
@@ -36,7 +34,7 @@ bool AliasTextureFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > AliasTextureFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< AliasTextureResource > resource = instance->getObject< AliasTextureResource >();
+	Ref< const AliasTextureResource > resource = instance->getObject< const AliasTextureResource >();
 	if (!resource)
 		return nullptr;
 
@@ -47,5 +45,4 @@ Ref< Object > AliasTextureFactory::create(resource::IResourceManager* resourceMa
 	return new TextureProxy(texture);
 }
 
-	}
 }
