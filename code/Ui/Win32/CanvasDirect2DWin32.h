@@ -124,18 +124,19 @@ private:
 	ComRef< ID2D1SolidColorBrush > m_d2dBackgroundBrush;
 	D2D1_GRADIENT_STOP m_gradientStops[2];
 	ComRef< ID2D1GradientStopCollection > m_d2dGradientStops;
-	ComRef< IDWriteTextFormat > m_dwTextFormat;
-	ComRef< IDWriteFont > m_dwFont;
-	DWRITE_FONT_METRICS m_fontMetrics;
+	mutable ComRef< IDWriteTextFormat > m_dwTextFormat;
+	mutable ComRef< IDWriteFont > m_dwFont;
+	mutable DWRITE_FONT_METRICS m_fontMetrics;
 	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
 	Font m_font;
 	float m_strokeWidth = 1.0f;
-	bool m_underline = false;
 	bool m_clip = false;
 
 	ID2D1Bitmap* getCachedBitmap(const ISystemBitmap* bm);
 
 	void flushCachedBitmaps();
+
+	bool realizeFont() const;
 };
 
 	}

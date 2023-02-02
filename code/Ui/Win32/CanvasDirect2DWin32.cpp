@@ -52,8 +52,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	RECT rcClient;
 	GetClientRect(hWnd, &rcClient);
 
-	int32_t width = rcClient.right - rcClient.left;
-	int32_t height = rcClient.bottom - rcClient.top;
+	const int32_t width = rcClient.right - rcClient.left;
+	const int32_t height = rcClient.bottom - rcClient.top;
 
 	if (width <= 0 || height <= 0)
 	{
@@ -65,7 +65,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	{
 		flushCachedBitmaps();
 
-		D2D1_SIZE_U size = D2D1::SizeU(width, height);
+		const D2D1_SIZE_U size = D2D1::SizeU(width, height);
 		hr = s_d2dFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(hWnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
@@ -76,7 +76,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	}
 	else
 	{
-		D2D1_SIZE_U size = D2D1::SizeU(width, height);
+		const D2D1_SIZE_U size = D2D1::SizeU(width, height);
 		hr = m_d2dRenderTarget->Resize(size);
 		if (FAILED(hr))
 			return false;
@@ -95,7 +95,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	LOGFONT lf;
 
-	BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
+	const BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
 	T_ASSERT_M (result, L"Unable to get device font");
 
 	int32_t logical = 0;
@@ -108,8 +108,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	else
 		logical = -lf.lfHeight;
 
-	float inches = float(logical) / getSystemDPI();
-	float dip = inches * 96.0f;
+	const float inches = float(logical) / getSystemDPI();
+	const float dip = inches * 96.0f;
 
 	setFont(Font(
 		lf.lfFaceName,
@@ -301,7 +301,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 
 void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
-	if (m_dwTextFormat)
+	if (realizeFont())
 	{
 		outAscent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm);
 		outDescent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm);
@@ -325,6 +325,9 @@ int32_t CanvasDirect2DWin32::getLineSpacing() const
 
 Size CanvasDirect2DWin32::getExtent(const std::wstring& text) const
 {
+	if (!realizeFont())
+		return Size(0, 0);
+
 	ComRef< IDWriteTextLayout > dwLayout;
 	s_dwFactory->CreateTextLayout(
 		text.c_str(),
@@ -373,51 +376,12 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 	if (font == m_font)
 		return;
 
+	m_font = font;
+
+	// Release previous font, the actual font is created later when text
+	// is first drawn using the new font.
 	m_dwFont.release();
-
-	s_dwFactory->CreateTextFormat(
-		font.getFace().c_str(),
-		NULL,
-		font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-		font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		font.getSize() * getSystemDPI() / 96.0f,
-		L"",
-		&m_dwTextFormat.getAssign()
-	);
-
-	if (m_dwTextFormat)
-	{
-		m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-		m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		m_dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-
-		ComRef< IDWriteFontCollection > collection;
-		m_dwTextFormat->GetFontCollection(&collection.getAssign());
-
-		UINT32 findex;
-		BOOL exists;
-		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists);
-
-		if (exists)
-		{
-			ComRef< IDWriteFontFamily > ffamily;
-			collection->GetFontFamily(findex, &ffamily.getAssign());
-			T_FATAL_ASSERT(ffamily != nullptr);
-
-			ffamily->GetFirstMatchingFont(
-				m_dwTextFormat->GetFontWeight(),
-				m_dwTextFormat->GetFontStretch(),
-				m_dwTextFormat->GetFontStyle(),
-				&m_dwFont.getAssign()
-			);
-
-			if (m_dwFont != nullptr)
-				m_dwFont->GetMetrics(&m_fontMetrics);
-		}
-	}
-
-	m_underline = font.isUnderline();
+	m_dwTextFormat.release();
 }
 
 const IFontMetric* CanvasDirect2DWin32::getFontMetric() const
@@ -779,7 +743,7 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 
 void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 {
-	if (!m_dwTextFormat)
+	if (!realizeFont())
 		return;
 
 	ComRef< IDWriteTextLayout > dwLayout;
@@ -794,7 +758,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	if (!dwLayout)
 		return;
 
-	if (m_underline)
+	if (m_font.isUnderline())
 	{
 		DWRITE_TEXT_RANGE range;
 		range.startPosition = 0;
@@ -803,7 +767,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	}
 
 	// Remove line gap; it's being added on top of ascent.
-	int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
+	const int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
 
 	m_d2dRenderTarget->DrawTextLayout(
 		D2D1::Point2F(at.x, at.y - lineGap),
@@ -814,7 +778,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 
 void* CanvasDirect2DWin32::getSystemHandle()
 {
-	return NULL; // m_hDC;
+	return NULL;
 }
 
 bool CanvasDirect2DWin32::startup()
@@ -885,6 +849,55 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 void CanvasDirect2DWin32::flushCachedBitmaps()
 {
 	m_cachedBitmaps.clear();
+}
+
+bool CanvasDirect2DWin32::realizeFont() const
+{
+	if (m_dwFont)
+		return true;
+
+	s_dwFactory->CreateTextFormat(
+		m_font.getFace().c_str(),
+		NULL,
+		m_font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+		m_font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		m_font.getSize() * getSystemDPI() / 96.0f,
+		L"",
+		&m_dwTextFormat.getAssign()
+	);
+	if (!m_dwTextFormat)
+		return false;
+
+	m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	m_dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+
+	ComRef< IDWriteFontCollection > collection;
+	m_dwTextFormat->GetFontCollection(&collection.getAssign());
+
+	UINT32 findex;
+	BOOL exists;
+	collection->FindFamilyName(m_font.getFace().c_str(), &findex, &exists);
+
+	if (exists)
+	{
+		ComRef< IDWriteFontFamily > ffamily;
+		collection->GetFontFamily(findex, &ffamily.getAssign());
+		T_FATAL_ASSERT(ffamily != nullptr);
+
+		ffamily->GetFirstMatchingFont(
+			m_dwTextFormat->GetFontWeight(),
+			m_dwTextFormat->GetFontStretch(),
+			m_dwTextFormat->GetFontStyle(),
+			&m_dwFont.getAssign()
+		);
+
+		if (m_dwFont != nullptr)
+			m_dwFont->GetMetrics(&m_fontMetrics);
+	}
+
+	return m_dwFont != nullptr;
 }
 
 	}
