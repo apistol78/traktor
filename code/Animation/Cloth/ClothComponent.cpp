@@ -188,7 +188,7 @@ void ClothComponent::build(
 
 	if (
 		m_updateRequired &&
-		(worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0
+		(worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0
 	)
 	{
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
@@ -290,7 +290,7 @@ void ClothComponent::update(const world::UpdateParams& update)
 {
 	m_updateClothJob = JobManager::getInstance().add([=](){
 #if !defined(__IOS__)
-		const float c_updateDeltaTime = 1.0f / 60.0f;
+		const float c_updateDeltaTime = 1.0f / 30.0f;
 #else
 		const float c_updateDeltaTime = 1.0f / 10.0f;
 #endif
