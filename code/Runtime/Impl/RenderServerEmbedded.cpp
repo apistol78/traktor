@@ -24,12 +24,10 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 int32_t sanitizeMultiSample(int32_t multiSample)
 {
@@ -85,7 +83,7 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 	return c_maxAnisotropy[quality];
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerEmbedded", RenderServerEmbedded, RenderServer)
 
@@ -286,5 +284,4 @@ float RenderServerEmbedded::getRefreshRate() const
 	return m_originalDisplayMode.refreshRate;
 }
 
-	}
 }

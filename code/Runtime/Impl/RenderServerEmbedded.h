@@ -10,12 +10,10 @@
 
 #include "Runtime/Impl/RenderServer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class RenderServerEmbedded : public RenderServer
@@ -57,6 +55,4 @@ private:
 	float m_screenAspectRatio = 1.0f;
 };
 
-	}
 }
-

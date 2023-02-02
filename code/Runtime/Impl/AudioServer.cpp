@@ -26,10 +26,8 @@
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/SoundPlayer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.AudioServer", AudioServer, IAudioServer)
 
@@ -238,7 +236,6 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
 	m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
 	m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
-
 	return CrAccepted;
 }
 
@@ -257,5 +254,4 @@ sound::SurroundEnvironment* AudioServer::getSurroundEnvironment()
 	return m_surroundEnvironment;
 }
 
-	}
 }

@@ -15,19 +15,21 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class ResourceServer : public IResourceServer
@@ -51,6 +53,4 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 };
 
-	}
 }
-

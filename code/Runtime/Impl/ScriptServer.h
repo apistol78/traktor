@@ -20,26 +20,28 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace input
-	{
+}
+
+namespace traktor::input
+{
 
 class InputSystem;
 
-	}
+}
 
-	namespace net
-	{
+namespace traktor::net
+{
 
 class BidirectionalObjectTransport;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class ScriptServer
@@ -102,6 +104,4 @@ private:
 	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) override final;
 };
 
-	}
 }
-

@@ -27,12 +27,10 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const float c_maxAspectRatio = 8.0f;
 
@@ -154,7 +152,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServerDefault", RenderServerDefault, RenderServer)
 
@@ -482,5 +480,4 @@ float RenderServerDefault::getRefreshRate() const
 	return m_renderViewDesc.displayMode.refreshRate;
 }
 
-	}
 }

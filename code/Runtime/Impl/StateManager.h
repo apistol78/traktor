@@ -11,10 +11,8 @@
 #include "Core/Thread/Semaphore.h"
 #include "Runtime/IStateManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! State manager.
  * \ingroup Runtime
@@ -67,6 +65,4 @@ private:
 	void enterNext();
 };
 
-	}
 }
-

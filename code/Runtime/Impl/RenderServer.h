@@ -15,19 +15,21 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class TextureFactory;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class RenderServer : public IRenderServer
@@ -65,6 +67,4 @@ private:
 	int32_t m_frameRate = 0;
 };
 
-	}
 }
-

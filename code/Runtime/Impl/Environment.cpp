@@ -17,10 +17,8 @@
 #include "Runtime/UpdateControl.h"
 #include "Runtime/Impl/WorldServer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Environment", Environment, IEnvironment)
 
@@ -139,5 +137,4 @@ int32_t Environment::executeReconfigure()
 	return result;
 }
 
-	}
 }

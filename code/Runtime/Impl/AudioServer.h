@@ -18,19 +18,21 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace sound
-	{
+}
+
+namespace traktor::sound
+{
 
 class SoundPlayer;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class AudioServer : public IAudioServer
@@ -66,6 +68,4 @@ private:
 	float m_soundMutedVolume = 1.0f;
 };
 
-	}
 }
-
