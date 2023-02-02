@@ -1621,6 +1621,9 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 
 void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 {
+	if (!m_gridMeasurements->isVisible(true))
+		return;
+
 	if (event->getPass() <= 0)
 		m_gridMeasurements->removeAllRows();
 
