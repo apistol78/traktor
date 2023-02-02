@@ -21,8 +21,6 @@ namespace traktor::render
 	namespace
 	{
 
-const static Handle s_handleTime(L"Time");
-const static Handle s_handleDeltaTime(L"DeltaTime");
 const static Handle s_handleViewEdgeTopLeft(L"ViewEdgeTopLeft");
 const static Handle s_handleViewEdgeTopRight(L"ViewEdgeTopRight");
 const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
@@ -77,8 +75,6 @@ void Simple::build(
 	pp->beginParameters(renderContext);
 	pp->attachParameters(sharedParams);
 
-	pp->setFloatParameter(s_handleTime, view.time);
-	pp->setFloatParameter(s_handleDeltaTime, view.deltaTime);
 	pp->setVectorParameter(s_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	pp->setVectorParameter(s_handleViewEdgeTopRight, viewEdgeTopRight);
 	pp->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);

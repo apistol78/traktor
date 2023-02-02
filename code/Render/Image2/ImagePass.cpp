@@ -16,6 +16,13 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+const static Handle s_handleTime(L"Time");
+const static Handle s_handleDeltaTime(L"DeltaTime");
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, IImageStep)
 
@@ -48,10 +55,15 @@ void ImagePass::addPasses(
 		{
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
+			
+			sharedParams->setFloatParameter(s_handleTime, view.time);
+			sharedParams->setFloatParameter(s_handleDeltaTime, view.deltaTime);
+
 			for (auto it : context.getFloatParameters())
 				sharedParams->setFloatParameter(it.first, it.second);
 			for (auto it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
+
 			sharedParams->endParameters(renderContext);
 				
 			for (auto op : m_ops)

@@ -33,8 +33,6 @@ const Vector4 c_poissonTaps[] =
 };
 
 const static Handle s_handleLastSlice(L"LastSlice");
-const static Handle s_handleTime(L"Time");
-const static Handle s_handleDeltaTime(L"DeltaTime");
 const static Handle s_handleShadowMapSizeAndBias(L"ShadowMapSizeAndBias");
 const static Handle s_handleShadowMapUvTransform(L"ShadowMapUvTransform");
 const static Handle s_handleMagicCoeffs(L"MagicCoeffs");
@@ -104,8 +102,6 @@ void ShadowProject::build(
 	pp->beginParameters(renderContext);
 	pp->attachParameters(sharedParams);	
 
-	pp->setFloatParameter(s_handleTime, view.time);
-	pp->setFloatParameter(s_handleDeltaTime, view.deltaTime);
 	pp->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	pp->setVectorParameter(s_handleShadowMapUvTransform, view.shadowMapUvTransform);
 	pp->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, view.sliceNearZ - c_sliceBias, view.sliceFarZ + c_sliceBias));
