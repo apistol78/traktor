@@ -23,8 +23,10 @@ namespace traktor
 
 class IStream;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class Mesh;
 class MeshFactory;
@@ -45,6 +47,4 @@ private:
 	Ref< const MeshFactory > m_meshFactory;
 };
 
-	}
 }
-

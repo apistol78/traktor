@@ -15,10 +15,8 @@
 #include "Render/Mesh/MeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.MeshReader", MeshReader, Object)
 
@@ -212,5 +210,4 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	return mesh;
 }
 
-	}
 }

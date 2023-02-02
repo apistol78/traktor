@@ -12,10 +12,8 @@
 #include "Core/Math/Half.h"
 #include "Core/Io/Writer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.MeshWriter", MeshWriter, Object)
 
@@ -133,7 +131,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 
 	const AlignedVector< Mesh::Part >& parts = mesh->getParts();
 
-	uint32_t partCount = uint32_t(parts.size());
+	const uint32_t partCount = (uint32_t)parts.size();
 	writer << partCount;
 
 	for (unsigned int i = 0; i < partCount; ++i)
@@ -158,5 +156,4 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	return true;
 }
 
-	}
 }

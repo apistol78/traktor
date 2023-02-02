@@ -8,10 +8,8 @@
  */
 #include "Render/Mesh/Mesh.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Mesh", Mesh, Object)
 
@@ -50,5 +48,4 @@ void Mesh::setBoundingBox(const Aabb3& boundingBox)
 	m_boundingBox = boundingBox;
 }
 
-	}
 }
