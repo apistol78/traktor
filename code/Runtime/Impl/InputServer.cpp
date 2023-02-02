@@ -35,12 +35,10 @@
 #include "Input/Binding/InputState.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory deviceCategory)
 {
@@ -64,7 +62,7 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.InputServer", InputServer, IInputServer)
 
@@ -563,5 +561,4 @@ input::RumbleEffectPlayer* InputServer::getRumbleEffectPlayer()
 	return m_rumbleEffectPlayer;
 }
 
-	}
 }

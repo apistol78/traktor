@@ -57,12 +57,10 @@
 #include "Script/IScriptManager.h"
 #include "World/EntityEventManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_databasePollInterval = 5;
 
@@ -98,7 +96,7 @@ private:
 	Ref< TargetManagerConnection > m_targetManagerConnection;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.Application", Application, IApplication)
 
@@ -1153,5 +1151,4 @@ void Application::threadRender()
 	}
 }
 
-	}
 }

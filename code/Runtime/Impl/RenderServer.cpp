@@ -9,10 +9,8 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Core/Thread/Atomic.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.RenderServer", RenderServer, IRenderServer)
 
@@ -36,5 +34,4 @@ int32_t RenderServer::getThreadFrameQueueCount() const
 	return 2;
 }
 
-	}
 }

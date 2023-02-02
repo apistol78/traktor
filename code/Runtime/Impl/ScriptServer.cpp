@@ -33,10 +33,8 @@
 #include "Script/ScriptFactory.h"
 #include "Script/StackFrame.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ScriptServer", ScriptServer, IScriptServer)
 
@@ -341,5 +339,4 @@ void ScriptServer::callMeasured(const Guid& scriptId, const std::wstring& functi
 	sample.exclusiveDuration += exclusiveDuration;
 }
 
-	}
 }

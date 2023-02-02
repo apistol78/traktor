@@ -35,15 +35,17 @@ namespace traktor
 class PropertyGroup;
 class Thread;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 // \fixme Move to configuration file.
 #define T_MEASURE_PERFORMANCE 1
@@ -140,6 +142,4 @@ private:
 	void threadRender();
 };
 
-	}
 }
-

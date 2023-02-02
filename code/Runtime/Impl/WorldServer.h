@@ -16,23 +16,25 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace spray
-	{
+}
+
+namespace traktor::spray
+{
 
 class EffectRenderer;
 class FeedbackManager;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class EntityRenderer;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 class IRenderServer;
@@ -98,6 +100,4 @@ private:
 	float m_gamma = 2.2f;
 };
 
-	}
 }
-

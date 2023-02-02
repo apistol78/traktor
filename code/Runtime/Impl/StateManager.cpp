@@ -10,10 +10,8 @@
 #include "Runtime/IState.h"
 #include "Runtime/Impl/StateManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.StateManager", StateManager, IStateManager)
 
@@ -74,5 +72,4 @@ void StateManager::enterNext()
 	m_lock.release();
 }
 
-	}
 }

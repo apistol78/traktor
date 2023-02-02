@@ -15,12 +15,14 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace runtime
-	{
+}
+
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class PhysicsServer : public IPhysicsServer
@@ -46,6 +48,4 @@ private:
 	Ref< physics::PhysicsManager > m_physicsManager;
 };
 
-	}
 }
-

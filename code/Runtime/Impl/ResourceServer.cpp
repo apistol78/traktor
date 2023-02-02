@@ -21,10 +21,8 @@
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "Resource/ResourceManager.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ResourceServer", ResourceServer, IResourceServer)
 
@@ -72,5 +70,4 @@ resource::IResourceManager* ResourceServer::getResourceManager()
 	return m_resourceManager;
 }
 
-	}
 }

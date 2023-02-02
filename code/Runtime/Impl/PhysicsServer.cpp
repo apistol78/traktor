@@ -21,16 +21,14 @@
 #include "Resource/IResourceManager.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const float c_timeScale = 1.25f;	//< Make simulation 25% faster than normal; empirically measured to make simulation feel more natural.
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.PhysicsServer", PhysicsServer, IPhysicsServer)
 
@@ -90,5 +88,4 @@ physics::PhysicsManager* PhysicsServer::getPhysicsManager()
 	return m_physicsManager;
 }
 
-	}
 }

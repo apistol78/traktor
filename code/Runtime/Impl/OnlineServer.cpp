@@ -20,10 +20,8 @@
 #include "Online/Impl/SessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.OnlineServer", OnlineServer, IOnlineServer)
 
@@ -91,5 +89,4 @@ online::ISessionManager* OnlineServer::getSessionManager()
 	return m_sessionManager;
 }
 
-	}
 }

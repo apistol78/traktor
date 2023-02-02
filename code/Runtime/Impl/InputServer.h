@@ -16,28 +16,30 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace input
-	{
+namespace traktor::input
+{
 
 class IInputDevice;
 class InputMappingSourceData;
 class InputSourceFabricator;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IEnvironment;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class InputServer : public IInputServer
@@ -97,6 +99,4 @@ private:
 	Ref< input::RumbleEffectPlayer > m_rumbleEffectPlayer;
 };
 
-	}
 }
-

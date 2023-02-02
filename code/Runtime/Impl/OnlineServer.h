@@ -16,19 +16,21 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class IAudioServer;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class OnlineServer : public IOnlineServer
@@ -50,6 +52,4 @@ private:
 	Ref< online::ISessionManager > m_sessionManager;
 };
 
-	}
 }
-

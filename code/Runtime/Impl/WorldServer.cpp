@@ -51,12 +51,10 @@
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const float c_sprayLodDistances[][2] =
 {
@@ -85,7 +83,7 @@ const uint32_t c_terrainSurfaceCacheSizes[] =
 	8192
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.WorldServer", WorldServer, IWorldServer)
 
@@ -316,5 +314,4 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	return worldRenderer;
 }
 
-	}
 }

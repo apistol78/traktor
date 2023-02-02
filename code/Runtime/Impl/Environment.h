@@ -15,8 +15,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace runtime
-	{
+}
+
+namespace traktor::runtime
+{
 
 class AudioServer;
 class InputServer;
@@ -28,7 +30,7 @@ class ScriptServer;
 class UpdateControl;
 class WorldServer;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class Environment : public IEnvironment
@@ -93,6 +95,4 @@ private:
 	bool m_shouldReconfigure;
 };
 
-	}
 }
-
